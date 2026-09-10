@@ -89,6 +89,12 @@ struct SceneStripGizmoRects {
   rcti move;
   rcti slip;
   rcti scrub;
+  /* BFA (#6780): parts of the bar that lie outside the live content (hold
+   * frames / range extension). Drawn dimmed so the strip's empty extent is
+   * visible while the bar still spans the full mode extent. `xmax <= xmin`
+   * marks "none". */
+  rcti empty_in;
+  rcti empty_out;
 };
 
 /* Resolve the 3D Sequencer sync settings (window_manager.timeline_sync_settings).
@@ -155,42 +161,105 @@ static const Strip *scene_strip_master_get(const bContext *C, Scene **r_master_s
   return strip;
 }
 
+/* Resolved dopesheet x-range of the scene strip gizmo for the active toggles.
+ * `frame_in/frame_out` is the extent the bar spans (and the hit-areas cover);
+ * `empty_in/empty_out` mark the parts of that extent which lie *outside* the
+ * strip's live content (hold frames / range extension) and are drawn dimmed. */
+struct SceneStripGizmoExtent {
+  float frame_in;
+  float frame_out;
+  /* Empty (non-content) sub-ranges. `xmax <= xmin` means "none". */
+  float empty_in_in;
+  float empty_in_out;
+  float empty_out_in;
+  float empty_out_out;
+};
+
+/* Unclamped variant of the `ANIM_draw_scene_strip_range` mapping: the linear map
+ * `give_frame_index` follows inside the content, evaluated beyond it too, so the
+ * strip's hold frames (where `give_frame_index` saturates) get real coordinates. */
+static float scene_strip_scene_frame_unclamped(const Scene *master_scene,
+                                               const Strip *strip,
+                                               float timeline_frame)
+{
+  const float scene_fps = float(master_scene->r.frs_sec) / float(master_scene->r.frs_sec_base);
+  const float factor = strip->media_playback_rate_factor(scene_fps);
+  return (timeline_frame - strip->content_start()) * factor + strip->scene->r.sfra +
+         strip->anim_startofs;
+}
+
 /* Frame range of a scene strip in the dope-sheet time reference (same mapping as
- * `ANIM_draw_scene_strip_range`). When "Set Preview Range" is on and "Clamp to
- * Scene Strip" is off, the bar draws directly to the preview range (psfra/pefra)
- * so it fully stretches to the preview extent set by the strip duration - not
- * clamped to the scene content. Otherwise it maps the strip's handles through
- * the scene range (sfra). */
-static void scene_strip_frame_range(const bContext *C,
-                                    const Scene *master_scene,
-                                    const Strip *strip,
-                                    float *r_frame_in,
-                                    float *r_frame_out)
+ * `ANIM_draw_scene_strip_range`).
+ *
+ * BFA (#6780) §2.1: the gizmo must span the full extent of the *active mode*, not
+ * always the scene content. The modes compose top-down:
+ *   - no toggles   : full strip width (the strip's own extent, including hold
+ *                    frames beyond the scene range) - the default.
+ *   - Set Preview  : the preview range (psfra/pefra), decoupled from the scene
+ *                    range even when it reaches beyond it.
+ *   - Clamp Scene  : the scene render range (sfra/efra).
+ *   - both         : the union (widest) of preview and scene ranges.
+ * The `empty_*` sub-ranges mark where the extent lies outside the rendered
+ * content: those frames are drawn dimmed. */
+static SceneStripGizmoExtent scene_strip_gizmo_extent(const bContext *C,
+                                                       const Scene *master_scene,
+                                                       const Strip *strip)
 {
   const SpaceAction *space_action = CTX_wm_space_action(C);
   const bool use_preview = (space_action != nullptr) &&
                            (space_action->overlays.flag & ADS_SHOW_USE_PREVIEW_RANGE) != 0;
   const bool clamp = (space_action != nullptr) &&
                      (space_action->overlays.flag & ADS_SHOW_CLAMP_TO_SCENE_STRIP) != 0;
-  if (use_preview && !clamp) {
-    /* Draw directly to the preview range so the bar stretches to the full
-     * preview extent (the strip duration in the scene strip), not clamped to
-     * the scene content. */
-    *r_frame_in = float(strip->scene->r.psfra);
-    *r_frame_out = float(strip->scene->r.pefra);
-    return;
+  const Scene *scene = strip->scene;
+
+  /* Live content extent (the rendered frames) in scene frames: the strip plays
+   * `sfra + anim_startofs .. efra - anim_endofs` (the scene range length minus
+   * the anim trims). */
+  const float content_in = float(scene->r.sfra) + strip->anim_startofs;
+  const float content_out = float(scene->r.efra) - strip->anim_endofs;
+
+  /* Full strip extent: the strip's own master length mapped through the
+   * unclamped linear map, so hold frames extend beyond the content. */
+  const float strip_in = scene_strip_scene_frame_unclamped(master_scene, strip, strip->left_handle());
+  const float strip_out = scene_strip_scene_frame_unclamped(
+      master_scene, strip, strip->right_handle(master_scene) - 1);
+
+  SceneStripGizmoExtent ext{};
+  float frame_in;
+  float frame_out;
+  switch ((use_preview ? 1 : 0) | (clamp ? 2 : 0)) {
+    case 1: /* Preview only: decoupled preview range. */
+      frame_in = float(scene->r.psfra);
+      frame_out = float(scene->r.pefra);
+      break;
+    case 2: /* Clamp only: scene render range. */
+      frame_in = float(scene->r.sfra);
+      frame_out = float(scene->r.efra);
+      break;
+    case 3: /* Both: union of preview and scene ranges (widest). */
+      frame_in = min_ff(float(scene->r.psfra), float(scene->r.sfra));
+      frame_out = max_ff(float(scene->r.pefra), float(scene->r.efra));
+      break;
+    default: /* No toggles: full strip extent. */
+      frame_in = strip_in;
+      frame_out = strip_out;
+      break;
   }
-  const float left_handle = strip->left_handle();
-  const float right_handle = strip->right_handle(master_scene);
-  float frame_in = seq::give_frame_index(master_scene, strip, left_handle) +
-                   strip->scene->r.sfra + strip->anim_startofs;
-  float frame_out = seq::give_frame_index(master_scene, strip, right_handle - 1) +
-                    strip->scene->r.sfra + strip->anim_startofs;
   if (frame_in > frame_out) {
     std::swap(frame_in, frame_out);
   }
-  *r_frame_in = frame_in;
-  *r_frame_out = frame_out;
+  ext.frame_in = frame_in;
+  ext.frame_out = frame_out;
+
+  /* Empty sub-ranges: the extent minus the live content, in scene frames.
+   * Left empty spans [frame_in, content_in), right empty spans
+   * (content_out, frame_out]. Either collapses when the extent does not reach
+   * beyond the content on that side. */
+  ext.empty_in_in = frame_in;
+  ext.empty_in_out = min_ff(content_in, frame_out);
+  ext.empty_out_in = max_ff(content_out, frame_in);
+  ext.empty_out_out = frame_out;
+  return ext;
 }
 
 /* Compute the hit-areas of the master strip bar in region pixels. Returns false
@@ -218,13 +287,12 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
   const int strip_height = int(26.0f * ui_scale);
   const int y_strip = baseline + int(2.0f * ui_scale);
 
-  float frame_in, frame_out;
-  scene_strip_frame_range(C, master_scene, strip, &frame_in, &frame_out);
+  const SceneStripGizmoExtent ext = scene_strip_gizmo_extent(C, master_scene, strip);
 
   View2D *v2d = &region->v2d;
   int x_in, x_out, y_dummy;
-  ui::view2d_view_to_region(v2d, frame_in, 0.0f, &x_in, &y_dummy);
-  ui::view2d_view_to_region(v2d, frame_out, 0.0f, &x_out, &y_dummy);
+  ui::view2d_view_to_region(v2d, ext.frame_in, 0.0f, &x_in, &y_dummy);
+  ui::view2d_view_to_region(v2d, ext.frame_out, 0.0f, &x_out, &y_dummy);
 
   const int handle_width = int(8.0f * ui_scale);
   /* bfa 3d sequencer: the move bar (strip location) is the TOP half and the
@@ -244,10 +312,22 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
                 x_out + handle_width / 2,
                 y_strip,
                 y_strip + strip_height);
-  /* Move (strip location) on top, slip (strip content) on the bottom. */
+  /* Move (strip location) on top, slip (strip content) on the bottom. The hit
+   * zones span the full mode extent so empty extensions stay grabbable. */
   BLI_rcti_init(&rects->move, x_in, x_out, y_strip + move_bar_height, y_strip + strip_height);
   BLI_rcti_init(&rects->slip, x_in, x_out, y_strip, y_strip + move_bar_height);
   BLI_rcti_init(&rects->scrub, 0, region->winx, baseline, baseline + timeline_height);
+
+  /* BFA (#6780) §2.1: empty (non-content) sub-ranges of the bar, in region
+   * pixels. Collapsed to a zero-width rect at the boundary when there is no
+   * extension on that side. */
+  int ex_in_in, ex_in_out, ex_out_in, ex_out_out;
+  ui::view2d_view_to_region(v2d, ext.empty_in_in, 0.0f, &ex_in_in, &y_dummy);
+  ui::view2d_view_to_region(v2d, ext.empty_in_out, 0.0f, &ex_in_out, &y_dummy);
+  ui::view2d_view_to_region(v2d, ext.empty_out_in, 0.0f, &ex_out_in, &y_dummy);
+  ui::view2d_view_to_region(v2d, ext.empty_out_out, 0.0f, &ex_out_out, &y_dummy);
+  BLI_rcti_init(&rects->empty_in, ex_in_in, ex_in_out, y_strip, y_strip + strip_height);
+  BLI_rcti_init(&rects->empty_out, ex_out_in, ex_out_out, y_strip, y_strip + strip_height);
   return true;
 }
 
@@ -719,6 +799,45 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
         immUniformColor4f(0.42f, 0.62f, 0.95f, 0.4f);
         immRectf(pos, zone_x0, y_strip + border_w, zone_x1, y_seam);
       }
+    }
+
+    /* BFA (#6780) §2.1: dim the parts of the bar that lie outside the strip's
+     * live content (hold frames / the active mode's range extension). The bars
+     * still read as one gizmo, but the empty frames are visibly "no content" -
+     * darkening matches the layered-strip opacity language. Drawn before the
+     * handles so the grip caps stay crisp on top. */
+    uchar empty_uc[3];
+    ui::theme::get_color_shade_3ubv(col_uc, -85, empty_uc);
+    immUniformColor4f(empty_uc[0] / 255.0f, empty_uc[1] / 255.0f, empty_uc[2] / 255.0f, 0.55f);
+    if (rects.empty_in.xmax > rects.empty_in.xmin) {
+      immRectf(pos,
+               float(rects.empty_in.xmin),
+               y_strip + border_w,
+               float(rects.empty_in.xmax),
+               y_top - border_w);
+    }
+    if (rects.empty_out.xmax > rects.empty_out.xmin) {
+      immRectf(pos,
+               float(rects.empty_out.xmin),
+               y_strip + border_w,
+               float(rects.empty_out.xmax),
+               y_top - border_w);
+    }
+    /* Thin seam at the content boundary so the live/empty split is unambiguous. */
+    immUniformColor4f(0.0f, 0.0f, 0.0f, 0.35f);
+    if (rects.empty_in.xmax > rects.empty_in.xmin) {
+      immRectf(pos,
+               float(rects.empty_in.xmax) - 0.5f,
+               y_strip + border_w,
+               float(rects.empty_in.xmax) + 0.5f,
+               y_top - border_w);
+    }
+    if (rects.empty_out.xmax > rects.empty_out.xmin) {
+      immRectf(pos,
+               float(rects.empty_out.xmin) - 0.5f,
+               y_strip + border_w,
+               float(rects.empty_out.xmin) + 0.5f,
+               y_top - border_w);
     }
 
     /* Grip handles: green/red caps with a soft halo. The halo is white on hover
