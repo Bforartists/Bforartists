@@ -120,7 +120,10 @@ static Scene *timeline_sync_master_scene_get(const bContext *C)
  * scene) and the legacy 3D Sequencer addon sync (addon master scene).
  * BFA (#6780): the gizmos are sync-agnostic - they operate whenever a master
  * sequencer timeline is configured, whether or not scene time sync is on
- * (the sync only drives the playhead, not the gizmos). */
+ * (the sync only drives the playhead, not the gizmos). The strip is found by
+ * iterating the master timeline's scene strips (the one referencing the active
+ * scene), NOT by the playhead position, so the gizmos always draw regardless of
+ * where the playhead is. */
 static const Strip *scene_strip_master_get(const bContext *C, Scene **r_master_scene)
 {
   WorkSpace *workspace = CTX_wm_workspace(C);
@@ -132,7 +135,17 @@ static const Strip *scene_strip_master_get(const bContext *C, Scene **r_master_s
       return nullptr;
     }
   }
-  const Strip *strip = ed::vse::get_scene_strip_for_time_sync(master_scene);
+  const Scene *active_scene = CTX_data_scene(C);
+  const Editing *ed = seq::editing_get(master_scene);
+  const Strip *strip = nullptr;
+  if (ed != nullptr) {
+    for (const Strip &s : ed->seqbase) {
+      if (s.type == STRIP_TYPE_SCENE && s.scene == active_scene) {
+        strip = &s;
+        break;
+      }
+    }
+  }
   if (!strip || !strip->scene) {
     return nullptr;
   }
@@ -143,12 +156,30 @@ static const Strip *scene_strip_master_get(const bContext *C, Scene **r_master_s
 }
 
 /* Frame range of a scene strip in the dope-sheet time reference (same mapping as
- * `ANIM_draw_scene_strip_range`). */
-static void scene_strip_frame_range(const Scene *master_scene,
+ * `ANIM_draw_scene_strip_range`). When "Set Preview Range" is on and "Clamp to
+ * Scene Strip" is off, the bar draws directly to the preview range (psfra/pefra)
+ * so it fully stretches to the preview extent set by the strip duration - not
+ * clamped to the scene content. Otherwise it maps the strip's handles through
+ * the scene range (sfra). */
+static void scene_strip_frame_range(const bContext *C,
+                                    const Scene *master_scene,
                                     const Strip *strip,
                                     float *r_frame_in,
                                     float *r_frame_out)
 {
+  const SpaceAction *space_action = CTX_wm_space_action(C);
+  const bool use_preview = (space_action != nullptr) &&
+                           (space_action->overlays.flag & ADS_SHOW_USE_PREVIEW_RANGE) != 0;
+  const bool clamp = (space_action != nullptr) &&
+                     (space_action->overlays.flag & ADS_SHOW_CLAMP_TO_SCENE_STRIP) != 0;
+  if (use_preview && !clamp) {
+    /* Draw directly to the preview range so the bar stretches to the full
+     * preview extent (the strip duration in the scene strip), not clamped to
+     * the scene content. */
+    *r_frame_in = float(strip->scene->r.psfra);
+    *r_frame_out = float(strip->scene->r.pefra);
+    return;
+  }
   const float left_handle = strip->left_handle();
   const float right_handle = strip->right_handle(master_scene);
   float frame_in = seq::give_frame_index(master_scene, strip, left_handle) +
@@ -188,7 +219,7 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
   const int y_strip = baseline + int(2.0f * ui_scale);
 
   float frame_in, frame_out;
-  scene_strip_frame_range(master_scene, strip, &frame_in, &frame_out);
+  scene_strip_frame_range(C, master_scene, strip, &frame_in, &frame_out);
 
   View2D *v2d = &region->v2d;
   int x_in, x_out, y_dummy;
@@ -1459,10 +1490,11 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
                                   max_ii(strip->left_handle(), MINAFRAME));
   }
   /* BFA (#6780): the strip scene's preview range follows the gizmo when the
-   * dope-sheet "Set Preview Range" toggle is on - except for the range-window
-   * mover (MOVE), which translates the preview range directly. */
+   * dope-sheet "Set Preview Range" toggle is on - in all modes. When the toggle
+   * is off, only the strip range (and, with clamp on, the scene range) is
+   * affected. */
 
-  if (use_preview_range && data->mode != GZ_PART_MOVE) {
+  if (use_preview_range) {
     update_preview_range(master_scene, strip);
   }
   /* BFA (#6780): "Clamp to Scene Strip" is intentionally NOT applied during the
@@ -1498,21 +1530,26 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
           master_scene, strip, offset - delta, scene_strip_clamp_to_strip_get(C));
       break;
     case GZ_PART_MOVE:
-      /* BFA (#6780): the top middle gizmo moves the RANGE WINDOW - the strip
-       * scene's preview range (psfra/pefra) and, with "Clamp to Scene Strip"
-       * on, the scene range (sfra/efra) 1:1. The strip in the sequencer stays
-       * locked: sfra/efra move together so the content length (and thus the
-       * strip's handles) is unchanged. */
-      delta = strip->scene->r.psfra - data->orig_psfra;
-      {
+      /* BFA (#6780): the top middle gizmo moves the strip's content window (its
+       * start/end in the dopesheet) while the sequencer position stays locked.
+       * In clamp mode this shifts the scene range (sfra/efra); in non-clamp mode
+       * it shifts the strip's handles (startofs/endofs). The preview range
+       * follows via update_preview_range() in sync_ranges when "Set Preview
+       * Range" is on. */
+      if (scene_strip_clamp_to_strip_get(C)) {
+        delta = strip->scene->r.sfra - data->orig_sfra;
         const int moved = offset - delta;
         if (moved != 0 && strip->scene) {
-          strip->scene->r.psfra += moved;
-          strip->scene->r.pefra += moved;
-          if (scene_strip_clamp_to_strip_get(C)) {
-            strip->scene->r.sfra += moved;
-            strip->scene->r.efra += moved;
-          }
+          strip->scene->r.sfra += moved;
+          strip->scene->r.efra += moved;
+        }
+      }
+      else {
+        delta = int(strip->startofs) - int(data->orig_startofs);
+        const int moved = offset - delta;
+        if (moved != 0) {
+          strip->startofs += moved;
+          strip->endofs -= moved;
         }
       }
       break;
