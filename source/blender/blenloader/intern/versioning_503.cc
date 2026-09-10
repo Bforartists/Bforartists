@@ -410,14 +410,16 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     /* BFA (#6780): Dope Sheet scene strip gizmo defaults - enable the interactive
      * gizmos, the layered "Show All Strips" indicators and both strip and scene
      * name labels; set the indicator opacity to 0.5 for files that still carry
-     * the old default (1.0), so user-tuned opacities are left alone. */
+     * the old default (1.0), so user-tuned opacities are left alone. "Set
+     * Preview Range" (ADS_SHOW_USE_PREVIEW_RANGE) is deliberately NOT
+     * force-enabled so the gizmo only edits the strip range until the user
+     * opts into preview-range writes. */
     for (bScreen &screen : bmain->screens) {
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &space : area.spacedata) {
           if (space.spacetype == SPACE_ACTION) {
             SpaceAction *space_action = reinterpret_cast<SpaceAction *>(&space);
             space_action->overlays.flag |= (ADS_SHOW_SCENE_STRIP_GIZMOS |
-                                            ADS_SHOW_USE_PREVIEW_RANGE |
                                             ADS_SHOW_SCENE_STRIP_ALL |
                                             ADS_SHOW_SCENE_STRIP_STRIP_NAME |
                                             ADS_SHOW_SCENE_STRIP_SCENE_NAME);

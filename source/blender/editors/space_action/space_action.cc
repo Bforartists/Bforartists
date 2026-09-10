@@ -89,9 +89,13 @@ static SpaceLink *action_create(const ScrArea *area, const Scene *scene)
 
   /* BFA (#6780): scene strip gizmo defaults - overlays on with the interactive
    * gizmos, the layered "Show All Strips" indicators and both strip and scene
-   * name labels enabled, indicator opacity at 0.5 so stacked chips read subtle. */
+   * name labels enabled, indicator opacity at 0.5 so stacked chips read subtle.
+   * "Set Preview Range" (ADS_SHOW_USE_PREVIEW_RANGE) is deliberately NOT
+   * force-enabled: new files start with the toggle off so the gizmo only edits
+   * the strip range (and, with clamp on, the scene range) until the user opts
+   * into preview-range writes. */
   saction->overlays.flag |= (ADS_OVERLAY_SHOW_OVERLAYS | ADS_SHOW_SCENE_STRIP_FRAME_RANGE |
-                             ADS_SHOW_SCENE_STRIP_GIZMOS | ADS_SHOW_USE_PREVIEW_RANGE |
+                             ADS_SHOW_SCENE_STRIP_GIZMOS |
                              ADS_SHOW_SCENE_STRIP_ALL |
                              ADS_SHOW_SCENE_STRIP_STRIP_NAME | ADS_SHOW_SCENE_STRIP_SCENE_NAME);
   saction->overlays.all_strips_opacity = 0.5f;
