@@ -127,32 +127,40 @@ static Scene *timeline_sync_master_scene_get(const bContext *C)
 static const Strip *scene_strip_master_get(const bContext *C, Scene **r_master_scene)
 {
   WorkSpace *workspace = CTX_wm_workspace(C);
-  Scene *master_scene = workspace ? workspace->sequencer_scene : nullptr;
-  if (!master_scene) {
-    /* Legacy 3D Sequencer sync: master scene is stored on the addon settings. */
-    master_scene = timeline_sync_master_scene_get(C);
-    if (!master_scene) {
-      return nullptr;
-    }
-  }
   const Scene *active_scene = CTX_data_scene(C);
-  const Editing *ed = seq::editing_get(master_scene);
-  const Strip *strip = nullptr;
-  if (ed != nullptr) {
+  if (active_scene == nullptr) {
+    return nullptr;
+  }
+  /* BFA (#6780, §2.8): consider BOTH master stores and pick whichever actually
+   * holds a scene strip for the active scene. The old first-wins logic bailed
+   * as soon as `workspace->sequencer_scene` was set, even when it had no strip
+   * for the active scene; that masked the legacy 3D Sequencer store (whose
+   * `master_scene` is a transient WindowManager property, cleared on file load
+   * by the addon and only repopulated when the sync toggle runs). With the
+   * sync-agnostic scan below the gizmos initialize on load regardless of the
+   * sync state. Precedence is unchanged when both stores resolve. */
+  const Scene *candidates[2] = {
+      workspace ? workspace->sequencer_scene : nullptr,
+      timeline_sync_master_scene_get(C),
+  };
+  for (const Scene *master_scene : candidates) {
+    if (master_scene == nullptr) {
+      continue;
+    }
+    const Editing *ed = seq::editing_get(master_scene);
+    if (ed == nullptr) {
+      continue;
+    }
     for (const Strip &s : ed->seqbase) {
       if (s.type == STRIP_TYPE_SCENE && s.scene == active_scene) {
-        strip = &s;
-        break;
+        if (r_master_scene) {
+          *r_master_scene = const_cast<Scene *>(master_scene);
+        }
+        return &s;
       }
     }
   }
-  if (!strip || !strip->scene) {
-    return nullptr;
-  }
-  if (r_master_scene) {
-    *r_master_scene = master_scene;
-  }
-  return strip;
+  return nullptr;
 }
 
 /* Resolved dopesheet x-range of the scene strip gizmo: always the strip's own
@@ -171,21 +179,31 @@ struct SceneStripGizmoExtent {
   float frame_out;
 };
 
+/* BFA (#6780) §2.7: linear, UNCLAMPED handle -> strip-scene frame map.
+ *
+ * `give_frame_index()` saturates the content index into `[0, content_length-1]`
+ * (`strip_time.cc`), so a strip extended beyond its scene range via hold frames
+ * (negative startofs/endofs) collapses onto the scene-range boundary and the
+ * gizmo "clamps to the scene range" instead of spanning the strip. Scene strips
+ * never play media at a rate (the media playback factor is 1.0 for them) and
+ * retiming does not apply to a live scene, so the plain linear form is exact -
+ * and critically it does not clamp, so it yields the strip's full extent. */
+static float scene_strip_frame_from_handle(const Strip *strip, float handle)
+{
+  return (handle - strip->content_start()) + strip->scene->r.sfra + strip->anim_startofs;
+}
+
 static SceneStripGizmoExtent scene_strip_gizmo_extent(const bContext * /*C*/,
                                                        const Scene *master_scene,
                                                        const Strip *strip)
 {
-  /* Same mapping as `ANIM_draw_scene_strip_range`: the handles mapped through
-   * `give_frame_index` into the strip scene's frame reference. `give_frame_index`
-   * saturates at the content edges, so hold frames beyond the played range
-   * collapse onto the boundary - the bar spans exactly the strip's content. */
+  /* The strip's own extent, mapped linearly (unclamped) so hold frames beyond
+   * the scene range stay part of the bar (§2.7). */
   const float left_handle = strip->left_handle();
   const float right_handle = strip->right_handle(master_scene);
   SceneStripGizmoExtent ext{};
-  ext.frame_in = seq::give_frame_index(master_scene, strip, left_handle) +
-                 strip->scene->r.sfra + strip->anim_startofs;
-  ext.frame_out = seq::give_frame_index(master_scene, strip, right_handle - 1) +
-                  strip->scene->r.sfra + strip->anim_startofs;
+  ext.frame_in = scene_strip_frame_from_handle(strip, left_handle);
+  ext.frame_out = scene_strip_frame_from_handle(strip, right_handle - 1);
   if (ext.frame_in > ext.frame_out) {
     std::swap(ext.frame_in, ext.frame_out);
   }
@@ -494,10 +512,10 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
       }
       const float left_handle = other.left_handle();
       const float right_handle = other.right_handle(master_scene);
-      float frame_in = seq::give_frame_index(master_scene, &other, left_handle) +
-                       other.scene->r.sfra + other.anim_startofs;
-      float frame_out = seq::give_frame_index(master_scene, &other, right_handle - 1) +
-                        other.scene->r.sfra + other.anim_startofs;
+      /* BFA (#6780) §2.7: unclamped extent so chips match the bar over its full
+       * strip range (hold frames included). */
+      float frame_in = scene_strip_frame_from_handle(&other, left_handle);
+      float frame_out = scene_strip_frame_from_handle(&other, right_handle - 1);
       if (frame_in > frame_out) {
         std::swap(frame_in, frame_out);
       }
@@ -517,11 +535,11 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
       float x_in, x_out;
     };
     blender::Vector<LaneInterval> lane_intervals[lane_max + 1];
-    float bar_frame_in = seq::give_frame_index(master_scene, strip, strip->left_handle()) +
-                         strip->scene->r.sfra + strip->anim_startofs;
-    float bar_frame_out = seq::give_frame_index(
-                              master_scene, strip, strip->right_handle(master_scene) - 1) +
-                          strip->scene->r.sfra + strip->anim_startofs;
+    /* BFA (#6780) §2.7: the bar's lane occupancy uses the same unclamped strip
+     * extent the bar itself is drawn with. */
+    float bar_frame_in = scene_strip_frame_from_handle(strip, strip->left_handle());
+    float bar_frame_out = scene_strip_frame_from_handle(
+        strip, strip->right_handle(master_scene) - 1);
     if (bar_frame_in > bar_frame_out) {
       std::swap(bar_frame_in, bar_frame_out);
     }

@@ -686,6 +686,17 @@ def on_load_pre(*args):
 @bpy.app.handlers.persistent
 def on_load_post(*args):
     sync_settings = get_sync_settings()
+    # BFA (#6780, §2.8): re-establish the master timeline scene on load from the
+    # workspace's pinned sequencer scene, independent of the sync toggle and of
+    # whether a Sequencer area happens to be on screen. `master_scene` is a
+    # WindowManager property (not saved in the file, see register()) and is
+    # cleared by `on_load_pre`, so without this the addon store stays empty and
+    # the C scene-strip gizmos could not resolve a master timeline until the user
+    # toggled sync (which used to be the only writer here).
+    if bpy.context.workspace.sequencer_scene is not None:
+        sync_settings.master_scene = bpy.context.workspace.sequencer_scene
+        update_sync_cache_from_current_state()
+
     # Auto-setup the system for the new file if the active screen contains
     # a Sequence Editor area defining a scene override with at least 1 scene strip.
     if bpy.context.workspace.sequencer_scene is not None:
