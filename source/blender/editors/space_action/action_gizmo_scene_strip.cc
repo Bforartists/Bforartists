@@ -196,9 +196,11 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
   ui::view2d_view_to_region(v2d, frame_out, 0.0f, &x_out, &y_dummy);
 
   const int handle_width = int(8.0f * ui_scale);
-  /* bfa 3d sequencer: the move bar (strip location) is the bottom half and the
-   * slip bar (strip content) the top half - split 50/50 so both zones stay easy
-   * to grab (the move bar was too thin to hit comfortably before). */
+  /* bfa 3d sequencer: the move bar (strip location) is the TOP half and the
+   * slip bar (strip content) the BOTTOM half - split 50/50 so both zones stay
+   * easy to grab. The top zone moves the strip (and, with clamp on, the scene
+   * range in lockstep); the bottom zone slips the shot content in the sequencer
+   * only. */
   const int move_bar_height = int(strip_height * 0.5f);
 
   BLI_rcti_init(&rects->left,
@@ -211,8 +213,9 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
                 x_out + handle_width / 2,
                 y_strip,
                 y_strip + strip_height);
-  BLI_rcti_init(&rects->move, x_in, x_out, y_strip, y_strip + move_bar_height);
-  BLI_rcti_init(&rects->slip, x_in, x_out, y_strip + move_bar_height, y_strip + strip_height);
+  /* Move (strip location) on top, slip (strip content) on the bottom. */
+  BLI_rcti_init(&rects->move, x_in, x_out, y_strip + move_bar_height, y_strip + strip_height);
+  BLI_rcti_init(&rects->slip, x_in, x_out, y_strip, y_strip + move_bar_height);
   BLI_rcti_init(&rects->scrub, 0, region->winx, baseline, baseline + timeline_height);
   return true;
 }
@@ -594,7 +597,9 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     const float x_out = float(rects.move.xmax);
     const float y_strip = float(rects.left.ymin);
     const float y_top = y_strip + strip_height;
-    const float y_move_max = float(rects.move.ymax); /* boundary: bottom move | top slip */
+    /* Seam between the two zones: move (strip location) on top, slip (strip
+     * content) on the bottom. */
+    const float y_seam = float(rects.slip.ymax);
 
     /* BFA (#6780): minimap-style bar. The rounded chip is drawn from the same
      * hit-area rects used for grabbing; hovering lights an outline around the whole
@@ -650,37 +655,38 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     const float zone_x0 = lx1;
     const float zone_x1 = rx0;
     if (zone_x1 > zone_x0) {
-      /* Zone shading: slip (top, content) lighter, move (bottom, location) darker,
-       * with a thin seam in between so both areas read even without hovering. */
+      /* Zone shading: move (top, location) lighter, slip (bottom, content)
+       * darker, with a thin seam in between so both areas read even without
+       * hovering. */
       /* BFA (#6780): shade the strip color instead of gray, keeping the
-       * slip-lighter / move-darker two-tone affordance on the colored body. */
-      uchar slip_uc[3], move_uc[3];
-      ui::theme::get_color_shade_3ubv(col_uc, 45, slip_uc);
-      ui::theme::get_color_shade_3ubv(col_uc, -55, move_uc);
-      float zone_slip[4] = {slip_uc[0] / 255.0f,
-                            slip_uc[1] / 255.0f,
-                            slip_uc[2] / 255.0f,
-                            0.85f};
+       * move-lighter / slip-darker two-tone affordance on the colored body. */
+      uchar move_uc[3], slip_uc[3];
+      ui::theme::get_color_shade_3ubv(col_uc, 45, move_uc);
+      ui::theme::get_color_shade_3ubv(col_uc, -55, slip_uc);
       float zone_move[4] = {move_uc[0] / 255.0f,
                             move_uc[1] / 255.0f,
                             move_uc[2] / 255.0f,
                             0.85f};
-      immUniformColor4f(zone_slip[0], zone_slip[1], zone_slip[2], zone_slip[3]);
-      /* Inset from the chip top/bottom so the rounded border band stays visible. */
-      immRectf(pos, zone_x0, y_move_max, zone_x1, y_top - border_w);
+      float zone_slip[4] = {slip_uc[0] / 255.0f,
+                            slip_uc[1] / 255.0f,
+                            slip_uc[2] / 255.0f,
+                            0.85f};
       immUniformColor4f(zone_move[0], zone_move[1], zone_move[2], zone_move[3]);
-      immRectf(pos, zone_x0, y_strip + border_w, zone_x1, y_move_max);
+      /* Inset from the chip top/bottom so the rounded border band stays visible. */
+      immRectf(pos, zone_x0, y_seam, zone_x1, y_top - border_w);
+      immUniformColor4f(zone_slip[0], zone_slip[1], zone_slip[2], zone_slip[3]);
+      immRectf(pos, zone_x0, y_strip + border_w, zone_x1, y_seam);
       immUniformColor4f(0.55f, 0.58f, 0.66f, 0.6f);
-      immRectf(pos, zone_x0, y_move_max - 0.5f, zone_x1, y_move_max + 0.5f);
+      immRectf(pos, zone_x0, y_seam - 0.5f, zone_x1, y_seam + 0.5f);
 
       /* Hover: translucent accent wash over the whole active zone. */
-      if (slip_hovered) {
+      if (move_hovered) {
         immUniformColor4f(0.42f, 0.62f, 0.95f, 0.4f);
-        immRectf(pos, zone_x0, y_move_max, zone_x1, y_top - border_w);
+        immRectf(pos, zone_x0, y_seam, zone_x1, y_top - border_w);
       }
-      else if (move_hovered) {
+      else if (slip_hovered) {
         immUniformColor4f(0.42f, 0.62f, 0.95f, 0.4f);
-        immRectf(pos, zone_x0, y_strip + border_w, zone_x1, y_move_max);
+        immRectf(pos, zone_x0, y_strip + border_w, zone_x1, y_seam);
       }
     }
 
@@ -768,7 +774,7 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
           &bar_rect, nullptr, nullptr, 1.0f, bump_color, 2.0f * ui_scale, 3.0f * ui_scale);
     }
     /* BFA (#6780): label per the "Show Strip Names" / "Show Scene Names"
-     * overlay toggles, centered in the top (slip) zone so the bar always
+     * overlay toggles, centered in the top (move) zone so the bar always
      * identifies the shot it belongs to ("Name | Scene" when both are on).
      * Dark label for contrast on the lightened top zone; drawn last (BLF manages
      * its own GPU state, nothing imm follows). */
@@ -792,7 +798,7 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
       BLI_rcti_init(&text_rect,
                     int(zone_x0) + int(2.0f * ui_scale),
                     int(zone_x1) - int(2.0f * ui_scale),
-                    int(y_move_max),
+                    int(y_seam),
                     int(y_top));
       uchar text_col[4] = {30, 33, 40, 235};
       ui::FontStyleDrawParams text_params{};
@@ -1031,14 +1037,16 @@ static int remap_frame_value(const Strip *strip, int frame)
  * the master-timeline end edge (and the dope-sheet bar edge) forward in lockstep
  * while the start edge stays put. First the trimmed content (a positive end
  * offset) is consumed; once that runs out, the scene's end frame is extended
- * live so the bar keeps following the mouse instead of stopping at the scene's
- * efra. Like the left handle, the strips after this one on the channel move with
- * the end edge (pushed right when extending, pulled left when shrinking), so the
+ * live (when `clamp` is on) or the strip extends via hold frames (when off) so
+ * the bar keeps following the mouse instead of stopping at the scene's efra.
+ * Like the left handle, the strips after this one on the channel move with the
+ * end edge (pushed right when extending, pulled left when shrinking), so the
  * drag never desyncs neighbors. The scene's end frame is bounded by the highest
  * representable frame (#MAXFRAME). */
 static int adjust_shot_duration_right(Scene *master_scene,
                                       Strip *strip,
-                                      const int frame_offset)
+                                      const int frame_offset,
+                                      const bool clamp)
 {
   const int duration = strip->right_handle(master_scene) - strip->left_handle();
   const int new_duration = max_ii(duration + frame_offset, 1);
@@ -1050,13 +1058,17 @@ static int adjust_shot_duration_right(Scene *master_scene,
   if (new_frame_offset > 0) {
     /* Extend: first absorb the trimmed end content (a positive end offset, i.e.
      * the right handle sits left of the content end), then extend the scene's
-     * end frame for the overflow, bounded at #MAXFRAME. Following strips are
-     * pushed right by the total actually moved (absorb + scene_extend), not the
-     * requested offset, so neighbors stay in sync at the bound. */
+     * end frame for the overflow (clamp) or the strip's hold frames (non-clamp),
+     * bounded at #MAXFRAME. Following strips are pushed right by the total
+     * actually moved (absorb + scene_extend + hold_extend), not the requested
+     * offset, so neighbors stay in sync at the bound. */
     const int absorb = min_ii(new_frame_offset, max_ii(int(strip->endofs), 0));
-    const int scene_extend = min_ii(new_frame_offset - absorb,
-                                    max_ii(MAXFRAME - strip->scene->r.efra, 0));
-    const int moved = absorb + scene_extend;
+    const int scene_extend = clamp ?
+                                 min_ii(new_frame_offset - absorb,
+                                        max_ii(MAXFRAME - strip->scene->r.efra, 0)) :
+                                 0;
+    const int hold_extend = clamp ? 0 : (new_frame_offset - absorb);
+    const int moved = absorb + scene_extend + hold_extend;
     if (moved <= 0) {
       return 0;
     }
@@ -1065,6 +1077,11 @@ static int adjust_shot_duration_right(Scene *master_scene,
     }
     if (absorb != 0) {
       strip->endofs -= absorb;
+    }
+    if (hold_extend != 0) {
+      /* Non-clamp: extend the strip's end edge via hold frames (negative
+       * endofs) without touching the scene range. */
+      strip->endofs -= hold_extend;
     }
     if (scene_extend > 0) {
       /* Capture the left edge and the right edge *after* the absorb, then extend
@@ -1123,16 +1140,18 @@ static Vector<Strip *> strips_before_same_channel(Scene *master_scene, const Str
  * master-timeline start edge (and the dope-sheet bar edge) back in lockstep while
  * the end edge stays put, so the strip feels "in sync" with the dope-sheet. First
  * the trimmed content is consumed; once that runs out, the scene's start frame is
- * extended. Like the right handle, the strips before this one on the channel move
- * with the start edge (pushed left when extending, pulled right when shrinking),
- * so the drag keeps going into earlier frames instead of getting stuck at the
- * previous strip or at frame 0. Both the start edge and the scene's start frame
- * are bounded by the lowest representable frame (#MINAFRAME).
+ * extended (when `clamp` is on) or the strip extends via hold frames (when off).
+ * Like the right handle, the strips before this one on the channel move with the
+ * start edge (pushed left when extending, pulled right when shrinking), so the
+ * drag keeps going into earlier frames instead of getting stuck at the previous
+ * strip or at frame 0. Both the start edge and the scene's start frame are
+ * bounded by the lowest representable frame (#MINAFRAME).
  * Returns the signed displacement applied to the preceding strips (positive when
  * they were pushed left), so the modal operator can undo it on cancel. */
 static int adjust_shot_duration_left(Scene *master_scene,
                                       Strip *strip,
-                                      const int frame_offset)
+                                      const int frame_offset,
+                                      const bool clamp)
 {
   const int duration = strip->right_handle(master_scene) - strip->left_handle();
   const int new_duration = max_ii(duration + frame_offset, 1);
@@ -1142,20 +1161,26 @@ static int adjust_shot_duration_left(Scene *master_scene,
   }
   if (new_frame_offset > 0) {
     /* Extend: first consume trimmed content (master start edge moves left), then
-     * optionally extend the scene's start frame. Both move the start edge, so the
-     * preceding strips on the channel are pushed left by the same total amount -
-     * mirrored from adjust_shot_duration_right(), which pushes the following
-     * strips right when extending. */
+     * optionally extend the scene's start frame (clamp) or the strip's hold
+     * frames (non-clamp). Both move the start edge, so the preceding strips on
+     * the channel are pushed left by the same total amount - mirrored from
+     * adjust_shot_duration_right(), which pushes the following strips right when
+     * extending. */
     const int trim = min_ii(new_frame_offset,
                             min_ii(int(strip->startofs),
                                    max_ii(strip->left_handle() - MINAFRAME, 0)));
     /* Extending the scene's start frame is bounded by the lowest representable
      * frame, like every scene frame range (BFA) - both for the scene's start
-     * frame itself and for the master start edge that follows it. */
-    const int scene_extend = min_ii(new_frame_offset - trim,
-                                    min_ii(max_ii(strip->scene->r.sfra - MINAFRAME, 0),
-                                           max_ii(strip->left_handle() - trim - MINAFRAME, 0)));
-    const int moved = trim + scene_extend;
+     * frame itself and for the master start edge that follows it. In non-clamp
+     * mode the scene range is left untouched and the strip extends via hold
+     * frames (negative startofs). */
+    const int scene_extend = clamp ?
+                                 min_ii(new_frame_offset - trim,
+                                        min_ii(max_ii(strip->scene->r.sfra - MINAFRAME, 0),
+                                               max_ii(strip->left_handle() - trim - MINAFRAME, 0))) :
+                                 0;
+    const int hold_extend = clamp ? 0 : (new_frame_offset - trim);
+    const int moved = trim + scene_extend + hold_extend;
     if (moved <= 0) {
       return 0;
     }
@@ -1164,6 +1189,11 @@ static int adjust_shot_duration_left(Scene *master_scene,
     }
     if (trim != 0) {
       strip->startofs -= trim;
+    }
+    if (hold_extend != 0) {
+      /* Non-clamp: extend the strip's start edge via hold frames (negative
+       * startofs) without touching the scene range. */
+      strip->startofs -= hold_extend;
     }
     if (scene_extend > 0) {
       /* Capture the end edge before the start moves: the scene-strip content
@@ -1203,23 +1233,6 @@ static void move_shot(Scene *master_scene,
     return;
   }
   seq::transform_translate_strip(master_scene, strip, frame_offset);
-}
-
-static void slip_shot_content(Strip *strip, const int frame_offset)
-{
-  const int remapped_start = remap_frame_value(strip, strip->left_handle());
-  const int new_start = max_ii(remapped_start + frame_offset, strip->scene->r.sfra);
-  const int new_frame_offset = new_start - remapped_start;
-  if (new_frame_offset == 0) {
-    return;
-  }
-  strip->startofs += new_frame_offset;
-  strip->start -= new_frame_offset;
-  /* BFA (#6780): the end offset must move the opposite way too, otherwise the
-   * strip end edge (and its duration) changes and the slip "extends" the shot
-   * instead of offsetting both edges of the internal range (same math as
-   * seq::time_slip_strip and the addon slip_shot_content). */
-  strip->endofs -= new_frame_offset;
 }
 
 /* Update the strip's scene preview range to match the strip (dope-sheet overlay
@@ -1272,6 +1285,11 @@ struct SceneStripTimingOp {
   int orig_len;
   int orig_sfra;
   int orig_efra;
+  /* BFA (#6780): preview-range snapshot for the range-window mover (top middle
+   * gizmo) - it translates psfra/pefra (and, with clamp on, sfra/efra) while the
+   * strip stays locked. */
+  int orig_psfra;
+  int orig_pefra;
   /* Signed displacement applied to the preceding strips by
    * adjust_shot_duration_left (positive when they were pushed left). */
   int pushed_before_total;
@@ -1286,8 +1304,8 @@ struct SceneStripTimingOp {
 static const EnumPropertyItem rna_enum_scene_strip_timing_mode_items[] = {
     {GZ_PART_LEFT, "LEFT", 0, "Left Handle", "Shift the shot's start frame in the master timeline"},
     {GZ_PART_RIGHT, "RIGHT", 0, "Right Handle", "Shift the shot's end frame in the master timeline"},
-    {GZ_PART_MOVE, "MOVE", 0, "Move", "Move the strip in the master timeline"},
-    {GZ_PART_SLIP, "SLIP", 0, "Slip", "Slip the shot content in the scene"},
+    {GZ_PART_MOVE, "MOVE", 0, "Move Range", "Move the scene/preview range window"},
+    {GZ_PART_SLIP, "SLIP", 0, "Move Strip", "Move the strip in the sequencer timeline"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -1305,12 +1323,15 @@ static std::string scene_strip_timing_get_description(bContext * /*C*/,
       return TIP_("Retime the shot end: shift the end frame in the master timeline, "
                   "keeping the start frame fixed");
     case GZ_PART_MOVE:
-      return TIP_("Move the strip in the master timeline. When it bumps into another "
-                  "strip the sequencer overlap mode applies on release: expand pushes "
-                  "the strip, shuffle slides to the nearest free space, overwrite trims it");
+      return TIP_("Move the range window: shift the strip scene's preview range "
+                  "(and, with Clamp to Scene Strip on, the scene range) while the "
+                  "strip stays locked in the sequencer");
     case GZ_PART_SLIP:
-      return TIP_("Slip the shot content: shift which scene frames are shown without "
-                  "moving the strip in the master timeline");
+      return TIP_("Move the strip in the sequencer timeline. The scene/preview "
+                  "ranges stay locked. When it bumps into another strip the "
+                  "sequencer overlap mode applies on release: expand pushes the "
+                  "strip, shuffle slides to the nearest free space, overwrite "
+                  "trims it");
     default:
       return "";
   }
@@ -1415,7 +1436,7 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
   const int frame_end = strip->right_handle(master_scene) - 1;
   if (from_frame_start || ELEM(data->mode, GZ_PART_SLIP, GZ_PART_MOVE)) {
     int update_frame;
-    if (data->mode == GZ_PART_MOVE) {
+    if (data->mode == GZ_PART_SLIP) {
       update_frame = clamp_i(master_scene->r.cfra, strip->left_handle(), frame_end);
     }
     else {
@@ -1427,18 +1448,21 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
     master_scene->r.cfra = frame_end;
   }
   master_scene->r.efra = max_ii(frame_end, data->orig_master_efra);
-  /* BFA (#6780): with "Clamp to Scene Strip" on, the MOVE bar also lowers the
-   * master start frame to keep the view following a leftward drag, mirroring the
-   * efra follow above. Only the master range is touched (never strip->start), so
-   * the MOVE delta tracking stays stable. */
-  if (data->mode == GZ_PART_MOVE && scene_strip_clamp_to_strip_get(C)) {
-    master_scene->r.sfra = min_ii(master_scene->r.sfra, strip->left_handle());
+  /* BFA (#6780): with "Clamp to Scene Strip" on, the SLIP bar (strip mover)
+   * also lowers the master start frame to keep the view following a leftward
+   * drag, mirroring the efra follow above. Only the master range is touched
+   * (never strip->start), so the SLIP delta tracking stays stable. Floored at
+   * #MINAFRAME like every scene frame range (BFA) - the mirror of the red
+   * handle's MAXFRAME-bound efra. */
+  if (data->mode == GZ_PART_SLIP && scene_strip_clamp_to_strip_get(C)) {
+    master_scene->r.sfra = min_ii(master_scene->r.sfra,
+                                  max_ii(strip->left_handle(), MINAFRAME));
   }
   /* BFA (#6780): the strip scene's preview range follows the gizmo when the
-   * dope-sheet "Set Preview Range" toggle is on; the separate scene frame range
-   * feature was removed (extend-only proved unreliable for scene strips). */
+   * dope-sheet "Set Preview Range" toggle is on - except for the range-window
+   * mover (MOVE), which translates the preview range directly. */
 
-  if (use_preview_range) {
+  if (use_preview_range && data->mode != GZ_PART_MOVE) {
     update_preview_range(master_scene, strip);
   }
   /* BFA (#6780): "Clamp to Scene Strip" is intentionally NOT applied during the
@@ -1465,13 +1489,37 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
   switch (data->mode) {
     case GZ_PART_LEFT:
       delta = duration - data->orig_duration;
-      data->pushed_before_total += adjust_shot_duration_left(master_scene, strip, -offset - delta);
+      data->pushed_before_total += adjust_shot_duration_left(
+          master_scene, strip, -offset - delta, scene_strip_clamp_to_strip_get(C));
       break;
     case GZ_PART_RIGHT:
       delta = duration - data->orig_duration;
-      data->pushed_following_total += adjust_shot_duration_right(master_scene, strip, offset - delta);
+      data->pushed_following_total += adjust_shot_duration_right(
+          master_scene, strip, offset - delta, scene_strip_clamp_to_strip_get(C));
       break;
     case GZ_PART_MOVE:
+      /* BFA (#6780): the top middle gizmo moves the RANGE WINDOW - the strip
+       * scene's preview range (psfra/pefra) and, with "Clamp to Scene Strip"
+       * on, the scene range (sfra/efra) 1:1. The strip in the sequencer stays
+       * locked: sfra/efra move together so the content length (and thus the
+       * strip's handles) is unchanged. */
+      delta = strip->scene->r.psfra - data->orig_psfra;
+      {
+        const int moved = offset - delta;
+        if (moved != 0 && strip->scene) {
+          strip->scene->r.psfra += moved;
+          strip->scene->r.pefra += moved;
+          if (scene_strip_clamp_to_strip_get(C)) {
+            strip->scene->r.sfra += moved;
+            strip->scene->r.efra += moved;
+          }
+        }
+      }
+      break;
+    case GZ_PART_SLIP:
+      /* BFA (#6780): the bottom middle gizmo moves the STRIP in the sequencer
+       * (its start/end in the master timeline). The scene/preview ranges stay
+       * locked. */
       delta = int(strip->start) - int(data->orig_start);
       move_shot(master_scene, strip, offset - delta);
       /* BFA (#6780): live overlap feedback during the drag, same as the VSE -
@@ -1484,10 +1532,6 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
           strip->runtime->flag |= seq::StripRuntimeFlag::Overlap;
         }
       }
-      break;
-    case GZ_PART_SLIP:
-      delta = int(strip->startofs) - int(data->orig_startofs);
-      slip_shot_content(strip, offset - delta);
       break;
   }
 
@@ -1508,7 +1552,7 @@ static void scene_strip_timing_ui_cleanup(bContext *C, wmOperator *op)
 static void scene_strip_timing_finish(bContext *C, wmOperator *op)
 {
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
-  if (data->mode == GZ_PART_MOVE) {
+  if (data->mode == GZ_PART_SLIP) {
     resolve_move_overlap(data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
@@ -1516,8 +1560,11 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
    * drag - clamp_scene_strip_range() shifts strip->start/startofs which feeds
    * back into the modal drag's delta tracking and would make the strip race.
    * At release the strip's final geometry is settled, so the clamp only touches
-   * the scene render range (sfra/efra) and keeps everything else fixed. */
-  if (scene_strip_clamp_to_strip_get(C)) {
+   * the scene render range (sfra/efra) and keeps everything else fixed.
+   * BFA (#6780): only the retime handles (LEFT/RIGHT) run the release clamp.
+   * MOVE (range window) already translated sfra/efra live in clamp mode, and
+   * SLIP (strip mover) leaves the scene/preview ranges locked. */
+  if (scene_strip_clamp_to_strip_get(C) && ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
     clamp_scene_strip_range(C, data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
@@ -1555,6 +1602,8 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
   data->orig_len = strip->len;
   data->orig_sfra = strip->scene->r.sfra;
   data->orig_efra = strip->scene->r.efra;
+  data->orig_psfra = strip->scene->r.psfra;
+  data->orig_pefra = strip->scene->r.pefra;
   data->pushed_before_total = 0;
   data->pushed_following_total = 0;
 
@@ -1589,7 +1638,7 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
   }
 
   char header_text[64];
-  if (data->mode == GZ_PART_MOVE && strip_move_bump_active(data->master_scene, data->strip)) {
+  if (data->mode == GZ_PART_SLIP && strip_move_bump_active(data->master_scene, data->strip)) {
     const char *bump_name = "";
     switch (scene_strip_overlap_mode_get(data->master_scene)) {
       case SEQ_OVERLAP_EXPAND:
@@ -1640,14 +1689,12 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
     case RIGHTMOUSE:
     case EVT_ESCKEY:
       if (event->val == KM_PRESS) {
-        /* BFA (#6780): exact restore for the drag modes. LEFT and RIGHT push
+        /* BFA (#6780): exact restore for all drag modes. LEFT and RIGHT push
          * same-channel neighbors and extend the strip scene's start/end frame;
-         * re-applying a zero offset cannot undo those. MOVE translates the
-         * strip only (no neighbor push) and may lower the master sfra when
-         * clamp follows live, so the snapshot restores it exactly. SLIP keeps
-         * the cheap re-apply - it cannot move scene ranges or neighbors. */
-        if (data->mode == GZ_PART_LEFT || data->mode == GZ_PART_RIGHT ||
-            data->mode == GZ_PART_MOVE)
+         * MOVE (range window) translates the preview/scene range; SLIP (strip
+         * mover) translates the strip and may lower the master sfra when clamp
+         * follows live. Re-applying a zero offset cannot undo any of these, so
+         * the snapshot restores them exactly. */
         {
           Strip *strip = data->strip;
           if (data->mode == GZ_PART_LEFT && data->pushed_before_total != 0) {
@@ -1673,19 +1720,14 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
           if (strip->scene) {
             strip->scene->r.sfra = data->orig_sfra;
             strip->scene->r.efra = data->orig_efra;
+            strip->scene->r.psfra = data->orig_psfra;
+            strip->scene->r.pefra = data->orig_pefra;
           }
           strip->handles_set(
               data->master_scene, data->orig_left_handle, data->orig_right_handle);
           scene_strip_timing_sync_ranges(C, op);
           data->master_scene->r.efra = data->orig_master_efra;
           data->master_scene->r.sfra = data->orig_master_sfra;
-        }
-        else {
-          /* Restore the strip by re-applying with a zero offset, then restore the
-           * master frame range that was possibly extended (SLIP). */
-          data->offset = 0;
-          scene_strip_timing_apply(C, op);
-          data->master_scene->r.efra = data->orig_master_efra;
         }
         /* BFA (#6780): restore the strip's selection state from before the drag. */
         if (!data->orig_select) {
