@@ -1369,11 +1369,13 @@ static std::string scene_strip_timing_get_description(bContext * /*C*/,
                   "(and, with Clamp to Scene Strip on, the scene range) while the "
                   "strip stays locked in the sequencer");
     case GZ_PART_SLIP:
-      return TIP_("Move the strip in the sequencer timeline. The scene/preview "
-                  "ranges stay locked. When it bumps into another strip the "
-                  "sequencer overlap mode applies on release: expand pushes the "
-                  "strip, shuffle slides to the nearest free space, overwrite "
-                  "trims it");
+      return TIP_("Move the strip in the sequencer timeline. The preview range "
+                  "stays locked unless Set Preview Range is on; with Clamp to "
+                  "Scene Strip on, the scene range moves with the strip and "
+                  "snaps to it with lead-in/out on release. When it bumps into "
+                  "another strip the sequencer overlap mode applies on release: "
+                  "expand pushes the strip, shuffle slides to the nearest free "
+                  "space, overwrite trims it");
     default:
       return "";
   }
@@ -1614,17 +1616,43 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
     }
     case GZ_PART_SLIP: {
       /* BFA (#6780): the bottom middle gizmo moves the STRIP in the sequencer
-       * (its start/end in the master timeline). The scene range stays locked;
-       * the preview range translates 1:1 here when preview-coupled
-       * (captured at invoke, §2.4). */
+       * (its start/end in the master timeline). With "Clamp to Scene Strip"
+       * on, the strip scene's range (sfra/efra) translates 1:1 in lockstep -
+       * the strip stays glued to the master sequencer range (§2.5); without
+       * clamp the scene range stays locked. The preview range translates 1:1
+       * here when preview-coupled (captured at invoke, §2.4). */
+      const bool clamp = data->clamp_coupled;
+      /* BFA (#6780) §2.5: apply only the increment since the last mousemove.
+       * The servo derives the already-applied displacement from the strip's
+       * state (like the MOVE branch derives it from the scene range), so a
+       * partially-applied increment cannot accumulate - re-applying the
+       * cumulative mouse offset on every move made the strip race ahead of
+       * the cursor. */
+      int moved_request = offset - int(strip->start - data->orig_start);
+      if (clamp && strip->scene) {
+        /* The strip stays glued to the scene range, so it can only move as
+         * far as the range can follow - its only two stops are the scene
+         * frame bounds (BFA), the same bounds the MOVE branch uses. */
+        moved_request = clamp_i(moved_request,
+                                MINAFRAME - strip->scene->r.sfra,
+                                MAXFRAME - strip->scene->r.efra);
+      }
       const int start_before = int(strip->start);
-      move_shot(master_scene, strip, offset - delta);
-      /* BFA (#6780): the preview range translates 1:1 with the strip move
-       * when the drag is preview-coupled (captured at invoke): the preview
-       * window slides with the strip (§2.4). */
-      if (data->preview_coupled && strip->scene) {
-        const int moved = int(strip->start) - start_before;
-        if (moved != 0) {
+      if (moved_request != 0) {
+        move_shot(master_scene, strip, moved_request);
+      }
+      const int moved = int(strip->start) - start_before;
+      if (moved != 0) {
+        if (clamp && strip->scene) {
+          /* Lockstep: the scene range follows the strip exactly (its length
+           * is preserved; the release SET clamp adds the lead padding). */
+          strip->scene->r.sfra += moved;
+          strip->scene->r.efra += moved;
+        }
+        /* BFA (#6780): the preview range translates 1:1 with the strip move
+         * when the drag is preview-coupled (captured at invoke): the preview
+         * window slides with the strip (§2.4). */
+        if (data->preview_coupled && strip->scene) {
           strip->scene->r.psfra = clamp_i(
               strip->scene->r.psfra + moved, MINAFRAME, MAXFRAME);
           strip->scene->r.pefra = clamp_i(
@@ -1663,6 +1691,15 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
 {
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
   if (data->mode == GZ_PART_SLIP) {
+    /* BFA (#6780) §2.5: with "Clamp to Scene Strip" on, the strip mover snaps
+     * the scene range to the strip on release (lead-in/out padding), like the
+     * retime handles. The clamp runs BEFORE the overlap resolution because its
+     * lockstep compensation shifts the strip by the lead padding - a shift
+     * that could push it into a neighbour; the overlap mode then settles that
+     * collision, exactly like a plain move release. */
+    if (scene_strip_clamp_to_strip_get(C)) {
+      clamp_scene_strip_range(C, data->master_scene, data->strip);
+    }
     resolve_move_overlap(data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
@@ -1671,9 +1708,10 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
    * back into the modal drag's delta tracking and would make the strip race.
    * At release the strip's final geometry is settled, so the clamp only touches
    * the scene render range (sfra/efra) and keeps everything else fixed.
-   * BFA (#6780): only the retime handles (LEFT/RIGHT) run the release clamp.
-   * MOVE (range window) already translated sfra/efra live in clamp mode, and
-   * SLIP (strip mover) leaves the scene/preview ranges locked. */
+   * BFA (#6780): the retime handles (LEFT/RIGHT) and the strip mover (SLIP,
+   * §2.5) run the release clamp. MOVE (range window) already translated
+   * sfra/efra live in clamp mode, so snapping it again would only re-pad the
+   * same range. */
   if (scene_strip_clamp_to_strip_get(C) && ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
     clamp_scene_strip_range(C, data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
