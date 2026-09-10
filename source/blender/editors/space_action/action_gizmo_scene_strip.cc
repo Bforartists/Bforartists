@@ -1388,6 +1388,26 @@ static bool scene_strip_use_preview_range_get(const bContext *C)
          (space_action->overlays.flag & ADS_SHOW_USE_PREVIEW_RANGE) != 0;
 }
 
+/* BFA (#6780): when the dope-sheet "Set Preview Range" toggle is off, the gizmo
+ * must never touch the strip scene's preview range. The sequencer scene-time
+ * sync loop can re-derive psfra/pefra as a side effect of a clamp-mode
+ * sfra/efra write (the master-scene/shot coupling refreshes the preview range
+ * from the render range), so re-assert the pre-drag preview range after every
+ * range write. Gated on the toggle: when it is on, update_preview_range() owns
+ * the preview range and this is a no-op. */
+static void restore_preview_range(bContext *C, wmOperator *op)
+{
+  SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
+  if (scene_strip_use_preview_range_get(C)) {
+    return;
+  }
+  if (!data->strip->scene) {
+    return;
+  }
+  data->strip->scene->r.psfra = data->orig_psfra;
+  data->strip->scene->r.pefra = data->orig_pefra;
+}
+
 /* BFA (#6780): "Clamp to Scene Strip" opt-in toggle - when on, the gizmo clamps
  * the strip scene's frame range (sfra/efra) to the strip's visible extent after
  * editing it. */
@@ -1515,6 +1535,13 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
   if (use_preview_range && ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
     update_preview_range(master_scene, strip);
   }
+  /* BFA (#6780): when the "Set Preview Range" toggle is off, the gizmo must
+   * never touch the strip scene's preview range. The sequencer scene-time sync
+   * loop can re-derive psfra/pefra as a side effect of a clamp-mode sfra/efra
+   * write (the master-scene/shot coupling refreshes the preview range from the
+   * render range), so re-assert the pre-drag preview range after every range
+   * write. No-op when the toggle is on (update_preview_range owns it). */
+  restore_preview_range(C, op);
   /* BFA (#6780): "Clamp to Scene Strip" is intentionally NOT applied during the
    * drag - clamp_scene_strip_range() shifts strip->start/startofs, which feeds
    * back into the modal drag's delta tracking and makes the strip race/exponentially
