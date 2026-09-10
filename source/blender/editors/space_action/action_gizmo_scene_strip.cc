@@ -1265,17 +1265,20 @@ static void move_shot(Scene *master_scene,
 }
 
 /* Update the strip's scene preview range to match the strip (dope-sheet overlay
- * toggle), but only while the preview range mode is actually enabled on the scene
- * (SCER_PRV_RANGE). The user opts into preview mode from the timeline controls, so
- * this toggle never forces the preview range on by itself - with preview mode off
- * it simply does nothing. */
+ * toggle). If the scene has no preview range yet (#SCER_PRV_RANGE), the first
+ * gizmo write enables it and seeds it from the render range (BFA #6780, §2.4):
+ * "Set Preview Range" implies preview mode, otherwise the written values would
+ * be invisible. The flag rides the operator's undo step and is restored on
+ * cancel (see the snapshot in #SceneStripTimingOp). */
 static void update_preview_range(Scene *master_scene, Strip *strip)
 {
   if (!strip->scene) {
     return;
   }
   if ((strip->scene->r.flag & SCER_PRV_RANGE) == 0) {
-    return;
+    strip->scene->r.flag |= SCER_PRV_RANGE;
+    strip->scene->r.psfra = strip->scene->r.sfra;
+    strip->scene->r.pefra = strip->scene->r.efra;
   }
   const int start = remap_frame_value(strip, strip->left_handle());
   const int end = remap_frame_value(strip, strip->right_handle(master_scene) - 1);
@@ -1319,6 +1322,16 @@ struct SceneStripTimingOp {
    * strip stays locked. */
   int orig_psfra;
   int orig_pefra;
+  /* BFA (#6780): the scene's render flags - "Set Preview Range" may enable
+   * #SCER_PRV_RANGE mid-drag (update_preview_range); cancel must undo that. */
+  short orig_scene_flag;
+  /* BFA (#6780): middle-bar range coupling, captured at invoke (§2.4). The
+   * drag must not re-evaluate the toggles mid-flight: a toggle change during
+   * an active drag would switch the slip mechanism under the servo. The
+   * preview coupling only applies when the scene actually has a preview
+   * range (#SCER_PRV_RANGE) - without it there is nothing to translate. */
+  bool preview_coupled;
+  bool clamp_coupled;
   /* Signed displacement applied to the preceding strips by
    * adjust_shot_duration_left (positive when they were pushed left). */
   int pushed_before_total;
@@ -1492,7 +1505,14 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
    * is off, only the strip range (and, with clamp on, the scene range) is
    * affected. */
 
-  if (use_preview_range) {
+  /* BFA (#6780): the strip scene's preview range follows the retime handles
+   * (LEFT/RIGHT) when the dope-sheet "Set Preview Range" toggle is on: the
+   * preview window is the strip's visible extent, so it is recomputed. The
+   * middle bars translate the preview range 1:1 in their apply branches
+   * instead (§2.4): a recompute is a no-op for the content-window move (the
+   * strip's visible extent does not change) and could not keep the preview
+   * window glued to a slip/move that the recompute never sees. */
+  if (use_preview_range && ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
     update_preview_range(master_scene, strip);
   }
   /* BFA (#6780): "Clamp to Scene Strip" is intentionally NOT applied during the
@@ -1527,36 +1547,63 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
       data->pushed_following_total += adjust_shot_duration_right(
           master_scene, strip, offset - delta, scene_strip_clamp_to_strip_get(C));
       break;
-    case GZ_PART_MOVE:
+    case GZ_PART_MOVE: {
       /* BFA (#6780): the top middle gizmo moves the strip's content window (its
        * start/end in the dopesheet) while the sequencer position stays locked.
        * In clamp mode this shifts the scene range (sfra/efra); in non-clamp mode
        * it shifts the strip's handles (startofs/endofs). The preview range
-       * follows via update_preview_range() in sync_ranges when "Set Preview
-       * Range" is on. */
-      if (scene_strip_clamp_to_strip_get(C)) {
-        delta = strip->scene->r.sfra - data->orig_sfra;
-        const int moved = offset - delta;
-        if (moved != 0 && strip->scene) {
+       * translates 1:1 here when preview-coupled (captured at invoke, §2.4). */
+      const bool clamp = data->clamp_coupled;
+      delta = clamp ? strip->scene->r.sfra - data->orig_sfra :
+                      int(strip->startofs) - int(data->orig_startofs);
+      int moved = offset - delta;
+      if (moved != 0) {
+        if (clamp && strip->scene) {
+          /* Translate the scene range only as far as the representable frame
+           * bounds allow (BFA) - the range is the window's only stop. */
+          moved = clamp_i(moved,
+                          MINAFRAME - strip->scene->r.sfra,
+                          MAXFRAME - strip->scene->r.efra);
           strip->scene->r.sfra += moved;
           strip->scene->r.efra += moved;
         }
-      }
-      else {
-        delta = int(strip->startofs) - int(data->orig_startofs);
-        const int moved = offset - delta;
-        if (moved != 0) {
+        else if (!clamp) {
           strip->startofs += moved;
           strip->endofs -= moved;
         }
       }
+      /* BFA (#6780): the preview range translates 1:1 with the window move
+       * when the drag is preview-coupled (captured at invoke), so the preview
+       * window slips with the content (§2.4) - the recompute used before was
+       * a no-op here (the strip's visible extent does not change) and left
+       * the preview range behind. */
+      if (data->preview_coupled && strip->scene && moved != 0) {
+        strip->scene->r.psfra = clamp_i(
+            strip->scene->r.psfra + moved, MINAFRAME, MAXFRAME);
+        strip->scene->r.pefra = clamp_i(
+            strip->scene->r.pefra + moved, MINAFRAME, MAXFRAME);
+      }
       break;
-    case GZ_PART_SLIP:
+    }
+    case GZ_PART_SLIP: {
       /* BFA (#6780): the bottom middle gizmo moves the STRIP in the sequencer
-       * (its start/end in the master timeline). The scene/preview ranges stay
-       * locked. */
-      delta = int(strip->start) - int(data->orig_start);
+       * (its start/end in the master timeline). The scene range stays locked;
+       * the preview range translates 1:1 here when preview-coupled
+       * (captured at invoke, §2.4). */
+      const int start_before = int(strip->start);
       move_shot(master_scene, strip, offset - delta);
+      /* BFA (#6780): the preview range translates 1:1 with the strip move
+       * when the drag is preview-coupled (captured at invoke): the preview
+       * window slides with the strip (§2.4). */
+      if (data->preview_coupled && strip->scene) {
+        const int moved = int(strip->start) - start_before;
+        if (moved != 0) {
+          strip->scene->r.psfra = clamp_i(
+              strip->scene->r.psfra + moved, MINAFRAME, MAXFRAME);
+          strip->scene->r.pefra = clamp_i(
+              strip->scene->r.pefra + moved, MINAFRAME, MAXFRAME);
+        }
+      }
       /* BFA (#6780): live overlap feedback during the drag, same as the VSE -
        * set the Overlap runtime flag while the moved strip overlaps a neighbour
        * so the dope-sheet bar shows the red outline; cleared on release after
@@ -1568,6 +1615,7 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
         }
       }
       break;
+    }
   }
 
   scene_strip_timing_sync_ranges(C, op);
@@ -1639,6 +1687,12 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
   data->orig_efra = strip->scene->r.efra;
   data->orig_psfra = strip->scene->r.psfra;
   data->orig_pefra = strip->scene->r.pefra;
+  data->orig_scene_flag = strip->scene->r.flag;
+  /* BFA (#6780): capture the middle-bar coupling state at invoke (§2.4) -
+   * the drag ignores toggle changes mid-flight. */
+  data->preview_coupled = scene_strip_use_preview_range_get(C) &&
+                          (strip->scene->r.flag & SCER_PRV_RANGE) != 0;
+  data->clamp_coupled = scene_strip_clamp_to_strip_get(C);
   data->pushed_before_total = 0;
   data->pushed_following_total = 0;
 
@@ -1757,6 +1811,7 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
             strip->scene->r.efra = data->orig_efra;
             strip->scene->r.psfra = data->orig_psfra;
             strip->scene->r.pefra = data->orig_pefra;
+            strip->scene->r.flag = data->orig_scene_flag;
           }
           strip->handles_set(
               data->master_scene, data->orig_left_handle, data->orig_right_handle);
