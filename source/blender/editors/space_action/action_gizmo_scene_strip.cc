@@ -735,7 +735,7 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     bool scrub_fallback = false;
     const Strip *scrub_drag = nullptr;
     const Strip *scrub_target = ed::vse::sync_scene_strip_scrub_target_get(
-        C, &scrub_master, &scrub_frame, &scrub_fallback, &scrub_drag);
+        *C, &scrub_master, &scrub_frame, &scrub_fallback, &scrub_drag);
 
     const float lane_gap = 1.0f * ui_scale;
     for (const LayeredStripDraw &item : layered_strips) {
