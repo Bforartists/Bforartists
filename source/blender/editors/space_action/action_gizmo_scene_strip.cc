@@ -37,6 +37,7 @@
 #include "DNA_workspace_types.h"
 
 #include "BKE_context.hh"
+#include "BKE_wm_runtime.hh"
 
 #include "ED_anim_api.hh"
 #include "ED_sequencer.hh"
@@ -62,6 +63,8 @@
 
 #include "WM_api.hh"
 #include "WM_types.hh"
+
+#include "wm_event_system.hh"
 
 #include "action_intern.hh"
 
@@ -1955,6 +1958,166 @@ void ACTION_OT_scene_strip_timing(wmOperatorType *ot)
                GZ_PART_RIGHT,
                "Mode",
                "Which part of the scene strip to adjust");
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name ACTION_OT_scene_strip_sync_from_range operator
+ *
+ * One-shot, opt-in reconciliation of the strip's geometry with the strip
+ * scene's render range (sfra/efra). This is the inverse of
+ * `clamp_scene_strip_range()`: instead of setting the range to the strip's
+ * visible extent, it sets the strip's visible extent to the range. It is the
+ * explicit cure for the §2.3/§2.5 desync - when the user changes the scene
+ * range from the timeline, the gizmo (which draws the strip's extent) keeps
+ * its old width; pressing this button adopts the new range into the strip so
+ * the gizmo reflects it and subsequent drags do not "snap".
+ *
+ * BFA (#6780): only the render range is adopted. The preview range
+ * (psfra/pefra) is an *output* of the strip (`update_preview_range`), so it is
+ * never touched here. The strip's content (anim_startofs/anim_endofs) is
+ * preserved; the trim (startofs/endofs) absorbs the change so the strip's
+ * visible extent maps exactly onto `[sfra, efra]`.
+ * \{ */
+
+/* True while the scene-strip timing gizmo is running modally. The sync button
+ * is disabled during a drag so it cannot fight the modal operator. */
+static bool scene_strip_timing_is_modal(const bContext *C)
+{
+  wmWindowManager *wm = CTX_wm_manager(C);
+  if (wm == nullptr) {
+    return false;
+  }
+  for (wmWindow *win = static_cast<wmWindow *>(wm->windows.first); win; win = win->next) {
+    if (win->runtime == nullptr) {
+      continue;
+    }
+    for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+      if (handler_base.type != WM_HANDLER_TYPE_OP) {
+        continue;
+      }
+      wmEventHandler_Op *handler = reinterpret_cast<wmEventHandler_Op *>(&handler_base);
+      if (handler->op != nullptr && handler->op->type != nullptr &&
+          STREQ(handler->op->type->idname, "ACTION_OT_scene_strip_timing"))
+      {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/* True when the strip's visible extent already maps exactly onto the strip
+ * scene's render range - i.e. `remap(left_handle) == sfra` and
+ * `remap(right_handle - 1) == efra`. The sync button is greyed out in this
+ * state because there is nothing to reconcile. */
+static bool scene_strip_extent_matches_range(const Scene *master_scene, const Strip *strip)
+{
+  if (strip->scene == nullptr) {
+    return false;
+  }
+  const int left = strip->left_handle();
+  const int right = strip->right_handle(master_scene);
+  const int visible_start = remap_frame_value(strip, left);
+  const int visible_end = remap_frame_value(strip, right - 1);
+  return visible_start == strip->scene->r.sfra && visible_end == strip->scene->r.efra;
+}
+
+static bool scene_strip_sync_from_range_poll(bContext *C)
+{
+  /* The gizmo must be enabled (overlays on + the "Scene Strip Gizmo" toggle). */
+  const SpaceAction *space_action = CTX_wm_space_action(C);
+  if (space_action == nullptr || (space_action->overlays.flag & ADS_OVERLAY_SHOW_OVERLAYS) == 0 ||
+      (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0)
+  {
+    return false;
+  }
+  /* A scene strip must exist for the active scene. */
+  Scene *master_scene = nullptr;
+  const Strip *strip = scene_strip_master_get(C, &master_scene);
+  if (strip == nullptr || strip->scene == nullptr) {
+    return false;
+  }
+  const Scene *active_scene = CTX_data_scene(C);
+  if (strip->scene != active_scene) {
+    return false;
+  }
+  /* Disabled while the timing gizmo is modal. */
+  if (scene_strip_timing_is_modal(C)) {
+    return false;
+  }
+  /* Greyed out when the strip's visible extent already equals the range. */
+  if (scene_strip_extent_matches_range(master_scene, strip)) {
+    return false;
+  }
+  return true;
+}
+
+static std::string scene_strip_sync_from_range_get_description(bContext * /*C*/,
+                                                               wmOperatorType * /*ot*/,
+                                                               PointerRNA * /*ptr*/)
+{
+  return TIP_("Adopt the strip scene's render range (start/end frame) into the scene strip, "
+              "so the strip's visible extent in the dope-sheet matches the range set from the "
+              "timeline. One-way, opt-in: the strip is resized to the range (neighbors are "
+              "pushed/pulled), the range itself is never changed. Greyed out when the strip "
+              "already matches the range");
+}
+
+static wmOperatorStatus scene_strip_sync_from_range_exec(bContext *C, wmOperator * /*op*/)
+{
+  Scene *master_scene = nullptr;
+  Strip *strip = const_cast<Strip *>(scene_strip_master_get(C, &master_scene));
+  if (strip == nullptr || strip->scene == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
+  const Scene *active_scene = CTX_data_scene(C);
+  if (strip->scene != active_scene) {
+    return OPERATOR_CANCELLED;
+  }
+
+  /* Adopt the render range into the strip's geometry - the inverse of
+   * `clamp_scene_strip_range()`. The strip's visible extent is
+   * `[left_handle, right_handle]` with
+   *   left_handle  = start + startofs
+   *   right_handle = start + len - endofs
+   * and the scene frame shown at a master frame `f` is `f - start + sfra`.
+   * For the extent to map onto `[sfra, efra]` we need
+   *   remap(left_handle)  == sfra  ->  startofs == 0
+   *   remap(right_handle-1) == efra ->  len - endofs == efra - sfra + 1
+   * The left edge is moved via the green recipe (adjust_shot_duration_left,
+   * which pushes/pulls the preceding strips) and the right edge via the red
+   * recipe (adjust_shot_duration_right, which pushes/pulls the following
+   * strips), both with `clamp = false` so sfra/efra are never written - the
+   * range is already the target, so the clamp cannot loop. The strip's content
+   * (anim_startofs/anim_endofs) is preserved; the trim absorbs the change. */
+  const int frame_offset_left = int(strip->startofs);
+  const int frame_offset_right = strip->scene->r.efra - strip->scene->r.sfra + 1 -
+                                 strip->len + int(strip->endofs);
+
+  adjust_shot_duration_left(master_scene, strip, frame_offset_left, false);
+  adjust_shot_duration_right(master_scene, strip, frame_offset_right, false);
+
+  WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, master_scene);
+  WM_event_add_notifier(C, NC_SCENE | ND_FRAME_RANGE, master_scene);
+  ED_region_tag_redraw(CTX_wm_region(C));
+
+  return OPERATOR_FINISHED;
+}
+
+void ACTION_OT_scene_strip_sync_from_range(wmOperatorType *ot)
+{
+  ot->name = "Sync Scene Strip to Range";
+  ot->idname = "ACTION_OT_scene_strip_sync_from_range";
+  ot->description = "Adopt the strip scene's render range into the scene strip so its visible "
+                    "extent matches the range set from the timeline";
+
+  ot->exec = scene_strip_sync_from_range_exec;
+  ot->poll = scene_strip_sync_from_range_poll;
+  ot->get_description = scene_strip_sync_from_range_get_description;
+
+  ot->flag |= OPTYPE_UNDO;
 }
 
 /** \} */

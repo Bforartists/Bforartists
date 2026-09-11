@@ -152,6 +152,7 @@ void ACTION_GT_scene_strip_gizmo(wmGizmoType *gzt);
 void ACTION_GT_scene_strip_scrub(wmGizmoType *gzt);
 void ACTION_OT_scene_strip_timing(wmOperatorType *ot);
 void ACTION_OT_scene_strip_scrub(wmOperatorType *ot);
+void ACTION_OT_scene_strip_sync_from_range(wmOperatorType *ot);
 
 /* ***************************************** */
 /* `action_ops.cc` */
