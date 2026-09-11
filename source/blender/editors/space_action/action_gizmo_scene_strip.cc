@@ -1281,16 +1281,31 @@ static int remap_frame_value(const Strip *strip, int frame)
   return frame - strip->start + strip->scene->r.sfra;
 }
 
+/* BFA (#6780, §5.9): refresh the strip's live Overlap flag after a retime-edit
+ * changed its extent. Overlapping a neighbor shows the same red outline a VSE
+ * drag shows; the release path (scene_strip_timing_finish) then resolves the
+ * collision with the sequencer's overlap mode, exactly like releasing a VSE
+ * strip grab. */
+static void scene_strip_retime_overlap_update(Scene *master_scene, Strip *strip)
+{
+  strip->runtime->flag &= ~seq::StripRuntimeFlag::Overlap;
+  if (Editing *ed = seq::editing_get(master_scene)) {
+    if (seq::transform_test_overlap(master_scene, &ed->seqbase, strip)) {
+      strip->runtime->flag |= seq::StripRuntimeFlag::Overlap;
+    }
+  }
+}
+
 /* bfa 3d sequencer: retime from the right handle. Dragging to the right moves
  * the master-timeline end edge (and the dope-sheet bar edge) forward in lockstep
  * while the start edge stays put. First the trimmed content (a positive end
  * offset) is consumed; once that runs out, the scene's end frame is extended
  * live (when `clamp` is on) or the strip extends via hold frames (when off) so
  * the bar keeps following the mouse instead of stopping at the scene's efra.
- * Like the left handle, the strips after this one on the channel move with the
- * end edge (pushed right when extending, pulled left when shrinking), so the
- * drag never desyncs neighbors. The scene's end frame is bounded by the highest
- * representable frame (#MAXFRAME). */
+ * BFA (#6780, §5.9): neighbors are NEVER displaced - like the VSE, extending
+ * into a neighbor overlaps it (live red outline) and the sequencer's overlap
+ * mode resolves the collision on release; shrinking just opens a gap. The
+ * scene's end frame is bounded by the highest representable frame (#MAXFRAME). */
 static int adjust_shot_duration_right(Scene *master_scene,
                                       Strip *strip,
                                       const int frame_offset,
@@ -1302,7 +1317,6 @@ static int adjust_shot_duration_right(Scene *master_scene,
   if (new_frame_offset == 0) {
     return 0;
   }
-  Vector<Strip *> impacted = strips_after_same_channel(master_scene, strip);
   if (new_frame_offset > 0) {
     /* Extend: first absorb the trimmed end content (a positive end offset, i.e.
      * the right handle sits left of the content end), then extend the scene's
@@ -1320,9 +1334,7 @@ static int adjust_shot_duration_right(Scene *master_scene,
     if (moved <= 0) {
       return 0;
     }
-    for (int i = impacted.size() - 1; i >= 0; i--) {
-      seq::transform_translate_strip(master_scene, impacted[i], moved);
-    }
+    /* BFA (#6780, §5.9): no neighbor displacement - see the function comment. */
     if (absorb != 0) {
       strip->endofs -= absorb;
     }
@@ -1347,22 +1359,20 @@ static int adjust_shot_duration_right(Scene *master_scene,
       strip->content_length_set(new_len);
       strip->handles_set(master_scene, left, right_after_absorb + scene_extend);
     }
+    scene_strip_retime_overlap_update(master_scene, strip);
     return moved;
   }
-  else {
-    /* Shrink: adjust the strip first, then move impacted strips to the left. */
-    strip->endofs -= new_frame_offset;
-    for (Strip *s : impacted) {
-      seq::transform_translate_strip(master_scene, s, new_frame_offset);
-    }
-    return new_frame_offset;
-  }
+  /* Shrink: the end edge moves left, opening a gap; neighbors stay put
+   * (BFA #6780, §5.9 - the mirror of the extend case). */
+  strip->endofs -= new_frame_offset;
+  scene_strip_retime_overlap_update(master_scene, strip);
+  return new_frame_offset;
 }
 
 /* BFA (#6780): strips on the same channel whose end is entirely before `strip`'s
  * start edge, sorted by start frame (the mirror of `strips_after_same_channel`).
- * The left handle pushes these strips leftwards when extending, just like the
- * right handle pushes the following strips rightwards. */
+ * Since §5.9 the retime handles never displace neighbors; this query stays for
+ * the modal cancel bookkeeping and the bump/overlap feedback paths. */
 static Vector<Strip *> strips_before_same_channel(Scene *master_scene, const Strip *strip)
 {
   Vector<Strip *> result;
@@ -1389,13 +1399,13 @@ static Vector<Strip *> strips_before_same_channel(Scene *master_scene, const Str
  * the end edge stays put, so the strip feels "in sync" with the dope-sheet. First
  * the trimmed content is consumed; once that runs out, the scene's start frame is
  * extended (when `clamp` is on) or the strip extends via hold frames (when off).
- * Like the right handle, the strips before this one on the channel move with the
- * start edge (pushed left when extending, pulled right when shrinking), so the
- * drag keeps going into earlier frames instead of getting stuck at the previous
- * strip or at frame 0. Both the start edge and the scene's start frame are
- * bounded by the lowest representable frame (#MINAFRAME).
- * Returns the signed displacement applied to the preceding strips (positive when
- * they were pushed left), so the modal operator can undo it on cancel. */
+ * BFA (#6780, §5.9): neighbors are NEVER displaced - like the VSE, extending
+ * into a neighbor overlaps it (live red outline) and the sequencer's overlap
+ * mode resolves the collision on release; shrinking just opens a gap. Both the
+ * start edge and the scene's start frame are bounded by the lowest representable
+ * frame (#MINAFRAME).
+ * Returns the signed displacement applied to the preceding strips (always 0
+ * since §5.9; kept so the modal operator's cancel bookkeeping is unchanged). */
 static int adjust_shot_duration_left(Scene *master_scene,
                                       Strip *strip,
                                       const int frame_offset,
@@ -1432,9 +1442,7 @@ static int adjust_shot_duration_left(Scene *master_scene,
     if (moved <= 0) {
       return 0;
     }
-    for (Strip *impacted : strips_before_same_channel(master_scene, strip)) {
-      seq::transform_translate_strip(master_scene, impacted, -moved);
-    }
+    /* BFA (#6780, §5.9): no neighbor displacement - see the function comment. */
     if (trim != 0) {
       strip->startofs -= trim;
     }
@@ -1460,16 +1468,14 @@ static int adjust_shot_duration_left(Scene *master_scene,
       strip->content_length_set(new_len);
       strip->handles_set(master_scene, left, right);
     }
+    scene_strip_retime_overlap_update(master_scene, strip);
     return moved;
   }
-  /* Shrink: the master start edge moves right; the end edge (and any following
-   * strips) stay put. The strips before this one follow the edge - mirrored from
-   * adjust_shot_duration_right(), whose following strips follow on shrink. */
+  /* Shrink: the master start edge moves right, opening a gap; neighbors stay
+   * put (BFA #6780, §5.9 - the mirror of the extend case). */
   const int pulled = -new_frame_offset;
   strip->startofs -= new_frame_offset;
-  for (Strip *impacted : strips_before_same_channel(master_scene, strip)) {
-    seq::transform_translate_strip(master_scene, impacted, pulled);
-  }
+  scene_strip_retime_overlap_update(master_scene, strip);
   return -pulled;
 }
 
@@ -2069,6 +2075,18 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
   if (scene_strip_clamp_to_strip_get(C) && ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
     clamp_scene_strip_range(C, data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
+  }
+  /* BFA (#6780, §5.9): the retime handles may leave the strip overlapping a
+   * same-channel neighbor (extending into it - the live red outline), and the
+   * clamp above can shift it into one as well. Resolve on release with the
+   * sequencer's overlap mode, like the VSE settles a colliding edge drag. */
+  if (ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
+    if (Editing *ed = seq::editing_get(data->master_scene)) {
+      if (seq::transform_test_overlap(data->master_scene, &ed->seqbase, data->strip)) {
+        resolve_move_overlap(data->master_scene, data->strip);
+        scene_strip_timing_sync_ranges(C, op);
+      }
+    }
   }
   /* BFA (#6780): restore the strip's selection state from before the drag. */
   if (!data->orig_select) {
