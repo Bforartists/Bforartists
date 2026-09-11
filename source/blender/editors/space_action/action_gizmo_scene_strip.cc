@@ -123,8 +123,10 @@ static Scene *timeline_sync_master_scene_get(const bContext *C)
  * (the sync only drives the playhead, not the gizmos). The strip is found by
  * iterating the master timeline's scene strips (the one referencing the active
  * scene), NOT by the playhead position, so the gizmos always draw regardless of
- * where the playhead is. */
-static const Strip *scene_strip_master_get(const bContext *C, Scene **r_master_scene)
+ * where the playhead is. Shared with the dope-sheet range shading
+ * (#ANIM_draw_scene_strip_range) so both follow the same resolution and stay
+ * sync-agnostic. Declared in #ED_anim_api.hh. */
+const Strip *ANIM_scene_strip_master_get(const bContext *C, Scene **r_master_scene)
 {
   WorkSpace *workspace = CTX_wm_workspace(C);
   const Scene *active_scene = CTX_data_scene(C);
@@ -215,7 +217,7 @@ static SceneStripGizmoExtent scene_strip_gizmo_extent(const bContext * /*C*/,
 static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects *rects)
 {
   Scene *master_scene = nullptr;
-  const Strip *strip = scene_strip_master_get(C, &master_scene);
+  const Strip *strip = ANIM_scene_strip_master_get(C, &master_scene);
   if (!strip) {
     return false;
   }
@@ -420,7 +422,7 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     return;
   }
   Scene *master_scene = nullptr;
-  const Strip *strip = scene_strip_master_get(C, &master_scene);
+  const Strip *strip = ANIM_scene_strip_master_get(C, &master_scene);
   if (strip == nullptr || strip->scene == nullptr) {
     return;
   }
@@ -957,7 +959,7 @@ static bool WIDGETGROUP_scene_strip_poll(const bContext *C, wmGizmoGroupType * /
   {
     return false;
   }
-  const Strip *strip = scene_strip_master_get(C, nullptr);
+  const Strip *strip = ANIM_scene_strip_master_get(C, nullptr);
   if (!strip) {
     return false;
   }
@@ -1731,11 +1733,20 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
    * back into the modal drag's delta tracking and would make the strip race.
    * At release the strip's final geometry is settled, so the clamp only touches
    * the scene render range (sfra/efra) and keeps everything else fixed.
-   * BFA (#6780): the retime handles (LEFT/RIGHT) and the strip mover (SLIP,
-   * §2.5) run the release clamp. MOVE (range window) already translated
-   * sfra/efra live in clamp mode, so snapping it again would only re-pad the
-   * same range. */
-  if (scene_strip_clamp_to_strip_get(C) && ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
+   * BFA (#6780): the retime handles (LEFT/RIGHT) and the range window (MOVE)
+   * run the release clamp here; the strip mover (SLIP) has its own block above
+   * so the clamp runs before its overlap resolution. For the retime handles
+   * the snap aligns the range to the dragged edge. For MOVE it "initializes"
+   * the snap (§5.2): the drag translated sfra/efra 1:1 preserving whatever
+   * length the range had at invoke, so when that length is stale (the range
+   * was edited from the timeline first), the release snap is what settles the
+   * length to the strip's visible extent - the same one-time alignment the
+   * green/red handles apply on their first drag. When the length is already
+   * correct the snap only re-pads the lead in/out, which is the usual
+   * "snaps on release with lead-in/out" behavior. */
+  if (scene_strip_clamp_to_strip_get(C) &&
+      ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT, GZ_PART_MOVE))
+  {
     clamp_scene_strip_range(C, data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
@@ -1751,7 +1762,7 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
                                                   const wmEvent *event)
 {
   Scene *master_scene = nullptr;
-  Strip *strip = const_cast<Strip *>(scene_strip_master_get(C, &master_scene));
+  Strip *strip = const_cast<Strip *>(ANIM_scene_strip_master_get(C, &master_scene));
   if (!strip || !strip->scene) {
     return OPERATOR_CANCELLED;
   }
@@ -1957,7 +1968,7 @@ void ACTION_OT_scene_strip_timing(wmOperatorType *ot)
 static wmOperatorStatus scene_strip_scrub_invoke(bContext *C, wmOperator *op, const wmEvent * /*event*/)
 {
   Scene *master_scene = nullptr;
-  if (!scene_strip_master_get(C, &master_scene)) {
+  if (!ANIM_scene_strip_master_get(C, &master_scene)) {
     return OPERATOR_CANCELLED;
   }
   op->customdata = master_scene;

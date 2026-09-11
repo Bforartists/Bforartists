@@ -916,6 +916,16 @@ void ANIM_draw_previewrange(const Scene *scene, View2D *v2d, int end_frame_width
  */
 void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d);
 
+/**
+ * Resolve the master scene strip the scene-strip gizmos and dope-sheet range
+ * shading operate on, and optionally the master sequencer scene itself. Works
+ * with both the built-in sync (workspace sequencer scene) and the legacy 3D
+ * Sequencer addon sync (addon master scene), and is sync-agnostic: it returns
+ * whichever store actually holds a scene strip for the active scene, so the
+ * gizmos and shading draw regardless of the sync state (BFA #6780).
+ */
+const Strip *ANIM_scene_strip_master_get(const bContext *C, Scene **r_master_scene);
+
 /** \} */
 
 /* -------------------------------------------------------------------- */

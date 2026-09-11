@@ -127,22 +127,17 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   if ((space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0) {
     return;
   }
-  WorkSpace *workspace = CTX_wm_workspace(C);
-  if (!workspace) {
-    return;
-  }
-  // BFA (#6780): the strip range shading follows either sync switch - the 3D
-  // Sequencer addon's flag (WORKSPACE_SYNC_SCENE_BFA) or the built-in scene time
-  // sync (WORKSPACE_SYNC_SCENE_TIME, the core Sync toggle in the sequencer
-  // header) - so both affordances light up the dope-sheet the same way.
-  if ((workspace->flags & (WORKSPACE_SYNC_SCENE_BFA | WORKSPACE_SYNC_SCENE_TIME)) == 0) {
-    return;
-  }
-  const Scene *sequencer_scene = workspace->sequencer_scene;
-  if (!sequencer_scene) {
-    return;
-  }
-  const Strip *scene_strip = ed::vse::get_scene_strip_for_time_sync(sequencer_scene);
+  /* BFA (#6780): the strip range shading follows the same sync-agnostic strip
+   * resolution as the interactive gizmos (#ANIM_scene_strip_master_get) -
+   * whichever master store (workspace sequencer scene, or the legacy 3D
+   * Sequencer addon master) actually holds a scene strip for the active scene.
+   * The old sync-flag gate made the shading invisible until the user enabled
+   * sync, even though the gizmos (and the resolution itself) never needed it.
+   * The strip is the one referencing the active scene, found by iterating the
+   * master timeline - not the playhead position - so the shading is stable
+   * while scrubbing. */
+  Scene *sequencer_scene = nullptr;
+  const Strip *scene_strip = ANIM_scene_strip_master_get(C, &sequencer_scene);
   if (!scene_strip || !scene_strip->scene) {
     return;
   }
