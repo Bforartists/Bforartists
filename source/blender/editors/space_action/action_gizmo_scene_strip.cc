@@ -727,6 +727,16 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     }
     lane_intervals[0].append({region_x_from_view(bar_frame_in), region_x_from_view(bar_frame_out)});
 
+    /* BFA (#6780): while a dopesheet playhead scrub is deferred, the chip of
+     * the strip the release will switch to is highlighted white, so the
+     * landing timeline is visible on the ghosts the user already knows. */
+    Scene *scrub_master = nullptr;
+    int scrub_frame = 0;
+    bool scrub_fallback = false;
+    const Strip *scrub_drag = nullptr;
+    const Strip *scrub_target = ed::vse::sync_scene_strip_scrub_target_get(
+        C, &scrub_master, &scrub_frame, &scrub_fallback, &scrub_drag);
+
     const float lane_gap = 1.0f * ui_scale;
     for (const LayeredStripDraw &item : layered_strips) {
       int lane = 0;
@@ -766,6 +776,14 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
                                 other_outline_uc[1] / 255.0f,
                                 other_outline_uc[2] / 255.0f,
                                 0.6f * all_opacity};
+      if (scrub_target == item.strip) {
+        /* BFA (#6780): this is the deferred switch target - brighten to near
+         * white so it reads instantly against the other ghost chips. */
+        other_body[0] = other_body[1] = other_body[2] = 0.95f;
+        other_body[3] = 0.75f;
+        other_outline[0] = other_outline[1] = other_outline[2] = 1.0f;
+        other_outline[3] = 0.95f;
+      }
       rctf other_rect;
       BLI_rctf_init(&other_rect, item.x_in, item.x_out, y, y_top_other);
       ui::draw_roundbox_corner_set(ui::CNR_ALL);

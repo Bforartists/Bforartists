@@ -179,10 +179,11 @@ void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
 {
   /* BFA (#6780): ghost highlight for the deferred timeline switch during a
    * dopesheet playhead scrub. While the mouse is held and the playhead has
-   * left the current scene strip, this tints the range the release will
-   * switch to - the next scene strip mapped through the drag strip's linear
-   * mapping, or the full width for the master (fallback) timeline - plus a
-   * vertical line at the frame the playhead will land on. */
+   * left the current scene strip, this shows where the release will land:
+   * a full-width tint when the target is the master (fallback) timeline -
+   * the next scene strip is highlighted white on its ghost chip by the
+   * scene strip gizmo overlay - plus a vertical line at the landing frame
+   * in both cases. */
   SpaceAction *space_action = CTX_wm_space_action(C);
   if (!space_action || (space_action->overlays.flag & ADS_OVERLAY_SHOW_OVERLAYS) == 0 ||
       (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0)
@@ -219,24 +220,18 @@ void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
   immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 0, -10);
 
   if (is_master_fallback || !target_strip) {
-    /* Switching to the full master timeline: highlight everything. */
+    /* Switching to the full master timeline: highlight everything. For a
+     * strip target the ghost chip itself is highlighted white by the scene
+     * strip gizmo overlay, so only the landing line is drawn here. */
     immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
   }
-  else {
-    const float ghost_start = master_to_shot(float(target_strip->left_handle()));
-    const float ghost_end = master_to_shot(
-        float(target_strip->right_handle(sequencer_scene) - 1));
-    const float x1 = std::min(ghost_start, ghost_end);
-    const float x2 = std::max(ghost_start, ghost_end);
-    immRectf(pos, x1, v2d->cur.ymin, x2, v2d->cur.ymax);
 
-    /* Vertical line at the frame the playhead will land on after the switch. */
-    const float landing = master_to_shot(float(master_frame));
-    immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, landing, v2d->cur.ymin);
-    immVertex2f(pos, landing, v2d->cur.ymax);
-    immEnd();
-  }
+  /* Vertical line at the frame the playhead will land on after the switch. */
+  const float landing = master_to_shot(float(master_frame));
+  immBegin(GPU_PRIM_LINES, 2);
+  immVertex2f(pos, landing, v2d->cur.ymin);
+  immVertex2f(pos, landing, v2d->cur.ymax);
+  immEnd();
 
   immUnbindProgram();
 

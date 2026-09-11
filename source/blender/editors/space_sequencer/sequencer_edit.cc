@@ -670,6 +670,30 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
         /* Refresh the sequencer and dope-sheet playheads. */
         WM_event_add_notifier(&C, NC_SCENE | ND_FRAME, sequencer_scene);
       }
+      /* BFA (#6780): while a dopesheet scrub is held, record the would-be
+       * switch target for the ghost highlight - the top-most scene strip now
+       * under the master playhead when it is inside some strip's coverage
+       * (best_dist == 0), or the master fallback when it is on an empty
+       * lane. The mouse release applies the switch. */
+      SceneStripScrubDefer &defer_rev = g_scene_strip_scrub_defer;
+      if (defer_rev.active && active_scene_pre == defer_rev.drag_scene) {
+        if (best_dist == 0) {
+          const Strip *topmost = get_scene_strip_for_time_sync(sequencer_scene);
+          defer_rev.target_strip = (topmost && topmost->scene &&
+                                    topmost->scene != active_scene_pre) ?
+                                       topmost :
+                                       nullptr;
+          defer_rev.has_target = (defer_rev.target_strip != nullptr);
+          defer_rev.target_master_frame = sequencer_scene->r.cfra;
+        }
+        else {
+          /* Past every strip showing the active scene: switch to the master
+           * (fallback) timeline on release. */
+          defer_rev.target_strip = nullptr;
+          defer_rev.target_master_frame = target_cfra;
+          defer_rev.has_target = true;
+        }
+      }
       /* Either way, the shot time is authoritative now - done. */
       return;
     }
