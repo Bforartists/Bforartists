@@ -546,6 +546,61 @@ preview range exists), the middle bars move the window. No pinned sequencer, no
 scene strips and no sync are required. When a strip *does* exist the previous
 behavior is unchanged.
 
+### 5.5 Fallback respects both toggles at once (2026-09-10)
+
+**User report.** In the no-strip fallback with **Clamp Scene Range** *and* **Set
+Preview Range** both on, the gizmo only changed one range instead of both (the
+strip path changes both together).
+
+**Root cause.** The fallback picked a *single* pair via an exclusive
+`preview_mode` flag: with preview on it edited only `psfra/pefra`, so the
+clamp's render-range involvement was dropped.
+
+**Fix.** The fallback target now carries `edit_render` and `edit_preview`
+(independent): clamp → render, preview → preview, both → both, neither → render.
+`scene_strip_timing_apply_scene_range()` applies the same edit to each selected
+pair through a shared `apply_pair` lambda (so they stay in lockstep), and
+selecting preview seeds `SCER_PRV_RANGE` from the render range (snapshotted
+first, so cancel still restores exactly). The preview/default geometry uses the
+render pair only when the preview pair is *not* the sole editor.
+
+### 5.6 Move-overlap resolution regression fixed (2026-09-10)
+
+**User report.** After a gizmo strip move, the overlap modes (shuffle, overwrite,
+expand) draw their feedback ring but the strip stays overlapping in the sequencer
+— it used to resolve.
+
+**Root cause.** Commit `bad956197a3` (a) forced the dragged strip `SEQ_SELECT`
+for the whole drag and (b) replaced the generic `transform_handle_overlap` call
+with a shuffle-only early return. The VSE overlap helpers skip every *selected*
+strip (`query_unselected_strips`, and `query_right_side_strips` via its
+`remove_if(SEQ_SELECT)`), so any strip the user had selected was never treated as
+a bump target and the overlap survived.
+
+**Fix.** `resolve_move_overlap()` now temporarily clears `SEQ_SELECT` on every
+strip except the dragged one for the duration of the resolve (restoring the
+selection afterwards), and calls the generic `transform_handle_overlap()` for
+all modes — the pre-regression behavior. The lane-only time shuffle is kept as a
+last resort when a strip is *still* overlapping (e.g. it cannot leave a locked
+strip or a transition).
+
+### 5.7 Playhead no longer bounces when dragged past a strip (2026-09-10)
+
+**User report.** With sync on, dragging the playhead past a strip's range makes
+it "glitch" and bounce back to the old position; with sync off it goes past
+freely.
+
+**Root cause.** The reverse (shot→sequencer) sync snapped the master playhead to
+the nearest strip *edge* whenever the shot playhead was outside the strip's
+coverage (`best_master_t = left/right`). That snapped master frame then drove the
+forward re-derivation, which mapped it back to a shot frame inside the strip —
+the visible bounce.
+
+**Fix.** The reverse sync now follows the linear shot→sequencer mapping even
+outside the strip (target floored at `MINAFRAME`), choosing the strip whose range
+is nearest the target (distance 0 wins). Shot and master stay in lockstep past the
+strip, so the drag continues smoothly instead of snapping back.
+
 ---
 
 ## 3. Implementation steps (ordered)
@@ -698,3 +753,62 @@ Revisit only if the visual mismatch is reported as confusing.
 6. Sync turns on playhead sync (done).
 7. Drawing of the gizmo is always full range set by the strip settings, and if
    set to preview or scene range, the strip offsets should be drawn (§2.1).
+
+---
+
+# Round 10 — Final review & finishing touches (2026-09-11)
+
+Closing review against the feature list. Four user-reported issues fixed; all landed on
+`6780-3d-sequencer---fix-timeline-gizmos-to-retime-shots`.
+
+## Commits this round
+
+- `6af311fb518` — **§5.6 overlap resolve + §5.5 fallback dual-range** (mostly the parallel
+  agent's work; I fixed the snapshot ordering so Esc can undo the preview seeding).
+- `338c0d041c3` — **§5.7 playhead bounce**: reverse sync follows the linear shot→master
+  mapping past the strip edges (nearest strip wins, integer math, MINAFRAME/MAXFRAME bounds)
+  instead of clamping to an edge and bouncing back.
+- `6fd9cc56a26` — **§5.8 pinned scene authority**: `workspace->sequencer_scene` is the
+  authoritative master in `ANIM_scene_strip_master_get` (pin set → use it or fallback mode;
+  legacy addon store + file scan only when no pin). Python mirrors it in `get_master_scene()`,
+  and "Set Pinned Scene as the Synchronization Timeline" with no pin now CLEARS the stored
+  master — the explicit "go back".
+- `550e8b9e311` — **§5.9 retime handles honor the overlap mode**: green/red never displace
+  same-channel neighbors anymore. Extend into a neighbor = live red outline, release resolves
+  with expand/shuffle/overwrite; trim opens a gap. `finish()` now resolves retime-handle
+  collisions (covers the clamp-mode lead shift too).
+
+## Feature review checklist (target state)
+
+| Feature | Status |
+|---|---|
+| Set strip frame ranges; fallback to active scene range when no strips | ✅ (§5.4/§5.5) |
+| Move or slip scene range start/end | ✅ (MOVE bar + fallback) |
+| Set preview range / scene range / both | ✅ (strip mode §2.4; fallback §5.5 dual-range) |
+| Extend or trim ranges | ✅ (§5.9 semantics, overlap-mode resolution on release) |
+| Show other scene strips, colors/transparency customizable | ✅ (chips; prefs in addon) |
+| Show scene and strip names, customizable | ✅ (chips; prefs in addon) |
+| Bidirectional playhead sync when sync is on | ✅ (smooth past edges, §5.7) |
+| Pinned sequencer scene authority + fallback "go back" | ✅ (§5.8) |
+| Overlap modes (expand/shuffle/overwrite) apply on release | ✅ (§5.6, all four gizmo zones) |
+| Vertical channel drag on the strip mover | ✅ (`255aabf3a44`) |
+
+## Remaining manual verification (needs a build of `bf::editor_space_action`)
+
+1. §5.6: select a neighbor strip, move a strip into it with the bottom bar, release → no
+   overlap remains for expand/shuffle/overwrite.
+2. §5.9: extend green/red into a neighbor → red outline during drag, release resolves per
+   overlap mode; trim → gap, neighbors unmoved; clamp-mode lead shift also resolves.
+3. §5.8: pin an empty scene → gizmos fall back to the active scene's ranges; re-pin a master
+   → gizmos follow the pin; run "Set Pinned Scene..." with no pin → sync master clears.
+4. §5.5: no strips, both toggles on → gizmo moves render AND preview ranges together; Esc
+   restores everything including a seeded preview range.
+5. §5.7: sync on, drag the dopesheet playhead past the strip's range → smooth follow, no
+   bounce-back; inside the range the bi-directional sync is unchanged.
+6. Regression: Esc in every zone × toggle combination; strip-move overlap matrix; undo/redo
+   across a gizmo drag.
+
+## Known follow-ups (deliberately out of scope)
+
+- View panning during long gizmo drags (§6, carried).
+- `SEQ_REVERSE_FRAMES` strips mirror under the §2.7 unclamped map (noted in commit `ad0d3b349ce`).
