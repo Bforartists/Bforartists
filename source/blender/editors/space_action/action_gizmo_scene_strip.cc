@@ -1315,6 +1315,17 @@ static void scene_strip_retime_overlap_update(Scene *master_scene, Strip *strip)
   }
 }
 
+/* BFA (#6780): the negative-frame floor for every gizmo frame write. By default
+ * the user preferences forbid negative frames ("Allow Negative Frames" is off,
+ * #USER_NONEGFRAMES set - the same convention #FRAMENUMBER_MIN_CLAMP applies to
+ * the playhead), so nothing the gizmos do may move a frame, a range edge or a
+ * strip below 0. With the preference enabled the representable bound
+ * (#MINAFRAME) applies instead, like everywhere else in Blender. */
+static int scene_strip_negative_frame_floor()
+{
+  return (U.flag & USER_NONEGFRAMES) ? 0 : MINAFRAME;
+}
+
 /* bfa 3d sequencer: retime from the right handle. Dragging to the right moves
  * the master-timeline end edge (and the dope-sheet bar edge) forward in lockstep
  * while the start edge stays put. First the trimmed content (a positive end
@@ -1443,20 +1454,26 @@ static int adjust_shot_duration_left(Scene *master_scene,
      * the channel are pushed left by the same total amount - mirrored from
      * adjust_shot_duration_right(), which pushes the following strips right when
      * extending. */
+    /* BFA (#6780): both the trim and the hold-frame extension move the master
+     * start edge left, so their SUM is bounded by the negative-frame floor
+     * (0 by default, #MINAFRAME with "Allow Negative Frames" enabled) - the
+     * edge never crosses it. */
+    const int max_edge_move = max_ii(
+        strip->left_handle() - scene_strip_negative_frame_floor(), 0);
     const int trim = min_ii(new_frame_offset,
-                            min_ii(int(strip->startofs),
-                                   max_ii(strip->left_handle() - MINAFRAME, 0)));
-    /* Extending the scene's start frame is bounded by the lowest representable
-     * frame, like every scene frame range (BFA) - both for the scene's start
-     * frame itself and for the master start edge that follows it. In non-clamp
-     * mode the scene range is left untouched and the strip extends via hold
-     * frames (negative startofs). */
-    const int scene_extend = clamp ?
-                                 min_ii(new_frame_offset - trim,
-                                        min_ii(max_ii(strip->scene->r.sfra - MINAFRAME, 0),
-                                               max_ii(strip->left_handle() - trim - MINAFRAME, 0))) :
-                                 0;
-    const int hold_extend = clamp ? 0 : (new_frame_offset - trim);
+                            min_ii(int(strip->startofs), max_edge_move));
+    /* Extending the scene's start frame is bounded by the same floor - both
+     * for the scene's start frame itself and for the master start edge that
+     * follows it. In non-clamp mode the scene range is left untouched and the
+     * strip extends via hold frames (negative startofs). */
+    const int scene_extend =
+        clamp ?
+            min_ii(new_frame_offset - trim,
+                   min_ii(max_ii(strip->scene->r.sfra - scene_strip_negative_frame_floor(), 0),
+                          max_edge_move - trim)) :
+            0;
+    const int hold_extend =
+        clamp ? 0 : min_ii(new_frame_offset - trim, max_edge_move - trim);
     const int moved = trim + scene_extend + hold_extend;
     if (moved <= 0) {
       return 0;
@@ -1505,7 +1522,19 @@ static void move_shot(Scene *master_scene,
   if (frame_offset == 0) {
     return;
   }
-  seq::transform_translate_strip(master_scene, strip, frame_offset);
+  /* BFA (#6780): a strip's start edge never moves below the negative-frame
+   * floor (0 by default, #MINAFRAME with "Allow Negative Frames" in the
+   * preferences) - the same bound the VSE grab enforces on its left edge. */
+  const int offset = (frame_offset < 0) ?
+                         -min_ii(-frame_offset,
+                                 max_ii(int(strip->left_handle()) -
+                                            scene_strip_negative_frame_floor(),
+                                        0)) :
+                         frame_offset;
+  if (offset == 0) {
+    return;
+  }
+  seq::transform_translate_strip(master_scene, strip, offset);
 }
 
 /* Update the strip's scene preview range to match the strip (dope-sheet overlay
@@ -1742,10 +1771,10 @@ static void clamp_scene_strip_range(const bContext *C, Scene *master_scene, Stri
   const int visible_start = remap_frame_value(strip, left);
   const int visible_end = remap_frame_value(strip, right - 1);
   /* SET (1:1): align the scene range to the strip's visible extent, with lead
-   * padding. BFA (#6780): the start is floored at #MINAFRAME (not 0) so the
-   * green handle can set render ranges into the earlier (negative) frames,
-   * mirroring the red handle where efra has no upper clamp. */
-  const int new_sfra = max_ii(visible_start - lead_in, MINAFRAME);
+   * padding. BFA (#6780): the start is floored at the negative-frame bound (0
+   * by default, #MINAFRAME with "Allow Negative Frames" enabled), mirroring
+   * the red handle where efra has no upper clamp. */
+  const int new_sfra = max_ii(visible_start - lead_in, scene_strip_negative_frame_floor());
   const int new_efra = visible_end + lead_out;
   if (new_sfra == strip->scene->r.sfra && new_efra == strip->scene->r.efra) {
     return;
@@ -1807,8 +1836,9 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
    * #MINAFRAME like every scene frame range (BFA) - the mirror of the red
    * handle's MAXFRAME-bound efra. */
   if (data->mode == GZ_PART_SLIP && scene_strip_clamp_to_strip_get(C)) {
-    master_scene->r.sfra = min_ii(master_scene->r.sfra,
-                                  max_ii(strip->left_handle(), MINAFRAME));
+    master_scene->r.sfra = min_ii(
+        master_scene->r.sfra,
+        max_ii(strip->left_handle(), scene_strip_negative_frame_floor()));
   }
   /* BFA (#6780): the strip scene's preview range follows the gizmo when the
    * dope-sheet "Set Preview Range" toggle is on - in all modes. When the toggle
@@ -1876,7 +1906,7 @@ static void scene_strip_timing_apply_scene_range(bContext *C, wmOperator *op)
     switch (data->mode) {
       case GZ_PART_LEFT:
         /* Absolute from the invoke base; keep at least one frame before end. */
-        *range_start = clamp_i(base_start + offset, MINAFRAME, base_end - 1);
+        *range_start = clamp_i(base_start + offset, scene_strip_negative_frame_floor(), base_end - 1);
         break;
       case GZ_PART_RIGHT:
         *range_end = clamp_i(base_end + offset, base_start + 1, MAXFRAME);
@@ -1888,7 +1918,10 @@ static void scene_strip_timing_apply_scene_range(bContext *C, wmOperator *op)
         const int delta = *range_start - base_start;
         int moved = offset - delta;
         if (moved != 0) {
-          moved = clamp_i(moved, MINAFRAME - *range_start, MAXFRAME - *range_end);
+          moved = clamp_i(
+              moved,
+              scene_strip_negative_frame_floor() - *range_start,
+              MAXFRAME - *range_end);
           *range_start += moved;
           *range_end += moved;
         }
@@ -1990,8 +2023,9 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
            * NOTE: bounding the move by anim_startofs/anim_endofs staying
            * non-negative was wrong - both are 0 for a full-range window,
            * which clamped every move to zero (the "stuck" bar). */
-          moved = clamp_i(
-              moved, MINAFRAME - strip->scene->r.sfra, MAXFRAME - strip->scene->r.efra);
+          moved = clamp_i(moved,
+                          scene_strip_negative_frame_floor() - strip->scene->r.sfra,
+                          MAXFRAME - strip->scene->r.efra);
           strip->scene->r.sfra += moved;
           strip->scene->r.efra += moved;
         }
@@ -2003,9 +2037,9 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
        * the preview range behind. */
       if (data->preview_coupled && strip->scene && moved != 0) {
         strip->scene->r.psfra = clamp_i(
-            strip->scene->r.psfra + moved, MINAFRAME, MAXFRAME);
+            strip->scene->r.psfra + moved, scene_strip_negative_frame_floor(), MAXFRAME);
         strip->scene->r.pefra = clamp_i(
-            strip->scene->r.pefra + moved, MINAFRAME, MAXFRAME);
+            strip->scene->r.pefra + moved, scene_strip_negative_frame_floor(), MAXFRAME);
       }
       break;
     }
@@ -2029,7 +2063,7 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
          * far as the range can follow - its only two stops are the scene
          * frame bounds (BFA), the same bounds the MOVE branch uses. */
         moved_request = clamp_i(moved_request,
-                                MINAFRAME - strip->scene->r.sfra,
+                                scene_strip_negative_frame_floor() - strip->scene->r.sfra,
                                 MAXFRAME - strip->scene->r.efra);
       }
       const int start_before = int(strip->start);
@@ -2049,9 +2083,9 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
          * window slides with the strip (§2.4). */
         if (data->preview_coupled && strip->scene) {
           strip->scene->r.psfra = clamp_i(
-              strip->scene->r.psfra + moved, MINAFRAME, MAXFRAME);
+              strip->scene->r.psfra + moved, scene_strip_negative_frame_floor(), MAXFRAME);
           strip->scene->r.pefra = clamp_i(
-              strip->scene->r.pefra + moved, MINAFRAME, MAXFRAME);
+              strip->scene->r.pefra + moved, scene_strip_negative_frame_floor(), MAXFRAME);
         }
       }
       /* BFA (#6780): live overlap feedback during the drag, same as the VSE -
