@@ -1960,8 +1960,12 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
         data->move_base_sfra = strip->scene->r.sfra;
         data->move_clamp_initialized = true;
       }
-      delta = clamp ? strip->scene->r.sfra - data->move_base_sfra :
-                      int(strip->anim_startofs) - int(data->orig_anim_startofs);
+      /* BFA (#6780): the servo derives the already-applied displacement from
+       * the scene range in BOTH middle-bar branches (MOVE and SLIP): the
+       * clamp MOVE translates sfra/efra, and - since the fix below - the
+       * non-clamp MOVE does too, so the delta can no longer be read from
+       * anim_startofs (which no longer changes during the drag). */
+      delta = strip->scene ? strip->scene->r.sfra - data->move_base_sfra : 0;
       int moved = offset - delta;
       if (moved != 0) {
         if (clamp && strip->scene) {
@@ -1974,16 +1978,22 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
           strip->scene->r.efra += moved;
         }
         else if (!clamp && strip->scene) {
-          /* Slip the content window inside the scene's frame range (BFA):
-           * the scene range IS the strip's content, so the window stays
-           * within [sfra, efra] - anim_startofs/anim_endofs never go
-           * negative (the same bound a VSE slip has against the media
-           * length). */
-          moved = clamp_i(moved,
-                          -int(strip->anim_startofs),
-                          -int(strip->anim_endofs));
-          strip->anim_startofs += moved;
-          strip->anim_endofs -= moved;
+          /* BFA (#6780): for a scene strip the content window IS the scene's
+           * frame range [sfra, efra] - there is no off-screen media to slip
+           * into. Translating the scene range moves the window's start and
+           * end exactly as the gizmo intends, while the derived content
+           * length (efra - sfra + 1 - anim_startofs - anim_endofs) and the
+           * visible extent (start + len - endofs) are unchanged, so the
+           * strip's master handles stay locked - same result as the clamp
+           * translate, minus the range alignment. The window is bounded by
+           * the representable frame range (BFA), like every scene range.
+           * NOTE: bounding the move by anim_startofs/anim_endofs staying
+           * non-negative was wrong - both are 0 for a full-range window,
+           * which clamped every move to zero (the "stuck" bar). */
+          moved = clamp_i(
+              moved, MINAFRAME - strip->scene->r.sfra, MAXFRAME - strip->scene->r.efra);
+          strip->scene->r.sfra += moved;
+          strip->scene->r.efra += moved;
         }
       }
       /* BFA (#6780): the preview range translates 1:1 with the window move
