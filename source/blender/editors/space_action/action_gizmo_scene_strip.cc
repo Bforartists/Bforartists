@@ -229,6 +229,8 @@ struct SceneStripGizmoExtent {
 /* Forward declaration: the "Set Preview Range" overlay toggle is defined with
  * the timing operator below but is also needed to resolve the no-strip target. */
 static bool scene_strip_use_preview_range_get(const bContext *C);
+/* Forward declaration: the "Clamp Scene Range" overlay toggle, likewise. */
+static bool scene_strip_clamp_to_strip_get(const bContext *C);
 
 /* BFA (#6780, §5.4): what the dope-sheet gizmo operates on. Normally this is a
  * scene strip on a master timeline (see #ANIM_scene_strip_master_get). When the
@@ -242,10 +244,14 @@ struct SceneStripGizmoTarget {
   /* The master timeline scene (strip mode) or the active scene (fallback). */
   Scene *scene;
   /* Fallback only: true when the gizmo edits the active scene's render range
-   * (sfra/efra); false when it edits the preview range (psfra/pefra). */
+   * (sfra/efra). Selected by "Clamp Scene Range" (or when no toggle is on). */
   bool scene_range_mode;
-  /* Fallback only: true when a preview range is being edited. */
-  bool preview_mode;
+  /* Fallback only: true when the render range is being edited. */
+  bool edit_render;
+  /* Fallback only: true when the preview range (psfra/pefra) is being edited.
+   * Selected by "Set Preview Range". Both can be on at once, in which case the
+   * gizmo edits them together (mirroring the strip-mode "both toggles" row). */
+  bool edit_preview;
 
   bool is_strip() const
   {
@@ -263,25 +269,30 @@ static SceneStripGizmoTarget scene_strip_gizmo_target_get(const bContext *C)
     target.scene = master_scene;
     return target;
   }
-  /* No-strip fallback: operate on the active scene's own frame ranges. Preview
-   * mode requires the scene to actually have a preview range enabled
-   * (#SCER_PRV_RANGE); otherwise the render range is edited. */
+  /* No-strip fallback: operate on the active scene's own frame ranges. The
+   * toggles select which ranges are edited, mirroring the strip-mode rows:
+   * "Clamp Scene Range" -> the render range, "Set Preview Range" -> the preview
+   * range, both -> both. With neither toggle the render range is the default
+   * (the gizmo always does something useful). */
   Scene *active_scene = CTX_data_scene(C);
+  const bool preview_on = active_scene != nullptr &&
+                          scene_strip_use_preview_range_get(C);
+  const bool clamp_on = scene_strip_clamp_to_strip_get(C);
   target.strip = nullptr;
   target.scene = active_scene;
-  target.preview_mode = active_scene != nullptr &&
-                        scene_strip_use_preview_range_get(C) &&
-                        (active_scene->r.flag & SCER_PRV_RANGE) != 0;
-  target.scene_range_mode = !target.preview_mode;
+  target.edit_preview = preview_on;
+  target.edit_render = clamp_on || !preview_on;
+  target.scene_range_mode = target.edit_render && !target.edit_preview;
   return target;
 }
 
 /* Fallback-only geometry: the frame extent the gizmo spans when there is no
- * strip. The preview range when one is being edited, else the render range. */
+ * strip. The preview range when only the preview range is edited, else the
+ * render range. */
 static SceneStripGizmoExtent scene_range_gizmo_extent(const SceneStripGizmoTarget &target)
 {
   SceneStripGizmoExtent ext{};
-  const bool preview = target.preview_mode;
+  const bool preview = target.edit_preview && !target.edit_render;
   const int start = preview ? target.scene->r.psfra : target.scene->r.sfra;
   const int end = preview ? target.scene->r.pefra : target.scene->r.efra;
   ext.frame_in = float(start);
@@ -455,11 +466,21 @@ static void strip_move_bump_color(const Scene *master_scene, float r_color[4])
 /* Resolve overlaps left by a move drag, like the VSE does when a strip grab is
  * released: the master timeline's overlap mode decides - expand pushes the bumped
  * strips along, shuffle slides this strip to the nearest free spot, overwrite trims
- * the bumped strips. BFA (#6780): shuffle never leaves its lane - it seeks the
- * nearest free spot at the start/end of the same lane (transform_seqbase_shuffle_time)
- * or bounces back, matching the VSE; the previous "never leaves its track" fallback
- * forced the strip back to its original channel and re-shuffled in time, which fought
- * the shuffle mode and could re-create the overlap it just resolved. */
+ * the bumped strips.
+ *
+ * BFA (#6780, §5.6): the drag marks the dragged strip `SEQ_SELECT` so the
+ * overwrite helper excludes it. But the VSE helpers also *skip every other
+ * selected strip* (`query_unselected_strips` / `query_right_side_strips` both
+ * drop `SEQ_SELECT` strips), so any strip the user had selected was left
+ * untouched and the overlap survived ("draws the effect but stays overlapping
+ * in the sequencer"). The previous code also bypassed the generic
+ * `transform_handle_overlap` for shuffle and only ran a lane time-shuffle. Fix:
+ * temporarily clear `SEQ_SELECT` on every strip except the dragged one for the
+ * duration of the resolve, so the mode helpers see the whole timeline; restore
+ * the selection afterwards. The generic `transform_handle_overlap` is used for
+ * all modes (as before the shuffle-only regression); the lane-only time shuffle
+ * remains a last resort when a strip is still overlapping (e.g. it could not
+ * move off a locked strip). */
 static void resolve_move_overlap(Scene *master_scene, Strip *strip)
 {
   Editing *ed = seq::editing_get(master_scene);
@@ -468,15 +489,35 @@ static void resolve_move_overlap(Scene *master_scene, Strip *strip)
   }
   Vector<Strip *> source;
   source.append(strip);
-  if (scene_strip_overlap_mode_get(master_scene) == SEQ_OVERLAP_SHUFFLE) {
-    /* Lane-only shuffle: seek the nearest free spot at the start/end of the same
-     * lane, never move to another channel. */
+
+  /* Snapshot and clear the selection of every other strip so the VSE overlap
+   * helpers do not skip them. The dragged strip keeps `SEQ_SELECT` so the
+   * overwrite helper still excludes it as the source. */
+  Vector<Strip *> reselect;
+  for (Strip &s : ed->seqbase) {
+    if (&s == strip || (s.flag & SEQ_SELECT) == 0) {
+      continue;
+    }
+    reselect.append(&s);
+    s.flag &= ~SEQ_SELECT;
+  }
+
+  seq::transform_handle_overlap(master_scene, &ed->seqbase, source, false);
+
+  /* Last resort: if the strip is still overlapping (e.g. it could not move off
+   * a locked strip / inside a transition), do a same-lane time shuffle so it at
+   * least lands in a free spot; if that cannot either, it stays put. */
+  if (scene_strip_overlap_mode_get(master_scene) == SEQ_OVERLAP_SHUFFLE &&
+      seq::transform_test_overlap(master_scene, &ed->seqbase, strip))
+  {
     seq::transform_seqbase_shuffle_time(
         source, &ed->seqbase, master_scene, &master_scene->markers, false);
-    strip->runtime->flag &= ~seq::StripRuntimeFlag::Overlap;
-    return;
   }
-  seq::transform_handle_overlap(master_scene, &ed->seqbase, source, false);
+  strip->runtime->flag &= ~seq::StripRuntimeFlag::Overlap;
+
+  for (Strip *s : reselect) {
+    s->flag |= SEQ_SELECT;
+  }
 }
 
 /** \} */
@@ -1475,12 +1516,18 @@ struct SceneStripTimingOp {
    * strip-specific code paths are skipped. */
   bool scene_range_mode;
   /* BFA (#6780, §5.4): fallback only - true when editing the preview range
-   * (psfra/pefra) rather than the render range (sfra/efra). */
-  bool preview_mode;
-  /* BFA (#6780, §5.4): fallback only - the invoke snapshot of the edited pair,
-   * used as the absolute base for LEFT/RIGHT and the delta base for MOVE/SLIP. */
+   * (psfra/pefra) rather than the render range (sfra/efra). Both `edit_render`
+   * and `edit_preview` can be set at once (clamp + preview toggles), in which
+   * case the drag edits both ranges together. */
+  bool edit_render;
+  bool edit_preview;
+  /* BFA (#6780, §5.4): fallback only - the invoke snapshot of the render pair
+   * (used as the absolute base for LEFT/RIGHT and the delta base for MOVE/SLIP)
+   * and of the preview pair (used when "Set Preview Range" is also on). */
   int scene_range_base_start;
   int scene_range_base_end;
+  int preview_base_start;
+  int preview_base_end;
   int start_view_x;
   int offset;
   /* BFA (#6780): vertical drag baseline for the strip mover (SLIP) - vertical
@@ -1764,13 +1811,17 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
   ED_region_tag_redraw(CTX_wm_region(C));
 }
 
-/* BFA (#6780, §5.4): no-strip fallback - edit the active scene's own frame
+/* BFA (#6780, §5.4/§5.5): no-strip fallback - edit the active scene's own frame
  * range with the same four zones the strip gizmo uses. LEFT/RIGHT move the
- * start/end edge; MOVE translates the whole window; SLIP translates the preview
- * range (there is no strip to slip). The edited pair is the preview range when
- * preview mode is on, else the render range. All writes are bounded at
- * #MINAFRAME/#MAXFRAME, and LEFT/RIGHT set the edge absolutely from the invoke
- * base (no accumulation). Runs only when no scene strip exists. */
+ * start/end edge; MOVE translates the whole window; SLIP translates the window
+ * too (there is no strip to slip). The toggles pick the pair(s):
+ *   "Clamp Scene Range" -> render range (sfra/efra),
+ *   "Set Preview Range" -> preview range (psfra/pefra),
+ *   both                -> both ranges move together (same delta),
+ *   neither             -> render range.
+ * All writes are bounded at #MINAFRAME/#MAXFRAME, and LEFT/RIGHT set the edge
+ * absolutely from the invoke base (no accumulation). Runs only when no scene
+ * strip exists. */
 static void scene_strip_timing_apply_scene_range(bContext *C, wmOperator *op)
 {
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
@@ -1780,33 +1831,44 @@ static void scene_strip_timing_apply_scene_range(bContext *C, wmOperator *op)
   }
   RenderData *r = &scene->r;
   const int offset = data->offset;
+  const bool edit_render = data->edit_render;
+  const bool edit_preview = data->edit_preview;
 
-  int *range_start = data->preview_mode ? &r->psfra : &r->sfra;
-  int *range_end = data->preview_mode ? &r->pefra : &r->efra;
-  const int base_start = data->scene_range_base_start;
-  const int base_end = data->scene_range_base_end;
-
-  switch (data->mode) {
-    case GZ_PART_LEFT:
-      /* Absolute from the invoke base; keep at least one frame before the end. */
-      *range_start = clamp_i(base_start + offset, MINAFRAME, base_end - 1);
-      break;
-    case GZ_PART_RIGHT:
-      *range_end = clamp_i(base_end + offset, base_start + 1, MAXFRAME);
-      break;
-    case GZ_PART_MOVE:
-    case GZ_PART_SLIP: {
-      /* Translate the whole window, preserving its length. Incremental so a
-       * partially-applied move cannot accumulate. */
-      const int delta = *range_start - base_start;
-      int moved = offset - delta;
-      if (moved != 0) {
-        moved = clamp_i(moved, MINAFRAME - *range_start, MAXFRAME - *range_end);
-        *range_start += moved;
-        *range_end += moved;
+  /* Apply the same edit to one range pair. `delta_*` are computed once from the
+   * base so both pairs stay in lockstep when both are edited. */
+  const auto apply_pair = [&](int *range_start,
+                              int *range_end,
+                              const int base_start,
+                              const int base_end) {
+    switch (data->mode) {
+      case GZ_PART_LEFT:
+        /* Absolute from the invoke base; keep at least one frame before end. */
+        *range_start = clamp_i(base_start + offset, MINAFRAME, base_end - 1);
+        break;
+      case GZ_PART_RIGHT:
+        *range_end = clamp_i(base_end + offset, base_start + 1, MAXFRAME);
+        break;
+      case GZ_PART_MOVE:
+      case GZ_PART_SLIP: {
+        /* Translate the whole window, preserving its length. Incremental so a
+         * partially-applied move cannot accumulate. */
+        const int delta = *range_start - base_start;
+        int moved = offset - delta;
+        if (moved != 0) {
+          moved = clamp_i(moved, MINAFRAME - *range_start, MAXFRAME - *range_end);
+          *range_start += moved;
+          *range_end += moved;
+        }
+        break;
       }
-      break;
     }
+  };
+
+  if (edit_render) {
+    apply_pair(&r->sfra, &r->efra, data->scene_range_base_start, data->scene_range_base_end);
+  }
+  if (edit_preview) {
+    apply_pair(&r->psfra, &r->pefra, data->preview_base_start, data->preview_base_end);
   }
 
   WM_event_add_notifier(C, NC_SCENE | ND_FRAME_RANGE, scene);
@@ -2031,17 +2093,27 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
     data->strip = nullptr;
     data->master_scene = active_scene;
     data->scene_range_mode = true;
-    data->preview_mode = scene_strip_use_preview_range_get(C) &&
-                         (active_scene->r.flag & SCER_PRV_RANGE) != 0;
-    data->scene_range_base_start = data->preview_mode ? active_scene->r.psfra :
-                                                        active_scene->r.sfra;
-    data->scene_range_base_end = data->preview_mode ? active_scene->r.pefra :
-                                                      active_scene->r.efra;
+    const bool preview_on = scene_strip_use_preview_range_get(C);
+    const bool clamp_on = scene_strip_clamp_to_strip_get(C);
+    data->edit_preview = preview_on;
+    data->edit_render = clamp_on || !preview_on;
+    /* "Set Preview Range" implies preview mode: seed a preview range from the
+     * render range so the write is observable (mirrors `update_preview_range`).
+     * Snapshot the pre-seed state FIRST so cancel can undo the seeding. */
     data->orig_sfra = active_scene->r.sfra;
     data->orig_efra = active_scene->r.efra;
     data->orig_psfra = active_scene->r.psfra;
     data->orig_pefra = active_scene->r.pefra;
     data->orig_scene_flag = active_scene->r.flag;
+    if (data->edit_preview && (active_scene->r.flag & SCER_PRV_RANGE) == 0) {
+      active_scene->r.flag |= SCER_PRV_RANGE;
+      active_scene->r.psfra = active_scene->r.sfra;
+      active_scene->r.pefra = active_scene->r.efra;
+    }
+    data->scene_range_base_start = active_scene->r.sfra;
+    data->scene_range_base_end = active_scene->r.efra;
+    data->preview_base_start = active_scene->r.psfra;
+    data->preview_base_end = active_scene->r.pefra;
     data->orig_select = false;
     data->start_view_y = 0;
     data->orig_channel = 0;
@@ -2056,9 +2128,12 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
     data->strip = strip;
     data->master_scene = master_scene;
     data->scene_range_mode = false;
-    data->preview_mode = false;
+    data->edit_render = false;
+    data->edit_preview = false;
     data->scene_range_base_start = 0;
     data->scene_range_base_end = 0;
+    data->preview_base_start = 0;
+    data->preview_base_end = 0;
     data->orig_duration = strip->right_handle(master_scene) - strip->left_handle();
     data->orig_start = strip->start;
     data->orig_startofs = strip->startofs;
