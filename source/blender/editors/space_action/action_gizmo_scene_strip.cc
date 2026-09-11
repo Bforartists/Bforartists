@@ -37,6 +37,7 @@
 #include "DNA_workspace_types.h"
 
 #include "BKE_context.hh"
+#include "BKE_main.hh"
 #include "BKE_wm_runtime.hh"
 
 #include "ED_anim_api.hh"
@@ -126,6 +127,28 @@ static Scene *timeline_sync_master_scene_get(const bContext *C)
   return static_cast<Scene *>(master_ptr.data);
 }
 
+/* BFA (#6780, §2.8): find the first scene strip on `master_scene`'s timeline
+ * that references `active_scene` - the strip the gizmos and the range shading
+ * draw. Returns null when the timeline has no scene strip for the active scene
+ * (or is not a sequencer timeline at all). */
+static const Strip *scene_strip_for_active_scene(const Scene *master_scene,
+                                                 const Scene *active_scene)
+{
+  if (master_scene == nullptr) {
+    return nullptr;
+  }
+  const Editing *ed = seq::editing_get(master_scene);
+  if (ed == nullptr) {
+    return nullptr;
+  }
+  for (const Strip &s : ed->seqbase) {
+    if (s.type == STRIP_TYPE_SCENE && s.scene == active_scene) {
+      return &s;
+    }
+  }
+  return nullptr;
+}
+
 /* Returns the master scene strip the gizmos operate on, and optionally the
  * master scene itself. Works with both the built-in sync (workspace sequencer
  * scene) and the legacy 3D Sequencer addon sync (addon master scene).
@@ -157,19 +180,30 @@ const Strip *ANIM_scene_strip_master_get(const bContext *C, Scene **r_master_sce
       timeline_sync_master_scene_get(C),
   };
   for (const Scene *master_scene : candidates) {
-    if (master_scene == nullptr) {
-      continue;
+    if (const Strip *strip = scene_strip_for_active_scene(master_scene, active_scene)) {
+      if (r_master_scene) {
+        *r_master_scene = const_cast<Scene *>(master_scene);
+      }
+      return strip;
     }
-    const Editing *ed = seq::editing_get(master_scene);
-    if (ed == nullptr) {
-      continue;
-    }
-    for (const Strip &s : ed->seqbase) {
-      if (s.type == STRIP_TYPE_SCENE && s.scene == active_scene) {
+  }
+  /* BFA (#6780, §2.8): last-resort fallback so the gizmos/overlays draw without
+   * the sync ever being initialized. Neither store is guaranteed to be set:
+   * `workspace->sequencer_scene` is saved in the file but is optional, and the
+   * addon's `master_scene` is a transient WindowManager property (never saved,
+   * cleared on load). When both are empty, scan the file's scenes for the first
+   * sequencer timeline that holds a scene strip referencing the active scene and
+   * use it - so the "Scene Strip Gizmo" toggle alone is enough to reveal the
+   * gizmo, no Sync required. Scenes are visited in list order for determinism. */
+  Main *bmain = CTX_data_main(C);
+  if (bmain != nullptr) {
+    for (Scene &scene : bmain->scenes) {
+      const Strip *strip = scene_strip_for_active_scene(&scene, active_scene);
+      if (strip != nullptr) {
         if (r_master_scene) {
-          *r_master_scene = const_cast<Scene *>(master_scene);
+          *r_master_scene = &scene;
         }
-        return &s;
+        return strip;
       }
     }
   }
@@ -1368,6 +1402,16 @@ struct SceneStripTimingOp {
    * range (#SCER_PRV_RANGE) - without it there is nothing to translate. */
   bool preview_coupled;
   bool clamp_coupled;
+  /* BFA (#6780, §5.3): the clamp-mode MOVE bar (range window) aligns the scene
+   * range to the strip's visible extent ONCE, on the first movement of the drag,
+   * before the 1:1 translate begins. Previously the alignment ran on release, so
+   * the range translated with a stale length and then jumped when the drag ended
+   * ("updates, then snaps"). Initializing at the first move removes the release
+   * jump while keeping the mode's SET-clamp contract (the range ends up aligned
+   * to the strip, then is translated by the drag). `move_base_sfra` is the delta
+   * base, re-seeded right after that one-time alignment. */
+  bool move_clamp_initialized;
+  int move_base_sfra;
   /* Signed displacement applied to the preceding strips by
    * adjust_shot_duration_left (positive when they were pushed left). */
   int pushed_before_total;
@@ -1619,7 +1663,21 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
        * it shifts the strip's handles (startofs/endofs). The preview range
        * translates 1:1 here when preview-coupled (captured at invoke, §2.4). */
       const bool clamp = data->clamp_coupled;
-      delta = clamp ? strip->scene->r.sfra - data->orig_sfra :
+      /* BFA (#6780, §5.3): with clamp on, align the scene range to the strip's
+       * visible extent (plus lead-in/out) ONCE, on the first movement, before the
+       * 1:1 translate begins. Previously that alignment ran on release, so the
+       * range translated with a stale length and then jumped when the drag ended
+       * ("updates, then snaps"). Initializing up front makes the whole drag
+       * consistent - the length equals the strip's extent from the first pixel -
+       * and removes the release jump, while keeping the mode's SET-clamp
+       * contract (the range is aligned to the strip, then translated by the
+       * drag). The invoke snapshot is untouched, so Esc still restores exactly. */
+      if (clamp && strip->scene && !data->move_clamp_initialized && offset != 0) {
+        clamp_scene_strip_range(C, master_scene, strip);
+        data->move_base_sfra = strip->scene->r.sfra;
+        data->move_clamp_initialized = true;
+      }
+      delta = clamp ? strip->scene->r.sfra - data->move_base_sfra :
                       int(strip->startofs) - int(data->orig_startofs);
       int moved = offset - delta;
       if (moved != 0) {
@@ -1744,20 +1802,13 @@ static void scene_strip_timing_finish(bContext *C, wmOperator *op)
    * back into the modal drag's delta tracking and would make the strip race.
    * At release the strip's final geometry is settled, so the clamp only touches
    * the scene render range (sfra/efra) and keeps everything else fixed.
-   * BFA (#6780): the retime handles (LEFT/RIGHT) and the range window (MOVE)
-   * run the release clamp here; the strip mover (SLIP) has its own block above
-   * so the clamp runs before its overlap resolution. For the retime handles
-   * the snap aligns the range to the dragged edge. For MOVE it "initializes"
-   * the snap (§5.2): the drag translated sfra/efra 1:1 preserving whatever
-   * length the range had at invoke, so when that length is stale (the range
-   * was edited from the timeline first), the release snap is what settles the
-   * length to the strip's visible extent - the same one-time alignment the
-   * green/red handles apply on their first drag. When the length is already
-   * correct the snap only re-pads the lead in/out, which is the usual
-   * "snaps on release with lead-in/out" behavior. */
-  if (scene_strip_clamp_to_strip_get(C) &&
-      ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT, GZ_PART_MOVE))
-  {
+   * BFA (#6780): the retime handles (LEFT/RIGHT) run the release clamp here;
+   * the strip mover (SLIP) has its own block above so the clamp runs before its
+   * overlap resolution. The range window (MOVE) is NOT clamped on release: it
+   * aligns the range to the strip once on its first movement instead (§5.3), so
+   * a release snap would re-pad and shift the range after the drag, re-creating
+   * the "updates, then snaps" jump it was meant to remove. */
+  if (scene_strip_clamp_to_strip_get(C) && ELEM(data->mode, GZ_PART_LEFT, GZ_PART_RIGHT)) {
     clamp_scene_strip_range(C, data->master_scene, data->strip);
     scene_strip_timing_sync_ranges(C, op);
   }
@@ -1805,6 +1856,11 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
   data->preview_coupled = scene_strip_use_preview_range_get(C) &&
                           (strip->scene->r.flag & SCER_PRV_RANGE) != 0;
   data->clamp_coupled = scene_strip_clamp_to_strip_get(C);
+  /* BFA (#6780, §5.3): the clamp-mode MOVE bar aligns the range to the strip
+   * once, on its first movement (see the apply branch). The base is the current
+   * range until that alignment re-seeds it. */
+  data->move_clamp_initialized = false;
+  data->move_base_sfra = strip->scene->r.sfra;
   data->pushed_before_total = 0;
   data->pushed_following_total = 0;
 
@@ -2043,7 +2099,7 @@ static bool scene_strip_sync_from_range_poll(bContext *C)
   }
   /* A scene strip must exist for the active scene. */
   Scene *master_scene = nullptr;
-  const Strip *strip = scene_strip_master_get(C, &master_scene);
+  const Strip *strip = ANIM_scene_strip_master_get(C, &master_scene);
   if (strip == nullptr || strip->scene == nullptr) {
     return false;
   }
@@ -2076,7 +2132,7 @@ static std::string scene_strip_sync_from_range_get_description(bContext * /*C*/,
 static wmOperatorStatus scene_strip_sync_from_range_exec(bContext *C, wmOperator * /*op*/)
 {
   Scene *master_scene = nullptr;
-  Strip *strip = const_cast<Strip *>(scene_strip_master_get(C, &master_scene));
+  Strip *strip = const_cast<Strip *>(ANIM_scene_strip_master_get(C, &master_scene));
   if (strip == nullptr || strip->scene == nullptr) {
     return OPERATOR_CANCELLED;
   }
