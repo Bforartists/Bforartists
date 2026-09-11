@@ -22,6 +22,7 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
+#include "BLI_utildefines.hh"
 #include "BLI_rect.hh"
 #include "BLI_utildefines.hh"
 
@@ -192,7 +193,7 @@ void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
   bool is_master_fallback = false;
   const Strip *drag_strip = nullptr;
   const Strip *target_strip = ed::vse::sync_scene_strip_scrub_target_get(
-      C, &sequencer_scene, &master_frame, &is_master_fallback, &drag_strip);
+      *C, &sequencer_scene, &master_frame, &is_master_fallback, &drag_strip);
   if (!sequencer_scene || !drag_strip || !drag_strip->scene) {
     return;
   }
