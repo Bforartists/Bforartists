@@ -1936,8 +1936,14 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
       /* BFA (#6780): the top middle gizmo moves the strip's content window (its
        * start/end in the dopesheet) while the sequencer position stays locked.
        * In clamp mode this shifts the scene range (sfra/efra); in non-clamp mode
-       * it shifts the strip's handles (startofs/endofs). The preview range
-       * translates 1:1 here when preview-coupled (captured at invoke, §2.4). */
+       * it slips the strip's CONTENT offsets (anim_startofs/anim_endofs) - the
+       * same pair the dopesheet mapping reads
+       * (give_frame_index() + sfra + anim_startofs), so the bar's displayed
+       * range slides while the master handles
+       * (left_handle = start + startofs) stay exactly where they were. The
+       * master-side startofs/endofs trims would slide the strip through the
+       * sequencer timeline instead. The preview range translates 1:1 here
+       * when preview-coupled (captured at invoke, §2.4). */
       const bool clamp = data->clamp_coupled;
       /* BFA (#6780, §5.3): with clamp on, align the scene range to the strip's
        * visible extent (plus lead-in/out) ONCE, on the first movement, before the
@@ -1954,7 +1960,7 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
         data->move_clamp_initialized = true;
       }
       delta = clamp ? strip->scene->r.sfra - data->move_base_sfra :
-                      int(strip->startofs) - int(data->orig_startofs);
+                      int(strip->anim_startofs) - int(data->orig_anim_startofs);
       int moved = offset - delta;
       if (moved != 0) {
         if (clamp && strip->scene) {
@@ -1966,9 +1972,17 @@ static void scene_strip_timing_apply(bContext *C, wmOperator *op)
           strip->scene->r.sfra += moved;
           strip->scene->r.efra += moved;
         }
-        else if (!clamp) {
-          strip->startofs += moved;
-          strip->endofs -= moved;
+        else if (!clamp && strip->scene) {
+          /* Slip the content window inside the scene's frame range (BFA):
+           * the scene range IS the strip's content, so the window stays
+           * within [sfra, efra] - anim_startofs/anim_endofs never go
+           * negative (the same bound a VSE slip has against the media
+           * length). */
+          moved = clamp_i(moved,
+                          -int(strip->anim_startofs),
+                          -int(strip->anim_endofs));
+          strip->anim_startofs += moved;
+          strip->anim_endofs -= moved;
         }
       }
       /* BFA (#6780): the preview range translates 1:1 with the window move
