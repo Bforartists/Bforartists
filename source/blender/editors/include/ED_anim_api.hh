@@ -924,6 +924,7 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d);
  * whichever store actually holds a scene strip for the active scene, so the
  * gizmos and shading draw regardless of the sync state (BFA #6780).
  */
+struct Strip;
 const Strip *ANIM_scene_strip_master_get(const bContext *C, Scene **r_master_scene);
 
 /** \} */
