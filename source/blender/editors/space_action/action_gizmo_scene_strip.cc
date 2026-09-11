@@ -226,6 +226,70 @@ struct SceneStripGizmoExtent {
   float frame_out;
 };
 
+/* Forward declaration: the "Set Preview Range" overlay toggle is defined with
+ * the timing operator below but is also needed to resolve the no-strip target. */
+static bool scene_strip_use_preview_range_get(const bContext *C);
+
+/* BFA (#6780, §5.4): what the dope-sheet gizmo operates on. Normally this is a
+ * scene strip on a master timeline (see #ANIM_scene_strip_master_get). When the
+ * file has no scene strip for the active scene at all - a plain scene with no
+ * sequencer, or before any shot exists - the gizmo falls back to the ACTIVE
+ * SCENE's own frame ranges so it still works as a range-setting tool (start/end
+ * plus the preview range). `strip` is null in that fallback mode. */
+struct SceneStripGizmoTarget {
+  /* The scene strip being edited, or null in the no-strip fallback. */
+  const Strip *strip;
+  /* The master timeline scene (strip mode) or the active scene (fallback). */
+  Scene *scene;
+  /* Fallback only: true when the gizmo edits the active scene's render range
+   * (sfra/efra); false when it edits the preview range (psfra/pefra). */
+  bool scene_range_mode;
+  /* Fallback only: true when a preview range is being edited. */
+  bool preview_mode;
+
+  bool is_strip() const
+  {
+    return this->strip != nullptr;
+  }
+};
+
+static SceneStripGizmoTarget scene_strip_gizmo_target_get(const bContext *C)
+{
+  SceneStripGizmoTarget target{};
+  Scene *master_scene = nullptr;
+  const Strip *strip = ANIM_scene_strip_master_get(C, &master_scene);
+  if (strip != nullptr && strip->scene != nullptr) {
+    target.strip = strip;
+    target.scene = master_scene;
+    return target;
+  }
+  /* No-strip fallback: operate on the active scene's own frame ranges. Preview
+   * mode requires the scene to actually have a preview range enabled
+   * (#SCER_PRV_RANGE); otherwise the render range is edited. */
+  Scene *active_scene = CTX_data_scene(C);
+  target.strip = nullptr;
+  target.scene = active_scene;
+  target.preview_mode = active_scene != nullptr &&
+                        scene_strip_use_preview_range_get(C) &&
+                        (active_scene->r.flag & SCER_PRV_RANGE) != 0;
+  target.scene_range_mode = !target.preview_mode;
+  return target;
+}
+
+/* Fallback-only geometry: the frame extent the gizmo spans when there is no
+ * strip. The preview range when one is being edited, else the render range. */
+static SceneStripGizmoExtent scene_range_gizmo_extent(const SceneStripGizmoTarget &target)
+{
+  SceneStripGizmoExtent ext{};
+  const bool preview = target.preview_mode;
+  const int start = preview ? target.scene->r.psfra : target.scene->r.sfra;
+  const int end = preview ? target.scene->r.pefra : target.scene->r.efra;
+  ext.frame_in = float(start);
+  /* `efra` is inclusive; the bar's right edge sits one frame past it. */
+  ext.frame_out = float(end) + 1.0f;
+  return ext;
+}
+
 /* BFA (#6780) §2.7: linear, UNCLAMPED handle -> strip-scene frame map.
  *
  * `give_frame_index()` saturates the content index into `[0, content_length-1]`
@@ -257,13 +321,25 @@ static SceneStripGizmoExtent scene_strip_gizmo_extent(const bContext * /*C*/,
   return ext;
 }
 
+/* Resolve the gizmo extent for either mode: the strip's own range (strip mode)
+ * or the active scene's render/preview range (no-strip fallback, §5.4). */
+static SceneStripGizmoExtent scene_strip_gizmo_extent_get(const SceneStripGizmoTarget &target,
+                                                          Scene *master_scene)
+{
+  if (target.is_strip()) {
+    return scene_strip_gizmo_extent(nullptr, master_scene, target.strip);
+  }
+  return scene_range_gizmo_extent(target);
+}
+
 /* Compute the hit-areas of the master strip bar in region pixels. Returns false
- * when there is no usable strip (or the region is too small). */
+ * when there is no usable target (or the region is too small). Works in both
+ * modes: a scene strip on a master timeline, or the active scene's own ranges
+ * when no strip exists (§5.4). */
 static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects *rects)
 {
-  Scene *master_scene = nullptr;
-  const Strip *strip = ANIM_scene_strip_master_get(C, &master_scene);
-  if (!strip) {
+  const SceneStripGizmoTarget target = scene_strip_gizmo_target_get(C);
+  if (target.scene == nullptr) {
     return false;
   }
   ARegion *region = CTX_wm_region(C);
@@ -271,7 +347,7 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
     return false;
   }
   const Scene *active_scene = CTX_data_scene(C);
-  if (strip->scene != active_scene) {
+  if (active_scene == nullptr) {
     return false;
   }
 
@@ -282,7 +358,7 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
   const int strip_height = int(26.0f * ui_scale);
   const int y_strip = baseline + int(2.0f * ui_scale);
 
-  const SceneStripGizmoExtent ext = scene_strip_gizmo_extent(C, master_scene, strip);
+  const SceneStripGizmoExtent ext = scene_strip_gizmo_extent_get(target, target.scene);
 
   View2D *v2d = &region->v2d;
   int x_in, x_out, y_dummy;
@@ -466,13 +542,14 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
   {
     return;
   }
-  Scene *master_scene = nullptr;
-  const Strip *strip = ANIM_scene_strip_master_get(C, &master_scene);
-  if (strip == nullptr || strip->scene == nullptr) {
+  SceneStripGizmoTarget target = scene_strip_gizmo_target_get(C);
+  if (target.scene == nullptr) {
     return;
   }
+  Scene *master_scene = target.scene;
+  const Strip *strip = target.strip;
   const Scene *active_scene = CTX_data_scene(C);
-  if (strip->scene != active_scene) {
+  if (active_scene == nullptr) {
     return;
   }
   ARegion *region = CTX_wm_region(C);
@@ -583,10 +660,19 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     };
     blender::Vector<LaneInterval> lane_intervals[lane_max + 1];
     /* BFA (#6780) §2.7: the bar's lane occupancy uses the same unclamped strip
-     * extent the bar itself is drawn with. */
-    float bar_frame_in = scene_strip_frame_from_handle(strip, strip->left_handle());
-    float bar_frame_out = scene_strip_frame_from_handle(
-        strip, strip->right_handle(master_scene) - 1);
+     * extent the bar itself is drawn with. In the no-strip fallback (§5.4) the
+     * bar spans the active scene's range instead. */
+    float bar_frame_in = 0.0f, bar_frame_out = 0.0f;
+    if (target.is_strip()) {
+      bar_frame_in = scene_strip_frame_from_handle(strip, strip->left_handle());
+      bar_frame_out = scene_strip_frame_from_handle(
+          strip, strip->right_handle(master_scene) - 1);
+    }
+    else {
+      const SceneStripGizmoExtent bar_ext = scene_range_gizmo_extent(target);
+      bar_frame_in = bar_ext.frame_in;
+      bar_frame_out = bar_ext.frame_out - 1.0f;
+    }
     if (bar_frame_in > bar_frame_out) {
       std::swap(bar_frame_in, bar_frame_out);
     }
@@ -713,9 +799,24 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     const bool right_grabbed = (modal_part == GZ_PART_RIGHT);
 
     /* BFA (#6780): the bar body uses the strip's color - the same color tag or
-     * scene-strip theme color the VSE shows - shaded for the body and outline. */
+     * scene-strip theme color the VSE shows - shaded for the body and outline.
+     * In the no-strip fallback (§5.4) the strip-scene theme color is used. */
     float strip_col[4];
-    scene_strip_color_get(strip, strip_col);
+    if (target.is_strip()) {
+      scene_strip_color_get(strip, strip_col);
+    }
+    else {
+      uchar scene_col[3];
+      ui::theme::bThemeState theme_state;
+      ui::theme::theme_store(&theme_state);
+      ui::theme::theme_set(SPACE_SEQ, RGN_TYPE_WINDOW);
+      ui::theme::get_color_3ubv(TH_SEQ_SCENE, scene_col);
+      ui::theme::theme_restore(&theme_state);
+      strip_col[0] = scene_col[0] / 255.0f;
+      strip_col[1] = scene_col[1] / 255.0f;
+      strip_col[2] = scene_col[2] / 255.0f;
+      strip_col[3] = 1.0f;
+    }
     uchar col_uc[3] = {uchar(strip_col[0] * 255.0f),
                        uchar(strip_col[1] * 255.0f),
                        uchar(strip_col[2] * 255.0f)};
@@ -859,8 +960,9 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     /* BFA - overlap-mode bump feedback: while a move drag leaves the strip
      * overlapping a strip on the same channel, ring the bar in the color of the
      * master timeline's overlap mode so the user sees what releasing will do to
-     * the bumped strip (green expand, sky blue shuffle, red overwrite). */
-    if (strip_move_bump_active(master_scene, strip)) {
+     * the bumped strip (green expand, sky blue shuffle, red overwrite). Strip
+     * mode only - the no-strip fallback has no neighbours to bump. */
+    if (target.is_strip() && strip_move_bump_active(master_scene, strip)) {
       float bump_color[4];
       strip_move_bump_color(master_scene, bump_color);
       ui::draw_roundbox_corner_set(ui::CNR_ALL);
@@ -871,10 +973,14 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
      * overlay toggles, centered in the top (move) zone so the bar always
      * identifies the shot it belongs to ("Name | Scene" when both are on).
      * Dark label for contrast on the lightened top zone; drawn last (BLF manages
-     * its own GPU state, nothing imm follows). */
+     * its own GPU state, nothing imm follows). In the no-strip fallback (§5.4)
+     * the active scene's name is shown. */
     if ((show_strip_names || show_scene_names) && zone_x1 - zone_x0 > 6.0f * ui_scale) {
       char label[128];
-      if (show_strip_names && show_scene_names && strip->scene) {
+      if (!target.is_strip()) {
+        SNPRINTF(label, "%s", active_scene->id.name + 2);
+      }
+      else if (show_strip_names && show_scene_names && strip->scene) {
         SNPRINTF(label, "%s | %s", strip->name + 2, strip->scene->id.name + 2);
       }
       else if (show_strip_names) {
@@ -1004,13 +1110,12 @@ static bool WIDGETGROUP_scene_strip_poll(const bContext *C, wmGizmoGroupType * /
   {
     return false;
   }
-  const Strip *strip = ANIM_scene_strip_master_get(C, nullptr);
-  if (!strip) {
-    return false;
-  }
-  /* Only show the gizmos when the dope-sheet displays the strip's scene. */
-  const Scene *active_scene = CTX_data_scene(C);
-  return strip->scene == active_scene;
+  /* BFA (#6780, §5.4): show the gizmo whenever there is a target - a scene
+   * strip on a master timeline, or (fallback) the active scene's own frame
+   * ranges when no strip exists. This makes the gizmo usable as a plain
+   * range-setting tool on any scene, with no sequencer/pinned scene/sync. */
+  const SceneStripGizmoTarget target = scene_strip_gizmo_target_get(C);
+  return target.scene != nullptr;
 }
 
 static void WIDGETGROUP_scene_strip_setup(const bContext * /*C*/, wmGizmoGroup *gzgroup)
@@ -1364,6 +1469,18 @@ struct SceneStripTimingOp {
   Strip *strip;
   Scene *master_scene;
   int mode;
+  /* BFA (#6780, §5.4): true when there is no scene strip and the operator edits
+   * the active scene's own render/preview range instead (the no-strip
+   * fallback). `strip`/`master_scene` then refer to the active scene and the
+   * strip-specific code paths are skipped. */
+  bool scene_range_mode;
+  /* BFA (#6780, §5.4): fallback only - true when editing the preview range
+   * (psfra/pefra) rather than the render range (sfra/efra). */
+  bool preview_mode;
+  /* BFA (#6780, §5.4): fallback only - the invoke snapshot of the edited pair,
+   * used as the absolute base for LEFT/RIGHT and the delta base for MOVE/SLIP. */
+  int scene_range_base_start;
+  int scene_range_base_end;
   int start_view_x;
   int offset;
   /* Original state for the offset delta tracking. */
@@ -1483,7 +1600,7 @@ static void restore_preview_range(bContext *C, wmOperator *op)
   if (scene_strip_use_preview_range_get(C)) {
     return;
   }
-  if (!data->strip->scene) {
+  if (data->strip == nullptr || !data->strip->scene) {
     return;
   }
   data->strip->scene->r.psfra = data->orig_psfra;
@@ -1571,6 +1688,12 @@ static void clamp_scene_strip_range(const bContext *C, Scene *master_scene, Stri
 static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
 {
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
+  /* BFA (#6780, §5.4): the no-strip fallback edits the active scene's own frame
+   * ranges directly and has no strip to keep in sync - the apply branch already
+   * sent the notifiers. */
+  if (data->scene_range_mode) {
+    return;
+  }
   Scene *master_scene = data->master_scene;
   Strip *strip = data->strip;
   const bool use_preview_range = scene_strip_use_preview_range_get(C);
@@ -1636,9 +1759,63 @@ static void scene_strip_timing_sync_ranges(bContext *C, wmOperator *op)
   ED_region_tag_redraw(CTX_wm_region(C));
 }
 
+/* BFA (#6780, §5.4): no-strip fallback - edit the active scene's own frame
+ * range with the same four zones the strip gizmo uses. LEFT/RIGHT move the
+ * start/end edge; MOVE translates the whole window; SLIP translates the preview
+ * range (there is no strip to slip). The edited pair is the preview range when
+ * preview mode is on, else the render range. All writes are bounded at
+ * #MINAFRAME/#MAXFRAME, and LEFT/RIGHT set the edge absolutely from the invoke
+ * base (no accumulation). Runs only when no scene strip exists. */
+static void scene_strip_timing_apply_scene_range(bContext *C, wmOperator *op)
+{
+  SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
+  Scene *scene = data->master_scene;
+  if (scene == nullptr) {
+    return;
+  }
+  RenderData *r = &scene->r;
+  const int offset = data->offset;
+
+  int *range_start = data->preview_mode ? &r->psfra : &r->sfra;
+  int *range_end = data->preview_mode ? &r->pefra : &r->efra;
+  const int base_start = data->scene_range_base_start;
+  const int base_end = data->scene_range_base_end;
+
+  switch (data->mode) {
+    case GZ_PART_LEFT:
+      /* Absolute from the invoke base; keep at least one frame before the end. */
+      *range_start = clamp_i(base_start + offset, MINAFRAME, base_end - 1);
+      break;
+    case GZ_PART_RIGHT:
+      *range_end = clamp_i(base_end + offset, base_start + 1, MAXFRAME);
+      break;
+    case GZ_PART_MOVE:
+    case GZ_PART_SLIP: {
+      /* Translate the whole window, preserving its length. Incremental so a
+       * partially-applied move cannot accumulate. */
+      const int delta = *range_start - base_start;
+      int moved = offset - delta;
+      if (moved != 0) {
+        moved = clamp_i(moved, MINAFRAME - *range_start, MAXFRAME - *range_end);
+        *range_start += moved;
+        *range_end += moved;
+      }
+      break;
+    }
+  }
+
+  WM_event_add_notifier(C, NC_SCENE | ND_FRAME_RANGE, scene);
+  WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
+  ED_region_tag_redraw(CTX_wm_region(C));
+}
+
 static void scene_strip_timing_apply(bContext *C, wmOperator *op)
 {
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
+  if (data->scene_range_mode) {
+    scene_strip_timing_apply_scene_range(C, op);
+    return;
+  }
   Strip *strip = data->strip;
   Scene *master_scene = data->master_scene;
   const int offset = data->offset;
@@ -1784,6 +1961,12 @@ static void scene_strip_timing_ui_cleanup(bContext *C, wmOperator *op)
 static void scene_strip_timing_finish(bContext *C, wmOperator *op)
 {
   SceneStripTimingOp *data = static_cast<SceneStripTimingOp *>(op->customdata);
+  /* BFA (#6780, §5.4): the no-strip fallback edits the active scene's ranges
+   * directly - no strip to clamp, resolve or re-sync. */
+  if (data->scene_range_mode) {
+    scene_strip_timing_ui_cleanup(C, op);
+    return;
+  }
   if (data->mode == GZ_PART_SLIP) {
     /* BFA (#6780) §2.5: with "Clamp to Scene Strip" on, the strip mover snaps
      * the scene range to the strip on release (lead-in/out padding), like the
@@ -1825,51 +2008,87 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
 {
   Scene *master_scene = nullptr;
   Strip *strip = const_cast<Strip *>(ANIM_scene_strip_master_get(C, &master_scene));
-  if (!strip || !strip->scene) {
-    return OPERATOR_CANCELLED;
-  }
 
   SceneStripTimingOp *data = MEM_new<SceneStripTimingOp>(__func__);
-  data->strip = strip;
-  data->master_scene = master_scene;
   data->mode = RNA_enum_get(op->ptr, "mode");
   data->offset = 0;
-  data->orig_duration = strip->right_handle(master_scene) - strip->left_handle();
-  data->orig_start = strip->start;
-  data->orig_startofs = strip->startofs;
-  data->orig_master_efra = master_scene->r.efra;
-  data->orig_master_sfra = master_scene->r.sfra;
-  /* BFA (#6780): exact-drag snapshot for a cancel (see the modal handler). */
-  data->orig_left_handle = strip->left_handle();
-  data->orig_right_handle = strip->right_handle(master_scene);
-  data->orig_endofs = strip->endofs;
-  data->orig_len = strip->len;
-  data->orig_anim_startofs = strip->anim_startofs;
-  data->orig_anim_endofs = strip->anim_endofs;
-  data->orig_sfra = strip->scene->r.sfra;
-  data->orig_efra = strip->scene->r.efra;
-  data->orig_psfra = strip->scene->r.psfra;
-  data->orig_pefra = strip->scene->r.pefra;
-  data->orig_scene_flag = strip->scene->r.flag;
-  /* BFA (#6780): capture the middle-bar coupling state at invoke (§2.4) -
-   * the drag ignores toggle changes mid-flight. */
-  data->preview_coupled = scene_strip_use_preview_range_get(C) &&
-                          (strip->scene->r.flag & SCER_PRV_RANGE) != 0;
-  data->clamp_coupled = scene_strip_clamp_to_strip_get(C);
-  /* BFA (#6780, §5.3): the clamp-mode MOVE bar aligns the range to the strip
-   * once, on its first movement (see the apply branch). The base is the current
-   * range until that alignment re-seeds it. */
-  data->move_clamp_initialized = false;
-  data->move_base_sfra = strip->scene->r.sfra;
-  data->pushed_before_total = 0;
-  data->pushed_following_total = 0;
 
-  /* BFA (#6780): mark the dragged strip as selected for the duration of the
-   * drag, like the VSE does. The overlap resolution (query_overwrite_targets)
-   * excludes selected strips, so without this the overwrite mode would target
-   * the dragged strip itself and fall back to a shuffle. */
-  data->orig_select = (strip->flag & SEQ_SELECT) != 0;
-  strip->flag |= SEQ_SELECT;
+  if (!strip || !strip->scene) {
+    /* BFA (#6780, §5.4): no-strip fallback - edit the active scene's own
+     * ranges. Preview mode needs a preview range (#SCER_PRV_RANGE); otherwise
+     * the render range is edited. No strip means no neighbour/clamp/sync work,
+     * so the drag only writes sfra/efra (or psfra/pefra). */
+    Scene *active_scene = CTX_data_scene(C);
+    if (active_scene == nullptr) {
+      MEM_delete(data);
+      return OPERATOR_CANCELLED;
+    }
+    data->strip = nullptr;
+    data->master_scene = active_scene;
+    data->scene_range_mode = true;
+    data->preview_mode = scene_strip_use_preview_range_get(C) &&
+                         (active_scene->r.flag & SCER_PRV_RANGE) != 0;
+    data->scene_range_base_start = data->preview_mode ? active_scene->r.psfra :
+                                                        active_scene->r.sfra;
+    data->scene_range_base_end = data->preview_mode ? active_scene->r.pefra :
+                                                      active_scene->r.efra;
+    data->orig_sfra = active_scene->r.sfra;
+    data->orig_efra = active_scene->r.efra;
+    data->orig_psfra = active_scene->r.psfra;
+    data->orig_pefra = active_scene->r.pefra;
+    data->orig_scene_flag = active_scene->r.flag;
+    data->orig_select = false;
+    data->preview_coupled = false;
+    data->clamp_coupled = false;
+    data->move_clamp_initialized = false;
+    data->move_base_sfra = active_scene->r.sfra;
+    data->pushed_before_total = 0;
+    data->pushed_following_total = 0;
+  }
+  else {
+    data->strip = strip;
+    data->master_scene = master_scene;
+    data->scene_range_mode = false;
+    data->preview_mode = false;
+    data->scene_range_base_start = 0;
+    data->scene_range_base_end = 0;
+    data->orig_duration = strip->right_handle(master_scene) - strip->left_handle();
+    data->orig_start = strip->start;
+    data->orig_startofs = strip->startofs;
+    data->orig_master_efra = master_scene->r.efra;
+    data->orig_master_sfra = master_scene->r.sfra;
+    /* BFA (#6780): exact-drag snapshot for a cancel (see the modal handler). */
+    data->orig_left_handle = strip->left_handle();
+    data->orig_right_handle = strip->right_handle(master_scene);
+    data->orig_endofs = strip->endofs;
+    data->orig_len = strip->len;
+    data->orig_anim_startofs = strip->anim_startofs;
+    data->orig_anim_endofs = strip->anim_endofs;
+    data->orig_sfra = strip->scene->r.sfra;
+    data->orig_efra = strip->scene->r.efra;
+    data->orig_psfra = strip->scene->r.psfra;
+    data->orig_pefra = strip->scene->r.pefra;
+    data->orig_scene_flag = strip->scene->r.flag;
+    /* BFA (#6780): capture the middle-bar coupling state at invoke (§2.4) -
+     * the drag ignores toggle changes mid-flight. */
+    data->preview_coupled = scene_strip_use_preview_range_get(C) &&
+                            (strip->scene->r.flag & SCER_PRV_RANGE) != 0;
+    data->clamp_coupled = scene_strip_clamp_to_strip_get(C);
+    /* BFA (#6780, §5.3): the clamp-mode MOVE bar aligns the range to the strip
+     * once, on its first movement (see the apply branch). The base is the current
+     * range until that alignment re-seeds it. */
+    data->move_clamp_initialized = false;
+    data->move_base_sfra = strip->scene->r.sfra;
+    data->pushed_before_total = 0;
+    data->pushed_following_total = 0;
+
+    /* BFA (#6780): mark the dragged strip as selected for the duration of the
+     * drag, like the VSE does. The overlap resolution (query_overwrite_targets)
+     * excludes selected strips, so without this the overwrite mode would target
+     * the dragged strip itself and fall back to a shuffle. */
+    data->orig_select = (strip->flag & SEQ_SELECT) != 0;
+    strip->flag |= SEQ_SELECT;
+  }
 
   ARegion *region = CTX_wm_region(C);
   if (region != nullptr) {
@@ -1895,7 +2114,9 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
   }
 
   char header_text[64];
-  if (data->mode == GZ_PART_SLIP && strip_move_bump_active(data->master_scene, data->strip)) {
+  if (!data->scene_range_mode && data->mode == GZ_PART_SLIP &&
+      strip_move_bump_active(data->master_scene, data->strip))
+  {
     const char *bump_name = "";
     switch (scene_strip_overlap_mode_get(data->master_scene)) {
       case SEQ_OVERLAP_EXPAND:
@@ -1952,6 +2173,23 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
          * mover) translates the strip and may lower the master sfra when clamp
          * follows live. Re-applying a zero offset cannot undo any of these, so
          * the snapshot restores them exactly. */
+        if (data->scene_range_mode) {
+          /* BFA (#6780, §5.4): no-strip fallback - restore the active scene's
+           * ranges and preview-mode flag from the invoke snapshot. */
+          Scene *scene = data->master_scene;
+          if (scene != nullptr) {
+            scene->r.sfra = data->orig_sfra;
+            scene->r.efra = data->orig_efra;
+            scene->r.psfra = data->orig_psfra;
+            scene->r.pefra = data->orig_pefra;
+            scene->r.flag = data->orig_scene_flag;
+            WM_event_add_notifier(C, NC_SCENE | ND_FRAME_RANGE, scene);
+            WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
+            ED_region_tag_redraw(CTX_wm_region(C));
+          }
+          scene_strip_timing_ui_cleanup(C, op);
+          return OPERATOR_CANCELLED;
+        }
         {
           Strip *strip = data->strip;
           if (data->mode == GZ_PART_LEFT && data->pushed_before_total != 0) {
