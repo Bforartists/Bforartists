@@ -1447,6 +1447,14 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
             # start/end (only while preview mode is enabled on the scene, via the
             # timeline Preview Range toggle); off = the gizmo only changes the strip.
             subcol.prop(overlay_settings, "use_preview_range", text="Set Preview Range")
+            # BFA (#6780): Clamp to Scene Strip = gizmo clamps the strip scene's frame
+            # range (start/end frame) to the strip's visible extent when editing it,
+            # with optional lead-in/out padding. Only the scene frame range is affected.
+            subcol.prop(overlay_settings, "clamp_to_scene_strip", text="Set Frame Range")
+            # BFA (#6780): lead-in/out padding for the "Extend Frame Range" gizmo.
+            subcol.prop(overlay_settings, "clamp_lead_in", text="Lead In")
+            subcol.prop(overlay_settings, "clamp_lead_out", text="Lead Out")
+            subcol.separator()
             # BFA (#6780): layered strip indicator display options (opt-in).
             subcol.prop(overlay_settings, "show_scene_strip_all", text="Show All Strips")
             # BFA (#6780): label options - strip name and referenced scene name.
@@ -1454,13 +1462,7 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
             subcol.prop(overlay_settings, "show_scene_strip_scene_name", text="Show Scene Names")
             # BFA (#6780): opacity of the layered/stacked strip indicators.
             subcol.prop(overlay_settings, "all_strips_opacity", text="Strips Opacity")
-            # BFA (#6780): Clamp to Scene Strip = gizmo clamps the strip scene's frame
-            # range (start/end frame) to the strip's visible extent when editing it,
-            # with optional lead-in/out padding. Only the scene frame range is affected.
-            subcol.prop(overlay_settings, "clamp_to_scene_strip", text="Clamp Frame Range")
-            # BFA (#6780): lead-in/out padding for the "Extend Frame Range" gizmo.
-            subcol.prop(overlay_settings, "clamp_lead_in", text="Lead In")
-            subcol.prop(overlay_settings, "clamp_lead_out", text="Lead Out")
+
         else:
             header_row.label(icon="DISCLOSURE_TRI_RIGHT")
 
