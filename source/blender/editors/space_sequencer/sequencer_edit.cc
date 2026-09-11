@@ -581,6 +581,33 @@ const Strip *sync_scene_strip_scrub_target_get(const bContext &C,
   return defer.target_strip;
 }
 
+/* BFA (#6780): one shared rule for recording the deferred switch target, used
+ * by BOTH sync directions while a dopesheet scrub is held. The old split - the
+ * forward block checked the strip under the master playhead, the reverse
+ * branch measured the distance to same-scene strips only - made the two ticks
+ * disagree, so the highlight alternated on/off while dragging past the strip
+ * ("flickers off, flickers on"). With one rule the state only changes when
+ * the master playhead genuinely crosses a boundary: inside the drag's
+ * timeline clears the target ("unstuck"), anywhere else records it - the
+ * top-most strip of another scene, or the master fallback on an empty
+ * lane - and it stays until the release applies it or the drag returns. */
+static void scene_strip_scrub_target_record(Scene *sequencer_scene, const Scene *active_scene)
+{
+  SceneStripScrubDefer &defer = g_scene_strip_scrub_defer;
+  const Strip *strip_at_frame = get_scene_strip_for_time_sync(sequencer_scene);
+  if (strip_at_frame && strip_at_frame->scene == active_scene) {
+    /* Back inside the drag's timeline: no switch pending, and re-anchor the
+     * mapping strip (a click may have jumped between strips of one scene). */
+    defer.drag_strip = strip_at_frame;
+    defer.target_strip = nullptr;
+    defer.has_target = false;
+    return;
+  }
+  defer.target_strip = (strip_at_frame && strip_at_frame->scene) ? strip_at_frame : nullptr;
+  defer.target_master_frame = sequencer_scene->r.cfra;
+  defer.has_target = true;
+}
+
 void sync_active_scene_and_time_with_scene_strip(bContext &C)
 {
   Scene *sequencer_scene = get_sequencer_scene_for_time_sync(C);
@@ -671,28 +698,13 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
         WM_event_add_notifier(&C, NC_SCENE | ND_FRAME, sequencer_scene);
       }
       /* BFA (#6780): while a dopesheet scrub is held, record the would-be
-       * switch target for the ghost highlight - the top-most scene strip now
-       * under the master playhead when it is inside some strip's coverage
-       * (best_dist == 0), or the master fallback when it is on an empty
-       * lane. The mouse release applies the switch. */
+       * switch target with the same shared rule the forward path uses (the
+       * master playhead now sits on the mapped target frame, so "the strip
+       * under the playhead" is well-defined for both directions). The mouse
+       * release applies the switch. */
       SceneStripScrubDefer &defer_rev = g_scene_strip_scrub_defer;
       if (defer_rev.active && active_scene_pre == defer_rev.drag_scene) {
-        if (best_dist == 0) {
-          const Strip *topmost = get_scene_strip_for_time_sync(sequencer_scene);
-          defer_rev.target_strip = (topmost && topmost->scene &&
-                                    topmost->scene != active_scene_pre) ?
-                                       topmost :
-                                       nullptr;
-          defer_rev.has_target = (defer_rev.target_strip != nullptr);
-          defer_rev.target_master_frame = sequencer_scene->r.cfra;
-        }
-        else {
-          /* Past every strip showing the active scene: switch to the master
-           * (fallback) timeline on release. */
-          defer_rev.target_strip = nullptr;
-          defer_rev.target_master_frame = target_cfra;
-          defer_rev.has_target = true;
-        }
+        scene_strip_scrub_target_record(sequencer_scene, active_scene_pre);
       }
       /* Either way, the shot time is authoritative now - done. */
       return;
@@ -716,27 +728,13 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
     wmWindow *win_defer = CTX_wm_window(&C);
     Scene *active_scene_defer = win_defer ? WM_window_get_active_scene(win_defer) : nullptr;
     if (active_scene_defer == defer.drag_scene && active_scene_defer != nullptr) {
-      const Strip *strip_at_frame = get_scene_strip_for_time_sync(sequencer_scene);
       /* Re-cache the frame pair for every deferred outcome so the direction
        * detection stays in lockstep with the mouse-driven times. */
       cache.master_scene = sequencer_scene;
       cache.shot_scene = active_scene_defer;
       cache.last_master_cfra = sequencer_scene->r.cfra;
       cache.last_shot_cfra = active_scene_defer->r.cfra;
-      if (strip_at_frame && strip_at_frame->scene == defer.drag_scene) {
-        /* Still inside the drag's timeline (any strip of the same scene - a
-         * click may jump between two strips of one scene without a switch).
-         * Keep the strip under the playhead as the mapping anchor for the
-         * ghost highlight and the reverse sync. */
-        defer.drag_strip = strip_at_frame;
-        defer.has_target = false;
-        return;
-      }
-      /* Past the drag's timeline: record the target - the strip now under
-       * the playhead, or the master fallback when it is on an empty lane. */
-      defer.target_strip = (strip_at_frame && strip_at_frame->scene) ? strip_at_frame : nullptr;
-      defer.target_master_frame = sequencer_scene->r.cfra;
-      defer.has_target = true;
+      scene_strip_scrub_target_record(sequencer_scene, active_scene_defer);
       return;
     }
   }

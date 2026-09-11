@@ -777,12 +777,13 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
                                 other_outline_uc[2] / 255.0f,
                                 0.6f * all_opacity};
       if (scrub_target == item.strip) {
-        /* BFA (#6780): this is the deferred switch target - brighten to near
-         * white so it reads instantly against the other ghost chips. */
-        other_body[0] = other_body[1] = other_body[2] = 0.95f;
-        other_body[3] = 0.75f;
-        other_outline[0] = other_outline[1] = other_outline[2] = 1.0f;
-        other_outline[3] = 0.95f;
+        /* BFA (#6780): this is the deferred switch target - brighten toward
+         * white so it reads against the other ghost chips, kept at half
+         * strength so it stays a hint, not a flash. */
+        other_body[0] = other_body[1] = other_body[2] = 0.9f;
+        other_body[3] = 0.4f * all_opacity;
+        other_outline[0] = other_outline[1] = other_outline[2] = 0.95f;
+        other_outline[3] = 0.55f * all_opacity;
       }
       rctf other_rect;
       BLI_rctf_init(&other_rect, item.x_in, item.x_out, y, y_top_other);

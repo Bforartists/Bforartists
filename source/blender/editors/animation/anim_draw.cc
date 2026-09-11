@@ -215,9 +215,9 @@ void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
   uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
-  /* A stronger alpha than the out-of-range shading so the ghost reads on top
-   * of it. */
-  immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 0, -10);
+  /* Half-strength tint (BFA #6780): readable against the out-of-range
+   * shading without shouting. */
+  immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 0, -40);
 
   if (is_master_fallback || !target_strip) {
     /* Switching to the full master timeline: highlight everything. For a
