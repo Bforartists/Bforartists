@@ -1333,6 +1333,11 @@ struct SceneStripTimingOp {
   int orig_right_handle;
   float orig_endofs;
   int orig_len;
+  /* BFA (#6780, §2.4): the slip mechanism moves the strip's anim offsets when
+   * the preview toggle is off (seq::time_slip_strip) - cancel must restore
+   * them exactly or a cancelled slip leaves the bar shifted. */
+  int orig_anim_startofs;
+  int orig_anim_endofs;
   int orig_sfra;
   int orig_efra;
   /* BFA (#6780): preview-range snapshot for the range-window mover (top middle
@@ -1766,6 +1771,8 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
   data->orig_right_handle = strip->right_handle(master_scene);
   data->orig_endofs = strip->endofs;
   data->orig_len = strip->len;
+  data->orig_anim_startofs = strip->anim_startofs;
+  data->orig_anim_endofs = strip->anim_endofs;
   data->orig_sfra = strip->scene->r.sfra;
   data->orig_efra = strip->scene->r.efra;
   data->orig_psfra = strip->scene->r.psfra;
@@ -1888,6 +1895,8 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
           strip->start = data->orig_start;
           strip->startofs = data->orig_startofs;
           strip->endofs = data->orig_endofs;
+          strip->anim_startofs = data->orig_anim_startofs;
+          strip->anim_endofs = data->orig_anim_endofs;
           strip->content_length_set(data->orig_len);
           if (strip->scene) {
             strip->scene->r.sfra = data->orig_sfra;
