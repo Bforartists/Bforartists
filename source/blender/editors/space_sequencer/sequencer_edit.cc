@@ -497,10 +497,19 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
                             active_scene_pre != sequencer_scene &&
                             active_scene_pre != nullptr;
   if (reverse_sync) {
-    /* Find a scene strip on the sequencer timeline showing the active scene. */
+    /* Find a scene strip on the sequencer timeline showing the active scene.
+     * BFA (#6780, §5.7): follow the linear shot->master mapping even when the
+     * shot playhead is outside the strip's coverage, instead of snapping the
+     * master playhead to the nearest strip edge. The edge snap moved the master
+     * playhead backwards, and the next forward re-derivation mapped it back to a
+     * shot frame inside the strip ("glitch / bounce back to old position"). The
+     * linear follow keeps shot and master in lockstep past the strip, so the
+     * drag continues smoothly; the target is floored at MINAFRAME. */
     Editing *ed_rev = seq::editing_get(sequencer_scene);
     Strip *strip_rev = nullptr;
-    float best_master_t = 0.0f;
+    int best_master_t = 0;
+    bool found_any = false;
+    int best_dist = MAXFRAME;
     if (ed_rev != nullptr) {
       for (Strip &strip_iter : ed_rev->seqbase) {
         if (strip_iter.type != STRIP_TYPE_SCENE || strip_iter.scene != active_scene_pre) {
@@ -509,34 +518,29 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
         /* Invert the forward mapping: the strip shows
          * scene_frame(timeline_frame) = timeline_frame - content_start +
          * scene.sfra (retiming ignored, matching the forward path's
-         * simple scenes). target = shot frame + content_start -
-         * scene.sfra. */
-        const float target = float(active_scene_pre->r.cfra) +
-                             strip_iter.content_start() -
-                             float(active_scene_pre->r.sfra);
+         * simple scenes). target = shot frame + content_start - scene.sfra. */
+        const int target = round_fl_to_int(float(active_scene_pre->r.cfra) +
+                                           strip_iter.content_start() -
+                                           float(active_scene_pre->r.sfra));
         const int left = strip_iter.left_handle();
         const int right = strip_iter.right_handle(sequencer_scene);
-        const bool inside = !(target < left) && target < right;
-        if (inside) {
+        /* Prefer the strip whose range contains the target (distance 0). */
+        const int dist = (target < left) ? (left - target) :
+                         (target >= right) ? (target - (right - 1)) :
+                                             0;
+        if (!found_any || dist < best_dist) {
+          found_any = true;
+          best_dist = dist;
           best_master_t = target;
           strip_rev = &strip_iter;
+        }
+        if (dist == 0) {
           break;
-        }
-        /* Lead-in/out territory: clamp to the nearest edge. */
-        if (strip_rev == nullptr || (target < left && left < best_master_t)) {
-          best_master_t = left;
-          strip_rev = &strip_iter;
-        }
-        else if (!(target < right) &&
-                 (strip_rev == nullptr || right > best_master_t))
-        {
-          best_master_t = right;
-          strip_rev = &strip_iter;
         }
       }
     }
     if (strip_rev != nullptr) {
-      const int target_cfra = int(best_master_t);
+      const int target_cfra = clamp_i(best_master_t, MINAFRAME, MAXFRAME);
       if (target_cfra != sequencer_scene->r.cfra) {
         sequencer_scene->r.cfra = target_cfra;
         sequencer_scene->r.subframe = 0.0f;
