@@ -197,16 +197,22 @@ void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
   const Strip *drag_strip = nullptr;
   const Strip *target_strip = ed::vse::sync_scene_strip_scrub_target_get(
       *C, &sequencer_scene, &master_frame, &is_master_fallback, &drag_strip);
-  if (!sequencer_scene || !drag_strip || !drag_strip->scene) {
+  if (!sequencer_scene) {
     return;
   }
 
-  /* Map master frames into this dopesheet's (shot) time using the strip the
-   * drag started in - the same linear mapping the playhead itself follows
-   * (#6780 §5.7), so the ghost aligns exactly with where the playhead sits. */
+  /* Map master frames into this dopesheet's time coordinate. In a shot
+   * timeline this is the drag strip's linear mapping - the same one the
+   * playhead itself follows (#6780 §5.7), so the ghost aligns exactly with
+   * where the playhead sits. In the master (fallback) timeline the view IS
+   * the master timeline, so master frames map 1:1 (BFA) - this also covers a
+   * drag started in the fallback, where there is no drag strip at all. */
   auto master_to_shot = [&](const float master_frame_f) {
-    return seq::give_frame_index(sequencer_scene, drag_strip, master_frame_f) +
-           drag_strip->scene->r.sfra + drag_strip->anim_startofs;
+    if (drag_strip && drag_strip->scene) {
+      return seq::give_frame_index(sequencer_scene, drag_strip, master_frame_f) +
+             drag_strip->scene->r.sfra + drag_strip->anim_startofs;
+    }
+    return master_frame_f;
   };
 
   GPU_blend(GPU_BLEND_ALPHA);
@@ -215,18 +221,25 @@ void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
   uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
 
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
-  /* Half-strength tint (BFA #6780): readable against the out-of-range
-   * shading without shouting. */
-  immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 0, -40);
 
   if (is_master_fallback || !target_strip) {
-    /* Switching to the full master timeline: highlight everything. For a
-     * strip target the ghost chip itself is highlighted white by the scene
-     * strip gizmo overlay, so only the landing line is drawn here. */
+    /* Switching to the full master timeline: highlight the whole view with a
+     * clearly visible tint (BFA #6780). There is no chip to highlight in
+     * this direction - the tint IS the cue - so it runs stronger than the
+     * half-strength used elsewhere and is topped with bright edge lines. */
+    immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 30, -45);
     immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+    immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 60, -15);
+    immBegin(GPU_PRIM_LINES, 4);
+    immVertex2f(pos, v2d->cur.xmin, v2d->cur.ymin + 1.0f);
+    immVertex2f(pos, v2d->cur.xmax, v2d->cur.ymin + 1.0f);
+    immVertex2f(pos, v2d->cur.xmin, v2d->cur.ymax - 1.0f);
+    immVertex2f(pos, v2d->cur.xmax, v2d->cur.ymax - 1.0f);
+    immEnd();
   }
 
   /* Vertical line at the frame the playhead will land on after the switch. */
+  immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 40, -25);
   const float landing = master_to_shot(float(master_frame));
   immBegin(GPU_PRIM_LINES, 2);
   immVertex2f(pos, landing, v2d->cur.ymin);
