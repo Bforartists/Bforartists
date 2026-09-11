@@ -114,6 +114,14 @@ static Scene *timeline_sync_master_scene_get(const bContext *C)
   if (!timeline_sync_settings_ptr(C, &settings)) {
     return nullptr;
   }
+  /* The settings group is only fully registered when the bfa_3Dsequencer addon
+   * is enabled; probe the property first so a disabled addon does not spam the
+   * terminal with "WindowManager.master_scene not found" on every gizmo poll
+   * (BFA #6780, follow-up to the §2.8 dual-store scan). */
+  PropertyRNA *master_prop = RNA_struct_find_property(&settings, "master_scene");
+  if (master_prop == nullptr) {
+    return nullptr;
+  }
   PointerRNA master_ptr = RNA_pointer_get(&settings, "master_scene");
   return static_cast<Scene *>(master_ptr.data);
 }
