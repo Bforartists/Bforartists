@@ -23,6 +23,8 @@
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_utildefines.hh"
+
+#include <algorithm>
 #include "BLI_rect.hh"
 #include "BLI_utildefines.hh"
 
@@ -224,8 +226,8 @@ void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
     const float ghost_start = master_to_shot(float(target_strip->left_handle()));
     const float ghost_end = master_to_shot(
         float(target_strip->right_handle(sequencer_scene) - 1));
-    const float x1 = MIN2(ghost_start, ghost_end);
-    const float x2 = MAX2(ghost_start, ghost_end);
+    const float x1 = std::min(ghost_start, ghost_end);
+    const float x2 = std::max(ghost_start, ghost_end);
     immRectf(pos, x1, v2d->cur.ymin, x2, v2d->cur.ymax);
 
     /* Vertical line at the frame the playhead will land on after the switch. */
