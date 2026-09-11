@@ -1483,6 +1483,10 @@ struct SceneStripTimingOp {
   int scene_range_base_end;
   int start_view_x;
   int offset;
+  /* BFA (#6780): vertical drag baseline for the strip mover (SLIP) - vertical
+   * motion steps the strip's sequencer channel (one bar-height per channel). */
+  int start_view_y;
+  int orig_channel;
   /* Original state for the offset delta tracking. */
   int orig_duration;
   float orig_start;
@@ -1572,7 +1576,8 @@ static std::string scene_strip_timing_get_description(bContext * /*C*/,
                   "snaps to it with lead-in/out on release. When it bumps into "
                   "another strip the sequencer overlap mode applies on release: "
                   "expand pushes the strip, shuffle slides to the nearest free "
-                  "space, overwrite trims it");
+                  "space, overwrite trims it. Vertical motion steps the strip "
+                  "between sequencer channels");
     default:
       return "";
   }
@@ -2038,6 +2043,8 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
     data->orig_pefra = active_scene->r.pefra;
     data->orig_scene_flag = active_scene->r.flag;
     data->orig_select = false;
+    data->start_view_y = 0;
+    data->orig_channel = 0;
     data->preview_coupled = false;
     data->clamp_coupled = false;
     data->move_clamp_initialized = false;
@@ -2081,6 +2088,9 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
     data->move_base_sfra = strip->scene->r.sfra;
     data->pushed_before_total = 0;
     data->pushed_following_total = 0;
+    /* BFA (#6780): channel snapshot - vertical motion on the strip mover steps
+     * the strip's sequencer channel; cancel restores it exactly. */
+    data->orig_channel = strip->channel;
 
     /* BFA (#6780): mark the dragged strip as selected for the duration of the
      * drag, like the VSE does. The overlap resolution (query_overwrite_targets)
@@ -2095,10 +2105,12 @@ static wmOperatorStatus scene_strip_timing_invoke(bContext *C,
     View2D *v2d = &region->v2d;
     data->start_view_x = round_fl_to_int(
         ui::view2d_region_to_view_x(v2d, float(event->mval[0])));
+    data->start_view_y = event->mval[1];
   }
 
   op->customdata = data;
-  WM_cursor_modal_set(CTX_wm_window(C), WM_CURSOR_X_MOVE);
+  WM_cursor_modal_set(CTX_wm_window(C),
+                      data->mode == GZ_PART_SLIP ? WM_CURSOR_MOVE : WM_CURSOR_X_MOVE);
   WM_event_add_modal_handler(C, op);
 
   return OPERATOR_RUNNING_MODAL;
@@ -2147,6 +2159,28 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
         if (offset != data->offset) {
           data->offset = offset;
           scene_strip_timing_apply(C, op);
+        }
+      }
+      /* BFA (#6780): the strip mover (SLIP) also steps the strip's sequencer
+       * channel with vertical motion - one bar-height per channel, dragging up
+       * moves to higher channels (screen Y grows downward, so invert). Live
+       * overlap feedback like the horizontal move; the release path resolves
+       * it with the sequencer's overlap mode. */
+      if (data->mode == GZ_PART_SLIP && data->strip != nullptr) {
+        const int strip_height = int(26.0f * UI_SCALE_FAC);
+        const int channel = data->orig_channel -
+                            (event->mval[1] - data->start_view_y) / strip_height;
+        if (channel != data->strip->channel) {
+          data->strip->channel_set(channel);
+          Strip *strip = data->strip;
+          strip->runtime->flag &= ~seq::StripRuntimeFlag::Overlap;
+          if (Editing *ed = seq::editing_get(data->master_scene)) {
+            if (seq::transform_test_overlap(data->master_scene, &ed->seqbase, strip)) {
+              strip->runtime->flag |= seq::StripRuntimeFlag::Overlap;
+            }
+          }
+          WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, data->master_scene);
+          ED_region_tag_redraw(CTX_wm_region(C));
         }
       }
       break;
@@ -2214,6 +2248,7 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
           strip->anim_startofs = data->orig_anim_startofs;
           strip->anim_endofs = data->orig_anim_endofs;
           strip->content_length_set(data->orig_len);
+          strip->channel = data->orig_channel;
           if (strip->scene) {
             strip->scene->r.sfra = data->orig_sfra;
             strip->scene->r.efra = data->orig_efra;
