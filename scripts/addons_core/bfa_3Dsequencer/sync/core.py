@@ -190,13 +190,17 @@ def get_dopesheet_preview_range() -> bool:
 def get_master_scene() -> Union[bpy.types.Scene, None]:
     """Return the synchronization timeline scene.
 
-    Falls back to the workspace's pinned sequencer scene so the sync system,
-    overlay and gizmos also work with the built-in scene-time sync.
+    BFA (#6780, §5.8): the workspace's pinned sequencer scene is authoritative -
+    when set, it IS the master timeline, matching the C gizmo resolver
+    (#ANIM_scene_strip_master_get). The stored sync master only applies when no
+    scene is pinned, so un-pinning the sequencer scene makes the whole sync
+    system "go back" instead of shadowing the pin with stale state.
     """
     settings = get_sync_settings()
-    return settings.master_scene or getattr(
-        bpy.context.workspace, "sequencer_scene", None
-    )
+    pinned = getattr(bpy.context.workspace, "sequencer_scene", None)
+    if pinned is not None:
+        return pinned
+    return settings.master_scene
 
 
 # Main scene frame set function that will use the optimized or fallback to default

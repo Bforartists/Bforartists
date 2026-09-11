@@ -167,25 +167,33 @@ const Strip *ANIM_scene_strip_master_get(const bContext *C, Scene **r_master_sce
   if (active_scene == nullptr) {
     return nullptr;
   }
-  /* BFA (#6780, §2.8): consider BOTH master stores and pick whichever actually
-   * holds a scene strip for the active scene. The old first-wins logic bailed
-   * as soon as `workspace->sequencer_scene` was set, even when it had no strip
-   * for the active scene; that masked the legacy 3D Sequencer store (whose
-   * `master_scene` is a transient WindowManager property, cleared on file load
-   * by the addon and only repopulated when the sync toggle runs). With the
-   * sync-agnostic scan below the gizmos initialize on load regardless of the
-   * sync state. Precedence is unchanged when both stores resolve. */
-  const Scene *candidates[2] = {
-      workspace ? workspace->sequencer_scene : nullptr,
-      timeline_sync_master_scene_get(C),
-  };
-  for (const Scene *master_scene : candidates) {
-    if (const Strip *strip = scene_strip_for_active_scene(master_scene, active_scene)) {
+  /* BFA (#6780, §2.8/§5.8): the workspace's pinned sequencer scene is the
+   * AUTHORITATIVE master store: when it is set, only it decides the master
+   * timeline. The legacy 3D Sequencer store (whose `master_scene` is a
+   * transient WindowManager property that can still hold a stale pinned
+   * scene) is only consulted when the pin is unset, so re-pinning the
+   * sequencer to an empty scene makes the gizmos "go back" to the active-
+   * scene fallback mode instead of editing the old pinned scene through the
+   * stale addon state. When no pin exists, both stores and the file scan
+   * resolve the master as before, so the gizmos still initialize on load
+   * regardless of the sync state. */
+  const Scene *pinned_scene = workspace ? workspace->sequencer_scene : nullptr;
+  if (pinned_scene != nullptr) {
+    if (const Strip *strip = scene_strip_for_active_scene(pinned_scene, active_scene)) {
       if (r_master_scene) {
-        *r_master_scene = const_cast<Scene *>(master_scene);
+        *r_master_scene = const_cast<Scene *>(pinned_scene);
       }
       return strip;
     }
+    /* Pinned but no strip for the active scene: fallback mode (no strip). */
+    return nullptr;
+  }
+  const Scene *addon_scene = timeline_sync_master_scene_get(C);
+  if (const Strip *strip = scene_strip_for_active_scene(addon_scene, active_scene)) {
+    if (r_master_scene) {
+      *r_master_scene = const_cast<Scene *>(addon_scene);
+    }
+    return strip;
   }
   /* BFA (#6780, §2.8): last-resort fallback so the gizmos/overlays draw without
    * the sync ever being initialized. Neither store is guaranteed to be set:
@@ -243,8 +251,8 @@ struct SceneStripGizmoTarget {
   const Strip *strip;
   /* The master timeline scene (strip mode) or the active scene (fallback). */
   Scene *scene;
-  /* Fallback only: true when the gizmo edits the active scene's render range
-   * (sfra/efra). Selected by "Clamp Scene Range" (or when no toggle is on). */
+  /* Fallback only (no strip): true when this target edits the active scene's
+   * ranges instead of a scene strip. Always true when `strip == nullptr`. */
   bool scene_range_mode;
   /* Fallback only: true when the render range is being edited. */
   bool edit_render;
@@ -282,7 +290,7 @@ static SceneStripGizmoTarget scene_strip_gizmo_target_get(const bContext *C)
   target.scene = active_scene;
   target.edit_preview = preview_on;
   target.edit_render = clamp_on || !preview_on;
-  target.scene_range_mode = target.edit_render && !target.edit_preview;
+  target.scene_range_mode = true;
   return target;
 }
 

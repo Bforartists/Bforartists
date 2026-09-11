@@ -98,7 +98,12 @@ class SEQUENCER_OT_set_master_scene(bpy.types.Operator):
             settings.master_scene = workspace.sequencer_scene
             self.report({'INFO'}, f"Set {workspace.sequencer_scene.name} as the Synchronization Timeline")
         else:
-            self.report({'WARNING'}, "No scene pinned to be the Synchronization Timeline")
+            # BFA (#6780, §5.8): running this with no pinned scene CLEARS the
+            # stored sync master - the explicit way to "go back" to the
+            # no-master state (the C gizmo resolver then falls back to the
+            # active scene's own ranges).
+            settings.master_scene = None
+            self.report({'INFO'}, "Cleared the Synchronization Timeline")
         
         return {'FINISHED'}
 
