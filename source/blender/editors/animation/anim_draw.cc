@@ -172,6 +172,74 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   GPU_blend(GPU_BLEND_NONE);
 }
 
+void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
+{
+  /* BFA (#6780): ghost highlight for the deferred timeline switch during a
+   * dopesheet playhead scrub. While the mouse is held and the playhead has
+   * left the current scene strip, this tints the range the release will
+   * switch to - the next scene strip mapped through the drag strip's linear
+   * mapping, or the full width for the master (fallback) timeline - plus a
+   * vertical line at the frame the playhead will land on. */
+  SpaceAction *space_action = CTX_wm_space_action(C);
+  if (!space_action || (space_action->overlays.flag & ADS_OVERLAY_SHOW_OVERLAYS) == 0 ||
+      (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0)
+  {
+    return;
+  }
+
+  Scene *sequencer_scene = nullptr;
+  int master_frame = 0;
+  bool is_master_fallback = false;
+  const Strip *drag_strip = nullptr;
+  const Strip *target_strip = ed::vse::sync_scene_strip_scrub_target_get(
+      C, &sequencer_scene, &master_frame, &is_master_fallback, &drag_strip);
+  if (!sequencer_scene || !drag_strip || !drag_strip->scene) {
+    return;
+  }
+
+  /* Map master frames into this dopesheet's (shot) time using the strip the
+   * drag started in - the same linear mapping the playhead itself follows
+   * (#6780 §5.7), so the ghost aligns exactly with where the playhead sits. */
+  auto master_to_shot = [&](const float master_frame_f) {
+    return seq::give_frame_index(sequencer_scene, drag_strip, master_frame_f) +
+           drag_strip->scene->r.sfra + drag_strip->anim_startofs;
+  };
+
+  GPU_blend(GPU_BLEND_ALPHA);
+
+  GPUVertFormat *format = immVertexFormat();
+  uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  /* A stronger alpha than the out-of-range shading so the ghost reads on top
+   * of it. */
+  immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 0, -10);
+
+  if (is_master_fallback || !target_strip) {
+    /* Switching to the full master timeline: highlight everything. */
+    immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+  }
+  else {
+    const float ghost_start = master_to_shot(float(target_strip->left_handle()));
+    const float ghost_end = master_to_shot(
+        float(target_strip->right_handle(sequencer_scene) - 1));
+    const float x1 = MIN2(ghost_start, ghost_end);
+    const float x2 = MAX2(ghost_start, ghost_end);
+    immRectf(pos, x1, v2d->cur.ymin, x2, v2d->cur.ymax);
+
+    /* Vertical line at the frame the playhead will land on after the switch. */
+    const float landing = master_to_shot(float(master_frame));
+    immBegin(GPU_PRIM_LINES, 2);
+    immVertex2f(pos, landing, v2d->cur.ymin);
+    immVertex2f(pos, landing, v2d->cur.ymax);
+    immEnd();
+  }
+
+  immUnbindProgram();
+
+  GPU_blend(GPU_BLEND_NONE);
+}
+
 /* *************************************************** */
 /* SCENE FRAME RANGE */
 

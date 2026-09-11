@@ -294,6 +294,7 @@ static void action_main_region_draw(const bContext *C, ARegion *region)
   ANIM_draw_previewrange(scene, v2d, 0);
 
   ANIM_draw_scene_strip_range(C, v2d);
+  ANIM_draw_scene_strip_scrub_target(C, v2d);
 
   /* callback */
   ui::view2d_view_ortho(v2d);

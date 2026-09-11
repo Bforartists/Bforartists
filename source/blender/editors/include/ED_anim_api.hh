@@ -915,6 +915,9 @@ void ANIM_draw_previewrange(const Scene *scene, View2D *v2d, int end_frame_width
  * Draw range of the current sequencer scene strip when using scene time syncing.
  */
 void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d);
+/** BFA (#6780): ghost highlight of the deferred playhead-driven timeline
+ * switch during a dopesheet scrub (see #sync_scene_strip_scrub_begin). */
+void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d);
 
 /**
  * BFA - Resolve the master scene strip the scene-strip gizmos and dope-sheet range
