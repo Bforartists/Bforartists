@@ -2264,12 +2264,12 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
       }
       /* BFA (#6780): the strip mover (SLIP) also steps the strip's sequencer
        * channel with vertical motion - one bar-height per channel, dragging up
-       * moves to higher channels (screen Y grows downward, so invert). Live
-       * overlap feedback like the horizontal move; the release path resolves
-       * it with the sequencer's overlap mode. */
+       * moves to higher channels (region mval[1] grows upward, matching the
+       * channel numbering). Live overlap feedback like the horizontal move; the
+       * release path resolves it with the sequencer's overlap mode. */
       if (data->mode == GZ_PART_SLIP && data->strip != nullptr) {
         const int strip_height = int(26.0f * UI_SCALE_FAC);
-        const int channel = data->orig_channel -
+        const int channel = data->orig_channel +
                             (event->mval[1] - data->start_view_y) / strip_height;
         if (channel != data->strip->channel) {
           data->strip->channel_set(channel);
