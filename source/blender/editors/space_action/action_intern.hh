@@ -20,6 +20,9 @@ struct Scene;
 struct SpaceAction;
 struct bAnimContext;
 struct bContext;
+// bfa 3d sequencer scene strip gizmos
+struct wmGizmoGroupType;
+struct wmGizmoType;
 struct wmKeyConfig;
 struct wmOperatorType;
 
@@ -139,6 +142,17 @@ enum eActKeys_Mirror_Mode {
   ACTKEYS_MIRROR_XAXIS,
   ACTKEYS_MIRROR_MARKER,
 };
+
+/* ***************************************** */
+/* `action_gizmo_scene_strip.cc` (bfa 3d sequencer) */
+
+void action_widgets();
+void ACTION_GGT_scene_strip_gizmos(wmGizmoGroupType *gzgt);
+void ACTION_GT_scene_strip_gizmo(wmGizmoType *gzt);
+void ACTION_GT_scene_strip_scrub(wmGizmoType *gzt);
+void ACTION_OT_scene_strip_timing(wmOperatorType *ot);
+void ACTION_OT_scene_strip_scrub(wmOperatorType *ot);
+void ACTION_OT_scene_strip_sync_from_range(wmOperatorType *ot);
 
 /* ***************************************** */
 /* `action_ops.cc` */

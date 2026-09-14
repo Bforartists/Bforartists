@@ -6,8 +6,7 @@ from typing import Any, Callable, Optional, Union, Type
 
 import bpy
 
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
-
+from ..utils import register_classes, unregister_classes
 
 SequenceType = Type[bpy.types.Strip]
 
@@ -97,6 +96,11 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
     )
 
     def use_preview_range_update_callback(self, context):
+        # Update master strip preview range when the option is changed
+        if (
+            strip := get_sync_master_strip(use_cache=True)[0]
+        ) and self.use_preview_range:
+            update_preview_range(strip)
         bpy.context.workspace.use_scene_sync_bfa = self.is_sync() and self.use_preview_range
 
     use_preview_range: bpy.props.BoolProperty(
@@ -108,6 +112,7 @@ class TimelineSyncSettings(bpy.types.PropertyGroup):
         default=True,
         update=use_preview_range_update_callback,
     )
+
 
     # Cached values from last update
     # See sync_system_update function for details
@@ -161,6 +166,43 @@ def get_sync_settings() -> TimelineSyncSettings:
     return bpy.context.window_manager.timeline_sync_settings
 
 
+def get_dopesheet_preview_range() -> bool:
+    """Return the dope-sheet "Set Preview Range" overlay toggle.
+
+    BFA: single source of truth shared with the built-in C gizmos, so the addon
+    sync and the gizmo always agree and turning the toggle off really stops the
+    preview range updates. (The separate scene frame range feature was removed -
+    extend-only proved unreliable for scene strips.)
+    """
+    use_preview_range = False
+    for window in bpy.context.window_manager.windows:
+        for area in window.screen.areas:
+            if area.type != "DOPESHEET_EDITOR":
+                continue
+            overlays = getattr(area.spaces.active, "overlays", None)
+            if (overlays is None or not overlays.show_overlays or
+                not overlays.show_scene_strip_gizmos):
+                continue
+            use_preview_range |= overlays.use_preview_range
+    return use_preview_range
+
+
+def get_master_scene() -> Union[bpy.types.Scene, None]:
+    """Return the synchronization timeline scene.
+
+    BFA (#6780, §5.8): the workspace's pinned sequencer scene is authoritative -
+    when set, it IS the master timeline, matching the C gizmo resolver
+    (#ANIM_scene_strip_master_get). The stored sync master only applies when no
+    scene is pinned, so un-pinning the sequencer scene makes the whole sync
+    system "go back" instead of shadowing the pin with stale state.
+    """
+    settings = get_sync_settings()
+    pinned = getattr(bpy.context.workspace, "sequencer_scene", None)
+    if pinned is not None:
+        return pinned
+    return settings.master_scene
+
+
 # Main scene frame set function that will use the optimized or fallback to default
 # implementation.
 scene_frame_set: Optional[
@@ -209,7 +251,7 @@ def remap_frame_value(frame: int, scene_strip: bpy.types.Strip) -> int:
     :param scene_strip: The scene strip to remap to.
     :returns: The remapped frame value
     """
-    return int(frame - scene_strip.frame_start + scene_strip.scene.frame_start)
+    return int(frame - scene_strip.content_start + scene_strip.scene.frame_start)
 
 
 def get_strips_at_frame(
@@ -233,7 +275,7 @@ def get_strips_at_frame(
         if (
             (not type_filter or isinstance(s, type_filter))
             and (not skip_muted or not s.mute)
-            and (frame >= s.frame_final_start and frame < s.frame_final_end)
+            and (frame >= s.left_handle and frame < s.right_handle)
         )
     ]
 
@@ -392,7 +434,7 @@ def get_sync_master_strip(
     :param use_cache: If True, return last cached value. Compute from current master time otherwise.
     """
     settings = get_sync_settings()
-    master_scene = settings.master_scene
+    master_scene = get_master_scene()
     if not settings.is_sync() or not master_scene or not master_scene.sequence_editor:
         return None, -1
 
@@ -408,6 +450,30 @@ def get_sync_master_strip(
     )
 
 
+def update_preview_range(scene_strip: bpy.types.Strip):
+    """Update `scene_strip`'s scene preview range to match `scene_strip`'s range.
+
+    BFA (#6780): only applies while the strip scene's preview range mode is
+    enabled (the user opts into preview mode from the timeline controls) - the
+    toggle never forces the preview range on by itself.
+
+    :param scene_strip: The scene strip to update.
+    """
+    # Discard scene strip without scene, or with preview range disabled.
+    if not scene_strip.scene or not scene_strip.scene.use_preview_range:
+        return
+
+    # Compute and update preview range if necessary
+    start = remap_frame_value(scene_strip.left_handle, scene_strip)
+    end = remap_frame_value(scene_strip.right_handle, scene_strip) - 1
+    if start != scene_strip.scene.frame_preview_start:
+        scene_strip.scene.frame_preview_start = start
+    if end != scene_strip.scene.frame_preview_end:
+        scene_strip.scene.frame_preview_end = end
+
+
+
+
 def sync_system_update(context: bpy.types.Context, force: bool = False):
     """Perform the synchronization system update.
 
@@ -420,7 +486,7 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
         return
 
     sync_settings = get_sync_settings()
-    master_scene = sync_settings.master_scene
+    master_scene = get_master_scene()
     win_scene = context.window.scene
 
     # Discard update if disabled or not properly configured
@@ -486,12 +552,12 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
                 return
 
             # Compute strip range in scene's referential
-            frame_start = remap_frame_value(strip.frame_final_start, strip)
-            frame_end = remap_frame_value(strip.frame_final_end - 1, strip)
+            frame_start = remap_frame_value(strip.left_handle, strip)
+            frame_end = remap_frame_value(strip.right_handle - 1, strip)
 
             # Compute new strip range in current strip referential
-            new_strip_start = remap_frame_value(new_strip.frame_final_start, strip)
-            new_strip_end = remap_frame_value(new_strip.frame_final_end - 1, strip)
+            new_strip_start = remap_frame_value(new_strip.left_handle, strip)
+            new_strip_end = remap_frame_value(new_strip.right_handle - 1, strip)
 
             # If current frame is not consecutive to current strip boundary
             # or equal to one of the new strip's boundary,
@@ -547,6 +613,13 @@ def sync_system_update(context: bpy.types.Context, force: bool = False):
     # to avoid unwanted updates in case bidirectional sync is enabled.
     if strip.scene.frame_current != inner_frame and sync_settings.is_legacy():
         scene_frame_set(context, strip.scene, inner_frame)
+
+    # Update the shot scene's preview/frame range to match the strip (per the
+    # dope-sheet overlays popup toggles - BFA: single source of truth shared with
+    # the built-in C gizmo, so unchecking them really stops the updates).
+    use_preview_range = get_dopesheet_preview_range()
+    if use_preview_range:
+        update_preview_range(strip)
 
     # Synchronize target windows
     for window in (
@@ -617,6 +690,17 @@ def on_load_pre(*args):
 @bpy.app.handlers.persistent
 def on_load_post(*args):
     sync_settings = get_sync_settings()
+    # BFA (#6780, §2.8): re-establish the master timeline scene on load from the
+    # workspace's pinned sequencer scene, independent of the sync toggle and of
+    # whether a Sequencer area happens to be on screen. `master_scene` is a
+    # WindowManager property (not saved in the file, see register()) and is
+    # cleared by `on_load_pre`, so without this the addon store stays empty and
+    # the C scene-strip gizmos could not resolve a master timeline until the user
+    # toggled sync (which used to be the only writer here).
+    if bpy.context.workspace.sequencer_scene is not None:
+        sync_settings.master_scene = bpy.context.workspace.sequencer_scene
+        update_sync_cache_from_current_state()
+
     # Auto-setup the system for the new file if the active screen contains
     # a Sequence Editor area defining a scene override with at least 1 scene strip.
     if bpy.context.workspace.sequencer_scene is not None:

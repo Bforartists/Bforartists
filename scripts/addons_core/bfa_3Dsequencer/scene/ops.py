@@ -5,29 +5,26 @@ from typing import Optional
 
 import bpy
 
-from bfa_3Dsequencer.preferences import get_addon_prefs
-from bfa_3Dsequencer.scene.core import (
-    adjust_shot_duration,
+from ..preferences import get_addon_prefs
+from .core import (
     delete_scene,
     duplicate_scene,
     get_valid_shot_scenes,
     rename_scene,
     slip_shot_content,
 )
-from bfa_3Dsequencer.scene.naming import shot_naming, ShotNamingProperty
-from bfa_3Dsequencer.sync.core import (
-    get_sync_master_strip,
-    get_sync_settings,
+from .naming import shot_naming, ShotNamingProperty
+from ..sync.core import (
     remap_frame_value,
 )
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
+from ..utils import register_classes, unregister_classes
 
 
 def get_last_sequence(
     strips: list[bpy.types.Strip],
 ) -> Optional[bpy.types.Strip]:
     """Get the last sequence, i.e. the one with the greatest final frame number."""
-    return max(strips, key=lambda x: x.frame_final_end) if strips else None
+    return max(strips, key=lambda x: x.right_handle) if strips else None
 
 
 def get_last_used_frame(
@@ -45,7 +42,7 @@ def get_last_used_frame(
     if not scene_strips:
         return scene.frame_start - 1
 
-    return max(remap_frame_value(s.frame_final_end - 1, s) for s in scene_strips)
+    return max(remap_frame_value(s.right_handle - 1, s) for s in scene_strips)
 
 
 def get_selected_scene_sequences(
@@ -196,10 +193,10 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
 
         source_scene = bpy.data.scenes[self.source_scene]
         # Create sequence editor data if needed.
-        if not context.scene.sequence_editor:
+        if not context.sequencer_scene.sequence_editor:
             context.scene.sequence_editor_create()
 
-        strips = context.scene.sequence_editor.strips
+        strips = context.sequencer_scene.sequence_editor.strips
         frame_offset_start = 0
 
         # Source scene handling.
@@ -217,7 +214,7 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
 
         last_seq = get_last_sequence(strips)
         insert_frame = (
-            last_seq.frame_final_end if last_seq else context.scene.frame_start
+            last_seq.right_handle if last_seq else context.scene.frame_start
         )
 
         bpy.ops.sequencer.select_all(action="DESELECT")
@@ -225,23 +222,23 @@ class SEQUENCER_OT_shot_new(bpy.types.Operator):
         new_strip = strips.new_scene(
             self.naming.to_string(), shot_scene, self.channel, insert_frame
         )
-        new_strip.frame_final_duration = self.duration
+        new_strip.duration = self.duration
         slip_shot_content(new_strip, frame_offset_start)
         new_strip.scene_camera = new_strip.scene.camera
-        context.scene.sequence_editor.active_strip = new_strip
+        context.sequencer_scene.sequence_editor.active_strip = new_strip
 
         if self.scene_mode == "EXISTING":
             shot_scene.camera = source_scene.camera
 
-        context.scene.frame_end = max(
-            new_strip.frame_final_end - 1, context.scene.frame_end
+        context.sequencer_scene.frame_end = max(
+            new_strip.right_handle - 1, context.sequencer_scene.frame_end
         )
 
         # Move current frame to the new strip's start frame.
-        context.scene.frame_set(insert_frame)
+        context.sequencer_scene.frame_set(insert_frame)
 
         # Ensure newly created scene is visible.
-        ensure_sequencer_frame_visible(context, new_strip.frame_final_end)
+        ensure_sequencer_frame_visible(context, new_strip.right_handle)
 
         self.report({"INFO"}, f"Created new scene '{new_strip.name}'")
 
@@ -279,14 +276,14 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
             shot_scene = strip.scene
 
         # Find the frame where to insert the duplicated strip
-        insert_frame = get_last_sequence(sed.strips).frame_final_end
+        insert_frame = get_last_sequence(sed.strips).right_handle
 
         # Create new strip
         new_strip = sed.strips.new_scene(
             name, shot_scene, strip.channel, insert_frame
         )
 
-        new_strip.frame_final_duration = strip.frame_final_duration
+        new_strip.duration = strip.duration
 
         if not duplicate_scene:
             new_strip.scene_camera = strip.scene_camera
@@ -310,7 +307,7 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
             return {"CANCELLED"}
 
         # Move current frame to the new strip's start frame.
-        context.scene.frame_set(new_strips[0].frame_final_start)
+        context.scene.frame_set(new_strips[0].left_handle)
 
         # Deselect all strips
         bpy.ops.sequencer.select_all(action="DESELECT")
@@ -321,11 +318,11 @@ class SEQUENCER_OT_shot_duplicate(bpy.types.Operator):
             strip.select = True
 
         context.scene.frame_end = max(
-            new_strips[-1].frame_final_end - 1, context.scene.frame_end
+            new_strips[-1].right_handle - 1, context.scene.frame_end
         )
 
         # Ensure created strips are visible.
-        ensure_sequencer_frame_visible(context, new_strips[0].frame_final_end)
+        ensure_sequencer_frame_visible(context, new_strips[0].right_handle)
 
         self.report({"INFO"}, f"Duplicated {len(new_strips)} scene(s)")
 
@@ -409,173 +406,113 @@ class SEQUENCER_OT_shot_delete(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class SEQUENCER_OT_shot_timing_adjust(bpy.types.Operator):
-    bl_idname = "sequencer.shot_timing_adjust"
-    bl_label = "Adjust Timing"
-    bl_description = "Adjust the timing of the active scene interactively"
-    bl_options = {"GRAB_CURSOR_X", "BLOCKING", "UNDO"}
+# BFA (#6780): opt-in batch operator aligning every scene strip's scene frame range
+# (sfra/efra, the render range) to its visible extent in the sequencer timeline,
+# with optional lead-in/out padding. Only the scene frame range is affected - the
+# preview range, the strip's position in the master timeline and the strip's
+# internal time range all stay unchanged. Non-destructive: strip handles/content
+# are re-pinned after the range write (the Set-Scene-Range lesson) so the displayed
+# content stays exactly where it is.
+class SEQUENCER_OT_sync_scene_strip_ranges(bpy.types.Operator):
+    """Set start and end frame of each scene strip's scene so they align to the strip's preview range in the sequencer timeline"""
 
-    offset: bpy.props.IntProperty(
-        name="Offset",
+    bl_idname = "sequencer.sync_scene_strip_ranges"
+    bl_label = "Sync Scene Strip Frame Ranges"
+    bl_description = (
+        "Set start and end frame of each scene strip's scene to align with the "
+        "strip's visible range in the sequencer timeline, with optional lead-in/out "
+        "padding. Non-destructive: the strips keep their position in the timeline"
     )
+    bl_options = {'REGISTER', 'UNDO'}
 
-    mode: bpy.props.EnumProperty(
-        name="Mode",
-        items=(
-            ("DURATION", "Duration", "Adjust strip duration"),
-            ("SLIP", "Slip", "Slip strip content"),
-        ),
-        default="DURATION",
-        options={"SKIP_SAVE"},
+    lead_in: bpy.props.IntProperty(
+        name="Lead In",
+        description="Frames of padding added before each scene strip's content",
+        default=0,
+        min=0,
     )
-
-    strip_handle: bpy.props.EnumProperty(
-        name="Strip Adjustment Handle",
-        items=(
-            ("LEFT", "Left", "Left"),
-            ("RIGHT", "Right", "Right"),
-        ),
-        default="RIGHT",
-        options={"SKIP_SAVE"},
+    lead_out: bpy.props.IntProperty(
+        name="Lead Out",
+        description="Frames of padding added after each scene strip's content",
+        default=0,
+        min=0,
     )
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        return cls.get_active_strip(context) is not None
+        # The master timeline lives on the sequencer scene (context.sequencer_scene),
+        # not on the active shot scene (context.scene) - the old poll used the latter
+        # and was permanently disabled in the Scene menu.
+        ed = context.sequencer_scene.sequence_editor if context.sequencer_scene else None
+        return ed is not None and any(
+            isinstance(s, bpy.types.SceneStrip) for s in ed.strips_all
+        )
 
     @staticmethod
-    def get_active_strip(
-        context: bpy.types.Context,
-    ) -> Optional[bpy.types.SceneStrip]:
-        if context.area.type == "DOPESHEET_EDITOR":
-            strip = get_sync_master_strip(use_cache=True)[0]
-            return strip if strip and strip.scene == context.window.scene else None
-        elif context.scene.sequence_editor and isinstance(
-            context.scene.sequence_editor.active_strip, bpy.types.SceneStrip
-        ):
-            return context.scene.sequence_editor.active_strip
+    def iter_scene_strips(context: bpy.types.Context) -> list[bpy.types.SceneStrip]:
+        ed = context.sequencer_scene.sequence_editor
+        if not ed:
+            return []
+        # strips_all: recursive, meta-inclusive.
+        return [s for s in ed.strips_all if isinstance(s, bpy.types.SceneStrip)]
 
-        return None
-
-    def setup(self, context: bpy.types.Context):
-        self.strip = self.get_active_strip(context)
-        if not self.strip:
-            self.report({"ERROR"}, "No current Scene Strip")
-            return False
-        return True
-
-    def invoke(self, context: bpy.types.Context, event: bpy.types.Event):
-        if not self.setup(context):
-            return {"CANCELLED"}
-
-        context.window.cursor_modal_set("SCROLL_X")
-
-        self.start_mouse_coords = context.region.view2d.region_to_view(
-            x=event.mouse_region_x, y=event.mouse_region_y
-        )
-
-        if context.area.type == "SEQUENCE_EDITOR":
-            self.strip_handle = "LEFT" if self.strip.select_left_handle else "RIGHT"
-
-        self.original_strip_duration = self.strip.frame_final_duration
-        self.original_strip_scene_end = self.strip.scene.frame_end
-        self.original_strip_offset_start = self.strip.frame_offset_start
-        self.original_edit_frame_end = get_sync_settings().master_scene.frame_end
-
-        context.window_manager.modal_handler_add(self)
-        return {"RUNNING_MODAL"}
-
-    def update_header_text(self, context, event):
-        text = (
-            f"Offset: {self.offset}"
-            f" | New Scene Duration: {self.strip.frame_final_duration}"
-        )
-        context.area.header_text_set(text)
-
-    def modal(self, context: bpy.types.Context, event: bpy.types.Event):
-        self.update_header_text(context, event)
-        # Cancel
-        if event.type in {"RIGHTMOUSE", "ESC"}:
-            self.cancel(context)
-            return {"CANCELLED"}
-        # Validate
-        elif (event.type in {"LEFTMOUSE"} and event.value in {"PRESS", "RELEASE"}) or (
-            event.type in {"RET", "NUMPAD_ENTER"} and event.value in {"PRESS"}
-        ):
-            if self.offset == 0:
-                self.cancel(context)
-                return {"CANCELLED"}
-            self.restore_ui(context)
-            return {"FINISHED"}
-        # Update
-        elif event.type in {"MOUSEMOVE"}:
-            mouse_coords = context.region.view2d.region_to_view(
-                x=event.mouse_region_x, y=event.mouse_region_y
-            )
-            offset = int(mouse_coords[0] - self.start_mouse_coords[0])
-            if offset != self.offset:
-                self.offset = offset
-                self.execute(context)
-
-        return {"RUNNING_MODAL"}
+    def invoke(self, context: bpy.types.Context, _event):
+        # Operator dialog asking for lead-in/out, then Confirm runs execute().
+        return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context: bpy.types.Context):
-        if not self.options.is_invoke:
-            if not self.setup(context):
-                return {"CANCELLED"}
+        strips = self.iter_scene_strips(context)
+        todo = [s for s in strips if s.scene is not None]
 
-        from_frame_start = self.strip_handle == "LEFT"
-        select = self.mode == "DURATION"
-        self.strip.select_left_handle = select and from_frame_start
-        self.strip.select_right_handle = select and not from_frame_start
-        # Adjust offset sign to match direction.
-        # For instance, a positive offset (going to the right in modal):
-        #  - SHRINKS the strip if using left handle (from frame start)
-        #  - EXTENDS the strip otherwise (from frame end)
-        offset = -self.offset if from_frame_start else self.offset
-        # Compute current absolute offset from original duration
-        if self.mode == "SLIP":
-            delta = self.strip.frame_offset_start - self.original_strip_offset_start
-            slip_shot_content(self.strip, offset - delta, clamp_start=True)
-        else:
-            delta = self.strip.frame_final_duration - self.original_strip_duration
-            adjust_shot_duration(self.strip, offset - delta, from_frame_start)
+        # 1. Per-scene union of the visible extents of every strip sharing the
+        #    scene, remapped into the scene's referential.
+        visible: dict[bpy.types.Scene, list[int]] = {}
+        for strip in todo:
+            scene = strip.scene
+            v_start = remap_frame_value(strip.left_handle, strip)
+            v_end = remap_frame_value(strip.right_handle - 1, strip)
+            if scene in visible:
+                visible[scene][0] = min(visible[scene][0], v_start)
+                visible[scene][1] = max(visible[scene][1], v_end)
+            else:
+                visible[scene] = [v_start, v_end]
 
-        edit_scene = get_sync_settings().master_scene
-        if from_frame_start or self.mode == "SLIP":
-            # NOTE: When adjusting from frame start, the current frame does not change.
-            #       Set time to a non meaningful value before re-setting the correct frame
-            #       value, to trigger time-dependent updates (e.g: synchronization).
-            edit_scene.frame_set(-1)
-            update_frame = self.strip.frame_final_start
-        else:
-            update_frame = self.strip.frame_final_end - 1
+        # 2. SET target range + delta per scene. The range is set to the strip's
+        #    visible extent (with lead padding), clamped to >= 0 (no negative
+        #    frames). The delta is the frame_start shift, used to re-anchor the
+        #    strips in lockstep so their displayed content stays fixed.
+        plan: dict[bpy.types.Scene, tuple[int, int, int]] = {}
+        for scene, (v_start, v_end) in visible.items():
+            new_start = max(v_start - self.lead_in, 0)
+            new_end = v_end + self.lead_out
+            plan[scene] = (new_start, new_end, new_start - scene.frame_start)
 
-        # Set sequencer's frame to strip's new end frame
-        edit_scene.frame_set(update_frame)
+        # 3. Apply ranges and re-anchor strips. Writing frame_start/frame_end
+        #    auto-derives a scene strip's content length (the Set-Scene-Range
+        #    lesson), so shift content_start in lockstep with frame_start (keeps
+        #    the remap / displayed content constant) and re-pin the handles (keeps
+        #    the master position fixed). Without the lockstep shift the strip's
+        #    visible content would jump by the frame_start delta.
+        for strip in todo:
+            scene = strip.scene
+            new_start, new_end, delta = plan[scene]
+            content_start = strip.content_start
+            left = strip.left_handle
+            right = strip.right_handle
+            channel = strip.channel
+            scene.frame_start = new_start
+            scene.frame_end = new_end
+            strip.content_start = content_start + delta
+            strip.left_handle = left
+            strip.right_handle = right
+            strip.channel = channel
 
-        # Update both edit and internal scene's end frame if going past original ones
-        frame_end = self.strip.frame_final_end - 1
-        edit_scene.frame_end = max(frame_end, self.original_edit_frame_end)
-        self.strip.scene.frame_end = max(
-            remap_frame_value(frame_end, self.strip),
-            self.original_strip_scene_end,
+        self.report(
+            {'INFO'},
+            f"Updated {len(plan)} scene strip range(s)"
+            + (f", {len(strips) - len(todo)} skipped (no scene)" if len(todo) != len(strips) else ""),
         )
-
-        return {"FINISHED"}
-
-    def restore_ui(self, context: bpy.types.Context):
-        context.area.header_text_set(None)
-        context.window.cursor_modal_restore()
-
-    def cancel(self, context: bpy.types.Context):
-        if self.offset:
-            self.offset = 0
-            self.execute(context)
-        # Restore scenes' original end frames
-        context.scene.frame_end = self.original_edit_frame_end
-        self.strip.scene.frame_end = self.original_strip_scene_end
-        self.restore_ui(context)
+        return {'FINISHED'}
 
 
 class SEQUENCER_OT_shot_rename(bpy.types.Operator):
@@ -745,7 +682,7 @@ class SEQUENCER_OT_shot_chronological_numbering(bpy.types.Operator):
         items_to_rename: dict[bpy.types.SceneStrip, tuple[str, bool]] = dict()
 
         # Go through the shots chronologically (sorted by the start frame)
-        sorted_scene_strips = sorted(scene_strips, key=lambda x: x.frame_final_start)
+        sorted_scene_strips = sorted(scene_strips, key=lambda x: x.left_handle)
 
         # 1st pass: list items (strips/scenes) to rename.
         for strip in sorted_scene_strips:
@@ -802,7 +739,7 @@ classes = (
     SEQUENCER_OT_shot_new,
     SEQUENCER_OT_shot_duplicate,
     SEQUENCER_OT_shot_delete,
-    SEQUENCER_OT_shot_timing_adjust,
+    SEQUENCER_OT_sync_scene_strip_ranges,
     SEQUENCER_OT_shot_rename,
     SEQUENCER_OT_shot_chronological_numbering,
 )

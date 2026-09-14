@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Thanks to Znight and Spa Studios for the work of making this real
 
-from bfa_3Dsequencer.sequence import (
+from . import (
     overlay,
     props,
     ops,

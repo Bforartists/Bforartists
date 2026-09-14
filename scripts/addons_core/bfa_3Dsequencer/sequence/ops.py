@@ -3,8 +3,9 @@
 
 import bpy
 
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
-from bfa_3Dsequencer.sync.core import (
+from ..utils import register_classes, unregister_classes
+from ..sync.core import (
+    get_master_scene,
     get_sync_master_strip,
     get_sync_settings,
     remap_frame_value,
@@ -27,7 +28,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        return get_sync_settings().master_scene is not None
+        return get_master_scene() is not None
 
     def modal(self, context: bpy.types.Context, event: bpy.types.Event):
         frame_value = int(
@@ -48,7 +49,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
         return {"RUNNING_MODAL"}
 
     def execute(self, context: bpy.types.Context):
-        master_scene = get_sync_settings().master_scene
+        master_scene = get_master_scene()
         master_strip, _ = get_sync_master_strip()
 
         # Find a strip that matches the timing
@@ -62,9 +63,9 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
             s
             for s in strips
             if (
-                remap_frame_value(s.frame_final_start, s)
+                remap_frame_value(s.left_handle, s)
                 <= self.frame
-                <= remap_frame_value(s.frame_final_end, s)
+                <= remap_frame_value(s.right_handle, s)
             )
         ]
 
@@ -74,7 +75,7 @@ class DOPESHEET_OT_sequence_navigate(bpy.types.Operator):
 
         # Update master scene current frame to enter target strip.
         if strip and strip != master_strip:
-            master_scene.frame_set(strip.frame_final_start)
+            master_scene.frame_set(strip.left_handle)
 
         # Set frame_current directly for context's active scene.
         # This proves to be enough and reacts better than frame_set which
@@ -174,20 +175,20 @@ class SEQUENCE_OT_check_obj_users_scene(bpy.types.Operator):
 
     def build_obj_user_scene_report(self, obj):
         info_msg = ""
-        master_scene = get_sync_settings().master_scene
+        master_scene = get_master_scene()
         strips = [
             strip
             for strip in master_scene.sequence_editor.strips_all
             if strip.type == "SCENE"
         ]
 
-        for strip in sorted(strips, key=lambda f: f.frame_final_start):
+        for strip in sorted(strips, key=lambda f: f.left_handle):
             scene_msg = f" - Scene '{strip.scene.name}' from strips:\n"
             if scene_msg not in info_msg:
                 info_msg += scene_msg
             info_msg += (
                 f"   - {strip.name} "
-                f"[{strip.frame_final_start}, {strip.frame_final_end}]\n"
+                f"[{strip.left_handle}, {strip.right_handle}]\n"
             )
 
         report = f"Object '{obj.name}' is used in '{master_scene.name}' by:\n{info_msg}"

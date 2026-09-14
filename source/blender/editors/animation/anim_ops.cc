@@ -721,6 +721,14 @@ static wmOperatorStatus change_frame_invoke(bContext *C, wmOperator *op, const w
 
   op_data->pre_scrubbing = ED_screen_scrubbing_enable(*C, *screen);
 
+  /* BFA (#6780): in the dopesheet, timeline switches triggered by the playhead
+   * crossing into another scene strip (or the master fallback) are deferred
+   * until mouse release - the ghost highlight previews the target and the
+   * sequencer keeps live switching. */
+  if (CTX_wm_area(C) && CTX_wm_area(C)->spacetype == SPACE_ACTION) {
+    blender::ed::vse::sync_scene_strip_scrub_begin(*C, event);
+  }
+
   if (RNA_boolean_get(op->ptr, "seq_solo_preview")) {
     SpaceSeq *sseq = CTX_wm_space_seq(C);
     if (sseq) {
@@ -765,6 +773,9 @@ static void change_frame_cancel(bContext *C, wmOperator *op)
     }
   }
 
+  /* BFA (#6780): a cancelled scrub drops the deferred timeline switch. */
+  blender::ed::vse::sync_scene_strip_scrub_cancel();
+
   if (need_extra_redraw_after_scrubbing_ends(C)) {
     Scene *scene = CTX_data_scene(C);
     WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
@@ -778,6 +789,8 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
   /* execute the events */
   switch (event->type) {
     case EVT_ESCKEY:
+      /* BFA (#6780): drop any deferred timeline switch on Esc. */
+      blender::ed::vse::sync_scene_strip_scrub_cancel();
       ret = OPERATOR_FINISHED;
       break;
 
@@ -832,6 +845,13 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
     }
     MEM_delete(op_data);
     op->customdata = nullptr;
+
+    /* BFA (#6780): mouse release in the dopesheet applies the deferred
+     * timeline switch (a no-op when no target was recorded; after an Esc the
+     * defer state was already cancelled). */
+    if (CTX_wm_area(C) && CTX_wm_area(C)->spacetype == SPACE_ACTION) {
+      blender::ed::vse::sync_scene_strip_scrub_end(*C);
+    }
 
     if (RNA_boolean_get(op->ptr, "seq_solo_preview")) {
       SpaceSeq *sseq = CTX_wm_space_seq(C);

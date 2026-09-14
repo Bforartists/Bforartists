@@ -1407,7 +1407,7 @@ class DOPESHEET_PT_overlay(Panel):
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Overlays"
-    bl_ui_units_x = 10
+    bl_ui_units_x = 14
 
     def draw(self, _context):
         pass
@@ -1426,9 +1426,45 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
         layout = self.layout
 
         layout.active = overlay_settings.show_overlays
-        row = layout.row()
-        row.active = context.workspace.use_scene_time_sync
-        row.prop(overlay_settings, "show_scene_strip_range")
+
+        # BFA (#6780): the scene strip gizmos are sync-agnostic now - they work
+        # whenever a master sequencer timeline is configured, sync on or off -
+        # so the section is not grayed by the sync state anymore. Collapsible
+        # section in the View3D overlays style (indented_column + disclosure tri).
+        subheader, subcol = layout.indented_column(draw_body=overlay_settings.show_scene_strip_gizmos)
+        header_row = subheader.row()
+        header_row.alignment = 'LEFT'
+        # bfa 3d sequencer interactive scene strip gizmos - single merged toggle (built-in and
+        # addon "Sequencer Sync" panel both bind here); off fully hides the gizmo system
+        header_row.prop(overlay_settings, "show_scene_strip_gizmos", text="Scene Strip Gizmo")
+
+        if subcol:
+            header_row.label(icon="DISCLOSURE_TRI_DOWN")
+
+            subcol.use_property_split = True
+            subcol.use_property_decorate = False
+            # BFA (#6780): Set Preview Range = gizmo writes the strip scene's preview
+            # start/end (only while preview mode is enabled on the scene, via the
+            # timeline Preview Range toggle); off = the gizmo only changes the strip.
+            subcol.prop(overlay_settings, "use_preview_range", text="Set Preview Range")
+            # BFA (#6780): Clamp to Scene Strip = gizmo clamps the strip scene's frame
+            # range (start/end frame) to the strip's visible extent when editing it,
+            # with optional lead-in/out padding. Only the scene frame range is affected.
+            subcol.prop(overlay_settings, "clamp_to_scene_strip", text="Set Frame Range")
+            # BFA (#6780): lead-in/out padding for the "Extend Frame Range" gizmo.
+            subcol.prop(overlay_settings, "clamp_lead_in", text="Lead In")
+            subcol.prop(overlay_settings, "clamp_lead_out", text="Lead Out")
+            subcol.separator()
+            # BFA (#6780): layered strip indicator display options (opt-in).
+            subcol.prop(overlay_settings, "show_scene_strip_all", text="Show All Strips")
+            # BFA (#6780): label options - strip name and referenced scene name.
+            subcol.prop(overlay_settings, "show_scene_strip_names", text="Show Strip Names")
+            subcol.prop(overlay_settings, "show_scene_strip_scene_name", text="Show Scene Names")
+            # BFA (#6780): opacity of the layered/stacked strip indicators.
+            subcol.prop(overlay_settings, "all_strips_opacity", text="Strips Opacity")
+
+        else:
+            header_row.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 classes = (

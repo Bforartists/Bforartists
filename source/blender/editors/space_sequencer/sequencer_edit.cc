@@ -400,11 +400,23 @@ static Scene *get_sequencer_scene_for_time_sync(const bContext &C)
     if (sad->do_scene_syncing) {
       return sad->scene;
     }
-    /* If we're playing a scene that's not a sequence scene, don't try and sync. */
-    return nullptr;
+    /* If we're playing a scene that's not a sequence scene, don't try and sync
+     * the forward way. BFA (#6780): fall through to the workspace fallback so
+     * playback started outside the sequencer (dope-sheet, 3D view) still drives
+     * the reverse mapping - the shot playhead moves the sequencer playhead. */
   }
-  if (is_scene_time_sync_needed(C)) {
+  else if (is_scene_time_sync_needed(C)) {
     return CTX_data_sequencer_scene(&C);
+  }
+  /* BFA (#6780): bidirectional playhead for the built-in sync - when the frame
+   * change comes from outside the sequencer (dope-sheet scrub, 3D view, playback),
+   * still run the sync seam so the shot time maps back onto the sequencer
+   * playhead. Only for the built-in sync mode (WORKSPACE_SYNC_SCENE_TIME). */
+  const WorkSpace *workspace_fallback = CTX_wm_workspace(&C);
+  if (workspace_fallback && workspace_fallback->sequencer_scene &&
+      (workspace_fallback->flags & WORKSPACE_SYNC_SCENE_TIME) != 0)
+  {
+    return workspace_fallback->sequencer_scene;
   }
   return nullptr;
 }
@@ -437,11 +449,294 @@ const Strip *get_scene_strip_for_time_sync(const Scene *sequencer_scene)
   return nullptr;
 }
 
+/* BFA (#6780): bidirectional playhead cache for the built-in scene time sync.
+ * Remembers the last frame pair the seam applied in each direction so the next
+ * call can tell which side the user moved: if only the sequencer (master) time
+ * changed the mapping runs forward (sequencer to shot), if only the active
+ * shot's time changed it runs in reverse (shot to sequencer). Both sides
+ * unchanged means the last application already updated both values - bail out
+ * to break potential feedback loops (e.g. with the 3D Sequencer addon's own
+ * handlers). */
+struct SceneStripTimeSyncCache {
+  const Scene *master_scene = nullptr;
+  const Scene *shot_scene = nullptr;
+  int last_master_cfra = -1;
+  int last_shot_cfra = -1;
+};
+static SceneStripTimeSyncCache g_scene_strip_time_sync_cache;
+
+/* BFA (#6780): deferred timeline switching during dopesheet playhead scrubs.
+ * While the mouse is held down, the forward sync must not switch the window's
+ * active scene (or rewrite the master playhead in fallback mode) - the full
+ * sequencer control belongs in the sequencer, and a live swap mid-drag is
+ * unpredictable UX. Instead the would-be switch target is recorded and shown
+ * as a ghost highlight; on mouse release the target is applied.
+ * State lives next to the frame-pair cache and is driven by the dopesheet's
+ * ANIM_OT_change_frame operator (begin at invoke, end on release, cancel on
+ * Esc). The sequencer's own scrub keeps the live behavior. */
+struct SceneStripScrubDefer {
+  bool active = false;
+  /* The scene the drag started in. Forward sync defers only for this scene. */
+  const Scene *drag_scene = nullptr;
+  /* The strip covering the drag start (no switches away from it while held). */
+  const Strip *drag_strip = nullptr;
+  /* Would-be switch target, recorded when the playhead leaves the strip. */
+  const Strip *target_strip = nullptr; /* Null means: master (fallback). */
+  int target_master_frame = 0;
+  bool has_target = false;
+};
+static SceneStripScrubDefer g_scene_strip_scrub_defer;
+
+void sync_scene_strip_scrub_begin(bContext &C, const wmEvent * /*event*/)
+{
+  SceneStripScrubDefer &defer = g_scene_strip_scrub_defer;
+  defer.active = true;
+  defer.has_target = false;
+  defer.target_strip = nullptr;
+  wmWindow *win = CTX_wm_window(&C);
+  defer.drag_scene = win ? WM_window_get_active_scene(win) : nullptr;
+  defer.drag_strip = nullptr;
+  /* Find the strip covering the active scene at the current master time, so
+   * forward sync knows exactly which strip's range it may map within. */
+  Scene *sequencer_scene = get_sequencer_scene_for_time_sync(C);
+  if (sequencer_scene && defer.drag_scene) {
+    const Strip *strip_at_frame = get_scene_strip_for_time_sync(sequencer_scene);
+    if (strip_at_frame && strip_at_frame->scene == defer.drag_scene) {
+      defer.drag_strip = strip_at_frame;
+    }
+  }
+}
+
+void sync_scene_strip_scrub_end(bContext &C)
+{
+  SceneStripScrubDefer &defer = g_scene_strip_scrub_defer;
+  defer.active = false;
+  if (!defer.has_target || !defer.drag_scene) {
+    defer.drag_scene = nullptr;
+    defer.drag_strip = nullptr;
+    defer.target_strip = nullptr;
+    return;
+  }
+  /* Apply the recorded switch target now: make the target scene active, then
+   * run the normal forward sync so the shot playhead derives from the target
+   * strip under the (already moved) master playhead. When the target is the
+   * master fallback (target_strip == null), the forward path's no-strip
+   * branch performs the switch itself. */
+  wmWindow *win = CTX_wm_window(&C);
+  Scene *active_scene = win ? WM_window_get_active_scene(win) : nullptr;
+  if (defer.target_strip && defer.target_strip->scene &&
+      active_scene != defer.target_strip->scene)
+  {
+    Main *bmain = CTX_data_main(&C);
+    WM_window_set_active_scene(bmain, &C, win, defer.target_strip->scene);
+  }
+  defer.drag_scene = nullptr;
+  defer.drag_strip = nullptr;
+  defer.target_strip = nullptr;
+  defer.has_target = false;
+  /* Re-cache the frame pair so the next seam call treats the post-switch
+   * state as fresh (same warm-up as after a scene change). */
+  Scene *sequencer_scene = get_sequencer_scene_for_time_sync(C);
+  SceneStripTimeSyncCache &cache = g_scene_strip_time_sync_cache;
+  cache.master_scene = sequencer_scene;
+  cache.shot_scene = active_scene;
+  cache.last_master_cfra = sequencer_scene ? sequencer_scene->r.cfra : -1;
+  cache.last_shot_cfra = active_scene ? active_scene->r.cfra : -1;
+  sync_active_scene_and_time_with_scene_strip(C);
+}
+
+void sync_scene_strip_scrub_cancel()
+{
+  SceneStripScrubDefer &defer = g_scene_strip_scrub_defer;
+  defer.active = false;
+  defer.has_target = false;
+  defer.drag_scene = nullptr;
+  defer.drag_strip = nullptr;
+  defer.target_strip = nullptr;
+}
+
+const Strip *sync_scene_strip_scrub_target_get(const bContext &C,
+                                               Scene **r_master_scene,
+                                               int *r_master_frame,
+                                               bool *r_is_master_fallback,
+                                               const Strip **r_drag_strip)
+{
+  SceneStripScrubDefer &defer = g_scene_strip_scrub_defer;
+  if (!defer.active || !defer.has_target) {
+    return nullptr;
+  }
+  Scene *sequencer_scene = get_sequencer_scene_for_time_sync(const_cast<bContext &>(C));
+  if (r_master_scene) {
+    *r_master_scene = sequencer_scene;
+  }
+  if (r_master_frame) {
+    *r_master_frame = defer.target_master_frame;
+  }
+  if (r_is_master_fallback) {
+    *r_is_master_fallback = (defer.target_strip == nullptr);
+  }
+  if (r_drag_strip) {
+    *r_drag_strip = defer.drag_strip;
+  }
+  return defer.target_strip;
+}
+
+/* BFA (#6780): one shared rule for recording the deferred switch target, used
+ * by BOTH sync directions while a dopesheet scrub is held. The old split - the
+ * forward block checked the strip under the master playhead, the reverse
+ * branch measured the distance to same-scene strips only - made the two ticks
+ * disagree, so the highlight alternated on/off while dragging past the strip
+ * ("flickers off, flickers on"). With one rule the state only changes when
+ * the master playhead genuinely crosses a boundary: inside the drag's
+ * timeline clears the target ("unstuck"), anywhere else records it - the
+ * top-most strip of another scene, or the master fallback on an empty
+ * lane - and it stays until the release applies it or the drag returns. */
+static void scene_strip_scrub_target_record(Scene *sequencer_scene, const Scene *active_scene)
+{
+  SceneStripScrubDefer &defer = g_scene_strip_scrub_defer;
+  const Strip *strip_at_frame = get_scene_strip_for_time_sync(sequencer_scene);
+  if (strip_at_frame && strip_at_frame->scene == active_scene) {
+    /* Back inside the drag's timeline: no switch pending, and re-anchor the
+     * mapping strip (a click may have jumped between strips of one scene). */
+    defer.drag_strip = strip_at_frame;
+    defer.target_strip = nullptr;
+    defer.has_target = false;
+    return;
+  }
+  defer.target_strip = (strip_at_frame && strip_at_frame->scene) ? strip_at_frame : nullptr;
+  defer.target_master_frame = sequencer_scene->r.cfra;
+  defer.has_target = true;
+}
+
 void sync_active_scene_and_time_with_scene_strip(bContext &C)
 {
   Scene *sequencer_scene = get_sequencer_scene_for_time_sync(C);
   if (!sequencer_scene) {
     return;
+  }
+
+  /* BFA (#6780): reverse mapping (shot playhead to sequencer playhead) for the
+   * built-in sync mode. The forward path below stays responsible for the
+   * sequencer to shot direction and for re-caching the pair afterwards. */
+  wmWindow *win_pre = CTX_wm_window(&C);
+  Scene *active_scene_pre = win_pre ? WM_window_get_active_scene(win_pre) : nullptr;
+  SceneStripTimeSyncCache &cache = g_scene_strip_time_sync_cache;
+  const bool cache_matches = (cache.master_scene == sequencer_scene &&
+                              cache.shot_scene == active_scene_pre &&
+                              active_scene_pre != nullptr);
+  const bool master_changed = cache.last_master_cfra != sequencer_scene->r.cfra;
+  const bool shot_changed = (active_scene_pre != nullptr &&
+                             cache.last_shot_cfra != active_scene_pre->r.cfra);
+  /* BFA (#6780): first call after startup/scene switch only primes the cache so
+   * the direction detection has a reference point (same warm-up as the 3D
+   * Sequencer addon's handler). */
+  if (!cache_matches) {
+    cache.master_scene = sequencer_scene;
+    cache.shot_scene = active_scene_pre;
+    cache.last_master_cfra = sequencer_scene->r.cfra;
+    cache.last_shot_cfra = active_scene_pre ? active_scene_pre->r.cfra : -1;
+  }
+  const bool reverse_sync = cache_matches && shot_changed && !master_changed &&
+                            active_scene_pre != sequencer_scene &&
+                            active_scene_pre != nullptr;
+  if (reverse_sync) {
+    /* Find a scene strip on the sequencer timeline showing the active scene.
+     * BFA (#6780, §5.7): follow the linear shot->master mapping even when the
+     * shot playhead is outside the strip's coverage, instead of snapping the
+     * master playhead to the nearest strip edge. The edge snap moved the master
+     * playhead backwards, and the next forward re-derivation mapped it back to a
+     * shot frame inside the strip ("glitch / bounce back to old position"). The
+     * linear follow keeps shot and master in lockstep past the strip, so the
+     * drag continues smoothly; the target is floored at MINAFRAME. */
+    Editing *ed_rev = seq::editing_get(sequencer_scene);
+    Strip *strip_rev = nullptr;
+    int best_master_t = 0;
+    bool found_any = false;
+    int best_dist = MAXFRAME;
+    if (ed_rev != nullptr) {
+      for (Strip &strip_iter : ed_rev->seqbase) {
+        if (strip_iter.type != STRIP_TYPE_SCENE || strip_iter.scene != active_scene_pre) {
+          continue;
+        }
+        /* Invert the forward mapping: the strip shows
+         * scene_frame(timeline_frame) = timeline_frame - content_start +
+         * scene.sfra (retiming ignored, matching the forward path's
+         * simple scenes). target = shot frame + content_start - scene.sfra. */
+        const int target = round_fl_to_int(float(active_scene_pre->r.cfra) +
+                                           strip_iter.content_start() -
+                                           float(active_scene_pre->r.sfra));
+        const int left = strip_iter.left_handle();
+        const int right = strip_iter.right_handle(sequencer_scene);
+        /* Prefer the strip whose range contains the target (distance 0). */
+        const int dist = (target < left) ? (left - target) :
+                         (target >= right) ? (target - (right - 1)) :
+                                             0;
+        if (!found_any || dist < best_dist) {
+          found_any = true;
+          best_dist = dist;
+          best_master_t = target;
+          strip_rev = &strip_iter;
+        }
+        if (dist == 0) {
+          break;
+        }
+      }
+    }
+    if (strip_rev != nullptr) {
+      const int target_cfra = clamp_i(best_master_t, MINAFRAME, MAXFRAME);
+      if (target_cfra != sequencer_scene->r.cfra) {
+        sequencer_scene->r.cfra = target_cfra;
+        sequencer_scene->r.subframe = 0.0f;
+        FRAMENUMBER_MIN_CLAMP(sequencer_scene->r.cfra);
+        /* Re-cache both values: the forward path would see nothing changed
+         * and bail out, breaking the feedback loop. */
+        cache.master_scene = sequencer_scene;
+        cache.shot_scene = active_scene_pre;
+        cache.last_master_cfra = sequencer_scene->r.cfra;
+        cache.last_shot_cfra = active_scene_pre->r.cfra;
+        /* Refresh the sequencer and dope-sheet playheads. */
+        WM_event_add_notifier(&C, NC_SCENE | ND_FRAME, sequencer_scene);
+      }
+      /* BFA (#6780): while a dopesheet scrub is held, record the would-be
+       * switch target with the same shared rule the forward path uses (the
+       * master playhead now sits on the mapped target frame, so "the strip
+       * under the playhead" is well-defined for both directions). The mouse
+       * release applies the switch. */
+      SceneStripScrubDefer &defer_rev = g_scene_strip_scrub_defer;
+      if (defer_rev.active && active_scene_pre == defer_rev.drag_scene) {
+        scene_strip_scrub_target_record(sequencer_scene, active_scene_pre);
+      }
+      /* Either way, the shot time is authoritative now - done. */
+      return;
+    }
+    /* BFA (#6780): no strip on the timeline shows the active scene - the shot
+     * time is still authoritative, do not run the forward mapping (it would
+     * switch the window's scene). */
+    return;
+  }
+
+  /* BFA (#6780): deferred timeline switching during dopesheet playhead scrubs
+   * (see the SceneStripScrubDefer block above). While the drag is held, the
+   * forward path must not switch the active scene and must not rewrite the
+   * master playhead from a strip mapping that would fight the mouse. Inside
+   * the strip the drag started in, the reverse mapping has already kept both
+   * playheads in lockstep, so the shot (mouse) time stays authoritative;
+   * past it, only the would-be switch target is recorded - the ghost
+   * highlight shows it and the mouse release applies it. */
+  SceneStripScrubDefer &defer = g_scene_strip_scrub_defer;
+  if (defer.active) {
+    wmWindow *win_defer = CTX_wm_window(&C);
+    Scene *active_scene_defer = win_defer ? WM_window_get_active_scene(win_defer) : nullptr;
+    if (active_scene_defer == defer.drag_scene && active_scene_defer != nullptr) {
+      /* Re-cache the frame pair for every deferred outcome so the direction
+       * detection stays in lockstep with the mouse-driven times. */
+      cache.master_scene = sequencer_scene;
+      cache.shot_scene = active_scene_defer;
+      cache.last_master_cfra = sequencer_scene->r.cfra;
+      cache.last_shot_cfra = active_scene_defer->r.cfra;
+      scene_strip_scrub_target_record(sequencer_scene, active_scene_defer);
+      return;
+    }
   }
 
   wmWindow *win = CTX_wm_window(&C);
@@ -511,6 +806,14 @@ void sync_active_scene_and_time_with_scene_strip(bContext &C)
       object::mode_set(&C, prev_obact->mode);
     }
   }
+
+  /* BFA (#6780): re-cache the applied frame pair so the next call can tell
+   * which side moved (bidirectional playhead detection for the built-in sync). */
+  SceneStripTimeSyncCache &cache_fwd = g_scene_strip_time_sync_cache;
+  cache_fwd.master_scene = sequencer_scene;
+  cache_fwd.shot_scene = active_scene;
+  cache_fwd.last_master_cfra = sequencer_scene->r.cfra;
+  cache_fwd.last_shot_cfra = active_scene->r.cfra;
 
   DEG_id_tag_update(&active_scene->id, ID_RECALC_FRAME_CHANGE);
   WM_event_add_notifier(&C, NC_WINDOW, nullptr);

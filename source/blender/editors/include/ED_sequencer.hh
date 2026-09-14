@@ -17,6 +17,7 @@ struct Strip;
 struct SpaceSeq;
 struct bContext;
 struct View2D;
+struct wmEvent;
 
 namespace ed::vse {
 
@@ -89,6 +90,26 @@ bool is_scene_time_sync_needed(const bContext &C);
  */
 const Strip *get_scene_strip_for_time_sync(const Scene *sequencer_scene);
 void sync_active_scene_and_time_with_scene_strip(bContext &C);
+
+/* BFA (#6780): deferred timeline switching during dopesheet playhead scrubs.
+ * While a dopesheet scrub is held down, the sync seam records the would-be
+ * switch target instead of switching scenes live; the ghost highlight reads
+ * the target and the mouse release applies it. */
+void sync_scene_strip_scrub_begin(bContext &C, const wmEvent *event);
+void sync_scene_strip_scrub_end(bContext &C);
+void sync_scene_strip_scrub_cancel();
+/**
+ * Returns the recorded switch target while a dopesheet scrub is deferred, or
+ * null when nothing is pending. \a r_master_scene gets the sequencer (master)
+ * scene, \a r_master_frame the master playhead frame the target was recorded
+ * at, and \a r_is_master_fallback is true when the target is the master
+ * timeline itself (no scene strip under the playhead).
+ */
+const Strip *sync_scene_strip_scrub_target_get(const bContext &C,
+                                               Scene **r_master_scene,
+                                               int *r_master_frame,
+                                               bool *r_is_master_fallback,
+                                               const Strip **r_drag_strip);
 
 }  // namespace ed::vse
 }  // namespace blender

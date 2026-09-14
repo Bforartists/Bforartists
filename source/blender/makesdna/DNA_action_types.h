@@ -495,7 +495,20 @@ ENUM_OPERATORS(eDopeSheet_Flag);
 
 enum SpaceActionOverlays_Flag : int {
   ADS_OVERLAY_SHOW_OVERLAYS = (1 << 0),
-  ADS_SHOW_SCENE_STRIP_FRAME_RANGE = (1 << 1)
+  ADS_SHOW_SCENE_STRIP_FRAME_RANGE = (1 << 1),
+  /** BFA - 3D Sequencer: interactive scene strip gizmos drawn in the dope-sheet. */
+  ADS_SHOW_SCENE_STRIP_GIZMOS = (1 << 2),
+  /** BFA - 3D Sequencer: keep the strip's scene preview range in sync with the strip. */
+  ADS_SHOW_USE_PREVIEW_RANGE = (1 << 3),
+  /** BFA - 3D Sequencer: opt-in dope-sheet display of every master-timeline scene strip. */
+  ADS_SHOW_SCENE_STRIP_ALL = (1 << 4),
+  /** BFA - 3D Sequencer: opt-in scene name on the scene strip labels/indicators. */
+  ADS_SHOW_SCENE_STRIP_SCENE_NAME = (1 << 5),
+  /** BFA - 3D Sequencer: strip name on the scene strip labels/indicators. */
+  ADS_SHOW_SCENE_STRIP_STRIP_NAME = (1 << 6),
+  /** BFA - 3D Sequencer: clamp the strip scene's frame range to the strip's
+   * visible extent (with lead-in/out padding) when the gizmo edits the strip. */
+  ADS_SHOW_CLAMP_TO_SCENE_STRIP = (1 << 7),
 };
 ENUM_OPERATORS(SpaceActionOverlays_Flag);
 
@@ -1162,7 +1175,13 @@ struct SpaceAction_Runtime {
 
 struct SpaceActionOverlays {
   SpaceActionOverlays_Flag flag = {};
-  char _pad0[4] = {};
+  /* BFA - 3D Sequencer: opacity multiplier for the layered/stacked strip indicators. */
+  float all_strips_opacity = 1.0f;
+  /* BFA - 3D Sequencer: lead-in/out padding (frames) for the "Clamp to Scene
+   * Strip" gizmo - added before/after the strip's visible extent when the gizmo
+   * sets the scene frame range (sfra/efra). */
+  int clamp_lead_in = 0;
+  int clamp_lead_out = 0;
 };
 
 /* Action Editor Space. This is defined here instead of in DNA_space_types.h */
