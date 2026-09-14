@@ -872,14 +872,19 @@ class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
         scene = context.scene
         rd = scene.render
 
-        layout.use_property_split = False
-        layout.use_property_decorate = False  # No animation.
+        layout.use_property_split = True
+        layout.use_property_decorate = True  # No animation.
 
-        row = layout.row() # BFA
+        col = layout.column(align=True) # BFA
+        
+        row = col.row()
+        row.use_property_split = True
         row.prop(rd, "use_high_quality_normals")
-        row.prop_decorator(rd, "use_high_quality_normals")
+        col.separator( factor = 1)
+        
+        row = col.row()
+        row.use_property_split = True
         row.prop(rd, "anisotropic_filter")
-        row.prop_decorator(rd, "anisotropic_filter")
 
 
 class CompositorPerformanceButtonsPanel:
