@@ -109,8 +109,10 @@ enum CDT_ids_needed_type {
   CDT_ORIG_FACES = (1 << 3),
   /** If set, include CW faces (going outward) when CDT_ORIG_FACES is set, else don't. */
   CDT_CW_ORIG_FACES = (1 << 4),
-  /** If set, in any of the previous requirements that produce lists, we only need one
-     representative value in the list. */
+  /**
+   * If set, in any of the previous requirements that produce lists, we only need one
+   * representative value in the list.
+   */
   CDT_ONLY_ONE_ORIG = (1 << 5)
 };
 ENUM_OPERATORS(CDT_ids_needed_type)
@@ -127,7 +129,9 @@ namespace meshintersect {
  * implied by the faces will be inferred.
  *
  * The edges are given by pairs of vertex indices.
- * The faces are given as groups of vertex indices, in counterclockwise order.
+ * The faces are given as groups of vertex indices, in counterclockwise order
+ * when original face ids are required (#CDT_ORIG_FACES) or for #CDT_CONSTRAINTS_VALID_BMESH.
+ * `*_NONZERO` outputs use the orientation as the winding, even-odd filling ignores it.
  *
  * The edges implied by the faces are automatically added
  * and need not be put in the edges array, which is intended

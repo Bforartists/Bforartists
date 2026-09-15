@@ -939,11 +939,8 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
         Only display properties that are either set or can be modified (i.e. the
         asset is in the current file). Empty, non-editable fields are not really useful.
         """
-        # BFA - float-left label with textbox for better legibility of asset metadata
-        if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(
-            propname
-        ):
-            split = layout.split(factor=0.4)
+        if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(propname):
+            split = layout.split(factor=layout.property_split_factor)
             ui_name = asset_metadata.rna_type.properties[propname].name
             sub = split.row()
             sub.alignment = 'RIGHT'
@@ -967,7 +964,7 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
         if getattr(asset_metadata, "webpage") or not asset_metadata.is_property_readonly("webpage"):
             ui_name = asset_metadata.rna_type.properties["webpage"].name
             if asset_metadata.is_property_readonly("webpage"):
-                split = layout.split(factor=0.4)
+                split = layout.split(factor=layout.property_split_factor)
                 sub = split.row()
                 sub.alignment = 'RIGHT'
                 sub.label(text=ui_name)

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-07-31 17:12+0000\n"
 "Last-Translator: Ye Gui <ziweidao@foxmail.com>\n"
 "Language-Team: Chinese (Traditional Han script) <https://translate.blender.org/projects/blender-ui/ui/zh_Hant/>\n"
@@ -26292,64 +26292,92 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
-msgid "Snap"
-msgstr "吸附"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "比例化編輯衰落"
-
-
 msgid "Read"
 msgstr "讀取"
-
-
-msgid "Mask Edit"
-msgstr "遮罩編輯"
 
 
 msgid "Sample"
 msgstr "取樣"
 
 
-msgid "Automasking"
-msgstr "自動遮罩"
+msgid "Show/Hide"
+msgstr "顯示/隱藏"
 
 
 msgid "Write"
 msgstr "寫入"
 
 
-msgid "Face Sets Edit"
-msgstr "面集編輯"
+msgid "Clean Up"
+msgstr "清理"
 
 
 msgid "Primitives"
 msgstr "原形"
 
 
-msgid "Vertex Group Locks"
-msgstr "頂點群組鎖定"
+msgid "Pivot Point"
+msgstr "樞紐點"
 
 
 msgid "Gizmo"
 msgstr "操縱器"
 
 
+msgid "Snap"
+msgstr "吸附"
+
+
 msgid "Instances"
 msgstr "實例化"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "比例化編輯衰落"
+
+
+msgid "Mask Edit"
+msgstr "遮罩編輯"
+
+
+msgid "Automasking"
+msgstr "自動遮罩"
+
+
+msgid "Face Sets Edit"
+msgstr "面集編輯"
+
+
+msgid "Vertex Group Locks"
+msgstr "頂點群組鎖定"
 
 
 msgid "Import"
 msgstr "匯入"
 
 
-msgid "Mirror"
-msgstr "鏡像"
-
-
 msgid "Render Preview"
 msgstr "算繪預覽"
+
+
+msgid "Utilities"
+msgstr "效用"
+
+
+msgid "Deprecated"
+msgstr "已棄用"
+
+
+msgid "Math"
+msgstr "數學公式"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Mirror"
+msgstr "鏡像"
 
 
 msgid "UV Mapping"
@@ -26360,16 +26388,8 @@ msgid "Local View"
 msgstr "區域檢視"
 
 
-msgid "Utilities"
-msgstr "效用"
-
-
 msgid "Viewpoint"
 msgstr "視點"
-
-
-msgid "Deprecated"
-msgstr "已棄用"
 
 
 msgid "Navigation"
@@ -26390,14 +26410,6 @@ msgstr "檢視範圍"
 
 msgid "Select More/Less"
 msgstr "選取更多/更少"
-
-
-msgid "Math"
-msgstr "數學公式"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Select Similar"
@@ -26432,6 +26444,14 @@ msgid "Light Probe"
 msgstr "燈光採樣器"
 
 
+msgid "Linked"
+msgstr "已連結"
+
+
+msgid "Layout"
+msgstr "配置"
+
+
 msgid "Add Image"
 msgstr "新增影像"
 
@@ -26452,24 +26472,16 @@ msgid "Track"
 msgstr "追蹤"
 
 
+msgid "Adjust"
+msgstr "調整"
+
+
 msgid "Quick Effects"
 msgstr "快速效果"
 
 
-msgid "Show/Hide"
-msgstr "顯示/隱藏"
-
-
-msgid "Linked"
-msgstr "已連結"
-
-
-msgid "Clean Up"
-msgstr "清理"
-
-
-msgid "Layout"
-msgstr "配置"
+msgid "Keying"
+msgstr "鍵處理"
 
 
 msgid "Asset"
@@ -26478,6 +26490,10 @@ msgstr "素材"
 
 msgid "Make Single User"
 msgstr "製作單一使用者"
+
+
+msgid "Tracking"
+msgstr "跟蹤"
 
 
 msgid "Convert"
@@ -26492,12 +26508,12 @@ msgid "Hooks"
 msgstr "鉤"
 
 
+msgid "Creative"
+msgstr "創意"
+
+
 msgid "Trim/Add"
 msgstr "修剪/增加"
-
-
-msgid "Adjust"
-msgstr "調整"
 
 
 msgid "Sculpt Set Pivot"
@@ -26510,14 +26526,6 @@ msgstr "面集初始化"
 
 msgid "Random Mask"
 msgstr "隨機遮罩"
-
-
-msgid "Keying"
-msgstr "鍵處理"
-
-
-msgid "Tracking"
-msgstr "跟蹤"
 
 
 msgid "Clear Transform"
@@ -26538,10 +26546,6 @@ msgstr "骨骼集盒"
 
 msgid "Names"
 msgstr "名稱"
-
-
-msgid "Creative"
-msgstr "創意"
 
 
 msgid "Toggle Bone Options"
@@ -26570,10 +26574,6 @@ msgstr "設定面強度"
 
 msgid "Merge"
 msgstr "合併"
-
-
-msgid "Pivot Point"
-msgstr "樞紐點"
 
 
 msgid "Special Characters"
@@ -36344,6 +36344,14 @@ msgid "Collection of Node Sockets"
 msgstr "節點接口的集盒"
 
 
+msgid "From Socket"
+msgstr "從接口"
+
+
+msgid "To Socket"
+msgstr "到接口"
+
+
 msgid "Socket Template"
 msgstr "接口範本"
 
@@ -43091,10 +43099,6 @@ msgid "Export materials"
 msgstr "匯出材質"
 
 
-msgid "No export"
-msgstr "不匯出"
-
-
 msgid "Merge Animation"
 msgstr "合併動畫"
 
@@ -49552,10 +49556,6 @@ msgid "From Node"
 msgstr "來自節點"
 
 
-msgid "From Socket"
-msgstr "從接口"
-
-
 msgid "Delete Empty Frames"
 msgstr "刪除空影格"
 
@@ -52722,6 +52722,10 @@ msgid "Paint a stroke into the image"
 msgstr "繪入影像中的一道筆觸"
 
 
+msgid "Override Location"
+msgstr "覆蓋位置"
+
+
 msgctxt "Operator"
 msgid "Mask Box Gesture"
 msgstr "遮罩框選地手勢"
@@ -52862,10 +52866,6 @@ msgstr "平滑頂點色彩"
 msgctxt "Operator"
 msgid "Vertex Paint"
 msgstr "頂點繪製"
-
-
-msgid "Override Location"
-msgstr "覆蓋位置"
 
 
 msgctxt "Operator"
@@ -59474,6 +59474,14 @@ msgid "View Online Manual"
 msgstr "檢視線上手冊"
 
 
+msgid "Trusted Source"
+msgstr "信任的來源"
+
+
+msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
+msgstr "允許 .blend 檔自動執行命令稿，系統偏好設定中預設為可用"
+
+
 msgctxt "Operator"
 msgid "Drop to Import File"
 msgstr "拖放以匯入檔案"
@@ -59661,14 +59669,6 @@ msgstr "從 .blend 檔案中載入使用者介面設置"
 
 msgid "State"
 msgstr "狀態"
-
-
-msgid "Trusted Source"
-msgstr "信任的來源"
-
-
-msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
-msgstr "允許 .blend 檔自動執行命令稿，系統偏好設定中預設為可用"
 
 
 msgid "Set the active operator to its default values"
@@ -61153,6 +61153,14 @@ msgid "Curves Edit Mode"
 msgstr "曲線編輯模式"
 
 
+msgid "glTF Variants"
+msgstr "glTF 變體"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF 材質變體"
+
+
 msgid "Transform Orientations"
 msgstr "變換方向"
 
@@ -61181,6 +61189,14 @@ msgid "Stereoscopy"
 msgstr "立體視覺"
 
 
+msgid "glTF"
+msgstr "glTF"
+
+
+msgid "glTF Animations"
+msgstr "glTF 動畫"
+
+
 msgid "Multi Frame"
 msgstr "多重畫框"
 
@@ -61199,22 +61215,6 @@ msgstr "VR"
 
 msgid "VR Info"
 msgstr "VR 資訊"
-
-
-msgid "glTF Variants"
-msgstr "glTF 變體"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF 材質變體"
-
-
-msgid "glTF"
-msgstr "glTF"
-
-
-msgid "glTF Animations"
-msgstr "glTF 動畫"
 
 
 msgid "Import Settings"
@@ -64204,10 +64204,6 @@ msgstr "新曲線工具"
 
 msgid "Paint Debug"
 msgstr "繪製除錯"
-
-
-msgid "Sculpt Texture Paint"
-msgstr "雕塑紋理繪製"
 
 
 msgid "Shader Node Previews"
@@ -67351,6 +67347,10 @@ msgstr "區域資料"
 
 msgid "Region height"
 msgstr "區塊高度"
+
+
+msgid "Live search filtering string"
+msgstr "即時搜尋過濾字串"
 
 
 msgid "Type of this region"
@@ -70832,10 +70832,6 @@ msgid "Show visible objects"
 msgstr "顯示可見物體"
 
 
-msgid "Live search filtering string"
-msgstr "即時搜尋過濾字串"
-
-
 msgid "Hierarchies"
 msgstr "階層"
 
@@ -71001,10 +70997,6 @@ msgid "Active Tool and Workspace settings"
 msgstr "作用中工具和工作空間設定"
 
 
-msgid "Scene Properties"
-msgstr "場景屬性"
-
-
 msgctxt "ID"
 msgid "Render"
 msgstr "算繪"
@@ -71021,6 +71013,10 @@ msgstr "輸出"
 
 msgid "Output Properties"
 msgstr "輸出屬性"
+
+
+msgid "Scene Properties"
+msgstr "場景屬性"
 
 
 msgctxt "ID"
@@ -79118,10 +79114,6 @@ msgid "Deleted 1 node"
 msgstr "已刪除 1 個節點"
 
 
-msgid "To Socket"
-msgstr "到接口"
-
-
 msgid "Ignored {}"
 msgstr "忽略 {}"
 
@@ -79973,6 +79965,10 @@ msgstr "Blender 商店"
 msgctxt "Operator"
 msgid "Blender Website"
 msgstr "Blender 網站"
+
+
+msgid "Trusted Source [Untrusted Path]"
+msgstr "信任的來源 [未受信任的路徑]"
 
 
 msgctxt "Operator"
@@ -83207,16 +83203,16 @@ msgid "All View Layers"
 msgstr "所有檢視層"
 
 
-msgid "Object Contents"
-msgstr "物件內容"
+msgid "Empties"
+msgstr "空體"
 
 
 msgid "Object Children"
 msgstr "物體子級"
 
 
-msgid "Empties"
-msgstr "空體"
+msgid "Object Contents"
+msgstr "物件內容"
 
 
 msgctxt "Operator"
@@ -83336,6 +83332,11 @@ msgstr "影像/序列..."
 
 
 msgctxt "Operator"
+msgid "Text"
+msgstr "文字"
+
+
+msgctxt "Operator"
 msgid "Fade"
 msgstr "淡化"
 
@@ -83425,23 +83426,8 @@ msgstr "控制桿"
 
 
 msgctxt "Operator"
-msgid "Clip..."
-msgstr "剪輯..."
-
-
-msgctxt "Operator"
-msgid "Mask..."
-msgstr "遮罩..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "色彩"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "文字"
 
 
 msgctxt "Operator"
@@ -83543,11 +83529,6 @@ msgstr "預覽縮放"
 msgctxt "Operator"
 msgid "Change Scene..."
 msgstr "更改場景..."
-
-
-msgctxt "Operator"
-msgid "Clip"
-msgstr "剪輯"
 
 
 msgctxt "Operator"
@@ -91828,10 +91809,6 @@ msgid "No scene assets."
 msgstr "無場景素材。"
 
 
-msgid "Scene Strip..."
-msgstr "場景片段..."
-
-
 msgid "No strips to paste"
 msgstr "無片段可供貼上"
 
@@ -95943,6 +95920,10 @@ msgid "BSDF"
 msgstr "BSDF"
 
 
+msgid "Anisotropy"
+msgstr "各向異性"
+
+
 msgid "IOR"
 msgstr "IOR"
 
@@ -95953,10 +95934,6 @@ msgstr "薄膜 IOR"
 
 msgid "Thin Film"
 msgstr "薄膜"
-
-
-msgid "Anisotropy"
-msgstr "各向異性"
 
 
 msgid "RoughnessU"
@@ -96576,10 +96553,6 @@ msgstr ""
 
 msgid "To make changes to Preferences permanent, use \"Save Preferences\"."
 msgstr "要維持偏好設定的變更，請使用「儲存偏好設定」。"
-
-
-msgid "Trusted Source [Untrusted Path]"
-msgstr "信任的來源 [未受信任的路徑]"
 
 
 msgid "Any unsaved changes will be lost."

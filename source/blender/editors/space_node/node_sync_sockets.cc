@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup spnode
+ */
+
 #include <fmt/format.h>
 
 #include "DNA_node_types.h"
@@ -51,7 +55,7 @@ static Vector<bNode *> get_nodes_to_sync(bContext &C, PointerRNA *ptr)
       }
     }
     else {
-      if (!(node->flag & NODE_SELECT)) {
+      if (!node->is_selected()) {
         continue;
       }
     }

@@ -294,8 +294,10 @@ static const EnumPropertyItem rna_enum_preferences_extension_repo_source_type_it
 #  include "BKE_main.hh"
 #  include "BKE_mesh_runtime.hh"
 #  include "BKE_object.hh"
+#  include "BKE_object_types.hh"
 #  include "BKE_paint.hh"
 #  include "BKE_preferences.h"
+#  include "BKE_scene.hh"
 #  include "BKE_screen.hh"
 #  include "BKE_sound.hh"
 
@@ -369,7 +371,7 @@ static void rna_userdef_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *
 static void rna_userdef_update_compact_tabs(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
   rna_userdef_update(bmain, scene, ptr);
-  auto *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+  auto *wm = bmain->wm.first();
   if (!wm) {
     return;
   }
@@ -440,19 +442,17 @@ static void rna_userdef_panel_tabs_compact_update(Main *bmain,
                                                    PointerRNA *ptr)
 {
   if (bmain) {
-    for (bScreen *screen = static_cast<bScreen *>(bmain->screens.first); screen;
+    for (bScreen *screen = bmain->screens.first(); screen;
          screen = static_cast<bScreen *>(screen->id.next))
     {
       bool screen_needs_refresh = false;
 
-      for (ScrArea *area = static_cast<ScrArea *>(screen->areabase.first); area;
-           area = area->next)
+      for (ScrArea *area = screen->areabase.first(); area; area = area->next)
       {
         if (ELEM(area->spacetype, SPACE_FILE, SPACE_SPREADSHEET)) {
           continue;
         }
-        for (ARegion *region = static_cast<ARegion *>(area->regionbase.first); region;
-             region = region->next)
+        for (ARegion *region = area->regionbase.first(); region; region = region->next)
         {
           if (region->regiontype == RGN_TYPE_TOOLS && region->runtime &&
               region->runtime->type && region->runtime->type->snap_size && region->sizex > 0)
@@ -488,7 +488,7 @@ static void rna_userdef_panel_tabs_compact_update(Main *bmain,
 static void rna_userdef_screen_update_header_default(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
   if (U.uiflag & USER_HEADER_FROM_PREF) {
-    for (bScreen *screen = static_cast<bScreen *>(bmain->screens.first); screen;
+    for (bScreen *screen = bmain->screens.first(); screen;
          screen = static_cast<bScreen *>(screen->id.next))
     {
       BKE_screen_header_alignment_reset(screen);
@@ -1194,9 +1194,7 @@ static void rna_UserDef_subdivision_update(Main *bmain, Scene *scene, PointerRNA
 {
   Object *ob;
 
-  for (ob = static_cast<Object *>(bmain->objects.first); ob;
-       ob = static_cast<Object *>(ob->id.next))
-  {
+  for (ob = bmain->objects.first(); ob; ob = static_cast<Object *>(ob->id.next)) {
     if (BKE_object_get_last_subsurf_modifier(ob) != nullptr) {
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }
@@ -1223,9 +1221,7 @@ static void rna_UserDef_weight_color_update(Main *bmain, Scene *scene, PointerRN
 {
   Object *ob;
 
-  for (ob = static_cast<Object *>(bmain->objects.first); ob;
-       ob = static_cast<Object *>(ob->id.next))
-  {
+  for (ob = bmain->objects.first(); ob; ob = static_cast<Object *>(ob->id.next)) {
     if (ob->mode & OB_MODE_WEIGHT_PAINT) {
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }
@@ -1259,7 +1255,7 @@ static bool rna_userdef_is_microsoft_store_install_get(PointerRNA * /*ptr*/)
 
 static void rna_userdef_autosave_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+  wmWindowManager *wm = bmain->wm.first();
 
   if (wm) {
     WM_file_autosave_init(wm);
@@ -1870,6 +1866,34 @@ static void rna_experimental_no_data_block_packing_update(bContext *C, PointerRN
   rna_userdef_update(bmain, scene, ptr);
   AS_asset_library_import_method_ensure_valid(*bmain);
   rna_userdef_asset_libraries_refresh(C, ptr);
+}
+
+static void rna_experimental_use_3d_texture_paint_update(bContext *C, PointerRNA *ptr)
+{
+  Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
+  rna_userdef_update(bmain, scene, ptr);
+
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  Object *object = CTX_data_active_object(C);
+  if (!object || (object->mode & OB_MODE_TEXTURE_PAINT) == 0) {
+    return;
+  }
+
+  PropertyRNA *prop = RNA_struct_find_property(ptr, "use_3d_texture_paint");
+  const bool new_value = RNA_property_boolean_get(ptr, prop);
+
+  if (new_value) {
+    if (object->runtime->sculpt_session == nullptr) {
+      BKE_object_sculpt_data_create(object);
+      DEG_id_tag_update(&object->id, ID_RECALC_GEOMETRY);
+      BKE_scene_graph_evaluated_ensure(depsgraph, bmain);
+      BKE_sculptsession_update_for_edit(depsgraph, object, true);
+    }
+  }
+  else {
+    BKE_sculptsession_free(object);
+  }
 }
 
 }  // namespace blender
@@ -2700,7 +2724,7 @@ static void rna_def_userdef_theme_common_anim(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "playhead", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, nullptr, "playhead");
-  RNA_def_property_array(prop, 3);
+  RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(prop, "Playhead", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
@@ -7973,9 +7997,11 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "EEVEE Debug", "Enable EEVEE debugging options for developers");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-  prop = RNA_def_property(srna, "use_sculpt_texture_paint", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "use_sculpt_texture_paint", 1);
-  RNA_def_property_ui_text(prop, "Sculpt Texture Paint", "Use texture painting in Sculpt Mode");
+  prop = RNA_def_property(srna, "use_3d_texture_paint", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "use_3d_texture_paint", 1);
+  RNA_def_property_ui_text(prop, "3D Texture Paint", "Use experimental 3D texture painting");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_update(prop, 0, "rna_experimental_use_3d_texture_paint_update");
 
   prop = RNA_def_property(srna, "use_extended_asset_browser", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(prop,

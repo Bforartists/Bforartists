@@ -64,7 +64,7 @@
 #include "versioning_common.hh"
 
 #define LISTBASE_FOREACH(type, var, list) \
-  for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
+  for (type var = (type)((list)->first_); var != nullptr; var = (type)(((Link *)(var))->next))
 
 namespace blender {
 
@@ -697,9 +697,9 @@ static bNodeTreeInterfaceItem *legacy_socket_move_to_interface(bNodeSocket &lega
   new_socket->item.item_type = NodeTreeInterfaceItemType::Socket;
 
   /* Move reusable data. */
-  new_socket->name = BLI_strdup(legacy_socket.name);
+  new_socket->name_ = BLI_strdup(legacy_socket.name);
   new_socket->identifier = BLI_strdup(legacy_socket.identifier);
-  new_socket->description = BLI_strdup(legacy_socket.description);
+  new_socket->description_ = BLI_strdup(legacy_socket.description);
   /* If the socket idname includes a subtype (e.g. "NodeSocketFloatFactor") this will convert it to
    * the base type name ("NodeSocketFloat"). */
   new_socket->socket_type = BLI_strdup(
@@ -902,8 +902,8 @@ static void version_copy_socket(bNodeTreeInterfaceSocket &dst,
                                 char *identifier)
 {
   /* Node socket copy function based on bNodeTreeInterface::item_copy to avoid using blenkernel. */
-  dst.name = BLI_strdup_null(src.name);
-  dst.description = BLI_strdup_null(src.description);
+  dst.name_ = BLI_strdup_null(src.name_);
+  dst.description_ = BLI_strdup_null(src.description_);
   dst.socket_type = BLI_strdup(src.socket_type);
   dst.default_attribute_name = BLI_strdup_null(src.default_attribute_name);
   dst.identifier = identifier;
@@ -1204,7 +1204,7 @@ static void add_node_editor_asset_shelf(Main &bmain)
           continue;
         }
 
-        ListBaseT<ARegion> *regionbase = (sl == area->spacedata.first) ? &area->regionbase : &sl->regionbase;
+        ListBaseT<ARegion> *regionbase = (sl == area->spacedata.first()) ? &area->regionbase : &sl->regionbase;
 
         if (ARegion *new_shelf_region = do_versions_add_region_if_not_found(
                 regionbase, RGN_TYPE_ASSET_SHELF, __func__, RGN_TYPE_TOOL_HEADER))
@@ -1356,8 +1356,8 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     for (bScreen &screen : bmain->screens) {
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
-          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                           &sl.regionbase;
+          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                            &sl.regionbase;
 
           /* Layout based regions used to also disallow resizing, now these are separate flags.
            * Make sure they are set together for old regions. */
@@ -1401,8 +1401,8 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
               continue;
             }
 
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
 
             if (ARegion *new_shelf_region = do_versions_add_region_if_not_found(
                     regionbase,
@@ -1604,7 +1604,7 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
       for (bScreen &screen : bmain->screens) {
         for (ScrArea &area : screen.areabase) {
           for (SpaceLink &sl : area.spacedata) {
-            const ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ?
+            const ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ?
                                                        &area.regionbase :
                                                        &sl.regionbase;
             for (ARegion &region : *regionbase) {
@@ -1694,8 +1694,9 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     for (bScreen &screen : bmain->screens) {
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
-          const ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                                 &sl.regionbase;
+          const ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ?
+                                                     &area.regionbase :
+                                                     &sl.regionbase;
           for (ARegion &region : *regionbase) {
             if (region.regiontype != RGN_TYPE_ASSET_SHELF) {
               continue;
@@ -1720,8 +1721,8 @@ void blo_do_versions_400(FileData *fd, Library * /*lib*/, Main *bmain)
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       for (bNode &node : ntree->nodes) {
         if (node.is_reroute()) {
-          static_cast<bNodeSocket *>(node.inputs.first)->flag &= ~SOCK_HIDDEN;
-          static_cast<bNodeSocket *>(node.outputs.first)->flag &= ~SOCK_HIDDEN;
+          node.inputs.first()->flag &= ~SOCK_HIDDEN;
+          node.outputs.first()->flag &= ~SOCK_HIDDEN;
         }
       }
     }

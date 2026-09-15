@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2025-07-23 15:10+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian <https://translate.blender.org/projects/blender-ui/ui/sr/>\n"
@@ -8498,12 +8498,24 @@ msgid "Material slot name"
 msgstr "Назив слота материјала"
 
 
+msgid "Show/Hide"
+msgstr "Прикажи/сакриј"
+
+
 msgid "Snap"
 msgstr "Лепљење"
 
 
 msgid "Import"
 msgstr "Увоз"
+
+
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Mirror"
@@ -8526,14 +8538,6 @@ msgid "Align View"
 msgstr "Поравнај поглед"
 
 
-msgid "Math"
-msgstr "Математика"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Linked"
 msgstr "Изабери повезано"
 
@@ -8544,6 +8548,10 @@ msgstr "Мета лопта"
 
 msgid "Light"
 msgstr "Светлост"
+
+
+msgid "Linked"
+msgstr "Повезано"
 
 
 msgid "Relations"
@@ -8566,24 +8574,16 @@ msgid "Quick Effects"
 msgstr "Брзи ефекти"
 
 
-msgid "Show/Hide"
-msgstr "Прикажи/сакриј"
-
-
-msgid "Linked"
-msgstr "Повезано"
-
-
-msgid "Hooks"
-msgstr "Удице"
-
-
 msgid "Keying"
 msgstr "Збирка тастера"
 
 
 msgid "Tracking"
 msgstr "Праћење"
+
+
+msgid "Hooks"
+msgstr "Удице"
 
 
 msgid "Clear Transform"
@@ -18712,6 +18712,14 @@ msgid "Debug Menu"
 msgstr "Мени за проналажење грешака"
 
 
+msgid "Trusted Source"
+msgstr "Извор од поврења"
+
+
+msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
+msgstr "Омогући .blend датотекама аутоматско покретање скрипти, тренутно доступно кроз подешавања система"
+
+
 msgctxt "Operator"
 msgid "Memory Statistics"
 msgstr "Статистика меморије"
@@ -18723,14 +18731,6 @@ msgstr "Испиши статистику меморије у конзоли"
 
 msgid "Load UI"
 msgstr "Учитај кориснички интерфејс"
-
-
-msgid "Trusted Source"
-msgstr "Извор од поврења"
-
-
-msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
-msgstr "Омогући .blend датотекама аутоматско покретање скрипти, тренутно доступно кроз подешавања система"
 
 
 msgid "Set the active operator to its default values"
@@ -25076,12 +25076,12 @@ msgid "BSDF"
 msgstr "BSDF"
 
 
-msgid "IOR"
-msgstr "IOR"
-
-
 msgid "Anisotropy"
 msgstr "Анизотропно"
+
+
+msgid "IOR"
+msgstr "IOR"
 
 
 msgid "RoughnessU"

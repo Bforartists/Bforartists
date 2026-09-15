@@ -1038,7 +1038,7 @@ void rna_Scene_set_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
 
 static void rna_Scene_camera_update(Main *bmain, Scene * /*scene_unused*/, PointerRNA *ptr)
 {
-  wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+  wmWindowManager *wm = bmain->wm.first();
   Scene *scene = static_cast<Scene *>(ptr->data);
 
   WM_windows_scene_data_sync(&wm->windows, scene);
@@ -1277,7 +1277,7 @@ static void rna_Scene_all_keyingsets_begin(CollectionPropertyIterator *iter, Poi
   /* start going over the scene KeyingSets first, while we still have pointer to it
    * but only if we have any Keying Sets to use...
    */
-  if (scene->keyingsets.first) {
+  if (scene->keyingsets.first()) {
     rna_iterator_listbase_begin(iter, ptr, &scene->keyingsets, nullptr);
   }
   else {
@@ -1292,8 +1292,8 @@ static void rna_Scene_all_keyingsets_next(CollectionPropertyIterator *iter)
 
   /* If we've run out of links in Scene list,
    * jump over to the builtins list unless we're there already. */
-  if ((ks->next == nullptr) && (ks != builtin_keyingsets.last)) {
-    internal->link = static_cast<Link *>(builtin_keyingsets.first);
+  if ((ks->next == nullptr) && (ks != builtin_keyingsets.last())) {
+    internal->link = builtin_keyingsets.first_as<Link>();
   }
   else {
     internal->link = reinterpret_cast<Link *>(ks->next);
@@ -1334,7 +1334,7 @@ static void rna_Scene_compositing_node_group_set(PointerRNA *scene_ptr,
 
   SceneCompositorEffect *effect = bke::compositor::get_active_effect(*scene);
   if (!effect) {
-    effect = &bke::compositor::new_effect(*scene, "Effect");
+    effect = &bke::compositor::new_effect(*scene, "Scene Effect");
   }
 
   if (effect->node_group) {
@@ -1957,7 +1957,7 @@ static const EnumPropertyItem *rna_RenderSettings_engine_itemf(bContext * /*C*/,
   EnumPropertyItem tmp = {0, "", 0, "", ""};
   int a = 0, totitem = 0;
 
-  for (type = static_cast<RenderEngineType *>(R_engines.first); type; type = type->next, a++) {
+  for (type = R_engines.first(); type; type = type->next, a++) {
     tmp.value = a;
     tmp.identifier = type->idname;
     tmp.name = type->name;
@@ -1976,7 +1976,7 @@ static int rna_RenderSettings_engine_get(PointerRNA *ptr)
   RenderEngineType *type;
   int a = 0;
 
-  for (type = static_cast<RenderEngineType *>(R_engines.first); type; type = type->next, a++) {
+  for (type = R_engines.first(); type; type = type->next, a++) {
     if (STREQ(type->idname, rd->engine)) {
       return a;
     }
@@ -2239,7 +2239,7 @@ static void rna_Scene_editmesh_select_mode_set(PointerRNA *ptr, const bool *valu
     ts->selectmode = selectmode;
 
     /* Update select mode in all the workspaces in mesh edit mode. */
-    wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+    wmWindowManager *wm = G_MAIN->wm.first();
     for (wmWindow &win : wm->windows) {
       const Scene *scene = WM_window_get_active_scene(&win);
       ViewLayer *view_layer = WM_window_get_active_view_layer(&win);
@@ -2314,7 +2314,7 @@ static void object_simplify_update(Scene *scene,
 
   ob->id.tag &= ~ID_TAG_DOIT;
 
-  for (md = static_cast<ModifierData *>(ob->modifiers.first); md; md = md->next) {
+  for (md = ob->modifiers.first(); md; md = md->next) {
     if (md->type == eModifierType_Nodes && depsgraph != nullptr) {
       Object *ob_eval = DEG_get_evaluated(depsgraph, ob);
       const bke::GeometrySet *geometry_set = ob_eval->runtime->geometry_set_eval;
@@ -2330,7 +2330,7 @@ static void object_simplify_update(Scene *scene,
     }
   }
 
-  for (psys = static_cast<ParticleSystem *>(ob->particlesystem.first); psys; psys = psys->next) {
+  for (psys = ob->particlesystem.first(); psys; psys = psys->next) {
     psys->recalc |= ID_RECALC_PSYS_CHILD;
   }
 
@@ -9119,13 +9119,13 @@ static void rna_def_compositor_effect_nodes_properties(BlenderRNA *brna)
   StructRNA *srna;
 
   srna = RNA_def_struct(brna, "SceneCompositorEffectProperties", nullptr);
-  RNA_def_struct_ui_text(srna, "Scene Compositor Effect Properties", "");
+  RNA_def_struct_ui_text(srna, "Scene Effect Properties", "");
   RNA_def_struct_refine_func(srna, "rna_SceneCompositorEffectProperties_refine");
   RNA_def_struct_system_idprops_func(srna, "rna_SceneCompositorEffect_idprops");
   RNA_def_struct_path_func(srna, "rna_SceneCompositorEffectProperties_path");
 
   srna = RNA_def_struct(brna, "SceneCompositorEffectPropertiesEmpty", nullptr);
-  RNA_def_struct_ui_text(srna, "Scene Compositor Effect Empty Properties", "");
+  RNA_def_struct_ui_text(srna, "Scene Effect Empty Properties", "");
   RNA_def_struct_system_idprops_func(srna, "rna_SceneCompositorEffect_idprops");
   RNA_def_struct_path_func(srna, "rna_SceneCompositorEffectProperties_path");
 }
@@ -9137,7 +9137,7 @@ static void rna_def_compositor_effect(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "SceneCompositorEffect", nullptr);
   RNA_def_struct_sdna(srna, "SceneCompositorEffect");
-  RNA_def_struct_ui_text(srna, "Scene Compositor Effect", "Compositor effect for scene");
+  RNA_def_struct_ui_text(srna, "Scene Effect", "Compositor effect for scene");
   RNA_def_struct_ui_icon(srna, ICON_NODE_COMPOSITING);
   RNA_def_struct_path_func(srna, "rna_SceneCompositorEffect_path");
 
@@ -9215,8 +9215,7 @@ static void rna_def_compositor_effects(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_property_srna(cprop, "SceneCompositorEffects");
   srna = RNA_def_struct(brna, "SceneCompositorEffects", nullptr);
   RNA_def_struct_sdna(srna, "Scene");
-  RNA_def_struct_ui_text(
-      srna, "Scene Compositor Effects", "Collection of scene compositor effects");
+  RNA_def_struct_ui_text(srna, "Scene Effects", "Collection of scene effects");
 
   /* add effect */
   func = RNA_def_function(srna, "new", "rna_SceneCompositorEffects_new");
@@ -9607,7 +9606,7 @@ void RNA_def_scene(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "compositor_effects", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_struct_type(prop, "SceneCompositorEffect");
-  RNA_def_property_ui_text(prop, "Compositor Effects", "Compositor effects for this scene");
+  RNA_def_property_ui_text(prop, "Scene Effects", "Compositor effects for this scene");
   rna_def_compositor_effects(brna, prop);
 
   /* Nodes (Compositing) */

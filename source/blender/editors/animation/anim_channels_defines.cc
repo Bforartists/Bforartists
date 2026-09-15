@@ -4359,8 +4359,8 @@ static void acf_nlatrack_color(bAnimContext * /*ac*/, bAnimListElem *ale, float 
   
   /* BFA - Check what type of strips are in this track and use appropriate theme. */
   int strip_type = NLASTRIP_TYPE_CLIP; /* Default to action clip */
-  if (nlt->strips.first) {
-    NlaStrip *first_strip = static_cast<NlaStrip *>(nlt->strips.first);
+  if (nlt->strips.first()) {
+    NlaStrip *first_strip = nlt->strips.first();
     strip_type = first_strip->type;
   }
 

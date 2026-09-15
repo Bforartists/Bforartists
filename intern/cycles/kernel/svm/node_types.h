@@ -60,6 +60,29 @@ struct SVMNodeMath {
 static_assert(alignof(SVMNodeMath) <= alignof(uint));
 static_assert(sizeof(SVMNodeMath) % sizeof(uint) == 0);
 
+/* NODE_BOOLEAN_MATH */
+struct SVMNodeBooleanMath {
+  NodeBooleanMathType math_type;
+  SVMInputInt value1;
+  SVMInputInt value2;
+  SVMStackOffset result_offset;
+  uint8_t _pad[3];
+};
+static_assert(alignof(SVMNodeBooleanMath) <= alignof(uint));
+static_assert(sizeof(SVMNodeBooleanMath) % sizeof(uint) == 0);
+
+/* NODE_INTEGER_MATH */
+struct SVMNodeIntegerMath {
+  NodeIntegerMathType math_type;
+  SVMInputInt value1;
+  SVMInputInt value2;
+  SVMInputInt value3;
+  SVMStackOffset result_offset;
+  uint8_t _pad[3];
+};
+static_assert(alignof(SVMNodeIntegerMath) <= alignof(uint));
+static_assert(sizeof(SVMNodeIntegerMath) % sizeof(uint) == 0);
+
 /* NODE_CLAMP */
 struct SVMNodeClamp {
   NodeClampType clamp_type;
@@ -1087,11 +1110,14 @@ static_assert(sizeof(SVMNodeRefractionBsdfData) % sizeof(uint) == 0);
 struct SVMNodeGlassBsdfData {
   SVMInputFloat3 color;
   SVMInputFloat roughness;
+  SVMInputFloat anisotropy;
+  SVMInputFloat rotation;
   SVMInputFloat ior;
   SVMInputFloat thin_film_thickness;
   SVMInputFloat thin_film_ior;
   SVMStackOffset normal_offset;
-  uint8_t _pad[3];
+  SVMStackOffset tangent_offset;
+  uint8_t _pad[2];
 };
 static_assert(alignof(SVMNodeGlassBsdfData) <= alignof(uint));
 static_assert(sizeof(SVMNodeGlassBsdfData) % sizeof(uint) == 0);

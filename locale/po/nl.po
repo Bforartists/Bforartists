@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-07-08 11:12+0000\n"
 "Last-Translator: Timo Hoetmer <timo@timohoetmer.nl>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -5760,6 +5760,10 @@ msgid "Dots"
 msgstr "Stippen"
 
 
+msgid "Show/Hide"
+msgstr "Toon/Verberg"
+
+
 msgid "Import"
 msgstr "Importeren"
 
@@ -5788,6 +5792,14 @@ msgid "Light"
 msgstr "Licht"
 
 
+msgid "Linked"
+msgstr "Gekoppeld"
+
+
+msgid "Layout"
+msgstr "Indeling"
+
+
 msgid "Add Image"
 msgstr "Voeg Afbeelding Toe"
 
@@ -5802,18 +5814,6 @@ msgstr "Star Lichaam"
 
 msgid "Quick Effects"
 msgstr "Snelle Effecten"
-
-
-msgid "Show/Hide"
-msgstr "Toon/Verberg"
-
-
-msgid "Linked"
-msgstr "Gekoppeld"
-
-
-msgid "Layout"
-msgstr "Indeling"
 
 
 msgid "Convert"
@@ -11092,6 +11092,11 @@ msgstr "Ververs Alles"
 
 
 msgctxt "Operator"
+msgid "Text"
+msgstr "Tekst"
+
+
+msgctxt "Operator"
 msgid "Fade"
 msgstr "Vervagen"
 
@@ -11134,11 +11139,6 @@ msgstr "Beide Zijden"
 msgctxt "Operator"
 msgid "Color"
 msgstr "Kleur"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Tekst"
 
 
 msgctxt "Operator"

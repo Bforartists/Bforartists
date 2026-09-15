@@ -93,9 +93,6 @@
 #include "tree/tree_element_seq.hh"
 #include "tree/tree_iterator.hh"
 
-#define LISTBASE_FOREACH(type, var, list) \
-  for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
-
 namespace blender {
 
 namespace ed::outliner {
@@ -304,7 +301,7 @@ static void outliner_object_set_flag_recursive_fn(bContext *C,
 
   Object *ob_parent = ob ? ob : base->object;
 
-  for (Object *ob_iter = static_cast<Object *>(bmain->objects.first); ob_iter;
+  for (Object *ob_iter = bmain->objects.first(); ob_iter;
        ob_iter = static_cast<Object *>(ob_iter->id.next))
   {
     if (BKE_object_is_child_recursive(ob_parent, ob_iter)) {
@@ -569,7 +566,7 @@ void outliner_collection_isolate_flag(const Main &bmain,
 
   LayerCollection *top_layer_collection = layer_collection ?
                                               static_cast<LayerCollection *>(
-                                                  view_layer->layer_collections.first) :
+                                                  view_layer->layer_collections.first_) :
                                               nullptr;
   Collection *top_collection = collection ? scene->master_collection : nullptr;
 
@@ -642,7 +639,7 @@ void outliner_collection_isolate_flag(const Main &bmain,
   else {
     CollectionParent *parent;
     Collection *child = collection;
-    while ((parent = static_cast<CollectionParent *>(child->runtime->parents.first))) {
+    while ((parent = child->runtime->parents.first())) {
       if (parent->collection->flag & COLLECTION_IS_MASTER) {
         break;
       }
@@ -1007,7 +1004,7 @@ static void namebutton_fn(bContext *C, TreeStoreElem *tselem, const char *oldnam
           Key *key = id_cast<Key *>(tselem->id);
           KeyBlock *keyblock = static_cast<KeyBlock *>(te->directdata);
           /* Outliner renaming already sets the new name to the KeyBlock. Restore the old name
-          before calling rename function which will ensure unique name. */
+           * before calling rename function which will ensure unique name. */
           char newname[sizeof(keyblock->name)];
           STRNCPY_UTF8(newname, keyblock->name);
           STRNCPY_UTF8(keyblock->name, oldname);
@@ -3184,7 +3181,7 @@ static void outliner_draw_tree_element(ui::Block *block,
     if (tselem->type == TSE_VIEW_COLLECTION_BASE) {
       /* Scene collection in view layer can't expand/collapse. */
     }
-    else if (te->subtree.first || (te->flag & TE_PRETEND_HAS_CHILDREN)) {
+    else if (te->subtree.first() || (te->flag & TE_PRETEND_HAS_CHILDREN)) {
       /* Open/close icon, only when sub-levels, except for scene. */
       int icon_x = startx;
 
@@ -3277,7 +3274,7 @@ static void outliner_draw_tree_element(ui::Block *block,
 
     /* Closed item, we draw the icons, not when it's a scene, or master-server list though. */
     if (!TSELEM_OPEN(tselem, space_outliner)) {
-      if (te->subtree.first) {
+      if (te->subtree.first()) {
         if ((tselem->type == TSE_SOME_ID) && (te->idcode == ID_SCE)) {
           /* Pass. */
         }
@@ -3526,11 +3523,11 @@ int calculate_hierarchy_depth(const TreeElement *te)
 int calculate_children_height(const TreeElement *te, const SpaceOutliner *space_outliner)
 {
   int total_height = 0;
-  LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
+  for (TreeElement &child_te : te->subtree) {
     total_height += UI_UNIT_Y;  // Add the height of each child row
-    if (TSELEM_OPEN(TREESTORE(child_te), space_outliner)) {
+    if (TSELEM_OPEN(TREESTORE(&child_te), space_outliner)) {
       total_height += calculate_children_height(
-          child_te, space_outliner);  // Recursively calculate height of children
+          &child_te, space_outliner);  // Recursively calculate height of children
     }
   }
   return total_height;
@@ -3600,11 +3597,11 @@ static void outliner_draw_highlights(const ARegion *region,
 
           // Calculate the total height of the collection content and children rows
           total_height += UI_UNIT_Y;  // Add the height of the current collection row
-          LISTBASE_FOREACH (TreeElement *, child_te, &te->subtree) {
+          for (TreeElement &child_te : te->subtree) {
             total_height += UI_UNIT_Y;  // Add the height of each child row, offset by one row
-            if (TSELEM_OPEN(TREESTORE(child_te), space_outliner)) {
+            if (TSELEM_OPEN(TREESTORE(&child_te), space_outliner)) {
               total_height += calculate_children_height(
-                  child_te, space_outliner);  // Recursively calculate height of children
+                  &child_te, space_outliner);  // Recursively calculate height of children
             }
           }
 

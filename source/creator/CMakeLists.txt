@@ -1986,7 +1986,6 @@ endif()
 # -----------------------------------------------------------------------------
 # Setup link libraries
 
-add_dependencies(bforartists makesdna)
 target_link_libraries(bforartists PRIVATE ${LIB})
 unset(LIB)
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-03-19 19:12+0000\n"
 "Last-Translator: Tamás Máté <royalpython132@gmail.com>\n"
 "Language-Team: Hungarian <https://translate.blender.org/projects/blender-ui/ui/hu/>\n"
@@ -6602,8 +6602,20 @@ msgid "Use Material Mask"
 msgstr "Anyagmaszk használata"
 
 
+msgid "Show/Hide"
+msgstr "Mutat/Rejt"
+
+
+msgid "Clean Up"
+msgstr "Tisztítás"
+
+
 msgid "Import"
 msgstr "Importálás"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Mirror"
@@ -6620,10 +6632,6 @@ msgstr "Navigáció"
 
 msgid "Align View"
 msgstr "Nézet igazítása"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Metaball"
@@ -6648,14 +6656,6 @@ msgstr "Elfogadás"
 
 msgid "Track"
 msgstr "Nyom"
-
-
-msgid "Show/Hide"
-msgstr "Mutat/Rejt"
-
-
-msgid "Clean Up"
-msgstr "Tisztítás"
 
 
 msgid "Keying"
@@ -12090,6 +12090,10 @@ msgid "Deselect All"
 msgstr "Összes elem kijelölése (megszüntetése)"
 
 
+msgid "Add a text strip to the sequencer"
+msgstr "Egy textsáv hozzűáadása a szekvenszerhez"
+
+
 msgid "View all the strips in the sequencer"
 msgstr "Mutassa az összes sávot"
 
@@ -12569,6 +12573,14 @@ msgid "Debug Menu"
 msgstr "Hibamegoldó menü"
 
 
+msgid "Trusted Source"
+msgstr "Megbízható forrás"
+
+
+msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
+msgstr "Szkriptek automatikus futtatásának engedélyezése a .blend fájlnak, az alapértelmezés elérhető a rendszerbeállításokból"
+
+
 msgid "Include selected frames"
 msgstr "Kijelölt képkockák bevonása"
 
@@ -12591,14 +12603,6 @@ msgstr "Felhasználói felület beállítások betöltése .blend fájlokban"
 
 msgid "State"
 msgstr "Állapot"
-
-
-msgid "Trusted Source"
-msgstr "Megbízható forrás"
-
-
-msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
-msgstr "Szkriptek automatikus futtatásának engedélyezése a .blend fájlnak, az alapértelmezés elérhető a rendszerbeállításokból"
 
 
 msgid "Set the active operator to its default values"
@@ -15556,6 +15560,11 @@ msgstr "Minden kijelölése típus alapján"
 
 
 msgctxt "Operator"
+msgid "Text"
+msgstr "Szöveg"
+
+
+msgctxt "Operator"
 msgid "Delete Keyframes..."
 msgstr "Kulcs-képkockák törlése..."
 
@@ -15578,11 +15587,6 @@ msgstr "Jobb"
 msgctxt "Operator"
 msgid "Color"
 msgstr "Szín"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Szöveg"
 
 
 msgctxt "Operator"
@@ -16657,10 +16661,6 @@ msgstr " Elnevezett tulajdonság"
 
 msgid " Named Attributes"
 msgstr " Elnevezett tulajdonságok"
-
-
-msgid "Add a text strip to the sequencer"
-msgstr "Egy textsáv hozzűáadása a szekvenszerhez"
 
 
 msgid "Add a color mix effect strip to the sequencer"

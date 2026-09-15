@@ -36,6 +36,7 @@ void Instance::init()
   state.v3d = ctx->v3d;
   state.region = ctx->region;
   state.rv3d = ctx->rv3d;
+  state.active_tool = ctx->active_tool;
   state.object_active = BKE_view_layer_active_object_get(ctx->view_layer);
   state.object_mode = ctx->object_mode;
   state.cfra = DEG_get_ctime(state.depsgraph);
@@ -1029,7 +1030,7 @@ bool Instance::object_is_selected(const ObjectRef &ob_ref)
 bool Instance::object_is_paint_mode(const Object *object)
 {
   return (object == state.object_active) &&
-         (state.object_mode & (OB_MODE_ALL_PAINT | OB_MODE_ALL_PAINT_GPENCIL));
+         (state.object_mode & (OB_MODE_ALL_PAINT_MESH | OB_MODE_ALL_PAINT_GPENCIL));
 }
 
 bool Instance::object_is_sculpt_mode(const ObjectRef &ob_ref)

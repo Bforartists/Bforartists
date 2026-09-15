@@ -40,12 +40,17 @@ class PackedSphericalHarmonicsTest : public ::testing::Test {
 
 TEST_F(PackedSphericalHarmonicsTest, PackUnpack)
 {
-  PackedSphericalHarmonics sh;
+  PackedSphericalHarmonicsRest sh_rest;
 
-  spherical_harmonics_fill_zero(sh);
+  spherical_harmonics_rest_fill_zero(sh_rest);
 
-  spherical_harmonics_set_coefficient(sh, 1, make_float3(0.1f, -0.2f, 0.3f));
-  EXPECT_THAT(spherical_harmonics_get_coefficient(sh, 1),
+  for (int i = 0; i < PackedSphericalHarmonicsRest::MAX_COEFFICIENTS; ++i) {
+    EXPECT_THAT(spherical_harmonics_rest_get_coefficient(sh_rest, i),
+                IsNearFloat3(make_float3(0.0f, 0.0f, 0.0f), 1.0f / 127.0f));
+  }
+
+  spherical_harmonics_rest_set_coefficient(sh_rest, 1, make_float3(0.1f, -0.2f, 0.3f));
+  EXPECT_THAT(spherical_harmonics_rest_get_coefficient(sh_rest, 1),
               IsNearFloat3(make_float3(0.1f, -0.2f, 0.3f), 1.0f / 127.0f));
 }
 

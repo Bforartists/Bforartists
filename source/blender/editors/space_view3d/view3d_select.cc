@@ -1802,7 +1802,7 @@ static bool object_mouse_select_menu(bContext *C,
     return false;
   }
   if (base_count == 1) {
-    Base *base = (static_cast<BaseRefWithDepth *>(base_ref_list.first))->base;
+    Base *base = (base_ref_list.first())->base;
     base_ref_list.free_no_destruct();
     *r_basact = base;
     return false;
@@ -1815,7 +1815,7 @@ static bool object_mouse_select_menu(bContext *C,
   });
 
   while (base_count > SEL_MENU_SIZE) {
-    BLI_freelinkN(&base_ref_list, base_ref_list.last);
+    BLI_freelinkN(&base_ref_list, base_ref_list.last());
     base_count -= 1;
   }
 
@@ -2053,7 +2053,7 @@ static bool bone_mouse_select_menu(bContext *C,
   });
 
   while (bone_count > SEL_MENU_SIZE) {
-    BLI_freelinkN(&bone_ref_list, bone_ref_list.last);
+    BLI_freelinkN(&bone_ref_list, bone_ref_list.last());
     bone_count -= 1;
   }
 
@@ -2097,6 +2097,20 @@ static bool selectbuffer_has_bones(const Span<GPUSelectResult> hit_results)
 {
   for (const GPUSelectResult &hit_result : hit_results) {
     if (ED_armature_selectresult_is_bone(hit_result)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Camera reconstruction bundles encode a sub-object ID without any of the #BONESEL_ANY bits,
+ * so they are not detected by #selectbuffer_has_bones.
+ */
+static bool selectbuffer_has_sub_object(const Span<GPUSelectResult> hit_results)
+{
+  for (const GPUSelectResult &hit_result : hit_results) {
+    if (hit_result.id & 0xFFFF0000) {
       return true;
     }
   }
@@ -2432,7 +2446,7 @@ static Base *mouse_select_object_center(const ViewContext *vc, Base *startbase, 
     base = base->next;
 
     if (base == nullptr) {
-      base = static_cast<Base *>(BKE_view_layer_object_bases_get(view_layer)->first);
+      base = BKE_view_layer_object_bases_get(view_layer)->first();
     }
     if (base == startbase) {
       break;
@@ -2639,6 +2653,7 @@ static bool ed_object_select_pick(bContext *C,
     int hits;
     bool do_nearest;
     bool has_bones;
+    bool has_sub_object;
   } *gpu = nullptr;
 
   /* First handle menu selection, early exit if a menu opens
@@ -2651,6 +2666,7 @@ static bool ed_object_select_pick(bContext *C,
     gpu = MEM_new<GPUData>(__func__);
     gpu->do_nearest = false;
     gpu->has_bones = false;
+    gpu->has_sub_object = false;
 
     /* If objects have pose-mode set, the bones are in the same selection buffer. */
     const eV3DSelectObjectFilter select_filter =
@@ -2661,6 +2677,10 @@ static bool ed_object_select_pick(bContext *C,
     gpu->has_bones = (object_only && gpu->hits > 0) ?
                          false :
                          selectbuffer_has_bones(gpu->buffer.storage.as_span().slice(0, gpu->hits));
+    gpu->has_sub_object = (object_only && gpu->hits > 0) ?
+                              false :
+                              selectbuffer_has_sub_object(
+                                  gpu->buffer.storage.as_span().slice(0, gpu->hits));
   }
 
   /* First handle menu selection, early exit when a menu was opened.
@@ -2703,7 +2723,7 @@ static bool ed_object_select_pick(bContext *C,
   /* Always start list from `basact` when cycling the selection. */
   Base *startbase = (oldbasact && oldbasact->next) ?
                         oldbasact->next :
-                        static_cast<Base *>(BKE_view_layer_object_bases_get(view_layer)->first);
+                        BKE_view_layer_object_bases_get(view_layer)->first();
 
   /* The next object's base to make active. */
   Base *basact = nullptr;
@@ -2767,46 +2787,49 @@ static bool ed_object_select_pick(bContext *C,
     /* See comment for `has_pose_old`, the same rationale applies here. */
     const bool has_pose_new = (basact &&
                                BKE_object_pose_armature_get_with_wpaint_check(basact->object));
+    /* Select camera-tracks. */
+    if ((gpu->hits > 0) && gpu->has_sub_object && basact && (basact->object->type == OB_CAMERA)) {
+      MovieClip *clip = BKE_object_movieclip_get(scene, basact->object, false);
+      if (clip != nullptr) {
+        if (ed_object_select_pick_camera_track(
+                C, scene, basact, clip, gpu->buffer, gpu->hits, params))
+        {
+          ed::object::base_select(basact, ed::object::BA_SELECT);
+          /* Don't set `handled` here as the object activation may be necessary. */
+          changed_object = true;
 
-    /* Select pose-bones or camera-tracks. */
-    if (((gpu->hits > 0) && gpu->has_bones) ||
-        /* Special case, even when there are no hits, pose logic may de-select all bones. */
-        ((gpu->hits == 0) && has_pose_old))
+          changed_track = true;
+        }
+        else {
+          /* Fallback to regular object selection if no new bundles were selected,
+           * allows to select object parented to reconstruction object. */
+          basact = mouse_select_eval_buffer(
+              &vc, gpu->buffer, gpu->hits, gpu->do_nearest, false, false, nullptr);
+        }
+      }
+      /* Prevent track selecting to pass on to object selecting. */
+      if (basact == oldbasact) {
+        handled = true;
+      }
+    }
+    /* Select pose-bones. */
+    else if (((gpu->hits > 0) && gpu->has_bones) ||
+             /* Special case, even when there are no hits, pose logic may de-select all bones. */
+             ((gpu->hits == 0) && has_pose_old))
     {
       /* Regarding the `basact` null checks.
        * While it's unlikely there are GPU hits *without* `basact` being found,
        * it's possible looking up the selection index fails, see: #143161. */
-
-      if (basact && (gpu->has_bones && (basact->object->type == OB_CAMERA))) {
-        MovieClip *clip = BKE_object_movieclip_get(scene, basact->object, false);
-        if (clip != nullptr) {
-          if (ed_object_select_pick_camera_track(
-                  C, scene, basact, clip, gpu->buffer, gpu->hits, params))
-          {
-            ed::object::base_select(basact, ed::object::BA_SELECT);
-            /* Don't set `handled` here as the object activation may be necessary. */
-            changed_object = true;
-
-            changed_track = true;
-          }
-          else {
-            /* Fallback to regular object selection if no new bundles were selected,
-             * allows to select object parented to reconstruction object. */
-            basact = mouse_select_eval_buffer(
-                &vc, gpu->buffer, gpu->hits, gpu->do_nearest, false, false, nullptr);
-          }
-        }
-      }
-      else if ((basact || oldbasact) && ED_armature_pose_select_pick_with_buffer(
-                                            *vc.bmain,
-                                            scene,
-                                            view_layer,
-                                            v3d,
-                                            basact ? basact : const_cast<Base *>(oldbasact),
-                                            gpu->buffer.storage.data(),
-                                            gpu->hits,
-                                            params,
-                                            gpu->do_nearest))
+      if ((basact || oldbasact) &&
+          ED_armature_pose_select_pick_with_buffer(*vc.bmain,
+                                                   scene,
+                                                   view_layer,
+                                                   v3d,
+                                                   basact ? basact : const_cast<Base *>(oldbasact),
+                                                   gpu->buffer.storage.data(),
+                                                   gpu->hits,
+                                                   params,
+                                                   gpu->do_nearest))
       {
 
         changed_pose = true;
@@ -2859,7 +2882,7 @@ static bool ed_object_select_pick(bContext *C,
           }
         }
       }
-      /* Prevent bone/track selecting to pass on to object selecting. */
+      /* Prevent bone selecting to pass on to object selecting. */
       if (basact == oldbasact) {
         handled = true;
       }
@@ -4174,9 +4197,7 @@ static bool do_meta_box_select(const ViewContext *vc, const rcti *rect, const eS
   }
 
   int metaelem_id = 0;
-  for (ml = static_cast<MetaElem *>(mb->editelems->first); ml;
-       ml = ml->next, metaelem_id += 0x10000)
-  {
+  for (ml = mb->editelems->first(); ml; ml = ml->next, metaelem_id += 0x10000) {
     bool is_inside_radius = false;
     bool is_inside_stiff = false;
 
@@ -4363,7 +4384,7 @@ static bool do_object_box_select(bContext *C,
     }
   }
 
-  for (Base *base = static_cast<Base *>(object_bases->first); base && hits; base = base->next) {
+  for (Base *base = object_bases->first(); base && hits; base = base->next) {
     if (BASE_SELECTABLE(v3d, base)) {
       const bool is_select = base->flag & BASE_SELECTED;
       const bool is_inside = bases_inside.contains(base);

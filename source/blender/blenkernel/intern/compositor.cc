@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup bke
+ */
+
 #include <limits>
 #include <string>
 
@@ -243,7 +247,7 @@ void rename_effect(Scene &scene,
   new_name.copy_utf8_truncated(effect.name);
   BLI_uniquename(&scene.compositor_effects,
                  &effect,
-                 CTX_DATA_(BLT_I18NCONTEXT_ID_SCENE, "Compositor Effect"),
+                 CTX_DATA_(BLT_I18NCONTEXT_ID_SCENE, "Scene Effect"),
                  '.',
                  offsetof(SceneCompositorEffect, name),
                  sizeof(effect.name));
@@ -611,7 +615,7 @@ bool is_viewport_compositor_used(const bContext &context)
   for (const wmWindow &window : window_manager->windows) {
     const bScreen *screen = WM_window_get_active_screen(&window);
     for (const ScrArea &area : screen->areabase) {
-      const SpaceLink &space = *static_cast<const SpaceLink *>(area.spacedata.first);
+      const SpaceLink &space = *area.spacedata.first();
       if (space.spacetype == SPACE_VIEW3D) {
         const View3D &view_3d = reinterpret_cast<const View3D &>(space);
         for (ARegion &region : area.regionbase) {

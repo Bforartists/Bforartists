@@ -312,6 +312,8 @@ option(WITH_MANIFOLD "Enable features depending on Manifold (Fast Robust Boolean
 
 option(WITH_OPENIMAGEDENOISE "Enable the OpenImageDenoise compositing node" ON)
 
+option(WITH_DLSS "Enable NVIDIA DLSS Ray Reconstruction support" OFF)
+
 option(WITH_OPENSUBDIV "Enable OpenSubdiv for surface subdivision" ON)
 
 option(WITH_POTRACE "Enable features relying on Potrace" ON)
@@ -344,6 +346,21 @@ if(UNIX AND NOT (APPLE OR HAIKU))
 
   option(WITH_GHOST_WAYLAND "Enable building Blender against Wayland for windowing" ON)
   mark_as_advanced(WITH_GHOST_WAYLAND)
+
+  if(WITH_GHOST_WAYLAND)
+    option(WITH_GHOST_DBUS "\
+Enable reading desktop settings over DBUS, such as the light/dark theme preference. \
+Requires the `dbus-1` headers at build time."
+      ON
+    )
+    mark_as_advanced(WITH_GHOST_DBUS)
+  endif()
+
+  option(WITH_GHOST_DBUS_DYNLOAD "\
+Enable runtime dynamic loading of `libdbus` (avoids a link time dependency)"
+    ON
+  )
+  mark_as_advanced(WITH_GHOST_DBUS_DYNLOAD)
 
   if(WITH_GHOST_WAYLAND)
     option(WITH_GHOST_CSD "Enable client side decorations with Wayland" ON)
@@ -1358,6 +1375,11 @@ endif()
 if(UNIX AND NOT (APPLE OR HAIKU))
   set_and_warn_incompatible(WITH_HEADLESS WITH_GHOST_WAYLAND OFF)
   set_and_warn_incompatible(WITH_HEADLESS WITH_GHOST_X11 OFF)
+  # Only the WAYLAND back-end currently reads desktop settings over DBUS.
+  if (DEFINED WITH_GHOST_DBUS)
+    set_and_warn_dependency(WITH_GHOST_WAYLAND WITH_GHOST_DBUS OFF)
+    set_and_warn_incompatible(WITH_HEADLESS WITH_GHOST_DBUS OFF)
+  endif()
 endif()
 set_and_warn_incompatible(WITH_HEADLESS WITH_GHOST_SDL OFF)
 
@@ -2570,6 +2592,10 @@ if(FIRST_RUN)
     endif()
     if(WITH_GHOST_WAYLAND)
       info_cfg_option(WITH_GHOST_WAYLAND_DYNLOAD)
+    endif()
+    info_cfg_option(WITH_GHOST_DBUS)
+    if(WITH_GHOST_DBUS)
+      info_cfg_option(WITH_GHOST_DBUS_DYNLOAD)
     endif()
   endif()
 

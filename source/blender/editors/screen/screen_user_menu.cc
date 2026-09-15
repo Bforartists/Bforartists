@@ -195,7 +195,7 @@ void ED_screen_user_menu_item_add_operator(const bContext *C,
     ScrArea *area = CTX_wm_area(C);
     if (area && area->spacetype != SPACE_TOPBAR) {
       /* Get the actual active editor context */
-      sl = static_cast<SpaceLink *>(area->spacedata.first);
+      sl = area->spacedata.first_as<SpaceLink>();
     }
     
     umi_op->item.space_type = sl->spacetype;
@@ -232,7 +232,7 @@ void ED_screen_user_menu_item_add_menu(const bContext *C,
     ScrArea *area = CTX_wm_area(C);
     if (area && area->spacetype != SPACE_TOPBAR) {
       /* Get the actual active editor context */
-      sl = static_cast<SpaceLink *>(area->spacedata.first);
+      sl = area->spacedata.first_as<SpaceLink>();
     }
     
     umi_mt->item.space_type = sl->spacetype;
@@ -268,7 +268,7 @@ void ED_screen_user_menu_item_add_prop(const bContext *C,
     ScrArea *area = CTX_wm_area(C);
     if (area && area->spacetype != SPACE_TOPBAR) {
       /* Get the actual active editor context */
-      sl = static_cast<SpaceLink *>(area->spacedata.first);
+      sl = area->spacedata.first_as<SpaceLink>();
     }
     
     umi_pr->item.space_type = sl->spacetype;
@@ -691,7 +691,7 @@ static wmOperatorStatus user_menu_item_remove_exec(bContext *C, wmOperator *op)
 
   /* Find the actual item at the filtered index and collect visible items */
   blender::Vector<bUserMenuItem *> visible_items;
-  for (bUserMenuItem *umi = static_cast<bUserMenuItem *>(global_menu->items.first); umi;
+  for (bUserMenuItem *umi = global_menu->items.first(); umi;
        umi = static_cast<bUserMenuItem *>(umi->next))
   {
     /* Apply context filtering */
@@ -1005,7 +1005,7 @@ static wmOperatorStatus user_menu_item_move_exec(bContext *C, wmOperator *op)
   /* Find the actual item at the filtered index and collect visible items */
   blender::Vector<bUserMenuItem *> visible_items;
   
-  for (bUserMenuItem *umi = static_cast<bUserMenuItem *>(global_menu->items.first); umi;
+  for (bUserMenuItem *umi = global_menu->items.first(); umi;
        umi = static_cast<bUserMenuItem *>(umi->next))
   {
     /* Apply context filtering */

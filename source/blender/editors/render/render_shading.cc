@@ -1087,7 +1087,7 @@ void SCENE_OT_view_layer_add(wmOperatorType *ot)
 static bool view_layer_remove_poll(bContext *C)
 {
   Scene *scene = CTX_data_scene(C);
-  return (scene->view_layers.first != scene->view_layers.last);
+  return (scene->view_layers.first() != scene->view_layers.last());
 }
 
 static wmOperatorStatus view_layer_remove_exec(bContext *C, wmOperator * /*op*/)
@@ -3215,7 +3215,7 @@ static wmOperatorStatus material_open_node_editor_exec(bContext *C, wmOperator *
     return OPERATOR_CANCELLED;
   }
 
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   STRNCPY(snode->tree_idname, "ShaderNodeTree");
   snode->shaderfrom = SNODE_SHADER_OBJECT;
   snode->selected_node_group = nullptr;
@@ -3273,7 +3273,7 @@ static wmOperatorStatus world_open_node_editor_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   STRNCPY(snode->tree_idname, "ShaderNodeTree");
   snode->shaderfrom = SNODE_SHADER_WORLD;
   snode->selected_node_group = nullptr;
@@ -3337,7 +3337,7 @@ static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *o
     return OPERATOR_CANCELLED;
   }
 
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   STRNCPY(snode->tree_idname, "TextureNodeTree");
   snode->texfrom = SNODE_TEX_BRUSH;
   snode->selected_node_group = nullptr;

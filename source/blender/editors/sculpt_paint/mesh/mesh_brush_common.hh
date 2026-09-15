@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup edsculpt
+ */
+
 #pragma once
 
 #include "BLI_array.hh"
@@ -190,17 +194,8 @@ void calc_factors_common_mesh(const Depsgraph &depsgraph,
                               Span<float3> positions,
                               Span<float3> vert_normals,
                               const bke::pbvh::MeshNode &node,
-                              Vector<float> &r_factors,
-                              Vector<float> &r_distances);
-void calc_factors_common_mesh_indexed(const Depsgraph &depsgraph,
-                                      const Brush &brush,
-                                      const Object &object,
-                                      const MeshAttributeData &attribute_data,
-                                      Span<float3> vert_positions,
-                                      Span<float3> vert_normals,
-                                      const bke::pbvh::MeshNode &node,
-                                      Vector<float> &r_factors,
-                                      Vector<float> &r_distances);
+                              MutableSpan<float> factors,
+                              MutableSpan<float> distances);
 void calc_factors_common_mesh_indexed(const Depsgraph &depsgraph,
                                       const Brush &brush,
                                       const Object &object,
@@ -210,26 +205,6 @@ void calc_factors_common_mesh_indexed(const Depsgraph &depsgraph,
                                       const bke::pbvh::MeshNode &node,
                                       MutableSpan<float> factors,
                                       MutableSpan<float> distances);
-void calc_cube_tip_factors_common_mesh_indexed(const Depsgraph &depsgraph,
-                                               const Brush &brush,
-                                               const Object &object,
-                                               const float4x4 &mat,
-                                               const MeshAttributeData &attribute_data,
-                                               const Span<float3> vert_positions,
-                                               const Span<float3> vert_normals,
-                                               const bke::pbvh::MeshNode &node,
-                                               Vector<float> &r_factors,
-                                               Vector<float> &r_distances);
-void calc_cube_tip_factors_common_mesh_indexed(const Depsgraph &depsgraph,
-                                               const Brush &brush,
-                                               const Object &object,
-                                               const float4x4 &mat,
-                                               const MeshAttributeData &attribute_data,
-                                               Span<float3> vert_positions,
-                                               Span<float3> vert_normals,
-                                               const bke::pbvh::MeshNode &node,
-                                               MutableSpan<float> factors,
-                                               MutableSpan<float> distances);
 void calc_factors_common_grids(const Depsgraph &depsgraph,
                                const Brush &brush,
                                const Object &object,
@@ -267,8 +242,8 @@ void calc_factors_common_from_orig_data_mesh(const Depsgraph &depsgraph,
                                              Span<float3> positions,
                                              Span<float3> normals,
                                              const bke::pbvh::MeshNode &node,
-                                             Vector<float> &r_factors,
-                                             Vector<float> &r_distances);
+                                             MutableSpan<float> r_factors,
+                                             MutableSpan<float> r_distances);
 void calc_factors_common_from_orig_data_grids(const Depsgraph &depsgraph,
                                               const Brush &brush,
                                               const Object &object,
@@ -398,12 +373,14 @@ void calc_brush_strength_factors(const StrokeCache &cache,
 /**
  * Modify brush influence factors to include sampled texture values.
  */
-void calc_brush_texture_factors(const SculptSession &ss,
+void calc_brush_texture_factors(PaintMode paint_mode,
+                                const SculptSession &ss,
                                 const Brush &brush,
                                 Span<float3> vert_positions,
                                 Span<int> vert,
                                 MutableSpan<float> factors);
-void calc_brush_texture_factors(const SculptSession &ss,
+void calc_brush_texture_factors(PaintMode paint_mode,
+                                const SculptSession &ss,
                                 const Brush &brush,
                                 Span<float3> positions,
                                 MutableSpan<float> factors);
