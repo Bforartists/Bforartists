@@ -873,18 +873,9 @@ class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
         rd = scene.render
 
         layout.use_property_split = True
-        layout.use_property_decorate = True  # No animation.
-
-        col = layout.column(align=True) # BFA
         
-        row = col.row()
-        row.use_property_split = True
-        row.prop(rd, "use_high_quality_normals")
-        col.separator( factor = 1)
-        
-        row = col.row()
-        row.use_property_split = True
-        row.prop(rd, "anisotropic_filter")
+        layout.prop(rd, "use_high_quality_normals")
+        layout.prop(rd, "anisotropic_filter")
 
 
 class CompositorPerformanceButtonsPanel:
