@@ -424,6 +424,12 @@ static void block_region_refresh(const bContext *C, ARegion *region)
     for (Block &block : region->runtime->uiblocks.items_mutable()) {
       PopupBlockHandle *handle = block.handle;
 
+      /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+      printf("BFA-DIAG block_region_refresh can_refresh=%d is_tear_off=%d\n",
+             handle->can_refresh,
+             handle->is_tear_off);
+      fflush(stdout);
+
       if (handle->can_refresh) {
         handle_ctx_area = handle->ctx_area;
         handle_ctx_region = handle->ctx_region;
@@ -676,6 +682,12 @@ void popup_dummy_panel_set(ARegion *region, Block *block, StringRef idname)
 
 Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butregion, Button *but)
 {
+  /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+  printf("BFA-DIAG popup_block_refresh is_tear_off=%d refresh=%d\n",
+         handle->is_tear_off,
+         handle->refresh);
+  fflush(stdout);
+
   const int margin = UI_POPUP_MARGIN;
   wmWindow *window = CTX_wm_window(C);
   ARegion *region = handle->region;
@@ -1036,6 +1048,12 @@ PopupBlockHandle *popup_block_create(bContext *C,
 
 void popup_block_free(bContext *C, PopupBlockHandle *handle)
 {
+  /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+  printf("BFA-DIAG popup_block_free is_tear_off=%d menu_idname=%s\n",
+         handle->is_tear_off,
+         handle->menu_idname);
+  fflush(stdout);
+
   bool is_submenu = false;
 
   /* If this popup is created from a popover which does NOT have keep-open flag set,

@@ -13151,6 +13151,19 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     retval = WM_UI_HANDLER_CONTINUE;
   }
 
+  /* BFA - Tear-Off Menu/Panel: tear-off menus/panels are persistent. Keyboard events must
+   * pass straight through to the global keymap so hotkeys keep working, and must never be
+   * processed by the menu handler. Without this, a mode-switch hotkey (e.g. Tab) reaches
+   * `handle_menus_recursive`, sets `menuretval = RETURN_CANCEL`, and the delayed-cancel
+   * block below frees the tear-off. */
+  if (ISKEYBOARD(event->type)) {
+    Block *block = menu->region->runtime->uiblocks.first();
+    if (block && (block->flag & BLOCK_TEAR_OFF)) {
+      CTX_wm_region_popup_set(C, region_popup);
+      return WM_UI_HANDLER_CONTINUE;
+    }
+  }
+
   handle_menus_recursive(C, event, menu, 0, false, false, true);
 
   /* BFA - Tear-Off Menu/Panel */
@@ -13168,6 +13181,12 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       WM_event_add_mousemove(win);
     }
     else {
+      /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+      printf("BFA-DIAG popup_handler closing is_tear_off=%d menuretval=%d\n",
+             menu->is_tear_off,
+             menu->menuretval);
+      fflush(stdout);
+
       // BFA - Tear-Off Menu/Panel
       /* set last pie event to allow chained pie spawning */
       if (block->flag & BLOCK_PIE_MENU) {
@@ -13240,6 +13259,9 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
    * waiting for the next event. */
   if (!popup_closed && (menu->menuretval & RETURN_CANCEL)) {
     wmWindow *win = CTX_wm_window(C);
+    /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+    printf("BFA-DIAG popup_handler delayed-cancel closing is_tear_off=%d\n", menu->is_tear_off);
+    fflush(stdout);
     popup_block_free(C, menu);
     popup_handlers_remove(&win->runtime->modalhandlers, menu);
     CTX_wm_region_popup_set(C, nullptr);
@@ -13264,6 +13286,12 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 static void popup_handler_remove(bContext *C, void *userdata)
 {
   PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(userdata);
+
+  /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+  printf("BFA-DIAG popup_handler_remove is_tear_off=%d menu_idname=%s\n",
+         menu->is_tear_off,
+         menu->menu_idname);
+  fflush(stdout);
 
   /* More correct would be to expect RETURN_CANCEL here, but not wanting to
    * cancel when removing handlers because of file exit is a rare exception.
@@ -13337,6 +13365,10 @@ void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle
 
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
 {
+  /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+  printf("BFA-DIAG popup_handlers_remove_all called\n");
+  fflush(stdout);
+
   /* BFA - Tear-Off Menu/Panel: keep tear-off popups open across screen/workspace changes. */
   for (wmEventHandler &handler_base : handlers->items_mutable()) {
     if (handler_base.type == WM_HANDLER_TYPE_UI) {
@@ -13349,8 +13381,7 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
           handler->context.area = nullptr;
           handler->context.region = nullptr;
           continue;
-        }
-        if (menu->region && menu->region->runtime->uiblocks.first()) {
+        }        if (menu->region && menu->region->runtime->uiblocks.first()) {
           Block *block = menu->region->runtime->uiblocks.first();
           if (block->flag & BLOCK_TEAR_OFF) {
             /* BFA - Tear-Off Menu/Panel: clear stale context so

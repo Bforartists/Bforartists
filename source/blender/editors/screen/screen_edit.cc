@@ -673,6 +673,9 @@ void ED_screen_do_listen(bContext *C, const wmNotifier *note)
       break;
     case NC_SCENE:
       if (note->data == ND_MODE) {
+        /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+        printf("BFA-DIAG ED_screen_do_listen ND_MODE\n");
+        fflush(stdout);
         region_cursor_set(win, true);
       }
       break;

@@ -2394,6 +2394,10 @@ void ED_area_and_region_types_init(ScrArea *area)
 
 void ED_area_init(bContext *C, const wmWindow *win, ScrArea *area)
 {
+  /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
+  printf("BFA-DIAG ED_area_init spacetype=%d\n", area->spacetype);
+  fflush(stdout);
+
   wmWindowManager *wm = CTX_wm_manager(C);
   WorkSpace *workspace = WM_window_get_active_workspace(win);
   const bScreen *screen = BKE_workspace_active_screen_get(win->workspace_hook);
