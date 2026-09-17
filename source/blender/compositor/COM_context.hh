@@ -4,16 +4,15 @@
 
 #pragma once
 
-#include "BLI_bounds_types.hh"
-#include "BLI_math_vector_types.hh"
+#include <cstdint>
+
+#include "BLI_enum_flags.hh"
 #include "BLI_string_ref.hh"
 
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
 
 #include "GPU_shader.hh"
-
-#include "BKE_compute_context_cache.hh"
 
 #include "COM_domain.hh"
 #include "COM_meta_data.hh"
@@ -23,6 +22,7 @@
 
 namespace blender {
 struct Main;
+struct ComputeContextHash;
 }  // namespace blender
 
 namespace blender::nodes::eval_log {
@@ -30,6 +30,15 @@ class NodesEvalLog;
 }  // namespace blender::nodes::eval_log
 
 namespace blender::compositor {
+
+/* A bit flag of compositor side effect outputs than can be computed. */
+enum class SideEffectOutputTypes : uint8_t {
+  None = 0,
+  ViewerNode = 1 << 0,
+  FileOutputNode = 1 << 1,
+  NodePreviews = 1 << 2,
+};
+ENUM_OPERATORS(SideEffectOutputTypes)
 
 /* ------------------------------------------------------------------------------------------------
  * Context
@@ -62,6 +71,9 @@ class Context {
   /* True if the compositor should use GPU acceleration. */
   virtual bool use_gpu() const = 0;
 
+  /* Returns the side effect output types that needs to be computed. */
+  virtual SideEffectOutputTypes needed_side_effect_output_types() const = 0;
+
   /* Returns the hash of the currently active compute context. */
   virtual const ComputeContextHash &get_active_compute_context_hash() const = 0;
 
@@ -83,11 +95,6 @@ class Context {
   /* Get the precision of the intermediate results of the compositor. */
   virtual ResultPrecision get_precision() const;
 
-  /* Set an info message. This is called by the compositor evaluator to inform or warn the user
-   * about something, typically an error. The implementation should display the message in an
-   * appropriate place, which can be directly in the UI or just logged to the output stream. */
-  virtual void set_info_message(StringRef message) const;
-
   /* Populates the given meta data from the render stamp information of the given render pass. */
   virtual void populate_meta_data_for_pass(const Scene *scene,
                                            int view_layer_id,
@@ -98,6 +105,10 @@ class Context {
    * the current render. It might be null if the compositor is not being evaluated as part of a
    * render pipeline. */
   virtual RenderContext *render_context() const;
+
+  /* Returns true if this context is the viewport compositor, as opposed to the interactive
+   * compositor or a final render. */
+  virtual bool is_viewport() const;
 
   /* Returns a pointer to a nodes evaluation log of the context, this can be nullptr for context
    * that does not support logging. */

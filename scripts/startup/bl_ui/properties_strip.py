@@ -234,10 +234,13 @@ class STRIP_PT_effect(StripButtonsPanel, Panel):
             row.prop(strip, "input_1")
 
             if strip.input_count > 1:
-                row.operator("sequencer.swap_inputs", text="", icon='SORT_ASC')
+                is_transition = strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'COMPOSITOR'}
+                if not is_transition:
+                    row.operator("sequencer.swap_inputs", text="", icon='SORT_ASC')
                 row = col.row()
                 row.prop(strip, "input_2")
-                row.operator("sequencer.swap_inputs", text="", icon='SORT_DESC')
+                if not is_transition:
+                    row.operator("sequencer.swap_inputs", text="", icon='SORT_DESC')
 
         if strip_type == 'COLOR':
             layout.template_color_picker(strip, "color", value_slider=True, cubic=True)
@@ -330,6 +333,9 @@ class STRIP_PT_effect(StripButtonsPanel, Panel):
             layout.prop(strip, "blend_effect", text="Blend Mode")
             row = layout.row(align=True)
             row.prop(strip, "factor", slider=True)
+
+        if strip_type == 'COMPOSITOR':
+            layout.template_compositor_strip_inputs(strip)
 
 
 class STRIP_PT_effect_text_layout(StripButtonsPanel, Panel):
@@ -748,7 +754,7 @@ class STRIP_PT_scene_sound(StripButtonsPanel, Panel):
         col = layout.column()
 
         col.use_property_decorate = True
-        split = col.split(factor=0.4)
+        split = col.split(factor=col.property_split_factor)
         split.alignment = 'RIGHT'
         split.label(text="Strip Volume", text_ctxt=i18n_contexts.id_sound)
         split.prop(strip, "volume", text="")
@@ -827,18 +833,18 @@ class STRIP_PT_time(StripButtonsPanel, Panel):
         right_handle = strip.right_handle
 
         length_list = (
-            str(round(content_start, 0)),
-            str(round(content_duration, 0)),
-            str(round(content_end, 0)),
+            str(round(left_handle, 0)),
+            str(round(duration, 0)),
+            str(round(right_handle, 0)),
         )
 
         if not is_effect:
             length_list = length_list + (
-                str(round(left_handle, 0)),
-                str(round(duration, 0)),
-                str(round(right_handle, 0)),
                 str(round(strip.content_trim_start, 0)),
                 str(round(strip.content_trim_end, 0)),
+                str(round(content_start, 0)),
+                str(round(content_duration, 0)),
+                str(round(content_end, 0)),
             )
 
         max_length = max(len(x) for x in length_list)
@@ -857,42 +863,40 @@ class STRIP_PT_time(StripButtonsPanel, Panel):
         split.label(text="Channel")
         split.prop(strip, "channel", text="")
 
-        if not is_effect or strip.input_count == 0:
-            layout.alignment = 'RIGHT'
-            sub = layout.column(align=True)
-
-            split = sub.split(factor=factor + max_factor, align=True)
-            split.alignment = 'RIGHT'
-            split.label(text="Left Handle")
-            split.prop(strip, "left_handle", text=smpte_from_frame(left_handle))
-
-            split = sub.split(factor=factor + max_factor, align=True)
-            split.alignment = 'RIGHT'
-            split.label(text="Strip Duration")
-            split.prop(strip, "duration", text=smpte_from_frame(duration))
-
-            split = sub.split(factor=factor + max_factor, align=True)
-            split.alignment = 'RIGHT'
-            split.label(text="Right Handle")
-            split.prop(strip, "right_handle", text=smpte_from_frame(right_handle))
-
+        layout.alignment = 'RIGHT'
         sub = layout.column(align=True)
-        split = sub.split(factor=factor + max_factor, align=True)
-        split.alignment = 'RIGHT'
-        split.label(text="Content Start")
-        split.prop(strip, "content_start", text=smpte_from_frame(content_start))
 
         split = sub.split(factor=factor + max_factor, align=True)
         split.alignment = 'RIGHT'
-        split.label(text="Duration")
-        split.prop(strip, "content_duration", text=smpte_from_frame(content_duration))
+        split.label(text="Left Handle")
+        split.prop(strip, "left_handle", text=smpte_from_frame(left_handle))
 
         split = sub.split(factor=factor + max_factor, align=True)
         split.alignment = 'RIGHT'
-        split.label(text="End")
-        split.prop(strip, "content_end", text=smpte_from_frame(content_end))
+        split.label(text="Strip Duration")
+        split.prop(strip, "duration", text=smpte_from_frame(duration))
+
+        split = sub.split(factor=factor + max_factor, align=True)
+        split.alignment = 'RIGHT'
+        split.label(text="Right Handle")
+        split.prop(strip, "right_handle", text=smpte_from_frame(right_handle))
 
         if not is_effect:
+            sub = layout.column(align=True)
+            split = sub.split(factor=factor + max_factor, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Content Start")
+            split.prop(strip, "content_start", text=smpte_from_frame(content_start))
+
+            split = sub.split(factor=factor + max_factor, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="Duration")
+            split.prop(strip, "content_duration", text=smpte_from_frame(content_duration))
+
+            split = sub.split(factor=factor + max_factor, align=True)
+            split.alignment = 'RIGHT'
+            split.label(text="End")
+            split.prop(strip, "content_end", text=smpte_from_frame(content_end))
 
             layout.alignment = 'RIGHT'
             sub = layout.column(align=True)
@@ -966,7 +970,7 @@ class STRIP_PT_adjust_sound(StripButtonsPanel, Panel):
             layout.use_property_split = True
             col = layout.column()
 
-            split = col.split(factor=0.4)
+            split = col.split(factor=col.property_split_factor)
             split.alignment = 'RIGHT'
             split.label(text="Volume", text_ctxt=i18n_contexts.id_sound)
             split.prop(strip, "volume", text="")
@@ -1001,7 +1005,7 @@ class STRIP_PT_adjust_sound(StripButtonsPanel, Panel):
                 split.enabled = pan_enabled
 
             if audio_channels not in {'MONO', 'STEREO'}:
-                split = col.split(factor=0.4)
+                split = col.split(factor=col.property_split_factor)
                 split.alignment = 'RIGHT'
                 split.label(text="Pan Angle")
                 split.enabled = pan_enabled
@@ -1112,10 +1116,7 @@ class STRIP_PT_adjust_video(StripButtonsPanel, Panel):
             return False
 
         return strip.type in {
-            'MOVIE', 'IMAGE', 'SCENE', 'MOVIECLIP', 'MASK',
-            'META', 'ADD', 'SUBTRACT', 'ALPHA_OVER',
-            'ALPHA_UNDER', 'CROSS', 'GAMMA_CROSS', 'MULTIPLY', 'COMPOSITOR',
-            'WIPE', 'GLOW', 'COLOR', 'MULTICAM', 'SPEED', 'ADJUSTMENT', 'COLORMIX',
+            'MOVIE', 'IMAGE', 'SCENE', 'MOVIECLIP', 'MASK', 'META',
         }
 
     def draw(self, context):

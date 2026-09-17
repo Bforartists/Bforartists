@@ -519,7 +519,8 @@ class Strip : public ActionStrip {
    * Make a shallow copy, effectively creating an *instance* of a strip.
    *
    * Does *not* make a copy of the strip's data, which is stored in an array on
-   * the owning action. */
+   * the owning action.
+   */
   explicit Strip(const Strip &other) = default;
 
   /**
@@ -722,7 +723,8 @@ class Slot : public ActionSlot {
    *
    * This is a low-level function and should not typically be used. It's only here to let
    * blenkernel allocate the runtime struct when reading a Slot from disk, without having to
-   * share the struct definition itself. */
+   * share the struct definition itself.
+   */
   void blend_read_post();
 
   /**
@@ -1577,6 +1579,10 @@ std::optional<std::pair<Action *, Slot *>> get_action_slot_pair(ID &animated_id)
 const animrig::Channelbag *channelbag_for_action_slot(const Action &action,
                                                       slot_handle_t slot_handle);
 animrig::Channelbag *channelbag_for_action_slot(Action &action, slot_handle_t slot_handle);
+
+/* Returns all unique channelbags for this action slot combination. */
+Vector<animrig::Channelbag *> channelbags_for_action_slot(Action &action,
+                                                          slot_handle_t slot_handle);
 
 /**
  * Return the F-Curves for this specific slot handle.

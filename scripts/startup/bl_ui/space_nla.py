@@ -357,10 +357,7 @@ class NLA_MT_tracks(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("nla.tracks_add", text="Add").above_selected = False
-        layout.operator("nla.tracks_add", text="Add Above Selected").above_selected = True
-
-        layout.separator()
+        # BFA - moved add trakcs operators to Add menu
 
         layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
 
@@ -394,7 +391,6 @@ class NLA_MT_strips(Menu):
         props = layout.operator("wm.call_panel", text="Rename", icon="RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
-        layout.operator("nla.delete", icon="DELETE")
 
         layout.separator()
 
@@ -428,7 +424,7 @@ class NLA_MT_strips(Menu):
                 icon="ACTION_TWEAK",
             ).use_upper_stack_evaluation = False
         layout.separator()
-        layout.operator("nla.delete", text="Delete", icon='X')
+        layout.operator("nla.delete", icon="DELETE")
 
 # BFA - menu
 

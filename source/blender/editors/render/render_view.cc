@@ -19,6 +19,7 @@
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_image.hh"
+#include "BKE_recents.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
@@ -87,7 +88,7 @@ static ScrArea *find_area_showing_render_result(bContext *C, Scene *scene, wmWin
     const bScreen *screen = WM_window_get_active_screen(&win);
     for (ScrArea &area : screen->areabase) {
       if (area.spacetype == SPACE_IMAGE) {
-        SpaceImage *sima = static_cast<SpaceImage *>(area.spacedata.first);
+        SpaceImage *sima = area.spacedata.first_as<SpaceImage>();
         if (sima->image && sima->image->type == IMA_TYPE_R_RESULT) {
           area_render = &area;
           win_render = &win;
@@ -111,9 +112,9 @@ static ScrArea *find_area_image_empty(bContext *C)
   SpaceImage *sima;
 
   /* find an image-window showing render result */
-  for (area = static_cast<ScrArea *>(screen->areabase.first); area; area = area->next) {
+  for (area = screen->areabase.first(); area; area = area->next) {
     if (area->spacetype == SPACE_IMAGE) {
-      sima = static_cast<SpaceImage *>(area->spacedata.first);
+      sima = area->spacedata.first_as<SpaceImage>();
       if ((sima->mode == SI_MODE_VIEW) && !sima->image) {
         break;
       }
@@ -153,13 +154,16 @@ ScrArea *render_view_open(bContext *C, int mx, int my, ReportList *reports)
     sizey = std::max(sizey, 256);
 
     WM_window_dpi_set_userdef(CTX_wm_window(C));
-    rctf *stored_bounds = &U.stored_bounds.image;
-    const bool bounds_valid = (stored_bounds && (BLI_rctf_size_x(stored_bounds) > 150.0f) &&
-                               (BLI_rctf_size_y(stored_bounds) > 100.0f));
+
+    const std::string key = "IMAGE_EDITOR";
+    const auto bounds = recents::Section("temp.window.dimensions").get<std::vector<float>>(key);
+
+    const bool bounds_valid = (bounds.size() == 4 && (bounds[1] - bounds[0] > 150.0f) &&
+                               (bounds[3] - bounds[2] > 100.0f));
     const bool mm_placement = WM_capabilities_flag() & WM_CAPABILITY_MULTIMONITOR_PLACEMENT;
     if (bounds_valid && mm_placement) {
-      mx = int(stored_bounds->xmin * UI_SCALE_FAC);
-      my = int(stored_bounds->ymin * UI_SCALE_FAC);
+      mx = int(bounds[0] * UI_SCALE_FAC);
+      my = int(bounds[2] * UI_SCALE_FAC);
     }
 
     const rcti window_rect = {
@@ -170,24 +174,27 @@ ScrArea *render_view_open(bContext *C, int mx, int my, ReportList *reports)
     };
 
     /* changes context! */
-    if (WM_window_open(C,
-                       IFACE_("Bforartists Render"),
-                       &window_rect,
-                       SPACE_IMAGE,
-                       true,
-                       false,
-                       true,
-                       WIN_ALIGN_ABSOLUTE,
-                       nullptr,
-                       nullptr) == nullptr)
-    {
+    wmWindow *win = WM_window_open(C,
+                                   IFACE_("Bforartists Render"),
+                                   &window_rect,
+                                   SPACE_IMAGE,
+                                   true,
+                                   false,
+                                   true,
+                                   WIN_ALIGN_ABSOLUTE,
+                                   nullptr,
+                                   nullptr);
+
+    if (win == nullptr) {
       BKE_report(reports, RPT_ERROR, "Failed to open window!");
       return nullptr;
     }
 
+    win->runtime->recents_storage_key = key;
+
     area = CTX_wm_area(C);
     if (area->spacedata.is_single() == false) {
-      sima = static_cast<SpaceImage *>(area->spacedata.first);
+      sima = area->spacedata.first_as<SpaceImage>();
       sima->flag |= SI_PREVSPACE;
     }
   }
@@ -227,7 +234,7 @@ ScrArea *render_view_open(bContext *C, int mx, int my, ReportList *reports)
       area = biggest_non_image_area(C);
       if (area) {
         ED_area_newspace(C, area, SPACE_IMAGE, true);
-        sima = static_cast<SpaceImage *>(area->spacedata.first);
+        sima = area->spacedata.first_as<SpaceImage>();
 
         /* Makes "Escape" go back to previous space. */
         sima->flag |= SI_PREVSPACE;
@@ -242,7 +249,7 @@ ScrArea *render_view_open(bContext *C, int mx, int my, ReportList *reports)
         area = BKE_screen_find_big_area(CTX_wm_screen(C), SPACE_TYPE_ANY, 0);
         if (area->spacetype != SPACE_IMAGE) {
           // XXX newspace(area, SPACE_IMAGE);
-          sima = static_cast<SpaceImage *>(area->spacedata.first);
+          sima = area->spacedata.first_as<SpaceImage>();
 
           /* Makes "Escape" go back to previous space. */
           sima->flag |= SI_PREVSPACE;
@@ -250,7 +257,7 @@ ScrArea *render_view_open(bContext *C, int mx, int my, ReportList *reports)
       }
     }
   }
-  sima = static_cast<SpaceImage *>(area->spacedata.first);
+  sima = area->spacedata.first_as<SpaceImage>();
   sima->link_flag |= SPACE_FLAG_TYPE_TEMPORARY;
 
   /* get the correct image, and scale it */
@@ -290,7 +297,7 @@ static wmOperatorStatus render_view_cancel_exec(bContext *C, wmOperator * /*op*/
 {
   wmWindow *win = CTX_wm_window(C);
   ScrArea *area = CTX_wm_area(C);
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
 
   /* ensure image editor full-screen and area full-screen states are in sync */
   if ((sima->flag & SI_FULLWINDOW) && !area->full) {
@@ -359,7 +366,7 @@ static wmOperatorStatus render_view_show_invoke(bContext *C, wmOperator *op, con
       const bScreen *screen = WM_window_get_active_screen(&win);
 
       if ((WM_window_is_temp_screen(&win) &&
-           (static_cast<ScrArea *>(screen->areabase.first))->spacetype == SPACE_IMAGE) ||
+           (screen->areabase.first())->spacetype == SPACE_IMAGE) ||
           (&win == win_show && win_show != wincur))
       {
         wm_window_raise(&win);
@@ -371,7 +378,7 @@ static wmOperatorStatus render_view_show_invoke(bContext *C, wmOperator *op, con
     if (area) {
       /* but don't close it when rendering */
       if (G.is_rendering == false) {
-        SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+        SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
 
         if (sima->flag & SI_PREVSPACE) {
           sima->flag &= ~SI_PREVSPACE;

@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup edobj
+ */
+
 #include "object_intern.hh"
 
 #include "DNA_mesh_types.h"
@@ -273,7 +277,7 @@ static wmOperatorStatus multires_external_save_exec(bContext *C, wmOperator *op)
 
   CustomData_external_add(&mesh->corner_data, &mesh->id, CD_MDISPS, mesh->corners_num, filepath);
   CustomData_external_write(
-      &mesh->corner_data, &mesh->id, CD_MASK_MESH.lmask, mesh->corners_num, 0);
+      &mesh->corner_data, "", &mesh->id, CD_MASK_MESH.lmask, mesh->corners_num, 0);
 
   return OPERATOR_FINISHED;
 }

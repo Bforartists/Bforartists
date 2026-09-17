@@ -423,7 +423,7 @@ static void object_hook_from_context(
   Object *ob;
   HookModifierData *hmd;
 
-  if (ptr->data) { /* if modifier context is available, use that */
+  if (*ptr) { /* if modifier context is available, use that */
     ob = id_cast<Object *>(ptr->owner_id);
     hmd = static_cast<HookModifierData *>(ptr->data);
   }
@@ -731,7 +731,7 @@ static const EnumPropertyItem *hook_mod_itemf(bContext *C,
     return rna_enum_dummy_NULL_items;
   }
 
-  for (a = 0, md = static_cast<ModifierData *>(ob->modifiers.first); md; md = md->next, a++) {
+  for (a = 0, md = ob->modifiers.first(); md; md = md->next, a++) {
     if (md->type == eModifierType_Hook) {
       tmp.value = a;
       tmp.icon = ICON_HOOK;

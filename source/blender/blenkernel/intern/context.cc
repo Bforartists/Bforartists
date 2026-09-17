@@ -307,12 +307,13 @@ static std::string ctx_result_brief_repr(const bContextDataResult &result)
 {
   switch (result.type) {
     case ContextDataType::Pointer:
-      if (result.ptr.data) {
-        const char *rna_type_name = result.ptr.type ? RNA_struct_identifier(result.ptr.type) :
-                                                      "Unknown";
+      if (result.ptr) {
+        const char *rna_type_name = result.ptr.has_type() ?
+                                        RNA_struct_identifier(result.ptr.type) :
+                                        "Unknown";
         /* Try to get the name property if it exists. */
         std::string member_name;
-        if (result.ptr.type) {
+        if (result.ptr.has_type()) {
           PropertyRNA *name_prop = RNA_struct_name_property(result.ptr.type);
           if (name_prop) {
             char name_buf[256];
@@ -351,10 +352,11 @@ static std::string ctx_result_brief_repr(const bContextDataResult &result)
       }
 
     case ContextDataType::Property:
-      if (result.prop && result.ptr.data) {
+      if (result.prop && result.ptr) {
         const char *prop_name = RNA_property_identifier(result.prop);
-        const char *rna_type_name = result.ptr.type ? RNA_struct_identifier(result.ptr.type) :
-                                                      "Unknown";
+        const char *rna_type_name = result.ptr.has_type() ?
+                                        RNA_struct_identifier(result.ptr.type) :
+                                        "Unknown";
         if (result.index >= 0) {
           return fmt::format("<Property({}.{}[{}])>", rna_type_name, prop_name, result.index);
         }
@@ -434,7 +436,7 @@ static void *ctx_wm_python_context_get(const bContext *C,
     if (BPY_context_member_get(const_cast<bContext *>(C), member, &result)) {
       found_member = true;
 
-      if (result.ptr.data) {
+      if (result.ptr) {
         if (RNA_struct_is_a(result.ptr.type, member_type)) {
           return_data = result.ptr.data;
         }
@@ -655,14 +657,14 @@ PointerRNA CTX_data_pointer_get(const bContext *C, const char *member)
     return result.ptr;
   }
 
-  return PointerRNA_NULL;
+  return {};
 }
 
 PointerRNA CTX_data_pointer_get_type(const bContext *C, const char *member, StructRNA *type)
 {
   PointerRNA ptr = CTX_data_pointer_get(C, member);
 
-  if (ptr.data) {
+  if (ptr) {
     if (RNA_struct_is_a(ptr.type, type)) {
       return ptr;
     }
@@ -674,18 +676,18 @@ PointerRNA CTX_data_pointer_get_type(const bContext *C, const char *member, Stru
               RNA_struct_identifier(type));
   }
 
-  return PointerRNA_NULL;
+  return {};
 }
 
 PointerRNA CTX_data_pointer_get_type_silent(const bContext *C, const char *member, StructRNA *type)
 {
   PointerRNA ptr = CTX_data_pointer_get(C, member);
 
-  if (ptr.data && RNA_struct_is_a(ptr.type, type)) {
+  if (ptr && RNA_struct_is_a(ptr.type, type)) {
     return ptr;
   }
 
-  return PointerRNA_NULL;
+  return {};
 }
 
 Vector<PointerRNA> CTX_data_collection_get(const bContext *C, const char *member)
@@ -959,7 +961,7 @@ ScrArea *CTX_wm_area(const bContext *C)
 SpaceLink *CTX_wm_space_data(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
-  return (area) ? static_cast<SpaceLink *>(area->spacedata.first) : nullptr;
+  return (area) ? area->spacedata.first() : nullptr;
 }
 
 ARegion *CTX_wm_region(const bContext *C)
@@ -1001,7 +1003,7 @@ View3D *CTX_wm_view3d(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_VIEW3D) {
-    return static_cast<View3D *>(area->spacedata.first);
+    return area->spacedata.first_as<View3D>();
   }
   return nullptr;
 }
@@ -1023,7 +1025,7 @@ SpaceText *CTX_wm_space_text(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_TEXT) {
-    return static_cast<SpaceText *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceText>();
   }
   return nullptr;
 }
@@ -1032,7 +1034,7 @@ SpaceConsole *CTX_wm_space_console(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_CONSOLE) {
-    return static_cast<SpaceConsole *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceConsole>();
   }
   return nullptr;
 }
@@ -1041,7 +1043,7 @@ SpaceImage *CTX_wm_space_image(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_IMAGE) {
-    return static_cast<SpaceImage *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceImage>();
   }
   return nullptr;
 }
@@ -1050,7 +1052,7 @@ SpaceProperties *CTX_wm_space_properties(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_PROPERTIES) {
-    return static_cast<SpaceProperties *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceProperties>();
   }
   return nullptr;
 }
@@ -1059,7 +1061,7 @@ SpaceFile *CTX_wm_space_file(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_FILE) {
-    return static_cast<SpaceFile *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceFile>();
   }
   return nullptr;
 }
@@ -1068,7 +1070,7 @@ SpaceSeq *CTX_wm_space_seq(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_SEQ) {
-    return static_cast<SpaceSeq *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceSeq>();
   }
   return nullptr;
 }
@@ -1077,7 +1079,7 @@ SpaceOutliner *CTX_wm_space_outliner(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_OUTLINER) {
-    return static_cast<SpaceOutliner *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceOutliner>();
   }
   return nullptr;
 }
@@ -1086,7 +1088,7 @@ SpaceNla *CTX_wm_space_nla(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_NLA) {
-    return static_cast<SpaceNla *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceNla>();
   }
   return nullptr;
 }
@@ -1095,7 +1097,7 @@ SpaceNode *CTX_wm_space_node(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_NODE) {
-    return static_cast<SpaceNode *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceNode>();
   }
   return nullptr;
 }
@@ -1104,7 +1106,7 @@ SpaceGraph *CTX_wm_space_graph(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_GRAPH) {
-    return static_cast<SpaceGraph *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceGraph>();
   }
   return nullptr;
 }
@@ -1113,7 +1115,7 @@ SpaceAction *CTX_wm_space_action(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_ACTION) {
-    return static_cast<SpaceAction *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceAction>();
   }
   return nullptr;
 }
@@ -1122,7 +1124,7 @@ SpaceInfo *CTX_wm_space_info(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_INFO) {
-    return static_cast<SpaceInfo *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceInfo>();
   }
   return nullptr;
 }
@@ -1131,7 +1133,7 @@ SpaceUserPref *CTX_wm_space_userpref(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_USERPREF) {
-    return static_cast<SpaceUserPref *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceUserPref>();
   }
   return nullptr;
 }
@@ -1140,7 +1142,7 @@ SpaceClip *CTX_wm_space_clip(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_CLIP) {
-    return static_cast<SpaceClip *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceClip>();
   }
   return nullptr;
 }
@@ -1149,7 +1151,7 @@ SpaceTopBar *CTX_wm_space_topbar(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_TOPBAR) {
-    return static_cast<SpaceTopBar *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceTopBar>();
   }
   return nullptr;
 }
@@ -1159,7 +1161,7 @@ SpaceToolbar *CTX_wm_space_toolbar(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_TOOLBAR) {
-    return static_cast<SpaceToolbar*>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceToolbar>();
   }
   return nullptr;
 }
@@ -1168,7 +1170,7 @@ SpaceSpreadsheet *CTX_wm_space_spreadsheet(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_SPREADSHEET) {
-    return static_cast<SpaceSpreadsheet *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceSpreadsheet>();
   }
   return nullptr;
 }
@@ -1177,7 +1179,7 @@ SpaceProject *CTX_wm_space_project(const bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
   if (area && area->spacetype == SPACE_PROJECT) {
-    return static_cast<SpaceProject *>(area->spacedata.first);
+    return area->spacedata.first_as<SpaceProject>();
   }
   return nullptr;
 }

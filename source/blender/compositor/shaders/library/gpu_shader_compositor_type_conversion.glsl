@@ -2,8 +2,8 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "gpu_shader_math_matrix_construct_lib.glsl"
-#include "gpu_shader_math_rotation_conversion_lib.glsl"
+#include "gpu_shader_math_matrix_construct.bsl.hh"
+#include "gpu_shader_math_rotation_conversion.bsl.hh"
 
 /* --------------------------------------------------------------------
  * Float to other.
@@ -300,7 +300,7 @@ float int2_to_float(int2 value)
 
 int int2_to_int(int2 value)
 {
-  return int(int2_to_float(value));
+  return midpoint(value.x, value.y);
 }
 
 int3 int2_to_int3(int2 value)
@@ -427,7 +427,8 @@ int3 bool_to_int3(bool value)
 
 float4 float4x4_to_quaternion(float4x4 mat)
 {
-  float3x3 mat_3x3 = normalize(to_float3x3(mat));
+  float3 unused_size;
+  float3x3 mat_3x3 = normalize_and_get_size(to_float3x3(mat), unused_size);
   return to_quaternion(to_euler(mat_3x3)).as_float4();
 }
 

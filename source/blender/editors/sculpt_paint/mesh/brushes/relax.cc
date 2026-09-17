@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup edsculpt
+ */
+
 #include "editors/sculpt_paint/mesh/brushes/brushes.hh"
 
 #include "DNA_brush_types.h"
@@ -137,7 +141,7 @@ BLI_NOINLINE static void calc_factors_faces(const Depsgraph &depsgraph,
 
   scale_factors(factors, strength);
 
-  calc_brush_texture_factors(ss, brush, positions_eval, verts, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, positions_eval, verts, factors);
 
   face_set::filter_verts_with_unique_face_sets_mesh(
       vert_to_face_map, attribute_data.face_sets, relax_face_sets, verts, factors);
@@ -263,7 +267,7 @@ BLI_NOINLINE static void calc_factors_grids(const Depsgraph &depsgraph,
 
   scale_factors(factors, strength);
 
-  calc_brush_texture_factors(ss, brush, positions, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, positions, factors);
 
   face_set::filter_verts_with_unique_face_sets_grids(faces,
                                                      corner_verts,
@@ -392,7 +396,7 @@ static void calc_factors_bmesh(const Depsgraph &depsgraph,
 
   scale_factors(factors, strength);
 
-  calc_brush_texture_factors(ss, brush, positions, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, positions, factors);
   face_set::filter_verts_with_unique_face_sets_bmesh(
       face_set_offset, relax_face_sets, verts, factors);
 }
@@ -499,7 +503,7 @@ BLI_NOINLINE static void calc_topology_relax_factors_faces(const Depsgraph &deps
 
   scale_factors(factors, strength);
 
-  calc_brush_texture_factors(ss, brush, orig_data.positions, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, orig_data.positions, factors);
 }
 
 static void do_topology_relax_brush_mesh(const Depsgraph &depsgraph,
@@ -613,7 +617,7 @@ BLI_NOINLINE static void calc_topology_relax_factors_grids(const Depsgraph &deps
 
   scale_factors(factors, strength);
 
-  calc_brush_texture_factors(ss, brush, orig_data.positions, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, orig_data.positions, factors);
 }
 
 static void do_topology_relax_brush_grids(const Depsgraph &depsgraph,
@@ -730,7 +734,7 @@ static void calc_topology_relax_factors_bmesh(const Depsgraph &depsgraph,
 
   scale_factors(factors, strength);
 
-  calc_brush_texture_factors(ss, brush, orig_positions, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, orig_positions, factors);
 }
 
 static void do_topology_relax_brush_bmesh(const Depsgraph &depsgraph,

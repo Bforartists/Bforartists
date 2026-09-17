@@ -68,21 +68,24 @@ static size_t idp_size_table[] = {
  * Maximum amount of supported depth in IDProperties (when putting e.g. groups inside groups
  * inside groups etc.).
  *
- * Too many levels will lead to running out of stack memory and crashes. */
+ * Too many levels will lead to running out of stack memory and crashes.
+ */
 constexpr int MAX_IDPROP_DEPTH_LEVEL = 1026;
 /**
  * Write code uses one level less than runtime processing code, because it still has to write
  * something when it detects the issue, to ensure references to the 'limit properties' remain
  * valid.
  * Limits overly noisy continuous error messages in the console due to runtime processing and
- * undo/redo. */
+ * undo/redo.
+ */
 constexpr int MAX_IDPROP_DEPTH_LEVEL_FOR_WRITE = MAX_IDPROP_DEPTH_LEVEL - 1;
 /**
  * Read code uses two level less than runtime processing code, because it still has to read
  * something when it detects the issue, to ensure references to the 'limit properties' remain
  * valid.
  * Limits overly noisy continuous error messages in the console due to runtime processing and
- * undo/redo. */
+ * undo/redo.
+ */
 constexpr int MAX_IDPROP_DEPTH_LEVEL_FOR_READ = MAX_IDPROP_DEPTH_LEVEL - 2;
 
 static void idp_free_property_content_recurse(IDProperty *prop,
@@ -520,15 +523,21 @@ void IDP_FreeString(IDProperty *prop)
 /** \name Enum Type (IDProperty Enum API)
  * \{ */
 
-static void IDP_int_ui_data_free_enum_items(IDPropertyUIDataInt *ui_data)
+void IDP_EnumItemsFree(IDPropertyUIDataEnumItem *items, const int items_num)
 {
-  for (const int64_t i : IndexRange(ui_data->enum_items_num)) {
-    IDPropertyUIDataEnumItem &item = ui_data->enum_items[i];
+  for (const int64_t i : IndexRange(items_num)) {
+    IDPropertyUIDataEnumItem &item = items[i];
     MEM_SAFE_DELETE(item.identifier);
     MEM_SAFE_DELETE(item.name);
     MEM_SAFE_DELETE(item.description);
   }
-  MEM_SAFE_DELETE(ui_data->enum_items);
+  MEM_SAFE_DELETE(items);
+}
+
+static void IDP_int_ui_data_free_enum_items(IDPropertyUIDataInt *ui_data)
+{
+  IDP_EnumItemsFree(ui_data->enum_items, ui_data->enum_items_num);
+  ui_data->enum_items = nullptr;
 }
 
 const IDPropertyUIDataEnumItem *IDP_EnumItemFind(const IDProperty *prop)
@@ -891,7 +900,9 @@ std::optional<Span<float>> IDP_group_lookup_float_array(const IDProperty &group,
                                                         int required_size)
 {
   const IDProperty *prop = IDP_GetPropertyFromGroup(&group, name);
-  if (!prop || prop->type != IDP_FLOAT) {
+  /* The subtype has to be checked too: an array of any other element type, such as the doubles
+   * that assigning a float array through Python produces, must not reach #IDP_array_float_get. */
+  if (!prop || prop->type != IDP_ARRAY || prop->subtype != IDP_FLOAT) {
     return std::nullopt;
   }
   if (prop->len != required_size) {

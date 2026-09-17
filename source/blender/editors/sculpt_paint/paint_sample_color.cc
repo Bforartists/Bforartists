@@ -27,6 +27,7 @@
 #include "BLT_translation.hh"
 
 #include "BKE_brush.hh"
+#include "BKE_bvh.hh"
 #include "BKE_bvhutils.hh"
 #include "BKE_context.hh"
 #include "BKE_customdata.hh"
@@ -132,27 +133,21 @@ static bool imapaint_pick_face(ViewContext *vc,
   const float3 start_object = math::transform_point(world_to_object, start_world);
   const float3 end_object = math::transform_point(world_to_object, end_world);
 
-  bke::BVHTreeFromMesh mesh_bvh = mesh.bvh_corner_tris();
-
-  BVHTreeRayHit ray_hit;
-  ray_hit.dist = FLT_MAX;
-  ray_hit.index = -1;
-  BLI_bvhtree_ray_cast(mesh_bvh.tree,
-                       start_object,
-                       math::normalize(end_object - start_object),
-                       0.0f,
-                       &ray_hit,
-                       mesh_bvh.raycast_callback,
-                       &mesh_bvh);
-  if (ray_hit.index == -1) {
+  const bke::bvh::Tree &mesh_bvh = mesh.bvh_tris();
+  const bke::bvh::Ray ray(start_object, math::normalize(end_object - start_object));
+  const std::optional<bke::bvh::RayHit> ray_hit = mesh_bvh.ray_intersect(ray);
+  if (!ray_hit) {
     return false;
   }
 
   *r_bary_coord = bke::mesh_surface_sample::compute_bary_coord_in_triangle(
-      mesh.vert_positions(), mesh.corner_verts(), mesh.corner_tris()[ray_hit.index], ray_hit.co);
+      mesh.vert_positions(),
+      mesh.corner_verts(),
+      mesh.corner_tris()[ray_hit->index],
+      ray_hit->position(ray));
 
-  *r_tri_index = ray_hit.index;
-  *r_face_index = mesh.corner_tri_faces()[ray_hit.index];
+  *r_tri_index = ray_hit->index;
+  *r_face_index = mesh.corner_tri_faces()[ray_hit->index];
   return true;
 }
 
@@ -314,8 +309,7 @@ static float3 paint_sample_color(bContext *C,
   const Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  Paint *paint = BKE_paint_get_active_from_context(C);
-  const PaintMode mode = paint->runtime->paint_mode;
+  const PaintMode mode = BKE_paintmode_get_active_from_context(C);
 
   SpaceImage *sima = CTX_wm_space_image(C);
   const View3D *v3d = CTX_wm_view3d(C);
@@ -333,7 +327,7 @@ static float3 paint_sample_color(bContext *C,
       sampled_color = sample_texture_paint_color(*depsgraph, *scene, vc, ob, mval);
     }
     else if (ELEM(mode, PaintMode::Sculpt, PaintMode::Vertex)) {
-      BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
+      BKE_sculptsession_update_for_edit(depsgraph, ob, false);
       sampled_color = sample_mesh_attribute_color(vc, *ob, mval);
     }
   }
@@ -413,7 +407,7 @@ static wmOperatorStatus sample_color_exec(bContext *C, wmOperator *op)
   wmWindow *win = CTX_wm_window(C);
 
   const bool use_merged_texture = RNA_boolean_get(op->ptr, "merged");
-  const PaintMode mode = paint->runtime->paint_mode;
+  const PaintMode mode = BKE_paintmode_get_active_from_context(C);
   if (ELEM(mode, PaintMode::Vertex, PaintMode::Sculpt) && !use_merged_texture) {
     if (!color_supported_check(scene, object, op->reports)) {
       return OPERATOR_CANCELLED;
@@ -457,7 +451,7 @@ static wmOperatorStatus sample_color_invoke(bContext *C, wmOperator *op, const w
   wmWindow *win = CTX_wm_window(C);
 
   const bool use_merged_texture = RNA_boolean_get(op->ptr, "merged");
-  const PaintMode mode = paint->runtime->paint_mode;
+  const PaintMode mode = BKE_paintmode_get_active_from_context(C);
   if (ELEM(mode, PaintMode::Vertex, PaintMode::Sculpt) && !use_merged_texture) {
     if (!color_supported_check(scene, object, op->reports)) {
       return OPERATOR_CANCELLED;

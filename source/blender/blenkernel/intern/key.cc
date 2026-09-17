@@ -43,6 +43,7 @@
 #include "BKE_customdata.hh"
 #include "BKE_deform.hh"
 #include "BKE_editmesh.hh"
+#include "BKE_global.hh"
 #include "BKE_idtype.hh"
 #include "BKE_key.hh"
 #include "BKE_lattice.hh"
@@ -71,9 +72,7 @@ static void shapekey_copy_data(Main * /*bmain*/,
   BLI_duplicatelist(&key_dst->block, &key_src->block);
 
   KeyBlock *kb_dst, *kb_src;
-  for (kb_src = static_cast<KeyBlock *>(key_src->block.first),
-      kb_dst = static_cast<KeyBlock *>(key_dst->block.first);
-       kb_dst;
+  for (kb_src = key_src->block.first(), kb_dst = key_dst->block.first(); kb_dst;
        kb_src = kb_src->next, kb_dst = kb_dst->next)
   {
     if (kb_dst->data) {
@@ -117,7 +116,7 @@ static ID **shapekey_owner_pointer_get(ID *id, const bool debug_relationship_ass
 static void shapekey_blend_write(BlendWriter *writer, ID *id, const void *id_address)
 {
   Key *key = id_cast<Key *>(id);
-  const bool is_undo = BLO_write_is_undo(writer);
+  const bool is_undo = writer->is_undo();
 
   /* Write LibData. */
   writer->write_id_struct(id_address, key);
@@ -163,8 +162,8 @@ static void shapekey_blend_read_data(BlendDataReader *reader, ID *id)
 static void shapekey_blend_read_after_liblink(BlendLibReader * /*reader*/, ID *id)
 {
   /* ShapeKeys should always only be linked indirectly through their user ID (mesh, Curve etc.), or
-   * be fully local data. */
-  BLI_assert((id->tag & ID_TAG_EXTERN) == 0);
+   * be fully local data, or part of linked packed data. */
+  BLI_assert((id->tag & ID_TAG_EXTERN) == 0 || ID_IS_PACKED(id));
   UNUSED_VARS_NDEBUG(id);
 }
 
@@ -189,6 +188,7 @@ IDTypeInfo IDType_ID_KE = {
     .foreach_cache = nullptr,
     .foreach_path = nullptr,
     .foreach_working_space_color = nullptr,
+    .foreach_asset_weak_reference = nullptr,
     /* A bit weird, due to shape-keys not being strictly speaking embedded data... But they also
      * share a lot with those (non linkable, only ever used by one owner ID, etc.). */
     .owner_pointer_get = shapekey_owner_pointer_get,
@@ -278,7 +278,7 @@ void BKE_key_sort(Key *key)
   KeyBlock *kb;
 
   /* Locate the key which is out of position. */
-  for (kb = static_cast<KeyBlock *>(key->block.first); kb; kb = kb->next) {
+  for (kb = key->block.first(); kb; kb = kb->next) {
     if ((kb->next) && (kb->pos > kb->next->pos)) {
       break;
     }
@@ -299,7 +299,7 @@ void BKE_key_sort(Key *key)
   }
 
   /* New rule; first key is refkey, this to match drawing channels... */
-  key->refkey = static_cast<KeyBlock *>(key->block.first);
+  key->refkey = key->block.first();
 }
 
 /**************** do the key ****************/
@@ -438,8 +438,8 @@ static bool get_keys_for_absolute_eval(float eval_time,
                                        KeyBlock *r_target_keys[4],
                                        float r_weights[4])
 {
-  KeyBlock *firstkey = static_cast<KeyBlock *>(keyblocks->first);
-  KeyBlock *lastkey = static_cast<KeyBlock *>(keyblocks->last);
+  KeyBlock *firstkey = keyblocks->first();
+  KeyBlock *lastkey = keyblocks->last();
   eval_time = clamp_f(eval_time, firstkey->pos, lastkey->pos);
 
   r_target_keys[0] = r_target_keys[1] = r_target_keys[2] = r_target_keys[3] = firstkey;
@@ -1064,7 +1064,7 @@ float *BKE_key_evaluate_object_ex(Object *ob,
     }
 
     if (kb == nullptr) {
-      kb = static_cast<KeyBlock *>(key->block.first);
+      kb = key->block.first();
       ob->shapenr = 1;
     }
 
@@ -1319,7 +1319,7 @@ KeyBlock *BKE_keyblock_add(Key *key, const char *name)
 {
   float curpos = -0.1;
 
-  KeyBlock *kb = static_cast<KeyBlock *>(key->block.last);
+  KeyBlock *kb = key->block.last();
   if (kb) {
     curpos = kb->pos;
   }
@@ -1526,7 +1526,7 @@ int BKE_keyblock_curve_element_count(const ListBaseT<Nurb> *nurb)
   const Nurb *nu;
   int tot = 0;
 
-  nu = static_cast<const Nurb *>(nurb->first);
+  nu = nurb->first();
   while (nu) {
     if (nu->bezt) {
       tot += KEYELEM_ELEM_LEN_BEZTRIPLE * nu->pntsu;
@@ -1625,7 +1625,7 @@ void BKE_keyblock_convert_from_curve(const Curve *cu, KeyBlock *kb, const ListBa
 
 static void keyblock_data_convert_to_curve(const float *fp, ListBaseT<Nurb> *nurb, int totpoint)
 {
-  for (Nurb *nu = static_cast<Nurb *>(nurb->first); nu && totpoint > 0; nu = nu->next) {
+  for (Nurb *nu = nurb->first(); nu && totpoint > 0; nu = nu->next) {
     if (nu->bezt != nullptr) {
       BezTriple *bezt = nu->bezt;
       for (int i = nu->pntsu; i && (totpoint -= KEYELEM_ELEM_LEN_BEZTRIPLE) >= 0;
@@ -1796,7 +1796,7 @@ bool BKE_keyblock_move(Object *ob, int org_index, int new_index)
   /* We swap 'org' element with its previous/next neighbor (depending on direction of the move)
    * repeatedly, until we reach final position.
    * This allows us to only loop on the list once! */
-  for (kb = static_cast<KeyBlock *>(rev ? key->block.last : key->block.first),
+  for (kb = static_cast<KeyBlock *>(rev ? key->block.last() : key->block.first()),
       i = (rev ? totkey - 1 : 0);
        kb;
        kb = (rev ? kb->prev : kb->next), rev ? i-- : i++)
@@ -1847,7 +1847,7 @@ bool BKE_keyblock_move(Object *ob, int org_index, int new_index)
   }
 
   /* First key is always refkey, matches interface and BKE_key_sort. */
-  key->refkey = static_cast<KeyBlock *>(key->block.first);
+  key->refkey = key->block.first();
 
   return true;
 }
@@ -1858,7 +1858,7 @@ bool BKE_keyblock_is_basis(const Key *key, const int index)
   int i;
 
   if (key->type == KEY_RELATIVE) {
-    for (i = 0, kb = static_cast<const KeyBlock *>(key->block.first); kb; i++, kb = kb->next) {
+    for (i = 0, kb = key->block.first(); kb; i++, kb = kb->next) {
       if ((i != index) && (kb->relative == index)) {
         return true;
       }
@@ -1909,7 +1909,7 @@ std::optional<Array<bool>> BKE_keyblock_get_dependent_keys(const Key *key, const
   return marked;
 }
 
-void BKE_keyblock_rename(const Key *key, KeyBlock *kb, const char *newname)
+void BKE_keyblock_rename(Main &bmain, Key *key, KeyBlock *kb, const char *newname)
 {
   char oldname[sizeof(kb->name)];
 
@@ -1927,6 +1927,11 @@ void BKE_keyblock_rename(const Key *key, KeyBlock *kb, const char *newname)
                  sizeof(kb->name));
 
   /* Fix all the animation data which may link to this. */
-  BKE_animdata_fix_paths_rename_all(nullptr, "key_blocks", oldname, kb->name);
+  BKE_animdata_fix_paths(key->id,
+                         "key_blocks",
+                         RNA_path_name_to_infix(oldname),
+                         RNA_path_name_to_infix(kb->name),
+                         /*verify_paths=*/true,
+                         bmain);
 }
 }  // namespace blender

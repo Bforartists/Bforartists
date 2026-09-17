@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "BLI_math_vector_types.hh"
+
 #include "DNA_vec_types.h"
 
 namespace blender {
@@ -37,6 +39,12 @@ int BKE_camera_sensor_fit(int sensor_fit, float sizex, float sizey);
 float BKE_camera_sensor_size(int sensor_fit, float sensor_x, float sensor_y);
 
 /**
+ * Size in pixels of the camera frame fitted inside a viewport.
+ * \param frame_aspect: Aspect ratio of the camera frame (y over x).
+ */
+float2 BKE_camera_frame_size(float winx, float winy, float frame_aspect);
+
+/**
  * Camera Parameters:
  *
  * Intermediate struct for storing camera parameters from various sources,
@@ -45,9 +53,11 @@ float BKE_camera_sensor_size(int sensor_fit, float sensor_x, float sensor_y);
 struct CameraParams {
   /* lens */
   bool is_ortho = false;
+  bool is_flipped_x = false;
   float lens = 0.0f;
   float ortho_scale = 1.0f;
   float zoom = 1.0f;
+  float roll = 0.0f;
 
   float shiftx = 0.0f;
   float shifty = 0.0f;
@@ -58,6 +68,18 @@ struct CameraParams {
   float sensor_x = 0.0f;
   float sensor_y = 0.0f;
   int sensor_fit = 0;
+
+  /**
+   * Aspect override: the aspect (y-over-x) of the camera frame, used to resolve the sensor fit
+   * and framing in place of the view rect.
+   *
+   * Only set when the frame is drawn inside the view rect instead of filling it,
+   * e.g. #BKE_camera_params_from_view3d for the camera view.
+   *
+   * \warning Never set this for rendering, it would change the render output.
+   */
+  bool use_aspect_override = false;
+  float aspect_override = 0.0f;
 
   /* clipping */
   float clip_start = 0.1f;
@@ -91,9 +113,36 @@ void BKE_camera_params_compute_viewplane(
  */
 void BKE_camera_params_crop_viewplane(rctf *viewplane, int winx, int winy, const rcti *region);
 /**
+ * Apply the camera view roll and flip to the camera view offset.
+ */
+float2 BKE_camera_viewplane_offset_transform(float roll, bool is_flipped_x, float2 offset);
+/**
  * View-plane is assumed to be already computed.
  */
 void BKE_camera_params_compute_matrix(CameraParams *params);
+
+/* Camera Border in Viewport */
+
+/** Camera frame within a viewport of the given size, in viewport pixels. */
+rctf BKE_camera_view_border(const struct Scene *scene,
+                            const struct Depsgraph *depsgraph,
+                            const struct View3D *v3d,
+                            const struct RegionView3D *rv3d,
+                            int winx,
+                            int winy,
+                            bool no_shift,
+                            bool no_zoom,
+                            bool no_roll);
+
+/** Border to render within a viewport of the given size, in viewport pixels. */
+bool BKE_camera_view_render_border(const struct Scene *scene,
+                                   const struct Depsgraph *depsgraph,
+                                   const struct View3D *v3d,
+                                   const struct RegionView3D *rv3d,
+                                   int winx,
+                                   int winy,
+                                   rctf *r_border,
+                                   rctf *r_unrolled_border);
 
 /* Camera View Frame */
 

@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup bke
+ */
+
 #define DNA_DEPRECATED_ALLOW
 
 #include <optional>
@@ -46,6 +50,7 @@ std::optional<AttrType> custom_data_type_to_attr_type(const eCustomDataType data
     case CD_TESSLOOPNORMAL:
     case CD_FREESTYLE_EDGE:
     case CD_FREESTYLE_FACE:
+    case CD_MVERT_SKIN:
       return std::nullopt;
 
     /* These types are only used for #BMesh. */
@@ -62,7 +67,6 @@ std::optional<AttrType> custom_data_type_to_attr_type(const eCustomDataType data
 
     /* Custom data on vertices. */
     case CD_MDEFORMVERT:
-    case CD_MVERT_SKIN:
     case CD_ORCO:
     case CD_CLOTH_ORCO:
       return std::nullopt;
@@ -160,15 +164,13 @@ static void attribute_legacy_convert_customdata_to_storage(
     array_data.data = attribute.array_data;
     array_data.size = attribute.array_size;
     array_data.sharing_info = ImplicitSharingPtr<>(attribute.sharing_info);
-    if (Attribute *attr = storage.lookup(attribute.name)) {
-      attr->assign_data(std::move(array_data));
+    if (storage.lookup(attribute.name)) {
+      storage.remove(attribute.name);
     }
-    else {
-      storage.add(storage.unique_name_calc(attribute.name),
-                  attribute.domain,
-                  attribute.type,
-                  std::move(array_data));
-    }
+    storage.add(storage.unique_name_calc(attribute.name),
+                attribute.domain,
+                attribute.type,
+                std::move(array_data));
   }
 
   for (const auto &[domain, custom_data] : domains.items()) {

@@ -529,7 +529,7 @@ class BaseCryptoMatteOperation : public NodeOperation {
     GPU_shader_bind(shader);
 
     Result &input_image = get_input_image();
-    input_image.bind_as_texture(shader, "input_tx");
+    gpu::Texture *input_texture = input_image.bind_as_texture_or_single_value(shader, "input_tx");
 
     matte.bind_as_texture(shader, "matte_tx");
 
@@ -541,7 +541,7 @@ class BaseCryptoMatteOperation : public NodeOperation {
     compute_dispatch_threads_at_least(shader, domain.data_size);
 
     GPU_shader_unbind();
-    input_image.unbind_as_texture();
+    input_image.unbind_as_texture_or_single_value(input_texture);
     matte.unbind_as_texture();
     image_output.unbind_as_image();
   }
@@ -593,17 +593,16 @@ static void node_declare(NodeDeclarationBuilder &b)
   b.add_output<decl::Color>("Pick"_ustr).structure_type(StructureType::Dynamic);
 }
 
-static void node_init(bNodeTree * /*ntree*/, bNode *node)
+static void node_init(bNodeTree * /*node_tree*/, bNode *node)
 {
-  NodeCryptomatte *user = MEM_new<NodeCryptomatte>(__func__);
-  node->storage = user;
+  NodeCryptomatte *storage = MEM_new<NodeCryptomatte>(__func__);
+  node->storage = storage;
 }
 
-static void node_init_api(const bContext *C, PointerRNA *ptr)
+static void node_init_api(const bContext *C, PointerRNA *node_ptr)
 {
   Scene *scene = CTX_data_scene(C);
-  bNode *node = static_cast<bNode *>(ptr->data);
-  BLI_assert(node->type_legacy == CMP_NODE_CRYPTOMATTE);
+  bNode *node = node_ptr->data_as<bNode>();
   node->id = &scene->id;
   id_us_plus(node->id);
 }

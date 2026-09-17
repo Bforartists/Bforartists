@@ -22,6 +22,7 @@
 
 #include "BKE_action.hh"
 #include "BKE_anim_data.hh"
+#include "BKE_constraint.h"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_layer.hh"
@@ -313,24 +314,26 @@ static bool pchan_autoik_adjust(bPoseChannel *pchan, short chainlen)
 
   /* Check if pchan has ik-constraint. */
   for (bConstraint &con : pchan->constraints) {
-    if (con.flag & (CONSTRAINT_DISABLE | CONSTRAINT_OFF)) {
+    if (con.type != CONSTRAINT_TYPE_KINEMATIC) {
       continue;
     }
-    if (con.type == CONSTRAINT_TYPE_KINEMATIC && (con.enforce != 0.0f)) {
-      bKinematicConstraint *data = static_cast<bKinematicConstraint *>(con.data);
+    if (!BKE_constraint_has_influence(&con)) {
+      continue;
+    }
 
-      /* Only accept if a temporary one (for auto-IK). */
-      if (data->flag & CONSTRAINT_IK_TEMP) {
-        /* `chainlen` is new `chainlen`, but is limited by maximum `chainlen`. */
-        const int old_rootbone = data->rootbone;
-        if ((chainlen == 0) || (chainlen > data->max_rootbone)) {
-          data->rootbone = data->max_rootbone;
-        }
-        else {
-          data->rootbone = chainlen;
-        }
-        changed |= (data->rootbone != old_rootbone);
+    bKinematicConstraint *data = static_cast<bKinematicConstraint *>(con.data);
+
+    /* Only accept if a temporary one (for auto-IK). */
+    if (data->flag & CONSTRAINT_IK_TEMP) {
+      /* `chainlen` is new `chainlen`, but is limited by maximum `chainlen`. */
+      const int old_rootbone = data->rootbone;
+      if ((chainlen == 0) || (chainlen > data->max_rootbone)) {
+        data->rootbone = data->max_rootbone;
       }
+      else {
+        data->rootbone = chainlen;
+      }
+      changed |= (data->rootbone != old_rootbone);
     }
   }
 
@@ -546,75 +549,77 @@ bool constraints_list_needinv(TransInfo *t, ListBaseT<bConstraint> *list)
   if (list) {
     for (bConstraint &con : *list) {
       /* Only consider constraint if it is enabled, and has influence on result. */
-      if ((con.flag & (CONSTRAINT_DISABLE | CONSTRAINT_OFF)) == 0 && (con.enforce != 0.0f)) {
-        /* Affirmative: returns for specific constraints here. */
-        /* Constraints that require this regardless. */
-        if (ELEM(con.type,
-                 CONSTRAINT_TYPE_FOLLOWPATH,
-                 CONSTRAINT_TYPE_CLAMPTO,
-                 CONSTRAINT_TYPE_ARMATURE,
-                 CONSTRAINT_TYPE_OBJECTSOLVER,
-                 CONSTRAINT_TYPE_FOLLOWTRACK))
+      if (!BKE_constraint_has_influence(&con)) {
+        continue;
+      }
+
+      /* Affirmative: returns for specific constraints here. */
+      /* Constraints that require this regardless. */
+      if (ELEM(con.type,
+               CONSTRAINT_TYPE_FOLLOWPATH,
+               CONSTRAINT_TYPE_CLAMPTO,
+               CONSTRAINT_TYPE_ARMATURE,
+               CONSTRAINT_TYPE_OBJECTSOLVER,
+               CONSTRAINT_TYPE_FOLLOWTRACK))
+      {
+        return true;
+      }
+
+      /* Constraints that require this only under special conditions. */
+      if (con.type == CONSTRAINT_TYPE_CHILDOF) {
+        /* ChildOf constraint only works when using all location components, see #42256. */
+        bChildOfConstraint *data = static_cast<bChildOfConstraint *>(con.data);
+
+        if ((data->flag & CHILDOF_LOCX) && (data->flag & CHILDOF_LOCY) &&
+            (data->flag & CHILDOF_LOCZ))
         {
           return true;
         }
+      }
+      else if (con.type == CONSTRAINT_TYPE_ROTLIKE) {
+        /* CopyRot constraint only does this when rotating, and offset is on. */
+        bRotateLikeConstraint *data = static_cast<bRotateLikeConstraint *>(con.data);
 
-        /* Constraints that require this only under special conditions. */
-        if (con.type == CONSTRAINT_TYPE_CHILDOF) {
-          /* ChildOf constraint only works when using all location components, see #42256. */
-          bChildOfConstraint *data = static_cast<bChildOfConstraint *>(con.data);
-
-          if ((data->flag & CHILDOF_LOCX) && (data->flag & CHILDOF_LOCY) &&
-              (data->flag & CHILDOF_LOCZ))
-          {
-            return true;
-          }
+        if (ELEM(data->mix_mode, ROTLIKE_MIX_OFFSET, ROTLIKE_MIX_BEFORE) &&
+            ELEM(t->mode, TFM_ROTATION))
+        {
+          return true;
         }
-        else if (con.type == CONSTRAINT_TYPE_ROTLIKE) {
-          /* CopyRot constraint only does this when rotating, and offset is on. */
-          bRotateLikeConstraint *data = static_cast<bRotateLikeConstraint *>(con.data);
+      }
+      else if (con.type == CONSTRAINT_TYPE_TRANSLIKE) {
+        /* Copy Transforms constraint only does this in the Before mode. */
+        bTransLikeConstraint *data = static_cast<bTransLikeConstraint *>(con.data);
 
-          if (ELEM(data->mix_mode, ROTLIKE_MIX_OFFSET, ROTLIKE_MIX_BEFORE) &&
-              ELEM(t->mode, TFM_ROTATION))
-          {
-            return true;
-          }
+        if (ELEM(data->mix_mode, TRANSLIKE_MIX_BEFORE, TRANSLIKE_MIX_BEFORE_FULL) &&
+            ELEM(t->mode, TFM_ROTATION, TFM_TRANSLATION))
+        {
+          return true;
         }
-        else if (con.type == CONSTRAINT_TYPE_TRANSLIKE) {
-          /* Copy Transforms constraint only does this in the Before mode. */
-          bTransLikeConstraint *data = static_cast<bTransLikeConstraint *>(con.data);
-
-          if (ELEM(data->mix_mode, TRANSLIKE_MIX_BEFORE, TRANSLIKE_MIX_BEFORE_FULL) &&
-              ELEM(t->mode, TFM_ROTATION, TFM_TRANSLATION))
-          {
-            return true;
-          }
-          if (ELEM(data->mix_mode, TRANSLIKE_MIX_BEFORE_SPLIT) && ELEM(t->mode, TFM_ROTATION)) {
-            return true;
-          }
+        if (ELEM(data->mix_mode, TRANSLIKE_MIX_BEFORE_SPLIT) && ELEM(t->mode, TFM_ROTATION)) {
+          return true;
         }
-        else if (con.type == CONSTRAINT_TYPE_ACTION) {
-          /* The Action constraint only does this in the Before mode. */
-          bActionConstraint *data = static_cast<bActionConstraint *>(con.data);
+      }
+      else if (con.type == CONSTRAINT_TYPE_ACTION) {
+        /* The Action constraint only does this in the Before mode. */
+        bActionConstraint *data = static_cast<bActionConstraint *>(con.data);
 
-          if (ELEM(data->mix_mode, ACTCON_MIX_BEFORE, ACTCON_MIX_BEFORE_FULL) &&
-              ELEM(t->mode, TFM_ROTATION, TFM_TRANSLATION))
-          {
-            return true;
-          }
-          if (ELEM(data->mix_mode, ACTCON_MIX_BEFORE_SPLIT) && ELEM(t->mode, TFM_ROTATION)) {
-            return true;
-          }
+        if (ELEM(data->mix_mode, ACTCON_MIX_BEFORE, ACTCON_MIX_BEFORE_FULL) &&
+            ELEM(t->mode, TFM_ROTATION, TFM_TRANSLATION))
+        {
+          return true;
         }
-        else if (con.type == CONSTRAINT_TYPE_TRANSFORM) {
-          /* Transform constraint needs it for rotation at least (r.57309),
-           * but doing so when translating may also mess things up, see: #36203. */
-          bTransformConstraint *data = static_cast<bTransformConstraint *>(con.data);
+        if (ELEM(data->mix_mode, ACTCON_MIX_BEFORE_SPLIT) && ELEM(t->mode, TFM_ROTATION)) {
+          return true;
+        }
+      }
+      else if (con.type == CONSTRAINT_TYPE_TRANSFORM) {
+        /* Transform constraint needs it for rotation at least (r.57309),
+         * but doing so when translating may also mess things up, see: #36203. */
+        bTransformConstraint *data = static_cast<bTransformConstraint *>(con.data);
 
-          if (data->to == TRANS_ROTATION) {
-            if (t->mode == TFM_ROTATION && data->mix_mode_rot == TRANS_MIXROT_BEFORE) {
-              return true;
-            }
+        if (data->to == TRANS_ROTATION) {
+          if (t->mode == TFM_ROTATION && data->mix_mode_rot == TRANS_MIXROT_BEFORE) {
+            return true;
           }
         }
       }
@@ -856,7 +861,7 @@ static void init_TransDataContainers(TransInfo *t, Object *obact, Span<Object *>
                                 0;
       }
 
-      if (object_mode & OB_MODE_EDIT) {
+      if (object_mode & OB_MODE_EDIT || object_mode & OB_MODE_PAINT_GREASE_PENCIL) {
         tc->obedit = objects[i];
         /* Check needed for UVs. */
         if ((t->flag & T_2D_EDIT) == 0) {
@@ -1014,7 +1019,7 @@ static TransConvertTypeInfo *convert_type_get(const TransInfo *t, Object **r_obj
   {
     return &TransConvertType_Particle;
   }
-  if (ob && ((ob->mode & OB_MODE_ALL_PAINT) || (ob->mode & OB_MODE_SCULPT_CURVES))) {
+  if (ob && ((ob->mode & OB_MODE_ALL_PAINT_MESH) || (ob->mode & OB_MODE_SCULPT_CURVES))) {
     if ((t->options & CTX_PAINT_CURVE) && !ELEM(t->mode, TFM_SHEAR, TFM_SHRINKFATTEN)) {
       return &TransConvertType_PaintCurve;
     }
@@ -1117,7 +1122,8 @@ void create_trans_data(bContext *C, TransInfo *t)
 void transform_convert_clip_mirror_modifier_apply(TransDataContainer *tc)
 {
   Object *ob = tc->obedit;
-  ModifierData *md = static_cast<ModifierData *>(ob->modifiers.first);
+  ModifierData *md = ob->modifiers.first();
+  tc->has_mirror_clipping = false;
 
   for (; md; md = md->next) {
     if ((md->type == eModifierType_Mirror) && (md->mode & eModifierMode_Realtime)) {
@@ -1187,6 +1193,7 @@ void transform_convert_clip_mirror_modifier_apply(TransDataContainer *tc)
             mul_m4_v3(imtx, loc);
           }
           copy_v3_v3(td->loc, loc);
+          tc->has_mirror_clipping = true;
         }
       }
     }
@@ -1217,7 +1224,7 @@ void animrecord_check_state(TransInfo *t, ID *id)
      * we need to add a new NLA track+strip to allow a clean pass to occur. */
     if ((sad) && (sad->flag & ANIMPLAY_FLAG_JUMPED)) {
       AnimData *adt = BKE_animdata_from_id(id);
-      const bool is_first = (adt) && (adt->nla_tracks.first == nullptr);
+      const bool is_first = (adt) && (adt->nla_tracks.first_ == nullptr);
 
       /* Perform push-down manually with some differences
        * NOTE: #BKE_nla_action_pushdown() sync warning. */

@@ -530,7 +530,7 @@ Slot &Action::slot_add_for_id_type(const ID_Type idtype)
 Slot &Action::slot_add_for_id(const ID &animated_id)
 {
   Slot &slot = this->slot_add();
-  slot.idtype = GS(animated_id.name);
+  slot.idtype = animated_id.id_type();
 
   /* Determine the identifier for this slot, prioritizing transparent
    * auto-selection when toggling between Actions. That's why the last-used slot
@@ -717,7 +717,7 @@ void Action::slot_setup_for_id(Slot &slot, const ID &animated_id)
     return;
   }
 
-  slot.idtype = GS(animated_id.name);
+  slot.idtype = animated_id.id_type();
   this->slot_identifier_ensure_prefix(slot);
 }
 
@@ -831,8 +831,8 @@ static float2 get_frame_range_of_fcurves(Span<const FCurve *> fcurves,
     /* if include_modifiers is enabled, need to consider modifiers too
      * - only really care about the last modifier
      */
-    if ((include_modifiers) && (fcu->modifiers.last)) {
-      FModifier *fcm = static_cast<FModifier *>(fcu->modifiers.last);
+    if ((include_modifiers) && (fcu->modifiers.last())) {
+      FModifier *fcm = fcu->modifiers.last();
 
       /* only use the maximum sensible limits of the modifiers if they are more extreme */
       switch (fcm->type) {
@@ -1010,7 +1010,7 @@ bool Slot::is_suitable_for(const ID &animated_id) const
   }
 
   /* Check that the ID type is compatible with this slot. */
-  const int animated_idtype = GS(animated_id.name);
+  const int animated_idtype = animated_id.id_type();
   return this->idtype == animated_idtype;
 }
 
@@ -1857,7 +1857,7 @@ Vector<FCurve *> Channelbag::fcurve_create_many(Main *bmain,
   unique_curves.reserve(prev_fcurve_num);
   for (FCurve *fcurve : this->fcurves()) {
     CurvePathIndex path_index;
-    path_index.rna_path = StringRefNull(fcurve->rna_path ? fcurve->rna_path : "");
+    path_index.rna_path = fcurve->rna_path();
     path_index.array_index = fcurve->array_index;
     unique_curves.add(path_index);
   }
@@ -1943,8 +1943,7 @@ FCurve &Channelbag::fcurve_clone(const FCurve &old_fcurve,
   }
   else {
     new_fcurve = BKE_fcurve_copy(&old_fcurve);
-    MEM_delete(new_fcurve->rna_path);
-    new_fcurve->rna_path = BLI_strdup(new_path.data());
+    new_fcurve->rna_path_set(new_path);
     new_fcurve->array_index = new_array_index;
     this->fcurve_append(*new_fcurve);
   }
@@ -2505,6 +2504,36 @@ const animrig::Channelbag *channelbag_for_action_slot(const Action &action,
   return nullptr;
 }
 
+Vector<Channelbag *> channelbags_for_action_slot(Action &action, const slot_handle_t slot_handle)
+{
+  if (slot_handle == Slot::unassigned) {
+    return {};
+  }
+
+  /* To avoid adding the same channelbag multiple times which can happen with strip instances. */
+  Set<Channelbag *> visited_channelbags;
+  Vector<Channelbag *> channelbags;
+  for (animrig::Layer *layer : action.layers()) {
+    for (animrig::Strip *strip : layer->strips()) {
+      switch (strip->type()) {
+        case animrig::Strip::Type::Keyframe: {
+          animrig::StripKeyframeData &strip_data = strip->data<animrig::StripKeyframeData>(action);
+          animrig::Channelbag *bag = strip_data.channelbag_for_slot(slot_handle);
+          if (!bag) {
+            continue;
+          }
+          if (!visited_channelbags.add(bag)) {
+            continue;
+          }
+          channelbags.append(bag);
+        }
+      }
+    }
+  }
+
+  return channelbags;
+}
+
 animrig::Channelbag *channelbag_for_action_slot(Action &action, const slot_handle_t slot_handle)
 {
   const animrig::Channelbag *const_bag = channelbag_for_action_slot(
@@ -2591,12 +2620,13 @@ bool fcurve_matches_collection_path(const FCurve &fcurve,
   const size_t quoted_name_size = data_name.size() + 1;
   char *quoted_name = static_cast<char *>(alloca(quoted_name_size));
 
-  if (!fcurve.rna_path) {
+  const StringRefNull rna_path = fcurve.rna_path();
+  if (rna_path.is_empty()) {
     return false;
   }
   /* Skipping names longer than `quoted_name_size` is OK since we're after an exact match. */
   if (!BLI_str_quoted_substr(
-          fcurve.rna_path, collection_rna_path.c_str(), quoted_name, quoted_name_size))
+          rna_path.c_str(), collection_rna_path.c_str(), quoted_name, quoted_name_size))
   {
     return false;
   }
@@ -2753,7 +2783,7 @@ void action_fcurve_attach(Action &action,
     printf("Cannot find slot handle %d on Action %s, unable to attach F-Curve %s[%d] to it!\n",
            action_slot,
            action.id.name + 2,
-           fcurve_to_attach.rna_path,
+           fcurve_to_attach.rna_path().c_str(),
            fcurve_to_attach.array_index);
     return;
   }

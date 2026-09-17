@@ -53,7 +53,7 @@ static Main *pyrna_bmain_FromPyObject(PyObject *obj)
   }
   BPy_StructRNA *pyrna = reinterpret_cast<BPy_StructRNA *>(obj);
   PYRNA_STRUCT_CHECK_OBJ(pyrna);
-  if (!(pyrna->ptr && pyrna->ptr->type == RNA_BlendData && pyrna->ptr->data)) {
+  if (!(pyrna->ptr && pyrna->ptr->type == RNA_BlendData && *pyrna->ptr)) {
     PyErr_Format(PyExc_TypeError,
                  "Expected a StructRNA of type BlendData, not %.200s",
                  Py_TYPE(pyrna)->tp_name);
@@ -83,7 +83,7 @@ static int id_code_as_index(const short idcode)
 
 static bool id_check_type(const ID *id, const BLI_bitmap *types_bitmap)
 {
-  return BLI_BITMAP_TEST_BOOL(types_bitmap, id_code_as_index(GS(id->name)));
+  return BLI_BITMAP_TEST_BOOL(types_bitmap, id_code_as_index(id->id_type()));
 }
 
 static int foreach_libblock_id_user_map_callback(LibraryIDLinkCallbackData *cb_data)
@@ -183,7 +183,7 @@ static PyObject *bpy_user_map(PyObject *self, PyObject *args, PyObject *kwds)
 
   static const char *_keywords[] = {"subset", "key_types", "value_types", nullptr};
   static _PyArg_Parser _parser = {
-      "|$" /* Optional keyword only arguments. */
+      "|$" /* Optional, keyword only arguments. */
       "O"  /* `subset` */
       "O&" /* `key_types` */
       "O&" /* `value_types` */
@@ -407,7 +407,7 @@ static PyObject *bpy_file_path_map(PyObject *self, PyObject *args, PyObject *kwd
 
   static const char *_keywords[] = {"subset", "key_types", "include_libraries", nullptr};
   static _PyArg_Parser _parser = {
-      "|$" /* Optional keyword only arguments. */
+      "|$" /* Optional, keyword only arguments. */
       "O"  /* `subset` */
       "O&" /* `key_types` */
       "O!" /* `include_libraries` */
@@ -596,13 +596,14 @@ const EnumPropertyItem rna_enum_file_path_foreach_flag_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-/* Metadata for path visited by `file_path_foreach.
+/**
+ * Metadata for path visited by `file_path_foreach`.
  *
  * In the future it may be useful to extend this:
  *  - Is the path intended to reference a directory or a file.
  *  - Does the path support templates.
- *  - Is the path referring to input or output (the render output, or file output nodes). */
-
+ *  - Is the path referring to input or output (the render output, or file output nodes).
+ */
 struct BPy_FilePathMeta {
   PyObject_HEAD
   bool is_expanded;
@@ -848,7 +849,7 @@ PyDoc_STRVAR(
     ":class:`bpy.types.BlendDataPathMeta`], str|None]\n"
     "   :param subset: When given, only these data-blocks and their used file paths "
     "will be visited.\n"
-    "   :type subset: set[str] | None\n"
+    "   :type subset: set[:class:`bpy.types.ID`] | None\n"
     "   :param visit_types: When given, only visit data-blocks of these types. Ignored if "
     "``subset`` is also given.\n"
     "   :type visit_types: set[str] | None\n"
@@ -875,7 +876,7 @@ static PyObject *bpy_file_path_foreach(PyObject *self, PyObject *args, PyObject 
   static const char *_keywords[] = {"visit_path_fn", "subset", "visit_types", "flags", nullptr};
   static _PyArg_Parser _parser = {
       "O!" /* `visit_path_fn` */
-      "|$" /* Optional keyword only arguments. */
+      "|$" /* Optional, keyword only arguments. */
       "O"  /* `subset` */
       "O&" /* `visit_types` */
       "O!" /* `flags` */

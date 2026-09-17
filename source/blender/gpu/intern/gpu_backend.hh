@@ -6,7 +6,8 @@
  * \ingroup gpu
  *
  * GPUBackend derived class contain allocators that do not need a context bound.
- * The backend is init at startup and is accessible using GPU_backend_get() */
+ * The backend is init at startup and is accessible using GPU_backend_get()
+ */
 
 #pragma once
 
@@ -37,6 +38,7 @@ class StorageBuf;
 class VertBuf;
 class TopLevelAS;
 class BottomLevelAS;
+class WorkInFlight;
 
 class GPUBackend {
  protected:
@@ -64,6 +66,7 @@ class GPUBackend {
 
   virtual Batch *batch_alloc() = 0;
   virtual Fence *fence_alloc() = 0;
+  virtual WorkInFlight *work_in_flight_alloc(unsigned int max_in_flight) = 0;
   virtual FrameBuffer *framebuffer_alloc(const char *name) = 0;
   virtual IndexBuf *indexbuf_alloc() = 0;
   virtual PixelBuffer *pixelbuf_alloc(size_t size) = 0;

@@ -70,7 +70,7 @@ ccl_device_inline void film_write_data_passes(KernelGlobals kg,
       }
     }
 
-    if (!(sd->flag & (SD_TRANSPARENT | SD_RAY_PORTAL)) ||
+    if (!(sd->runtime_flag & (SR_TRANSPARENT | SR_RAY_PORTAL)) ||
         kernel_data.film.pass_alpha_threshold == 0.0f ||
         average(surface_shader_alpha(sd)) >= kernel_data.film.pass_alpha_threshold)
     {
@@ -213,7 +213,8 @@ ccl_device_inline void film_write_data_passes_background(
     }
 
     if (flag & PASSMASK(MOTION)) {
-      const float4 speed = camera_motion_vector_direction(kg, INTEGRATOR_STATE(state, ray, D));
+      const float4 speed = camera_motion_vector_direction(
+          kg, INTEGRATOR_STATE(state, ray, P), INTEGRATOR_STATE(state, ray, D));
       film_write_pass_float4(buffer + kernel_data.film.pass_motion, speed);
       film_write_pass_float(buffer + kernel_data.film.pass_motion_weight, 1.0f);
     }

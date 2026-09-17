@@ -280,11 +280,12 @@ def draw_material_surface_settings(layout, mat, is_eevee=True):
         row.separator()
         row.prop(mat, "displacement_method", text="Method")
 
+        # NOTE: "max_vertex_displacement" also drives the max offset when using Shadow Raycast with a custom Position.
         row = col.row()
         row.separator()
-
-        if mat.displacement_method != 'BUMP':
-            row.prop(mat, "max_vertex_displacement", text="Max Distance")
+        max_diplacement_text = "Max Distance" if is_eevee else "Max Displacement"
+        row.enabled = mat.displacement_method != 'BUMP' or is_eevee
+        row.prop(mat, "max_vertex_displacement", text=max_diplacement_text)
 
         if mat.displacement_method == 'DISPLACEMENT':
             row = col.row()

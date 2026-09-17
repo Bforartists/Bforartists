@@ -8,6 +8,7 @@
  * \ingroup bke
  */
 
+#include "BLI_cache_mutex.hh"
 #include "BLI_vector.hh"
 
 #include "BKE_collection.hh"
@@ -38,6 +39,13 @@ enum eViewLayerCopyMethod {
   VIEWLAYER_ADD_NEW = 0,
   VIEWLAYER_ADD_EMPTY = 1,
   VIEWLAYER_ADD_COPY = 2,
+};
+
+struct ViewLayerRuntime {
+  Vector<Base *> object_bases_array;
+  CacheMutex object_bases_array_mutex;
+
+  ObjectBasesMap *object_bases_hash = nullptr;
 };
 
 /**
@@ -510,9 +518,8 @@ void _BKE_view_layer_synced_ensure_or_assert(const Main *bmain,
     Object *_instance; \
     Base *_base; \
     _BKE_view_layer_synced_ensure_or_assert(_bmain, _scene, _view_layer); \
-    for (_base = (Base *)BKE_view_layer_object_bases_get(_view_layer)->first; _base; \
-         _base = _base->next) \
-    { \
+    for (_base = BKE_view_layer_object_bases_get(_view_layer)->first(); _base; \
+         _base = _base->next) { \
       _instance = _base->object;
 
 #define FOREACH_OBJECT_END \

@@ -163,8 +163,8 @@ static CVKeyIndex *init_cvKeyIndex(
 
 static void init_editNurb_keyIndex(EditNurb *editnurb, ListBaseT<Nurb> *origBase)
 {
-  Nurb *nu = static_cast<Nurb *>(editnurb->nurbs.first);
-  Nurb *orignu = static_cast<Nurb *>(origBase->first);
+  Nurb *nu = editnurb->nurbs.first();
+  Nurb *orignu = origBase->first();
   BezTriple *bezt, *origbezt;
   BPoint *bp, *origbp;
   CVKeyIndex *keyIndex;
@@ -595,6 +595,12 @@ static void calc_keyHandles(ListBaseT<Nurb> *nurb, float *key)
 
   for (Nurb &nu : *nurb) {
     if (nu.bezt) {
+      if (nu.pntsu < 2) {
+        /* Single point, no need to calculate handles, proceed to th next Nurb. */
+        fp += nu.pntsu * KEYELEM_FLOAT_LEN_BEZTRIPLE;
+        continue;
+      }
+
       BezTriple *prevp, *nextp;
       BezTriple cur, prev, next;
       float *startfp, *prevfp, *nextfp;
@@ -612,14 +618,8 @@ static void calc_keyHandles(ListBaseT<Nurb> *nurb, float *key)
         prevfp = nullptr;
       }
 
-      if (nu.pntsu > 1) {
-        nextp = bezt + 1;
-        nextfp = fp + KEYELEM_FLOAT_LEN_BEZTRIPLE;
-      }
-      else {
-        nextp = nullptr;
-        nextfp = nullptr;
-      }
+      nextp = bezt + 1;
+      nextfp = fp + KEYELEM_FLOAT_LEN_BEZTRIPLE;
 
       while (a--) {
         key_to_bezt(fp, bezt, &cur);
@@ -752,11 +752,11 @@ static void calc_shapeKeys(Object *obedit, ListBaseT<Nurb> *newnurbs)
         MEM_new_zeroed(cu->key->elemsize * totvert, "currkey->data"));
     ofp = oldkey = static_cast<float *>(currkey.data);
 
-    Nurb *nu = static_cast<Nurb *>(editnurb->nurbs.first);
+    Nurb *nu = editnurb->nurbs.first();
     /* We need to restore to original curve into newnurb, *not* editcurve's nurbs.
      * Otherwise, in case we update obdata *without* leaving editmode (e.g. viewport render),
      * we would invalidate editcurve. */
-    newnu = static_cast<Nurb *>(newnurbs->first);
+    newnu = newnurbs->first();
     i = 0;
     while (nu) {
       if (&currkey == actkey) {
@@ -922,7 +922,7 @@ static bool curve_is_animated(Curve *cu)
 {
   AnimData *ad = BKE_animdata_from_id(&cu->id);
 
-  return ad && (ad->action || ad->drivers.first);
+  return ad && (ad->action || ad->drivers.first_);
 }
 
 /**
@@ -939,16 +939,15 @@ static void fcurve_path_rename(const char *orig_rna_path,
     if (processed_fcurves.contains(fcu)) {
       continue;
     }
-    if (!STREQLEN(fcu->rna_path, orig_rna_path, len)) {
+    if (!STREQLEN(fcu->rna_path().c_str(), orig_rna_path, len)) {
       continue;
     }
 
     processed_fcurves.add(fcu);
 
-    const char *suffix = fcu->rna_path + len;
+    const char *suffix = fcu->rna_path().c_str() + len;
     char *new_rna_path = BLI_sprintfN("%s%s", rna_path, suffix);
-    MEM_SAFE_DELETE(fcu->rna_path);
-    fcu->rna_path = new_rna_path;
+    fcu->rna_path_set_move(new_rna_path);
   }
 }
 
@@ -1062,8 +1061,8 @@ static void fcurve_path_rename(const char *orig_rna_path,
       continue;
     }
 
-    if (STRPREFIX(fcu->rna_path, "splines")) {
-      const char *ch = strchr(fcu->rna_path, '.');
+    if (STRPREFIX(fcu->rna_path().c_str(), "splines")) {
+      const char *ch = strchr(fcu->rna_path().c_str(), '.');
 
       if (ch && (STRPREFIX(ch, ".bezier_points") || STRPREFIX(ch, ".points"))) {
         fcurves_to_remove.append(fcu);
@@ -1096,7 +1095,7 @@ static void fcurve_path_rename(const char *orig_rna_path,
     if (processed_fcurves.contains(fcu)) {
       continue;
     }
-    if (STRPREFIX(fcu->rna_path, "splines")) {
+    if (STRPREFIX(fcu->rna_path().c_str(), "splines")) {
       fcurves_to_remove.append(fcu);
       /* Not strictly necessary, because `orig_curves` shouldn't contain any duplicates, and this
        * is the last loop that can add anything to `fcurves_to_remove`. However, the line below
@@ -4306,25 +4305,25 @@ static void make_selection_list_nurb(View3D *v3d,
   }
 
   /* just add the first one */
-  nus = static_cast<NurbSort *>(nbase.first);
+  nus = nbase.first();
   BLI_remlink(&nbase, nus);
   BLI_addtail(nsortbase, nus);
 
   /* now add, either at head or tail, the closest one */
-  while (nbase.first) {
+  while (nbase.first_) {
 
     headdist = taildist = 1.0e30;
     headdo = taildo = nullptr;
 
-    nustest = static_cast<NurbSort *>(nbase.first);
+    nustest = nbase.first();
     while (nustest) {
-      dist = len_v3v3(nustest->vec, (static_cast<NurbSort *>(nsortbase->first))->vec);
+      dist = len_v3v3(nustest->vec, (nsortbase->first())->vec);
 
       if (dist < headdist) {
         headdist = dist;
         headdo = nustest;
       }
-      dist = len_v3v3(nustest->vec, (static_cast<NurbSort *>(nsortbase->last))->vec);
+      dist = len_v3v3(nustest->vec, (nsortbase->last())->vec);
 
       if (dist < taildist) {
         taildist = dist;
@@ -4520,12 +4519,12 @@ static int merge_nurb(View3D *v3d, Object *obedit)
 
   make_selection_list_nurb(v3d, editnurb, &nsortbase);
 
-  if (nsortbase.first == nsortbase.last) {
+  if (nsortbase.first_ == nsortbase.last()) {
     nsortbase.free_no_destruct();
     return CURVE_MERGE_ERR_FEW_SELECTION;
   }
 
-  nus1 = static_cast<NurbSort *>(nsortbase.first);
+  nus1 = nsortbase.first();
   nus2 = nus1->next;
 
   /* resolution match, to avoid uv rotations */
@@ -4605,7 +4604,7 @@ static wmOperatorStatus make_segment_exec(bContext *C, wmOperator *op)
 
     /* first decide if this is a surface merge! */
     if (obedit->type == OB_SURF) {
-      nu = static_cast<Nurb *>(nubase->first);
+      nu = nubase->first();
     }
     else {
       nu = nullptr;
@@ -7026,7 +7025,7 @@ wmOperatorStatus ED_curve_join_objects_exec(bContext *C, wmOperator *op)
 
         cu = id_cast<Curve *>(ob_iter->data);
 
-        if (cu->nurb.first) {
+        if (cu->nurb.first_) {
           /* watch it: switch order here really goes wrong */
           mul_m4_m4m4(cmat, imat, ob_iter->object_to_world().ptr());
 

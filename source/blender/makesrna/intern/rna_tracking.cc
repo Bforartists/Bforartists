@@ -16,6 +16,7 @@
 #include "BKE_tracking.hh"
 
 #include "RNA_define.hh"
+#include "RNA_path.hh"
 
 #include "rna_internal.hh"
 
@@ -35,6 +36,7 @@
 
 #  include "BKE_anim_data.hh"
 #  include "BKE_animsys.hh"
+#  include "BKE_global.hh"
 #  include "BKE_movieclip.hh"
 #  include "BKE_node_tree_update.hh"
 #  include "BKE_report.hh"
@@ -275,22 +277,15 @@ static void rna_trackingTrack_name_set(PointerRNA *ptr, const char *value)
   STRNCPY_UTF8(track->name, value);
   BKE_tracking_track_unique_name(&tracking_object->tracks, track);
   /* Fix animation paths. */
-  AnimData *adt = BKE_animdata_from_id(&clip->id);
-  if (adt != nullptr) {
-    char rna_path_prefix[MAX_NAME * 2 + 64];
-    BKE_tracking_get_rna_path_prefix_for_track(
-        &clip->tracking, track, rna_path_prefix, sizeof(rna_path_prefix));
-    BKE_animdata_fix_paths_rename(&clip->id,
-                                  adt,
-                                  nullptr,
-                                  rna_path_prefix,
-                                  old_name,
-                                  track->name,
-                                  0,
-                                  0,
-                                  /*verify_paths=*/true,
-                                  /*infix_is_name=*/true);
-  }
+  char rna_path_prefix[MAX_NAME * 2 + 64];
+  BKE_tracking_get_rna_path_prefix_for_track(
+      &clip->tracking, track, rna_path_prefix, sizeof(rna_path_prefix));
+  BKE_animdata_fix_paths(clip->id,
+                         rna_path_prefix,
+                         RNA_path_name_to_infix(old_name),
+                         RNA_path_name_to_infix(track->name),
+                         /* verify_paths= */ true,
+                         *G_MAIN);
 }
 
 static bool rna_trackingTrack_select_get(PointerRNA *ptr)
@@ -371,22 +366,15 @@ static void rna_trackingPlaneTrack_name_set(PointerRNA *ptr, const char *value)
   STRNCPY(plane_track->name, value);
   BKE_tracking_plane_track_unique_name(&tracking_object->plane_tracks, plane_track);
   /* Fix animation paths. */
-  AnimData *adt = BKE_animdata_from_id(&clip->id);
-  if (adt != nullptr) {
-    char rna_path[MAX_NAME * 2 + 64];
-    BKE_tracking_get_rna_path_prefix_for_plane_track(
-        &clip->tracking, plane_track, rna_path, sizeof(rna_path));
-    BKE_animdata_fix_paths_rename(&clip->id,
-                                  adt,
-                                  nullptr,
-                                  rna_path,
-                                  old_name,
-                                  plane_track->name,
-                                  0,
-                                  0,
-                                  /*verify_paths=*/true,
-                                  /*infix_is_name=*/true);
-  }
+  char rna_path[MAX_NAME * 2 + 64];
+  BKE_tracking_get_rna_path_prefix_for_plane_track(
+      &clip->tracking, plane_track, rna_path, sizeof(rna_path));
+  BKE_animdata_fix_paths(clip->id,
+                         rna_path,
+                         RNA_path_name_to_infix(old_name),
+                         RNA_path_name_to_infix(plane_track->name),
+                         /* verify_paths= */ true,
+                         *G_MAIN);
 }
 
 static std::optional<std::string> rna_trackingCamera_path(const PointerRNA * /*ptr*/)
@@ -1530,6 +1518,7 @@ static void rna_def_trackingMarkers(BlenderRNA *brna, PropertyRNA *cprop)
       1.0);
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   parm = RNA_def_pointer(func, "marker", "MovieTrackingMarker", "", "Newly created marker");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "delete_frame", "rna_trackingMarkers_delete_frame");
@@ -1877,6 +1866,7 @@ static void rna_def_trackingPlaneMarkers(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   parm = RNA_def_pointer(
       func, "plane_marker", "MovieTrackingPlaneMarker", "", "Newly created plane marker");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "delete_frame", "rna_trackingPlaneMarkers_delete_frame");
@@ -2303,6 +2293,7 @@ static void rna_def_trackingTracks(BlenderRNA *brna)
               MINFRAME,
               MAXFRAME);
   parm = RNA_def_pointer(func, "track", "MovieTrackingTrack", "", "Newly created track");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   /* active track */
@@ -2371,6 +2362,7 @@ static void rna_def_trackingObjectTracks(BlenderRNA *brna)
               MINFRAME,
               MAXFRAME);
   parm = RNA_def_pointer(func, "track", "MovieTrackingTrack", "", "Newly created track");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   /* active track */
@@ -2516,6 +2508,7 @@ static void rna_def_trackingObjects(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string(func, "name", nullptr, 0, "", "Name of new object");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   parm = RNA_def_pointer(func, "object", "MovieTrackingObject", "", "New motion tracking object");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_trackingObject_remove");

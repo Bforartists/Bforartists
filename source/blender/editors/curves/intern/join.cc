@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup edcurves
+ */
+
 #include "DNA_scene_types.h"
 
 #include "BKE_context.hh"
@@ -64,10 +68,10 @@ wmOperatorStatus join_objects_exec(bContext *C, wmOperator *op)
     });
   }
 
-  bke::GeometrySet realized_geometry = geometry::realize_instances(
+  bke::GeometrySet realized_geometry = blender::geometry::realize_instances(
                                            bke::GeometrySet::from_instances(
                                                &instances, bke::GeometryOwnershipType::ReadOnly),
-                                           geometry::RealizeInstancesOptions())
+                                           blender::geometry::RealizeInstancesOptions())
                                            .geometry;
 
   if (!realized_geometry.has_curves()) {

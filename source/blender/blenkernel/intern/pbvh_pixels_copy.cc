@@ -2,11 +2,16 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup bke
+ */
+
 #include <algorithm>
 
 #include "BLI_array.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_listbase.hh"
+#include "BLI_math_color_c.hh"
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_vector.hh"
 #include "BLI_task.hh"
@@ -16,6 +21,7 @@
 #include "IMB_imbuf_types.hh"
 
 #include "BKE_image_wrappers.hh"
+#include "BKE_mesh.hh"
 #include "BKE_paint_bvh.hh"
 #include "BKE_paint_bvh_pixels.hh"
 
@@ -107,16 +113,18 @@ class NonManifoldUVEdges : public Vector<Edge<CoordSpace::UV>> {
     int num_non_manifold_edges = count_non_manifold_edges(mesh_data);
     reserve(num_non_manifold_edges);
     for (const int primitive_id : mesh_data.corner_tris.index_range()) {
-      for (const int edge_id : mesh_data.primitive_to_edge_map[primitive_id]) {
-        if (mesh_data.is_edge_manifold(edge_id)) {
+      const int3 tri = mesh_data.corner_tris[primitive_id];
+      const int3 real_edges = mesh::corner_tri_get_real_edges(
+          mesh_data.mesh_edges, mesh_data.corner_verts, mesh_data.corner_edges, tri);
+      for (int j = 0; j < 3; j++) {
+        const int edge_id = real_edges[j];
+        /* -1 means internal edge in face, which is always manifold. */
+        if (edge_id == -1 || mesh_data.is_edge_manifold(edge_id)) {
           continue;
         }
-        const int3 &tri = mesh_data.corner_tris[primitive_id];
-        const int2 mesh_edge = mesh_data.edges[edge_id];
         Edge<CoordSpace::UV> edge;
-
-        edge.vertex_1.coordinate = find_uv(mesh_data, tri, mesh_edge[0]);
-        edge.vertex_2.coordinate = find_uv(mesh_data, tri, mesh_edge[1]);
+        edge.vertex_1.coordinate = mesh_data.uv_map[tri[j]];
+        edge.vertex_2.coordinate = mesh_data.uv_map[tri[(j + 1) % 3]];
         append(edge);
       }
     }
@@ -141,27 +149,19 @@ class NonManifoldUVEdges : public Vector<Edge<CoordSpace::UV>> {
   {
     int64_t result = 0;
     for (const int primitive_id : mesh_data.corner_tris.index_range()) {
-      for (const int edge_id : mesh_data.primitive_to_edge_map[primitive_id]) {
-        if (mesh_data.is_edge_manifold(edge_id)) {
-          continue;
+      const int3 real_edges = mesh::corner_tri_get_real_edges(mesh_data.mesh_edges,
+                                                              mesh_data.corner_verts,
+                                                              mesh_data.corner_edges,
+                                                              mesh_data.corner_tris[primitive_id]);
+      for (int j = 0; j < 3; j++) {
+        const int edge_id = real_edges[j];
+        /* -1 means internal edge in face, which is always manifold. */
+        if (!(edge_id == -1 || mesh_data.is_edge_manifold(edge_id))) {
+          result += 1;
         }
-        result += 1;
       }
     }
     return result;
-  }
-
-  static float2 find_uv(const uv_islands::MeshData &mesh_data, const int3 &tri, int vertex_i)
-  {
-    for (int i = 0; i < 3; i++) {
-      const int loop_i = tri[i];
-      const int vert = mesh_data.corner_verts[loop_i];
-      if (vert == vertex_i) {
-        return mesh_data.uv_map[loop_i];
-      }
-    }
-    BLI_assert_unreachable();
-    return float2(0.0f);
   }
 };
 
@@ -201,6 +201,41 @@ class PixelNodesTileData : public Vector<std::reference_wrapper<UDIMTilePixels>>
     });
   }
 };
+
+/** Pixel copy command to mix 2 source pixels and write to a destination pixel. */
+struct CopyPixelCommand {
+  /** Pixel coordinate to write to. */
+  int2 destination;
+  /** Pixel coordinate to read first source from. */
+  int2 source_1;
+  /** Pixel coordinate to read second source from. */
+  int2 source_2;
+  /** Factor to mix between first and second source. */
+  float mix_factor;
+};
+
+static DeltaCopyPixelCommand encode_delta(const CopyPixelCommand &previous,
+                                          const CopyPixelCommand &next)
+{
+  return DeltaCopyPixelCommand(char2(next.source_1 - previous.source_1),
+                               char2(next.source_2 - next.source_1),
+                               uint8_t(next.mix_factor * 255));
+}
+
+/** Can `next` be appended to a group whose most recent command is `previous`? */
+static bool can_be_extended(const CopyPixelCommand &previous, const CopyPixelCommand &next)
+{
+  /* Can only extend sequential pixels. */
+  if (previous.destination.x != next.destination.x - 1 ||
+      previous.destination.y != next.destination.y)
+  {
+    return false;
+  }
+
+  /* Can only extend when the delta between with the previous source fits in a single byte. */
+  const int2 delta_source_1 = previous.source_1 - next.source_1;
+  return math::reduce_max(math::abs(delta_source_1)) <= 127;
+}
 
 /**
  * Row contains intermediate data per pixel for a single image row. It is used during updating to
@@ -450,7 +485,7 @@ struct Rows {
         /* Split group when it cross into another seam tile, so we can cleanly
          * sort each group into a seam tile later. */
         const int seam_tile = CopyPixelTile::seam_tile_index(command.source_1, seam_tilex_x);
-        if (!last_command.has_value() || !last_command->can_be_extended(command) ||
+        if (!last_command.has_value() || !can_be_extended(*last_command, command) ||
             seam_tile != last_seam_tile)
         {
           CopyPixelGroup new_group = {command.destination - int2(1, 0),
@@ -460,10 +495,13 @@ struct Rows {
           last_seam_tile = seam_tile;
           copy_tile.groups.append(new_group);
           last_group = copy_tile.groups.last();
-          last_command = CopyPixelCommand(*last_group);
+          last_command = CopyPixelCommand{.destination = new_group.start_destination,
+                                          .source_1 = new_group.start_source_1,
+                                          .source_2 = int2(0),
+                                          .mix_factor = 0.0f};
         }
 
-        DeltaCopyPixelCommand delta_command = last_command->encode_delta(command);
+        DeltaCopyPixelCommand delta_command = encode_delta(*last_command, command);
         copy_tile.command_deltas.append(delta_command);
         last_group->get().num_deltas++;
         last_command = command;
@@ -494,9 +532,96 @@ void CopyPixelTile::build_seam_tile_map(const int2 resolution)
   }
 }
 
+static int64_t pixel_offset(const int width, const int2 coordinate)
+{
+  return (int64_t(coordinate.y) * width + coordinate.x) * 4;
+}
+
+static float4 read_pixel(const float *buffer, const int width, const int2 coordinate)
+{
+  return float4(&buffer[pixel_offset(width, coordinate)]);
+}
+
+static void write_pixel(float *buffer, const int width, const int2 coordinate, const float4 &value)
+{
+  std::copy_n(&value.x, 4, &buffer[pixel_offset(width, coordinate)]);
+}
+
+static float4 read_pixel(const uint8_t *buffer, const int width, const int2 coordinate)
+{
+  float4 result;
+  rgba_uchar_to_float(result, &buffer[pixel_offset(width, coordinate)]);
+  return result;
+}
+
+static void write_pixel(uint8_t *buffer,
+                        const int width,
+                        const int2 coordinate,
+                        const float4 &value)
+{
+  rgba_float_to_uchar(&buffer[pixel_offset(width, coordinate)], value);
+}
+
+template<typename T>
+static void copy_pixels(T *buffer,
+                        const int width,
+                        const Span<CopyPixelGroup> groups,
+                        const Span<DeltaCopyPixelCommand> command_deltas)
+{
+  for (const CopyPixelGroup &group : groups) {
+    CopyPixelCommand command{.destination = group.start_destination,
+                             .source_1 = group.start_source_1,
+                             .source_2 = group.start_source_1,
+                             .mix_factor = 0.0f};
+
+    for (const DeltaCopyPixelCommand &delta :
+         Span(&command_deltas[group.start_delta_index], group.num_deltas))
+    {
+      command.destination.x += 1;
+      command.source_1 += int2(delta.delta_source_1);
+      command.source_2 = command.source_1 + int2(delta.delta_source_2);
+      command.mix_factor = float(delta.mix_factor) / 255.0f;
+
+      const float4 src_color_1 = read_pixel(buffer, width, command.source_1);
+      const float4 src_color_2 = read_pixel(buffer, width, command.source_2);
+      const float4 dst_color = math::interpolate(src_color_1, src_color_2, command.mix_factor);
+      write_pixel(buffer, width, command.destination, dst_color);
+    }
+  }
+}
+
+void CopyPixelTile::copy_pixels(ImBuf &tile_buffer, const IndexRange group_range) const
+{
+  BLI_assert(tile_buffer.channels == 4);
+  if (tile_buffer.float_data()) {
+    pixels::copy_pixels(tile_buffer.float_data_for_write(),
+                        tile_buffer.x,
+                        groups.as_span().slice(group_range),
+                        command_deltas);
+  }
+  else {
+    pixels::copy_pixels(tile_buffer.byte_data_for_write(),
+                        tile_buffer.x,
+                        groups.as_span().slice(group_range),
+                        command_deltas);
+  }
+}
+
+void CopyPixelTile::print_compression_rate() const
+{
+  const int decoded_size = command_deltas.size() * int(sizeof(CopyPixelCommand));
+  const int encoded_size = groups.size() * int(sizeof(CopyPixelGroup)) +
+                           command_deltas.size() * int(sizeof(DeltaCopyPixelCommand));
+  printf("Tile %d compression rate: %d->%d = %d%%\n",
+         tile_number,
+         decoded_size,
+         encoded_size,
+         int(100.0 * float(encoded_size) / float(decoded_size)));
+}
+
 void copy_update(bke::pbvh::Tree &pbvh,
                  Image &image,
-                 ImageUser &image_user,
+                 const ImageUser &image_user,
                  const uv_islands::MeshData &mesh_data)
 {
   PRF_scope(ProfileCategory::Editor);

@@ -66,6 +66,7 @@
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_material.hh"
+#include "BKE_paint.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
@@ -282,12 +283,12 @@ std::string WM_operator_pystring_ex(bContext *C,
   WM_operator_py_idname(idname_py, ot->idname);
   ss << "bpy.ops." << idname_py << "(";
 
-  if (op && op->macro.first) {
+  if (op && op->macro.first()) {
     /* Special handling for macros, else we only get default values in this case... */
     wmOperator *opm;
     bool first_op = true;
 
-    opm = static_cast<wmOperator *>(macro_args ? op->macro.first : nullptr);
+    opm = macro_args ? op->macro.first() : nullptr;
 
     for (; opm; opm = opm->next) {
       PointerRNA *opmptr = opm->ptr;
@@ -314,7 +315,7 @@ std::string WM_operator_pystring_ex(bContext *C,
   else {
     /* Only to get the original props for comparisons. */
     PointerRNA opptr_default;
-    const bool macro_args_test = ot->macro.first ? macro_args : true;
+    const bool macro_args_test = ot->macro.first() ? macro_args : true;
 
     if (opptr == nullptr) {
       opptr_default = WM_operator_properties_create_ptr(ot);
@@ -402,7 +403,7 @@ static const char *wm_context_member_from_ptr(bContext *C, const PointerRNA *ptr
     PointerRNA ctx_item_ptr = {};
     // CTX_data_pointer_get(C, identifier);  /* XXX, this isn't working. */
 
-    if (ctx_item_ptr.type == nullptr) {
+    if (!ctx_item_ptr.has_type()) {
       continue;
     }
 
@@ -748,8 +749,9 @@ std::optional<std::string> WM_prop_pystring_assign(bContext *C,
 
 PointerRNA WM_operator_properties_create_ptr(wmOperatorType *ot)
 {
+  wmWindowManager *wm = G_MAIN->wm.first();
   /* Set the ID so the context can be accessed: see #STRUCT_NO_CONTEXT_WITHOUT_OWNER_ID. */
-  return RNA_pointer_create_discrete(static_cast<ID *>(G_MAIN->wm.first), ot->srna, nullptr);
+  return RNA_pointer_create_discrete(wm ? &wm->id : nullptr, ot->srna, nullptr);
 }
 
 PointerRNA WM_operator_properties_create(const char *opstring)
@@ -759,9 +761,9 @@ PointerRNA WM_operator_properties_create(const char *opstring)
   if (ot) {
     return WM_operator_properties_create_ptr(ot);
   }
+  wmWindowManager *wm = G_MAIN->wm.first();
   /* Set the ID so the context can be accessed: see #STRUCT_NO_CONTEXT_WITHOUT_OWNER_ID. */
-  return RNA_pointer_create_discrete(
-      static_cast<ID *>(G_MAIN->wm.first), RNA_OperatorProperties, nullptr);
+  return RNA_pointer_create_discrete(wm ? &wm->id : nullptr, RNA_OperatorProperties, nullptr);
 }
 
 void WM_operator_properties_alloc(PointerRNA **ptr, IDProperty **properties, const char *opstring)
@@ -841,7 +843,7 @@ bool WM_operator_properties_default(PointerRNA *ptr, const bool do_update)
 
 void WM_operator_properties_reset(wmOperator *op)
 {
-  if (op->ptr->data) {
+  if (*op->ptr) {
     PropertyRNA *iterprop = RNA_struct_iterator_property(op->type->srna);
 
     RNA_PROP_BEGIN (op->ptr, itemptr, iterprop) {
@@ -950,7 +952,7 @@ bool WM_operator_last_properties_store(wmOperator *op)
     op->type->last_properties = IDP_CopyProperty(op->properties);
   }
 
-  if (op->macro.first != nullptr) {
+  if (op->macro.first() != nullptr) {
     for (wmOperator &opm : op->macro) {
       if (opm.properties) {
         if (op->type->last_properties == nullptr) {
@@ -1289,7 +1291,8 @@ bool WM_operator_check_ui_enabled(const bContext *C, const char *idname)
   wmWindowManager *wm = CTX_wm_manager(C);
   Scene *scene = CTX_data_scene(C);
 
-  return !((ED_undo_is_valid(C, idname) == false) || WM_jobs_test(wm, scene, WM_JOB_TYPE_ANY));
+  return !((ED_undo_is_valid(C, idname) == false) ||
+           WM_jobs_has_running(wm, scene, WM_JOB_TYPE_ANY, WM_JOB_BACKGROUND));
 }
 
 wmOperator *WM_operator_last_redo(const bContext *C)
@@ -1316,8 +1319,9 @@ IDProperty *WM_operator_last_properties_ensure_idprops(wmOperatorType *ot)
 
 void WM_operator_last_properties_ensure(wmOperatorType *ot, PointerRNA *ptr)
 {
+  wmWindowManager *wm = G_MAIN->wm.first();
   IDProperty *props = WM_operator_last_properties_ensure_idprops(ot);
-  *ptr = RNA_pointer_create_discrete(static_cast<ID *>(G_MAIN->wm.first), ot->srna, props);
+  *ptr = RNA_pointer_create_discrete(wm ? &wm->id : nullptr, ot->srna, props);
 }
 
 ID *WM_operator_drop_load_path(bContext *C, wmOperator *op, const short idcode)
@@ -1336,7 +1340,7 @@ ID *WM_operator_drop_load_path(bContext *C, wmOperator *op, const short idcode)
     errno = 0;
 
     if (idcode == ID_IM) {
-      id = reinterpret_cast<ID *>(BKE_image_load_exists(bmain, filepath, &exists));
+      id = reinterpret_cast<ID *>(BKE_image_load_exists(bmain, filepath, true, &exists));
     }
     else {
       BLI_assert_unreachable();
@@ -1481,6 +1485,8 @@ struct wmOpPopUp {
   wmPopupPosition position;
   bool cancel_default;
   bool mouse_move_quit;
+  /** Assign accelerator keys to buttons (#ui::BLOCK_NUMSELECT). */
+  bool use_numselect;
   bool include_properties;
 };
 
@@ -1697,6 +1703,9 @@ static ui::Block *wm_operator_ui_create(bContext *C, ARegion *region, void *user
   ui::Block *block = block_begin(C, region, __func__, ui::EmbossType::Emboss);
   block_flag_disable(block, ui::BLOCK_LOOP);
   block_flag_enable(block, ui::BLOCK_KEEP_OPEN | ui::BLOCK_MOVEMOUSE_QUIT | ui::BLOCK_POPUP);
+  if (data->use_numselect) {
+    block_flag_enable(block, ui::BLOCK_NUMSELECT);
+  }
   block_theme_style_set(block, ui::BLOCK_THEME_STYLE_REGULAR);
 
   popup_dummy_panel_set(region, block, op->idname);
@@ -1777,11 +1786,15 @@ wmOperatorStatus WM_operator_confirm_ex(bContext *C,
   return OPERATOR_RUNNING_MODAL;
 }
 
-wmOperatorStatus WM_operator_ui_popup(bContext *C, wmOperator *op, int width)
+wmOperatorStatus WM_operator_ui_popup(bContext *C,
+                                      wmOperator *op,
+                                      int width,
+                                      const bool use_numselect)
 {
   wmOpPopUp *data = MEM_new<wmOpPopUp>(__func__);
   data->op = op;
   data->width = width * UI_SCALE_FAC;
+  data->use_numselect = use_numselect;
   data->free_op = true; /* If this runs and gets registered we may want not to free it. */
   popup_block_ex(C, wm_operator_ui_create, nullptr, wm_operator_ui_popup_cancel, data, op);
   return OPERATOR_RUNNING_MODAL;
@@ -1937,6 +1950,11 @@ std::optional<wmOperatorStatus> WM_operator_IME_insert_maybe(bContext *C,
   if (win == nullptr) {
     return std::nullopt;
   }
+  if (IS_EVENT_IME_ANY(event->type)) {
+    /* Keep the composition preview current, including #WM_IME_COMPOSITE_END which must
+     * erase it (canceling inserts no text so nothing else redraws). */
+    ED_region_tag_redraw(CTX_wm_region(C));
+  }
   if (event->type == WM_IME_COMPOSITE_EVENT) {
     const wmIMEData *ime_data = win->runtime->ime_data;
     if (ime_data && !ime_data->result.empty()) {
@@ -2009,7 +2027,7 @@ static wmOperatorStatus wm_operator_defaults_exec(bContext *C, wmOperator *op)
 {
   PointerRNA ptr = CTX_data_pointer_get_type(C, "active_operator", RNA_Operator);
 
-  if (!ptr.data) {
+  if (!ptr) {
     BKE_report(op->reports, RPT_ERROR, "No operator in context");
     return OPERATOR_CANCELLED;
   }
@@ -2297,8 +2315,9 @@ static wmOperatorStatus wm_call_panel_exec(bContext *C, wmOperator *op)
   char idname[BKE_ST_MAXNAME];
   RNA_string_get(op->ptr, "name", idname);
   const bool keep_open = RNA_boolean_get(op->ptr, "keep_open");
+  const bool use_numselect = RNA_boolean_get(op->ptr, "auto_keymap");
 
-  return ui::popover_panel_invoke(C, idname, keep_open, op->reports);
+  return ui::popover_panel_invoke(C, idname, keep_open, use_numselect, op->reports);
 }
 
 static std::string wm_call_panel_get_name(wmOperatorType *ot, PointerRNA *ptr)
@@ -2332,6 +2351,12 @@ static void WM_OT_call_panel(wmOperatorType *ot)
       (PROP_STRING_SEARCH_SORT | PROP_STRING_SEARCH_SUGGESTION));
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
   prop = RNA_def_boolean(ot->srna, "keep_open", true, "Keep Open", "");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+  prop = RNA_def_boolean(ot->srna,
+                         "auto_keymap",
+                         false,
+                         "Auto Keymap",
+                         "Assign accelerator keys to buttons, shown as underlined characters");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -2507,8 +2532,8 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
 
   /* BFA - Tear-Off Menu/Panel */
   /* Make the popup persistent and pass-through for outside events */
-  if (handle && handle->region && handle->region->runtime->uiblocks.first) {
-    ui::Block *block = static_cast<ui::Block *>(handle->region->runtime->uiblocks.first);
+  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
+    ui::Block *block = handle->region->runtime->uiblocks.first();
     ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
     ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
     ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
@@ -2588,15 +2613,15 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
   ARegion *region_popup_orig = CTX_wm_region_popup(C);
 
   ui::PopupBlockHandle *handle = nullptr;
-  wmOperatorStatus status = ui::popover_panel_invoke(C, idname, true, op->reports, &handle);
+  wmOperatorStatus status = ui::popover_panel_invoke(C, idname, true, false, op->reports, &handle);
 
   if (handle) {
     handle->is_tear_off = true;
   }
 
   /* BFA - Tear-Off Menu/Panel */
-  if (handle && handle->region && handle->region->runtime->uiblocks.first) {
-    ui::Block *block = static_cast<ui::Block *>(handle->region->runtime->uiblocks.first);
+  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
+    ui::Block *block = handle->region->runtime->uiblocks.first();
     ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
     ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
     ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
@@ -2711,11 +2736,11 @@ static void WM_OT_console_toggle(wmOperatorType *ot)
 
 wmPaintCursor *WM_paint_cursor_activate(short space_type,
                                         short region_type,
-                                        bool (*poll)(bContext *C),
+                                        wmPaintCursorPoll poll,
                                         wmPaintCursorDraw draw,
                                         void *customdata)
 {
-  wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+  wmWindowManager *wm = G_MAIN->wm.first();
 
   wmPaintCursor *pc = MEM_new_zeroed<wmPaintCursor>("paint cursor");
 
@@ -2733,7 +2758,7 @@ wmPaintCursor *WM_paint_cursor_activate(short space_type,
 
 bool WM_paint_cursor_end(wmPaintCursor *handle)
 {
-  wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+  wmWindowManager *wm = G_MAIN->wm.first();
   for (wmPaintCursor &pc : wm->runtime->paintcursors) {
     if (&pc == handle) {
       BLI_remlink(&wm->runtime->paintcursors, &pc);
@@ -2744,7 +2769,9 @@ bool WM_paint_cursor_end(wmPaintCursor *handle)
   return false;
 }
 
-void WM_paint_cursor_remove_by_type(wmWindowManager *wm, void *draw_fn, void (*free)(void *))
+void WM_paint_cursor_remove_by_type(wmWindowManager *wm,
+                                    wmPaintCursorDraw draw_fn,
+                                    void (*free)(void *))
 {
   for (wmPaintCursor &pc : wm->runtime->paintcursors.items_mutable()) {
     if (pc.draw == draw_fn) {
@@ -3014,7 +3041,7 @@ static void radial_control_paint_curve(uint pos, Brush *br, float radius, int li
   immEnd();
 }
 
-static void radial_control_paint_cursor(bContext * /*C*/,
+static void radial_control_paint_cursor(bContext *C,
                                         const int2 & /*xy*/,
                                         const float2 & /*tilt*/,
                                         void *customdata)
@@ -3135,14 +3162,49 @@ static void radial_control_paint_cursor(bContext * /*C*/,
     GPU_matrix_pop();
   }
 
+  bool draw_rounded_box = false;
+  float roundness = 1.0f;
+  float tip_scale_x = 1.0f;
+  if (RNA_type_to_ID_code(rc->image_id_ptr.type) == ID_BR && rc->prop &&
+      STREQ(RNA_property_identifier(rc->prop), "size"))
+  {
+    const Brush *br = static_cast<const Brush *>(rc->image_id_ptr.data);
+    if (br) {
+      const PaintMode paint_mode = BKE_paintmode_get_active_from_context(C);
+      draw_rounded_box = BKE_brush_has_cube_tip(br, paint_mode);
+      roundness = br->tip_roundness;
+      tip_scale_x = br->tip_scale_x;
+    }
+  }
+
   /* Draw circles on top. */
   GPU_line_width(2.0f);
   immUniformColor3fvAlpha(col, 0.8f);
-  imm_draw_circle_wire_2d(pos, 0.0f, 0.0f, r1, 80);
+  if (draw_rounded_box) {
+    gpu::imm_draw_rounded_box_wire_2d(pos,
+                                      0,
+                                      0,
+                                      float2(r1, r1 * tip_scale_x),
+                                      float2(r1 * roundness, r1 * roundness * tip_scale_x),
+                                      80);
+  }
+  else {
+    imm_draw_circle_wire_2d(pos, 0.0f, 0.0f, r1, 80);
+  }
 
   GPU_line_width(1.0f);
   immUniformColor3fvAlpha(col, 0.5f);
-  imm_draw_circle_wire_2d(pos, 0.0f, 0.0f, r2, 80);
+  if (draw_rounded_box) {
+    gpu::imm_draw_rounded_box_wire_2d(pos,
+                                      0,
+                                      0,
+                                      float2(r2, r2 * tip_scale_x),
+                                      float2(r2 * roundness, r2 * roundness * tip_scale_x),
+                                      80);
+  }
+  else {
+    imm_draw_circle_wire_2d(pos, 0.0f, 0.0f, r2, 80);
+  }
   if (rmin > 0.0f) {
     /* Inner fill circle to increase the contrast of the value. */
     const float black[3] = {0.0f};
@@ -3353,7 +3415,7 @@ static int radial_control_get_properties(bContext *C, wmOperator *op)
   {
     return 0;
   }
-  if (rc->image_id_ptr.data) {
+  if (rc->image_id_ptr) {
     /* Extra check, pointer must be to an ID. */
     if (!RNA_struct_is_ID(rc->image_id_ptr.type)) {
       BKE_report(op->reports, RPT_ERROR, "Pointer from path image_id is not an ID");
@@ -3755,8 +3817,10 @@ static wmOperatorStatus radial_control_modal(bContext *C, wmOperator *op, const 
     wmWindowManager *wm = CTX_wm_manager(C);
     if (wm->op_undo_depth == 0) {
       ID *id = rc->ptr.owner_id;
-      if (ED_undo_is_legacy_compatible_for_property(C, id, rc->ptr, *rc->prop)) {
-        ED_undo_push(C, op->type->name);
+      std::optional<UndoEncodeHints> undo_hints_or_none =
+          ED_undo_is_legacy_compatible_for_property(C, id, rc->ptr, *rc->prop);
+      if (undo_hints_or_none) {
+        ED_undo_push(C, op->type->name, *undo_hints_or_none);
       }
     }
   }
@@ -4305,7 +4369,7 @@ static wmOperatorStatus previews_clear_exec(bContext *C, wmOperator *op)
       PreviewFilterID(RNA_enum_get(op->ptr, "id_type")));
 
   for (int i = 0; lb[i]; i++) {
-    ID *id = static_cast<ID *>(lb[i]->first);
+    ID *id = lb[i]->first();
     if (!id) {
       continue;
     }
@@ -4825,11 +4889,8 @@ const EnumPropertyItem *RNA_action_itemf(bContext *C,
                                          bool *r_free)
 {
 
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->actions.first) : nullptr,
-                      false,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->actions.first_as<ID>() : nullptr, false, nullptr, nullptr);
 }
 #if 0 /* UNUSED. */
 const EnumPropertyItem *RNA_action_local_itemf(bContext *C,
@@ -4846,22 +4907,16 @@ const EnumPropertyItem *RNA_collection_itemf(bContext *C,
                                              PropertyRNA * /*prop*/,
                                              bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->collections.first) : nullptr,
-                      false,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->collections.first_as<ID>() : nullptr, false, nullptr, nullptr);
 }
 const EnumPropertyItem *RNA_collection_local_itemf(bContext *C,
                                                    PointerRNA * /*ptr*/,
                                                    PropertyRNA * /*prop*/,
                                                    bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->collections.first) : nullptr,
-                      true,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->collections.first_as<ID>() : nullptr, true, nullptr, nullptr);
 }
 
 const EnumPropertyItem *RNA_image_itemf(bContext *C,
@@ -4869,22 +4924,16 @@ const EnumPropertyItem *RNA_image_itemf(bContext *C,
                                         PropertyRNA * /*prop*/,
                                         bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->images.first) : nullptr,
-                      false,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->images.first_as<ID>() : nullptr, false, nullptr, nullptr);
 }
 const EnumPropertyItem *RNA_image_local_itemf(bContext *C,
                                               PointerRNA * /*ptr*/,
                                               PropertyRNA * /*prop*/,
                                               bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->images.first) : nullptr,
-                      true,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->images.first_as<ID>() : nullptr, true, nullptr, nullptr);
 }
 
 const EnumPropertyItem *RNA_scene_itemf(bContext *C,
@@ -4892,22 +4941,16 @@ const EnumPropertyItem *RNA_scene_itemf(bContext *C,
                                         PropertyRNA * /*prop*/,
                                         bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->scenes.first) : nullptr,
-                      false,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->scenes.first_as<ID>() : nullptr, false, nullptr, nullptr);
 }
 const EnumPropertyItem *RNA_scene_local_itemf(bContext *C,
                                               PointerRNA * /*ptr*/,
                                               PropertyRNA * /*prop*/,
                                               bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->scenes.first) : nullptr,
-                      true,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->scenes.first_as<ID>() : nullptr, true, nullptr, nullptr);
 }
 const EnumPropertyItem *RNA_scene_without_sequencer_scene_itemf(bContext *C,
                                                                 PointerRNA * /*ptr*/,
@@ -4916,7 +4959,7 @@ const EnumPropertyItem *RNA_scene_without_sequencer_scene_itemf(bContext *C,
 {
   Scene *sequencer_scene = C ? CTX_data_sequencer_scene(C) : nullptr;
   return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->scenes.first) : nullptr,
+                      C ? CTX_data_main(C)->scenes.first_as<ID>() : nullptr,
                       false,
                       rna_id_enum_filter_single_and_assets,
                       sequencer_scene);
@@ -4927,22 +4970,16 @@ const EnumPropertyItem *RNA_movieclip_itemf(bContext *C,
                                             PropertyRNA * /*prop*/,
                                             bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->movieclips.first) : nullptr,
-                      false,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->movieclips.first_as<ID>() : nullptr, false, nullptr, nullptr);
 }
 const EnumPropertyItem *RNA_movieclip_local_itemf(bContext *C,
                                                   PointerRNA * /*ptr*/,
                                                   PropertyRNA * /*prop*/,
                                                   bool *r_free)
 {
-  return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->movieclips.first) : nullptr,
-                      true,
-                      nullptr,
-                      nullptr);
+  return rna_id_itemf(
+      r_free, C ? CTX_data_main(C)->movieclips.first_as<ID>() : nullptr, true, nullptr, nullptr);
 }
 
 const EnumPropertyItem *RNA_mask_itemf(bContext *C,
@@ -4951,7 +4988,7 @@ const EnumPropertyItem *RNA_mask_itemf(bContext *C,
                                        bool *r_free)
 {
   return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->masks.first) : nullptr,
+                      C ? static_cast<ID *>(CTX_data_main(C)->masks.first_) : nullptr,
                       false,
                       nullptr,
                       nullptr);
@@ -4962,7 +4999,7 @@ const EnumPropertyItem *RNA_mask_local_itemf(bContext *C,
                                              bool *r_free)
 {
   return rna_id_itemf(r_free,
-                      C ? static_cast<ID *>(CTX_data_main(C)->masks.first) : nullptr,
+                      C ? static_cast<ID *>(CTX_data_main(C)->masks.first_) : nullptr,
                       true,
                       nullptr,
                       nullptr);

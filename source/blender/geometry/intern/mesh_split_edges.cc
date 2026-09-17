@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup geo
+ */
+
 #include "BLI_array_utils.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_listbase_iterator.hh"
@@ -28,7 +32,6 @@ static void propagate_vert_attributes(Mesh &mesh, const Span<int> new_to_old_ver
   /* These types aren't supported for interpolation below. */
   CustomData_free_layers(&mesh.vert_data, CD_SHAPEKEY);
   CustomData_free_layers(&mesh.vert_data, CD_CLOTH_ORCO);
-  CustomData_free_layers(&mesh.vert_data, CD_MVERT_SKIN);
   CustomData_realloc(
       &mesh.vert_data, mesh.verts_num, mesh.verts_num + new_to_old_verts_map.size());
   mesh.verts_num += new_to_old_verts_map.size();

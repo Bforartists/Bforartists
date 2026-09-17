@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup bke
+ */
+
 #pragma once
 
 #include "BKE_compute_context_cache_fwd.hh"
@@ -32,6 +36,8 @@ class ComputeContextCache {
       data_block_contexts_cache_;
   Map<std::pair<const ComputeContext *, int>, const GeometryNodesModifierComputeContext *>
       geometry_nodes_modifier_contexts_cache_;
+  Map<std::pair<const ComputeContext *, std::string>, const SceneCompositorEffectComputeContext *>
+      scene_compositor_effect_contexts_cache_;
   Map<const ComputeContext *, const OperatorComputeContext *> operator_contexts_cache_;
   Map<const ComputeContext *, const ShaderComputeContext *> shader_contexts_cache_;
   Map<std::pair<const ComputeContext *, int32_t>, const GroupNodeComputeContext *>
@@ -56,6 +62,9 @@ class ComputeContextCache {
       const ComputeContext *parent, const NodesModifierData &nmd);
   const GeometryNodesModifierComputeContext &for_geometry_nodes_modifier(
       const ComputeContext *parent, int modifier_uid);
+
+  const SceneCompositorEffectComputeContext &for_scene_compositor_effect(
+      const ComputeContext *parent, const SceneCompositorEffect &effect);
 
   const OperatorComputeContext &for_operator(const ComputeContext *parent);
   const OperatorComputeContext &for_operator(const ComputeContext *parent, const bNodeTree &tree);

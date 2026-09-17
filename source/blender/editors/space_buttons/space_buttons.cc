@@ -174,20 +174,27 @@ void ED_buttons_visible_tabs_menu(bContext *C, ui::Layout *layout, void * /*arg*
 
   /* These can be reordered freely. */
   constexpr std::array<StringRefNull, BCONTEXT_TOT> filter_items = {
-      /*bfa - we don't have the tools in the properties editor.
-Not commenting this out leads to a crash to desktop since the array then doesn't fit anymore
-See also source\blender\makesrna\intern\rna_space.cc - static const EnumPropertyItem
-*rna_SpaceProperties_context_itemf */
-      "show_properties_tool",        "show_properties_render",
-      "show_properties_output",      "show_properties_view_layer",
-      "show_properties_scene",       "show_properties_world",
-      "show_properties_collection",  "show_properties_object",
-      "show_properties_modifiers",   "show_properties_effects",
-      "show_properties_particles",   "show_properties_physics",
-      "show_properties_constraints", "show_properties_data",
-      "show_properties_bone",        "show_properties_bone_constraints",
-      "show_properties_material",    "show_properties_texture",
-      "show_properties_strip",       "show_properties_strip_modifier",
+      "show_properties_tool",
+      "show_properties_render",
+      "show_properties_output",
+      "show_properties_scene",
+      "show_properties_view_layer",
+      "show_properties_compositor",
+      "show_properties_world",
+      "show_properties_collection",
+      "show_properties_object",
+      "show_properties_modifiers",
+      "show_properties_effects",
+      "show_properties_particles",
+      "show_properties_physics",
+      "show_properties_constraints",
+      "show_properties_data",
+      "show_properties_bone",
+      "show_properties_bone_constraints",
+      "show_properties_material",
+      "show_properties_texture",
+      "show_properties_strip",
+      "show_properties_strip_modifier",
   };
 
   for (StringRefNull item : filter_items) {
@@ -225,8 +232,9 @@ Vector<eSpaceButtons_Context> ED_buttons_tabs_list(const SpaceProperties *sbuts,
 
   add_tab(BCONTEXT_RENDER);
   add_tab(BCONTEXT_OUTPUT);
-  add_tab(BCONTEXT_VIEW_LAYER);
   add_tab(BCONTEXT_SCENE);
+  add_tab(BCONTEXT_VIEW_LAYER);
+  add_tab(BCONTEXT_COMPOSITOR);
   add_tab(BCONTEXT_WORLD);
 
   add_spacer();
@@ -302,6 +310,8 @@ static const char *buttons_main_region_context_string(const short mainb)
       return "strip";
     case BCONTEXT_STRIP_MODIFIER:
       return "strip_modifier";
+    case BCONTEXT_COMPOSITOR:
+      return "compositor";
   }
 
   /* All the cases should be handled. */
@@ -643,7 +653,7 @@ static void buttons_header_region_message_subscribe(const wmRegionMessageSubscri
   wmMsgBus *mbus = params->message_bus;
   ScrArea *area = params->area;
   ARegion *region = params->region;
-  SpaceProperties *sbuts = static_cast<SpaceProperties *>(area->spacedata.first);
+  SpaceProperties *sbuts = area->spacedata.first_as<SpaceProperties>();
 
   wmMsgSubscribeValue msg_sub_value_region_tag_redraw{};
   msg_sub_value_region_tag_redraw.owner = region;
@@ -714,7 +724,7 @@ static void buttons_navigation_bar_region_message_subscribe(
  * showing that button set, to reduce unnecessary drawing. */
 static void buttons_area_redraw(ScrArea *area, short buttons)
 {
-  SpaceProperties *sbuts = static_cast<SpaceProperties *>(area->spacedata.first);
+  SpaceProperties *sbuts = area->spacedata.first_as<SpaceProperties>();
 
   /* if the area's current button set is equal to the one to redraw */
   if (sbuts->mainb == buttons) {
@@ -733,7 +743,7 @@ static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
 {
   ScrArea *area = params->area;
   const wmNotifier *wmn = params->notifier;
-  SpaceProperties *sbuts = static_cast<SpaceProperties *>(area->spacedata.first);
+  SpaceProperties *sbuts = area->spacedata.first_as<SpaceProperties>();
 
   /* context changes */
   switch (wmn->category) {
@@ -768,6 +778,9 @@ static void buttons_area_listener(const wmSpaceTypeListenerParams *params)
           break;
         case ND_SEQUENCER:
           ED_area_tag_redraw(area);
+          break;
+        case ND_COMPO_RESULT:
+          buttons_area_redraw(area, BCONTEXT_COMPOSITOR);
           break;
         case ND_MODE:
         case ND_LAYER:
@@ -1143,6 +1156,8 @@ void ED_spacetype_buttons()
       mti->panel_register(art);
     }
   }
+
+  ui::register_scene_compositor_effects_panel(art);
 
   /* regions: header */
   art = MEM_new_zeroed<ARegionType>("spacetype buttons region");

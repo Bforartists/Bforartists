@@ -437,7 +437,7 @@ static wmOperatorStatus create_op_exec(bContext *C, wmOperator *op)
   Mesh &mesh = *id_cast<Mesh *>(object.data);
   const bke::AttributeAccessor attributes = mesh.attributes();
 
-  BKE_sculpt_update_object_for_edit(&depsgraph, &object, false);
+  BKE_sculptsession_update_for_edit(&depsgraph, &object, false);
 
   undo::push_begin(scene, object, op);
 
@@ -727,7 +727,7 @@ static wmOperatorStatus init_op_exec(bContext *C, wmOperator *op)
 
   ed::sculpt_paint::face_set_overlay_check(*C, *op);
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
 
   bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(ob);
   /* Dyntopo not supported. */
@@ -1009,7 +1009,7 @@ static wmOperatorStatus change_visibility_exec(bContext *C, wmOperator *op)
   Depsgraph &depsgraph = *CTX_data_depsgraph_pointer(C);
 
   Mesh *mesh = BKE_object_get_original_mesh(&object);
-  BKE_sculpt_update_object_for_edit(&depsgraph, &object, false);
+  BKE_sculptsession_update_for_edit(&depsgraph, &object, false);
 
   bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
 
@@ -1093,9 +1093,7 @@ static wmOperatorStatus change_visibility_exec(bContext *C, wmOperator *op)
       float location[3];
       copy_v3_v3(location, ss.active_vert_position(depsgraph, object));
       mul_m4_v3(object.object_to_world().ptr(), location);
-      copy_v3_v3(paint_runtime->average_stroke_accum, location);
-      paint_runtime->average_stroke_counter = 1;
-      paint_runtime->last_stroke_valid = true;
+      bke::paint::stroke_set_location(*paint, location);
     }
   }
 
@@ -1541,7 +1539,7 @@ static bool edit_op_init(bContext *C, wmOperator *op)
     return false;
   }
 
-  BKE_sculpt_update_object_for_edit(depsgraph, ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, ob, false);
 
   return true;
 }
@@ -1594,7 +1592,7 @@ static wmOperatorStatus edit_op_invoke(bContext *C, wmOperator *op, const wmEven
     return OPERATOR_CANCELLED;
   }
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
 
   /* Update the current active face set and Vertex as the operator can be used directly from the
    * tool without brush cursor. */
@@ -1794,7 +1792,7 @@ static void gesture_begin(bContext &C, wmOperator &op, gesture::GestureData &ges
 {
   const Scene &scene = *CTX_data_scene(&C);
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(&C);
-  BKE_sculpt_update_object_for_edit(depsgraph, gesture_data.vc.obact, false);
+  BKE_sculptsession_update_for_edit(depsgraph, gesture_data.vc.obact, false);
   undo::push_begin(scene, *gesture_data.vc.obact, &op);
 }
 

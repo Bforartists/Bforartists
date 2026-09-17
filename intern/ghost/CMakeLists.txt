@@ -141,14 +141,19 @@ if(WITH_HEADLESS)
   add_definitions(-DWITH_HEADLESS)
 elseif(WITH_GHOST_SDL)
   list(APPEND SRC
-    intern/GHOST_ContextSDL.cc
     intern/GHOST_SystemSDL.cc
     intern/GHOST_WindowSDL.cc
 
-    intern/GHOST_ContextSDL.hh
     intern/GHOST_SystemSDL.hh
     intern/GHOST_WindowSDL.hh
   )
+  # SDL/OpenGL uses ContextSDL, while SDL/Vulkan uses the common ContextVK.
+  if(WITH_OPENGL_BACKEND)
+    list(APPEND SRC
+      intern/GHOST_ContextSDL.cc
+      intern/GHOST_ContextSDL.hh
+    )
+  endif()
   add_definitions(-DWITH_GHOST_SDL)
 
   list(APPEND LIB
@@ -292,11 +297,6 @@ elseif(WITH_GHOST_X11 OR WITH_GHOST_WAYLAND)
       add_definitions(-DHAVE_MEMFD_CREATE)
     endif()
 
-    check_symbol_exists(poll "poll.h" HAVE_POLL)
-    if(HAVE_POLL)
-      add_definitions(-DHAVE_POLL)
-    endif()
-
     list(APPEND SRC
       intern/GHOST_SystemWayland.cc
       intern/GHOST_WindowWayland.cc
@@ -416,6 +416,36 @@ elseif(WITH_GHOST_X11 OR WITH_GHOST_WAYLAND)
 
   endif()
 
+  # Not tied to a windowing back-end: the settings read over DBUS (currently the light/dark
+  # theme preference) come from the desktop, not from X11 or WAYLAND.
+  if(WITH_GHOST_DBUS)
+    list(APPEND INC_SYS
+      ${dbus_INCLUDE_DIRS}
+    )
+    list(APPEND SRC
+      intern/GHOST_SystemDBusUnix.cc
+
+      intern/GHOST_SystemDBusUnix.hh
+    )
+    add_definitions(-DWITH_GHOST_DBUS)
+
+    if(WITH_GHOST_DBUS_DYNLOAD)
+      # `libdbus` is loaded at runtime by `bf_intern_dbus_dynload`,
+      # `dbus_INCLUDE_DIRS` above is still needed for its type declarations.
+      list(APPEND INC_SYS
+        ../dbus_dynload/extern
+      )
+      list(APPEND LIB
+        bf_intern_dbus_dynload
+      )
+      add_definitions(-DWITH_GHOST_DBUS_DYNLOAD)
+    else()
+      list(APPEND LIB
+        ${dbus_LINK_LIBRARIES}
+      )
+    endif()
+  endif()
+
   if(WITH_INPUT_NDOF)
     list(APPEND SRC
       intern/GHOST_NDOFManagerUnix.cc
@@ -449,6 +479,10 @@ elseif(WIN32)
     intern/GHOST_TrackpadWin32.hh
     intern/GHOST_WindowWin32.hh
     intern/GHOST_Wintab.hh
+
+    # Without these files listed, they aren't known to CMake.
+    ../../extern/wintab/include/pktdef.h
+    ../../extern/wintab/include/wintab.h
   )
 
   list(APPEND SRC

@@ -129,12 +129,7 @@ static void trans_obchild_in_obmode_update_all(TransInfo *t)
 
 /* -------------------------------------------------------------------- */
 /** \name Object Transform Creation
- *
- * Instead of transforming the selection, move the 2D/3D cursor.
- *
  * \{ */
-
-/* *********************** Object Transform data ******************* */
 
 /**
  * Transcribe given object into TransData for Transforming.
@@ -181,7 +176,7 @@ static void ObjectToTransData(TransInfo *t, TransData *td, TransDataExtension *t
     }
   }
 
-  td->con = static_cast<bConstraint *>(ob->constraints.first);
+  td->con = ob->constraints.first();
 
   /* HACK: temporarily disable tracking and/or constraints when getting
    * object matrix, if tracking is on, or if constraints don't need
@@ -778,7 +773,7 @@ static bool motionpath_need_update_object(Scene *scene, Object *ob)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Recalc Data object
+/** \name Recalc Data Object
  * \{ */
 
 /* Given the transform mode `tmode` return a Vector of RNA paths that were possibly modified during
@@ -923,11 +918,13 @@ static void special_aftertrans_update__object(bContext *C, TransInfo *t)
     ANIM_deselect_keys_in_animation_editors(C);
   }
 
+  VectorSet<Object *> modified_objects;
   for (int i = 0; i < tc->data_len; i++) {
     TransData *td = tc->data + i;
     TransDataExtension *td_ext = tc->data_ext + i;
     ListBaseT<PTCacheID> pidlist;
     ob = static_cast<Object *>(td->extra);
+    modified_objects.add(ob);
 
     if (td->flag & TD_SKIP) {
       continue;
@@ -973,7 +970,7 @@ static void special_aftertrans_update__object(bContext *C, TransInfo *t)
 
   if (!canceled && motionpath_update) {
     /* Update motion paths once for all transformed objects. */
-    object::motion_paths_recalc_selected(C, t->scene, ANIMVIZ_CALC_RANGE_CHANGED);
+    object::motion_paths_recalc(C, t->scene, modified_objects);
   }
 
   clear_trans_object_base_flags(t);

@@ -96,6 +96,13 @@ class USDExportTest(AbstractUSDTest):
         self.assertAlmostEqual(first[1], second[1], places)
         self.assertAlmostEqual(first[2], second[2], places)
 
+    # Utility function to force frame evaluation (ensures simulation zone data is baked etc.)
+    @staticmethod
+    def ensure_simulation_frame_range(frame_start, frame_end):
+        for frame in range(frame_start, frame_end + 1):
+            bpy.context.scene.frame_set(frame)
+        bpy.context.scene.frame_set(frame_start)
+
     def test_export_extents(self):
         """Test that exported scenes contain have a properly authored extent attribute on each boundable prim"""
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_extent_test.blend"))
@@ -276,9 +283,7 @@ class USDExportTest(AbstractUSDTest):
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_materials_multi.blend"))
 
         # Ensure the simulation zone data is baked for all relevant frames...
-        for frame in range(1, 5):
-            bpy.context.scene.frame_set(frame)
-        bpy.context.scene.frame_set(1)
+        self.ensure_simulation_frame_range(1, 4)
 
         export_path = self.tempdir / "usd_materials_multi.usda"
         self.export_and_validate(
@@ -591,9 +596,7 @@ class USDExportTest(AbstractUSDTest):
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_particle_hair.blend"))
 
         # Ensure the hair dynamics are baked for all relevant frames...
-        for frame in range(1, 11):
-            bpy.context.scene.frame_set(frame)
-        bpy.context.scene.frame_set(1)
+        self.ensure_simulation_frame_range(1, 10)
 
         export_path = self.tempdir / "usd_particle_hair.usda"
         self.export_and_validate(
@@ -741,9 +744,7 @@ class USDExportTest(AbstractUSDTest):
     def test_export_attributes_varying(self):
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_attribute_varying_test.blend"))
         # Ensure the simulation zone data is baked for all relevant frames...
-        for frame in range(1, 16):
-            bpy.context.scene.frame_set(frame)
-        bpy.context.scene.frame_set(1)
+        self.ensure_simulation_frame_range(1, 15)
 
         export_path = self.tempdir / "usd_attribute_varying_test.usda"
         self.export_and_validate(
@@ -967,9 +968,7 @@ class USDExportTest(AbstractUSDTest):
 
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_point_ids.blend"))
         # Ensure the simulation zone data is baked for all relevant frames...
-        for frame in range(1, 7):
-            bpy.context.scene.frame_set(frame)
-        bpy.context.scene.frame_set(1)
+        self.ensure_simulation_frame_range(1, 6)
 
         export_path = self.tempdir / "usd_point_ids.usda"
         self.export_and_validate(filepath=str(export_path), export_animation=True, evaluation_mode="RENDER")
@@ -1064,9 +1063,7 @@ class USDExportTest(AbstractUSDTest):
         """Test exporting Curves that are empty"""
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_curves_empty.blend"))
         # Ensure the simulation zone data is baked for all relevant frames...
-        for frame in range(1, 5):
-            bpy.context.scene.frame_set(frame)
-        bpy.context.scene.frame_set(1)
+        self.ensure_simulation_frame_range(1, 4)
 
         export_path = self.tempdir / "usd_curves_empty.usda"
         self.export_and_validate(filepath=str(export_path), export_animation=True, evaluation_mode="RENDER")
@@ -1146,6 +1143,62 @@ class USDExportTest(AbstractUSDTest):
         weight_samples = anim.GetBlendShapeWeightsAttr().GetTimeSamples()
         self.assertEqual(weight_samples, [1.0, 2.0, 3.0, 4.0, 5.0])
 
+    def test_export_animation_missing_geo(self):
+        """Test that animated geometry export handles frames containing no data."""
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_anim_missing_geo.blend"))
+
+        # Ensure the simulation zone data is baked for all relevant frames...
+        self.ensure_simulation_frame_range(1, 9)
+
+        export_path = self.tempdir / "usd_anim_missing_geo.usda"
+        self.export_and_validate(
+            filepath=str(export_path), convert_world_material=False, export_animation=True, evaluation_mode="RENDER")
+
+        stage = Usd.Stage.Open(str(export_path))
+        stats = UsdUtils.ComputeUsdStageStats(stage)
+        self.assertEqual(stats["primary"]["primCountsByType"], {'BasisCurves': 1, 'Mesh': 1, 'Xform': 3})
+
+        mesh_prim = UsdGeom.Mesh(stage.GetPrimAtPath("/root/Plane/Plane"))
+        curve_prim = UsdGeom.BasisCurves(stage.GetPrimAtPath("/root/Curves/Curves"))
+
+        # Frames 1-3 and 7-9 contain no data. Frames 4-6 contain data. The USD writer should encode
+        # this sequence with data for frames 3, 4, 6, and 7.
+        expected_time_samples = [3.0, 4.0, 6.0, 7.0]
+
+        # Validate mesh data
+        self.assertEqual(mesh_prim.GetPointsAttr().GetTimeSamples(), expected_time_samples)
+        self.assertEqual(mesh_prim.GetFaceVertexCountsAttr().GetTimeSamples(), expected_time_samples)
+        self.assertEqual(mesh_prim.GetFaceVertexIndicesAttr().GetTimeSamples(), expected_time_samples)
+        self.assertEqual(mesh_prim.GetNormalsAttr().GetTimeSamples(), expected_time_samples)
+
+        self.assertEqual(
+            [len(mesh_prim.GetPointsAttr().Get(frame)) for frame in range(1, 10)],
+            [0, 0, 0, 4, 4, 4, 0, 0, 0])
+        self.assertEqual(
+            [len(mesh_prim.GetFaceVertexCountsAttr().Get(frame)) for frame in range(1, 10)],
+            [0, 0, 0, 1, 1, 1, 0, 0, 0])
+        self.assertEqual(
+            [len(mesh_prim.GetFaceVertexIndicesAttr().Get(frame)) for frame in range(1, 10)],
+            [0, 0, 0, 4, 4, 4, 0, 0, 0])
+        self.assertEqual(
+            [len(mesh_prim.GetNormalsAttr().Get(frame)) for frame in range(1, 10)],
+            [0, 0, 0, 4, 4, 4, 0, 0, 0])
+
+        # Validate curve data
+        self.assertEqual(curve_prim.GetPointsAttr().GetTimeSamples(), expected_time_samples)
+        self.assertEqual(curve_prim.GetCurveVertexCountsAttr().GetTimeSamples(), expected_time_samples)
+        self.assertEqual(curve_prim.GetWidthsAttr().GetTimeSamples(), expected_time_samples)
+
+        self.assertEqual(
+            [len(curve_prim.GetPointsAttr().Get(frame)) for frame in range(1, 10)],
+            [0, 0, 0, 3, 3, 3, 0, 0, 0])
+        self.assertEqual(
+            [len(curve_prim.GetCurveVertexCountsAttr().Get(frame)) for frame in range(1, 10)],
+            [0, 0, 0, 1, 1, 1, 0, 0, 0])
+        self.assertEqual(
+            [len(curve_prim.GetWidthsAttr().Get(frame)) for frame in range(1, 10)],
+            [0, 0, 0, 3, 3, 3, 0, 0, 0])
+
     def test_export_text(self):
         """Test various forms of Text/Font export."""
 
@@ -1211,9 +1264,7 @@ class USDExportTest(AbstractUSDTest):
 
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_volumes.blend"))
         # Ensure the simulation zone data is baked for all relevant frames...
-        for frame in range(4, 15):
-            bpy.context.scene.frame_set(frame)
-        bpy.context.scene.frame_set(4)
+        self.ensure_simulation_frame_range(4, 14)
 
         export_path = self.tempdir / "usd_volumes.usda"
         self.export_and_validate(filepath=str(export_path), export_animation=True, evaluation_mode="RENDER")
@@ -1743,6 +1794,48 @@ class USDExportTest(AbstractUSDTest):
         self.assertEqual(stats['prototypeCount'], 0, "Unexpected number of prototypes")
         self.assertEqual(stats['primary']['primCountsByType']['Mesh'], 2, "Unexpected number of primary meshes")
         self.assertEqual(stats['primary']['primCountsByType']['Points'], 4, "Unexpected number of primary point clouds")
+
+    def test_instancing_nonmesh(self):
+        """Test that certain non-mesh object types are properly instanced correctly."""
+
+        bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_instancing_nonmesh.blend"))
+
+        export_path = self.tempdir / "usd_instancing_nonmesh.usda"
+        self.export_and_validate(
+            filepath=str(export_path),
+            use_instancing=True
+        )
+
+        stage = Usd.Stage.Open(str(export_path))
+
+        # Note: This test purposely uses Text, Metaball, and NURBS surface objects which are non
+        # meshes but are currently converted to mesh on export.
+        stats = UsdUtils.ComputeUsdStageStats(stage)
+        self.assertEqual(stats['totalInstanceCount'], 6, "Unexpected number of instances")
+        self.assertEqual(stats['prototypeCount'], 4, "Unexpected number of prototypes")
+        self.assertEqual(stats['primary']['primCountsByType']['Mesh'], 4, "Unexpected number of primary meshes")
+        self.assertEqual(
+            stats['primary']['primCountsByType']['PointInstancer'], 1, "Unexpected number of primary point clouds")
+        self.assertEqual(stats['prototypes']['primCountsByType']['Mesh'], 4, "Unexpected number of prototype meshes")
+
+        # Ensure the prims are marked as instances
+        prim_list = [
+            ("/root/Text", True),
+            ("/root/SurfPatch", True),
+            ("/root/Mball", False),  # Metaballs are not instanced in Blender at the moment
+        ]
+        for prim_path, expected in prim_list:
+            prim = stage.GetPrimAtPath(prim_path)
+            self.assertEqual(prim.IsInstance(), expected, f"Unexpected result for {prim_path}")
+
+        # Ensure all the prototype paths are under the pototypes root.
+        protos_root_path = Sdf.Path("/root/prototypes")
+        for prim in stage.Traverse():
+            if prim.IsInstance():
+                arcs = Usd.PrimCompositionQuery.GetDirectReferences(prim).GetCompositionArcs()
+                for arc in arcs:
+                    target_path = arc.GetTargetPrimPath()
+                    self.assertTrue(target_path.HasPrefix(protos_root_path))
 
     def test_texture_export_hook(self):
         """Exporting textures from on_material_export USD hook."""

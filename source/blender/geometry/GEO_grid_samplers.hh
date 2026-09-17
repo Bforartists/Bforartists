@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup geo
+ */
+
 #pragma once
 
 #include "BLI_index_range.hh"
@@ -136,10 +140,10 @@ struct NearestPointKernel {
 
   static float weight(float x)
   {
-    if (x < 0.0f) {
+    if (x < -0.5f) {
       return 0.0f;
     }
-    if (x < 1.0f) {
+    if (x < 0.5f) {
       return 1.0f;
     }
     return 0.0f;

@@ -406,6 +406,12 @@ struct IDHash {
 #endif
 };
 
+/** Return the #ID_Type encoded in the first two bytes of #ID::name. */
+inline ID_Type GS(const char *name)
+{
+  return ID_Type(*reinterpret_cast<const short *>(name));
+}
+
 struct ID {
   /* There's a nasty circular dependency here.... 'void *' to the rescue! I
    * really wonder why this is needed. */
@@ -513,9 +519,11 @@ struct ID {
   void *py_instance = nullptr;
 
   /**
-   * Weak reference to an ID in a given library file, used to allow re-using already appended data
-   * in some cases, instead of appending it again.
-   *
+   * Weak reference to an ID in a given library file, used for two purposes:
+   * - Allow re-using already appended data in some cases, instead of appending
+   *   it again.
+   * - Store the original name and library for linked editable assets, that
+   *   might get renamed locally.
    * May be NULL.
    */
   struct LibraryWeakReference *library_weak_reference = nullptr;
@@ -531,6 +539,13 @@ struct ID {
    * and #BKE_libblock_free_runtime_data).
    */
   bke::id::ID_Runtime *runtime = nullptr;
+
+#ifdef __cplusplus
+  ID_Type id_type() const
+  {
+    return GS(this->name);
+  }
+#endif
 };
 
 /**
@@ -693,15 +708,16 @@ struct PreviewImage {
 #define ID_IS_EDITABLE(_id) \
   ((id_cast<const ID *>(_id)->lib == NULL) || \
    ((id_cast<const ID *>(_id)->lib->runtime->tag & LIBRARY_ASSET_EDITABLE) && \
-    ID_TYPE_SUPPORTS_ASSET_EDITABLE(GS(id_cast<const ID *>(_id)->name))))
+    ID_TYPE_SUPPORTS_ASSET_EDITABLE(id_cast<const ID *>(_id)->id_type())))
 
 /* Note that these are fairly high-level checks, should be used at user interaction level, not in
  * BKE_library_override typically (especially due to the check on ID_TAG_EXTERN). */
 #define ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY(_id) \
   (ID_IS_LINKED(_id) && !ID_MISSING(_id) && \
+   (id_cast<const ID *>(_id)->flag & ID_FLAG_EMBEDDED_DATA) == 0 && \
    (BKE_idtype_get_info_from_id(id_cast<const ID *>(_id))->flags & IDTYPE_FLAGS_NO_LIBLINKING) == \
        0 && \
-   !ELEM(GS((id_cast<const ID *>(_id))->name), ID_SCE))
+   !ELEM((id_cast<const ID *>(_id))->id_type(), ID_SCE))
 #define ID_IS_OVERRIDABLE_LIBRARY(_id) \
   (ID_IS_OVERRIDABLE_LIBRARY_HIERARCHY((_id)) && \
    (id_cast<const ID *>(_id)->tag & ID_TAG_EXTERN) != 0)
@@ -737,11 +753,6 @@ struct PreviewImage {
 /* This used to be ELEM(id_type, ID_IP), currently there is no deprecated ID
  * type. ID_IP was removed in Blender 5.0. */
 #define ID_TYPE_IS_DEPRECATED(id_type) false
-
-#ifdef GS
-#  undef GS
-#endif
-#define GS(a) (CHECK_TYPE_ANY(a, char *, const char *), (ID_Type)(*((const short *)(a))))
 
 #define ID_NEW_SET(_id, _idn) \
   (((id_cast<ID *>)(_id))->newid = (id_cast<ID *>)(_idn), \

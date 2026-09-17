@@ -118,7 +118,7 @@ static wmOperatorStatus outliner_highlight_update_invoke(bContext *C,
 
   /* Drag and drop does its own highlighting. */
   wmWindowManager *wm = CTX_wm_manager(C);
-  if (wm->runtime->drags.first) {
+  if (wm->runtime->drags.first_) {
     return OPERATOR_PASS_THROUGH;
   }
 
@@ -1499,7 +1499,8 @@ static wmOperatorStatus outliner_start_filter_exec(bContext *C, wmOperator * /*o
   SpaceOutliner *space_outliner = CTX_wm_space_outliner(C);
   ScrArea *area = CTX_wm_area(C);
   ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
-  ui::textbutton_activate_rna(C, region, space_outliner, "filter_text");
+
+  ED_region_activate_rna_prop(C, region, space_outliner, "filter_text");
 
   return OPERATOR_FINISHED;
 }
@@ -1546,9 +1547,15 @@ void outliner_set_coordinates(const ARegion *region, SpaceOutliner *space_outlin
 {
   int starty = int(region->v2d.tot.ymax) - UI_UNIT_Y;
 
+  tree_iterator::all(space_outliner->runtime->tree, [&](TreeElement *te) {
+    /* Set coordinates to zero for all elements. This is done to reset coordinates of collapsed
+     * elements. */
+    te->xs = 0;
+    te->ys = 0;
+  });
+
   tree_iterator::all_open(*space_outliner, [&](TreeElement *te) {
     /* store coord and continue, we need coordinates for elements outside view too */
-    te->xs = 0;
     te->ys = float(starty);
     starty -= UI_UNIT_Y;
   });
@@ -1638,7 +1645,7 @@ void outliner_scroll_to_active(SpaceOutliner *space_outliner, ARegion *region, s
   const View2D *v2d = &region->v2d;
   TreeElement *active_te = nullptr;
 
-  tree_iterator::all_open(*space_outliner, [&](TreeElement *te) {
+  tree_iterator::all(space_outliner->runtime->tree, [&](TreeElement *te) {
     TreeStoreElem *tselem = TREESTORE(te);
     if (tselem->flag & TSE_ACTIVE) {
       if (tselem->type == TSE_SOME_ID) {
@@ -1651,14 +1658,28 @@ void outliner_scroll_to_active(SpaceOutliner *space_outliner, ARegion *region, s
       }
     }
   });
-  if (active_te) {
-    if (!BLI_rctf_isect_y(&v2d->cur, active_te->ys)) {
-      outliner_show_active(space_outliner, region, active_te, TREESTORE(active_te)->id);
-      const int size_y = BLI_rcti_size_y(&v2d->mask) + 1;
-      const int ytop = (active_te->ys + (size_y / 2));
-      const int delta_y = ytop - v2d->cur.ymax;
-      outliner_scroll_view(space_outliner, region, delta_y);
+
+  if (!active_te) {
+    return;
+  }
+
+  TreeElement *scroll_to_te = active_te;
+  if ((space_outliner->flag & SO_EXPAND_ON_FOCUS) == 0) {
+    TreeElement *iter = active_te->parent;
+    while (iter) {
+      if (!TSELEM_OPEN(iter->store_elem, space_outliner)) {
+        scroll_to_te = iter;
+      }
+      iter = iter->parent;
     }
+  }
+
+  if (!(scroll_to_te->ys && BLI_rctf_isect_y(&v2d->cur, scroll_to_te->ys))) {
+    outliner_show_active(space_outliner, region, scroll_to_te, TREESTORE(scroll_to_te)->id);
+    const int size_y = BLI_rcti_size_y(&v2d->mask) + 1;
+    const int ytop = (scroll_to_te->ys + (size_y / 2));
+    const int delta_y = ytop - v2d->cur.ymax;
+    outliner_scroll_view(space_outliner, region, delta_y);
   }
 }
 
@@ -1992,7 +2013,7 @@ static void tree_element_to_path(TreeElement *te,
 
   /* step 2: step down hierarchy building the path
    * (NOTE: addhead in previous loop was needed so that we can loop like this) */
-  for (const LinkData *ld = static_cast<const LinkData *>(hierarchy.first); ld; ld = ld->next) {
+  for (const LinkData *ld = hierarchy.first(); ld; ld = ld->next) {
     /* get data */
     TreeElement *tem = static_cast<TreeElement *>(ld->data);
     TreeElementRNACommon *tem_rna = tree_element_cast<TreeElementRNACommon>(tem);
@@ -2134,7 +2155,7 @@ static void do_outliner_drivers_editop(SpaceOutliner *space_outliner,
     eKSP_Grouping groupmode = KSP_GROUP_KSNAME;
 
     TreeElementRNACommon *te_rna = tree_element_cast<TreeElementRNACommon>(te);
-    PointerRNA ptr = te_rna ? te_rna->get_pointer_rna() : PointerRNA_NULL;
+    PointerRNA ptr = te_rna ? te_rna->get_pointer_rna() : PointerRNA();
     PropertyRNA *prop = te_rna ? te_rna->get_property_rna() : nullptr;
 
     /* check if RNA-property described by this selected element is an animatable prop */

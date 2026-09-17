@@ -863,7 +863,7 @@ class DOPESHEET_MT_action(Menu):
         layout.operator("anim.separate_slots", icon="SEPARATE")
         layout.operator("anim.replace_action", icon="ACTION_REPLACE")
         layout.operator("anim.replace_action_new", icon="ACTION_REPLACE_NEW")
-        layout.operator("anim.replace_action_duplicate") # BFA - wip
+        layout.operator("anim.replace_action_duplicate", icon="ACTION_REPLACE_DUPLICATE")
 
         layout.separator()
         layout.operator("anim.slot_channels_move_to_new_action", icon="ACTION_SLOT")
@@ -1116,8 +1116,8 @@ class DOPESHEET_PT_action_slot(Panel):
         except (KeyError, IndexError, AttributeError) as ex:
             idtype_label = str(ex)
 
-        split = layout.split(factor=0.4)
-        split.alignment = "RIGHT"
+        split = layout.split(factor=layout.property_split_factor)
+        split.alignment = 'RIGHT'
         split.label(text="Type")
         split.alignment = "LEFT"
 

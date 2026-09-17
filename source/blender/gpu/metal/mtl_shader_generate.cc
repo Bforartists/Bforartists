@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup gpu
+ */
+
 #include <fmt/format.h>
 #include <sstream>
 #include <string>
@@ -333,7 +337,7 @@ static const char *get_stage_out_class_name(ShaderStage stage, const ShaderCreat
       return "mtl_VertOut";
     case ShaderStage::FRAGMENT:
       return (info.fragment_outputs_.is_empty() && info.depth_write_ == DepthWrite::UNCHANGED &&
-              bool(info.builtins_ & BuiltinBits::STENCIL_REF) == false) ?
+              flag_is_set(info.builtins_combined(), BuiltinBits::STENCIL_REF) == false) ?
                  "void" :
                  "mtl_FragOut";
     case ShaderStage::COMPUTE:
@@ -700,6 +704,38 @@ static void generate_texture(GeneratedStreams &generated,
   }
 }
 
+static void generate_acceleration_structure(GeneratedStreams &generated,
+                                            StringRefNull name,
+                                            int slot)
+{
+  {
+    /* Reference definition for global access. */
+    auto &out = generated.wrapper_class_members;
+    out << "  instance_acceleration_structure " << name << ";\n";
+  }
+  {
+    /* Constructor parameters. */
+    auto &out = generated.wrapper_constructor_parameters;
+    out << Sep() << "instance_acceleration_structure " << name;
+  }
+  {
+    /* Constructor assignments. */
+    auto &out = generated.wrapper_constructor_assign;
+    out << Sep() << name << "(" << name << ")";
+  }
+  {
+    /* Constructor arguments. */
+    auto &out = generated.wrapper_instance_init;
+    out << Sep() << name;
+  }
+  {
+    /* Entry point arguments. */
+    auto &out = generated.entry_point_parameters;
+    out << Sep() << "instance_acceleration_structure " << name;
+    out << " [[buffer(" << slot << ")]]";
+  }
+}
+
 static void generate_resource(GeneratedStreams &generated,
                               const ShaderCreateInfo::Resource &res,
                               const ShaderStage stage,
@@ -743,7 +779,8 @@ static void generate_resource(GeneratedStreams &generated,
                       stage);
       break;
     case ShaderCreateInfo::Resource::BindType::ACCELERATION_STRUCTURE:
-      BLI_assert_unreachable();
+      generate_acceleration_structure(
+          generated, res.acceleration_structure.name, MTL_ACCELERATION_STRUCTURE_SLOT + res.slot);
       break;
   }
 }
@@ -818,8 +855,8 @@ void generate_resources(GeneratedStreams &generated,
                         const ShaderStage stage,
                         const ShaderCreateInfo &info)
 {
-  const bool use_sampler_argument_buffer = bool(info.builtins_ &
-                                                BuiltinBits::USE_SAMPLER_ARG_BUFFER);
+  const bool use_sampler_argument_buffer = flag_is_set(info.builtins_combined(),
+                                                       BuiltinBits::USE_SAMPLER_ARG_BUFFER);
 
   int specialization_constant_index = MTL_SPECIALIZATION_CONSTANT_OFFSET;
   for (const SpecializationConstant &sc : info.specialization_constants_) {
@@ -932,23 +969,29 @@ static std::string generate_raster_builtins(GeneratedStreams &ss,
   if (stage == ShaderStage::VERTEX) {
     generate_raster_builtin(ss, decl, "float4", "gl_Position", pos_attr);
   }
-  else if (bool(info.builtins_ & BuiltinBits::FRAG_COORD) && stage == ShaderStage::FRAGMENT) {
+  else if (flag_is_set(info.builtins_combined(), BuiltinBits::FRAG_COORD) &&
+           stage == ShaderStage::FRAGMENT)
+  {
     generate_raster_builtin(ss, decl, "float4", "gl_FragCoord", pos_attr, "", true);
   }
 
-  if (bool(info.builtins_ & BuiltinBits::LAYER)) {
+  if (flag_is_set(info.builtins_combined(), BuiltinBits::LAYER)) {
     generate_raster_builtin(
         ss, decl, "uint", "gpu_Layer", "[[render_target_array_index]]", "", is_frag);
   }
-  if (bool(info.builtins_ & BuiltinBits::VIEWPORT_INDEX)) {
+  if (flag_is_set(info.builtins_combined(), BuiltinBits::VIEWPORT_INDEX)) {
     generate_raster_builtin(
         ss, decl, "uint", "gpu_ViewportIndex", "[[viewport_array_index]]", "", is_frag);
   }
-  if (bool(info.builtins_ & BuiltinBits::POINT_SIZE) && stage == ShaderStage::VERTEX) {
+  if (flag_is_set(info.builtins_combined(), BuiltinBits::POINT_SIZE) &&
+      stage == ShaderStage::VERTEX)
+  {
     generate_raster_builtin(ss, decl, "float", "gl_PointSize", "[[point_size]]");
   }
-  if (bool(info.builtins_ & BuiltinBits::CLIP_DISTANCES) && stage == ShaderStage::VERTEX) {
-    /** WORKAROUND: BSL has currently no way to disable clip distances using compilation constant.
+  if (flag_is_set(info.builtins_combined(), BuiltinBits::CLIP_DISTANCES) &&
+      stage == ShaderStage::VERTEX)
+  {
+    /* WORKAROUND: BSL has currently no way to disable clip distances using compilation constant.
      * This induce a huge performance gap with the BSL port of workbench shader (see #155865).
      * This adds back the same preprocessor check that was previously here. However, this code is
      * heavily tailored to workbench and assume exact match with the compilation constant name.
@@ -1121,7 +1164,7 @@ static std::string generate_fragment_builtins(GeneratedStreams &ss, const Shader
     generate_fragment_builtin(ss, decl, "float", "gl_FragDepth", "float", attr(info.depth_write_));
   }
 
-  if (bool(info.builtins_ & BuiltinBits::STENCIL_REF)) {
+  if (flag_is_set(info.builtins_combined(), BuiltinBits::STENCIL_REF)) {
     generate_fragment_builtin(ss, decl, "int", "gl_FragStencilRefARB", "uint", "[[stencil]]");
   }
 
@@ -1310,42 +1353,42 @@ static void generate_builtins(GeneratedStreams &ss,
                               const ShaderCreateInfo &info)
 {
   if (stage == ShaderStage::VERTEX) {
-    if (bool(info.builtins_ & BuiltinBits::VERTEX_ID)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::VERTEX_ID)) {
       generate_builtin(ss, "int", "gl_VertexID", "uint", "[[vertex_id]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::INSTANCE_ID)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::INSTANCE_ID)) {
       generate_instance_id(ss);
     }
   }
   else if (stage == ShaderStage::FRAGMENT) {
-    if (bool(info.builtins_ & BuiltinBits::FRONT_FACING)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::FRONT_FACING)) {
       generate_builtin(ss, "bool", "gl_FrontFacing", "[[front_facing]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::PRIMITIVE_ID)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::PRIMITIVE_ID)) {
       generate_builtin(ss, "int", "gl_PrimitiveID", "uint", "[[primitive_id]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::POINT_COORD)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::POINT_COORD)) {
       generate_builtin(ss, "float2", "gl_PointCoord", "[[point_coord]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::BARYCENTRIC_COORD)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::BARYCENTRIC_COORD)) {
       generate_builtin(ss, "float3", "gpu_BaryCoord", "[[barycentric_coord]]");
     }
   }
   else if (stage == ShaderStage::COMPUTE) {
     /* Compute shader global variables. */
-    if (bool(info.builtins_ & BuiltinBits::GLOBAL_INVOCATION_ID)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::GLOBAL_INVOCATION_ID)) {
       generate_builtin(ss, "uint3", "gl_GlobalInvocationID", "[[thread_position_in_grid]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::WORK_GROUP_ID)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::WORK_GROUP_ID)) {
       generate_builtin(ss, "uint3", "gl_WorkGroupID", "[[threadgroup_position_in_grid]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::NUM_WORK_GROUP)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::NUM_WORK_GROUP)) {
       generate_builtin(ss, "uint3", "gl_NumWorkGroups", "[[threadgroups_per_grid]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::LOCAL_INVOCATION_INDEX)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::LOCAL_INVOCATION_INDEX)) {
       generate_builtin(ss, "uint", "gl_LocalInvocationIndex", "[[thread_index_in_threadgroup]]");
     }
-    if (bool(info.builtins_ & BuiltinBits::LOCAL_INVOCATION_ID)) {
+    if (flag_is_set(info.builtins_combined(), BuiltinBits::LOCAL_INVOCATION_ID)) {
       generate_builtin(ss, "uint3", "gl_LocalInvocationID", "[[thread_position_in_threadgroup]]");
     }
   }
@@ -1467,7 +1510,7 @@ uint32_t available_buffer_slots(const ShaderCreateInfo &info)
       case ShaderCreateInfo::Resource::BindType::IMAGE:
         break;
       case ShaderCreateInfo::Resource::BindType::ACCELERATION_STRUCTURE:
-        BLI_assert_unreachable();
+        free_slots &= ~(1u << (MTL_ACCELERATION_STRUCTURE_SLOT + res.slot));
         break;
     };
   };
@@ -1486,7 +1529,7 @@ uint32_t available_buffer_slots(const ShaderCreateInfo &info)
     free_slots &= ~(1u << MTL_PUSH_CONSTANT_BUFFER_SLOT);
   }
 
-  if (bool(info.builtins_ & BuiltinBits::USE_SAMPLER_ARG_BUFFER)) {
+  if (flag_is_set(info.builtins_combined(), BuiltinBits::USE_SAMPLER_ARG_BUFFER)) {
     free_slots &= ~(1u << MTL_SAMPLER_ARGUMENT_BUFFER_SLOT);
   }
 
@@ -1531,9 +1574,7 @@ void patch_create_info_atomic_workaround(std::unique_ptr<PatchedShaderCreateInfo
         break;
       case ShaderCreateInfo::Resource::BindType::UNIFORM_BUFFER:
       case ShaderCreateInfo::Resource::BindType::STORAGE_BUFFER:
-        break;
       case ShaderCreateInfo::Resource::BindType::ACCELERATION_STRUCTURE:
-        BLI_assert_unreachable();
         break;
     }
   };

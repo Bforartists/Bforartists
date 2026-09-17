@@ -27,9 +27,21 @@
 #  include <thread>
 #endif
 
+#ifdef WITH_GHOST_DBUS
+#  include "GHOST_SystemDBusUnix.hh"
+#  include <atomic>
+#  include <memory>
+#endif
+
 class GHOST_WindowWayland;
 
 bool ghost_wl_display_report_error_if_set(wl_display *display);
+
+/**
+ * Create a 1x1 transparent buffer, intended for up-scaling via #wp_viewport_set_destination.
+ * The caller owns the returned buffer, null on allocation failure.
+ */
+struct wl_buffer *ghost_wl_buffer_create_transparent_pixel(struct wl_shm *shm);
 
 bool ghost_wl_output_own(const struct wl_output *wl_output);
 void ghost_wl_output_tag(struct wl_output *wl_output);
@@ -52,6 +64,16 @@ void ghost_wl_surface_tag_cursor_pointer(struct wl_surface *wl_surface);
 
 bool ghost_wl_surface_own_cursor_tablet(const struct wl_surface *wl_surface);
 void ghost_wl_surface_tag_cursor_tablet(struct wl_surface *wl_surface);
+
+#ifdef WITH_GHOST_CSD
+/**
+ * Tag for the invisible resize margin around the window
+ * (see #GWL_WindowCSD::margin_surface). Kept distinct from #ghost_wl_surface_tag
+ * so input paths without margin support ignore it as any other foreign surface.
+ */
+bool ghost_wl_surface_own_csd_margin(const struct wl_surface *wl_surface);
+void ghost_wl_surface_tag_csd_margin(struct wl_surface *wl_surface);
+#endif
 
 /* Scaling to: translates from WAYLAND into GHOST (viewport local) coordinates.
  * Scaling from: performs the reverse translation.
@@ -158,10 +180,15 @@ struct GWL_Output {
   std::string model;
 };
 
+struct GHOST_SystemDBusSettings {
+  /** Written from the watcher's background thread, see #getSystemColorScheme. */
+  std::atomic<uint32_t> color_scheme = -1;
+};
+
 class GHOST_SystemWayland : public GHOST_System {
  public:
   GHOST_SystemWayland(bool background);
-  GHOST_SystemWayland() : GHOST_SystemWayland(true) {};
+  GHOST_SystemWayland() : GHOST_SystemWayland(true) {}
 
   ~GHOST_SystemWayland() override;
 
@@ -267,6 +294,7 @@ class GHOST_SystemWayland : public GHOST_System {
 
   struct wl_display *wl_display_get();
   struct wl_compositor *wl_compositor_get();
+  struct wl_subcompositor *wl_subcompositor_get();
   struct zwp_primary_selection_device_manager_v1 *wp_primary_selection_manager_get();
   struct xdg_activation_v1 *xdg_activation_manager_get();
   struct zwp_pointer_gestures_v1 *wp_pointer_gestures_get();
@@ -381,4 +409,9 @@ class GHOST_SystemWayland : public GHOST_System {
   void display_destroy_and_free_all();
 
   struct GWL_Display *display_;
+
+#ifdef WITH_GHOST_DBUS
+  std::unique_ptr<GHOST_SystemDBusUnix> dbus_watcher_;
+  GHOST_SystemDBusSettings dbus_;
+#endif
 };

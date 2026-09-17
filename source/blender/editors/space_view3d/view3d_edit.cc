@@ -16,7 +16,9 @@
 
 #include "BLI_listbase.hh"
 #include "BLI_math_geom_c.hh"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_matrix_c.hh"
+#include "BLI_math_quaternion.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
@@ -180,7 +182,6 @@ static wmOperatorStatus view3d_center_camera_exec(bContext *C, wmOperator * /*op
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
   float xfac, yfac;
-  float size[2];
 
   View3D *v3d;
   ARegion *region;
@@ -191,8 +192,12 @@ static wmOperatorStatus view3d_center_camera_exec(bContext *C, wmOperator * /*op
   rv3d = static_cast<RegionView3D *>(region->regiondata);
 
   rv3d->camdx = rv3d->camdy = 0.0f;
+  rv3d->camroll = 0.0f;
+  rv3d->rflag &= ~RV3D_FLIP_X;
 
-  ED_view3d_calc_camera_border_size(scene, depsgraph, region, v3d, rv3d, size);
+  const rctf viewborder = BKE_camera_view_border(
+      scene, depsgraph, v3d, rv3d, region->winx, region->winy, true, true, false);
+  const float2 size = {BLI_rctf_size_x(&viewborder), BLI_rctf_size_y(&viewborder)};
 
   /* 4px is just a little room from the edge of the area */
   xfac = float(region->winx) / float(size[0] + 4);
@@ -277,7 +282,8 @@ static wmOperatorStatus render_border_exec(bContext *C, wmOperator *op)
 
   if (rv3d->persp == RV3D_CAMOB) {
     const Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-    ED_view3d_calc_camera_border(scene, depsgraph, region, v3d, rv3d, false, &vb);
+    vb = BKE_camera_view_border(
+        scene, depsgraph, v3d, rv3d, region->winx, region->winy, false, false, true);
   }
   else {
     vb.xmin = 0;
@@ -286,10 +292,28 @@ static wmOperatorStatus render_border_exec(bContext *C, wmOperator *op)
     vb.ymax = region->winy;
   }
 
-  border.xmin = (float(rect.xmin) - vb.xmin) / BLI_rctf_size_x(&vb);
-  border.ymin = (float(rect.ymin) - vb.ymin) / BLI_rctf_size_y(&vb);
-  border.xmax = (float(rect.xmax) - vb.xmin) / BLI_rctf_size_x(&vb);
-  border.ymax = (float(rect.ymax) - vb.ymin) / BLI_rctf_size_y(&vb);
+  border.xmin = float(rect.xmin);
+  border.ymin = float(rect.ymin);
+  border.xmax = float(rect.xmax);
+  border.ymax = float(rect.ymax);
+
+  /* Apply flip. */
+  if (rv3d->persp == RV3D_CAMOB && (rv3d->rflag & RV3D_FLIP_X) != 0) {
+    std::swap(border.xmin, border.xmax);
+    border.xmin = region->winx - border.xmin;
+    border.xmax = region->winx - border.xmax;
+  }
+
+  /* Remove the roll to put the border in view border space, expanding to fully cover the box. */
+  if (rv3d->persp == RV3D_CAMOB && rv3d->camroll != 0.0f) {
+    const float pivot[2] = {region->winx / 2.0f, region->winy / 2.0f};
+    BLI_rctf_rotate_expand_around(&border, &border, pivot, -rv3d->camroll);
+  }
+
+  border.xmin = (border.xmin - vb.xmin) / BLI_rctf_size_x(&vb);
+  border.ymin = (border.ymin - vb.ymin) / BLI_rctf_size_y(&vb);
+  border.xmax = (border.xmax - vb.xmin) / BLI_rctf_size_x(&vb);
+  border.ymax = (border.ymax - vb.ymin) / BLI_rctf_size_y(&vb);
 
   /* actually set border */
   CLAMP(border.xmin, 0.0f, 1.0f);
@@ -431,14 +455,14 @@ static void view3d_set_1_to_1_viewborder(Scene *scene,
                                          View3D *v3d)
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-  float size[2];
 
   int im_width, im_height;
   BKE_render_resolution(&scene->r, false, &im_width, &im_height);
 
-  ED_view3d_calc_camera_border_size(scene, depsgraph, region, v3d, rv3d, size);
+  const rctf viewborder = BKE_camera_view_border(
+      scene, depsgraph, v3d, rv3d, region->winx, region->winy, true, true, false);
 
-  rv3d->camzoom = BKE_screen_view3d_zoom_from_fac(float(im_width) / size[0]);
+  rv3d->camzoom = BKE_screen_view3d_zoom_from_fac(float(im_width) / BLI_rctf_size_x(&viewborder));
   CLAMP(rv3d->camzoom, RV3D_CAMZOOM_MIN, RV3D_CAMZOOM_MAX);
 }
 
@@ -476,6 +500,130 @@ void VIEW3D_OT_zoom_camera_1_to_1(wmOperatorType *ot)
 
   /* flags */
   ot->flag = 0;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Set View Roll Operator
+ *
+ * Sets the roll of the view to an angle.
+ * \{ */
+
+static void view3d_set_view_angle(ARegion *region, View3D *v3d, const float input_angle)
+{
+  RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
+  const float angle = angle_wrap_rad(input_angle);
+
+  if (rv3d->persp == RV3D_CAMOB) {
+    const bool is_camera_lock = ED_view3d_camera_lock_check(v3d, rv3d);
+    if (!is_camera_lock) {
+      rv3d->camroll = angle;
+      return;
+    }
+  }
+
+  const float horizon_plane[3] = {0.0f, 0.0f, 1.0f};
+  /* Match the top & bottom axis-views, without this the angle
+   * would be relative and repeated runs would accumulate. */
+  const float axis_fallback[3] = {1.0f, 0.0f, 0.0f};
+
+  view3d_horizon_correct_quat(rv3d->viewquat, horizon_plane, false, axis_fallback, angle, 1.0f);
+
+  rv3d->view = RV3D_VIEW_USER;
+}
+
+static wmOperatorStatus view3d_set_roll_exec(bContext *C, wmOperator *op)
+{
+  View3D *v3d;
+  ARegion *region;
+
+  const float angle = RNA_float_get(op->ptr, "angle");
+
+  /* no nullptr check is needed, poll checks */
+  ED_view3d_context_user_region(C, &v3d, &region);
+  ED_view3d_smooth_view_force_finish(C, v3d, region);
+
+  view3d_set_view_angle(region, v3d, angle);
+  ED_region_tag_redraw(region);
+
+  return OPERATOR_FINISHED;
+}
+
+void VIEW3D_OT_view_roll_set(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Set View Roll";
+  ot->description = "Set the view roll angle";
+  ot->idname = "VIEW3D_OT_view_roll_set";
+
+  /* API callbacks. */
+  ot->exec = view3d_set_roll_exec;
+  ot->poll = ED_operator_rv3d_user_region_poll;
+
+  /* properties */
+  ot->prop = RNA_def_float(ot->srna, "angle", 0, -FLT_MAX, FLT_MAX, "Roll", "", -FLT_MAX, FLT_MAX);
+  RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Flip View Operator
+ *
+ * Flips the view either horizontally or vertically.
+ * \{ */
+
+enum class FlipDirection : int8_t {
+  Horizontal = 0,
+  Vertical = 1,
+};
+
+static const EnumPropertyItem prop_flip_directions[] = {
+    {int(FlipDirection::Horizontal), "HORIZONTAL", 0, "Horizontal", ""},
+    {int(FlipDirection::Vertical), "VERTICAL", 0, "Vertical", ""},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+static wmOperatorStatus view3d_flip_view_exec(bContext *C, wmOperator *op)
+{
+  View3D *v3d;
+  ARegion *region;
+
+  const FlipDirection direction = FlipDirection(RNA_enum_get(op->ptr, "direction"));
+
+  ED_view3d_context_user_region(C, &v3d, &region);
+  ED_view3d_smooth_view_force_finish(C, v3d, region);
+
+  RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
+
+  rv3d->rflag ^= RV3D_FLIP_X;
+
+  if (direction == FlipDirection::Vertical) {
+    rv3d->camroll = angle_wrap_rad(rv3d->camroll + M_PI);
+  }
+
+  ED_region_tag_redraw(region);
+
+  return OPERATOR_FINISHED;
+}
+
+void VIEW3D_OT_view_flip(wmOperatorType *ot)
+{
+  ot->name = "Flip View";
+  ot->description = "Flip the camera view along the given direction";
+  ot->idname = "VIEW3D_OT_view_flip";
+
+  ot->exec = view3d_flip_view_exec;
+  ot->poll = view3d_camera_user_poll;
+
+  ot->prop = RNA_def_enum(ot->srna,
+                          "direction",
+                          prop_flip_directions,
+                          int(FlipDirection::Horizontal),
+                          "Flip Direction",
+                          "");
+  RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
 }
 
 /** \} */

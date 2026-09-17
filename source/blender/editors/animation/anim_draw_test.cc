@@ -40,7 +40,7 @@ class AnimDrawTest : public bke::BlenderGTestBase {
 
 TEST_F(AnimDrawTest, anim_unit_mapping_get_factor_not_normalizing)
 {
-  FCurve *fcurve = MEM_new<FCurve>(__func__);
+  FCurve *fcurve = BKE_fcurve_create();
   fcurve->array_index = 0;
 
   /* Avoid creating a Scene via BKE_id_new<Scene>(this->bmain, "SCTestScene"); as that requires
@@ -51,7 +51,7 @@ TEST_F(AnimDrawTest, anim_unit_mapping_get_factor_not_normalizing)
 
   { /* Rotation: Degrees. */
     scene.unit.system_rotation = 0;
-    BKE_fcurve_rnapath_set(*fcurve, "rotation_euler");
+    fcurve->rna_path_set("rotation_euler");
 
     EXPECT_FLOAT_EQ(RAD2DEGF(1.0f),
                     ANIM_unit_mapping_get_factor(&scene, &this->object->id, fcurve, 0, nullptr));
@@ -62,7 +62,7 @@ TEST_F(AnimDrawTest, anim_unit_mapping_get_factor_not_normalizing)
 
   { /* Rotation: Radians. */
     scene.unit.system_rotation = USER_UNIT_ROT_RADIANS;
-    BKE_fcurve_rnapath_set(*fcurve, "rotation_euler");
+    fcurve->rna_path_set("rotation_euler");
 
     EXPECT_FLOAT_EQ(1.0f,
                     ANIM_unit_mapping_get_factor(&scene, &this->object->id, fcurve, 0, nullptr));

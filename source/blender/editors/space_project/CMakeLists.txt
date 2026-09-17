@@ -5,6 +5,7 @@
 set(INC
   ../include
   ../../makesrna
+  ../asset
 
   # RNA_prototypes.hh
   ${CMAKE_BINARY_DIR}/source/blender/makesrna
@@ -14,7 +15,10 @@ set(INC_SYS
 )
 
 set(SRC
+  project_asset_panel.cc
   space_project.cc
+
+  project_intern.hh
 )
 
 set(LIB

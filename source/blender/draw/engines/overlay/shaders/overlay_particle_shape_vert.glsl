@@ -13,8 +13,8 @@ VERTEX_SHADER_CREATE_INFO(overlay_particle_shape)
 #include "draw_model_lib.glsl"
 #include "draw_view_clipping_lib.glsl"
 #include "draw_view_lib.glsl"
-#include "gpu_shader_math_constants_lib.glsl"
-#include "gpu_shader_math_matrix_transform_lib.glsl"
+#include "gpu_shader_math_constants.bsl.hh"
+#include "gpu_shader_math_matrix_transform.bsl.hh"
 
 #include "select_lib.glsl"
 
@@ -54,8 +54,8 @@ void main()
   uint axis_id = uint(shape_vert_id) >> 1u;
   uint axis_vert = uint(shape_vert_id) & 1u;
 
-#ifdef GPU_METAL
-  /* Metal has a different provoking vertex convention. */
+#ifdef GPU_PROVOKING_VERTEX_LAST
+  /* Metal and Vulkan (without extension) have different provoking vertex convention. */
   axis_vert ^= 1u;
 #endif
 

@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "gpu_shader_fullscreen_infos.hh"
-#include "gpu_shader_sequencer_infos.hh"
 
 VERTEX_SHADER_CREATE_INFO(gpu_fullscreen)
 
-#include "gpu_shader_fullscreen_lib.glsl"
+#include "gpu_shader_fullscreen.bsl.hh"
 
 void main()
 {

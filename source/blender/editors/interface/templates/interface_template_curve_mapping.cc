@@ -32,10 +32,12 @@ namespace blender::ui {
 
 using blender::Vector;
 
+namespace {
 struct CurveRuntimeProperties {
   CurveMapPoint *last_pt = nullptr;
   float2 last_pos;
 };
+}  // namespace
 
 static bool curvemap_can_zoom_out(CurveMapping *cumap)
 {
@@ -884,7 +886,7 @@ void template_curve_mapping(Layout *layout,
   }
 
   PointerRNA cptr = RNA_property_pointer_get(ptr, prop);
-  if (!cptr.data || !RNA_struct_is_a(cptr.type, RNA_CurveMapping)) {
+  if (!cptr || !RNA_struct_is_a(cptr.type, RNA_CurveMapping)) {
     return;
   }
 

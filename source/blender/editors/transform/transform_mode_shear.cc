@@ -106,6 +106,12 @@ static void initShear_mouseInputMode(TransInfo *t)
         dir_flip = !dir_flip;
       }
     }
+
+    /* A flipped view applies to this this orientation,
+     * so the input direction must be flipped to match. */
+    if (t->flag & T_VIEW_NEGATIVE) {
+      dir_flip = !dir_flip;
+    }
   }
 
   /* Without this, half the gizmo handles move in the opposite direction. */
@@ -290,7 +296,10 @@ static void apply_shear(TransInfo *t)
   }
 
   ED_area_status_text(t->area, str);
+}
 
+static void shear_status(TransInfo *t)
+{
   ShearCustomData *custom_data = static_cast<ShearCustomData *>(t->custom.mode.data);
   if (custom_data->op && custom_data->update_status_bar) {
     custom_data->update_status_bar = false;
@@ -369,6 +378,7 @@ TransModeInfo TransMode_shear = {
     /*snap_distance_fn*/ nullptr,
     /*snap_apply_fn*/ nullptr,
     /*draw_fn*/ nullptr,
+    /*status_fn*/ shear_status,
 };
 
 }  // namespace blender::ed::transform

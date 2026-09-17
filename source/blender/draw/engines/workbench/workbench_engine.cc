@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup draw_engine
+ */
+
 #include "BLI_rect.hh"
 #include "BLI_string.hh"
 
@@ -117,7 +121,7 @@ class Instance : public DrawEngine {
     transparent_ps_.sync(scene_state_, resources_);
     transparent_depth_ps_.sync(scene_state_, resources_);
 
-    shadow_ps_.sync();
+    shadow_ps_.sync(resources_);
     volume_ps_.sync(resources_);
     outline_ps_.sync(resources_);
     dof_ps_.sync(resources_, this->draw_ctx);
@@ -129,6 +133,7 @@ class Instance : public DrawEngine {
   void end_sync() final
   {
     resources_.material_buf.push_update();
+    shadow_ps_.end_sync();
   }
 
   Material get_material(ObjectRef ob_ref, eV3DShadingColorType color_type, int slot = 0)
@@ -216,7 +221,7 @@ class Instance : public DrawEngine {
       }
     }
 
-    if (ob->type == OB_MESH && ob->modifiers.first != nullptr) {
+    if (ob->type == OB_MESH && ob->modifiers.first() != nullptr) {
       for (ModifierData &md : ob->modifiers) {
         if (md.type != eModifierType_ParticleSystem) {
           continue;
@@ -459,7 +464,7 @@ class Instance : public DrawEngine {
   {
     int2 resolution = scene_state_.resolution;
 
-    /** Always setup in-front depth, since Overlays can be updated without causing a Workbench
+    /* Always setup in-front depth, since Overlays can be updated without causing a Workbench
      * re-sync (See #113580). */
     bool needs_depth_in_front = !transparent_ps_.accumulation_in_front_ps_.is_empty() ||
                                 (!opaque_ps_.gbuffer_in_front_ps_.is_empty() &&
@@ -815,6 +820,8 @@ RenderEngineType DRW_engine_viewport_workbench_type = {
     /*bake*/ nullptr,
     /*view_update*/ nullptr,
     /*view_draw*/ nullptr,
+    /*view_pause*/ nullptr,
+    /*view_resume*/ nullptr,
     /*update_script_node*/ nullptr,
     /*update_render_passes*/ &workbench_render_update_passes,
     /*update_custom_camera*/ nullptr,

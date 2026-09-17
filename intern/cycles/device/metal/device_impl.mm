@@ -47,7 +47,7 @@ bool MetalDevice::is_device_cancelled(const int ID)
   return get_device_by_ID(ID, lock) == nullptr;
 }
 
-BVHLayoutMask MetalDevice::get_bvh_layout_mask(uint /*kernel_features*/) const
+BVHLayoutMask MetalDevice::get_bvh_layout_mask(const uint64_t /*kernel_features*/) const
 {
   return use_metalrt ? BVH_LAYOUT_METAL : BVH_LAYOUT_BVH2;
 }
@@ -86,9 +86,6 @@ MetalDevice::MetalDevice(const DeviceInfo &info, Stats &stats, Profiler &profile
     assert(mtlDevId < usable_devices.size());
     mtlDevice = usable_devices[mtlDevId];
     metal_printf("Creating new Cycles Metal device: %s", info.description.c_str());
-
-    /* Ensure that back-compatibility helpers for getting gpuAddress & gpuResourceID are set up. */
-    metal_gpu_address_helper_init(mtlDevice);
 
     /* Enable increased concurrent shader compiler limit.
      * This is also done by MTLContext::MTLContext, but only in GUI mode. */
@@ -316,7 +313,7 @@ void MetalDevice::prepare_residency()
 #  endif
 }
 
-bool MetalDevice::support_device(const uint /*kernel_features*/)
+bool MetalDevice::support_device(const uint64_t /*kernel_features*/)
 {
   return true;
 }
@@ -339,7 +336,7 @@ bool MetalDevice::use_local_atomic_sort() const
 }
 
 string MetalDevice::preprocess_source(MetalPipelineType pso_type,
-                                      const uint kernel_features,
+                                      const uint64_t kernel_features,
                                       string *source)
 {
   string global_defines;
@@ -377,10 +374,6 @@ string MetalDevice::preprocess_source(MetalPipelineType pso_type,
     global_defines += "#define WITH_NANOVDB\n";
   }
 #  endif
-
-  NSProcessInfo *processInfo = [NSProcessInfo processInfo];
-  NSOperatingSystemVersion macos_ver = [processInfo operatingSystemVersion];
-  global_defines += "#define __KERNEL_METAL_MACOS__ " + to_string(macos_ver.majorVersion) + "\n";
 
 #  if TARGET_CPU_ARM64
   global_defines += "#define __KERNEL_METAL_TARGET_CPU_ARM64__\n";
@@ -438,7 +431,7 @@ string MetalDevice::preprocess_source(MetalPipelineType pso_type,
   return md5.get_hex();
 }
 
-void MetalDevice::make_source(MetalPipelineType pso_type, const uint kernel_features)
+void MetalDevice::make_source(MetalPipelineType pso_type, const uint64_t kernel_features)
 {
   string &source = this->source[pso_type];
   source = "\n#include \"kernel/device/metal/kernel.metal\"\n";
@@ -451,7 +444,7 @@ void MetalDevice::make_source(MetalPipelineType pso_type, const uint kernel_feat
   global_defines_md5[pso_type] = preprocess_source(pso_type, kernel_features, &source);
 }
 
-bool MetalDevice::load_kernels(const uint _kernel_features)
+bool MetalDevice::load_kernels(const uint64_t _kernel_features)
 {
   @autoreleasepool {
     kernel_features |= _kernel_features;
@@ -520,11 +513,11 @@ void MetalDevice::refresh_source_and_kernels_md5(MetalPipelineType pso_type)
   md5.append(constant_values);
   md5.append(source[pso_type]);
   if (use_metalrt) {
-    md5.append(string_printf("metalrt_features=%d", kernel_features & METALRT_FEATURE_MASK));
+    md5.append(string_printf("metalrt_features=%llu", kernel_features & METALRT_FEATURE_MASK));
   }
   if (pso_type != PSO_GENERIC) {
     /* Include kernel_features since it's specialized but missed by the constant_values loop. */
-    md5.append(string_printf("kernel_features=%u", launch_params->data.kernel_features));
+    md5.append(string_printf("kernel_features=%llu", launch_params->data.kernel_features));
   }
   kernels_md5[pso_type] = md5.get_hex();
 }
@@ -568,14 +561,7 @@ void MetalDevice::compile_and_load(const int device_id, MetalPipelineType pso_ty
     MTLCompileOptions *options = [[MTLCompileOptions alloc] init];
 
     options.fastMathEnabled = YES;
-    if (@available(macos 12.0, *)) {
-      options.languageVersion = MTLLanguageVersion2_4;
-    }
-#  if defined(MAC_OS_VERSION_13_0)
-    if (@available(macos 13.0, *)) {
-      options.languageVersion = MTLLanguageVersion3_0;
-    }
-#  endif
+    options.languageVersion = MTLLanguageVersion3_0;
 #  if defined(MAC_OS_VERSION_14_0)
     if (@available(macos 14.0, *)) {
       options.languageVersion = MTLLanguageVersion3_1;
@@ -1031,9 +1017,7 @@ void MetalDevice::const_copy_to(const char *name, void *host, const size_t size)
       if (mmem[i]) {
         mmem[i]->pointer_index = pointer_index + i;
         if (mmem[i]->mtlBuffer) {
-          if (@available(macOS 13.0, *)) {
-            addresses[i] = metal_gpuAddress(mmem[i]->mtlBuffer);
-          }
+          addresses[i] = mmem[i]->mtlBuffer.gpuAddress;
         }
       }
     }
@@ -1300,7 +1284,7 @@ void MetalDevice::image_free(device_image &mem)
   image_info_id_map[image_info_id] = nil;
 }
 
-bool MetalDevice::has_unified_memory() const
+bool MetalDevice::has_unified_memory_any() const
 {
   return true;
 }

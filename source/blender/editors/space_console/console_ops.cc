@@ -122,7 +122,7 @@ static int console_delete_editable_selection(SpaceConsole *sc)
 
   sc->sel_start = std::max(sc->sel_start, 0);
 
-  ConsoleLine *cl = static_cast<ConsoleLine *>(sc->history.last);
+  ConsoleLine *cl = sc->history.last();
   if (!cl || sc->sel_start > cl->len) {
     sc->sel_start = sc->sel_end;
     return 0;
@@ -184,7 +184,7 @@ static void console_scrollback_limit(SpaceConsole *sc)
   int tot;
 
   for (tot = sc->scrollback.count(); tot > U.scrollback; tot--) {
-    console_scrollback_free(sc, static_cast<ConsoleLine *>(sc->scrollback.first));
+    console_scrollback_free(sc, sc->scrollback.first());
   }
 }
 
@@ -217,7 +217,7 @@ static void console_lb_debug__internal(ListBaseT<ConsoleLine> *lb)
   ConsoleLine *cl;
 
   printf("%d: ", lb->count());
-  for (cl = lb->first; cl; cl = cl->next) {
+  for (cl = lb->first_; cl; cl = cl->next) {
     printf("<%s> ", cl->line);
   }
   printf("\n");
@@ -296,7 +296,7 @@ ConsoleLine *console_scrollback_add_str(SpaceConsole *sc, char *str, bool own)
 ConsoleLine *console_history_verify(const bContext *C)
 {
   SpaceConsole *sc = CTX_wm_space_console(C);
-  ConsoleLine *ci = static_cast<ConsoleLine *>(sc->history.last);
+  ConsoleLine *ci = sc->history.last();
   if (ci == nullptr) {
     ci = console_history_add(sc, nullptr);
   }
@@ -349,7 +349,7 @@ static bool console_line_column_from_index(
   ConsoleLine *cl;
   int offset = 0;
 
-  for (cl = static_cast<ConsoleLine *>(sc->scrollback.last); cl; cl = cl->prev) {
+  for (cl = sc->scrollback.last(); cl; cl = cl->prev) {
     offset += cl->len + 1;
     if (offset > pos) {
       break;
@@ -920,14 +920,14 @@ static wmOperatorStatus console_clear_exec(bContext *C, wmOperator *op)
   /* ConsoleLine *ci = */ console_history_verify(C);
 
   if (scrollback) { /* Last item in history. */
-    while (sc->scrollback.first) {
-      console_scrollback_free(sc, static_cast<ConsoleLine *>(sc->scrollback.first));
+    while (sc->scrollback.first_) {
+      console_scrollback_free(sc, sc->scrollback.first());
     }
   }
 
   if (history) {
-    while (sc->history.first) {
-      console_history_free(sc, static_cast<ConsoleLine *>(sc->history.first));
+    while (sc->history.first_) {
+      console_history_free(sc, sc->history.first());
     }
     console_history_verify(C);
   }
@@ -1215,7 +1215,6 @@ static wmOperatorStatus console_paste_exec(bContext *C, wmOperator *op)
   SpaceConsole *sc = CTX_wm_space_console(C);
   ConsoleLine *ci = console_history_verify(C);
   ScrArea *area = CTX_wm_area(C);
-  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
 
   int buf_str_len;
 
@@ -1227,6 +1226,7 @@ static wmOperatorStatus console_paste_exec(bContext *C, wmOperator *op)
     MEM_delete(buf_str);
     return OPERATOR_CANCELLED;
   }
+  bool context_valid = true;
   const char *buf_step = buf_str;
   do {
     const char *buf = buf_step;
@@ -1235,6 +1235,14 @@ static wmOperatorStatus console_paste_exec(bContext *C, wmOperator *op)
     if (buf != buf_str) {
       WM_operator_name_call(
           C, "CONSOLE_OT_execute", wm::OpCallContext::ExecDefault, nullptr, nullptr);
+      /* Detect context changes from actions such as loading a new file or direct
+       * context manipulation (switching area type for e.g.).
+       * While it's not an error, we only support executing in the active context.
+       * So bail out with a warning, see: #161595. */
+      if (sc != CTX_wm_space_console(C)) {
+        context_valid = false;
+        break;
+      }
       ci = console_history_verify(C);
     }
     console_delete_editable_selection(sc);
@@ -1244,10 +1252,19 @@ static wmOperatorStatus console_paste_exec(bContext *C, wmOperator *op)
 
   MEM_delete(buf_str);
 
-  console_textview_update_rect(sc, region);
-  ED_area_tag_redraw(area);
+  if (context_valid) {
+    ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+    console_textview_update_rect(sc, region);
+    ED_area_tag_redraw(area);
 
-  console_scroll_bottom(region);
+    console_scroll_bottom(region);
+  }
+  else {
+    BKE_report(op->reports,
+               RPT_WARNING,
+               "Context changed during paste, "
+               "console execution may be incomplete");
+  }
 
   return OPERATOR_FINISHED;
 }
@@ -1305,7 +1322,7 @@ static void console_cursor_set_to_pos(SpaceConsole *sc,
   }
 
   /* Move text cursor to the last selection point. */
-  ConsoleLine *cl = static_cast<ConsoleLine *>(sc->history.last);
+  ConsoleLine *cl = sc->history.last();
 
   if (cl != nullptr) {
     if (dragging && sc->sel_end > cl->len && pos <= cl->len) {
@@ -1358,7 +1375,7 @@ static wmOperatorStatus console_select_set_invoke(bContext *C,
 
   SetConsoleCursor *scu;
 
-  ConsoleLine *cl = static_cast<ConsoleLine *>(sc->history.last);
+  ConsoleLine *cl = sc->history.last();
   if (cl != nullptr) {
     const int pos = console_char_pick(sc, region, event->mval);
     if (pos >= 0 && pos <= cl->len) {
@@ -1443,7 +1460,7 @@ static wmOperatorStatus console_modal_select_all_invoke(bContext *C,
     offset += cl.len + 1;
   }
 
-  ConsoleLine *cl = static_cast<ConsoleLine *>(sc->history.last);
+  ConsoleLine *cl = sc->history.last();
   if (cl) {
     offset += cl->len + 1;
   }
@@ -1503,7 +1520,7 @@ static wmOperatorStatus console_selectword_invoke(bContext *C,
 
   console_scrollback_prompt_end(sc, &cl_dummy);
 
-  ConsoleLine *ci = static_cast<ConsoleLine *>(sc->history.last);
+  ConsoleLine *ci = sc->history.last();
   if (ci && sc->sel_start <= ci->len) {
     console_line_cursor_set(ci, ci->len - sc->sel_start);
   }

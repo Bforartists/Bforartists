@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup draw_engine
+ */
+
 #pragma once
 
 #include "GPU_shader_shared_utils.hh"
@@ -63,5 +67,6 @@ struct [[host_shared]] ExtrudedFrustum {
 struct [[host_shared]] ShadowPassData {
   float4 far_plane;
   packed_float3 light_direction_ws;
-  int _padding;
+  /* Pixel size at 1 unit from the View origin. */
+  float pixel_size;
 };

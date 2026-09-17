@@ -91,17 +91,6 @@ void debug_flags_reset()
 
 } /* namespace */
 
-void python_thread_state_save(void **python_thread_state)
-{
-  *python_thread_state = (void *)PyEval_SaveThread();
-}
-
-void python_thread_state_restore(void **python_thread_state)
-{
-  PyEval_RestoreThread((PyThreadState *)*python_thread_state);
-  *python_thread_state = nullptr;
-}
-
 static const char *PyC_UnicodeAsBytes(PyObject *py_str, PyObject **coerce)
 {
   const char *result = PyUnicode_AsUTF8(py_str);
@@ -133,7 +122,14 @@ static PyObject *init_func(PyObject * /*self*/, PyObject *args)
   PyObject *user_path;
   int headless;
 
-  if (!PyArg_ParseTuple(args, "OOi", &path, &user_path, &headless)) {
+  if (!PyArg_ParseTuple(args,
+                        "O" /* `path` */
+                        "O" /* `user_path` */
+                        "i" /* `headless` */,
+                        &path,
+                        &user_path,
+                        &headless))
+  {
     return nullptr;
   }
 
@@ -174,7 +170,14 @@ static PyObject *create_func(PyObject * /*self*/, PyObject *args)
   int preview_osl;
 
   if (!PyArg_ParseTuple(args,
-                        "OOOOOOOi",
+                        "O" /* `engine` */
+                        "O" /* `preferences` */
+                        "O" /* `data` */
+                        "O" /* `screen` */
+                        "O" /* `region` */
+                        "O" /* `v3d` */
+                        "O" /* `rv3d` */
+                        "i" /* `preview_osl` */,
                         &pyengine,
                         &pypreferences,
                         &pydata,
@@ -234,7 +237,12 @@ static PyObject *render_func(PyObject * /*self*/, PyObject *args)
   PyObject *pysession;
   PyObject *pydepsgraph;
 
-  if (!PyArg_ParseTuple(args, "OO", &pysession, &pydepsgraph)) {
+  if (!PyArg_ParseTuple(args,
+                        "O" /* `session` */
+                        "O" /* `depsgraph` */,
+                        &pysession,
+                        &pydepsgraph))
+  {
     return nullptr;
   }
 
@@ -243,11 +251,9 @@ static PyObject *render_func(PyObject * /*self*/, PyObject *args)
       PyLong_AsVoidPtr(pydepsgraph));
 
   /* Allow Blender to execute other Python scripts. */
-  python_thread_state_save(&session->python_thread_state);
-
+  Py_BEGIN_ALLOW_THREADS;
   session->render(*b_depsgraph);
-
-  python_thread_state_restore(&session->python_thread_state);
+  Py_END_ALLOW_THREADS;
 
   Py_RETURN_NONE;
 }
@@ -256,18 +262,16 @@ static PyObject *render_frame_finish_func(PyObject * /*self*/, PyObject *args)
 {
   PyObject *pysession;
 
-  if (!PyArg_ParseTuple(args, "O", &pysession)) {
+  if (!PyArg_ParseTuple(args, "O" /* `session` */, &pysession)) {
     return nullptr;
   }
 
   BlenderSession *session = (BlenderSession *)PyLong_AsVoidPtr(pysession);
 
   /* Allow Blender to execute other Python scripts. */
-  python_thread_state_save(&session->python_thread_state);
-
+  Py_BEGIN_ALLOW_THREADS;
   session->render_frame_finish();
-
-  python_thread_state_restore(&session->python_thread_state);
+  Py_END_ALLOW_THREADS;
 
   Py_RETURN_NONE;
 }
@@ -279,7 +283,16 @@ static PyObject *draw_func(PyObject * /*self*/, PyObject *args)
   PyObject *py_screen;
   PyObject *py_space_image;
 
-  if (!PyArg_ParseTuple(args, "OOOO", &py_session, &py_graph, &py_screen, &py_space_image)) {
+  if (!PyArg_ParseTuple(args,
+                        "O" /* `session` */
+                        "O" /* `graph` */
+                        "O" /* `screen` */
+                        "O" /* `space_image` */,
+                        &py_session,
+                        &py_graph,
+                        &py_screen,
+                        &py_space_image))
+  {
     return nullptr;
   }
 
@@ -290,7 +303,11 @@ static PyObject *draw_func(PyObject * /*self*/, PyObject *args)
   blender::SpaceImage *b_space_image = static_cast<blender::SpaceImage *>(
       pylong_as_voidptr_typesafe(py_space_image));
 
+  /* Release GIL, this is required because draw() can indirectly cause
+   * a Python render_stats handler to be run, which can deadlock otherwise. */
+  Py_BEGIN_ALLOW_THREADS;
   session->draw(blender::id_cast<blender::bScreen &>(*b_screen), *b_space_image);
+  Py_END_ALLOW_THREADS;
 
   Py_RETURN_NONE;
 }
@@ -307,7 +324,13 @@ static PyObject *bake_func(PyObject * /*self*/, PyObject *args)
   int height;
 
   if (!PyArg_ParseTuple(args,
-                        "OOOsiii",
+                        "O" /* `session` */
+                        "O" /* `depsgraph` */
+                        "O" /* `object` */
+                        "s" /* `pass_type` */
+                        "i" /* `pass_filter` */
+                        "i" /* `width` */
+                        "i" /* `height` */,
                         &pysession,
                         &pydepsgraph,
                         &pyobject,
@@ -325,11 +348,9 @@ static PyObject *bake_func(PyObject * /*self*/, PyObject *args)
       PyLong_AsVoidPtr(pydepsgraph));
   blender::Object *b_object = static_cast<blender::Object *>(PyLong_AsVoidPtr(pyobject));
 
-  python_thread_state_save(&session->python_thread_state);
-
+  Py_BEGIN_ALLOW_THREADS;
   session->bake(*b_depsgraph, *b_object, pass_type, pass_filter, width, height);
-
-  python_thread_state_restore(&session->python_thread_state);
+  Py_END_ALLOW_THREADS;
 
   Py_RETURN_NONE;
 }
@@ -341,7 +362,16 @@ static PyObject *view_draw_func(PyObject * /*self*/, PyObject *args)
   PyObject *pyv3d;
   PyObject *pyrv3d;
 
-  if (!PyArg_ParseTuple(args, "OOOO", &pysession, &pygraph, &pyv3d, &pyrv3d)) {
+  if (!PyArg_ParseTuple(args,
+                        "O" /* `session` */
+                        "O" /* `graph` */
+                        "O" /* `v3d` */
+                        "O" /* `rv3d` */,
+                        &pysession,
+                        &pygraph,
+                        &pyv3d,
+                        &pyrv3d))
+  {
     return nullptr;
   }
 
@@ -352,8 +382,27 @@ static PyObject *view_draw_func(PyObject * /*self*/, PyObject *args)
     int viewport[4];
     blender::GPU_viewport_size_get_i(viewport);
 
+    Py_BEGIN_ALLOW_THREADS;
     session->view_draw(viewport[2], viewport[3]);
+    Py_END_ALLOW_THREADS;
   }
+
+  Py_RETURN_NONE;
+}
+
+static PyObject *view_pause_func(PyObject * /*self*/, PyObject *args)
+{
+  PyObject *pysession;
+  int pause;
+
+  if (!PyArg_ParseTuple(args, "Op", &pysession, &pause)) {
+    return nullptr;
+  }
+
+  BlenderSession *session = (BlenderSession *)PyLong_AsVoidPtr(pysession);
+  Py_BEGIN_ALLOW_THREADS;
+  session->view_pause(pause);
+  Py_END_ALLOW_THREADS;
 
   Py_RETURN_NONE;
 }
@@ -364,7 +413,14 @@ static PyObject *reset_func(PyObject * /*self*/, PyObject *args)
   PyObject *pydata;
   PyObject *pydepsgraph;
 
-  if (!PyArg_ParseTuple(args, "OOO", &pysession, &pydata, &pydepsgraph)) {
+  if (!PyArg_ParseTuple(args,
+                        "O" /* `session` */
+                        "O" /* `data` */
+                        "O" /* `depsgraph` */,
+                        &pysession,
+                        &pydata,
+                        &pydepsgraph))
+  {
     return nullptr;
   }
 
@@ -374,11 +430,9 @@ static PyObject *reset_func(PyObject * /*self*/, PyObject *args)
   blender::Depsgraph *b_depsgraph = static_cast<blender::Depsgraph *>(
       PyLong_AsVoidPtr(pydepsgraph));
 
-  python_thread_state_save(&session->python_thread_state);
-
+  Py_BEGIN_ALLOW_THREADS;
   session->reset_session(*b_data, *b_depsgraph);
-
-  python_thread_state_restore(&session->python_thread_state);
+  Py_END_ALLOW_THREADS;
 
   Py_RETURN_NONE;
 }
@@ -388,7 +442,12 @@ static PyObject *sync_func(PyObject * /*self*/, PyObject *args)
   PyObject *pysession;
   PyObject *pydepsgraph;
 
-  if (!PyArg_ParseTuple(args, "OO", &pysession, &pydepsgraph)) {
+  if (!PyArg_ParseTuple(args,
+                        "O" /* `session` */
+                        "O" /* `depsgraph` */,
+                        &pysession,
+                        &pydepsgraph))
+  {
     return nullptr;
   }
 
@@ -397,11 +456,9 @@ static PyObject *sync_func(PyObject * /*self*/, PyObject *args)
   blender::Depsgraph *b_depsgraph = static_cast<blender::Depsgraph *>(
       PyLong_AsVoidPtr(pydepsgraph));
 
-  python_thread_state_save(&session->python_thread_state);
-
+  Py_BEGIN_ALLOW_THREADS;
   session->synchronize(*b_depsgraph);
-
-  python_thread_state_restore(&session->python_thread_state);
+  Py_END_ALLOW_THREADS;
 
   Py_RETURN_NONE;
 }
@@ -409,7 +466,7 @@ static PyObject *sync_func(PyObject * /*self*/, PyObject *args)
 static PyObject *available_devices_func(PyObject * /*self*/, PyObject *args)
 {
   const char *type_name;
-  if (!PyArg_ParseTuple(args, "s", &type_name)) {
+  if (!PyArg_ParseTuple(args, "s" /* `type_name` */, &type_name)) {
     return nullptr;
   }
 
@@ -429,7 +486,7 @@ static PyObject *available_devices_func(PyObject * /*self*/, PyObject *args)
   for (size_t i = 0; i < devices.size(); i++) {
     const DeviceInfo &device = devices[i];
     const string type_name = Device::string_from_type(device.type);
-    PyObject *device_tuple = PyTuple_New(9);
+    PyObject *device_tuple = PyTuple_New(10);
     PyTuple_SET_ITEM(device_tuple, 0, pyunicode_from_string(device.description.c_str()));
     PyTuple_SET_ITEM(device_tuple, 1, pyunicode_from_string(type_name.c_str()));
     PyTuple_SET_ITEM(device_tuple, 2, pyunicode_from_string(device.id.c_str()));
@@ -440,6 +497,7 @@ static PyObject *available_devices_func(PyObject * /*self*/, PyObject *args)
     PyTuple_SET_ITEM(device_tuple, 6, PyBool_FromLong(device.denoisers & DENOISER_OPTIX));
     PyTuple_SET_ITEM(device_tuple, 7, PyBool_FromLong(device.has_execution_optimization));
     PyTuple_SET_ITEM(device_tuple, 8, PyBool_FromLong(device.meets_driver_requirement));
+    PyTuple_SET_ITEM(device_tuple, 9, PyBool_FromLong(device.denoisers & DENOISER_DLSS));
     PyTuple_SET_ITEM(ret, i, device_tuple);
   }
 
@@ -453,7 +511,12 @@ static PyObject *osl_compile_func(PyObject * /*self*/, PyObject *args)
   const char *inputfile = nullptr;
   const char *outputfile = nullptr;
 
-  if (!PyArg_ParseTuple(args, "ss", &inputfile, &outputfile)) {
+  if (!PyArg_ParseTuple(args,
+                        "s" /* `inputfile` */
+                        "s" /* `outputfile` */,
+                        &inputfile,
+                        &outputfile))
+  {
     return nullptr;
   }
 
@@ -513,7 +576,12 @@ static PyObject *denoise_func(PyObject * /*self*/, PyObject *args, PyObject *key
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    keywords,
-                                   "OOOO|O",
+                                   "O" /* `preferences` */
+                                   "O" /* `scene` */
+                                   "O" /* `view_layer` */
+                                   "O" /* `input` */
+                                   "|" /* Optional arguments. */
+                                   "O" /* `output` */,
                                    (char **)keyword_list,
                                    &pypreferences,
                                    &pyscene,
@@ -590,8 +658,13 @@ static PyObject *merge_func(PyObject * /*self*/, PyObject *args, PyObject *keywo
   PyObject *pyinput;
   PyObject *pyoutput = nullptr;
 
-  if (!PyArg_ParseTupleAndKeywords(
-          args, keywords, "OO", (char **)keyword_list, &pyinput, &pyoutput))
+  if (!PyArg_ParseTupleAndKeywords(args,
+                                   keywords,
+                                   "O" /* `input` */
+                                   "O" /* `output` */,
+                                   (char **)keyword_list,
+                                   &pyinput,
+                                   &pyoutput))
   {
     return nullptr;
   }
@@ -625,7 +698,7 @@ static PyObject *merge_func(PyObject * /*self*/, PyObject *args, PyObject *keywo
 static PyObject *debug_flags_update_func(PyObject * /*self*/, PyObject *args)
 {
   PyObject *pyscene;
-  if (!PyArg_ParseTuple(args, "O", &pyscene)) {
+  if (!PyArg_ParseTuple(args, "O" /* `scene` */, &pyscene)) {
     return nullptr;
   }
 
@@ -736,7 +809,11 @@ static PyObject *maketx_func(PyObject * /*self*/, PyObject *args, PyObject *keyw
 
   if (!PyArg_ParseTupleAndKeywords(args,
                                    keywords,
-                                   "s|sss",
+                                   "s" /* `filepath` */
+                                   "|" /* Optional arguments. */
+                                   "s" /* `colorspace` */
+                                   "s" /* `alpha_type` */
+                                   "s" /* `cache_dir` */,
                                    (char **)keyword_list,
                                    &filepath,
                                    &colorspace,
@@ -826,6 +903,7 @@ static PyMethodDef methods[] = {
     {"draw", draw_func, METH_VARARGS, ""},
     {"bake", bake_func, METH_VARARGS, ""},
     {"view_draw", view_draw_func, METH_VARARGS, ""},
+    {"view_pause", view_pause_func, METH_VARARGS, ""},
     {"sync", sync_func, METH_VARARGS, ""},
     {"reset", reset_func, METH_VARARGS, ""},
 #ifdef WITH_OSL
@@ -929,6 +1007,12 @@ void *blender::CCL_python_module_init()
   else {
     PyModule_AddObjectRef(mod, "with_openimagedenoise", Py_False);
   }
+
+#ifdef WITH_DLSS
+  PyModule_AddObjectRef(mod, "with_dlss", Py_True);
+#else
+  PyModule_AddObjectRef(mod, "with_dlss", Py_False);
+#endif
 
 #ifdef WITH_CYCLES_DEBUG
   PyModule_AddObjectRef(mod, "with_debug", Py_True);

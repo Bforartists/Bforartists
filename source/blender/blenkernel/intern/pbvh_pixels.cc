@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup bke
+ */
+
 #include <fmt/format.h>
 
 #include "BKE_attribute.hh"
@@ -92,11 +96,7 @@ static void extract_barycentric_pixels(Vector<BuildPixelRow> &build_rows,
                                        const uv_islands::UVIslandsMask::Tile &mask_tile,
                                        const int uv_island_index,
                                        const int uv_primitive_index,
-                                       const float2 uvs[3],
-                                       const int minx,
-                                       const int miny,
-                                       const int maxx,
-                                       const int maxy)
+                                       const float2 uvs[3])
 {
   const float inv_w = 1.0f / image_buffer->x;
   const float inv_h = 1.0f / image_buffer->y;
@@ -106,11 +106,11 @@ static void extract_barycentric_pixels(Vector<BuildPixelRow> &build_rows,
   const float mask_scale_x = mask_resolution_x * inv_w;
   const float mask_scale_y = mask_resolution_y * inv_h;
 
-  const float2 image_dimensions(image_buffer->x, image_buffer->y);
-  const TriRasterizer rasterizer(
-      uvs[0] * image_dimensions, uvs[1] * image_dimensions, uvs[2] * image_dimensions);
+  const int2 image_size(image_buffer->x, image_buffer->y);
+  const TriRasterizer rasterizer(uvs[0], uvs[1], uvs[2], image_size);
+  const Bounds<int2> bounds = rasterizer.bounds;
 
-  for (int y = miny; y < maxy; y++) {
+  for (int y = bounds.min.y; y < bounds.max.y; y++) {
     bool start_detected = false;
     BuildPixelRow pixel_row;
     pixel_row.uv_primitive_index = uv_primitive_index;
@@ -120,7 +120,7 @@ static void extract_barycentric_pixels(Vector<BuildPixelRow> &build_rows,
     const float fy = float(y) + 0.5f;
     const int mask_y = std::clamp(int(fy * mask_scale_y), 0, mask_resolution_y - 1);
 
-    for (x = minx; x < maxx; x++) {
+    for (x = bounds.min.x; x < bounds.max.x; x++) {
       const float fx = float(x) + 0.5f;
 
       /* The mask UV is always in range, since loop pixels are inside the clamped bounding box. */
@@ -145,33 +145,51 @@ static void extract_barycentric_pixels(Vector<BuildPixelRow> &build_rows,
   }
 }
 
-struct UVPrimitiveLookup {
-  struct Entry {
-    uv_islands::UVPrimitive *uv_primitive;
-    uint64_t uv_island_index;
+/** Triangle added by border extension. */
+struct BorderTriangle {
+  float2 uvs[3];
+  int uv_island_index;
+};
 
-    Entry(uv_islands::UVPrimitive *uv_primitive, uint64_t uv_island_index)
-        : uv_primitive(uv_primitive), uv_island_index(uv_island_index)
-    {
-    }
-  };
-
-  Vector<Vector<Entry>> lookup;
-
-  UVPrimitiveLookup(const uint64_t geom_primitive_len,
-                    MutableSpan<uv_islands::UVIsland> uv_islands)
-  {
-    lookup.append_n_times(Vector<Entry>(), geom_primitive_len);
-
-    uint64_t uv_island_index = 0;
-    for (uv_islands::UVIsland &uv_island : uv_islands) {
-      for (uv_islands::UVPrimitive &uv_primitive : uv_island.uv_primitives) {
-        lookup[uv_primitive.primitive_i].append_as(Entry(&uv_primitive, uv_island_index));
-      }
-      uv_island_index++;
+/**
+ * Build a map from each original triangle to the border extension triangles that
+ * duplicate it on the border of another island,
+ */
+static GroupedSpan<BorderTriangle> build_border_triangles(
+    const uv_islands::MeshData &mesh_data,
+    const int64_t geom_primitive_len,
+    MutableSpan<uv_islands::UVIsland> uv_islands,
+    Array<int> &r_offsets,
+    Array<BorderTriangle> &r_data)
+{
+  /* Count border extension triangles per original triangle. */
+  r_offsets = Array<int>(geom_primitive_len + 1, 0);
+  for (const uv_islands::UVIsland &uv_island : uv_islands) {
+    for (int64_t i = uv_island.num_original_primitives; i < uv_island.uv_primitives.size(); i++) {
+      r_offsets[uv_island.uv_primitives[i].primitive_i]++;
     }
   }
-};
+  const OffsetIndices<int> offsets = offset_indices::accumulate_counts_to_offsets(r_offsets);
+
+  /* Fill in the border triangles grouped by original triangle. */
+  r_data.reinitialize(offsets.total_size());
+  Array<int> current_offset(r_offsets.as_span().drop_back(1));
+  for (const int uv_island_index : uv_islands.index_range()) {
+    uv_islands::UVIsland &uv_island = uv_islands[uv_island_index];
+    for (int64_t i = uv_island.num_original_primitives; i < uv_island.uv_primitives.size(); i++) {
+      const uv_islands::UVPrimitive &uv_primitive = uv_island.uv_primitives[i];
+      BorderTriangle border_tri;
+      border_tri.uv_island_index = uv_island_index;
+      for (int k = 0; k < 3; k++) {
+        border_tri.uvs[k] =
+            uv_island.uv_verts[uv_primitive.get_uv_vert(uv_island, mesh_data, k)].uv;
+      }
+      r_data[current_offset[uv_primitive.primitive_i]++] = border_tri;
+    }
+  }
+
+  return GroupedSpan<BorderTriangle>(offsets, r_data);
+}
 
 static void build_pixel_row_runs(Vector<BuildPixelRow> &build_rows, UDIMTilePixels &tile_data)
 {
@@ -212,12 +230,32 @@ static void build_pixel_row_runs(Vector<BuildPixelRow> &build_rows, UDIMTilePixe
   tile_data.pixel_row_run_starts.append(n);
 }
 
+/**
+ * Iterate over all UV triangles, both original triangles and new ones added by border
+ * extension. Provides UVs and island index.
+ */
+template<typename Fn>
+inline void foreach_uv_triangle(const uv_islands::MeshData &mesh_data,
+                                const GroupedSpan<BorderTriangle> border_tris,
+                                const int tri,
+                                Fn &&fn)
+{
+  const int3 &corner_tri = mesh_data.corner_tris[tri];
+  const float2 uvs[3] = {mesh_data.uv_map[corner_tri[0]],
+                         mesh_data.uv_map[corner_tri[1]],
+                         mesh_data.uv_map[corner_tri[2]]};
+  fn(uvs, int(mesh_data.uv_island_ids[tri]));
+
+  for (const BorderTriangle &border_tri : border_tris[tri]) {
+    fn(border_tri.uvs, border_tri.uv_island_index);
+  }
+}
+
 static void do_encode_pixels(const uv_islands::MeshData &mesh_data,
-                             const Span<uv_islands::UVIsland> islands,
                              const uv_islands::UVIslandsMask &uv_masks,
-                             const UVPrimitiveLookup &uv_prim_lookup,
+                             const GroupedSpan<BorderTriangle> border_tris,
                              Image &image,
-                             ImageUser &image_user,
+                             const ImageUser &image_user,
                              MeshNode &node,
                              PixelNode &pixel_node)
 {
@@ -233,9 +271,6 @@ static void do_encode_pixels(const uv_islands::MeshData &mesh_data,
   tri_indices.reserve(node.faces().size() * 2);
   pixel_to_position.reserve(node.faces().size() * 2);
 
-  const Span<int3> corner_tris = mesh_data.corner_tris;
-  const Span<float2> uv_map = mesh_data.uv_map;
-
   /* For multiple UDIM tiles, compute which ones this node overlaps with. */
   const bool multi_tile = BLI_listbase_count(&image.tiles) > 1;
   Vector<int2, 8> node_tiles;
@@ -248,28 +283,28 @@ static void do_encode_pixels(const uv_islands::MeshData &mesh_data,
 
     for (const int face : node.faces()) {
       for (const int tri : bke::mesh::face_triangles_range(mesh_data.faces, face)) {
-        if (uv_prim_lookup.lookup[tri].is_empty()) {
-          continue;
-        }
-        float2 uv_min(FLT_MAX);
-        float2 uv_max(-FLT_MAX);
-        for (int i = 0; i < 3; i++) {
-          const float2 uv = uv_map[corner_tris[tri][i]];
-          uv_min = math::min(uv_min, uv);
-          uv_max = math::max(uv_max, uv);
-        }
-        /* Bound by UDIM tiles to guard against very large UV coordinates. */
-        const int2 tile_min = math::clamp(int2(math::floor(uv_min)), tiles_min, tiles_max);
-        const int2 tile_max = math::clamp(int2(math::floor(uv_max)), tiles_min, tiles_max);
-        for (int ty = tile_min.y; ty <= tile_max.y; ty++) {
-          for (int tx = tile_min.x; tx <= tile_max.x; tx++) {
-            node_tiles.append_non_duplicates(int2(tx, ty));
-          }
-        }
+        foreach_uv_triangle(
+            mesh_data, border_tris, tri, [&](const float2 uvs[3], const int /*island_index*/) {
+              float2 uv_min(FLT_MAX);
+              float2 uv_max(-FLT_MAX);
+              for (int i = 0; i < 3; i++) {
+                uv_min = math::min(uv_min, uvs[i]);
+                uv_max = math::max(uv_max, uvs[i]);
+              }
+              /* Bound by UDIM tiles to guard against very large UV coordinates. */
+              const int2 tile_min = math::clamp(int2(math::floor(uv_min)), tiles_min, tiles_max);
+              const int2 tile_max = math::clamp(int2(math::floor(uv_max)), tiles_min, tiles_max);
+              for (int ty = tile_min.y; ty <= tile_max.y; ty++) {
+                for (int tx = tile_min.x; tx <= tile_max.x; tx++) {
+                  node_tiles.append_non_duplicates(int2(tx, ty));
+                }
+              }
+            });
       }
     }
   }
 
+  ImageUser tile_user = image_user;
   for (ImageTile &tile : image.tiles) {
     image::ImageTileWrapper image_tile(&tile);
     const int2 tile_offset_i = image_tile.get_tile_offset();
@@ -287,8 +322,8 @@ static void do_encode_pixels(const uv_islands::MeshData &mesh_data,
       continue;
     }
 
-    image_user.tile = image_tile.get_tile_number();
-    ImBuf *image_buffer = BKE_image_acquire_ibuf(&image, &image_user, nullptr);
+    tile_user.tile = image_tile.get_tile_number();
+    ImBuf *image_buffer = BKE_image_acquire_ibuf(&image, &tile_user, nullptr);
     if (image_buffer == nullptr) {
       continue;
     }
@@ -301,48 +336,26 @@ static void do_encode_pixels(const uv_islands::MeshData &mesh_data,
 
     for (const int face : node.faces()) {
       for (const int tri : bke::mesh::face_triangles_range(mesh_data.faces, face)) {
-        for (const UVPrimitiveLookup::Entry &entry : uv_prim_lookup.lookup[tri]) {
-          const uv_islands::UVIsland &island = islands[entry.uv_island_index];
-          const uv_islands::UVPrimitive &uv_primitive = *entry.uv_primitive;
-          const float2 uvs[3] = {
-              island.uv_verts[uv_primitive.get_uv_vert(island, mesh_data, 0)].uv - tile_offset,
-              island.uv_verts[uv_primitive.get_uv_vert(island, mesh_data, 1)].uv - tile_offset,
-              island.uv_verts[uv_primitive.get_uv_vert(island, mesh_data, 2)].uv - tile_offset,
-          };
-          const float minv = clamp_f(std::min({uvs[0].y, uvs[1].y, uvs[2].y}), 0.0f, 1.0f);
-          const int miny = floor(minv * image_buffer->y);
-          const float maxv = clamp_f(std::max({uvs[0].y, uvs[1].y, uvs[2].y}), 0.0f, 1.0f);
-          const int maxy = min_ii(ceil(maxv * image_buffer->y), image_buffer->y);
-          const float minu = clamp_f(std::min({uvs[0].x, uvs[1].x, uvs[2].x}), 0.0f, 1.0f);
-          const int minx = floor(minu * image_buffer->x);
-          const float maxu = clamp_f(std::max({uvs[0].x, uvs[1].x, uvs[2].x}), 0.0f, 1.0f);
-          const int maxx = min_ii(ceil(maxu * image_buffer->x), image_buffer->x);
+        foreach_uv_triangle(
+            mesh_data, border_tris, tri, [&](const float2 tri_uvs[3], const int island_index) {
+              float2 uvs[3] = {
+                  tri_uvs[0] - tile_offset,
+                  tri_uvs[1] - tile_offset,
+                  tri_uvs[2] - tile_offset,
+              };
+              const int uv_prim_index = tri_indices.size();
+              const int64_t build_rows_num = build_rows.size();
+              extract_barycentric_pixels(
+                  build_rows, image_buffer, *mask_tile, island_index, uv_prim_index, uvs);
 
-          /* Skip primitives that don't overlap this tile. */
-          if (minx >= maxx || miny >= maxy) {
-            continue;
-          }
-
-          const int uv_prim_index = tri_indices.size();
-          const int64_t build_rows_num = build_rows.size();
-          extract_barycentric_pixels(build_rows,
-                                     image_buffer,
-                                     *mask_tile,
-                                     entry.uv_island_index,
-                                     uv_prim_index,
-                                     uvs,
-                                     minx,
-                                     miny,
-                                     maxx,
-                                     maxy);
-
-          /* Don't append primitive if no pixels where written to this tile. */
-          if (build_rows.size() == build_rows_num) {
-            continue;
-          }
-          tri_indices.append(tri);
-          pixel_to_position.append(calc_pixel_to_position_map(mesh_data, tri, uvs, inv_w, inv_h));
-        }
+              /* Don't append primitive if no pixels were written to this tile. */
+              if (build_rows.size() == build_rows_num) {
+                return;
+              }
+              tri_indices.append(tri);
+              pixel_to_position.append(
+                  calc_pixel_to_position_map(mesh_data, tri, uvs, inv_w, inv_h));
+            });
       }
     }
     BKE_image_release_ibuf(&image, image_buffer, nullptr);
@@ -398,7 +411,7 @@ static IndexMask find_nodes_to_update(Tree &pbvh, IndexMaskMemory &memory)
   return nodes_to_update;
 }
 
-static void apply_watertight_check(Tree &pbvh, Image &image, ImageUser &image_user)
+static void apply_watertight_check(Tree &pbvh, Image &image, const ImageUser &image_user)
 {
   ImageUser watertight = image_user;
   for (ImageTile &tile_data : image.tiles) {
@@ -455,7 +468,7 @@ static bool update_pixels(const Depsgraph &depsgraph,
                           const Object &object,
                           Tree &pbvh,
                           Image &image,
-                          ImageUser &image_user)
+                          const ImageUser &image_user)
 {
   IndexMaskMemory memory;
   const IndexMask nodes_to_update = find_nodes_to_update(pbvh, memory);
@@ -475,6 +488,9 @@ static bool update_pixels(const Depsgraph &depsgraph,
   uv_islands::MeshData mesh_data(mesh.faces(),
                                  mesh.corner_tris(),
                                  mesh.corner_verts(),
+                                 mesh.corner_edges(),
+                                 mesh.edges(),
+                                 mesh.vert_to_face_map(),
                                  uv_map,
                                  bke::pbvh::vert_positions_eval(depsgraph, object));
 
@@ -506,21 +522,18 @@ static bool update_pixels(const Depsgraph &depsgraph,
   Array<uv_islands::UVIsland> islands = uv_islands::build_uv_islands(
       mesh_data, tris_by_island, uv_masks);
 
-  UVPrimitiveLookup uv_primitive_lookup(mesh_data.corner_tris.size(), islands);
+  Array<int> border_tri_offsets;
+  Array<BorderTriangle> border_tri_data;
+  const GroupedSpan<BorderTriangle> border_tris = build_border_triangles(
+      mesh_data, mesh_data.corner_tris.size(), islands, border_tri_offsets, border_tri_data);
 
   MutableSpan<MeshNode> nodes = pbvh.nodes<MeshNode>();
   MutableSpan<PixelNode> pixel_nodes = pbvh.pixels_->nodes;
 
   nodes_to_update.foreach_index(
       [&](const int i) {
-        do_encode_pixels(mesh_data,
-                         islands,
-                         uv_masks,
-                         uv_primitive_lookup,
-                         image,
-                         image_user,
-                         nodes[i],
-                         pixel_nodes[i]);
+        do_encode_pixels(
+            mesh_data, uv_masks, border_tris, image, image_user, nodes[i], pixel_nodes[i]);
       },
       exec_mode::grain_size(1));
   if (USE_WATERTIGHT_CHECK) {
@@ -614,7 +627,10 @@ void collect_dirty_tiles(PixelNode &node, Vector<image::TileNumber> &r_dirty_til
 
 namespace bke::pbvh {
 
-void build_pixels(const Depsgraph &depsgraph, Object &object, Image &image, ImageUser &image_user)
+void build_pixels(const Depsgraph &depsgraph,
+                  Object &object,
+                  Image &image,
+                  const ImageUser &image_user)
 {
   PRF_scope(ProfileCategory::Editor);
   Tree &pbvh = *object::pbvh_get(object);

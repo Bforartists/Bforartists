@@ -289,11 +289,13 @@ class TOPBAR_MT_file(Menu):
 
         layout.separator()
 
-        layout.menu("TOPBAR_MT_file_import", icon="IMPORT")
-        layout.menu("TOPBAR_MT_file_export", icon="EXPORT")
-        row = layout.row()
-        row.operator("wm.collection_export_all", icon="EXPORT_COLLECTION")
-        row.enabled = context.view_layer.has_export_collections
+        layout.menu("TOPBAR_MT_file_project", icon='PROJECT')
+
+        layout.separator()
+
+        layout.menu("TOPBAR_MT_file_import", icon='IMPORT')
+        layout.menu("TOPBAR_MT_file_export", icon='EXPORT')
+        # BFA - collection export is in the file export submenu, at the top. Removed the duplicate top level entry.
 
         layout.separator()
 
@@ -335,7 +337,7 @@ class TOPBAR_MT_file_new(Menu):
 
         # Limit number of templates in splash screen, spill over into more menu.
         paths = TOPBAR_MT_file_new.app_template_paths()
-        splash_limit = 6
+        splash_limit = 7
 
         if use_splash:
             icon = "FILE_NEW"
@@ -440,6 +442,21 @@ class TOPBAR_MT_file_defaults(Menu):
             layout.operator("wm.read_factory_settings", icon="LOAD_FACTORY")
 
 
+class TOPBAR_MT_file_project(Menu):
+    bl_label = "Project"
+    bl_translation_context = i18n_contexts.editor_preferences
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("project.new_project", text="New Project...", icon='ADD')
+        layout.operator("project.open_blend_in_project", icon='FILE_FOLDER')
+
+        layout.separator()
+
+        layout.operator("screen.project_setup_show", text="Project Settings...", icon='PREFERENCES')
+
+
 # Include technical operators here which would otherwise have no way for users to access.
 class TOPBAR_MT_blender_system(Menu):
     bl_label = "System"
@@ -471,32 +488,53 @@ class TOPBAR_MT_file_import(Menu):
     bl_owner_use_filter = False
 
     def draw(self, _context):
+        FileHandler = bpy.types.FileHandler
         if bpy.app.build_options.alembic:
-            self.layout.operator("wm.alembic_import", text="Alembic (.abc)", icon="LOAD_ABC")
+            self.layout.operator(
+                "wm.alembic_import",
+                text=FileHandler.label_with_extensions("IO_FH_alembic"),
+                icon="LOAD_ABC",
+            )
 
         if bpy.app.build_options.usd:
             self.layout.operator(
                 "wm.usd_import",
-                text="Universal Scene Description (.usd*)",
+                text=FileHandler.label_with_extensions("IO_FH_usd"),
                 icon="LOAD_USD",
             )
 
         if bpy.app.build_options.io_gpencil:
             self.layout.operator(
                 "wm.grease_pencil_import_svg",
-                text="SVG as Grease Pencil",
+                text=FileHandler.label_with_extensions("IO_FH_grease_pencil_svg"),
                 icon="LOAD_SVG_GPENCIL",
             )
 
         if bpy.app.build_options.io_fbx:
-            self.layout.operator("wm.fbx_import", text="FBX (.fbx)", icon="LOAD_FBX")
+            self.layout.operator(
+                "wm.fbx_import",
+                text=FileHandler.label_with_extensions("IO_FH_fbx"),
+                icon="LOAD_FBX",
+            )
 
         if bpy.app.build_options.io_wavefront_obj:
-            self.layout.operator("wm.obj_import", text="Wavefront (.obj)", icon="LOAD_OBJ")
+            self.layout.operator(
+                "wm.obj_import",
+                text=FileHandler.label_with_extensions("IO_FH_obj"),
+                icon="LOAD_OBJ",
+            )
         if bpy.app.build_options.io_ply:
-            self.layout.operator("wm.ply_import", text="Stanford PLY (.ply)", icon="LOAD_PLY")
+            self.layout.operator(
+                "wm.ply_import",
+                text=FileHandler.label_with_extensions("IO_FH_ply"),
+                icon="LOAD_PLY",
+            )
         if bpy.app.build_options.io_stl:
-            self.layout.operator("wm.stl_import", text="STL (.stl)", icon="LOAD_STL")
+            self.layout.operator(
+                "wm.stl_import",
+                text=FileHandler.label_with_extensions("IO_FH_stl"),
+                icon="LOAD_STL",
+            )
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -504,13 +542,25 @@ class TOPBAR_MT_file_export(Menu):
     bl_label = "Export"
     bl_owner_use_filter = False
 
-    def draw(self, _context):
+    def draw(self, context):
+        FileHandler = bpy.types.FileHandler
+
+        row = self.layout.row()
+        row.operator("wm.collection_export_all", icon="EXPORT_COLLECTION")  # BFA - icon
+        row.enabled = context.view_layer.has_export_collections
+
+        self.layout.separator()
+
         if bpy.app.build_options.alembic:
-            self.layout.operator("wm.alembic_export", text="Alembic (.abc)", icon="SAVE_ABC")
+            self.layout.operator(
+                "wm.alembic_export",
+                text=FileHandler.label_with_extensions("IO_FH_alembic"),
+                icon="SAVE_ABC",
+            )
         if bpy.app.build_options.usd:
             self.layout.operator(
                 "wm.usd_export",
-                text="Universal Scene Description (.usd*)",
+                text=FileHandler.label_with_extensions("IO_FH_usd"),
                 icon="SAVE_USD",
             )
 
@@ -535,11 +585,23 @@ class TOPBAR_MT_file_export(Menu):
         #    self.layout.operator("wm.fbx_export", text="FBX (.fbx)", icon='SAVE_FBX')
 
         if bpy.app.build_options.io_wavefront_obj:
-            self.layout.operator("wm.obj_export", text="Wavefront (.obj)", icon="SAVE_OBJ")
+            self.layout.operator(
+                "wm.obj_export",
+                text=FileHandler.label_with_extensions("IO_FH_obj"),
+                icon="SAVE_OBJ",
+            )
         if bpy.app.build_options.io_ply:
-            self.layout.operator("wm.ply_export", text="Stanford PLY (.ply)", icon="SAVE_PLY")
+            self.layout.operator(
+                "wm.ply_export",
+                text=FileHandler.label_with_extensions("IO_FH_ply"),
+                icon="SAVE_PLY",
+            )
         if bpy.app.build_options.io_stl:
-            self.layout.operator("wm.stl_export", text="STL (.stl)", icon="SAVE_STL")
+            self.layout.operator(
+                "wm.stl_export",
+                text=FileHandler.label_with_extensions("IO_FH_stl"),
+                icon="SAVE_STL",
+            )
 
 
 class TOPBAR_MT_file_external_data(Menu):
@@ -749,10 +811,6 @@ class TOPBAR_MT_edit(Menu):
             del display_name
         else:
             layout.operator("wm.read_factory_settings", icon="LOAD_FACTORY")
-
-        layout.separator()
-
-        layout.operator("screen.project_setup_show", text="Project Setup", icon='PROJECT') # BFA - Moved up before preferences group
 
         layout.separator()
 
@@ -1022,31 +1080,12 @@ class TOPBAR_PT_name_marker(Panel):
     bl_ui_units_x = 14
 
     @staticmethod
-    def is_using_pose_markers(context):
-        sd = context.space_data
-        return (
-            sd.type == 'DOPESHEET_EDITOR' and sd.mode in {'ACTION', 'SHAPEKEY'} and
-            sd.show_pose_markers and context.active_action
-        )
-
-    @staticmethod
-    def is_using_sequencer(context):
-        sd = context.space_data
-        return sd.type == 'SEQUENCE_EDITOR'
-
-    @staticmethod
     def get_selected_marker(context):
-        if TOPBAR_PT_name_marker.is_using_pose_markers(context):
-            markers = context.active_action.pose_markers
-        elif TOPBAR_PT_name_marker.is_using_sequencer(context):
-            markers = context.sequencer_scene.timeline_markers
-        else:
-            markers = context.scene.timeline_markers
-
-        for marker in markers:
-            if marker.select:
-                return marker
-        return None
+        sd = context.space_data
+        if sd.type == 'SEQUENCE_EDITOR':
+            with context.temp_override(scene=context.sequencer_scene):
+                return context.selected_markers[0] if context.selected_markers else None
+        return context.selected_markers[0] if context.selected_markers else None
 
     @staticmethod
     def row_with_icon(layout, icon):
@@ -1076,7 +1115,7 @@ class TOPBAR_PT_name_marker(Panel):
         icon = "TIME"
         if marker.camera is not None:
             icon = "CAMERA_DATA"
-        elif self.is_using_pose_markers(context):
+        elif marker.id_data.id_type == 'ACTION':
             icon = "ARMATURE_DATA"
         row = self.row_with_icon(layout, icon)
         row.prop(marker, "name", text="")
@@ -1118,6 +1157,7 @@ classes = (
     TOPBAR_MT_file_new,
     TOPBAR_MT_file_recover,  # BFA - not used
     TOPBAR_MT_file_defaults,  # BFA - not used
+    TOPBAR_MT_file_project,
     TOPBAR_MT_templates_more,
     TOPBAR_MT_file_import,
     TOPBAR_MT_file_export,

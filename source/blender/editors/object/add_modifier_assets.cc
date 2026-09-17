@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup edobj
+ */
+
 #include "AS_asset_catalog.hh"
 #include "AS_asset_catalog_tree.hh"
 #include "AS_asset_library.hh"
@@ -120,7 +124,8 @@ static void catalog_assets_draw(const bContext *C, Menu *menu)
     }
     ensure_separator();
 
-    asset::draw_asset_menu_item(asset, "OBJECT_OT_modifier_add_node_group", layout, ICON_NODETREE); /*BFA*/
+    asset::draw_asset_menu_item(
+        asset, "OBJECT_OT_modifier_add_node_group", wm::OpCallContext::InvokeDefault, layout, ICON_NODETREE); /*BFA*/
   }
 
   catalog_item->foreach_child([&](const asset_system::AssetCatalogTreeItem &item) {
@@ -153,8 +158,7 @@ static void unassigned_assets_draw(const bContext *C, Menu *menu)
   ui::Layout &layout = *menu->layout;
   wmOperatorType *ot = WM_operatortype_find("OBJECT_OT_modifier_add_node_group", true);
   for (const asset_system::AssetRepresentation *asset : tree.unassigned_assets) {
-
-    asset::draw_asset_menu_item(asset, ot->idname, layout, ICON_NODETREE); /*BFA*/
+    asset::draw_asset_menu_item(asset, ot->idname, wm::OpCallContext::InvokeDefault, layout, ICON_NODETREE); /*BFA*/
   }
 
   bool first = true;
@@ -417,11 +421,17 @@ void object_modifier_add_asset_register()
   WM_operatortype_append(OBJECT_OT_modifier_add_node_group);
 }
 
-void ui_template_modifier_asset_menu_items(ui::Layout &layout,
+void ui_template_modifier_asset_menu_items(const bContext &C,
+                                           ui::Layout &layout,
                                            const StringRef catalog_path,
                                            const bool skip_essentials)
 {
   asset::AssetItemTree &tree = *get_static_item_tree();
+  tree = build_catalog_tree(C);
+  if (tree.catalogs.is_empty() && all_loading_finished()) {
+    return;
+  }
+
   const asset_system::AssetCatalogTreeItem *item = tree.catalogs.find_root_item(catalog_path);
   if (!item) {
     return;

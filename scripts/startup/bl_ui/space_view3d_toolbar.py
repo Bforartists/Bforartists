@@ -23,12 +23,15 @@ from bl_ui.properties_paint_common import (
     StrokePanel,
     SmoothStrokePanel,
     FalloffPanel,
+    ShapePanel,
     DisplayPanel,
     brush_texture_settings,
     brush_mask_texture_settings,
     brush_settings,
     brush_settings_advanced,
     draw_color_settings,
+    supports_shape_panel,
+    show_experimental_texture_paint,
 )
 from bl_ui.utils import PresetPanel
 
@@ -109,24 +112,6 @@ class VIEW3D_MT_brush_context_menu(Menu):
 class View3DPanel:
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-
-
-# **************** standard tool clusters ******************
-
-
-# Used by vertex & weight paint
-def draw_vpaint_symmetry(layout, obj):
-    mesh = obj.data
-
-    col = layout.column()
-    row = col.row(heading="Mirror", align=True)
-    row.prop(obj, "use_mesh_mirror_x", text="X", toggle=True)
-    row.prop(obj, "use_mesh_mirror_y", text="Y", toggle=True)
-    row.prop(obj, "use_mesh_mirror_z", text="Z", toggle=True)
-
-    col = layout.column()
-    col.active = not mesh.use_mirror_vertex_groups
-    col.prop(mesh, "radial_symmetry", text="Radial")
 
 
 # ********** default tools for object mode ****************
@@ -670,7 +655,7 @@ class VIEW3D_PT_slots_paint_canvas(SelectPaintSlotHelper, View3DPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        if not context.preferences.experimental.use_sculpt_texture_paint:
+        if not context.preferences.experimental.use_3d_texture_paint:
             return False
 
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
@@ -803,12 +788,72 @@ class VIEW3D_PT_mask(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
     bl_label = "Masking"
-    bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
-        pass
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
+
+        # BFA - Stencil Mask and Cavity Mask are drawn directly in this popover
+        # as checkbox toggles with the split label system, instead of being
+        # collapsible child panels. (Fixes double dropdown, issue #6470)
+
+        # Stencil Mask
+        brush = ipaint.brush
+        ob = context.active_object
+        if brush is not None and ob is not None:
+            row = layout.row()
+            split = row.split(factor=0.5)
+            split.prop(ipaint, "use_stencil_layer", text="Stencil Mask")
+            if ipaint.use_stencil_layer:
+                split.label(icon="DISCLOSURE_TRI_DOWN")
+            else:
+                split.label(icon="DISCLOSURE_TRI_RIGHT")
+
+            if ipaint.use_stencil_layer:
+                col = layout.column()
+                col.use_property_split = True
+                col.use_property_decorate = False
+                col.active = ipaint.use_stencil_layer
+
+                col.label(text="Stencil Image")
+                col.template_ID(ipaint, "stencil_image", new="image.new", open="image.open")
+
+                mesh = ob.data
+                stencil_text = mesh.uv_layer_stencil.name if mesh.uv_layer_stencil else ""
+
+                col.separator()
+
+                split = col.split()
+                colsub = split.column()
+                colsub.alignment = "RIGHT"
+                colsub.label(text="UV Layer")
+                split.column().menu("VIEW3D_MT_tools_projectpaint_stencil", text=stencil_text, translate=False)
+
+                col.separator()
+
+                row = col.row(align=True)
+                row.prop(ipaint, "stencil_color", text="Display Color")
+                row.prop(ipaint, "invert_stencil", text="", icon="IMAGE_ALPHA")
+
+        # Cavity Mask
+        layout.separator()
+
+        row = layout.row()
+        split = row.split(factor=0.5)
+        split.prop(ipaint, "use_cavity", text="Cavity Mask")
+        if ipaint.use_cavity:
+            split.label(icon="DISCLOSURE_TRI_DOWN")
+        else:
+            split.label(icon="DISCLOSURE_TRI_RIGHT")
+
+        if ipaint.use_cavity:
+            layout.template_curve_mapping(ipaint, "cavity_curve", brush=True)
 
 
+# BFA - Not used. Stencil Mask is now drawn directly in VIEW3D_PT_mask to avoid
+# the double dropdown from collapsible child panels. (issue #6470)
 class VIEW3D_PT_stencil_projectpaint(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "HEADER"
@@ -858,6 +903,32 @@ class VIEW3D_PT_stencil_projectpaint(Panel):
         row = col.row(align=True)
         row.prop(ipaint, "stencil_color", text="Display Color")
         row.prop(ipaint, "invert_stencil", text="", icon="IMAGE_ALPHA")
+
+
+# BFA - Not used. Cavity Mask is now drawn directly in VIEW3D_PT_mask to avoid
+# the double dropdown from collapsible child panels. (issue #6470)
+class VIEW3D_PT_tools_imagepaint_options_cavity(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "HEADER"
+    bl_label = "Cavity Mask"
+    bl_parent_id = "VIEW3D_PT_mask"
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
+
+        row = layout.row()
+        split = row.split(factor=0.5)
+        split.prop(ipaint, "use_cavity", text=self.bl_label if self.is_popover else "")
+        if ipaint.use_cavity:
+            split.label(icon="DISCLOSURE_TRI_DOWN")
+        else:
+            split.label(icon="DISCLOSURE_TRI_RIGHT")
+
+        if ipaint.use_cavity:
+            layout.template_curve_mapping(ipaint, "cavity_curve", brush=True)
 
 
 class VIEW3D_PT_tools_brush_display(Panel, View3DPaintBrushPanel, DisplayPanel):
@@ -976,52 +1047,45 @@ class VIEW3D_PT_tools_weight_gradient(Panel, View3DPaintPanel):
             )
 
 
+class VIEW3D_PT_tools_brush_shape(Panel, View3DPaintPanel, ShapePanel):
+    bl_context = ".paint_common"  # dot on purpose (access from topbar)
+    bl_parent_id = "VIEW3D_PT_tools_brush_settings"
+    bl_label = "Shape"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 11
+
+    @classmethod
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+        mode = cls.get_brush_mode(context)
+        return supports_shape_panel(mode)
+
+
 class VIEW3D_PT_tools_brush_falloff(Panel, View3DPaintPanel, FalloffPanel):
     bl_context = ".paint_common"  # dot on purpose (access from topbar)
     bl_parent_id = "VIEW3D_PT_tools_brush_settings"
     bl_label = "Falloff"
     bl_options = {"DEFAULT_CLOSED"}
 
-
-class VIEW3D_PT_tools_brush_falloff_frontface(View3DPaintPanel, Panel):
-    bl_context = ".imagepaint"  # dot on purpose (access from topbar)
-    bl_label = "Front-Face Falloff"
-    bl_parent_id = "VIEW3D_PT_tools_brush_falloff"
-    bl_options = {"DEFAULT_CLOSED"}
-
     @classmethod
     def poll(cls, context):
-        return context.weight_paint_object or context.vertex_paint_object
-
-    def draw_header(self, context):
-        settings = self.paint_settings_from_active_tool(context)
-        brush = settings.brush
-
-        self.layout.prop(brush, "use_frontface_falloff", text=self.bl_label if self.is_popover else "")
-
-    def draw(self, context):
-        settings = self.paint_settings_from_active_tool(context)
-        brush = settings.brush
-
-        layout = self.layout
-
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        row = layout.row()
-        row.active = brush.use_frontface_falloff
-        row.prop(brush, "falloff_angle", text="Angle")
+        if not super().poll(context):
+            return False
+        mode = cls.get_brush_mode(context)
+        return not supports_shape_panel(mode)
 
 
 class VIEW3D_PT_tools_brush_falloff_normal(View3DPaintPanel, Panel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Normal Falloff"
-    bl_parent_id = "VIEW3D_PT_tools_brush_falloff"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_parent_id = "VIEW3D_PT_tools_brush_shape"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
-        return context.image_paint_object
+        brush = context.tool_settings.image_paint.brush
+        return context.image_paint_object and not show_experimental_texture_paint(brush)
 
     def draw_header(self, context):
         tool_settings = context.tool_settings
@@ -1164,6 +1228,12 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         sculpt = tool_settings.sculpt
 
         col = layout.column(align=True)
+
+        col = layout.column(heading="Transform Only", align=True)
+        col.prop(tool_settings, "use_transform_data_pivot", text="Pivot")
+
+        layout.separator()
+
         col.label(text="Display")
 
         row = col.row()
@@ -1396,7 +1466,15 @@ class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
 
         layout.use_property_split = True
 
-        draw_vpaint_symmetry(layout, ob)
+        col = layout.column()
+        row = col.row(heading="Mirror", align=True)
+        row.prop(ob, "use_mesh_mirror_x", text="X", toggle=True)
+        row.prop(ob, "use_mesh_mirror_y", text="Y", toggle=True)
+        row.prop(ob, "use_mesh_mirror_z", text="Z", toggle=True)
+
+        col = layout.column()
+        col.active = not mesh.use_mirror_vertex_groups
+        col.prop(mesh, "radial_symmetry", text="Radial")
 
 
 class VIEW3D_PT_tools_weightpaint_symmetry_for_topbar(Panel):
@@ -1465,8 +1543,16 @@ class VIEW3D_PT_tools_vertexpaint_symmetry(Panel, View3DPaintPanel):
         layout.use_property_decorate = False
 
         ob = context.object
+        mesh = ob.data
 
-        draw_vpaint_symmetry(layout, ob)
+        col = layout.column()
+        row = col.row(heading="Mirror", align=True)
+        row.prop(ob, "use_mesh_mirror_x", text="X", toggle=True)
+        row.prop(ob, "use_mesh_mirror_y", text="Y", toggle=True)
+        row.prop(ob, "use_mesh_mirror_z", text="Z", toggle=True)
+
+        col = layout.column()
+        col.prop(mesh, "radial_symmetry", text="Radial")
 
 
 class VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar(Panel):
@@ -1519,21 +1605,38 @@ class VIEW3D_PT_tools_imagepaint_symmetry(Panel, View3DPaintPanel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        split = layout.split()
+        image_paint = context.tool_settings.image_paint
+        brush = image_paint.brush
 
-        col = split.column()
-        col.alignment = "RIGHT"
-        col.label(text="Mirror")
-
-        col = split.column()
-
-        row = col.row(align=True)
         ob = context.object
         mesh = ob.data
+
+        row = layout.row(align=True, heading="Mirror")
         row.prop(mesh, "use_mirror_x", text="X", toggle=True)
         row.prop(mesh, "use_mirror_y", text="Y", toggle=True)
         row.prop(mesh, "use_mirror_z", text="Z", toggle=True)
+
+        if show_experimental_texture_paint(brush):
+            row = layout.row(align=True, heading="Tiling")
+            row.prop(image_paint, "tile_x", text="X", toggle=True)
+            row.prop(image_paint, "tile_y", text="Y", toggle=True)
+            row.prop(image_paint, "tile_z", text="Z", toggle=True)
+
+            layout.prop(image_paint, "use_symmetry_feather", text="Feather")
+            layout.prop(mesh, "radial_symmetry", text="Radial")
+            layout.prop(image_paint, "tile_offset", text="Tile Offset")
+
+
+class VIEW3D_PT_tools_imagepaint_symmetry_for_topbar(Panel):
+    bl_space_type = 'TOPBAR'
+    bl_region_type = 'HEADER'
+    bl_label = "Symmetry"
+    bl_ui_units_x = 13
+
+    draw = VIEW3D_PT_tools_imagepaint_symmetry.draw
 
 
 class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
@@ -1555,42 +1658,18 @@ class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
         tool_settings = context.tool_settings
         ipaint = tool_settings.image_paint
 
-        layout.prop(ipaint, "seam_bleed")
-        layout.prop(ipaint, "dither", slider=True)
-
         col = layout.column()
-        col.use_property_split = False
-        col.prop(ipaint, "use_occlude")
-        col.prop(ipaint, "use_backface_culling", text="Backface Culling")
-
-
-class VIEW3D_PT_tools_imagepaint_options_cavity(Panel):
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "HEADER"
-    bl_label = "Cavity Mask"
-    bl_parent_id = "VIEW3D_PT_mask"
-    bl_options = {"DEFAULT_CLOSED"}
-
-    def draw_header(self, context):
-        tool_settings = context.tool_settings
-        ipaint = tool_settings.image_paint
-
-        row = self.layout.row()
-        split = row.split(factor=0.5)
-        split.prop(ipaint, "use_cavity", text=self.bl_label if self.is_popover else "")
-        if ipaint.use_cavity:
-            split.label(icon="DISCLOSURE_TRI_DOWN")
+        if show_experimental_texture_paint(ipaint.brush):
+            # TODO: Enable dither support
+            col.prop(ipaint, "dither", slider=True)
+            col.active = False
         else:
-            split.label(icon="DISCLOSURE_TRI_RIGHT")
+            col.prop(ipaint, "seam_bleed")
+            col.prop(ipaint, "dither", slider=True)
 
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        ipaint = tool_settings.image_paint
-
-        if ipaint.use_cavity:
-            layout.template_curve_mapping(ipaint, "cavity_curve", brush=True)
+            col.use_property_split = False  # BFA - float checkboxes left
+            col.prop(ipaint, "use_occlude")
+            col.prop(ipaint, "use_backface_culling", text="Backface Culling")
 
 
 class VIEW3D_PT_imagepaint_options(View3DPaintPanel):
@@ -1905,7 +1984,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_vertex_color(View3DPanel, Panel):
         brush = settings.brush
         use_unified_paint = context.object.mode != "PAINT_GREASE_PENCIL"
         ups = settings.unified_paint_settings
-        prop_owner = ups if use_unified_paint and ups.use_unified_color else brush
+        prop_owner = ups if use_unified_paint and brush.use_unified_color else brush
 
         col = layout.column()
 
@@ -1921,7 +2000,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_vertex_color(View3DPanel, Panel):
 
         sub_row.operator("paint.brush_colors_flip", icon="FILE_REFRESH", text="")
         if use_unified_paint:
-            sub_row.prop(ups, "use_unified_color", text="", icon="BRUSHES_ALL")
+            sub_row.prop(brush, "use_unified_color", text="", icon='BRUSHES_ALL')
 
 
 class VIEW3D_PT_tools_grease_pencil_brush_vertex_falloff(GreasePencilBrushFalloff, Panel, View3DPaintPanel):
@@ -2504,7 +2583,7 @@ class VIEW3D_PT_tools_grease_pencil_v3_brush_mixcolor(View3DPanel, Panel):
         gp_settings = brush.gpencil_settings
         use_unified_paint = context.object.mode != "PAINT_GREASE_PENCIL"
         ups = settings.unified_paint_settings
-        prop_owner = ups if use_unified_paint and ups.use_unified_color else brush
+        prop_owner = ups if use_unified_paint and brush.use_unified_color else brush
 
         row = layout.row()
         row.prop(settings, "color_mode", expand=True)
@@ -2646,8 +2725,8 @@ classes = (
     VIEW3D_PT_tools_mask_texture,
     VIEW3D_PT_tools_brush_stroke,
     VIEW3D_PT_tools_brush_stroke_smooth_stroke,
+    VIEW3D_PT_tools_brush_shape,
     VIEW3D_PT_tools_brush_falloff,
-    VIEW3D_PT_tools_brush_falloff_frontface,
     VIEW3D_PT_tools_brush_falloff_normal,
     VIEW3D_PT_tools_brush_display,
     VIEW3D_PT_tools_weight_gradient,
@@ -2671,10 +2750,11 @@ classes = (
     VIEW3D_PT_tools_vertexpaint_options,
 
     VIEW3D_PT_mask,
-    VIEW3D_PT_stencil_projectpaint,
-    VIEW3D_PT_tools_imagepaint_options_cavity,
+    VIEW3D_PT_stencil_projectpaint, # BFA - Not used (kept for merge compatibility, issue #6470)
+    VIEW3D_PT_tools_imagepaint_options_cavity, # BFA - Not used (kept for merge compatibility, issue #6470)
 
     VIEW3D_PT_tools_imagepaint_symmetry,
+    VIEW3D_PT_tools_imagepaint_symmetry_for_topbar,
     VIEW3D_PT_tools_imagepaint_options,
 
     VIEW3D_PT_tools_imagepaint_options_external,

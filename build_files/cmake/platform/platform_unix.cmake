@@ -90,7 +90,7 @@ if(DEFINED LIBDIR)
   # NOTE: Make sure "proper" compiled zlib comes first
   set(CMAKE_PREFIX_PATH ${LIBDIR}/zlib ${LIB_SUBDIRS})
 
-  include(platform_old_libs_update)
+  include("${CMAKE_CURRENT_LIST_DIR}/platform_old_libs_update.cmake")
 
   set(WITH_STATIC_LIBS ON)
   set(OPENEXR_ROOT_DIR ${LIBDIR}/openexr)
@@ -392,6 +392,8 @@ if(DEFINED LIBDIR)
     ${SYCL_ROOT_DIR}/lib/libur_*.so.*
   )
   list(FILTER _sycl_runtime_libraries EXCLUDE REGEX "\\.py$")
+  # Only bundle the v2 Level Zero adapter, not the legacy libur_adapter_level_zero.so (#159584).
+  list(FILTER _sycl_runtime_libraries EXCLUDE REGEX "ur_adapter_level_zero\\.so")
   list(APPEND PLATFORM_BUNDLED_LIBRARIES ${_sycl_runtime_libraries})
   unset(_sycl_runtime_libraries)
 endif()
@@ -458,7 +460,7 @@ if(DEFINED OpenColorIO_DIR)
 endif()
 add_bundled_libraries(opencolorio/lib)
 
-if(WITH_CYCLES AND WITH_CYCLES_EMBREE)
+if(WITH_EMBREE)
   find_package(Embree 4.0.0 REQUIRED)
 endif()
 add_bundled_libraries(embree/lib)
@@ -521,6 +523,7 @@ if(WITH_XR_OPENXR)
   find_package(XR_OpenXR_SDK)
   set_and_warn_library_found("OpenXR-SDK" XR_OPENXR_SDK_FOUND WITH_XR_OPENXR)
 endif()
+add_bundled_libraries(xr_openxr_sdk/lib)
 
 if(WITH_GMP)
   find_package_wrapper(GMP)
@@ -718,6 +721,15 @@ if(WITH_SYSTEM_AUDASPACE)
   find_package_wrapper(Audaspace)
   set(AUDASPACE_FOUND ${AUDASPACE_FOUND} AND ${AUDASPACE_C_FOUND})
   set_and_warn_library_found("External Audaspace" AUDASPACE_FOUND WITH_SYSTEM_AUDASPACE)
+endif()
+
+# Reading desktop settings (the light/dark theme preference) from the XDG desktop portal.
+# Only the headers are needed when `WITH_GHOST_DBUS_DYNLOAD` is enabled, `libdbus` itself is
+# then an optional runtime dependency.
+if(WITH_GHOST_DBUS)
+  find_package(PkgConfig)
+  pkg_check_modules(dbus dbus-1)
+  set_and_warn_library_found("dbus-1" dbus_FOUND WITH_GHOST_DBUS)
 endif()
 
 if(WITH_GHOST_WAYLAND)

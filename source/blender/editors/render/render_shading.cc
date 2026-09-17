@@ -27,7 +27,6 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_path_utils.hh"
-#include "BLI_string.hh"
 #include "BLI_string_utils.hh"
 #include "BLI_utildefines.hh"
 
@@ -80,6 +79,7 @@
 #endif
 
 #include "RNA_access.hh"
+#include "RNA_path.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -1087,7 +1087,7 @@ void SCENE_OT_view_layer_add(wmOperatorType *ot)
 static bool view_layer_remove_poll(bContext *C)
 {
   Scene *scene = CTX_data_scene(C);
-  return (scene->view_layers.first != scene->view_layers.last);
+  return (scene->view_layers.first() != scene->view_layers.last());
 }
 
 static wmOperatorStatus view_layer_remove_exec(bContext *C, wmOperator * /*op*/)
@@ -1557,7 +1557,7 @@ static wmOperatorStatus lightprobe_cache_bake_modal(bContext *C,
   Scene *scene = data->scene;
 
   /* No running bake, remove handler and pass through. */
-  if (0 == WM_jobs_test(CTX_wm_manager(C), scene, WM_JOB_TYPE_LIGHT_BAKE)) {
+  if (!WM_jobs_has_running(CTX_wm_manager(C), scene, WM_JOB_TYPE_LIGHT_BAKE)) {
     std::string report = data->report;
 
     MEM_delete(data);
@@ -2634,12 +2634,11 @@ void SCENE_OT_freestyle_stroke_material_create(wmOperatorType *ot)
 static wmOperatorStatus texture_slot_move_exec(bContext *C, wmOperator *op)
 {
   ID *id = CTX_data_pointer_get_type(C, "texture_slot", RNA_TextureSlot).owner_id;
-
   if (id) {
+    const DriverMap driver_map = BKE_animdata_build_driver_target_map(*CTX_data_main(C));
     MTex **mtex_ar, *mtexswap;
     short act;
     int type = RNA_enum_get(op->ptr, "type");
-    AnimData *adt = BKE_animdata_from_id(id);
 
     give_active_mtex(id, &mtex_ar, &act);
 
@@ -2649,36 +2648,24 @@ static wmOperatorStatus texture_slot_move_exec(bContext *C, wmOperator *op)
         mtex_ar[act] = mtex_ar[act - 1];
         mtex_ar[act - 1] = mtexswap;
 
-        BKE_animdata_fix_paths_rename(id,
-                                      adt,
-                                      nullptr,
-                                      "texture_slots",
-                                      nullptr,
-                                      nullptr,
-                                      act - 1,
-                                      -1,
-                                      /*verify_paths=*/false,
-                                      /*infix_is_name=*/true);
-        BKE_animdata_fix_paths_rename(id,
-                                      adt,
-                                      nullptr,
-                                      "texture_slots",
-                                      nullptr,
-                                      nullptr,
-                                      act,
-                                      act - 1,
-                                      /*verify_paths=*/false,
-                                      /*infix_is_name=*/true);
-        BKE_animdata_fix_paths_rename(id,
-                                      adt,
-                                      nullptr,
-                                      "texture_slots",
-                                      nullptr,
-                                      nullptr,
-                                      -1,
-                                      act,
-                                      /*verify_paths=*/false,
-                                      /*infix_is_name=*/true);
+        BKE_animdata_fix_paths(*id,
+                               "texture_slots",
+                               RNA_path_number_to_infix(act - 1),
+                               RNA_path_number_to_infix(-1),
+                               /*verify_paths=*/false,
+                               driver_map);
+        BKE_animdata_fix_paths(*id,
+                               "texture_slots",
+                               RNA_path_number_to_infix(act),
+                               RNA_path_number_to_infix(act - 1),
+                               /*verify_paths=*/false,
+                               driver_map);
+        BKE_animdata_fix_paths(*id,
+                               "texture_slots",
+                               RNA_path_number_to_infix(-1),
+                               RNA_path_number_to_infix(act),
+                               /*verify_paths=*/false,
+                               driver_map);
 
         set_active_mtex(id, act - 1);
       }
@@ -2689,36 +2676,24 @@ static wmOperatorStatus texture_slot_move_exec(bContext *C, wmOperator *op)
         mtex_ar[act] = mtex_ar[act + 1];
         mtex_ar[act + 1] = mtexswap;
 
-        BKE_animdata_fix_paths_rename(id,
-                                      adt,
-                                      nullptr,
-                                      "texture_slots",
-                                      nullptr,
-                                      nullptr,
-                                      act + 1,
-                                      -1,
-                                      /*verify_paths=*/false,
-                                      /*infix_is_name=*/true);
-        BKE_animdata_fix_paths_rename(id,
-                                      adt,
-                                      nullptr,
-                                      "texture_slots",
-                                      nullptr,
-                                      nullptr,
-                                      act,
-                                      act + 1,
-                                      /*verify_paths=*/false,
-                                      /*infix_is_name=*/true);
-        BKE_animdata_fix_paths_rename(id,
-                                      adt,
-                                      nullptr,
-                                      "texture_slots",
-                                      nullptr,
-                                      nullptr,
-                                      -1,
-                                      act,
-                                      /*verify_paths=*/false,
-                                      /*infix_is_name=*/true);
+        BKE_animdata_fix_paths(*id,
+                               "texture_slots",
+                               RNA_path_number_to_infix(act + 1),
+                               RNA_path_number_to_infix(-1),
+                               /*verify_paths=*/false,
+                               driver_map);
+        BKE_animdata_fix_paths(*id,
+                               "texture_slots",
+                               RNA_path_number_to_infix(act),
+                               RNA_path_number_to_infix(act + 1),
+                               /*verify_paths=*/false,
+                               driver_map);
+        BKE_animdata_fix_paths(*id,
+                               "texture_slots",
+                               RNA_path_number_to_infix(-1),
+                               RNA_path_number_to_infix(act),
+                               /*verify_paths=*/false,
+                               driver_map);
 
         set_active_mtex(id, act + 1);
       }
@@ -2841,7 +2816,7 @@ static int paste_material_nodetree_ids_relink_or_clear(LibraryIDLinkCallbackData
     if (cb_data->cb_flag & IDWALK_CB_USER) {
       id_us_min(*id_p);
     }
-    ListBaseT<ID> *lb = which_libbase(bmain, GS((*id_p)->name));
+    ListBaseT<ID> *lb = which_libbase(bmain, (*id_p)->id_type());
     ID *id_local = static_cast<ID *>(
         BLI_findstring(lb, (*id_p)->name + 2, offsetof(ID, name) + 2));
     *id_p = id_local;
@@ -2869,10 +2844,6 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
 
   /* Read copy buffer .blend file. */
   char filepath[FILE_MAX];
-  Main *temp_bmain = BKE_main_new();
-
-  STRNCPY(temp_bmain->filepath, BKE_main_blendfile_path_from_global());
-
   material_copybuffer_filepath_get(filepath, sizeof(filepath));
 
   /* NOTE(@ideasman42) The node tree might reference different kinds of ID types.
@@ -2892,9 +2863,9 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
        * Note that object data is *not* included. */
       FILTER_ID_OB);
 
-  if (!BKE_copybuffer_read(temp_bmain, filepath, op->reports, ntree_filter)) {
+  Main *temp_bmain = BKE_copybuffer_read(*bmain, filepath, op->reports, ntree_filter);
+  if (!temp_bmain) {
     BKE_report(op->reports, RPT_ERROR, "Internal clipboard is empty");
-    BKE_main_free(temp_bmain);
     return OPERATOR_CANCELLED;
   }
 
@@ -3040,7 +3011,7 @@ static void copy_mtex_copybuf(ID *id)
 {
   MTex **mtex = nullptr;
 
-  switch (GS(id->name)) {
+  switch (id->id_type()) {
     case ID_PA:
       mtex = &(
           (id_cast<ParticleSettings *>(id))->mtex[int((id_cast<ParticleSettings *>(id))->texact)]);
@@ -3070,7 +3041,7 @@ static void paste_mtex_copybuf(ID *id)
     return;
   }
 
-  switch (GS(id->name)) {
+  switch (id->id_type()) {
     case ID_PA:
       mtex = &(
           (id_cast<ParticleSettings *>(id))->mtex[int((id_cast<ParticleSettings *>(id))->texact)]);
@@ -3244,7 +3215,7 @@ static wmOperatorStatus material_open_node_editor_exec(bContext *C, wmOperator *
     return OPERATOR_CANCELLED;
   }
 
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   STRNCPY(snode->tree_idname, "ShaderNodeTree");
   snode->shaderfrom = SNODE_SHADER_OBJECT;
   snode->selected_node_group = nullptr;
@@ -3272,6 +3243,64 @@ void MATERIAL_OT_open_node_editor(wmOperatorType *ot)
   ot->description = "Open a Shader Editor window for this material";
   ot->exec = material_open_node_editor_exec;
   ot->poll = material_open_node_editor_poll;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - Open World Shader Editor Operator
+ * \{ */
+
+static wmOperatorStatus world_open_node_editor_exec(bContext *C, wmOperator *op)
+{
+  World *wo = static_cast<World *>(
+      CTX_data_pointer_get_type(C, "world", RNA_World).data);
+  if (!wo) {
+    BKE_report(op->reports, RPT_ERROR, "No active world");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!wo->nodetree) {
+    BKE_report(op->reports, RPT_ERROR, "World has no node tree");
+    return OPERATOR_CANCELLED;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_("Shader Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(op->reports, RPT_ERROR, "Failed to open Shader Editor");
+    return OPERATOR_CANCELLED;
+  }
+
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
+  STRNCPY(snode->tree_idname, "ShaderNodeTree");
+  snode->shaderfrom = SNODE_SHADER_WORLD;
+  snode->selected_node_group = nullptr;
+
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, wo->nodetree, &wo->id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  WM_event_add_notifier(C, NC_WORLD | ND_NODES, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static bool world_open_node_editor_poll(bContext *C)
+{
+  World *wo = static_cast<World *>(
+      CTX_data_pointer_get_type(C, "world", RNA_World).data);
+  return wo != nullptr && wo->nodetree != nullptr;
+}
+
+void WORLD_OT_open_node_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Shader Editor";
+  ot->idname = "WORLD_OT_open_node_editor";
+  ot->description = "Open a Shader Editor window for this world";
+  ot->exec = world_open_node_editor_exec;
+  ot->poll = world_open_node_editor_poll;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
@@ -3308,7 +3337,7 @@ static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *o
     return OPERATOR_CANCELLED;
   }
 
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   STRNCPY(snode->tree_idname, "TextureNodeTree");
   snode->texfrom = SNODE_TEX_BRUSH;
   snode->selected_node_group = nullptr;

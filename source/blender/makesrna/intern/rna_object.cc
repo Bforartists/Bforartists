@@ -31,6 +31,9 @@
 #include "WM_api.hh"
 #include "WM_types.hh"
 
+#include "ANIM_action.hh"
+#include "ANIM_action_iterators.hh"
+
 namespace blender {
 
 const EnumPropertyItem rna_enum_object_mode_items[] = {
@@ -350,6 +353,8 @@ const EnumPropertyItem rna_enum_object_axis_flip_items[] = {
 #  include "DEG_depsgraph.hh"
 #  include "DEG_depsgraph_build.hh"
 
+#  include "ED_anim_api.hh"
+#  include "ED_anim_transformable.hh"
 #  include "ED_curve.hh"
 #  include "ED_lattice.hh"
 #  include "ED_mesh.hh"
@@ -914,7 +919,7 @@ static PointerRNA rna_Object_active_vertex_group_get(PointerRNA *ptr)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   if (!BKE_object_supports_vertex_groups(ob)) {
-    return PointerRNA_NULL;
+    return {};
   }
 
   const ListBaseT<bDeformGroup> *defbase = BKE_object_defgroup_list(ob);
@@ -1226,6 +1231,19 @@ static void rna_Object_rotation_mode_set(PointerRNA *ptr, int value)
 
   /* finally, set the new rotation type */
   ob->rotmode = clamp_i(value, ROT_MODE_MIN, ROT_MODE_MAX);
+}
+
+static void rna_Object_convert_rotation_mode(Object *ob,
+                                             bContext *C,
+                                             const short rotation_mode,
+                                             const bool bake)
+{
+  if (rotation_mode < ROT_MODE_MIN || rotation_mode > ROT_MODE_MAX) {
+    return;
+  }
+
+  ed::AnimTransformable transformable(*ob);
+  convert_to_rotation_mode(*C, transformable, eRotationModes(rotation_mode), bake);
 }
 
 static void rna_Object_dimensions_get(PointerRNA *ptr, float *value)
@@ -1560,7 +1578,7 @@ static PointerRNA rna_Object_active_shape_key_get(PointerRNA *ptr)
   KeyBlock *kb;
 
   if (key == nullptr) {
-    return PointerRNA_NULL;
+    return {};
   }
 
   kb = static_cast<KeyBlock *>(BLI_findlink(&key->block, ob->shapenr - 1));
@@ -1580,7 +1598,7 @@ static PointerRNA rna_Object_collision_get(PointerRNA *ptr)
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
 
   if (ob->type != OB_MESH) {
-    return PointerRNA_NULL;
+    return {};
   }
 
   return RNA_pointer_create_with_parent(*ptr, RNA_CollisionSettings, ob->pd);
@@ -1784,7 +1802,7 @@ static void rna_Object_active_modifier_set(PointerRNA *ptr, PointerRNA value, Re
 
   WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, ob);
 
-  if (RNA_pointer_is_null(&value)) {
+  if (!value) {
     BKE_object_modifier_set_active(ob, nullptr);
     return;
   }
@@ -2491,6 +2509,7 @@ static void rna_def_object_constraints(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   /* return type */
   parm = RNA_def_pointer(func, "constraint", "Constraint", "", "New constraint");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Object_constraints_remove");
@@ -2527,6 +2546,7 @@ static void rna_def_object_constraints(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, ParameterFlag(0));
   /* return type */
   parm = RNA_def_pointer(func, "new_constraint", "Constraint", "", "New constraint");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 }
 
@@ -2726,6 +2746,7 @@ static void rna_def_object_vertex_groups(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_function_ui_description(func, "Add vertex group to object");
   RNA_def_string(func, "name", "Group", 0, "", "Vertex group name"); /* optional */
   parm = RNA_def_pointer(func, "group", "VertexGroup", "", "New vertex group");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Object_vgroup_remove");
@@ -3209,6 +3230,24 @@ static void rna_def_object(BlenderRNA *brna)
       /* This description is shared by other "rotation_mode" properties. */
       "The kind of rotation to apply, values from other rotation modes are not used");
   RNA_def_property_update(prop, NC_OBJECT | ND_TRANSFORM, "rna_Object_internal_update");
+
+  FunctionRNA *func = RNA_def_function(
+      srna, "convert_rotation_mode", "rna_Object_convert_rotation_mode");
+  RNA_def_function_ui_description(
+      func, "Changes the rotation mode and converts all animation to match that new mode");
+  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
+  PropertyRNA *parm = RNA_def_enum(func,
+                                   "rotation_mode",
+                                   rna_enum_object_rotation_mode_items,
+                                   ROT_MODE_XYZ,
+                                   "Rotation Mode",
+                                   "The rotation mode to change to");
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  parm = RNA_def_boolean(func,
+                         "bake",
+                         false,
+                         "Bake",
+                         "Insert a key on every frame to ensure interpolation is preserved");
 
   prop = RNA_def_property(srna, "scale", PROP_FLOAT, PROP_XYZ);
   RNA_def_property_flag(prop, PROP_PROPORTIONAL);

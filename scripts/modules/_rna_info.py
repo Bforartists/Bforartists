@@ -559,9 +559,9 @@ class InfoPropertyRNA:
         # Pointer and collection properties can be `None` unless
         # `is_never_none` is set.  For arguments, check `default_str`
         # since any parameter defaulting to `None` must accept it.
-        if as_arg and self.default_str == "None":
+        if as_arg and self.default_str == "None" and not self.is_never_none:
             type_str += " | None"
-        elif not (as_arg or as_ret) and self.type == "pointer" and not self.is_never_none:
+        elif not as_arg and self.type == "pointer" and not self.is_never_none:
             type_str += " | None"
 
         if not (as_arg or as_ret):

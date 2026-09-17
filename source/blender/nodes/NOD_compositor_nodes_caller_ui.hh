@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup nodes
+ */
+
 #pragma once
 
 namespace blender {
@@ -18,6 +22,8 @@ namespace nodes {
 void draw_compositor_nodes_modifier_ui(const bContext &C,
                                        PointerRNA *modifier_ptr,
                                        ui::Layout &layout);
+
+void draw_compositor_nodes_effect_ui(const bContext &C, PointerRNA *strip_ptr, ui::Layout &layout);
 
 }  // namespace nodes
 }  // namespace blender

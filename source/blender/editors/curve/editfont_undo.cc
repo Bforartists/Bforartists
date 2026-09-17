@@ -276,9 +276,7 @@ static void *undofont_from_editfont(UndoFont *uf, Curve *cu)
 #ifdef USE_ARRAY_STORE
   {
     const UndoFont *uf_ref = static_cast<const UndoFont *>(
-        uf_arraystore.local_links.last ?
-            (static_cast<LinkData *>(uf_arraystore.local_links.last))->data :
-            nullptr);
+        uf_arraystore.local_links.last() ? (uf_arraystore.local_links.last())->data : nullptr);
 
     /* Add ourselves. */
     BLI_addtail(&uf_arraystore.local_links, BLI_genericNodeN(uf));
@@ -418,7 +416,7 @@ void ED_font_undosys_type(UndoType *ut)
 
   ut->step_foreach_ID_ref = font_undosys_foreach_ID_ref;
 
-  ut->flags = UNDOTYPE_FLAG_NEED_CONTEXT_FOR_ENCODE;
+  ut->flags = UNDOTYPE_FLAG_NEED_CONTEXT_FOR_ENCODE | UNDOTYPE_FLAG_ENCODE_PRE_MEMFILE_SUPPORTED;
 
   ut->step_size = sizeof(FontUndoStep);
 }

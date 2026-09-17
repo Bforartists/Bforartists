@@ -1048,7 +1048,7 @@ static void acf_fcurve_name(bAnimListElem *ale, char *name)
       PointerRNA id_ptr = RNA_id_pointer_create(ale->id);
       PointerRNA ptr;
       PropertyRNA *prop;
-      if (!RNA_path_resolve_property(&id_ptr, fcurve->rna_path, &ptr, &prop)) {
+      if (!RNA_path_resolve_property(&id_ptr, fcurve->rna_path_parsed(), &ptr, &prop)) {
         fcurve->flag |= FCURVE_DISABLED;
       }
     }
@@ -1306,7 +1306,7 @@ static void acf_nla_curve_name(bAnimListElem *ale, char *name)
   PropertyRNA *prop;
 
   /* try to get RNA property that this shortened path (relative to the strip) refers to */
-  prop = RNA_struct_type_find_property(RNA_NlaStrip, fcu->rna_path);
+  prop = RNA_struct_type_find_property(RNA_NlaStrip, fcu->rna_path().c_str());
   if (prop) {
     /* "name" of this strip displays the UI identifier + the name of the NlaStrip */
     BLI_snprintf_utf8(
@@ -1314,7 +1314,8 @@ static void acf_nla_curve_name(bAnimListElem *ale, char *name)
   }
   else {
     /* unknown property... */
-    BLI_snprintf_utf8(name, ANIM_CHAN_NAME_SIZE, "%s[%d]", fcu->rna_path, fcu->array_index);
+    BLI_snprintf_utf8(
+        name, ANIM_CHAN_NAME_SIZE, "%s[%d]", fcu->rna_path().c_str(), fcu->array_index);
   }
 }
 
@@ -4358,8 +4359,8 @@ static void acf_nlatrack_color(bAnimContext * /*ac*/, bAnimListElem *ale, float 
   
   /* BFA - Check what type of strips are in this track and use appropriate theme. */
   int strip_type = NLASTRIP_TYPE_CLIP; /* Default to action clip */
-  if (nlt->strips.first) {
-    NlaStrip *first_strip = static_cast<NlaStrip *>(nlt->strips.first);
+  if (nlt->strips.first()) {
+    NlaStrip *first_strip = nlt->strips.first();
     strip_type = first_strip->type;
   }
 
@@ -5201,7 +5202,7 @@ static bool achannel_is_broken(const bAnimListElem *ale)
 
 float ANIM_UI_get_keyframe_scale_factor()
 {
-  bTheme *btheme = ui::theme::theme_get();
+  const bTheme *btheme = ui::theme::theme_get();
   const float yscale_fac = btheme->space_action.keyframe_scale_fac;
 
   /* clamp to avoid problems with uninitialized values... */
@@ -5598,7 +5599,7 @@ static bool anim_list_el_is_visibility_related_or_self(const bAnimListElem *targ
   }
 
   /* 2. Hierarchy Roots (Summary/Scene) - Always keep structure visible */
-  if (iter->type == ANIMTYPE_SUMMARY || iter->type == ANIMTYPE_SCENE) {
+  if (ELEM(iter->type, ANIMTYPE_SUMMARY, ANIMTYPE_SCENE)) {
     return true;
   }
 
@@ -5803,7 +5804,7 @@ static void achannel_setting_slider_cb(bContext *C, void *id_poin, void *fcu_poi
   flag = animrig::get_keyframing_flags(scene);
 
   /* try to resolve the path stored in the F-Curve */
-  if (RNA_path_resolve_property(&id_ptr, fcu->rna_path, &ptr, &prop)) {
+  if (RNA_path_resolve_property(&id_ptr, fcu->rna_path_parsed(), &ptr, &prop)) {
     /* set the special 'replace' flag if on a keyframe */
     if (animrig::fcurve_frame_has_keyframe(fcu, cfra)) {
       flag |= INSERTKEY_REPLACE;
@@ -6541,7 +6542,7 @@ void ANIM_channel_draw_widgets(const bContext *C,
 
           /* create RNA pointers */
           PointerRNA ptr = RNA_pointer_create_discrete(ale->id, RNA_NlaStrip, strip);
-          prop = RNA_struct_find_property(&ptr, fcu->rna_path);
+          prop = RNA_struct_find_property(&ptr, fcu->rna_path().c_str());
 
           /* create property slider */
           if (prop) {
@@ -6573,7 +6574,7 @@ void ANIM_channel_draw_widgets(const bContext *C,
         if (ale->type == ANIMTYPE_FCURVE) {
           FCurve *fcu = static_cast<FCurve *>(ale->data);
 
-          rna_path = fcu->rna_path;
+          rna_path = fcu->rna_path();
           array_index = fcu->array_index;
         }
         else if (ale->type == ANIMTYPE_SHAPEKEY) {

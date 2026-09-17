@@ -63,17 +63,35 @@ TEST_F(BMainAllIDsIteratorTest, basics)
   Object *ob_linked = BKE_id_new_in_lib<Object>(bmain, lib, "Object_linked");
   BKE_collection_object_add(bmain, coll, ob_linked);
 
-  Array<ID *> expected_ids = {&lib->id, &ob->id, &ob_linked->id, &coll->id};
+  Array<ID *> expected_ids_dependency_first = {&lib->id, &ob->id, &ob_linked->id, &coll->id};
+  Array<ID *> expected_ids_user_first = {&coll->id, &ob->id, &ob_linked->id, &lib->id};
 
   EXPECT_EQ(1, bmain->libraries.count());
   EXPECT_EQ(1, bmain->collections.count());
   EXPECT_EQ(2, bmain->objects.count());
 
   MainAllIDsIterator main_iter{*bmain};
+  MainAllIDsIterator main_iter_user_first{*bmain, false};
+  MainAllIDsIterator main_iter_dependency_first{*bmain, true};
   EXPECT_EQ(4, main_iter.size());
+  EXPECT_EQ(4, main_iter_dependency_first.size());
+  EXPECT_EQ(4, main_iter_user_first.size());
+
   int i = 0;
   for (ID &id_iter : main_iter) {
-    EXPECT_EQ(expected_ids[i], &id_iter);
+    EXPECT_EQ(expected_ids_user_first[i], &id_iter);
+    i++;
+  }
+  EXPECT_EQ(4, i);
+  i = 0;
+  for (ID &id_iter : main_iter_user_first) {
+    EXPECT_EQ(expected_ids_user_first[i], &id_iter);
+    i++;
+  }
+  EXPECT_EQ(4, i);
+  i = 0;
+  for (ID &id_iter : main_iter_dependency_first) {
+    EXPECT_EQ(expected_ids_dependency_first[i], &id_iter);
     i++;
   }
   EXPECT_EQ(4, i);
@@ -81,7 +99,19 @@ TEST_F(BMainAllIDsIteratorTest, basics)
   i = 4;
   for (ID &id_iter : main_iter.begin() | std::views::reverse) {
     i--;
-    EXPECT_EQ(expected_ids[i], &id_iter);
+    EXPECT_EQ(expected_ids_user_first[i], &id_iter);
+  }
+  EXPECT_EQ(0, i);
+  i = 4;
+  for (ID &id_iter : main_iter_user_first.begin() | std::views::reverse) {
+    i--;
+    EXPECT_EQ(expected_ids_user_first[i], &id_iter);
+  }
+  EXPECT_EQ(0, i);
+  i = 4;
+  for (ID &id_iter : main_iter_dependency_first.begin() | std::views::reverse) {
+    i--;
+    EXPECT_EQ(expected_ids_dependency_first[i], &id_iter);
   }
   EXPECT_EQ(0, i);
 }
@@ -170,7 +200,7 @@ TEST_F(BMainMergeTest, basics)
   /* `Coll_src_2` should have been remapped to using `Ob_src` in `bmain_dst`, instead of `Ob_src`
    * in `bmain_src`. */
   EXPECT_EQ(1, coll_2->gobject.count());
-  EXPECT_EQ(ob, static_cast<CollectionObject *>(coll_2->gobject.first)->ob);
+  EXPECT_EQ(ob, coll_2->gobject.first()->ob);
 
   Collection *coll_3;
   Object *ob_3;
@@ -196,7 +226,7 @@ TEST_F(BMainMergeTest, basics)
   /* `Coll_src_2` should not have been modified here (Ob_3 is not instantiated at all in
    * destination Main). */
   EXPECT_EQ(1, coll_2->gobject.count());
-  EXPECT_EQ(ob, static_cast<CollectionObject *>(coll_2->gobject.first)->ob);
+  EXPECT_EQ(ob, coll_2->gobject.first()->ob);
 }
 
 TEST_F(BMainMergeTest, linked_data)
@@ -246,8 +276,8 @@ TEST_F(BMainMergeTest, linked_data)
   EXPECT_EQ(2, bmain_dst->collections.count());
   EXPECT_EQ(1, bmain_dst->objects.count());
   EXPECT_EQ(1, bmain_dst->libraries.count());
-  EXPECT_EQ(ob_1, bmain_dst->objects.first);
-  EXPECT_EQ(lib_src_1, bmain_dst->libraries.first);
+  EXPECT_EQ(ob_1, bmain_dst->objects.first());
+  EXPECT_EQ(lib_src_1, bmain_dst->libraries.first());
   EXPECT_EQ(ob_1->id.lib, lib_src_1);
   EXPECT_EQ(3, reports.num_merged_ids);
   EXPECT_EQ(0, reports.num_unknown_ids);
@@ -280,9 +310,9 @@ TEST_F(BMainMergeTest, linked_data)
   EXPECT_EQ(3, bmain_dst->collections.count());
   EXPECT_EQ(3, bmain_dst->objects.count());
   EXPECT_EQ(1, bmain_dst->libraries.count());
-  EXPECT_EQ(ob_1, bmain_dst->objects.first);
-  EXPECT_EQ(ob_2_2, bmain_dst->objects.last);
-  EXPECT_EQ(lib_src_1, bmain_dst->libraries.first);
+  EXPECT_EQ(ob_1, bmain_dst->objects.first());
+  EXPECT_EQ(ob_2_2, bmain_dst->objects.last());
+  EXPECT_EQ(lib_src_1, bmain_dst->libraries.first());
   EXPECT_EQ(ob_1->id.lib, lib_src_1);
   EXPECT_EQ(ob_2->id.lib, lib_src_1);
   EXPECT_EQ(ob_2_2->id.lib, lib_src_1);
@@ -316,10 +346,10 @@ TEST_F(BMainMergeTest, linked_data)
   EXPECT_EQ(4, bmain_dst->collections.count());
   EXPECT_EQ(4, bmain_dst->objects.count());
   EXPECT_EQ(2, bmain_dst->libraries.count());
-  EXPECT_EQ(ob_1, bmain_dst->objects.first);
-  EXPECT_EQ(ob_3, bmain_dst->objects.last);
-  EXPECT_EQ(lib_src_3, bmain_dst->libraries.first);
-  EXPECT_EQ(lib_src_1, bmain_dst->libraries.last);
+  EXPECT_EQ(ob_1, bmain_dst->objects.first());
+  EXPECT_EQ(ob_3, bmain_dst->objects.last());
+  EXPECT_EQ(lib_src_3, bmain_dst->libraries.first());
+  EXPECT_EQ(lib_src_1, bmain_dst->libraries.last());
   EXPECT_EQ(ob_1->id.lib, lib_src_1);
   EXPECT_EQ(ob_2->id.lib, lib_src_1);
   EXPECT_EQ(ob_2_2->id.lib, lib_src_1);
@@ -356,8 +386,8 @@ TEST_F(BMainMergeTest, linked_data)
   EXPECT_EQ(4, bmain_dst->collections.count());
   EXPECT_EQ(4, bmain_dst->objects.count());
   EXPECT_EQ(2, bmain_dst->libraries.count());
-  EXPECT_EQ(lib_src_3, bmain_dst->libraries.first);
-  EXPECT_EQ(lib_src_1, bmain_dst->libraries.last);
+  EXPECT_EQ(lib_src_3, bmain_dst->libraries.first());
+  EXPECT_EQ(lib_src_1, bmain_dst->libraries.last());
   EXPECT_EQ(ob_1->id.lib, lib_src_1);
   EXPECT_EQ(ob_2->id.lib, lib_src_1);
   EXPECT_EQ(ob_2_2->id.lib, lib_src_1);

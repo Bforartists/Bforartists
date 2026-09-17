@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup spnode
+ */
+
 #include "DNA_space_types.h"
 
 #include "BLI_listbase.hh"
@@ -123,7 +127,7 @@ static int node_copy_local(bNodeTree &from_tree,
   for (bNodeLink &link : from_tree.links) {
     BLI_assert(link.tonode);
     BLI_assert(link.fromnode);
-    if (link.tonode->flag & NODE_SELECT && link.fromnode->flag & NODE_SELECT) {
+    if (link.tonode->is_selected() && link.fromnode->is_selected()) {
       if (!node_map.contains(link.tonode) || !node_map.contains(link.fromnode)) {
         /* If copying a node fails, skip copying their links. */
         continue;
@@ -211,7 +215,7 @@ static wmOperatorStatus node_clipboard_copy_exec(bContext *C, wmOperator *op)
     auto partial_write_dependencies_filter_cb = [](LibraryIDLinkCallbackData *cb_deps_data,
                                                    PartialWriteContext::IDAddOptions /*options*/) {
       ID *id_deps_src = *cb_deps_data->id_pointer;
-      const ID_Type id_type = GS((id_deps_src)->name);
+      const ID_Type id_type = id_deps_src->id_type();
       if (id_type == ID_SCE) {
         /* Note: Scenes referenced in the Render Layers node are cleared. At this stage, we
          * don't know if the target blender instance will have a scene with identical name, so
@@ -253,8 +257,6 @@ void NODE_OT_clipboard_copy(wmOperatorType *ot)
 
   ot->exec = node_clipboard_copy_exec;
   ot->poll = ED_operator_node_active;
-
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
 /** \} */
@@ -274,13 +276,13 @@ static StringRef scene_lib_filepath(const Scene &scene)
 static wmOperatorStatus node_clipboard_paste_exec(bContext *C, wmOperator *op)
 {
   SpaceNode *snode = CTX_wm_space_node(C);
+  Main *bmain_dst = CTX_data_main(C);
 
   char filepath[FILE_MAX];
   node_copybuffer_filepath_get(filepath, sizeof(filepath));
-  Main *bmain_src = BKE_main_new();
-  if (!BKE_copybuffer_read(bmain_src, filepath, op->reports, FILTER_ID_NT)) {
+  Main *bmain_src = BKE_copybuffer_read(*bmain_dst, filepath, op->reports, FILTER_ID_NT);
+  if (!bmain_src) {
     BKE_report(op->reports, RPT_ERROR, "No data to paste");
-    BKE_main_free(bmain_src);
     return OPERATOR_CANCELLED;
   }
 
@@ -288,7 +290,6 @@ static wmOperatorStatus node_clipboard_paste_exec(bContext *C, wmOperator *op)
 
   /* We don't want to paste scenes referenced by the Render Layers node if they don't exist in the
    * destination bmain. */
-  Main *bmain_dst = CTX_data_main(C);
   Set<std::pair<StringRef, StringRef>> dst_scenes;
   for (Scene &scene : bmain_dst->scenes) {
     /* Packed scenes are currently not needed so they are skipped.

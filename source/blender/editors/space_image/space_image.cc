@@ -40,6 +40,7 @@
 #include "ED_image.hh"
 #include "ED_mask.hh"
 #include "ED_node.hh"
+#include "ED_paint.hh"
 #include "ED_render.hh"
 #include "ED_screen.hh"
 #include "ED_space_api.hh"
@@ -62,7 +63,7 @@
 #include "image_intern.hh"
 
 #define LISTBASE_FOREACH(type, var, list) \
-  for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
+  for (type var = (type)((list)->first_); var != nullptr; var = (type)(((Link *)(var))->next))
 
 namespace blender {
 
@@ -70,7 +71,7 @@ namespace blender {
 
 static void image_scopes_tag_refresh(ScrArea *area)
 {
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
 
   /* only while histogram is visible */
   for (ARegion &region : area->regionbase) {
@@ -286,7 +287,7 @@ static void image_dropboxes() {}
 static void image_refresh(const bContext *C, ScrArea *area)
 {
   Scene *scene = CTX_data_scene(C);
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
   Image *ima;
 
   ima = ED_space_image(sima);
@@ -298,7 +299,7 @@ static void image_listener(const wmSpaceTypeListenerParams *params)
   wmWindow *win = params->window;
   ScrArea *area = params->area;
   const wmNotifier *wmn = params->notifier;
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
 
   /* context changes */
   switch (wmn->category) {
@@ -612,6 +613,20 @@ static void IMAGE_GGT_compositor_split(wmGizmoGroupType *gzgt)
   gzgt->refresh = nodes::gizmos::split_refresh;
 }
 
+static void IMAGE_GGT_compositor_translate(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "Translate Widget";
+  gzgt->idname = "IMAGE_GGT_compositor_translate";
+
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT;
+
+  gzgt->poll = nodes::gizmos::translate_poll_space_image;
+  gzgt->setup = nodes::gizmos::translate_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->draw_prepare = nodes::gizmos::bbox_draw_prepare_space_image;
+  gzgt->refresh = nodes::gizmos::translate_refresh;
+}
+
 static void image_widgets()
 {
   const wmGizmoMapType_Params params{SPACE_IMAGE, RGN_TYPE_WINDOW};
@@ -630,6 +645,7 @@ static void image_widgets()
   WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_corner_pin);
   WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_ellipse_mask);
   WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_split);
+  WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_translate);
 }
 
 /************************** main region ***************************/
@@ -818,7 +834,7 @@ static void image_main_region_draw(const bContext *C, ARegion *region)
     int viewer_size_x, viewer_size_y;
     ED_space_image_get_size(sima, &viewer_size_x, &viewer_size_y);
 
-    ED_region_image_overlay_info_text_draw(
+    ED_region_overlay_info_text_draw(
         render_size_x, render_size_y, viewer_size_x, viewer_size_y, xoffset, yoffset);
   }
 
@@ -906,7 +922,7 @@ static void image_main_region_listener(const wmRegionListenerParams *params)
       break;
     case NC_MATERIAL:
       if (wmn->data == ND_SHADING_LINKS) {
-        SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+        SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
 
         if (sima->iuser.scene &&
             (sima->iuser.scene->toolsettings->uv_flag & UV_FLAG_SHOW_SAME_IMAGE))
@@ -947,12 +963,12 @@ static void image_buttons_region_init(wmWindowManager *wm, ARegion *region)
   WM_event_add_keymap_handler(&region->runtime->handlers, keymap);
 }
 
-static void image_buttons_region_layout(const bContext *C, ARegion *region)
+std::array<const char *, 4> ED_image_buttons_contexts(const bContext *C)
 {
   const enum eContextObjectMode mode = CTX_data_mode_enum(C);
-  const char *contexts_base[3] = {nullptr};
+  std::array<const char *, 4> contexts_base = {nullptr};
 
-  const char **contexts = contexts_base;
+  const char **contexts = contexts_base.data();
 
   SpaceImage *sima = CTX_wm_space_image(C);
   switch (sima->mode) {
@@ -969,12 +985,18 @@ static void image_buttons_region_layout(const bContext *C, ARegion *region)
       }
       break;
   }
+  return contexts_base;
+}
+
+static void image_buttons_region_layout(const bContext *C, ARegion *region)
+{
+  std::array<const char *, 4> contexts = ED_image_buttons_contexts(C);
 
   ED_region_panels_layout_ex(C,
                              region,
                              &region->runtime->type->paneltypes,
                              wm::OpCallContext::InvokeRegionWin,
-                             contexts_base,
+                             contexts.data(),
                              nullptr);
 }
 
@@ -1117,7 +1139,7 @@ static void image_tools_region_listener(const wmRegionListenerParams *params)
 static void image_tools_header_region_draw(const bContext *C, ARegion *region)
 {
   ScrArea *area = CTX_wm_area(C);
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
 
   image_user_refresh_scene(C, sima);
 
@@ -1140,7 +1162,7 @@ static void image_header_region_init(wmWindowManager * /*wm*/, ARegion *region)
 static void image_header_region_draw(const bContext *C, ARegion *region)
 {
   ScrArea *area = CTX_wm_area(C);
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
 
   image_user_refresh_scene(C, sima);
 
@@ -1236,13 +1258,13 @@ static void image_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data)
  */
 static int image_space_subtype_get(ScrArea *area)
 {
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
   return sima->mode == SI_MODE_UV ? SI_MODE_UV : SI_MODE_VIEW;
 }
 
 static void image_space_subtype_set(ScrArea *area, int value)
 {
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
   if (value == SI_MODE_UV) {
     if (sima->mode != SI_MODE_UV) {
       sima->mode_prev = sima->mode;
@@ -1263,7 +1285,7 @@ static void image_space_subtype_item_extend(bContext * /*C*/,
 
 static StringRefNull image_space_name_get(const ScrArea *area)
 {
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
   int index = RNA_enum_from_value(rna_enum_space_image_mode_items, sima->mode);
   if (index < 0) {
     index = SI_MODE_VIEW;
@@ -1274,7 +1296,7 @@ static StringRefNull image_space_name_get(const ScrArea *area)
 
 static int image_space_icon_get(const ScrArea *area)
 {
-  SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+  SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
   int index = RNA_enum_from_value(rna_enum_space_image_mode_items, sima->mode);
   if (index < 0) {
     index = SI_MODE_VIEW;
@@ -1357,6 +1379,7 @@ void ED_spacetype_image()
   /* regions: list-view/buttons/scopes */
   art = MEM_new_zeroed<ARegionType>("spacetype image region");
   art->regionid = RGN_TYPE_UI;
+  art->flag = ARegionTypeFlag::UsePanelCategoriesSearch;
   art->prefsizex = UI_SIDEBAR_PANEL_WIDTH;
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
   art->listener = image_buttons_region_listener;

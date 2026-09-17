@@ -869,7 +869,7 @@ static void smooth_panel_draw(const bContext *C, Panel *panel)
   layout.use_property_decorate_set(false);
 
   if (fcm->flag & FMODIFIER_FLAG_DISABLED) {
-    layout.label("Modifier must be first in the stack.", ICON_STATUS_ERROR);
+    layout.label_multiline("Modifier must be first in the stack.", ICON_STATUS_ERROR);
   }
 
   ui::Layout &col = layout.column(false);
@@ -923,7 +923,7 @@ void ANIM_fmodifier_panels(const bContext *C,
   }
   else {
     /* Assuming there's only one group of instanced panels, update the custom data pointers. */
-    Panel *panel = static_cast<Panel *>(region->panels.first);
+    Panel *panel = region->panels.first();
     for (FModifier &fcm : *fmodifiers) {
 
       /* Move to the next instanced panel corresponding to the next modifier. */
@@ -987,7 +987,7 @@ bool ANIM_fmodifiers_copy_to_buf(ListBaseT<FModifier> *modifiers, bool active)
   bool ok = true;
 
   /* sanity checks */
-  if (ELEM(nullptr, modifiers, modifiers->first)) {
+  if (ELEM(nullptr, modifiers, modifiers->first())) {
     return false;
   }
 

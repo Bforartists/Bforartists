@@ -21,6 +21,8 @@ add_library(bf_intern_draco_bridge SHARED "${SRC}")
 blender_link_libraries(bf_intern_draco_bridge "${LIB}")
 blender_source_group(bf_intern_draco_bridge "${SRC}")
 
+# Installed by `source/creator/CMakeLists.txt`, which also sets the RPATH.
+# Keep in sync with `intern/meshoptimizer_bridge/CMakeLists.txt`.
 if(APPLE)
   # On macOS, prevent the draco library (already present in the application bundle) from being wrongly copied into the
   # Xcode archive used for application distribution, which pollutes the archive and prevents it from being properly

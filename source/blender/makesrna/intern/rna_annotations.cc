@@ -11,6 +11,7 @@
 
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
+#include "RNA_path.hh"
 
 #include "rna_internal.hh"
 
@@ -30,6 +31,7 @@
 #  include "BLI_string_utils.hh"
 
 #  include "BKE_animsys.hh"
+#  include "BKE_global.hh"
 #  include "BKE_gpencil_geom_legacy.h"
 #  include "BKE_gpencil_legacy.h"
 #  include "BKE_icons.hh"
@@ -171,7 +173,14 @@ static void rna_annotation_layer_info_set(PointerRNA *ptr, const char *value)
       &gpd->layers, gpl, DATA_("GP_Layer"), '.', offsetof(bGPDlayer, info), sizeof(gpl->info));
 
   /* now fix animation paths */
-  BKE_animdata_fix_paths_rename_all(&gpd->id, "layers", oldname, gpl->info);
+  if (ptr->owner_id) {
+    BKE_animdata_fix_paths(*ptr->owner_id,
+                           "layers",
+                           RNA_path_name_to_infix(oldname),
+                           RNA_path_name_to_infix(gpl->info),
+                           /*verify_paths=*/true,
+                           *G_MAIN);
+  }
 
   /* Fix mask layers. */
   for (bGPDlayer &gpl_ : gpd->layers) {
@@ -231,7 +240,7 @@ static const EnumPropertyItem *rna_annotation_active_layer_itemf(bContext *C,
   }
 
   /* Existing layers */
-  for (gpl = static_cast<bGPDlayer *>(gpd->layers.first), i = 0; gpl; gpl = gpl->next, i++) {
+  for (gpl = gpd->layers.first(), i = 0; gpl; gpl = gpl->next, i++) {
     item_tmp.identifier = gpl->info;
     item_tmp.name = gpl->info;
     item_tmp.value = i;
@@ -393,6 +402,7 @@ static void rna_def_annotation_strokes_api(BlenderRNA *brna, PropertyRNA *cprop)
   func = RNA_def_function(srna, "new", "rna_annotation_stroke_new");
   RNA_def_function_ui_description(func, "Add a new annotation stroke");
   parm = RNA_def_pointer(func, "stroke", "AnnotationStroke", "", "The newly created stroke");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_annotation_stroke_remove");
@@ -554,6 +564,7 @@ static void rna_def_annotation_frames_api(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   RNA_def_boolean(func, "active", false, "Active", "");
   parm = RNA_def_pointer(func, "frame", "AnnotationFrame", "", "The newly created frame");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_annotation_frame_remove");
@@ -568,6 +579,7 @@ static void rna_def_annotation_frames_api(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_pointer(func, "source", "AnnotationFrame", "Source", "The source frame");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
   parm = RNA_def_pointer(func, "copy", "AnnotationFrame", "", "The newly copied frame");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 }
 
@@ -731,6 +743,7 @@ static void rna_def_annotation_layers_api(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_boolean(
       func, "set_active", true, "Set Active", "Set the newly created layer to the active layer");
   parm = RNA_def_pointer(func, "layer", "AnnotationLayer", "", "The newly created layer");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_annotation_layer_remove");

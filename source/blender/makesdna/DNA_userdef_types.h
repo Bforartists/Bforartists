@@ -10,6 +10,7 @@
 
 #include "BLI_enum_flags.hh"
 #include "BLI_math_constants.hh"
+#include "BLI_uuid.hh"
 
 #include "DNA_ID.h"
 #include "DNA_anim_enums.h"
@@ -99,7 +100,7 @@ enum eUserPref_PrefFlag : char {
 };
 ENUM_OPERATORS(eUserPref_PrefFlag)
 
-/* Helper macro for checking frame clamping */
+/** Helper macro for checking frame clamping. */
 #define FRAMENUMBER_MIN_CLAMP(cfra) \
   { \
     if ((U.flag & USER_NONEGFRAMES) && (cfra < 0)) { \
@@ -201,7 +202,7 @@ ENUM_OPERATORS(eUserpref_UI_Flag2)
 
 /** #UserDef.gpu_flag */
 enum eUserpref_GPU_Flag : char {
-  USER_GPU_FLAG_UNUSED_0 = (1 << 0), /* Unused. To be removed. */
+  USER_GPU_FLAG_WORKBENCH_RT_SHADOWS = (1 << 0),
   USER_GPU_FLAG_NO_EDIT_MODE_SMOOTH_WIRE = (1 << 1),
   USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE = (1 << 2),
   USER_GPU_FLAG_SUBDIVISION_EVALUATION = (1 << 3),
@@ -572,6 +573,7 @@ enum eUserpref_SeqProxySetup : short {
 enum eUserpref_SeqEditorFlags : int {
   USER_SEQ_ED_UNUSED_0 = (1 << 0), /* Dirty. */
   USER_SEQ_ED_CONNECT_STRIPS_BY_DEFAULT = (1 << 1),
+  USER_SEQ_ED_CLAMP_STRIPS_BY_DEFAULT = (1 << 2),
 };
 ENUM_OPERATORS(eUserpref_SeqEditorFlags)
 
@@ -677,13 +679,41 @@ struct bUserAssetLibrary {
   struct bUserAssetLibrary *next = nullptr, *prev = nullptr;
 
   char name[/*MAX_NAME*/ 64] = "";
-  /** The path on disk for this asset library. For remote libraries
+  /**
+   * The path on disk for this asset library. For remote libraries
    * (#ASSET_LIBRARY_USE_REMOTE_URL), this is the download cache directory, where already
-   * downloaded assets will be placed. */
+   * downloaded assets will be placed.
+   */
   char dirpath[/*FILE_MAX*/ 1024] = "";
-  /** Only for remote asset libraries (#ASSET_LIBRARY_USE_REMOTE_URL is set). Update using
-   * #BKE_preferences_remote_asset_library_url_set() only. */
+  /**
+   * The "resolved" dirpath. This is the version of dirpath that has had variable expansion done
+   * on it and has normalized the path string and converted the directory separator to use the OS
+   * native version. This should always be used when looking for the actual asset library on disk.
+   */
+  char resolved_dirpath[/*FILE_MAX*/ 1024] = "";
+  /**
+   * Only for remote asset libraries (#ASSET_LIBRARY_USE_REMOTE_URL is set). Update using
+   * #BKE_preferences_remote_asset_library_url_set() only.
+   */
   char remote_url[/*FILE_MAX*/ 1024];
+  /**
+   * Secret access token for remote repositories (allocated).
+   * Only use when #ASSET_LIBRARY_USE_AUTH_TOKEN is set. Update using
+   * #BKE_preferences_remote_asset_library_auth_token_set() only.
+   */
+  char *auth_token = nullptr;
+  /**
+   * The UUID of the asset library. This is used to make deduplication possible when using the
+   * same asset library from different computers.
+   */
+  bUUID uuid;
+  /**
+   * If the asset library was created with an invalid UUID string, it will be stored here.
+   * The library will be disabled and we will notify the user that it has an invalid UUID.
+   * We store the invalid UUID string so that we don't introduce any data loss when saving the
+   * UUIDs to files. (If it is invalid it is up to the end user to fix it.
+   */
+  char *invalid_uuid = nullptr;
 
   short import_method = ASSET_IMPORT_PACK;  /* eAssetImportMethod */
   short flag = ASSET_LIBRARY_RELATIVE_PATH; /* eAssetLibrary_Flag */
@@ -866,7 +896,7 @@ struct UserDef_TempWinBounds {
  * or the #USER_DEVELOPER_TOOL_TEST() macro.
  */
 struct UserDef_Experimental {
-  /* Debug options, always available. */
+  /** Debug options, always available. */
   char use_undo_legacy = 0;
   char no_override_auto_resync = 0;
   char use_cycles_debug = 0;
@@ -881,14 +911,18 @@ struct UserDef_Experimental {
   char no_data_block_packing = 0;
   char use_paint_debug = 0;
   char SANITIZE_AFTER_HERE = {};
-  /* The following options are automatically sanitized (set to 0)
-   * when the release cycle is not alpha. */
+  /**
+   * The following options are automatically sanitized (set to 0)
+   * when the release cycle is not alpha.
+   */
   char use_new_curves_tools = 0;
   char use_extended_asset_browser = 0;
-  char use_sculpt_texture_paint = 0;
+  char use_3d_texture_paint = 0;
   char use_shader_node_previews = 0;
-  /* As a temporary exception to the above sanitation rules, this flag is always ON. The work to
-   * actually remove this flag is tracked in #158903. */
+  /**
+   * As a temporary exception to the above sanitation rules, this flag is always ON. The work to
+   * actually remove this flag is tracked in #158903.
+   */
   char use_remote_asset_libraries = 1;
   char use_collection_importer = 0;
   char _pad[4] = {};
@@ -1002,14 +1036,16 @@ struct UserDef {
   eUserpref_GPU_Flag gpu_flag = USER_GPU_FLAG_OVERLAY_SMOOTH_WIRE |
                                 USER_GPU_FLAG_SUBDIVISION_EVALUATION;
 
-  /* date_string::DateFormat */
+  /** #date_string::DateFormat */
   char date_format = 0;
-  /* date_string::TimeFormat */
+  /** #date_string::TimeFormat */
   char time_format = 0;
 
   char _pad8[4] = {};
-  /* Experimental flag for app-templates to make changes to behavior
-   * which are outside the scope of typical preferences. */
+  /**
+   * Experimental flag for app-templates to make changes to behavior
+   * which are outside the scope of typical preferences.
+   */
   eUserpref_APP_Flag app_flag = {};
   eViewZoom_Style viewzoom = USER_ZOOM_DOLLY;
   /** Default language of English (1), not Automatic (0). */
@@ -1137,7 +1173,11 @@ struct UserDef {
   short vbotimeout = 120, vbocollectrate = 60;
   short textimeout = 120, texcollectrate = 60;
   int memcachelimit = 4096;
-  int geometry_nodes_stack_limit = 100;
+  /**
+   * Maximum evaluation depth of node trees (e.g. number of nested node groups, not how many nodes
+   * are in a chain).
+   */
+  int nodes_stack_limit = 100;
   /** Unused. */
   int prefetchframes = 0;
   /** Control the rotation step of the view when PAD2, PAD4, PAD6&PAD8 is use. */
@@ -1284,7 +1324,10 @@ struct UserDef {
   eUserpref_RenderDisplayType render_display_type = USER_RENDER_DISPLAY_WINDOW;
   eUserpref_TempSpaceDisplayType filebrowser_display_type = USER_TEMP_SPACE_DISPLAY_WINDOW;
   eUserpref_TempSpaceDisplayType preferences_display_type = USER_TEMP_SPACE_DISPLAY_WINDOW;
-  char _pad18[7] = {};
+  char _pad18[3] = {};
+
+  /** Default duration in *seconds* for strips with no inherent duration (color, text, etc). */
+  float sequencer_default_strip_length = 1.0f;
 
   eUserpref_SeqProxySetup sequencer_proxy_setup = USER_SEQ_PROXY_SETUP_AUTOMATIC;
   short _pad1 = {};

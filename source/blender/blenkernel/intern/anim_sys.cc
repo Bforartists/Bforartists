@@ -54,13 +54,10 @@
 #include "BKE_material.hh"
 #include "BKE_nla.hh"
 #include "BKE_node.hh"
-#include "BKE_object.hh"
 #include "BKE_texture.h"
 
 #include "ANIM_action.hh"
-#include "ANIM_action_legacy.hh"
 #include "ANIM_evaluation.hh"
-#include "ANIM_rna.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
@@ -214,7 +211,7 @@ KS_Path *BKE_keyingset_add_path(KeyingSet *ks,
 
   /* store additional info for relative paths (just in case user makes the set relative) */
   if (id) {
-    ksp->idtype = GS(id->name);
+    ksp->idtype = id->id_type();
   }
 
   /* just copy path info */
@@ -283,7 +280,7 @@ void BKE_keyingset_free_paths(KeyingSet *ks)
   }
 
   /* free each path as we go to avoid looping twice */
-  for (ksp = static_cast<KS_Path *>(ks->paths.first); ksp; ksp = kspn) {
+  for (ksp = ks->paths.first(); ksp; ksp = kspn) {
     kspn = ksp->next;
     BKE_keyingset_free_path(ks, ksp);
   }
@@ -301,7 +298,7 @@ void BKE_keyingsets_free(ListBaseT<KeyingSet> *list)
   /* loop over KeyingSets freeing them
    * - BKE_keyingset_free_paths() doesn't free the set itself, but it frees its sub-data
    */
-  for (ks = static_cast<KeyingSet *>(list->first); ks; ks = ksn) {
+  for (ks = list->first(); ks; ks = ksn) {
     ksn = ks->next;
     BKE_keyingset_free_paths(ks);
     BLI_freelinkN(list, ks);
@@ -357,17 +354,12 @@ static bool is_fcurve_evaluatable(const FCurve *fcu)
 }
 
 bool BKE_animsys_rna_path_resolve(
-    PointerRNA *ptr, /* typically 'fcu->rna_path', 'fcu->array_index' */
-    const char *rna_path,
+    PointerRNA *ptr, /* typically 'fcu->rna_path()', 'fcu->array_index' */
+    const ParsedRNAPathRef rna_path,
     const int array_index,
     PathResolvedRNA *r_result)
 {
-  if (rna_path == nullptr) {
-    return false;
-  }
-
-  const char *path = rna_path;
-  if (!RNA_path_resolve_property(ptr, path, &r_result->ptr, &r_result->prop)) {
+  if (!RNA_path_resolve_property(ptr, rna_path, &r_result->ptr, &r_result->prop)) {
     /* failed to get path */
     /* XXX don't tag as failed yet though, as there are some legit situations (Action Constraint)
      * where some channels will not exist, but shouldn't lock up Action */
@@ -375,7 +367,7 @@ bool BKE_animsys_rna_path_resolve(
       CLOG_WARN(&LOG_ANIM_FCURVE,
                 "Invalid path. ID = '%s',  '%s[%d]'",
                 (ptr->owner_id) ? (ptr->owner_id->name + 2) : "<No ID>",
-                path,
+                rna_path::to_string(rna_path).c_str(),
                 array_index);
     }
     return false;
@@ -391,7 +383,7 @@ bool BKE_animsys_rna_path_resolve(
       CLOG_WARN(&LOG_ANIM_FCURVE,
                 "Invalid array index. ID = '%s',  '%s[%d]', array length is %d",
                 (ptr->owner_id) ? (ptr->owner_id->name + 2) : "<No ID>",
-                path,
+                rna_path::to_string(rna_path).c_str(),
                 array_index,
                 array_len - 1);
     }
@@ -559,7 +551,7 @@ static bool animsys_construct_orig_pointer_rna(const PointerRNA *ptr, PointerRNA
 }
 
 static void animsys_write_orig_anim_rna(PointerRNA *ptr,
-                                        const char *rna_path,
+                                        const ParsedRNAPathRef rna_path,
                                         int array_index,
                                         float value)
 {
@@ -591,295 +583,16 @@ static void animsys_evaluate_fcurves(PointerRNA *ptr,
       continue;
     }
 
+    const ParsedRNAPathRef rna_path = fcu->rna_path_parsed();
+
     PathResolvedRNA anim_rna;
-    if (BKE_animsys_rna_path_resolve(ptr, fcu->rna_path, fcu->array_index, &anim_rna)) {
+    if (BKE_animsys_rna_path_resolve(ptr, rna_path, fcu->array_index, &anim_rna)) {
       const float curval = calculate_fcurve(&anim_rna, fcu, anim_eval_context);
       BKE_animsys_write_to_rna_path(&anim_rna, curval);
       if (flush_to_original) {
-        animsys_write_orig_anim_rna(ptr, fcu->rna_path, fcu->array_index, curval);
+        animsys_write_orig_anim_rna(ptr, rna_path, fcu->array_index, curval);
       }
     }
-  }
-}
-
-/**
- * This function assumes that the quaternion keys are sequential. They do not
- * have to be in array_index order. If the quaternion is only partially keyed,
- * the result is normalized. If it is fully keyed, the result is returned as-is.
- */
-static void animsys_quaternion_evaluate_fcurves(PointerRNA &ptr,
-                                                PropertyRNA *prop,
-                                                const Span<FCurve *> quat_fcurves,
-                                                const AnimationEvalContext *anim_eval_context,
-                                                float r_quaternion[4])
-{
-  BLI_assert(quat_fcurves.size() <= 4);
-
-  /* Initialize r_quaternion to the unit quaternion so that half-keyed quaternions at least have
-   * *some* value in there. */
-  r_quaternion[0] = 1.0f;
-  r_quaternion[1] = 0.0f;
-  r_quaternion[2] = 0.0f;
-  r_quaternion[3] = 0.0f;
-  PathResolvedRNA quat_rna;
-  quat_rna.ptr = ptr;
-  quat_rna.prop = prop;
-  for (FCurve *quat_curve_fcu : quat_fcurves) {
-    const int array_index = quat_curve_fcu->array_index;
-    quat_rna.prop_index = array_index;
-    r_quaternion[array_index] = calculate_fcurve(&quat_rna, quat_curve_fcu, anim_eval_context);
-  }
-
-  if (quat_fcurves.size() < 4) {
-    /* This quaternion was incompletely keyed, so the result is a mixture of the unit quaternion
-     * and values from FCurves. This means that it's almost certainly no longer of unit length. */
-    normalize_qt(r_quaternion);
-  }
-}
-
-/**
- * This function assumes that the quaternion keys are sequential. They do not
- * have to be in array_index order.
- */
-static void animsys_blend_fcurves_quaternion(PointerRNA &ptr,
-                                             PropertyRNA *prop,
-                                             const Span<FCurve *> quaternion_fcurves,
-                                             const AnimationEvalContext *anim_eval_context,
-                                             const float blend_factor)
-{
-  BLI_assert(quaternion_fcurves.size() <= 4);
-
-  float current_quat[4];
-  RNA_property_float_get_array(&ptr, prop, current_quat);
-
-  float target_quat[4];
-  animsys_quaternion_evaluate_fcurves(
-      ptr, prop, quaternion_fcurves, anim_eval_context, target_quat);
-
-  float blended_quat[4];
-  interp_qt_qtqt(blended_quat, current_quat, target_quat, blend_factor);
-
-  RNA_property_float_set_array(&ptr, prop, blended_quat);
-}
-
-/**
- * LERP between current value (blend_factor=0.0) and the value from the FCurve (blend_factor=1.0).
- */
-static float get_fcurve_blend_value(FCurve &fcu,
-                                    PathResolvedRNA &anim_rna,
-                                    const AnimationEvalContext *anim_eval_context,
-                                    const float blend_factor)
-{
-  const float fcurve_value = calculate_fcurve(&anim_rna, &fcu, anim_eval_context);
-
-  float current_value;
-  float value_to_write;
-  if (!BKE_animsys_read_from_rna_path(&anim_rna, &current_value)) {
-    /* Unable to read the current value for blending, so just apply the FCurve value instead. */
-    return fcurve_value;
-  }
-
-  value_to_write = (1 - blend_factor) * current_value + blend_factor * fcurve_value;
-
-  switch (RNA_property_type(anim_rna.prop)) {
-    case PROP_BOOLEAN: /* Without this, anything less than 1.0 is converted to 'False' by
-                        * ANIMSYS_FLOAT_AS_BOOL(). This is probably not desirable for blends,
-                        * where anything above a 50% blend should act more like the FCurve than
-                        * like the current value. */
-    case PROP_INT:
-    case PROP_ENUM:
-      value_to_write = roundf(value_to_write);
-      break;
-      /* All other types are just handled as float, and value_to_write is already correct. */
-    default:
-      break;
-  }
-  return value_to_write;
-}
-
-/**
- * Apply the rotation fcurves to the `ptr` by converting them to a matrix first. This means the
- * rotation can be applied regardless of rotation mode.
- *
- * \param blend_factor: LERP between the current rotation value of the `ptr` and the value of the
- * `rotation_fcurves`. A `1` means the `rotation_fcurves` will be applied at 100%.
- */
-static void blend_rotation_with_conversion(PointerRNA &ptr,
-                                           const Span<FCurve *> rotation_fcurves,
-                                           const eRotationModes fcurve_rotation_mode,
-                                           const float eval_time,
-                                           const float blend_factor)
-{
-  /* The rotation data is 0 initialized for reasonable defaults in case some indices have no
-   * FCurves associated with them. */
-  float4 fcurve_rotation_values(0.0);
-  if (fcurve_rotation_mode == ROT_MODE_QUAT) {
-    /* Default W value for quaternions. */
-    fcurve_rotation_values[0] = 1.0;
-  }
-
-  for (FCurve *fcurve : rotation_fcurves) {
-    BLI_assert_msg(fcurve->array_index >= 0 && fcurve->array_index < 4,
-                   "Rotation properties have at most 4 components.");
-    fcurve_rotation_values[fcurve->array_index] = evaluate_fcurve(fcurve, eval_time);
-  }
-
-  /* Converting to quaternion simplifies blending below. */
-  float4 fcurve_quat;
-  switch (fcurve_rotation_mode) {
-    case ROT_MODE_QUAT: {
-      copy_qt_qt(fcurve_quat, fcurve_rotation_values);
-      break;
-    }
-    case ROT_MODE_EUL: {
-      /* TODO: determine the rotation order for euler angles. This has to be stored at the
-       * point of pose creation. */
-      eulO_to_quat(fcurve_quat, fcurve_rotation_values, ROT_MODE_XYZ);
-      break;
-    }
-    case ROT_MODE_AXISANGLE: {
-      axis_angle_to_quat(fcurve_quat, &fcurve_rotation_values[1], fcurve_rotation_values[0]);
-      break;
-    }
-    default: {
-      BLI_assert_unreachable();
-    }
-  }
-
-  float4 interp_quat;
-  if (ptr.type == RNA_PoseBone) {
-    bPoseChannel *pose_bone = static_cast<bPoseChannel *>(ptr.data);
-    const float4 quat = BKE_pchan_rot_to_quat(*pose_bone);
-    interp_qt_qtqt(interp_quat, quat, fcurve_quat, blend_factor);
-    BKE_pchan_quat_to_rot(*pose_bone, interp_quat);
-  }
-  else if (ptr.type == RNA_Object) {
-    Object *object = static_cast<Object *>(ptr.data);
-    const float4 quat = BKE_object_rot_to_quat(*object);
-    interp_qt_qtqt(interp_quat, quat, fcurve_quat, blend_factor);
-    BKE_object_quat_to_rot(*object, interp_quat);
-  }
-  else {
-    BLI_assert_unreachable();
-  }
-}
-
-static void blend_rotation(PointerRNA &ptr,
-                           PropertyRNA *prop,
-                           const Span<FCurve *> rotation_fcurves,
-                           const eRotationModes fcurve_rotation_mode,
-                           const AnimationEvalContext *anim_eval_context,
-                           const float blend_factor)
-{
-  if (fcurve_rotation_mode == ROT_MODE_QUAT) {
-    animsys_blend_fcurves_quaternion(ptr, prop, rotation_fcurves, anim_eval_context, blend_factor);
-    return;
-  }
-
-  PathResolvedRNA anim_rna;
-  anim_rna.ptr = ptr;
-  anim_rna.prop = prop;
-  for (FCurve *fcurve : rotation_fcurves) {
-    anim_rna.prop_index = fcurve->array_index;
-    const float value_to_write = get_fcurve_blend_value(
-        *fcurve, anim_rna, anim_eval_context, blend_factor);
-    BKE_animsys_write_to_rna_path(&anim_rna, value_to_write);
-  }
-}
-
-static bool rotation_mode_is_euler(const eRotationModes rotation_mode)
-{
-  return rotation_mode >= ROT_MODE_EUL;
-}
-
-/* LERP between current value (blend_factor=0.0) and the value from the FCurve (blend_factor=1.0)
- */
-static void animsys_blend_in_fcurves(PointerRNA *ptr,
-                                     const Span<FCurve *> fcurves,
-                                     const AnimationEvalContext *anim_eval_context,
-                                     const float blend_factor)
-{
-  /* Rotations are a special case since the rotation mode of the pose may not match with the
-   * current rotation mode of the `ptr`. Also quaternions need to be handled together. */
-  Map<StringRefNull, Vector<FCurve *>> rotation_fcurve_map;
-  for (FCurve *fcurve : fcurves) {
-    StringRefNull rna_path(fcurve->rna_path);
-
-    if (!is_fcurve_evaluatable(fcurve)) {
-      continue;
-    }
-
-    if (!animrig::is_rotation_path(rna_path)) {
-      continue;
-    }
-
-    Vector<FCurve *> &rotation_fcurves = rotation_fcurve_map.lookup_or_add_default(rna_path);
-    rotation_fcurves.append(fcurve);
-  }
-
-  for (const auto &[rna_path, rotation_fcurves] : rotation_fcurve_map.items()) {
-    PointerRNA resolved_ptr;
-    PropertyRNA *resolved_prop;
-    if (!RNA_path_resolve_property(ptr, rna_path.data(), &resolved_ptr, &resolved_prop)) {
-      continue;
-    }
-
-    std::optional<eRotationModes> ptr_rotation_mode_opt =
-        animrig::get_rotation_mode_from_rna_pointer(resolved_ptr);
-    BLI_assert_msg(
-        ptr_rotation_mode_opt.has_value(),
-        "We have an FCurve on a rotation property, the RNA data should have a rotation order.");
-    const eRotationModes ptr_rotation_mode = ptr_rotation_mode_opt.value();
-
-    const std::optional<eRotationModes> fcurve_rotation_mode_opt =
-        animrig::get_rotation_mode_from_path(rna_path);
-    BLI_assert(fcurve_rotation_mode_opt.has_value());
-    const eRotationModes fcurve_rotation_mode = fcurve_rotation_mode_opt.value();
-
-    /* The check for Euler rotation mode means we will *not* do any conversion if both modes are
-     * euler. Since we *cannot* know the exact euler mode of the stored FCurves we have to assume
-     * they are the same as the ptr. */
-    if (fcurve_rotation_mode == ptr_rotation_mode ||
-        (rotation_mode_is_euler(fcurve_rotation_mode) &&
-         rotation_mode_is_euler(ptr_rotation_mode)))
-    {
-      /* Easy case, animation mode of fcurves and of `resolved_ptr` are matching. Data can just
-       * be applied. The reason to have this separate is because in this case euler angles > 180
-       * degrees are preserved. The other path uses a conversion to a quaternion which loses that
-       * information. */
-      blend_rotation(resolved_ptr,
-                     resolved_prop,
-                     rotation_fcurves,
-                     fcurve_rotation_mode,
-                     anim_eval_context,
-                     blend_factor);
-    }
-    else {
-      blend_rotation_with_conversion(resolved_ptr,
-                                     rotation_fcurves,
-                                     fcurve_rotation_mode,
-                                     anim_eval_context->eval_time,
-                                     blend_factor);
-    }
-  }
-
-  for (FCurve *fcu : fcurves) {
-    if (!is_fcurve_evaluatable(fcu)) {
-      continue;
-    }
-
-    if (rotation_fcurve_map.contains(StringRefNull(fcu->rna_path))) {
-      continue;
-    }
-
-    PathResolvedRNA anim_rna;
-    if (!BKE_animsys_rna_path_resolve(ptr, fcu->rna_path, fcu->array_index, &anim_rna)) {
-      continue;
-    }
-
-    const float value_to_write = get_fcurve_blend_value(
-        *fcu, anim_rna, anim_eval_context, blend_factor);
-    BKE_animsys_write_to_rna_path(&anim_rna, value_to_write);
   }
 }
 
@@ -921,7 +634,7 @@ static void animsys_evaluate_drivers(PointerRNA *ptr,
          * NOTE: for 'layering' option later on, we should check if we should remove old value
          * before adding new to only be done when drivers only changed. */
         PathResolvedRNA anim_rna;
-        if (BKE_animsys_rna_path_resolve(ptr, fcu.rna_path, fcu.array_index, &anim_rna)) {
+        if (BKE_animsys_rna_path_resolve(ptr, fcu.rna_path_parsed(), fcu.array_index, &anim_rna)) {
           const float curval = calculate_fcurve(&anim_rna, &fcu, anim_eval_context);
           ok = BKE_animsys_write_to_rna_path(&anim_rna, curval);
         }
@@ -957,7 +670,7 @@ void animsys_evaluate_action_group(PointerRNA *ptr,
     /* check if this curve should be skipped */
     if ((fcu->flag & FCURVE_MUTED) == 0 && !BKE_fcurve_is_empty(fcu)) {
       PathResolvedRNA anim_rna;
-      if (BKE_animsys_rna_path_resolve(ptr, fcu->rna_path, fcu->array_index, &anim_rna)) {
+      if (BKE_animsys_rna_path_resolve(ptr, fcu->rna_path_parsed(), fcu->array_index, &anim_rna)) {
         const float curval = calculate_fcurve(&anim_rna, fcu, anim_eval_context);
         BKE_animsys_write_to_rna_path(&anim_rna, curval);
       }
@@ -992,16 +705,6 @@ void animsys_evaluate_action(PointerRNA *ptr,
   animsys_evaluate_fcurves(ptr, fcurves, anim_eval_context, flush_to_original);
 }
 
-void animsys_blend_in_action(PointerRNA *ptr,
-                             bAction *act,
-                             const int32_t action_slot_handle,
-                             const AnimationEvalContext *anim_eval_context,
-                             const float blend_factor)
-{
-  Vector<FCurve *> fcurves = animrig::fcurves_for_action_slot(act->wrap(), action_slot_handle);
-  animsys_blend_in_fcurves(ptr, fcurves, anim_eval_context, blend_factor);
-}
-
 /* ***************************************** */
 /* NLA System - Evaluation */
 
@@ -1032,7 +735,7 @@ static void nlastrip_evaluate_controls(NlaStrip *strip,
                                        const bool flush_to_original)
 {
   /* now strip's evaluate F-Curves for these settings (if applicable) */
-  if (strip->fcurves.first) {
+  if (strip->fcurves.first()) {
 
     /* create RNA-pointer needed to set values */
     PointerRNA strip_ptr = RNA_pointer_create_discrete(nullptr, RNA_NlaStrip, strip);
@@ -1112,7 +815,7 @@ NlaEvalStrip *nlastrips_ctime_get_strip(ListBaseT<NlaEvalStrip> *list,
 
     /* if time occurred before current strip... */
     if (ctime < strip.start) {
-      if (&strip == strips->first) {
+      if (&strip == strips->first()) {
         /* before first strip - only try to use it if it extends backwards in time too */
         if (strip.extendmode == NLASTRIP_EXTEND_HOLD) {
           estrip = &strip;
@@ -1138,7 +841,7 @@ NlaEvalStrip *nlastrips_ctime_get_strip(ListBaseT<NlaEvalStrip> *list,
     /* if time occurred after current strip... */
     if (ctime > strip.end) {
       /* only if this is the last strip should we do anything, and only if that is being held */
-      if (&strip == strips->last) {
+      if (&strip == strips->last()) {
         if (strip.extendmode != NLASTRIP_EXTEND_NOTHING) {
           estrip = &strip;
         }
@@ -1232,7 +935,7 @@ static NlaEvalStrip *nlastrips_ctime_get_strip_single(
     const bool flush_to_original)
 {
   ListBaseT<NlaStrip> single_tracks_list;
-  single_tracks_list.first = single_tracks_list.last = single_strip;
+  single_tracks_list.first_ = single_tracks_list.last_ = single_strip;
 
   return nlastrips_ctime_get_strip(
       dst_list, &single_tracks_list, -1, anim_eval_context, flush_to_original);
@@ -2640,27 +2343,27 @@ static void nlaeval_fmodifiers_join_stacks(ListBaseT<FModifier> *result,
   FModifier *fcm1, *fcm2;
 
   /* if list1 is invalid... */
-  if (ELEM(nullptr, list1, list1->first)) {
-    if (list2 && list2->first) {
-      result->first = list2->first;
-      result->last = list2->last;
+  if (ELEM(nullptr, list1, list1->first())) {
+    if (list2 && list2->first()) {
+      result->first_ = list2->first();
+      result->last_ = list2->last();
     }
   }
   /* if list 2 is invalid... */
-  else if (ELEM(nullptr, list2, list2->first)) {
-    result->first = list1->first;
-    result->last = list1->last;
+  else if (ELEM(nullptr, list2, list2->first())) {
+    result->first_ = list1->first();
+    result->last_ = list1->last();
   }
   else {
     /* list1 should be added first, and list2 second,
      * with the endpoints of these being the endpoints for result
      * - the original lists must be left unchanged though, as we need that fact for restoring.
      */
-    result->first = list1->first;
-    result->last = list2->last;
+    result->first_ = list1->first();
+    result->last_ = list2->last();
 
-    fcm1 = static_cast<FModifier *>(list1->last);
-    fcm2 = static_cast<FModifier *>(list2->first);
+    fcm1 = list1->last();
+    fcm2 = list2->first();
 
     fcm1->next = fcm2;
     fcm2->prev = fcm1;
@@ -2677,13 +2380,13 @@ static void nlaeval_fmodifiers_split_stacks(ListBaseT<FModifier> *list1,
   if (ELEM(nullptr, list1, list2)) {
     return;
   }
-  if (ELEM(nullptr, list1->first, list2->first)) {
+  if (ELEM(nullptr, list1->first(), list2->first())) {
     return;
   }
 
   /* get endpoints */
-  fcm1 = static_cast<FModifier *>(list1->last);
-  fcm2 = static_cast<FModifier *>(list2->first);
+  fcm1 = list1->last();
+  fcm2 = list2->first();
 
   /* clear their links */
   fcm1->next = nullptr;
@@ -2715,7 +2418,7 @@ static void nlasnapshot_from_action(PointerRNA *ptr,
       continue;
     }
 
-    NlaEvalChannel *nec = nlaevalchan_verify(ptr, channels, fcu->rna_path);
+    NlaEvalChannel *nec = nlaevalchan_verify(ptr, channels, fcu->rna_path().c_str());
 
     /* Invalid path or property cannot be animated. */
     if (nec == nullptr) {
@@ -3179,7 +2882,10 @@ void nladata_flush_channels(PointerRNA *ptr,
         }
         BKE_animsys_write_to_rna_path(&rna, value);
         if (flush_to_original) {
-          animsys_write_orig_anim_rna(ptr, nec.rna_path, rna.prop_index, value);
+          if (std::optional<ParsedRNAPath<>> rna_path = ParsedRNAPath<>::from_string(nec.rna_path))
+          {
+            animsys_write_orig_anim_rna(ptr, *rna_path, rna.prop_index, value);
+          }
         }
       }
     }
@@ -3208,7 +2914,7 @@ static void nla_eval_domain_action(PointerRNA *ptr,
       continue;
     }
 
-    NlaEvalChannel *nec = nlaevalchan_verify(ptr, channels, fcu->rna_path);
+    NlaEvalChannel *nec = nlaevalchan_verify(ptr, channels, fcu->rna_path().c_str());
 
     if (nec != nullptr) {
       /* For quaternion properties, enable all sub-channels. */
@@ -3445,13 +3151,13 @@ static bool animsys_evaluate_nla_for_flush(NlaEvalData *echannels,
   NlaTrack *tweaked_track = nlatrack_find_tweaked(adt);
 
   /* Get the stack of strips to evaluate at current time (influence calculated here). */
-  for (nlt = static_cast<NlaTrack *>(adt->nla_tracks.first); nlt; nlt = nlt->next, track_index++) {
+  for (nlt = adt->nla_tracks.first(); nlt; nlt = nlt->next, track_index++) {
 
     if (!is_nlatrack_evaluatable(adt, nlt)) {
       continue;
     }
 
-    if (nlt->strips.first) {
+    if (nlt->strips.first()) {
       has_strips = true;
     }
 
@@ -3526,7 +3232,7 @@ static void animsys_evaluate_nla_for_keyframing(PointerRNA *ptr,
   NlaTrack *tweaked_track = nlatrack_find_tweaked(adt);
 
   /* Get the lower stack of strips to evaluate at current time (influence calculated here). */
-  for (nlt = static_cast<NlaTrack *>(adt->nla_tracks.first); nlt; nlt = nlt->next, track_index++) {
+  for (nlt = adt->nla_tracks.first(); nlt; nlt = nlt->next, track_index++) {
 
     if (!is_nlatrack_evaluatable(adt, nlt)) {
       continue;
@@ -3537,7 +3243,7 @@ static void animsys_evaluate_nla_for_keyframing(PointerRNA *ptr,
       break;
     }
 
-    if (nlt->strips.first) {
+    if (nlt->strips.first()) {
       has_strips = true;
     }
 
@@ -3563,7 +3269,7 @@ static void animsys_evaluate_nla_for_keyframing(PointerRNA *ptr,
         continue;
       }
 
-      if (nlt->strips.first) {
+      if (nlt->strips.first()) {
         has_strips = true;
       }
 
@@ -3779,7 +3485,7 @@ NlaKeyframingContext *BKE_animsys_get_nla_keyframing_context(
   BLI_assert(RNA_struct_is_ID(ptr->type));
 
   /* No remapping needed if NLA is off or no action. */
-  if ((adt == nullptr) || (adt->action == nullptr) || (adt->nla_tracks.first == nullptr) ||
+  if ((adt == nullptr) || (adt->action == nullptr) || (adt->nla_tracks.first() == nullptr) ||
       (adt->flag & ADT_NLA_EVAL_OFF))
   {
     return nullptr;
@@ -3957,7 +3663,11 @@ static void animsys_evaluate_overrides(PointerRNA *ptr, AnimData *adt)
   /* for each override, simply execute... */
   for (AnimOverride &aor : adt->overrides) {
     PathResolvedRNA anim_rna;
-    if (BKE_animsys_rna_path_resolve(ptr, aor.rna_path, aor.array_index, &anim_rna)) {
+    const std::optional<ParsedRNAPath<>> rna_path = ParsedRNAPath<>::from_string(aor.rna_path);
+    if (!rna_path) {
+      continue;
+    }
+    if (BKE_animsys_rna_path_resolve(ptr, *rna_path, aor.array_index, &anim_rna)) {
       BKE_animsys_write_to_rna_path(&anim_rna, aor.value);
     }
   }
@@ -4024,7 +3734,7 @@ void BKE_animsys_evaluate_animdata(ID *id,
   if (recalc & ADT_RECALC_ANIM) {
     /* evaluate NLA data */
     bool did_nla_evaluate_anything = false;
-    if ((adt->nla_tracks.first) && !(adt->flag & ADT_NLA_EVAL_OFF)) {
+    if ((adt->nla_tracks.first()) && !(adt->flag & ADT_NLA_EVAL_OFF)) {
       /* evaluate NLA-stack
        * - active action is evaluated as part of the NLA stack as the last item
        */
@@ -4083,7 +3793,7 @@ void BKE_animsys_update_driver_array(ID *id)
   /* Runtime driver map to avoid O(n^2) lookups in BKE_animsys_eval_driver.
    * Ideally the depsgraph could pass a pointer to the evaluated driver directly,
    * but this is difficult in the current design. */
-  if (adt && adt->drivers.first) {
+  if (adt && adt->drivers.first()) {
     BLI_assert(!adt->driver_array);
 
     int num_drivers = adt->drivers.count();
@@ -4108,7 +3818,8 @@ void BKE_animsys_eval_driver_unshare(Depsgraph *depsgraph, ID *id_eval)
   for (FCurve &fcu : adt->drivers) {
     /* Resolve the driver RNA path. */
     PathResolvedRNA anim_rna;
-    if (!BKE_animsys_rna_path_resolve(&id_ptr, fcu.rna_path, fcu.array_index, &anim_rna)) {
+    const ParsedRNAPathRef rna_path = fcu.rna_path_parsed();
+    if (!BKE_animsys_rna_path_resolve(&id_ptr, rna_path, fcu.array_index, &anim_rna)) {
       continue;
     }
 
@@ -4123,7 +3834,7 @@ void BKE_animsys_eval_driver_unshare(Depsgraph *depsgraph, ID *id_eval)
 
     if (is_active_depsgraph) {
       /* Also un-share the original data, as the driver evaluation will write here too. */
-      animsys_write_orig_anim_rna(&id_ptr, fcu.rna_path, fcu.array_index, curval);
+      animsys_write_orig_anim_rna(&id_ptr, rna_path, fcu.array_index, curval);
     }
   }
 }
@@ -4154,7 +3865,7 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph, ID *id, int driver_index, FCu
   }
 
   DEG_debug_print_eval_subdata_index(
-      depsgraph, __func__, id->name, id, "fcu", fcu->rna_path, fcu, fcu->array_index);
+      depsgraph, __func__, id->name, id, "fcu", fcu->rna_path().c_str(), fcu, fcu->array_index);
 
   PointerRNA id_ptr = RNA_id_pointer_create(id);
 
@@ -4170,7 +3881,8 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph, ID *id, int driver_index, FCu
       // printf("\told val = %f\n", fcu->curval);
 
       PathResolvedRNA anim_rna;
-      if (BKE_animsys_rna_path_resolve(&id_ptr, fcu->rna_path, fcu->array_index, &anim_rna)) {
+      const ParsedRNAPathRef rna_path = fcu->rna_path_parsed();
+      if (BKE_animsys_rna_path_resolve(&id_ptr, rna_path, fcu->array_index, &anim_rna)) {
         /* Evaluate driver, and write results to copy-on-eval-domain destination */
         const float ctime = DEG_get_ctime(depsgraph);
         const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
@@ -4180,15 +3892,15 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph, ID *id, int driver_index, FCu
 
         /* Flush results & status codes to original data for UI (#59984) */
         if (ok && DEG_is_active(depsgraph)) {
-          animsys_write_orig_anim_rna(&id_ptr, fcu->rna_path, fcu->array_index, curval);
+          animsys_write_orig_anim_rna(&id_ptr, rna_path, fcu->array_index, curval);
 
           /* curval is displayed in the UI, and flag contains error-status codes */
-          fcu_orig->curval = fcu->curval;
+          fcu_orig->runtime->curval = fcu->runtime->curval;
           driver_orig->curval = fcu->driver->curval;
           driver_orig->flag = fcu->driver->flag;
 
-          DriverVar *dvar_orig = static_cast<DriverVar *>(driver_orig->variables.first);
-          DriverVar *dvar = static_cast<DriverVar *>(fcu->driver->variables.first);
+          DriverVar *dvar_orig = driver_orig->variables.first();
+          DriverVar *dvar = fcu->driver->variables.first();
           for (; dvar_orig && dvar; dvar_orig = dvar_orig->next, dvar = dvar->next) {
             DriverTarget *dtar_orig = &dvar_orig->targets[0];
             DriverTarget *dtar = &dvar->targets[0];
@@ -4206,9 +3918,9 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph, ID *id, int driver_index, FCu
       if (ok == 0) {
         CLOG_WARN(&LOG_ANIM_DRIVER,
                   "Invalid driver on %s '%s' - %s[%d]",
-                  BKE_idtype_idcode_to_name(GS(id->name)),
+                  BKE_idtype_idcode_to_name(id->id_type()),
                   id->name + 2,
-                  fcu->rna_path,
+                  fcu->rna_path().c_str(),
                   fcu->array_index);
         driver_orig->flag |= DRIVER_FLAG_INVALID;
       }

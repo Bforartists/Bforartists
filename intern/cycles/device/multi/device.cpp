@@ -120,7 +120,7 @@ class MultiDevice : public Device {
     return error_msg;
   }
 
-  BVHLayoutMask get_bvh_layout_mask(const uint kernel_features) const override
+  BVHLayoutMask get_bvh_layout_mask(const uint64_t kernel_features) const override
   {
     BVHLayoutMask bvh_layout_mask = BVH_LAYOUT_ALL;
     BVHLayoutMask bvh_layout_mask_all = BVH_LAYOUT_NONE;
@@ -172,7 +172,7 @@ class MultiDevice : public Device {
     return bvh_layout_mask;
   }
 
-  bool load_kernels(const uint kernel_features) override
+  bool load_kernels(const uint64_t kernel_features) override
   {
     for (SubDevice &sub : devices) {
       if (!sub.device->load_kernels(kernel_features)) {
@@ -644,24 +644,24 @@ class MultiDevice : public Device {
     }
   }
 
-  bool has_unified_memory() const override
+  bool has_unified_memory_any() const override
   {
     for (const SubDevice &sub : devices) {
-      if (sub.device->has_unified_memory()) {
+      if (sub.device->has_unified_memory_any()) {
         return true;
       }
     }
     return false;
   }
 
-  bool has_unified_image_memory() const override
+  bool has_unified_image_memory_all() const override
   {
     for (const SubDevice &sub : devices) {
-      if (sub.device->has_unified_image_memory()) {
-        return true;
+      if (!sub.device->has_unified_image_memory_all()) {
+        return false;
       }
     }
-    return false;
+    return true;
   }
 };
 

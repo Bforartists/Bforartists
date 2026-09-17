@@ -164,21 +164,22 @@ void cache_init(bContext *C,
   }
 
   const UnifiedPaintSettings *ups = &sd.paint.unified_paint_settings;
-  bke::PaintRuntime *paint_runtime = sd.paint.runtime;
 
-  float3 co;
-
-  if (vc.rv3d && stroke_get_location_bvh(C, co, mval_fl, false)) {
+  std::optional<float3> hit_location;
+  if (vc.rv3d) {
+    hit_location = stroke_get_location_bvh(C, mval_fl, false);
+  }
+  if (hit_location) {
     /* Get radius from brush. */
     const Brush *brush = BKE_paint_brush_for_read(&sd.paint);
 
     float radius;
     if (brush) {
-      radius = object_space_radius_get(vc, sd.paint, *brush, co, area_normal_radius);
+      radius = object_space_radius_get(vc, sd.paint, *brush, *hit_location, area_normal_radius);
     }
     else {
       radius = paint_calc_object_space_radius(
-          vc, co, float(ups->size / 2.0f) * area_normal_radius);
+          vc, *hit_location, float(ups->size / 2.0f) * area_normal_radius);
     }
 
     const float radius_sq = math::square(radius);
@@ -186,7 +187,8 @@ void cache_init(bContext *C,
     IndexMaskMemory memory;
     const IndexMask node_mask = bke::pbvh::search_nodes(
         pbvh, memory, [&](const bke::pbvh::Node &node) {
-          return !node_fully_masked_or_hidden(node) && node_in_sphere(node, co, radius_sq, true);
+          return !node_fully_masked_or_hidden(node) &&
+                 node_in_sphere(node, *hit_location, radius_sq, true);
         });
 
     const std::optional<float3> area_normal = calc_area_normal(*depsgraph, *brush, ob, node_mask);
@@ -200,11 +202,9 @@ void cache_init(bContext *C,
 
     /* Update last stroke location */
 
-    mul_m4_v3(ob.object_to_world().ptr(), co);
+    mul_m4_v3(ob.object_to_world().ptr(), *hit_location);
 
-    add_v3_v3(paint_runtime->average_stroke_accum, co);
-    paint_runtime->average_stroke_counter++;
-    paint_runtime->last_stroke_valid = true;
+    bke::paint::stroke_track_location(sd.paint, *hit_location);
   }
   else {
     /* Use last normal. */
@@ -361,12 +361,11 @@ static void calc_smooth_filter(const Depsgraph &depsgraph,
           [&](const int i) {
             LocalData &tls = all_tls.local();
             const Span<int> verts = nodes[i].verts();
-            const Span<float3> positions = gather_data_mesh(
-                position_data.eval, verts, tls.positions);
+            Array<float3, bke::pbvh::MESH_LEAF_LIMIT> positions(verts.size());
+            gather_data_mesh(position_data.eval, verts, positions.as_mutable_span());
             const OrigPositionData orig_data = orig_position_data_get_mesh(object, nodes[i]);
 
-            tls.factors.resize(verts.size());
-            const MutableSpan<float> factors = tls.factors;
+            Array<float, bke::pbvh::MESH_LEAF_LIMIT> factors(verts.size());
             fill_factor_from_hide_and_mask(
                 attribute_data.hide_vert, attribute_data.mask, verts, factors);
             auto_mask::calc_vert_factors(
@@ -385,13 +384,11 @@ static void calc_smooth_filter(const Depsgraph &depsgraph,
                 tls.neighbor_offsets,
                 tls.neighbor_data);
 
-            tls.new_positions.resize(verts.size());
-            const MutableSpan<float3> new_positions = tls.new_positions;
+            Array<float3, bke::pbvh::MESH_LEAF_LIMIT> new_positions(verts.size());
             smooth::neighbor_data_average_mesh_check_loose(
-                position_data.eval, verts, neighbors, new_positions);
+                position_data.eval, verts, neighbors, new_positions.as_mutable_span());
 
-            tls.translations.resize(verts.size());
-            const MutableSpan<float3> translations = tls.translations;
+            Array<float3, bke::pbvh::MESH_LEAF_LIMIT> translations(verts.size());
             if (use_original_position) {
               translations_from_new_positions(new_positions, orig_data.positions, translations);
             }
@@ -2438,7 +2435,7 @@ static wmOperatorStatus sculpt_mesh_filter_modal(bContext *C, wmOperator *op, co
 
   sculpt_mesh_update_strength(op, ss, prev_mval, mval);
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
 
   sculpt_mesh_filter_apply(C, op);
 
@@ -2504,7 +2501,7 @@ static wmOperatorStatus sculpt_mesh_filter_start(bContext *C, wmOperator *op)
   const bool use_automasking = auto_mask::is_enabled(sd.paint, ob, nullptr);
   const bool needs_topology_info = sculpt_mesh_filter_needs_pmap(filter_type) || use_automasking;
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
 
   if (!shape_key_check(ob, op->reports)) {
     return OPERATOR_CANCELLED;

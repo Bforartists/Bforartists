@@ -124,7 +124,7 @@ static PointerRNA rna_Context_region_data_get(PointerRNA *ptr)
     return newptr;
   }
 
-  return PointerRNA_NULL;
+  return {};
 }
 
 static PointerRNA rna_Context_region_popup_get(PointerRNA *ptr)
@@ -377,6 +377,7 @@ void RNA_def_context(BlenderRNA *brna)
       "graph will be updated. This invalidates all references to evaluated data-blocks from the "
       "dependency graph.");
   parm = RNA_def_pointer(func, "depsgraph", "Depsgraph", "", "Evaluated dependency graph");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 }
 

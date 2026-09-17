@@ -109,7 +109,7 @@ static void rna_Screen_redraw_update(Main * /*bmain*/, Scene * /*scene*/, Pointe
 static bool rna_Screen_is_animation_playing_get(PointerRNA * /*ptr*/)
 {
   /* can be nullptr on file load, #42619 */
-  wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+  wmWindowManager *wm = G_MAIN->wm.first();
   return wm ? (ED_screen_animation_playing(wm) != nullptr) : 0;
 }
 
@@ -170,7 +170,7 @@ static void rna_Area_type_update(bContext *C, PointerRNA *ptr)
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win;
   /* XXX this call still use context, so we trick it to work in the right context */
-  for (win = static_cast<wmWindow *>(wm->windows.first); win; win = win->next) {
+  for (win = wm->windows.first(); win; win = win->next) {
     if (screen == WM_window_get_active_screen(win)) {
       wmWindow *prevwin = CTX_wm_window(C);
       ScrArea *prevsa = CTX_wm_area(C);
@@ -303,7 +303,6 @@ static void rna_Area_ui_type_update(bContext *C, PointerRNA *ptr)
 
 static PointerRNA rna_Region_data_get(PointerRNA *ptr)
 {
-  bScreen *screen = id_cast<bScreen *>(ptr->owner_id);
   ARegion *region = static_cast<ARegion *>(ptr->data);
 
   if (region->regiondata != nullptr) {
@@ -312,12 +311,12 @@ static PointerRNA rna_Region_data_get(PointerRNA *ptr)
       SpaceType *st = BKE_spacetype_from_id(SPACE_VIEW3D);
       if (region->runtime->type == BKE_regiontype_from_id(st, region->regiontype)) {
         PointerRNA newptr = RNA_pointer_create_discrete(
-            &screen->id, RNA_RegionView3D, region->regiondata);
+            ptr->owner_id, RNA_RegionView3D, region->regiondata);
         return newptr;
       }
     }
   }
-  return PointerRNA_NULL;
+  return {};
 }
 
 static int rna_region_has_panel_categories(const ARegion *region)
@@ -423,6 +422,41 @@ static void rna_Region_tag_refresh_ui(ARegion *region, ReportList *reports)
   ED_region_tag_refresh_ui(region);
 }
 
+static void rna_Region_search_filter_get(PointerRNA *ptr, char *value)
+{
+  ARegion *region = static_cast<ARegion *>(ptr->data);
+  strcpy(value, region->runtime->search_filter.c_str());
+}
+
+static int rna_Region_search_filter_length(PointerRNA *ptr)
+{
+  ARegion *region = static_cast<ARegion *>(ptr->data);
+  return region->runtime->search_filter.size();
+}
+
+static void rna_Region_search_filter_set(PointerRNA *ptr, const char *value)
+{
+  ARegion *region = static_cast<ARegion *>(ptr->data);
+  region->runtime->search_filter = value ? value : "";
+}
+
+static int rna_Region_search_filter_editable(const PointerRNA *ptr, const char **r_info)
+{
+  ARegion *region = static_cast<ARegion *>(ptr->data);
+
+  if (!BKE_region_panel_categories_search_filter_visible(region)) {
+    *r_info = N_("Only for side-panels");
+    return 0;
+  }
+  return PROP_EDITABLE;
+}
+
+static void rna_Region_search_filter_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+{
+  ARegion *region = static_cast<ARegion *>(ptr->data);
+  ED_region_search_filter_update(nullptr, region);
+}
+
 }  // namespace blender
 
 #else
@@ -441,7 +475,7 @@ static void rna_def_area_spaces(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_struct_ui_text(srna, "Area Spaces", "Collection of spaces");
 
   prop = RNA_def_property(srna, "active", PROP_POINTER, PROP_NONE);
-  RNA_def_property_pointer_sdna(prop, nullptr, "spacedata.first");
+  RNA_def_property_pointer_sdna(prop, nullptr, "spacedata.first_");
   RNA_def_property_struct_type(prop, "Space");
   RNA_def_property_ui_text(prop, "Active Space", "Space currently being displayed in this area");
 }
@@ -468,7 +502,7 @@ static void rna_def_area(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Area", nullptr);
   RNA_def_struct_ui_text(srna, "Area", "Area in a subdivided screen, containing an editor");
-  RNA_def_struct_path_func(srna, "BKE_screen_path_from_screen_to_area");
+  RNA_def_struct_path_func(srna, "BKE_screen_path_to_area");
   RNA_def_struct_sdna(srna, "ScrArea");
 
   prop = RNA_def_property(srna, "spaces", PROP_COLLECTION, PROP_NONE);
@@ -802,6 +836,18 @@ static void rna_def_region(BlenderRNA *brna)
       "The current active panel category, may be Null if the region does not "
       "support this feature (NOTE: these categories are generated at runtime, so list may be "
       "empty at initialization, before any drawing took place)");
+
+  prop = RNA_def_property(srna, "search_filter", PROP_STRING, PROP_NONE);
+  /* The search filter is stored in the region's runtime as #std::string, so use the getter /
+   * setter here. */
+  RNA_def_property_string_funcs(prop,
+                                "rna_Region_search_filter_get",
+                                "rna_Region_search_filter_length",
+                                "rna_Region_search_filter_set");
+  RNA_def_property_editable_func(prop, "rna_Region_search_filter_editable");
+  RNA_def_property_ui_text(prop, "Display Filter", "Live search filtering string");
+  RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
+  RNA_def_property_update(prop, 0, "rna_Region_search_filter_update");
 
   rna_def_region_api(srna);
 }

@@ -7,8 +7,8 @@ bl_info = {
     # This is now displayed as the maintainer, so show the foundation.
     # "author": "Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein", # Original Authors
     'author': "Blender Foundation, Khronos Group",
-    "version": (5, 3, 17),
-    'blender': (5, 2, 0),
+    "version": (5, 3, 32),
+    'blender': (5, 3, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
     'warning': '',
@@ -114,8 +114,6 @@ def on_export_format_changed(self, context):
 
     # Also change the filter
     sfile.params.filter_glob = '*.glb' if self.export_format == 'GLB' else '*.gltf'
-    # Force update of file list, because update the filter does not update the real file list
-    bpy.ops.file.refresh()
 
 
 def on_export_action_filter_changed(self, context):
@@ -532,7 +530,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
              'Viewport',
              'Export minimal materials as defined in Viewport display properties'),
             ('NONE',
-             'No export',
+             'No Export',
              'Do not export materials, and combine mesh primitive groups, losing material slot information')),
         description='Export materials',
         default='EXPORT')
@@ -607,6 +605,12 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
             'Export loose points as glTF points, using the material from the first material slot'
         ),
         default=False,
+    )
+
+    export_pointclouds: BoolProperty(
+        name='Point Clouds',
+        description='Export point clouds',
+        default=True
     )
 
     export_cameras: BoolProperty(
@@ -1146,6 +1150,8 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
         export_settings['exported_texture_nodes'] = []
         export_settings['additional_texture_export'] = []
         export_settings['additional_texture_export_current_idx'] = {}
+        export_settings['material_identifiers'] = {}
+        export_settings['mesh_identifiers'] = {}
 
         export_settings['timestamp'] = datetime.datetime.now()
         export_settings['gltf_export_id'] = self.gltf_export_id
@@ -1168,6 +1174,7 @@ class ExportGLTF2_Base(ConvertGLTF2_Base):
         export_settings['gltf_tangents'] = self.export_tangents and self.export_normals
         export_settings['gltf_loose_edges'] = self.use_mesh_edges
         export_settings['gltf_loose_points'] = self.use_mesh_vertices
+        export_settings['gltf_pointclouds'] = self.export_pointclouds
 
         if is_draco_available():
             export_settings['gltf_draco_mesh_compression'] = self.export_draco_mesh_compression_enable
@@ -1502,6 +1509,7 @@ def export_panel_data(layout, operator):
     if body:
         export_panel_data_scene_graph(body, operator)
         export_panel_data_mesh(body, operator)
+        export_panel_data_pointclouds(body, operator)
         export_panel_data_material(body, operator)
         export_panel_data_shapekeys(body, operator)
         export_panel_data_armature(body, operator)
@@ -1568,6 +1576,15 @@ def export_panel_data_mesh(layout, operator):
             row.use_property_split = False  # BFA
             row.active = operator.export_vertex_color != "NONE"
             row.prop(operator, 'export_active_vertex_color_when_no_material')
+
+
+def export_panel_data_pointclouds(layout, operator):
+    header, body = layout.panel("GLTF_export_data_pointclouds", default_closed=True)
+    header.use_property_split = False
+    header.prop(operator, "export_pointclouds", text="")
+    header.label(text="Point Clouds")
+    if body:
+        pass
 
 
 def export_panel_data_material(layout, operator):
@@ -1931,14 +1948,15 @@ class ExportGLTF2(bpy.types.Operator, ExportGLTF2_Base, ExportHelper):
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon='SAVE_GLTF') # BFA - Icon Added
+    self.layout.operator(
+        ExportGLTF2.bl_idname, text=bpy.types.FileHandler.label_with_extensions('IO_FH_gltf2'), icon='SAVE_GLTF') # BFA - Icon Added
 
 
 class ImportGLTF2(Operator, ConvertGLTF2_Base, ImportHelper):
     """Load a glTF 2.0 file"""
     bl_idname = 'import_scene.gltf'
     bl_label = 'Import glTF 2.0'
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     filter_glob: StringProperty(default="*.glb;*.gltf", options={'HIDDEN'})
 
@@ -2304,7 +2322,7 @@ class IO_FH_gltf2(bpy.types.FileHandler):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon='LOAD_GLTF') # BFA - Icon Added
+    self.layout.operator(ImportGLTF2.bl_idname, text=bpy.types.FileHandler.label_with_extensions("IO_FH_gltf2"), icon='LOAD_GLTF') # BFA - Icon Added
 
 
 classes = (

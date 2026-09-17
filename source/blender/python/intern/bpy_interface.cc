@@ -826,9 +826,7 @@ void BPY_modules_load_user(bContext *C)
 
   bpy_context_set(C, &gilstate);
 
-  for (text = static_cast<Text *>(bmain->texts.first); text;
-       text = static_cast<Text *>(text->id.next))
-  {
+  for (text = bmain->texts.first(); text; text = static_cast<Text *>(text->id.next)) {
     if (text->flags & TXT_ISSCRIPT) {
       if (!(G.f & G_FLAG_SCRIPT_AUTOEXEC)) {
         if (!(G.f & G_FLAG_SCRIPT_AUTOEXEC_FAIL_QUIET)) {
@@ -1168,6 +1166,16 @@ PyMODINIT_FUNC PyInit_bpy()
     return nullptr; /* The error has been set. */
   }
 
+  /* Assign dummy type. */
+  dealloc_obj_Type.tp_name = "dealloc_obj";
+  dealloc_obj_Type.tp_basicsize = sizeof(dealloc_obj);
+  dealloc_obj_Type.tp_dealloc = dealloc_obj_dealloc;
+  dealloc_obj_Type.tp_flags = Py_TPFLAGS_DEFAULT;
+
+  if (PyType_Ready(&dealloc_obj_Type) < 0) {
+    return nullptr;
+  }
+
   PyObject *bpy_proxy = PyModule_Create(&bpy_proxy_def);
 
   /* Problem:
@@ -1186,16 +1194,6 @@ PyMODINIT_FUNC PyInit_bpy()
 
   /* Assign an object which is freed after `__file__` is assigned. */
   dealloc_obj *dob;
-
-  /* Assign dummy type. */
-  dealloc_obj_Type.tp_name = "dealloc_obj";
-  dealloc_obj_Type.tp_basicsize = sizeof(dealloc_obj);
-  dealloc_obj_Type.tp_dealloc = dealloc_obj_dealloc;
-  dealloc_obj_Type.tp_flags = Py_TPFLAGS_DEFAULT;
-
-  if (PyType_Ready(&dealloc_obj_Type) < 0) {
-    return nullptr;
-  }
 
   dob = (dealloc_obj *)dealloc_obj_Type.tp_alloc(&dealloc_obj_Type, 0);
   dob->mod = bpy_proxy;                                       /* borrow */

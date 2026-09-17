@@ -47,7 +47,7 @@ static char ffmpeg_last_error_buffer[1024];
 #  endif
 
 static size_t ffmpeg_log_to_buffer(char *buffer,
-                                   const size_t buffer_size,
+                                   const size_t buffer_maxncpy,
                                    const char *format,
                                    va_list arg)
 {
@@ -55,7 +55,7 @@ static size_t ffmpeg_log_to_buffer(char *buffer,
   size_t n;
 
   va_copy(args_cpy, arg);
-  n = BLI_vsnprintf(buffer, buffer_size, format, args_cpy);
+  n = BLI_vsnprintf(buffer, buffer_maxncpy, format, args_cpy);
   va_end(args_cpy);
 
   return n;
@@ -125,6 +125,30 @@ static void ffmpeg_log_callback(void * /*ptr*/, int level, const char *format, v
 const char *ffmpeg_last_error()
 {
   return ffmpeg_last_error_buffer;
+}
+
+static bool ffmpeg_container_has_real_video(const AVFormatContext *format_ctx)
+{
+  for (int i = 0; i < format_ctx->nb_streams; i++) {
+    const AVStream *stream = format_ctx->streams[i];
+    if (stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO &&
+        (stream->disposition & AV_DISPOSITION_ATTACHED_PIC) == 0)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool ffmpeg_stream_counts_as_video(const AVFormatContext *format_ctx, const AVStream *stream)
+{
+  if (stream->codecpar->codec_type != AVMEDIA_TYPE_VIDEO) {
+    return false;
+  }
+  if ((stream->disposition & AV_DISPOSITION_ATTACHED_PIC) == 0) {
+    return true;
+  }
+  return !ffmpeg_container_has_real_video(format_ctx);
 }
 
 static int isffmpeg(const char *filepath)

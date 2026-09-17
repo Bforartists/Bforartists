@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup draw_engine
+ */
+
 #include "workbench_private.hh"
 
 #include "DNA_userdef_types.h"
@@ -96,6 +100,7 @@ void SceneState::init(const DRWContext *context,
                       bool scene_updated,
                       Object *camera_ob /*=nullptr*/)
 {
+  updated = scene_updated;
   bool reset_taa = reset_taa_next_sample || scene_updated;
   reset_taa_next_sample = false;
 
@@ -231,14 +236,6 @@ void SceneState::init(const DRWContext *context,
     reset_taa = true;
   }
 
-  if (reset_taa || samples_len <= 1) {
-    sample = 0;
-  }
-  else {
-    sample++;
-  }
-  render_finished = sample >= samples_len && samples_len > 1;
-
   /* TODO(@pragma37): volumes_do */
 
   draw_cavity = shading.flag & V3D_SHADING_CAVITY &&
@@ -253,10 +250,25 @@ void SceneState::init(const DRWContext *context,
 
   draw_object_id = (draw_outline || draw_curvature);
 
+  const bool shadows_use_rt_new = draw_shadows &&
+                                  (U.gpu_flag & USER_GPU_FLAG_WORKBENCH_RT_SHADOWS) &&
+                                  GPU_ray_query_support();
+  if (assign_if_different(shadows_use_rt, shadows_use_rt_new)) {
+    reset_taa = true;
+  }
+
   show_paint_bvh_debug = scene->toolsettings->sculpt ?
                              (scene->toolsettings->sculpt->paint.debug_flags &
                               PAINT_DEBUG_SHOW_BVH_NODES) != 0 :
                              false;
+
+  if (reset_taa || samples_len <= 1) {
+    sample = 0;
+  }
+  else {
+    sample++;
+  }
+  render_finished = sample >= samples_len && samples_len > 1;
 };
 
 static bool mesh_has_color_attribute(const Mesh &mesh)
@@ -328,37 +340,10 @@ ObjectState::ObjectState(const DRWContext *draw_ctx,
 
   if (sculpt_pbvh) {
     if (color_type == V3D_SHADING_TEXTURE_COLOR &&
-        bke::object::pbvh_get(*ob)->type() != bke::pbvh::Type::Mesh)
+        !ELEM(bke::object::pbvh_get(*ob)->type(), bke::pbvh::Type::Mesh, bke::pbvh::Type::Grids))
     {
       /* Force use of material color for sculpt. */
       color_type = V3D_SHADING_MATERIAL_COLOR;
-    }
-
-    /* Bad call C is required to access the tool system that is context aware. Cast to non-const
-     * due to current API. */
-    bContext *C = const_cast<bContext *>(draw_ctx->evil_C);
-    if (C != nullptr) {
-      const PaintModeSettings *paint_mode = &scene_state.scene->toolsettings->paint_mode;
-      color_type = ED_paint_shading_color_override(C, paint_mode, *ob, color_type);
-
-      /* Override object shading to show current image texture if using experimental texture paint
-       * and the canvas selector is set to image mode. */
-      const bool override_material = is_active && color_type == V3D_SHADING_TEXTURE_COLOR &&
-                                     paint_mode->canvas_source == PAINT_CANVAS_SOURCE_IMAGE;
-      if (override_material && has_uv()) {
-        show_missing_texture = true;
-        if (paint_mode->canvas_image) {
-          image_paint_override = MaterialTexture(manager, paint_mode->canvas_image);
-          image_paint_override.sampler_state.extend_x = GPU_SAMPLER_EXTEND_MODE_REPEAT;
-          image_paint_override.sampler_state.extend_yz = GPU_SAMPLER_EXTEND_MODE_REPEAT;
-          /* TODO: Add an image texture interpolation variable to PaintModeSettings, similar to
-           * ImagePaintSetting's interp variable, and make the material override apply the
-           * interpolation filter to achieve feature parity with legacy texture painting mode. */
-        }
-        else {
-          image_paint_override = resources.missing_texture;
-        }
-      }
     }
   }
   else if (ob->type == OB_MESH && !draw_ctx->is_scene_render()) {

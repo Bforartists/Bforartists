@@ -36,8 +36,6 @@ ResultPrecision Context::get_precision() const
   return ResultPrecision::Full;
 }
 
-void Context::set_info_message(StringRef /*message*/) const {}
-
 void Context::populate_meta_data_for_pass(const Scene * /*scene*/,
                                           int /*view_layer_id*/,
                                           const char * /*pass_name*/,
@@ -48,6 +46,11 @@ void Context::populate_meta_data_for_pass(const Scene * /*scene*/,
 RenderContext *Context::render_context() const
 {
   return nullptr;
+}
+
+bool Context::is_viewport() const
+{
+  return false;
 }
 
 nodes::eval_log::NodesEvalLog *Context::nodes_evaluation_log() const

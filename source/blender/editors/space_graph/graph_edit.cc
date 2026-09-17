@@ -217,7 +217,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
         CombinedKeyingResult result = insert_keyframes(ac->bmain,
                                                        &id_rna_pointer,
                                                        channel_group,
-                                                       {{fcu->rna_path, {}, fcu->array_index}},
+                                                       {{fcu->rna_path(), {}, fcu->array_index}},
                                                        std::nullopt,
                                                        anim_eval_context,
                                                        eBezTriple_KeyframeType(ts->keyframe_type),
@@ -1408,9 +1408,6 @@ void GRAPH_OT_bake_keys(wmOperatorType *ot)
 
 /** \} */
 
-/* ************************************************************************** */
-/* EXTRAPOLATION MODE AND KEYFRAME HANDLE SETTINGS */
-
 /* -------------------------------------------------------------------- */
 /** \name Set Extrapolation-Type Operator
  * \{ */
@@ -1483,7 +1480,7 @@ static void setexpo_graph_keys(bAnimContext *ac, short mode)
         /* Remove all the modifiers fitting this description. */
         FModifier *fcm, *fcn = nullptr;
 
-        for (fcm = static_cast<FModifier *>(fcu->modifiers.first); fcm; fcm = fcn) {
+        for (fcm = fcu->modifiers.first(); fcm; fcm = fcn) {
           fcn = fcm->next;
 
           if (fcm->type == FMODIFIER_TYPE_CYCLES) {
@@ -1785,9 +1782,6 @@ void GRAPH_OT_handle_type(wmOperatorType *ot)
 
 /** \} */
 
-/* ************************************************************************** */
-/* EULER FILTER */
-
 /* -------------------------------------------------------------------- */
 /** \name 'Euler Filter' Operator
  *
@@ -1832,7 +1826,7 @@ static ListBaseT<tEulerFilter> euler_filter_group_channels(
      * - Only rotation curves.
      * - For pose-channel curves, make sure we're only using the euler curves.
      */
-    if (strstr(fcu->rna_path, "rotation_euler") == nullptr) {
+    if (strstr(fcu->rna_path().c_str(), "rotation_euler") == nullptr) {
       continue;
     }
     if (ELEM(fcu->array_index, 0, 1, 2) == 0) {
@@ -1840,7 +1834,7 @@ static ListBaseT<tEulerFilter> euler_filter_group_channels(
                   RPT_WARNING,
                   "Euler Rotation F-Curve has invalid index (ID='%s', Path='%s', Index=%d)",
                   (ale.id) ? ale.id->name : RPT_("<No ID>"),
-                  fcu->rna_path,
+                  fcu->rna_path().c_str(),
                   fcu->array_index);
       continue;
     }
@@ -1853,7 +1847,7 @@ static ListBaseT<tEulerFilter> euler_filter_group_channels(
      * so if the paths or the ID's don't match up, then a curve needs to be added
      * to a new group.
      */
-    if ((euf) && (euf->id == ale.id) && STREQ(euf->rna_path, fcu->rna_path)) {
+    if ((euf) && (euf->id == ale.id) && STREQ(euf->rna_path, fcu->rna_path().c_str())) {
       /* This should be fine to add to the existing group then. */
       euf->fcurves[fcu->array_index] = fcu;
       continue;
@@ -1866,7 +1860,7 @@ static ListBaseT<tEulerFilter> euler_filter_group_channels(
 
     euf->id = ale.id;
     /* This should be safe, since we're only using it for a short time. */
-    euf->rna_path = fcu->rna_path;
+    euf->rna_path = fcu->rna_path().c_str();
     euf->fcurves[fcu->array_index] = fcu;
   }
 
@@ -2126,9 +2120,6 @@ void GRAPH_OT_euler_filter(wmOperatorType *ot)
 
 /** \} */
 
-/* ************************************************************************** */
-/* SNAPPING */
-
 /* -------------------------------------------------------------------- */
 /** \name Jump to Selected Frames Operator
  * \{ */
@@ -2247,6 +2238,12 @@ void GRAPH_OT_frame_jump(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Keyframe Jump Operator (Deprecated)
+ * \{ */
+
 static wmOperatorStatus keyframe_jump_exec(bContext *C, wmOperator *op)
 {
   BKE_report(op->reports, RPT_WARNING, "Deprecated operator, use screen.keyframe_jump instead");
@@ -2270,6 +2267,12 @@ void GRAPH_OT_keyframe_jump(wmOperatorType *ot)
   /* properties */
   RNA_def_boolean(ot->srna, "next", true, "Next Keyframe", "");
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Snap Cursor Value Operator
+ * \{ */
 
 /* snap 2D cursor value to the average value of selected keyframe */
 static wmOperatorStatus graphkeys_snap_cursor_value_exec(bContext *C, wmOperator * /*op*/)
@@ -2374,8 +2377,8 @@ static void snap_graph_keys(bAnimContext *ac, short mode)
   memset(&ked, 0, sizeof(KeyframeEditData));
   ked.scene = ac->scene;
   if (mode == GRAPHKEYS_SNAP_NEAREST_MARKER) {
-    ked.time_marker_list.first = (ac->markers) ? ac->markers->first : nullptr;
-    ked.time_marker_list.last = (ac->markers) ? ac->markers->last : nullptr;
+    ked.time_marker_list.first_ = (ac->markers) ? ac->markers->first_ : nullptr;
+    ked.time_marker_list.last_ = (ac->markers) ? ac->markers->last() : nullptr;
   }
   else if (mode == GRAPHKEYS_SNAP_VALUE) {
     cursor_value = (sipo) ? sipo->cursorVal : 0.0f;
@@ -2833,9 +2836,6 @@ void GRAPH_OT_smooth(wmOperatorType *ot)
 
 /** \} */
 
-/* ************************************************************************** */
-/* F-CURVE MODIFIERS */
-
 /* -------------------------------------------------------------------- */
 /** \name Add F-Modifier Operator
  * \{ */
@@ -3002,7 +3002,7 @@ static wmOperatorStatus graph_fmodifier_delete_exec(bContext *C, wmOperator *op)
     }
 
     if (mode == RemovalMode::FIRST) {
-      if (FModifier *first = static_cast<FModifier *>(fcu->modifiers.first)) {
+      if (FModifier *first = fcu->modifiers.first()) {
         fmods_to_delete.append(first);
       }
     }
@@ -3261,9 +3261,6 @@ void GRAPH_OT_fmodifier_paste(wmOperatorType *ot)
 
 /** \} */
 
-/* ************************************************************************** */
-/* Drivers */
-
 /* -------------------------------------------------------------------- */
 /** \name Copy Driver Variables Operator
  * \{ */
@@ -3396,7 +3393,7 @@ static wmOperatorStatus graph_driver_delete_invalid_exec(bContext *C, wmOperator
       continue;
     }
 
-    ok |= ANIM_remove_driver(ale.id, fcu->rna_path, fcu->array_index);
+    ok |= ANIM_remove_driver(ale.id, fcu->rna_path().c_str(), fcu->array_index);
     if (!ok) {
       break;
     }

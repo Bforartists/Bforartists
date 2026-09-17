@@ -610,7 +610,7 @@ static void um_arraystore_compact(UndoMesh *um, const UndoMesh *um_ref)
           um->store.keyblocks = MEM_new_array_uninitialized<BArrayState *>(
               mesh->key->totkey, "um_arraystore_compact keyblocks");
 
-          KeyBlock *keyblock = static_cast<KeyBlock *>(mesh->key->block.first);
+          KeyBlock *keyblock = mesh->key->block.first();
           for (int i = 0; i < mesh->key->totkey; i++, keyblock = keyblock->next) {
             const BArrayState *state_reference = (um_ref && um_ref->mesh->key &&
                                                   (i < um_ref->mesh->key->totkey)) ?
@@ -667,7 +667,7 @@ static void um_arraystore_expand_clear(UndoMesh *um)
                                        &mesh->runtime->face_offsets_sharing_info);
   }
   if (mesh->key && mesh->key->totkey) {
-    KeyBlock *keyblock = static_cast<KeyBlock *>(mesh->key->block.first);
+    KeyBlock *keyblock = mesh->key->block.first();
     for (int i = 0; i < mesh->key->totkey; i++, keyblock = keyblock->next) {
       if (keyblock->data) {
         MEM_delete_void(keyblock->data);
@@ -774,7 +774,7 @@ static void um_arraystore_expand(UndoMesh *um)
 
   if (um->store.keyblocks) {
     const size_t stride = mesh->key->elemsize;
-    KeyBlock *keyblock = static_cast<KeyBlock *>(mesh->key->block.first);
+    KeyBlock *keyblock = mesh->key->block.first();
     for (int i = 0; i < mesh->key->totkey; i++, keyblock = keyblock->next) {
       const BArrayState *state = um->store.keyblocks[i];
       size_t state_len;
@@ -894,7 +894,7 @@ static UndoMesh **mesh_undostep_reference_elems_from_objects(Object **object, in
   /* Loop backwards over all previous mesh undo data until either:
    * - All elements have been found (where `um_references` we'll have every element set).
    * - There are no undo steps left to look for. */
-  UndoMesh *um_iter = static_cast<UndoMesh *>(um_arraystore.local_links.last);
+  UndoMesh *um_iter = um_arraystore.local_links.last();
   while (um_iter && (uuid_map_len != 0)) {
     if (UndoMesh **um_p = uuid_map.pop_default(um_iter->mesh->id.session_uid, nullptr)) {
       *um_p = um_iter;
@@ -1265,9 +1265,6 @@ static void mesh_undosys_step_decode(
 
     em->needs_flush_to_id = 1;
     DEG_id_tag_update(&mesh->id, ID_RECALC_GEOMETRY);
-    /* The object update tag is necessary to cause modifiers to reevaluate after vertex group
-     * changes. */
-    DEG_id_tag_update(&obedit->id, ID_RECALC_GEOMETRY);
   }
 
   /* The first element is always active */
@@ -1337,7 +1334,7 @@ void ED_mesh_undosys_type(UndoType *ut)
 
   ut->step_foreach_ID_ref = mesh_undosys_foreach_ID_ref;
 
-  ut->flags = UNDOTYPE_FLAG_NEED_CONTEXT_FOR_ENCODE;
+  ut->flags = UNDOTYPE_FLAG_NEED_CONTEXT_FOR_ENCODE | UNDOTYPE_FLAG_ENCODE_PRE_MEMFILE_SUPPORTED;
 
   ut->step_size = sizeof(MeshUndoStep);
 }

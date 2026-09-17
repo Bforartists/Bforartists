@@ -234,8 +234,10 @@ def addon_draw_item_expanded(
     col_b = split.column()
 
     if item_description:
-        col_a.label(
-            text=" {:s}.".format(item_description),
+        col_a_row = col_a.row()
+        col_a_row.separator(factor=0.1)
+        col_a_row.label_multiline(
+            text="{:s}.".format(item_description),
             translate=False,
         )
 
@@ -294,11 +296,11 @@ def addon_draw_item_expanded(
     if item_warnings:
         # Only for legacy add-ons.
         col_a.label(text="Warning")
-        col_b.label(text=item_warnings[0], icon='STATUS_WARNING')
+        col_b.label_multiline(text=item_warnings[0], icon='STATUS_WARNING')
         if len(item_warnings) > 1:
             for value in item_warnings[1:]:
                 col_a.label(text="")
-                col_b.label(text=value, icon='BLANK1')
+                col_b.label_multiline(text=value, icon='BLANK1')
             # pylint: disable-next=undefined-loop-variable
             del value
 
@@ -1507,8 +1509,8 @@ def extension_draw_item(
         row = grid.row()
         row.active = is_enabled
 
-        # The full tagline may be multiple lines (not yet supported by Blender's UI).
-        row.label(text=" {:s}.".format(item.tagline), translate=False)
+        row.separator(factor=0.1)
+        row.label_multiline(text="{:s}.".format(item.tagline), translate=False)
 
         ## BFA - expose uninstall in a consistent way to the addons - START ##
         if is_installed:
@@ -1539,11 +1541,11 @@ def extension_draw_item(
 
         if item_warnings:
             col_a.label(text="Warning")
-            col_b.label(text=item_warnings[0])
+            col_b.label_multiline(text=item_warnings[0])
             if len(item_warnings) > 1:
                 for value in item_warnings[1:]:
                     col_a.label(text="")
-                    col_b.label(text=value)
+                    col_b.label_multiline(text=value)
                 # pylint: disable-next=undefined-loop-variable
                 del value
 

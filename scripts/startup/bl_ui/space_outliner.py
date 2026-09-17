@@ -75,6 +75,7 @@ class OUTLINER_HT_header(Header):
         if display_mode in {'SCENES', 'VIEW_LAYER', 'LIBRARY_OVERRIDES'}:
             row.popover(
                 panel="OUTLINER_PT_filter",
+                icon="FILTER", # BFA - add icon back
                 text="",
             )
 
@@ -324,7 +325,7 @@ class OUTLINER_MT_view_pie(Menu):
 
 
 class OUTLINER_MT_id_data(Menu):
-    bl_label = "ID Data"
+    bl_label = "Data-block"
 
     @classmethod
     def poll(cls, context):
@@ -398,7 +399,7 @@ class OUTLINER_MT_collection(Menu):
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection)
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection).nested = True
         layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon="DUPLICATE")
-        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE") #BFA - exposed hidden operator
+        layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE") # BFA - WIP - Make a Duplicate Linked icon #BFA - exposed hidden operator
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
@@ -504,7 +505,7 @@ class OUTLINER_MT_object(Menu):
         layout.separator()
 
         layout.menu("OUTLINER_MT_id_data")
-        
+
         layout.separator()
 
         OUTLINER_MT_context_menu.draw_common_operators(space, layout)
@@ -563,14 +564,14 @@ class OUTLINER_PT_filter(Panel):
     bl_region_type = 'HEADER'
     bl_label = "Options"
 
-    # BFA - Helper method to simplify drawing of properties            
+    # BFA - Helper method to simplify drawing of properties
     @staticmethod
     def draw_prop_row(layout, data, prop_name, text, *, icon=None):
         row = layout.row()
-        
+
         if icon is not None:
             row.label(text='', icon=icon)
-        
+
         row.prop(data, prop_name, text=text)
         return row
 
@@ -579,7 +580,7 @@ class OUTLINER_PT_filter(Panel):
 
         space = context.space_data
         display_mode = space.display_mode
-        
+
         if display_mode == 'VIEW_LAYER':
             layout.label(text="Restriction Toggles")
             row = layout.row(align=True)
@@ -614,7 +615,11 @@ class OUTLINER_PT_filter(Panel):
             if space.use_sync_select:
                 row = col.row(align=True)
                 row.separator(factor=2.5)
-                row.prop(space, "scroll_to_active", text="Scroll to Active") # BFA - WIP, float left
+                row.prop(space, "scroll_to_active", text="Scroll to Active")
+                row = col.row(align=True)
+                row.separator(factor=2.5)
+                row.active = space.scroll_to_active and space.use_sync_select 
+                row.prop(space, "expand_on_focus") # BFA - WIP - cascade cpñña´se
 
             row = layout.row(align=True)
             row.prop(space, "show_mode_column", text="Show Mode Column")
@@ -690,9 +695,6 @@ class OUTLINER_PT_options_filter(Panel):
             sub = col.column(align=True)
 
             row = sub.row()
-            row.label(icon='OBJECT_CONTENTS')
-            row.prop(space, "use_filter_object_content", text="Object Contents")
-            row = sub.row()
             row.label(icon='CHILD')
             row.prop(space, "use_filter_children", text="Object Children")
 
@@ -735,6 +737,75 @@ class OUTLINER_PT_options_filter(Panel):
                 row.label(icon='BLANK1')
                 row.prop(space, "use_filter_object_others", text="Others")
 
+
+# BFA - Object Contents filters, moved into a collapsible sub panel
+class OUTLINER_PT_options_object_data(Panel):
+    bl_space_type = 'OUTLINER'
+    bl_region_type = 'HEADER'
+    bl_label = ""
+    bl_parent_id = "OUTLINER_PT_options_filter"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        layout = self.layout
+        space = context.space_data
+        layout.prop(space, "use_filter_object_content", text="Object Contents")
+
+    def draw(self, context):
+        space = context.space_data
+        layout = self.layout
+
+        layout.active = space.use_filter_object and space.use_filter_object_content
+        panel_column = layout.column(align=True)
+        panel_column.use_property_split = False
+        panel_column.use_property_decorate = False
+
+        row = panel_column.row(align=True)
+        row.label(icon='OBJECT_DATA')
+        row.separator()
+        row.prop(space, "use_filter_object_data", text="Object Data")
+        row = panel_column.row(align=True)
+        row.label(icon='GROUP_VERTEX')
+        row.separator()
+        row.prop(space, "use_filter_object_vertex_groups", text="Vertex Groups")
+        row = panel_column.row(align=True)
+        row.label(icon='SHAPEKEY_DATA')
+        row.separator()
+        row.prop(space, "use_filter_object_shape_keys", text="Shape Keys")
+        row = panel_column.row(align=True)
+        row.label(icon='ANIM_DATA')
+        row.separator()
+        row.prop(space, "use_filter_object_animation", text="Animation Data")
+        row = panel_column.row(align=True)
+        row.label(icon='CONSTRAINT')
+        row.separator()
+        row.prop(space, "use_filter_object_constraints", text="Constraints")
+        row = panel_column.row(align=True)
+        row.label(icon='MODIFIER_ON')
+        row.separator()
+        row.prop(space, "use_filter_object_modifiers", text="Modifiers")
+        row = panel_column.row(align=True)
+        row.label(icon='GROUP_BONE')
+        row.separator()
+        row.prop(space, "use_filter_bone_collections", text="Bone Collections")
+        row = panel_column.row(align=True)
+        row.label(icon='SHADERFX')
+        row.separator()
+        row.prop(space, "use_filter_grease_pencil_effects", text="Grease Pencil Effects")
+        row = panel_column.row(align=True)
+        row.label(icon='BONE_DATA')
+        row.separator()
+        row.prop(space, "use_filter_pose_bones", text="Pose Bones")
+        row = panel_column.row(align=True)
+        row.label(icon='ARMATURE_DATA')
+        row.separator()
+        row.prop(space, "use_filter_pose_bones_per_bone", text="Pose Bones (Per Bone)")
+        row = panel_column.row(align=True)
+        row.label(icon='MATERIAL')
+        row.separator()
+        row.prop(space, "use_filter_object_materials", text="Materials")
+
+
 classes = (
     OUTLINER_HT_header,
     OUTLINER_MT_object_collection, # BFA - menu
@@ -757,6 +828,7 @@ classes = (
     OUTLINER_PT_filter,
     OUTLINER_PT_options_search,
     OUTLINER_PT_options_filter,
+    OUTLINER_PT_options_object_data,
 )
 
 if __name__ == "__main__":  # only for live edit.

@@ -78,7 +78,7 @@ bool BlenderSync::object_is_geometry(BObjectInfo &b_ob_info)
     return true;
   }
 
-  return GS(b_ob_data->name) == blender::ID_ME;
+  return b_ob_data->id_type() == blender::ID_ME;
 }
 
 bool BlenderSync::object_can_have_geometry(blender::Object &b_ob)
@@ -104,14 +104,14 @@ bool BlenderSync::object_is_light(blender::Object &b_ob)
 {
   blender::ID *b_ob_data = object_get_data(b_ob, true);
 
-  return (b_ob_data && GS(b_ob_data->name) == blender::ID_LA);
+  return (b_ob_data && b_ob_data->id_type() == blender::ID_LA);
 }
 
 bool BlenderSync::object_is_camera(blender::Object &b_ob)
 {
   blender::ID *b_ob_data = object_get_data(b_ob, true);
 
-  return (b_ob_data && GS(b_ob_data->name) == blender::ID_CA);
+  return (b_ob_data && b_ob_data->id_type() == blender::ID_CA);
 }
 
 void BlenderSync::sync_object_motion_init(blender::Object &b_parent,
@@ -592,8 +592,7 @@ void BlenderSync::sync_objects_and_motion(blender::RenderData &b_render,
                                           blender::View3D *b_v3d,
                                           blender::RegionView3D *b_rv3d,
                                           const int width,
-                                          const int height,
-                                          void **python_thread_state)
+                                          const int height)
 {
   /* get camera object here to deal with camera switch */
   blender::Object *b_cam = get_camera_object(b_v3d, b_rv3d);
@@ -617,9 +616,7 @@ void BlenderSync::sync_objects_and_motion(blender::RenderData &b_render,
     const float time = frame_center + subframe_center + frame_center_delta;
     const int frame = (int)floorf(time);
     const float subframe = time - frame;
-    python_thread_state_restore(python_thread_state);
     RE_engine_frame_set(b_engine, frame, subframe);
-    python_thread_state_save(python_thread_state);
     if (b_cam) {
       sync_camera_motion(b_render, b_cam, width, height, 0.0f);
     }
@@ -676,9 +673,7 @@ void BlenderSync::sync_objects_and_motion(blender::RenderData &b_render,
     const float subframe = time - frame;
 
     /* change frame */
-    python_thread_state_restore(python_thread_state);
     RE_engine_frame_set(b_engine, frame, subframe);
-    python_thread_state_save(python_thread_state);
 
     /* Syncs camera motion if relative_time is one of the camera's motion times. */
     sync_camera_motion(b_render, b_cam, width, height, relative_time);
@@ -689,12 +684,8 @@ void BlenderSync::sync_objects_and_motion(blender::RenderData &b_render,
 
   geometry_motion_attribute_synced.clear();
 
-  /* we need to set the python thread state again because this
-   * function assumes it is being executed from python and will
-   * try to save the thread state */
-  python_thread_state_restore(python_thread_state);
+  /* Restore the frame that was current before motion synchronization. */
   RE_engine_frame_set(b_engine, frame_center, subframe_center);
-  python_thread_state_save(python_thread_state);
 }
 
 CCL_NAMESPACE_END

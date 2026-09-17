@@ -62,11 +62,13 @@ set(WITH_TBB_MALLOC_PROXY    OFF CACHE BOOL "" FORCE)
 set(WITH_USD                 OFF CACHE BOOL "" FORCE)
 set(WITH_MATERIALX           OFF CACHE BOOL "" FORCE)
 set(WITH_XR_OPENXR           OFF CACHE BOOL "" FORCE)
+
 set(WITH_ASSERT_RELEASE       ON CACHE BOOL "" FORCE)
 
 if(UNIX AND NOT APPLE)
   set(WITH_GHOST_WAYLAND        ON CACHE BOOL "" FORCE)
   set(WITH_GHOST_X11           OFF CACHE BOOL "" FORCE)
+  set(WITH_GHOST_DBUS          OFF CACHE BOOL "" FORCE)
 
   # Keep X11 options so the build is still "lite" if X11 is enabled.
   set(WITH_GHOST_XDND          OFF CACHE BOOL "" FORCE)
@@ -80,7 +82,7 @@ endif()
 # These should not have any impact but are disabled so they don't
 # appear to be enabled in the list of items (which are mostly OFF).
 set(WITH_CYCLES_DEVICE_OPTIX OFF CACHE BOOL "" FORCE)
-set(WITH_CYCLES_EMBREE       OFF CACHE BOOL "" FORCE)
+set(WITH_EMBREE              OFF CACHE BOOL "" FORCE)
 set(WITH_CYCLES_OSL          OFF CACHE BOOL "" FORCE)
 set(WITH_CYCLES_PATH_GUIDING OFF CACHE BOOL "" FORCE)
 set(WITH_OPENVDB_BLOSC       OFF CACHE BOOL "" FORCE)

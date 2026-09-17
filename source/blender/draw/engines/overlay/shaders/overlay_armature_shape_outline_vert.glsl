@@ -11,9 +11,9 @@ VERTEX_SHADER_CREATE_INFO(overlay_armature_shape_outline)
 #include "gpu_shader_attribute_load_lib.glsl"
 #include "gpu_shader_index_load_lib.glsl"
 
-#include "gpu_shader_math_matrix_transform_lib.glsl"
-#include "gpu_shader_math_safe_lib.glsl"
-#include "gpu_shader_utildefines_lib.glsl"
+#include "gpu_shader_math_matrix_transform.bsl.hh"
+#include "gpu_shader_math_safe.bsl.hh"
+#include "gpu_shader_utildefines.bsl.hh"
 #include "overlay_common_lib.glsl"
 #include "select_lib.glsl"
 
@@ -168,7 +168,7 @@ void geometry_main(VertOut geom_in[4],
 
 void main()
 {
-  select_id_set(in_select_buf[gl_InstanceID]);
+  select_id_set(in_select_buf[gpu_InstanceIndex]);
 
   /* Line Adjacency primitive. */
   constexpr uint input_primitive_vertex_count = 4u;
@@ -190,7 +190,7 @@ void main()
   uint out_invocation_id = (uint(gl_VertexID) / output_vertex_count_per_invocation) %
                            output_invocation_count;
 
-  float4x4 inst_matrix = data_buf[gl_InstanceID];
+  float4x4 inst_matrix = data_buf[gpu_InstanceIndex];
 
   VertIn vert_in[input_primitive_vertex_count];
   vert_in[0] = input_assembly(in_primitive_first_vertex + 0u, inst_matrix);

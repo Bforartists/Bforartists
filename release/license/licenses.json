@@ -13,8 +13,12 @@
   },
   "Public Domain": {
     "name": "Public Domain",
-    "url": "https://spdx.org/licenses/CC0-1.0.html",
+    "url": "",
     "copyright_exemption": "Public domain projects have no specific license or requirements in regards to copyright enforcement."
+  },
+  "SPDX:0BSD": {
+    "name": "BSD Zero Clause License",
+    "url": "https://spdx.org/licenses/0BSD.html"
   },
   "SPDX:Apache-2.0": {
     "name": "Apache License 2.0",

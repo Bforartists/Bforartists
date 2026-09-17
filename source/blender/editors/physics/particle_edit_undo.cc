@@ -66,7 +66,7 @@ static void undoptcache_from_editcache(PTCacheUndo *undo, PTCacheEdit *edit)
     PTCacheMem *pm;
 
     BLI_duplicatelist(&undo->mem_cache, &edit->pid.cache->mem_cache);
-    pm = static_cast<PTCacheMem *>(undo->mem_cache.first);
+    pm = undo->mem_cache.first();
 
     for (; pm; pm = pm->next) {
       for (int i = 0; i < BPHYS_TOT_DATA; i++) {
@@ -147,7 +147,7 @@ static void undoptcache_to_editcache(PTCacheUndo *undo, PTCacheEdit *edit)
 
     BLI_duplicatelist(&edit->pid.cache->mem_cache, &undo->mem_cache);
 
-    pm = static_cast<PTCacheMem *>(edit->pid.cache->mem_cache.first);
+    pm = edit->pid.cache->mem_cache.first();
 
     for (; pm; pm = pm->next) {
       for (i = 0; i < BPHYS_TOT_DATA; i++) {
@@ -248,6 +248,11 @@ static void particle_undosys_step_decode(
       CTX_wm_manager(C), us->scene_ref.ptr, &scene, &view_layer);
 
   Object *ob = us->object_ref.ptr;
+  if (ob->mode != OB_MODE_PARTICLE_EDIT) {
+    /* Exit the current mode before restoring Particle Edit to clean up its runtime data and avoid
+     * combining incompatible mode bits. */
+    ed::object::mode_generic_exit(bmain, depsgraph, scene, ob);
+  }
   ED_object_particle_edit_mode_enter_ex(depsgraph, scene, ob);
 
   PTCacheEdit *edit = PE_get_current(depsgraph, scene, ob);
@@ -298,7 +303,7 @@ void ED_particle_undosys_type(UndoType *ut)
 
   ut->step_foreach_ID_ref = particle_undosys_foreach_ID_ref;
 
-  ut->flags = UNDOTYPE_FLAG_NEED_CONTEXT_FOR_ENCODE;
+  ut->flags = UNDOTYPE_FLAG_NEED_CONTEXT_FOR_ENCODE | UNDOTYPE_FLAG_ENCODE_PRE_MEMFILE_SUPPORTED;
 
   ut->step_size = sizeof(ParticleUndoStep);
 }

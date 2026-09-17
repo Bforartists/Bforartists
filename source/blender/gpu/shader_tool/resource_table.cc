@@ -10,9 +10,15 @@
 #include "metadata.hh"
 #include "processor.hh"
 
+#include <ranges>
+#include <string>
+#include <utility>
+#include <vector>
+
 namespace blender::gpu::shader {
 using namespace std;
 using namespace shader::parser;
+using namespace shader::parser::ast;
 using namespace metadata;
 
 /**
@@ -65,6 +71,55 @@ void SourceProcessor::lower_srt_accessor_templates(Parser &parser)
       }
     });
   });
+  parser.apply_mutations();
+}
+
+/**
+ * For safety reason, nested resource tables need to be declared with the srt_t template.
+ * This avoid chained member access which isn't well defined with the preprocessing we are doing.
+ *
+ * This linting phase make sure that [[resource_table]] members uses it and that no incorrect
+ * usage is made. We also remove this template because it has no real meaning.
+ *
+ * Need to run before lower_resource_table.
+ */
+void SourceProcessor::lower_srt_accessor_templates_ast(Parser &parser)
+{
+  for (ClassDecl decl : parser.root().descendants_of_type<ClassDecl>()) {
+    for (VarDecl var : decl.body().children_of_type<VarDecl>()) {
+      IdType type = var.type();
+      bool is_resource_table = var.attributes().contains_attr("resource_table");
+      bool is_srt = type.identifier().name().str() == "srt_t";
+      if (!is_srt) {
+        continue;
+      }
+
+      if (!is_resource_table) {
+        report_error(var,
+                     "The srt_t<T> template is only to be used with members declared with the "
+                     "[[resource_table]] attribute.");
+        continue;
+      }
+
+      for (Declarator decl : var.children_of_type<Declarator>()) {
+        if (decl.is_array()) {
+          report_error(decl, "[[resource_table]] members cannot be arrays.");
+        }
+        if (decl.is_reference()) {
+          report_error(decl, "[[resource_table]] members cannot be references.");
+        }
+      }
+
+      /* Remove the template but not the wrapped type. */
+      parser.erase(type.identifier().name());
+      TemplateParamList list = type.identifier().template_params();
+      if (list.is_valid()) {
+        parser.erase(list.front());
+        parser.erase(list.back());
+      }
+    }
+  }
+
   parser.apply_mutations();
 }
 
@@ -272,7 +327,7 @@ void SourceProcessor::lower_using(Parser &parser)
     /* Assignments do not allow to alias functions symbols. */
     const bool use_alias = from.str() != to_end.str();
     const bool replace_fn = !use_alias;
-    /** IMPORTANT: If replace_fn is true, this can replace any symbol type if there are functions
+    /* IMPORTANT: If `replace_fn` is true, this can replace any symbol type if there are functions
      * and types with the same name. We could support being more explicit about the type of
      * symbol to replace using an optional attribute [[gpu::using_function]]. */
 
@@ -364,6 +419,11 @@ void SourceProcessor::lower_resource_table(Parser &parser)
         resource.res_slot = attribute[2].str();
         resource.res_qualifier = attribute[4].str();
       }
+      else if (type == "acceleration_structure") {
+        resource.res_type = type;
+        resource.res_slot = attribute[2].str();
+        resource.res_qualifier = attribute[4].str();
+      }
       else if (type == "shared") {
         resource.res_type = type;
       }
@@ -394,6 +454,9 @@ void SourceProcessor::lower_resource_table(Parser &parser)
       else if (type == "legacy_info") {
         resource.res_type = type;
       }
+      else if (type == "legacy_iface") {
+        resource.res_type = type;
+      }
       else {
         report_error(attribute[0], "Invalid attribute in resource table");
       }
@@ -418,6 +481,14 @@ void SourceProcessor::lower_resource_table(Parser &parser)
       string_view type = attribute[0].str();
       if (type == "attribute") {
         vert_in.slot = attribute[2].str();
+      }
+      else if (type == "condition") {
+        attribute[1].scope().foreach_token(Word, [&](const Token tok) {
+          vert_in.res_condition += "int " + string(tok.str()) + " = ";
+          vert_in.res_condition += "ShaderCreateInfo::find_constant(constants, \"" +
+                                   string(tok.str()) + "\"); ";
+        });
+        vert_in.res_condition += "return " + string(attribute[1].scope().str()) + ";";
       }
       else {
         report_error(attribute[0], "Invalid attribute in vertex input interface");
@@ -502,9 +573,9 @@ void SourceProcessor::lower_resource_table(Parser &parser)
   auto is_resource_table_attribute = [](Token attr) {
     string_view type = attr.str();
     return (type == "sampler" || type == "image" || type == "uniform" || type == "storage" ||
-            type == "shared" || type == "push_constant" || type == "compilation_constant" ||
-            type == "specialization_constant" || type == "legacy_info" ||
-            type == "resource_table");
+            type == "acceleration_structure" || type == "shared" || type == "push_constant" ||
+            type == "compilation_constant" || type == "specialization_constant" ||
+            type == "legacy_info" || type == "legacy_iface" || type == "resource_table");
   };
   auto is_vertex_input_attribute = [](Token attr) {
     string_view type = attr.str();
@@ -699,28 +770,75 @@ void SourceProcessor::lower_resource_table(Parser &parser)
       ctor += "}\n";
       parser.insert_after(end_of_srt, ctor);
 
-      string access_macros;
-      for (const auto &member : srt) {
-        if (member.res_type == "resource_table") {
-          access_macros += "#define access_" + srt.name + "_" + member.var_name + "() ";
-          access_macros += member.var_type + "::new_()\n";
+      {
+        string access_macros;
+        for (const auto &member : srt) {
+          if (member.res_type == "resource_table") {
+            access_macros += "#define access_" + srt.name + "_" + member.var_name + "() ";
+            access_macros += member.var_type + "_ctor_()\n";
+          }
+          else {
+            access_macros += "#define access_" + srt.name + "_" + member.var_name + "() ";
+            access_macros += member.var_name + "\n";
+          }
         }
-        else {
-          access_macros += "#define access_" + srt.name + "_" + member.var_name + "() ";
-          access_macros += member.var_name + "\n";
-        }
-      }
-      parser.insert_before(struct_tok, access_macros);
-      parser.insert_before(struct_tok, get_create_info_placeholder(srt.name));
+        parser.insert_before(struct_tok, access_macros);
+        parser.insert_before(struct_tok, get_create_info_placeholder(srt.name));
 
-      parser.insert_before(struct_tok, "\n");
-      parser.insert_line_number(struct_tok.str_index_start() - 1, struct_tok.line_number());
+        parser.insert_before(struct_tok, "\n");
+        parser.insert_line_number(struct_tok.str_index_start() - 1, struct_tok.line_number());
+      }
 
       /* Insert attribute so that method mutations know that this struct is an SRT. */
-      parser.insert_before(struct_tok, "[[resource_table]] ");
+      if (parser.language == Language::BSL) {
+        parser.insert_after(struct_tok, "[[resource_table]] ");
+      }
+      else {
+        parser.insert_before(struct_tok, "[[resource_table]] ");
+      }
     }
   });
-  parser.apply_mutations();
+
+  parser.parse(error_handler);
+}
+
+void SourceProcessor::lower_resource_macro_placeholder_ast(Parser &parser)
+{
+  auto split_into_pairs = [](const string &str) {
+    vector<pair<string, string>> result;
+    /* Split by spaces. */
+    auto words_view = str | std::views::split(' ');
+
+    string first_of_pair;
+    for (auto &&word_range : words_view) {
+      string word(word_range.begin(), word_range.end());
+      if (first_of_pair.empty()) {
+        first_of_pair = std::move(word);
+      }
+      else {
+        result.emplace_back(std::move(first_of_pair), std::move(word));
+      }
+    }
+    return result;
+  };
+
+  for (Preprocessor directive : parser.root().descendants_of_type<Preprocessor>()) {
+    string_view dir_str = directive.str();
+    if (dir_str.starts_with("#pragma resource_access ")) {
+      auto pairs = split_into_pairs(string(dir_str));
+      for (auto pair : pairs) {
+        if (pair.first != "#pragma") {
+          parser.insert_before(directive.front(),
+                               "#define " + pair.first + " " + pair.second + "\n");
+        }
+      }
+      parser.erase(directive);
+    }
+    else if (dir_str.starts_with("#pragma resource_defines ")) {
+      string_view str_name = directive.back().str();
+      parser.replace(directive, get_create_info_placeholder(string(str_name)));
+    }
+  }
 }
 
 }  // namespace blender::gpu::shader

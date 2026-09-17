@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup geo
+ */
+
 #include <algorithm>
 #include <memory>
 #include <optional>
@@ -457,8 +461,10 @@ class ExtendableMesh {
       new_face_kinds_.last() = kind;
     }
   }
-  /** Tags a new edge by its combined (original + new) index with the given kind.
-   * Only new edges (index >= mesh.edges_num) are tagged; original edges are silently ignored. */
+  /**
+   * Tags a new edge by its combined (original + new) index with the given kind.
+   * Only new edges (index >= mesh.edges_num) are tagged; original edges are silently ignored.
+   */
   void tag_edge_kind(const int edge_index, const NewEdgeKind kind)
   {
     const int ni = edge_index - mesh.edges_num;
@@ -976,8 +982,10 @@ struct BevelState {
   bool mark_seam;
   bool mark_sharp;
 
-  /** Source-edge indices of the two outer edges of each bevel strip, accumulated during
-   * #bevel_build_edge_polygons for use by the #BevelAttributeOutputs `outer_edge_id` field. */
+  /**
+   * Source-edge indices of the two outer edges of each bevel strip, accumulated during
+   * #bevel_build_edge_polygons for use by the #BevelAttributeOutputs `outer_edge_id` field.
+   */
   Vector<int> outer_edge_src_indices;
 
   VMeshMethod vmesh_method;
@@ -2832,15 +2840,33 @@ static void find_bevel_edge_order(const ExtendableMesh &emesh,
       continue;
     }
     int bestf = -1;
+    bool bestf_is_directional = false;
     for (const int f : emesh.src_edge_to_face[e]) {
-      if (emesh.src_edge_to_face[e2].contains(f)) {
-        const IndexRange corners = emesh.face_corners(f);
-        for (const int c : corners) {
-          if (emesh.corner_vert(c) == bv->v) {
-            bestf = f;
-            break;
-          }
+      if (!emesh.src_edge_to_face[e2].contains(f)) {
+        continue;
+      }
+      const IndexRange corners = emesh.face_corners(f);
+      for (const int c : corners) {
+        if (emesh.corner_vert(c) != bv->v) {
+          continue;
         }
+        /* Mirror BMesh's `l->v == bv->v` preference: prefer the face where the corner
+         * at bv->v has its outgoing edge equal to e (the "fnext" direction).
+         * Without this, for 2-edge vertices where both edges share both adjacent faces,
+         * both loop iterations may select the same face, causing wrong BoundVert positions. */
+        if (emesh.corner_edge(c) == e) {
+          /* Directionally correct face: always prefer this and stop searching. */
+          bestf = f;
+          bestf_is_directional = true;
+          break;
+        }
+        if (bestf == -1) {
+          /* Fall back: accept any face containing bv->v if no directional match yet. */
+          bestf = f;
+        }
+      }
+      if (bestf_is_directional) {
+        break;
       }
     }
     if (bestf != -1) {
@@ -4775,6 +4801,8 @@ static void bevel_build_rings(BevelState &state, BevVert *bv)
   } while ((bndv = bndv->next) != vm->boundstart);
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Face rebuild
  * \{ */
@@ -5367,6 +5395,10 @@ static void bevel_build_edge_polygons(BevelState &state, const int edge_index)
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name VMesh building
+ * \{ */
+
 static BoundVert *pipe_test(const BevelState &state, BevVert *bv);
 static VMesh pipe_adj_vmesh(BevelState &state, BevVert *bv, BoundVert *vpipe);
 static VMesh square_out_adj_vmesh(BevelState &state, BevVert *bv);
@@ -5510,7 +5542,7 @@ static void build_vmesh(BevelState &state, BevVert *bv)
       for (int i = 0; i < n; i++) {
         for (int j = 0; j <= ns2; j++) {
           for (int k = 0; k <= ns; k++) {
-            if (j == 0 && (k == 0 || k == ns)) {
+            if (j == 0 && ELEM(k, 0, ns)) {
               continue; /* Boundary corners already created. */
             }
             if (!geom::is_canon(vm, i, j, k)) {

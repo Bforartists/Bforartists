@@ -25,6 +25,7 @@
 #include "BLI_vector.hh"
 
 #include "DNA_ID.h"
+#include "DNA_collection_types.h"
 
 #include "BKE_bpath.hh"
 #include "BKE_global.hh"
@@ -36,6 +37,7 @@
 #include "BKE_main.hh"
 #include "BKE_main_idmap.hh"
 #include "BKE_main_namemap.hh"
+#include "BKE_node.hh"
 #include "BKE_report.hh"
 
 #include "IMB_colormanagement.hh"
@@ -95,6 +97,12 @@ Main *BKE_main_new()
   return bmain;
 }
 
+void BKE_main_init_from_reference(Main &bmain, const Main &reference)
+{
+  STRNCPY(bmain.filepath, reference.filepath);
+  bmain.colorspace = reference.colorspace;
+}
+
 void BKE_main_clear(Main &bmain)
 {
   /* Also call when reading a file, erase all, etc */
@@ -112,7 +120,7 @@ void BKE_main_clear(Main &bmain)
     ListBaseT<ID> *lb = lbarray[a];
     ID *id, *id_next;
 
-    for (id = static_cast<ID *>(lb->first); id != nullptr; id = id_next) {
+    for (id = lb->first(); id != nullptr; id = id_next) {
       id_next = static_cast<ID *>(id->next);
 #if 1
       BKE_id_free_ex(&bmain, id, free_flag, false);
@@ -214,7 +222,7 @@ static bool are_ids_from_different_mains_matching(Main *bmain_1, ID *id_1, Main 
    *     - Neither of their absolute filepaths should match any of the bmain filepaths.
    *   - If one of the library is null:
    *      - The other library should match the bmain filepath of the null library. */
-  if ((!id_1 && GS(id_2->name) == ID_LI) || GS(id_1->name) == ID_LI) {
+  if ((!id_1 && id_2->id_type() == ID_LI) || id_1->id_type() == ID_LI) {
     BLI_assert(!id_1 || !ID_IS_LINKED(id_1));
     BLI_assert(!id_2 || !ID_IS_LINKED(id_2));
 
@@ -364,7 +372,7 @@ void BKE_main_merge(Main *bmain_dst,
   Map<IDHash, ID *> id_packed_map_dst;
   ID *id_iter_dst, *id_iter_src;
   FOREACH_MAIN_ID_BEGIN (bmain_dst, id_iter_dst) {
-    if (GS(id_iter_dst->name) == ID_LI) {
+    if (id_iter_dst->id_type() == ID_LI) {
       /* Libraries need specific handling, as we want to check them by their filepath, not the IDs
        * themselves. */
       Library *lib_dst = reinterpret_cast<Library *>(id_iter_dst);
@@ -399,7 +407,7 @@ void BKE_main_merge(Main *bmain_dst,
   Vector<ID *> ids_to_move;
 
   FOREACH_MAIN_ID_BEGIN (bmain_src, id_iter_src) {
-    const bool is_library = GS(id_iter_src->name) == ID_LI;
+    const bool is_library = id_iter_src->id_type() == ID_LI;
     const bool is_packed = ID_IS_PACKED(id_iter_src);
     BLI_assert(!is_packed || !is_library);
     BLI_assert(!is_library || !ID_IS_LINKED(id_iter_src));
@@ -562,6 +570,68 @@ void BKE_main_merge(Main *bmain_dst,
 void BKE_main_merge(Main *bmain_dst, Main **r_bmain_src, MainMergeReport &reports)
 {
   BKE_main_merge(bmain_dst, nullptr, r_bmain_src, reports);
+}
+
+void BKE_main_merge_as_archive_library(Main &bmain_dst,
+                                       Main *&r_bmain_src,
+                                       Library &dst_external_library,
+                                       MainMergeReport &reports)
+{
+  BLI_assert(dst_external_library.flag & LIBRARY_FLAG_IS_ARCHIVE);
+  BLI_assert(dst_external_library.flag & LIBRARY_FLAG_IS_EXTERNAL);
+
+  Main &bmain_src = *r_bmain_src;
+  Vector<ID *> ids_to_move;
+
+  /* Collect all non-Library IDs from the source Main. Library IDs are dropped: the destination
+   * already has the authoritative external_library representing this import source. */
+  for (ID &id_iter : MainAllIDsIterator(bmain_src)) {
+    if (id_iter.id_type() == ID_LI) {
+      BLI_assert_msg(false,
+                     "Unexpected Library ID in source Main when merging as archive library");
+      continue;
+    }
+    ids_to_move.append(&id_iter);
+  }
+
+  reports.num_merged_ids = int(ids_to_move.size());
+
+  /* Remove IDs from the source Main and assign them to the external library namespace. */
+  for (ID *id : ids_to_move) {
+    BKE_libblock_management_main_remove(&bmain_src, id);
+    id->lib = &dst_external_library;
+
+    /* Consider these IDs as directly linked and packed. */
+    id->flag |= ID_FLAG_LINKED_AND_PACKED;
+
+    /* Need to tag embedded IDs as well. */
+    bNodeTree *ntree = bke::node_tree_from_id(id);
+    if (ntree != nullptr) {
+      ntree->id.lib = &dst_external_library;
+      ntree->id.flag |= ID_FLAG_LINKED_AND_PACKED;
+    }
+    if (id->id_type() == ID_SCE) {
+      Collection *master_collection = (id_cast<Scene *>(id))->master_collection;
+      if (master_collection != nullptr) {
+        master_collection->id.lib = &dst_external_library;
+        master_collection->id.flag |= ID_FLAG_LINKED_AND_PACKED;
+      }
+    }
+
+    /* Needs to be done after setting library for embedded IDs above too. */
+    id_lib_extern(id, true);
+  }
+
+  /* Add all IDs into the destination Main under the external library. */
+  for (ID *id : ids_to_move) {
+    BLI_assert((id->tag & ID_TAG_NO_MAIN) != 0);
+    BKE_libblock_management_main_add(&bmain_dst, id);
+  }
+
+  BLI_assert(BKE_main_namemap_validate(bmain_dst));
+
+  BKE_main_free(&bmain_src);
+  r_bmain_src = nullptr;
 }
 
 bool BKE_main_is_empty(Main *bmain)
@@ -761,17 +831,18 @@ MainLibraryWeakReferenceMap *BKE_main_library_weak_reference_create(Main *bmain)
 
   ListBaseT<ID> *lb;
   FOREACH_MAIN_LISTBASE_BEGIN (bmain, lb) {
-    ID *id_iter = static_cast<ID *>(lb->first);
+    ID *id_iter = lb->first();
     if (id_iter == nullptr) {
       continue;
     }
-    if (!BKE_idtype_idcode_append_is_reusable(GS(id_iter->name))) {
+    if (!BKE_idtype_idcode_append_is_reusable(id_iter->id_type())) {
       continue;
     }
-    BLI_assert(BKE_idtype_idcode_is_linkable(GS(id_iter->name)));
+    BLI_assert(BKE_idtype_idcode_is_linkable(id_iter->id_type()));
 
     FOREACH_MAIN_LISTBASE_ID_BEGIN (lb, id_iter) {
-      if (id_iter->library_weak_reference == nullptr) {
+      /* Only local IDs can be reused, not linked editable assets. */
+      if (id_iter->library_weak_reference == nullptr || ID_IS_LINKED(id_iter)) {
         continue;
       }
       const LibWeakRefKey key{id_iter->library_weak_reference->library_filepath,
@@ -874,6 +945,9 @@ ID *BKE_main_library_weak_reference_find(Main *bmain,
 
   ListBaseT<ID> *id_list = which_libbase(bmain, GS(library_id_name));
   for (ID &existing_id : *id_list) {
+    if (ID_IS_LINKED(&existing_id)) {
+      continue;
+    }
     if (!(existing_id.library_weak_reference &&
           STREQ(existing_id.library_weak_reference->library_id_name, library_id_name)))
     {
@@ -1158,21 +1232,22 @@ MainAllIDsIterator &MainAllIDsIterator::operator++()
   }
 
   BLI_assert(curr_id_ == nullptr);
-  BLI_assert(curr_lbarray_index_ >= -1 && curr_lbarray_index_ <= int64_t(lbarray_.size()));
+  BLI_assert(lbarray_index_is_valid());
 
-  if (curr_lbarray_index_ >= int64_t(lbarray_.size())) {
+  if (curr_lbarray_index_ == lbarray_index_upper_bound()) {
     return *this;
   }
   while (true) {
-    curr_lbarray_index_++;
-    if (curr_lbarray_index_ == int64_t(lbarray_.size())) {
+    lbarray_index_step_next();
+    BLI_assert(lbarray_index_is_valid());
+    if (curr_lbarray_index_ == lbarray_index_upper_bound()) {
       return *this;
     }
     /* Listbase pointers from lbarray_ can be nullptr when no data was provided (default
      * constructor case). */
     ListBaseT<ID> *lb_ids = lbarray_[size_t(curr_lbarray_index_)];
     if (lb_ids && !lb_ids->is_empty()) {
-      curr_id_ = static_cast<ID *>(lb_ids->first);
+      curr_id_ = lb_ids->first();
       return *this;
     }
   }
@@ -1190,21 +1265,22 @@ MainAllIDsIterator &MainAllIDsIterator::operator--()
     }
   }
   BLI_assert(curr_id_ == nullptr);
-  BLI_assert(curr_lbarray_index_ >= -1 && curr_lbarray_index_ <= int64_t(lbarray_.size()));
+  BLI_assert(lbarray_index_is_valid());
 
-  if (this->curr_lbarray_index_ <= -1) {
+  if (curr_lbarray_index_ == lbarray_index_lower_bound()) {
     return *this;
   }
   while (true) {
-    curr_lbarray_index_--;
-    if (curr_lbarray_index_ == -1) {
+    lbarray_index_step_prev();
+    BLI_assert(lbarray_index_is_valid());
+    if (curr_lbarray_index_ == lbarray_index_lower_bound()) {
       return *this;
     }
     /* Listbase pointers from lbarray_ can be nullptr when no data was provided (default
      * constructor case). */
     ListBaseT<ID> *lb_ids = lbarray_[size_t(curr_lbarray_index_)];
     if (lb_ids && !lb_ids->is_empty()) {
-      curr_id_ = static_cast<ID *>(lb_ids->last);
+      curr_id_ = lb_ids->last();
       return *this;
     }
   }

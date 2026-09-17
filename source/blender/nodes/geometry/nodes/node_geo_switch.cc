@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "node_geometry_util.hh"
+#include "shader/node_shader_util.hh"
 
 #include "BKE_node_tree_reference_lifetimes.hh"
 
@@ -75,10 +76,10 @@ static void node_layout(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
   layout.prop(ptr, "input_type", UI_ITEM_NONE, "", ICON_NONE);
 }
 
-static void node_init(bNodeTree * /*tree*/, bNode *node)
+static void node_init(bNodeTree *tree, bNode *node)
 {
   NodeSwitch *data = MEM_new<NodeSwitch>(__func__);
-  data->input_type = SOCK_FLOAT;
+  data->input_type = tree->type == NTREE_GEOMETRY ? SOCK_FLOAT : SOCK_RGBA;
   node->storage = data;
 }
 
@@ -156,12 +157,12 @@ class LazyFunctionForSwitchNode : public LazyFunction {
   {
     SocketValueVariant condition_variant = params.get_input<SocketValueVariant>(0);
     if (!condition_variant.is_context_dependent_field()) {
-      this->execute_single(condition_variant.get<bool>(), params);
+      this->execute_single(condition_variant.ensure_type<bool>(), params);
       return;
     }
 
     if (can_be_field_) {
-      this->execute_field(condition_variant.get<Field<bool>>(), params);
+      this->execute_field(condition_variant.ensure_type<Field<bool>>(), params);
       return;
     }
 
@@ -173,7 +174,7 @@ class LazyFunctionForSwitchNode : public LazyFunction {
           {node_id_, {NodeWarningType::Error, N_("Type cannot be switched by a field")}});
     }
 
-    this->execute_single(condition_variant.get<bool>(), params);
+    this->execute_single(condition_variant.ensure_type<bool>(), params);
   }
 
   static constexpr int false_input_index = 1;
@@ -211,15 +212,15 @@ class LazyFunctionForSwitchNode : public LazyFunction {
 
     const MultiFunction &switch_multi_function = this->get_switch_multi_function();
 
-    GField false_field = false_value_variant->extract<GField>();
-    GField true_field = true_value_variant->extract<GField>();
+    GField false_field = std::move(false_value_variant->ensure_type<GField>());
+    GField true_field = std::move(true_value_variant->ensure_type<GField>());
 
     GField output_field{FieldOperation::from(
         switch_multi_function,
         {std::move(condition), std::move(false_field), std::move(true_field)})};
 
     void *output_ptr = params.get_output_data_ptr(0);
-    SocketValueVariant::ConstructIn(output_ptr, std::move(output_field));
+    new (output_ptr) SocketValueVariant(SocketValueVariant::from(std::move(output_field)));
     params.output_set(0);
   }
 
@@ -303,7 +304,7 @@ static void register_node()
 {
   static bke::bNodeType ntype;
 
-  geo_cmp_node_type_base(&ntype, "GeometryNodeSwitch"_ustr, GEO_NODE_SWITCH);
+  common_node_type_base(&ntype, "GeometryNodeSwitch"_ustr, GEO_NODE_SWITCH);
   ntype.ui_name = "Switch";
   ntype.ui_description = "Switch between two inputs";
   ntype.enum_name_legacy = "SWITCH";

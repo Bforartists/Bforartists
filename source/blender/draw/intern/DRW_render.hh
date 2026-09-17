@@ -56,6 +56,7 @@ struct DRWViewData;
 struct GPUViewport;
 struct DRWTextStore;
 struct GPUViewport;
+struct bToolRef;
 namespace draw {
 class TextureFromPool;
 class ObjectRef;
@@ -77,6 +78,12 @@ struct DrawEngine {
   virtual ~DrawEngine() = default;
 
   virtual StringRefNull name_get() = 0;
+
+  /** True if the render engine takes the render border into account. */
+  virtual bool uses_render_border() const
+  {
+    return false;
+  }
 
   /* Functions called for viewport. */
 
@@ -309,8 +316,10 @@ struct DRWContext {
   /** Evaluated ViewLayer. */
   ViewLayer *view_layer = nullptr;
 
-  /** Last resort (some functions take this as an arg so we can't easily avoid).
-   * May be nullptr when used for selection or depth buffer. */
+  /**
+   * Last resort (some functions take this as an arg so we can't easily avoid).
+   * May be nullptr when used for selection or depth buffer.
+   */
   const bContext *evil_C = nullptr;
   /** Can be nullptr depending on context. */
   ARegion *region = nullptr;
@@ -320,6 +329,8 @@ struct DRWContext {
   RegionView3D *rv3d = nullptr;
   /** Can be nullptr depending on context. */
   View3D *v3d = nullptr;
+  /* Active tool in the current context. Might be nullptr. */
+  bToolRef *active_tool = nullptr;
   /** Use 'object_edit' for edit-mode */
   Object *obact = nullptr;
   Object *object_pose = nullptr;
@@ -448,7 +459,7 @@ struct DRWContext {
   /** True if current viewport is drawn during transforming operator. */
   bool is_transforming() const;
   /** True if viewport compositor is enabled when drawing with this context. */
-  bool is_viewport_compositor_enabled() const;
+  bool is_viewport_compositor_used() const;
 };
 
 /** \} */

@@ -14,8 +14,8 @@ Can run in two modes:
 Usage:
     python weekly_report.py                           # Remote mode, last 7 full days
     python weekly_report.py --repo /path/to/blender   # Local repo mode
-    python weekly_report.py --since 2026-06-11 --until 2026-05-18
-    python weekly_report.py --since 2026-06-11
+    python weekly_report.py --since 2026-09-03 --until 2026-09-14
+    python weekly_report.py --since 2026-09-15
     python weekly_report.py --show-all                 # Include fixes/cleanups
 """
 
@@ -404,6 +404,15 @@ def generate_report(commits, show_all=False, since_date=None, until_date=None):
     interesting = []
     for c in commits:
         body = get_commit_body(c["hash"])
+
+        # Count stats for the stats line (before filtering, so we get accurate totals)
+        if is_fix(c["subject"]):
+            nr_fix += 1
+        if is_cleanup(c["subject"]):
+            nr_cleanup += 1
+        if is_refactor(c["subject"]):
+            nr_refactor += 1
+
         skipped = should_skip(c["subject"], body)
         if skipped and not show_all:
             continue
@@ -413,14 +422,6 @@ def generate_report(commits, show_all=False, since_date=None, until_date=None):
         c["issue_links"] = extract_issue_links(c["subject"], body)
         c["commit_link"] = get_commit_link(c["hash"])
         interesting.append(c)
-
-        # Count stats for the stats line
-        if is_fix(c["subject"]):
-            nr_fix += 1
-        if is_cleanup(c["subject"]):
-            nr_cleanup += 1
-        if is_refactor(c["subject"]):
-            nr_refactor += 1
 
     # Group by category
     grouped = defaultdict(list)
@@ -514,9 +515,7 @@ def generate_report(commits, show_all=False, since_date=None, until_date=None):
     # ── Footer ──
     report_lines.append("---")
     report_lines.append("")
-    report_lines.append("This is a selection of changes that happened over the last week. "
-                        "For a full overview including fixes, code-only changes and more visit "
-                        f"[projects.blender.org](https://projects.blender.org/blender/blender/commits/branch/main).")
+
     if show_all:
         report_lines.append("")
         report_lines.append("> *Report mode: `--show-all` — includes fixes, cleanups, and refactors.*")

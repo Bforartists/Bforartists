@@ -110,6 +110,8 @@ class OptiXDevice : public CUDADevice {
   vector<OptixModule> osl_modules;
   vector<OptixProgramGroup> osl_groups;
   OptixModule osl_camera_module = nullptr;
+  OptixModule osl_shadow_module = nullptr;
+  OptixModule osl_shadow_curve_module = nullptr;
   OptixModule osl_volume_module = nullptr;
   device_vector<uint8_t> osl_colorsystem;
 #  endif
@@ -126,9 +128,9 @@ class OptiXDevice : public CUDADevice {
   OptiXDevice(const DeviceInfo &info, Stats &stats, Profiler &profiler, bool headless);
   ~OptiXDevice() override;
 
-  BVHLayoutMask get_bvh_layout_mask(uint /*kernel_features*/) const override;
+  BVHLayoutMask get_bvh_layout_mask(uint64_t kernel_features) const override;
 
-  string compile_kernel_get_common_cflags(const uint kernel_features);
+  string compile_kernel_get_common_cflags(uint64_t kernel_features);
 
   void create_optix_module(TaskPool &pool,
                            OptixModuleCompileOptions &module_options,
@@ -136,7 +138,7 @@ class OptiXDevice : public CUDADevice {
                            OptixModule &module,
                            OptixResult &failure_reason);
 
-  bool load_kernels(const uint kernel_features) override;
+  bool load_kernels(uint64_t kernel_features) override;
 
   bool load_osl_kernels() override;
 

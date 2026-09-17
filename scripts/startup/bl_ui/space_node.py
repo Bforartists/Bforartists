@@ -245,13 +245,23 @@ class NODE_HT_header(Header):
 
             if snode.node_tree_sub_type == 'SCENE':
                 row = layout.row()
+                active_effect = scene.compositor_effects.active
                 if snode.pin:
                     row.enabled = False
-                    row.template_ID(snode, "node_tree", new="node.new_compositing_node_group")
-                elif scene.compositing_node_group:
-                    row.template_ID(scene, "compositing_node_group", new="node.duplicate_compositing_node_group")
+                    row.template_ID(snode, "node_tree", new="scene.new_compositor_effect_node_group")
+                elif active_effect:
+                    if active_effect.node_group:
+                        row.template_ID(
+                            active_effect,
+                            "node_group",
+                            new="scene.duplicate_compositor_effect_node_group")
+                    else:
+                        row.template_ID(
+                            active_effect,
+                            "node_group",
+                            new="scene.new_compositor_effect_node_group")
                 else:
-                    row.template_ID(scene, "compositing_node_group", new="node.new_compositing_node_group")
+                    row.template_ID(snode, "node_tree", new="scene.new_compositor_effect_node_group")
             elif snode.node_tree_sub_type == 'SEQUENCER':
                 row = layout.row()
                 sequencer_scene = context.workspace.sequencer_scene
@@ -430,29 +440,35 @@ class NODE_PT_gizmo_display(Panel):
             colsub.active = snode.node_tree is not None and col.active
             colsub.prop(snode, "show_gizmo_active_node", text="Active Node")
         
-        col.separator()
-        col = col.column(align=True)
-        row = col.row()
-        row.prop(snode, "show_minimap", text="Show Minimap")
-        if not snode.show_minimap:
-            row.label(icon="DISCLOSURE_TRI_RIGHT")
+        header, col = col.indented_column(align=False, draw_body=snode.show_minimap)        
+        header_row = header.row()
+        header_row.alignment = 'LEFT'
+        header_row.prop(snode, "show_minimap", text="Show Minimap")
+
+        if col:
+            header_row.label(icon="DISCLOSURE_TRI_DOWN")
+            col.use_property_split = True
+            col.use_property_decorate = False
+
+            col.separator()
+            col.prop(snode, "minimap_aspect_ratio", text="Aspect Ratio")
+            col.prop(snode, "minimap_scale", text="Scale")
+            col.separator()
+        
+            col.prop(snode, "minimap_auto_hide", text="Auto Hide")
+            col.prop(snode, "minimap_top", text="Draw on Top")
+            col.prop(snode, "show_nodes_in_frame", text="Show Nodes in Frame")
+
+            col.separator()
+            subheader, subcol = col.indented_column()        
+            subheader.label(text="Color")
+
+            split = subcol.split()
+            split.prop(snode, "use_node_colors", text="Nodes")
+            split.prop(snode, "use_frame_colors", text="Frames")
         else:
-            row.label(icon="DISCLOSURE_TRI_DOWN")
-            
-            split = col.split()
-            row = split.column()
-            row.separator()
-            row.use_property_split = True
-            row.prop(snode, "minimap_top")
-            row.prop(snode, "minimap_auto_hide")
-            row.separator()
-            row.prop(snode, "minimap_aspect_ratio")
-            row.prop(snode, "minimap_scale")
-            row.separator()
-            row.prop(snode, "use_node_colors")
-            row.separator()
-            row.prop(snode, "use_frame_colors")
-            row.prop(snode, "show_nodes_in_frame")
+            header_row.label(icon="DISCLOSURE_TRI_RIGHT")
+
 
 class NODE_MT_editor_menus(Menu):
     bl_idname = "NODE_MT_editor_menus"
@@ -1176,6 +1192,11 @@ class NODE_PT_active_node_generic(Panel):
         col.prop(node, "show_options")
         col.prop(node, "mute")
 
+        # BFA - Expose location and width
+        col = layout.column(align=True)
+        col.prop(node, "width", text="Width")
+        col.prop(node, "location_absolute", text="Location")
+
         if tree.type in ('GEOMETRY', 'COMPOSITING'):
             layout.prop(node, "warning_propagation", text="Propagate")
 
@@ -1360,6 +1381,10 @@ class NODE_PT_overlay(Panel):
             subcol = col.column(align=True)
             subcol.active = overlay.show_render_size and snode.show_backdrop
 
+            subcol = col.column()
+            subcol.prop(overlay, "show_text_info")
+            subcol.active = snode.show_backdrop
+
             row = subcol.row(align=True)
             row.prop(overlay, "show_render_size", text="Render Region")
             row.prop(overlay, "passepartout_alpha", text="Passepartout")
@@ -1497,6 +1522,7 @@ class NODE_PT_node_tree_properties(Panel):
             if body:
                 col = body.column(align=True)
                 col.prop(group, "is_strip_modifier")
+                col.prop(group, "allow_usage_in_scene_compositor_effect")
 
 
 class NODE_PT_node_tree_animation(Panel):

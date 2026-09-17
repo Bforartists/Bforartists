@@ -285,10 +285,10 @@ static void slider_draw(const bContext * /*C*/, ARegion *region, void *arg)
   uint8_t color_bg[4];
 
   /* Get theme colors. */
-  ui::theme::get_color_4ubv(TH_HEADER_TEXT_HI, color_handle);
-  ui::theme::get_color_4ubv(TH_HEADER_TEXT, color_text);
-  ui::theme::get_color_4ubv(TH_HEADER_TEXT, color_line);
-  ui::theme::get_color_4ubv(TH_HEADER_TEXT, color_overshoot);
+  ui::theme::get_color_4ubv(TH_TEXT_HI, color_handle);
+  ui::theme::get_color_4ubv(TH_TEXT, color_text);
+  ui::theme::get_color_4ubv(TH_TEXT, color_line);
+  ui::theme::get_color_4ubv(TH_TEXT, color_overshoot);
   ui::theme::get_color_4ubv(TH_HEADER, color_bg);
 
   color_overshoot[0] = color_overshoot[0] * 0.8;
@@ -950,14 +950,12 @@ static void text_info_row(const char *text,
   BLF_disable(font_id, BLF_SHADOW);
 }
 
-void ED_region_image_overlay_info_text_draw(const int render_size_x,
-                                            const int render_size_y,
-
-                                            const int viewer_size_x,
-                                            const int viewer_size_y,
-
-                                            const int draw_offset_x,
-                                            const int draw_offset_y)
+void ED_region_overlay_info_text_draw(const int render_size_x,
+                                      const int render_size_y,
+                                      const int viewer_size_x,
+                                      const int viewer_size_y,
+                                      const int draw_offset_x,
+                                      const int draw_offset_y)
 {
   BLF_set_default();
   const int font_id = BLF_default();

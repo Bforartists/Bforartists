@@ -10,6 +10,8 @@
  * Implements XR Location Scouting drawing and feature logic.
  */
 
+#include <fmt/format.h>
+
 #include "BKE_camera.h"
 #include "BKE_context.hh"
 #include "BKE_lib_id.hh"
@@ -437,6 +439,8 @@ void wm_xr_viewfinder_render_view(wmXrData *xr_data)
                                   state->viewfinder.offscreen,
                                   state->viewfinder.viewport);
 }
+
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Location Scouting Viewfinder UI Widgets

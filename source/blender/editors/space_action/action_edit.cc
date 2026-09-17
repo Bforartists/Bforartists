@@ -73,6 +73,7 @@ namespace blender {
  * 2) that the set of markers being shown are the scene markers, not the list we're merging
  * 3) that the mode will have an active action available
  * 4) that there are some selected markers
+ * 5) that the markers are not locked
  */
 static bool act_markers_make_local_poll(bContext *C)
 {
@@ -97,7 +98,13 @@ static bool act_markers_make_local_poll(bContext *C)
   }
 
   /* 4) */
-  return ED_markers_get_first_selected(ED_context_get_markers(C)) != nullptr;
+  if (ED_markers_get_first_selected(ED_context_get_markers(C)) == nullptr) {
+    return false;
+  }
+
+  /* 5) */
+  ToolSettings *ts = CTX_data_tool_settings(C);
+  return !ts->lock_markers;
 }
 
 static wmOperatorStatus act_markers_make_local_exec(bContext *C, wmOperator * /*op*/)
@@ -115,7 +122,7 @@ static wmOperatorStatus act_markers_make_local_exec(bContext *C, wmOperator * /*
   }
 
   /* migrate markers */
-  for (marker = static_cast<TimeMarker *>(markers->first); marker; marker = markern) {
+  for (marker = markers->first(); marker; marker = markern) {
     markern = marker->next;
 
     /* move if marker is selected */
@@ -140,9 +147,9 @@ static wmOperatorStatus act_markers_make_local_exec(bContext *C, wmOperator * /*
 void ACTION_OT_markers_make_local(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Make Markers Local";
+  ot->name = "Convert to Pose Markers";
   ot->idname = "ACTION_OT_markers_make_local";
-  ot->description = "Move selected scene markers to the active Action as local 'pose' markers";
+  ot->description = "Move selected scene markers to the active action as pose markers";
 
   /* callbacks */
   ot->exec = act_markers_make_local_exec;
@@ -177,7 +184,7 @@ static bool get_keyframe_extents(bAnimContext *ac, float *min, float *max, const
   *max = -999999999.0f;
 
   /* check if any channels to set range with */
-  if (anim_data.first) {
+  if (anim_data.first_) {
     /* go through channels, finding max extents */
     for (bAnimListElem &ale : anim_data) {
       if (ale.datatype == ALE_GPFRAME) {
@@ -340,9 +347,7 @@ static bool actkeys_channels_get_selected_extents(bAnimContext *ac, float *r_min
   /* loop through all channels, finding the first one that's selected */
   float ymax = ANIM_UI_get_first_channel_top(&ac->region->v2d);
   const float channel_step = ANIM_UI_get_channel_step();
-  for (ale = static_cast<bAnimListElem *>(anim_data.first); ale;
-       ale = ale->next, ymax -= channel_step)
-  {
+  for (ale = anim_data.first(); ale; ale = ale->next, ymax -= channel_step) {
     const bAnimChannelType *acf = ANIM_channel_get_typeinfo(ale);
 
     /* must be selected... */
@@ -884,7 +889,7 @@ static void insert_fcurve_key(bAnimContext *ac,
     CombinedKeyingResult result = insert_keyframes(ac->bmain,
                                                    &id_rna_pointer,
                                                    channel_group,
-                                                   {{fcu->rna_path, {}, fcu->array_index}},
+                                                   {{fcu->rna_path(), {}, fcu->array_index}},
                                                    std::nullopt,
                                                    anim_eval_context,
                                                    eBezTriple_KeyframeType(ts->keyframe_type),
@@ -1059,7 +1064,7 @@ static bool duplicate_action_keys(bAnimContext *ac)
           static_cast<GreasePencilLayer *>(ale.data)->wrap());
     }
     else if (ale.type == ANIMTYPE_MASKLAYER) {
-      changed |= ED_masklayer_frames_duplicate(static_cast<MaskLayer *>(ale.data));
+      changed |= ED_masklayer_frames_duplicate(ac->bmain, static_cast<MaskLayer *>(ale.data));
     }
     else {
       BLI_assert(0);
@@ -1145,7 +1150,7 @@ static bool delete_action_keys(bAnimContext *ac)
       }
     }
     else if (ale.type == ANIMTYPE_MASKLAYER) {
-      changed = ED_masklayer_frames_delete(static_cast<MaskLayer *>(ale.data));
+      changed = ED_masklayer_frames_delete(ac->bmain, static_cast<MaskLayer *>(ale.data));
     }
     else {
       FCurve *fcu = static_cast<FCurve *>(ale.key_data);
@@ -1474,7 +1479,7 @@ static void setexpo_action_keys(bAnimContext *ac, short mode)
         /* remove all the modifiers fitting this description */
         FModifier *fcm, *fcn = nullptr;
 
-        for (fcm = static_cast<FModifier *>(fcu->modifiers.first); fcm; fcm = fcn) {
+        for (fcm = fcu->modifiers.first(); fcm; fcm = fcn) {
           fcn = fcm->next;
 
           if (fcm->type == FMODIFIER_TYPE_CYCLES) {
@@ -1999,8 +2004,8 @@ static void snap_action_keys(bAnimContext *ac, short mode)
 
   ked.scene = ac->scene;
   if (mode == ACTKEYS_SNAP_NEAREST_MARKER) {
-    ked.time_marker_list.first = (ac->markers) ? ac->markers->first : nullptr;
-    ked.time_marker_list.last = (ac->markers) ? ac->markers->last : nullptr;
+    ked.time_marker_list.first_ = (ac->markers) ? ac->markers->first_ : nullptr;
+    ked.time_marker_list.last_ = (ac->markers) ? ac->markers->last() : nullptr;
   }
 
   /* snap keyframes */

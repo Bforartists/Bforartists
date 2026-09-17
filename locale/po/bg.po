@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 07:34+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2025-07-23 15:34+0000\n"
 "Last-Translator: Just Adam <adam.abbas2009@gmail.com>\n"
 "Language-Team: Bulgarian <https://translate.blender.org/projects/blender-ui/ui/bg/>\n"
@@ -664,10 +664,6 @@ msgid "Gamma"
 msgstr "Гама"
 
 
-msgid "View"
-msgstr "Изглед"
-
-
 msgid "RGB"
 msgstr "ЧЗС"
 
@@ -678,6 +674,10 @@ msgstr "По часовника"
 
 msgid "Alpha"
 msgstr "Запълненост"
+
+
+msgid "Identifier"
+msgstr "Идентификатор"
 
 
 msgid "Output"
@@ -718,6 +718,10 @@ msgstr "Разделяне"
 
 msgid "Plane"
 msgstr "Равнина"
+
+
+msgid "View"
+msgstr "Изглед"
 
 
 msgid "Render"
@@ -766,10 +770,6 @@ msgstr "Магнитен"
 
 msgid "Wind"
 msgstr "Вятър"
-
-
-msgid "Identifier"
-msgstr "Идентификатор"
 
 
 msgid "User Defined"
@@ -1148,10 +1148,6 @@ msgid "ID Type"
 msgstr "ID тип"
 
 
-msgid "Merge"
-msgstr "Слей"
-
-
 msgid "Import"
 msgstr "Внеси"
 
@@ -1182,6 +1178,10 @@ msgstr "Куки"
 
 msgid "In-Betweens"
 msgstr "Междинни Кадри"
+
+
+msgid "Merge"
+msgstr "Слей"
 
 
 msgid "Cache"
@@ -1403,11 +1403,6 @@ msgstr "Филтрирай .blend файловете"
 
 msgid "Filter text files"
 msgstr "Филтрирай текстовите файлове"
-
-
-msgctxt "Operator"
-msgid "Accept"
-msgstr "Приеми"
 
 
 msgid "Directory of the file"
@@ -1830,6 +1825,10 @@ msgid "Copy"
 msgstr "Копиране"
 
 
+msgid "Movie"
+msgstr "Преместване"
+
+
 msgctxt "Operator"
 msgid "Add Surface Circle"
 msgstr "Добави Повърхностен Кръг"
@@ -1942,6 +1941,10 @@ msgid "Doc ID"
 msgstr "Doc ID"
 
 
+msgid "Trusted Source"
+msgstr "Надежден Източник"
+
+
 msgctxt "Operator"
 msgid "Memory Statistics"
 msgstr "Статистики на Паметта"
@@ -1953,10 +1956,6 @@ msgstr "Принтирай статистиката на паметта в ко�
 
 msgid "Open a Blender file"
 msgstr "Отваряне на Blender файл"
-
-
-msgid "Trusted Source"
-msgstr "Надежден Източник"
 
 
 msgctxt "Operator"
@@ -2290,10 +2289,6 @@ msgstr "Запълненост:"
 
 msgid "OK"
 msgstr "ОК"
-
-
-msgid "Movie"
-msgstr "Преместване"
 
 
 msgid "Stop this job"

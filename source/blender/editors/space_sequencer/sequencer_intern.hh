@@ -54,12 +54,14 @@ namespace ed::asset {
 struct AssetItemTree;
 }
 
+namespace seq {
+enum class Side : int;
+}
+
 namespace ed::vse {
 
 class SeqQuadsBatch;
 class StripsDrawBatch;
-
-#define DEFAULT_IMG_STRIP_LENGTH 25 /* XXX arbitrary but ok for now. */
 
 struct SpaceSeq_Runtime : public NonCopyable {
   int rename_channel_index = 0;
@@ -127,7 +129,8 @@ struct TimelineDrawContext {
   ListBaseT<SeqTimelineChannel> *channels;
   GPUViewport *viewport;
   gpu::FrameBuffer *framebuffer_overlay;
-  float pixelx, pixely; /* Width and height of pixel in timeline space. */
+  /** Width and height of pixel in timeline space, calculated from #view2d_pixel_size_get. */
+  float pixelx, pixely;
   Map<SeqRetimingKey *, Strip *> retiming_selection;
 
   SeqQuadsBatch *quads;
@@ -182,9 +185,8 @@ void channel_draw_context_init(const bContext *C,
 void slip_modal_keymap(wmKeyConfig *keyconf);
 VectorSet<Strip *> strip_effect_get_new_inputs(const Scene *scene,
                                                StripType effect_type,
-                                               int num_inputs,
                                                bool ignore_active = false);
-const char *effect_inputs_validate(int have_inputs, int num_inputs);
+bool effect_inputs_validate(int have_inputs, int num_inputs, ReportList *reports);
 
 /* Operator helpers. */
 bool sequencer_edit_poll(bContext *C);
@@ -283,7 +285,7 @@ rctf strip_bounds_get(const Scene *scene, const Strip *strip);
  */
 rcti strip_int_bounds_get(const Scene *scene, const Strip *strip);
 
-Strip *find_neighboring_strip(const Scene *scene, const Strip *test, const int lr, int sel);
+Strip *find_neighboring_strip(const Scene *scene, const Strip *test, const seq::Side lr, int sel);
 
 void SEQUENCER_OT_select_all(wmOperatorType *ot);
 void SEQUENCER_OT_select(wmOperatorType *ot);
@@ -324,8 +326,16 @@ void SEQUENCER_OT_movieclip_strip_add(wmOperatorType *ot);
 void SEQUENCER_OT_mask_strip_add(wmOperatorType *ot);
 void SEQUENCER_OT_sound_strip_add(wmOperatorType *ot);
 void SEQUENCER_OT_image_strip_add(wmOperatorType *ot);
+void SEQUENCER_OT_text_strip_add(wmOperatorType *ot);
 void SEQUENCER_OT_effect_strip_add(wmOperatorType *ot);
 void SEQUENCER_OT_add_scene_strip_from_scene_asset(wmOperatorType *ot);
+
+void frame_filename_set(char *dst,
+                        size_t dst_maxncpy,
+                        const char *filename_stripped,
+                        const int frame,
+                        const int numdigits,
+                        const char *ext);
 
 /* `sequencer_drag_drop.cc` */
 
@@ -375,15 +385,6 @@ void SEQUENCER_OT_rename_channel(wmOperatorType *ot);
 
 void sequencer_preview_add_sound(const bContext *C, const Strip *strip);
 
-/* `sequencer_add.cc` */
-
-int sequencer_image_strip_get_minmax_frame(wmOperator *op,
-                                           int sfra,
-                                           int *r_minframe,
-                                           int *r_numdigits);
-void sequencer_image_strip_reserve_frames(
-    wmOperator *op, StripElem *se, int len, int minframe, int numdigits);
-
 /* `sequencer_retiming.cc` */
 void SEQUENCER_OT_retiming_reset(wmOperatorType *ot);
 void SEQUENCER_OT_retiming_show(wmOperatorType *ot);
@@ -425,8 +426,31 @@ bool retiming_overlay_enabled(const SpaceSeq *sseq);
 
 /* `sequencer_text_edit.cc` */
 bool sequencer_text_editing_active_poll(bContext *C);
+
+/**
+ * Return the strip used for text editing.
+ *
+ * \note intended to be used with #sequencer_text_editing_cursor_region_xy_get,
+ * where the functionality is split across two functions for the purpose
+ * of detecting of IME text should be enabled but is currently isn't visible.
+ */
+const Strip *sequencer_text_editing_cursor_strip_get(const Scene *scene);
+/**
+ * Return the text cursor of the active text strip, in region pixels.
+ *
+ * \param strip: The result of #sequencer_text_editing_cursor_strip_get.
+ *
+ * \note when \a strip is non-null this function may still return null.
+ * The \a strip may be non-null even when no position is found below:
+ * - The current-frame may be off the strip.
+ * - The runtime not built until the strip renders.
+ *
+ * In both recover while editing stays active.
+ */
 std::optional<int2> sequencer_text_editing_cursor_region_xy_get(const Scene *scene,
-                                                                const ARegion *region);
+                                                                const ARegion *region,
+                                                                const Strip *strip);
+
 void SEQUENCER_OT_text_cursor_move(wmOperatorType *ot);
 void SEQUENCER_OT_text_insert(wmOperatorType *ot);
 void SEQUENCER_OT_text_delete(wmOperatorType *ot);

@@ -12,8 +12,8 @@ COMPUTE_SHADER_CREATE_INFO(compositor_inpaint_fill_region)
 
 #include "gpu_shader_compositor_jump_flooding_lib.glsl"
 #include "gpu_shader_compositor_texture_utilities.glsl"
-#include "gpu_shader_math_base_lib.glsl"
-#include "gpu_shader_math_constants_lib.glsl"
+#include "gpu_shader_math_base.bsl.hh"
+#include "gpu_shader_math_constants.bsl.hh"
 
 void main()
 {
@@ -22,7 +22,8 @@ void main()
   float4 color = texture_load(input_tx, texel);
 
   /* An opaque pixel, not part of the inpainting region. */
-  if (color.a == 1.0f) {
+  constexpr float alpha_threshold = 1.0f - 1e-3f;
+  if (color.a >= alpha_threshold) {
     imageStore(filled_region_img, texel, color);
     imageStore(smoothing_radius_img, texel, float4(0.0f));
     imageStore(distance_to_boundary_img, texel, float4(0.0f));

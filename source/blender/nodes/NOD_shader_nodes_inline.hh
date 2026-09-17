@@ -2,11 +2,17 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup nodes
+ */
+
 #pragma once
 
 #include "BLI_vector.hh"
 
 #include "DNA_node_types.h"
+
+#include "NOD_warning.hh"
 
 namespace blender {
 
@@ -33,6 +39,7 @@ struct InlineShaderNodeTreeParams {
      * yet. */
     const bNode *node;
     std::string message;
+    NodeWarningType type;
   };
   Vector<ErrorMessage> r_error_messages;
 };

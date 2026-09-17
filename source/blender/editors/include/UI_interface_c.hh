@@ -456,7 +456,8 @@ enum {
 #define UI_TOOLBAR_WIDTH (UI_TOOLBAR_MARGIN + UI_TOOLBAR_COLUMN) /* BFA */
 
 #define UI_PANEL_CATEGORY_MARGIN_WIDTH \
-  ((UI_COMPACT_TABS ? 1.4f : 1.0f) * U.widget_unit)
+  (((U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 1.4f : 1.0f) * U.widget_unit)
+#define UI_PANEL_SEARCH_BLOCK_MARGIN_HEIGHT (1.25f * UI_UNIT_Y)
 
 /* Minimum width for a panel showing only category tabs. */
 #define UI_PANEL_CATEGORY_MIN_WIDTH (UI_COMPACT_TABS ? 32.0f : 26.0f) /** BFA - UI_COMPACT_TABS */
@@ -750,14 +751,19 @@ void draw_widget_scroll(uiWidgetColors *wcol, const rcti *rect, const rcti *slid
  *
  * \param clip_right_if_tight: In case this middle clipping would just remove a few chars, or there
  * are less than 10 characters before the clipping, it rather clips right, which is more readable.
+ *
+ * \param shorten_template_variables: When true, shortens template variable expressions
+ * as needed starting from the left. NOTE: this should only be set to true if the text
+ * field being clipped supports template variables!
  */
 float text_clip_middle_ex(const uiFontStyle *fstyle,
                           char *str,
                           float okwidth,
                           float minwidth,
-                          size_t max_len,
+                          size_t str_maxncpy,
                           char rpart_sep,
-                          bool clip_right_if_tight = true);
+                          bool clip_right_if_tight = true,
+                          bool shorten_template_variables = false);
 
 Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
                                              const char *str,
@@ -969,11 +975,13 @@ void popup_menu_but_set(PopupMenu *pup, ARegion *butregion, Button *but);
 
 struct Popover;
 
-wmOperatorStatus popover_panel_invoke(bContext *C,
-                                      const char *idname,
-                                      bool keep_open,
-                                      ReportList *reports, // BFA - Tear-Off Menu/Panel
-                                      struct PopupBlockHandle **r_handle = nullptr); // BFA - Tear-Off Menu/Panel
+wmOperatorStatus popover_panel_invoke(
+    bContext *C,
+    const char *idname,
+    bool keep_open,
+    bool use_numselect,
+    ReportList *reports,                            // BFA - Tear-Off Menu/Panel
+    struct PopupBlockHandle **r_handle = nullptr);  // BFA - Tear-Off Menu/Panel
 
 /**
  * Only return handler, and set optional title.
@@ -981,7 +989,11 @@ wmOperatorStatus popover_panel_invoke(bContext *C,
  * \param from_active_button: Use the active button for positioning,
  * use when the popover is activated from an operator instead of directly from the button.
  */
-Popover *popover_begin(bContext *C, int ui_menu_width, bool from_active_button) ATTR_NONNULL(1);
+/**
+ * \param use_numselect: Assign accelerator keys to buttons.
+ */
+Popover *popover_begin(bContext *C, int ui_menu_width, bool from_active_button, bool use_numselect)
+    ATTR_NONNULL(1);
 /**
  * Set the whole structure to work.
  */
@@ -1089,6 +1101,17 @@ Block *block_begin(const bContext *C,
                    ARegion *region,
                    std::string name,
                    EmbossType emboss);
+
+/** Execute every block's after layout callback. */
+void block_post_layout_callbacks_exec(const bContext *C, ARegion *region, Block *block);
+
+/**
+ * \param postpone_callbacks: After block layout callbacks are postponed, caller must execute
+ * them with #block_post_layout_callbacks_exec.
+ * This is necessary if a callback requires to access the region bounds but they
+ * might be no known yet. For example: activating a button may scroll the region view so it can get
+ * properly focused, but that requires to build all panels in a region.
+ */
 void block_end_ex(const bContext *C,
                   Main *bmain,
                   wmWindow *window,
@@ -1097,8 +1120,9 @@ void block_end_ex(const bContext *C,
                   Depsgraph *depsgraph,
                   Block *block,
                   const int xy[2] = nullptr,
-                  int r_xy[2] = nullptr);
-void block_end(const bContext *C, Block *block);
+                  int r_xy[2] = nullptr,
+                  bool postpone_callbacks = false);
+void block_end(const bContext *C, Block *block, bool postpone_callbacks = false);
 /**
  * Uses local copy of style, to scale things down, and allow widgets to change stuff.
  */
@@ -1674,7 +1698,7 @@ enum {
   TEMPLATE_ID_FILTER_AVAILABLE = 1,
 };
 
-/***************************** ID Utilities *******************************/
+/* ID utilities. */
 
 int icon_from_id(const ID *id);
 /** See: #BKE_report_type_str */
@@ -2104,10 +2128,22 @@ void button_tooltip_refresh(bContext *C, Button *but);
  */
 void button_tooltip_timer_remove(bContext *C, Button *but);
 
+/**
+ * Attempt to activate an button referencing an RNA property in the \a region.
+ * \param block_name: targets a block in the \a region, if \a block_name is not set it will test
+ * any block in the \a region.
+ * \returns `true` if the button gets activated.
+ */
 bool textbutton_activate_rna(const bContext *C,
                              ARegion *region,
                              const void *rna_poin_data,
                              const char *rna_prop_id);
+bool textbutton_activate_rna(const bContext *C,
+                             ARegion *region,
+                             const void *rna_poin_data,
+                             const char *rna_prop_id,
+                             Block &block);
+
 bool textbutton_activate_but(const bContext *C, Button *actbut);
 
 /**
@@ -2203,6 +2239,8 @@ void panels_end(const bContext *C, ARegion *region, int *r_x, int *r_y);
  */
 void panels_draw(const bContext *C, ARegion *region);
 
+void panels_do_after_block_layout_fns(const bContext *C, ARegion *region);
+
 Panel *panel_find_by_type(ListBaseT<Panel> *lb, const PanelType *pt);
 /**
  * \note \a panel should be return value from #panel_find_by_type and can be NULL.
@@ -2273,6 +2311,8 @@ void panel_category_clear_all(ARegion *region);
 void panel_category_tabs_draw_all(const bContext *C,
                                   ARegion *region,
                                   const char *category_id_active);
+/** Scrolls the region's category bar to show the #category. */
+void panel_category_show_tab(const bContext &C, ARegion *region, StringRef category);
 
 void panel_stop_animation(const bContext *C, Panel *panel);
 
@@ -2545,6 +2585,8 @@ void template_path_builder(Layout *layout,
                            std::optional<StringRefNull> text);
 void template_modifiers(Layout *layout, bContext *C);
 void template_strip_modifiers(Layout *layout, bContext *C);
+void template_scene_compositor_effects(Layout *layout, bContext *C);
+
 /**
  * Check if the shader effect panels don't match the data and rebuild the panels if so.
  */
@@ -2800,6 +2842,11 @@ void template_tree_interface(Layout *layout, const bContext *C, PointerRNA *ptr)
  */
 void template_node_inputs(Layout *layout, bContext *C, PointerRNA *ptr);
 
+/**
+ * Draw the node group inputs for a compositor effect strip.
+ */
+void template_compositor_strip_inputs(Layout *layout, bContext *C, PointerRNA *ptr);
+
 void template_collection_importer(Layout *layout, bContext *C);
 void template_collection_exporters(Layout *layout, bContext *C);
 }  // namespace ui
@@ -2905,13 +2952,6 @@ Block *region_block_find_mouse_over(const ARegion *region, const int xy[2], bool
  * Try to find a search-box region opened from a button in \a button_region.
  */
 ARegion *region_searchbox_region_get(const ARegion *button_region);
-
-/** #uiFontStyle.align */
-enum FontStyleAlign {
-  UI_STYLE_TEXT_LEFT = 0,
-  UI_STYLE_TEXT_CENTER = 1,
-  UI_STYLE_TEXT_RIGHT = 2,
-};
 
 struct FontStyleDrawParams {
   FontStyleAlign align;
@@ -3083,7 +3123,7 @@ ARegion *tooltip_create_from_search_item_generic(bContext *C,
                                                  ID *id);
 
 /* How long before a tool-tip shows. */
-#define UI_TOOLTIP_DELAY 0.5
+#define UI_TOOLTIP_DELAY 1.0
 #define UI_TOOLTIP_DELAY_QUICK 0.2
 
 /* Float precision helpers */
@@ -3178,5 +3218,32 @@ AbstractViewItem *region_views_find_active_item(const ARegion *region, const Abs
 Button *region_views_find_active_item_but(const ARegion *region);
 void region_views_clear_search_highlight(const ARegion *region);
 
+bool region_panels_fits_only_categories(const ARegion *region);
+
+void register_scene_compositor_effects_panel(ARegionType *region_type);
+
+enum class ActivationButtonState : int8_t {
+  Highlight,
+  WaitKeyEvent,
+  NumEditing,
+  TextEditing,
+};
+
+/**
+ * Attempt to activate an button referencing an RNA property. If any other button in the screen is
+ * active, it will be deactivated.
+ * \param state: Activation state for the button. Some states are specific to certain button types;
+ * when an incompatible state is provided, the button will be activated with the
+ * #ActivationButtonState::Highlight state.
+ * \param index: Index of the button that references the RNA property.
+ * \return The center point of the button in window coordinates when successfully activated.
+ */
+std::optional<int2> try_activate_rna_button(bContext *C,
+                                            ARegion *region,
+                                            ActivationButtonState target_state,
+                                            PointerRNA *ptr,
+                                            PropertyRNA *prop,
+                                            bool warp_cursor_at_button = false,
+                                            int index = 0);
 }  // namespace ui
 }  // namespace blender

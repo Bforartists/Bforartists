@@ -14,6 +14,7 @@
 
 #include "BLI_span.hh"
 #include "BLI_string.hh"
+#include "BLI_utildefines.hh"
 #include "BLI_vector.hh"
 
 #include "BKE_cryptomatte.hh"
@@ -57,7 +58,7 @@ static std::ostream &operator<<(std::ostream &stream, const GPUInput *input)
     case GPU_SOURCE_LAYER_ATTR:
       return stream << "attr_load_layer(" << input->layer_attr->hash_code << ")";
     case GPU_SOURCE_STRUCT:
-      return stream << "strct" << input->id;
+      return stream << (input->is_zone_io ? "zone" : "strct") << input->id;
     case GPU_SOURCE_TEX:
       return stream << input->texture->sampler_name;
     case GPU_SOURCE_TEX_TILED_MAPPING:
@@ -92,12 +93,46 @@ static std::ostream &operator<<(std::ostream &stream, const Span<float> &span)
   return stream;
 }
 
+/* Print data constructor (i.e: int2(1, 1)). */
+static std::ostream &operator<<(std::ostream &stream, const Span<int> &span)
+{
+  stream << gpu_int_type_from_element_count(span.size()) << "(";
+  for (const int &element : span) {
+    stream << element;
+    if (&element != &span.last()) {
+      stream << ", ";
+    }
+  }
+  stream << ")";
+  return stream;
+}
+
 /* Trick type to change overload and keep a somewhat nice syntax. */
 struct GPUConstant : public GPUInput {};
 
 static std::ostream &operator<<(std::ostream &stream, const GPUConstant *input)
 {
-  stream << Span<float>(input->vec, gpu_type_element_count(input->type));
+  switch (input->type) {
+    case GPU_FLOAT:
+    case GPU_VEC2:
+    case GPU_VEC3:
+    case GPU_VEC4:
+    case GPU_MAT3:
+    case GPU_MAT4:
+      return stream << gpu_constant_to_float_span(input->constant_data, input->type);
+    case GPU_INT:
+    case GPU_INT2:
+    case GPU_INT3:
+    case GPU_INT4:
+      return stream << gpu_constant_to_int_span(input->constant_data, input->type);
+    case GPU_BOOL:
+      return stream << "bool(" << (gpu_constant_to_bool(input->constant_data) ? "true" : "false")
+                    << ")";
+    default:
+      break;
+  }
+
+  BLI_assert_unreachable();
   return stream;
 }
 
@@ -219,6 +254,9 @@ void GPUCodegen::generate_resources()
   GPUCodegenCreateInfo &info = *create_info;
 
   std::stringstream ss;
+  /* Improve error logging. */
+  ss << "#line 1 \"" __FILE__ "\"\n";
+  ss << "#line " STRINGIFY(__LINE__) "\n";
 
   /* Textures. */
   int slot = 0;
@@ -257,7 +295,14 @@ void GPUCodegen::generate_resources()
         ss << input->type << " crypto_hash;\n";
       }
       else {
-        ss << input->type << " u" << input->id << (input->is_duplicate ? "b" : "") << ";\n";
+        /* MSL does not pad bool to 4 bytes; use bool32_t so UBO layout matches correctly. */
+        if (input->type == GPU_BOOL) {
+          ss << "bool32_t";
+        }
+        else {
+          ss << input->type;
+        }
+        ss << " u" << input->id << (input->is_duplicate ? "b" : "") << ";\n";
       }
     }
     ss << "};\n";
@@ -313,7 +358,7 @@ void GPUCodegen::node_serialize(Set<StringRefNull> &used_libraries,
 
     if (from != to) {
       /* Special case that needs luminance coefficients as argument. */
-      if (from == GPU_VEC4 && to == GPU_FLOAT) {
+      if (from == GPU_VEC4 && ELEM(to, GPU_FLOAT, GPU_INT, GPU_BOOL)) {
         float coefficients[3];
         IMB_colormanagement_get_luminance_coefficients(coefficients);
         eval_ss << ", " << Span<float>(coefficients, 3);
@@ -385,7 +430,7 @@ void GPUCodegen::node_serialize(Set<StringRefNull> &used_libraries,
         eval_ss << &input;
         break;
     }
-    GPUOutput *output = static_cast<GPUOutput *>(node->outputs.first);
+    GPUOutput *output = node->outputs.first();
     if ((input.next && !input.next->is_zone_io) || (output && !output->is_zone_io)) {
       eval_ss << ", ";
     }
@@ -471,7 +516,7 @@ GPUGraphOutput GPUCodegen::graph_serialize(GPUNodeTag tree_tag)
 
 void GPUCodegen::generate_cryptomatte()
 {
-  cryptomatte_input_ = MEM_new_zeroed<GPUInput>(__func__);
+  cryptomatte_input_ = MEM_new<GPUInput>(__func__);
   cryptomatte_input_->type = GPU_FLOAT;
   cryptomatte_input_->source = GPU_SOURCE_CRYPTOMATTE;
 
@@ -482,7 +527,7 @@ void GPUCodegen::generate_cryptomatte()
                                            BLI_strnlen(material->id.name + 2, MAX_NAME - 2));
     material_hash = hash.float_encoded();
   }
-  cryptomatte_input_->vec[0] = material_hash;
+  cryptomatte_input_->constant_data = material_hash;
 
   BLI_addtail(&ubo_inputs_, BLI_genericNodeN(cryptomatte_input_));
 }
@@ -535,13 +580,13 @@ void GPUCodegen::set_unique_ids()
   /* Assign the same id to inputs and outputs of start and end zones. */
   for (GPUNode *end : zone_ends.values()) {
 
-    GPUInput *end_input = find_zone_io(static_cast<GPUInput *>(end->inputs.first));
-    GPUOutput *end_output = find_zone_io(static_cast<GPUOutput *>(end->outputs.first));
+    GPUInput *end_input = find_zone_io(end->inputs.first());
+    GPUOutput *end_output = find_zone_io(end->outputs.first());
 
     GPUNode *start = zone_starts.lookup(end->zone_index);
 
-    GPUInput *start_input = find_zone_io(static_cast<GPUInput *>(start->inputs.first));
-    GPUOutput *start_output = find_zone_io(static_cast<GPUOutput *>(start->outputs.first));
+    GPUInput *start_input = find_zone_io(start->inputs.first());
+    GPUOutput *start_output = find_zone_io(start->outputs.first());
 
     for (; start_input; start_input = start_input->next,
                         start_output = start_output->next,

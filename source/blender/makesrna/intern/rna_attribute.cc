@@ -140,7 +140,8 @@ const EnumPropertyItem rna_enum_attr_storage_type_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static EnumPropertyItem domain_item_auto{int(AttrDomain::Auto), "AUTO", 0, "Auto", ""};
+static EnumPropertyItem domain_item_auto{
+    int(bke::AttrDomainSelection::Auto), "AUTO", 0, "Auto", ""};
 static EnumPropertyItem domain_item_point{
     int(AttrDomain::Point), "POINT", ICON_VERTEXSEL, "Point", "Vertex or point"};
 static EnumPropertyItem domain_item_edge{
@@ -418,7 +419,7 @@ static StructRNA *rna_Attribute_refine(PointerRNA *ptr)
 
 StringRefNull rna_Attribute_name_get(const PointerRNA &ptr)
 {
-  if (RNA_pointer_is_null(&ptr)) {
+  if (!ptr) {
     return "";
   }
   ID *owner_id = ptr.owner_id;
@@ -518,8 +519,11 @@ const EnumPropertyItem *rna_enum_attribute_domain_itemf(const AttributeOwner &ow
   const EnumPropertyItem *domain_item = nullptr;
   int totitem = 0, a;
 
-  static EnumPropertyItem mesh_vertex_domain_item = {
-      int(AttrDomain::Point), "POINT", 0, N_("Vertex"), N_("Attribute per point/vertex")};
+  static EnumPropertyItem mesh_vertex_domain_item = {int(AttrDomain::Point),
+                                                     "POINT",
+                                                     ICON_VERTEXSEL,
+                                                     N_("Vertex"),
+                                                     N_("Attribute per point/vertex")};
 
   for (a = 0; rna_enum_attribute_domain_items[a].identifier; a++) {
     domain_item = &rna_enum_attribute_domain_items[a];
@@ -637,7 +641,7 @@ void rna_Attribute_data_begin(CollectionPropertyIterator *iter, PointerRNA *ptr)
 
 int rna_Attribute_data_length(PointerRNA *ptr)
 {
-  if (RNA_pointer_is_null(ptr)) {
+  if (!*ptr) {
     return 0;
   }
   AttributeOwner owner = owner_from_attribute_pointer_rna(ptr);
@@ -658,13 +662,13 @@ bool rna_Attribute_data_lookup_int(PointerRNA *ptr, int index, PointerRNA *r_ptr
   CollectionPropertyIterator iter;
   rna_Attribute_data_begin(&iter, ptr);
   if (!iter.valid) {
-    *r_ptr = PointerRNA_NULL;
+    *r_ptr = {};
     return false;
   }
 
   ArrayIterator *internal = &iter.internal.array;
   if (index < 0 || index >= internal->length) {
-    *r_ptr = PointerRNA_NULL;
+    *r_ptr = {};
     return false;
   }
 
@@ -820,7 +824,7 @@ static PointerRNA rna_AttributeGroupID_new(
       CustomDataLayer *layer = BKE_attribute_new(
           *mesh, *em->bm, name, eCustomDataType(type), AttrDomain(domain), reports);
       if (!layer) {
-        return PointerRNA_NULL;
+        return {};
       }
 
       if ((GS(id->name) == ID_ME)) {
@@ -854,7 +858,7 @@ static PointerRNA rna_AttributeGroupID_new(
   const bke::AttributeAccessor accessor = *owner.get_accessor();
   if (!accessor.domain_supported(AttrDomain(domain))) {
     BKE_report(reports, RPT_ERROR, "Attribute domain not supported by this geometry type");
-    return PointerRNA_NULL;
+    return {};
   }
   const int domain_size = accessor.domain_size(AttrDomain(domain));
 
@@ -997,7 +1001,7 @@ PointerRNA rna_AttributeGroup_iterator_get(CollectionPropertyIterator *iter)
       CustomDataLayer *layer = *static_cast<CustomDataLayer **>(rna_iterator_array_get(iter));
       StructRNA *type = srna_by_custom_data_layer_type(eCustomDataType(layer->type));
       if (type == nullptr) {
-        return PointerRNA_NULL;
+        return {};
       }
       return RNA_pointer_create_with_parent(iter->parent, type, layer);
     }
@@ -1037,13 +1041,13 @@ PointerRNA rna_AttributeGroup_lookup_string(const PointerRNA &ptr,
     if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
       const BMDataLayerLookup attr = BM_data_layer_lookup(*em->bm, key);
       if (!attr) {
-        return PointerRNA_NULL;
+        return {};
       }
       if (!(CD_TYPE_AS_MASK(*bke::attr_type_to_custom_data_type(attr.type)) & cd_type_mask)) {
-        return PointerRNA_NULL;
+        return {};
       }
       if (!(ATTR_DOMAIN_AS_MASK(attr.domain) & domain_mask)) {
-        return PointerRNA_NULL;
+        return {};
       }
       PointerRNA result;
       rna_pointer_create_with_ancestors(
@@ -1055,13 +1059,13 @@ PointerRNA rna_AttributeGroup_lookup_string(const PointerRNA &ptr,
   bke::AttributeStorage &storage = *owner.get_storage();
   bke::Attribute *attr = storage.lookup(key);
   if (!attr) {
-    return PointerRNA_NULL;
+    return {};
   }
   if (!(ATTR_DOMAIN_AS_MASK(attr->domain()) & domain_mask)) {
-    return PointerRNA_NULL;
+    return {};
   }
   if (!(CD_TYPE_AS_MASK(*bke::attr_type_to_custom_data_type(attr->data_type())) & cd_type_mask)) {
-    return PointerRNA_NULL;
+    return {};
   }
   PointerRNA result;
   rna_pointer_create_with_ancestors(ptr, RNA_Attribute, attr, result);
@@ -1071,7 +1075,7 @@ PointerRNA rna_AttributeGroup_lookup_string(const PointerRNA &ptr,
 bool rna_AttributeGroup_lookup_string(PointerRNA *ptr, const char *key, PointerRNA *r_ptr)
 {
   *r_ptr = rna_AttributeGroup_lookup_string(*ptr, key, ATTR_DOMAIN_MASK_ALL, CD_MASK_PROP_ALL);
-  return !RNA_pointer_is_null(r_ptr);
+  return *r_ptr;
 }
 
 static int rna_AttributeGroupID_active_index_get(PointerRNA *ptr)
@@ -1085,7 +1089,7 @@ static PointerRNA rna_AttributeGroupID_active_get(PointerRNA *ptr)
   AttributeOwner owner = AttributeOwner::from_id(ptr->owner_id);
   const std::optional<StringRef> name = BKE_attributes_active_name_get(owner);
   if (!name) {
-    return PointerRNA_NULL;
+    return {};
   }
   return rna_AttributeGroup_lookup_string(*ptr, *name, ATTR_DOMAIN_MASK_ALL, CD_MASK_PROP_ALL);
 }
@@ -1179,7 +1183,7 @@ static void rna_AttributeGroupMesh_active_color_set(PointerRNA *ptr,
                                                     PointerRNA attribute_ptr,
                                                     ReportList * /*reports*/)
 {
-  if (RNA_pointer_is_null(&attribute_ptr)) {
+  if (!attribute_ptr) {
     BKE_id_attributes_active_color_clear(ptr->owner_id);
     return;
   }
@@ -1313,7 +1317,7 @@ static PointerRNA rna_AttributeGroupGreasePencilDrawing_new(ID *grease_pencil_id
   const bke::AttributeAccessor accessor = *owner.get_accessor();
   if (!accessor.domain_supported(AttrDomain(domain))) {
     BKE_report(reports, RPT_ERROR, "Attribute domain not supported by this geometry type");
-    return PointerRNA_NULL;
+    return {};
   }
   const int domain_size = accessor.domain_size(AttrDomain(domain));
 
@@ -1357,7 +1361,7 @@ static PointerRNA rna_AttributeGroupGreasePencilDrawing_active_get(PointerRNA *p
   AttributeOwner owner = AttributeOwner(AttributeOwnerType::GreasePencilDrawing, drawing);
   const std::optional<StringRef> name = BKE_attributes_active_name_get(owner);
   if (!name) {
-    return PointerRNA_NULL;
+    return {};
   }
   bke::AttributeStorage &storage = *owner.get_storage();
   bke::Attribute *attr = storage.lookup(*name);
@@ -1370,7 +1374,7 @@ static void rna_AttributeGroupGreasePencilDrawing_active_set(PointerRNA *ptr,
 {
   GreasePencilDrawing *drawing = static_cast<GreasePencilDrawing *>(ptr->data);
   AttributeOwner owner = AttributeOwner(AttributeOwnerType::GreasePencilDrawing, drawing);
-  if (RNA_pointer_is_null(&attribute_ptr)) {
+  if (!attribute_ptr) {
     BKE_attributes_active_clear(owner);
     return;
   }
@@ -2022,7 +2026,7 @@ static void rna_def_attribute_group_id_common(StructRNA *srna)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 
   parm = RNA_def_pointer(func, "attribute", "Attribute", "", "New geometry attribute");
-  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_RNAPTR);
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_RNAPTR);
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_AttributeGroupID_remove");
@@ -2199,7 +2203,7 @@ static void rna_def_attribute_group_grease_pencil_drawing(BlenderRNA *brna)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 
   parm = RNA_def_pointer(func, "attribute", "Attribute", "", "New geometry attribute");
-  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_RNAPTR);
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_RNAPTR);
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_AttributeGroupGreasePencilDrawing_remove");

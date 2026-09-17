@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup nodes
+ */
+
 #include <regex>
 
 #include "NOD_menu_value.hh"
@@ -723,9 +727,9 @@ class SocketValueInferencerImpl {
     const NodeInContext node = socket.owner_node();
 
     SocketInContext input_socket;
-    for (const bNodeLink &internal_link : node->internal_links()) {
-      if (internal_link.tosock == socket.socket) {
-        input_socket = SocketInContext{socket.context, internal_link.fromsock};
+    for (const bNodeInternalLink &internal_link : node->internal_links()) {
+      if (internal_link.out == socket.socket) {
+        input_socket = SocketInContext{socket.context, internal_link.in};
         break;
       }
     }
@@ -870,12 +874,12 @@ class SocketValueInferencerImpl {
     if (tree.adt->action) {
       animrig::foreach_fcurve_in_action_slot(
           tree.adt->action->wrap(), tree.adt->slot_handle, [&](const FCurve &fcurve) {
-            handle_rna_path(fcurve.rna_path);
+            handle_rna_path(fcurve.rna_path().c_str());
           });
     }
     /* Gather all inputs controlled by drivers. */
     for (const FCurve &driver : tree.adt->drivers) {
-      handle_rna_path(driver.rna_path);
+      handle_rna_path(driver.rna_path().c_str());
     }
 
     /* Actually find the #bNodeSocket for each controlled input. */

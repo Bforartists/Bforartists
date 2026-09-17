@@ -230,6 +230,11 @@ static void gizmo_minimap_exit(bContext *C, wmGizmo *gz, const bool /*cancel*/)
   BLI_rctf_init(&minimap_space, min[0], max[0], min[1], max[1] + tile_height);
   const float minimap_space_width = BLI_rctf_size_x(&minimap_space);
   const float minimap_space_height = BLI_rctf_size_y(&minimap_space);
+  if (minimap_space_width <= 0.0f || minimap_space_height <= 0.0f) {
+    /* Failsafe: no nodes in the tree, so there is no valid minimap space to
+     * map the click to. Keep the current view. */
+    return;
+  }
   const float minimap_scale = min_ff(minimap_width_without_padding / minimap_space_width,
                                      minimap_height_without_padding / minimap_space_height);
 
@@ -300,6 +305,11 @@ static wmOperatorStatus gizmo_minimap_invoke(bContext *C, wmGizmo *gz, const wmE
   BLI_rctf_init(&minimap_space, min[0], max[0], min[1], max[1] + tile_height);
   float minimap_space_width = BLI_rctf_size_x(&minimap_space);
   float minimap_space_height = BLI_rctf_size_y(&minimap_space);
+  if (minimap_space_width <= 0.0f || minimap_space_height <= 0.0f) {
+    /* Failsafe: no nodes in the tree, so there is no valid minimap space.
+     * Cancel the gesture so the view can't be moved to an invalid location. */
+    return OPERATOR_CANCELLED;
+  }
   float minimap_scale = min_ff(minimap_width_without_padding / minimap_space_width,
                                minimap_height_without_padding / minimap_space_height);
 

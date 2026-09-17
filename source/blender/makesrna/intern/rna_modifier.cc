@@ -24,6 +24,7 @@
 #include "BKE_animsys.hh"
 #include "BKE_customdata.hh"
 #include "BKE_data_transfer.h"
+#include "BKE_global.hh"
 #include "BKE_mesh_remap.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -31,6 +32,7 @@
 
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
+#include "RNA_path.hh"
 
 #include "rna_internal.hh"
 
@@ -926,10 +928,14 @@ static void rna_Modifier_name_set(PointerRNA *ptr, const char *value)
   if (ptr->owner_id) {
     Object *ob = id_cast<Object *>(ptr->owner_id);
     BKE_modifier_unique_name(&ob->modifiers, md);
-  }
 
-  /* fix all the animation data which may link to this */
-  BKE_animdata_fix_paths_rename_all(nullptr, "modifiers", oldname, md->name);
+    BKE_animdata_fix_paths(ob->id,
+                           "modifiers",
+                           RNA_path_name_to_infix(oldname),
+                           RNA_path_name_to_infix(md->name),
+                           /*verify_paths=*/true,
+                           *G_MAIN);
+  }
 }
 
 static void rna_Modifier_name_update(Main *bmain, Scene * /*scene*/, PointerRNA * /*ptr*/)
@@ -1572,7 +1578,7 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
       RNA_enum_item_add_separator(&item, &totitem);
 
       const ListBaseT<bDeformGroup> *defbase = BKE_object_defgroup_list(ob_src);
-      for (i = 0, dg = static_cast<const bDeformGroup *>(defbase->first); dg; i++, dg = dg->next) {
+      for (i = 0, dg = defbase->first(); dg; i++, dg = dg->next) {
         tmp_item.value = i;
         tmp_item.identifier = tmp_item.name = dg->name;
         RNA_enum_item_add(&item, &totitem, &tmp_item);
@@ -1699,8 +1705,7 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
         RNA_enum_item_add_separator(&item, &totitem);
 
         const ListBaseT<bDeformGroup> *defbase = BKE_object_defgroup_list(ob_dst);
-        for (i = 0, dg = static_cast<const bDeformGroup *>(defbase->first); dg; i++, dg = dg->next)
-        {
+        for (i = 0, dg = defbase->first(); dg; i++, dg = dg->next) {
           tmp_item.value = i;
           tmp_item.identifier = tmp_item.name = dg->name;
           RNA_enum_item_add(&item, &totitem, &tmp_item);
@@ -1867,7 +1872,7 @@ static PointerRNA rna_ParticleInstanceModifier_particle_system_get(PointerRNA *p
   ParticleSystem *psys;
 
   if (!psmd->ob) {
-    return PointerRNA_NULL;
+    return {};
   }
 
   psys = static_cast<ParticleSystem *>(BLI_findlink(&psmd->ob->particlesystem, psmd->psys - 1));
@@ -1961,7 +1966,7 @@ static PointerRNA rna_NodesModifierProperties_get(PointerRNA *ptr)
 {
   auto *nmd = ptr->data_as<NodesModifierData>();
   if (!nmd->node_group) {
-    return PointerRNA_NULL;
+    return {};
   }
   return RNA_pointer_create_with_parent(*ptr, RNA_NodesModifierProperties, nmd);
 }
@@ -1977,8 +1982,8 @@ static nodes::eval_log::NodeTreeLog *get_nodes_modifier_log(const Object &object
   return &nmd.runtime->eval_log->get_tree_log(modifier_context.hash());
 }
 
-static Span<nodes::eval_log::NodeWarning> get_node_modifier_warnings(const Object &object,
-                                                                     NodesModifierData &nmd)
+static Span<nodes::NodeWarning> get_node_modifier_warnings(const Object &object,
+                                                           NodesModifierData &nmd)
 {
   if (auto *log = get_nodes_modifier_log(object, nmd)) {
     log->ensure_node_warnings(nmd);
@@ -2022,19 +2027,19 @@ static int rna_NodesModifier_node_warnings_length(PointerRNA *ptr)
 
 static void rna_NodesModifierWarning_message_get(PointerRNA *ptr, char *r_value)
 {
-  const auto *warning = static_cast<const nodes::eval_log::NodeWarning *>(ptr->data);
+  const auto *warning = static_cast<const nodes::NodeWarning *>(ptr->data);
   strcpy(r_value, warning->message.c_str());
 }
 
 static int rna_NodesModifierWarning_message_length(PointerRNA *ptr)
 {
-  const auto *warning = static_cast<const nodes::eval_log::NodeWarning *>(ptr->data);
+  const auto *warning = static_cast<const nodes::NodeWarning *>(ptr->data);
   return warning->message.size();
 }
 
 static int rna_NodesModifierWarning_type_get(PointerRNA *ptr)
 {
-  const auto *warning = static_cast<const nodes::eval_log::NodeWarning *>(ptr->data);
+  const auto *warning = static_cast<const nodes::NodeWarning *>(ptr->data);
   return int(warning->type);
 }
 
@@ -2124,12 +2129,12 @@ static PointerRNA rna_NodesModifierBake_node_get(PointerRNA *ptr)
   const NodesModifierBake *bake = static_cast<NodesModifierBake *>(ptr->data);
   const NodesModifierData *nmd = find_nodes_modifier_by_bake(*ob, *bake);
   if (!nmd->node_group) {
-    return PointerRNA_NULL;
+    return {};
   }
   const bNodeTree *tree;
   const bNode *node = nmd->node_group->find_nested_node(bake->id, &tree);
   if (!node) {
-    return PointerRNA_NULL;
+    return {};
   }
   BLI_assert(tree != nullptr);
   return RNA_pointer_create_discrete(
@@ -2521,7 +2526,12 @@ static void rna_GreasePencilDashModifierSegment_name_set(PointerRNA *ptr, const 
   BLI_str_escape(name_esc, dmd->modifier.name, sizeof(name_esc));
   char rna_path_prefix[36 + sizeof(name_esc) + 1];
   SNPRINTF_UTF8(rna_path_prefix, "modifiers[\"%s\"].segments", name_esc);
-  BKE_animdata_fix_paths_rename_all(nullptr, rna_path_prefix, oldname.c_str(), dash_segment->name);
+  BKE_animdata_fix_paths(*ptr->owner_id,
+                         rna_path_prefix,
+                         RNA_path_name_to_infix(oldname),
+                         RNA_path_name_to_infix(dash_segment->name),
+                         /*verify_paths=*/true,
+                         *G_MAIN);
 }
 
 static void rna_GreasePencilDashModifier_segments_begin(CollectionPropertyIterator *iter,
@@ -2625,7 +2635,12 @@ static void rna_GreasePencilTimeModifierSegment_name_set(PointerRNA *ptr, const 
   BLI_str_escape(name_esc, tmd->modifier.name, sizeof(name_esc));
   char rna_path_prefix[36 + sizeof(name_esc) + 1];
   SNPRINTF_UTF8(rna_path_prefix, "modifiers[\"%s\"].segments", name_esc);
-  BKE_animdata_fix_paths_rename_all(nullptr, rna_path_prefix, oldname.c_str(), segment->name);
+  BKE_animdata_fix_paths(*ptr->owner_id,
+                         rna_path_prefix,
+                         RNA_path_name_to_infix(oldname),
+                         RNA_path_name_to_infix(segment->name),
+                         /*verify_paths=*/true,
+                         *G_MAIN);
 }
 
 static void rna_GreasePencilTimeModifier_segments_begin(CollectionPropertyIterator *iter,
@@ -6623,7 +6638,7 @@ static void rna_def_modifier_remesh(BlenderRNA *brna)
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
   prop = RNA_def_property(srna, "scale", PROP_FLOAT, PROP_NONE);
-  RNA_def_property_ui_range(prop, 0, 0.99, 0.01, 3);
+  RNA_def_property_ui_range(prop, 0, 0.99, 0.01, 4);
   RNA_def_property_range(prop, 0, 0.99);
   RNA_def_property_ui_text(
       prop, "Scale", "The ratio of the largest dimension of the model over the size of the grid");
@@ -6670,7 +6685,7 @@ static void rna_def_modifier_remesh(BlenderRNA *brna)
                            "values preserve finer details.");
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
-  prop = RNA_def_property(srna, "adaptivity", PROP_FLOAT, PROP_DISTANCE);
+  prop = RNA_def_property(srna, "adaptivity", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "adaptivity");
   RNA_def_property_ui_range(prop, 0, 1, 0.1, 3);
   RNA_def_property_ui_text(

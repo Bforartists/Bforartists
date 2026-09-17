@@ -8,18 +8,22 @@ set(INC
   cached_resources
   derived_resources
   utilities
+  ../functions
   ../nodes/geometry/include
   ../gpu/intern
   ../makesrna
   ../render/intern
   ../imbuf/opencolorio/intern/libocio
+
+  # RNA_prototypes.hh
+  ${CMAKE_BINARY_DIR}/source/blender/makesrna
 )
 
 set(INC_SYS
 )
 
 set(SRC
-  COM_compile_state.hh
+  COM_bundle_item.hh
   COM_context.hh
   COM_conversion_operation.hh
   COM_derived_resources.hh
@@ -33,11 +37,13 @@ set(SRC
   COM_multi_function_procedure_operation.hh
   COM_node_group_operation.hh
   COM_node_operation.hh
+  COM_node_tree_evaluator.hh
   COM_operation.hh
   COM_pixel_operation.hh
   COM_realize_on_domain_operation.hh
   COM_render_context.hh
   COM_result.hh
+  COM_scene_compositor_effects_operation.hh
   COM_scheduler.hh
   COM_shader_node.hh
   COM_shader_operation.hh
@@ -47,7 +53,7 @@ set(SRC
   COM_undefined_node_operation.hh
   COM_utilities.hh
 
-  intern/compile_state.cc
+  intern/bundle_item.cc
   intern/context.cc
   intern/conversion_operation.cc
   intern/domain.cc
@@ -59,11 +65,13 @@ set(SRC
   intern/multi_function_procedure_operation.cc
   intern/node_group_operation.cc
   intern/node_operation.cc
+  intern/node_tree_evaluator.cc
   intern/operation.cc
   intern/pixel_operation.cc
   intern/realize_on_domain_operation.cc
   intern/render_context.cc
   intern/result.cc
+  intern/scene_compositor_effects_operation.cc
   intern/scheduler.cc
   intern/shader_node.cc
   intern/shader_operation.cc
@@ -408,6 +416,8 @@ set(GLSL_INC
   ../gpu/intern
   ../gpu/shaders
   ../gpu/shaders/common
+  ../gpu/shaders/compat
+  ../gpu/shaders/nodes
 
   shaders
   shaders/infos
@@ -456,3 +466,6 @@ blender_add_lib(bf_compositor "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 if(CXX_WARN_NO_SUGGEST_OVERRIDE)
   target_compile_options(bf_compositor PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-Wsuggest-override>)
 endif()
+
+# RNA_prototypes.hh
+add_dependencies(bf_compositor bf_rna)

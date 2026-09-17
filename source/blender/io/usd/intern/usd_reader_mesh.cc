@@ -8,7 +8,6 @@
 #include "usd_reader_mesh.hh"
 #include "usd.hh"
 #include "usd_attribute_utils.hh"
-#include "usd_hash_types.hh"
 #include "usd_mesh_utils.hh"
 #include "usd_reader_material.hh"
 #include "usd_skel_convert.hh"
@@ -433,7 +432,7 @@ void USDMeshReader::read_uv_data_primvar(Mesh *mesh,
 
 void USDMeshReader::read_subdiv()
 {
-  ModifierData *md = static_cast<ModifierData *>(object_->modifiers.last);
+  ModifierData *md = object_->modifiers.last();
   SubsurfModifierData *subdiv_data = reinterpret_cast<SubsurfModifierData *>(md);
 
   pxr::TfToken uv_smooth;

@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup draw
+ */
+
 #pragma once
 
 #include "draw_object_infos_infos.hh"
@@ -12,11 +16,11 @@ SHADER_LIBRARY_CREATE_INFO(draw_gpencil)
 #include "draw_object_infos_lib.glsl"
 #include "draw_view_lib.glsl"
 
-#include "gpu_shader_math_constants_lib.glsl"
-#include "gpu_shader_math_matrix_transform_lib.glsl"
-#include "gpu_shader_math_vector_lib.glsl"
-#include "gpu_shader_math_vector_safe_lib.glsl"
-#include "gpu_shader_utildefines_lib.glsl"
+#include "gpu_shader_math_constants.bsl.hh"
+#include "gpu_shader_math_matrix_transform.bsl.hh"
+#include "gpu_shader_math_vector.bsl.hh"
+#include "gpu_shader_math_vector_safe.bsl.hh"
+#include "gpu_shader_utildefines.bsl.hh"
 
 #ifndef DRW_GPENCIL_INFO
 #  error Missing additional info draw_gpencil
@@ -419,7 +423,7 @@ float2 get_rotation(float4 viewport_res,
  *
  *
  * WARNING: Max attribute count is actually 14 because OSX OpenGL implementation
- * considers gl_VertexID and gl_InstanceID as vertex attribute. (see #74536)
+ * considers gl_VertexID and gpu_InstanceIndex as vertex attribute. (see #74536)
  */
 float4 gpencil_vertex(float4 viewport_res,
                       gpMaterialFlag material_flags,

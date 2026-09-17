@@ -25,8 +25,6 @@
 namespace blender::ui {
 
 /* -------------------------------------------------------------------- */
-/* Keymap
- */
 /** \name Modal Keymap
  * \{ */
 
@@ -88,9 +86,6 @@ wmKeyMap *eyedropper_colorband_modal_keymap(wmKeyConfig *keyconf)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/* Utility Functions
- */
-
 /** \name Generic Shared Functions
  * \{ */
 
@@ -121,7 +116,7 @@ Button *eyedropper_get_property_button_under_mouse(bContext *C, const wmEvent *e
 
   Button *but = but_find_mouse_over(region, event);
 
-  if (ELEM(nullptr, but, but->rnapoin.data, but->rnaprop)) {
+  if (!but || !but->rnapoin || !but->rnaprop) {
     return nullptr;
   }
   return but;

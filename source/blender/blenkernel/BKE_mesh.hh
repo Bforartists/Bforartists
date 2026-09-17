@@ -60,7 +60,7 @@ void vert_tris_from_corner_tris(Span<int> corner_verts,
                                 Span<int3> corner_tris,
                                 MutableSpan<int3> vert_tris);
 
-/** Return the triangle's three edge indices they are real edges, otherwise -1. */
+/** Return the triangle's three edge indices if they are real edges, otherwise -1. */
 int3 corner_tri_get_real_edges(Span<int2> edges,
                                Span<int> corner_verts,
                                Span<int> corner_edges,
@@ -418,7 +418,8 @@ void mesh_sharp_edges_set_from_angle(Mesh &mesh, float angle, bool keep_sharp_ed
 
 /**
  * Calculate edge visibility based on vertex visibility, hides an edge when either of its
- * vertices are hidden. */
+ * vertices are hidden.
+ */
 void mesh_edge_hide_from_vert(Span<int2> edges, Span<bool> hide_vert, MutableSpan<bool> hide_edge);
 
 /* Hide faces when any of their vertices are hidden. */

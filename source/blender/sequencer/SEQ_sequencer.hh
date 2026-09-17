@@ -11,11 +11,12 @@
 #include "BKE_sound_types.hh"
 #include "BLI_enum_flags.hh"
 #include "BLI_map.hh"
-#include "BLI_vector.hh"
 #include "BLI_vector_set.hh"
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_session_uid_types.h"
+
+#include <optional>
 
 namespace blender {
 
@@ -23,9 +24,9 @@ struct BlendDataReader;
 struct BlendWriter;
 struct Depsgraph;
 struct Editing;
+struct IDProperty;
 struct Main;
 struct MetaStack;
-struct MovieReader;
 struct Scene;
 struct SeqTimelineChannel;
 struct Strip;
@@ -37,6 +38,7 @@ class CompositorCache;
 struct FinalImageCache;
 struct IntraFrameCache;
 struct MediaPresence;
+struct MovieReaderCache;
 struct PrefetchJob;
 struct PreviewCache;
 struct SourceImageCache;
@@ -45,25 +47,24 @@ struct ThumbnailCache;
 
 constexpr int MAX_CHANNELS = 128;
 
-/* RNA enums, just to be more readable */
-enum {
-  SIDE_MOUSE = -1,
-  SIDE_NONE = 0,
-  SIDE_LEFT,
-  SIDE_RIGHT,
-  SIDE_BOTH,
-  SIDE_NO_CHANGE,
+enum class Side : int {
+  Mouse = -1,
+  None = 0,
+  Left,
+  Right,
+  Both,
+  NoChange,
 };
 
-/* strip_duplicate' flags */
+/** Strip_duplicate flags */
 enum class StripDuplicate : uint8_t {
-  /* Note: Technically, the selected strips are duplicated when `All` is not set. */
+  /** NOTE: Technically, the selected strips are duplicated when `All` is not set. */
   Selected = 0,
-  /* Ensure strips have a unique name. */
+  /** Ensure strips have a unique name. */
   UniqueName = (1 << 0),
-  /* Duplicate strips and the IDs they reference. */
+  /** Duplicate strips and the IDs they reference. */
   Data = (1 << 1),
-  /* If this is set, duplicate all strips. If not set, duplicate selected strips. */
+  /** If this is set, duplicate all strips. If not set, duplicate selected strips. */
   All = (1 << 3),
 };
 ENUM_OPERATORS(StripDuplicate);
@@ -74,8 +75,10 @@ enum class StripRuntimeFlag {
   ClampedRH = (1 << 1),
   Overlap = (1 << 2),
   MarkForDelete = (1 << 4),
-  IgnoreChannelLock = (1 << 5), /* For #SEQUENCER_OT_duplicate_move macro. */
-  ShowOffsets = (1 << 6),       /* Set during #SEQUENCER_OT_slip. */
+  /** For #SEQUENCER_OT_duplicate_move macro. */
+  IgnoreChannelLock = (1 << 5),
+  /** Set during #SEQUENCER_OT_slip. */
+  ShowOffsets = (1 << 6),
 };
 ENUM_OPERATORS(StripRuntimeFlag);
 
@@ -88,23 +91,19 @@ struct StripRuntime {
   AUD_Sound sound_time_stretch;
   float sound_time_stretch_fps = 0.0f;
 
-  Vector<MovieReader *, 1> movie_readers;
-  /* To detect the removal of a sound modifier. */
-  int sound_modifiers_count = 0;
+  /** A null pointer can mean either not loaded yet or that the movie has no metadata. */
+  IDProperty *movie_metadata = nullptr;
+  bool movie_metadata_is_loaded = false;
 
-  [[nodiscard]] MovieReader *movie_reader_get(int64_t index = 0) const
-  {
-    if (index < 0 || index >= movie_readers.size()) {
-      return nullptr;
-    }
-    return movie_readers[index];
-  }
+  /** To detect the removal of a sound modifier. */
+  int sound_modifiers_count = 0;
 
   void clear_sound_time_stretch();
   void remove_scene_sound(Scene *scene);
 };
 
 struct EditingRuntime {
+  EditingRuntime();
   ~EditingRuntime();
 
   StripLookup *strip_lookup = nullptr;
@@ -113,12 +112,21 @@ struct EditingRuntime {
   IntraFrameCache *intra_frame_cache = nullptr;
   SourceImageCache *source_image_cache = nullptr;
   FinalImageCache *final_image_cache = nullptr;
+  MovieReaderCache *movie_reader_cache = nullptr;
   PreviewCache *preview_cache = nullptr;
   PrefetchJob *prefetch_job = nullptr;
   CompositorCache *compositor_cache = nullptr;
 
-  /** Used for rendering a different frame using sequencer_draw_get_transform_preview from the box
-   * blade tool. */
+  /**
+   * Frame index that was rendered with a temporary,
+   * unkeyed value of an animated property.
+   */
+  std::optional<float> temporary_animation_frame;
+
+  /**
+   * Used for rendering a different frame using sequencer_draw_get_transform_preview from the box
+   * blade tool.
+   */
   int transform_preview_frame = 0;
   bool show_transform_preview = false;
 
@@ -269,6 +277,11 @@ void strip_lookup_free(Editing *ed);
  * Mark strip lookup as invalid (i.e. will need rebuilding).
  */
 void strip_lookup_invalidate(const Editing *ed);
+
+/** Return movie metadata copied into the strip runtime, reading the source lazily if needed. */
+IDProperty *movie_metadata_ensure(Scene &scene, Strip &strip);
+/** Discard metadata copied from the movie source. */
+void movie_metadata_invalidate(Strip &strip);
 
 }  // namespace seq
 }  // namespace blender

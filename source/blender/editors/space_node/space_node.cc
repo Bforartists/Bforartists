@@ -28,6 +28,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BKE_asset.hh"
+#include "BKE_compositor.hh"
 #include "BKE_compute_context_cache.hh"
 #include "BKE_compute_contexts.hh"
 #include "BKE_context.hh"
@@ -128,7 +129,7 @@ void ED_node_tree_start(ARegion *region, SpaceNode *snode, bNodeTree *ntree, ID 
 void ED_node_tree_push(ARegion *region, SpaceNode *snode, bNodeTree *ntree, bNode *gnode)
 {
   bNodeTreePath *path = MEM_new<bNodeTreePath>("node tree path");
-  bNodeTreePath *prev_path = static_cast<bNodeTreePath *>(snode->treepath.last);
+  bNodeTreePath *prev_path = snode->treepath.last();
   path->nodetree = ntree;
   if (gnode) {
     if (prev_path) {
@@ -170,10 +171,10 @@ void ED_node_tree_push(ARegion *region, SpaceNode *snode, bNodeTree *ntree, bNod
 
 void ED_node_tree_pop(ARegion *region, SpaceNode *snode)
 {
-  bNodeTreePath *path = static_cast<bNodeTreePath *>(snode->treepath.last);
+  bNodeTreePath *path = snode->treepath.last();
 
   /* don't remove root */
-  if (path == snode->treepath.first) {
+  if (path == snode->treepath.first_) {
     return;
   }
 
@@ -181,7 +182,7 @@ void ED_node_tree_pop(ARegion *region, SpaceNode *snode)
   MEM_delete(path);
 
   /* update current tree */
-  path = static_cast<bNodeTreePath *>(snode->treepath.last);
+  path = snode->treepath.last();
   snode->edittree = path->nodetree;
 
   /* Set view center and zoom from node tree path. */
@@ -207,9 +208,7 @@ bNodeTree *ED_node_tree_get(SpaceNode *snode, int level)
 {
   bNodeTreePath *path;
   int i;
-  for (path = static_cast<bNodeTreePath *>(snode->treepath.last), i = 0; path;
-       path = path->prev, i++)
-  {
+  for (path = snode->treepath.last(), i = 0; path; path = path->prev, i++) {
     if (i == level) {
       return path->nodetree;
     }
@@ -251,7 +250,7 @@ void ED_node_tree_path_get(SpaceNode *snode, char *value)
 
 void ED_node_set_active_viewer_key(SpaceNode *snode)
 {
-  bNodeTreePath *path = static_cast<bNodeTreePath *>(snode->treepath.last);
+  bNodeTreePath *path = snode->treepath.last();
   if (snode->nodetree && path) {
     /* A change in active viewer may result in the change of the output node used by the
      * compositor, so we need to get notified about such changes. */
@@ -280,7 +279,7 @@ namespace ed::space_node {
 
 float2 space_node_group_offset(const SpaceNode &snode)
 {
-  const bNodeTreePath *path = static_cast<bNodeTreePath *>(snode.treepath.last);
+  const bNodeTreePath *path = snode.treepath.last();
 
   if (path && path->prev) {
     return float2(path->view_center) - float2(path->prev->view_center);
@@ -335,6 +334,19 @@ std::optional<nodes::FoundNestedNodeID> find_nested_node_id_in_root(
   }
   found.id = nested_node_ref->id;
   return found;
+}
+
+Object *get_space_editor_object(const bContext *C)
+{
+  SpaceNode *snode = CTX_wm_space_node(C);
+
+  if (snode && snode->from) {
+    if (snode->from->id_type() == ID_OB) {
+      return id_cast<Object *>(snode->from);
+    }
+  }
+
+  return static_cast<Object *>(CTX_data_pointer_get(C, "object").data);
 }
 
 std::optional<ObjectAndModifier> get_geometry_nodes_modifier_for_node_editor(
@@ -396,6 +408,43 @@ bool node_editor_is_for_geometry_nodes_modifier(const SpaceNode &snode,
     return false;
   }
   return object_and_modifier->nmd->modifier.persistent_uid == nmd.modifier.persistent_uid;
+}
+
+struct SceneAndCompositorEffect {
+  const Scene *scene = nullptr;
+  const SceneCompositorEffect *effect = nullptr;
+};
+
+static std::optional<SceneAndCompositorEffect> get_scene_compositor_effect_for_node_editor(
+    const SpaceNode &space_node)
+{
+  if (space_node.node_tree_sub_type != SNODE_COMPOSITOR_SCENE) {
+    return std::nullopt;
+  }
+
+  if (!space_node.id) {
+    return std::nullopt;
+  }
+
+  if (GS(space_node.id->name) != ID_SCE) {
+    return std::nullopt;
+  }
+
+  const Scene *scene = id_cast<Scene *>(space_node.id);
+  if (space_node.flag & SNODE_PIN) {
+    for (const SceneCompositorEffect &effect : scene->compositor_effects) {
+      if (effect.node_group == space_node.nodetree) {
+        return SceneAndCompositorEffect(scene, &effect);
+      }
+    }
+    return std::nullopt;
+  }
+
+  const SceneCompositorEffect *active_effect = bke::compositor::get_active_effect(*scene);
+  if (!active_effect) {
+    return std::nullopt;
+  }
+  return SceneAndCompositorEffect(scene, active_effect);
 }
 
 const ComputeContext *compute_context_for_zone(const bke::bNodeTreeZone &zone,
@@ -515,11 +564,15 @@ static const ComputeContext *get_node_editor_root_compute_context(
   if (snode.nodetree->type == NTREE_COMPOSIT) {
     switch (SpaceNodeCompositorNodesType(snode.node_tree_sub_type)) {
       case SNODE_COMPOSITOR_SCENE: {
-        const Scene *scene = reinterpret_cast<Scene *>(snode.id);
-        if (!scene) {
+        std::optional<SceneAndCompositorEffect> scene_and_effect =
+            ed::space_node::get_scene_compositor_effect_for_node_editor(snode);
+        if (!scene_and_effect) {
           return nullptr;
         }
-        return &compute_context_cache.for_data_block(nullptr, scene->id);
+        const bke::DataBlockComputeContext &scene_context = compute_context_cache.for_data_block(
+            nullptr, scene_and_effect->scene->id);
+        return &compute_context_cache.for_scene_compositor_effect(&scene_context,
+                                                                  *scene_and_effect->effect);
       }
       case SNODE_COMPOSITOR_SEQUENCER: {
         return nullptr;
@@ -695,7 +748,7 @@ static void node_init(wmWindowManager * /*wm*/, ScrArea * /*area*/) {}
 
 static void node_exit(wmWindowManager *wm, ScrArea *area)
 {
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   free_previews(*wm, *snode);
 }
 
@@ -729,7 +782,7 @@ static void node_area_listener(const wmSpaceTypeListenerParams *params)
   const wmNotifier *wmn = params->notifier;
 
   /* NOTE: #ED_area_tag_refresh will re-execute compositor. */
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   /* shaderfrom is only used for new shading nodes, otherwise all shaders are from objects */
   short shader_type = snode->shaderfrom;
 
@@ -930,7 +983,7 @@ static void node_toolbar_region_draw(const bContext *C, ARegion *region)
 
 static void node_cursor(wmWindow *win, ScrArea *area, ARegion *region)
 {
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
 
   /* convert mouse coordinates to v2d space */
   ui::view2d_region_to_view(&region->v2d,
@@ -1058,16 +1111,21 @@ static bool node_import_file_drop_poll(bContext *C, wmDrag *drag, const wmEvent 
   if (!snode->edittree) {
     return false;
   }
-  if (snode->edittree->type != NTREE_GEOMETRY) {
+  if (!ELEM(snode->edittree->type, NTREE_GEOMETRY, NTREE_COMPOSIT)) {
     return false;
   }
   if (drag->type != WM_DRAG_PATH) {
     return false;
   }
+  const bool is_geometry_tree = snode->edittree->type == NTREE_GEOMETRY;
   const Span<std::string> paths = WM_drag_get_paths(drag);
   for (const StringRef path : paths) {
-    if (path.endswith(".csv") || path.endswith(".obj") || path.endswith(".ply") ||
-        path.endswith(".stl") || path.endswith(".txt") || path.endswith(".vdb"))
+    if (path.endswith(".txt")) {
+      return true;
+    }
+    if (is_geometry_tree &&
+        (path.endswith(".csv") || path.endswith(".obj") || path.endswith(".ply") ||
+         path.endswith(".stl") || path.endswith(".vdb")))
     {
       return true;
     }
@@ -1373,7 +1431,7 @@ static void node_region_listener(const wmRegionListenerParams *params)
       ED_region_tag_redraw(region);
       break;
     case NC_OBJECT:
-      if (wmn->data == ND_OB_SHADING || wmn->data == ND_TRANSFORM) {
+      if (ELEM(wmn->data, ND_OB_SHADING, ND_TRANSFORM)) {
         ED_region_tag_redraw(region);
       }
       break;
@@ -1419,7 +1477,7 @@ static int /*eContextResult*/ node_context(const bContext *C,
   if (CTX_data_equals(member, "selected_nodes")) {
     if (snode->edittree) {
       for (bNode *node : snode->edittree->all_nodes()) {
-        if (node->flag & NODE_SELECT) {
+        if (node->is_selected()) {
           PointerRNA ptr = RNA_pointer_create_id_subdata(snode->edittree->id, RNA_Node, node);
           CTX_data_list_add_ptr(result, &ptr);
         }
@@ -1460,9 +1518,10 @@ static int /*eContextResult*/ node_context(const bContext *C,
     if (snode->edittree != nullptr) {
       if (bNode *node = bke::node_get_active(*snode->edittree)) {
         if (ELEM(node->type_legacy, SH_NODE_TEX_IMAGE, SH_NODE_TEX_ENVIRONMENT)) {
-          Image *image = id_cast<Image *>(node->id);
-          CTX_data_id_pointer_set(result, &image->id);
-          return CTX_RESULT_OK;
+          if (Image *image = id_cast<Image *>(node->id)) {
+            CTX_data_id_pointer_set(result, &image->id);
+            return CTX_RESULT_OK;
+          }
         }
       }
     }
@@ -1482,6 +1541,7 @@ static void node_widgets()
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_box_mask);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_ellipse_mask);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_split);
+  WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_translate);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_minimap);
   WM_gizmotype_append(NODE_GT_minimap);
 }
@@ -1525,12 +1585,12 @@ static void node_id_remap(ID *old_id, ID *new_id, SpaceNode *snode)
 
     bNodeTreePath *path, *path_next;
 
-    for (path = static_cast<bNodeTreePath *>(snode->treepath.first); path; path = path->next) {
+    for (path = snode->treepath.first(); path; path = path->next) {
       if (id_cast<ID *>(path->nodetree) == old_id) {
         path->nodetree = id_cast<bNodeTree *>(new_id);
         id_us_ensure_real(new_id);
       }
-      if (path == snode->treepath.first) {
+      if (path == snode->treepath.first_) {
         /* first nodetree in path is same as snode->nodetree */
         snode->nodetree = path->nodetree;
       }
@@ -1549,8 +1609,8 @@ static void node_id_remap(ID *old_id, ID *new_id, SpaceNode *snode)
 
     /* edittree is just the last in the path,
      * set this directly since the path may have been shortened above */
-    if (snode->treepath.last) {
-      path = static_cast<bNodeTreePath *>(snode->treepath.last);
+    if (snode->treepath.last()) {
+      path = snode->treepath.last();
       snode->edittree = path->nodetree;
       ED_node_set_active_viewer_key(snode);
     }
@@ -1592,7 +1652,7 @@ static void node_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data)
   BKE_LIB_FOREACHID_PROCESS_ID(data, snode->id, IDWALK_CB_DIRECT_WEAK_LINK);
   BKE_LIB_FOREACHID_PROCESS_ID(data, snode->from, IDWALK_CB_DIRECT_WEAK_LINK);
 
-  bNodeTreePath *path = static_cast<bNodeTreePath *>(snode->treepath.first);
+  bNodeTreePath *path = snode->treepath.first();
   BLI_assert(path == nullptr || path->nodetree == snode->nodetree);
 
   if (is_embedded_nodetree) {
@@ -1667,8 +1727,8 @@ static void node_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data)
   if (!is_readonly) {
     /* `edittree` is just the last in the path, set this directly since the path may have
      * been shortened above. */
-    if (snode->treepath.last != nullptr) {
-      path = static_cast<bNodeTreePath *>(snode->treepath.last);
+    if (snode->treepath.last() != nullptr) {
+      path = snode->treepath.last();
       snode->edittree = path->nodetree;
     }
     else {
@@ -1689,13 +1749,13 @@ static void node_foreach_id(SpaceLink *space_link, LibraryForeachIDData *data)
 
 static int node_space_subtype_get(ScrArea *area)
 {
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   return rna_node_tree_idname_to_enum(snode->tree_idname);
 }
 
 static void node_space_subtype_set(ScrArea *area, int value)
 {
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   ED_node_set_tree_type(snode, rna_node_tree_type_from_enum(value));
 }
 
@@ -1711,7 +1771,7 @@ static void node_space_subtype_item_extend(bContext *C, EnumPropertyItem **item,
 
 static StringRefNull node_space_name_get(const ScrArea *area)
 {
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   bke::bNodeTreeType *tree_type = bke::node_tree_type_find(snode->tree_idname);
   if (tree_type == nullptr) {
     return IFACE_("Node Editor");
@@ -1721,7 +1781,7 @@ static StringRefNull node_space_name_get(const ScrArea *area)
 
 static int node_space_icon_get(const ScrArea *area)
 {
-  SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
   bke::bNodeTreeType *tree_type = bke::node_tree_type_find(snode->tree_idname);
   if (tree_type == nullptr) {
     return ICON_NODETREE;
@@ -1866,6 +1926,7 @@ void ED_spacetype_node()
   /* regions: list-view/buttons */
   art = MEM_new_zeroed<ARegionType>("spacetype node region");
   art->regionid = RGN_TYPE_UI;
+  art->flag = ARegionTypeFlag::UsePanelCategoriesSearch;
   art->prefsizex = UI_SIDEBAR_PANEL_WIDTH;
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
   art->listener = node_region_listener;

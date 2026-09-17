@@ -70,6 +70,7 @@ set(SRC
   intern/boids.cc
   intern/bpath.cc
   intern/brush.cc
+  intern/bvh.cc
   intern/bvhutils.cc
   intern/cachefile.cc
   intern/callbacks.cc
@@ -261,6 +262,7 @@ set(SRC
   intern/pose_backup.cc
   intern/preferences.cc
   intern/preview_image.cc
+  intern/recents.cc
   intern/report.cc
   intern/rigidbody.cc
   intern/scene.cc
@@ -269,6 +271,7 @@ set(SRC
   intern/shrinkwrap.cc
   intern/softbody.cc
   intern/sound.cc
+  intern/sound_reader_cache.cc
   intern/speaker.cc
   intern/studiolight.cc
   intern/subdiv.cc
@@ -337,6 +340,7 @@ set(SRC
   BKE_attribute_storage.hh
   BKE_attribute_storage_blend_write.hh
   BKE_autoexec.hh
+  BKE_bake_attribute_field.hh
   BKE_bake_data_block_id.hh
   BKE_bake_data_block_map.hh
   BKE_bake_geometry_nodes_modifier.hh
@@ -356,6 +360,7 @@ set(SRC
   BKE_boids.h
   BKE_bpath.hh
   BKE_brush.hh
+  BKE_bvh.hh
   BKE_bvhutils.hh
   BKE_cachefile.hh
   BKE_callbacks.hh
@@ -501,6 +506,7 @@ set(SRC
   BKE_pose_backup.h
   BKE_preferences.h
   BKE_preview_image.hh
+  BKE_recents.hh
   BKE_report.hh
   BKE_rigidbody.h
   BKE_scene.hh
@@ -562,10 +568,15 @@ set(SRC
   intern/ocean_intern.h
   intern/pbvh_intern.hh
   intern/pbvh_pixels_copy.hh
+  intern/pbvh_pixels_rasterize.hh
   intern/pbvh_uv_islands.hh
+  intern/sound_reader_cache.hh
   intern/subdiv_converter.hh
   intern/subdiv_inline.hh
   intern/tracking_private.hh
+
+  # Without these files listed, they aren't known to CMake.
+  ../../../extern/toml11/toml.hpp
 )
 
 set(LIB
@@ -602,6 +613,7 @@ set(LIB
   PRIVATE bf::sequencer
   bf_shader_fx
   bf_simulation
+  PRIVATE bf::extern::toml
   PRIVATE bf::extern::xxhash
   PRIVATE bf::intern::atomic
   PRIVATE bf::dependencies::zlib
@@ -617,6 +629,13 @@ if(WITH_BINRELOC)
     PRIVATE bf::extern::binreloc
   )
   add_definitions(-DWITH_BINRELOC)
+endif()
+
+if(WITH_EMBREE)
+  list(APPEND LIB
+    PRIVATE bf::dependencies::optional::embree
+  )
+  add_definitions(-DWITH_EMBREE)
 endif()
 
 
@@ -757,6 +776,7 @@ if(WITH_GTESTS)
     intern/asset_metadata_test.cc
     intern/attribute_storage_test.cc
     intern/bake_items_serialize_test.cc
+    intern/blender_project_test.cc
     intern/bpath_test.cc
     intern/brush_test.cc
     intern/cryptomatte_test.cc
@@ -775,12 +795,14 @@ if(WITH_GTESTS)
     intern/lib_id_test.cc
     intern/lib_query_test.cc
     intern/lib_remap_test.cc
-    intern/main_test.cc
     intern/main_namemap_test.cc
+    intern/main_test.cc
     intern/nla_test.cc
     intern/node_socket_value_iter_test.cc
     intern/path_templates_test.cc
+    intern/recents_test.cc
     intern/scene_test.cc
+    intern/sound_reader_cache_test.cc
     intern/subdiv_ccg_test.cc
     intern/tracking_test.cc
     intern/volume_test.cc

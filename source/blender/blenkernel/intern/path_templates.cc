@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup bke
+ */
+
 #include <fmt/format.h>
 
 #include "BLT_translation.hh"
@@ -12,6 +16,7 @@
 
 #include "BKE_blender_project.hh"
 #include "BKE_context.hh"
+#include "BKE_idprop.hh"
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_path_templates.hh"
@@ -281,6 +286,28 @@ void BKE_add_template_variables_general(bke::path_templates::VariableMap &variab
   if (project) {
     variables.add_string("project_name", project->get_name());
     variables.add_filepath("project_root", project->get_root_path());
+
+    for (const std::unique_ptr<bke::ProjectVariable> &var : project->variables) {
+      switch (var->type_get()) {
+        case bke::ProjectVariableType::STRING: {
+          if (var->string_subtype_get() == bke::ProjectVariableStringSubtype::FILEPATH) {
+            variables.add_filepath(var->name_get(), var->value_string_get());
+          }
+          else {
+            variables.add_string(var->name_get(), var->value_string_get());
+          }
+          break;
+        }
+
+        case bke::ProjectVariableType::INT:
+          variables.add_integer(var->name_get(), var->value_int_get());
+          break;
+
+        case bke::ProjectVariableType::FLOAT:
+          variables.add_float(var->name_get(), var->value_float_get());
+          break;
+      }
+    }
   }
 
   /* Global blend filepath (a.k.a. path to the blend file that's currently
@@ -765,6 +792,38 @@ static std::optional<Token> next_token(StringRef path, const int from_char)
 
   return token;
 }
+
+namespace bke::path_templates {
+
+std::optional<ExpressionInfo> next_template_variable_expression(StringRef text,
+                                                                size_t starting_offset)
+{
+  while (const std::optional<Token> token = next_token(text, starting_offset)) {
+    switch (token->type) {
+      case TokenType::LEFT_CURLY_BRACE:
+      case TokenType::RIGHT_CURLY_BRACE: {
+        starting_offset = token->byte_range.one_after_last();
+        continue;
+      }
+
+      case TokenType::VARIABLE_EXPRESSION: {
+        ExpressionInfo info;
+        info.byte_range = token->byte_range;
+        info.variable_name = token->variable_name;
+        return info;
+      }
+
+      case TokenType::VARIABLE_SYNTAX_ERROR:
+      case TokenType::UNESCAPED_CURLY_BRACE_ERROR: {
+        return std::nullopt;
+      }
+    }
+  }
+
+  return std::nullopt;
+}
+
+}  // namespace bke::path_templates
 
 /* Parse the given template and return the list of tokens found, in the same
  * order as they appear in the template. */

@@ -266,7 +266,7 @@ static void do_version_layers_to_collections(Main *bmain, Scene *scene)
     scene->master_collection = BKE_collection_master_add(scene);
   }
 
-  if (scene->view_layers.first) {
+  if (scene->view_layers.first()) {
     return;
   }
 
@@ -311,7 +311,7 @@ static void do_version_layers_to_collections(Main *bmain, Scene *scene)
 
   /* Handle legacy render layers. */
   bool have_override = false;
-  const bool need_default_renderlayer = scene->r.layers.first == nullptr;
+  const bool need_default_renderlayer = scene->r.layers.first() == nullptr;
 
   for (SceneRenderLayer &srl : scene->r.layers) {
     ViewLayer *view_layer = BKE_view_layer_add(bmain, scene, srl.name, nullptr, VIEWLAYER_ADD_NEW);
@@ -466,7 +466,7 @@ static void do_versions_remove_region(ListBaseT<ARegion> *regionbase, ARegion *r
 static void do_versions_remove_regions_by_type(ListBaseT<ARegion> *regionbase, int regiontype)
 {
   ARegion *region, *region_next;
-  for (region = static_cast<ARegion *>(regionbase->first); region; region = region_next) {
+  for (region = regionbase->first(); region; region = region_next) {
     region_next = static_cast<ARegion *>(region->next);
     if (region->regiontype == regiontype) {
       do_versions_remove_region(regionbase, region);
@@ -501,8 +501,8 @@ static void do_versions_area_ensure_tool_region(Main *bmain,
     for (ScrArea &area : screen.areabase) {
       for (SpaceLink &sl : area.spacedata) {
         if (sl.spacetype == space_type) {
-          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                           &sl.regionbase;
+          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                            &sl.regionbase;
           ARegion *region = BKE_area_find_region_type(&area, RGN_TYPE_TOOLS);
           if (!region) {
             ARegion *header = BKE_area_find_region_type(&area, RGN_TYPE_HEADER);
@@ -539,23 +539,21 @@ static void do_version_bones_inherit_scale(ListBaseT<Bone> *lb)
   }
 }
 
-static bool replace_bbone_scale_rnapath(char **p_old_path)
+/**
+ * \return a newly allocated replacement path, or nullptr if `old_path` doesn't need replacing.
+ */
+static char *replace_bbone_scale_rnapath(const char *old_path)
 {
-  char *old_path = *p_old_path;
-
   if (old_path == nullptr) {
-    return false;
+    return nullptr;
   }
 
   if (BLI_str_endswith(old_path, "bbone_scalein") || BLI_str_endswith(old_path, "bbone_scaleout"))
   {
-    *p_old_path = BLI_strdupcat(old_path, "x");
-
-    MEM_delete(old_path);
-    return true;
+    return BLI_strdupcat(old_path, "x");
   }
 
-  return false;
+  return nullptr;
 }
 
 static void do_version_bbone_scale_fcurve_fix(ListBaseT<FCurve> *curves, FCurve *fcu)
@@ -564,26 +562,33 @@ static void do_version_bbone_scale_fcurve_fix(ListBaseT<FCurve> *curves, FCurve 
   if (fcu->driver) {
     for (DriverVar &dvar : fcu->driver->variables) {
       DRIVER_TARGETS_LOOPER_BEGIN (&dvar) {
-        replace_bbone_scale_rnapath(&dtar->rna_path);
+        if (char *new_path = replace_bbone_scale_rnapath(dtar->rna_path)) {
+          MEM_delete(dtar->rna_path);
+          dtar->rna_path = new_path;
+        }
       }
       DRIVER_TARGETS_LOOPER_END;
     }
   }
 
   /* Update F-Curve's path. */
-  if (replace_bbone_scale_rnapath(&fcu->rna_path)) {
+  if (char *new_path = replace_bbone_scale_rnapath(fcu->rna_path().c_str())) {
+    fcu->rna_path_set_move(new_path);
+
     /* If matched, duplicate the curve and tweak name. */
     FCurve *second = BKE_fcurve_copy(fcu);
 
-    second->rna_path[strlen(second->rna_path) - 1] = 'y';
+    char *second_path = BLI_strdup(second->rna_path().c_str());
+    second_path[strlen(second_path) - 1] = 'y';
+    second->rna_path_set_move(second_path);
 
     BLI_insertlinkafter(curves, fcu, second);
 
     /* Add to the curve group. */
     second->grp = fcu->grp;
 
-    if (fcu->grp != nullptr && fcu->grp->channels.last == fcu) {
-      fcu->grp->channels.last = second;
+    if (fcu->grp != nullptr && fcu->grp->channels.last() == fcu) {
+      fcu->grp->channels.last_ = second;
     }
   }
 }
@@ -631,7 +636,7 @@ static void do_versions_seq_alloc_transform_and_crop(ListBaseT<Strip> *seqbase)
         strip.data->crop = MEM_new<StripCrop>("StripCrop");
       }
 
-      if (strip.seqbase.first != nullptr) {
+      if (strip.seqbase.first() != nullptr) {
         do_versions_seq_alloc_transform_and_crop(&strip.seqbase);
       }
     }
@@ -645,7 +650,7 @@ static void do_versions_material_convert_legacy_blend_mode(bNodeTree *ntree, cha
 
   /* Iterate backwards from end so we don't encounter newly added links. */
   bNodeLink *prevlink;
-  for (bNodeLink *link = static_cast<bNodeLink *>(ntree->links.last); link; link = prevlink) {
+  for (bNodeLink *link = ntree->links.last(); link; link = prevlink) {
     prevlink = static_cast<bNodeLink *>(link->prev);
 
     /* Detect link to replace. */
@@ -675,8 +680,8 @@ static void do_versions_material_convert_legacy_blend_mode(bNodeTree *ntree, cha
       add_node->locx_legacy = 0.5f * (fromnode->locx_legacy + tonode->locx_legacy);
       add_node->locy_legacy = 0.5f * (fromnode->locy_legacy + tonode->locy_legacy);
 
-      bNodeSocket *shader1_socket = static_cast<bNodeSocket *>(add_node->inputs.first);
-      bNodeSocket *shader2_socket = static_cast<bNodeSocket *>(add_node->inputs.last);
+      bNodeSocket *shader1_socket = add_node->inputs.first();
+      bNodeSocket *shader2_socket = add_node->inputs.last();
       bNodeSocket *add_socket = bke::node_find_socket(*add_node, SOCK_OUT, "Shader"_ustr);
 
       bNode *transp_node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_BSDF_TRANSPARENT);
@@ -890,8 +895,7 @@ static void do_version_curvemapping_walker(Main *bmain, void (*callback)(CurveMa
     }
     /* Grease pencil modifiers.
      * No ListBaseT iterator because the type does not match current DNA. */
-    for (ModifierData *md = static_cast<ModifierData *>(ob.greasepencil_modifiers.first); md;
-         md = md->next)
+    for (ModifierData *md = ob.greasepencil_modifiers.first_as<ModifierData>(); md; md = md->next)
     {
       if (GpencilModifierType(md->type) == eGpencilModifierType_Thick) {
         ThickGpencilModifierData *gpmd = reinterpret_cast<ThickGpencilModifierData *>(md);
@@ -1083,23 +1087,19 @@ static void square_roughness_node_insert(bNodeTree *ntree)
     float *value = version_cycles_node_socket_float_value(input);
     *value = sqrtf(max_ff(*value, 0.0f));
   };
-  auto update_input_link = [ntree](bNode *fromnode,
-                                   bNodeSocket *fromsock,
-                                   bNode *tonode,
-                                   bNodeSocket *tosock) {
-    /* Add `sqrt` node. */
-    bNode *node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_MATH);
-    node->custom1 = NODE_MATH_POWER;
-    node->locx_legacy = 0.5f * (fromnode->locx_legacy + tonode->locx_legacy);
-    node->locy_legacy = 0.5f * (fromnode->locy_legacy + tonode->locy_legacy);
+  auto update_input_link =
+      [ntree](bNode *fromnode, bNodeSocket *fromsock, bNode *tonode, bNodeSocket *tosock) {
+        /* Add `sqrt` node. */
+        bNode *node = bke::node_add_static_node(nullptr, *ntree, SH_NODE_MATH);
+        node->custom1 = NODE_MATH_POWER;
+        node->locx_legacy = 0.5f * (fromnode->locx_legacy + tonode->locx_legacy);
+        node->locy_legacy = 0.5f * (fromnode->locy_legacy + tonode->locy_legacy);
 
-    /* Link to input and material output node. */
-    *version_cycles_node_socket_float_value(static_cast<bNodeSocket *>(node->inputs.last)) = 0.5f;
-    bke::node_add_link(
-        *ntree, *fromnode, *fromsock, *node, *static_cast<bNodeSocket *>(node->inputs.first));
-    bke::node_add_link(
-        *ntree, *node, *static_cast<bNodeSocket *>(node->outputs.first), *tonode, *tosock);
-  };
+        /* Link to input and material output node. */
+        *version_cycles_node_socket_float_value(node->inputs.last()) = 0.5f;
+        bke::node_add_link(*ntree, *fromnode, *fromsock, *node, *node->inputs.first());
+        bke::node_add_link(*ntree, *node, *node->outputs.first(), *tonode, *tosock);
+      };
 
   version_update_node_input(ntree, check_node, "Roughness", update_input, update_input_link);
 }
@@ -1693,35 +1693,33 @@ static void update_mapping_node_fcurve_rna_path_callback(FCurve *fcurve,
                                                          const bNode *minimumNode,
                                                          const bNode *maximumNode)
 {
-  if (!STRPREFIX(fcurve->rna_path, nodePath) ||
-      BLI_str_endswith(fcurve->rna_path, "default_value"))
+  if (!STRPREFIX(fcurve->rna_path().c_str(), nodePath) ||
+      BLI_str_endswith(fcurve->rna_path().c_str(), "default_value"))
   {
     return;
   }
-  char *old_fcurve_rna_path = fcurve->rna_path;
+  const char *old_fcurve_rna_path = fcurve->rna_path().c_str();
 
   if (BLI_str_endswith(old_fcurve_rna_path, "translation")) {
-    fcurve->rna_path = BLI_sprintfN("%s.%s", nodePath, "inputs[1].default_value");
+    fcurve->rna_path_set_move(BLI_sprintfN("%s.%s", nodePath, "inputs[1].default_value"));
   }
   else if (BLI_str_endswith(old_fcurve_rna_path, "rotation")) {
-    fcurve->rna_path = BLI_sprintfN("%s.%s", nodePath, "inputs[2].default_value");
+    fcurve->rna_path_set_move(BLI_sprintfN("%s.%s", nodePath, "inputs[2].default_value"));
   }
   else if (BLI_str_endswith(old_fcurve_rna_path, "scale")) {
-    fcurve->rna_path = BLI_sprintfN("%s.%s", nodePath, "inputs[3].default_value");
+    fcurve->rna_path_set_move(BLI_sprintfN("%s.%s", nodePath, "inputs[3].default_value"));
   }
   else if (minimumNode && BLI_str_endswith(old_fcurve_rna_path, "max")) {
     char node_name_esc[sizeof(minimumNode->name) * 2];
     BLI_str_escape(node_name_esc, minimumNode->name, sizeof(node_name_esc));
-    fcurve->rna_path = BLI_sprintfN("nodes[\"%s\"].%s", node_name_esc, "inputs[1].default_value");
+    fcurve->rna_path_set_move(
+        BLI_sprintfN("nodes[\"%s\"].%s", node_name_esc, "inputs[1].default_value"));
   }
   else if (maximumNode && BLI_str_endswith(old_fcurve_rna_path, "min")) {
     char node_name_esc[sizeof(maximumNode->name) * 2];
     BLI_str_escape(node_name_esc, maximumNode->name, sizeof(node_name_esc));
-    fcurve->rna_path = BLI_sprintfN("nodes[\"%s\"].%s", node_name_esc, "inputs[1].default_value");
-  }
-
-  if (fcurve->rna_path != old_fcurve_rna_path) {
-    MEM_delete(old_fcurve_rna_path);
+    fcurve->rna_path_set_move(
+        BLI_sprintfN("nodes[\"%s\"].%s", node_name_esc, "inputs[1].default_value"));
   }
 }
 
@@ -2212,9 +2210,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
       }
 
       Collection *hidden_collection_array[20] = {nullptr};
-      for (CollectionObject *cob = static_cast<CollectionObject *>(collection.gobject.first),
-                            *cob_next = nullptr;
-           cob;
+      for (CollectionObject *cob = collection.gobject.first(), *cob_next = nullptr; cob;
            cob = cob_next)
       {
         cob_next = cob->next;
@@ -2274,7 +2270,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
       /* same render-layer as do_version_workspaces_after_lib_link will activate,
        * so same layer as BKE_view_layer_default_view would return */
-      ViewLayer *layer = static_cast<ViewLayer *>(screen.scene->view_layers.first);
+      ViewLayer *layer = screen.scene->view_layers.first();
 
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &space : area.spacedata) {
@@ -2295,8 +2291,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
               TreeStoreElem *tselem = static_cast<TreeStoreElem *>(
                   BLI_mempool_calloc(space_outliner->treestore));
               tselem->type = TSE_LAYER_COLLECTION;
-              tselem->id = &(static_cast<LayerCollection *>(layer->layer_collections.first))
-                                ->collection->id;
+              tselem->id = &(layer->layer_collections.first())->collection->id;
               tselem->nr = tselem->used = 0;
               tselem->flag &= ~TSE_CLOSED;
             }
@@ -2364,7 +2359,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 4)) {
     for (Object &object : bmain->objects) {
-      if (object.particlesystem.first) {
+      if (object.particlesystem.first_) {
         object.duplicator_visibility_flag = OB_DUPLI_FLAG_VIEWPORT;
         for (ParticleSystem &psys : object.particlesystem) {
           if (psys.part->draw & PART_DRAW_EMITTER) {
@@ -2389,8 +2384,8 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
   /* SpaceTime & SpaceLogic removal/replacing */
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 9)) {
-    const wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
-    const Scene *scene = static_cast<Scene *>(bmain->scenes.first);
+    const wmWindowManager *wm = bmain->wm.first();
+    const Scene *scene = bmain->scenes.first();
 
     if (wm != nullptr) {
       /* Action editors need a scene for creation. First, update active
@@ -2441,7 +2436,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
          * collection. */
         for (ViewLayer &view_layer : scene.view_layers) {
           if (LayerCollection *first_layer_collection = static_cast<LayerCollection *>(
-                  view_layer.layer_collections.first))
+                  view_layer.layer_collections.first_))
           {
             first_layer_collection->collection = scene.master_collection;
           }
@@ -2674,7 +2669,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 64)) {
     /* Unify Cycles and Eevee settings. */
-    Scene *scene = static_cast<Scene *>(bmain->scenes.first);
+    Scene *scene = bmain->scenes.first();
     const char *engine = (scene) ? scene->r.engine : "CYCLES";
 
     for (Light &light : bmain->lights) {
@@ -2684,7 +2679,7 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 69)) {
     /* Unify Cycles and Eevee depth of field. */
-    Scene *scene = static_cast<Scene *>(bmain->scenes.first);
+    Scene *scene = bmain->scenes.first();
     const char *engine = (scene) ? scene->r.engine : "CYCLES";
 
     if (STREQ(engine, RE_engine_id_CYCLES)) {
@@ -2920,12 +2915,11 @@ void do_versions_after_linking_280(FileData *fd, Main *bmain)
      * removed, and reintroduced in 5e968a996a53 as "Object.hide_viewport". */
     for (Object &ob : bmain->objects) {
       animrig::versioning::fcurves_id_cb(&ob.id, [&](ID * /*id*/, FCurve *fcu) {
-        if (fcu->rna_path == nullptr || !STREQ(fcu->rna_path, "hide")) {
+        if (fcu->rna_path() != "hide") {
           return;
         }
 
-        MEM_delete(fcu->rna_path);
-        fcu->rna_path = BLI_strdupn("hide_viewport", 13);
+        fcu->rna_path_set("hide_viewport");
       });
     }
 
@@ -2994,7 +2988,7 @@ static void do_versions_seq_unique_name_all_strips(Scene *sce, ListBaseT<Strip> 
 {
   for (Strip &strip : *seqbasep) {
     seq::strip_unique_name_set(sce, &sce->ed->seqbase, &strip);
-    if (strip.seqbase.first != nullptr) {
+    if (strip.seqbase.first() != nullptr) {
       do_versions_seq_unique_name_all_strips(sce, &strip.seqbase);
     }
   }
@@ -3293,9 +3287,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
         win_height = std::max<int>(win_height, vert.vec.y);
       }
 
-      for (ScrArea *area = static_cast<ScrArea *>(screen.areabase.first), *area_next; area;
-           area = area_next)
-      {
+      for (ScrArea *area = screen.areabase.first(), *area_next; area; area = area_next) {
         area_next = static_cast<ScrArea *>(area->next);
 
         if (area->spacetype == SPACE_INFO) {
@@ -3334,11 +3326,10 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (ELEM(sl.spacetype, SPACE_VIEW3D, SPACE_CLIP)) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
 
-            for (ARegion *region = static_cast<ARegion *>(regionbase->first), *region_next; region;
-                 region = region_next)
+            for (ARegion *region = regionbase->first(), *region_next; region; region = region_next)
             {
               region_next = static_cast<ARegion *>(region->next);
 
@@ -3792,7 +3783,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 280, 21)) {
     for (Scene &sce : bmain->scenes) {
-      if (sce.ed != nullptr && sce.ed->seqbase.first != nullptr) {
+      if (sce.ed != nullptr && sce.ed->seqbase.first() != nullptr) {
         do_versions_seq_unique_name_all_strips(&sce, &sce.ed->seqbase);
       }
     }
@@ -4186,8 +4177,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       for (bScreen &screen : bmain->screens) {
         for (ScrArea &area : screen.areabase) {
           for (SpaceLink &sl : area.spacedata) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             ARegion *region_header = do_versions_find_region_or_null(regionbase, RGN_TYPE_HEADER);
 
             if (!region_header) {
@@ -4211,13 +4202,12 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_PROPERTIES) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             ARegion *region = BKE_area_region_new();
             ARegion *region_header = nullptr;
 
-            for (region_header = static_cast<ARegion *>(regionbase->first);
-                 region_header != nullptr;
+            for (region_header = regionbase->first(); region_header != nullptr;
                  region_header = static_cast<ARegion *>(region_header->next))
             {
               if (region_header->regiontype == RGN_TYPE_HEADER) {
@@ -4440,7 +4430,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
             if (!navigation_region) {
               ARegion *main_region = BKE_spacedata_find_region_type(
                   &slink, &area, RGN_TYPE_WINDOW);
-              ListBaseT<ARegion> *regionbase = (&slink == area.spacedata.first) ?
+              ListBaseT<ARegion> *regionbase = (&slink == area.spacedata.first_) ?
                                                    &area.regionbase :
                                                    &slink.regionbase;
 
@@ -4707,8 +4697,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
             ARegion *execute_region = BKE_spacedata_find_region_type(&sl, &area, RGN_TYPE_EXECUTE);
 
             if (!execute_region) {
-              ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                               &sl.regionbase;
+              ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                                &sl.regionbase;
               ARegion *region_navbar = BKE_spacedata_find_region_type(
                   &sl, &area, RGN_TYPE_NAV_BAR);
 
@@ -4847,7 +4837,7 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     /* All tool names changed, reset to defaults. */
     for (WorkSpace &workspace : bmain->workspaces) {
       while (!workspace.tools.is_empty()) {
-        BKE_workspace_tool_remove(&workspace, static_cast<bToolRef *>(workspace.tools.first));
+        BKE_workspace_tool_remove(&workspace, workspace.tools.first());
       }
     }
   }
@@ -4946,8 +4936,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_TEXT) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
 
             /* Remove multiple footers that were added by mistake. */
             do_versions_remove_regions_by_type(regionbase, RGN_TYPE_FOOTER);
@@ -5039,8 +5029,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
     for (bScreen &screen : bmain->screens) {
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
-          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                           &sl.regionbase;
+          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                            &sl.regionbase;
           /* All spaces that use tools must be eventually added. */
           ARegion *region = nullptr;
           if (ELEM(sl.spacetype, SPACE_VIEW3D, SPACE_IMAGE, SPACE_SEQ) &&
@@ -5158,8 +5148,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (ELEM(sl.spacetype, SPACE_CLIP, SPACE_GRAPH, SPACE_SEQ)) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
 
             ARegion *region = nullptr;
             if (sl.spacetype == SPACE_CLIP) {
@@ -5326,8 +5316,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_TEXT) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             ARegion *region = do_versions_find_region_or_null(regionbase, RGN_TYPE_UI);
             if (region) {
               region->alignment = RGN_ALIGN_RIGHT;
@@ -5413,8 +5403,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_FILE) {
             SpaceFile *sfile = reinterpret_cast<SpaceFile *>(&sl);
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             ARegion *region_ui = do_versions_find_region(regionbase, RGN_TYPE_UI);
             ARegion *region_header = do_versions_find_region(regionbase, RGN_TYPE_HEADER);
             ARegion *region_toolprops = do_versions_find_region_or_null(regionbase,
@@ -5548,8 +5538,8 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
             }
           }
           else if (sl.spacetype == SPACE_FILE) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             ARegion *region_tools = do_versions_find_region_or_null(regionbase, RGN_TYPE_TOOLS);
             ARegion *region_header = do_versions_find_region(regionbase, RGN_TYPE_HEADER);
 

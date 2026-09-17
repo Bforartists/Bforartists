@@ -29,16 +29,13 @@ void ED_editors_init(bContext *C);
  */
 void ED_editors_exit(Main *bmain, bool do_undo_system);
 
-bool ED_editors_flush_edits_for_object_ex(Main *bmain,
-                                          Object *ob,
-                                          bool for_render,
-                                          bool check_needs_flush);
+bool ED_editors_flush_edits_for_object_ex(Main *bmain, Object *ob, bool check_needs_flush);
 bool ED_editors_flush_edits_for_object(Main *bmain, Object *ob);
 
 /**
  * Flush any temp data from object editing to DNA before writing files, rendering, copying, etc.
  */
-bool ED_editors_flush_edits_ex(Main *bmain, bool for_render, bool check_needs_flush);
+bool ED_editors_flush_edits_ex(Main *bmain, bool check_needs_flush);
 bool ED_editors_flush_edits(Main *bmain);
 
 /**
@@ -77,14 +74,12 @@ void ED_region_draw_mouse_line_cb(const bContext *C, ARegion *region, void *arg_
 void ED_region_image_metadata_draw(
     int x, int y, const ImBuf *ibuf, const rctf *frame, float zoomx, float zoomy);
 
-void ED_region_image_overlay_info_text_draw(const int render_size_x,
-                                            const int render_size_y,
-
-                                            const int viewer_size_x,
-                                            const int viewer_size_y,
-
-                                            const int draw_offset_x,
-                                            const int draw_offset_y);
+void ED_region_overlay_info_text_draw(const int render_size_x,
+                                      const int render_size_y,
+                                      const int viewer_size_x,
+                                      const int viewer_size_y,
+                                      const int draw_offset_x,
+                                      const int draw_offset_y);
 
 void ED_region_render_region_draw(
     int x, int y, const rcti *frame, float zoomx, float zoomy, float passepartout_alpha);

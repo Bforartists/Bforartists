@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup gpu
+ */
+
 #include "vk_ray_tracing.hh"
 
 #include "vk_backend.hh"
@@ -128,6 +132,7 @@ void VKTopLevelAS::build()
   }
 
   build_acceleration_structure_info_.src_buffers.clear_and_keep_capacity();
+  build_acceleration_structure_info_.src_acceleration_structures.clear_and_keep_capacity();
 
   for (int64_t blas_index : instances_.index_range()) {
     VkAccelerationStructureInstanceKHR &instance = instances_[blas_index];
@@ -139,7 +144,7 @@ void VKTopLevelAS::build()
       return;
     }
     instance.accelerationStructureReference = blas.vk_device_address();
-    build_acceleration_structure_info_.src_buffers.add(blas.vk_buffer());
+    build_acceleration_structure_info_.src_acceleration_structures.add(blas.vk_buffer());
   }
 
   /* Create the instances buffer and upload the instance data. */
@@ -284,27 +289,25 @@ void VKTopLevelAS::build()
   /* TODO: Only create when size differs from previous allocation. */
   VKBuffer device_scratch_space;
   device_scratch_space.create(
-      ceil_to_multiple_ul(
-          do_update ? vk_acceleration_structure_build_sizes_info.updateScratchSize :
-                      vk_acceleration_structure_build_sizes_info.buildScratchSize,
-          acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment),
+      do_update ? vk_acceleration_structure_build_sizes_info.updateScratchSize :
+                  vk_acceleration_structure_build_sizes_info.buildScratchSize,
       VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
       VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE,
       VmaAllocationCreateFlags(0),
       1.0,
       false,
-      name_get());
+      name_get(),
+      acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment);
   BLI_assert(device_scratch_space.is_allocated());
   BLI_assert(device_scratch_space.device_address_get());
 
   build_geometry_infos.scratchData.deviceAddress = device_scratch_space.device_address_get();
   node_data.vk_acceleration_structure_build_geometry_info.scratchData.deviceAddress =
-      ceil_to_multiple_ul(
-          device_scratch_space.device_address_get(),
-          acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment);
+      device_scratch_space.device_address_get();
   node_data.vk_acceleration_structure_build_geometry_info.dstAccelerationStructure =
       vk_acceleration_structure_;
   build_acceleration_structure_info_.dst_acceleration_structure = buffer_.resource();
+  build_acceleration_structure_info_.scratch_buffer = device_scratch_space.resource();
 
   render_graph::VKRenderGraph &render_graph = context.render_graph();
   render_graph.add_node(build_acceleration_structure_info_);
@@ -416,7 +419,10 @@ void VKBottomLevelAS::add_geometry(IndexBuf &index_buffer_, VertBuf &vertex_buff
        VK_GEOMETRY_OPAQUE_BIT_KHR});
   const uint32_t num_primitives = uint32_t(index_buffer.index_len_get() / 3);
   build_acceleration_structure_info_.node_data.vk_acceleration_structure_build_range_infos.append(
-      {num_primitives, 0, index_buffer.index_base_get(), 0});
+      {num_primitives,
+       index_buffer.index_start_get() * (index_buffer.is_32bit() ? 4u : 2u),
+       index_buffer.index_base_get(),
+       0});
   max_primitive_count_per_geometry_.append(num_primitives);
 
   build_acceleration_structure_info_.src_buffers.add(index_buffer.resource());
@@ -496,26 +502,24 @@ void VKBottomLevelAS::build()
   /* Create scratch space for building */
   VKBuffer device_scratch_space;
   device_scratch_space.create(
-      ceil_to_multiple_ul(
-          vk_acceleration_structure_build_sizes_info.buildScratchSize,
-          acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment),
+      vk_acceleration_structure_build_sizes_info.buildScratchSize,
       VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
       VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE,
       0,
       1.0,
       false,
-      name_get());
+      name_get(),
+      acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment);
   BLI_assert(device_scratch_space.is_allocated());
   BLI_assert(device_scratch_space.device_address_get());
 
   build_geometry_infos.scratchData.deviceAddress = device_scratch_space.device_address_get();
   node_data.vk_acceleration_structure_build_geometry_info.scratchData.deviceAddress =
-      ceil_to_multiple_ul(
-          device_scratch_space.device_address_get(),
-          acceleration_structure_properties.minAccelerationStructureScratchOffsetAlignment);
+      device_scratch_space.device_address_get();
   node_data.vk_acceleration_structure_build_geometry_info.dstAccelerationStructure =
       vk_acceleration_structure_;
   build_acceleration_structure_info_.dst_acceleration_structure = buffer_.resource();
+  build_acceleration_structure_info_.scratch_buffer = device_scratch_space.resource();
 
   VKContext &context = *VKContext::get();
   render_graph::VKRenderGraph &render_graph = context.render_graph();

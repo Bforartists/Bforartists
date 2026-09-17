@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "BLI_array_utils.hh"
+#include "BLI_assert.hh"
 #include "BLI_enum_flags.hh"
 #include "BLI_math_base_c.hh"
 #include "BLI_span.hh"
@@ -142,7 +144,7 @@ class VertBuf {
         GenericVertexFormat<T>::format(), GPU_USAGE_STATIC | GPU_USAGE_FLAG_BUFFER_TEXTURE_ONLY));
     /* GPU formats needs to be aligned to 4 bytes. */
     buf->allocate(ceil_to_multiple_u(data.size_in_bytes(), 4) / sizeof(GenericVertexFormat<T>));
-    buf->data<T>().slice(0, data.size()).copy_from(data);
+    array_utils::copy(data, buf->data<T>().slice(0, data.size()));
     return buf;
   }
 
@@ -154,7 +156,7 @@ class VertBuf {
     /* GPU formats needs to be aligned to 4 bytes. */
     buf->allocate(ceil_to_multiple_u(array.size() * sizeof(T), 4) /
                   sizeof(GenericVertexFormat<T>));
-    array.materialize(buf->data<T>().slice(0, array.size()));
+    array_utils::copy(array, buf->data<T>().slice(0, array.size()));
     return buf;
   }
 
@@ -221,6 +223,22 @@ class VertBuf {
   }
 
   virtual void update_sub(uint start, uint len, const void *data) = 0;
+  /**
+   * \brief Copy from part of source vertex buffer into the vertex buffer.
+   *
+   * \note: format of the vertex buffers should be identical.
+   * \note: asserts when the copy range exceeds the bounds of either vertex buffer.
+   * \note: both vertex buffers must be uploaded to the GPU with GPU_vertbuf_use before calling.
+   *
+   * \param source_buf: source vertex buffer to copy data from.
+   * \param source_first_vertex: starting vertex index to start copying the data from.
+   * \param dest_first_vertex: starting vertex index to copy the data to.
+   * \param vertex_len: the number of vertices to copy.
+   */
+  virtual void copy_sub(VertBuf &source_buf,
+                        uint source_first_vertex,
+                        uint dest_first_vertex,
+                        uint vertex_len) = 0;
   virtual void read(void *data) const = 0;
 
  protected:

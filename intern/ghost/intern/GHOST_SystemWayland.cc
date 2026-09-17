@@ -95,9 +95,7 @@
 
 #include <pthread.h> /* For setting the thread priority. */
 
-#ifdef HAVE_POLL
-#  include <poll.h>
-#endif
+#include <poll.h>
 
 /* Logging, use `ghost.wl.*` prefix. */
 #include "CLG_log.h"
@@ -108,6 +106,8 @@ static signed char has_wl_trackpad_physical_direction = -1;
 
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
+
+static CLG_LogRef LOG = {"ghost.dbus"};
 
 /* -------------------------------------------------------------------- */
 /** \name Defines for Testing
@@ -150,8 +150,6 @@ static bool xkb_compose_state_feed_and_get_utf8(
 
 #ifdef USE_EVENT_BACKGROUND_THREAD
 static void gwl_display_event_thread_destroy(GWL_Display *display);
-
-static void ghost_wl_display_lock_without_input(wl_display *wl_display, std::mutex *server_mutex);
 
 /** Default size for pending event vector. */
 constexpr size_t events_pending_default_size = 4096 / sizeof(void *);
@@ -733,6 +731,14 @@ struct GWL_SeatStatePointer {
      * (events with this pointing device will be sent here).
      */
     wl_surface *surface_window = nullptr;
+#ifdef WITH_GHOST_CSD
+    /**
+     * The pointer is over #GWL_WindowCSD::margin_surface, mutually exclusive with
+     * `surface_window`. Only margin handling uses this (the resize cursor & border
+     * resize), never generating window events, see #pointer_handle_frame_csd_margin.
+     */
+    wl_surface *surface_window_csd_margin = nullptr;
+#endif
   } wl;
 
   /**
@@ -1318,6 +1324,19 @@ static GWL_SeatStatePointer *gwl_seat_state_pointer_from_cursor_surface(
   return nullptr;
 }
 
+/**
+ * Set the window surface receiving this device's input,
+ * clearing the mutually exclusive CSD margin surface (null clears both).
+ */
+static void gwl_seat_state_pointer_surface_window_set(GWL_SeatStatePointer *seat_state_pointer,
+                                                      wl_surface *wl_surface)
+{
+  seat_state_pointer->wl.surface_window = wl_surface;
+#ifdef WITH_GHOST_CSD
+  seat_state_pointer->wl.surface_window_csd_margin = nullptr;
+#endif
+}
+
 #ifdef USE_NON_LATIN_KB_WORKAROUND
 static xkb_layout_index_t xkb_keymap_get_fallback_layout(xkb_keymap *keymap,
                                                          const xkb_layout_index_t layout_active);
@@ -1529,6 +1548,7 @@ struct GWL_Display {
     wl_registry *registry = nullptr;
     wl_display *display = nullptr;
     wl_compositor *compositor = nullptr;
+    wl_subcompositor *subcompositor = nullptr;
     wl_shm *shm = nullptr;
 
     /* Managers. */
@@ -1636,11 +1656,16 @@ struct GWL_Display {
    */
   pthread_t events_pthread = 0;
   /**
-   * Use to exit the event reading loop.
+   * Used to make the loop exit, otherwise if a flag on the loop condition were simply used,
+   * when the stop happens while `poll` is blocking the thread would never quit since there
+   * are no WAYLAND messages coming anymore.
    *
    * Not set when `background == true`.
+   *
+   * - 0: The read end, waited on by #events_pthread.
+   * - 1: The write end, closing it ends that threads loop.
    */
-  bool events_pthread_is_active = false;
+  int events_pipe[2] = {-1, -1};
 
   /**
    * Events added from the event reading thread.
@@ -1683,10 +1708,10 @@ struct GWL_Display {
 static void gwl_display_destroy(GWL_Display *display)
 {
 #ifdef USE_EVENT_BACKGROUND_THREAD
+  /* End the event thread first, everything below frees memory it accesses. */
   if (!display->background) {
     if (display->events_pthread) {
-      ghost_wl_display_lock_without_input(display->wl.display, display->system->server_mutex);
-      display->events_pthread_is_active = false;
+      gwl_display_event_thread_destroy(display);
     }
   }
 #endif
@@ -1712,15 +1737,6 @@ static void gwl_display_destroy(GWL_Display *display)
     }
   }
 #endif
-
-#ifdef USE_EVENT_BACKGROUND_THREAD
-  if (!display->background) {
-    if (display->events_pthread) {
-      gwl_display_event_thread_destroy(display);
-      display->system->server_mutex->unlock();
-    }
-  }
-#endif /* USE_EVENT_BACKGROUND_THREAD */
 
   /* Important to remove after the seats which may have key repeat timers active. */
   if (display->key_repeat_timer_manager) {
@@ -2448,6 +2464,27 @@ static GHOST_TTabletMode tablet_tool_map_type(enum zwp_tablet_tool_v2_type wp_ta
 
 static const int default_cursor_size = 24;
 
+/**
+ * The cursor size from `XCURSOR_SIZE`, unset when it isn't a usable value.
+ * This environment variable is used by enough WAYLAND applications that it
+ * makes sense to check it (see the `Xcursor` man page).
+ */
+static std::optional<int> cursor_size_from_env()
+{
+  const char *env = getenv("XCURSOR_SIZE");
+  if (!env || (*env == '\0')) {
+    return std::nullopt;
+  }
+  char *env_end = nullptr;
+  const long value = strtol(env, &env_end, 10);
+  /* While clamping is not needed on the WAYLAND side,
+   * GHOST's internal logic may get confused by negative values, so ensure it's at least 1. */
+  if ((*env_end != '\0') || (value <= 0)) {
+    return std::nullopt;
+  }
+  return int(value);
+}
+
 static constexpr const char *ghost_wl_mime_text_plain = "text/plain";
 static constexpr const char *ghost_wl_mime_text_utf8 = "text/plain;charset=utf-8";
 static constexpr const char *ghost_wl_mime_text_uri_list = "text/uri-list";
@@ -2558,7 +2595,11 @@ enum {
   GWL_IOR_NO_RETRY = 1 << 2,
 };
 
-static int file_descriptor_is_io_ready(int fd, const int flags, const int timeout_ms)
+/**
+ * \param fd_stop: When not -1, wait on this descriptor too, setting `r_stop` when it's ready.
+ */
+static int file_descriptor_is_io_ready_ex(
+    const int fd, const int fd_stop, const int flags, const int timeout_ms, bool *r_stop)
 {
   int result;
 
@@ -2566,48 +2607,32 @@ static int file_descriptor_is_io_ready(int fd, const int flags, const int timeou
 
   /* NOTE: We don't bother to account for elapsed time if we get #EINTR. */
   do {
-#ifdef HAVE_POLL
-    pollfd info;
+    pollfd info[2];
 
-    info.fd = fd;
-    info.events = 0;
+    info[0].fd = fd;
+    info[0].events = 0;
     if (flags & GWL_IOR_READ) {
-      info.events |= POLLIN | POLLPRI;
+      info[0].events |= POLLIN | POLLPRI;
     }
     if (flags & GWL_IOR_WRITE) {
-      info.events |= POLLOUT;
+      info[0].events |= POLLOUT;
     }
-    result = poll(&info, 1, timeout_ms);
-#else
-    fd_set rfdset, *rfdp = nullptr;
-    fd_set wfdset, *wfdp = nullptr;
-    struct timeval tv, *tvp = nullptr;
+    /* A negative descriptor is ignored with `revents` zeroed, so -1 needs no special case.
+     * #POLLHUP is reported without asking for it, which is what closing the write end gives. */
+    info[1] = {fd_stop, POLLIN, 0};
 
-    /* If this assert triggers we'll corrupt memory here */
-    GHOST_ASSERT(fd >= 0 && fd < FD_SETSIZE, "X");
-
-    if (flags & GWL_IOR_READ) {
-      FD_ZERO(&rfdset);
-      FD_SET(fd, &rfdset);
-      rfdp = &rfdset;
+    result = poll(info, 2, timeout_ms);
+    if ((result > 0) && (info[1].revents != 0)) {
+      *r_stop = true;
     }
-    if (flags & GWL_IOR_WRITE) {
-      FD_ZERO(&wfdset);
-      FD_SET(fd, &wfdset);
-      wfdp = &wfdset;
-    }
-
-    if (timeout_ms >= 0) {
-      tv.tv_sec = timeout_ms / 1000;
-      tv.tv_usec = (timeout_ms % 1000) * 1000;
-      tvp = &tv;
-    }
-
-    result = select(fd + 1, rfdp, wfdp, nullptr, tvp);
-#endif /* !HAVE_POLL */
   } while (result < 0 && errno == EINTR && !(flags & GWL_IOR_NO_RETRY));
 
   return result;
+}
+
+static int file_descriptor_is_io_ready(const int fd, const int flags, const int timeout_ms)
+{
+  return file_descriptor_is_io_ready_ex(fd, -1, flags, timeout_ms, nullptr);
 }
 
 static int ghost_wl_display_event_pump(wl_display *wl_display)
@@ -2726,30 +2751,23 @@ static bool ghost_wl_surface_commit_and_wait_for_apply(GHOST_SystemWayland *syst
 
 #ifdef USE_EVENT_BACKGROUND_THREAD
 
-static void ghost_wl_display_lock_without_input(wl_display *wl_display, std::mutex *server_mutex)
-{
-  const int fd = wl_display_get_fd(wl_display);
-  int state;
-  do {
-    state = file_descriptor_is_io_ready(fd, GWL_IOR_READ | GWL_IOR_NO_RETRY, 0);
-    /* Re-check `state` with a lock held, needed to avoid holding the lock. */
-    if (state == 0) {
-      server_mutex->lock();
-      state = file_descriptor_is_io_ready(fd, GWL_IOR_READ | GWL_IOR_NO_RETRY, 0);
-      if (state == 0) {
-        break;
-      }
-    }
-  } while (state == 0);
-}
-
+/**
+ * Handle events from the display, waiting when there are none.
+ *
+ * \param fd_stop: See #file_descriptor_is_io_ready_ex.
+ * \return -1 when `fd_stop` signaled or the connection failed, ending the callers loop.
+ */
 static int ghost_wl_display_event_pump_from_thread(wl_display *wl_display,
                                                    const int fd,
+                                                   const int fd_stop,
                                                    std::mutex *server_mutex)
 {
+  GHOST_ASSERT(fd_stop != -1, "Expected to be set");
+
   /* Based on SDL's `Wayland_PumpEvents`. */
   server_mutex->lock();
   int err = 0;
+  bool stop = false;
   if (wl_display_prepare_read(wl_display) == 0) {
     bool wait_on_fd = false;
     /* Use #GWL_IOR_NO_RETRY to ensure #SIGINT will break us out of our wait. */
@@ -2765,17 +2783,20 @@ static int ghost_wl_display_event_pump_from_thread(wl_display *wl_display,
     server_mutex->unlock();
 
     if (wait_on_fd) {
-      /* Important this runs after unlocking. */
-      file_descriptor_is_io_ready(fd, GWL_IOR_READ | GWL_IOR_NO_RETRY, INT32_MAX);
+      /* Important this runs after unlocking,
+       * the read was canceled above so nothing is left prepared while waiting. */
+      file_descriptor_is_io_ready_ex(
+          fd, fd_stop, GWL_IOR_READ | GWL_IOR_NO_RETRY, INT32_MAX, &stop);
     }
   }
   else {
     server_mutex->unlock();
 
     /* Wait for input (unlocked, so as not to block other threads). */
-    int state = file_descriptor_is_io_ready(fd, GWL_IOR_READ | GWL_IOR_NO_RETRY, INT32_MAX);
+    int state = file_descriptor_is_io_ready_ex(
+        fd, fd_stop, GWL_IOR_READ | GWL_IOR_NO_RETRY, INT32_MAX, &stop);
     /* Re-check `state` with a lock held, needed to avoid holding the lock. */
-    if (state > 0) {
+    if (!stop && state > 0) {
       server_mutex->lock();
       state = file_descriptor_is_io_ready(fd, GWL_IOR_READ | GWL_IOR_NO_RETRY, 0);
       if (state > 0) {
@@ -2785,7 +2806,7 @@ static int ghost_wl_display_event_pump_from_thread(wl_display *wl_display,
     }
   }
 
-  return err;
+  return stop ? -1 : err;
 }
 #endif /* USE_EVENT_BACKGROUND_THREAD */
 
@@ -2839,6 +2860,21 @@ static wl_buffer *ghost_wl_buffer_create_for_image(wl_shm *shm,
     }
     close(fd);
   }
+  return buffer;
+}
+
+wl_buffer *ghost_wl_buffer_create_transparent_pixel(wl_shm *shm)
+{
+  const int32_t size_xy[2] = {1, 1};
+  void *buffer_data = nullptr;
+  size_t buffer_data_size = 0;
+  wl_buffer *buffer = ghost_wl_buffer_create_for_image(
+      shm, size_xy, WL_SHM_FORMAT_ARGB8888, &buffer_data, &buffer_data_size);
+  if (buffer == nullptr) [[unlikely]] {
+    return nullptr;
+  }
+  memset(buffer_data, 0, buffer_data_size);
+  munmap(buffer_data, buffer_data_size);
   return buffer;
 }
 
@@ -3390,67 +3426,22 @@ static int32_t gwl_window_dpi_scale_value(GHOST_WindowWayland *win, const int32_
 }
 
 /**
- * Pointer motion or pointer "enter".
- *
- * Return true if an active region was found (and the cursor is set).
+ * Set `type` as the active CSD element, updating the cursor.
+ * Return true if the element changed (and the cursor was set).
  */
-static bool gwl_window_csd_active_elem_motion(GWL_Seat *seat,
-                                              GHOST_WindowWayland *win,
-                                              const int event_xy[2])
+static bool gwl_window_csd_active_elem_type_apply(GWL_Seat *seat,
+                                                  GHOST_WindowWayland *win,
+                                                  const GHOST_TCSD_Type type)
 {
-  /* Caller must lock `server_mutex`. */
-
-  const GHOST_TCSD_Type active_type_curr = win->csd_elem_active_type_get();
-  GHOST_TCSD_Type active_type_next = GHOST_kCSDTypeBody;
-  int elems_num = 0;
-  const GHOST_CSD_Elem *csd_elems = win->csd_layout(&elems_num);
-
-  int i;
-  for (i = 0; i < elems_num; i++) {
-    const GHOST_CSD_Elem &elem = csd_elems[i];
-
-    if ((event_xy[0] >= elem.bounds[0][0] && event_xy[0] <= elem.bounds[0][1]) &&
-        (event_xy[1] >= elem.bounds[1][0] && event_xy[1] <= elem.bounds[1][1]))
-    {
-      active_type_next = elem.type;
-      break;
-    }
-  }
-  /* Ignore this function if the event doesn't overlap anything. */
-  if (i == elems_num) [[unlikely]] {
+  if (type == win->csd_elem_active_type_get()) {
     return false;
   }
-
-  /* Update motion. */
-  GHOST_CSD_EventState &event_state = win->csd_eventstate_get();
-  event_state.event_xy[0] = event_xy[0];
-  event_state.event_xy[1] = event_xy[1];
-
-  {
-    /* Detect press-drag. */
-    GHOST_CSD_EventState_Button &event_button = event_state.buttons[GHOST_kButtonMaskLeft];
-    if (event_button.action_history_num > 0) {
-      GHOST_CSD_EventState_ButtonAction &press = event_button.action_history[0];
-      if (press.is_press && (press.type == GHOST_kCSDTypeTitlebar)) {
-        const GHOST_CSD_Params &params = seat->system->getWindowCSD();
-        if ((std::abs(press.xy[0] - event_xy[0]) + std::abs(press.xy[1] - event_xy[1])) >
-            gwl_window_dpi_scale_value(win, params.cursor_drag_threshold))
-        {
-          xdg_toplevel_move(win->xdg_toplevel_get(), seat->wl.seat, press.serial);
-        }
-      }
-    }
-  }
-
-  if (active_type_next == active_type_curr) {
-    return false;
-  }
-  win->csd_elem_active_type_set(active_type_next);
+  win->csd_elem_active_type_set(type);
 
   /* Set the cursor unless grabbed. */
   if (win->getCursorGrabMode() == GHOST_kGrabDisable) {
     GHOST_TStandardCursor cursor = GHOST_kStandardCursorCustom;
-    switch (active_type_next) {
+    switch (type) {
       case GHOST_kCSDTypeBody: {
         win->cursor_shape_refresh();
         break;
@@ -3518,6 +3509,61 @@ static bool gwl_window_csd_active_elem_motion(GWL_Seat *seat,
 }
 
 /**
+ * Pointer motion or pointer "enter".
+ *
+ * Return true if an active region was found (and the cursor is set).
+ */
+static bool gwl_window_csd_active_elem_motion(GWL_Seat *seat,
+                                              GHOST_WindowWayland *win,
+                                              const int event_xy[2])
+{
+  /* Caller must lock `server_mutex`. */
+
+  GHOST_TCSD_Type active_type_next = GHOST_kCSDTypeBody;
+  int elems_num = 0;
+  const GHOST_CSD_Elem *csd_elems = win->csd_layout(&elems_num);
+
+  int i;
+  for (i = 0; i < elems_num; i++) {
+    const GHOST_CSD_Elem &elem = csd_elems[i];
+
+    if ((event_xy[0] >= elem.bounds[0][0] && event_xy[0] <= elem.bounds[0][1]) &&
+        (event_xy[1] >= elem.bounds[1][0] && event_xy[1] <= elem.bounds[1][1]))
+    {
+      active_type_next = elem.type;
+      break;
+    }
+  }
+  /* Ignore this function if the event doesn't overlap anything. */
+  if (i == elems_num) [[unlikely]] {
+    return false;
+  }
+
+  /* Update motion. */
+  GHOST_CSD_EventState &event_state = win->csd_eventstate_get();
+  event_state.event_xy[0] = event_xy[0];
+  event_state.event_xy[1] = event_xy[1];
+
+  {
+    /* Detect press-drag. */
+    GHOST_CSD_EventState_Button &event_button = event_state.buttons[GHOST_kButtonMaskLeft];
+    if (event_button.action_history_num > 0) {
+      GHOST_CSD_EventState_ButtonAction &press = event_button.action_history[0];
+      if (press.is_press && (press.type == GHOST_kCSDTypeTitlebar)) {
+        const GHOST_CSD_Params &params = seat->system->getWindowCSD();
+        if ((std::abs(press.xy[0] - event_xy[0]) + std::abs(press.xy[1] - event_xy[1])) >
+            gwl_window_dpi_scale_value(win, params.cursor_drag_threshold))
+        {
+          xdg_toplevel_move(win->xdg_toplevel_get(), seat->wl.seat, press.serial);
+        }
+      }
+    }
+  }
+
+  return gwl_window_csd_active_elem_type_apply(seat, win, active_type_next);
+}
+
+/**
  * The surface has been left.
  */
 static void gwl_window_csd_active_elem_clear(GHOST_WindowWayland *win)
@@ -3560,9 +3606,9 @@ static void gwl_window_csd_active_elem_button(GWL_Seat *seat,
   GHOST_TCSD_Type press_type = GHOST_kCSDTypeBody;
 
   bool is_double_click = false;
-  if (ebutton < ARRAY_SIZE(GHOST_CSD_EventState::buttons)) {
+  GHOST_CSD_EventState &event_state = win->csd_eventstate_get();
+  if (ebutton < ARRAY_SIZE(event_state.buttons)) {
     const GHOST_CSD_Params &params = seat->system->getWindowCSD();
-    GHOST_CSD_EventState &event_state = win->csd_eventstate_get();
     GHOST_CSD_EventState_Button &event_button = event_state.buttons[ebutton];
 
     if (event_button.action_history_num >= 1) {
@@ -3774,6 +3820,118 @@ static void gwl_window_csd_active_elem_button(GWL_Seat *seat,
       }
     }
   }
+}
+
+/**
+ * True when `wl_surface` is the invisible resize margin around the window,
+ * see #GWL_WindowCSD::margin_surface.
+ */
+static bool ghost_wl_surface_own_csd_margin_with_null_check(const wl_surface *wl_surface)
+{
+  return wl_surface && ghost_wl_surface_own_csd_margin(wl_surface);
+}
+
+/**
+ * Like #ghost_wl_surface_user_data, but for a `wl_surface` already known to be
+ * #GWL_WindowCSD::margin_surface (tagged separately, see #ghost_wl_surface_own_csd_margin).
+ */
+static GHOST_WindowWayland *ghost_wl_surface_csd_margin_user_data(wl_surface *wl_surface)
+{
+  GHOST_ASSERT(wl_surface, "wl_surface must not be nullptr");
+  GHOST_ASSERT(ghost_wl_surface_own_csd_margin(wl_surface),
+               "wl_surface is not the CSD margin surface");
+  return static_cast<GHOST_WindowWayland *>(wl_surface_get_user_data(wl_surface));
+}
+
+/**
+ * Set the margin surface as this input device's focus & reset the CSD state,
+ * shared between pointer "enter", tablet "proximity_in" & touch "down" handling.
+ */
+static GHOST_WindowWayland *gwl_window_csd_margin_focus_set(
+    GWL_Seat *seat,
+    GWL_SeatStatePointer *seat_state_pointer,
+    const uint32_t serial,
+    wl_surface *wl_surface)
+{
+  GHOST_WindowWayland *win = ghost_wl_surface_csd_margin_user_data(wl_surface);
+
+  seat->cursor_source_serial = serial;
+  seat_state_pointer->serial = serial;
+  seat_state_pointer->wl.surface_window = nullptr;
+  seat_state_pointer->wl.surface_window_csd_margin = wl_surface;
+
+  seat->system->seat_active_set(seat);
+
+  /* On enter there is logically no prior state that needs to be taken into account.
+   * Note that this is mostly likely cleared when leaving, setting here to account
+   * for badly behaved compositors. */
+  win->csd_elem_active_type_set(GHOST_kCSDTypeBody);
+  gwl_window_csd_buttons_clear(win);
+
+  return win;
+}
+
+/**
+ * Clear the state set by #gwl_window_csd_margin_focus_set,
+ * shared between pointer "leave", tablet "proximity_out" & touch "up"/"cancel" handling.
+ */
+static void gwl_window_csd_margin_focus_clear(GWL_SeatStatePointer *seat_state_pointer,
+                                              wl_surface *wl_surface)
+{
+  GHOST_WindowWayland *win = ghost_wl_surface_csd_margin_user_data(wl_surface);
+  gwl_window_csd_active_elem_clear(win);
+  gwl_window_csd_buttons_clear(win);
+  seat_state_pointer->wl.surface_window_csd_margin = nullptr;
+}
+
+/**
+ * Hit-test `xy` (margin surface local coordinates), setting the active element & cursor.
+ * Return true if the active element changed.
+ *
+ * Resolve the border from the surface's own geometry instead of the CSD elements:
+ * the compositor routes input by logical geometry so using the same values is exact,
+ * translating into the window's physical space rounds,
+ * leaving dead-zones at the margin boundaries.
+ */
+static bool gwl_window_csd_margin_elem_motion(GWL_Seat *seat,
+                                              GHOST_WindowWayland *win,
+                                              const wl_fixed_t xy[2])
+{
+  int32_t margin_size = 0;
+  int32_t window_size[2] = {0, 0};
+  win->csd_margin_geometry_get(margin_size, window_size);
+
+  /* The window rectangle in margin surface local coordinates. */
+  const wl_fixed_t xy_min = wl_fixed_from_int(margin_size);
+  const wl_fixed_t xy_max[2] = {
+      wl_fixed_from_int(margin_size + window_size[0]),
+      wl_fixed_from_int(margin_size + window_size[1]),
+  };
+
+  GHOST_TCSD_Type type;
+  if (xy[1] < xy_min) {
+    type = (xy[0] < xy_min)     ? GHOST_kCSDTypeBorderTopLeft :
+           (xy[0] >= xy_max[0]) ? GHOST_kCSDTypeBorderTopRight :
+                                  GHOST_kCSDTypeBorderTop;
+  }
+  else if (xy[1] >= xy_max[1]) {
+    type = (xy[0] < xy_min)     ? GHOST_kCSDTypeBorderBottomLeft :
+           (xy[0] >= xy_max[0]) ? GHOST_kCSDTypeBorderBottomRight :
+                                  GHOST_kCSDTypeBorderBottom;
+  }
+  else if (xy[0] < xy_min) {
+    type = GHOST_kCSDTypeBorderLeft;
+  }
+  else if (xy[0] >= xy_max[0]) {
+    type = GHOST_kCSDTypeBorderRight;
+  }
+  else {
+    /* Points within the window rectangle are handled by the window surface above,
+     * should practically never happen. */
+    return false;
+  }
+
+  return gwl_window_csd_active_elem_type_apply(seat, win, type);
 }
 
 #endif /* WITH_GHOST_CSD */
@@ -4443,6 +4601,25 @@ static const wl_buffer_listener cursor_buffer_listener = {
 static CLG_LogRef LOG_WL_CURSOR_SURFACE = {"ghost.wl.handle.cursor_surface"};
 #define LOG (&LOG_WL_CURSOR_SURFACE)
 
+/**
+ * Re-render the custom cursor on the focused surface of `seat_state_pointer`.
+ */
+static void cursor_shape_refresh_for_pointer(const GWL_Seat *seat,
+                                             const GWL_SeatStatePointer *seat_state_pointer)
+{
+  if (!seat->cursor.is_custom) {
+    return;
+  }
+  wl_surface *wl_surface_focus = seat_state_pointer->wl.surface_window;
+  if (!wl_surface_focus) {
+    return;
+  }
+  GHOST_WindowWayland *win = ghost_wl_surface_user_data(wl_surface_focus);
+  if (win) {
+    win->cursor_shape_refresh();
+  }
+}
+
 static bool update_cursor_scale(GWL_Seat *seat,
                                 GWL_Cursor &cursor,
                                 GWL_SeatStatePointer *seat_state_pointer)
@@ -4462,15 +4639,7 @@ static bool update_cursor_scale(GWL_Seat *seat,
 
   if (scale > 0 && cursor.custom_cursor_scale != scale) {
     cursor.custom_cursor_scale = scale;
-    if (cursor.is_custom) {
-      wl_surface *wl_surface_focus = seat_state_pointer->wl.surface_window;
-      if (wl_surface_focus) {
-        GHOST_WindowWayland *win = ghost_wl_surface_user_data(wl_surface_focus);
-        if (win) {
-          win->cursor_shape_refresh();
-        }
-      }
-    }
+    cursor_shape_refresh_for_pointer(seat, seat_state_pointer);
     return true;
   }
   return false;
@@ -4549,6 +4718,36 @@ static const wl_surface_listener cursor_surface_listener = {
 static CLG_LogRef LOG_WL_POINTER = {"ghost.wl.handle.pointer"};
 #define LOG (&LOG_WL_POINTER)
 
+#ifdef WITH_GHOST_CSD
+/**
+ * A version of #pointer_handle_enter for #GWL_WindowCSD::margin_surface.
+ *
+ * The margin isn't part of the window: only margin actions apply
+ * (the resize cursor & border resize), window events are never generated,
+ * as if the pointer were just outside the window.
+ */
+static void pointer_handle_enter_csd_margin(GWL_Seat *seat,
+                                            const uint32_t serial,
+                                            wl_surface *wl_surface,
+                                            const wl_fixed_t surface_x,
+                                            const wl_fixed_t surface_y)
+{
+  GHOST_WindowWayland *win = gwl_window_csd_margin_focus_set(
+      seat, &seat->pointer, serial, wl_surface);
+
+  seat->pointer.xy[0] = surface_x;
+  seat->pointer.xy[1] = surface_y;
+
+  /* Resetting scroll events is likely unnecessary,
+   * do this to avoid any possible problems as it's harmless. */
+  seat->pointer_scroll = GWL_SeatStatePointerScroll{};
+
+  if (!gwl_window_csd_margin_elem_motion(seat, win, seat->pointer.xy)) {
+    win->cursor_shape_refresh();
+  }
+}
+#endif /* WITH_GHOST_CSD */
+
 static void pointer_handle_enter(void *data,
                                  wl_pointer * /*wl_pointer*/,
                                  const uint32_t serial,
@@ -4557,6 +4756,15 @@ static void pointer_handle_enter(void *data,
                                  const wl_fixed_t surface_y)
 {
   GWL_Seat *seat = static_cast<GWL_Seat *>(data);
+
+#ifdef WITH_GHOST_CSD
+  if (ghost_wl_surface_own_csd_margin_with_null_check(wl_surface)) {
+    CLOG_DEBUG(LOG, "enter (csd margin)");
+    pointer_handle_enter_csd_margin(seat, serial, wl_surface, surface_x, surface_y);
+    return;
+  }
+#endif
+
   const uint64_t event_ms = seat->system->getMilliSeconds();
 
   /* Null when just destroyed. */
@@ -4577,7 +4785,7 @@ static void pointer_handle_enter(void *data,
    * do this to avoid any possible problems as it's harmless. */
   seat->pointer_scroll = GWL_SeatStatePointerScroll{};
 
-  seat->pointer.wl.surface_window = wl_surface;
+  gwl_seat_state_pointer_surface_window_set(&seat->pointer, wl_surface);
 
   seat->system->seat_active_set(seat);
 
@@ -4612,7 +4820,16 @@ static void pointer_handle_leave(void *data,
 {
   /* First clear the `pointer.wl_surface`, since the window won't exist when closing the window. */
   GWL_Seat *seat = static_cast<GWL_Seat *>(data);
-  seat->pointer.wl.surface_window = nullptr;
+  gwl_seat_state_pointer_surface_window_set(&seat->pointer, nullptr);
+
+#ifdef WITH_GHOST_CSD
+  if (ghost_wl_surface_own_csd_margin_with_null_check(wl_surface)) {
+    CLOG_DEBUG(LOG, "leave (csd margin)");
+    gwl_window_csd_margin_focus_clear(&seat->pointer, wl_surface);
+    return;
+  }
+#endif
+
   if (!ghost_wl_surface_own_with_null_check(wl_surface)) {
     CLOG_DEBUG(LOG, "leave (skipped)");
     return;
@@ -4720,11 +4937,78 @@ static void pointer_handle_axis(void *data,
       &seat->pointer_events, GWL_Pointer_EventTypes::Scroll, WL_SERIAL_NONE, 0);
 }
 
+#ifdef WITH_GHOST_CSD
+/**
+ * A version of #pointer_handle_frame for #GWL_WindowCSD::margin_surface,
+ * see #pointer_handle_enter_csd_margin.
+ *
+ * Only motion & button events apply, others (scroll for example) are ignored,
+ * as they would be just outside the window.
+ */
+static void pointer_handle_frame_csd_margin(GWL_Seat *seat, wl_surface *wl_surface)
+{
+  GHOST_WindowWayland *win = ghost_wl_surface_csd_margin_user_data(wl_surface);
+
+  for (int ty_index = 0; ty_index < seat->pointer_events.frame_pending.frame_types_num; ty_index++)
+  {
+    const GWL_Pointer_EventTypes ty = seat->pointer_events.frame_pending.frame_types[ty_index];
+    const uint64_t event_ms = seat->pointer_events.frame_pending.frame_event_ms[ty_index];
+    const uint32_t serial = seat->pointer_events.frame_pending.frame_serial[ty_index];
+    switch (ty) {
+      using enum GWL_Pointer_EventTypes;
+      case Motion: {
+        gwl_window_csd_margin_elem_motion(seat, win, seat->pointer.xy);
+        break;
+      }
+      case Scroll: {
+        break;
+      }
+#  ifdef NDEBUG
+      default:
+#  else /* Warn when any events aren't handled (in debug builds). */
+      case Button0_Down:
+      case Button0_Up:
+      case Button1_Down:
+      case Button1_Up:
+      case Button2_Down:
+      case Button2_Up:
+      case Button3_Down:
+      case Button3_Up:
+      case Button4_Down:
+      case Button4_Up:
+      case Button5_Down:
+      case Button5_Up:
+      case Button6_Down:
+      case Button6_Up:
+#  endif
+      {
+        const int button_enum_offset = int(ty) - int(Button0_Down);
+        const int button_index = button_enum_offset / 2;
+        const bool button_down = (button_index * 2) == button_enum_offset;
+        const GHOST_TButton ebutton = gwl_pointer_events_ebutton[button_index];
+        GHOST_ASSERT(serial != WL_SERIAL_NONE || !button_down,
+                     "Button down events must have a serial");
+        gwl_window_csd_active_elem_button(seat, win, ebutton, button_down, serial, event_ms);
+        break;
+      }
+    }
+  }
+}
+#endif /* WITH_GHOST_CSD */
+
 static void pointer_handle_frame(void *data, wl_pointer * /*wl_pointer*/)
 {
   GWL_Seat *seat = static_cast<GWL_Seat *>(data);
 
   CLOG_DEBUG(LOG, "frame");
+
+#ifdef WITH_GHOST_CSD
+  if (wl_surface *wl_surface_focus = seat->pointer.wl.surface_window_csd_margin) {
+    pointer_handle_frame_csd_margin(seat, wl_surface_focus);
+    gwl_pointer_handle_frame_event_reset(&seat->pointer_events);
+    return;
+  }
+#endif
 
   if (wl_surface *wl_surface_focus = seat->pointer.wl.surface_window) {
     GHOST_WindowWayland *win = ghost_wl_surface_user_data(wl_surface_focus);
@@ -5279,6 +5563,37 @@ static const zwp_pointer_gesture_swipe_v1_listener gesture_swipe_listener = {
 static CLG_LogRef LOG_WL_TOUCH = {"ghost.wl.handle.touch"};
 #define LOG (&LOG_WL_TOUCH)
 
+#ifdef WITH_GHOST_CSD
+/**
+ * A version of #touch_seat_handle_down for #GWL_WindowCSD::margin_surface,
+ * see #pointer_handle_enter_csd_margin.
+ * Actions run on the next frame event, see #touch_seat_handle_frame_csd_margin.
+ */
+static void touch_seat_handle_down_csd_margin(GWL_Seat *seat,
+                                              const uint32_t serial,
+                                              const uint32_t time,
+                                              const int32_t id,
+                                              wl_surface *wl_surface,
+                                              const wl_fixed_t x,
+                                              const wl_fixed_t y)
+{
+  const uint64_t event_ms = seat->system->ms_from_input_time(time);
+
+  gwl_window_csd_margin_focus_set(seat, &seat->touch, serial, wl_surface);
+  seat->touch.xy[0] = x;
+  seat->touch.xy[1] = y;
+
+  /* Set touch-tracking state. */
+  seat->touch_state.is_touching = true;
+  seat->touch_state.down_id = id;
+  seat->touch_state.motion_pending = true;
+  seat->touch_state.motion_event_time_ms = event_ms;
+  seat->touch_state.down_pending = true;
+  seat->touch_state.down_event_time_ms = event_ms;
+  seat->touch_state.down_event_serial = serial;
+}
+#endif /* WITH_GHOST_CSD */
+
 static void touch_seat_handle_down(void *data,
                                    wl_touch * /*touch*/,
                                    const uint32_t serial,
@@ -5292,6 +5607,18 @@ static void touch_seat_handle_down(void *data,
 
   CLOG_DEBUG(LOG, "down");
   GWL_Seat *seat = static_cast<GWL_Seat *>(data);
+
+#ifdef WITH_GHOST_CSD
+  if (ghost_wl_surface_own_csd_margin_with_null_check(surface)) {
+    /* Only track one point at a time. */
+    if (seat->touch_state.is_touching) {
+      return;
+    }
+    CLOG_DEBUG(LOG, "down (csd margin)");
+    touch_seat_handle_down_csd_margin(seat, serial, time, id, surface, x, y);
+    return;
+  }
+#endif
 
   /* Null when just destroyed. */
   if (!ghost_wl_surface_own_with_null_check(surface)) {
@@ -5311,7 +5638,7 @@ static void touch_seat_handle_down(void *data,
   seat->touch.xy[0] = x;
   seat->touch.xy[1] = y;
   seat->touch.serial = serial;
-  seat->touch.wl.surface_window = surface;
+  gwl_seat_state_pointer_surface_window_set(&seat->touch, surface);
 
   /* Set the active pointer. */
   seat->cursor_source_serial = serial;
@@ -5375,10 +5702,60 @@ static void touch_seat_handle_motion(void *data,
   seat->touch_state.motion_pending = true;
 }
 
+#ifdef WITH_GHOST_CSD
+/**
+ * A version of #touch_seat_handle_frame for #GWL_WindowCSD::margin_surface,
+ * see #pointer_handle_frame_csd_margin.
+ */
+static void touch_seat_handle_frame_csd_margin(GWL_Seat *seat, wl_surface *wl_surface)
+{
+  GHOST_WindowWayland *win = ghost_wl_surface_csd_margin_user_data(wl_surface);
+
+  /* Run before the "down" handling so pressing resolves to a border element. */
+  if (seat->touch_state.motion_pending == true) {
+    gwl_window_csd_margin_elem_motion(seat, win, seat->touch.xy);
+
+    seat->touch_state.motion_pending = false;
+    seat->touch_state.motion_event_time_ms = 0;
+  }
+
+  if (seat->touch_state.down_pending == true) {
+    const uint32_t serial = seat->touch_state.down_event_serial;
+    GHOST_ASSERT(serial != WL_SERIAL_NONE, "Button down events must have a serial");
+    gwl_window_csd_active_elem_button(
+        seat, win, GHOST_kButtonMaskLeft, true, serial, seat->touch_state.down_event_time_ms);
+
+    seat->touch_state.down_pending = false;
+    seat->touch_state.down_event_time_ms = 0;
+    seat->touch_state.down_event_serial = WL_SERIAL_NONE;
+  }
+
+  if (seat->touch_state.up_pending == true) {
+    const uint32_t serial = seat->touch_state.up_event_serial;
+    GHOST_ASSERT(serial != WL_SERIAL_NONE, "Button up events must have a serial");
+    gwl_window_csd_active_elem_button(
+        seat, win, GHOST_kButtonMaskLeft, false, serial, seat->touch_state.up_event_time_ms);
+    gwl_window_csd_margin_focus_clear(&seat->touch, wl_surface);
+
+    seat->touch_state.up_pending = false;
+    seat->touch_state.up_event_time_ms = 0;
+    seat->touch_state.up_event_serial = WL_SERIAL_NONE;
+  }
+}
+#endif /* WITH_GHOST_CSD */
+
 static void touch_seat_handle_frame(void *data, wl_touch * /*touch*/)
 {
   CLOG_DEBUG(LOG, "frame");
   GWL_Seat *seat = static_cast<GWL_Seat *>(data);
+
+#ifdef WITH_GHOST_CSD
+  if (wl_surface *wl_surface_focus = seat->touch.wl.surface_window_csd_margin) {
+    touch_seat_handle_frame_csd_margin(seat, wl_surface_focus);
+    return;
+  }
+#endif
+
   if (wl_surface *wl_surface_focus = seat->touch.wl.surface_window) {
     GHOST_WindowWayland *win = ghost_wl_surface_user_data(wl_surface_focus);
 
@@ -5472,10 +5849,23 @@ static void touch_seat_handle_frame(void *data, wl_touch * /*touch*/)
   }
 }
 
-static void touch_seat_handle_cancel(void * /*data*/, wl_touch * /*wl_touch*/)
+static void touch_seat_handle_cancel(void *data, wl_touch * /*wl_touch*/)
 {
-
   CLOG_DEBUG(LOG, "cancel");
+
+#ifdef WITH_GHOST_CSD
+  GWL_Seat *seat = static_cast<GWL_Seat *>(data);
+  /* Starting a border resize cancels the touch (no further events arrive),
+   * reset tracking so new contact points aren't ignored.
+   * Cancellation with a window surface focused is left as-is,
+   * it would involve generating a button release for the window. */
+  if (wl_surface *wl_surface_focus = seat->touch.wl.surface_window_csd_margin) {
+    gwl_window_csd_margin_focus_clear(&seat->touch, wl_surface_focus);
+    seat->touch_state = {};
+  }
+#else
+  (void)data;
+#endif
 }
 
 static void touch_seat_handle_shape(void * /*data*/,
@@ -5577,25 +5967,55 @@ static void tablet_tool_handle_removed(void *data, zwp_tablet_tool_v2 *zwp_table
 
   delete tablet_tool;
 }
+#ifdef WITH_GHOST_CSD
+/**
+ * A version of #tablet_tool_handle_proximity_in for #GWL_WindowCSD::margin_surface,
+ * see #pointer_handle_enter_csd_margin.
+ * Hit-testing runs on the first motion as proximity events carry no coordinates.
+ */
+static void tablet_tool_handle_proximity_in_csd_margin(GWL_TabletTool *tablet_tool,
+                                                       const uint32_t serial,
+                                                       wl_surface *wl_surface)
+{
+  GWL_Seat *seat = tablet_tool->seat;
+
+  tablet_tool->proximity = true;
+  tablet_tool->serial = serial;
+
+  gwl_window_csd_margin_focus_set(seat, &seat->tablet, serial, wl_surface);
+
+  seat->data_source_serial = serial;
+}
+#endif /* WITH_GHOST_CSD */
+
 static void tablet_tool_handle_proximity_in(void *data,
                                             zwp_tablet_tool_v2 * /*zwp_tablet_tool_v2*/,
                                             const uint32_t serial,
                                             zwp_tablet_v2 * /*tablet*/,
                                             wl_surface *wl_surface)
 {
+  GWL_TabletTool *tablet_tool = static_cast<GWL_TabletTool *>(data);
+
+#ifdef WITH_GHOST_CSD
+  if (ghost_wl_surface_own_csd_margin_with_null_check(wl_surface)) {
+    CLOG_DEBUG(LOG, "proximity_in (csd margin)");
+    tablet_tool_handle_proximity_in_csd_margin(tablet_tool, serial, wl_surface);
+    return;
+  }
+#endif
+
   if (!ghost_wl_surface_own_with_null_check(wl_surface)) {
     CLOG_DEBUG(LOG, "proximity_in (skipped)");
     return;
   }
   CLOG_DEBUG(LOG, "proximity_in");
 
-  GWL_TabletTool *tablet_tool = static_cast<GWL_TabletTool *>(data);
   tablet_tool->proximity = true;
   tablet_tool->serial = serial;
 
   GWL_Seat *seat = tablet_tool->seat;
   seat->cursor_source_serial = serial;
-  seat->tablet.wl.surface_window = wl_surface;
+  gwl_seat_state_pointer_surface_window_set(&seat->tablet, wl_surface);
   seat->tablet.serial = serial;
 
   seat->data_source_serial = serial;
@@ -5785,6 +6205,67 @@ static void tablet_tool_handle_button(void *data,
     gwl_tablet_tool_frame_event_add(tablet_tool, ty, serial);
   }
 }
+#ifdef WITH_GHOST_CSD
+/**
+ * A version of #tablet_tool_handle_frame for #GWL_WindowCSD::margin_surface,
+ * see #pointer_handle_frame_csd_margin.
+ * Only motion & button events apply, pressure, tilt & wheel are ignored.
+ */
+static void tablet_tool_handle_frame_csd_margin(GWL_TabletTool *tablet_tool,
+                                                wl_surface *wl_surface,
+                                                const uint64_t event_ms)
+{
+  GWL_Seat *seat = tablet_tool->seat;
+  GHOST_WindowWayland *win = ghost_wl_surface_csd_margin_user_data(wl_surface);
+
+  for (int ty_index = 0; ty_index < tablet_tool->frame_pending.frame_types_num; ty_index++) {
+    const GWL_TabletTool_EventTypes ty = tablet_tool->frame_pending.frame_types[ty_index];
+    const uint32_t serial = tablet_tool->frame_pending.frame_serial[ty_index];
+    switch (ty) {
+      using enum GWL_TabletTool_EventTypes;
+      case Motion: {
+        /* Can happen when there is pressure/tilt without motion. */
+        if (tablet_tool->has_xy == false) {
+          break;
+        }
+        seat->tablet.xy[0] = tablet_tool->xy[0];
+        seat->tablet.xy[1] = tablet_tool->xy[1];
+
+        gwl_window_csd_margin_elem_motion(seat, win, tablet_tool->xy);
+        break;
+      }
+      case Pressure:
+      case Tilt:
+      case Wheel: {
+        break;
+      }
+#  ifdef NDEBUG
+      default:
+#  else /* Warn when any events aren't handled (in debug builds). */
+      case Stylus0_Down:
+      case Stylus0_Up:
+      case Stylus1_Down:
+      case Stylus1_Up:
+      case Stylus2_Down:
+      case Stylus2_Up:
+      case Stylus3_Down:
+      case Stylus3_Up:
+#  endif
+      {
+        const int button_enum_offset = int(ty) - int(Stylus0_Down);
+        const int button_index = button_enum_offset / 2;
+        const bool button_down = (button_index * 2) == button_enum_offset;
+        const GHOST_TButton ebutton = gwl_tablet_tool_ebutton[button_index];
+        GHOST_ASSERT(serial != WL_SERIAL_NONE || !button_down,
+                     "Button down events must have a serial");
+        gwl_window_csd_active_elem_button(seat, win, ebutton, button_down, serial, event_ms);
+        break;
+      }
+    }
+  }
+}
+#endif /* WITH_GHOST_CSD */
+
 static void tablet_tool_handle_frame(void *data,
                                      zwp_tablet_tool_v2 * /*zwp_tablet_tool_v2*/,
                                      const uint32_t time)
@@ -5794,6 +6275,17 @@ static void tablet_tool_handle_frame(void *data,
   const uint64_t event_ms = seat->system->ms_from_input_time(time);
 
   CLOG_DEBUG(LOG, "frame");
+
+#ifdef WITH_GHOST_CSD
+  if (wl_surface *wl_surface_focus = seat->tablet.wl.surface_window_csd_margin) {
+    tablet_tool_handle_frame_csd_margin(tablet_tool, wl_surface_focus, event_ms);
+    if (tablet_tool->proximity == false) {
+      gwl_window_csd_margin_focus_clear(&seat->tablet, wl_surface_focus);
+    }
+    gwl_tablet_tool_frame_event_reset(tablet_tool);
+    return;
+  }
+#endif
 
   /* No need to check the surfaces origin, it's already known to be owned by GHOST. */
   if (wl_surface *wl_surface_focus = seat->tablet.wl.surface_window) {
@@ -7034,22 +7526,7 @@ static void gwl_seat_capability_pointer_enable(GWL_Seat *seat)
 
   gwl_seat_capability_pointer_multitouch_enable(seat);
   {
-    /* Use environment variables, falling back to defaults.
-     * These environment variables are used by enough WAYLAND applications
-     * that it makes sense to check them (see `Xcursor` man page). */
-    const char *env;
-    env = getenv("XCURSOR_SIZE");
-    seat->cursor.theme_size = default_cursor_size;
-
-    if (env && (*env != '\0')) {
-      char *env_end = nullptr;
-      /* While clamping is not needed on the WAYLAND side,
-       * GHOST's internal logic may get confused by negative values, so ensure it's at least 1. */
-      const long value = strtol(env, &env_end, 10);
-      if ((*env_end == '\0') && (value > 0)) {
-        seat->cursor.theme_size = int(value);
-      }
-    }
+    seat->cursor.theme_size = cursor_size_from_env().value_or(default_cursor_size);
 
     /* TODO: detect this from the system.
      * We *could* have weak support based on checking for known themes. */
@@ -7496,6 +7973,26 @@ static void gwl_registry_compositor_remove(GWL_Display *display,
 {
   wl_compositor **value_p = &display->wl.compositor;
   wl_compositor_destroy(*value_p);
+  *value_p = nullptr;
+}
+
+/* #GWL_Display.wl_subcompositor */
+
+static void gwl_registry_subcompositor_add(GWL_Display *display,
+                                           const GWL_RegisteryAdd_Params &params)
+{
+  const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
+
+  display->wl.subcompositor = static_cast<wl_subcompositor *>(
+      wl_registry_bind(display->wl.registry, params.name, &wl_subcompositor_interface, version));
+  gwl_registry_entry_add(display, params, nullptr);
+}
+static void gwl_registry_subcompositor_remove(GWL_Display *display,
+                                              void * /*user_data*/,
+                                              const bool /*on_exit*/)
+{
+  wl_subcompositor **value_p = &display->wl.subcompositor;
+  wl_subcompositor_destroy(*value_p);
   *value_p = nullptr;
 }
 
@@ -8173,6 +8670,12 @@ static const GWL_RegistryHandler gwl_registry_handlers[] = {
         /*remove_fn*/ gwl_registry_compositor_remove,
     },
     {
+        /*interface_p*/ &wl_subcompositor_interface.name,
+        /*add_fn*/ gwl_registry_subcompositor_add,
+        /*update_fn*/ nullptr,
+        /*remove_fn*/ gwl_registry_subcompositor_remove,
+    },
+    {
         /*interface_p*/ &wl_shm_interface.name,
         /*add_fn*/ gwl_registry_wl_shm_add,
         /*update_fn*/ nullptr,
@@ -8421,43 +8924,67 @@ static void *gwl_display_event_thread_fn(void *display_voidp)
 {
   GWL_Display *display = static_cast<GWL_Display *>(display_voidp);
   GHOST_ASSERT(!display->background, "Foreground only");
-  const int fd = wl_display_get_fd(display->wl.display);
-  while (display->events_pthread_is_active) {
-    /* Wait for an event, this thread is dedicated to event handling. */
-    if (ghost_wl_display_event_pump_from_thread(
-            display->wl.display, fd, display->system->server_mutex) == -1)
-    {
-      break;
-    }
-  }
 
-  /* Wait until the main thread cancels this thread, otherwise this thread may exit
-   * before cancel is called, causing a crash on exit. */
-  while (true) {
-    pause();
+  /* Read once, the main thread joins before freeing these. */
+  wl_display *wl_display = display->wl.display;
+  std::mutex *server_mutex = display->system->server_mutex;
+  const int fd = wl_display_get_fd(wl_display);
+  const int fd_stop = display->events_pipe[0];
+
+  /* Wait for events, this thread is dedicated to event handling.
+   * Ends via `fd_stop`, see #gwl_display_event_thread_destroy. */
+  while (ghost_wl_display_event_pump_from_thread(wl_display, fd, fd_stop, server_mutex) != -1) {
+    /* Pass. */
   }
 
   return nullptr;
 }
 
 /* Event reading thread. */
-static void gwl_display_event_thread_create(GWL_Display *display)
+static bool gwl_display_event_thread_create(GWL_Display *display)
 {
   GHOST_ASSERT(!display->background, "Foreground only");
   GHOST_ASSERT(display->events_pthread == 0, "Only call once");
+
+  /* Fatal, the thread can't be ended without a way to wake it. Only expected on descriptor
+   * exhaustion, where start-up is doomed anyway.
+   *
+   * `O_CLOEXEC` is not optional, a sub-process inheriting the write end would keep it
+   * open, so closing it here wouldn't end the thread & the join would never return. */
+  if (pipe2(display->events_pipe, O_CLOEXEC) != 0) {
+    display->events_pipe[0] = display->events_pipe[1] = -1;
+    return false;
+  }
+
   display->events_pending.reserve(events_pending_default_size);
-  display->events_pthread_is_active = true;
-  pthread_create(&display->events_pthread, nullptr, gwl_display_event_thread_fn, display);
+  if (pthread_create(&display->events_pthread, nullptr, gwl_display_event_thread_fn, display) != 0)
+  {
+    close(display->events_pipe[0]);
+    close(display->events_pipe[1]);
+    display->events_pipe[0] = display->events_pipe[1] = -1;
+    display->events_pthread = 0;
+    return false;
+  }
   /* Application logic should take priority, this only ensures events don't accumulate when busy
    * which typically takes a while (5+ seconds of frantic mouse motion for example). */
   pthread_set_min_priority(display->events_pthread);
-  pthread_detach(display->events_pthread);
+  return true;
 }
 
 static void gwl_display_event_thread_destroy(GWL_Display *display)
 {
   GHOST_ASSERT(!display->background, "Foreground only");
-  pthread_cancel(display->events_pthread);
+
+  /* Close the write end, the read end then reports end-of-file.
+   * Closing the read end wouldn't do, that doesn't wake the threads `poll`. */
+  close(display->events_pipe[1]);
+  display->events_pipe[1] = -1;
+
+  pthread_join(display->events_pthread, nullptr);
+  display->events_pthread = 0;
+
+  close(display->events_pipe[0]);
+  display->events_pipe[0] = -1;
 }
 
 #endif /* USE_EVENT_BACKGROUND_THREAD */
@@ -8569,19 +9096,45 @@ GHOST_SystemWayland::GHOST_SystemWayland(const bool background)
   /* There is no need for an event handling thread in background mode
    * because there no polling for user input. */
   if (background) {
-    GHOST_ASSERT(display_->events_pthread_is_active == false, "Expected to be false");
+    GHOST_ASSERT(display_->events_pthread == 0, "Expected to be unset");
   }
-  else {
-    gwl_display_event_thread_create(display_);
+  else if (!gwl_display_event_thread_create(display_)) {
+    display_destroy_and_free_all();
+    throw std::runtime_error("unable to create the event thread!");
   }
 #endif
   /* Could be null in background mode, however there are enough
    * references to the timer-manager that it's safer to create it. */
   display_->key_repeat_timer_manager = new GHOST_TimerManager();
+
+#ifdef WITH_GHOST_DBUS
+  /* Like the WAYLAND event thread, there's no need for this in background mode. */
+  if (!background) {
+    dbus_watcher_ = std::make_unique<GHOST_SystemDBusUnix>();
+    dbus_watcher_->setting_add(
+        "org.freedesktop.appearance", "color-scheme", [this](const GHOST_DBusValue &value) {
+          const uint32_t *value_uint = std::get_if<uint32_t>(&value);
+          if (!value_uint) {
+            return;
+          }
+          if (dbus_.color_scheme.exchange(*value_uint) == *value_uint) {
+            return;
+          }
+          CLOG_INFO(&LOG, "XDG: color-scheme changed: %u", *value_uint);
+        });
+    dbus_watcher_->start();
+  }
+#endif
 }
 
 void GHOST_SystemWayland::display_destroy_and_free_all()
 {
+#ifdef WITH_GHOST_DBUS
+  /* Stop the watcher before freeing `display_`: its callback (which can still run up until
+   * this returns) accesses `display_` indirectly via `pushEvent_maybe_pending`. */
+  dbus_watcher_.reset();
+#endif
+
   gwl_display_destroy(display_);
 
 #ifdef USE_EVENT_BACKGROUND_THREAD
@@ -9491,7 +10044,7 @@ GHOST_IContext *GHOST_SystemWayland::createOffscreenContext(GHOST_GPUSettings gp
                                                    display_->wl.display,
                                                    nullptr,
                                                    1,
-                                                   2,
+                                                   1,
                                                    gpu_settings.preferred_device);
 
       if (context->initializeDrawingContext()) {
@@ -9986,9 +10539,8 @@ GHOST_TCapabilityFlag GHOST_SystemWayland::getCapabilities() const
           ((has_wl_trackpad_physical_direction == 1) ?
                0 :
                GHOST_kCapabilityTrackpadPhysicalDirection) |
-          /* This WAYLAND back-end doesn't have support for window decoration styles.
-           * In all likelihood, this back-end will eventually need to support client-side
-           * decorations, see #113795. */
+          /* The title bar is drawn by Blender itself via CSD, so the backend does not need to
+           * support this. */
           GHOST_kCapabilityWindowDecorationStyles |
           /* No support for window path meta-data. */
           GHOST_kCapabilityWindowPath |
@@ -10084,6 +10636,9 @@ static const char *ghost_wl_output_tag_id = "GHOST-output";
 static const char *ghost_wl_surface_tag_id = "GHOST-window";
 static const char *ghost_wl_surface_cursor_pointer_tag_id = "GHOST-cursor-pointer";
 static const char *ghost_wl_surface_cursor_tablet_tag_id = "GHOST-cursor-tablet";
+#ifdef WITH_GHOST_CSD
+static const char *ghost_wl_surface_csd_margin_tag_id = "GHOST-csd-margin";
+#endif
 
 bool ghost_wl_output_own(const wl_output *wl_output)
 {
@@ -10115,6 +10670,14 @@ bool ghost_wl_surface_own_cursor_tablet(const wl_surface *wl_surface)
   return wl_proxy_get_tag(const_cast<wl_proxy *>(proxy)) == &ghost_wl_surface_cursor_tablet_tag_id;
 }
 
+#ifdef WITH_GHOST_CSD
+bool ghost_wl_surface_own_csd_margin(const wl_surface *wl_surface)
+{
+  const wl_proxy *proxy = reinterpret_cast<const wl_proxy *>(wl_surface);
+  return wl_proxy_get_tag(const_cast<wl_proxy *>(proxy)) == &ghost_wl_surface_csd_margin_tag_id;
+}
+#endif
+
 void ghost_wl_output_tag(wl_output *wl_output)
 {
   wl_proxy *proxy = reinterpret_cast<wl_proxy *>(wl_output);
@@ -10139,6 +10702,14 @@ void ghost_wl_surface_tag_cursor_tablet(wl_surface *wl_surface)
   wl_proxy_set_tag(proxy, &ghost_wl_surface_cursor_tablet_tag_id);
 }
 
+#ifdef WITH_GHOST_CSD
+void ghost_wl_surface_tag_csd_margin(wl_surface *wl_surface)
+{
+  wl_proxy *proxy = reinterpret_cast<wl_proxy *>(wl_surface);
+  wl_proxy_set_tag(proxy, &ghost_wl_surface_csd_margin_tag_id);
+}
+#endif
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -10155,6 +10726,11 @@ wl_display *GHOST_SystemWayland::wl_display_get()
 wl_compositor *GHOST_SystemWayland::wl_compositor_get()
 {
   return display_->wl.compositor;
+}
+
+wl_subcompositor *GHOST_SystemWayland::wl_subcompositor_get()
+{
+  return display_->wl.subcompositor;
 }
 
 zwp_primary_selection_device_manager_v1 *GHOST_SystemWayland::wp_primary_selection_manager_get()
@@ -10563,6 +11139,12 @@ bool GHOST_SystemWayland::window_surface_unref(const wl_surface *wl_surface)
   for (GWL_Seat *seat : display_->seats) {
     SURFACE_CLEAR_PTR(seat->pointer.wl.surface_window);
     SURFACE_CLEAR_PTR(seat->tablet.wl.surface_window);
+    SURFACE_CLEAR_PTR(seat->touch.wl.surface_window);
+#ifdef WITH_GHOST_CSD
+    SURFACE_CLEAR_PTR(seat->pointer.wl.surface_window_csd_margin);
+    SURFACE_CLEAR_PTR(seat->tablet.wl.surface_window_csd_margin);
+    SURFACE_CLEAR_PTR(seat->touch.wl.surface_window_csd_margin);
+#endif
     SURFACE_CLEAR_PTR(seat->keyboard.wl.surface_window);
     SURFACE_CLEAR_PTR(seat->wl.surface_window_focus_dnd);
 #ifdef WITH_INPUT_IME

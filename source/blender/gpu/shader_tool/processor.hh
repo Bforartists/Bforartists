@@ -11,33 +11,25 @@
 #include "intermediate.hh"
 #include "metadata.hh"
 
-namespace blender::gpu::shader {
+#include "bsl/symbol_table.hh"
 
-enum class Language {
-  UNKNOWN = 0,
-  /* Shared header. */
-  CPP,
-  /* Metal Shading Language. */
-  MSL,
-  /* OpenGL Shading Language. */
-  GLSL,
-  /* Blender Shading Language. */
-  BSL,
-  /* Same as GLSL but enable partial C++ feature support like template, references,
-   * include system, etc ... */
-  BLENDER_GLSL,
-};
+namespace blender::gpu::shader {
 
 static inline Language language_from_filename(const std::string &filename)
 {
-  if (filename.find(".msl") != std::string::npos) {
+  if (filename.ends_with(".msl")) {
     return Language::MSL;
   }
-  if (filename.find(".glsl") != std::string::npos || filename.find(".bsl.hh") != std::string::npos)
-  {
+  if (filename.ends_with(".glsl")) {
     return Language::GLSL;
   }
-  if (filename.find(".hh") != std::string::npos) {
+  if (filename.ends_with(".bsl.hh")) {
+    return Language::BSL;
+  }
+  if (filename.ends_with("_infos.hh")) {
+    return Language::INFO;
+  }
+  if (filename.ends_with(".hh")) {
     return Language::CPP;
   }
   return Language::UNKNOWN;
@@ -65,12 +57,20 @@ class SourceProcessor {
  private:
   const std::string source_;
   const std::string filepath_;
+  const std::string filename;
   metadata::Source metadata_;
+  /* List of file that can be used in include directives. */
+  const std::vector<std::string> file_list_;
 
   Language language_;
 
   parser::ErrorHandler error_handler = {
       .default_filename = filepath_.substr(filepath_.find_last_of('/') + 1)};
+
+  void report_error(parser::ast::Node node, const std::string &message)
+  {
+    error_handler.report(node.front(), message);
+  }
 
   void report_error(Token tok, const std::string &message)
   {
@@ -82,9 +82,35 @@ class SourceProcessor {
     error_handler.report(row, column, line, message);
   }
 
+  struct SourceManager {
+   private:
+    std::vector<std::unique_ptr<Parser>> parsers_;
+
+    int include_id_ = 0;
+
+   public:
+    Parser &new_source(ErrorHandler &error_handler)
+    {
+      return *parsers_.emplace_back(std::make_unique<Parser>(error_handler));
+    }
+
+    /* To be called after all own include of a file have been processed. */
+    int include_id_get()
+    {
+      return include_id_++;
+    }
+  };
+
  public:
-  SourceProcessor(const std::string &source, const std::string &filepath, Language language)
-      : source_(source), filepath_(filepath), language_(language)
+  SourceProcessor(const std::string &source,
+                  const std::string &filepath,
+                  Language language,
+                  const std::vector<std::string> &file_list)
+      : source_(source),
+        filepath_(filepath),
+        filename(filepath_.substr(filepath_.find_last_of('/') + 1)),
+        file_list_(file_list),
+        language_(language)
   {
   }
 
@@ -103,6 +129,9 @@ class SourceProcessor {
 
   /* Lightweight parsing. Only Source::dependencies and Source::symbol_table are populated. */
   metadata::Source parse_include_and_symbols();
+  metadata::Source parse_include_and_symbols(SourceManager &sources,
+                                             bsl::SymbolTable &symbols,
+                                             std::vector<std::string> &visited_files);
 
   /* Return the input string with comments removed. */
   std::string remove_comments()
@@ -119,9 +148,11 @@ class SourceProcessor {
   }
 
  private:
+  Result convert_bsl();
+  Result convert_info();
   Result convert_glsl();
   Result convert_msl();
-  Result convert_bsl(metadata::Source external_sources_symbols);
+  Result convert_bsl_legacy(metadata::Source external_sources_symbols);
 
   /* --- Cleanup --- */
 
@@ -132,9 +163,9 @@ class SourceProcessor {
    * Avoid processing code that is not destined to be shader code and could contain unsupported
    * syntax. */
   std::string disabled_code_mutation(const std::string &str);
-  void disabled_code_mutation(Parser &parser);
+  void disabled_code_mutation(Parser &parser, bool new_bsl_compiler = false);
   /* Remove trailing white spaces. */
-  template<typename ParserT> void cleanup_whitespace(ParserT &parser);
+  template<typename ParserT> void cleanup_whitespace(ParserT &parser, bool do_leading = false);
   /* Successive mutations can introduce a lot of unneeded line directives. */
   void cleanup_line_directives(Parser &parser);
   /* Successive mutations can introduce a lot of unneeded blank lines. */
@@ -156,6 +187,7 @@ class SourceProcessor {
   void parse_pragma_runtime_generated(Parser &parser);
   /** Populate metadata::functions for runtime node-tree compilation. */
   void parse_library_functions(Parser &parser);
+  void parse_library_functions_ast(Parser &parser);
   /* Populate metadata::builtins by scanning source for keywords. Can trigger false positive.
    * This is mostly legacy path as most builtin should be explicitly defined inside the BSL entry
    * points. */
@@ -166,6 +198,10 @@ class SourceProcessor {
   std::string threadgroup_variables_parse_and_remove(const std::string &str);
   void threadgroup_variables_parse_and_remove(Parser &parser);
 
+  void scan_external_symbols(SourceManager &sources,
+                             bsl::SymbolTable &symbols,
+                             std::vector<std::string> &visited_files);
+
   /* --- Linting --- */
 
   /* Make sure `if`, `else`, `for` statements are followed by braces. */
@@ -174,8 +210,10 @@ class SourceProcessor {
   void lint_reserved_tokens(Parser &parser);
   /* Lint for valid BSL attributes. */
   void lint_attributes(Parser &parser);
+  void lint_attributes_ast(Parser &parser);
   /* Assume formatted source with our code style. Cannot be applied to python shaders. */
   void lint_global_scope_constants(Parser &parser);
+  void lint_global_scope_constants_ast(Parser &parser);
   /* Search for constructor definition in active code. These are not supported. */
   void lint_constructors(Parser &parser);
   /* Forward declaration of types are not supported and makes no sense in a shader program where
@@ -188,6 +226,7 @@ class SourceProcessor {
   void lower_maybe_unused(Parser &parser);
   /* Lower parameters that have no name (invalid in GLSL). */
   void lower_namesless_parameters(Parser &parser);
+  void lower_namesless_parameters_ast(Parser &parser);
   /**
    * Given our code-style, we don't need the disambiguation.
    * Example: `x.template foo<int>()` > `x.foo<int>()`
@@ -197,6 +236,7 @@ class SourceProcessor {
    * substitution. */
   void lower_templates(Parser &parser);
   void lower_template_calls(Parser &parser);
+  void lower_template_calls_ast(Parser &parser);
   void lower_template_specialization(Parser &parser);
   /* Ensures pragma once is present in headers to comply to our include semantic. */
   void lint_pragma_once(Parser &parser, const std::string &filename);
@@ -206,6 +246,7 @@ class SourceProcessor {
   void lower_static_branch(Parser &parser);
   /* Lower namespaces by adding namespace prefix to all the contained structs and functions. */
   void lower_namespaces(Parser &parser);
+  void lower_bsl_to_il(Parser &parser, bsl::SymbolTable &symbols);
   /**
    * Needs to run before namespace mutation so that `using` have more precedence.
    * Otherwise the following would fail.
@@ -228,9 +269,11 @@ class SourceProcessor {
   /* Remove preprocessor directives unsupported by target shading languages.
    * Examples `#includes`, `#pragma once`. */
   void lower_preprocessor(Parser &parser);
+  void lower_preprocessor_ast(Parser &parser);
   /* Support for BLI swizzle syntax.
    * Examples `a.xy()` --> `a.xy`. */
   void lower_swizzle_methods(Parser &parser);
+  void lower_swizzle_methods_ast(Parser &parser);
   /* Support for binary literals.
    * Examples `0b1001` --> `0x9`. */
   void lower_binary_literals(Parser &parser);
@@ -239,10 +282,12 @@ class SourceProcessor {
   void lower_printf(Parser &parser);
   /* Turn assert into a printf. */
   void lower_assert(Parser &parser, const std::string &filename);
+  void lower_assert_ast(Parser &parser, const std::string &filename);
   /* Parse SRT and interfaces, remove their attributes and create init function for SRT structs. */
   void lower_resource_table(Parser &parser);
   /* Examples `string_t s = "a" "b"` --> `string_t s = "ab"`. */
   void lower_strings_sequences(Parser &parser);
+  void lower_strings_sequences_ast(Parser &parser);
   /* Replace string literals by their hash and store the original string in the file metadata. */
   void lower_strings(Parser &parser);
   /* `class` -> `struct` */
@@ -253,10 +298,12 @@ class SourceProcessor {
   void lower_implicit_member(Parser &parser);
   /* Move all method definition outside of struct definition blocks. */
   void lower_method_definitions(Parser &parser);
+  void lower_this_keyword(Parser &parser);
   /* Add padding member to empty structs. */
   void lower_empty_struct(Parser &parser);
   /* Transform `a.fn(b)` into `fn(a, b)`. */
-  void lower_method_calls(Parser &parser);
+  void lower_method_calls(Parser &parser, bool with_prefix = true);
+  void lower_constructors(Parser &parser);
   /* Transform `auto [a, b] = fn()` into `S _tmp = fn(); a = _tmp.A; b = _tmp.B;`. */
   void lower_structured_bindings(Parser &parser);
   /* Parse, convert to create infos, and erase declaration. */
@@ -270,29 +317,36 @@ class SourceProcessor {
   void lower_resource_access_functions(Parser &parser);
   /* Lower enums to constants. */
   void lower_enums(Parser &parser);
+  void lower_enums_ast(Parser &parser);
   /* Merge attribute scopes. They are equivalent in the C++ standard.
    * This allow to simplify parsing later on.
    * `[[a]] [[b]]` > `[[a, b]]` */
   void lower_attribute_sequences(Parser &parser);
+  void lower_attribute_sequences_ast(Parser &parser);
   /* Lint host shared structure for padding and alignment.
    * Remove the [[host_shared]] attribute. */
   void lower_host_shared_structures(Parser &parser);
   /* Remove noop keywords that makes subsequent lowering passes more complicated. */
   void lower_noop_keywords(Parser &parser);
+  void lower_noop_keywords_ast(Parser &parser);
   /* Example: `int a[] = {1,2,};` --> `int a[] = {1,2 };` */
   void lower_trailing_comma_in_list(Parser &parser);
+  void lower_trailing_comma_in_list_ast(Parser &parser);
   /* Allow easier parsing of struct member declaration.
    * Example: `int a, b;` --> `int a; int b;` */
   void lower_comma_separated_declarations(Parser &parser);
   /* Example: `return {1, 2};` --> `T tmp = T{1, 2}; return tmp;`. */
   void lower_implicit_return_types(Parser &parser);
+  void lower_implicit_return_types_ast(Parser &parser);
   /* Example: `int a{1};` --> `int a = int{1};`. */
   void lower_initializer_implicit_types(Parser &parser);
+  void lower_initializer_implicit_types_ast(Parser &parser);
   /* Example: `T a{.a=1};` --> `T a; a.a=1;`. */
   void lower_designated_initializers(Parser &parser);
   /* Support for **full** aggregate initialization.
    * They are converted to default constructor for GLSL. */
   void lower_aggregate_initializers(Parser &parser);
+  void lower_aggregate_initializers_ast(Parser &parser);
   /* Auto detect array length, and lower to GLSL compatible syntax.
    * TODO(fclem): GLSL 4.3 already supports initializer list. So port the old GLSL syntax to
    * initializer list instead. */
@@ -302,6 +356,12 @@ class SourceProcessor {
    * Expects formatted input and that function bodies are followed by newline.
    */
   void lower_function_default_arguments(Parser &parser);
+  /**
+   * Move the instantiated templated function forward declaration up to where their class were
+   * defined. Needed step in order to support proper intra class calls of templated method with
+   * arbitrary declaration order.
+   */
+  void lower_method_forward_declaration(Parser &parser);
   /* Limited union implementation. Create getters and setters to a raw data struct. */
   void lower_unions(Parser &parser);
   /**
@@ -312,6 +372,14 @@ class SourceProcessor {
    * Need to run before lower_unions.
    */
   void lower_union_accessor_templates(Parser &parser);
+  void lower_union_accessor_templates_ast(Parser &parser);
+  void lower_union_setters(Parser &parser);
+  /**
+   * Convert bitfieldExtract into bitfieldInsert when assigned to.
+   *
+   * Need to run after lower_union_setters.
+   */
+  void lower_bitfield_setters(Parser &parser);
   /**
    * For safety reason, nested resource tables need to be declared with the srt_t template.
    * This avoid chained member access which isn't well defined with the preprocessing we are doing.
@@ -322,6 +390,7 @@ class SourceProcessor {
    * Need to run before lower_resource_table.
    */
   void lower_srt_accessor_templates(Parser &parser);
+  void lower_srt_accessor_templates_ast(Parser &parser);
   /* Add `srt_access` around all member access of SRT variables.
    * Need to run before local reference mutations. */
   void lower_srt_member_access(Parser &parser);
@@ -339,7 +408,9 @@ class SourceProcessor {
   /* Example: `textureGather(t,c,1)` > `textureGather1(t,c)` */
   void lower_gather_component(Parser &parser);
   /* Lower test expect clauses to SSBO assignments. */
-  void lower_tests(Parser &parser);
+  void lower_tests(Parser &parser, const std::string &prefix = "");
+  /* Lower resource pragmas to macros (breaks BSL parsing). */
+  void lower_resource_macro_placeholder_ast(Parser &parser);
 
   /* --- Legacy passes for GLSL --- */
 
@@ -400,7 +471,7 @@ class SourceProcessor {
   /** Remove trailing white-spaces. */
   static std::string strip_whitespace(const std::string &str);
 
-  /* Example: `VertOut<float, 1>` > `VertOutTfloatT1` */
+  /* Example: `<float, 1>` > `TfloatT1` */
   static std::string template_arguments_mangle(const Scope template_args);
 
   /* Create placeholder for GLSL declarations generated by the GPU backends (VK/GL). */

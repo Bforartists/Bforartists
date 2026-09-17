@@ -29,7 +29,7 @@
 
 namespace blender::gpu::debug {
 
-CLG_LogRef LOG = {"gpu.debug.metal"};
+CLG_LogRef LOG = {"gpu.metal"};
 
 void mtl_debug_init()
 {
@@ -39,6 +39,8 @@ void mtl_debug_init()
 }  // namespace blender::gpu::debug
 
 namespace blender::gpu {
+
+static CLG_LogRef LOG = {"gpu.metal"};
 
 /* -------------------------------------------------------------------- */
 /** \name Debug Groups
@@ -129,11 +131,19 @@ bool MTLContext::debug_capture_begin(const char * /*title*/)
     /* Early exit if frame capture is disabled. */
     return false;
   }
+  /* MTLCaptureManager always exists but capture only works when running under Xcode with GPU
+   * Frame Capture enabled, or with MTL_CAPTURE_ENABLED=1. Check before attempting to avoid
+   * a noisy error log in normal command-line runs. */
+  if (![capture_manager supportsDestination:MTLCaptureDestinationDeveloperTools]) {
+    return false;
+  }
   MTLCaptureDescriptor *capture_descriptor = [[MTLCaptureDescriptor alloc] init];
   capture_descriptor.captureObject = this->device;
   NSError *error;
   if (![capture_manager startCaptureWithDescriptor:capture_descriptor error:&error]) {
-    NSLog(@"Failed to start Metal frame capture, error %@", error);
+    CLOG_ERROR(&LOG,
+               "Failed to start Metal frame capture, error %s",
+               error ? [[error localizedDescription] UTF8String] : "unknown");
     return false;
   }
   return true;

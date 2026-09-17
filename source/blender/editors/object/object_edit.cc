@@ -179,11 +179,11 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
   bool use_ob = true;
 
   if (space_type == SPACE_PROPERTIES) {
-    SpaceProperties *sbuts = static_cast<SpaceProperties *>(area->spacedata.first);
+    SpaceProperties *sbuts = area->spacedata.first_as<SpaceProperties>();
     id_pin = sbuts->pinid;
   }
 
-  if (id_pin && (GS(id_pin->name) == ID_OB)) {
+  if (id_pin && (id_pin->id_type() == ID_OB)) {
     /* Pinned data takes priority, in this case ignore selection & other objects in the mode. */
     ob = id_cast<Object *>(id_pin);
   }
@@ -196,7 +196,7 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
      * irrespective of selection. */
     ob = ob_active;
   }
-  else if (ob_active && (ob_active->mode & (OB_MODE_ALL_PAINT | OB_MODE_ALL_PAINT_GPENCIL))) {
+  else if (ob_active && (ob_active->mode & (OB_MODE_ALL_PAINT_MESH | OB_MODE_ALL_PAINT_GPENCIL))) {
     /* When painting, limit to active. */
     ob = ob_active;
   }
@@ -211,9 +211,7 @@ Vector<Object *> objects_in_mode_or_selected(bContext *C,
     }
     return ob ? Vector<Object *>({ob}) : Vector<Object *>();
   }
-  const View3D *v3d = (space_type == SPACE_VIEW3D) ?
-                          static_cast<const View3D *>(area->spacedata.first) :
-                          nullptr;
+  const View3D *v3d = (space_type == SPACE_VIEW3D) ? area->spacedata.first_as<View3D>() : nullptr;
 
   /* When in a mode that supports multiple active objects, use "objects in mode"
    * instead of the object's selection. */
@@ -478,7 +476,7 @@ void collection_hide_menu_draw(const bContext *C, ui::Layout &layout)
   const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  LayerCollection *lc_scene = static_cast<LayerCollection *>(view_layer->layer_collections.first);
+  LayerCollection *lc_scene = view_layer->layer_collections.first();
 
   /* Use the "invoke" operator context so the "Shift" modifier is used to extend. */
   layout.operator_context_set(wm::OpCallContext::InvokeRegionWin);
@@ -880,7 +878,7 @@ bool editmode_enter_ex(Main *bmain, Scene *scene, Object *ob, int flag)
 {
   bool ok = false;
 
-  if (ELEM(nullptr, ob, ob->data) || !ID_IS_EDITABLE(ob) || ID_IS_OVERRIDE_LIBRARY(ob) ||
+  if (ELEM(nullptr, ob, ob->data) || !ID_IS_EDITABLE(ob) || !ID_IS_EDITABLE(ob->data) ||
       ID_IS_OVERRIDE_LIBRARY(ob->data))
   {
     return false;
@@ -1077,7 +1075,7 @@ static bool editmode_toggle_poll(bContext *C)
   Object *ob = BKE_view_layer_active_object_get(view_layer);
 
   /* Covers liboverrides too. */
-  if (ELEM(nullptr, ob, ob->data) || !ID_IS_EDITABLE(ob->data) || ID_IS_OVERRIDE_LIBRARY(ob) ||
+  if (ELEM(nullptr, ob, ob->data) || !ID_IS_EDITABLE(ob) || !ID_IS_EDITABLE(ob->data) ||
       ID_IS_OVERRIDE_LIBRARY(ob->data))
   {
     return false;
@@ -1290,10 +1288,7 @@ static bool has_pose_motion_paths(Object *ob)
   return ob->pose && (ob->pose->avs.path_bakeflag & MOTIONPATH_BAKE_HAS_PATHS) != 0;
 }
 
-void motion_paths_recalc(bContext *C,
-                         Scene *scene,
-                         const eAnimvizCalcRange range,
-                         const Span<Object *> objects)
+void motion_paths_recalc(bContext *C, Scene *scene, const Span<Object *> objects)
 {
   BLI_assert(C != nullptr);
   Main *bmain = CTX_data_main(C);
@@ -1315,7 +1310,7 @@ void motion_paths_recalc(bContext *C,
 
   Depsgraph *depsgraph = animviz_depsgraph_build(bmain, scene, view_layer, targets);
 
-  animviz_calc_motionpaths(depsgraph, scene, targets, range);
+  animviz_calc_motionpaths(depsgraph, scene, targets, BKE_scene_frame_get(scene));
 
   /* Tag objects for copy-on-eval - so paths will draw/redraw
    * For currently frame only we update evaluated object directly. */
@@ -1327,28 +1322,6 @@ void motion_paths_recalc(bContext *C,
 
   /* Free temporary depsgraph. */
   DEG_graph_free(depsgraph);
-}
-
-void motion_paths_recalc_selected(bContext *C, Scene *scene, const eAnimvizCalcRange range)
-{
-  Vector<Object *> selected_objects;
-  CTX_DATA_BEGIN (C, Object *, ob, selected_editable_objects) {
-    selected_objects.append(ob);
-  }
-  CTX_DATA_END;
-
-  motion_paths_recalc(C, scene, range, selected_objects);
-}
-
-void motion_paths_recalc_visible(bContext *C, Scene *scene, const eAnimvizCalcRange range)
-{
-  Vector<Object *> visible_objects;
-  CTX_DATA_BEGIN (C, Object *, ob, visible_objects) {
-    visible_objects.append(ob);
-  }
-  CTX_DATA_END;
-
-  motion_paths_recalc(C, scene, range, visible_objects);
 }
 
 /* show popup to determine settings */
@@ -1378,6 +1351,7 @@ static wmOperatorStatus object_calculate_paths_exec(bContext *C, wmOperator *op)
   eMotionPaths_Types path_type = eMotionPaths_Types(RNA_enum_get(op->ptr, "display_type"));
   eMotionPath_Ranges path_range = eMotionPath_Ranges(RNA_enum_get(op->ptr, "range"));
 
+  Vector<Object *> selected_objects;
   /* set up path data for objects being calculated */
   CTX_DATA_BEGIN (C, Object *, ob, selected_editable_objects) {
     bAnimVizSettings *avs = &ob->avs;
@@ -1387,12 +1361,16 @@ static wmOperatorStatus object_calculate_paths_exec(bContext *C, wmOperator *op)
     animviz_motionpath_compute_range(ob, scene);
 
     /* verify that the selected object has the appropriate settings */
-    animviz_verify_motionpaths(op->reports, scene, ob, nullptr);
+    bke::motionpath::ensure(op->reports, scene, ob, nullptr);
+    if (ob->mpath) {
+      ed::motionpath::tag_for_recalc(*ob->mpath);
+      selected_objects.append(ob);
+    }
   }
   CTX_DATA_END;
 
   /* calculate the paths for objects that have them (and are tagged to get refreshed) */
-  motion_paths_recalc_selected(C, scene, ANIMVIZ_CALC_RANGE_FULL);
+  motion_paths_recalc(C, scene, selected_objects);
 
   /* notifiers for updates */
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW_ANIMVIZ, nullptr);
@@ -1456,15 +1434,20 @@ static wmOperatorStatus object_update_paths_exec(bContext *C, wmOperator *op)
   if (scene == nullptr) {
     return OPERATOR_CANCELLED;
   }
+  Vector<Object *> selected_objects;
   CTX_DATA_BEGIN (C, Object *, ob, selected_editable_objects) {
     animviz_motionpath_compute_range(ob, scene);
     /* verify that the selected object has the appropriate settings */
-    animviz_verify_motionpaths(op->reports, scene, ob, nullptr);
+    bke::motionpath::ensure(op->reports, scene, ob, nullptr);
+    if (ob->mpath) {
+      ed::motionpath::tag_for_recalc(*ob->mpath);
+      selected_objects.append(ob);
+    }
   }
   CTX_DATA_END;
 
   /* calculate the paths for objects that have them (and are tagged to get refreshed) */
-  motion_paths_recalc_selected(C, scene, ANIMVIZ_CALC_RANGE_FULL);
+  motion_paths_recalc(C, scene, selected_objects);
 
   /* notifiers for updates */
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW_ANIMVIZ, nullptr);
@@ -1508,8 +1491,27 @@ static wmOperatorStatus object_update_all_paths_exec(bContext *C, wmOperator * /
   if (scene == nullptr) {
     return OPERATOR_CANCELLED;
   }
-
-  motion_paths_recalc_visible(C, scene, ANIMVIZ_CALC_RANGE_FULL);
+  Vector<Object *> visible_objects_with_mpath;
+  CTX_DATA_BEGIN (C, Object *, ob, visible_objects) {
+    bool has_any_motion_path = false;
+    if (ob->mpath) {
+      ed::motionpath::tag_for_recalc(*ob->mpath);
+      has_any_motion_path = true;
+    }
+    if (ob->pose) {
+      for (bPoseChannel &pchan : ob->pose->chanbase) {
+        if (pchan.mpath) {
+          ed::motionpath::tag_for_recalc(*pchan.mpath);
+          has_any_motion_path = true;
+        }
+      }
+    }
+    if (has_any_motion_path) {
+      visible_objects_with_mpath.append(ob);
+    }
+  }
+  CTX_DATA_END;
+  motion_paths_recalc(C, scene, visible_objects_with_mpath);
 
   WM_event_add_notifier(C, NC_OBJECT | ND_POSE | ND_TRANSFORM, nullptr);
 
@@ -1541,7 +1543,7 @@ void OBJECT_OT_paths_update_visible(wmOperatorType *ot)
 static void object_clear_mpath(Object *ob)
 {
   if (ob->mpath) {
-    animviz_free_motionpath(ob->mpath);
+    bke::motionpath::free(ob->mpath);
     ob->mpath = nullptr;
     ob->avs.path_bakeflag &= ~MOTIONPATH_BAKE_HAS_PATHS;
 
@@ -1673,7 +1675,7 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
     ViewLayer *view_layer = CTX_data_view_layer(C);
     BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
     Object *obact = BKE_view_layer_active_object_get(view_layer);
-    if (obact && (obact->mode & OB_MODE_ALL_PAINT)) {
+    if (obact && (obact->mode & OB_MODE_ALL_PAINT_MESH)) {
       ctx_objects.append(RNA_id_pointer_create(&obact->id));
     }
   }
@@ -1712,7 +1714,7 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
     }
 
     bool changed = false;
-    if (GS(data->name) == ID_ME) {
+    if (data->id_type() == ID_ME) {
       Mesh &mesh = *reinterpret_cast<Mesh *>(data);
       const bool keep_sharp_edges = RNA_boolean_get(op->ptr, "keep_sharp_edges");
       bke::mesh_smooth_set(mesh, use_smooth || use_smooth_by_angle, keep_sharp_edges);
@@ -1723,7 +1725,7 @@ static wmOperatorStatus shade_smooth_exec(bContext *C, wmOperator *op)
       BKE_mesh_batch_cache_dirty_tag(reinterpret_cast<Mesh *>(data), BKE_MESH_BATCH_DIRTY_ALL);
       changed = true;
     }
-    else if (GS(data->name) == ID_CU_LEGACY) {
+    else if (data->id_type() == ID_CU_LEGACY) {
       BKE_curve_smooth_flag_set(reinterpret_cast<Curve *>(data), use_smooth);
       changed = true;
     }
@@ -1887,7 +1889,7 @@ static wmOperatorStatus shade_auto_smooth_exec(bContext *C, wmOperator *op)
       if (!node_group_id) {
         return OPERATOR_CANCELLED;
       }
-      if (GS(node_group_id->name) != ID_NT) {
+      if (node_group_id->id_type() != ID_NT) {
         return OPERATOR_CANCELLED;
       }
       node_group = reinterpret_cast<bNodeTree *>(node_group_id);
@@ -2265,10 +2267,8 @@ static wmOperatorStatus move_to_collection_exec(bContext *C, wmOperator *op)
     collection = BKE_collection_add(bmain, collection, new_collection_name);
   }
 
-  Object *single_object = objects.is_single() ?
-                              static_cast<Object *>(
-                                  (static_cast<LinkData *>(objects.first))->data) :
-                              nullptr;
+  Object *single_object = objects.is_single() ? static_cast<Object *>((objects.first())->data) :
+                                                nullptr;
 
   if ((single_object != nullptr) && is_link &&
       BKE_collection_has_object(collection, single_object))

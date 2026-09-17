@@ -364,7 +364,7 @@ void NodeSetInterfaceBuilder::expose_socket(const bNodeSocket &src_socket,
       data = &io_mapping_.socket_data.lookup_or_add(io_socket, {});
       data_by_socket_.add_new(&key_socket, io_socket);
 
-      data->hidden = key_socket.flag & SOCK_HIDDEN;
+      data->hidden = key_socket.is_user_hidden();
       data->collapsed = key_socket.flag & SOCK_COLLAPSED;
       return data;
     }
@@ -620,7 +620,7 @@ static void map_socket(NodeTreeInterfaceMapping &io_mapping,
           .as_span()
           .cast<NodeAndSocket>());
   data.external_sockets.add_multiple(get_socket_links(*group_socket, false));
-  data.hidden = group_socket->flag & SOCK_HIDDEN;
+  data.hidden = group_socket->is_user_hidden();
   data.collapsed = group_socket->flag & SOCK_COLLAPSED;
   io_mapping.socket_data.add(&io_socket, std::move(data));
 }
@@ -1048,7 +1048,7 @@ static void replace_interface_socket(
 
   if (proxy_node) {
     BLI_assert(proxy_node);
-    STRNCPY(proxy_node->label, io_socket.name);
+    STRNCPY(proxy_node->label, io_socket.name().c_str());
 
     const float width = (proxy_node->is_reroute() ? 0.0f : proxy_node->width);
     const float height = (proxy_node->is_reroute() ? 0.0f : proxy_node->height);

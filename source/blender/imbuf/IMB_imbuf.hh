@@ -113,7 +113,8 @@ eImFileTypeCapability IMB_ftype_capability_write(eImbFileType ftype);
  */
 enum class IMBThumbLoadFlags {
   Zero = 0,
-  /** Normally files larger than 100MB are not loaded for thumbnails, except when this flag is set.
+  /**
+   * Normally files larger than 100MB are not loaded for thumbnails, except when this flag is set.
    */
   LoadLargeFiles = (1 << 0),
 };
@@ -290,23 +291,6 @@ void IMB_rectclip(ImBuf *dbuf,
                   int *srcy,
                   int *width,
                   int *height);
-void IMB_rectblend(ImBuf *dbuf,
-                   const ImBuf *obuf,
-                   const ImBuf *sbuf,
-                   unsigned short *dmask,
-                   const unsigned short *curvemask,
-                   const unsigned short *texmask,
-                   float mask_max,
-                   int destx,
-                   int desty,
-                   int origx,
-                   int origy,
-                   int srcx,
-                   int srcy,
-                   int width,
-                   int height,
-                   IMB_BlendMode mode,
-                   bool accumulate);
 void IMB_rectblend_threaded(ImBuf *dbuf,
                             const ImBuf *obuf,
                             const ImBuf *sbuf,
@@ -324,6 +308,29 @@ void IMB_rectblend_threaded(ImBuf *dbuf,
                             int height,
                             IMB_BlendMode mode,
                             bool accumulate);
+/**
+ * \param dbuf_byte_data: Result of `dbuf->byte_data_for_write()`.
+ * \param dbuf_float_data: Result of `dbuf->float_data_for_write()`.
+ */
+void IMB_rectblend(ImBuf *dbuf,
+                   uint8_t *dbuf_byte_data,
+                   float *dbuf_float_data,
+                   const ImBuf *obuf,
+                   const ImBuf *sbuf,
+                   unsigned short *dmask,
+                   const unsigned short *curvemask,
+                   const unsigned short *texmask,
+                   float mask_max,
+                   int destx,
+                   int desty,
+                   int origx,
+                   int origy,
+                   int srcx,
+                   int srcy,
+                   int width,
+                   int height,
+                   IMB_BlendMode mode,
+                   bool accumulate);
 
 enum eIMBInterpolationFilterMode {
   IMB_FILTER_NEAREST,
@@ -423,14 +430,14 @@ void IMB_saturation(ImBuf *ibuf, float sat);
 
 /**
  * Convert float pixels to byte pixels.
- * \param dest Destination, always 4 channel RGBA, non-premultiplied.
- * \param src Source.
- * \param src_channels Source channels (1, 3, 4).
- * \param dither Amount of dithering to apply to destination.
- * \param predivide Is source alpha premultiplied.
- * \param width Width in pixels.
- * \param height Height in pixels.
- * \param stride Row stride in pixels.
+ * \param dest: Destination, always 4 channel RGBA, non-premultiplied.
+ * \param src: Source.
+ * \param src_channels: Source channels (1, 3, 4).
+ * \param dither: Amount of dithering to apply to destination.
+ * \param predivide: Is source alpha premultiplied.
+ * \param width: Width in pixels.
+ * \param height: Height in pixels.
+ * \param stride: Row stride in pixels.
  */
 void IMB_buffer_byte_from_float(unsigned char *dest,
                                 const float *src,
@@ -454,23 +461,23 @@ void IMB_buffer_byte_from_float_mask(unsigned char *dest,
                                      const char *mask);
 /**
  * Convert byte pixels to float pixels.
- * \param dest Destination, always 4 channel RGBA, non-premultiplied.
- * \param src Source, always 4 channel RGBA, non-premultiplied.
- * \param width Width in pixels.
- * \param height Height in pixels.
- * \param dest_stride Destination row stride in pixels.
- * \param src_stride Source row stride in pixels.
+ * \param dest: Destination, always 4 channel RGBA, non-premultiplied.
+ * \param src: Source, always 4 channel RGBA, non-premultiplied.
+ * \param width: Width in pixels.
+ * \param height: Height in pixels.
+ * \param dest_stride: Destination row stride in pixels.
+ * \param src_stride: Source row stride in pixels.
  */
 void IMB_buffer_float_from_byte(
     float *dest, const unsigned char *src, int width, int height, int dest_stride, int src_stride);
 
 /**
  * Convert 1/3/4 channel float pixels to 4 channel (RGBA) float pixels.
- * \param dest Destination, always 4 channel.
- * \param src Source.
- * \param src_channels Source channels (1, 3, 4).
- * \param width Width in pixels.
- * \param height Height in pixels.
+ * \param dest: Destination, always 4 channel.
+ * \param src: Source.
+ * \param src_channels: Source channels (1, 3, 4).
+ * \param width: Width in pixels.
+ * \param height: Height in pixels.
  */
 void IMB_buffer_float_rgba_from_float(
     float *dest, const float *src, int src_channels, int width, int height);
@@ -623,9 +630,7 @@ gpu::Texture *IMB_create_gpu_texture(const char *name, ImBuf *ibuf, GPUTextureCr
  * yet. */
 gpu::Texture *IMB_acquire_gpu_texture(const char *name,
                                       ImBuf *ibuf,
-                                      bool use_high_bitdepth,
-                                      bool use_premult,
-                                      bool limit_size,
+                                      GPUTextureCreateFlags texture_create_flags,
                                       bool try_only = false);
 
 gpu::TextureFormat IMB_gpu_get_texture_format(const ImBuf *ibuf,

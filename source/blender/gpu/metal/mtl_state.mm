@@ -91,9 +91,7 @@ void MTLStateManager::set_state(const GPUState &state)
   if (changed.culling_test != 0) {
     set_backface_culling((GPUFaceCullTest)state.culling_test);
   }
-  if (changed.logic_op_xor != 0) {
-    set_logic_op(state.logic_op_xor);
-  }
+
   if (changed.invert_facing != 0) {
     set_facing(state.invert_facing);
   }
@@ -344,11 +342,6 @@ void MTLStateManager::set_clip_distances(const int new_dist_len, const int old_d
   for (uint i = new_dist_len; i < old_dist_len; i++) {
     mtl_clip_plane_disable(i);
   }
-}
-
-void MTLStateManager::set_logic_op(const bool /*enable*/)
-{
-  /* NOTE(Metal): Logic Operations not directly supported. */
 }
 
 void MTLStateManager::set_facing(const bool invert)
@@ -655,7 +648,14 @@ void MTLStateManager::image_bind(Texture *tex_, int unit)
   MTLContext *ctx = MTLContext::get();
   if (unit >= 0) {
     ctx->texture_bind(mtl_tex, unit, true);
-    image_formats[unit] = TextureWriteFormat(tex_->format_get());
+    /* An sRGB texture bound as a storage image is written as UNORM: the hardware does the sRGB
+     * encode/decode. TextureWriteFormat has no sRGB entry, use UNORM instead to avoid adding
+     * a bunch of complexity elsewhere. */
+    TextureFormat format = tex_->format_get();
+    if (format == TextureFormat::SRGBA_8_8_8_8) {
+      format = TextureFormat::UNORM_8_8_8_8;
+    }
+    image_formats[unit] = TextureWriteFormat(format);
   }
 }
 

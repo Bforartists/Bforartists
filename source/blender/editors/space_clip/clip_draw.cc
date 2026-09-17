@@ -359,9 +359,8 @@ static void draw_stabilization_border(
     const uint shdr_pos = GPU_vertformat_attr_add(
         immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
 
-    /* Exclusive OR allows to get orig value when second operand is 0,
-     * and negative of orig value when second operand is 1. */
-    GPU_logic_op_xor_set(true);
+    /* Use invert blend mode for highly visible border */
+    GPU_blend(GPU_BLEND_INVERT);
 
     GPU_matrix_push();
     GPU_matrix_translate_2f(x, y);
@@ -387,7 +386,7 @@ static void draw_stabilization_border(
 
     GPU_matrix_pop();
 
-    GPU_logic_op_xor_set(false);
+    GPU_blend(GPU_BLEND_NONE);
   }
 }
 
@@ -829,14 +828,15 @@ static void draw_marker_areas(SpaceClip *sc,
       immUniform1f("dash_width", 6.0f);
       immUniform1f("udash_factor", 0.5f);
 
-      GPU_logic_op_xor_set(true);
+      /* Use invert blend mode for highly visible border */
+      GPU_blend(GPU_BLEND_INVERT);
 
       immBegin(GPU_PRIM_LINES, 2);
       immVertex2fv(shdr_pos, pos);
       immVertex2fv(shdr_pos, marker_pos);
       immEnd();
 
-      GPU_logic_op_xor_set(false);
+      GPU_blend(GPU_BLEND_NONE);
       immUnbindProgram();
     }
   }
@@ -1052,7 +1052,7 @@ static void draw_marker_texts(SpaceClip *sc,
 {
   char str[128] = {0}, state[64] = {0};
   float dx = 0.0f, dy = 0.0f, fontsize, pos[3];
-  uiStyle *style = static_cast<uiStyle *>(U.uistyles.first);
+  uiStyle *style = U.uistyles.first();
   int fontid = style->widget.uifont_id;
 
   if (!TRACK_VIEW_SELECTED(sc, track)) {
@@ -1841,10 +1841,10 @@ static void draw_distortion(SpaceClip *sc,
   }
 
   if (sc->flag & SC_MANUAL_CALIBRATION && gpd) {
-    bGPDlayer *layer = static_cast<bGPDlayer *>(gpd->layers.first);
+    bGPDlayer *layer = gpd->layers.first();
 
     while (layer) {
-      bGPDframe *frame = static_cast<bGPDframe *>(layer->frames.first);
+      bGPDframe *frame = layer->frames.first();
 
       if (layer->flag & GP_LAYER_HIDE) {
         layer = layer->next;
@@ -1857,7 +1857,7 @@ static void draw_distortion(SpaceClip *sc,
       GPU_point_size(float(layer->thickness + 2));
 
       while (frame) {
-        bGPDstroke *stroke = static_cast<bGPDstroke *>(frame->strokes.first);
+        bGPDstroke *stroke = frame->strokes.first();
 
         while (stroke) {
           if (stroke->flag & GP_STROKE_2DSPACE) {

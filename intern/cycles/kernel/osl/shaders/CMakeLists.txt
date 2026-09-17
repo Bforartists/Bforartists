@@ -10,6 +10,7 @@ set(SRC_OSL
   node_attribute.osl
   node_background.osl
   node_bevel.osl
+  node_boolean_math.osl
   node_brick_texture.osl
   node_brightness.osl
   node_bump.osl
@@ -34,6 +35,7 @@ set(SRC_OSL
   node_gabor_texture.osl
   node_gamma.osl
   node_geometry.osl
+  node_get_vector_component.osl
   node_glass_bsdf.osl
   node_glossy_bsdf.osl
   node_gradient_texture.osl
@@ -56,6 +58,7 @@ set(SRC_OSL
   node_map_range.osl
   node_mapping.osl
   node_math.osl
+  node_integer_math.osl
   node_metallic_bsdf.osl
   node_mix.osl
   node_mix_closure.osl

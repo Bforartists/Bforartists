@@ -286,6 +286,7 @@ static const EnumPropertyItem euler_order_items[] = {
 #  include "BKE_animsys.hh"
 #  include "BKE_constraint.h"
 #  include "BKE_context.hh"
+#  include "BKE_global.hh"
 #  include "BKE_lib_id.hh"
 
 #  ifdef WITH_ALEMBIC
@@ -441,7 +442,12 @@ static void rna_Constraint_name_set(PointerRNA *ptr, const char *value)
   }
 
   /* fix all the animation data which may link to this */
-  BKE_animdata_fix_paths_rename_all(nullptr, "constraints", oldname, con->name);
+  BKE_animdata_fix_paths(*ptr->owner_id,
+                         "constraints",
+                         RNA_path_name_to_infix(oldname),
+                         RNA_path_name_to_infix(con->name),
+                         /*verify_paths=*/true,
+                         *G_MAIN);
 }
 
 static std::optional<std::string> rna_Constraint_do_compute_path(Object *ob, bConstraint *con)
@@ -608,7 +614,7 @@ static const EnumPropertyItem *rna_Constraint_target_space_itemf(bContext * /*C*
   bConstraintTarget *ct;
 
   if (BKE_constraint_targets_get(con, &targets)) {
-    for (ct = static_cast<bConstraintTarget *>(targets.first); ct; ct = ct->next) {
+    for (ct = targets.first(); ct; ct = ct->next) {
       if (ct->tar && ct->tar->type == OB_ARMATURE && !(ct->flag & CONSTRAINT_TAR_CUSTOM_SPACE)) {
         break;
       }
@@ -699,7 +705,7 @@ static void rna_ActionConstraint_action_set(PointerRNA *ptr, PointerRNA value, R
 {
   using namespace animrig;
   BLI_assert(ptr->owner_id);
-  BLI_assert(ptr->data);
+  BLI_assert(*ptr);
 
   ID &animated_id = *ptr->owner_id;
   bConstraint *con = static_cast<bConstraint *>(ptr->data);
@@ -1181,6 +1187,7 @@ static void rna_def_constraint_armature_deform_targets(BlenderRNA *brna, Propert
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
   RNA_def_function_ui_description(func, "Add a new target to the constraint");
   parm = RNA_def_pointer(func, "target", "ConstraintTargetBone", "", "New target bone");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_ArmatureConstraint_target_remove");

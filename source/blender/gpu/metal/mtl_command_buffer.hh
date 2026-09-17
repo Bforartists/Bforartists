@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup gpu
+ */
+
 #pragma once
 
 #include "mtl_capabilities.hh"
@@ -92,6 +96,8 @@ struct MTLComputeCommandEncoder {
   void set_bytes(const void *bytes, size_t length, int index);
   void set_texture(id<MTLTexture> tex, int index);
   void set_sampler(id<MTLSamplerState> sampler_state, int index);
+  void set_acceleration_structure(id<MTLAccelerationStructure> accel, int index);
+  void use_resource(id<MTLResource> resource, MTLResourceUsage usage);
 };
 
 struct MTLVertexCommandEncoder {
@@ -104,6 +110,8 @@ struct MTLVertexCommandEncoder {
   void set_bytes(const void *bytes, size_t length, int index);
   void set_texture(id<MTLTexture> tex, int index);
   void set_sampler(id<MTLSamplerState> sampler_state, int index);
+  void set_acceleration_structure(id<MTLAccelerationStructure> accel, int index);
+  void use_resource(id<MTLResource> resource, MTLResourceUsage usage);
 };
 
 struct MTLFragmentCommandEncoder {
@@ -116,6 +124,8 @@ struct MTLFragmentCommandEncoder {
   void set_bytes(const void *bytes, size_t length, int index);
   void set_texture(id<MTLTexture> tex, int index);
   void set_sampler(id<MTLSamplerState> sampler_state, int index);
+  void set_acceleration_structure(id<MTLAccelerationStructure> accel, int index);
+  void use_resource(id<MTLResource> resource, MTLResourceUsage usage);
 };
 
 /* Class to remove redundant resource bindings. */

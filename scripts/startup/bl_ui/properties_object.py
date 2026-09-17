@@ -91,7 +91,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
         row.separator(factor=1.0) # bfa - helps the icon has spacer!
         row.use_property_decorate = False # bfa - no decorator before 4L/blank icon
         row.prop(ob, "rotation_mode", text="") # bfa - no label 
-
+        row.operator_menu_enum("anim.rotation_mode_convert", "mode", icon='SWAP', text="") # BFA - new
         if draw4L:
             row.prop(ob, "lock_rotations_4d", text="", emboss=True, icon='4L_ON' if ob.lock_rotations_4d else '4L_OFF')
         else:

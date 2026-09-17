@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "ast.hh"
 #include "enums.hh"
 #include "utils.hh"
 
@@ -57,7 +58,7 @@ struct FullLexer {
   static void lexical_analysis(LexerBase &lex, std::string_view input)
   {
     lex.process(input, LexerBase::bsl_char_class_table.data());
-    lex.merge_complex_literals();
+    lex.merge_complex_literals(true);
     lex.identify_keywords();
   }
 };
@@ -78,6 +79,10 @@ struct ScopeLinks {
  * Also creates mapping table from token to scope to have bi-directional mapping.
  */
 struct ParserBase : LexerBase {
+  /* A monotonically increasing ID for each file included inside the compilation unit.
+   * A file is only assigned an ID before parsing symbols (after parsing includes).
+   * Used to order tokens from different included file. */
+  int include_id = 0;
 
   /** Compact visualization of scope_types.  */
   std::string_view scope_types_str;
@@ -93,17 +98,30 @@ struct ParserBase : LexerBase {
   /** Index of bottom most scope per token. */
   std::vector<int> token_scope;
 
+  /* --- Abstract Syntax Tree. --- */
+
+  /**
+   * Flat array of nodes (nodes pointers are indices to this array).
+   *
+   * Nodes are stored in source order (not in logical execution order).
+   * This allow to have range based iterators follow the source order.
+   * Expressions need to use a parser to use logical execution order with operator precedence.
+   */
+  std::vector<ast::NodeData> ast_nodes;
+
   /* Return the i'th token. */
   Token operator[](int i) const;
 
   void build_scope_tree(ErrorHandler &err_handler);
   void build_token_to_scope_map();
+  void parse_bsl(ErrorHandler &err_handler);
+
+  ast::LocalScope root() const;
+  void print_ast() const;
 
  private:
   void update_string_view();
 };
-
-;
 
 /* Don't do anything. No access to scopes is allowed. */
 struct NullParser {

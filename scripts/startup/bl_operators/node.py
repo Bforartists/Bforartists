@@ -191,23 +191,6 @@ class NodeOperator:
         options={'SKIP_SAVE'},
     )
 
-    @classmethod
-    def description(cls, _context, properties):
-        from nodeitems_builtins import node_tree_group_type
-
-        nodetype = properties["type"]
-        if nodetype in node_tree_group_type.values():
-            for setting in properties.settings:
-                if setting.name == "node_tree":
-                    node_group = eval(setting.value)
-                    if node_group.description:
-                        return node_group.description
-        bl_rna = bpy.types.Node.bl_rna_get_subclass(nodetype)
-        if bl_rna is not None:
-            return tip_(bl_rna.description)
-        else:
-            return ""
-
     # Deselect all nodes in the tree.
     @staticmethod
     def deselect_nodes(context):
@@ -608,8 +591,27 @@ class NodeSwapOperator(NodeOperator):
             new_node.inputs[0].default_value = int(old_selector_value)
 
 
+class SingleNodeOperator:
+    @classmethod
+    def description(cls, _context, properties):
+        from nodeitems_builtins import node_tree_group_type
+
+        nodetype = properties["type"]
+        if nodetype in node_tree_group_type.values():
+            for setting in properties.settings:
+                if setting.name == "node_tree":
+                    node_group = eval(setting.value)
+                    if node_group.description:
+                        return node_group.description
+        bl_rna = bpy.types.Node.bl_rna_get_subclass(nodetype)
+        if bl_rna is not None:
+            return tip_(bl_rna.description)
+        else:
+            return ""
+
+
 # Simple basic operator for adding a node.
-class NODE_OT_add_node(NodeAddOperator, Operator):
+class NODE_OT_add_node(NodeAddOperator, SingleNodeOperator, Operator):
     """Add a node to the active tree"""
     bl_idname = "node.add_node"
     bl_label = "Add Node"
@@ -641,7 +643,7 @@ class NODE_OT_add_node(NodeAddOperator, Operator):
             return {'CANCELLED'}
 
 
-class NODE_OT_swap_node(NodeSwapOperator, Operator):
+class NODE_OT_swap_node(NodeSwapOperator, SingleNodeOperator, Operator):
     """Replace the selected nodes with the specified type"""
     bl_idname = "node.swap_node"
     bl_label = "Swap Node"
@@ -692,6 +694,20 @@ class NODE_OT_swap_node(NodeSwapOperator, Operator):
             except RuntimeError:
                 pass
 
+    @staticmethod
+    def swap_visible_output(tree, node, output_name):
+        target_output = node.outputs[output_name]
+        target_output.hide = False
+
+        for socket in node.outputs:
+            if socket.name != output_name:
+                for link in socket.links[:]:
+                    new_link = tree.links.new(target_output, link.to_socket)
+                    if not new_link.is_valid:
+                        tree.links.remove(new_link)
+
+                socket.hide = True
+
     def execute(self, context):
         tree = context.space_data.edit_tree
         nodes_to_delete = set()
@@ -702,6 +718,10 @@ class NODE_OT_swap_node(NodeSwapOperator, Operator):
 
             if (old_node.bl_idname == self.type) and (not hasattr(old_node, "node_tree")):
                 self.apply_node_settings(old_node)
+
+                if self.visible_output:
+                    self.swap_visible_output(tree, old_node, output_name=self.visible_output)
+
                 continue
 
             new_node = self.create_node(context, self.type)

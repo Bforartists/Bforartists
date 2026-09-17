@@ -399,7 +399,7 @@ ccl_device float3 ensure_valid_specular_reflection(const float3 Ng, const float3
 ccl_device float3 maybe_ensure_valid_specular_reflection(ccl_private ShaderData *sd,
                                                          const float3 N)
 {
-  if ((sd->flag & SD_USE_BUMP_MAP_CORRECTION) == 0) {
+  if ((sd->shader_flag & SD_USE_BUMP_MAP_CORRECTION) == 0) {
     return N;
   }
   if ((sd->type & PRIMITIVE_CURVE) || isequal(sd->Ng, N)) {
@@ -440,7 +440,7 @@ ccl_device_inline Spectrum bsdf_principled_hair_sigma_from_concentration(const f
 ccl_device_inline Spectrum closure_layering_weight(const Spectrum layer_albedo,
                                                    const Spectrum weight)
 {
-  return weight * saturatef(1.0f - reduce_max(safe_divide_color(layer_albedo, weight)));
+  return clamp(weight - layer_albedo, zero_spectrum(), weight);
 }
 
 /* ******** Thin-film iridescence implementation ********

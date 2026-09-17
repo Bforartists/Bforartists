@@ -13,6 +13,7 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_vector_c.hh"
 
+#include "BKE_compositor.hh"
 #include "BKE_context.hh"
 #include "BKE_movieclip.hh"
 #include "BKE_node_tree_update.hh"
@@ -262,7 +263,7 @@ static void flushTransTrackingCurves(TransInfo *t)
 
 static void recalcData_tracking_curves(TransInfo *t)
 {
-  SpaceClip *sc = static_cast<SpaceClip *>(t->area->spacedata.first);
+  SpaceClip *sc = t->area->spacedata.first_as<SpaceClip>();
 
   if (ED_space_clip_check_show_trackedit(sc)) {
     MovieClip *clip = ED_space_clip_get_clip(sc);
@@ -281,9 +282,10 @@ static void recalcData_tracking_curves(TransInfo *t)
 
 static void special_aftertrans_update__movieclip_for_curves(bContext *C, TransInfo *t)
 {
-  SpaceClip *sc = static_cast<SpaceClip *>(t->area->spacedata.first);
+  SpaceClip *sc = t->area->spacedata.first_as<SpaceClip>();
   MovieClip *clip = ED_space_clip_get_clip(sc);
-  if (t->scene->compositing_node_group != nullptr) {
+
+  if (bke::compositor::is_enabled(*t->scene, bke::compositor::ExecutionMode::Preview)) {
     /* Tracks can be used for stabilization nodes,
      * flush update for such nodes.
      */

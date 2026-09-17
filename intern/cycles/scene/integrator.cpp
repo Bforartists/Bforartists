@@ -118,7 +118,7 @@ NODE_DEFINE(Integrator)
 
   SOCKET_BOOLEAN(caustics_reflective, "Reflective Caustics", true);
   SOCKET_BOOLEAN(caustics_refractive, "Refractive Caustics", true);
-  SOCKET_FLOAT(filter_glossy, "Filter Glossy", 0.0f);
+  SOCKET_FLOAT(filter_glossy, "Filter Glossy", 1.0f);
 
   SOCKET_BOOLEAN(use_direct_light, "Use Direct Light", true);
   SOCKET_BOOLEAN(use_indirect_light, "Use Indirect Light", true);
@@ -166,6 +166,7 @@ NODE_DEFINE(Integrator)
   denoiser_type_enum.insert("none", DENOISER_NONE);
   denoiser_type_enum.insert("optix", DENOISER_OPTIX);
   denoiser_type_enum.insert("openimagedenoise", DENOISER_OPENIMAGEDENOISE);
+  denoiser_type_enum.insert("dlss", DENOISER_DLSS);
 
   static NodeEnum denoiser_prefilter_enum;
   denoiser_prefilter_enum.insert("none", DENOISER_PREFILTER_NONE);
@@ -210,6 +211,10 @@ void Integrator::device_update(Device *device, DeviceScene *dscene, Scene *scene
       scene->update_stats->integrator.times.add_entry({"device_update", time});
     }
   });
+
+  if (use_denoise && denoiser_type == DENOISER_DLSS) {
+    use_pixel_jitter = true;
+  }
 
   KernelIntegrator *kintegrator = &dscene->data.integrator;
 
@@ -267,6 +272,7 @@ void Integrator::device_update(Device *device, DeviceScene *dscene, Scene *scene
   kintegrator->caustics_reflective = caustics_reflective;
   kintegrator->caustics_refractive = caustics_refractive;
   kintegrator->filter_glossy = (filter_glossy == 0.0f) ? FLT_MAX : 1.0f / filter_glossy;
+  kintegrator->differential_widen_scale = min(1.0f, filter_glossy);
 
   kintegrator->filter_closures = 0;
   if (!use_direct_light) {
@@ -449,9 +455,9 @@ void Integrator::tag_update(Scene *scene, const uint32_t flag)
   }
 }
 
-uint Integrator::get_kernel_features() const
+uint64_t Integrator::get_kernel_features() const
 {
-  uint kernel_features = 0;
+  uint64_t kernel_features = 0;
 
   if (ao_additive_factor != 0.0f) {
     kernel_features |= KERNEL_FEATURE_AO_ADDITIVE;

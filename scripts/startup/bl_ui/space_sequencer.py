@@ -366,12 +366,18 @@ class SEQUENCER_PT_sequencer_overlay_thumbnails(Panel):
         st = context.space_data
         return st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
+    def draw_header(self, context):
+        overlay_settings = context.space_data.timeline_overlay
+        layout = self.layout
+        layout.active = context.space_data.show_overlays
+        layout.prop(overlay_settings, "show_thumbnails", text="")
+
     def draw(self, context):
         st = context.space_data
         overlay_settings = st.timeline_overlay
         layout = self.layout
 
-        layout.active = st.show_overlays
+        layout.active = st.show_overlays and overlay_settings.show_thumbnails
 
         row = layout.row()
         row.prop(overlay_settings, "thumbnail_display_style", expand=True)
@@ -550,6 +556,9 @@ class SEQUENCER_MT_view(Menu):
         layout.prop(st, "show_toolshelf_tabs")
 
         layout.prop(st, "show_region_footer", text="Playback Controls")
+        col = layout.column()
+        col.prop(st, "show_scrubbing_region", text="Scrubbing")
+        col.enabled = st.show_region_footer
         layout.separator()
 
         layout.menu("SEQUENCER_MT_view_annotations")  # BFA
@@ -1014,30 +1023,15 @@ class SEQUENCER_MT_add(Menu):
 
         layout.menu("SEQUENCER_MT_add_scene", text="Scene", icon='SCENE_DATA')
 
-        bpy_data_movieclips_len = len(bpy.data.movieclips)
-        if bpy_data_movieclips_len > 10:
-            layout.operator_context = "INVOKE_DEFAULT"
-            layout.operator("sequencer.movieclip_strip_add", text="Clip...", icon="TRACKER")
-        elif bpy_data_movieclips_len > 0:
-            layout.operator_menu_enum("sequencer.movieclip_strip_add", "clip", text="Clip", icon="TRACKER")
+        if bpy.data.movieclips:
+            layout.menu("SEQUENCER_MT_add_clip", text="Clip", text_ctxt=i18n_contexts.id_movieclip, icon='TRACKER')
         else:
-            layout.menu(
-                "SEQUENCER_MT_add_empty",
-                text="Clip",
-                text_ctxt=i18n_contexts.id_movieclip,
-                icon="TRACKER",
-            )
-        del bpy_data_movieclips_len
+            layout.menu("SEQUENCER_MT_add_empty", text="Clip", text_ctxt=i18n_contexts.id_movieclip, icon='TRACKER')
 
-        bpy_data_masks_len = len(bpy.data.masks)
-        if bpy_data_masks_len > 10:
-            layout.operator_context = "INVOKE_DEFAULT"
-            layout.operator("sequencer.mask_strip_add", text="Mask...", icon="MOD_MASK")
-        elif bpy_data_masks_len > 0:
-            layout.operator_menu_enum("sequencer.mask_strip_add", "mask", text="Mask", icon="MOD_MASK")
+        if bpy.data.masks:
+            layout.menu("SEQUENCER_MT_add_mask", text="Mask", icon='MOD_MASK')
         else:
-            layout.menu("SEQUENCER_MT_add_empty", text="Mask", icon="MOD_MASK")
-        del bpy_data_masks_len
+            layout.menu("SEQUENCER_MT_add_empty", text="Mask", icon='MOD_MASK')
 
         layout.separator()
 
@@ -1047,9 +1041,9 @@ class SEQUENCER_MT_add(Menu):
 
         layout.separator()
 
-        layout.operator_context = "INVOKE_REGION_WIN"
-        layout.operator("sequencer.effect_strip_add", text="Color", icon="COLOR").type = "COLOR"
-        layout.operator("sequencer.effect_strip_add", text="Text", icon="FONT_DATA").type = "TEXT"
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("sequencer.effect_strip_add", text="Color", icon='COLOR').type = 'COLOR'
+        layout.operator("sequencer.text_strip_add", text="Text", icon='FONT_DATA')
 
         layout.separator()
         total, nonsound = selected_strips_count(context)
@@ -1082,6 +1076,29 @@ class SEQUENCER_MT_add_empty(Menu):
         layout = self.layout
 
         layout.label(text="No Items Available")
+
+
+class SEQUENCER_MT_add_clip(Menu):
+    bl_label = "Clip"
+    bl_translation_context = i18n_contexts.id_movieclip
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        for clip in bpy.data.movieclips:
+            layout.operator("sequencer.movieclip_strip_add", text=clip.name, translate=False).clip = clip.name
+
+
+class SEQUENCER_MT_add_mask(Menu):
+    bl_label = "Mask"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        for mask in bpy.data.masks:
+            layout.operator("sequencer.mask_strip_add", text=mask.name, translate=False).mask = mask.name
 
 
 class SEQUENCER_MT_add_transitions(Menu):
@@ -1554,11 +1571,11 @@ class SEQUENCER_MT_strip(Menu):
             layout.operator("sequencer.paste", text="Paste", icon='PASTEDOWN')
             layout.separator()
             layout.operator("sequencer.duplicate_move", text="Duplicate", icon='DUPLICATE')
-            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked")
+            layout.operator("sequencer.duplicate_move_linked", text="Duplicate Linked", icon="DUPLICATE") # BFA - WIP - Make a Duplicate Linked icon # BFA - WIP - Make a Duplicate Linked icon
 
         layout.separator()
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
-        layout.operator("sequencer.ripple_delete", text="Ripple Delete") # BFA - WIP
+        layout.operator("sequencer.ripple_delete", text="Ripple Delete", icon="RIPPLE_DELETE")
 
         if strip and strip.type == "SCENE":
             layout.operator("sequencer.delete", text="Delete Strip & Data", icon="DELETE_DUPLICATE").delete_data = True
@@ -1595,9 +1612,12 @@ class SEQUENCER_MT_strip(Menu):
                     layout.menu("SEQUENCER_MT_strip_movie")
                 elif strip_type == "IMAGE":
                     layout.separator()
-                    layout.operator("sequencer.rendersize", icon="RENDER_REGION")
-                    layout.operator("sequencer.images_separate", icon="SEPARATE")
-                elif strip_type == "TEXT":
+                    layout.operator("sequencer.rendersize")
+                    layout.operator("sequencer.images_separate")
+                elif strip_type != 'SOUND':
+                    layout.separator()
+                    layout.operator("sequencer.rendersize")
+                elif strip_type == 'META':
                     layout.separator()
                     layout.menu("SEQUENCER_MT_strip_effect")
                     layout.menu("SEQUENCER_MT_strip_effect_change")
@@ -1613,7 +1633,7 @@ class SEQUENCER_MT_strip(Menu):
 
         if has_sequencer:
             layout.separator()
-            layout.menu("SEQUENCER_MT_color_tag_picker")
+            layout.menu_contents("SEQUENCER_MT_color_tag_picker") # BFA - Expose in top-level
 
             layout.separator()
             layout.menu("SEQUENCER_MT_strip_lock_mute")
@@ -1831,7 +1851,11 @@ class SEQUENCER_MT_context_menu(Menu):
             elif strip_type == "IMAGE":
                 layout.separator()
                 layout.operator("sequencer.rendersize", icon="RENDER_REGION")
-                layout.operator("sequencer.images_separate", icon="SEPARATE")
+                if has_selection:
+                   layout.operator("sequencer.images_separate", icon="SEPARATE")
+            elif strip_type != 'SOUND':
+                layout.separator()
+                layout.operator("sequencer.rendersize")
             elif strip_type == "TEXT":
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_effect")
@@ -1848,7 +1872,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.menu("SEQUENCER_MT_color_tag_picker")
+        layout.menu_contents("SEQUENCER_MT_color_tag_picker") # BFA - Expose in top-level
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_lock_mute")
@@ -3368,6 +3392,8 @@ classes = (
     SEQUENCER_MT_add_effect,
     SEQUENCER_MT_add_transitions,
     SEQUENCER_MT_add_empty,
+    SEQUENCER_MT_add_clip,
+    SEQUENCER_MT_add_mask,
     SEQUENCER_MT_strip_effect,
     SEQUENCER_MT_strip_effect_change,
     SEQUENCER_MT_strip_movie,

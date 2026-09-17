@@ -141,27 +141,28 @@ enum StencilTextureMode {
 };
 
 enum StencilConstraint {
+  STENCIL_CONSTRAINT_NONE = 0,
   STENCIL_CONSTRAINT_X = 1,
   STENCIL_CONSTRAINT_Y = 2,
 };
 
 struct StencilControlData {
-  float init_mouse[2];
-  float init_spos[2];
-  float init_sdim[2];
-  float init_rot;
-  float init_angle;
-  float lenorig;
-  float area_size[2];
-  StencilControlMode mode;
-  StencilConstraint constrain_mode;
+  float init_mouse[2] = {0};
+  float init_spos[2] = {0};
+  float init_sdim[2] = {0};
+  float init_rot = 0.0f;
+  float init_angle = 0.0f;
+  float lenorig = 0.0f;
+  float area_size[2] = {0};
+  StencilControlMode mode = STENCIL_TRANSLATE;
+  StencilConstraint constrain_mode = STENCIL_CONSTRAINT_NONE;
   /** We are tweaking mask or color stencil. */
-  int mask;
-  Brush *br;
-  float *dim_target;
-  float *rot_target;
-  float *pos_target;
-  short launch_event;
+  int mask = 0;
+  Brush *br = nullptr;
+  float *dim_target = nullptr;
+  float *rot_target = nullptr;
+  float *pos_target = nullptr;
+  short launch_event = 0;
 };
 
 static void stencil_set_target(StencilControlData *scd)
@@ -216,7 +217,7 @@ static wmOperatorStatus stencil_control_invoke(bContext *C, wmOperator *op, cons
     }
   }
 
-  scd = MEM_new_uninitialized<StencilControlData>(__func__);
+  scd = MEM_new<StencilControlData>(__func__);
   scd->mask = mask;
   scd->br = br;
 
@@ -330,7 +331,7 @@ static wmOperatorStatus stencil_control_modal(bContext *C, wmOperator *op, const
       if (event->val == KM_PRESS) {
 
         if (scd->constrain_mode == STENCIL_CONSTRAINT_X) {
-          scd->constrain_mode = StencilConstraint(0);
+          scd->constrain_mode = STENCIL_CONSTRAINT_NONE;
         }
         else {
           scd->constrain_mode = STENCIL_CONSTRAINT_X;
@@ -342,7 +343,7 @@ static wmOperatorStatus stencil_control_modal(bContext *C, wmOperator *op, const
     case EVT_YKEY:
       if (event->val == KM_PRESS) {
         if (scd->constrain_mode == STENCIL_CONSTRAINT_Y) {
-          scd->constrain_mode = StencilConstraint(0);
+          scd->constrain_mode = STENCIL_CONSTRAINT_NONE;
         }
         else {
           scd->constrain_mode = STENCIL_CONSTRAINT_Y;
@@ -672,6 +673,24 @@ void ED_operatortypes_paint()
   WM_operatortype_append(mask::PAINT_OT_mask_box_gesture);
   WM_operatortype_append(mask::PAINT_OT_mask_line_gesture);
   WM_operatortype_append(mask::PAINT_OT_mask_polyline_gesture);
+}
+
+static wmKeyMap *paint_stroke_modal_keymap(wmKeyConfig *keyconf)
+{
+  static const EnumPropertyItem modal_items[] = {
+      {PAINT_STROKE_MODAL_CANCEL, "CANCEL", 0, "Cancel", "Cancel and undo a stroke in progress"},
+      {0}};
+
+  static const char *name = "Paint Stroke Modal";
+
+  wmKeyMap *keymap = WM_modalkeymap_find(keyconf, name);
+
+  /* This function is called for each space-type, only needs to add map once. */
+  if (!keymap) {
+    keymap = WM_modalkeymap_ensure(keyconf, name, modal_items);
+  }
+
+  return keymap;
 }
 
 void ED_keymap_paint(wmKeyConfig *keyconf)

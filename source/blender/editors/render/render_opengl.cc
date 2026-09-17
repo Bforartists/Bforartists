@@ -55,6 +55,7 @@
 
 #include "ED_gpencil_legacy.hh"
 #include "ED_screen.hh"
+#include "ED_util.hh"
 #include "ED_view3d.hh"
 #include "ED_view3d_offscreen.hh"
 
@@ -188,7 +189,7 @@ static void screen_opengl_views_setup(OGLRender *oglrender)
 
   if (!is_multiview) {
     /* we only have one view when multiview is off */
-    rv = static_cast<RenderView *>(rr->views.first);
+    rv = rr->views.first();
 
     if (rv == nullptr) {
       rv = MEM_new<RenderView>("new opengl render view");
@@ -210,7 +211,7 @@ static void screen_opengl_views_setup(OGLRender *oglrender)
     }
 
     /* remove all the views that are not needed */
-    rv = static_cast<RenderView *>(rr->views.last);
+    rv = rr->views.last();
     while (rv) {
       srv = static_cast<SceneRenderView *>(
           BLI_findstring(&rd->views, rv->name, offsetof(SceneRenderView, name)));
@@ -504,8 +505,7 @@ static void screen_opengl_render_apply(const bke::BlenderProject *project, OGLRe
   }
 
   rr = RE_AcquireResultRead(oglrender->re);
-  for (rv = static_cast<RenderView *>(rr->views.first), view_id = 0; rv; rv = rv->next, view_id++)
-  {
+  for (rv = rr->views.first(), view_id = 0; rv; rv = rv->next, view_id++) {
     BLI_assert(view_id < oglrender->views_len);
     RE_SetActiveRenderView(oglrender->re, rv->name);
     oglrender->view_id = view_id;
@@ -595,7 +595,7 @@ static int gather_frames_to_render_for_id(LibraryIDLinkCallbackData *cb_data)
   OGLRender *oglrender = static_cast<OGLRender *>(cb_data->user_data);
 
   /* Whitelist of datablocks to follow pointers into. */
-  const ID_Type id_type = GS(id->name);
+  const ID_Type id_type = id->id_type();
   switch (id_type) {
     /* Whitelist: */
     case ID_ME:        /* Mesh */
@@ -727,7 +727,7 @@ static bool screen_opengl_render_init(bContext *C, wmOperator *op)
   }
 
   /* only one render job at a time */
-  if (WM_jobs_test(wm, scene, WM_JOB_TYPE_RENDER)) {
+  if (WM_jobs_has_running(wm, scene, WM_JOB_TYPE_RENDER)) {
     return false;
   }
 
@@ -777,6 +777,9 @@ static bool screen_opengl_render_init(bContext *C, wmOperator *op)
     return false;
   }
 
+  Main *bmain = CTX_data_main(C);
+  ED_editors_flush_edits(bmain);
+
   /* allocate opengl render */
   oglrender = MEM_new<OGLRender>("OGLRender");
   op->customdata = oglrender;
@@ -785,7 +788,7 @@ static bool screen_opengl_render_init(bContext *C, wmOperator *op)
   oglrender->sizex = sizex;
   oglrender->sizey = sizey;
   oglrender->viewport = GPU_viewport_create();
-  oglrender->bmain = CTX_data_main(C);
+  oglrender->bmain = bmain;
   oglrender->scene = scene;
   oglrender->current_scene = scene;
   oglrender->workspace = workspace;
@@ -1099,12 +1102,10 @@ static void write_result(const bke::BlenderProject *project,
       BKE_reportf(&reports, RPT_ERROR, "Write error: cannot save %s", filepath);
     }
   }
-  if (reports.list.first != nullptr) {
+  if (reports.list.first() != nullptr) {
     /* TODO: Should rather use new #BKE_reports_move_to_reports ? */
     std::unique_lock lock(oglrender->reports_mutex);
-    for (Report *report = static_cast<Report *>(reports.list.first); report != nullptr;
-         report = report->next)
-    {
+    for (Report *report = reports.list.first(); report != nullptr; report = report->next) {
       BKE_report(oglrender->reports, static_cast<eReportType>(report->type), report->message);
     }
   }
@@ -1280,7 +1281,7 @@ static wmOperatorStatus screen_opengl_render_modal(bContext *C,
   }
 
   /* no running blender, remove handler and pass through */
-  if (0 == WM_jobs_test(CTX_wm_manager(C), oglrender->scene, WM_JOB_TYPE_RENDER)) {
+  if (!WM_jobs_has_running(CTX_wm_manager(C), oglrender->scene, WM_JOB_TYPE_RENDER)) {
     screen_opengl_render_end(oglrender);
     MEM_delete(oglrender);
     return OPERATOR_FINISHED | OPERATOR_PASS_THROUGH;

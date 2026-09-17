@@ -53,6 +53,7 @@
 #include "BKE_anim_path.h"
 #include "BKE_animsys.hh"
 #include "BKE_armature.hh"
+#include "BKE_bvh.hh"
 #include "BKE_bvhutils.hh"
 #include "BKE_cachefile.hh"
 #include "BKE_camera.h"
@@ -1027,7 +1028,7 @@ static void childof_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *l
 {
   if (con && list) {
     bChildOfConstraint *data = static_cast<bChildOfConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -1039,7 +1040,7 @@ static void childof_evaluate(bConstraint *con,
                              ListBaseT<bConstraintTarget> *targets)
 {
   bChildOfConstraint *data = static_cast<bChildOfConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* Only evaluate if there is a target.
    *
@@ -1209,7 +1210,7 @@ static void trackto_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *l
 {
   if (con && list) {
     bTrackToConstraint *data = static_cast<bTrackToConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -1312,7 +1313,7 @@ static void trackto_evaluate(bConstraint *con,
                              ListBaseT<bConstraintTarget> *targets)
 {
   bTrackToConstraint *data = static_cast<bTrackToConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct)) {
     float size[3], vec[3];
@@ -1408,7 +1409,7 @@ static void kinematic_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bKinematicConstraint *data = static_cast<bKinematicConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -1515,7 +1516,7 @@ static void followpath_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bFollowPathConstraint *data = static_cast<bFollowPathConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGETNS_FLUSH_TARS(con, data->tar, ct, list, no_copy);
@@ -1567,7 +1568,7 @@ static bool followpath_get_tarmat(Depsgraph * /*depsgraph*/,
      * to get a time factor. */
     curvetime /= cu->pathlen;
 
-    Nurb *nu = static_cast<Nurb *>(cu->nurb.first);
+    Nurb *nu = cu->nurb.first();
     if (!(nu && nu->flagu & CU_NURB_CYCLIC) && cu->flag & CU_PATH_CLAMP) {
       /* If curve is not cyclic, clamp to the begin/end points if the curve clamp option is on.
        */
@@ -1612,7 +1613,7 @@ static void followpath_evaluate(bConstraint *con,
                                 bConstraintOb *cob,
                                 ListBaseT<bConstraintTarget> *targets)
 {
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* only evaluate if there is a target */
   if (VALID_CONS_TARGET(ct)) {
@@ -1951,7 +1952,7 @@ static void loclike_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *l
 {
   if (con && list) {
     bLocateLikeConstraint *data = static_cast<bLocateLikeConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -1963,7 +1964,7 @@ static void loclike_evaluate(bConstraint *con,
                              ListBaseT<bConstraintTarget> *targets)
 {
   bLocateLikeConstraint *data = static_cast<bLocateLikeConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct)) {
     float offset[3] = {0.0f, 0.0f, 0.0f};
@@ -2050,7 +2051,7 @@ static void rotlike_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *l
 {
   if (con && list) {
     bRotateLikeConstraint *data = static_cast<bRotateLikeConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -2062,7 +2063,7 @@ static void rotlike_evaluate(bConstraint *con,
                              ListBaseT<bConstraintTarget> *targets)
 {
   bRotateLikeConstraint *data = static_cast<bRotateLikeConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct)) {
     float loc[3], size[3], oldrot[3][3], newrot[3][3];
@@ -2235,7 +2236,7 @@ static void sizelike_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *
 {
   if (con && list) {
     bSizeLikeConstraint *data = static_cast<bSizeLikeConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -2247,7 +2248,7 @@ static void sizelike_evaluate(bConstraint *con,
                               ListBaseT<bConstraintTarget> *targets)
 {
   bSizeLikeConstraint *data = static_cast<bSizeLikeConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct)) {
     float obsize[3], size[3];
@@ -2361,7 +2362,7 @@ static void translike_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bTransLikeConstraint *data = static_cast<bTransLikeConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -2373,7 +2374,7 @@ static void translike_evaluate(bConstraint *con,
                                ListBaseT<bConstraintTarget> *targets)
 {
   bTransLikeConstraint *data = static_cast<bTransLikeConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct)) {
     float target_mat[4][4];
@@ -2810,7 +2811,7 @@ static void actcon_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *li
 {
   if (con && list) {
     bActionConstraint *data = static_cast<bActionConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -2925,6 +2926,7 @@ static bool actcon_get_tarmat(Depsgraph *depsgraph,
   else if (cob->type == CONSTRAINT_OBTYPE_BONE) {
     Object workob;
     bPose pose = {{nullptr}};
+    pose.runtime = MEM_new<bke::bPoseRuntime>(__func__);
     bPoseChannel *pchan, *tchan;
 
     /* make a copy of the bone of interest in the temp pose before evaluating action,
@@ -2968,7 +2970,7 @@ static void actcon_evaluate(bConstraint *con,
                             ListBaseT<bConstraintTarget> *targets)
 {
   bActionConstraint *data = static_cast<bActionConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct) || data->flag & ACTCON_USE_EVAL_TIME) {
     switch (data->mix_mode) {
@@ -3064,7 +3066,7 @@ static void locktrack_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bLockTrackConstraint *data = static_cast<bLockTrackConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -3076,7 +3078,7 @@ static void locktrack_evaluate(bConstraint *con,
                                ListBaseT<bConstraintTarget> *targets)
 {
   bLockTrackConstraint *data = static_cast<bLockTrackConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct)) {
     float vec[3], vec2[3];
@@ -3383,7 +3385,7 @@ static void distlimit_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bDistLimitConstraint *data = static_cast<bDistLimitConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -3395,7 +3397,7 @@ static void distlimit_evaluate(bConstraint *con,
                                ListBaseT<bConstraintTarget> *targets)
 {
   bDistLimitConstraint *data = static_cast<bDistLimitConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* only evaluate if there is a target */
   if (VALID_CONS_TARGET(ct)) {
@@ -3534,7 +3536,7 @@ static void stretchto_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bStretchToConstraint *data = static_cast<bStretchToConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -3546,7 +3548,7 @@ static void stretchto_evaluate(bConstraint *con,
                                ListBaseT<bConstraintTarget> *targets)
 {
   bStretchToConstraint *data = static_cast<bStretchToConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* only evaluate if there is a target */
   if (VALID_CONS_TARGET(ct)) {
@@ -3742,7 +3744,7 @@ static void minmax_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *li
 {
   if (con && list) {
     bMinMaxConstraint *data = static_cast<bMinMaxConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -3754,7 +3756,7 @@ static void minmax_evaluate(bConstraint *con,
                             ListBaseT<bConstraintTarget> *targets)
 {
   bMinMaxConstraint *data = static_cast<bMinMaxConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* only evaluate if there is a target */
   if (VALID_CONS_TARGET(ct)) {
@@ -3866,7 +3868,7 @@ static void clampto_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *l
 {
   if (con && list) {
     bClampToConstraint *data = static_cast<bClampToConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGETNS_FLUSH_TARS(con, data->tar, ct, list, no_copy);
@@ -3891,7 +3893,7 @@ static void clampto_evaluate(bConstraint *con,
                              ListBaseT<bConstraintTarget> *targets)
 {
   bClampToConstraint *data = static_cast<bClampToConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* only evaluate if there is a target and it is a curve */
   if (VALID_CONS_TARGET(ct) && (ct->tar->type == OB_CURVES_LEGACY)) {
@@ -4068,7 +4070,7 @@ static void transform_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bTransformConstraint *data = static_cast<bTransformConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -4080,7 +4082,7 @@ static void transform_evaluate(bConstraint *con,
                                ListBaseT<bConstraintTarget> *targets)
 {
   bTransformConstraint *data = static_cast<bTransformConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* only evaluate if there is a target */
   if (VALID_CONS_TARGET(ct)) {
@@ -4274,7 +4276,7 @@ static void shrinkwrap_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bShrinkwrapConstraint *data = static_cast<bShrinkwrapConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     SINGLETARGETNS_FLUSH_TARS(con, data->target, ct, list, no_copy);
   }
@@ -4401,7 +4403,7 @@ static bool shrinkwrap_get_tarmat(Depsgraph * /*depsgraph*/,
 
       char cull_mode = scon->flag & CON_SHRINKWRAP_PROJECT_CULL_MASK;
 
-      BKE_shrinkwrap_project_normal(cull_mode, co, no, 0.0f, &transform, &tree, &hit);
+      BKE_shrinkwrap_project_normal(cull_mode, co, no, &transform, &tree, &hit);
 
       if (scon->flag & CON_SHRINKWRAP_PROJECT_OPPOSITE) {
         float inv_no[3];
@@ -4411,7 +4413,7 @@ static bool shrinkwrap_get_tarmat(Depsgraph * /*depsgraph*/,
           cull_mode ^= CON_SHRINKWRAP_PROJECT_CULL_MASK;
         }
 
-        BKE_shrinkwrap_project_normal(cull_mode, co, inv_no, 0.0f, &transform, &tree, &hit);
+        BKE_shrinkwrap_project_normal(cull_mode, co, inv_no, &transform, &tree, &hit);
       }
 
       if (hit.index < 0) {
@@ -4454,7 +4456,7 @@ static void shrinkwrap_evaluate(bConstraint * /*con*/,
                                 bConstraintOb *cob,
                                 ListBaseT<bConstraintTarget> *targets)
 {
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   /* only evaluate if there is a target */
   if (VALID_CONS_TARGET(ct)) {
@@ -4515,7 +4517,7 @@ static void damptrack_flush_tars(bConstraint *con,
 {
   if (con && list) {
     bDampTrackConstraint *data = static_cast<bDampTrackConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -4537,7 +4539,7 @@ static void damptrack_evaluate(bConstraint *con,
                                ListBaseT<bConstraintTarget> *targets)
 {
   bDampTrackConstraint *data = static_cast<bDampTrackConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   if (VALID_CONS_TARGET(ct)) {
     float tarvec[3];
@@ -4706,7 +4708,7 @@ static void splineik_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *
 {
   if (con && list) {
     bSplineIKConstraint *data = static_cast<bSplineIKConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGETNS_FLUSH_TARS(con, data->tar, ct, list, no_copy);
@@ -4770,7 +4772,7 @@ static void pivotcon_flush_tars(bConstraint *con, ListBaseT<bConstraintTarget> *
 {
   if (con && list) {
     bPivotConstraint *data = static_cast<bPivotConstraint *>(con->data);
-    bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+    bConstraintTarget *ct = list->first();
 
     /* the following macro is used for all standard single-target constraints */
     SINGLETARGET_FLUSH_TARS(con, data->tar, data->subtarget, ct, list, no_copy);
@@ -4782,7 +4784,7 @@ static void pivotcon_evaluate(bConstraint *con,
                               ListBaseT<bConstraintTarget> *targets)
 {
   bPivotConstraint *data = static_cast<bPivotConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
 
   float pivot[3], vec[3];
   float rotMat[3][3];
@@ -5164,27 +5166,15 @@ static void followtrack_project_to_depth_object_if_needed(FollowTrackContext *co
    * since this isn't typically used in edit-mode. */
   BKE_mesh_wrapper_ensure_mdata(const_cast<Mesh *>(depth_mesh));
 
-  bke::BVHTreeFromMesh tree_data = depth_mesh->bvh_corner_tris();
-
-  /* Can happen when the mesh has no faces. */
-  if (tree_data.tree == nullptr) {
+  if (depth_mesh->faces_num == 0) {
     return;
   }
 
-  BVHTreeRayHit hit;
-  hit.dist = BVH_RAYCAST_DIST_MAX;
-  hit.index = -1;
-
-  const int result = BLI_bvhtree_ray_cast(tree_data.tree,
-                                          ray_start,
-                                          ray_direction,
-                                          0.0f,
-                                          &hit,
-                                          tree_data.raycast_callback,
-                                          &tree_data);
-
-  if (result != -1) {
-    mul_v3_m4v3(cob->matrix[3], depth_object->object_to_world().ptr(), hit.co);
+  const bke::bvh::Tree &tree = depth_mesh->bvh_tris();
+  const bke::bvh::Ray ray(ray_start, ray_direction);
+  const std::optional<bke::bvh::RayHit> hit = tree.ray_intersect(ray);
+  if (hit) {
+    mul_v3_m4v3(cob->matrix[3], depth_object->object_to_world().ptr(), hit->position(ray));
   }
 }
 
@@ -5679,7 +5669,7 @@ static void geometry_attribute_flush_tars(bConstraint *con,
     return;
   }
   bGeometryAttributeConstraint *data = static_cast<bGeometryAttributeConstraint *>(con->data);
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(list->first);
+  bConstraintTarget *ct = list->first();
 
   SINGLETARGETNS_FLUSH_TARS(con, data->target, ct, list, no_copy);
 }
@@ -5740,7 +5730,7 @@ static void geometry_attribute_evaluate(bConstraint *con,
                                         bConstraintOb *cob,
                                         ListBaseT<bConstraintTarget> *targets)
 {
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->first);
+  bConstraintTarget *ct = targets->first();
   const bGeometryAttributeConstraint *data = static_cast<bGeometryAttributeConstraint *>(
       con->data);
 
@@ -6090,8 +6080,8 @@ bool BKE_constraint_apply_for_pose(
 
   bConstraint *new_con = BKE_constraint_duplicate_ex(con_eval, 0, ID_IS_EDITABLE(ob));
   ListBaseT<bConstraint> single_con;
-  single_con.first = new_con;
-  single_con.last = new_con;
+  single_con.first_ = new_con;
+  single_con.last_ = new_con;
 
   float vec[3];
   copy_v3_v3(vec, pchan_eval->pose_mat[3]);
@@ -6389,9 +6379,7 @@ void BKE_constraints_copy_ex(ListBaseT<bConstraint> *dst,
   dst->clear_no_delete();
   BLI_duplicatelist(dst, src);
 
-  for (con = static_cast<bConstraint *>(dst->first),
-      srccon = static_cast<bConstraint *>(src->first);
-       con && srccon;
+  for (con = dst->first(), srccon = src->first(); con && srccon;
        srccon = srccon->next, con = con->next)
   {
     constraint_copy_data_ex(con, srccon, flag, do_extern);
@@ -6444,6 +6432,28 @@ void BKE_constraints_active_set(ListBaseT<bConstraint> *list, bConstraint *con)
       }
     }
   }
+}
+
+bool BKE_constraint_has_influence(const bConstraint *con)
+{
+  if (con->flag & CONSTRAINT_OFF) {
+    return false;
+  }
+  if (con->enforce == 0.0f) {
+    return false;
+  }
+  if (con->flag & CONSTRAINT_DISABLE) {
+    if (con->type != CONSTRAINT_TYPE_KINEMATIC) {
+      return false;
+    }
+    /* Targetless/Auto IK constraints still need to be considered "active". */
+    bKinematicConstraint *data = static_cast<bKinematicConstraint *>(con->data);
+    if ((data->flag & (CONSTRAINT_IK_AUTO | CONSTRAINT_IK_TEMP)) == 0) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 static bConstraint *constraint_list_find_from_target(ListBaseT<bConstraint> *constraints,
@@ -6609,7 +6619,7 @@ void BKE_constraint_targets_flush(bConstraint *con,
   }
 
   /* Remove the custom target. */
-  bConstraintTarget *ct = static_cast<bConstraintTarget *>(targets->last);
+  bConstraintTarget *ct = targets->last();
 
   if (ct && (ct->flag & CONSTRAINT_TAR_CUSTOM_SPACE)) {
     BLI_assert(is_custom_space_needed(con));
@@ -6775,15 +6785,11 @@ void BKE_constraints_solve(Depsgraph *depsgraph,
     if (cti == nullptr) {
       continue;
     }
-    if (con.flag & (CONSTRAINT_DISABLE | CONSTRAINT_OFF)) {
+    if (!BKE_constraint_has_influence(&con)) {
       continue;
     }
     /* these constraints can't be evaluated anyway */
     if (cti->evaluate_constraint == nullptr) {
-      continue;
-    }
-    /* influence == 0 should be ignored */
-    if (con.enforce == 0.0f) {
       continue;
     }
 

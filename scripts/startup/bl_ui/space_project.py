@@ -5,7 +5,10 @@
 import bpy
 from bpy.types import Header, Menu, Panel
 
-from bpy.app.translations import pgettext_iface
+from bpy.app.translations import (
+    pgettext_iface as iface_,
+    contexts as i18n_contexts,
+)
 
 from .space_userpref import CenterAlignMixIn
 
@@ -34,7 +37,7 @@ class PROJECT_MT_editor_menus(Menu):
     def draw(self, context):
         layout = self.layout
         layout.menu("PROJECT_MT_view")
-        layout.menu("PROJECT_MT_save_load", text="Project")
+        layout.menu("PROJECT_MT_save_load", text="Project", text_ctxt=i18n_contexts.editor_preferences)
 
 
 class PROJECT_MT_view(Menu):
@@ -63,6 +66,19 @@ class PROJECT_MT_save_load(Menu):
         layout.operator("project.save_project", text="Save Project", icon='FILE_TICK')
 
 
+class PROJECT_MT_add_variable(Menu):
+    bl_label = "Add Variable"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("project.add_variable", text="String", icon='NONE').variable_type = 'STRING'
+        layout.operator("project.add_variable", text="Filepath", icon='NONE').variable_type = 'FILEPATH'
+        layout.separator()
+        layout.operator("project.add_variable", text="Integer", icon='NONE').variable_type = 'INTEGER'
+        layout.operator("project.add_variable", text="Float", icon='NONE').variable_type = 'FLOAT'
+
+
 # -------------------------------------------------------------
 # Execution Area
 #
@@ -87,7 +103,7 @@ class PROJECT_PT_save_project(Panel):
             # and for consistency with unsaved files in the title bar.
             layout.operator(
                 "project.save_project",
-                text=("* " if bpy.data.project.is_dirty else "") + pgettext_iface("Save Project"),
+                text=("* " if bpy.data.project.is_dirty else "") + iface_("Save Project"),
                 icon='FILE_TICK',
                 translate=False,
             )
@@ -131,6 +147,7 @@ class PROJECT_PT_navigation_bar(Panel):
 
 class PROJECT_PT_main(Panel, CenterAlignMixIn):
     bl_label = "Project"
+    bl_translation_context = i18n_contexts.editor_preferences
     bl_space_type = 'PROJECT'
     bl_region_type = 'WINDOW'
     bl_category = MAIN_SECTION_NAME
@@ -174,12 +191,14 @@ class PROJECT_PT_main_unset(Panel, CenterAlignMixIn):
             col.separator()
 
             row = col.row()
-            row.alignment = 'CENTER'
-            row.label(text="Save the current file, and make sure to place it in a folder that will be part of the project")
+            row.label_multiline(
+                text="Save the current file, and make sure to place it in a folder that will be part of the project",
+                alignment='CENTER')
 
             row = col.row()
-            row.alignment = 'CENTER'
-            row.label(text="Alternatively, open a file inside of a project directory to see its settings.")
+            row.label_multiline(
+                text="Alternatively, open a file inside of a project directory to see its settings.",
+                alignment='CENTER')
 
             col.separator()
             row = col.row()
@@ -196,17 +215,80 @@ class PROJECT_PT_main_unset(Panel, CenterAlignMixIn):
             col.separator()
 
             row = col.row()
-            row.alignment = 'CENTER'
-            row.label(text="Set up a new project by choosing any parent directory of the current file.")
+            row.label_multiline(
+                text="Set up a new project by choosing any parent directory of the current file.",
+                alignment='CENTER')
             row = col.row()
-            row.alignment = 'CENTER'
-            row.label(text="Alternatively, open a file inside of a project directory to see its settings.")
+            row.label_multiline(
+                text="Alternatively, open a file inside of a project directory to see its settings.",
+                alignment='CENTER')
 
             col.separator()
             row = col.row()
             row.alignment = 'CENTER'
             row.operator("project.new_project", text="New Project...", icon='ADD')
             row.operator("project.open_blend_in_project", icon='FILE_FOLDER')
+
+
+class PROJECT_UL_variables(bpy.types.UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        col = layout.column()
+        col.prop(item, "name", text="", expand=False, emboss=False)
+
+        col = layout.column()
+        col.alignment = 'RIGHT'
+        col.active = False
+        match item.type:
+            case 'INTEGER':
+                col.label(text=str(item.value))
+            case 'FLOAT':
+                col.label(text="{:.3f}".format(item.value))
+            case 'STRING':
+                col.label(text=str(item.value))
+
+
+class PROJECT_PT_variables(Panel):
+    bl_label = "Variables"
+    bl_space_type = 'PROJECT'
+    bl_region_type = 'WINDOW'
+    bl_category = "Variables"
+
+    def draw(self, context):
+        project = bpy.data.project
+
+        layout = self.layout
+
+        row = layout.row()
+        row.template_list(
+            listtype_name="PROJECT_UL_variables",
+            list_id="Variables",
+            dataptr=project,
+            propname="variables",
+            item_dyntip_propname="description",
+            active_dataptr=project,
+            active_propname="active_variable_index",
+        )
+
+        col = row.column(align=True)
+        col.menu("PROJECT_MT_add_variable", text="", icon='ADD')
+        col.operator("project.remove_variable", text="", icon='REMOVE')
+        col.separator()
+        col.operator("project.move_variable", text="", icon='TRIA_UP').direction = 'UP'
+        col.operator("project.move_variable", text="", icon='TRIA_DOWN').direction = 'DOWN'
+
+        col = layout.column()
+        col.use_property_split = True
+        col.alignment = 'LEFT'
+        col.separator(factor=1)
+
+        if project.active_variable_index >= 0 and project.active_variable_index < len(project.variables):
+            var = project.variables[project.active_variable_index]
+            col.prop(var, "type")
+            if var.type == 'STRING':
+                col.prop(var, "subtype")
+            col.prop(var, "name")
+            col.prop(var, "value")
+            col.prop(var, "description")
 
 
 # -------------------------------------------------------------
@@ -217,8 +299,11 @@ classes = (
     PROJECT_MT_editor_menus,
     PROJECT_MT_view,
     PROJECT_MT_save_load,
+    PROJECT_MT_add_variable,
     PROJECT_PT_navigation_bar,
     PROJECT_PT_save_project,
     PROJECT_PT_main_unset,
     PROJECT_PT_main,
+    PROJECT_PT_variables,
+    PROJECT_UL_variables,
 )

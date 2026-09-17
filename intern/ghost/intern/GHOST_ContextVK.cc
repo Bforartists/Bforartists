@@ -25,6 +25,10 @@
 #endif
 #include "volk.h"
 
+#ifdef WITH_GHOST_SDL
+#  include <SDL3/SDL_vulkan.h>
+#endif
+
 #include "GHOST_ContextVK.hh"
 #include "GHOST_Types.hh"
 
@@ -46,6 +50,7 @@
 #include <cassert>
 #include <cinttypes>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <mutex>
@@ -210,12 +215,15 @@ class GHOST_DeviceVK {
   VkPhysicalDeviceProperties2 properties = {
       VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
   };
-  VkPhysicalDeviceVulkan12Properties properties_12 = {
-      VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES,
+  VkPhysicalDeviceDriverProperties device_driver_properties = {
+      VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES,
   };
   VkPhysicalDeviceFeatures2 features = {};
   VkPhysicalDeviceVulkan11Features features_11 = {};
-  VkPhysicalDeviceVulkan12Features features_12 = {};
+  VkPhysicalDeviceTimelineSemaphoreFeatures features_timeline_semaphore = {
+      VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES};
+  VkPhysicalDeviceBufferDeviceAddressFeatures features_buffer_device_address = {
+      VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES};
   VkPhysicalDeviceRobustness2FeaturesEXT features_robustness2 = {
       VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT};
   VkPhysicalDeviceAccelerationStructureFeaturesKHR features_acceleration_structure = {
@@ -234,15 +242,15 @@ class GHOST_DeviceVK {
       : vk_physical_device(vk_physical_device),
         use_vk_ext_swapchain_colorspace(use_vk_ext_swapchain_colorspace)
   {
-    properties.pNext = &properties_12;
+    properties.pNext = &device_driver_properties;
     volk::vkGetPhysicalDeviceProperties2(vk_physical_device, &properties);
 
     features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
     features_11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-    features_12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
     features.pNext = &features_11;
-    features_11.pNext = &features_12;
-    features_12.pNext = &features_robustness2;
+    features_11.pNext = &features_timeline_semaphore;
+    features_timeline_semaphore.pNext = &features_buffer_device_address;
+    features_buffer_device_address.pNext = &features_robustness2;
     features_robustness2.pNext = &features_acceleration_structure;
 
     volk::vkGetPhysicalDeviceFeatures2(vk_physical_device, &features);
@@ -314,7 +322,7 @@ class GHOST_DeviceVK {
   void init_memory_allocator(VkInstance vk_instance)
   {
     VmaAllocatorCreateInfo vma_allocator_create_info = {};
-    vma_allocator_create_info.vulkanApiVersion = VK_API_VERSION_1_2;
+    vma_allocator_create_info.vulkanApiVersion = VK_API_VERSION_1_1;
     vma_allocator_create_info.physicalDevice = vk_physical_device;
     vma_allocator_create_info.device = vk_device;
     vma_allocator_create_info.instance = vk_instance;
@@ -348,6 +356,21 @@ struct GHOST_InstanceVK {
 
   GHOST_InstanceVK()
   {
+    /* volk is initialized in vk_instance_create_for_platform_checks during Vulkan backend support
+     * detection when not skipped via "--debug-gpu-backend-no-fallback". So only initialize it here
+     * as needed. */
+    if (volk::vkGetInstanceProcAddr == nullptr) {
+      VkResult vk_result = volkInitialize();
+      if (vk_result != VK_SUCCESS) {
+        CLOG_ERROR(
+            &LOG,
+            "Error initializing Vulkan loader: VkResult=%d, most likely cannot find the Vulkan "
+            "Loader provided by GPU driver/OS.",
+            vk_result);
+        /* Not recoverable when using "--debug-gpu-backend-no-fallback". */
+        exit(EXIT_FAILURE);
+      }
+    }
     init_extensions();
   }
 
@@ -427,14 +450,10 @@ struct GHOST_InstanceVK {
 #ifndef __APPLE__
           !device_vk.features.features.geometryShader ||
 #endif
-          !device_vk.features.features.vertexPipelineStoresAndAtomics ||
           !device_vk.features.features.multiViewport ||
-          !device_vk.features.features.shaderClipDistance ||
           !device_vk.features.features.fragmentStoresAndAtomics ||
-          !device_vk.features.features.multiDrawIndirect ||
           !device_vk.features.features.imageCubeArray ||
-          !device_vk.features.features.dualSrcBlend || !device_vk.features.features.logicOp ||
-          !device_vk.features.features.imageCubeArray)
+          !device_vk.features.features.dualSrcBlend || !device_vk.features.features.imageCubeArray)
       {
         continue;
       }
@@ -558,8 +577,10 @@ struct GHOST_InstanceVK {
      *
      * Ref #151103
      */
-    const bool is_amd_driver = device.properties_12.driverID == VK_DRIVER_ID_AMD_PROPRIETARY ||
-                               device.properties_12.driverID == VK_DRIVER_ID_AMD_OPEN_SOURCE;
+    const bool is_amd_driver = device.device_driver_properties.driverID ==
+                                   VK_DRIVER_ID_AMD_PROPRIETARY ||
+                               device.device_driver_properties.driverID ==
+                                   VK_DRIVER_ID_AMD_OPEN_SOURCE;
     if (is_amd_driver && is_debug) {
       device.extensions.disable(VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME);
       device.extensions.disable(VK_EXT_GRAPHICS_PIPELINE_LIBRARY_EXTENSION_NAME);
@@ -573,7 +594,7 @@ struct GHOST_InstanceVK {
      *
      * Ref: #147721
      */
-    if (device.properties_12.driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS &&
+    if (device.device_driver_properties.driverID == VK_DRIVER_ID_INTEL_PROPRIETARY_WINDOWS &&
         device.properties.properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
     {
       const uint32_t driver_version = device.properties.properties.driverVersion;
@@ -602,14 +623,15 @@ struct GHOST_InstanceVK {
 #ifndef __APPLE__
     device_features.geometryShader = VK_TRUE;
 #endif
-    device_features.vertexPipelineStoresAndAtomics = VK_TRUE;
+    device_features.vertexPipelineStoresAndAtomics =
+        device.features.features.vertexPipelineStoresAndAtomics;
     device_features.multiViewport = VK_TRUE;
-    device_features.shaderClipDistance = VK_TRUE;
+    device_features.shaderClipDistance = device.features.features.shaderClipDistance;
     device_features.fragmentStoresAndAtomics = VK_TRUE;
-    device_features.logicOp = VK_TRUE;
+
     device_features.dualSrcBlend = VK_TRUE;
     device_features.imageCubeArray = VK_TRUE;
-    device_features.multiDrawIndirect = VK_TRUE;
+    device_features.multiDrawIndirect = device.features.features.multiDrawIndirect;
     device_features.drawIndirectFirstInstance = VK_TRUE;
     device_features.samplerAnisotropy = device.features.features.samplerAnisotropy;
     device_features.wideLines = device.features.features.wideLines;
@@ -624,29 +646,28 @@ struct GHOST_InstanceVK {
 
     std::vector<void *> feature_struct_ptr;
 
-    /* Enable vulkan 11 features when supported on physical device. */
-    VkPhysicalDeviceVulkan11Features vulkan_11_features = {};
-    vulkan_11_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-    vulkan_11_features.shaderDrawParameters = VK_TRUE;
-    feature_struct_ptr.push_back(&vulkan_11_features);
+    /* Enable timeline semaphore. */
+    VkPhysicalDeviceTimelineSemaphoreFeatures timeline_semaphore_features = {};
+    timeline_semaphore_features.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
+    timeline_semaphore_features.timelineSemaphore = VK_TRUE;
+    feature_struct_ptr.push_back(&timeline_semaphore_features);
 
-    /* Enable optional vulkan 12 features when supported on physical device. */
-    VkPhysicalDeviceVulkan12Features vulkan_12_features = {};
-    vulkan_12_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-    vulkan_12_features.shaderOutputLayer = device.features_12.shaderOutputLayer;
-    vulkan_12_features.shaderOutputViewportIndex = device.features_12.shaderOutputViewportIndex;
-    vulkan_12_features.bufferDeviceAddress = device.features_12.bufferDeviceAddress;
-    vulkan_12_features.timelineSemaphore = VK_TRUE;
-    feature_struct_ptr.push_back(&vulkan_12_features);
+    /* Enable buffer device address. */
+    VkPhysicalDeviceBufferDeviceAddressFeatures buffer_device_address_features = {};
+    buffer_device_address_features.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+    buffer_device_address_features.bufferDeviceAddress = VK_TRUE;
+    feature_struct_ptr.push_back(&buffer_device_address_features);
 
-#ifndef __APPLE__
-    /* Enable provoking vertex. */
+    /* Enable provoking vertex if available. */
     VkPhysicalDeviceProvokingVertexFeaturesEXT provoking_vertex_features = {};
-    provoking_vertex_features.sType =
-        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT;
-    provoking_vertex_features.provokingVertexLast = VK_TRUE;
-    feature_struct_ptr.push_back(&provoking_vertex_features);
-#endif
+    if (device.extensions.is_supported(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME)) {
+      provoking_vertex_features.sType =
+          VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT;
+      provoking_vertex_features.provokingVertexLast = VK_TRUE;
+      feature_struct_ptr.push_back(&provoking_vertex_features);
+    }
 
     /* Enable dynamic rendering. */
     VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering = {};
@@ -788,9 +809,31 @@ struct GHOST_InstanceVK {
     }
 
     device_create_info.pNext = feature_struct_ptr[0];
-    VK_CHECK(
-        volk::vkCreateDevice(vk_physical_device, &device_create_info, nullptr, &device.vk_device),
-        GHOST_kFailure);
+
+    VkResult result = volk::vkCreateDevice(
+        vk_physical_device, &device_create_info, nullptr, &device.vk_device);
+
+    if (result != VK_SUCCESS) {
+#ifndef __has_feature
+#  define __has_feature(x) 0
+#endif
+#if (defined(__SANITIZE_ADDRESS__) || __has_feature(address_sanitizer)) && defined(__linux__)
+      if (device.device_driver_properties.driverID == VK_DRIVER_ID_NVIDIA_PROPRIETARY) {
+        CLOG_ERROR(
+            &LOG,
+            "Vulkan: vkCreateDevice resulted in code %s.\n"
+            "Address Sanitizer has known incompatibilities with Nvidia Vulkan drivers on Linux,"
+            "see https://developer.blender.org/docs/handbook/tooling/asan/"
+            "#shadow-memory-issue-with-vulkan-on-nvidia-linux-drivers for more info.",
+            blender::gpu::to_string(result));
+        return GHOST_kFailure;
+      }
+#endif
+      CLOG_ERROR(
+          &LOG, "Vulkan: vkCreateDevice resulted in code %s.", blender::gpu::to_string(result));
+      return GHOST_kFailure;
+    }
+
     volkLoadDeviceTable(&device.functions, device.vk_device);
     device.init_generic_queue();
     device.init_memory_allocator(vk_instance);
@@ -835,7 +878,10 @@ bool GHOST_ContextVK::is_device_extension_enabled(blender::StringRefNull extensi
 /** \} */
 
 GHOST_ContextVK::GHOST_ContextVK(const GHOST_ContextParams &context_params,
-#ifdef _WIN32
+#if defined(WITH_GHOST_SDL)
+                                 /* SDL */
+                                 SDL_Window *sdl_window,
+#elif defined(_WIN32)
                                  HWND hwnd,
 #elif defined(__APPLE__)
                                  void *metal_layer,
@@ -854,7 +900,10 @@ GHOST_ContextVK::GHOST_ContextVK(const GHOST_ContextParams &context_params,
                                  const GHOST_GPUDevice &preferred_device,
                                  const GHOST_WindowHDRInfo *hdr_info)
     : GHOST_Context(context_params),
-#ifdef _WIN32
+#if defined(WITH_GHOST_SDL)
+      /* SDL */
+      sdl_window_(sdl_window),
+#elif defined(_WIN32)
       hwnd_(hwnd),
 #elif defined(__APPLE__)
       metal_layer_(metal_layer),
@@ -985,7 +1034,7 @@ GHOST_TSuccess GHOST_ContextVK::swapBufferAcquire()
     recreateSwapchain(use_hdr_swapchain);
   }
 
-  /* Acquiree next image, swapchain can be (or become) invalid when minimizing window. */
+  /* Acquire next image, swapchain can be (or become) invalid when minimizing window. */
   uint32_t image_index = 0;
   if (swapchain_ != VK_NULL_HANDLE) {
     /* Some platforms (NVIDIA/Wayland) can receive an out of date swapchain when acquiring the next
@@ -1556,7 +1605,18 @@ GHOST_TSuccess GHOST_ContextVK::recreateSwapchain(bool use_hdr_swapchain)
   create_info.imageUsage = VK_IMAGE_USAGE_TRANSFER_DST_BIT |
                            (use_hdr_swapchain ? VK_IMAGE_USAGE_STORAGE_BIT : 0);
   create_info.preTransform = capabilities.currentTransform;
-  create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+  /* Alpha lets the compositor blend the surface against the desktop, needed by CSD for rounded
+   * window corners. Not all surfaces support it, so fall back to opaque in those cases. The caller
+   * handles the lack of transparency by drawing square corners, see #GHOST_Context::hasAlpha. */
+  if (context_params_.use_alpha &&
+      (capabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR))
+  {
+    create_info.compositeAlpha = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR;
+  }
+  else {
+    create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    context_params_.use_alpha = false;
+  }
   create_info.presentMode = present_mode;
   create_info.clipped = VK_TRUE;
   create_info.oldSwapchain = old_swapchain;
@@ -1657,35 +1717,45 @@ GHOST_TSuccess GHOST_ContextVK::destroySwapchain()
   return GHOST_kSuccess;
 }
 
-const char *GHOST_ContextVK::getPlatformSpecificSurfaceExtension() const
+std::vector<const char *> GHOST_ContextVK::getPlatformSpecificSurfaceExtensions() const
 {
-#ifdef _WIN32
-  return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
+  std::vector<const char *> extensions;
+#if defined(WITH_GHOST_SDL)
+  /* SDL provides the set of instance extensions its window backend requires. */
+  Uint32 sdl_extension_count = 0;
+  const char *const *sdl_extensions = SDL_Vulkan_GetInstanceExtensions(&sdl_extension_count);
+  for (Uint32 i = 0; i < sdl_extension_count; i++) {
+    extensions.push_back(sdl_extensions[i]);
+  }
+#elif defined(_WIN32)
+  extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #elif defined(__APPLE__)
-  return VK_EXT_METAL_SURFACE_EXTENSION_NAME;
+  extensions.push_back(VK_EXT_METAL_SURFACE_EXTENSION_NAME);
 #else /* UNIX/Linux */
   switch (platform_) {
 #  ifdef WITH_GHOST_X11
     case GHOST_kVulkanPlatformX11:
-      return VK_KHR_XLIB_SURFACE_EXTENSION_NAME;
+      extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
       break;
 #  endif
 #  ifdef WITH_GHOST_WAYLAND
     case GHOST_kVulkanPlatformWayland:
-      return VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME;
+      extensions.push_back(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
       break;
 #  endif
     case GHOST_kVulkanPlatformHeadless:
       break;
   }
 #endif
-  return nullptr;
+  return extensions;
 }
 
 GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
 {
   bool use_vk_ext_swapchain_colorspace = false;
-#ifdef _WIN32
+#if defined(WITH_GHOST_SDL)
+  const bool use_window_surface = (sdl_window_ != nullptr);
+#elif defined(_WIN32)
   const bool use_window_surface = (hwnd_ != nullptr);
 #elif defined(__APPLE__)
   const bool use_window_surface = (metal_layer_ != nullptr);
@@ -1716,6 +1786,7 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
     vulkan_instance.emplace();
     GHOST_InstanceVK &instance_vk = vulkan_instance.value();
     instance_vk.extensions.enable(VK_EXT_DEBUG_UTILS_EXTENSION_NAME, true);
+    instance_vk.extensions.enable(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
     /* Some XR platforms load functions without knowing if they were replaced by a core
      * function. Monado for example always uses the extension functions. Due to maintenance changes
@@ -1728,7 +1799,6 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
     instance_vk.extensions.enable(VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME);
     instance_vk.extensions.enable(VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME);
     instance_vk.extensions.enable(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME);
-    instance_vk.extensions.enable(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
     /* SteamVR requests both NVIDIA and KHR rectified extension. */
     instance_vk.extensions.enable(VK_NV_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME, true);
@@ -1738,9 +1808,14 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
 #endif
 
     if (use_window_surface) {
-      const char *native_surface_extension_name = getPlatformSpecificSurfaceExtension();
+      const std::vector<const char *> surface_extensions = getPlatformSpecificSurfaceExtensions();
       instance_vk.extensions.enable(VK_KHR_SURFACE_EXTENSION_NAME);
-      instance_vk.extensions.enable(native_surface_extension_name);
+
+      for (const char *extension : surface_extensions) {
+        if (!instance_vk.extensions.is_enabled(extension)) {
+          instance_vk.extensions.enable(extension);
+        }
+      }
       /* X11 doesn't use the correct swapchain offset, flipping can squash the first frames. */
       const bool use_vk_ext_swapchain_maintenance1 =
 #ifdef WITH_GHOST_X11
@@ -1772,7 +1847,12 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
 
   /* Initialize VkSurface */
   if (use_window_surface) {
-#ifdef _WIN32
+#if defined(WITH_GHOST_SDL)
+    if (!SDL_Vulkan_CreateSurface(sdl_window_, instance_vk.vk_instance, nullptr, &surface_)) {
+      CLOG_ERROR(&LOG, "SDL_Vulkan_CreateSurface failed: %s", SDL_GetError());
+      return GHOST_kFailure;
+    }
+#elif defined(_WIN32)
     VkWin32SurfaceCreateInfoKHR surface_create_info = {};
     surface_create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
     surface_create_info.hinstance = GetModuleHandle(nullptr);
@@ -1833,13 +1913,17 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
     optional_device_extensions.append(VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME);
 #endif
 
-#ifndef __APPLE__
-    required_device_extensions.append(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME);
-#endif
+    optional_device_extensions.append(VK_EXT_PROVOKING_VERTEX_EXTENSION_NAME);
     required_device_extensions.append(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
+    required_device_extensions.append(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+    required_device_extensions.append(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
+    required_device_extensions.append(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
+    required_device_extensions.append(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME);
+    required_device_extensions.append(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME);
     optional_device_extensions.append(VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_EXTENSION_NAME);
     optional_device_extensions.append(VK_EXT_DYNAMIC_RENDERING_UNUSED_ATTACHMENTS_EXTENSION_NAME);
     optional_device_extensions.append(VK_EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME);
+    optional_device_extensions.append(VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME);
     optional_device_extensions.append(VK_KHR_MAINTENANCE_4_EXTENSION_NAME);
     optional_device_extensions.append(VK_KHR_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME);
     optional_device_extensions.append(VK_EXT_ROBUSTNESS_2_EXTENSION_NAME);
@@ -1903,6 +1987,9 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
     optional_device_extensions.append(VK_KHR_RAY_QUERY_EXTENSION_NAME);
     optional_device_extensions.append(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
     optional_device_extensions.append(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+    optional_device_extensions.append(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+    optional_device_extensions.append(VK_KHR_SPIRV_1_4_EXTENSION_NAME);
+    optional_device_extensions.append(VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME);
 
     if (!instance_vk.select_physical_device(preferred_device_, required_device_extensions)) {
       return GHOST_kFailure;
@@ -1944,7 +2031,7 @@ GHOST_TSuccess GHOST_ContextVK::supportsWaylandColorManagement()
   }
 
   GHOST_DeviceVK &device_vk = vulkan_instance->device.value();
-  if (device_vk.properties_12.driverID != VK_DRIVER_ID_NVIDIA_PROPRIETARY) {
+  if (device_vk.device_driver_properties.driverID != VK_DRIVER_ID_NVIDIA_PROPRIETARY) {
     return GHOST_kSuccess;
   }
 

@@ -129,21 +129,21 @@ static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gz
   }
   switch (area->spacetype) {
     case SPACE_SEQ: {
-      const SpaceSeq *sseq = static_cast<const SpaceSeq *>(area->spacedata.first);
+      const SpaceSeq *sseq = area->spacedata.first_as<SpaceSeq>();
       if (sseq->gizmo_flag & (SEQ_GIZMO_HIDE | SEQ_GIZMO_HIDE_NAVIGATE)) {
         return false;
       }
       break;
     }
     case SPACE_IMAGE: {
-      const SpaceImage *sima = static_cast<const SpaceImage *>(area->spacedata.first);
+      const SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
       if (sima->gizmo_flag & (SI_GIZMO_HIDE | SI_GIZMO_HIDE_NAVIGATE)) {
         return false;
       }
       break;
     }
     case SPACE_CLIP: {
-      const SpaceClip *sc = static_cast<const SpaceClip *>(area->spacedata.first);
+      const SpaceClip *sc = area->spacedata.first_as<SpaceClip>();
       if (sc->gizmo_flag & (SCLIP_GIZMO_HIDE | SCLIP_GIZMO_HIDE_NAVIGATE)) {
         return false;
       }
@@ -151,7 +151,7 @@ static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gz
     }
     // bfa node minimap
     case SPACE_NODE: {
-      const SpaceNode *snode = static_cast<const SpaceNode *>(area->spacedata.first);
+      const SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
       if (snode->gizmo_flag & (SNODE_GIZMO_HIDE)) // bfa node minimap TODO: maybe add hide navigate?
         return false;
     } break;
@@ -270,8 +270,6 @@ void VIEW2D_GGT_navigate_impl(wmGizmoGroupType *gzgt, const char *idname)
   gzgt->setup = WIDGETGROUP_navigate_setup;
   gzgt->draw_prepare = WIDGETGROUP_navigate_draw_prepare;
   gzgt->draw_background = ED_gizmo_button2d_group_background;
-  gzgt->background_color = {0.0f, 0.0f, 0.0f, 0.3f};
-  gzgt->outline_color = {0.0f, 0.0f, 0.0f, 0.4f};
 }
 
 /** \} */

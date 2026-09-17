@@ -16,6 +16,7 @@ from bl_ui.properties_paint_common import (
     brush_basic_grease_pencil_vertex_settings,
     BrushAssetShelf,
     draw_mesh_automasking_settings,
+    show_experimental_texture_paint,
 )
 from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
@@ -100,7 +101,7 @@ class VIEW3D_HT_tool_header(Header):
             if tool_mode == "PAINT_TEXTURE":
                 layout.popover("VIEW3D_PT_tools_mask_texture")
             layout.popover("VIEW3D_PT_tools_brush_stroke")
-            layout.popover("VIEW3D_PT_tools_brush_falloff")
+            layout.popover("VIEW3D_PT_tools_brush_shape")
             layout.popover("VIEW3D_PT_tools_brush_display")
 
         # NOTE: general mode options should be added to `draw_mode_settings`.
@@ -195,7 +196,9 @@ class VIEW3D_HT_tool_header(Header):
                 row.popover(panel="VIEW3D_PT_sculpt_symmetry_for_topbar", text="")
             elif mode_string == "PAINT_VERTEX":
                 row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
-        elif mode_string == "SCULPT_CURVES":
+            elif mode_string == 'PAINT_TEXTURE' and show_experimental_texture_paint(tool_settings.image_paint.brush):
+                row.popover(panel="VIEW3D_PT_tools_imagepaint_symmetry_for_topbar", text="")
+        elif mode_string == 'SCULPT_CURVES':
             ob = context.object
             _row, sub = row_for_mirror()
             sub.prop(ob.data, "use_mirror_x", icon="MIRROR_X", toggle=True, icon_only=True)
@@ -311,8 +314,8 @@ class _draw_tool_settings_context_mode:
             layout.prop(brush, "blend", text="", expand=False)
 
         size = "size"
-        size_owner = ups if ups.use_unified_size else brush
-        if size_owner.use_locked_size == "SCENE":
+        size_owner = ups if brush.use_unified_size else brush
+        if size_owner.use_locked_size == 'SCENE':
             size = "unprojected_size"
 
         UnifiedPaintPanel.prop_unified(
@@ -352,6 +355,7 @@ class _draw_tool_settings_context_mode:
             return False
 
         paint = context.tool_settings.image_paint
+        ups = paint.unified_paint_settings
         brush = paint.brush
 
         BrushAssetShelf.draw_popup_selector(layout, context, brush)
@@ -359,7 +363,44 @@ class _draw_tool_settings_context_mode:
         if brush is None:
             return False
 
-        brush_basic_texpaint_settings(layout, context, brush, compact=True)
+        if show_experimental_texture_paint(brush):
+            size = "size"
+            size_owner = ups if brush.use_unified_size else brush
+            if size_owner.use_locked_size == 'SCENE':
+                size = "unprojected_size"
+
+            capabilities = brush.image_paint_capabilities
+
+            if capabilities.has_color:
+                row = layout.row(align=True)
+                row.ui_units_x = 4
+                UnifiedPaintPanel.prop_unified_color(row, context, brush, "color", text="")
+                UnifiedPaintPanel.prop_unified_color(row, context, brush, "secondary_color", text="")
+                row.separator()
+                layout.prop(brush, "blend", text="", translate=False)
+
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                size,
+                pressure_name="use_pressure_size",
+                unified_name="use_unified_size",
+                slider=True,
+                text="Size",
+                header=True,
+            )
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                "strength",
+                pressure_name="use_pressure_strength",
+                unified_name="use_unified_strength",
+                header=True,
+            )
+        else:
+            brush_basic_texpaint_settings(layout, context, brush, compact=True)
 
         return True
 
@@ -445,8 +486,8 @@ class _draw_tool_settings_context_mode:
         ups = paint.unified_paint_settings
 
         size = "size"
-        size_owner = ups if ups.use_unified_size else brush
-        if size_owner.use_locked_size == "SCENE":
+        size_owner = ups if brush.use_unified_size else brush
+        if size_owner.use_locked_size == 'SCENE':
             size = "unprojected_size"
 
         UnifiedPaintPanel.prop_unified(
@@ -514,10 +555,10 @@ class _draw_tool_settings_context_mode:
 
         BrushAssetShelf.draw_popup_selector(layout, context, brush)
 
-        if brush.gpencil_vertex_brush_type not in {"BLUR", "AVERAGE", "SMEAR"}:
-            layout.separator(factor=0.4)
+        if brush.gpencil_vertex_brush_type not in {'BLUR', 'AVERAGE', 'SMEAR'}:
+            layout.separator(factor=layout.property_split_factor)
             ups = paint.unified_paint_settings
-            prop_owner = ups if ups.use_unified_color else brush
+            prop_owner = ups if brush.use_unified_color else brush
 
             sub = layout.row(align=True)
             sub.prop_with_popover(prop_owner, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
@@ -695,8 +736,8 @@ class _draw_tool_settings_context_mode:
 
             brush_basic__draw_color_selector(context, layout, brush, brush.gpencil_settings)
 
-        if grease_pencil_tool == "TINT":
-            row.separator(factor=0.4)
+        if grease_pencil_tool == 'TINT':
+            row.separator(factor=layout.property_split_factor)
             row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
 
         from bl_ui.properties_paint_common import (
@@ -1045,15 +1086,7 @@ class VIEW3D_HT_header(Header):
             row = layout.row()
             row.active = is_paint_tool and color_type == "VERTEX"
 
-            if context.preferences.experimental.use_sculpt_texture_paint:
-                canvas_source = tool_settings.paint_mode.canvas_source
-                icon = "GROUP_VCOL" if canvas_source == "COLOR_ATTRIBUTE" else canvas_source
-                row.popover(panel="VIEW3D_PT_slots_paint_canvas", icon=icon)
-                # TODO: Update this boolean condition so that the Canvas button is only active when
-                # the appropriate color types are selected in Solid mode, I.E. 'TEXTURE'
-                row.active = is_paint_tool
-            else:
-                row.popover(panel="VIEW3D_PT_slots_color_attributes", icon="GROUP_VCOL")
+            row.popover(panel="VIEW3D_PT_slots_color_attributes", icon='GROUP_VCOL')
 
             layout.popover(
                 panel="VIEW3D_PT_sculpt_snapping",
@@ -1099,6 +1132,9 @@ class VIEW3D_HT_header(Header):
                 text="",
                 icon=VIEW3D_HT_header._mesh_paint_automasking_icon(paint),
             )
+
+            # BFA - expose loop select operator in header
+            layout.operator("mesh.loop_select", text="", icon="LOOPSEL")
         elif object_mode == "WEIGHT_GREASE_PENCIL":
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon="GROUP_VERTEX")
@@ -1190,6 +1226,16 @@ class VIEW3D_HT_header(Header):
 
         # sub.enabled = shading.type != 'RENDERED'
         sub.popover(panel="VIEW3D_PT_shading", text="")
+
+        # Pause the rendered viewport, for render engines that support it.
+        if shading.type == 'RENDERED':
+            rv3d = view.region_3d
+            if rv3d.support_pause_render:
+                layout.prop(
+                    rv3d, "pause_render",
+                    icon='PLAY' if rv3d.pause_render else 'PAUSE',
+                    text="",
+                )
 
     @staticmethod
     def _mesh_paint_automasking_icon(paint):
@@ -1303,10 +1349,11 @@ class VIEW3D_MT_editor_menus(Menu):
 
         elif obj:
             if mode_string not in {
-                "PAINT_TEXTURE",
-                "SCULPT_CURVES",
-                "SCULPT_GREASE_PENCIL",
-                "VERTEX_GREASE_PENCIL",
+                'PAINT_TEXTURE',
+                'SCULPT_CURVES',
+                'PAINT_GREASE_PENCIL',
+                'SCULPT_GREASE_PENCIL',
+                'VERTEX_GREASE_PENCIL',
             }:
                 layout.menu("VIEW3D_MT_" + mode_string.lower())
             if mode_string in {
@@ -1322,7 +1369,11 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_select_sculpt_curves")
                 layout.menu("VIEW3D_MT_sculpt_curves")
                 layout.template_node_operator_asset_root_items()
-            elif mode_string == "VERTEX_GREASE_PENCIL":
+            elif mode_string == 'PAINT_GREASE_PENCIL':
+                layout.menu("VIEW3D_MT_paint_grease_pencil")
+                layout.menu("VIEW3D_MT_paint_grease_pencil_stroke")
+                layout.template_node_operator_asset_root_items()
+            elif mode_string == 'VERTEX_GREASE_PENCIL':
                 layout.menu("VIEW3D_MT_select_edit_grease_pencil")
                 layout.menu("VIEW3D_MT_paint_vertex_grease_pencil")
                 layout.template_node_operator_asset_root_items()
@@ -1480,7 +1531,7 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base, Menu):
                 # Only show Align to Transform Orientation operator in pose mode, because in edit mode
                 # it might change the parent bone's length, or fail to align in certain cases.
                 layout.operator_context = 'EXEC_REGION_WIN'
-                layout.operator("transform.transform", text="Align to Transform Orientation").mode = 'ALIGN'
+                layout.operator("transform.transform", text="Align to Transform Orientation", icon="ALIGN_TRANSFORM").mode = 'ALIGN'
                 layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.data.display_type == 'BBONE':
@@ -1940,8 +1991,10 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.view_roll", text="Roll Left", icon="ROLL_LEFT").angle = pi / -12.0
-        layout.operator("view3d.view_roll", text="Roll Right", icon="ROLL_RIGHT").angle = pi / 12.0
+        layout.operator("view3d.view_roll", text="Roll Left", icon="ROLL_LEFT").type = 'LEFT'
+        layout.operator("view3d.view_roll", text="Roll Right", icon="ROLL_RIGHT").type = 'RIGHT'
+        layout.operator("view3d.view_roll_set", text="Reset Roll") # BFA - WIP  - needs icon
+        layout.operator("view3d.view_flip")  # BFA - WIP - needs icon
 
         layout.separator()
 
@@ -2902,6 +2955,24 @@ class VIEW3D_MT_select_edit_grease_pencil_more_less(Menu):
         layout.operator("grease_pencil.select_less", text="Less", icon="SELECTLESS")
 
 
+class VIEW3D_MT_select_paint_grease_pencil(Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("grease_pencil.select_all", text="All").action = 'SELECT'
+        layout.operator("grease_pencil.select_all", text="None").action = 'DESELECT'
+        layout.operator("grease_pencil.select_all", text="Invert").action = 'INVERT'
+
+        layout.separator()
+
+        layout.operator_menu_enum("grease_pencil.select_by_stroke_type", "type", text="By Stroke Type")
+        layout.operator("grease_pencil.select_fill")
+
+        layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
+
+
 class VIEW3D_MT_select_edit_grease_pencil(Menu):
     bl_label = "Select"
 
@@ -2977,6 +3048,43 @@ class VIEW3D_MT_paint_grease_pencil(Menu):
         layout.operator("paint.sample_color", icon="EYEDROPPER").merged = False
 
 
+class VIEW3D_MT_paint_grease_pencil_stroke(Menu):
+    bl_label = "Stroke"
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        settings = tool_settings.gpencil_sculpt
+
+        layout.menu("VIEW3D_MT_transform")
+        layout.menu("VIEW3D_MT_mirror")
+        layout.menu("GREASE_PENCIL_MT_snap")
+
+        layout.separator()
+
+        layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon='DUPLICATE')
+
+        layout.separator()
+
+        layout.operator("grease_pencil.stroke_split", text="Split")
+        layout.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
+        layout.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
+        layout.operator("grease_pencil.paste", text="Paste by Layer").type = 'LAYER'
+
+        layout.separator()
+
+        layout.operator("grease_pencil.set_uniform_thickness")
+        layout.operator("grease_pencil.set_uniform_opacity")
+        layout.prop(settings, "use_scale_thickness", text="Scale Thickness")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_greasepencil_delete")
+
+        layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
+
+
 class VIEW3D_MT_paint_vertex_grease_pencil(Menu):
     bl_label = "Paint"
 
@@ -3029,17 +3137,17 @@ class VIEW3D_MT_select_paint_mask(Menu):
 
         layout.separator()
 
-        if _context.mode == "PAINT_TEXTURE":
-            myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
+        # BFA - exposed to all paint modes, not just texture paint
+        myvar = layout.operator("paint.face_select_loop", text="Select Loop", icon="SELECT_EDGERING")
 
-            myvar = layout.operator("paint.face_select_loop", text="Add Loop to Selection", icon="SELECT_EDGERING")
-            myvar.extend = True
+        myvar = layout.operator("paint.face_select_loop", text="Add Loop to Selection", icon="SELECT_EDGERING")
+        myvar.extend = True
 
-            myvar = layout.operator("paint.face_select_loop", text="Remove Loop from Selection", icon="SELECT_EDGERING")
-            myvar.select = False
-            myvar.extend = True
+        myvar = layout.operator("paint.face_select_loop", text="Remove Loop from Selection", icon="SELECT_EDGERING")
+        myvar.select = False
+        myvar.extend = True
 
-            layout.separator()
+        layout.separator()
 
         layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")  # bfa menu
 
@@ -3066,9 +3174,9 @@ class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
         layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
         layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden")
-        layout.operator("paint.face_select_hide", text="Hide Selected")
-        props = layout.operator("paint.face_select_hide", text="Hide Unselected")
+        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
+        layout.operator("paint.face_select_hide", text="Hide Selected") # BFA - WIP
+        props = layout.operator("paint.face_select_hide", text="Hide Unselected") # BFA - WIP
         props.unselected = True
 
 
@@ -3108,9 +3216,9 @@ class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
         layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
 
         layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden")
-        layout.operator("paint.vert_select_hide", text="Hide Selected")
-        props = layout.operator("paint.vert_select_hide", text="Hide Unselected")
+        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
+        layout.operator("paint.vert_select_hide", text="Hide Selected") # BFA - WIP
+        props = layout.operator("paint.vert_select_hide", text="Hide Unselected") # BFA - WIP
         props.unselected = True
 
 
@@ -3210,6 +3318,7 @@ class VIEW3D_MT_mesh_add(Menu):
         layout.operator("mesh.primitive_plane_add", text="Plane", icon="MESH_PLANE")
         layout.operator("mesh.primitive_cube_add", text="Cube", icon="MESH_CUBE")
         layout.operator("mesh.primitive_circle_add", text="Circle", icon="MESH_CIRCLE")
+        layout.operator("mesh.primitive_quad_sphere_add", text="Quad Sphere", icon='MESH_QUADSPHERE') # BFA - WIP - add to topbar
         layout.operator("mesh.primitive_uv_sphere_add", text="UV Sphere", icon="MESH_UVSPHERE")
         layout.operator("mesh.primitive_ico_sphere_add", text="Ico Sphere", icon="MESH_ICOSPHERE")
         layout.operator("mesh.primitive_cylinder_add", text="Cylinder", icon="MESH_CYLINDER")
@@ -3533,7 +3642,7 @@ class VIEW3D_MT_add(Menu):
         else:
             layout.operator("object.armature_add", text="Armature", icon="OUTLINER_OB_ARMATURE")
 
-        layout.menu("VIEW3D_MT_lattice_add")
+        layout.menu("VIEW3D_MT_lattice_add", icon="OUTLINER_OB_LATTICE")
 
         layout.separator()
 
@@ -3940,7 +4049,11 @@ class VIEW3D_MT_object_animation(Menu):
             icon="BAKE_ACTION")
         layout.operator("anim.replace_action", icon="ACTION_REPLACE")
         layout.operator("anim.replace_action_new", icon="ACTION_REPLACE_NEW")
-        layout.operator("anim.replace_action_duplicate")
+        layout.operator("anim.replace_action_duplicate", icon="ACTION_REPLACE_DUPLICATE")
+
+        layout.separator()
+
+        layout.operator("anim.rotation_mode_convert") # BFA - WIP
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -5349,18 +5462,10 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         layout.separator()
 
-        props = layout.operator(
-            "paint.hide_show_polyline_gesture",
-            text="Polyline Hide",
-            icon="POLYLINE_HIDE",
-        )
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Hide", icon="POLYLINE_HIDE",)
         props.action = "HIDE"
 
-        props = layout.operator(
-            "paint.hide_show_polyline_gesture",
-            text="Polyline Show",
-            icon="POLYLINE_SHOW",
-        )
+        props = layout.operator("paint.hide_show_polyline_gesture", text="Polyline Show", icon="POLYLINE_SHOW")
         props.action = "SHOW"
 
         layout.separator()
@@ -5377,6 +5482,14 @@ class VIEW3D_MT_sculpt_legacy(Menu):
         layout.separator()
 
         layout.operator("sculpt.project_line_gesture", text="Line Project", icon="LINE_PROJECT")
+
+        layout.separator()
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add") # BFA - WIP
+        props.trim_mode = "JOIN"
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")  # BFA - WIP
+        props.trim_mode = "DIFFERENCE"
 
 
 # bfa menu
@@ -5473,13 +5586,13 @@ class VIEW3D_MT_sculpt_trim(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim")
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Trim", icon="BOX_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim")
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Trim", icon="LASSO_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_line_gesture", text="Line Trim")
+        props = layout.operator("sculpt.trim_line_gesture", text="Line Trim", icon="LINE_TRIM")
         props.trim_mode = "DIFFERENCE"
 
         props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")
@@ -5487,10 +5600,10 @@ class VIEW3D_MT_sculpt_trim(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.trim_box_gesture", text="Box Add")
+        props = layout.operator("sculpt.trim_box_gesture", text="Box Add", icon="BOX_ADD")
         props.trim_mode = "JOIN"
 
-        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add")
+        props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
         props.trim_mode = "JOIN"
 
         props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add")
@@ -9594,79 +9707,56 @@ class VIEW3D_PT_overlay_guides(Panel):
         overlay = view.overlay
         shading = view.shading
         display_all = overlay.show_overlays
-
-        col = layout.column()
+        
+        header, col = layout.indented_column(align=False)
+        
         col.active = display_all
 
         split = col.split()
-        sub = split.column()
+        col1 = split.column()
+        col2 = split.column()
 
         split = col.split()
         col = split.column()
         col.use_property_split = False
-        col.prop(overlay, "show_ortho_grid")
-        col = split.column()
-
-        if overlay.show_ortho_grid:
-            col.prop(
-                overlay,
-                "show_floor",
-                text="Floor",
-                text_ctxt=i18n_contexts.editor_view3d,
+        col1.prop(overlay, "show_ortho_grid", text="Grid")
+        col2.prop(overlay, "show_floor", text="Floor")
+        
+        if overlay.show_ortho_grid or overlay.show_floor:
+            col.use_property_split = True
+            col.use_property_decorate = False
+    
+            grid_active = bool(
+                view.region_quadviews or
+                (view.region_3d.is_orthographic_side_view and not view.region_3d.is_perspective)
             )
-        else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
+            show_scale = (
+                (overlay.show_floor and not view.region_3d.is_orthographic_side_view) or
+                (overlay.show_ortho_grid and grid_active)
+            )
+            if show_scale:
+                col.prop(overlay, "grid_scale", text="Scale")
+            
+            if scene.unit_settings.system == "NONE":
+                col.prop(overlay, "grid_subdivisions", text="Subdivisions")
 
-        if overlay.show_ortho_grid:
-            col = layout.column(heading="Axes", align=False)
+        split = col.split(factor=0.4)
 
-            row = col.row()
-            row.use_property_split = True
-            row.use_property_decorate = False
-            row.separator()
-            row.prop(overlay, "show_axis_x", text="X", toggle=True)
-            row.prop(overlay, "show_axis_y", text="Y", toggle=True)
-            row.prop(overlay, "show_axis_z", text="Z", toggle=True)
+        col1 = split.column()
+        col1.label(text="Axes")
+        
+        col2 = split.column()
+        row = col2.row(align=True)
+        row.use_property_split = False
+        row.prop(overlay, "show_axis_x", text="X", toggle=True)
+        row.prop(overlay, "show_axis_y", text="Y", toggle=True)
+        row.prop(overlay, "show_axis_z", text="Z", toggle=True)
 
-            if overlay.show_floor:
-                col = layout.column()
-                col.use_property_split = True
-                col.use_property_decorate = False
-                row = col.row()
-                row.separator()
-                row.prop(overlay, "grid_scale", text="Grid Scale")
-                if scene.unit_settings.system == "NONE":
-                    col = layout.column()
-                    col.use_property_split = True
-                    col.use_property_decorate = False
-                    row = col.row()
-                    row.separator()
-                    row.prop(overlay, "grid_subdivisions", text="Subdivisions")
+        if view.region_3d.view_perspective == 'CAMERA':
+            col.prop(overlay, "show_camera_guides", text="Camera Guides")
 
-        # bfa - Camera and HDRi Preview options placed at the bottom,
-        # since they're only relevant in specific view modes.
-        if view.region_3d.view_perspective == "CAMERA" or shading.type == "MATERIAL":
-
-            layout.separator() # bfa - spacer
-
-            col = layout.column(align=True)
-            col.active = display_all
-            split = col.split()
-            sub = split.column(align=True)
-            row = sub.row()
-            row.separator()
-
-        if view.region_3d.view_perspective == "CAMERA":
-            layout.separator() # bfa - spacer
-
-            row.prop(overlay, "show_camera_guides", text="Camera Guides")
-
-        if shading.type == "MATERIAL":
-            layout.separator() # bfa - spacer
-
-            row = row if view.region_3d.view_perspective != "CAMERA" else row.row()
-            row.active = shading.render_pass == "COMBINED"
-            row.prop(overlay, "show_look_dev")
+        if (shading.type == 'MATERIAL') and (shading.render_pass == 'COMBINED'):
+            col.prop(overlay, "show_look_dev")
 
 
 class VIEW3D_PT_overlay_text(Panel): # bfa - options
@@ -9781,23 +9871,25 @@ class VIEW3D_PT_overlay_geometry(Panel):
         display_all = overlay.show_overlays
         is_wireframes = view.shading.type == "WIREFRAME"
 
-        col = layout.column(align=True)
+        _header, col = layout.indented_column()
+        
         col.active = display_all
-        split = col.split()
-        row = split.row()
-        row.separator()
-        row.prop(overlay, "show_wireframes")
-
-        row = split.row(align=True)
-        if overlay.show_wireframes or is_wireframes:
-            row.prop(overlay, "wireframe_threshold", text="")
-            row.prop(overlay, "wireframe_opacity", text="Opacity")
+        col.prop(overlay, "show_face_orientation") # BFA - Move above collapsible sections
+        
+        subheader, subcol = col.indented_column(draw_body=overlay.show_wireframes or is_wireframes) # BFA - indent
+        header_row = subheader.row()
+        header_row.alignment = 'LEFT'
+        header_row.prop(overlay, "show_wireframes")
+        
+        if subcol:
+            header_row.label(icon="DISCLOSURE_TRI_DOWN")
+            
+            subcol.use_property_split = True
+            subcol.use_property_decorate = False
+            subcol.prop(overlay, "wireframe_threshold", text="Threshold")
+            subcol.prop(overlay, "wireframe_opacity", text="Opacity")
         else:
-            row.label(icon="DISCLOSURE_TRI_RIGHT")
-
-        row = col.row()
-        row.separator()
-        row.prop(overlay, "show_face_orientation")
+            header_row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         # These properties should be always available in the UI for all modes
         # other than Object.
@@ -9805,18 +9897,19 @@ class VIEW3D_PT_overlay_geometry(Panel):
         # current active object depending on its mode, it will always affect
         # the rest of the scene.
         if context.mode != "OBJECT":
-            col = layout.column(align=True)
-            col.active = display_all
-            split = col.split()
-            row = split.row()
-            row.separator()
-            row.prop(overlay, "show_fade_inactive")
+            subheader, subcol = col.indented_column(draw_body=overlay.show_fade_inactive) # BFA - indent
+            header_row = subheader.row()
+            header_row.alignment = 'LEFT'
+            header_row.prop(overlay, "show_fade_inactive")
 
-            row = split.row(align=True)
-            if overlay.show_fade_inactive:
-                row.prop(overlay, "fade_inactive_alpha", text="")
+            if subcol:
+                header_row.label(icon="DISCLOSURE_TRI_DOWN")
+            
+                subcol.use_property_split = True
+                subcol.use_property_decorate = False
+                subcol.prop(overlay, "fade_inactive_alpha")
             else:
-                row.label(icon="DISCLOSURE_TRI_RIGHT")
+                header_row.label(icon="DISCLOSURE_TRI_RIGHT")
 
         # sub.prop(overlay, "show_onion_skins")
 
@@ -9831,38 +9924,32 @@ class VIEW3D_PT_overlay_viewer_node(Panel):
     def draw(self, context):
         layout = self.layout
         view = context.space_data
+
         if not view.show_viewer:
-            layout.label(text="Viewer Nodes Overlay Is Disabled", icon="ERROR")
+            layout.label(text="Viewer Nodes Overlay is Disabled", icon="ERROR")
             return
 
         overlay = view.overlay
         display_all = overlay.show_overlays
-        col = layout.column(align=True)
-        col.active = display_all
-        split = col.split()
-        row = split.row()
-        row.separator()
-        row.prop(overlay, "show_viewer_attribute", text="Color Overlay")
+        
+        _header, col = layout.indented_column() # BFA - indent
+        
+        subheader, subcol = col.indented_column(draw_body=overlay.show_viewer_attribute) # BFA - indent
+        subrow = subheader.row()
+        subrow.alignment = 'LEFT'
+        subrow.prop(overlay, "show_viewer_attribute", text="Color Overlay")
 
-        row = split.row(align=True)
-        if not overlay.show_viewer_attribute:
-            row.label(icon="DISCLOSURE_TRI_RIGHT")
+        if subcol:
+            subrow.label(icon="DISCLOSURE_TRI_DOWN")
+            
+            subcol.use_property_split = True
+            subcol.use_property_decorate = False
+            subcol.prop(overlay, "viewer_attribute_opacity", text="Opacity")
         else:
-            row.label(icon="DISCLOSURE_TRI_DOWN")
-            split = col.split()
-            row = split.row()
-            row.separator()
-            col2 = row.column()
-            split = col2.split()
-            row = split.row()
-            row.separator()
-            row.use_property_split = True
-            row.prop(overlay, "viewer_attribute_opacity", text="Opacity")
+            subrow.label(icon="DISCLOSURE_TRI_RIGHT")
 
-        split = col.split()
-        row = split.row()
-        row.separator()
-        row.prop(overlay, "show_viewer_text", text="Attribute Text Overlay")  # BFA - made explicit
+        if overlay.show_text:
+            col.prop(overlay, "show_viewer_text", text="Attribute Text Overlay")  # BFA - made explicit
 
 
 class VIEW3D_PT_overlay_motion_tracking(Panel):
@@ -9879,13 +9966,7 @@ class VIEW3D_PT_overlay_motion_tracking(Panel):
         display_all = overlay.show_overlays
         layout.active = display_all
 
-        row = layout.row()
-        split = row.split()
-        split.prop(view, "show_reconstruction", text=self.bl_label)
-        if view.show_reconstruction:
-            split.label(icon="DISCLOSURE_TRI_DOWN")
-        else:
-            split.label(icon="DISCLOSURE_TRI_RIGHT")
+        layout.prop(view, "show_reconstruction", text=self.bl_label)
 
     def draw(self, context):
         layout = self.layout
@@ -9893,25 +9974,19 @@ class VIEW3D_PT_overlay_motion_tracking(Panel):
         overlay = view.overlay
         layout.active = overlay.show_overlays and view.show_reconstruction
 
-        col = layout.column()
+        _header, col = layout.indented_column() # BFA - indent
 
         split = col.split()
+        split.prop(view, "show_camera_path", text="Camera Path")
+        split.prop(view, "show_bundle_names", text="Marker Names")
 
-        sub = split.column(align=True)
-        row = sub.row()
-        row.separator()
-        row.prop(view, "show_camera_path", text="Camera Path")
-
-        sub = split.column()
-        sub.prop(view, "show_bundle_names", text="Marker Names")
-
-        col = layout.column()
-        col.active = display_all
-        col.label(text="Tracks")
-        row = col.row(align=True)
-        row.separator()
-        row.prop(view, "tracks_display_type", text="")
-        row.prop(view, "tracks_display_size", text="Size")
+        subheader, subcol = col.indented_column() # BFA - indent
+        subheader.label(text="Tracks")
+        
+        subcol.use_property_split = True
+        subcol.use_property_decorate = False
+        subcol.prop(view, "tracks_display_type", text="Display Type")
+        subcol.prop(view, "tracks_display_size", text="Size")
 
 
 class VIEW3D_PT_overlay_edit_mesh(Panel):
@@ -11470,16 +11545,16 @@ class VIEW3D_PT_greasepencil_sculpt_context_menu(Panel):
         layout = self.layout
 
         ups = paint.unified_paint_settings
-        size_owner = ups if ups.use_unified_size else brush
-        strength_owner = ups if ups.use_unified_strength else brush
+        size_owner = ups if brush.use_unified_size else brush
+        strength_owner = ups if brush.use_unified_strength else brush
         row = layout.row(align=True)
         row.prop(size_owner, "size", text="")
-        row.prop(brush, "use_pressure_size", text="", icon="STYLUS_PRESSURE")
-        row.prop(ups, "use_unified_size", text="", icon="BRUSHES_ALL")
+        row.prop(brush, "use_pressure_size", text="", icon='STYLUS_PRESSURE')
+        row.prop(brush, "use_unified_size", text="", icon='BRUSHES_ALL')
         row = layout.row(align=True)
         row.prop(strength_owner, "strength", text="")
-        row.prop(brush, "use_pressure_strength", text="", icon="STYLUS_PRESSURE")
-        row.prop(ups, "use_unified_strength", text="", icon="BRUSHES_ALL")
+        row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
+        row.prop(brush, "use_unified_strength", text="", icon='BRUSHES_ALL')
 
         layer = context.object.data.layers.active
 
@@ -11510,7 +11585,7 @@ class VIEW3D_PT_greasepencil_vertex_paint_context_menu(Panel):
         if brush.gpencil_vertex_brush_type in {"DRAW", "REPLACE"}:
             split = layout.split(factor=0.1)
             ups = settings.unified_paint_settings
-            prop_owner = ups if ups.use_unified_color else brush
+            prop_owner = ups if brush.use_unified_color else brush
             split.prop(prop_owner, "color", text="")
             split.template_color_picker(prop_owner, "color", value_slider=True)
 
@@ -11525,11 +11600,11 @@ class VIEW3D_PT_greasepencil_vertex_paint_context_menu(Panel):
 
         if brush.gpencil_vertex_brush_type in {"DRAW", "BLUR", "SMEAR"}:
             ups = settings.unified_paint_settings
-            strength_owner = ups if ups.use_unified_strength else brush
+            strength_owner = ups if brush.use_unified_strength else brush
             row = layout.row(align=True)
             row.prop(strength_owner, "strength", text="")
-            row.prop(brush, "use_pressure_strength", text="", icon="STYLUS_PRESSURE")
-            row.prop(ups, "use_unified_strength", text="", icon="BRUSHES_ALL")
+            row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
+            row.prop(brush, "use_unified_strength", text="", icon='BRUSHES_ALL')
 
         layer = context.object.data.layers.active
 
@@ -11647,7 +11722,9 @@ class VIEW3D_PT_paint_texture_context_menu(Panel):
     def draw(self, context):
         layout = self.layout
 
-        brush = context.tool_settings.image_paint.brush
+        paint = context.tool_settings.image_paint
+        space = context.space_data
+        brush = paint.brush
         capabilities = brush.image_paint_capabilities
 
         if capabilities.has_color:
@@ -11657,13 +11734,21 @@ class VIEW3D_PT_paint_texture_context_menu(Panel):
             layout.prop(brush, "blend", text="")
 
         if capabilities.has_radius:
+            size = "size"
+            if space.type == 'VIEW_3D' and show_experimental_texture_paint(brush):
+                ups = paint.unified_paint_settings
+                size_owner = ups if brush.use_unified_size else brush
+                if size_owner.use_locked_size == 'SCENE':
+                    size = "unprojected_size"
+
             UnifiedPaintPanel.prop_unified(
                 layout,
                 context,
                 brush,
-                "size",
+                size,
                 unified_name="use_unified_size",
                 pressure_name="use_pressure_size",
+                text="Size",
                 slider=True,
             )
             UnifiedPaintPanel.prop_unified(
@@ -11916,8 +12001,8 @@ class VIEW3D_PT_sculpt_context_menu(Panel):
 
         ups = paint.unified_paint_settings
         size = "size"
-        size_owner = ups if ups.use_unified_size else brush
-        if size_owner.use_locked_size == "SCENE":
+        size_owner = ups if brush.use_unified_size else brush
+        if size_owner.use_locked_size == 'SCENE':
             size = "unprojected_size"
 
         UnifiedPaintPanel.prop_unified(
@@ -11925,6 +12010,7 @@ class VIEW3D_PT_sculpt_context_menu(Panel):
             context,
             brush,
             size,
+            unified_paint_settings_override=ups,
             unified_name="use_unified_size",
             pressure_name="use_pressure_size",
             text="Size",
@@ -11935,6 +12021,7 @@ class VIEW3D_PT_sculpt_context_menu(Panel):
             context,
             brush,
             "strength",
+            unified_paint_settings_override=ups,
             unified_name="use_unified_strength",
             pressure_name="use_pressure_strength",
             slider=True,
@@ -12000,7 +12087,7 @@ class TOPBAR_PT_grease_pencil_vertex_color(Panel):
 
         ups = paint.unified_paint_settings
         brush = paint.brush
-        prop_owner = ups if use_unified_paint and ups.use_unified_color else brush
+        prop_owner = ups if use_unified_paint and brush.use_unified_color else brush
 
         col = layout.column()
         col.template_color_picker(prop_owner, "color", value_slider=True)
@@ -12286,6 +12373,7 @@ classes = (
     VIEW3D_MT_select_greasepencil_legacy,  # BFA - legacy menu
     VIEW3D_MT_select_edit_grease_pencil_more_less,  # BFA - menu
     VIEW3D_MT_select_edit_grease_pencil,
+    VIEW3D_MT_select_paint_grease_pencil,
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_legacy,  # BFA menu
     VIEW3D_MT_select_paint_mask_face_more_less,  # bfa menu
@@ -12406,6 +12494,7 @@ classes = (
     VIEW3D_MT_edit_mesh_showhide,
     VIEW3D_MT_greasepencil_material_active,
     VIEW3D_MT_paint_grease_pencil,
+    VIEW3D_MT_paint_grease_pencil_stroke,
     VIEW3D_MT_paint_vertex_grease_pencil,
     VIEW3D_MT_edit_grease_pencil_arrange_strokes,  # BFA - menu
     VIEW3D_MT_sculpt_grease_pencil_copy,  # BFA - menu

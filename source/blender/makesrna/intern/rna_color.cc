@@ -236,7 +236,7 @@ static std::optional<std::string> rna_ColorRamp_path(const PointerRNA *ptr)
         bNodeTree *ntree = id_cast<bNodeTree *>(id);
         bNode *node;
 
-        for (node = static_cast<bNode *>(ntree->nodes.first); node; node = node->next) {
+        for (node = ntree->nodes.first(); node; node = node->next) {
           if (ELEM(node->type_legacy, SH_NODE_VALTORGB, TEX_NODE_VALTORGB)) {
             if (node->storage == ptr->data) {
               /* all node color ramp properties called 'color_ramp'
@@ -304,7 +304,7 @@ static std::optional<std::string> rna_ColorRampElement_path(const PointerRNA *pt
         bNodeTree *ntree = id_cast<bNodeTree *>(id);
         bNode *node;
 
-        for (node = static_cast<bNode *>(ntree->nodes.first); node; node = node->next) {
+        for (node = ntree->nodes.first(); node; node = node->next) {
           if (ELEM(node->type_legacy, SH_NODE_VALTORGB, TEX_NODE_VALTORGB)) {
             ramp_ptr = RNA_pointer_create_discrete(id, RNA_ColorRamp, node->storage);
             COLRAMP_GETPATH;
@@ -317,7 +317,7 @@ static std::optional<std::string> rna_ColorRampElement_path(const PointerRNA *pt
         LinkData *link;
 
         BKE_linestyle_modifier_list_color_ramps(id_cast<FreestyleLineStyle *>(id), &listbase);
-        for (link = static_cast<LinkData *>(listbase.first); link; link = link->next) {
+        for (link = listbase.first(); link; link = link->next) {
           ramp_ptr = RNA_pointer_create_discrete(id, RNA_ColorRamp, link->data);
           COLRAMP_GETPATH;
         }
@@ -360,7 +360,7 @@ static void rna_ColorRamp_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr
         bNodeTree *ntree = id_cast<bNodeTree *>(id);
         bNode *node;
 
-        for (node = static_cast<bNode *>(ntree->nodes.first); node; node = node->next) {
+        for (node = ntree->nodes.first(); node; node = node->next) {
           if (ELEM(node->type_legacy, SH_NODE_VALTORGB, TEX_NODE_VALTORGB)) {
             BKE_ntree_update_tag_node_property(ntree, node);
             BKE_main_ensure_invariants(*bmain, ntree->id);
@@ -446,7 +446,7 @@ static const ColorManagedDisplaySettings *rna_display_settings_from_view_setting
 {
   /* Assumes view_settings and display_settings are stored next to each other. */
   PointerRNA parent_ptr = ptr->parent();
-  if (parent_ptr.data) {
+  if (parent_ptr) {
     PointerRNA display_ptr = RNA_pointer_get(&parent_ptr, "display_settings");
     if (display_ptr.type == RNA_ColorManagedDisplaySettings) {
       return display_ptr.data_as<const ColorManagedDisplaySettings>();
@@ -469,7 +469,7 @@ static ColorManagedViewSettings *rna_view_settings_from_display_settings(Pointer
 {
   /* Assumes view_settings and display_settings are stored next to each other. */
   PointerRNA parent_ptr = ptr->parent();
-  if (parent_ptr.data) {
+  if (parent_ptr) {
     PointerRNA view_ptr = RNA_pointer_get(&parent_ptr, "view_settings");
     if (view_ptr.type == RNA_ColorManagedViewSettings) {
       return view_ptr.data_as<ColorManagedViewSettings>();
@@ -517,11 +517,11 @@ static void rna_display_and_view_settings_node_update(Main *bmain, PointerRNA *p
   if (id && GS(id->name) == ID_NT) {
     /* Find a node ancestor and tag it. */
     PointerRNA node_ptr = ptr->parent();
-    while (node_ptr.data && !RNA_struct_is_a(node_ptr.type, RNA_Node)) {
+    while (node_ptr && !RNA_struct_is_a(node_ptr.type, RNA_Node)) {
       node_ptr = node_ptr.parent();
     }
 
-    if (node_ptr.data) {
+    if (node_ptr) {
       bNodeTree *ntree = reinterpret_cast<bNodeTree *>(id);
       bNode *node = node_ptr.data_as<bNode>();
       BKE_ntree_update_tag_node_property(ntree, node);
@@ -545,9 +545,7 @@ static void rna_ColorManagedDisplaySettings_display_device_update(Main *bmain,
     WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, nullptr);
 
     /* Color management can be baked into shaders, need to refresh. */
-    for (Material *ma = static_cast<Material *>(bmain->materials.first); ma;
-         ma = static_cast<Material *>(ma->id.next))
-    {
+    for (Material *ma = bmain->materials.first(); ma; ma = static_cast<Material *>(ma->id.next)) {
       DEG_id_tag_update(&ma->id, ID_RECALC_SYNC_TO_EVAL);
     }
   }
@@ -808,8 +806,6 @@ static void rna_ColorManagedColorspaceSettings_reload_update(Main *bmain,
         Strip *strip = rna_strip_find_by_colorspace_settings(scene->ed, colorspace_settings);
 
         if (strip) {
-          seq::strip_free_movie_readers(strip);
-
           if (strip->data->proxy && strip->data->proxy->anim) {
             MOV_close(strip->data->proxy->anim);
             strip->data->proxy->anim = nullptr;
@@ -933,6 +929,7 @@ static void rna_def_curvemap_points_api(BlenderRNA *brna, PropertyRNA *cprop)
       func, "value", 0.0f, -FLT_MAX, FLT_MAX, "Value", "Value of point", -FLT_MAX, FLT_MAX);
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   parm = RNA_def_pointer(func, "point", "CurveMapPoint", "", "New point");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_CurveMap_remove_point");
@@ -1146,6 +1143,7 @@ static void rna_def_color_ramp_element_api(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   /* return type */
   parm = RNA_def_pointer(func, "element", "ColorRampElement", "", "New element");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_ColorRampElement_remove");
@@ -1411,6 +1409,7 @@ static void rna_def_colormanage(BlenderRNA *brna)
       "Display name. For viewing, this is the display device that will be emulated by limiting "
       "the gamut and HDR colors. For image and video output, this is the display space used for "
       "writing.");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR_MANAGEMENT);
   RNA_def_property_update(
       prop, NC_WINDOW, "rna_ColorManagedDisplaySettings_display_device_update");
 
@@ -1438,6 +1437,7 @@ static void rna_def_colormanage(BlenderRNA *brna)
                               "rna_ColorManagedViewSettings_look_itemf");
   RNA_def_property_ui_text(
       prop, "Look", "Additional transform applied before view transform for artistic needs");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR_MANAGEMENT);
   RNA_def_property_update(prop, NC_WINDOW, "rna_ColorManagement_update");
 
   prop = RNA_def_property(srna, "view_transform", PROP_ENUM, PROP_NONE);
@@ -1447,6 +1447,7 @@ static void rna_def_colormanage(BlenderRNA *brna)
                               "rna_ColorManagedViewSettings_view_transform_set",
                               "rna_ColorManagedViewSettings_view_transform_itemf");
   RNA_def_property_ui_text(prop, "View", "View used when converting image to a display space");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR_MANAGEMENT);
   RNA_def_property_update(prop, NC_WINDOW, "rna_ColorManagement_update");
 
   prop = RNA_def_property(srna, "exposure", PROP_FLOAT, PROP_FACTOR);
@@ -1557,6 +1558,7 @@ static void rna_def_colormanage(BlenderRNA *brna)
       prop,
       "Input Color Space",
       "Color space in the image file, to convert to and from when saving and loading the image");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR_MANAGEMENT);
   RNA_def_property_update(prop, NC_WINDOW, "rna_ColorManagedColorspaceSettings_reload_update");
 
   prop = RNA_def_property(srna, "is_data", PROP_BOOLEAN, PROP_NONE);
@@ -1584,6 +1586,7 @@ static void rna_def_colormanage(BlenderRNA *brna)
                               "rna_ColorManagedColorspaceSettings_colorspace_set",
                               "rna_ColorManagedColorspaceSettings_colorspace_itemf");
   RNA_def_property_ui_text(prop, "Color Space", "Color space that the sequencer operates in");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR_MANAGEMENT);
   RNA_def_property_update(prop, NC_WINDOW, "rna_ColorManagedColorspaceSettings_reload_update");
 }
 

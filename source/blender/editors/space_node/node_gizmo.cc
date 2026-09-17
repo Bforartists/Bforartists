@@ -258,4 +258,24 @@ void NODE_GGT_minimap(wmGizmoGroupType *gzgt)
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Translate
+ * \{ */
+
+void NODE_GGT_compositor_translate(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "Translate Widget";
+  gzgt->idname = "NODE_GGT_compositor_translate";
+
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT;
+
+  gzgt->poll = nodes::gizmos::translate_poll_space_node;
+  gzgt->setup = nodes::gizmos::translate_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->draw_prepare = nodes::gizmos::bbox_draw_prepare_space_node;
+  gzgt->refresh = nodes::gizmos::translate_refresh;
+}
+
+/** \} */
+
 }  // namespace blender::ed::space_node

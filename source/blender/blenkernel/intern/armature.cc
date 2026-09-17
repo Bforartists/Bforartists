@@ -14,6 +14,8 @@
 #include <limits>
 #include <optional>
 
+#include <fmt/format.h>
+
 #include "BLI_alloca.hh"
 #include "BLI_assert.hh"
 #include "BLI_bounds.hh"
@@ -66,7 +68,11 @@
 
 #include "BLO_read_write.hh"
 
+#include "CLG_log.h"
+
 namespace blender {
+
+static CLG_LogRef LOG = {"bke.armature"};
 
 /* -------------------------------------------------------------------- */
 /** \name Prototypes
@@ -162,10 +168,8 @@ static void armature_copy_data(Main * /*bmain*/,
   BLI_duplicatelist(&armature_dst->bonebase, &armature_src->bonebase);
 
   /* Duplicate the children's lists. */
-  bone_dst = static_cast<Bone *>(armature_dst->bonebase.first);
-  for (bone_src = static_cast<Bone *>(armature_src->bonebase.first); bone_src;
-       bone_src = bone_src->next)
-  {
+  bone_dst = armature_dst->bonebase.first();
+  for (bone_src = armature_src->bonebase.first(); bone_src; bone_src = bone_src->next) {
     bone_dst->parent = nullptr;
     copy_bonechildren(bone_dst, bone_src, armature_src->act_bone, &bone_dst_act, flag_subdata);
     bone_dst = bone_dst->next;
@@ -191,9 +195,7 @@ static void armature_copy_data(Main * /*bmain*/,
   BKE_armature_bone_hash_make(armature_dst);
 
   /* Fix custom handle references. */
-  for (bone_dst = static_cast<Bone *>(armature_dst->bonebase.first); bone_dst;
-       bone_dst = bone_dst->next)
-  {
+  for (bone_dst = armature_dst->bonebase.first(); bone_dst; bone_dst = bone_dst->next) {
     copy_bonechildren_custom_handles(bone_dst, armature_dst);
   }
 
@@ -379,8 +381,8 @@ static void armature_blend_write(BlendWriter *writer, ID *id, const void *id_add
       arm->collection_array[i]->next = arm->collection_array[i + 1];
       arm->collection_array[i + 1]->prev = arm->collection_array[i];
     }
-    arm->collections_legacy.first = arm->collection_array[0];
-    arm->collections_legacy.last = arm->collection_array[arm->collection_array_num - 1];
+    arm->collections_legacy.first_ = arm->collection_array[0];
+    arm->collections_legacy.last_ = arm->collection_array[arm->collection_array_num - 1];
     arm->collection_array = nullptr;
   }
 
@@ -407,8 +409,11 @@ static void armature_blend_write(BlendWriter *writer, ID *id, const void *id_add
   arm->runtime = runtime_backup;
 }
 
-static void direct_link_bones(BlendDataReader *reader, Bone *bone)
+static void direct_link_bones(BlendDataReader *reader, Bone *bone, bool *all_bones_are_named)
 {
+  if (bone->name[0] == '\0') {
+    *all_bones_are_named = false;
+  }
   BLO_read_struct(reader, Bone, &bone->parent);
 
   BLO_read_struct(reader, IDProperty, &bone->prop);
@@ -424,7 +429,7 @@ static void direct_link_bones(BlendDataReader *reader, Bone *bone)
   BLO_read_struct_list(reader, Bone, &bone->childbase);
 
   for (Bone &child : bone->childbase) {
-    direct_link_bones(reader, &child);
+    direct_link_bones(reader, &child, all_bones_are_named);
   }
 
   bone->runtime = Bone_Runtime{};
@@ -496,6 +501,42 @@ static void read_bone_collections(BlendDataReader *reader, bArmature *arm)
   }
 }
 
+/**
+ * While not likely, it can happen that bones load with no name. This would crash Blender and
+ * thus needs to be avoided. Sets "unnamed.<some_number>" to any empty name. See #162046.
+ */
+static void fix_empty_bone_names(bArmature &armature)
+{
+  constexpr const char *name_prefix = "unnamed.";
+  constexpr const char *format_string = "unnamed.{:0>3}";
+
+  Set<StringRefNull> potential_duplicates;
+  Vector<Bone *> no_name_bones;
+  BKE_armature_foreach_bone(armature, [&](const int /* bone_index */, const Bone &bone) {
+    if (bone.name[0] == '\0') {
+      no_name_bones.append(const_cast<Bone *>(&bone));
+    }
+    else {
+      if (StringRefNull(bone.name).startswith(name_prefix)) {
+        potential_duplicates.add(bone.name);
+      }
+    }
+  });
+  /* Custom unique bone name logic because the actual logic is editor code and relies on the
+   * hashmap already built. */
+  int unique_index = 0;
+  std::string bone_name;
+  for (Bone *bone : no_name_bones) {
+    bone_name = fmt::format(format_string, unique_index);
+    while (potential_duplicates.contains(bone_name)) {
+      unique_index++;
+      bone_name = fmt::format(format_string, unique_index);
+    }
+    STRNCPY_UTF8(bone->name, bone_name.c_str());
+    unique_index++;
+  }
+}
+
 static void armature_blend_read_data(BlendDataReader *reader, ID *id)
 {
   bArmature *arm = id_cast<bArmature *>(id);
@@ -504,9 +545,13 @@ static void armature_blend_read_data(BlendDataReader *reader, ID *id)
   arm->edbo = nullptr;
   /* Must always be cleared (armatures don't have their own edit-data). */
   arm->needs_flush_to_id = 0;
-
+  bool all_bones_are_named = true;
   for (Bone &bone : arm->bonebase) {
-    direct_link_bones(reader, &bone);
+    direct_link_bones(reader, &bone, &all_bones_are_named);
+  }
+  if (!all_bones_are_named) {
+    CLOG_WARN(&LOG, "Found bones with empty names. Fixing automatically.\n");
+    fix_empty_bone_names(*arm);
   }
 
   read_bone_collections(reader, arm);
@@ -554,6 +599,7 @@ IDTypeInfo IDType_ID_AR = {
     .foreach_cache = nullptr,
     .foreach_path = nullptr,
     .foreach_working_space_color = nullptr,
+    .foreach_asset_weak_reference = nullptr,
     .owner_pointer_get = nullptr,
 
     .blend_write = armature_blend_write,
@@ -655,8 +701,7 @@ static void copy_bonechildren(Bone *bone_dst,
   BLI_duplicatelist(&bone_dst->childbase, &bone_src->childbase);
 
   /* For each child in the list, update its children */
-  for (bone_src_child = static_cast<Bone *>(bone_src->childbase.first),
-      bone_dst_child = static_cast<Bone *>(bone_dst->childbase.first);
+  for (bone_src_child = bone_src->childbase.first(), bone_dst_child = bone_dst->childbase.first();
        bone_src_child;
        bone_src_child = bone_src_child->next, bone_dst_child = bone_dst_child->next)
   {
@@ -676,7 +721,7 @@ static void copy_bonechildren_custom_handles(Bone *bone_dst, bArmature *arm_dst)
     bone_dst->bbone_next = BKE_armature_find_bone_name(arm_dst, bone_dst->bbone_next->name);
   }
 
-  for (bone_dst_child = static_cast<Bone *>(bone_dst->childbase.first); bone_dst_child;
+  for (bone_dst_child = bone_dst->childbase.first(); bone_dst_child;
        bone_dst_child = bone_dst_child->next)
   {
     copy_bonechildren_custom_handles(bone_dst_child, arm_dst);
@@ -708,8 +753,8 @@ static void copy_bone_transform(Bone *bone_dst, const Bone *bone_src)
 
 void BKE_armature_copy_bone_transforms(bArmature *armature_dst, const bArmature *armature_src)
 {
-  Bone *bone_dst = static_cast<Bone *>(armature_dst->bonebase.first);
-  const Bone *bone_src = static_cast<const Bone *>(armature_src->bonebase.first);
+  Bone *bone_dst = armature_dst->bonebase.first();
+  const Bone *bone_src = armature_src->bonebase.first();
   while (bone_dst != nullptr) {
     BLI_assert(bone_src != nullptr);
     copy_bone_transform(bone_dst, bone_src);
@@ -869,7 +914,7 @@ static void armature_bone_from_name_insert_recursive(GHash *bone_hash, ListBaseT
 /**
  * Create a (name -> bone) map.
  *
- * \note typically #bPose.chanhash us used via #BKE_pose_channel_find_name
+ * \note typically #bPose.runtime->chanhash us used via #BKE_pose_channel_find_name
  * this is for the cases we can't use pose channels.
  */
 static GHash *armature_bone_from_name_map(bArmature *arm)
@@ -2870,7 +2915,7 @@ void BKE_armature_where_is_bone(Bone *bone, const Bone *bone_parent, const bool 
   /* and the kiddies */
   if (use_recursion) {
     bone_parent = bone;
-    for (bone = static_cast<Bone *>(bone->childbase.first); bone; bone = bone->next) {
+    for (bone = bone->childbase.first(); bone; bone = bone->next) {
       BKE_armature_where_is_bone(bone, bone_parent, use_recursion);
     }
   }
@@ -2971,9 +3016,10 @@ void BKE_pose_rebuild(Main *bmain, Object *ob, bArmature *arm, const bool do_id_
   if (ob->pose == nullptr) {
     /* create new pose */
     ob->pose = MEM_new<bPose>("new pose");
+    ob->pose->runtime = MEM_new<bke::bPoseRuntime>(__func__);
 
     /* set default settings for animviz */
-    animviz_settings_init(&ob->pose->avs);
+    bke::animviz::settings_init(&ob->pose->avs);
   }
   pose = ob->pose;
 
@@ -3148,7 +3194,7 @@ void BKE_pose_where_is_bone(Depsgraph *depsgraph,
 
   if (do_extra) {
     /* Do constraints */
-    if (pchan->constraints.first) {
+    if (pchan->constraints.first()) {
       bConstraintOb *cob;
       float vec[3];
 

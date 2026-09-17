@@ -219,6 +219,11 @@ struct ProjPaintImage {
   Image *ima;
   ImageUser iuser;
   ImBuf *ibuf;
+
+  /* Regenerated in project_paint_op to avoid calling `_for_write()` in threaded loops. */
+  float *float_data_mut = nullptr;
+  uint8_t *byte_data_mut = nullptr;
+
   ImagePaintPartialRedraw *partRedrawRect;
   /** Only used to build undo tiles during painting. */
   volatile const void **undoRect;
@@ -476,6 +481,7 @@ struct ProjPaintState {
    * so a loop indirection is needed as well.
    */
   const float2 **poly_to_loop_uv;
+  std::optional<float2> poly_to_loop_uv_single;
   /** other UV map, use for cloning between layers. */
   const float2 **poly_to_loop_uv_clone;
 
@@ -526,7 +532,8 @@ struct ProjPixel {
 
   PixelPointer origColor;
   PixelStore newColor;
-  PixelPointer pixel;
+  /* For write access */
+  int pixel_offset;
 };
 
 struct ProjPixelClone {
@@ -770,14 +777,24 @@ static bool project_paint_PickColor(
   }
 
   const int3 &tri = ps->corner_tris_eval[tri_index];
-  PS_CORNER_TRI_ASSIGN_UV_3(
-      tri_uv, ps->poly_to_loop_uv, ps->corner_tri_faces_eval[tri_index], tri);
-
-  interp_v2_v2v2v2(uv, UNPACK3(tri_uv), w);
+  if (ps->poly_to_loop_uv_single) {
+    copy_v2_v2(uv, ps->poly_to_loop_uv_single.value());
+  }
+  else {
+    PS_CORNER_TRI_ASSIGN_UV_3(
+        tri_uv, ps->poly_to_loop_uv, ps->corner_tri_faces_eval[tri_index], tri);
+    interp_v2_v2v2v2(uv, UNPACK3(tri_uv), w);
+  }
 
   ima = project_paint_face_paint_image(ps, tri_index);
   /** we must have got the imbuf before getting here. */
-  int tile_number = project_paint_face_paint_tile(ima, tri_uv[0]);
+  int tile_number;
+  if (ps->poly_to_loop_uv_single) {
+    tile_number = project_paint_face_paint_tile(ima, ps->poly_to_loop_uv_single.value());
+  }
+  else {
+    tile_number = project_paint_face_paint_tile(ima, tri_uv[0]);
+  }
   /* XXX get appropriate ImageUser instead */
   ImageUser iuser;
   BKE_imageuser_default(&iuser);
@@ -1134,8 +1151,17 @@ static void project_face_winding_init(const ProjPaintState *ps, const int tri_in
   /* detect the winding of faces in uv space */
   const int3 &tri = ps->corner_tris_eval[tri_index];
   const int face_i = ps->corner_tri_faces_eval[tri_index];
-  const float *tri_uv[3] = {PS_CORNER_TRI_AS_UV_3(ps->poly_to_loop_uv, face_i, tri)};
-  float winding = cross_tri_v2(tri_uv[0], tri_uv[1], tri_uv[2]);
+  float winding;
+  if (ps->poly_to_loop_uv_single) {
+    /* Could also just init this to 0 */
+    winding = cross_tri_v2(ps->poly_to_loop_uv_single.value(),
+                           ps->poly_to_loop_uv_single.value(),
+                           ps->poly_to_loop_uv_single.value());
+  }
+  else {
+    const float *tri_uv[3] = {PS_CORNER_TRI_AS_UV_3(ps->poly_to_loop_uv, face_i, tri)};
+    winding = cross_tri_v2(tri_uv[0], tri_uv[1], tri_uv[2]);
+  }
 
   if (winding > 0) {
     ps->faceWindingFlags[tri_index] |= PROJ_FACE_WINDING_CW;
@@ -1155,8 +1181,10 @@ static bool check_seam(const ProjPaintState *ps,
 {
   const int3 &orig_tri = ps->corner_tris_eval[orig_face];
   const int orig_poly_i = ps->corner_tri_faces_eval[orig_face];
-  const float *orig_tri_uv[3] = {
-      PS_CORNER_TRI_AS_UV_3(ps->poly_to_loop_uv, orig_poly_i, orig_tri)};
+  const float *orig_tri_uv[3];
+  if (!ps->poly_to_loop_uv_single) {
+    PS_CORNER_TRI_ASSIGN_UV_3(orig_tri_uv, ps->poly_to_loop_uv, orig_poly_i, orig_tri);
+  }
   /* vert indices from face vert order indices */
   const uint i1 = ps->corner_verts_eval[orig_tri[orig_i1_fidx]];
   const uint i2 = ps->corner_verts_eval[orig_tri[orig_i2_fidx]];
@@ -1182,11 +1210,23 @@ static bool check_seam(const ProjPaintState *ps,
       /* Only need to check if 'i2_fidx' is valid because
        * we know i1_fidx is the same vert on both faces. */
       if (i2_fidx != -1) {
-        const float *tri_uv[3] = {PS_CORNER_TRI_AS_UV_3(ps->poly_to_loop_uv, face_i, tri)};
+        const float *tri_uv[3];
+        if (!ps->poly_to_loop_uv_single) {
+          PS_CORNER_TRI_ASSIGN_UV_3(tri_uv, ps->poly_to_loop_uv, face_i, tri);
+        }
         Image *tpage = project_paint_face_paint_image(ps, tri_index);
         Image *orig_tpage = project_paint_face_paint_image(ps, orig_face);
-        int tile = project_paint_face_paint_tile(tpage, tri_uv[0]);
-        int orig_tile = project_paint_face_paint_tile(orig_tpage, orig_tri_uv[0]);
+        int tile;
+        int orig_tile;
+        if (ps->poly_to_loop_uv_single) {
+          tile = project_paint_face_paint_tile(tpage, ps->poly_to_loop_uv_single.value());
+          orig_tile = project_paint_face_paint_tile(orig_tpage,
+                                                    ps->poly_to_loop_uv_single.value());
+        }
+        else {
+          tile = project_paint_face_paint_tile(tpage, tri_uv[0]);
+          orig_tile = project_paint_face_paint_tile(orig_tpage, orig_tri_uv[0]);
+        }
 
         BLI_assert(i1_fidx != -1);
 
@@ -1203,11 +1243,18 @@ static bool check_seam(const ProjPaintState *ps,
           project_face_winding_init(ps, tri_index);
         }
 
+        bool has_same_image;
+        if (ps->poly_to_loop_uv_single) {
+          has_same_image = (orig_tpage == tpage) && (orig_tile == tile);
+        }
+        else {
+          has_same_image = (orig_tpage == tpage) && (orig_tile == tile) &&
+                           cmp_uv(orig_tri_uv[orig_i1_fidx], tri_uv[i1_fidx]) &&
+                           cmp_uv(orig_tri_uv[orig_i2_fidx], tri_uv[i2_fidx]);
+        }
+
         /* first test if they have the same image */
-        if ((orig_tpage == tpage) && (orig_tile == tile) &&
-            cmp_uv(orig_tri_uv[orig_i1_fidx], tri_uv[i1_fidx]) &&
-            cmp_uv(orig_tri_uv[orig_i2_fidx], tri_uv[i2_fidx]))
-        {
+        if (has_same_image) {
           /* if faces don't have the same winding in uv space,
            * they are on the same side so edge is boundary */
           if ((ps->faceWindingFlags[tri_index] & PROJ_FACE_WINDING_CW) !=
@@ -1235,7 +1282,7 @@ static VertSeam *find_adjacent_seam(const ProjPaintState *ps,
                                     VertSeam **r_seam)
 {
   ListBaseT<VertSeam> *vert_seams = &ps->vertSeams[vert_index];
-  VertSeam *seam = static_cast<VertSeam *>(vert_seams->first);
+  VertSeam *seam = vert_seams->first();
   VertSeam *adjacent = nullptr;
 
   while (seam->loop != loop_index) {
@@ -1405,7 +1452,10 @@ static void insert_seam_vert_array(const ProjPaintState *ps,
 {
   const int3 &tri = ps->corner_tris_eval[tri_index];
   const int face_i = ps->corner_tri_faces_eval[tri_index];
-  const float *tri_uv[3] = {PS_CORNER_TRI_AS_UV_3(ps->poly_to_loop_uv, face_i, tri)};
+  const float *tri_uv[3];
+  if (!ps->poly_to_loop_uv_single) {
+    PS_CORNER_TRI_ASSIGN_UV_3(tri_uv, ps->poly_to_loop_uv, face_i, tri);
+  }
   const int fidx[2] = {fidx1, ((fidx1 + 1) % 3)};
   float vec[2];
 
@@ -1417,7 +1467,13 @@ static void insert_seam_vert_array(const ProjPaintState *ps,
   vseam->tri = tri_index;
   vseam->loop = tri[fidx[0]];
 
-  sub_v2_v2v2(vec, tri_uv[fidx[1]], tri_uv[fidx[0]]);
+  if (ps->poly_to_loop_uv_single) {
+    copy_v2_v2(vec, ps->poly_to_loop_uv_single.value());
+  }
+  else {
+    sub_v2_v2v2(vec, tri_uv[fidx[1]], tri_uv[fidx[0]]);
+  }
+
   vec[0] *= ibuf_x;
   vec[1] *= ibuf_y;
   vseam->angle = atan2f(vec[1], vec[0]);
@@ -1426,17 +1482,27 @@ static void insert_seam_vert_array(const ProjPaintState *ps,
   BLI_assert((ps->faceWindingFlags[tri_index] & PROJ_FACE_WINDING_INIT) != 0);
   vseam->normal_cw = (ps->faceWindingFlags[tri_index] & PROJ_FACE_WINDING_CW);
 
-  copy_v2_v2(vseam->uv, tri_uv[fidx[0]]);
+  if (ps->poly_to_loop_uv_single) {
+    copy_v2_v2(vseam->uv, ps->poly_to_loop_uv_single.value());
+  }
+  else {
+    copy_v2_v2(vseam->uv, tri_uv[fidx[0]]);
+  }
 
   vseam[1] = vseam[0];
   vseam[1].angle += vseam[1].angle > 0.0f ? -M_PI : M_PI;
   vseam[1].normal_cw = !vseam[1].normal_cw;
-  copy_v2_v2(vseam[1].uv, tri_uv[fidx[1]]);
+  if (ps->poly_to_loop_uv_single) {
+    copy_v2_v2(vseam->uv, ps->poly_to_loop_uv_single.value());
+  }
+  else {
+    copy_v2_v2(vseam[1].uv, tri_uv[fidx[1]]);
+  }
 
   for (uint i = 0; i < 2; i++) {
     const int vert = ps->corner_verts_eval[tri[fidx[i]]];
     ListBaseT<VertSeam> *list = &ps->vertSeams[vert];
-    VertSeam *item = static_cast<VertSeam *>(list->first);
+    VertSeam *item = list->first();
 
     while (item && item->angle < vseam[i].angle) {
       item = item->next;
@@ -1938,16 +2004,15 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
   BLI_assert(tile_offset < (ED_IMAGE_UNDO_TILE_SIZE * ED_IMAGE_UNDO_TILE_SIZE));
 
   projPixel->valid = projima->valid[tile_index];
+  projPixel->pixel_offset = (x_px + y_px * ibuf->x) * 4;
 
   if (ibuf->float_data()) {
-    projPixel->pixel.f_pt = ibuf->float_data_for_write() + ((x_px + y_px * ibuf->x) * 4);
     projPixel->origColor.f_pt = static_cast<float *>(
                                     const_cast<void *>(projima->undoRect[tile_index])) +
                                 4 * tile_offset;
     zero_v4(projPixel->newColor.f);
   }
   else {
-    projPixel->pixel.ch_pt = ibuf->byte_data_for_write() + (x_px + y_px * ibuf->x) * 4;
     projPixel->origColor.uint_pt = static_cast<uint *>(
                                        const_cast<void *>(projima->undoRect[tile_index])) +
                                    tile_offset;
@@ -2066,14 +2131,6 @@ static ProjPixel *project_paint_uvpixel_init(const ProjPaintState *ps,
     }
   }
 
-#ifdef PROJ_DEBUG_PAINT
-  if (ibuf->float_data()) {
-    projPixel->pixel.f_pt[0] = 0;
-  }
-  else {
-    projPixel->pixel.ch_pt[0] = 0;
-  }
-#endif
   /* pointer arithmetic */
   projPixel->image_index = projima - ps->projImages;
 
@@ -3042,7 +3099,10 @@ static void project_paint_face_init(const ProjPaintState *ps,
   const int3 &tri = ps->corner_tris_eval[tri_index];
   const int face_i = ps->corner_tri_faces_eval[tri_index];
   const int vert_tri[3] = {PS_CORNER_TRI_AS_VERT_INDEX_3(ps, tri)};
-  const float *tri_uv[3] = {PS_CORNER_TRI_AS_UV_3(ps->poly_to_loop_uv, face_i, tri)};
+  const float *tri_uv[3];
+  if (!ps->poly_to_loop_uv_single) {
+    PS_CORNER_TRI_ASSIGN_UV_3(tri_uv, ps->poly_to_loop_uv, face_i, tri);
+  }
 
   /* UV/pixel seeking data */
   /* Image X/Y-Pixel */
@@ -3102,14 +3162,22 @@ static void project_paint_face_init(const ProjPaintState *ps,
    * but since the first thing most people try is painting onto a quad- better make it work.
    */
 
-  tri_uv_pxoffset[0][0] = tri_uv[0][0] - xhalfpx;
-  tri_uv_pxoffset[0][1] = tri_uv[0][1] - yhalfpx;
+  if (ps->poly_to_loop_uv_single) {
+    float2 offset = ps->poly_to_loop_uv_single.value() - float2(xhalfpx, yhalfpx);
+    copy_v2_v2(tri_uv_pxoffset[0], offset);
+    copy_v2_v2(tri_uv_pxoffset[1], offset);
+    copy_v2_v2(tri_uv_pxoffset[2], offset);
+  }
+  else {
+    tri_uv_pxoffset[0][0] = tri_uv[0][0] - xhalfpx;
+    tri_uv_pxoffset[0][1] = tri_uv[0][1] - yhalfpx;
 
-  tri_uv_pxoffset[1][0] = tri_uv[1][0] - xhalfpx;
-  tri_uv_pxoffset[1][1] = tri_uv[1][1] - yhalfpx;
+    tri_uv_pxoffset[1][0] = tri_uv[1][0] - xhalfpx;
+    tri_uv_pxoffset[1][1] = tri_uv[1][1] - yhalfpx;
 
-  tri_uv_pxoffset[2][0] = tri_uv[2][0] - xhalfpx;
-  tri_uv_pxoffset[2][1] = tri_uv[2][1] - yhalfpx;
+    tri_uv_pxoffset[2][0] = tri_uv[2][0] - xhalfpx;
+    tri_uv_pxoffset[2][1] = tri_uv[2][1] - yhalfpx;
+  }
 
   {
     uv1co = tri_uv_pxoffset[0]; /* Was `tri_uv[i1];`. */
@@ -4049,13 +4117,20 @@ static void project_paint_bleed_add_face_user(const ProjPaintState *ps,
   /* annoying but we need to add all faces even ones we never use elsewhere */
   if (ps->seam_bleed_px > 0.0f) {
     const int face_i = ps->corner_tri_faces_eval[tri_index];
-    const float *tri_uv[3] = {PS_CORNER_TRI_AS_UV_3(ps->poly_to_loop_uv, face_i, corner_tri)};
+    const float *tri_uv[3];
+    if (!ps->poly_to_loop_uv_single) {
+      PS_CORNER_TRI_ASSIGN_UV_3(tri_uv, ps->poly_to_loop_uv, face_i, corner_tri);
+    }
 
     /* Check for degenerate triangles. Degenerate faces cause trouble with bleed computations.
      * Ideally this would be checked later, not to add to the cost of computing non-degenerate
      * triangles, but that would allow other triangles to still find adjacent seams on degenerate
      * triangles, potentially causing incorrect results. */
-    if (area_tri_v2(UNPACK3(tri_uv)) > 0.0f) {
+    float area_tri = 0.0f;
+    if (!ps->poly_to_loop_uv_single) {
+      area_tri = area_tri_v2(UNPACK3(tri_uv));
+    }
+    if (area_tri > 0.0f) {
       const int vert_tri[3] = {PS_CORNER_TRI_AS_VERT_INDEX_3(ps, corner_tri)};
       void *tri_index_p = POINTER_FROM_INT(tri_index);
 
@@ -4366,9 +4441,7 @@ static void project_paint_build_proj_ima(ProjPaintState *ps,
   projIma = ps->projImages = static_cast<ProjPaintImage *>(
       BLI_memarena_alloc(arena, sizeof(ProjPaintImage) * ps->image_tot));
 
-  for (entry = static_cast<PrepareImageEntry *>(used_images->first); entry;
-       entry = entry->next, projIma++)
-  {
+  for (entry = used_images->first(); entry; entry = entry->next, projIma++) {
     projIma->iuser = entry->iuser;
     int size;
     projIma->ima = entry->ima;
@@ -4413,6 +4486,8 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
   const Span<int3> corner_tris = ps->corner_tris_eval;
   const Span<int> tri_faces = ps->corner_tri_faces_eval;
 
+  std::optional<float2> single_value;
+
   BLI_assert(ps->image_tot == 0);
 
   for (tri_index = 0; tri_index < ps->corner_tris_eval.size(); tri_index++) {
@@ -4430,6 +4505,9 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
             if (attr.varray.is_span()) {
               uv_map_base = attr.varray.get_internal_span().typed<float2>().data();
             }
+            else if (attr.varray.is_single()) {
+              single_value = attr.varray.typed<float2>().get_internal_single();
+            }
           }
         }
         tpage = ps->canvas_ima;
@@ -4442,6 +4520,9 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
                 if (attr.varray.is_span()) {
                   uv_map_base = attr.varray.get_internal_span().typed<float2>().data();
                 }
+                else if (attr.varray.is_single()) {
+                  single_value = attr.varray.typed<float2>().get_internal_single();
+                }
               }
             }
           }
@@ -4451,6 +4532,9 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
               if (attr.domain == bke::AttrDomain::Corner && attr.varray.type().is<float2>()) {
                 if (attr.varray.is_span()) {
                   uv_map_base = attr.varray.get_internal_span().typed<float2>().data();
+                }
+                else if (attr.varray.is_single()) {
+                  single_value = attr.varray.typed<float2>().get_internal_single();
                 }
               }
             }
@@ -4483,10 +4567,16 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
     else {
       tpage = ps->stencil_ima;
     }
+    BLI_assert(uv_map_base != nullptr || single_value.has_value());
 
-    ps->poly_to_loop_uv[tri_faces[tri_index]] = uv_map_base;
-
-    tile = project_paint_face_paint_tile(tpage, uv_map_base[corner_tris[tri_index][0]]);
+    if (single_value.has_value()) {
+      ps->poly_to_loop_uv_single = single_value;
+      tile = project_paint_face_paint_tile(tpage, single_value.value());
+    }
+    else {
+      ps->poly_to_loop_uv[tri_faces[tri_index]] = uv_map_base;
+      tile = project_paint_face_paint_tile(tpage, uv_map_base[corner_tris[tri_index][0]]);
+    }
 
 #ifndef PROJ_DEBUG_NOSEAMBLEED
     project_paint_bleed_add_face_user(ps, arena, corner_tris[tri_index], tri_index);
@@ -4495,9 +4585,6 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
     if (skip_tri || project_paint_clone_face_skip(ps, layer_clone, slot, tri_index)) {
       continue;
     }
-
-    BLI_assert(uv_map_base != nullptr);
-
     if (is_face_paintable && tpage) {
       ProjPaintFaceCoSS coSS;
       proj_paint_face_coSS_init(ps, corner_tris[tri_index], &coSS);
@@ -4545,9 +4632,7 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
 
       if (tpage_last != tpage || tile_last != tile) {
         image_index = 0;
-        for (PrepareImageEntry *e = static_cast<PrepareImageEntry *>(used_images.first); e;
-             e = e->next, image_index++)
-        {
+        for (PrepareImageEntry *e = used_images.first(); e; e = e->next, image_index++) {
           if (e->ima == tpage && e->iuser.tile == tile) {
             break;
           }
@@ -4755,7 +4840,7 @@ static void project_paint_end(ProjPaintState *ps)
     }
 
     /* must be set for non-shared */
-    BLI_assert(ps->poly_to_loop_uv || ps->is_shared_user);
+    BLI_assert(ps->poly_to_loop_uv || ps->poly_to_loop_uv_single || ps->is_shared_user);
     if (ps->poly_to_loop_uv) {
       MEM_delete(ps->poly_to_loop_uv);
     }
@@ -4958,6 +5043,7 @@ struct ProjectHandle {
 
 static void do_projectpaint_clone(ProjPaintState *ps, ProjPixel *projPixel, float mask)
 {
+  uint8_t *data = ps->projImages[projPixel->image_index].byte_data_mut + projPixel->pixel_offset;
   const uchar *clone_pt = (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.ch;
 
   if (clone_pt[3]) {
@@ -4969,20 +5055,17 @@ static void do_projectpaint_clone(ProjPaintState *ps, ProjPixel *projPixel, floa
     clone_rgba[3] = uchar(clone_pt[3] * mask);
 
     if (ps->do_masking) {
-      IMB_blend_color_byte(projPixel->pixel.ch_pt,
-                           projPixel->origColor.ch_pt,
-                           clone_rgba,
-                           IMB_BlendMode(ps->blend));
+      IMB_blend_color_byte(data, projPixel->origColor.ch_pt, clone_rgba, IMB_BlendMode(ps->blend));
     }
     else {
-      IMB_blend_color_byte(
-          projPixel->pixel.ch_pt, projPixel->pixel.ch_pt, clone_rgba, IMB_BlendMode(ps->blend));
+      IMB_blend_color_byte(data, data, clone_rgba, IMB_BlendMode(ps->blend));
     }
   }
 }
 
 static void do_projectpaint_clone_f(ProjPaintState *ps, ProjPixel *projPixel, float mask)
 {
+  float *data = ps->projImages[projPixel->image_index].float_data_mut + projPixel->pixel_offset;
   const float *clone_pt = (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.f;
 
   if (clone_pt[3]) {
@@ -4991,12 +5074,10 @@ static void do_projectpaint_clone_f(ProjPaintState *ps, ProjPixel *projPixel, fl
     mul_v4_v4fl(clone_rgba, clone_pt, mask);
 
     if (ps->do_masking) {
-      IMB_blend_color_float(
-          projPixel->pixel.f_pt, projPixel->origColor.f_pt, clone_rgba, IMB_BlendMode(ps->blend));
+      IMB_blend_color_float(data, projPixel->origColor.f_pt, clone_rgba, IMB_BlendMode(ps->blend));
     }
     else {
-      IMB_blend_color_float(
-          projPixel->pixel.f_pt, projPixel->pixel.f_pt, clone_rgba, IMB_BlendMode(ps->blend));
+      IMB_blend_color_float(data, data, clone_rgba, IMB_BlendMode(ps->blend));
     }
   }
 }
@@ -5013,16 +5094,16 @@ static void do_projectpaint_smear(ProjPaintState *ps,
                                   LinkNode **smearPixels,
                                   const float co[2])
 {
+  const uint8_t *data = ps->projImages[projPixel->image_index].byte_data_mut +
+                        projPixel->pixel_offset;
   uchar rgba_ub[4];
 
   if (project_paint_PickColor(ps, co, nullptr, rgba_ub, true) == 0) {
     return;
   }
 
-  blend_color_interpolate_byte((reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.ch,
-                               projPixel->pixel.ch_pt,
-                               rgba_ub,
-                               mask);
+  blend_color_interpolate_byte(
+      (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.ch, data, rgba_ub, mask);
   BLI_linklist_prepend_arena(smearPixels, static_cast<void *>(projPixel), smearArena);
 }
 
@@ -5033,16 +5114,16 @@ static void do_projectpaint_smear_f(ProjPaintState *ps,
                                     LinkNode **smearPixels_f,
                                     const float co[2])
 {
+  const float *data = ps->projImages[projPixel->image_index].float_data_mut +
+                      projPixel->pixel_offset;
   float rgba[4];
 
   if (project_paint_PickColor(ps, co, rgba, nullptr, true) == 0) {
     return;
   }
 
-  blend_color_interpolate_float((reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.f,
-                                projPixel->pixel.f_pt,
-                                rgba,
-                                mask);
+  blend_color_interpolate_float(
+      (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.f, data, rgba, mask);
   BLI_linklist_prepend_arena(smearPixels_f, static_cast<void *>(projPixel), smearArena);
 }
 
@@ -5052,6 +5133,7 @@ static void do_projectpaint_soften_f(ProjPaintState *ps,
                                      MemArena *softenArena,
                                      LinkNode **softenPixels)
 {
+  float *data = ps->projImages[projPixel->image_index].float_data_mut + projPixel->pixel_offset;
   float accum_tot = 0.0f;
   int xk, yk;
   BlurKernel *kernel = ps->blurkernel;
@@ -5081,17 +5163,17 @@ static void do_projectpaint_soften_f(ProjPaintState *ps,
 
     if (ps->mode == BrushStrokeMode::Invert) {
       /* subtract blurred image from normal image gives high pass filter */
-      sub_v3_v3v3(rgba, projPixel->pixel.f_pt, rgba);
+      sub_v3_v3v3(rgba, data, rgba);
 
       /* now rgba_ub contains the edge result, but this should be converted to luminance to avoid
        * colored speckles appearing in final image, and also to check for threshold */
       rgba[0] = rgba[1] = rgba[2] = IMB_colormanagement_get_luminance(rgba);
       if (fabsf(rgba[0]) > ps->brush->sharp_threshold) {
-        float alpha = projPixel->pixel.f_pt[3];
-        projPixel->pixel.f_pt[3] = rgba[3] = mask;
+        float alpha = data[3];
+        data[3] = rgba[3] = mask;
 
         /* add to enhance edges */
-        blend_color_add_float(rgba, projPixel->pixel.f_pt, rgba);
+        blend_color_add_float(rgba, data, rgba);
         rgba[3] = alpha;
       }
       else {
@@ -5099,7 +5181,7 @@ static void do_projectpaint_soften_f(ProjPaintState *ps,
       }
     }
     else {
-      blend_color_interpolate_float(rgba, projPixel->pixel.f_pt, rgba, mask);
+      blend_color_interpolate_float(rgba, data, rgba, mask);
     }
 
     BLI_linklist_prepend_arena(softenPixels, static_cast<void *>(projPixel), softenArena);
@@ -5112,6 +5194,7 @@ static void do_projectpaint_soften(ProjPaintState *ps,
                                    MemArena *softenArena,
                                    LinkNode **softenPixels)
 {
+  uint8_t *data = ps->projImages[projPixel->image_index].byte_data_mut + projPixel->pixel_offset;
   float accum_tot = 0;
   int xk, yk;
   BlurKernel *kernel = ps->blurkernel;
@@ -5145,7 +5228,7 @@ static void do_projectpaint_soften(ProjPaintState *ps,
     if (ps->mode == BrushStrokeMode::Invert) {
       float rgba_pixel[4];
 
-      straight_uchar_to_premul_float(rgba_pixel, projPixel->pixel.ch_pt);
+      straight_uchar_to_premul_float(rgba_pixel, data);
 
       /* subtract blurred image from normal image gives high pass filter */
       sub_v3_v3v3(rgba, rgba_pixel, rgba);
@@ -5168,7 +5251,7 @@ static void do_projectpaint_soften(ProjPaintState *ps,
     }
     else {
       premul_float_to_straight_uchar(rgba_ub, rgba);
-      blend_color_interpolate_byte(rgba_ub, projPixel->pixel.ch_pt, rgba_ub, mask);
+      blend_color_interpolate_byte(rgba_ub, data, rgba_ub, mask);
     }
     BLI_linklist_prepend_arena(softenPixels, static_cast<void *>(projPixel), softenArena);
   }
@@ -5183,6 +5266,7 @@ static void do_projectpaint_draw(ProjPaintState *ps,
                                  int v)
 {
   const ProjPaintImage *img = &ps->projImages[projPixel->image_index];
+  uint8_t *data = ps->projImages[projPixel->image_index].byte_data_mut + projPixel->pixel_offset;
   float rgb[3];
   uchar rgba_ub[4];
 
@@ -5210,12 +5294,10 @@ static void do_projectpaint_draw(ProjPaintState *ps,
   rgba_ub[3] = f_to_char(mask);
 
   if (ps->do_masking) {
-    IMB_blend_color_byte(
-        projPixel->pixel.ch_pt, projPixel->origColor.ch_pt, rgba_ub, IMB_BlendMode(ps->blend));
+    IMB_blend_color_byte(data, projPixel->origColor.ch_pt, rgba_ub, IMB_BlendMode(ps->blend));
   }
   else {
-    IMB_blend_color_byte(
-        projPixel->pixel.ch_pt, projPixel->pixel.ch_pt, rgba_ub, IMB_BlendMode(ps->blend));
+    IMB_blend_color_byte(data, data, rgba_ub, IMB_BlendMode(ps->blend));
   }
 }
 
@@ -5224,6 +5306,7 @@ static void do_projectpaint_draw_f(ProjPaintState *ps,
                                    const float texrgb[3],
                                    float mask)
 {
+  float *data = ps->projImages[projPixel->image_index].float_data_mut + projPixel->pixel_offset;
   float rgba[4];
 
   copy_v3_v3(rgba, ps->paint_color_linear);
@@ -5236,44 +5319,40 @@ static void do_projectpaint_draw_f(ProjPaintState *ps,
   rgba[3] = mask;
 
   if (ps->do_masking) {
-    IMB_blend_color_float(
-        projPixel->pixel.f_pt, projPixel->origColor.f_pt, rgba, IMB_BlendMode(ps->blend));
+    IMB_blend_color_float(data, projPixel->origColor.f_pt, rgba, IMB_BlendMode(ps->blend));
   }
   else {
-    IMB_blend_color_float(
-        projPixel->pixel.f_pt, projPixel->pixel.f_pt, rgba, IMB_BlendMode(ps->blend));
+    IMB_blend_color_float(data, data, rgba, IMB_BlendMode(ps->blend));
   }
 }
 
 static void do_projectpaint_mask(ProjPaintState *ps, ProjPixel *projPixel, float mask)
 {
+  uint8_t *data = ps->projImages[projPixel->image_index].byte_data_mut + projPixel->pixel_offset;
   uchar rgba_ub[4];
   rgba_ub[0] = rgba_ub[1] = rgba_ub[2] = ps->stencil_value * 255.0f;
   rgba_ub[3] = f_to_char(mask);
 
   if (ps->do_masking) {
-    IMB_blend_color_byte(
-        projPixel->pixel.ch_pt, projPixel->origColor.ch_pt, rgba_ub, IMB_BlendMode(ps->blend));
+    IMB_blend_color_byte(data, projPixel->origColor.ch_pt, rgba_ub, IMB_BlendMode(ps->blend));
   }
   else {
-    IMB_blend_color_byte(
-        projPixel->pixel.ch_pt, projPixel->pixel.ch_pt, rgba_ub, IMB_BlendMode(ps->blend));
+    IMB_blend_color_byte(data, data, rgba_ub, IMB_BlendMode(ps->blend));
   }
 }
 
 static void do_projectpaint_mask_f(ProjPaintState *ps, ProjPixel *projPixel, float mask)
 {
+  float *data = ps->projImages[projPixel->image_index].float_data_mut + projPixel->pixel_offset;
   float rgba[4];
   rgba[0] = rgba[1] = rgba[2] = ps->stencil_value;
   rgba[3] = mask;
 
   if (ps->do_masking) {
-    IMB_blend_color_float(
-        projPixel->pixel.f_pt, projPixel->origColor.f_pt, rgba, IMB_BlendMode(ps->blend));
+    IMB_blend_color_float(data, projPixel->origColor.f_pt, rgba, IMB_BlendMode(ps->blend));
   }
   else {
-    IMB_blend_color_float(
-        projPixel->pixel.f_pt, projPixel->pixel.f_pt, rgba, IMB_BlendMode(ps->blend));
+    IMB_blend_color_float(data, data, rgba, IMB_BlendMode(ps->blend));
   }
 }
 
@@ -5286,19 +5365,21 @@ static void image_paint_partial_redraw_expand(ImagePaintPartialRedraw *cell,
   BLI_rcti_do_minmax_rcti(&cell->dirty_region, &rect_to_add);
 }
 
-static void copy_original_alpha_channel(ProjPixel *pixel, bool is_floatbuf)
+static void copy_original_alpha_channel(ProjPaintState *ps, ProjPixel *pixel, bool is_floatbuf)
 {
   /* Use the original alpha channel data instead of the modified one */
   if (is_floatbuf) {
+    float *data = ps->projImages[pixel->image_index].float_data_mut + pixel->pixel_offset;
     /* slightly more involved case since floats are in premultiplied space we need
      * to make sure alpha is consistent, see #44627 */
     float rgb_straight[4];
-    premul_to_straight_v4_v4(rgb_straight, pixel->pixel.f_pt);
+    premul_to_straight_v4_v4(rgb_straight, data);
     rgb_straight[3] = pixel->origColor.f_pt[3];
-    straight_to_premul_v4_v4(pixel->pixel.f_pt, rgb_straight);
+    straight_to_premul_v4_v4(data, rgb_straight);
   }
   else {
-    pixel->pixel.ch_pt[3] = pixel->origColor.ch_pt[3];
+    uint8_t *data = ps->projImages[pixel->image_index].byte_data_mut + pixel->pixel_offset;
+    data[3] = pixel->origColor.ch_pt[3];
   }
 }
 
@@ -5394,6 +5475,12 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
           last_projIma->touch = true;
           is_floatbuf = (last_projIma->ibuf->float_data() != nullptr);
         }
+
+        uint8_t *byte_data = ps->projImages[projPixel->image_index].byte_data_mut;
+        float *float_data = ps->projImages[projPixel->image_index].float_data_mut;
+
+        BLI_assert(byte_data != nullptr || float_data != nullptr);
+
         /* end copy */
 
         /* fill brushes */
@@ -5431,7 +5518,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
             if (is_floatbuf) {
               /* Convert to premutliplied. */
               mul_v3_fl(color_f, color_f[3]);
-              IMB_blend_color_float(projPixel->pixel.f_pt,
+              IMB_blend_color_float(float_data + projPixel->pixel_offset,
                                     projPixel->origColor.f_pt,
                                     color_f,
                                     IMB_BlendMode(ps->blend));
@@ -5453,7 +5540,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
                 unit_float_to_uchar_clamp_v3(projPixel->newColor.ch, color_f);
               }
               projPixel->newColor.ch[3] = unit_float_to_uchar_clamp(color_f[3]);
-              IMB_blend_color_byte(projPixel->pixel.ch_pt,
+              IMB_blend_color_byte(byte_data + projPixel->pixel_offset,
                                    projPixel->origColor.ch_pt,
                                    projPixel->newColor.ch,
                                    IMB_BlendMode(ps->blend));
@@ -5465,7 +5552,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
               newColor_f[3] = float(projPixel->mask) * (1.0f / 65535.0f) * brush_alpha;
               copy_v3_v3(newColor_f, ps->paint_color_linear);
 
-              IMB_blend_color_float(projPixel->pixel.f_pt,
+              IMB_blend_color_float(float_data + projPixel->pixel_offset,
                                     projPixel->origColor.f_pt,
                                     newColor_f,
                                     IMB_BlendMode(ps->blend));
@@ -5476,7 +5563,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
               projPixel->newColor.ch[3] = mask * 255 * brush_alpha;
 
               rgb_float_to_uchar(projPixel->newColor.ch, img->paint_color_byte);
-              IMB_blend_color_byte(projPixel->pixel.ch_pt,
+              IMB_blend_color_byte(byte_data + projPixel->pixel_offset,
                                    projPixel->origColor.ch_pt,
                                    projPixel->newColor.ch,
                                    IMB_BlendMode(ps->blend));
@@ -5484,7 +5571,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
           }
 
           if (lock_alpha) {
-            copy_original_alpha_channel(projPixel, is_floatbuf);
+            copy_original_alpha_channel(ps, projPixel, is_floatbuf);
           }
 
           last_partial_redraw_cell = last_projIma->partRedrawRect + projPixel->bb_cell_index;
@@ -5503,8 +5590,9 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
 
               mul_v4_v4fl(projPixel->newColor.f, projPixel->newColor.f, mask);
 
-              blend_color_mix_float(
-                  projPixel->pixel.f_pt, projPixel->origColor.f_pt, projPixel->newColor.f);
+              blend_color_mix_float(float_data + projPixel->pixel_offset,
+                                    projPixel->origColor.f_pt,
+                                    projPixel->newColor.f);
             }
           }
           else {
@@ -5517,8 +5605,9 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
               float mask = float(projPixel->mask) * (1.0f / 65535.0f);
               projPixel->newColor.ch[3] *= mask;
 
-              blend_color_mix_byte(
-                  projPixel->pixel.ch_pt, projPixel->origColor.ch_pt, projPixel->newColor.ch);
+              blend_color_mix_byte(byte_data + projPixel->pixel_offset,
+                                   projPixel->origColor.ch_pt,
+                                   projPixel->newColor.ch);
             }
           }
         }
@@ -5556,7 +5645,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
 
             /* Color texture (alpha used as mask). */
             if (ps->is_texbrush) {
-              const MTex *mtex = BKE_brush_color_texture_get(brush, OB_MODE_TEXTURE_PAINT);
+              const MTex *mtex = BKE_brush_color_texture_get(brush, PaintMode::Texture3D);
               float3 samplecos;
               float4 texrgba;
 
@@ -5681,7 +5770,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
               }
 
               if (lock_alpha) {
-                copy_original_alpha_channel(projPixel, is_floatbuf);
+                copy_original_alpha_channel(ps, projPixel, is_floatbuf);
               }
             }
 
@@ -5696,18 +5785,21 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
 
     for (node = smearPixels; node; node = node->next) { /* this won't run for a float image */
       projPixel = static_cast<ProjPixel *>(node->link);
-      *projPixel->pixel.uint_pt = (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.uint_;
+      uint8_t *data = ps->projImages[projPixel->image_index].byte_data_mut +
+                      projPixel->pixel_offset;
+      copy_v4_v4_uchar(data, reinterpret_cast<ProjPixelClone *>(projPixel)->clonepx.ch);
       if (lock_alpha) {
-        copy_original_alpha_channel(projPixel, false);
+        copy_original_alpha_channel(ps, projPixel, false);
       }
     }
 
     for (node = smearPixels_f; node; node = node->next) {
       projPixel = static_cast<ProjPixel *>(node->link);
-      copy_v4_v4(projPixel->pixel.f_pt,
-                 (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.f);
+      float *data = ps->projImages[projPixel->image_index].float_data_mut +
+                    projPixel->pixel_offset;
+      copy_v4_v4(data, (reinterpret_cast<ProjPixelClone *>(projPixel))->clonepx.f);
       if (lock_alpha) {
-        copy_original_alpha_channel(projPixel, true);
+        copy_original_alpha_channel(ps, projPixel, true);
       }
     }
 
@@ -5717,17 +5809,21 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
 
     for (node = softenPixels; node; node = node->next) { /* this won't run for a float image */
       projPixel = static_cast<ProjPixel *>(node->link);
-      *projPixel->pixel.uint_pt = projPixel->newColor.uint_;
+      uint8_t *data = ps->projImages[projPixel->image_index].byte_data_mut +
+                      projPixel->pixel_offset;
+      copy_v4_v4_uchar(data, projPixel->newColor.ch);
       if (lock_alpha) {
-        copy_original_alpha_channel(projPixel, false);
+        copy_original_alpha_channel(ps, projPixel, false);
       }
     }
 
     for (node = softenPixels_f; node; node = node->next) {
       projPixel = static_cast<ProjPixel *>(node->link);
-      copy_v4_v4(projPixel->pixel.f_pt, projPixel->newColor.f);
+      float *data = ps->projImages[projPixel->image_index].float_data_mut +
+                    projPixel->pixel_offset;
+      copy_v4_v4(data, projPixel->newColor.f);
       if (lock_alpha) {
-        copy_original_alpha_channel(projPixel, true);
+        copy_original_alpha_channel(ps, projPixel, true);
       }
     }
 
@@ -5781,6 +5877,12 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
       IMB_byte_from_float(ps->reproject_ibuf);
       ps->reproject_ibuf_free_uchar = true;
     }
+  }
+
+  for (i = 0; i < ps->image_tot; i++) {
+    ps->projImages[i].float_data_mut = ps->projImages[i].ibuf->float_data_for_write();
+    ps->projImages[i].byte_data_mut = ps->projImages[i].ibuf->byte_data_for_write();
+    BLI_assert(ps->projImages[i].float_data_mut || ps->projImages[i].byte_data_mut);
   }
 
   /* get the threads running */
@@ -5854,7 +5956,6 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
       const int3 &tri = ps->corner_tris_eval[tri_index];
       const int vert_tri[3] = {PS_CORNER_TRI_AS_VERT_INDEX_3(ps, tri)};
       float world[3];
-      bke::PaintRuntime *paint_runtime = ps->paint->runtime;
 
       interp_v3_v3v3v3(world,
                        ps->vert_positions_eval[vert_tri[0]],
@@ -5862,10 +5963,8 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
                        ps->vert_positions_eval[vert_tri[2]],
                        w);
 
-      paint_runtime->average_stroke_counter++;
       mul_m4_v3(ps->obmat, world);
-      add_v3_v3(paint_runtime->average_stroke_accum, world);
-      paint_runtime->last_stroke_valid = true;
+      bke::paint::stroke_track_location(*ps->paint, world);
     }
   }
 
@@ -6237,7 +6336,7 @@ void paint_proj_redraw(const bContext *C, void *ps_handle_p, bool final)
   }
 }
 
-void paint_proj_stroke_done(void *ps_handle_p)
+void paint_proj_stroke_done(void *ps_handle_p, wmPaintCursor *cursor)
 {
   ProjStrokeHandle *ps_handle = static_cast<ProjStrokeHandle *>(ps_handle_p);
 
@@ -6262,6 +6361,9 @@ void paint_proj_stroke_done(void *ps_handle_p)
   }
 
   MEM_delete(ps_handle);
+  if (cursor) {
+    WM_paint_cursor_end(cursor);
+  }
 }
 /* use project paint to re-apply an image */
 static wmOperatorStatus texture_paint_camera_project_exec(bContext *C, wmOperator *op)
@@ -6453,7 +6555,7 @@ static wmOperatorStatus texture_paint_image_from_view_exec(bContext *C, wmOperat
 
   /* Create a copy of the overlays where they are all turned off, except the
    * texture paint overlay opacity */
-  View3D *v3d = static_cast<View3D *>(area->spacedata.first);
+  View3D *v3d = area->spacedata.first_as<View3D>();
   View3D v3d_copy = dna::shallow_copy(*v3d);
   v3d_copy.gridflag = eView3D_GridFlag{};
   v3d_copy.flag2 = eView3D_Flag2{};
@@ -6537,9 +6639,9 @@ void PAINT_OT_image_from_view(wmOperatorType *ot)
       ot->srna, "filepath", nullptr, FILE_MAX, "File Path", "Name of the file");
 }
 
-/*********************************************
- * Data generation for projective texturing  *
- * *******************************************/
+/* -------------------------------------------------------------------- */
+/** \name Data Generation for Projective Texturing
+ * \{ */
 
 void ED_paint_data_warning(
     ReportList *reports, bool has_uvs, bool has_mat, bool has_tex, bool has_stencil)
@@ -6654,7 +6756,12 @@ bool ED_paint_proj_mesh_data_check(Scene &scene,
   return has_uvs && has_mat && has_tex && has_stencil;
 }
 
-/* Add layer operator */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Add Texture Paint Slot Operator
+ * \{ */
+
 enum {
   LAYER_BASE_COLOR,
   LAYER_SPECULAR,
@@ -7166,6 +7273,12 @@ void PAINT_OT_add_texture_paint_slot(wmOperatorType *ot)
                "Type of data stored in attribute");
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Add Simple UVs Operator
+ * \{ */
+
 static wmOperatorStatus add_simple_uvs_exec(bContext *C, wmOperator * /*op*/)
 {
   /* no checks here, poll function does them for us */
@@ -7207,5 +7320,7 @@ void PAINT_OT_add_simple_uvs(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+/** \} */
 
 }  // namespace blender

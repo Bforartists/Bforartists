@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.2.0 LTS Release Candidate (b'3d8c46ac31f4')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 07:34+0000\n"
-"PO-Revision-Date: 2026-04-22 14:12+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
+"PO-Revision-Date: 2026-09-13 09:09+0000\n"
 "Last-Translator: Karlo Pavicic <soulcreature@hotmail.com>\n"
 "Language-Team: Croatian <https://translate.blender.org/projects/blender-ui/ui/hr/>\n"
 "Language: hr\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.16.2"
+"X-Generator: Weblate 2026.6.1"
 
 
 msgid "Name"
@@ -442,10 +442,6 @@ msgid "Curve"
 msgstr "Krivulja"
 
 
-msgid "View"
-msgstr "Pogled"
-
-
 msgid "Output"
 msgstr "Ispis"
 
@@ -468,6 +464,10 @@ msgstr "Kursor"
 
 msgid "Plane"
 msgstr "Ploha"
+
+
+msgid "View"
+msgstr "Pogled"
 
 
 msgid "Render"
@@ -748,10 +748,6 @@ msgid "Clean Up"
 msgstr "Počisti"
 
 
-msgid "Merge"
-msgstr "Spajanje"
-
-
 msgid "Navigation"
 msgstr "Navigacija"
 
@@ -762,6 +758,10 @@ msgstr "Svjetlo"
 
 msgid "Relations"
 msgstr "Odnosi"
+
+
+msgid "Merge"
+msgstr "Spajanje"
 
 
 msgid "Console"
@@ -866,7 +866,7 @@ msgstr "Spoji obzirom na udaljenost"
 
 
 msgid "UV Sphere"
-msgstr "UV sfera"
+msgstr "UV kugla"
 
 
 msgid "OpenGL"
@@ -1633,13 +1633,13 @@ msgstr "Scena/e"
 
 
 msgctxt "Operator"
-msgid "Add Bone Constraint"
-msgstr "Dodavanje ograničenja kosti"
+msgid "Search..."
+msgstr "Pretraživanje..."
 
 
 msgctxt "Operator"
-msgid "Search..."
-msgstr "Pretraživanje..."
+msgid "Add Bone Constraint"
+msgstr "Dodavanje ograničenja kosti"
 
 
 msgid "Display Cursor"
@@ -1779,7 +1779,7 @@ msgstr "Kocka"
 
 msgctxt "Operator"
 msgid "UV Sphere"
-msgstr "UV sfera"
+msgstr "UV kugla"
 
 
 msgctxt "Operator"

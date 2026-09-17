@@ -178,7 +178,8 @@ bool BKE_scene_validate_setscene(Main *bmain, Scene *sce);
 /**
  * Return fractional frame number taking into account sub-frames and time
  * remapping. This the time value used by animation, modifiers and physics
- * evaluation. */
+ * evaluation.
+ */
 float BKE_scene_ctime_get(const Scene *scene);
 /**
  * Convert integer frame number to fractional frame number taking into account
@@ -199,6 +200,12 @@ struct ScenePlaybackRange {
   /** The start frame is always less or equal the end frame. */
   int start_frame;
   int end_frame;
+
+  /** Check whether a given frame falls within this range (inclusive). */
+  bool contains(const int frame) const
+  {
+    return frame >= start_frame && frame <= end_frame;
+  }
 };
 
 /**

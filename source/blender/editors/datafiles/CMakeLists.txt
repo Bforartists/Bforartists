@@ -243,6 +243,7 @@ if(WITH_BLENDER)
       action
       action_replace
       action_replace_new
+      action_replace_duplicate
       action_slot
       action_tweak
       action_tweak_solo
@@ -886,6 +887,7 @@ if(WITH_BLENDER)
       imgdisplay
       implicit_conversion
       import
+      import_export
       inc_contrast
       increase_kerning
       indent
@@ -898,8 +900,8 @@ if(WITH_BLENDER)
       info
       input_bool
       inset_faces
-	  instances_to_points
-	  instance_bounds
+      instances_to_points
+      instance_bounds
       instance_rotate
       instance_scale
       instance_transform
@@ -1118,6 +1120,7 @@ if(WITH_BLENDER)
       mesh_to_points
       mesh_to_volume
       mesh_torus
+      mesh_quadsphere
       mesh_uvsphere
       meta_ball
       meta_capsule
@@ -1775,6 +1778,7 @@ if(WITH_BLENDER)
       rimlight
       rip
       rip_fill
+      ripple_delete
       rna
       rndcurve
       roll_left

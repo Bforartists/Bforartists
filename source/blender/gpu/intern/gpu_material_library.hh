@@ -5,7 +5,8 @@
 /** \file
  * \ingroup gpu
  *
- * Parsing of and code generation using GLSL shaders in gpu/shaders/material. */
+ * Parsing of and code generation using GLSL shaders in gpu/shaders/material.
+ */
 
 #pragma once
 
@@ -15,7 +16,7 @@
 namespace blender {
 
 #define MAX_FUNCTION_NAME 64
-#define MAX_PARAMETER 36
+#define MAX_PARAMETER 37
 
 enum GPUFunctionQual {
   FUNCTION_QUAL_IN,

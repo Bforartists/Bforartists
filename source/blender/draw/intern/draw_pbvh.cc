@@ -9,6 +9,7 @@
  * Embeds GPU meshes inside of bke::pbvh::Tree nodes, used by mesh sculpt mode.
  */
 
+#include "BLI_enumerable_thread_specific.hh"
 #include "BLI_map.hh"
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_vector_types.hh"
@@ -25,6 +26,7 @@
 #include "BKE_paint.hh"
 #include "BKE_paint_bvh.hh"
 #include "BKE_subdiv_ccg.hh"
+#include "BKE_subdiv_eval.hh"
 
 #include "DEG_depsgraph_query.hh"
 
@@ -33,6 +35,8 @@
 #include "DRW_engine.hh"
 #include "DRW_pbvh.hh"
 #include "DRW_render.hh"
+
+#include "PRF_profile.hh"
 
 #include "attribute_convert.hh"
 #include "bmesh.hh"
@@ -66,6 +70,7 @@ uint64_t ViewportRequest::hash() const
 struct OrigMeshData {
   StringRef active_color;
   StringRef default_color;
+  VectorSet<StringRef> uv_map_names;
   StringRef active_uv_map;
   StringRef default_uv_map;
   int face_set_default;
@@ -80,6 +85,7 @@ struct OrigMeshData {
         face_set_seed(mesh.face_sets_color_seed),
         attributes(mesh.attributes())
   {
+    uv_map_names.add_multiple(mesh.uv_map_names().as_span().cast<StringRef>());
   }
 };
 
@@ -215,7 +221,7 @@ void DrawCacheImpl::tag_visibility_changed(const IndexMask &node_mask)
 
 void DrawCacheImpl::tag_topology_changed(const IndexMask &node_mask)
 {
-  /** Currently the only times where topology changes are for BMesh dynamic topology, where tagging
+  /* Currently the only times where topology changes are for BMesh dynamic topology, where tagging
    * a visibility update deletes all the GPU data anyway. */
   this->tag_visibility_changed(node_mask);
 }
@@ -343,6 +349,7 @@ void extract_data_vert_mesh(const OffsetIndices<int> faces,
                             const Span<int> face_indices,
                             gpu::VertBuf &vbo)
 {
+  PRF_scope(ProfileCategory::Draw);
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
   VBOType *data = vbo.data<VBOType>().data();
@@ -360,6 +367,7 @@ void extract_data_face_mesh(const OffsetIndices<int> faces,
                             const Span<int> face_indices,
                             gpu::VertBuf &vbo)
 {
+  PRF_scope(ProfileCategory::Draw);
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
 
@@ -377,6 +385,7 @@ void extract_data_corner_mesh(const OffsetIndices<int> faces,
                               const Span<int> face_indices,
                               gpu::VertBuf &vbo)
 {
+  PRF_scope(ProfileCategory::Draw);
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
 
@@ -407,6 +416,7 @@ template<typename T> const T &bmesh_cd_face_get(const BMFace &face, const int of
 template<typename T>
 void extract_data_vert_bmesh(const Set<BMFace *, 0> &faces, const int cd_offset, gpu::VertBuf &vbo)
 {
+  PRF_scope(ProfileCategory::Draw);
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
   VBOType *data = vbo.data<VBOType>().data();
@@ -428,6 +438,7 @@ void extract_data_vert_bmesh(const Set<BMFace *, 0> &faces, const int cd_offset,
 template<typename T>
 void extract_data_face_bmesh(const Set<BMFace *, 0> &faces, const int cd_offset, gpu::VertBuf &vbo)
 {
+  PRF_scope(ProfileCategory::Draw);
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
   VBOType *data = vbo.data<VBOType>().data();
@@ -446,6 +457,7 @@ void extract_data_corner_bmesh(const Set<BMFace *, 0> &faces,
                                const int cd_offset,
                                gpu::VertBuf &vbo)
 {
+  PRF_scope(ProfileCategory::Draw);
   using Converter = AttributeConverter<T>;
   using VBOType = typename Converter::VBOType;
   VBOType *data = vbo.data<VBOType>().data();
@@ -482,6 +494,7 @@ DrawCacheImpl::~DrawCacheImpl()
 
 void DrawCacheImpl::free_nodes_with_changed_topology(const bke::pbvh::Tree &pbvh)
 {
+  PRF_scope(ProfileCategory::Draw);
   /* NOTE: Theoretically we shouldn't need to free batches with a changed triangle count, but
    * currently it's the simplest way to reallocate all the GPU data while keeping everything in a
    * consistent state. */
@@ -519,6 +532,7 @@ BLI_NOINLINE static void ensure_vbos_allocated_mesh(const Object &object,
                                                     const IndexMask &node_mask,
                                                     const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
   node_mask.foreach_index(
@@ -537,6 +551,7 @@ BLI_NOINLINE static void ensure_vbos_allocated_grids(const Object &object,
                                                      const IndexMask &node_mask,
                                                      const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
   const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
@@ -558,6 +573,7 @@ BLI_NOINLINE static void ensure_vbos_allocated_bmesh(const Object &object,
                                                      const IndexMask &node_mask,
                                                      const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
   node_mask.foreach_index(
@@ -577,6 +593,7 @@ static void update_positions_mesh(const Object &object,
                                   const IndexMask &node_mask,
                                   MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
   const Mesh &mesh = DRW_object_get_data_for_drawing<Mesh>(object);
@@ -596,6 +613,7 @@ static void update_normals_mesh(const Object &object,
                                 const IndexMask &node_mask,
                                 MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
   const Mesh &mesh = DRW_object_get_data_for_drawing<Mesh>(object);
@@ -632,6 +650,7 @@ BLI_NOINLINE static void update_masks_mesh(const Object &object,
                                            const IndexMask &node_mask,
                                            MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
   const Mesh &mesh = DRW_object_get_data_for_drawing<Mesh>(object);
@@ -664,6 +683,7 @@ BLI_NOINLINE static void update_face_sets_mesh(const Object &object,
                                                const IndexMask &node_mask,
                                                MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
   const Mesh &mesh = DRW_object_get_data_for_drawing<Mesh>(object);
@@ -708,6 +728,7 @@ BLI_NOINLINE static void update_generic_attribute_mesh(const Object &object,
                                                        const StringRef name,
                                                        MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
   const Mesh &mesh = DRW_object_get_data_for_drawing<Mesh>(object);
@@ -750,6 +771,7 @@ BLI_NOINLINE static void fill_positions_grids(const Object &object,
                                               const IndexMask &node_mask,
                                               const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
   const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
@@ -794,6 +816,7 @@ BLI_NOINLINE static void fill_normals_grids(const Object &object,
                                             const IndexMask &node_mask,
                                             const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
   const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
@@ -858,6 +881,7 @@ BLI_NOINLINE static void fill_masks_grids(const Object &object,
                                           const IndexMask &node_mask,
                                           const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
   const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
@@ -908,6 +932,7 @@ BLI_NOINLINE static void fill_face_sets_grids(const Object &object,
                                               const IndexMask &node_mask,
                                               const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
   const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
@@ -946,10 +971,757 @@ BLI_NOINLINE static void fill_face_sets_grids(const Object &object,
   }
 }
 
+static void calc_quad_uv(const SubdivCCG &subdiv_ccg,
+                         const int uv_map_index,
+                         const float grid_size_1_inv,
+                         const int ptex_face_index,
+                         const int grid_start,
+                         const int corner,
+                         const int x,
+                         const int y,
+                         const int offset,
+                         MutableSpan<float2> result)
+{
+  const float grid_u = x * grid_size_1_inv;
+  const float grid_v = y * grid_size_1_inv;
+  float u;
+  float v;
+  bke::subdiv::rotate_grid_to_quad(corner, grid_u, grid_v, &u, &v);
+  bke::subdiv::eval_face_varying(
+      subdiv_ccg.subdiv, uv_map_index, ptex_face_index, u, v, result[grid_start + offset]);
+}
+
+static void calc_non_quad_uv(const SubdivCCG &subdiv_ccg,
+                             const int uv_map_index,
+                             const float grid_size_1_inv,
+                             const int ptex_face_index,
+                             const int grid_start,
+                             const int x,
+                             const int y,
+                             const int offset,
+                             MutableSpan<float2> result)
+{
+  const float u = 1.0f - (y * grid_size_1_inv);
+  const float v = 1.0f - (x * grid_size_1_inv);
+  bke::subdiv::eval_face_varying(
+      subdiv_ccg.subdiv, uv_map_index, ptex_face_index, u, v, result[grid_start + offset]);
+}
+
+static void calc_node_uvs_for_flat_layout(const SubdivCCG &subdiv_ccg,
+                                          const int uv_map_index,
+                                          Span<int> grids,
+                                          MutableSpan<float2> result)
+{
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grid_size_1 = key.grid_size - 1;
+  const int grid_area_1 = grid_size_1 * grid_size_1;
+  const int verts_per_grid = grid_area_1 * 4;
+
+  const Span<int> face_ptex_offset = bke::subdiv::face_ptex_offset_get(subdiv_ccg.subdiv);
+  const float grid_size_1_inv = 1.0f / (key.grid_size - 1);
+
+  threading::parallel_for(grids.index_range(), 1024, [&](const IndexRange range) {
+    for (const int i : range) {
+      const int grid = grids[i];
+      const int face_index = subdiv_ccg.grid_to_face_map[grid];
+      const IndexRange face = subdiv_ccg.faces[face_index];
+      const int corner = grid - face.start();
+      if (face.size() == 4) {
+        const int ptex_face_index = face_ptex_offset[face_index];
+        for (int y = 0; y < grid_size_1; y++) {
+          for (int x = 0; x < grid_size_1; x++) {
+            const int start = verts_per_grid * i + CCG_grid_xy_to_index(grid_size_1, x, y) * 4;
+            calc_quad_uv(subdiv_ccg,
+                         uv_map_index,
+                         grid_size_1_inv,
+                         ptex_face_index,
+                         start,
+                         corner,
+                         x,
+                         y,
+                         0,
+                         result);
+            calc_quad_uv(subdiv_ccg,
+                         uv_map_index,
+                         grid_size_1_inv,
+                         ptex_face_index,
+                         start,
+                         corner,
+                         x + 1,
+                         y,
+                         1,
+                         result);
+            calc_quad_uv(subdiv_ccg,
+                         uv_map_index,
+                         grid_size_1_inv,
+                         ptex_face_index,
+                         start,
+                         corner,
+                         x + 1,
+                         y + 1,
+                         2,
+                         result);
+            calc_quad_uv(subdiv_ccg,
+                         uv_map_index,
+                         grid_size_1_inv,
+                         ptex_face_index,
+                         start,
+                         corner,
+                         x,
+                         y + 1,
+                         3,
+                         result);
+          }
+        }
+      }
+      else {
+        const int ptex_face_index = face_ptex_offset[face_index] + corner;
+        for (int y = 0; y < grid_size_1; y++) {
+          for (int x = 0; x < grid_size_1; x++) {
+            const int start = verts_per_grid * i + CCG_grid_xy_to_index(grid_size_1, x, y) * 4;
+            calc_non_quad_uv(subdiv_ccg,
+                             uv_map_index,
+                             grid_size_1_inv,
+                             ptex_face_index,
+                             start,
+                             x,
+                             y,
+                             0,
+                             result);
+            calc_non_quad_uv(subdiv_ccg,
+                             uv_map_index,
+                             grid_size_1_inv,
+                             ptex_face_index,
+                             start,
+                             x + 1,
+                             y,
+                             1,
+                             result);
+            calc_non_quad_uv(subdiv_ccg,
+                             uv_map_index,
+                             grid_size_1_inv,
+                             ptex_face_index,
+                             start,
+                             x + 1,
+                             y + 1,
+                             2,
+                             result);
+            calc_non_quad_uv(subdiv_ccg,
+                             uv_map_index,
+                             grid_size_1_inv,
+                             ptex_face_index,
+                             start,
+                             x,
+                             y + 1,
+                             3,
+                             result);
+          }
+        }
+      }
+    }
+  });
+}
+
+static void calc_node_uvs_for_standard_layout(const SubdivCCG &subdiv_ccg,
+                                              const int uv_map_index,
+                                              Span<int> grids,
+                                              MutableSpan<float2> result)
+{
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grid_size = key.grid_size;
+  const int grid_area = key.grid_area;
+
+  const Span<int> face_ptex_offset = bke::subdiv::face_ptex_offset_get(subdiv_ccg.subdiv);
+  const float grid_size_1_inv = 1.0f / (grid_size - 1);
+  threading::parallel_for(grids.index_range(), 1024, [&](const IndexRange range) {
+    for (const int i : range) {
+      const int grid = grids[i];
+      const int face_index = subdiv_ccg.grid_to_face_map[grid];
+      const IndexRange face = subdiv_ccg.faces[face_index];
+      const int corner = grid - face.start();
+      if (face.size() == 4) {
+        const int ptex_face_index = face_ptex_offset[face_index];
+        for (int y = 0; y < grid_size; y++) {
+          const float grid_v = y * grid_size_1_inv;
+          for (int x = 0; x < grid_size; x++) {
+            const float grid_u = x * grid_size_1_inv;
+            float u;
+            float v;
+            bke::subdiv::rotate_grid_to_quad(corner, grid_u, grid_v, &u, &v);
+            const int element = i * grid_area + CCG_grid_xy_to_index(grid_size, x, y);
+            bke::subdiv::eval_face_varying(
+                subdiv_ccg.subdiv, uv_map_index, ptex_face_index, u, v, result[element]);
+          }
+        }
+      }
+      else {
+        const int ptex_face_index = face_ptex_offset[face_index] + corner;
+        for (int y = 0; y < grid_size; y++) {
+          const float u = 1.0f - (y * grid_size_1_inv);
+          for (int x = 0; x < grid_size; x++) {
+            const float v = 1.0f - (x * grid_size_1_inv);
+            const int element = i * grid_area + CCG_grid_xy_to_index(grid_size, x, y);
+            bke::subdiv::eval_face_varying(
+                subdiv_ccg.subdiv, uv_map_index, ptex_face_index, u, v, result[element]);
+          }
+        }
+      }
+    }
+  });
+}
+
+static void calc_node_uvs(const SubdivCCG &subdiv_ccg,
+                          const int uv_map_index,
+                          const bke::pbvh::GridsNode &node,
+                          const bool use_flat_layout,
+                          MutableSpan<float2> result)
+{
+  const Span<int> grids = node.grids();
+  if (use_flat_layout) {
+    calc_node_uvs_for_flat_layout(subdiv_ccg, uv_map_index, grids, result);
+  }
+  if (!use_flat_layout) {
+    calc_node_uvs_for_standard_layout(subdiv_ccg, uv_map_index, grids, result);
+  }
+}
+
+BLI_NOINLINE static void fill_uvs_grids(const Object &object,
+                                        const OrigMeshData &orig_mesh_data,
+                                        const BitSpan use_flat_layout,
+                                        const IndexMask &node_mask,
+                                        const StringRef name,
+                                        const MutableSpan<gpu::VertBufPtr> vbos)
+{
+  PRF_scope(ProfileCategory::Draw);
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+  const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
+  const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
+  ensure_vbos_allocated_grids(object,
+                              attribute_format(orig_mesh_data, name, bke::AttrType::Float2),
+                              use_flat_layout,
+                              node_mask,
+                              vbos);
+  node_mask.foreach_index(
+      [&](const int i) {
+        float2 *data = vbos[i]->data<float2>().data();
+
+        const int uv_channel = orig_mesh_data.uv_map_names.index_of_try(name);
+        if (uv_channel == -1) [[unlikely]] {
+          BLI_assert_msg(uv_channel != -1,
+                         "Unable to find appropriate FVar channel for given UV map");
+          std::fill_n(data, vbos[i]->data<float2>().size(), float2(0));
+        }
+        else {
+          calc_node_uvs(subdiv_ccg,
+                        uv_channel,
+                        nodes[i],
+                        use_flat_layout[i],
+                        {data, vbos[i]->data<float2>().size()});
+        }
+      },
+      exec_mode::grain_size(1));
+}
+
+static float4 quad_weights_from_grid(const int corner,
+                                     const int x,
+                                     const int y,
+                                     const float grid_size_1_inv)
+{
+  const float grid_u = x * grid_size_1_inv;
+  const float grid_v = y * grid_size_1_inv;
+  float u;
+  float v;
+  bke::subdiv::rotate_grid_to_quad(corner, grid_u, grid_v, &u, &v);
+  return bke::subdiv::quad_weights_from_uv(u, v);
+}
+
+static float4 quad_weights_from_irregular_corner(const int x,
+                                                 const int y,
+                                                 const float grid_size_1_inv)
+{
+  const float u = 1.0f - (y * grid_size_1_inv);
+  const float v = 1.0f - (x * grid_size_1_inv);
+
+  return bke::subdiv::quad_weights_from_uv(u, v);
+}
+
+template<typename T>
+static void interpolate_vert_data_for_flat_layout(const SubdivCCG &subdiv_ccg,
+                                                  const Span<int> corner_verts,
+                                                  const Span<int> grids,
+                                                  const Span<T> src,
+                                                  gpu::VertBuf &vbo)
+{
+  using Converter = AttributeConverter<T>;
+  using VBOType = typename Converter::VBOType;
+
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grid_size_1 = key.grid_size - 1;
+  const int grid_area_1 = grid_size_1 * grid_size_1;
+  const int verts_per_grid = grid_area_1 * 4;
+  const float grid_size_1_inv = 1.0f / (key.grid_size - 1);
+  MutableSpan<VBOType> dst = vbo.data<VBOType>();
+
+  threading::parallel_for(grids.index_range(), 1024, [&](const IndexRange range) {
+    for (const int i : range) {
+      const int grid = grids[i];
+      const int face_index = subdiv_ccg.grid_to_face_map[grid];
+      const IndexRange face = subdiv_ccg.faces[face_index];
+      const int corner = grid - face.start();
+      if (face.size() == 4) {
+        Span<int> face_verts = corner_verts.slice(face);
+        for (int y = 0; y < grid_size_1; y++) {
+          for (int x = 0; x < grid_size_1; x++) {
+            const int start = verts_per_grid * i + CCG_grid_xy_to_index(grid_size_1, x, y) * 4;
+            dst[start] = Converter::convert(
+                bke::attribute_math::mix4(quad_weights_from_grid(corner, x, y, grid_size_1_inv),
+                                          src[face_verts[0]],
+                                          src[face_verts[1]],
+                                          src[face_verts[2]],
+                                          src[face_verts[3]]));
+            dst[start + 1] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_grid(corner, x + 1, y, grid_size_1_inv),
+                src[face_verts[0]],
+                src[face_verts[1]],
+                src[face_verts[2]],
+                src[face_verts[3]]));
+            dst[start + 2] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_grid(corner, x + 1, y + 1, grid_size_1_inv),
+                src[face_verts[0]],
+                src[face_verts[1]],
+                src[face_verts[2]],
+                src[face_verts[3]]));
+            dst[start + 3] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_grid(corner, x, y + 1, grid_size_1_inv),
+                src[face_verts[0]],
+                src[face_verts[1]],
+                src[face_verts[2]],
+                src[face_verts[3]]));
+          }
+        }
+      }
+      else {
+        const std::array<T, 4> values =
+            bke::subdiv::interpolate_vert_data_for_subdivided_irregular_face<T>(
+                corner_verts, face, grid, src);
+        for (int y = 0; y < grid_size_1; y++) {
+          for (int x = 0; x < grid_size_1; x++) {
+            const int start = verts_per_grid * i + CCG_grid_xy_to_index(grid_size_1, x, y) * 4;
+            dst[start] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x, y, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+            dst[start + 1] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x + 1, y, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+            dst[start + 2] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x + 1, y + 1, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+            dst[start + 3] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x, y + 1, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+          }
+        }
+      }
+    }
+  });
+}
+
+template<typename T>
+static void interpolate_vert_data_for_standard_layout(const SubdivCCG &subdiv_ccg,
+                                                      const Span<int> corner_verts,
+                                                      const Span<int> grids,
+                                                      const Span<T> src,
+                                                      gpu::VertBuf &vbo)
+{
+  using Converter = AttributeConverter<T>;
+  using VBOType = typename Converter::VBOType;
+
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grid_size = key.grid_size;
+  const int grid_area = key.grid_area;
+
+  const float grid_size_1_inv = 1.0f / (grid_size - 1);
+  MutableSpan<VBOType> dst = vbo.data<VBOType>();
+  threading::parallel_for(grids.index_range(), 1024, [&](const IndexRange range) {
+    for (const int i : range) {
+      const int grid = grids[i];
+      const int face_index = subdiv_ccg.grid_to_face_map[grid];
+      const IndexRange face = subdiv_ccg.faces[face_index];
+      const int corner = grid - face.start();
+      if (face.size() == 4) {
+        const Span<int> face_verts = corner_verts.slice(face);
+        for (int y = 0; y < grid_size; y++) {
+          for (int x = 0; x < grid_size; x++) {
+            const int element = i * grid_area + CCG_grid_xy_to_index(grid_size, x, y);
+            dst[element] = Converter::convert(
+                bke::attribute_math::mix4(quad_weights_from_grid(corner, x, y, grid_size_1_inv),
+                                          src[face_verts[0]],
+                                          src[face_verts[1]],
+                                          src[face_verts[2]],
+                                          src[face_verts[3]]));
+          }
+        }
+      }
+      else {
+        const std::array<T, 4> values =
+            bke::subdiv::interpolate_vert_data_for_subdivided_irregular_face<T>(
+                corner_verts, face, grid, src);
+        for (int y = 0; y < grid_size; y++) {
+          for (int x = 0; x < grid_size; x++) {
+            const int element = i * grid_area + CCG_grid_xy_to_index(grid_size, x, y);
+            dst[element] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x, y, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+          }
+        }
+      }
+    }
+  });
+}
+
+BLI_NOINLINE static void calc_generic_vert_attribute_grids(const Object &object,
+                                                           const OrigMeshData &orig_mesh_data,
+                                                           const BitSpan &use_flat_layout,
+                                                           const IndexMask &node_mask,
+                                                           const StringRef name,
+                                                           const MutableSpan<gpu::VertBufPtr> vbos)
+{
+  PRF_scope(ProfileCategory::Draw);
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+  const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
+  const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
+  const bke::AttributeAccessor attributes = orig_mesh_data.attributes;
+  const GVArraySpan attr = *attributes.lookup(name);
+
+  const Mesh &mesh = DRW_object_get_data_for_drawing<Mesh>(object);
+  const Span<int> corner_verts = mesh.corner_verts();
+
+  node_mask.foreach_index(
+      [&](const int i) {
+        bke::attribute_math::to_static_type(attr.type(), [&]<typename T>() {
+          if constexpr (!std::is_void_v<typename AttributeConverter<T>::VBOType>) {
+            if (use_flat_layout[i]) {
+              interpolate_vert_data_for_flat_layout<T>(
+                  subdiv_ccg, corner_verts, nodes[i].grids(), attr.typed<T>(), *vbos[i]);
+            }
+            else {
+              interpolate_vert_data_for_standard_layout<T>(
+                  subdiv_ccg, corner_verts, nodes[i].grids(), attr.typed<T>(), *vbos[i]);
+            }
+          }
+        });
+      },
+      exec_mode::grain_size(1));
+}
+
+template<typename T>
+static void interpolate_corner_data_for_flat_layout(const SubdivCCG &subdiv_ccg,
+                                                    const Span<int> grids,
+                                                    const Span<T> src,
+                                                    gpu::VertBuf &vbo)
+{
+  using Converter = AttributeConverter<T>;
+  using VBOType = typename Converter::VBOType;
+
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grid_size_1 = key.grid_size - 1;
+  const int grid_area_1 = grid_size_1 * grid_size_1;
+  const int verts_per_grid = grid_area_1 * 4;
+  const float grid_size_1_inv = 1.0f / (key.grid_size - 1);
+  MutableSpan<VBOType> dst = vbo.data<VBOType>();
+
+  threading::parallel_for(grids.index_range(), 1024, [&](const IndexRange range) {
+    for (const int i : range) {
+      const int grid = grids[i];
+      const int face_index = subdiv_ccg.grid_to_face_map[grid];
+      const IndexRange face = subdiv_ccg.faces[face_index];
+      const int corner = grid - face.start();
+      if (face.size() == 4) {
+        for (int y = 0; y < grid_size_1; y++) {
+          for (int x = 0; x < grid_size_1; x++) {
+            const int start = verts_per_grid * i + CCG_grid_xy_to_index(grid_size_1, x, y) * 4;
+            dst[start] = Converter::convert(
+                bke::attribute_math::mix4(quad_weights_from_grid(corner, x, y, grid_size_1_inv),
+                                          src[face[0]],
+                                          src[face[1]],
+                                          src[face[2]],
+                                          src[face[3]]));
+            dst[start + 1] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_grid(corner, x + 1, y, grid_size_1_inv),
+                src[face[0]],
+                src[face[1]],
+                src[face[2]],
+                src[face[3]]));
+            dst[start + 2] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_grid(corner, x + 1, y + 1, grid_size_1_inv),
+                src[face[0]],
+                src[face[1]],
+                src[face[2]],
+                src[face[3]]));
+            dst[start + 3] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_grid(corner, x, y + 1, grid_size_1_inv),
+                src[face[0]],
+                src[face[1]],
+                src[face[2]],
+                src[face[3]]));
+          }
+        }
+      }
+      else {
+        const std::array<T, 4> values =
+            bke::subdiv::interpolate_corner_data_for_subdivided_irregular_face<T>(face, grid, src);
+        for (int y = 0; y < grid_size_1; y++) {
+          for (int x = 0; x < grid_size_1; x++) {
+            const int start = verts_per_grid * i + CCG_grid_xy_to_index(grid_size_1, x, y) * 4;
+            dst[start] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x, y, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+            dst[start + 1] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x + 1, y, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+            dst[start + 2] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x + 1, y + 1, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+            dst[start + 3] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x, y + 1, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+          }
+        }
+      }
+    }
+  });
+}
+
+template<typename T>
+static void interpolate_corner_data_for_standard_layout(const SubdivCCG &subdiv_ccg,
+                                                        const Span<int> grids,
+                                                        const Span<T> src,
+                                                        gpu::VertBuf &vbo)
+{
+  using Converter = AttributeConverter<T>;
+  using VBOType = typename Converter::VBOType;
+
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int grid_size = key.grid_size;
+  const int grid_area = key.grid_area;
+
+  const float grid_size_1_inv = 1.0f / (grid_size - 1);
+  MutableSpan<VBOType> dst = vbo.data<VBOType>();
+  threading::parallel_for(grids.index_range(), 1024, [&](const IndexRange range) {
+    for (const int i : range) {
+      const int grid = grids[i];
+      const int face_index = subdiv_ccg.grid_to_face_map[grid];
+      const IndexRange face = subdiv_ccg.faces[face_index];
+      const int corner = grid - face.start();
+      if (face.size() == 4) {
+        for (int y = 0; y < grid_size; y++) {
+          for (int x = 0; x < grid_size; x++) {
+            const int element = i * grid_area + CCG_grid_xy_to_index(grid_size, x, y);
+            dst[element] = Converter::convert(
+                bke::attribute_math::mix4(quad_weights_from_grid(corner, x, y, grid_size_1_inv),
+                                          src[face[0]],
+                                          src[face[1]],
+                                          src[face[2]],
+                                          src[face[3]]));
+          }
+        }
+      }
+      else {
+        const std::array<T, 4> values =
+            bke::subdiv::interpolate_corner_data_for_subdivided_irregular_face<T>(face, grid, src);
+        for (int y = 0; y < grid_size; y++) {
+          for (int x = 0; x < grid_size; x++) {
+            const int element = i * grid_area + CCG_grid_xy_to_index(grid_size, x, y);
+            dst[element] = Converter::convert(bke::attribute_math::mix4(
+                quad_weights_from_irregular_corner(x, y, grid_size_1_inv),
+                values[0],
+                values[1],
+                values[2],
+                values[3]));
+          }
+        }
+      }
+    }
+  });
+}
+
+BLI_NOINLINE static void calc_generic_corner_attribute_grids(
+    const Object &object,
+    const OrigMeshData &orig_mesh_data,
+    const BitSpan &use_flat_layout,
+    const IndexMask &node_mask,
+    const StringRef name,
+    const MutableSpan<gpu::VertBufPtr> vbos)
+{
+  PRF_scope(ProfileCategory::Draw);
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+  const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
+  const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
+  const bke::AttributeAccessor attributes = orig_mesh_data.attributes;
+  const GVArraySpan attr = *attributes.lookup(name);
+
+  node_mask.foreach_index(
+      [&](const int i) {
+        bke::attribute_math::to_static_type(attr.type(), [&]<typename T>() {
+          if constexpr (!std::is_void_v<typename AttributeConverter<T>::VBOType>) {
+            if (use_flat_layout[i]) {
+              interpolate_corner_data_for_flat_layout<T>(
+                  subdiv_ccg, nodes[i].grids(), attr.typed<T>(), *vbos[i]);
+            }
+            else {
+              interpolate_corner_data_for_standard_layout<T>(
+                  subdiv_ccg, nodes[i].grids(), attr.typed<T>(), *vbos[i]);
+            }
+          }
+        });
+      },
+      exec_mode::grain_size(1));
+}
+
+template<typename T>
+static void fill_face_data_grids(const SubdivCCG &subdiv_ccg,
+                                 const bool use_flat_layout,
+                                 const Span<int> grids,
+                                 const Span<T> src,
+                                 gpu::VertBuf &vbo)
+{
+  using Converter = AttributeConverter<T>;
+  using VBOType = typename Converter::VBOType;
+
+  const CCGKey key = BKE_subdiv_ccg_key_top_level(subdiv_ccg);
+  const int verts_per_grid = use_flat_layout ? (key.grid_size - 1) * (key.grid_size - 1) * 4 :
+                                               key.grid_area;
+  VBOType *dst = vbo.data<VBOType>().data();
+  for (const int i : grids.index_range()) {
+    const int face_index = subdiv_ccg.grid_to_face_map[grids[i]];
+    std::fill_n(dst, verts_per_grid, Converter::convert(src[face_index]));
+    dst += verts_per_grid;
+  }
+}
+
+BLI_NOINLINE static void fill_generic_face_attribute_grids(const Object &object,
+                                                           const OrigMeshData &orig_mesh_data,
+                                                           const BitSpan &use_flat_layout,
+                                                           const IndexMask &node_mask,
+                                                           const StringRef name,
+                                                           const MutableSpan<gpu::VertBufPtr> vbos)
+{
+  PRF_scope(ProfileCategory::Draw);
+  const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
+  const Span<bke::pbvh::GridsNode> nodes = pbvh.nodes<bke::pbvh::GridsNode>();
+  const SubdivCCG &subdiv_ccg = *object.runtime->sculpt_session->subdiv_ccg;
+  const bke::AttributeAccessor attributes = orig_mesh_data.attributes;
+  const GVArraySpan attr = *attributes.lookup(name);
+
+  node_mask.foreach_index(
+      [&](const int i) {
+        bke::attribute_math::to_static_type(attr.type(), [&]<typename T>() {
+          if constexpr (!std::is_void_v<typename AttributeConverter<T>::VBOType>) {
+            fill_face_data_grids<T>(
+                subdiv_ccg, use_flat_layout[i], nodes[i].grids(), attr.typed<T>(), *vbos[i]);
+          }
+        });
+      },
+      exec_mode::grain_size(1));
+}
+
+BLI_NOINLINE static void update_generic_attribute_grids(const Object &object,
+                                                        const OrigMeshData &orig_mesh_data,
+                                                        const BitSpan use_flat_layout,
+                                                        const IndexMask &node_mask,
+                                                        const StringRef name,
+                                                        const MutableSpan<gpu::VertBufPtr> vbos)
+{
+  PRF_scope(ProfileCategory::Draw);
+  const bke::AttributeAccessor attributes = orig_mesh_data.attributes;
+  const bke::GAttributeReader attr = attributes.lookup(name);
+  if (attr.domain == bke::AttrDomain::Edge) {
+    return;
+  }
+
+  if (!attr) {
+    ensure_vbos_allocated_grids(object,
+                                attribute_format(orig_mesh_data, "Dummy", bke::AttrType::Float3),
+                                use_flat_layout,
+                                node_mask,
+                                vbos);
+    node_mask.foreach_index([&](const int i) { vbos[i]->data<float3>().fill(float3(0.0f)); },
+                            exec_mode::grain_size(1));
+    return;
+  }
+
+  const bke::AttrType data_type = bke::cpp_type_to_attribute_type(attr.varray.type());
+
+  if (attr.domain == bke::AttrDomain::Corner && data_type == bke::AttrType::Float2) {
+    fill_uvs_grids(object, orig_mesh_data, use_flat_layout, node_mask, name, vbos);
+    return;
+  }
+
+  switch (attr.domain) {
+    case bke::AttrDomain::Point:
+      ensure_vbos_allocated_grids(object,
+                                  attribute_format(orig_mesh_data, name, data_type),
+                                  use_flat_layout,
+                                  node_mask,
+                                  vbos);
+      calc_generic_vert_attribute_grids(
+          object, orig_mesh_data, use_flat_layout, node_mask, name, vbos);
+      break;
+    case bke::AttrDomain::Corner:
+      ensure_vbos_allocated_grids(object,
+                                  attribute_format(orig_mesh_data, name, data_type),
+                                  use_flat_layout,
+                                  node_mask,
+                                  vbos);
+      calc_generic_corner_attribute_grids(
+          object, orig_mesh_data, use_flat_layout, node_mask, name, vbos);
+      break;
+    case bke::AttrDomain::Face:
+      ensure_vbos_allocated_grids(object,
+                                  attribute_format(orig_mesh_data, name, data_type),
+                                  use_flat_layout,
+                                  node_mask,
+                                  vbos);
+      fill_generic_face_attribute_grids(
+          object, orig_mesh_data, use_flat_layout, node_mask, name, vbos);
+      break;
+    default:
+      BLI_assert_unreachable();
+  }
+}
+
 BLI_NOINLINE static void update_positions_bmesh(const Object &object,
                                                 const IndexMask &node_mask,
                                                 const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
   ensure_vbos_allocated_bmesh(object, position_format(), node_mask, vbos);
@@ -978,6 +1750,7 @@ BLI_NOINLINE static void update_normals_bmesh(const Object &object,
                                               const IndexMask &node_mask,
                                               const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
   ensure_vbos_allocated_bmesh(object, normal_format(), node_mask, vbos);
@@ -1012,6 +1785,7 @@ BLI_NOINLINE static void update_masks_bmesh(const Object &object,
                                             const IndexMask &node_mask,
                                             const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
   const BMesh &bm = *object.runtime->sculpt_session->bm;
@@ -1049,6 +1823,7 @@ BLI_NOINLINE static void update_face_sets_bmesh(const Object &object,
                                                 const IndexMask &node_mask,
                                                 const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
   const BMesh &bm = *object.runtime->sculpt_session->bm;
@@ -1089,6 +1864,7 @@ BLI_NOINLINE static void update_generic_attribute_bmesh(const Object &object,
                                                         const StringRef name,
                                                         const MutableSpan<gpu::VertBufPtr> vbos)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   const Span<bke::pbvh::BMeshNode> nodes = pbvh.nodes<bke::pbvh::BMeshNode>();
   const BMesh &bm = *object.runtime->sculpt_session->bm;
@@ -1460,6 +2236,7 @@ static Array<int> calc_material_indices(const Object &object, const OrigMeshData
 
 static BitVector<> calc_use_flat_layout(const Object &object, const OrigMeshData &orig_mesh_data)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   switch (pbvh.type()) {
     case bke::pbvh::Type::Mesh:
@@ -1688,6 +2465,7 @@ Span<gpu::IndexBufPtr> DrawCacheImpl::ensure_lines_indices(const Object &object,
 BitSpan DrawCacheImpl::ensure_use_flat_layout(const Object &object,
                                               const OrigMeshData &orig_mesh_data)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   if (use_flat_layout_.size() != pbvh.nodes_num()) {
     use_flat_layout_ = calc_use_flat_layout(object, orig_mesh_data);
@@ -1698,6 +2476,7 @@ BitSpan DrawCacheImpl::ensure_use_flat_layout(const Object &object,
 BLI_NOINLINE static void flush_vbo_data(const Span<gpu::VertBufPtr> vbos,
                                         const IndexMask &node_mask)
 {
+  PRF_scope(ProfileCategory::Draw);
   node_mask.foreach_index([&](const int i) { GPU_vertbuf_use(vbos[i].get()); });
 }
 
@@ -1706,6 +2485,7 @@ Span<gpu::VertBufPtr> DrawCacheImpl::ensure_attribute_data(const Object &object,
                                                            const AttributeRequest &attr,
                                                            const IndexMask &node_mask)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   AttributeData &data = attribute_vbos_.lookup_or_add_default(attr);
   Vector<gpu::VertBufPtr> &vbos = data.vbos;
@@ -1766,14 +2546,8 @@ Span<gpu::VertBufPtr> DrawCacheImpl::ensure_attribute_data(const Object &object,
         }
       }
       else {
-        ensure_vbos_allocated_grids(
-            object,
-            attribute_format(orig_mesh_data, "Dummy", bke::AttrType::Float3),
-            use_flat_layout_,
-            mask,
-            vbos);
-        mask.foreach_index([&](const int i) { vbos[i]->data<float3>().fill(float3(0.0f)); },
-                           exec_mode::grain_size(1));
+        update_generic_attribute_grids(
+            object, orig_mesh_data, use_flat_layout_, mask, std::get<GenericRequest>(attr), vbos);
       }
       break;
     }
@@ -1816,6 +2590,7 @@ Span<gpu::IndexBufPtr> DrawCacheImpl::ensure_tri_indices(const Object &object,
                                                          const IndexMask &node_mask,
                                                          const bool coarse)
 {
+  PRF_scope(ProfileCategory::Draw);
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
   switch (pbvh.type()) {
     case bke::pbvh::Type::Mesh: {
@@ -1885,6 +2660,7 @@ Span<gpu::Batch *> DrawCacheImpl::ensure_tris_batches(const Object &object,
                                                       const ViewportRequest &request,
                                                       const IndexMask &nodes_to_update)
 {
+  PRF_scope(ProfileCategory::Draw);
   const Object &object_orig = *DEG_get_original(&object);
   const OrigMeshData orig_mesh_data{*id_cast<const Mesh *>(object_orig.data)};
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
@@ -1931,6 +2707,7 @@ Span<gpu::Batch *> DrawCacheImpl::ensure_lines_batches(const Object &object,
                                                        const ViewportRequest &request,
                                                        const IndexMask &nodes_to_update)
 {
+  PRF_scope(ProfileCategory::Draw);
   const Object &object_orig = *DEG_get_original(&object);
   const OrigMeshData orig_mesh_data(*id_cast<const Mesh *>(object_orig.data));
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
@@ -1963,9 +2740,11 @@ Span<gpu::Batch *> DrawCacheImpl::ensure_lines_batches(const Object &object,
 Span<int> DrawCacheImpl::ensure_material_indices(const Object &object)
 {
   const bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(object);
-  if (material_indices_.size() != pbvh.nodes_num()) {
-    const Object &object_orig = *DEG_get_original(&object);
-    const OrigMeshData orig_mesh_data(*id_cast<const Mesh *>(object_orig.data));
+  const Object &object_orig = *DEG_get_original(&object);
+  const OrigMeshData orig_mesh_data(*id_cast<const Mesh *>(object_orig.data));
+  if (orig_mesh_data.attributes.contains("material_index") &&
+      material_indices_.size() != pbvh.nodes_num())
+  {
     material_indices_ = calc_material_indices(object, orig_mesh_data);
   }
   return material_indices_;

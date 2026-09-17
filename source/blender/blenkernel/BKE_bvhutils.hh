@@ -60,27 +60,15 @@ BVHTreeFromMesh bvhtree_from_mesh_edges_ex(Span<float3> vert_positions,
 
 /**
  * Builds a BVH-tree where nodes are the triangle faces (#Mesh::corner_tris()) of the given mesh.
+ * \param map_global_indices: Record and later return the indices from the full mesh rather than
+ * the index in the masked faces.
  */
 BVHTreeFromMesh bvhtree_from_mesh_corner_tris_ex(Span<float3> vert_positions,
                                                  OffsetIndices<int> faces,
                                                  Span<int> corner_verts,
                                                  Span<int3> corner_tris,
-                                                 const IndexMask &faces_mask);
-
-/**
- * Build a BVH-tree from the triangles in the mesh that correspond to the faces in the given mask.
- */
-BVHTreeFromMesh bvhtree_from_mesh_tris_init(const Mesh &mesh, const IndexMask &faces_mask);
-
-/**
- * Build a BVH-tree containing the given edges.
- */
-BVHTreeFromMesh bvhtree_from_mesh_edges_init(const Mesh &mesh, const IndexMask &edges_mask);
-
-/**
- * Build a BVH-tree containing the given vertices.
- */
-BVHTreeFromMesh bvhtree_from_mesh_verts_init(const Mesh &mesh, const IndexMask &verts_mask);
+                                                 const IndexMask &faces_mask,
+                                                 bool map_global_indices = true);
 
 /**
  * Math functions used by callbacks
@@ -93,19 +81,6 @@ float bvhtree_sphereray_tri_intersection(const BVHTreeRay *ray,
                                          const float v0[3],
                                          const float v1[3],
                                          const float v2[3]);
-
-struct BVHTreeFromPointCloud {
-  const BVHTree *tree = nullptr;
-
-  BVHTree_NearestPointCallback nearest_callback;
-
-  Span<float3> positions;
-
-  std::unique_ptr<BVHTree, BVHTreeDeleter> owned_tree;
-};
-
-BVHTreeFromPointCloud bvhtree_from_pointcloud_get(const PointCloud &pointcloud,
-                                                  const IndexMask &points_mask);
 
 }  // namespace bke
 }  // namespace blender

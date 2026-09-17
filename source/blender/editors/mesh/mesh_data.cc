@@ -46,6 +46,10 @@
 
 namespace blender {
 
+/* -------------------------------------------------------------------- */
+/** \name UV Layer API
+ * \{ */
+
 static void mesh_uv_reset_array(float **fuv, const int len)
 {
   if (len == 3) {
@@ -265,6 +269,12 @@ void ED_mesh_uv_ensure(Mesh *mesh, const char *name)
   }
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Color Layer API
+ * \{ */
+
 std::string ED_mesh_color_add(Mesh *mesh,
                               const char *name,
                               const bool active_set,
@@ -283,7 +293,7 @@ std::string ED_mesh_color_add(Mesh *mesh,
   if (const BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
     BM_data_layer_add_named(em->bm, &em->bm->ldata, CD_PROP_BYTE_COLOR, new_name);
     if (do_init) {
-      const BMDataLayerLookup active_attr = BM_data_layer_lookup(*em->bm, name);
+      const BMDataLayerLookup active_attr = BM_data_layer_lookup(*em->bm, active_name);
       if (active_attr.type == bke::AttrType::ColorByte &&
           active_attr.domain == bke::AttrDomain::Corner)
       {
@@ -314,7 +324,7 @@ std::string ED_mesh_color_add(Mesh *mesh,
     BKE_id_attributes_active_color_set(&mesh->id, new_name);
   }
 
-  DEG_id_tag_update(&mesh->id, 0);
+  DEG_id_tag_update(&mesh->id, ID_RECALC_GEOMETRY);
   WM_main_add_notifier(NC_GEOM | ND_DATA, mesh);
 
   return new_name;
@@ -340,12 +350,16 @@ bool ED_mesh_color_ensure(Mesh *mesh, const char *name)
   BKE_id_attributes_active_color_set(&mesh->id, unique_name);
   BKE_id_attributes_default_color_set(&mesh->id, unique_name);
   BKE_mesh_tessface_clear(mesh);
-  DEG_id_tag_update(&mesh->id, 0);
+  DEG_id_tag_update(&mesh->id, ID_RECALC_GEOMETRY);
 
   return true;
 }
 
-/*********************** UV texture operators ************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name UV Map Operators
+ * \{ */
 
 static bool uv_maps_poll(bContext *C)
 {
@@ -443,6 +457,12 @@ void MESH_OT_uv_texture_remove(wmOperatorType *ot)
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Custom Data Layer Operators
+ * \{ */
 
 static bool mesh_customdata_mask_clear_poll(bContext *C)
 {
@@ -586,11 +606,12 @@ static SkinState mesh_customdata_skin_state(bContext *C)
     return SkinState::Invalid;
   }
   if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
-    return CustomData_has_layer(&em->bm->vdata, CD_MVERT_SKIN) ? SkinState::HasSkin :
-                                                                 SkinState::NoSkin;
+    return CustomData_has_layer_named(&em->bm->vdata, CD_PROP_FLOAT2, "skin_modifier_radius") ?
+               SkinState::HasSkin :
+               SkinState::NoSkin;
   }
-  return CustomData_has_layer(&mesh->vert_data, CD_MVERT_SKIN) ? SkinState::HasSkin :
-                                                                 SkinState::NoSkin;
+  return mesh->attributes().contains("skin_modifier_radius") ? SkinState::HasSkin :
+                                                               SkinState::NoSkin;
 }
 
 static bool mesh_customdata_skin_add_poll(bContext *C)
@@ -633,15 +654,19 @@ static wmOperatorStatus mesh_customdata_skin_clear_exec(bContext *C, wmOperator 
   Object *object = ed::object::context_object(C);
   Mesh *mesh = id_cast<Mesh *>(object->data);
   if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
-    if (!CustomData_has_layer(&em->bm->vdata, CD_MVERT_SKIN)) {
+    if (!CustomData_has_layer_named(&em->bm->vdata, CD_PROP_FLOAT2, "skin_modifier_radius")) {
       return OPERATOR_CANCELLED;
     }
-    BM_data_layer_free(em->bm, &em->bm->vdata, CD_MVERT_SKIN);
+    BM_data_layer_free_named(em->bm, &em->bm->vdata, "skin_modifier_radius");
+    BM_data_layer_free_named(em->bm, &em->bm->vdata, "skin_modifier_root");
+    BM_data_layer_free_named(em->bm, &em->bm->vdata, "skin_modifier_loose");
   }
   else {
-    if (!CustomData_free_layers(&mesh->vert_data, CD_MVERT_SKIN)) {
+    if (!mesh->attributes_for_write().remove("skin_modifier_radius")) {
       return OPERATOR_CANCELLED;
     }
+    mesh->attributes_for_write().remove("skin_modifier_root");
+    mesh->attributes_for_write().remove("skin_modifier_loose");
   }
   DEG_id_tag_update(&mesh->id, ID_RECALC_GEOMETRY);
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, mesh);
@@ -735,6 +760,12 @@ void MESH_OT_customdata_custom_splitnormals_clear(wmOperatorType *ot)
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Add Geometry
+ * \{ */
 
 static void mesh_add_verts(Mesh *mesh, int len)
 {
@@ -845,10 +876,6 @@ static void mesh_add_faces(Mesh *mesh, int len)
   select_poly.span.take_back(len).fill(true);
   select_poly.finish();
 }
-
-/* -------------------------------------------------------------------- */
-/** \name Add Geometry
- * \{ */
 
 void ED_mesh_verts_add(Mesh *mesh, ReportList *reports, int count)
 {
@@ -1002,6 +1029,10 @@ void ED_mesh_geometry_clear(Mesh *mesh)
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Miscellaneous Public API
+ * \{ */
+
 void ED_mesh_report_mirror_ex(ReportList &reports, int totmirr, int totfail, char selectmode)
 {
   const char *elem_type;
@@ -1087,5 +1118,7 @@ void ED_mesh_split_faces(Mesh *mesh)
 
   geometry::split_edges(*mesh, split_mask, {});
 }
+
+/** \} */
 
 }  // namespace blender

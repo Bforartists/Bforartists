@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup nodes
+ */
+
 #pragma once
 
 #include <cstdint>
@@ -132,7 +136,7 @@ class ItemDeclaration {
 using ItemDeclarationPtr = std::unique_ptr<ItemDeclaration>;
 
 struct SocketNameRNA {
-  PointerRNA owner = PointerRNA_NULL;
+  PointerRNA owner = {};
   std::string property_name;
 };
 
@@ -171,12 +175,14 @@ struct OutputStructureTypeDependency {
 class SocketDeclaration : public ItemDeclaration {
  public:
   UString name;
-  std::string short_label;
+  UString short_label;
   UString identifier;
   std::string description;
   std::optional<std::string> translation_context;
-  /** Defined by whether the socket is part of the node's input or
-   * output socket declaration list. Included here for convenience. */
+  /**
+   * Defined by whether the socket is part of the node's input or
+   * output socket declaration list. Included here for convenience.
+   */
   eNodeSocketInOut in_out;
   /** Socket type that corresponds to this socket declaration. */
   eNodeSocketDatatype socket_type;
@@ -211,9 +217,11 @@ class SocketDeclaration : public ItemDeclaration {
   CompositorInputRealizationMode compositor_realization_mode_ =
       CompositorInputRealizationMode::OperationDomain;
 
-  /** The priority of the input for determining the domain of the node. If negative, then the
+  /**
+   * The priority of the input for determining the domain of the node. If negative, then the
    * domain priority is not set and the index of the input is assumed to be the priority instead.
-   * See compositor::InputDescriptor for more information. */
+   * See compositor::InputDescriptor for more information.
+   */
   int compositor_domain_priority_ = -1;
 
   /** Utility method to make the socket available if there is a straightforward way to do so. */
@@ -305,7 +313,7 @@ class BaseSocketDeclarationBuilder {
 
   BaseSocketDeclarationBuilder &compact(bool value = true);
 
-  BaseSocketDeclarationBuilder &short_label(std::string value = "");
+  BaseSocketDeclarationBuilder &short_label(UString value);
 
   BaseSocketDeclarationBuilder &description(std::string value = "");
 
@@ -604,17 +612,23 @@ class NodeDeclaration {
   Vector<PanelDeclaration *> panels;
   std::unique_ptr<rl::RelationsInNode> reference_lifetime_relations_;
 
-  /** Leave the sockets in place, even if they don't match the declaration. Used for dynamic
+  /**
+   * Leave the sockets in place, even if they don't match the declaration. Used for dynamic
    * declarations when the information used to build the declaration is missing, but might become
-   * available again in the future. */
+   * available again in the future.
+   */
   bool skip_updating_sockets = false;
 
-  /** Use order of socket declarations for socket order instead of conventional
-   * outputs | buttons | inputs order. Panels are only supported when using custom socket order. */
+  /**
+   * Use order of socket declarations for socket order instead of conventional
+   * outputs | buttons | inputs order. Panels are only supported when using custom socket order.
+   */
   bool use_custom_socket_order = false;
 
-  /** Usually output sockets come before input sockets currently. Only some specific nodes are
-   * exempt from that rule for now. */
+  /**
+   * Usually output sockets come before input sockets currently. Only some specific nodes are
+   * exempt from that rule for now.
+   */
   bool allow_any_socket_order = false;
 
   /**

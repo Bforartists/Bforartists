@@ -361,9 +361,7 @@ static void template_id_liboverride_hierarchy_collection_root_find_recursive(
       *r_collection_parent_best = collection;
     }
   }
-  for (CollectionParent *iter =
-           static_cast<CollectionParent *>(collection->runtime->parents.first);
-       iter != nullptr;
+  for (CollectionParent *iter = collection->runtime->parents.first(); iter != nullptr;
        iter = iter->next)
   {
     if (iter->collection->id.lib != collection->id.lib && ID_IS_LINKED(iter->collection)) {
@@ -382,9 +380,7 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
   /* Tag all local parents of the root collection, so that usages of the root collection and other
    * linked ones can be replaced by the local overrides in those parents too. */
   if (do_parents) {
-    for (CollectionParent *iter =
-             static_cast<CollectionParent *>(root_collection->runtime->parents.first);
-         iter != nullptr;
+    for (CollectionParent *iter = root_collection->runtime->parents.first(); iter != nullptr;
          iter = iter->next)
     {
       if (ID_IS_LINKED(iter->collection)) {
@@ -394,8 +390,7 @@ static void template_id_liboverride_hierarchy_collections_tag_recursive(
     }
   }
 
-  for (CollectionChild *iter = static_cast<CollectionChild *>(root_collection->children.first);
-       iter != nullptr;
+  for (CollectionChild *iter = root_collection->children.first(); iter != nullptr;
        iter = iter->next)
   {
     if (ID_IS_LINKED(iter->collection) && iter->collection->id.lib != target_id->lib) {
@@ -1083,7 +1078,7 @@ static void template_ID(const bContext *C,
   Block *block = layout.block();
   block_align_begin(block);
 
-  if (idptr.type) {
+  if (idptr.has_type()) {
     type = idptr.type;
   }
 
@@ -1501,7 +1496,7 @@ static void template_ID_tabs(const bContext *C,
     const bool editable = RNA_property_editable(&template_id.ptr, template_id.prop);
     Button *but;
 
-    if (active_ptr.type) {
+    if (active_ptr.has_type()) {
       type = active_ptr.type;
     }
 

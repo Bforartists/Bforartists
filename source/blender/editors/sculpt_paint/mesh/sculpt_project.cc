@@ -33,7 +33,7 @@ static void gesture_begin(bContext &C, wmOperator &op, gesture::GestureData &ges
 {
   const Scene &scene = *CTX_data_scene(&C);
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(&C);
-  BKE_sculpt_update_object_for_edit(depsgraph, gesture_data.vc.obact, false);
+  BKE_sculptsession_update_for_edit(depsgraph, gesture_data.vc.obact, false);
   undo::push_begin(scene, *gesture_data.vc.obact, &op);
 }
 
@@ -57,8 +57,10 @@ static void apply_projection_mesh(const Sculpt &sd,
   SculptSession &ss = *object.runtime->sculpt_session;
 
   const Span<int> verts = node.verts();
-  const MutableSpan positions = gather_data_mesh(position_data.eval, verts, tls.positions);
-  const MutableSpan normals = gather_data_mesh(vert_normals, verts, tls.normals);
+  Array<float3, bke::pbvh::MESH_LEAF_LIMIT> positions(verts.size());
+  gather_data_mesh(position_data.eval, verts, positions.as_mutable_span());
+  Array<float3, bke::pbvh::MESH_LEAF_LIMIT> normals(verts.size());
+  gather_data_mesh(vert_normals, verts, normals.as_mutable_span());
 
   tls.factors.resize(verts.size());
   const MutableSpan<float> factors = tls.factors;

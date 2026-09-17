@@ -70,7 +70,7 @@ static bool keyingset_poll_active_edit(bContext *C)
   }
 
   /* There must be an active KeyingSet (and KeyingSets). */
-  return ((scene->active_keyingset > 0) && (scene->keyingsets.first));
+  return ((scene->active_keyingset > 0) && (scene->keyingsets.first_));
 }
 
 /* poll callback for editing active KeyingSet Path */
@@ -89,7 +89,7 @@ static bool keyingset_poll_activePath_edit(bContext *C)
       BLI_findlink(&scene->keyingsets, scene->active_keyingset - 1));
 
   /* there must be an active KeyingSet and an active path */
-  return ((keyingset) && (keyingset->paths.first) && (keyingset->active_path > 0));
+  return ((keyingset) && (keyingset->paths.first_) && (keyingset->active_path > 0));
 }
 
 /* Add a Default (Empty) Keying Set ------------------------- */
@@ -307,7 +307,7 @@ static wmOperatorStatus add_keyingset_button_exec(bContext *C, wmOperator *op)
   /* Check if property is able to be added. */
   const bool all = RNA_boolean_get(op->ptr, "all");
   bool changed = false;
-  if (ptr.owner_id && ptr.data && prop && RNA_property_anim_editable(&ptr, prop)) {
+  if (ptr && ptr.has_owner_id() && prop && RNA_property_anim_editable(&ptr, prop)) {
     if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
       if (all) {
         pflag |= KSP_FLAG_WHOLE_ARRAY;
@@ -387,7 +387,7 @@ static wmOperatorStatus remove_keyingset_button_exec(bContext *C, wmOperator *op
       BLI_findlink(&scene->keyingsets, scene->active_keyingset - 1));
 
   bool changed = false;
-  if (ptr.owner_id && ptr.data && prop) {
+  if (ptr && ptr.has_owner_id() && prop) {
     if (const std::optional<std::string> path = RNA_path_from_ID_to_property(&ptr, prop)) {
       /* Try to find a path matching this description. */
       KS_Path *keyingset_path = BKE_keyingset_find_path(
@@ -496,8 +496,8 @@ static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *toti
   Scene *scene = CTX_data_scene(C);
   KeyingSet *keyingset;
   int enum_index = 1;
-  if (scene->keyingsets.first) {
-    for (keyingset = static_cast<KeyingSet *>(scene->keyingsets.first); keyingset;
+  if (scene->keyingsets.first_) {
+    for (keyingset = scene->keyingsets.first(); keyingset;
          keyingset = keyingset->next, enum_index++)
     {
       if (ANIM_keyingset_context_ok_poll(C, keyingset)) {
@@ -515,7 +515,7 @@ static void build_keyingset_enum(bContext *C, EnumPropertyItem **item, int *toti
 
   /* Builtin Keying Sets. */
   enum_index = -1;
-  for (keyingset = static_cast<KeyingSet *>(builtin_keyingsets.first); keyingset;
+  for (keyingset = builtin_keyingsets.first(); keyingset;
        keyingset = keyingset->next, enum_index--)
   {
     /* Only show KeyingSet if context is suitable. */
@@ -651,7 +651,7 @@ static void anim_keyingset_visit_for_search_impl(
   }
 
   /* User-defined Keying Sets. */
-  if (scene && scene->keyingsets.first) {
+  if (scene && scene->keyingsets.first_) {
     for (KeyingSet &keyingset : scene->keyingsets) {
       if (use_poll && !ANIM_keyingset_context_ok_poll(const_cast<bContext *>(C), &keyingset)) {
         continue;

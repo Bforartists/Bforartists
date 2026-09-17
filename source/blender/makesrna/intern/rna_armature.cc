@@ -118,7 +118,7 @@ static void rna_Armature_act_bone_set(PointerRNA *ptr, PointerRNA value, ReportL
 {
   bArmature *arm = static_cast<bArmature *>(ptr->data);
 
-  if (value.owner_id == nullptr && value.data == nullptr) {
+  if (!value) {
     arm->act_bone = nullptr;
   }
   else {
@@ -142,7 +142,7 @@ static void rna_Armature_act_edit_bone_set(PointerRNA *ptr,
 {
   bArmature *arm = static_cast<bArmature *>(ptr->data);
 
-  if (value.owner_id == nullptr && value.data == nullptr) {
+  if (!value) {
     arm->act_edbone = nullptr;
   }
   else {
@@ -280,7 +280,7 @@ static PointerRNA rna_BoneCollection_parent_get(PointerRNA *ptr)
   const int parent_index = armature_bonecoll_find_parent_index(arm, bcoll_index);
 
   if (parent_index < 0) {
-    return PointerRNA_NULL;
+    return {};
   }
 
   BoneCollection *parent = arm->collection_array[parent_index];
@@ -392,7 +392,7 @@ static void rna_BoneCollection_name_set(PointerRNA *ptr, const char *name)
   bArmature *arm = id_cast<bArmature *>(ptr->owner_id);
   BoneCollection *bcoll = static_cast<BoneCollection *>(ptr->data);
 
-  ANIM_armature_bonecoll_name_set(arm, bcoll, name);
+  ANIM_armature_bonecoll_name_set(*G_MAIN, arm, bcoll, name);
 }
 
 static void rna_BoneCollection_is_visible_set(PointerRNA *ptr, const bool is_visible)
@@ -949,9 +949,7 @@ static void rna_Bone_bbone_handle_update(Main *bmain, Scene *scene, PointerRNA *
   Bone *bone = static_cast<Bone *>(ptr->data);
 
   /* Update all users of this armature after changing B-Bone handles. */
-  for (Object *obt = static_cast<Object *>(bmain->objects.first); obt;
-       obt = static_cast<Object *>(obt->id.next))
-  {
+  for (Object *obt = bmain->objects.first(); obt; obt = static_cast<Object *>(obt->id.next)) {
     if (obt->data == id_cast<ID *>(arm) && obt->pose) {
       bPoseChannel *pchan = BKE_pose_channel_find_name(obt->pose, bone->name);
 
@@ -1044,7 +1042,7 @@ static void rna_Armature_editbone_transform_update(Main *bmain, Scene *scene, Po
   }
 
   /* update our children if necessary */
-  for (child = static_cast<EditBone *>(arm->edbo->first); child; child = child->next) {
+  for (child = arm->edbo->first(); child; child = child->next) {
     if (child->parent == ebone && (child->flag & BONE_CONNECTED)) {
       copy_v3_v3(child->head, ebone->tail);
       child->rad_head = ebone->rad_tail;
@@ -1063,8 +1061,8 @@ static void rna_Armature_bones_next(CollectionPropertyIterator *iter)
   ListBaseIterator *internal = &iter->internal.listbase;
   Bone *bone = reinterpret_cast<Bone *>(internal->link);
 
-  if (bone->childbase.first) {
-    internal->link = static_cast<Link *>(bone->childbase.first);
+  if (bone->childbase.first()) {
+    internal->link = bone->childbase.first_as<Link>();
   }
   else if (bone->next) {
     internal->link = reinterpret_cast<Link *>(bone->next);
@@ -1443,6 +1441,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
   RNA_def_property_update(prop, 0, "rna_Armature_update_data");
 
   prop = RNA_def_property(srna, "use_inherit_rotation", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", BONE_HINGE);
   RNA_def_property_ui_text(
       prop, "Inherit Rotation", "Bone inherits rotation or scale from parent bone");
@@ -1469,6 +1468,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
   RNA_def_property_update(prop, 0, "rna_Armature_update_data");
 
   prop = RNA_def_property(srna, "use_local_location", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop, "Local Location", "Bone location is set in local space");
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", BONE_NO_LOCAL_LOCATION);
   RNA_def_property_update(prop, 0, "rna_Armature_update_data");
@@ -1588,6 +1588,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
   }
   RNA_def_property_float_sdna(prop, nullptr, "xwidth");
   RNA_def_property_ui_range(prop, 0.0f, 1000.0f, 1, RNA_TRANSLATION_PREC_DEFAULT);
+  RNA_def_property_float_default(prop, 0.1f);
   RNA_def_property_ui_text(prop, "B-Bone Display X Width", "B-Bone X size");
 
   prop = RNA_def_property(srna, "bbone_z", PROP_FLOAT, PROP_NONE);
@@ -1599,6 +1600,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
   }
   RNA_def_property_float_sdna(prop, nullptr, "zwidth");
   RNA_def_property_ui_range(prop, 0.0f, 1000.0f, 1, RNA_TRANSLATION_PREC_DEFAULT);
+  RNA_def_property_float_default(prop, 0.1f);
   RNA_def_property_ui_text(prop, "B-Bone Display Z Width", "B-Bone Z size");
 
   /* B-Bone Start Handle settings. */
@@ -2007,6 +2009,7 @@ static void rna_def_armature_edit_bones(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   /* return type */
   parm = RNA_def_pointer(func, "bone", "EditBone", "", "Newly created edit bone");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   /* remove target */
@@ -2105,6 +2108,7 @@ static void rna_def_armature_collections(BlenderRNA *brna, PropertyRNA *cprop)
   /* Return value. */
   parm = RNA_def_pointer(
       func, "bonecollection", "BoneCollection", "", "Newly created bone collection");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   /* Armature.collections.remove(...) */
@@ -2372,6 +2376,7 @@ static void rna_def_bonecollection(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_OBJECT | ND_BONE_COLLECTION, nullptr);
 
   prop = RNA_def_property(srna, "is_visible", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_boolean_sdna(prop, nullptr, "flags", BONE_COLLECTION_VISIBLE);
   RNA_def_property_ui_text(
       prop, "Visible", "Bones in this collection will be visible in pose/object mode");

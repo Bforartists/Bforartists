@@ -63,7 +63,7 @@ namespace blender {
 
 void ED_editors_init_for_undo(Main *bmain)
 {
-  wmWindowManager *wm = static_cast<wmWindowManager *>(bmain->wm.first);
+  wmWindowManager *wm = bmain->wm.first();
   for (wmWindow &win : wm->windows) {
     Scene *scene = WM_window_get_active_scene(&win);
     ViewLayer *view_layer = WM_window_get_active_view_layer(&win);
@@ -168,7 +168,7 @@ void ED_editors_init(bContext *C)
     if (mode == OB_MODE_EDIT) {
       object::editmode_enter_ex(bmain, scene, &ob, 0);
     }
-    else if (mode & OB_MODE_ALL_SCULPT) {
+    else if (BKE_object_use_sculptsession(mode)) {
       if (obact == &ob) {
         if (mode == OB_MODE_SCULPT) {
           ed::sculpt_paint::object_sculpt_mode_enter(
@@ -180,6 +180,9 @@ void ED_editors_init(bContext *C)
         else if (mode == OB_MODE_WEIGHT_PAINT) {
           ED_object_wpaintmode_enter_ex(*bmain, *depsgraph, *scene, ob);
         }
+        else if (mode == OB_MODE_TEXTURE_PAINT) {
+          ED_object_texture_paint_mode_enter_ex(*bmain, *scene, *depsgraph, ob);
+        }
         else {
           BLI_assert_unreachable();
         }
@@ -187,7 +190,7 @@ void ED_editors_init(bContext *C)
       else {
         /* Create data for non-active objects which need it for
          * mode-switching but don't yet support multi-editing. */
-        if (mode & OB_MODE_ALL_SCULPT) {
+        if (BKE_object_use_sculptsession(mode)) {
           ob.mode = mode;
           BKE_object_sculpt_data_create(&ob);
         }
@@ -196,7 +199,7 @@ void ED_editors_init(bContext *C)
     else {
       /* TODO(@ideasman42): avoid operator calls. */
       if (obact == &ob) {
-        object::mode_set(C, mode);
+        object::mode_set_ex(C, mode, true, reports);
       }
     }
   }
@@ -232,8 +235,8 @@ void ED_editors_exit(Main *bmain, bool do_undo_system)
   }
 
   /* Frees all edit-mode undo-steps. */
-  if (do_undo_system && G_MAIN->wm.first) {
-    wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+  if (do_undo_system && G_MAIN->wm.first_) {
+    wmWindowManager *wm = G_MAIN->wm.first();
     /* normally we don't check for null undo stack,
      * do here since it may run in different context. */
     if (wm->runtime->undo_stack) {
@@ -266,10 +269,7 @@ void ED_editors_exit(Main *bmain, bool do_undo_system)
   ED_mesh_mirror_topo_table_end(nullptr);
 }
 
-bool ED_editors_flush_edits_for_object_ex(Main *bmain,
-                                          Object *ob,
-                                          bool for_render,
-                                          bool check_needs_flush)
+bool ED_editors_flush_edits_for_object_ex(Main *bmain, Object *ob, bool check_needs_flush)
 {
   using namespace blender::ed;
   bool has_edited = false;
@@ -282,20 +282,15 @@ bool ED_editors_flush_edits_for_object_ex(Main *bmain,
         return false;
       }
       ob->runtime->sculpt_session->needs_flush_to_id = false;
-
-      /* flush multires changes (for sculpt) */
-      multires_flush_sculpt_updates(ob);
       has_edited = true;
 
-      if (for_render) {
-        /* flush changes from dynamic topology sculpt */
-        BKE_sculptsession_bm_to_me_for_render(ob);
-      }
-      else {
-        /* Set reorder=false so that saving the file doesn't reorder
-         * the BMesh's elements */
-        BKE_sculptsession_bm_to_me(ob);
-      }
+      /* flush multires changes */
+      multires_flush_sculpt_updates(ob);
+
+      /* flush dynotopo changes */
+      BKE_sculptsession_bm_to_me(ob);
+
+      DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }
   }
   else if (ob->mode & OB_MODE_EDIT) {
@@ -317,10 +312,10 @@ bool ED_editors_flush_edits_for_object_ex(Main *bmain,
 
 bool ED_editors_flush_edits_for_object(Main *bmain, Object *ob)
 {
-  return ED_editors_flush_edits_for_object_ex(bmain, ob, false, false);
+  return ED_editors_flush_edits_for_object_ex(bmain, ob, false);
 }
 
-bool ED_editors_flush_edits_ex(Main *bmain, bool for_render, bool check_needs_flush)
+bool ED_editors_flush_edits_ex(Main *bmain, bool check_needs_flush)
 {
   bool has_edited = false;
 
@@ -328,7 +323,7 @@ bool ED_editors_flush_edits_ex(Main *bmain, bool for_render, bool check_needs_fl
    * exiting we might not have a context for edit object and multiple sculpt
    * objects can exist at the same time */
   for (Object &ob : bmain->objects) {
-    has_edited |= ED_editors_flush_edits_for_object_ex(bmain, &ob, for_render, check_needs_flush);
+    has_edited |= ED_editors_flush_edits_for_object_ex(bmain, &ob, check_needs_flush);
   }
 
   bmain->is_memfile_undo_flush_needed = false;
@@ -338,7 +333,7 @@ bool ED_editors_flush_edits_ex(Main *bmain, bool for_render, bool check_needs_fl
 
 bool ED_editors_flush_edits(Main *bmain)
 {
-  return ED_editors_flush_edits_ex(bmain, false, false);
+  return ED_editors_flush_edits_ex(bmain, false);
 }
 
 /* ***** XXX: functions are using old blender names, cleanup later ***** */

@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup balembic
+ */
+
 #include "abc_hierarchy_iterator.h"
 #include "abc_writer_abstract.h"
 #include "abc_writer_camera.h"
@@ -204,6 +208,8 @@ ABCAbstractWriter *ABCHierarchyIterator::create_data_writer_for_object_type(
       return new ABCNurbsWriter(writer_args);
     case OB_MBALL:
       return new ABCMetaballWriter(writer_args);
+    case OB_POINTCLOUD:
+      return new ABCPointCloudWriter(writer_args);
 
     case OB_EMPTY:
     case OB_LAMP:
@@ -213,7 +219,6 @@ ABCAbstractWriter *ABCHierarchyIterator::create_data_writer_for_object_type(
     case OB_LATTICE:
     case OB_ARMATURE:
     case OB_GPENCIL_LEGACY:
-    case OB_POINTCLOUD:
     case OB_VOLUME:
     case OB_GREASE_PENCIL:
       return nullptr;

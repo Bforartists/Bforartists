@@ -93,7 +93,7 @@ void modifier_error_message_draw(ui::Layout &layout, PointerRNA *ptr)
   ModifierData *md = static_cast<ModifierData *>(ptr->data);
   if (md->error) {
     ui::Layout &row = layout.row(false);
-    row.label(RPT_(md->error), ICON_STATUS_ERROR);
+    row.label_multiline(RPT_(md->error), ICON_STATUS_ERROR);
   }
 }
 
@@ -107,7 +107,7 @@ void modifier_error_message_draw(ui::Layout &layout, PointerRNA *ptr)
 PointerRNA *modifier_panel_get_property_pointers(Panel *panel, PointerRNA *r_ob_ptr)
 {
   PointerRNA *ptr = ui::panel_custom_data_get(panel);
-  BLI_assert(!RNA_pointer_is_null(ptr));
+  BLI_assert(*ptr);
   BLI_assert(RNA_struct_is_a(ptr->type, RNA_Modifier));
 
   if (r_ob_ptr != nullptr) {

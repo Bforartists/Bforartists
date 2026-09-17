@@ -57,7 +57,6 @@ void filelist_setfilter_options(FileList *filelist,
                                 bool filter_assets_only,
                                 bool filter_assets_hide_online,
                                 bool filter_assets_hide_offline,
-                                const char *filter_glob,
                                 const char *filter_search);
 /**
  * Set the indexer to be used by the filelist.
@@ -81,8 +80,12 @@ void filelist_tag_needs_filtering(FileList *filelist);
 void filelist_filter(FileList *filelist);
 /**
  * \param asset_library_ref: May be NULL to unset the library.
+ * \param on_change: Called when a different asset library was set. NOT called when the asset
+ *     library was unset (i.e. \a asset_library_ref is null).
  */
-void filelist_setlibrary(FileList *filelist, const AssetLibraryReference *asset_library_ref);
+void filelist_setlibrary(FileList *filelist,
+                         const AssetLibraryReference *asset_library_ref,
+                         FunctionRef<void()> on_change = nullptr);
 
 void filelist_init_icons();
 void filelist_free_icons();
@@ -223,6 +226,8 @@ void filelist_entry_parent_select_set(FileList *filelist,
                                       FileCheckType check);
 
 void filelist_setrecursion(FileList *filelist, int recursion_level);
+/** Set the extension glob used to tag entries with #FILE_TYPE_OPERATOR. */
+void filelist_setglob(FileList *filelist, const char *filter_glob);
 
 asset_system::AssetLibrary *filelist_asset_library(FileList *filelist);
 

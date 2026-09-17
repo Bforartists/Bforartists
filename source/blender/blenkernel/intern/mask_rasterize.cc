@@ -828,7 +828,7 @@ static void maskrasterize_layer_init_scanfill(MaskRasterHandle *mr_handle,
         }
 
         sf_vert = sf_vert_prev;
-        sf_vert_prev = static_cast<ScanFillVert *>(sf_ctx.fillvertbase.last);
+        sf_vert_prev = sf_ctx.fillvertbase.last();
 
         for (j = 0; j < tot_diff_point; j++) {
           ScanFillEdge *sf_edge = BLI_scanfill_edge_add(&sf_ctx, sf_vert_prev, sf_vert);
@@ -1026,9 +1026,7 @@ static void maskrasterize_layer_init_scanfill(MaskRasterHandle *mr_handle,
 
     /* coords */
     cos = reinterpret_cast<float *>(face_coords);
-    for (sf_vert = static_cast<ScanFillVert *>(sf_ctx.fillvertbase.first); sf_vert;
-         sf_vert = sf_vert_next)
-    {
+    for (sf_vert = sf_ctx.fillvertbase.first(); sf_vert; sf_vert = sf_vert_next) {
       sf_vert_next = sf_vert->next;
       copy_v3_v3(cos, sf_vert->co);
 
@@ -1058,9 +1056,7 @@ static void maskrasterize_layer_init_scanfill(MaskRasterHandle *mr_handle,
 
       cos = (&face_coords[vert_num][0]);
 
-      for (sf_vert = static_cast<ScanFillVert *>(sf_ctx.fillvertbase.first); sf_vert;
-           sf_vert = sf_vert->next)
-      {
+      for (sf_vert = sf_ctx.fillvertbase.first(); sf_vert; sf_vert = sf_vert->next) {
         copy_v3_v3(cos, sf_vert->co);
         sf_vert->tmp.u = i++;
         cos += 3;
@@ -1122,9 +1118,7 @@ static void maskrasterize_layer_init_scanfill(MaskRasterHandle *mr_handle,
 
     /* faces */
     face = reinterpret_cast<uint *>(face_array);
-    for (sf_tri = static_cast<ScanFillFace *>(sf_ctx.fillfacebase.first); sf_tri;
-         sf_tri = sf_tri->next)
-    {
+    for (sf_tri = sf_ctx.fillfacebase.first(); sf_tri; sf_tri = sf_tri->next) {
       *(face++) = sf_tri->v3->tmp.u;
       *(face++) = sf_tri->v2->tmp.u;
       *(face++) = sf_tri->v1->tmp.u;
@@ -1516,11 +1510,11 @@ static void maskrasterize_layer_init_cdt(MaskRasterHandle *mr_handle,
     const bool has_feather = !feather_ranges.is_empty();
 
     meshintersect::CDT_input<double> cdt_in;
-    cdt_in.vert = Array<double2>(cdt_verts.as_span());
+    cdt_in.vert = cdt_verts.as_span();
     cdt_in.face_offsets = cdt_face_offsets.as_span();
     cdt_in.face_vert_indices = cdt_face_vert_indices.as_span();
     cdt_in.epsilon = 1e-8;
-    cdt_in.need_ids = has_feather;
+    cdt_in.needed_ids = has_feather ? CDT_ORIG_VERTS : CDT_NO_ORIG_IDS;
 
     CDT_output_type cdt_type = (masklay->flag & MASK_LAYERFLAG_FILL_DISCRETE) ?
                                    CDT_INSIDE :

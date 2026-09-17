@@ -12,6 +12,7 @@
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_gpencil_legacy.h"
+#include "BKE_library.hh"
 #include "BKE_paint.hh"
 #include "BKE_paint_types.hh"
 
@@ -19,8 +20,8 @@
 #include "RNA_define.hh"
 
 #include "ED_grease_pencil.hh"
-#include "ED_image.hh"
 #include "ED_object.hh"
+#include "ED_paint.hh"
 
 #include "DEG_depsgraph.hh"
 
@@ -47,10 +48,13 @@ static bool brush_cursor_poll(bContext *C)
 static bool paintmode_toggle_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
-  if ((ob) && ob->type == OB_GREASE_PENCIL) {
-    return ob->data != nullptr;
+  if (ob == nullptr || ob->type != OB_GREASE_PENCIL) {
+    return false;
   }
-  return false;
+  if (!ob->data || !ID_IS_EDITABLE(ob->data)) {
+    return false;
+  }
+  return true;
 }
 
 static wmOperatorStatus paintmode_toggle_exec(bContext *C, wmOperator *op)
@@ -100,6 +104,8 @@ static wmOperatorStatus paintmode_toggle_exec(bContext *C, wmOperator *op)
       BKE_brush_init_gpencil_settings(brush);
     }
     BKE_paint_brushes_validate(bmain, &ts->gp_paint->paint);
+
+    ed::greasepencil::ensure_selection_domain(ts, ob);
   }
 
   GreasePencil *grease_pencil = id_cast<GreasePencil *>(ob->data);
@@ -142,13 +148,13 @@ static void GREASE_PENCIL_OT_paintmode_toggle(wmOperatorType *ot)
 static bool sculptmode_toggle_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
-  if (ob == nullptr) {
+  if (ob == nullptr || ob->type != OB_GREASE_PENCIL) {
     return false;
   }
-  if (ob->type == OB_GREASE_PENCIL) {
-    return ob->data != nullptr;
+  if (!ob->data || !ID_IS_EDITABLE(ob->data)) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 static bool sculpt_poll_view3d(bContext *C)
@@ -196,6 +202,8 @@ static wmOperatorStatus sculptmode_toggle_exec(bContext *C, wmOperator *op)
     BKE_paint_ensure(ts, reinterpret_cast<Paint **>(&ts->gp_sculptpaint));
     BKE_paint_brushes_ensure(bmain, &ts->gp_sculptpaint->paint);
     BKE_paint_brushes_validate(bmain, &ts->gp_sculptpaint->paint);
+
+    ed::greasepencil::ensure_selection_domain(ts, ob);
   }
 
   GreasePencil *grease_pencil = id_cast<GreasePencil *>(ob->data);
@@ -245,10 +253,13 @@ static bool grease_pencil_poll_weight_cursor(bContext *C)
 static bool weightmode_toggle_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
-  if ((ob) && ob->type == OB_GREASE_PENCIL) {
-    return ob->data != nullptr;
+  if (ob == nullptr || ob->type != OB_GREASE_PENCIL) {
+    return false;
   }
-  return false;
+  if (!ob->data || !ID_IS_EDITABLE(ob->data)) {
+    return false;
+  }
+  return true;
 }
 
 static wmOperatorStatus weightmode_toggle_exec(bContext *C, wmOperator *op)
@@ -289,6 +300,8 @@ static wmOperatorStatus weightmode_toggle_exec(bContext *C, wmOperator *op)
 
     BKE_paint_init(bmain, scene, PaintMode::WeightGPencil);
     BKE_paint_brushes_validate(bmain, weight_paint);
+
+    ed::greasepencil::ensure_selection_domain(ts, ob);
   }
 
   GreasePencil *grease_pencil = id_cast<GreasePencil *>(ob->data);
@@ -338,10 +351,13 @@ static bool grease_pencil_poll_vertex_cursor(bContext *C)
 static bool vertexmode_toggle_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
-  if ((ob) && ob->type == OB_GREASE_PENCIL) {
-    return ob->data != nullptr;
+  if (ob == nullptr || ob->type != OB_GREASE_PENCIL) {
+    return false;
   }
-  return false;
+  if (!ob->data || !ID_IS_EDITABLE(ob->data)) {
+    return false;
+  }
+  return true;
 }
 
 static wmOperatorStatus vertexmode_toggle_exec(bContext *C, wmOperator *op)
@@ -386,6 +402,8 @@ static wmOperatorStatus vertexmode_toggle_exec(bContext *C, wmOperator *op)
 
     /* Ensure Palette by default. */
     BKE_gpencil_palette_ensure(bmain, scene);
+
+    ed::greasepencil::ensure_selection_domain(ts, ob);
   }
 
   GreasePencil *grease_pencil = id_cast<GreasePencil *>(ob->data);

@@ -146,7 +146,7 @@ IDNode *DepsgraphNodeBuilder::add_id_node(ID *id)
 {
   BLI_assert(id->session_uid != MAIN_ID_SESSION_UID_UNSET);
 
-  const ID_Type id_type = GS(id->name);
+  const ID_Type id_type = id->id_type();
   IDNode *id_node = nullptr;
   ID *id_cow = nullptr;
   IDComponentsMask previously_visible_components_mask = 0;
@@ -464,7 +464,7 @@ static int foreach_id_cow_detect_need_for_update_callback(LibraryIDLinkCallbackD
   if (id == nullptr) {
     return IDWALK_RET_NOP;
   }
-  if (!ID_TYPE_USE_COPY_ON_EVAL(GS(id->name))) {
+  if (!ID_TYPE_USE_COPY_ON_EVAL(id->id_type())) {
     /* No need to go further if the id never had an evaluated copy in the depsgraph. This function
      * is only concerned with keeping the mapping between original and evaluated IDs intact. */
     return IDWALK_RET_NOP;
@@ -564,7 +564,7 @@ void DepsgraphNodeBuilder::build_id(ID *id, const bool force_be_visible)
     return;
   }
 
-  const ID_Type id_type = GS(id->name);
+  const ID_Type id_type = id->id_type();
   switch (id_type) {
     case ID_AC:
       build_action(id_cast<bAction *>(id));
@@ -804,19 +804,19 @@ void DepsgraphNodeBuilder::build_object(int base_index,
   /* Modifiers. */
   build_object_modifiers(object);
   /* Grease Pencil Modifiers. */
-  if (object->greasepencil_modifiers.first != nullptr) {
+  if (object->greasepencil_modifiers.first() != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
     BKE_gpencil_modifiers_foreach_ID_link(object, modifier_walk, &data);
   }
   /* Shader FX. */
-  if (object->shader_fx.first != nullptr) {
+  if (object->shader_fx.first() != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
     BKE_shaderfx_foreach_ID_link(object, modifier_walk, &data);
   }
   /* Constraints. */
-  if (object->constraints.first != nullptr) {
+  if (object->constraints.first() != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
     BKE_constraints_id_loop(&object->constraints, constraint_walk, IDWALK_NOP, &data);
@@ -835,7 +835,7 @@ void DepsgraphNodeBuilder::build_object(int base_index,
    * pose for proxy. */
   build_animdata(&object->id);
   /* Particle systems. */
-  if (object->particlesystem.first != nullptr) {
+  if (object->particlesystem.first() != nullptr) {
     build_particle_systems(object, is_visible);
   }
   /* Force field Texture. */
@@ -1101,7 +1101,7 @@ void DepsgraphNodeBuilder::build_object_transform(Object *object)
         [ob_cow](blender::Depsgraph *depsgraph) { BKE_object_eval_parent(depsgraph, ob_cow); });
   }
   /* Object constraints. */
-  if (object->constraints.first != nullptr) {
+  if (object->constraints.first() != nullptr) {
     build_object_constraints(object);
   }
   /* Rest of transformation update. */
@@ -1285,7 +1285,7 @@ void DepsgraphNodeBuilder::build_animdata_nlastrip_targets(ListBaseT<NlaStrip> *
     if (strip.act != nullptr) {
       build_action(strip.act);
     }
-    else if (strip.strips.first != nullptr) {
+    else if (strip.strips.first() != nullptr) {
       build_animdata_nlastrip_targets(&strip.strips);
     }
   }
@@ -1296,7 +1296,7 @@ void DepsgraphNodeBuilder::build_animation_images(ID *id)
   /* GPU materials might use an animated image. However, these materials have no been built yet so
    * we have to check if they might be created during evaluation. */
   bool has_image_animation = false;
-  if (ELEM(GS(id->name), ID_MA, ID_WO)) {
+  if (ELEM(id->id_type(), ID_MA, ID_WO)) {
     bNodeTree *ntree = *bke::node_tree_ptr_from_id(id);
     if (ntree != nullptr && ntree->runtime->runtime_flag & NTREE_RUNTIME_FLAG_HAS_IMAGE_ANIMATION)
     {
@@ -1337,7 +1337,7 @@ void DepsgraphNodeBuilder::build_animdata_drivers(ID *id, AnimData *adt)
 
   for (const auto [driver_index, fcu] : adt->drivers.enumerate()) {
     build_driver(id, &fcu, driver_index);
-    needs_unshare = needs_unshare || data_path_maybe_shared(*id, fcu.rna_path);
+    needs_unshare = needs_unshare || data_path_maybe_shared(*id, fcu.rna_path());
   }
 
   if (!needs_unshare) {
@@ -1369,7 +1369,7 @@ void DepsgraphNodeBuilder::build_driver(ID *id, FCurve *fcurve, int driver_index
       [id_cow, driver_index, fcurve](blender::Depsgraph *depsgraph) {
         BKE_animsys_eval_driver(depsgraph, id_cow, driver_index, fcurve);
       },
-      fcurve->rna_path ? fcurve->rna_path : "",
+      fcurve->rna_path().c_str(),
       fcurve->array_index);
   build_driver_variables(id, fcurve);
 }
@@ -1378,7 +1378,7 @@ void DepsgraphNodeBuilder::build_driver_variables(ID *id, FCurve *fcurve)
 {
   PointerRNA id_ptr = RNA_id_pointer_create(id);
 
-  build_driver_id_property(id_ptr, fcurve->rna_path);
+  build_driver_id_property(id_ptr, fcurve->rna_path().c_str());
 
   DriverTargetContext driver_target_context;
   driver_target_context.scene = graph_->scene;
@@ -1474,7 +1474,7 @@ void DepsgraphNodeBuilder::build_parameters(ID *id)
   op_node->set_as_entry();
   /* Generic evaluation node. */
 
-  if (ID_TYPE_SUPPORTS_PARAMS_WITHOUT_COW(GS(id->name))) {
+  if (ID_TYPE_SUPPORTS_PARAMS_WITHOUT_COW(id->id_type())) {
     ID *id_cow = get_cow_id(id);
     add_operation_node(id,
                        NodeType::PARAMETERS,
@@ -1540,7 +1540,8 @@ void DepsgraphNodeBuilder::build_rigidbody(Scene *scene)
    *    and/or not affected by the sim for instance).
    *
    * 3) "Pull Results" - grab the specific transforms applied for a specific
-   *    object - performed as part of object's transform-stack building. */
+   *    object - performed as part of object's transform-stack building.
+   */
 
   /* Create nodes --------------------------------------------------------- */
 
@@ -1612,8 +1613,7 @@ void DepsgraphNodeBuilder::build_rigidbody(Scene *scene)
 
 void DepsgraphNodeBuilder::build_particle_systems(Object *object, bool is_object_visible)
 {
-  /**
-   * Particle Systems Nodes
+  /* Particle Systems Nodes
    * ======================
    *
    * There are two types of nodes associated with representing
@@ -1815,7 +1815,7 @@ void DepsgraphNodeBuilder::build_object_data_geometry_datablock(ID *obdata)
   }
   /* Nodes for result of obdata's evaluation, and geometry
    * evaluation on object. */
-  const ID_Type id_type = GS(obdata->name);
+  const ID_Type id_type = obdata->id_type();
   switch (id_type) {
     case ID_ME: {
       op_node = add_operation_node(obdata,
@@ -2082,7 +2082,7 @@ void DepsgraphNodeBuilder::build_nodetree(bNodeTree *ntree)
     if (id == nullptr) {
       continue;
     }
-    ID_Type id_type = GS(id->name);
+    ID_Type id_type = id->id_type();
     if (id_type == ID_MA) {
       build_material(id_cast<Material *>(id));
     }
@@ -2482,7 +2482,7 @@ void DepsgraphNodeBuilder::modifier_walk(void *user_data,
   if (id == nullptr) {
     return;
   }
-  switch (GS(id->name)) {
+  switch (id->id_type()) {
     case ID_OB:
       data->builder->build_object(-1, id_cast<Object *>(id), DEG_ID_LINKED_INDIRECTLY, false);
       break;
@@ -2502,7 +2502,7 @@ void DepsgraphNodeBuilder::constraint_walk(bConstraint * /*con*/,
   if (id == nullptr) {
     return;
   }
-  switch (GS(id->name)) {
+  switch (id->id_type()) {
     case ID_OB:
       data->builder->build_object(-1, id_cast<Object *>(id), DEG_ID_LINKED_INDIRECTLY, false);
       break;

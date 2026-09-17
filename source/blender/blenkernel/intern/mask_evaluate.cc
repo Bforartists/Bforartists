@@ -885,7 +885,7 @@ void BKE_mask_layer_evaluate_deform(MaskLayer *masklay, const float ctime)
     BKE_mask_spline_ensure_deform(&spline);
     for (int i = 0; i < spline.tot_point; i++) {
       MaskSplinePoint *point = &spline.points[i];
-      MaskSplinePoint *point_deform = &spline.points_deform[i];
+      MaskSplinePoint *point_deform = &spline.runtime->points_deform[i];
       BKE_mask_point_free(point_deform);
       *point_deform = *point;
       point_deform->uw = point->uw ? MEM_dupalloc(point->uw) : nullptr;
@@ -899,7 +899,7 @@ void BKE_mask_layer_evaluate_deform(MaskLayer *masklay, const float ctime)
      */
     if (need_handle_recalc) {
       for (int i = 0; i < spline.tot_point; i++) {
-        MaskSplinePoint *point_deform = &spline.points_deform[i];
+        MaskSplinePoint *point_deform = &spline.runtime->points_deform[i];
         if (ELEM(point_deform->bezt.h1, HD_AUTO, HD_VECT)) {
           BKE_mask_calc_handle_point(&spline, point_deform);
         }
@@ -930,13 +930,13 @@ void BKE_mask_eval_update(Depsgraph *depsgraph, Mask *mask)
 
   if (is_depsgraph_active) {
     Mask *mask_orig = DEG_get_original(mask);
-    for (MaskLayer *masklay_orig = static_cast<MaskLayer *>(mask_orig->masklayers.first),
-                   *masklay_eval = static_cast<MaskLayer *>(mask->masklayers.first);
+    for (MaskLayer *masklay_orig = mask_orig->masklayers.first(),
+                   *masklay_eval = mask->masklayers.first();
          masklay_orig != nullptr;
          masklay_orig = masklay_orig->next, masklay_eval = masklay_eval->next)
     {
-      for (MaskSpline *spline_orig = static_cast<MaskSpline *>(masklay_orig->splines.first),
-                      *spline_eval = static_cast<MaskSpline *>(masklay_eval->splines.first);
+      for (MaskSpline *spline_orig = masklay_orig->splines.first(),
+                      *spline_eval = masklay_eval->splines.first();
            spline_orig != nullptr;
            spline_orig = spline_orig->next, spline_eval = spline_eval->next)
       {

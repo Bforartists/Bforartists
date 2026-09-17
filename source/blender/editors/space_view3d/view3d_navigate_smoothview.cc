@@ -47,7 +47,7 @@ static void view3d_smoothview_apply_with_interp(
 
 void ED_view3d_smooth_view_undo_begin(bContext *C, const ScrArea *area)
 {
-  const View3D *v3d = static_cast<const View3D *>(area->spacedata.first);
+  const View3D *v3d = area->spacedata.first_as<View3D>();
   Object *camera = v3d->camera;
   if (!camera) {
     return;
@@ -75,7 +75,7 @@ void ED_view3d_smooth_view_undo_end(bContext *C,
                                     const char *undo_str,
                                     const bool undo_grouped)
 {
-  View3D *v3d = static_cast<View3D *>(area->spacedata.first);
+  View3D *v3d = area->spacedata.first_as<View3D>();
   Object *camera = v3d->camera;
   if (!camera) {
     return;
@@ -282,7 +282,8 @@ void ED_view3d_smooth_view_ex(
       sms.dst.dist = ED_view3d_offset_distance(
           ob_camera_eval->object_to_world().ptr(), sview->ofs, VIEW3D_DIST_FALLBACK);
     }
-    ED_view3d_from_object(ob_camera_eval, sms.dst.ofs, sms.dst.quat, &sms.dst.dist, &sms.dst.lens);
+    ED_view3d_from_object(
+        ob_camera_eval, sms.dst.ofs, sms.dst.quat, &sms.dst.dist, rv3d->camroll, &sms.dst.lens);
     /* Restore view3d values in end. */
     sms.to_camera = true;
   }
@@ -311,8 +312,12 @@ void ED_view3d_smooth_view_ex(
         sms.src.dist = ED_view3d_offset_distance(
             ob_camera_old_eval->object_to_world().ptr(), sview->ofs, 0.0f);
       }
-      ED_view3d_from_object(
-          ob_camera_old_eval, sms.src.ofs, sms.src.quat, &sms.src.dist, &sms.src.lens);
+      ED_view3d_from_object(ob_camera_old_eval,
+                            sms.src.ofs,
+                            sms.src.quat,
+                            &sms.src.dist,
+                            rv3d->camroll,
+                            &sms.src.lens);
     }
     /* Grid draw as floor. */
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {

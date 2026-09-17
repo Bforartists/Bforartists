@@ -124,8 +124,8 @@ static std::optional<std::string> rna_NlaStrip_path(const PointerRNA *ptr)
     NlaTrack *nlt;
     NlaStrip *nls;
 
-    for (nlt = static_cast<NlaTrack *>(adt->nla_tracks.first); nlt; nlt = nlt->next) {
-      for (nls = static_cast<NlaStrip *>(nlt->strips.first); nls; nls = nls->next) {
+    for (nlt = adt->nla_tracks.first(); nlt; nlt = nlt->next) {
+      for (nls = nlt->strips.first(); nls; nls = nls->next) {
         if (nls == strip) {
           /* XXX but if we animate like this, the control will never work... */
           char name_esc_nlt[sizeof(nlt->name) * 2];
@@ -446,7 +446,7 @@ static void rna_NlaStrip_action_set(PointerRNA *ptr, PointerRNA value, ReportLis
 {
   using namespace animrig;
   BLI_assert(ptr->owner_id);
-  BLI_assert(ptr->data);
+  BLI_assert(*ptr);
 
   ID &animated_id = *ptr->owner_id;
   NlaStrip &strip = *static_cast<NlaStrip *>(ptr->data);
@@ -651,7 +651,7 @@ static NlaStrip *rna_NlaStrip_new(ID *id,
     while ((nlt = nlt->prev) != nullptr) {
       nlt_p = nlt;
     }
-    adt.nla_tracks.first = nlt_p;
+    adt.nla_tracks.first_ = nlt_p;
 
     /* do the same thing to find the last track */
     nlt_p = track;
@@ -659,7 +659,7 @@ static NlaStrip *rna_NlaStrip_new(ID *id,
     while ((nlt = nlt->next) != nullptr) {
       nlt_p = nlt;
     }
-    adt.nla_tracks.last = nlt_p;
+    adt.nla_tracks.last_ = nlt_p;
 
     STRNCPY(strip->name, name);
     BKE_nlastrip_validate_name(&adt, strip);
@@ -1185,6 +1185,7 @@ static void rna_api_nlatrack_strips(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
   /* return type */
   parm = RNA_def_pointer(func, "strip", "NlaStrip", "", "New NLA Strip");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_NlaStrip_remove");

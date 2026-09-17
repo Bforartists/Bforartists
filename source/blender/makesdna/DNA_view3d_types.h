@@ -97,6 +97,11 @@ enum eRegionView3D_Flag : short {
    */
   RV3D_ZOFFSET_DISABLED = 1 << 6,
   RV3D_WAS_CAMOB = 1 << 7,
+  /**
+   * Flip the view horizontally (along the local X axis).
+   * Only applies when in a camera view.
+   */
+  RV3D_FLIP_X = 1 << 8,
 };
 ENUM_OPERATORS(eRegionView3D_Flag)
 
@@ -522,6 +527,9 @@ struct RegionView3D {
   float ofs[3] = {};
   /** Viewport zoom on the camera frame, see BKE_screen_view3d_zoom_to_fac. */
   float camzoom = 0;
+  /** Camera view roll. */
+  float camroll = 0.0f;
+  char _pad9[4] = {};
   /**
    * Check if persp/ortho view, since 'persp' can't be used for this since
    * it can have cameras assigned as well. (only set in #view3d_winmatrix_set)
@@ -602,7 +610,7 @@ struct View3DShading {
   eV3DShadingColorType wire_color_type = V3D_SHADING_SINGLE_COLOR;
 
   /** When to preview the compositor output in the viewport. */
-  View3DShadingUseCompositor use_compositor = V3D_SHADING_USE_COMPOSITOR_DISABLED;
+  View3DShadingUseCompositor use_compositor = V3D_SHADING_USE_COMPOSITOR_ALWAYS;
 
   char _pad = {};
 

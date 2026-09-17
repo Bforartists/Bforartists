@@ -50,7 +50,9 @@
 
 namespace blender::ui {
 
-/*************************** RNA Utilities ******************************/
+/* -------------------------------------------------------------------- */
+/** \name RNA Utilities
+ * \{ */
 
 Button *uiDefAutoButR(Block *block,
                       PointerRNA *ptr,
@@ -400,7 +402,11 @@ void button_func_identity_compare_set(Button *but, ButtonIdentityCompareFunc cmp
   but->identity_cmp_func = cmp_fn;
 }
 
-/* *** RNA collection search menu *** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name RNA Collection Search Menu
+ * \{ */
 
 struct CollItemSearch {
   void *data;
@@ -477,6 +483,15 @@ void rna_collection_search_update_fn(
 
       char *name;
       if (is_id) {
+        const ID *id = static_cast<ID *>(itemptr.data);
+
+        /* Hide dot prefixed data-blocks, but only if filter does not force them visible. */
+        if (U.flag & USER_HIDE_DOT_DATABLOCK) {
+          if ((id->name[2] == '.') && (str[0] != '.')) {
+            continue;
+          }
+        }
+
         iconid = id_icon_get(C, static_cast<ID *>(itemptr.data), false);
         if (!ELEM(iconid, 0, ICON_BLANK1)) {
           has_id_icon = true;
@@ -486,7 +501,6 @@ void rna_collection_search_update_fn(
           name = RNA_struct_name_get_alloc(&itemptr, name_buf, sizeof(name_buf), nullptr);
         }
         else {
-          const ID *id = static_cast<ID *>(itemptr.data);
           BKE_id_full_name_ui_prefix_get(name_buf, id, true, UI_SEP_CHAR, &name_prefix_offset);
           BLI_STATIC_ASSERT(sizeof(name_buf) >= MAX_ID_FULL_NAME_UI,
                             "Name string buffer should be big enough to hold full UI ID name");
@@ -615,6 +629,12 @@ void rna_collection_search_update_fn(
   }
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name ID & Report Type Icons/Colors
+ * \{ */
+
 int icon_from_id(const ID *id)
 {
   if (id == nullptr) {
@@ -707,7 +727,11 @@ int UI_text_colorid_from_report_type(int type)
   return TH_INFO_WARNING_TEXT;
 }
 
-/********************************** Misc **************************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Miscellaneous Utilities
+ * \{ */
 
 int calc_float_precision(int prec, double value)
 {
@@ -761,7 +785,7 @@ int calc_float_precision(int prec, double value)
 
 std::optional<std::string> button_online_manual_id(const Button *but)
 {
-  if (but->rnapoin.data && but->rnaprop) {
+  if (but->rnapoin && but->rnaprop) {
     return fmt::format(
         "{}.{}", RNA_struct_identifier(but->rnapoin.type), RNA_property_identifier(but->rnaprop));
   }
@@ -782,8 +806,11 @@ std::optional<std::string> button_online_manual_id_from_active(const bContext *C
   return std::nullopt;
 }
 
-/* -------------------------------------------------------------------- */
+/** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Button Ensure In View
+ * \{ */
 static rctf but_rect_to_view(const Button *but, const ARegion *region, const View2D *v2d)
 {
   rctf region_rect;
@@ -863,6 +890,8 @@ void but_ensure_in_view(const bContext *C, ARegion *region, const Button *but)
     ED_region_tag_redraw_no_rebuild(region);
   }
 }
+
+/** \} */
 
 /* -------------------------------------------------------------------- */
 /** \name Button Store
@@ -989,12 +1018,12 @@ void butstore_update(Block *block)
 {
   /* move this list to the new block */
   if (block->oldblock) {
-    if (block->oldblock->butstore.first) {
+    if (block->oldblock->butstore.first_) {
       BLI_movelisttolist(&block->butstore, &block->oldblock->butstore);
     }
   }
 
-  if (block->butstore.first == nullptr) [[likely]] {
+  if (block->butstore.first_ == nullptr) [[likely]] {
     return;
   }
 

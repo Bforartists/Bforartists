@@ -275,7 +275,7 @@ static BaseSocketDeclarationBuilder &build_interface_socket_declaration(
   bke::bNodeSocketType *base_typeinfo = bke::node_socket_type_find(io_socket.socket_type);
   eNodeSocketDatatype datatype = SOCK_CUSTOM;
 
-  const UString name(io_socket.name);
+  const UString name(io_socket.name());
   const UString identifier(io_socket.identifier);
 
   BaseSocketDeclarationBuilder *decl = nullptr;
@@ -435,7 +435,7 @@ static BaseSocketDeclarationBuilder &build_interface_socket_declaration(
                 .idname(io_socket.socket_type)
                 .init_socket_fn(get_init_socket_fn(tree.tree_interface, io_socket));
   }
-  decl->description(io_socket.description ? io_socket.description : "");
+  decl->description(io_socket.description());
   decl->hide_value(io_socket.flag & NODE_INTERFACE_SOCKET_HIDE_VALUE);
   decl->compact(io_socket.flag & NODE_INTERFACE_SOCKET_COMPACT);
   decl->panel_toggle(io_socket.flag & NODE_INTERFACE_SOCKET_PANEL_TOGGLE);
@@ -482,8 +482,8 @@ static void node_group_declare_panel_recursive(
       case NodeTreeInterfaceItemType::Panel: {
         add_layout_if_needed();
         const auto &io_panel = node_interface::get_item_as<bNodeTreeInterfacePanel>(*item);
-        auto &panel_b = b.add_panel(UString(io_panel.name), io_panel.identifier)
-                            .description(StringRef(io_panel.description))
+        auto &panel_b = b.add_panel(UString(io_panel.name()), io_panel.identifier)
+                            .description(io_panel.description())
                             .default_closed(io_panel.flag & NODE_INTERFACE_PANEL_DEFAULT_CLOSED);
         node_group_declare_panel_recursive(
             panel_b, node, group, structure_type_by_socket, io_panel, false);
@@ -586,7 +586,6 @@ void register_node_type_frame()
   ntype->default_width = bke::NodeWidth::_160;
   ntype->minwidth = 100;
   ntype->maxwidth = FLT_MAX;
-  ntype->flag |= NODE_BACKGROUND;
 
   bke::node_register_type(*ntype);
 }
@@ -783,7 +782,7 @@ void ntree_update_reroute_nodes(bNodeTree *ntree)
     if (reroute_type == nullptr) {
       const int root_node_index = reroute_nodes[reroute_root_i];
       const bNode &root_reroute = *all_nodes[root_node_index];
-      const bNodeSocket *root_socket = static_cast<const bNodeSocket *>(root_reroute.inputs.first);
+      const bNodeSocket *root_socket = root_reroute.inputs.first();
       reroute_type = root_socket->typeinfo;
     }
 
@@ -1144,11 +1143,6 @@ static void get_compositor_group_output_extra_info(blender::nodes::NodeExtraInfo
 
   blender::Span<const bNodeSocket *> group_outputs = parameters.node.input_sockets().drop_back(1);
   if (group_outputs.is_empty()) {
-    blender::nodes::NodeExtraInfoRow row;
-    row.text = IFACE_("No Output");
-    row.icon = ICON_STATUS_ERROR;
-    row.tooltip = TIP_("Node group must have a Color output socket");
-    parameters.rows.append(std::move(row));
     return;
   }
 

@@ -439,7 +439,7 @@ static bool wm_draw_region_stereo_set(Main *bmain,
   switch (area->spacetype) {
     case SPACE_IMAGE: {
       if (region->regiontype == RGN_TYPE_WINDOW) {
-        SpaceImage *sima = static_cast<SpaceImage *>(area->spacedata.first);
+        SpaceImage *sima = area->spacedata.first_as<SpaceImage>();
         sima->iuser.multiview_eye = sview;
         return true;
       }
@@ -447,7 +447,7 @@ static bool wm_draw_region_stereo_set(Main *bmain,
     }
     case SPACE_VIEW3D: {
       if (region->regiontype == RGN_TYPE_WINDOW) {
-        View3D *v3d = static_cast<View3D *>(area->spacedata.first);
+        View3D *v3d = area->spacedata.first_as<View3D>();
         if (v3d->camera && v3d->camera->type == OB_CAMERA) {
           RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
           RenderEngine *engine = rv3d->view_render ? RE_view_engine_get(rv3d->view_render) :
@@ -457,7 +457,7 @@ static bool wm_draw_region_stereo_set(Main *bmain,
           }
 
           Camera *cam = id_cast<Camera *>(v3d->camera->data);
-          CameraBGImage *bgpic = static_cast<CameraBGImage *>(cam->bg_images.first);
+          CameraBGImage *bgpic = cam->bg_images.first();
           v3d->multiview_eye = sview;
           if (bgpic) {
             bgpic->iuser.multiview_eye = sview;
@@ -469,7 +469,7 @@ static bool wm_draw_region_stereo_set(Main *bmain,
     }
     case SPACE_NODE: {
       if (region->regiontype == RGN_TYPE_WINDOW) {
-        SpaceNode *snode = static_cast<SpaceNode *>(area->spacedata.first);
+        SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
         if ((snode->flag & SNODE_BACKDRAW) && ED_node_is_compositor(snode)) {
           Image *ima = BKE_image_ensure_viewer(bmain, IMA_TYPE_COMPOSITE, "Viewer Node");
           ima->eye = sview;
@@ -479,7 +479,7 @@ static bool wm_draw_region_stereo_set(Main *bmain,
       break;
     }
     case SPACE_SEQ: {
-      SpaceSeq *sseq = static_cast<SpaceSeq *>(area->spacedata.first);
+      SpaceSeq *sseq = area->spacedata.first_as<SpaceSeq>();
       sseq->multiview_eye = sview;
 
       if (region->regiontype == RGN_TYPE_PREVIEW) {
@@ -541,7 +541,7 @@ static void wm_region_test_render_do_draw(const Scene *scene,
     GPUViewport *viewport = WM_draw_region_get_viewport(region);
 
     if (engine && (engine->flag & RE_ENGINE_DO_DRAW)) {
-      View3D *v3d = static_cast<View3D *>(area->spacedata.first);
+      View3D *v3d = area->spacedata.first_as<View3D>();
       rcti border_rect;
 
       /* Do partial redraw when possible. */
@@ -567,7 +567,7 @@ static void wm_region_test_xr_do_draw(const wmWindowManager *wm,
 {
   if ((area->spacetype == SPACE_VIEW3D) && (region->regiontype == RGN_TYPE_WINDOW)) {
     if (ED_view3d_is_region_xr_mirror_active(
-            wm, static_cast<const View3D *>(area->spacedata.first), region))
+            wm, static_cast<const View3D *>(area->spacedata.first_), region))
     {
       ED_region_tag_redraw_no_rebuild(region);
     }
@@ -835,6 +835,15 @@ static void wm_draw_region_blit(ARegion *region, int view)
     }
   }
 
+  /* Regions are copied in without blending, so without this, the region's own alpha would land in
+   * the window's frame-buffer. That matters for client-side-decorated windows for rounded corners:
+   * viewports are transparent where nothing was rendered, leading to un-wanted transparency.
+   *
+   * Everything else drawn into the window blends with #GPU_BLEND_ALPHA which leaves an opaque
+   * destination opaque, so masking here is enough to keep the window opaque for the whole frame,
+   * see #WM_window_csd_draw_corner_mask. */
+  GPU_color_mask(true, true, true, false);
+
   if (region->runtime->draw_buffer->viewport) {
     GPU_viewport_draw_to_screen(region->runtime->draw_buffer->viewport, view, &region->winrct);
   }
@@ -842,6 +851,8 @@ static void wm_draw_region_blit(ARegion *region, int view)
     GPU_offscreen_draw_to_screen(
         region->runtime->draw_buffer->offscreen, region->winrct.xmin, region->winrct.ymin);
   }
+
+  GPU_color_mask(true, true, true, true);
 }
 
 gpu::Texture *wm_draw_region_texture(ARegion *region, int view)
@@ -878,6 +889,9 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
   const float halfy = GLA_PIXEL_OFS / (BLI_rcti_size_y(&region->winrct) + 1);
 
   rcti rect_geo = region->winrct;
+  if (blend) {
+    ED_region_blend_rect(region, &rect_geo);
+  }
   rect_geo.xmax += 1;
   rect_geo.ymax += 1;
 
@@ -887,27 +901,17 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
   rect_tex.xmax = 1.0f + halfx;
   rect_tex.ymax = 1.0f + halfy;
 
-  /* Quadratic ease-out: 1 - (1 - alpha)^2 == alpha * (2 - alpha). */
-  float alpha_easing = alpha * (2.0f - alpha);
-
-  /* Slide panels. */
-  float ofs_x = BLI_rcti_size_x(&region->winrct) * (1.0f - alpha_easing);
-  float ofs_y = BLI_rcti_size_y(&region->winrct) * (1.0f - alpha_easing);
   if (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) == RGN_ALIGN_RIGHT) {
-    rect_geo.xmin += ofs_x;
-    rect_tex.xmax *= alpha_easing;
+    rect_tex.xmax *= alpha;
   }
   else if (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) == RGN_ALIGN_LEFT) {
-    rect_geo.xmax -= ofs_x;
-    rect_tex.xmin += 1.0f - alpha_easing;
+    rect_tex.xmin += 1.0f - alpha;
   }
   else if (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) == RGN_ALIGN_TOP) {
-    rect_geo.ymin += ofs_y;
-    rect_tex.ymax *= alpha_easing;
+    rect_tex.ymax *= alpha;
   }
   else if (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) == RGN_ALIGN_BOTTOM) {
-    rect_geo.ymax -= ofs_y;
-    rect_tex.ymin += 1.0f - alpha_easing;
+    rect_tex.ymin += 1.0f - alpha;
   }
 
   /* Not the same layout as #rctf/#rcti. */
@@ -935,8 +939,7 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
 
   GPU_shader_uniform_float_ex(shader, rect_tex_loc, 4, 1, rectt);
   GPU_shader_uniform_float_ex(shader, rect_geo_loc, 4, 1, rectg);
-  GPU_shader_uniform_float_ex(
-      shader, color_loc, 4, 1, float4{alpha_easing, alpha_easing, alpha_easing, alpha_easing});
+  GPU_shader_uniform_float_ex(shader, color_loc, 4, 1, float4{alpha, alpha, alpha, alpha});
 
   gpu::Batch *quad = GPU_batch_preset_quad();
   GPU_batch_set_shader(quad, shader);
@@ -977,6 +980,8 @@ static void wm_draw_area_offscreen(bContext *C, wmWindow *win, ScrArea *area, bo
   CTX_wm_area_set(C, area);
   GPU_debug_group_begin(wm_area_name(area));
 
+  bool is_any_region_drawn = false;
+
   /* Compute UI layouts for dynamically size regions. */
   for (ARegion &region : area->regionbase) {
     if (region.flag & RGN_FLAG_POLL_FAILED) {
@@ -992,6 +997,14 @@ static void wm_draw_area_offscreen(bContext *C, wmWindow *win, ScrArea *area, bo
     if ((region.runtime->visible || ignore_visibility) && region.runtime->do_draw &&
         region.runtime->type && region.runtime->type->layout)
     {
+      /* Call space-level pre-draw callback if this is the first region to be laid out. */
+      if (!is_any_region_drawn) {
+        if (area->type->draw_pre) {
+          area->type->draw_pre(C, area);
+        }
+        is_any_region_drawn = true;
+      }
+
       CTX_wm_region_set(C, &region);
       ED_region_do_layout(C, &region);
       CTX_wm_region_set(C, nullptr);
@@ -1012,6 +1025,15 @@ static void wm_draw_area_offscreen(bContext *C, wmWindow *win, ScrArea *area, bo
   for (ARegion &region : area->regionbase) {
     if (!region.runtime->visible || !region.runtime->do_draw) {
       continue;
+    }
+
+    /* Call space-level pre-draw callback if it wasn't called yet, which can happen when none of
+     * the regions had a layout callback. */
+    if (!is_any_region_drawn) {
+      if (area->type->draw_pre) {
+        area->type->draw_pre(C, area);
+      }
+      is_any_region_drawn = true;
     }
 
     CTX_wm_region_set(C, &region);
@@ -1054,7 +1076,18 @@ static void wm_draw_area_offscreen(bContext *C, wmWindow *win, ScrArea *area, bo
     GPU_debug_group_end();
 
     region.runtime->do_draw = 0;
+
+    region.runtime->post_block_layout_fns.clear();
+
+    /* Clear temporary update flag. */
+    region.flag &= ~RGN_FLAG_SEARCH_FILTER_UPDATE;
+
     CTX_wm_region_set(C, nullptr);
+  }
+
+  /* Call space-level post-draw callback, but only if there was at least one region drawn. */
+  if (is_any_region_drawn && area->type->draw_post) {
+    area->type->draw_post(C, area);
   }
 
   CTX_wm_area_set(C, nullptr);
@@ -1157,7 +1190,7 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
       if (!region.runtime->visible) {
         continue;
       }
-      const bool do_paint_cursor = (wm->runtime->paintcursors.first &&
+      const bool do_paint_cursor = (wm->runtime->paintcursors.first() &&
                                     &region == screen->active_region);
       const bool do_draw_overlay = (region.runtime->type && region.runtime->type->draw_overlay);
       if (!(do_paint_cursor || do_draw_overlay)) {
@@ -1209,13 +1242,13 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
   }
 
   /* Always draw, not only when screen tagged. */
-  if (win->runtime->gesture.first) {
+  if (win->runtime->gesture.first_) {
     wm_gesture_draw(win);
     wmWindowViewport(win);
   }
 
   /* Needs pixel coords in screen. */
-  if (wm->runtime->drags.first) {
+  if (wm->runtime->drags.first_) {
     wm_drags_draw(C, win);
     wmWindowViewport(win);
   }
@@ -1244,9 +1277,16 @@ static void wm_draw_window(bContext *C, wmWindow *win)
   bool stereo = WM_stereo3d_enabled(win, false);
 
 #ifdef WITH_GHOST_CSD
-  /* Title bar. */
-  if (WM_window_is_csd(win)) {
-    WM_window_csd_draw_titlebar(win);
+  if (WM_window_csd_is_active()) {
+    /* Title bar. */
+    if (WM_window_is_csd(win)) {
+      WM_window_csd_draw_titlebar(win);
+    }
+    else {
+      /* Full-screen windows draw no decorations, so nothing above clears the frame-buffer.
+       * Their alpha channel still has to be made opaque, see #WM_window_csd_clear_alpha. */
+      WM_window_csd_clear_alpha(win);
+    }
   }
 #endif
 
@@ -1320,6 +1360,14 @@ static void wm_draw_window(bContext *C, wmWindow *win)
       wm_draw_window_onscreen(C, win, 0);
     }
   }
+
+#ifdef WITH_GHOST_CSD
+  /* Rounded corners, run last so the corners are cut away no matter what covered them
+   * (the title bar at the top, editor areas & the status bar at the bottom). */
+  if (WM_window_is_csd(win)) {
+    WM_window_csd_draw_corner_mask(win);
+  }
+#endif
 
   screen->do_draw = false;
 

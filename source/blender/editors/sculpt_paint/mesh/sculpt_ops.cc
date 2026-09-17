@@ -51,11 +51,13 @@
 
 #include "ED_image.hh"
 #include "ED_object.hh"
+#include "ED_paint.hh"
 #include "ED_screen.hh"
 #include "ED_sculpt.hh"
 
 #include "../paint_intern.hh"
 #include "mesh_brush_common.hh"
+#include "mesh_paint.hh"
 #include "paint_mask.hh"
 #include "sculpt_automask.hh"
 #include "sculpt_color.hh"
@@ -98,7 +100,7 @@ static wmOperatorStatus set_persistent_base_exec(bContext *C, wmOperator * /*op*
     return OPERATOR_CANCELLED;
   }
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
 
   switch (bke::object::pbvh_get(ob)->type()) {
     case bke::pbvh::Type::Mesh: {
@@ -319,31 +321,30 @@ static void SCULPT_OT_symmetrize(wmOperatorType *ot)
 /** \name Sculpt Mode Toggle Operator
  * \{ */
 
-static void init_sculpt_mode_session(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob)
+void object_sculpt_mode_enter(Main &bmain,
+                              Depsgraph &depsgraph,
+                              Scene &scene,
+                              Object &ob,
+                              const bool force_dyntopo,
+                              ReportList *reports)
 {
-  /* Create persistent sculpt mode data. */
-  BKE_sculpt_toolsettings_data_ensure(&bmain, &scene);
+  Mesh *mesh = BKE_mesh_from_object(&ob);
 
-  /* Create sculpt mode session data. */
-  if (ob.runtime->sculpt_session != nullptr) {
-    BKE_sculptsession_free(&ob);
+  /* Re-triangulating the mesh for position changes in sculpt mode isn't worth the performance
+   * impact, so delay triangulation updates until the user exits sculpt mode. */
+  mesh->runtime->corner_tris_cache.freeze();
+
+  if (!(fabsf(ob.scale[0] - ob.scale[1]) < 1e-4f && fabsf(ob.scale[1] - ob.scale[2]) < 1e-4f)) {
+    BKE_report(
+        reports, RPT_WARNING, "Object has non-uniform scale, sculpting may be unpredictable");
   }
-  ob.runtime->sculpt_session = MEM_new<SculptSession>(__func__);
-  ob.runtime->sculpt_session->mode_type = OB_MODE_SCULPT;
+  else if (is_negative_m4(ob.object_to_world().ptr())) {
+    BKE_report(reports, RPT_WARNING, "Object has negative scale, sculpting may be unpredictable");
+  }
 
-  /* Trigger evaluation of modifier stack to ensure
-   * multires modifier sets .runtime.ccg in
-   * the evaluated mesh.
-   */
-  DEG_id_tag_update(&ob.id, ID_RECALC_GEOMETRY);
+  ed::sculpt_paint::mode_enter_generic(bmain, depsgraph, scene, ob, OB_MODE_SCULPT);
 
-  BKE_scene_graph_evaluated_ensure(&depsgraph, &bmain);
-
-  /* This function expects a fully evaluated depsgraph. */
-  BKE_sculpt_update_object_for_edit(&depsgraph, &ob, false);
-
-  Mesh &mesh = *id_cast<Mesh *>(ob.data);
-  if (mesh.attributes().contains(".sculpt_face_set")) {
+  if (mesh->attributes().contains(".sculpt_face_set")) {
     /* Here we can detect geometry that was just added to Sculpt Mode as it has the
      * face_set_none assigned, so we can create a new face set for it. */
     /* In sculpt mode all geometry that is assigned to face_set_none is considered as not
@@ -357,75 +358,6 @@ static void init_sculpt_mode_session(Main &bmain, Depsgraph &depsgraph, Scene &s
     const int new_face_set = face_set::find_next_available_id(ob);
     face_set::initialize_none_to_id(id_cast<Mesh *>(ob.data), new_face_set);
   }
-}
-
-void ensure_valid_pivot(const Object &ob, Paint &paint)
-{
-  bke::PaintRuntime &paint_runtime = *paint.runtime;
-  const bke::pbvh::Tree *pbvh = bke::object::pbvh_get(ob);
-
-  /* Account for the case where no objects are evaluated. */
-  if (!pbvh) {
-    return;
-  }
-
-  /* No valid pivot? Use bounding box center. */
-  if (paint_runtime.average_stroke_counter == 0 || !paint_runtime.last_stroke_valid) {
-    const Bounds<float3> bounds = bke::pbvh::bounds_get(*pbvh);
-    const float3 center = math::midpoint(bounds.min, bounds.max);
-    const float3 location = math::transform_point(ob.object_to_world(), center);
-
-    copy_v3_v3(paint_runtime.average_stroke_accum, location);
-    paint_runtime.average_stroke_counter = 1;
-
-    /* Update last stroke position. */
-    paint_runtime.last_stroke_valid = true;
-  }
-}
-
-void object_sculpt_mode_enter(Main &bmain,
-                              Depsgraph &depsgraph,
-                              Scene &scene,
-                              Object &ob,
-                              const bool force_dyntopo,
-                              ReportList *reports)
-{
-  const eObjectMode mode_flag = OB_MODE_SCULPT;
-  Mesh *mesh = BKE_mesh_from_object(&ob);
-
-  /* Re-triangulating the mesh for position changes in sculpt mode isn't worth the performance
-   * impact, so delay triangulation updates until the user exits sculpt mode. */
-  mesh->runtime->corner_tris_cache.freeze();
-
-  /* Enter sculpt mode. */
-  ob.mode |= mode_flag;
-
-  init_sculpt_mode_session(bmain, depsgraph, scene, ob);
-
-  if (!(fabsf(ob.scale[0] - ob.scale[1]) < 1e-4f && fabsf(ob.scale[1] - ob.scale[2]) < 1e-4f)) {
-    BKE_report(
-        reports, RPT_WARNING, "Object has non-uniform scale, sculpting may be unpredictable");
-  }
-  else if (is_negative_m4(ob.object_to_world().ptr())) {
-    BKE_report(reports, RPT_WARNING, "Object has negative scale, sculpting may be unpredictable");
-  }
-
-  if (USER_EXPERIMENTAL_TEST(&U, use_sculpt_texture_paint)) {
-    BKE_texpaint_slots_refresh_object(&scene, &ob);
-
-    PaintModeSettings *paint_settings = &scene.toolsettings->paint_mode;
-    Image *image;
-    ImageUser *image_user;
-
-    if (BKE_paint_canvas_image_get(paint_settings, &ob, &image, &image_user)) {
-      ED_space_image_sync(&bmain, image, false);
-    }
-  }
-
-  Paint *paint = BKE_paint_get_active_from_paintmode(&scene, PaintMode::Sculpt);
-  BKE_paint_init(&bmain, &scene, PaintMode::Sculpt);
-
-  ED_paint_cursor_start(paint, brush_cursor_poll);
 
   /* Check dynamic-topology flag; re-enter dynamic-topology mode when changing modes,
    * As long as no data was added that is not supported. */
@@ -459,7 +391,7 @@ void object_sculpt_mode_enter(Main &bmain,
 
     if ((message_unsupported == nullptr) || force_dyntopo) {
       /* Needed because we may be entering this mode before the undo system loads. */
-      wmWindowManager *wm = static_cast<wmWindowManager *>(bmain.wm.first);
+      wmWindowManager *wm = bmain.wm.first();
       const bool has_undo = wm->runtime->undo_stack != nullptr;
       /* Undo push is needed to prevent memory leak. */
       if (has_undo) {
@@ -478,8 +410,6 @@ void object_sculpt_mode_enter(Main &bmain,
     }
   }
 
-  ensure_valid_pivot(ob, *paint);
-
   /* Flush object mode. */
   DEG_id_tag_update(&ob.id, ID_RECALC_SYNC_TO_EVAL);
 }
@@ -496,25 +426,11 @@ void object_sculpt_mode_enter(bContext *C, Depsgraph &depsgraph, ReportList *rep
 
 void object_sculpt_mode_exit(Main &bmain, Depsgraph &depsgraph, Scene &scene, Object &ob)
 {
-  const eObjectMode mode_flag = OB_MODE_SCULPT;
   Mesh *mesh = BKE_mesh_from_object(&ob);
 
   mesh->runtime->corner_tris_cache.unfreeze();
 
   multires_flush_sculpt_updates(&ob);
-
-  /* Not needed for now. */
-#if 0
-  MultiresModifierData *mmd = BKE_sculpt_multires_active(scene, ob);
-  const int flush_recalc = ed_object_sculptmode_flush_recalc_flag(scene, ob, mmd);
-#endif
-
-  /* Always for now, so leaving sculpt mode always ensures scene is in
-   * a consistent state. */
-  if (true || /* flush_recalc || */ (ob.runtime->sculpt_session && ob.runtime->sculpt_session->bm))
-  {
-    DEG_id_tag_update(&ob.id, ID_RECALC_GEOMETRY);
-  }
 
   if (mesh->flag & ME_SCULPT_DYNAMIC_TOPOLOGY) {
     /* Dynamic topology must be disabled before exiting sculpt
@@ -526,18 +442,8 @@ void object_sculpt_mode_exit(Main &bmain, Depsgraph &depsgraph, Scene &scene, Ob
     mesh->flag |= ME_SCULPT_DYNAMIC_TOPOLOGY;
   }
 
-  /* Leave sculpt mode. */
-  ob.mode &= ~mode_flag;
-
-  BKE_sculptsession_free(&ob);
-
-  paint_cursor_delete_textures();
-
-  /* Never leave derived meshes behind. */
-  BKE_object_free_derived_caches(&ob);
-
-  /* Flush object mode. */
-  DEG_id_tag_update(&ob.id, ID_RECALC_SYNC_TO_EVAL);
+  DEG_id_tag_update(&ob.id, ID_RECALC_GEOMETRY);
+  ed::sculpt_paint::mode_exit_generic(scene, ob, OB_MODE_SCULPT);
 }
 
 void object_sculpt_mode_exit(bContext *C, Depsgraph &depsgraph)
@@ -556,7 +462,6 @@ static wmOperatorStatus sculpt_mode_toggle_exec(bContext *C, wmOperator *op)
   Main &bmain = *CTX_data_main(C);
   Depsgraph *depsgraph = CTX_data_depsgraph_on_load(C);
   Scene &scene = *CTX_data_scene(C);
-  ToolSettings &ts = *scene.toolsettings;
   ViewLayer &view_layer = *CTX_data_view_layer(C);
   BKE_view_layer_synced_ensure(bmain, &scene, &view_layer);
   Object &ob = *BKE_view_layer_active_object_get(&view_layer);
@@ -577,7 +482,6 @@ static wmOperatorStatus sculpt_mode_toggle_exec(bContext *C, wmOperator *op)
       depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
     }
     object_sculpt_mode_enter(bmain, *depsgraph, scene, ob, false, op->reports);
-    BKE_paint_brushes_validate(&bmain, &ts.sculpt->paint);
 
     if (ob.mode & mode_flag) {
       Mesh *mesh = id_cast<Mesh *>(ob.data);
@@ -771,7 +675,7 @@ static wmOperatorStatus mask_by_color(bContext *C, wmOperator *op, const float2 
     return OPERATOR_CANCELLED;
   }
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
 
   /* Tools that are not brushes do not have the brush gizmo to update the vertex as the mouse move,
    * so it needs to be updated here. */
@@ -1117,7 +1021,7 @@ static wmOperatorStatus mask_from_cavity_exec(bContext *C, wmOperator *op)
 
   ed::sculpt_paint::mask_overlay_check(*C, *op);
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
   vert_random_access_ensure(ob);
 
   const ApplyMaskMode mode = ApplyMaskMode(RNA_enum_get(op->ptr, "mix_mode"));
@@ -1334,7 +1238,7 @@ static wmOperatorStatus mask_from_boundary_exec(bContext *C, wmOperator *op)
 
   ed::sculpt_paint::mask_overlay_check(*C, *op);
 
-  BKE_sculpt_update_object_for_edit(depsgraph, &ob, false);
+  BKE_sculptsession_update_for_edit(depsgraph, &ob, false);
   vert_random_access_ensure(ob);
 
   const ApplyMaskMode mode = ApplyMaskMode(RNA_enum_get(op->ptr, "mix_mode"));

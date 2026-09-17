@@ -159,7 +159,7 @@ static void node_remove_linked(Main *bmain, bNodeTree *ntree, bNode *rem_node)
   }
 
   /* remove nodes */
-  for (node = static_cast<bNode *>(ntree->nodes.first); node; node = next) {
+  for (node = ntree->nodes.first(); node; node = next) {
     next = node->next;
 
     if (node->flag & NODE_TEST) {
@@ -219,16 +219,14 @@ static void node_socket_add_replace(const bContext *C,
   }
 
   /* find existing node that we can use */
-  for (node_from = static_cast<bNode *>(ntree->nodes.first); node_from;
-       node_from = node_from->next)
-  {
+  for (node_from = ntree->nodes.first(); node_from; node_from = node_from->next) {
     if (node_from->type_legacy == type) {
       break;
     }
   }
 
   if (node_from) {
-    if (node_from->inputs.first || node_from->typeinfo->draw_buttons ||
+    if (node_from->inputs.first() || node_from->typeinfo->draw_buttons ||
         node_from->typeinfo->draw_buttons_ex)
     {
       node_from = nullptr;
@@ -282,8 +280,8 @@ static void node_socket_add_replace(const bContext *C,
             bke::node_add_link(*ntree, *link->fromnode, *link->fromsock, *node_from, sock_from);
             bke::node_remove_link(ntree, *link);
           }
-
-          node_socket_copy_default_value(&sock_from, &sock_prev);
+          bke::socket_value_copy_content(
+              sock_from.type, sock_from.default_value, sock_prev.default_value, true);
         }
       }
     }
@@ -359,7 +357,7 @@ static Vector<NodeLinkItem> ui_node_link_items(NodeLinkArg *arg,
          */
         const bke::bNodeSocketType *typeinfo = iosock->socket_typeinfo();
         item.socket_type = typeinfo->type;
-        item.socket_name = iosock->name;
+        item.socket_name = iosock->name().c_str();
         item.node_name = ngroup.id.name + 2;
         item.ngroup = &ngroup;
 
@@ -437,7 +435,7 @@ static void ui_node_sock_name(const bNodeTree *ntree,
     bNode *node = sock->link->fromnode;
     const std::string node_name = bke::node_label(*ntree, *node);
 
-    if (node->inputs.is_empty() && node->outputs.first != node->outputs.last) {
+    if (node->inputs.is_empty() && node->outputs.first() != node->outputs.last()) {
       BLI_snprintf_utf8(name,
                         UI_MAX_NAME_STR,
                         "%s | %s",
@@ -836,7 +834,8 @@ static void ui_node_draw_node(
       {
         if (!layout_decl->is_default) {
           PointerRNA nodeptr = RNA_pointer_create_discrete(&ntree.id, RNA_Node, &node);
-          layout_decl->draw(layout, &C, &nodeptr);
+          ui::Layout &column = layout.column(false);
+          layout_decl->draw(column, &C, &nodeptr);
         }
       }
     }
@@ -897,7 +896,7 @@ static void ui_node_draw_input(ui::Layout &layout,
          * - linked node has inputs
          * - linked node has dedicated button drawing
          * - linked node has dedicated socket drawing */
-        bool can_expand = lnode->inputs.first;
+        bool can_expand = lnode->inputs.first();
         if (lnode->type_legacy != NODE_GROUP) {
           if (lnode->typeinfo->draw_buttons) {
             can_expand = true;

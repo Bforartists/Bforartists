@@ -14,6 +14,7 @@
 #include "BKE_deform.hh"
 #include "BKE_grease_pencil.hh"
 #include "BKE_lib_id.hh"
+#include "BKE_library.hh"
 #include "BKE_material.hh"
 #include "BKE_paint.hh"
 #include "BKE_report.hh"
@@ -26,6 +27,7 @@
 #include "BLI_math_vector.hh"
 #include "BLI_vector_set.hh"
 
+#include "DNA_ID.h"
 #include "DNA_brush_types.h"
 #include "DNA_material_types.h"
 #include "DNA_object_types.h"
@@ -1743,6 +1745,13 @@ wmOperatorStatus grease_pencil_draw_operator_invoke(bContext *C,
     return OPERATOR_CANCELLED;
   }
 
+  if (ed::greasepencil::check_brush_needs_new_material(object, brush) &&
+      (!ID_IS_EDITABLE(&object->id) || ID_IS_OVERRIDE_LIBRARY(&object->id)))
+  {
+    BKE_report(op->reports, RPT_ERROR, "Cannot create new material on linked object");
+    return OPERATOR_CANCELLED;
+  }
+
   /* Ensure a drawing at the current keyframe. */
   bool inserted_keyframe = false;
   if (!ed::greasepencil::ensure_active_keyframe(
@@ -2144,12 +2153,26 @@ void apply_eval_grease_pencil_data(const GreasePencil &eval_grease_pencil,
     }
   }
 
-  bke::gather_attributes(merged_layers_grease_pencil.attributes(),
-                         AttrDomain::Layer,
-                         AttrDomain::Layer,
-                         {},
-                         eval_to_orig_layer_indices_map,
-                         orig_grease_pencil.attributes_for_write());
+  IndexMaskMemory memory;
+  const IndexMask mapped_orig_layers = array_utils::indices_non_negative(
+      eval_to_orig_layer_indices_map.index_range(), eval_to_orig_layer_indices_map, memory);
+
+  AttributeAccessor src_attributes = merged_layers_grease_pencil.attributes();
+  MutableAttributeAccessor dst_attributes = orig_grease_pencil.attributes_for_write();
+  src_attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
+    if (iter.domain != AttrDomain::Layer || iter.data_type == bke::AttrType::String) {
+      return;
+    }
+    const GAttributeReader src = iter.get(AttrDomain::Layer);
+    GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_span(
+        iter.name, AttrDomain::Layer, iter.data_type);
+    if (!dst) {
+      return;
+    }
+    attribute_math::gather(
+        src.varray, eval_to_orig_layer_indices_map, mapped_orig_layers, dst.span);
+    dst.finish();
+  });
 
   /* Free temporary grease pencil struct. */
   BKE_id_free(nullptr, &merged_layers_grease_pencil);

@@ -12,6 +12,7 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_matrix.hh"
+#include "BLI_math_matrix_c.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector.hh"
 #include "BLI_rect.hh"
@@ -86,7 +87,7 @@ void ViewOpsData::init_context(bContext *C)
   this->scene = CTX_data_scene(C);
   this->area = CTX_wm_area(C);
   this->region = CTX_wm_region(C);
-  this->v3d = static_cast<View3D *>(this->area->spacedata.first);
+  this->v3d = this->area->spacedata.first_as<View3D>();
   this->rv3d = static_cast<RegionView3D *>(this->region->regiondata);
 }
 
@@ -97,6 +98,8 @@ void ViewOpsData::state_backup()
   this->init.camdx = rv3d->camdx;
   this->init.camdy = rv3d->camdy;
   this->init.camzoom = rv3d->camzoom;
+  this->init.camroll = rv3d->camroll;
+  this->init.cam_flip_x = (rv3d->rflag & RV3D_FLIP_X) != 0;
   this->init.dist = rv3d->dist;
   copy_qt_qt(this->init.quat, rv3d->viewquat);
 
@@ -159,6 +162,15 @@ void ViewOpsData::state_restore()
   {
     /* Note this does not remove auto-keys on locked cameras. */
     copy_qt_qt(this->rv3d->viewquat, this->init.quat);
+    this->rv3d->camroll = this->init.camroll;
+  }
+
+  /* FLIP. */
+  {
+    this->rv3d->rflag &= ~RV3D_FLIP_X;
+    if (this->init.cam_flip_x) {
+      this->rv3d->rflag |= RV3D_FLIP_X;
+    }
   }
 
   /* ROTATE. */
@@ -379,6 +391,10 @@ void ViewOpsData::init_navigation(bContext *C,
   this->reverse = 1.0f;
   if (rv3d->persmat[2][1] < 0.0f) {
     this->reverse = -1.0f;
+  }
+
+  if (rv3d->persp == RV3D_CAMOB && (rv3d->rflag & RV3D_FLIP_X) != 0) {
+    this->reverse *= -1.0f;
   }
 
   this->viewops_flag = viewops_flag;
@@ -830,11 +846,11 @@ bool view3d_orbit_calc_center(bContext *C, float r_dyn_ofs[3])
     ofs = -float3(v3d->runtime.ofs_last_center);
   }
 
-  if (ob_act && (ob_act->mode & OB_MODE_ALL_PAINT) &&
+  if (ob_act && (ob_act->mode & OB_MODE_ALL_PAINT_MESH) &&
       /* with weight-paint + pose-mode, fall through to using calculateTransformCenter */
       ((ob_act->mode & OB_MODE_WEIGHT_PAINT) && BKE_object_pose_armature_get(ob_act)) == 0)
   {
-    BKE_paint_stroke_get_average(paint, ob_act_eval, ofs);
+    ofs = bke::paint::stroke_get_average(paint, ob_act_eval);
     is_set = true;
   }
   else if (ob_act && ELEM(ob_act->mode,
@@ -844,7 +860,7 @@ bool view3d_orbit_calc_center(bContext *C, float r_dyn_ofs[3])
                           OB_MODE_VERTEX_GREASE_PENCIL,
                           OB_MODE_WEIGHT_GREASE_PENCIL))
   {
-    BKE_paint_stroke_get_average(paint, ob_act_eval, ofs);
+    ofs = bke::paint::stroke_get_average(paint, ob_act_eval);
     is_set = true;
   }
   else if (ob_act && (ob_act->mode & OB_MODE_EDIT) && (ob_act->type == OB_FONT)) {
@@ -1003,7 +1019,7 @@ void axis_set_view(bContext *C,
 
     /* so we animate _from_ the camera location */
     Object *camera_eval = DEG_get_evaluated(CTX_data_ensure_evaluated_depsgraph(C), v3d->camera);
-    ED_view3d_from_object(camera_eval, rv3d->ofs, nullptr, &rv3d->dist, nullptr);
+    ED_view3d_from_object(camera_eval, rv3d->ofs, nullptr, &rv3d->dist, 0.0f, nullptr);
 
     V3D_SmoothParams sview = {nullptr};
     sview.camera_old = camera_eval;
@@ -1070,6 +1086,113 @@ void viewmove_apply(ViewOpsData *vod, int x, int y)
   ED_view3d_camera_lock_sync(vod->depsgraph, vod->v3d, vod->rv3d);
 
   ED_region_tag_redraw(vod->region);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Generic View Horizon Utilities
+ * \{ */
+
+/** Threshold for both the horizon axis length & the roll angle. */
+static const float view3d_horizon_eps = 1e-5f;
+
+/**
+ * The roll of `quat` relative to the horizon, see #view3d_horizon_correct_quat.
+ *
+ * \param angle_target: The roll to rotate to, zero levels the view.
+ * \param use_ease_out: Scale the angle down as the view turns to face along `horizon_plane`.
+ * \return the angle to rotate by, zero when there is nothing to do.
+ */
+static float view3d_horizon_angle_calc(const float quat[4],
+                                       const float horizon_plane[3],
+                                       const bool horizon_plane_no_flip,
+                                       const float axis_fallback[3],
+                                       const float angle_target,
+                                       const bool use_ease_out)
+{
+  BLI_ASSERT_UNIT_V3(horizon_plane);
+
+  float imat[3][3];
+  quat_to_mat3(imat, quat);
+  transpose_m3(imat);
+
+  float axis_horizon[3];
+  cross_v3_v3v3(axis_horizon, horizon_plane, imat[2]);
+  const float axis_length = normalize_v3(axis_horizon);
+  if (axis_length < view3d_horizon_eps) {
+    /* Undefined when looking along `horizon_plane`. */
+    if (axis_fallback == nullptr) {
+      return 0.0f;
+    }
+    BLI_ASSERT_UNIT_V3(axis_fallback);
+    /* A fallback parallel to the plane leaves nothing to use. */
+    project_plane_normalized_v3_v3v3(axis_horizon, axis_fallback, horizon_plane);
+    if (normalize_v3(axis_horizon) < view3d_horizon_eps) {
+      return 0.0f;
+    }
+  }
+
+  float angle = angle_wrap_rad(angle_signed_on_axis_v3v3_v3(axis_horizon, imat[0], imat[2]));
+
+  if (horizon_plane_no_flip) {
+    /* Align to the closer end of the horizon axis. */
+    if (angle > float(M_PI_2)) {
+      angle -= float(M_PI);
+    }
+    else if (angle < -float(M_PI_2)) {
+      angle += float(M_PI);
+    }
+  }
+
+  if (use_ease_out) {
+    /* Distance of the view X axis from the horizon plane,
+     * signed from `angle` which may have been flipped above.
+     * The same as: `angle = sinf(angle) * axis_length;`. */
+    angle = copysignf(dot_v3v3(imat[0], horizon_plane), angle);
+  }
+
+  angle -= angle_target;
+
+  return (fabsf(angle) < view3d_horizon_eps) ? 0.0f : angle;
+}
+
+/** Roll `quat` by `angle` about the view Z axis. */
+static void view3d_horizon_angle_apply(float quat[4], const float angle)
+{
+  float quat_roll[4];
+  axis_angle_to_quat_single(quat_roll, 'Z', -angle);
+  mul_qt_qtqt(quat, quat_roll, quat);
+}
+
+float view3d_horizon_correct_quat(float quat[4],
+                                  const float horizon_plane[3],
+                                  const bool horizon_plane_no_flip,
+                                  const float axis_fallback[3],
+                                  const float angle_target,
+                                  const float factor)
+{
+  const float angle = view3d_horizon_angle_calc(
+      quat, horizon_plane, horizon_plane_no_flip, axis_fallback, angle_target, false);
+  if (angle != 0.0f) {
+    view3d_horizon_angle_apply(quat, angle * factor);
+  }
+
+  return angle;
+}
+
+float view3d_horizon_correct_quat_ease_out(float quat[4],
+                                           const float horizon_plane[3],
+                                           const bool horizon_plane_no_flip,
+                                           const float factor)
+{
+  const float angle = view3d_horizon_angle_calc(
+      quat, horizon_plane, horizon_plane_no_flip, nullptr, 0.0f, true);
+  if (angle != 0.0f) {
+    view3d_horizon_angle_apply(quat, angle * factor);
+  }
+
+  return angle;
 }
 
 /** \} */

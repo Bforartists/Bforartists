@@ -102,9 +102,8 @@ static void initialize_posetree(Object * /*ob*/, bPoseChannel *pchan_tip)
 
     /* setup the chain data */
     /* we make tree-IK, unless all existing targets are in this chain */
-    for (tree = static_cast<PoseTree *>(pchan_root->iktree.first); tree; tree = tree->next) {
-      for (target = static_cast<PoseTarget *>(tree->targets.first); target; target = target->next)
-      {
+    for (tree = pchan_root->iktree.first(); tree; tree = tree->next) {
+      for (target = tree->targets.first(); target; target = target->next) {
         curchan = tree->pchan[target->tip];
         if (curchan->flag & POSE_CHAIN) {
           curchan->flag &= ~POSE_CHAIN;
@@ -217,7 +216,7 @@ static void initialize_posetree(Object * /*ob*/, bPoseChannel *pchan_tip)
 
     /* Per bone only one active IK constraint is supported. Inactive constraints still need to be
      * added for the depsgraph to evaluate properly. */
-    if (constraint->enforce != 0.0 && !(constraint->flag & CONSTRAINT_OFF)) {
+    if (BKE_constraint_has_influence(constraint)) {
       break;
     }
   }
@@ -611,8 +610,8 @@ void iksolver_initialize_tree(Depsgraph * /*depsgraph*/,
 void iksolver_execute_tree(
     Depsgraph *depsgraph, Scene *scene, Object *ob, bPoseChannel *pchan_root, float ctime)
 {
-  while (pchan_root->iktree.first) {
-    PoseTree *tree = static_cast<PoseTree *>(pchan_root->iktree.first);
+  while (pchan_root->iktree.first_) {
+    PoseTree *tree = pchan_root->iktree.first();
     int a;
 
     /* stop on the first tree that isn't a standard IK chain */
@@ -623,7 +622,7 @@ void iksolver_execute_tree(
     /* Test if this IK tree has any influence, so we can skip computations. */
     bool has_influence = false;
     for (PoseTarget &target : tree->targets) {
-      if (!(target.con->flag & CONSTRAINT_OFF) && target.con->enforce != 0.0f) {
+      if (BKE_constraint_has_influence(target.con)) {
         has_influence = true;
         break;
       }
@@ -680,8 +679,8 @@ void iksolver_clear_data(bPose *pose)
       continue;
     }
 
-    while (pchan.iktree.first) {
-      PoseTree *tree = static_cast<PoseTree *>(pchan.iktree.first);
+    while (pchan.iktree.first_) {
+      PoseTree *tree = pchan.iktree.first();
 
       /* stop on the first tree that isn't a standard IK chain */
       if (tree->type != CONSTRAINT_TYPE_KINEMATIC) {

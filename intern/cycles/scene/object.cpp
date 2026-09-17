@@ -583,7 +583,6 @@ void ObjectManager::device_update_object_transform(UpdateObjectTransformState *s
 
   kobject.tfm = tfm;
   kobject.itfm = itfm;
-  kobject.volume_density = object_volume_density(tfm, geom);
   kobject.color[0] = color.x;
   kobject.color[1] = color.y;
   kobject.color[2] = color.z;
@@ -593,7 +592,6 @@ void ObjectManager::device_update_object_transform(UpdateObjectTransformState *s
   kobject.particle_index = particle_index;
   kobject.motion_offset = 0;
   kobject.position_offset = ATTR_STD_NOT_FOUND;
-  kobject.normal_offset = ATTR_STD_NOT_FOUND;
   kobject.ao_distance = ob->ao_distance;
   kobject.receiver_light_set = ob->receiver_light_set >= LIGHT_LINK_SET_MAX ?
                                    0 :
@@ -629,7 +627,7 @@ void ObjectManager::device_update_object_transform(UpdateObjectTransformState *s
     if (volume->attributes.find(ATTR_STD_VOLUME_VELOCITY) && volume->get_velocity_scale() != 0.0f)
     {
       flag |= SD_OBJECT_HAS_VOLUME_MOTION;
-      kobject.velocity_scale = volume->get_velocity_scale();
+      kobject.mesh_volume.volume_velocity_scale = volume->get_velocity_scale();
     }
   }
   else if (geom->is_mesh()) {
@@ -707,9 +705,11 @@ void ObjectManager::device_update_object_transform(UpdateObjectTransformState *s
   kobject.num_geom_steps = geom->get_motion_steps();
   kobject.num_tfm_steps = ob->motion.size();
   kobject.numverts = object_num_motion_verts(geom);
-  kobject.numprims = (geom->is_mesh() || geom->is_volume()) ?
-                         static_cast<Mesh *>(geom)->num_triangles() :
-                         0;
+  if (geom->is_mesh() || geom->is_volume()) {
+    kobject.mesh_volume.volume_density = object_volume_density(tfm, geom);
+    kobject.mesh_volume.num_prims = static_cast<Mesh *>(geom)->num_triangles();
+    kobject.mesh_volume.normal_offset = ATTR_STD_NOT_FOUND;
+  }
   kobject.attribute_map_offset = 0;
 
   if (ob->asset_name_is_modified() || update_all) {
@@ -762,8 +762,14 @@ void ObjectManager::device_update_object_transform(UpdateObjectTransformState *s
   }
 }
 
-void ObjectManager::device_update_prim_offsets(Device *device, DeviceScene *dscene, Scene *scene)
+void ObjectManager::device_update_prim_offsets(Device * /*device*/,
+                                               DeviceScene *dscene,
+                                               Scene *scene)
 {
+  /* Currently only OptiX and BVH2 do not require object_prim_offset (unless light trees are used).
+   * While it is possible to save some computation time here and device memory, the logic for it
+   * becomes tricky and fragile. */
+#if 0
   if (!scene->integrator->get_use_light_tree()) {
     const BVHLayoutMask layout_mask = device->get_bvh_layout_mask(dscene->data.kernel_features);
     if (layout_mask != BVH_LAYOUT_METAL && layout_mask != BVH_LAYOUT_MULTI_METAL &&
@@ -773,6 +779,7 @@ void ObjectManager::device_update_prim_offsets(Device *device, DeviceScene *dsce
       return;
     }
   }
+#endif
 
   /* On MetalRT, primitive / curve segment offsets can't be baked at BVH build time. Intersection
    * handlers need to apply the offset manually. */
@@ -1104,8 +1111,8 @@ void ObjectManager::device_update_geom_offsets(Device * /*unused*/,
 
     /* Cached attribute offsets for quick lookup. */
     int position_offset = ATTR_STD_NOT_FOUND;
-    int normal_offset = ATTR_STD_NOT_FOUND;
     if (geom->is_mesh() || geom->is_volume()) {
+      int normal_offset = ATTR_STD_NOT_FOUND;
       position_offset = find_attribute(dscene->attributes_map.data(),
                                        attr_map_offset,
                                        PRIMITIVE_TRIANGLE,
@@ -1128,6 +1135,10 @@ void ObjectManager::device_update_geom_offsets(Device * /*unused*/,
              static_cast<Mesh *>(geom)->num_triangles() == 0);
       assert(normal_offset != ATTR_STD_NOT_FOUND ||
              static_cast<Mesh *>(geom)->num_triangles() == 0);
+      if (kobject.mesh_volume.normal_offset != normal_offset) {
+        kobject.mesh_volume.normal_offset = normal_offset;
+        update = true;
+      }
     }
     else if (geom->is_hair()) {
       position_offset = find_attribute(dscene->attributes_map.data(),
@@ -1148,10 +1159,6 @@ void ObjectManager::device_update_geom_offsets(Device * /*unused*/,
     }
     if (kobject.position_offset != position_offset) {
       kobject.position_offset = position_offset;
-      update = true;
-    }
-    if (kobject.normal_offset != normal_offset) {
-      kobject.normal_offset = normal_offset;
       update = true;
     }
 

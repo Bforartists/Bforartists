@@ -2,9 +2,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-/* Use a define instead of `#pragma once` because of `bmesh_iterators_inline.hh` */
-#ifndef __BLI_TASK_H__
-#define __BLI_TASK_H__
+#pragma once
 
 #include <string.h> /* for memset() */
 
@@ -29,7 +27,12 @@ struct BLI_mempool;
  * be called from the main threads. All other scheduler and pool functions are thread-safe.
  * \{ */
 
-void BLI_task_scheduler_init();
+/**
+ * \param use_flush_denormals_to_zero: Enable flush-to-zero and denormals-are-zero on the main
+ * thread and on every task scheduler thread. Applying this consistently keeps results reproducible
+ * no matter which thread a computation runs on.
+ */
+void BLI_task_scheduler_init(bool use_flush_denormals_to_zero = true);
 void BLI_task_scheduler_exit();
 int BLI_task_scheduler_num_threads();
 
@@ -356,5 +359,3 @@ void BLI_task_isolate(void (*func)(void *userdata), void *userdata);
 /** \} */
 
 }  // namespace blender
-
-#endif

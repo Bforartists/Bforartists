@@ -72,7 +72,7 @@ static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
     return;
   }
 
-  bTheme *btheme = ui::theme::theme_get();
+  const bTheme *btheme = ui::theme::theme_get();
   const float roundness = btheme->tui.wcol_menu_back.roundness * UI_SCALE_FAC;
   const int size = roundness * 20;
 
@@ -281,7 +281,7 @@ static ui::Block *wm_block_splash_create(bContext *C, ARegion *region, void * /*
   block_flag_enable(block, ui::BLOCK_LOOP | ui::BLOCK_KEEP_OPEN | ui::BLOCK_NO_WIN_CLIP);
   block_theme_style_set(block, ui::BLOCK_THEME_STYLE_POPUP);
 
-  int splash_width = style->widget.points * 45 * UI_SCALE_FAC;
+  int splash_width = style->widget.points * 54 * UI_SCALE_FAC; /* BFA - increased 20% from 45 */
   CLAMP_MAX(splash_width, WM_window_native_pixel_x(CTX_wm_window(C)) * 0.7f);
   int splash_height;
 
@@ -440,7 +440,7 @@ static ui::Block *wm_block_about_create(bContext *C, ARegion *region, void * /*a
   ImBuf *ibuf = ui::svg_icon_bitmap(ICON_BLENDER_LOGO_LARGE, size, show_color);
 
   if (ibuf) {
-    bTheme *btheme = ui::theme::theme_get();
+    const bTheme *btheme = ui::theme::theme_get();
     const uchar *color = btheme->tui.wcol_menu_back.text_sel;
 
     /* The top margin. */

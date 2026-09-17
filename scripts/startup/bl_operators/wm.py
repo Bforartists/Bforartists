@@ -1608,18 +1608,30 @@ class WM_OT_properties_edit(Operator):
 
     @staticmethod
     def _convert_new_value_single(old_value, new_type):
+        import idprop
+        # Can't convert from strings/data-block/nested data types.
+        if isinstance(old_value, (str, bytes, bpy.types.ID, idprop.types.IDPropertyGroup, type(None))):
+            return new_type()
+
         if hasattr(old_value, "__len__") and len(old_value) > 0:
             return new_type(old_value[0])
+
         return new_type(old_value)
 
     # Helper method to create a list of a given value and type, using a sequence or non-sequence old value.
     @staticmethod
     def _convert_new_value_array(old_value, new_type, new_len):
+        import idprop
+        # Can't convert from strings/data-block/nested data types.
+        if isinstance(old_value, (str, bytes, bpy.types.ID, idprop.types.IDPropertyGroup, type(None))):
+            return [new_type()] * new_len
+
         if hasattr(old_value, "__len__"):
             new_array = [new_type()] * new_len
             for i in range(min(len(old_value), new_len)):
                 new_array[i] = new_type(old_value[i])
             return new_array
+
         return [new_type(old_value)] * new_len
 
     # Convert an old property for a string, avoiding unhelpful string representations for custom list types.
@@ -1678,8 +1690,18 @@ class WM_OT_properties_edit(Operator):
     # For `DATA_BLOCK` types, return the `id_type` or an empty string for non data-block types.
     @staticmethod
     def get_property_id_type(item, property_name):
-        ui_data = item.id_properties_ui(property_name)
-        rna_data = ui_data.as_dict()
+        # FIXME: the Python API has no convenient way to detect if UI properties are supported.
+        # It *may* also return None, support both with exception handling.
+        try:
+            ui_data = item.id_properties_ui(property_name)
+        except TypeError:
+            ui_data = None
+
+        if ui_data is not None:
+            rna_data = ui_data.as_dict()
+        else:
+            rna_data = {}
+
         # For non `DATA_BLOCK` types, the `id_type` wont exist.
         return rna_data.get("id_type", "")
 
@@ -1746,19 +1768,11 @@ class WM_OT_properties_edit(Operator):
         elif prop_type_new == 'BOOL':
             return self._convert_new_value_single(item[name_old], bool)
         elif prop_type_new == 'INT_ARRAY':
-            prop_type_old = self.get_property_type(item, name_old)
-            if prop_type_old in {'INT', 'FLOAT', 'BOOL', 'INT_ARRAY', 'FLOAT_ARRAY', 'BOOL_ARRAY'}:
-                return self._convert_new_value_array(item[name_old], int, self.array_length)
+            return self._convert_new_value_array(item[name_old], int, self.array_length)
         elif prop_type_new == 'FLOAT_ARRAY':
-            prop_type_old = self.get_property_type(item, name_old)
-            if prop_type_old in {'INT', 'FLOAT', 'BOOL', 'FLOAT_ARRAY', 'INT_ARRAY', 'BOOL_ARRAY'}:
-                return self._convert_new_value_array(item[name_old], float, self.array_length)
+            return self._convert_new_value_array(item[name_old], float, self.array_length)
         elif prop_type_new == 'BOOL_ARRAY':
-            prop_type_old = self.get_property_type(item, name_old)
-            if prop_type_old in {'INT', 'FLOAT', 'FLOAT_ARRAY', 'INT_ARRAY', 'BOOL_ARRAY'}:
-                return self._convert_new_value_array(item[name_old], bool, self.array_length)
-            else:
-                return [False] * self.array_length
+            return self._convert_new_value_array(item[name_old], bool, self.array_length)
         elif prop_type_new == 'STRING':
             return self.convert_custom_property_to_string(item, name_old)
         elif prop_type_new == 'DATA_BLOCK':
@@ -2806,7 +2820,8 @@ class WM_OT_batch_rename(Operator):
             ('ACTION_CLIP', "Action Clips", "Rename selected action clips in the outliner editor", 'ACTION', 17),
             None,
             ('SCENE', "Scenes", "Rename selected scenes in the outliner editor", 'SCENE_DATA', 18),
-            ('BRUSH', "Brushes", "Rename selected brushes in the outliner editor", 'BRUSH_DATA', 19),
+            ('MARKER', "Markers", "Rename selected markers in the outliner editor", 'TIME', 19),
+            ('BRUSH', "Brushes", "Rename selected brushes in the outliner editor", 'BRUSH_DATA', 20),
         ),
         translation_context=i18n_contexts.id_id,
         description="Type of data to rename",
@@ -2859,6 +2874,23 @@ class WM_OT_batch_rename(Operator):
             if (action := action_from_any_id(id)) is not None
             if action.is_editable
         ))
+
+    @staticmethod
+    def _markers_from_context(context, space_type, only_selected):
+        from contextlib import nullcontext
+        if space_type == 'SEQUENCE_EDITOR':
+            context_manager = context.temp_override(scene=context.sequencer_scene)
+        else:
+            context_manager = nullcontext()
+
+        with context_manager:
+            return context.selected_markers if only_selected else context.markers
+
+    @staticmethod
+    def _markers_label(markers):
+        if markers and markers[0].id_data.id_type == 'ACTION':
+            return iface_("Pose Marker(s)")
+        return iface_("Timeline Marker(s)")
 
     @classmethod
     def _data_from_context(cls, context, data_type, only_selected, *, check_context=False):
@@ -3030,6 +3062,13 @@ class WM_OT_batch_rename(Operator):
                     ),
                     "name",
                     iface_("Scene(s)"),
+                )
+            elif data_type == 'MARKER':
+                markers = cls._markers_from_context(context, space_type, only_selected)
+                data = (
+                    markers,
+                    "name",
+                    cls._markers_label(markers)
                 )
             elif data_type == 'BRUSH':
                 data = (
@@ -3453,7 +3492,7 @@ class WM_MT_splash(Menu):
         col2 = split.column()
         col2_title = col2.row()
 
-        found_recent = col2.template_recent_files(rows=5)
+        found_recent = col2.template_recent_files(rows=6)
 
         if found_recent:
             col2_title.label(text="Recent Files")
@@ -3608,7 +3647,7 @@ class WM_MT_region_toggle_pie(Menu):
         space_data = context.space_data
         # Store each region by it's type.
         region_by_type = {}
-        
+
         # bfa - check if we are in the asset browser
         from bpy_extras.asset_utils import SpaceAssetInfo
         is_file_browser = space_data.type == 'FILE_BROWSER'
@@ -3633,7 +3672,7 @@ class WM_MT_region_toggle_pie(Menu):
                 if not is_asset_browser:
                     if not space_data.active_operator:
                         continue
-            
+
             # bfa - special handling for filebrowser UI region - Asset Browser doesn't have File Path
             if region_type == 'UI' and is_file_browser and is_asset_browser:
                 continue
@@ -3699,7 +3738,7 @@ class WM_MT_region_toggle_pie(Menu):
             attr = cls._region_info[region_type]
             value = getattr(space_data, attr)
             icon = cls._region_icons[region_type]  # Get icon from mapping
-            
+
             # bfa - customize labels for filebrowser context
             if is_file_browser:
                 if region_type == 'TOOLS':
@@ -3711,7 +3750,7 @@ class WM_MT_region_toggle_pie(Menu):
                         text = "Asset Details"
                     else:
                         text = "Sidebar"
-            
+
             props = pie.operator(
                 "wm.context_toggle",
                 text=text,
@@ -3735,25 +3774,66 @@ class WM_OT_drop_blend_file(Operator):
         subtype='FILE_PATH',
         options={'SKIP_SAVE'},
     )
+    use_scripts: BoolProperty(
+        name="Trusted Source",
+        options={'SKIP_SAVE'},
+        description="Allow .blend file to execute scripts automatically, default available from system preferences"
+    )
+
+    @classmethod
+    def _is_autoexec(cls, filepath):
+        """
+        Return true when `filepath` is in a directory which isn't excluded.
+        """
+        return bpy.path.is_autoexec(filepath, canonicalize=True, strip_filename=True)
+
+    def draw(self, context):
+        layout = self.layout
+        filepath = self.filepath
+
+        layout.label(text=bpy.path.basename(filepath), icon='QUESTION')
+
+        col = layout.column()
+        col.operator_context = 'INVOKE_DEFAULT'
+        # Return activates "Open", the primary action of this popup.
+        col.active_default = True
+        props = col.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
+        props.filepath = filepath
+        props.display_file_selector = False
+        props.use_scripts = self.use_scripts
+
+        col = layout.column()
+        if not context.preferences.filepaths.use_scripts_auto_execute or self._is_autoexec(filepath):
+            col.prop(self, "use_scripts")
+        else:
+            col.enabled = False
+            col.prop(self, "use_scripts", text="Trusted Source [Untrusted Path]")
+
+        layout.separator(type='LINE')
+
+        col = layout.column()
+        col.operator_context = 'INVOKE_DEFAULT'
+        # Use the confirm template so pressing these closes the popup,
+        # the popup is kept open otherwise (see `BLOCK_KEEP_OPEN`).
+        col.template_popup_confirm(
+            "wm.link", text="Link...", icon='LINK_BLEND', cancel_text="",
+        ).filepath = filepath
+        col.template_popup_confirm(
+            "wm.append", text="Append...", icon='APPEND_BLEND', cancel_text="",
+        ).filepath = filepath
+
+    def execute(self, context):
+        # Needed so the popup draws this operators UI.
+        return {'CANCELLED'}
 
     def invoke(self, context, _event):
-        context.window_manager.popup_menu(self.draw_menu, title=bpy.path.basename(self.filepath), icon='QUESTION')
-        return {'FINISHED'}
-
-    def draw_menu(self, menu, _context):
-        layout = menu.layout
-
-        col = layout.column()
-        col.operator_context = 'INVOKE_DEFAULT'
-        props = col.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
-        props.filepath = self.filepath
-        props.display_file_selector = False
-
-        layout.separator()
-        col = layout.column()
-        col.operator_context = 'INVOKE_DEFAULT'
-        col.operator("wm.link", text="Link...", icon='LINK_BLEND').filepath = self.filepath
-        col.operator("wm.append", text="Append...", icon='APPEND_BLEND').filepath = self.filepath
+        # Match the file selector, which defaults to the preferences.
+        self.use_scripts = (
+            context.preferences.filepaths.use_scripts_auto_execute and
+            self._is_autoexec(self.filepath)
+        )
+        # The popup shows this operators own UI, keeping it alive while it's open.
+        return context.window_manager.invoke_popup(self, auto_keymap=True)
 
 
 classes = (

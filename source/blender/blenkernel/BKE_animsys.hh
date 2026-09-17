@@ -11,9 +11,12 @@
 #include "DNA_listBase.h"
 
 #include "BLI_bit_vector.hh"
+#include "BLI_map.hh"
 #include "BLI_span.hh"
 #include "BLI_string.hh"
 #include "BLI_sys_types.hh" /* for bool */
+
+#include "RNA_path_fwd.hh"
 
 #include <string>
 
@@ -23,6 +26,7 @@ struct AnimData;
 struct BlendDataReader;
 struct BlendWriter;
 struct Depsgraph;
+struct DriverTarget;
 struct FCurve;
 struct ID;
 struct KS_Path;
@@ -125,14 +129,16 @@ void BKE_keyingsets_blend_read_data(BlendDataReader *reader, ListBaseT<KeyingSet
  * This is just an external wrapper for the RNA-Path fixing function,
  * with input validity checks on top of the basic method.
  *
- * \warning If the path fixing was successful, `old_path` will be freed after this function.
- * Always use the returned char * to update whatever was passed in as `old_path`.
+ * \return The new path, to be owned by the caller, or nullptr if the path should not be changed.
  *
  * \note it is assumed that the structure we're replacing is `<prefix><["><name><"]>`
  * i.e. `pose.bones["Bone"]`.
  */
-char *BKE_animsys_fix_rna_path_rename(
-    ID *owner_id, char *old_path, StringRef prefix, StringRefNull old_name, StringRefNull newName);
+char *BKE_animsys_fix_rna_path_rename(ID *owner_id,
+                                      const char *old_path,
+                                      StringRef prefix,
+                                      StringRefNull old_name,
+                                      StringRefNull newName);
 
 /**
  * Fix all the paths for the given ID + Action.
@@ -151,52 +157,49 @@ void BKE_action_fix_paths_rename(ID *owner_id,
                                  StringRefNull newName,
                                  bool verify_paths);
 
+using DriverMap = Map<ID *, Vector<DriverTarget *>>;
 /**
- * Fix all the paths for the given ID+AnimData
- *
- * \param old_infix, new_infix: The path section immediately following the `prefix`. If
- * `infix_is_name` is true, this is processed as a name..
- *
- * \param infix_is_name: If true, old_infix and new_infix are treated as names and padded with
- * [""] so that only exact matches are made. For example, the structure we're replacing is
- * `<prefix><["><name><"]>` i.e. `pose.bones["Bone"]`.
+ * Build a map from an ID to all the `DriverTarget`s where it is being used.
  */
-void BKE_animdata_fix_paths_rename(ID *owner_id,
-                                   AnimData *adt,
-                                   ID *ref_id,
-                                   const char *prefix,
-                                   const char *old_infix,
-                                   const char *new_infix,
-                                   int oldSubscript,
-                                   int newSubscript,
-                                   bool verify_paths,
-                                   bool infix_is_name);
+DriverMap BKE_animdata_build_driver_target_map(Main &bmain);
 
 /**
- * Fix all RNA-Paths throughout the database (directly access the #Global.main version).
+ * Search and replace `old_infix` with `new_infix` for all rna paths that reference the given ID
+ * and match the prefix.
  *
- * \param old_infix, new_infix: The path section immediately following the `prefix`. If
- * `infix_is_name` is true, this is processed as a name.
- *
- * \param infix_is_name: If true, old_infix and new_infix are treated as names and padded with
- * [""] so that only exact matches are made. For example, the structure we're replacing is
- * `<prefix><["><name><"]>` i.e. `pose.bones["Bone"]`
+ * \param prefix: Does not have to be the full prefix of the rna path; it works as long as it is
+ * directly preceding `infix`. E.g. if the full path is `pose.bones["foo"]` then passing `bones` as
+ * a prefix will still work.
+ * \param old_infix, new_infix: the full search and replace string pair.
+ * This has to be in the form of the rna path and will be replaced as given. E.g. bone names should
+ * be escaped and surrounded with `[""]` by the caller. See `RNA_path_name_to_infix` or
+ * `RNA_path_number_to_infix`.
+ * \param verify_paths: If true, only paths that are invalid before
+ * path replacement but resolve correctly after the change, are changed.
+ * \param driver_map: Maps
+ * IDs to where they are being used in drivers. Of that map, only the given `id` is read. But
+ * building the map for a single ID requires iterating Main anyway so it is built for all IDs
+ * passed in to improve the case when this function is called in a loop. See
+ * `BKE_animdata_build_driver_target_map`.
  */
-void BKE_animdata_fix_paths_rename_all_ex(Main *bmain,
-                                          ID *ref_id,
-                                          const char *prefix,
-                                          const char *old_infix,
-                                          const char *new_infix,
-                                          int oldSubscript,
-                                          int newSubscript,
-                                          bool verify_paths,
-                                          bool infix_is_name);
+void BKE_animdata_fix_paths(ID &id,
+                            StringRef prefix,
+                            StringRef old_infix,
+                            StringRef new_infix,
+                            bool verify_paths,
+                            const DriverMap &driver_map);
 
-/** See #BKE_animdata_fix_paths_rename_all_ex */
-void BKE_animdata_fix_paths_rename_all(ID *ref_id,
-                                       const char *prefix,
-                                       const char *oldName,
-                                       const char *newName);
+/**
+ * Function overload that generates the DriverMap and discards it immediately. When calling that
+ * function more than once, create a DriverMap using `BKE_animdata_build_driver_target_map` instead
+ * and pass it to the other version of this function.
+ */
+void BKE_animdata_fix_paths(ID &id,
+                            StringRef prefix,
+                            StringRef old_infix,
+                            StringRef new_infix,
+                            bool verify_paths,
+                            Main &bmain);
 
 /**
  * Remove any animation data (F-Curves from Actions, and drivers) that have an
@@ -304,7 +307,7 @@ enum eAnimData_Recalc {
 };
 
 bool BKE_animsys_rna_path_resolve(PointerRNA *ptr,
-                                  const char *rna_path,
+                                  ParsedRNAPathRef rna_path,
                                   int array_index,
                                   PathResolvedRNA *r_result);
 bool BKE_animsys_read_from_rna_path(PathResolvedRNA *anim_rna, float *r_value);
@@ -348,15 +351,6 @@ void animsys_evaluate_action(PointerRNA *ptr,
                              int32_t action_slot_handle,
                              const AnimationEvalContext *anim_eval_context,
                              bool flush_to_original);
-
-/**
- * Evaluate action, and blend the result into the current values (instead of overwriting fully).
- */
-void animsys_blend_in_action(PointerRNA *ptr,
-                             bAction *act,
-                             int32_t action_slot_handle,
-                             const AnimationEvalContext *anim_eval_context,
-                             float blend_factor);
 
 /** Evaluate Action Group. */
 void animsys_evaluate_action_group(PointerRNA *ptr,

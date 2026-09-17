@@ -1,0 +1,155 @@
+/* SPDX-FileCopyrightText: 2023 Blender Authors
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later */
+
+#pragma once
+
+#include "gpu_shader_compat.hh"
+
+/* There are two common ways of implementing a linear interpolation: result = a + t * (b - a) and
+ * result = (1 - t) * a + t * b. The former variant is called "mix" in our code and it ensures that
+ * result always changes monotonically when t increases monotonically. This comes at the cost of
+ * the fact that generally result != b when t == 1, which becomes particularly noticeable when the
+ * magnitudes of a and b are vastly different. The latter variant is called
+ * "endvalue_preserving_mix" in our code ensures that result == b when t == 1. This comes at the
+ * cost of an additional multiplication step compared to the former version and the fact that
+ * result may not change monotonically when a and b have different signs and t increases
+ * monotonically, which however isn't noticeable in most cases as long as monotony isn't explicitly
+ * required. In general, "endvalue_preserving_mix" should be preferred over "mix" when it is
+ * important that result == b when t == 1 or when a and b may have vastly different magnitudes.*/
+float endvalue_preserving_mix(float a, float b, float t)
+{
+  return (1.0f - t) * a + t * b;
+}
+
+/* `powf` is really slow for raising to integer powers. */
+
+float pow2f(float x)
+{
+  return x * x;
+}
+float pow3f(float x)
+{
+  return x * x * x;
+}
+float pow4f(float x)
+{
+  return pow2f(pow2f(x));
+}
+float pow5f(float x)
+{
+  return pow4f(x) * x;
+}
+float pow6f(float x)
+{
+  return pow2f(pow3f(x));
+}
+float pow7f(float x)
+{
+  return pow6f(x) * x;
+}
+float pow8f(float x)
+{
+  return pow2f(pow4f(x));
+}
+
+float square(float v)
+{
+  return v * v;
+}
+float2 square(float2 v)
+{
+  return v * v;
+}
+float3 square(float3 v)
+{
+  return v * v;
+}
+float4 square(float4 v)
+{
+  return v * v;
+}
+
+float hypot(float x, float y)
+{
+  return sqrt(x * x + y * y);
+}
+
+/* Declared as _atan2 to prevent errors with `WITH_GPU_SHADER_CPP_COMPILATION` on VS2019 due
+ * to `corecrt_math` conflicting functions. */
+
+float _atan2(float y, float x)
+{
+  return atan(y, x);
+}
+#define atan2 _atan2
+
+/**
+ * Returns \a a if it is a multiple of \a b or the next multiple or \a b after \b a .
+ * In other words, it is equivalent to `divide_ceil(a, b) * b`.
+ * It is undefined if \a a is negative or \b b is not strictly positive.
+ */
+int ceil_to_multiple(int a, int b)
+{
+  return ((a + b - 1) / b) * b;
+}
+uint ceil_to_multiple(uint a, uint b)
+{
+  return ((a + b - 1u) / b) * b;
+}
+
+/**
+ * Integer division that returns the ceiling, instead of flooring like normal C division.
+ * It is undefined if \a a is negative or \b b is not strictly positive.
+ */
+int divide_ceil(int a, int b)
+{
+  return (a + b - 1) / b;
+}
+uint divide_ceil(uint a, uint b)
+{
+  return (a + b - 1u) / b;
+}
+
+/**
+ * Component wise, use vector to replace min if it is smaller and max if bigger.
+ */
+void min_max(float value, float &min_v, float &max_v)
+{
+  min_v = min(value, min_v);
+  max_v = max(value, max_v);
+}
+
+/**
+ * Return true if the difference between`a` and `b` is below the `epsilon` value.
+ */
+bool is_equal(float a, float b, const float epsilon)
+{
+  return abs(a - b) <= epsilon;
+}
+
+float sin_from_cos(float c)
+{
+  return sqrt(max(0.0f, 1.0f - square(c)));
+}
+
+float cos_from_sin(float s)
+{
+  return sqrt(max(0.0f, 1.0f - square(s)));
+}
+
+float cos_from_tan(float t)
+{
+  return inversesqrt(1.0f + square(t));
+}
+
+/**
+ * Matches std::midpoint from C++20.
+ */
+int midpoint(int a, int b)
+{
+  uint smaller = uint(min(a, b));
+  uint larger = uint(max(a, b));
+  int sign = (b > a) ? 1 : -1;
+  return a + sign * int((larger - smaller) / 2u);
+}

@@ -22,6 +22,8 @@ add_library(bf_intern_meshopt_bridge SHARED "${SRC}")
 blender_link_libraries(bf_intern_meshopt_bridge "${LIB}")
 blender_source_group(bf_intern_meshopt_bridge "${SRC}")
 
+# Installed by `source/creator/CMakeLists.txt`, which also sets the RPATH.
+# Keep in sync with `intern/draco_bridge/CMakeLists.txt`.
 if(APPLE)
   # On macOS, prevent the `meshopt` library (already present in the application bundle)
   # from being wrongly copied into the Xcode archive used for application distribution,

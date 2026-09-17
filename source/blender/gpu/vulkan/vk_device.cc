@@ -37,10 +37,10 @@ void VKExtensions::log() const
 {
   CLOG_DEBUG(&LOG,
              "Device features\n"
-             " - [%c] shader output viewport index\n"
-             " - [%c] shader output layer\n"
              " - [%c] fragment shader barycentric\n"
              " - [%c] wide lines\n"
+             " - [%c] multi draw indirect\n"
+             " - [%c] shader clip distance\n"
              "Device extensions\n"
              " - [%c] dynamic rendering local read\n"
              " - [%c] dynamic rendering unused attachments\n"
@@ -52,13 +52,17 @@ void VKExtensions::log() const
              " - [%c] maintenance4\n"
              " - [%c] memory priority\n"
              " - [%c] pageable device local memory\n"
+             " - [%c] provoking vertex\n"
              " - [%c] shader stencil export\n"
+             " - [%c] shader output viewport index and layer\n"
+             " - [%c] spirv 1.4\n"
              " - [%c] ray queries\n"
-             " - [%c] vertex input dynamic state",
-             shader_output_viewport_index ? 'X' : ' ',
-             shader_output_layer ? 'X' : ' ',
+             " - [%c] vertex input dynamic state\n"
+             " - [%c] vertex pipeline stores and atomics",
              fragment_shader_barycentric ? 'X' : ' ',
              wide_lines ? 'X' : ' ',
+             multi_draw_indirect ? 'X' : ' ',
+             shader_clip_distance ? 'X' : ' ',
              dynamic_rendering_local_read ? 'X' : ' ',
              dynamic_rendering_unused_attachments ? 'X' : ' ',
              extended_dynamic_state ? 'X' : ' ',
@@ -69,9 +73,13 @@ void VKExtensions::log() const
              maintenance4 ? 'X' : ' ',
              memory_priority ? 'X' : ' ',
              pageable_device_local_memory ? 'X' : ' ',
+             provoking_vertex ? 'X' : ' ',
              GPU_stencil_export_support() ? 'X' : ' ',
+             shader_viewport_index_layer ? 'X' : ' ',
+             spirv_1_4 ? 'X' : ' ',
              GPU_ray_query_support() ? 'X' : ' ',
-             vertex_input_dynamic_state ? 'X' : ' ');
+             vertex_input_dynamic_state ? 'X' : ' ',
+             GPU_vertex_pipeline_stores_and_atomics_support() ? 'X' : ' ');
 }
 
 void VKWorkarounds::log() const
@@ -228,12 +236,9 @@ void VKDevice::init_physical_device_features()
   features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
   vk_physical_device_vulkan_11_features_.sType =
       VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-  vk_physical_device_vulkan_12_features_.sType =
-      VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 
   features.pNext = &vk_physical_device_vulkan_11_features_;
-  vk_physical_device_vulkan_11_features_.pNext = &vk_physical_device_vulkan_12_features_;
-  vk_physical_device_vulkan_12_features_.pNext =
+  vk_physical_device_vulkan_11_features_.pNext =
       &vk_physical_device_acceleration_structure_features_;
 
   vkGetPhysicalDeviceFeatures2(vk_physical_device_, &features);
@@ -274,30 +279,27 @@ void VKDevice::init_dummy_buffer()
   dummy_buffer.update_immediately(static_cast<void *>(data));
 }
 
+uint32_t VKDevice::glsl_patch_version_get(bool use_ray_query) const
+{
+  const bool requires_460 = use_ray_query;
+  return requires_460 ? 460u : 450u;
+}
+
 shader::GeneratedSource VKDevice::extensions_define(StringRefNull stage_define,
                                                     bool use_ray_query) const
 {
   std::stringstream ss;
 
-  const bool requires_460 = use_ray_query;
-  if (requires_460) {
-    ss << "#version 460\n";
-  }
-  else {
-    ss << "#version 450\n";
-  }
-  {
-    /* Required extension. */
-    ss << "#extension GL_ARB_shader_draw_parameters : enable\n";
-    ss << "#define GPU_ARB_shader_draw_parameters\n";
-    ss << "#define gpu_BaseInstance (gl_BaseInstanceARB)\n";
-  }
+  ss << "#version " << glsl_patch_version_get(use_ray_query) << "\n";
   ss << "#define GPU_ARB_clip_control\n";
   ss << "#define GPU_ARB_derivative_control\n";
 
   ss << "#define gl_VertexID gl_VertexIndex\n";
+  /* usage of gpu_BaseInstance is deprecated to support more Android devices. Prefer to use
+   * gpu_InstanceIndex. */
+  ss << "#define gpu_BaseInstance (0)\n";
   ss << "#define gpu_InstanceIndex (gl_InstanceIndex)\n";
-  ss << "#define gl_InstanceID (gpu_InstanceIndex - gpu_BaseInstance)\n";
+  ss << "#define gl_InstanceID (gpu_InstanceIndex)\n";
 
   ss << "#extension GL_ARB_shader_viewport_layer_array: enable\n";
   if (GPU_stencil_export_support()) {
@@ -311,6 +313,9 @@ shader::GeneratedSource VKDevice::extensions_define(StringRefNull stage_define,
   }
   if (use_ray_query) {
     ss << "#extension GL_EXT_ray_query : enable\n";
+  }
+  if (!extensions_.provoking_vertex) {
+    ss << "#define GPU_PROVOKING_VERTEX_LAST\n";
   }
   ss << stage_define;
 

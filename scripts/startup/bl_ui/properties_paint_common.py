@@ -214,6 +214,12 @@ def brush_asset_shelf_filter_draw(panel, context):
     layout.prop(prefs.view, "use_filter_brushes_by_tool", text="By Active Tool")
 
 
+def show_experimental_texture_paint(brush):
+    if not bpy.context.preferences.experimental.use_3d_texture_paint or not brush:
+        return False
+    return brush.image_brush_type in {'DRAW'}
+
+
 class UnifiedPaintPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
@@ -325,14 +331,14 @@ class UnifiedPaintPanel:
         if not brush:
             return
         prop_owner = brush
-        if unified_name and getattr(ups, unified_name):
+        if unified_name and getattr(brush, unified_name):
             prop_owner = ups
 
         row.prop(prop_owner, prop_name, icon='NONE', text=text, slider=slider)
 
         if unified_name: # BFA - don't minimize for discoverability
             # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
-            row.prop(ups, unified_name, text="", icon='BRUSHES_ALL')
+            row.prop(brush, unified_name, text="", icon='BRUSHES_ALL')
 
         if pressure_name:
             row.prop(brush, pressure_name, text="")
@@ -385,7 +391,7 @@ class UnifiedPaintPanel:
         if settings is None:  # BFA - Early return if settings is None for the Annotation tool
             return
         ups = settings.unified_paint_settings
-        prop_owner = ups if ups.use_unified_color else brush
+        prop_owner = ups if brush.use_unified_color else brush
         parent.prop(prop_owner, prop_name, text=text)
 
     @staticmethod
@@ -394,7 +400,7 @@ class UnifiedPaintPanel:
         if settings is None:  # BFA - Early return if settings is None for the Annotation tool
             return
         ups = settings.unified_paint_settings
-        prop_owner = ups if ups.use_unified_color else brush
+        prop_owner = ups if brush.use_unified_color else brush
         parent.template_color_picker(prop_owner, prop_name, value_slider=value_slider)
 
 
@@ -715,12 +721,23 @@ class StrokePanel(BrushPanel):
             row = col.row(align=True)
             row.prop(brush, "spacing", text="Spacing")
             row.prop(brush, "use_pressure_spacing", toggle=True, text="")
+            if not self.is_popover:
+                UnifiedPaintPanel.prop_custom_pressure(
+                    layout,
+                    context,
+                    row,
+                    brush,
+                    pressure_name="use_pressure_spacing",
+                    curve_visibility_name="show_spacing_curve",
+                    custom_curve_name="curve_spacing",
+                )
+                col = layout.column()
 
         if brush.stroke_method in {'LINE', 'CURVE'}:
             row = col.row(align=True)
             row.prop(brush, "spacing", text="Spacing")
 
-        if mode == "SCULPT":
+        if mode == 'SCULPT' or (mode == 'PAINT_TEXTURE' and show_experimental_texture_paint(brush)):
             col.row().prop(brush, "use_scene_spacing", text="Spacing Distance", expand=True)
 
         if mode in {"PAINT_TEXTURE", "PAINT_2D", "SCULPT"}:
@@ -844,7 +861,8 @@ class FalloffPanel(BrushPanel):
         settings = cls.paint_settings_from_active_tool(context)
         if not (settings and settings.brush and settings.brush.curve_distance_falloff):
             return False
-        if cls.get_brush_mode(context) == "SCULPT_CURVES":
+        mode = cls.get_brush_mode(context)
+        if mode == 'SCULPT_CURVES':
             brush = settings.brush
             if brush.curves_sculpt_brush_type in {'ADD', 'DELETE', 'CUT'}:
                 return False
@@ -852,10 +870,8 @@ class FalloffPanel(BrushPanel):
 
     def draw(self, context):
         layout = self.layout
+
         settings = self.paint_settings_from_active_tool(context)
-        if not settings or not settings.brush:  # BFA - Early return if settings or brush is None
-            return
-        mode = self.get_brush_mode(context)
         brush = settings.brush
 
         if brush is None:
@@ -878,10 +894,103 @@ class FalloffPanel(BrushPanel):
             col = layout.column(align=True)
             row = col.row(align=True)
 
+
+class ShapePanel(BrushPanel):
+    bl_label = "Shape"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+        settings = cls.paint_settings_from_active_tool(context)
+        if not settings:
+            return False
+        brush = settings.brush
+
+        if not (brush and brush.curve_distance_falloff):
+            return False
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        settings = self.paint_settings_from_active_tool(context)
+        if not settings or not settings.brush:  # BFA - Early return if settings or brush is None
+            return
+        mode = self.get_brush_mode(context)
+        brush = settings.brush
+        experimental_texture_paint_enabled = show_experimental_texture_paint(brush)
+
+        if brush is None:
+            return
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        if mode == 'SCULPT':
+            if brush.sculpt_capabilities.has_hardness:
+                row = layout.row(align=True)
+                row.prop(brush, "hardness", slider=True)
+                if brush.sculpt_capabilities.has_hardness_pressure:
+                    row.prop(brush, "use_hardness_pressure", text="")
+                    if not self.is_popover:
+                        UnifiedPaintPanel.prop_custom_pressure(
+                            layout,
+                            context,
+                            row,
+                            brush,
+                            pressure_name="use_hardness_pressure",
+                            curve_visibility_name="show_hardness_curve",
+                            custom_curve_name="curve_hardness",
+                        )
+                layout.separator()
+
+            if brush.sculpt_capabilities.has_tip_roundness:
+                layout.row(align=True)
+                layout.prop(brush, "tip_roundness")
+                layout.prop(brush, "tip_scale_x")
+                layout.separator()
+        elif mode == 'PAINT_TEXTURE' and experimental_texture_paint_enabled:
+            # TODO: Update this once the "capabilities" block has been updated
+            row = layout.row(align=True)
+            row.prop(brush, "hardness", slider=True)
+            row.prop(brush, "use_hardness_pressure", text="")
+            if not self.is_popover:
+                UnifiedPaintPanel.prop_custom_pressure(
+                    layout,
+                    context,
+                    row,
+                    brush,
+                    pressure_name="use_hardness_pressure",
+                    curve_visibility_name="show_hardness_curve",
+                    custom_curve_name="curve_hardness",
+                )
+            layout.separator()
+
+        layout.use_property_split = False
+        col = layout.column(align=True)
+        if context.region.type == 'TOOL_HEADER':
+            col.prop(brush, "curve_distance_falloff_preset", expand=True)
+        else:
+            row = col.row(align=True)
+            col.prop(brush, "curve_distance_falloff_preset", text="")
+
+        if brush.curve_distance_falloff_preset == 'CUSTOM':
+            layout.template_curve_mapping(
+                brush, "curve_distance_falloff",
+                brush=True,
+                use_negative_slope=True,
+                show_presets=True,
+            )
+            col = layout.column(align=True)
+            row = col.row(align=True)
+
         show_falloff_shape = False
         if mode in {"SCULPT", "PAINT_VERTEX", "PAINT_WEIGHT"} and brush.sculpt_brush_type != "POSE":
             show_falloff_shape = True
-        if not show_falloff_shape and mode == "SCULPT_CURVES" and context.space_data.type == "PROPERTIES":
+        if mode == 'PAINT_TEXTURE' and experimental_texture_paint_enabled:
+            show_falloff_shape = True
+        if not show_falloff_shape and mode == 'SCULPT_CURVES' and context.space_data.type == 'PROPERTIES':
             show_falloff_shape = True
 
         if show_falloff_shape:
@@ -1029,23 +1138,10 @@ def brush_settings(layout, context, brush, popover=False):
         if capabilities.has_tilt:
             layout.prop(brush, "tilt_strength_factor", slider=True)
 
-        row = layout.row(align=True)
-        if capabilities.has_hardness:
-            row.prop(brush, "hardness", slider=True)
-            if capabilities.has_hardness_pressure:
-                row.prop(brush, "invert_hardness_pressure", text="")
-                row.prop(brush, "use_hardness_pressure", text="")
-
-        if capabilities.has_tip_roundness:
-            layout.prop(brush, "tip_roundness", slider=True)
-            layout.prop(brush, "tip_scale_x", slider=True)
-
-        layout.separator()
-
-        # auto_smooth_factor and use_inverse_smooth_pressure
+        # auto_smooth_factor and use_smooth_pressure
         if capabilities.has_auto_smooth:
-            pressure_name = "use_inverse_smooth_pressure" if capabilities.has_auto_smooth_pressure else None
-            UnifiedPaintPanel.prop_unified(
+            pressure_name = "use_smooth_pressure" if capabilities.has_auto_smooth_pressure else None
+            unified_row = UnifiedPaintPanel.prop_unified(
                 layout,
                 context,
                 brush,
@@ -1053,6 +1149,16 @@ def brush_settings(layout, context, brush, popover=False):
                 pressure_name=pressure_name,
                 slider=True,
             )
+            if capabilities.has_auto_smooth_pressure and not popover:
+                UnifiedPaintPanel.prop_custom_pressure(
+                    layout,
+                    context,
+                    unified_row,
+                    brush,
+                    pressure_name="use_smooth_pressure",
+                    curve_visibility_name="show_auto_smooth_curve",
+                    custom_curve_name="curve_auto_smooth",
+                )
 
         # topology_rake_factor
         if capabilities.has_topology_rake and context.sculpt_object.use_dynamic_topology_sculpting:
@@ -1130,8 +1236,8 @@ def brush_settings(layout, context, brush, popover=False):
             UnifiedPaintPanel.prop_unified_color(row, context, brush, "color", text="")
             UnifiedPaintPanel.prop_unified_color(row, context, brush, "secondary_color", text="")
             row.separator()
-            row.operator("paint.brush_colors_flip", icon="FILE_REFRESH", text="", emboss=False)
-            row.prop(ups, "use_unified_color", text="", icon="BRUSHES_ALL")
+            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="", emboss=False)
+            row.prop(brush, "use_unified_color", text="", icon='BRUSHES_ALL')
             layout.prop(brush, "blend", text="Blend Mode")
 
         # Per sculpt tool options.
@@ -1394,7 +1500,9 @@ def brush_shared_settings(layout, context, brush, popover=False):
     direction = False
 
     # 3D and 2D Texture Paint #
-    if mode in {"PAINT_TEXTURE", "PAINT_2D"}:
+    if mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
+        if mode == 'PAINT_TEXTURE' and show_experimental_texture_paint(brush):
+            size_mode = True
         if not popover:
             blend_mode = brush.image_paint_capabilities.has_color
             size = brush.image_paint_capabilities.has_radius
@@ -1472,7 +1580,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
             slider=True,
         )
 
-    size_owner = ups if ups.use_unified_size else brush
+    size_owner = ups if brush.use_unified_size else brush
     size_prop = "size"
     if size_mode and (size_owner.use_locked_size == "SCENE"):
         size_prop = "unprojected_size"
@@ -1556,7 +1664,7 @@ def draw_color_jitter_panel(layout, context, brush):
         return
     ups = settings.unified_paint_settings
 
-    prop_owner = ups if ups.use_unified_color else brush
+    prop_owner = ups if brush.use_unified_color else brush
     layout.use_property_split = False
 
     header, panel = layout.panel("color_jitter_panel", default_closed=True)
@@ -1751,7 +1859,7 @@ def draw_mesh_automasking_settings(layout, settings, *, topbar=False, use_face_s
         else:
             col = parent.column()
             col.use_property_split = False
-            split = col.split(factor=0.4)
+            split = col.split(factor=col.property_split_factor)
             col = split.column()
             split.prop(settings, "boundary_edges_propagation_steps")
 
@@ -1822,7 +1930,7 @@ def draw_color_settings(context, layout, brush, color_type=False):
         UnifiedPaintPanel.prop_unified_color(row, context, brush, "secondary_color", text="")
         row.separator()
         row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="", emboss=False)
-        row.prop(ups, "use_unified_color", text="", icon='BRUSHES_ALL')
+        row.prop(brush, "use_unified_color", text="", icon='BRUSHES_ALL')
 
         draw_color_jitter_panel(layout, context, brush)
 
@@ -1941,6 +2049,8 @@ def brush_mask_texture_settings(layout, brush):
 
 def brush_basic_texpaint_settings(layout, context, brush, *, compact=False):
     """Draw Tool Settings header for Vertex Paint and 2D and 3D Texture Paint modes."""
+
+    # TODO: This shared method is incorrect and unnecessary, remove this layer of abstraction
     capabilities = brush.image_paint_capabilities
 
     if capabilities.has_color:
@@ -2355,6 +2465,10 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
             row.prop(gp_settings, "vertex_mode", text="Mode", expand=compact) # bfa - use compact!
             # bfa - This sets expand to false for the sidebar, while keeping header true
             # bfa - use 'not compact' for the opposite effect!
+
+
+def supports_shape_panel(mode):
+    return mode in {'SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'PAINT_TEXTURE'}
 
 
 classes = (

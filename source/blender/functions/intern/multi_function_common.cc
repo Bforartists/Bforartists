@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup fn
+ */
+
 #include "BLI_math_base_safe.hh"
 #include "BLI_math_vector.hh"
 
@@ -551,7 +555,17 @@ static void register_common_functions_impl()
   });
   registry::add_new_cb([] {
     return mf::build::SI2_SO<int, int, int>(
-        "int ** int", [](int a, int b) { return math::pow(a, b); }, exec_fast);
+        "int ** int",
+        [](int base, int exponent) {
+          if (exponent < 0) {
+            if (base == 1 || base == -1) {
+              return (base < 0 && (exponent & 1) != 0) ? -1 : 1;
+            }
+            return 0;
+          }
+          return pow_i(base, exponent);
+        },
+        exec_fast);
   });
   registry::add_new_cb([] {
     return mf::build::SI3_SO<int, int, int, int>(
@@ -661,6 +675,17 @@ static void register_common_functions_impl()
           const uint64_t wide_value = uint64_t(value) | (uint64_t(value) << 32);
           const uint64_t double_result = (wide_value << shift);
           return uint32_t((double_result | (double_result >> 32)) & ((uint64_t(1) << 33) - 1));
+        },
+        exec_fast);
+  });
+  registry::add_new_cb([] {
+    return mf::build::SI2_SO<float3, int, float>(
+        "float3[int]",
+        [](const float3 &vec, const int index) {
+          if (index >= 0 && index <= 2) {
+            return vec[index];
+          }
+          return 0.0f;
         },
         exec_fast);
   });

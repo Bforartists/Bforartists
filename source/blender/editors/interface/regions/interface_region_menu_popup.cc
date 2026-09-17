@@ -692,10 +692,6 @@ void popup_block_invoke_ex(bContext *C,
 {
   wmWindow *window = CTX_wm_window(C);
 
-#ifdef WITH_INPUT_IME
-  WM_window_IME_end(window);
-#endif
-
   PopupBlockHandle *handle = popup_block_create(
       C, nullptr, nullptr, func, nullptr, arg, arg_free, can_refresh);
   handle->popup = true;
@@ -706,8 +702,7 @@ void popup_block_invoke_ex(bContext *C,
   status.item(" ", ICON_NONE);
 
   popup_handlers_add(C, &window->runtime->modalhandlers, handle, 0);
-  block_active_only_flagged_buttons(
-      C, handle->region, static_cast<Block *>(handle->region->runtime->uiblocks.first));
+  block_active_only_flagged_buttons(C, handle->region, handle->region->runtime->uiblocks.first());
   WM_event_add_mousemove(window);
 }
 
@@ -745,8 +740,7 @@ void popup_block_ex(bContext *C,
   status.item(" ", ICON_NONE);
 
   popup_handlers_add(C, &window->runtime->modalhandlers, handle, 0);
-  block_active_only_flagged_buttons(
-      C, handle->region, static_cast<Block *>(handle->region->runtime->uiblocks.first));
+  block_active_only_flagged_buttons(C, handle->region, handle->region->runtime->uiblocks.first());
   WM_event_add_mousemove(window);
 }
 

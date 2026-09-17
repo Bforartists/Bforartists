@@ -400,9 +400,34 @@ static wmOperatorStatus shape_key_copy_exec(bContext *C, wmOperator * /*op*/)
 {
   Object *ob = context_object(C);
   Key *key = BKE_key_from_object(ob);
-  KeyBlock *kb_src = BKE_keyblock_from_object(ob);
-  KeyBlock *kb_new = BKE_keyblock_duplicate(key, kb_src);
-  ob->shapenr = BLI_findindex(&key->block, kb_new) + 1;
+
+  /* List selected shape keys. */
+  blender::Vector<KeyBlock *> to_duplicate;
+  for (auto [index, keyblock] : key->block.enumerate()) {
+    const bool is_selected = shape_key_is_selected(*ob, keyblock, index);
+
+    /* Deselect all keys, so that only new ones are selected. */
+    keyblock.flag &= ~KEYBLOCK_SEL;
+
+    if (index == 0) {
+      /* Never duplicate the base key, it's special. */
+      continue;
+    }
+    if (is_selected) {
+      to_duplicate.append(&keyblock);
+    }
+  }
+
+  KeyBlock *kb_new = nullptr;
+  for (KeyBlock *kb_src : to_duplicate) {
+    kb_new = BKE_keyblock_duplicate(key, kb_src);
+    kb_new->flag |= KEYBLOCK_SEL;
+  }
+
+  if (kb_new != nullptr) {
+    ob->shapenr = BLI_findindex(&key->block, kb_new) + 1;
+  }
+
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
   DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
   DEG_relations_tag_update(CTX_data_main(C));
@@ -915,7 +940,7 @@ static wmOperatorStatus shape_key_make_basis_exec(bContext *C, wmOperator * /*op
 {
   Object *ob = context_object(C);
   Key *key = BKE_key_from_object(ob);
-  KeyBlock *old_basis_key = static_cast<KeyBlock *>(key->block.first);
+  KeyBlock *old_basis_key = key->block.first();
 
   /* Make the new basis by moving the active key to index 0. */
   const int from_index = -1; /* Interpreted as "the active key". */
@@ -933,7 +958,7 @@ static wmOperatorStatus shape_key_make_basis_exec(bContext *C, wmOperator * /*op
    * matter much, as it's treated as special anyway, but keeping it relative to another key makes
    * no sense. For the old basis key (which just became a normal key), it would otherwise still be
    * relative to itself, effectively disabling it. */
-  KeyBlock *new_basis_key = static_cast<KeyBlock *>(key->block.first);
+  KeyBlock *new_basis_key = key->block.first();
   new_basis_key->relative = 0;
   old_basis_key->relative = 0;
 
@@ -1016,7 +1041,7 @@ static wmOperatorStatus shape_key_apply_to_basis_exec(bContext *C, wmOperator *o
   Main *bmain = CTX_data_main(C);
   Object *ob = context_object(C);
   Key *key = BKE_key_from_object(ob);
-  KeyBlock *basis_key = static_cast<KeyBlock *>(key->block.first);
+  KeyBlock *basis_key = key->block.first();
   MutableSpan<float3> basis_data(static_cast<float3 *>(basis_key->data), basis_key->totelem);
   Mesh &mesh = id_cast<Mesh &>(*ob->data);
 

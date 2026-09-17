@@ -25,6 +25,7 @@
 #include "BLI_string.hh"
 #include "BLI_string_utf8.hh"
 #include "BLI_utildefines.hh"
+#include "BLI_vector.hh"
 
 #include "BLF_api.hh"
 
@@ -713,22 +714,22 @@ static void wm_keymap_patch(wmKeyMap *km, wmKeyMap *diff_km)
       /* We seek only for exact copy here! See #42137. */
       wmKeyMapItem *kmi_add = wm_keymap_find_item_equals(km, kmdi.add_item);
 
-      /* If kmi_add is same as kmi_remove (can happen in some cases,
-       * typically when we got kmi_remove from #wm_keymap_find_item_equals_result()),
+      /* If `kmi_add` is same as `kmi_remove` (can happen in some cases,
+       * typically when we got `kmi_remove` from #wm_keymap_find_item_equals_result()),
        * no need to add or remove anything, see #45579. */
 
-      /**
-       * \note This typically happens when we apply user-defined keymap diff to a base one that
+      /* NOTE: This typically happens when we apply user-defined keymap diff to a base one that
        * was exported with that customized keymap already. In that case:
        *
-       * - wm_keymap_find_item_equals(km, kmdi->remove_item) finds nothing
-       *   (because actual shortcut of current base does not match kmdi->remove_item any more).
-       * - wm_keymap_find_item_equals_result(km, kmdi->remove_item) finds the current kmi from
+       * - `wm_keymap_find_item_equals(km, kmdi->remove_item)` finds nothing
+       *   (because actual shortcut of current base does not match `kmdi->remove_item any more`).
+       * - `wm_keymap_find_item_equals_result(km, kmdi->remove_item)` finds the current `kmi` from
        *   base keymap (because it does exactly the same thing).
-       * - wm_keymap_find_item_equals(km, kmdi->add_item) finds the same kmi,
+       * - `wm_keymap_find_item_equals(km, kmdi->add_item)` finds the same `kmi`,
        *   since base keymap was exported with that user-defined shortcut already!
        *
-       *       Maybe we should rather keep user-defined keymaps specific to a given base one? */
+       *       Maybe we should rather keep user-defined keymaps specific to a given base one?
+       */
       if (kmi_add != nullptr && kmi_add == kmi_remove) {
         kmi_remove = nullptr;
       }
@@ -764,12 +765,18 @@ static wmKeyMap *wm_keymap_patch_update(ListBaseT<wmKeyMap> *lb,
                                         wmKeyMap *usermap)
 {
   eKeyMap_Flag expanded = eKeyMap_Flag{};
+  Vector<short> expanded_item_ids;
 
   /* Get previous keymap in list, we will update it in place to keep iterators valid. */
   wmKeyMap *km = WM_keymap_list_find(
       lb, defaultmap->idname, defaultmap->spaceid, defaultmap->regionid);
   if (km) {
     expanded = (km->flag & (KEYMAP_EXPANDED | KEYMAP_CHILDREN_EXPANDED));
+    for (wmKeyMapItem &kmi : km->items) {
+      if (kmi.flag & KMI_EXPANDED) {
+        expanded_item_ids.append(kmi.id);
+      }
+    }
     WM_keymap_clear(km);
   }
   else {
@@ -820,6 +827,23 @@ static wmKeyMap *wm_keymap_patch_update(ListBaseT<wmKeyMap> *lb,
     wm_keymap_patch(km, usermap);
   }
 
+  /* Rebuilding the keymap loses the expanded flag from items which aren't being edited,
+   * collapsing them shifts the UI layout, see: #162030. */
+  if (!expanded_item_ids.is_empty()) {
+    /* Items keep their order, so only the next ID needs to be checked. */
+    const short *id = expanded_item_ids.begin();
+    const short *id_end = expanded_item_ids.end();
+    for (wmKeyMapItem &kmi : km->items) {
+      if (kmi.id != *id) {
+        continue;
+      }
+      kmi.flag |= KMI_EXPANDED;
+      if (++id == id_end) {
+        break;
+      }
+    }
+  }
+
   return km;
 }
 
@@ -852,7 +876,7 @@ static void wm_keymap_diff_update(ListBaseT<wmKeyMap> *lb,
   wm_keymap_diff(diffmap, defaultmap, km, origmap, addonmap);
 
   /* Add to list if not empty. */
-  if (diffmap->diff_items.first) {
+  if (diffmap->diff_items.first_) {
     BLI_addtail(lb, diffmap);
   }
   else {
@@ -955,7 +979,7 @@ wmKeyMap *WM_modalkeymap_ensure(wmKeyConfig *keyconf,
   km->flag |= KEYMAP_MODAL;
 
   /* Initialize modal items from default configuration. */
-  wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+  wmWindowManager *wm = G_MAIN->wm.first();
   if (wm->runtime->defaultconf && wm->runtime->defaultconf != keyconf) {
     wmKeyMap *defaultkm = WM_keymap_list_find(
         &wm->runtime->defaultconf->keymaps, km->idname, SPACE_EMPTY, RGN_TYPE_WINDOW);
@@ -1026,7 +1050,7 @@ static const wmKeyMapItem *wm_modalkeymap_find_propvalue_iter(const wmKeyMap *km
                                                               const int propvalue)
 {
   if (km->flag & KEYMAP_MODAL) {
-    kmi = static_cast<const wmKeyMapItem *>(kmi ? kmi->next : km->items.first);
+    kmi = kmi ? kmi->next : km->items.first();
     for (; kmi; kmi = kmi->next) {
       if (kmi->propvalue == propvalue) {
         return kmi;
@@ -1309,7 +1333,7 @@ std::optional<std::string> WM_modalkeymap_operator_items_to_string(wmOperatorTyp
                                                                    const int propvalue,
                                                                    const bool compact)
 {
-  wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+  wmWindowManager *wm = G_MAIN->wm.first();
   wmKeyMap *keymap = WM_keymap_active(wm, ot->modalkeymap);
   return WM_modalkeymap_items_to_string(keymap, propvalue, compact);
 }
@@ -2213,7 +2237,7 @@ wmKeyMapItem *WM_keymap_item_find_match(wmKeyMap *km_base,
     return nullptr;
   }
 
-  wmWindowManager *wm = static_cast<wmWindowManager *>(G_MAIN->wm.first);
+  wmWindowManager *wm = G_MAIN->wm.first();
   wmKeyConfig *kc_active = WM_keyconfig_active(wm);
 
   /* NOTE: the key-maps could store this, it would simplify checks here. */

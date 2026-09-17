@@ -10,8 +10,10 @@
 #include <cstring>
 
 #include "BLI_path_utils.hh"
-
 #include "BLI_string_ref.hh"
+
+#include "BLT_translation.hh"
+
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
 
@@ -62,7 +64,7 @@ static bool rna_Main_is_dirty_get(PointerRNA *ptr)
   /* XXX, not totally nice to do it this way, should store in main ? */
   Main *bmain = static_cast<Main *>(ptr->data);
   wmWindowManager *wm;
-  if ((wm = static_cast<wmWindowManager *>(bmain->wm.first))) {
+  if ((wm = bmain->wm.first())) {
     return !wm->file_saved;
   }
 
@@ -296,6 +298,7 @@ static void rna_def_main_colorspace(BlenderRNA *brna)
                            "Working Space",
                            "Color space used for all scene linear colors in this file, and "
                            "for compositing, shader and geometry nodes processing");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_COLOR_MANAGEMENT);
   RNA_def_property_enum_funcs(prop,
                               "rna_MainColorspace_working_space_get",
                               nullptr,
@@ -654,13 +657,17 @@ void RNA_def_main(BlenderRNA *brna)
                                     nullptr,
                                     nullptr);
   RNA_def_property_ui_text(
-      prop, "All Data-Blocks", "Read-only list of all IDs listed in Blender data-base");
+      prop,
+      "All Data-Blocks",
+      "Read-only list of all IDs listed in Blender data-base. Warning: Order is not guaranteed "
+      "and should be considered an internal implementation detail");
 
   prop = RNA_def_property(srna, "project", PROP_POINTER, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_struct_type(prop, "BlenderProject");
   RNA_def_property_pointer_funcs(prop, "rna_Main_blender_project_get", nullptr, nullptr, nullptr);
   RNA_def_property_ui_text(prop, "Project", "The currently active Blender project, if any");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_PREFERENCES);
 
   RNA_api_main(srna);
 

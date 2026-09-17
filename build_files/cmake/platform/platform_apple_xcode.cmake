@@ -99,9 +99,9 @@ else()
   unset(_cltools_pkg_info_result)
 endif()
 
-# Require a relatively recent Xcode version.
-if(${XCODE_VERSION} VERSION_LESS 16.0)
-  message(FATAL_ERROR "Only Xcode version 16.0 and newer is supported")
+# Require a relatively recent Xcode version, to support more C++20 features.
+if(${XCODE_VERSION} VERSION_LESS 16.3)
+  message(FATAL_ERROR "Only Xcode version 16.3 and newer is supported")
 endif()
 
 # Collect list of OSX system versions which will be used to detect path to corresponding SDK.
@@ -156,9 +156,9 @@ endif()
 unset(OSX_SDKROOT)
 
 
-# This is our minimum target, if you use higher sdk, weak linking happens
-# Mainly required because of Metal drivers.
-set(OSX_MIN_DEPLOYMENT_TARGET 11.2)
+# Minimum macOS deployment target.
+# APIs from newer SDK versions require availability checks.
+set(OSX_MIN_DEPLOYMENT_TARGET 13.0)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "${OSX_MIN_DEPLOYMENT_TARGET}" CACHE STRING "" FORCE)
 

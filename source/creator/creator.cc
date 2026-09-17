@@ -360,6 +360,11 @@ int main(int argc,
 
   restore_ld_preload();
 
+  /* Use the v2 Level Zero adapter of the SYCL unified runtime. As a fix for #159584, the v1 Level
+   * Zero adapter is not included. While the Cycles oneAPI device sets this as well, we also need
+   * the environment variable for the use of Open Image Denoise in the compositor. */
+  BLI_setenv_if_new("SYCL_UR_USE_LEVEL_ZERO_V2", "1");
+
 #ifdef WIN32
 #  ifdef USE_WIN32_UNICODE_ARGS
   /* Win32 Unicode Arguments. */
@@ -520,8 +525,16 @@ int main(int argc,
    * since they impact `BKE_appdir` behavior. */
   BKE_appdir_init();
 
-  /* After parsing number of threads argument. */
-  BLI_task_scheduler_init();
+  /* After parsing number of threads argument.
+   *
+   * Denormal handling is not enabled for the Python module because just writing `import bpy`
+   * should not change the result of unrelated computations. */
+#ifdef WITH_PYTHON_MODULE
+  const bool use_flush_denormals_to_zero = false;
+#else
+  const bool use_flush_denormals_to_zero = true;
+#endif
+  BLI_task_scheduler_init(use_flush_denormals_to_zero);
 
   /* Initialize FFTW threading support. */
   fftw::initialize_float();

@@ -73,7 +73,8 @@ enum LibraryForeachIDCallbackFlag {
   /**
    * That ID is not really used by its owner, it's just an internal hint/helper.
    * This marks the 'from' pointers issue, like Key->from.
-   * How to handle that kind of cases totally depends on what caller code is doing... */
+   * How to handle that kind of cases totally depends on what caller code is doing...
+   */
   IDWALK_CB_LOOPBACK = (1 << 6),
 
   /**
@@ -435,6 +436,10 @@ struct LibQueryUnusedIDsData {
    *
    * Allows for more complex handling of which IDs should be deleted, on top of the basic
    * local/linked choices.
+   *
+   * TODO: Refactor this to return some optional `UnusedIDsData::Status` value instead, and always
+   * call it. This will allow this callback to have full control over the final status of the given
+   * ID, if it decides to.
    */
   FunctionRef<bool(ID *id)> filter_fn = nullptr;
 

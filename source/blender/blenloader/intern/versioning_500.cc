@@ -65,6 +65,8 @@
 #include "BKE_pointcache.h"
 #include "BKE_report.hh"
 
+#include "RNA_path.hh"
+
 #include "BLT_translation.hh"
 
 #include "BLO_read_write.hh"
@@ -1312,10 +1314,9 @@ static void do_version_convert_to_generic_nodes(bNodeTree *node_tree)
 
 /* Equivalent to do_version_convert_to_generic_nodes but performed after linking for handing things
  * like animation or node construction. */
-static void do_version_convert_to_generic_nodes_after_linking(Main *bmain,
-                                                              bNodeTree *node_tree,
-                                                              ID *id)
+static void do_version_convert_to_generic_nodes_after_linking(Main *bmain, bNodeTree *node_tree)
 {
+  const DriverMap driver_map = BKE_animdata_build_driver_target_map(*bmain);
   for (bNode &node : node_tree->nodes.items_mutable()) {
     char escaped_node_name[sizeof(node.name) * 2 + 1];
     BLI_str_escape(escaped_node_name, node.name, sizeof(escaped_node_name));
@@ -1327,15 +1328,12 @@ static void do_version_convert_to_generic_nodes_after_linking(Main *bmain,
       case SH_NODE_CURVE_VEC: {
         /* The node gained a new Factor input as a first socket, so the vector socket moved to be
          * the second socket and we need to transfer its animation as well. */
-        BKE_animdata_fix_paths_rename_all_ex(bmain,
-                                             id,
-                                             rna_path_prefix.c_str(),
-                                             nullptr,
-                                             nullptr,
-                                             0,
-                                             1,
-                                             /*verify_paths=*/false,
-                                             /*infix_is_name=*/true);
+        BKE_animdata_fix_paths(node_tree->id,
+                               rna_path_prefix,
+                               RNA_path_number_to_infix(0),
+                               RNA_path_number_to_infix(1),
+                               /*verify_paths=*/false,
+                               driver_map);
         break;
       }
       /* Notice that we use the shader type because the node is already converted in versioning
@@ -1343,24 +1341,18 @@ static void do_version_convert_to_generic_nodes_after_linking(Main *bmain,
       case SH_NODE_MIX: {
         /* The node gained multiple new sockets after the factor socket, so the second and third
          * sockets moved to be the 7th and 8th sockets. */
-        BKE_animdata_fix_paths_rename_all_ex(bmain,
-                                             id,
-                                             rna_path_prefix.c_str(),
-                                             nullptr,
-                                             nullptr,
-                                             1,
-                                             6,
-                                             /*verify_paths=*/false,
-                                             /*infix_is_name=*/true);
-        BKE_animdata_fix_paths_rename_all_ex(bmain,
-                                             id,
-                                             rna_path_prefix.c_str(),
-                                             nullptr,
-                                             nullptr,
-                                             2,
-                                             7,
-                                             /*verify_paths=*/false,
-                                             /*infix_is_name=*/true);
+        BKE_animdata_fix_paths(node_tree->id,
+                               rna_path_prefix,
+                               RNA_path_number_to_infix(1),
+                               RNA_path_number_to_infix(6),
+                               /*verify_paths=*/false,
+                               driver_map);
+        BKE_animdata_fix_paths(node_tree->id,
+                               rna_path_prefix,
+                               RNA_path_number_to_infix(2),
+                               RNA_path_number_to_infix(7),
+                               /*verify_paths=*/false,
+                               driver_map);
         break;
       }
       default:
@@ -1604,7 +1596,7 @@ static bNode *do_version_composite_node_in_scene_tree(bNodeTree &node_tree, bNod
   group_output_node->location[0] = node.location[0];
   group_output_node->location[1] = node.location[1];
 
-  bNodeSocket *image_input = static_cast<bNodeSocket *>(group_output_node->inputs.first);
+  bNodeSocket *image_input = group_output_node->inputs.first();
   BLI_assert(StringRef(image_input->name) == "Image");
   copy_v4_v4(image_input->default_value_typed<bNodeSocketValueRGBA>()->value,
              old_image_input->default_value_typed<bNodeSocketValueRGBA>()->value);
@@ -2611,7 +2603,7 @@ static bool window_has_sequence_editor_open(const wmWindow *win)
 
 /* Merge transform effect properties with strip transform. Because this effect could use modifiers,
  * change its type to gaussian blur with 0 radius. */
-static void sequencer_substitute_transform_effects(Scene *scene)
+static void sequencer_substitute_transform_effects(Scene *scene, const DriverMap &driver_map)
 {
   seq::foreach_strip(&scene->ed->seqbase, [&](Strip *strip) -> bool {
     if (strip->type == STRIP_TYPE_TRANSFORM_LEGACY && strip->effectdata != nullptr) {
@@ -2633,7 +2625,7 @@ static void sequencer_substitute_transform_effects(Scene *scene)
       GaussianBlurVars *gv = static_cast<GaussianBlurVars *>(strip->effectdata);
       gv->size_x = gv->size_y = 0.0f;
       seq::edit_strip_name_set(scene, strip, "Transform Placeholder (Migrated)");
-      seq::ensure_unique_name(strip, scene);
+      seq::ensure_unique_name(strip, scene, driver_map);
     }
     return true;
   });
@@ -2724,12 +2716,12 @@ static void version_bone_hide_property_driver(AnimData *arm_adt, Vector<Object *
 
   Vector<FCurve *> drivers_to_fix;
   for (FCurve &fcurve : arm_adt->drivers) {
-    const StringRef rna_path(fcurve.rna_path);
+    const StringRefNull rna_path = fcurve.rna_path();
     int quoted_bone_name_start = 0;
     int quoted_bone_name_end = 0;
     const bool is_prefix_found = BLI_str_quoted_substr_range(
-        fcurve.rna_path, hide_prop_prefix, &quoted_bone_name_start, &quoted_bone_name_end);
-    if (is_prefix_found && STREQ(fcurve.rna_path + quoted_bone_name_end, hide_prop_suffix)) {
+        rna_path.c_str(), hide_prop_prefix, &quoted_bone_name_start, &quoted_bone_name_end);
+    if (is_prefix_found && STREQ(rna_path.c_str() + quoted_bone_name_end, hide_prop_suffix)) {
       drivers_to_fix.append(&fcurve);
     }
   }
@@ -2743,9 +2735,8 @@ static void version_bone_hide_property_driver(AnimData *arm_adt, Vector<Object *
     for (FCurve *original : drivers_to_fix) {
       /* Has to be a copy in case there is more than 1 object using the armature. */
       FCurve *copy = BKE_fcurve_copy(original);
-      char *fixed_path = BLI_string_joinN("pose.", copy->rna_path);
-      MEM_SAFE_DELETE(copy->rna_path);
-      copy->rna_path = fixed_path;
+      char *fixed_path = BLI_string_joinN("pose.", copy->rna_path().c_str());
+      copy->rna_path_set_move(fixed_path);
       BLI_addtail(&ob_adt->drivers, copy);
     }
   }
@@ -2769,7 +2760,7 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 27)) {
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       if (ntree->type == NTREE_COMPOSIT) {
-        do_version_convert_to_generic_nodes_after_linking(bmain, ntree, id);
+        do_version_convert_to_generic_nodes_after_linking(bmain, ntree);
       }
     }
     FOREACH_NODETREE_END;
@@ -2882,9 +2873,10 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 97)) {
+    const DriverMap driver_map = BKE_animdata_build_driver_target_map(*bmain);
     for (Scene &scene : bmain->scenes) {
       if (scene.ed != nullptr) {
-        sequencer_substitute_transform_effects(&scene);
+        sequencer_substitute_transform_effects(&scene, driver_map);
       }
     }
   }
@@ -2958,8 +2950,8 @@ static void remove_in_and_out_node_panel_recursive(bNodeTreeInterfacePanel &pane
 
     bNodeTreeInterfaceSocket *new_output = MEM_new<bNodeTreeInterfaceSocket>(__func__);
     new_output->item.item_type = NodeTreeInterfaceItemType::Socket;
-    new_output->name = BLI_strdup_null(socket->name);
-    new_output->description = BLI_strdup_null(socket->description);
+    new_output->name_ = BLI_strdup_null(socket->name_);
+    new_output->description_ = BLI_strdup_null(socket->description_);
     new_output->socket_type = BLI_strdup_null(socket->socket_type);
     new_output->flag = socket->flag & ~NODE_INTERFACE_SOCKET_INPUT;
     new_output->attribute_domain = socket->attribute_domain;
@@ -3412,8 +3404,8 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
           if (!ELEM(sl.spacetype, SPACE_ACTION, SPACE_GRAPH, SPACE_NLA, SPACE_SEQ)) {
             continue;
           }
-          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                           &sl.regionbase;
+          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                            &sl.regionbase;
           ARegion *new_footer = do_versions_add_region_if_not_found(
               regionbase, RGN_TYPE_FOOTER, "footer for animation editors", RGN_TYPE_HEADER);
           if (new_footer == nullptr) {
@@ -4087,8 +4079,7 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
       if (scene.ed != nullptr) {
         /* Set the first strip modifier as the active one and uncollapse the root panel. */
         seq::foreach_strip(&scene.ed->seqbase, [&](Strip *strip) -> bool {
-          seq::modifier_set_active(strip,
-                                   static_cast<StripModifierData *>(strip->modifiers.first));
+          seq::modifier_set_active(strip, strip->modifiers.first());
           for (StripModifierData &smd : strip->modifiers) {
             smd.layout_panel_open_flag |= UI_PANEL_DATA_EXPAND_ROOT;
           }
@@ -4162,8 +4153,8 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_USERPREF) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             ARegion *new_sidebar = do_versions_add_region_if_not_found(
                 regionbase, RGN_TYPE_UI, "sidebar for preferences", RGN_TYPE_HEADER);
             if (new_sidebar != nullptr) {
@@ -4427,8 +4418,8 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
             continue;
           }
 
-          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                           &sl.regionbase;
+          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                            &sl.regionbase;
 
           if (ARegion *new_shelf_region = do_versions_add_region_if_not_found(
                   regionbase,

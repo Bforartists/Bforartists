@@ -18,9 +18,11 @@
 
 namespace blender::gpu {
 
-/* TODO(fclem): add unique ID for debugging. */
+std::atomic<ShaderInterface::Key> ShaderInterface::next_uid_{1};
+
 ShaderInterface::ShaderInterface()
 {
+  uid = next_uid_++;
   image_formats_.fill(TextureWriteFormat::Invalid);
 }
 
@@ -68,6 +70,8 @@ void ShaderInterface::sort_inputs()
   offset += uniform_len_;
   sort_input_list(MutableSpan<ShaderInput>(inputs_ + offset, ssbo_len_));
   offset += ssbo_len_;
+  sort_input_list(MutableSpan<ShaderInput>(inputs_ + offset, tlas_len_));
+  offset += tlas_len_;
   sort_input_list(MutableSpan<ShaderInput>(inputs_ + offset, constant_len_));
   offset += constant_len_;
 }
