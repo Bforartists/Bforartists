@@ -2545,6 +2545,7 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
   if (handle) {
     handle->tear_off_mode = CTX_data_mode_enum(C);
     handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
+    handle->tear_off_workspace = CTX_wm_workspace(C);
   }
 
   if (handle) {
@@ -2640,6 +2641,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
   if (handle) {
     handle->tear_off_mode = CTX_data_mode_enum(C);
     handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
+    handle->tear_off_workspace = CTX_wm_workspace(C);
   }
 
   if (handle) {

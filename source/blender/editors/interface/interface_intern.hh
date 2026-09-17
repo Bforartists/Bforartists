@@ -52,6 +52,7 @@ struct wmEvent;
 struct wmKeyConfig;
 struct wmOperatorType;
 struct wmTimer;
+struct WorkSpace; /*BFA - Tear-Off Menu/Panel*/
 
 namespace gpu {
 class Batch;
@@ -1121,6 +1122,11 @@ struct PopupBlockHandle {
    * `tear_off_spacetype` is an #eSpace_Type, 0 means unpinned. */
   int tear_off_mode = -1;
   char tear_off_spacetype = 0;
+
+  /** BFA - Tear-Off Menu/Panel: workspace this panel was torn off in. Pinned panels are
+   * scoped per workspace: they hide when another workspace is active and reappear when the
+   * user returns. nullptr means unpinned. */
+  WorkSpace *tear_off_workspace = nullptr;
 
   char menu_idname[64] = "";
 

@@ -1058,6 +1058,13 @@ bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)
     return true;
   }
 
+  /* BFA - Tear-Off Menu/Panel: pinned panels are scoped per workspace. Hide when
+   * another workspace is active; the panel reappears when the user returns to the workspace it was
+   * torn off in. */
+  if (handle->tear_off_workspace && CTX_wm_workspace(C) != handle->tear_off_workspace) {
+    return false;
+  }
+
   /* Requirement 2: the originating editor domain must still exist in the active screen.
    * If another editor of the same domain exists, the panel stays visible. */
   const bScreen *screen = CTX_wm_screen(C);
