@@ -1633,7 +1633,7 @@ class SEQUENCER_MT_strip(Menu):
 
         if has_sequencer:
             layout.separator()
-            layout.menu("SEQUENCER_MT_color_tag_picker")
+            layout.menu_contents("SEQUENCER_MT_color_tag_picker") # BFA - Expose in top-level
 
             layout.separator()
             layout.menu("SEQUENCER_MT_strip_lock_mute")
@@ -1872,7 +1872,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.menu("SEQUENCER_MT_color_tag_picker")
+        layout.menu_contents("SEQUENCER_MT_color_tag_picker") # BFA - Expose in top-level
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_lock_mute")
