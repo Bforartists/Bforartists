@@ -25,6 +25,7 @@
 #include "BLI_math_matrix.hh"
 #include "BLI_math_matrix_c.hh"
 #include "BLI_math_vector_c.hh"
+#include "BLI_math_vector_types.hh"
 #include "BLI_rect.hh"
 #include "BLI_string.hh"
 #include "BLI_utildefines.hh"
@@ -207,7 +208,7 @@ static void camera_write_cycles_compatibility_data_clear(ID *id,
 
 static void camera_blend_write(BlendWriter *writer, ID *id, const void *id_address)
 {
-  const bool is_undo = BLO_write_is_undo(writer);
+  const bool is_undo = writer->is_undo();
   Camera *cam = id_cast<Camera *>(id);
 
   CameraCyclesCompatibilityData cycles_data;
@@ -270,6 +271,7 @@ IDTypeInfo IDType_ID_CA = {
     .foreach_cache = nullptr,
     .foreach_path = camera_foreach_path,
     .foreach_working_space_color = nullptr,
+    .foreach_asset_weak_reference = nullptr,
     .owner_pointer_get = nullptr,
 
     .blend_write = camera_blend_write,
@@ -343,6 +345,13 @@ int BKE_camera_sensor_fit(int sensor_fit, float sizex, float sizey)
   }
 
   return sensor_fit;
+}
+
+float2 BKE_camera_frame_size(const float winx, const float winy, const float frame_aspect)
+{
+  const float frame_x = math::min(winx, winy / frame_aspect);
+
+  return float2(frame_x, frame_x * frame_aspect);
 }
 
 /** \} */
@@ -426,11 +435,19 @@ void BKE_camera_params_from_view3d(CameraParams *params,
     const Object *ob_camera_eval = DEG_get_evaluated(depsgraph, v3d->camera);
     BKE_camera_params_from_object(params, ob_camera_eval);
 
+    /* Override the aspect, so change in viewport framing is minimized when camera parameters
+     * change. */
+    const Scene *scene = DEG_get_evaluated_scene(depsgraph);
+    params->use_aspect_override = true;
+    params->aspect_override = (float(scene->r.ysch) * scene->r.yasp) /
+                              (float(scene->r.xsch) * scene->r.xasp);
+
     params->zoom = BKE_screen_view3d_zoom_to_fac(rv3d->camzoom);
 
     params->offsetx = 2.0f * rv3d->camdx * params->zoom;
     params->offsety = 2.0f * rv3d->camdy * params->zoom;
     params->roll = rv3d->camroll;
+    params->is_flipped_x = (rv3d->rflag & RV3D_FLIP_X) != 0;
 
     params->shiftx *= params->zoom;
     params->shifty *= params->zoom;
@@ -465,10 +482,15 @@ void BKE_camera_params_compute_viewplane(
     CameraParams *params, int winx, int winy, float aspx, float aspy)
 {
   rctf viewplane;
-  float pixsize, viewfac, sensor_size, dx, dy;
+  float pixsize, viewfac, sensor_size;
   int sensor_fit;
 
   params->ycor = aspy / aspx;
+
+  const float winy_cor = params->ycor * float(winy);
+  const float frame_aspect = params->use_aspect_override ? params->aspect_override :
+                                                           winy_cor / float(winx);
+  const float2 frame_size = BKE_camera_frame_size(float(winx), winy_cor, frame_aspect);
 
   if (params->is_ortho) {
     /* orthographic camera */
@@ -482,14 +504,9 @@ void BKE_camera_params_compute_viewplane(
   }
 
   /* determine sensor fit */
-  sensor_fit = BKE_camera_sensor_fit(params->sensor_fit, aspx * winx, aspy * winy);
+  sensor_fit = BKE_camera_sensor_fit(params->sensor_fit, 1.0f, frame_aspect);
 
-  if (sensor_fit == CAMERA_SENSOR_FIT_HOR) {
-    viewfac = winx;
-  }
-  else {
-    viewfac = params->ycor * winy;
-  }
+  viewfac = (sensor_fit == CAMERA_SENSOR_FIT_HOR) ? frame_size.x : frame_size.y;
 
   pixsize /= viewfac;
 
@@ -503,20 +520,11 @@ void BKE_camera_params_compute_viewplane(
   viewplane.xmax = 0.5f * float(winx);
   viewplane.ymax = 0.5f * params->ycor * float(winy);
 
-  /* lens shift and offset */
-  dx = params->shiftx * viewfac + winx * params->offsetx;
-  dy = params->shifty * viewfac + winy * params->offsety;
-
-  /* Apply roll. */
-  if (params->roll != 0.0f) {
-    const float2x2 rot = math::from_rotation<float2x2>(math::AngleRadian(params->roll));
-    const float2 dxy = rot * float2(dx, dy);
-
-    BLI_rctf_translate(&viewplane, dxy.x, dxy.y);
-  }
-  else {
-    BLI_rctf_translate(&viewplane, dx, dy);
-  }
+  /* Lens shift and offset. */
+  float2 dxy(params->shiftx * viewfac + winx * params->offsetx,
+             params->shifty * viewfac + winy * params->offsety);
+  dxy = BKE_camera_viewplane_offset_transform(params->roll, params->is_flipped_x, dxy);
+  BLI_rctf_translate(&viewplane, dxy.x, dxy.y);
 
   /* the window matrix is used for clipping, and not changed during OSA steps */
   /* using an offset of +0.5 here would give clip errors on edges */
@@ -527,6 +535,19 @@ void BKE_camera_params_compute_viewplane(
   params->viewdx = pixsize;
   params->viewdy = params->ycor * pixsize;
   params->viewplane = viewplane;
+}
+
+float2 BKE_camera_viewplane_offset_transform(const float roll,
+                                             const bool is_flipped_x,
+                                             const float2 offset)
+{
+  float2 result = math::from_rotation<float2x2>(math::AngleRadian(roll)) * offset;
+
+  if (is_flipped_x) {
+    result.x = -result.x;
+  }
+
+  return result;
 }
 
 void BKE_camera_params_crop_viewplane(rctf *viewplane, int winx, int winy, const rcti *region)
@@ -594,6 +615,7 @@ rctf BKE_camera_view_border(const Scene *scene,
   }
   if (no_roll) {
     params.roll = 0.0f;
+    params.is_flipped_x = false;
   }
   BKE_camera_params_compute_viewplane(&params, winx, winy, 1.0f, 1.0f);
   rect_view = params.viewplane;
@@ -668,6 +690,12 @@ bool BKE_camera_view_render_border(const Scene *scene,
     else {
       border = viewborder;
     }
+
+    if ((rv3d->rflag & RV3D_FLIP_X) != 0) {
+      std::swap(border.xmin, border.xmax);
+      border.xmin = winx - border.xmin;
+      border.xmax = winx - border.xmax;
+    }
   }
   else {
     if ((v3d->flag2 & V3D_RENDER_BORDER) == 0) {
@@ -687,7 +715,12 @@ bool BKE_camera_view_render_border(const Scene *scene,
   /* The camera view roll rotates the border around the center of the viewport. */
   if (is_camera_view && rv3d->camroll != 0.0f) {
     const float pivot[2] = {winx / 2.0f, winy / 2.0f};
-    BLI_rctf_rotate_expand_around(&border, &border, pivot, rv3d->camroll);
+    if ((rv3d->rflag & RV3D_FLIP_X) != 0) {
+      BLI_rctf_rotate_expand_around(&border, &border, pivot, -rv3d->camroll);
+    }
+    else {
+      BLI_rctf_rotate_expand_around(&border, &border, pivot, rv3d->camroll);
+    }
   }
 
   *r_border = border;
@@ -1432,7 +1465,7 @@ void BKE_camera_background_image_remove(Camera *cam, CameraBGImage *bgpic)
 
 void BKE_camera_background_image_clear(Camera *cam)
 {
-  CameraBGImage *bgpic = static_cast<CameraBGImage *>(cam->bg_images.first);
+  CameraBGImage *bgpic = cam->bg_images.first();
 
   while (bgpic) {
     CameraBGImage *next_bgpic = bgpic->next;

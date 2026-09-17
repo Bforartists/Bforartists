@@ -1120,6 +1120,7 @@ if(WITH_BLENDER)
       mesh_to_points
       mesh_to_volume
       mesh_torus
+      mesh_quadsphere
       mesh_uvsphere
       meta_ball
       meta_capsule

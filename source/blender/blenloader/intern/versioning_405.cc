@@ -26,6 +26,7 @@
 #include "BLI_string_utf8.hh"
 #include "BLI_string_utils.hh"
 #include "BLI_sys_types.hh"
+#include "BLI_vector.hh"
 
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.hh"
@@ -58,7 +59,7 @@
 #include "versioning_common.hh"
 
 #define LISTBASE_FOREACH(type, var, list) \
-  for (type var = (type)((list)->first); var != nullptr; var = (type)(((Link *)(var))->next))
+  for (type var = (type)((list)->first_); var != nullptr; var = (type)(((Link *)(var))->next))
 
 namespace blender {
 
@@ -3714,6 +3715,7 @@ static void do_version_replace_image_info_node_coordinates(bNodeTree *node_tree)
  */
 static void do_version_vector_sockets_dimensions(bNodeTree *node_tree)
 {
+  Vector<bNodeTreeInterfaceSocket *> sockets_to_remove;
   node_tree->tree_interface.foreach_item([&](bNodeTreeInterfaceItem &item) {
     if (item.item_type != NodeTreeInterfaceItemType::Socket) {
       return true;
@@ -3727,11 +3729,19 @@ static void do_version_vector_sockets_dimensions(bNodeTree *node_tree)
     }
 
     if (base_typeinfo->type == SOCK_VECTOR) {
+      if (interface_socket.socket_data == nullptr) {
+        sockets_to_remove.append(&interface_socket);
+        return true;
+      }
       bke::node_interface::get_socket_data_as<bNodeSocketValueVector>(interface_socket)
           .dimensions = 3;
     }
     return true;
   });
+
+  for (bNodeTreeInterfaceSocket *socket : sockets_to_remove) {
+    node_tree->tree_interface.remove_item(socket->item);
+  }
 
   for (bNode &node : node_tree->nodes) {
     for (bNodeSocket &socket : node.inputs) {
@@ -5408,8 +5418,8 @@ void blo_do_versions_405(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_SEQ) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             for (ARegion &region : *regionbase) {
               if (region.regiontype == RGN_TYPE_WINDOW) {
                 region.v2d.keepzoom |= V2D_KEEPZOOM;
@@ -5649,8 +5659,8 @@ void blo_do_versions_405(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_SEQ) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             for (ARegion &region : *regionbase) {
               if (region.regiontype == RGN_TYPE_WINDOW) {
                 region.v2d.flag |= V2D_ZOOM_IGNORE_KEEPOFS;
@@ -5886,7 +5896,7 @@ void blo_do_versions_405(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
         LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
           if(ELEM(sl->spacetype, SPACE_VIEW3D, SPACE_NODE)) {
-            const ListBase *regionbase = (sl == area->spacedata.first) ? &area->regionbase :
+            const ListBase *regionbase = (sl == area->spacedata.first()) ? &area->regionbase :
                                                                          &sl->regionbase;
             LISTBASE_FOREACH (ARegion *, region, regionbase) {
               if (region->regiontype != RGN_TYPE_ASSET_SHELF) {

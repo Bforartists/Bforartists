@@ -289,7 +289,7 @@ static void do_color_smooth_task(const Depsgraph &depsgraph,
 
   auto_mask::calc_vert_factors(depsgraph, object, cache.automasking.get(), node, verts, factors);
 
-  calc_brush_texture_factors(ss, brush, vert_positions, verts, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, vert_positions, verts, factors);
   scale_factors(factors, cache.bstrength);
 
   tls.colors.resize(verts.size());
@@ -407,7 +407,7 @@ static void do_paint_brush_task(const Depsgraph &depsgraph,
     scale_factors(factors, auto_mask);
   }
 
-  calc_brush_texture_factors(ss, brush, vert_positions, verts, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, vert_positions, verts, factors);
   scale_factors(factors, bstrength);
 
   const float density = ss.cache->paint_brush.density;
@@ -441,7 +441,8 @@ static void do_paint_brush_task(const Depsgraph &depsgraph,
 
   const Span<float4> orig_colors = orig_color_data_get_mesh(object, node);
 
-  MutableSpan<float4> color_buffer = gather_data_mesh(mix_colors.as_span(), verts, tls.mix_colors);
+  Array<float4, bke::pbvh::MESH_LEAF_LIMIT> color_buffer(verts.size());
+  gather_data_mesh(mix_colors.as_span(), verts, color_buffer.as_mutable_span());
 
   if (brush.flag & BRUSH_USE_GRADIENT) {
     switch (brush.gradient_stroke_mode) {
@@ -557,16 +558,10 @@ static void do_sample_wet_paint_task(const Depsgraph &depsgraph,
 }
 
 void do_paint_brush(const Depsgraph &depsgraph,
-                    PaintModeSettings &paint_mode_settings,
                     const Sculpt &sd,
                     Object &ob,
-                    const IndexMask &node_mask,
-                    const IndexMask &texnode_mask)
+                    const IndexMask &node_mask)
 {
-  if (SCULPT_use_image_paint_brush(paint_mode_settings, ob)) {
-    SCULPT_do_paint_brush_image(depsgraph, sd, ob, texnode_mask);
-    return;
-  }
   PRF_scope(ProfileCategory::Editor);
 
   const Brush &brush = *BKE_paint_brush_for_read(&sd.paint);
@@ -724,7 +719,7 @@ static void do_smear_brush_task(const Depsgraph &depsgraph,
 
   auto_mask::calc_vert_factors(depsgraph, object, cache.automasking.get(), node, verts, factors);
 
-  calc_brush_texture_factors(ss, brush, vert_positions, verts, factors);
+  calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, vert_positions, verts, factors);
   scale_factors(factors, strength);
 
   float3 brush_delta;

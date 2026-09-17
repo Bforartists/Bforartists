@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-03-19 12:41+0000\n"
 "Last-Translator: Banditer1483 <pleum.wongvarit@gmail.com>\n"
 "Language-Team: Thai <https://translate.blender.org/projects/blender-ui/ui/th/>\n"
@@ -4893,6 +4893,10 @@ msgid "Mix Color"
 msgstr "ผสมสี"
 
 
+msgid "Pivot Point"
+msgstr "จุดหมุน"
+
+
 msgid "Snap"
 msgstr "ยึดติด"
 
@@ -4907,6 +4911,14 @@ msgstr "การแก้ไขหน้ากาก"
 
 msgid "Import"
 msgstr "นำเข้า"
+
+
+msgid "Math"
+msgstr "คณิตศาสตร์"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Mirror"
@@ -4937,20 +4949,16 @@ msgid "View Regions"
 msgstr "ขอบเขตมุมมอง"
 
 
-msgid "Math"
-msgstr "คณิตศาสตร์"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Metaball"
 msgstr "เมตาบอล"
 
 
 msgid "Light"
 msgstr "แสง"
+
+
+msgid "Layout"
+msgstr "เค้าโครง"
 
 
 msgid "Add Image"
@@ -4965,16 +4973,12 @@ msgid "Track"
 msgstr "แทร็ค"
 
 
-msgid "Layout"
-msgstr "เค้าโครง"
+msgid "Keying"
+msgstr "คีย์"
 
 
 msgid "Hooks"
 msgstr "ตะขอ"
-
-
-msgid "Keying"
-msgstr "คีย์"
 
 
 msgid "Names"
@@ -4987,10 +4991,6 @@ msgstr "ข้อมูลด้าน"
 
 msgid "Merge"
 msgstr "ผสาน"
-
-
-msgid "Pivot Point"
-msgstr "จุดหมุน"
 
 
 msgid "Zoom"
@@ -7169,6 +7169,11 @@ msgstr "แสดง"
 
 
 msgctxt "Operator"
+msgid "Text"
+msgstr "ข้อความ"
+
+
+msgctxt "Operator"
 msgid "Fade"
 msgstr "จาง"
 
@@ -7208,18 +7213,8 @@ msgstr "ทั้งสองด้าน"
 
 
 msgctxt "Operator"
-msgid "Mask..."
-msgstr "หน้ากาก..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "สี"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "ข้อความ"
 
 
 msgctxt "Operator"

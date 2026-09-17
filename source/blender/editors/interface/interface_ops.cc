@@ -103,6 +103,20 @@ namespace ui {
 
 static void region_redraw_immediately(bContext *C, ARegion *region)
 {
+  if (region->regiontype == RGN_TYPE_TEMPORARY) {
+    ARegion *old_region = CTX_wm_region_popup(C);
+
+    ED_region_tag_refresh_ui(region);
+    CTX_wm_region_popup_set(C, region);
+    if (region->runtime->type->layout) {
+      wmViewport(&region->winrct);
+      region->runtime->type->layout(C, region);
+    }
+
+    CTX_wm_region_popup_set(C, old_region);
+    wmWindowViewport(CTX_wm_window(C));
+    return;
+  }
   ED_region_do_layout(C, region);
   WM_draw_region_viewport_bind(region);
   ED_region_do_draw(C, region);
@@ -2183,19 +2197,41 @@ static wmOperatorStatus editsource_text_edit(bContext *C,
 
 static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
 {
-  Button *but = context_active_but_get(C);
+
+  ARegion *region = nullptr;
+  Button *but = nullptr;
+
+  {
+    const bContextStore *ctx_store = CTX_store_get(C);
+    const PointerRNA *region_ptr = ctx_store ? CTX_store_ptr_lookup(
+                                                   ctx_store, "popup_region", RNA_Region) :
+                                               nullptr;
+    if (region_ptr && region_ptr->has_data()) {
+      region = region_ptr->data_as<ARegion>();
+      but = region_find_active_but(region);
+      if (region->regiontype == RGN_TYPE_TEMPORARY && !but->block->handle->can_refresh) {
+        BKE_report(op->reports,
+                   RPT_ERROR,
+                   "Cannot edit source in popup regions that does not support refresh.");
+        return OPERATOR_CANCELLED;
+      }
+    }
+    else {
+      but = context_active_but_get(C);
+      region = CTX_wm_region(C);
+    }
+  }
 
   if (but) {
-    ARegion *region = CTX_wm_region(C);
     wmOperatorStatus ret;
-
-    /* needed else the active button does not get tested */
-    UI_screen_free_active_but_highlight(C, CTX_wm_screen(C));
 
     // printf("%s: begin\n", __func__);
 
     /* take care not to return before calling editsource_active_but_clear */
     editsource_active_but_set(but);
+
+    /* Needed so the active button does not get updated. */
+    button_active_free(C, but);
 
     /* redraw and get active button python info */
     region_redraw_immediately(C, region);
@@ -2578,12 +2614,9 @@ static wmOperatorStatus uilist_start_filter_invoke(bContext *C,
   BLI_assert(list != nullptr);
 
   if (uilist_unhide_filter_options(list)) {
-    region_redraw_immediately(C, region);
+    ED_region_tag_redraw(region);
   }
-
-  if (!textbutton_activate_rna(C, region, list, "filter_name")) {
-    return OPERATOR_CANCELLED;
-  }
+  ED_region_activate_rna_prop(C, region, list, "filter_name");
 
   return OPERATOR_FINISHED;
 }
@@ -3258,6 +3291,75 @@ static void UI_OT_drop_material(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Start / Clear Region Search Filter Operators
+ *
+ * \{ */
+
+static wmOperatorStatus region_start_filter_exec(bContext *C, wmOperator * /*op*/)
+{
+  ARegion *region = CTX_wm_region(C);
+  if (!(region->flag & RGN_FLAG_SEARCH_FILTER_SHOW)) {
+    region->flag |= RGN_FLAG_SEARCH_FILTER_SHOW;
+    region_panels_sort_for_search_filter_visibility_change(C, region);
+  }
+  if (region_panels_fits_only_categories(region)) {
+    /* Enlarge region to show content to filter. */
+    const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
+                         (BLI_rcti_size_y(&region->v2d.mask) + 1);
+    const int new_width = region->runtime->type->prefsizex ? region->runtime->type->prefsizex :
+                                                             250;
+    panel_region_width_set(region, aspect, new_width);
+    WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+  }
+  ED_region_activate_rna_prop(C, region, region, "search_filter");
+  return OPERATOR_FINISHED;
+}
+
+static bool region_start_filter_poll(blender::bContext *C)
+{
+  ARegion *region = CTX_wm_region(C);
+  return region && BKE_regiontype_uses_panel_categories_search(region->runtime->type);
+}
+
+static void UI_OT_region_start_filter(wmOperatorType *ot)
+{
+  ot->name = "Show Filter";
+  ot->description = "Shows and starts entering region filter text";
+  ot->idname = "UI_OT_region_start_filter";
+  ot->exec = region_start_filter_exec;
+  ot->poll = region_start_filter_poll;
+}
+
+static wmOperatorStatus region_clear_filter_exec(bContext *C, wmOperator * /*op*/)
+{
+  ARegion *region = CTX_wm_region(C);
+  region->runtime->search_filter.clear();
+  region->runtime->categories_search_match.clear();
+  ED_region_search_filter_update(CTX_wm_area(C), region);
+  ED_region_tag_redraw(region);
+  region->flag &= ~RGN_FLAG_SEARCH_FILTER_SHOW;
+  region_panels_sort_for_search_filter_visibility_change(C, region);
+  return OPERATOR_FINISHED;
+}
+
+static bool reion_clear_filter_poll(blender::bContext *C)
+{
+  ARegion *region = CTX_wm_region(C);
+  return region && BKE_region_panel_categories_search_filter_visible(region);
+}
+
+static void UI_OT_region_clear_filter(wmOperatorType *ot)
+{
+  ot->name = "Clear and Hide Filter";
+  ot->description = "Clear and hide the region search filter";
+  ot->idname = "UI_OT_region_clear_filter";
+  ot->exec = region_clear_filter_exec;
+  ot->poll = reion_clear_filter_poll;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Operator & Keymap Registration
  * \{ */
 
@@ -3310,6 +3412,9 @@ void operatortypes_ui()
   WM_operatortype_append(UI_OT_eyedropper_driver);
   WM_operatortype_append(UI_OT_eyedropper_bone);
   WM_operatortype_append(UI_OT_eyedropper_grease_pencil_color);
+  WM_operatortype_append(UI_OT_region_start_filter);
+  WM_operatortype_append(UI_OT_region_clear_filter);
+
   WM_menutype_add(UI_MT_color_space_select());
 }
 

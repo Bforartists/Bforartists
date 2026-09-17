@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup buttons
+ */
+
 #include <fmt/format.h>
 
 #include "BKE_screen.hh"
@@ -26,6 +30,7 @@ void invalidate_text_wrap_cache(const ARegion &region)
 {
   for (Block &block : region.runtime->uiblocks) {
     block.text_wrap_cache.clear();
+    block.markdown_layout_cache.clear();
     for (Button &button : block.buttons()) {
       if (button.type == ButtonType::TextBox) {
         auto &textbox = static_cast<ButtonTextBox &>(button);
@@ -35,6 +40,7 @@ void invalidate_text_wrap_cache(const ARegion &region)
       if (button.type == ButtonType::Label) {
         auto &label = static_cast<ButtonLabel &>(button);
         label.wrap_cache.reset();
+        label.markdown_cache.reset();
       }
     }
   }

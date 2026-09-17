@@ -1596,7 +1596,7 @@ static bNode *do_version_composite_node_in_scene_tree(bNodeTree &node_tree, bNod
   group_output_node->location[0] = node.location[0];
   group_output_node->location[1] = node.location[1];
 
-  bNodeSocket *image_input = static_cast<bNodeSocket *>(group_output_node->inputs.first);
+  bNodeSocket *image_input = group_output_node->inputs.first();
   BLI_assert(StringRef(image_input->name) == "Image");
   copy_v4_v4(image_input->default_value_typed<bNodeSocketValueRGBA>()->value,
              old_image_input->default_value_typed<bNodeSocketValueRGBA>()->value);
@@ -2603,7 +2603,7 @@ static bool window_has_sequence_editor_open(const wmWindow *win)
 
 /* Merge transform effect properties with strip transform. Because this effect could use modifiers,
  * change its type to gaussian blur with 0 radius. */
-static void sequencer_substitute_transform_effects(Main &bmain, Scene *scene)
+static void sequencer_substitute_transform_effects(Scene *scene, const DriverMap &driver_map)
 {
   seq::foreach_strip(&scene->ed->seqbase, [&](Strip *strip) -> bool {
     if (strip->type == STRIP_TYPE_TRANSFORM_LEGACY && strip->effectdata != nullptr) {
@@ -2625,7 +2625,7 @@ static void sequencer_substitute_transform_effects(Main &bmain, Scene *scene)
       GaussianBlurVars *gv = static_cast<GaussianBlurVars *>(strip->effectdata);
       gv->size_x = gv->size_y = 0.0f;
       seq::edit_strip_name_set(scene, strip, "Transform Placeholder (Migrated)");
-      seq::ensure_unique_name(bmain, strip, scene);
+      seq::ensure_unique_name(strip, scene, driver_map);
     }
     return true;
   });
@@ -2873,9 +2873,10 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 500, 97)) {
+    const DriverMap driver_map = BKE_animdata_build_driver_target_map(*bmain);
     for (Scene &scene : bmain->scenes) {
       if (scene.ed != nullptr) {
-        sequencer_substitute_transform_effects(*bmain, &scene);
+        sequencer_substitute_transform_effects(&scene, driver_map);
       }
     }
   }
@@ -2949,8 +2950,8 @@ static void remove_in_and_out_node_panel_recursive(bNodeTreeInterfacePanel &pane
 
     bNodeTreeInterfaceSocket *new_output = MEM_new<bNodeTreeInterfaceSocket>(__func__);
     new_output->item.item_type = NodeTreeInterfaceItemType::Socket;
-    new_output->name = BLI_strdup_null(socket->name);
-    new_output->description = BLI_strdup_null(socket->description);
+    new_output->name_ = BLI_strdup_null(socket->name_);
+    new_output->description_ = BLI_strdup_null(socket->description_);
     new_output->socket_type = BLI_strdup_null(socket->socket_type);
     new_output->flag = socket->flag & ~NODE_INTERFACE_SOCKET_INPUT;
     new_output->attribute_domain = socket->attribute_domain;
@@ -3403,8 +3404,8 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
           if (!ELEM(sl.spacetype, SPACE_ACTION, SPACE_GRAPH, SPACE_NLA, SPACE_SEQ)) {
             continue;
           }
-          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                           &sl.regionbase;
+          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                            &sl.regionbase;
           ARegion *new_footer = do_versions_add_region_if_not_found(
               regionbase, RGN_TYPE_FOOTER, "footer for animation editors", RGN_TYPE_HEADER);
           if (new_footer == nullptr) {
@@ -4078,8 +4079,7 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
       if (scene.ed != nullptr) {
         /* Set the first strip modifier as the active one and uncollapse the root panel. */
         seq::foreach_strip(&scene.ed->seqbase, [&](Strip *strip) -> bool {
-          seq::modifier_set_active(strip,
-                                   static_cast<StripModifierData *>(strip->modifiers.first));
+          seq::modifier_set_active(strip, strip->modifiers.first());
           for (StripModifierData &smd : strip->modifiers) {
             smd.layout_panel_open_flag |= UI_PANEL_DATA_EXPAND_ROOT;
           }
@@ -4153,8 +4153,8 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
       for (ScrArea &area : screen.areabase) {
         for (SpaceLink &sl : area.spacedata) {
           if (sl.spacetype == SPACE_USERPREF) {
-            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                             &sl.regionbase;
+            ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                              &sl.regionbase;
             ARegion *new_sidebar = do_versions_add_region_if_not_found(
                 regionbase, RGN_TYPE_UI, "sidebar for preferences", RGN_TYPE_HEADER);
             if (new_sidebar != nullptr) {
@@ -4418,8 +4418,8 @@ void blo_do_versions_500(FileData *fd, Library * /*lib*/, Main *bmain)
             continue;
           }
 
-          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first) ? &area.regionbase :
-                                                                           &sl.regionbase;
+          ListBaseT<ARegion> *regionbase = (&sl == area.spacedata.first_) ? &area.regionbase :
+                                                                            &sl.regionbase;
 
           if (ARegion *new_shelf_region = do_versions_add_region_if_not_found(
                   regionbase,

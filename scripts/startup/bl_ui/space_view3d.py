@@ -16,6 +16,7 @@ from bl_ui.properties_paint_common import (
     brush_basic_grease_pencil_vertex_settings,
     BrushAssetShelf,
     draw_mesh_automasking_settings,
+    show_experimental_texture_paint,
 )
 from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
@@ -195,7 +196,9 @@ class VIEW3D_HT_tool_header(Header):
                 row.popover(panel="VIEW3D_PT_sculpt_symmetry_for_topbar", text="")
             elif mode_string == "PAINT_VERTEX":
                 row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
-        elif mode_string == "SCULPT_CURVES":
+            elif mode_string == 'PAINT_TEXTURE' and show_experimental_texture_paint(tool_settings.image_paint.brush):
+                row.popover(panel="VIEW3D_PT_tools_imagepaint_symmetry_for_topbar", text="")
+        elif mode_string == 'SCULPT_CURVES':
             ob = context.object
             _row, sub = row_for_mirror()
             sub.prop(ob.data, "use_mirror_x", icon="MIRROR_X", toggle=True, icon_only=True)
@@ -352,6 +355,7 @@ class _draw_tool_settings_context_mode:
             return False
 
         paint = context.tool_settings.image_paint
+        ups = paint.unified_paint_settings
         brush = paint.brush
 
         BrushAssetShelf.draw_popup_selector(layout, context, brush)
@@ -359,7 +363,44 @@ class _draw_tool_settings_context_mode:
         if brush is None:
             return False
 
-        brush_basic_texpaint_settings(layout, context, brush, compact=True)
+        if show_experimental_texture_paint(brush):
+            size = "size"
+            size_owner = ups if brush.use_unified_size else brush
+            if size_owner.use_locked_size == 'SCENE':
+                size = "unprojected_size"
+
+            capabilities = brush.image_paint_capabilities
+
+            if capabilities.has_color:
+                row = layout.row(align=True)
+                row.ui_units_x = 4
+                UnifiedPaintPanel.prop_unified_color(row, context, brush, "color", text="")
+                UnifiedPaintPanel.prop_unified_color(row, context, brush, "secondary_color", text="")
+                row.separator()
+                layout.prop(brush, "blend", text="", translate=False)
+
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                size,
+                pressure_name="use_pressure_size",
+                unified_name="use_unified_size",
+                slider=True,
+                text="Size",
+                header=True,
+            )
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                "strength",
+                pressure_name="use_pressure_strength",
+                unified_name="use_unified_strength",
+                header=True,
+            )
+        else:
+            brush_basic_texpaint_settings(layout, context, brush, compact=True)
 
         return True
 
@@ -514,8 +555,8 @@ class _draw_tool_settings_context_mode:
 
         BrushAssetShelf.draw_popup_selector(layout, context, brush)
 
-        if brush.gpencil_vertex_brush_type not in {"BLUR", "AVERAGE", "SMEAR"}:
-            layout.separator(factor=0.4)
+        if brush.gpencil_vertex_brush_type not in {'BLUR', 'AVERAGE', 'SMEAR'}:
+            layout.separator(factor=layout.property_split_factor)
             ups = paint.unified_paint_settings
             prop_owner = ups if brush.use_unified_color else brush
 
@@ -695,8 +736,8 @@ class _draw_tool_settings_context_mode:
 
             brush_basic__draw_color_selector(context, layout, brush, brush.gpencil_settings)
 
-        if grease_pencil_tool == "TINT":
-            row.separator(factor=0.4)
+        if grease_pencil_tool == 'TINT':
+            row.separator(factor=layout.property_split_factor)
             row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
 
         from bl_ui.properties_paint_common import (
@@ -1045,15 +1086,7 @@ class VIEW3D_HT_header(Header):
             row = layout.row()
             row.active = is_paint_tool and color_type == "VERTEX"
 
-            if context.preferences.experimental.use_sculpt_texture_paint:
-                canvas_source = tool_settings.paint_mode.canvas_source
-                icon = "GROUP_VCOL" if canvas_source == "COLOR_ATTRIBUTE" else canvas_source
-                row.popover(panel="VIEW3D_PT_slots_paint_canvas", icon=icon)
-                # TODO: Update this boolean condition so that the Canvas button is only active when
-                # the appropriate color types are selected in Solid mode, I.E. 'TEXTURE'
-                row.active = is_paint_tool
-            else:
-                row.popover(panel="VIEW3D_PT_slots_color_attributes", icon="GROUP_VCOL")
+            row.popover(panel="VIEW3D_PT_slots_color_attributes", icon='GROUP_VCOL')
 
             layout.popover(
                 panel="VIEW3D_PT_sculpt_snapping",
@@ -1316,10 +1349,11 @@ class VIEW3D_MT_editor_menus(Menu):
 
         elif obj:
             if mode_string not in {
-                "PAINT_TEXTURE",
-                "SCULPT_CURVES",
-                "SCULPT_GREASE_PENCIL",
-                "VERTEX_GREASE_PENCIL",
+                'PAINT_TEXTURE',
+                'SCULPT_CURVES',
+                'PAINT_GREASE_PENCIL',
+                'SCULPT_GREASE_PENCIL',
+                'VERTEX_GREASE_PENCIL',
             }:
                 layout.menu("VIEW3D_MT_" + mode_string.lower())
             if mode_string in {
@@ -1335,7 +1369,11 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_select_sculpt_curves")
                 layout.menu("VIEW3D_MT_sculpt_curves")
                 layout.template_node_operator_asset_root_items()
-            elif mode_string == "VERTEX_GREASE_PENCIL":
+            elif mode_string == 'PAINT_GREASE_PENCIL':
+                layout.menu("VIEW3D_MT_paint_grease_pencil")
+                layout.menu("VIEW3D_MT_paint_grease_pencil_stroke")
+                layout.template_node_operator_asset_root_items()
+            elif mode_string == 'VERTEX_GREASE_PENCIL':
                 layout.menu("VIEW3D_MT_select_edit_grease_pencil")
                 layout.menu("VIEW3D_MT_paint_vertex_grease_pencil")
                 layout.template_node_operator_asset_root_items()
@@ -1955,7 +1993,8 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.operator("view3d.view_roll", text="Roll Left", icon="ROLL_LEFT").type = 'LEFT'
         layout.operator("view3d.view_roll", text="Roll Right", icon="ROLL_RIGHT").type = 'RIGHT'
-        layout.operator("view3d.view_roll_set", text="Reset Roll") # BFA - WIP
+        layout.operator("view3d.view_roll_set", text="Reset Roll") # BFA - WIP  - needs icon
+        layout.operator("view3d.view_flip")  # BFA - WIP - needs icon
 
         layout.separator()
 
@@ -2916,6 +2955,24 @@ class VIEW3D_MT_select_edit_grease_pencil_more_less(Menu):
         layout.operator("grease_pencil.select_less", text="Less", icon="SELECTLESS")
 
 
+class VIEW3D_MT_select_paint_grease_pencil(Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("grease_pencil.select_all", text="All").action = 'SELECT'
+        layout.operator("grease_pencil.select_all", text="None").action = 'DESELECT'
+        layout.operator("grease_pencil.select_all", text="Invert").action = 'INVERT'
+
+        layout.separator()
+
+        layout.operator_menu_enum("grease_pencil.select_by_stroke_type", "type", text="By Stroke Type")
+        layout.operator("grease_pencil.select_fill")
+
+        layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
+
+
 class VIEW3D_MT_select_edit_grease_pencil(Menu):
     bl_label = "Select"
 
@@ -2989,6 +3046,43 @@ class VIEW3D_MT_paint_grease_pencil(Menu):
         layout.separator()
 
         layout.operator("paint.sample_color", icon="EYEDROPPER").merged = False
+
+
+class VIEW3D_MT_paint_grease_pencil_stroke(Menu):
+    bl_label = "Stroke"
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        settings = tool_settings.gpencil_sculpt
+
+        layout.menu("VIEW3D_MT_transform")
+        layout.menu("VIEW3D_MT_mirror")
+        layout.menu("GREASE_PENCIL_MT_snap")
+
+        layout.separator()
+
+        layout.operator("grease_pencil.duplicate_move", text="Duplicate", icon='DUPLICATE')
+
+        layout.separator()
+
+        layout.operator("grease_pencil.stroke_split", text="Split")
+        layout.operator("grease_pencil.copy", text="Copy", icon='COPYDOWN')
+        layout.operator("grease_pencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
+        layout.operator("grease_pencil.paste", text="Paste by Layer").type = 'LAYER'
+
+        layout.separator()
+
+        layout.operator("grease_pencil.set_uniform_thickness")
+        layout.operator("grease_pencil.set_uniform_opacity")
+        layout.prop(settings, "use_scale_thickness", text="Scale Thickness")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_greasepencil_delete")
+
+        layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
 
 class VIEW3D_MT_paint_vertex_grease_pencil(Menu):
@@ -3224,6 +3318,7 @@ class VIEW3D_MT_mesh_add(Menu):
         layout.operator("mesh.primitive_plane_add", text="Plane", icon="MESH_PLANE")
         layout.operator("mesh.primitive_cube_add", text="Cube", icon="MESH_CUBE")
         layout.operator("mesh.primitive_circle_add", text="Circle", icon="MESH_CIRCLE")
+        layout.operator("mesh.primitive_quad_sphere_add", text="Quad Sphere", icon='MESH_QUADSPHERE') # BFA - WIP - add to topbar
         layout.operator("mesh.primitive_uv_sphere_add", text="UV Sphere", icon="MESH_UVSPHERE")
         layout.operator("mesh.primitive_ico_sphere_add", text="Ico Sphere", icon="MESH_ICOSPHERE")
         layout.operator("mesh.primitive_cylinder_add", text="Cylinder", icon="MESH_CYLINDER")
@@ -11627,7 +11722,9 @@ class VIEW3D_PT_paint_texture_context_menu(Panel):
     def draw(self, context):
         layout = self.layout
 
-        brush = context.tool_settings.image_paint.brush
+        paint = context.tool_settings.image_paint
+        space = context.space_data
+        brush = paint.brush
         capabilities = brush.image_paint_capabilities
 
         if capabilities.has_color:
@@ -11637,13 +11734,21 @@ class VIEW3D_PT_paint_texture_context_menu(Panel):
             layout.prop(brush, "blend", text="")
 
         if capabilities.has_radius:
+            size = "size"
+            if space.type == 'VIEW_3D' and show_experimental_texture_paint(brush):
+                ups = paint.unified_paint_settings
+                size_owner = ups if brush.use_unified_size else brush
+                if size_owner.use_locked_size == 'SCENE':
+                    size = "unprojected_size"
+
             UnifiedPaintPanel.prop_unified(
                 layout,
                 context,
                 brush,
-                "size",
+                size,
                 unified_name="use_unified_size",
                 pressure_name="use_pressure_size",
+                text="Size",
                 slider=True,
             )
             UnifiedPaintPanel.prop_unified(
@@ -12268,6 +12373,7 @@ classes = (
     VIEW3D_MT_select_greasepencil_legacy,  # BFA - legacy menu
     VIEW3D_MT_select_edit_grease_pencil_more_less,  # BFA - menu
     VIEW3D_MT_select_edit_grease_pencil,
+    VIEW3D_MT_select_paint_grease_pencil,
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_legacy,  # BFA menu
     VIEW3D_MT_select_paint_mask_face_more_less,  # bfa menu
@@ -12388,6 +12494,7 @@ classes = (
     VIEW3D_MT_edit_mesh_showhide,
     VIEW3D_MT_greasepencil_material_active,
     VIEW3D_MT_paint_grease_pencil,
+    VIEW3D_MT_paint_grease_pencil_stroke,
     VIEW3D_MT_paint_vertex_grease_pencil,
     VIEW3D_MT_edit_grease_pencil_arrange_strokes,  # BFA - menu
     VIEW3D_MT_sculpt_grease_pencil_copy,  # BFA - menu

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-04-13 10:12+0000\n"
 "Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -21152,20 +21152,40 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
+
+
 msgid "Snap"
 msgstr "Atrair"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
 
 
 msgid "Instances"
 msgstr "Instâncias"
 
 
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
+
+
 msgid "Import"
 msgstr "Importar"
+
+
+msgid "Math"
+msgstr "Matemática"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Mirror"
@@ -21204,14 +21224,6 @@ msgid "Select More/Less"
 msgstr "Selecionar mais ou menos"
 
 
-msgid "Math"
-msgstr "Matemática"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Similar"
 msgstr "Selecionar por similaridades"
 
@@ -21240,6 +21252,14 @@ msgid "Light Probe"
 msgstr "Sonda de Luz"
 
 
+msgid "Linked"
+msgstr "Vinculando"
+
+
+msgid "Layout"
+msgstr "Organizar"
+
+
 msgid "Add Image"
 msgstr "Adicionar Imagem"
 
@@ -21264,24 +21284,16 @@ msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
 
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Linked"
-msgstr "Vinculando"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
-msgid "Layout"
-msgstr "Organizar"
+msgid "Keying"
+msgstr "Inserção de chaves"
 
 
 msgid "Make Single User"
 msgstr "Tornar usuário único"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
 
 
 msgid "Convert"
@@ -21294,14 +21306,6 @@ msgstr "Ganchos"
 
 msgid "Random Mask"
 msgstr "Máscara Aleatória"
-
-
-msgid "Keying"
-msgstr "Inserção de chaves"
-
-
-msgid "Tracking"
-msgstr "Rastreamento"
 
 
 msgid "Clear Transform"
@@ -21342,10 +21346,6 @@ msgstr "Dados das faces"
 
 msgid "Merge"
 msgstr "Fundir"
-
-
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
 
 
 msgid "Special Characters"
@@ -33462,10 +33462,6 @@ msgstr "Adiciona vetores binormais e tangentes, juntamente com as normais que el
 
 msgid "Keep Original"
 msgstr "Manter original"
-
-
-msgid "No export"
-msgstr "Não exportar"
 
 
 msgid "Tangents"
@@ -46763,6 +46759,14 @@ msgid "View a context based online manual in a web browser"
 msgstr "Permite visualizar um manual contextual disponível online em um navegador de internet."
 
 
+msgid "Trusted Source"
+msgstr "Fonte confiável"
+
+
+msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
+msgstr "Permite que o arquivo .blend execute scripts automaticamente, padrão disponível a partir das preferências de sistema."
+
+
 msgctxt "Operator"
 msgid "Export to PDF"
 msgstr "Exportar para PDF"
@@ -46848,14 +46852,6 @@ msgstr "Carregar interface de usuário"
 
 msgid "Load user interface setup in the .blend file"
 msgstr "Carrega a configuração de interface de usuário no arquivo .blend."
-
-
-msgid "Trusted Source"
-msgstr "Fonte confiável"
-
-
-msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
-msgstr "Permite que o arquivo .blend execute scripts automaticamente, padrão disponível a partir das preferências de sistema."
 
 
 msgctxt "Operator"
@@ -51791,6 +51787,10 @@ msgid "Region height"
 msgstr "Altura da região."
 
 
+msgid "Live search filtering string"
+msgstr "Texto para filtro ativo de pesquisa."
+
+
 msgid "Type of this region"
 msgstr "Tipo desta região."
 
@@ -54789,10 +54789,6 @@ msgstr "Sobrepor Biblioteca"
 msgctxt "ID"
 msgid "Filter by Type"
 msgstr "Filtrar por Tipo"
-
-
-msgid "Live search filtering string"
-msgstr "Texto para filtro ativo de pesquisa."
 
 
 msgid "Indirect only"
@@ -59036,6 +59032,10 @@ msgid "Blender Website"
 msgstr "Site do Blender"
 
 
+msgid "Trusted Source [Untrusted Path]"
+msgstr "Fonte confiável [Caminho não garantido]"
+
+
 msgctxt "Operator"
 msgid "Link..."
 msgstr "Vincular..."
@@ -60392,6 +60392,11 @@ msgstr "Saltar para a faixa posterior (centralizando-a)"
 
 
 msgctxt "Operator"
+msgid "Text"
+msgstr "Texto"
+
+
+msgctxt "Operator"
 msgid "Fade"
 msgstr "Esmaecer"
 
@@ -60475,23 +60480,8 @@ msgstr "Ambos os Lados"
 
 
 msgctxt "Operator"
-msgid "Clip..."
-msgstr "Clipes..."
-
-
-msgctxt "Operator"
-msgid "Mask..."
-msgstr "Máscaras..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Cor"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Texto"
 
 
 msgctxt "Operator"
@@ -60552,11 +60542,6 @@ msgstr "Escalar para Preencher"
 msgctxt "Operator"
 msgid "Stretch To Fill"
 msgstr "Esticar para preencher"
-
-
-msgctxt "Operator"
-msgid "Clip"
-msgstr "Clipe"
 
 
 msgctxt "Operator"
@@ -66811,12 +66796,12 @@ msgid "BSDF"
 msgstr "Função de distribuição de espalhamento bidirecional"
 
 
-msgid "IOR"
-msgstr "Índice de refração"
-
-
 msgid "Anisotropy"
 msgstr "Anisotropia"
+
+
+msgid "IOR"
+msgstr "Índice de refração"
 
 
 msgid "RoughnessU"
@@ -67114,10 +67099,6 @@ msgstr "Visualização de arquivos do Blender"
 
 msgid "Missing 'window' in context"
 msgstr "Faltando \"janela\" no contexto."
-
-
-msgid "Trusted Source [Untrusted Path]"
-msgstr "Fonte confiável [Caminho não garantido]"
 
 
 msgid "Don't Save"

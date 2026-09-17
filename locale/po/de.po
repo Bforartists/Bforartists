@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-08-25 20:13+0000\n"
 "Last-Translator: \"Mattis V.\" <mattis@users.noreply.translate.blender.org>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -19296,44 +19296,64 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
-msgid "Snap"
-msgstr "Einrasten"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Proportionaler Bearbeitungsabfall"
-
-
 msgid "Read"
 msgstr "Lesen"
-
-
-msgid "Mask Edit"
-msgstr "Maskenbearbeitung"
 
 
 msgid "Sample"
 msgstr "Beispiel"
 
 
+msgid "Show/Hide"
+msgstr "Zeigen/Verbergen"
+
+
 msgid "Write"
 msgstr "Schreiben"
+
+
+msgid "Clean Up"
+msgstr "Aufräumen"
 
 
 msgid "Primitives"
 msgstr "Grundkörper"
 
 
-msgid "Vertex Group Locks"
-msgstr "Punktgruppen sperren"
+msgid "Pivot Point"
+msgstr "Drehpunkt"
+
+
+msgid "Snap"
+msgstr "Einrasten"
 
 
 msgid "Instances"
 msgstr "Instanzen"
 
 
+msgid "Proportional Editing Falloff"
+msgstr "Proportionaler Bearbeitungsabfall"
+
+
+msgid "Mask Edit"
+msgstr "Maskenbearbeitung"
+
+
+msgid "Vertex Group Locks"
+msgstr "Punktgruppen sperren"
+
+
 msgid "Import"
 msgstr "Importieren"
+
+
+msgid "Math"
+msgstr "Mathe"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Mirror"
@@ -19368,14 +19388,6 @@ msgid "Select More/Less"
 msgstr "Mehr/weniger anzeigen"
 
 
-msgid "Math"
-msgstr "Mathe"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Select Similar"
 msgstr "Ähnliche auswählen"
 
@@ -19408,6 +19420,14 @@ msgid "Light Probe"
 msgstr "Lichtsonde"
 
 
+msgid "Linked"
+msgstr "Verknüpft"
+
+
+msgid "Layout"
+msgstr "Layout"
+
+
 msgid "Add Image"
 msgstr "Bild hinzufügen"
 
@@ -19432,20 +19452,8 @@ msgid "Quick Effects"
 msgstr "Schnelle Effekte"
 
 
-msgid "Show/Hide"
-msgstr "Zeigen/Verbergen"
-
-
-msgid "Linked"
-msgstr "Verknüpft"
-
-
-msgid "Clean Up"
-msgstr "Aufräumen"
-
-
-msgid "Layout"
-msgstr "Layout"
+msgid "Keying"
+msgstr "Schlüsselbilder"
 
 
 msgid "Asset"
@@ -19454,6 +19462,10 @@ msgstr "Asset"
 
 msgid "Make Single User"
 msgstr "Einfachen Benutzer erzeugen"
+
+
+msgid "Tracking"
+msgstr "Verfolgen"
 
 
 msgid "Convert"
@@ -19466,14 +19478,6 @@ msgstr "Haken"
 
 msgid "Random Mask"
 msgstr "Zufällige Maske"
-
-
-msgid "Keying"
-msgstr "Schlüsselbilder"
-
-
-msgid "Tracking"
-msgstr "Verfolgen"
 
 
 msgid "Clear Transform"
@@ -19510,10 +19514,6 @@ msgstr "Flächendaten"
 
 msgid "Merge"
 msgstr "Zusammenführen"
-
-
-msgid "Pivot Point"
-msgstr "Drehpunkt"
 
 
 msgid "Special Characters"
@@ -36747,6 +36747,10 @@ msgid "Deselect All"
 msgstr "Alles abwählen"
 
 
+msgid "Add a text strip to the sequencer"
+msgstr "Textstreifen zum Sequenzer hinzufügen"
+
+
 msgctxt "Operator"
 msgid "Unlock Strips"
 msgstr "Streifen entsperren"
@@ -38481,6 +38485,14 @@ msgid "View Online Manual"
 msgstr "Online-Handbuch anzeigen"
 
 
+msgid "Trusted Source"
+msgstr "Vertrauenswürdige Quelle"
+
+
+msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
+msgstr "Automatische Ausführung von Skripten in .blend-Datei erlauben, Standard verfügbar in Systemeinstellungen"
+
+
 msgctxt "Operator"
 msgid "Export to PDF"
 msgstr "Export zu PDF"
@@ -38599,14 +38611,6 @@ msgstr "Benutzeroberflächeneinstellungen in .blend-Datei laden"
 
 msgid "State"
 msgstr "Zustand"
-
-
-msgid "Trusted Source"
-msgstr "Vertrauenswürdige Quelle"
-
-
-msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
-msgstr "Automatische Ausführung von Skripten in .blend-Datei erlauben, Standard verfügbar in Systemeinstellungen"
 
 
 msgctxt "Operator"
@@ -42962,6 +42966,10 @@ msgid "Region height"
 msgstr "Regionhöhe"
 
 
+msgid "Live search filtering string"
+msgstr "Suchfilter-Zeichenkette"
+
+
 msgid "View2D"
 msgstr "2D anschauen"
 
@@ -45320,10 +45328,6 @@ msgid "Show only selectable objects"
 msgstr "Nur selektierbare Objekte anzeigen"
 
 
-msgid "Live search filtering string"
-msgstr "Suchfilter-Zeichenkette"
-
-
 msgid "Hierarchies"
 msgstr "Hierarchieen"
 
@@ -45472,16 +45476,16 @@ msgid "Active Tool and Workspace settings"
 msgstr "Aktive Werkzeug- und Arbeitsbereichseinstellungen"
 
 
-msgid "Scene Properties"
-msgstr "Szeneneigenschaften"
-
-
 msgid "Render Properties"
 msgstr "Rendereigenschaften"
 
 
 msgid "Output Properties"
 msgstr "Ausgabeeigenschaften"
+
+
+msgid "Scene Properties"
+msgstr "Szeneneigenschaften"
 
 
 msgid "View Layer Properties"
@@ -49399,6 +49403,10 @@ msgid "Blender Website"
 msgstr "Blender Website"
 
 
+msgid "Trusted Source [Untrusted Path]"
+msgstr "Vertrauenswürdige Quelle [Nichtvertrauenswürdiger Pfad]"
+
+
 msgctxt "Operator"
 msgid "Link..."
 msgstr "Link..."
@@ -51598,12 +51606,12 @@ msgid "All View Layers"
 msgstr "Alle Ebenen anzeigen"
 
 
-msgid "Object Contents"
-msgstr "Objektinhalt"
-
-
 msgid "Object Children"
 msgstr "Objekt Kinder"
+
+
+msgid "Object Contents"
+msgstr "Objektinhalt"
 
 
 msgctxt "Operator"
@@ -51701,6 +51709,11 @@ msgstr "Springe zum nächsten Streifen (Zentrum)"
 
 
 msgctxt "Operator"
+msgid "Text"
+msgstr "Text"
+
+
+msgctxt "Operator"
 msgid "Fade"
 msgstr "Fading"
 
@@ -51793,23 +51806,8 @@ msgstr "Griff"
 
 
 msgctxt "Operator"
-msgid "Clip..."
-msgstr "Clip..."
-
-
-msgctxt "Operator"
-msgid "Mask..."
-msgstr "Maske..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Farbe"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Text"
 
 
 msgctxt "Operator"
@@ -51864,11 +51862,6 @@ msgstr "Ausblendung löschen"
 
 msgid "Resolutions"
 msgstr "Auflösung"
-
-
-msgctxt "Operator"
-msgid "Clip"
-msgstr "Clip"
 
 
 msgctxt "Operator"
@@ -56581,10 +56574,6 @@ msgid "Add a color strip to the sequencer"
 msgstr "Farbstreifeneffekt zum Sequenzer hinzufügen"
 
 
-msgid "Add a text strip to the sequencer"
-msgstr "Textstreifen zum Sequenzer hinzufügen"
-
-
 msgid "Add a color mix effect strip to the sequencer"
 msgstr "Farbmixeffekt zum Sequenzer hinzufügen"
 
@@ -57928,12 +57917,12 @@ msgid "BSDF"
 msgstr "BSDF"
 
 
-msgid "IOR"
-msgstr "Brechungsindex"
-
-
 msgid "Anisotropy"
 msgstr "Anisotropisch"
+
+
+msgid "IOR"
+msgstr "Brechungsindex"
 
 
 msgid "RoughnessU"
@@ -58282,10 +58271,6 @@ msgstr "Fehler beim Öffnen der Datei im Browser!"
 
 msgid "Missing 'window' in context"
 msgstr "Fehlendes 'Fenster' im Kontext"
-
-
-msgid "Trusted Source [Untrusted Path]"
-msgstr "Vertrauenswürdige Quelle [Nichtvertrauenswürdiger Pfad]"
 
 
 msgid "Allow Execution"

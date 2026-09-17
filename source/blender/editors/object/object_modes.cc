@@ -288,7 +288,7 @@ static bool ed_object_mode_generic_exit_ex(
       if (only_test) {
         return true;
       }
-      ED_object_vpaintmode_exit_ex(*ob);
+      ED_object_vpaintmode_exit_ex(*scene, *ob);
     }
   }
   else if (ob->mode & OB_MODE_WEIGHT_PAINT) {
@@ -298,7 +298,7 @@ static bool ed_object_mode_generic_exit_ex(
       if (only_test) {
         return true;
       }
-      ED_object_wpaintmode_exit_ex(*ob);
+      ED_object_wpaintmode_exit_ex(*scene, *ob);
     }
   }
   else if (ob->mode & OB_MODE_SCULPT) {
@@ -599,7 +599,7 @@ static wmOperatorStatus object_transfer_mode_invoke(bContext *C,
   ED_outliner_select_sync_from_object_tag(C);
 
   WM_toolsystem_update_from_context_view3d(C);
-  if (mode_src & OB_MODE_ALL_PAINT) {
+  if (mode_src & OB_MODE_ALL_PAINT_MESH) {
     Paint *paint = BKE_paint_get_active_from_context(C);
     object_transfer_mode_reposition_view_pivot(region, paint, event->mval);
   }

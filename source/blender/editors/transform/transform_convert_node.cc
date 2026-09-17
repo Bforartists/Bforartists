@@ -88,7 +88,7 @@ static void create_transform_data_for_node(TransData &td,
 static bool is_node_parent_select(const bNode *node)
 {
   while ((node = node->parent)) {
-    if (node->flag & NODE_SELECT) {
+    if (node->is_selected()) {
       return true;
     }
   }
@@ -134,7 +134,7 @@ static VectorSet<bNode *> get_transformed_nodes(bNodeTree &node_tree)
 
   /* Keep only nodes that are selected or inside a frame that is selected. */
   nodes.remove_if([&](bNode *node) {
-    const bool node_selected = node->flag & NODE_SELECT;
+    const bool node_selected = node->is_selected();
     const bool parent_selected = is_node_parent_select(node);
     return (!node_selected && !parent_selected);
   });
@@ -147,7 +147,7 @@ static VectorSet<bNode *> get_transformed_nodes(bNodeTree &node_tree)
 
 static void createTransNodeData(bContext * /*C*/, TransInfo *t)
 {
-  SpaceNode *snode = static_cast<SpaceNode *>(t->area->spacedata.first);
+  SpaceNode *snode = t->area->spacedata.first_as<SpaceNode>();
   bNodeTree *node_tree = snode->edittree;
   if (!node_tree) {
     return;
@@ -266,7 +266,7 @@ static void move_child_nodes(bNode &node, const float2 &delta)
 static bool has_selected_parent(const bNode &node)
 {
   for (bNode *parent = node.parent; parent; parent = parent->parent) {
-    if (parent->flag & NODE_SELECT) {
+    if (parent->is_selected()) {
       return true;
     }
   }
@@ -276,7 +276,7 @@ static bool has_selected_parent(const bNode &node)
 static void flushTransNodes(TransInfo *t)
 {
   const float dpi_fac = UI_SCALE_FAC;
-  SpaceNode *snode = static_cast<SpaceNode *>(t->area->spacedata.first);
+  SpaceNode *snode = t->area->spacedata.first_as<SpaceNode>();
 
   TransCustomDataNode *customdata = static_cast<TransCustomDataNode *>(t->custom.type.data);
 
@@ -310,7 +310,7 @@ static void flushTransNodes(TransInfo *t)
     t->modifiers &= ~MOD_NODE_FRAME;
     Vector<bNode *> nodes_to_detach;
     for (bNode *node : snode->edittree->all_nodes()) {
-      if (!(node->flag & NODE_SELECT)) {
+      if (!node->is_selected()) {
         continue;
       }
       if (has_selected_parent(*node)) {
@@ -376,7 +376,7 @@ static void flushTransNodes(TransInfo *t)
 static void special_aftertrans_update__node(bContext *C, TransInfo *t)
 {
   Main *bmain = CTX_data_main(C);
-  SpaceNode *snode = static_cast<SpaceNode *>(t->area->spacedata.first);
+  SpaceNode *snode = t->area->spacedata.first_as<SpaceNode>();
   bNodeTree *ntree = snode->edittree;
   const TransCustomDataNode &customdata = *static_cast<TransCustomDataNode *>(t->custom.type.data);
 
@@ -391,7 +391,7 @@ static void special_aftertrans_update__node(bContext *C, TransInfo *t)
     /* Remove selected nodes on cancel. */
     if (ntree) {
       for (bNode &node : ntree->nodes.items_mutable()) {
-        if (node.flag & NODE_SELECT) {
+        if (node.is_selected()) {
           bke::node_remove_node(bmain, *ntree, node, true);
         }
       }

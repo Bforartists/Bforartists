@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup nodes
+ */
+
 #include "BLI_listbase.hh"
 
 #include "BKE_compute_context_cache.hh"
@@ -289,12 +293,12 @@ static void foreach_active_gizmo_in_open_node_editor(
   for (auto &&item : gizmo_propagation.gizmo_inputs_by_value_nodes.items()) {
     const bNode &node = *item.key.node;
     const bNodeSocket &output_socket = node.output_socket(0);
-    if ((node.flag & NODE_SELECT) || (output_socket.flag & SOCK_GIZMO_PIN)) {
+    if (node.is_selected() || (output_socket.flag & SOCK_GIZMO_PIN)) {
       used_gizmo_inputs.add_multiple(item.value);
       continue;
     }
     for (const ie::SocketElem &socket_elem : item.value) {
-      if (socket_elem.socket->owner_node().flag & NODE_SELECT) {
+      if (socket_elem.socket->owner_node().is_selected()) {
         used_gizmo_inputs.add(socket_elem);
       }
     }
@@ -306,12 +310,12 @@ static void foreach_active_gizmo_in_open_node_editor(
       continue;
     }
     const bNode &node = socket.owner_node();
-    if ((node.flag & NODE_SELECT) || (socket.flag & SOCK_GIZMO_PIN)) {
+    if (node.is_selected() || (socket.flag & SOCK_GIZMO_PIN)) {
       used_gizmo_inputs.add_multiple(item.value);
       continue;
     }
     for (const ie::SocketElem &socket_elem : item.value) {
-      if (socket_elem.socket->owner_node().flag & NODE_SELECT) {
+      if (socket_elem.socket->owner_node().is_selected()) {
         used_gizmo_inputs.add(socket_elem);
       }
     }
@@ -322,7 +326,7 @@ static void foreach_active_gizmo_in_open_node_editor(
       continue;
     }
     const bNodeSocket &gizmo_input_socket = gizmo_node->input_socket(0);
-    if ((gizmo_node->flag & NODE_SELECT) || (gizmo_input_socket.flag & SOCK_GIZMO_PIN)) {
+    if (gizmo_node->is_selected() || (gizmo_input_socket.flag & SOCK_GIZMO_PIN)) {
       used_gizmo_inputs.add(
           {&gizmo_input_socket, *ie::get_elem_variant_for_socket_type(gizmo_input_socket.type)});
     }
@@ -350,12 +354,12 @@ static void foreach_active_gizmo_in_open_editors(const wmWindowManager &wm,
     const bScreen *active_screen = BKE_workspace_active_screen_get(window.workspace_hook);
     Vector<const bScreen *> screens = {active_screen};
     if (ELEM(active_screen->state, SCREENMAXIMIZED, SCREENFULL)) {
-      const ScrArea *area = static_cast<const ScrArea *>(active_screen->areabase.first);
+      const ScrArea *area = active_screen->areabase.first();
       screens.append(area->full);
     }
     for (const bScreen *screen : screens) {
       for (const ScrArea &area : screen->areabase) {
-        const SpaceLink *sl = static_cast<SpaceLink *>(area.spacedata.first);
+        const SpaceLink *sl = area.spacedata.first_as<SpaceLink>();
         if (sl == nullptr) {
           continue;
         }

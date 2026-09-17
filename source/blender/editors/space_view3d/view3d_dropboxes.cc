@@ -646,7 +646,7 @@ static void view3d_collection_drop_copy_external_asset(bContext *C, wmDrag *drag
   RNA_boolean_set(drop->ptr, "use_override", use_override); /* BFA */
 
   /* Make an object active, just use the first one in the collection. */
-  CollectionObject *cobject = static_cast<CollectionObject *>(collection->gobject.first);
+  CollectionObject *cobject = collection->gobject.first();
   BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   Base *base = cobject ? BKE_view_layer_base_find(view_layer, cobject->ob) : nullptr;
   if (base) {

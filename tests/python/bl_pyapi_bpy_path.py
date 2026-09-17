@@ -35,6 +35,28 @@ class TestBpyPath(unittest.TestCase):
         self.assertEqual(ensure_ext('demoBlend', 'blend', case_sensitive=True), 'demoBlendblend')
         self.assertEqual(ensure_ext('demo', '', case_sensitive=True), 'demo')
 
+    def test_is_autoexec(self):
+        import bpy
+        from bpy.path import is_autoexec
+
+        prefs = bpy.context.preferences
+
+        path_cmp = prefs.autoexec_paths.new()
+        self.addCleanup(prefs.autoexec_paths.remove, path_cmp)
+        path_cmp.path = "/untrusted/"
+
+        self.assertFalse(is_autoexec("/untrusted/"))
+        self.assertFalse(is_autoexec(b"/untrusted/"))
+        self.assertTrue(is_autoexec("/trusted/"))
+
+        self.assertFalse(is_autoexec("/untrusted/demo.blend", strip_filename=True))
+        self.assertTrue(is_autoexec("/trusted/demo.blend", strip_filename=True))
+
+        path_cmp.use_glob = True
+        path_cmp.path = "*/download*"
+        self.assertFalse(is_autoexec("/home/user/downloads/"))
+        self.assertTrue(is_autoexec("/home/user/projects/"))
+
 
 if __name__ == '__main__':
     import sys

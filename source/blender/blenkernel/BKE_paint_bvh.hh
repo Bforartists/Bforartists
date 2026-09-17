@@ -217,6 +217,8 @@ enum class Type {
   BMesh,
 };
 
+static constexpr int MESH_LEAF_LIMIT = 2500;
+
 /**
  * \todo Most data is public but should either be removed or become private in the future.
  * The "_" suffix means that fields shouldn't be used by consumers of the `bke::pbvh` API.
@@ -327,7 +329,10 @@ class Tree {
   static Tree from_spatially_organized_mesh(const Mesh &mesh);
 };
 
-void build_pixels(const Depsgraph &depsgraph, Object &object, Image &image, ImageUser &image_user);
+void build_pixels(const Depsgraph &depsgraph,
+                  Object &object,
+                  Image &image,
+                  const ImageUser &image_user);
 void pixels_free(bke::pbvh::Tree *pbvh);
 
 /**
