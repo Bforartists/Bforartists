@@ -1192,6 +1192,11 @@ class NODE_PT_active_node_generic(Panel):
         col.prop(node, "show_options")
         col.prop(node, "mute")
 
+        # BFA - Expose location and width
+        col = layout.column(align=True)
+        col.prop(node, "width", text="Width")
+        col.prop(node, "location_absolute", text="Location")
+
         if tree.type in ('GEOMETRY', 'COMPOSITING'):
             layout.prop(node, "warning_propagation", text="Propagate")
 
