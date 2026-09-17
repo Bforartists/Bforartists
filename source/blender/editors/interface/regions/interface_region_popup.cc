@@ -455,6 +455,11 @@ static void block_region_refresh(const bContext *C, ARegion *region)
 static void block_region_draw(const bContext *C, ARegion *region)
 {
   for (Block &block : region->runtime->uiblocks) {
+    /* BFA - Tear-Off Menu/Panel: hide pinned tear-offs whose editor domain or mode no longer
+     * matches the current context. The handle stays alive so the panel can reappear. */
+    if (block.handle && !tear_off_is_visible(C, block.handle)) {
+      continue;
+    }
     block_draw(C, &block);
   }
 }
@@ -1046,6 +1051,37 @@ PopupBlockHandle *popup_block_create(bContext *C,
   return handle;
 }
 
+bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)
+{
+  /* Only pinned tear-offs are subject to the domain/mode visibility rule. */
+  if (!handle->is_tear_off || handle->tear_off_spacetype == 0) {
+    return true;
+  }
+
+  /* Requirement 2: the originating editor domain must still exist in the active screen.
+   * If another editor of the same domain exists, the panel stays visible. */
+  const bScreen *screen = CTX_wm_screen(C);
+  if (screen) {
+    bool domain_found = false;
+    for (const ScrArea &area : screen->areabase) {
+      if (area.spacetype == handle->tear_off_spacetype) {
+        domain_found = true;
+        break;
+      }
+    }
+    if (!domain_found) {
+      return false;
+    }
+  }
+
+  /* Requirement 1: the object mode must match the mode the panel was torn off in. */
+  if (handle->tear_off_mode >= 0 && CTX_data_mode_enum(C) != handle->tear_off_mode) {
+    return false;
+  }
+
+  return true;
+}
+
 void popup_block_free(bContext *C, PopupBlockHandle *handle)
 {
   /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
@@ -1055,7 +1091,6 @@ void popup_block_free(bContext *C, PopupBlockHandle *handle)
   fflush(stdout);
 
   bool is_submenu = false;
-
   /* If this popup is created from a popover which does NOT have keep-open flag set,
    * then close the popover too. We could extend this to other popup types too. */
   ARegion *region = handle->popup_create_vars.butregion;

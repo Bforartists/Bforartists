@@ -13164,6 +13164,16 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     }
   }
 
+  /* BFA - Tear-Off Menu/Panel: a pinned tear-off that is currently hidden (editor domain or
+   * mode mismatch) must not consume events. Let them pass through to the rest of the UI. */
+  {
+    Block *block = menu->region->runtime->uiblocks.first();
+    if (block && block->handle && !tear_off_is_visible(C, block->handle)) {
+      CTX_wm_region_popup_set(C, region_popup);
+      return WM_UI_HANDLER_CONTINUE;
+    }
+  }
+
   handle_menus_recursive(C, event, menu, 0, false, false, true);
 
   /* BFA - Tear-Off Menu/Panel */

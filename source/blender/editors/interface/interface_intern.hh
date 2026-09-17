@@ -1115,6 +1115,13 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel True when this popup was created as a tear-off menu. */
   bool is_tear_off = false;
 
+  /** BFA - Tear-Off Menu/Panel: context this panel was torn off from, used to hide/restore
+   * the pinned panel when the editor domain or its mode changes.
+   * `tear_off_mode` is an #eContextObjectMode, -1 means unpinned.
+   * `tear_off_spacetype` is an #eSpace_Type, 0 means unpinned. */
+  int tear_off_mode = -1;
+  char tear_off_spacetype = 0;
+
   char menu_idname[64] = "";
 
   bool mmb_panning = false;
@@ -1260,6 +1267,14 @@ void pie_menu_level_create(Block *block,
 void popup_translate(ARegion *region, const int mdiff[2]);
 void popup_block_free(bContext *C, PopupBlockHandle *handle);
 void popup_block_scrolltest(Block *block);
+
+/**
+ * BFA - Tear-Off Menu/Panel: returns true if a pinned tear-off popup should currently be
+ * visible. A pinned tear-off is visible only when its originating editor domain still exists
+ * in the active screen AND the current object mode matches the mode it was torn off in.
+ * Unpinned popups (and non tear-offs) are always considered visible.
+ */
+bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle);
 
 /** \} */
 

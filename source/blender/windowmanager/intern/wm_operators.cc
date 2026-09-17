@@ -2540,6 +2540,13 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
     ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
   }
 
+  /* BFA - Tear-Off Menu/Panel: record the context this menu was torn off from so it can be
+   * hidden/restored when the editor domain or its mode changes. */
+  if (handle) {
+    handle->tear_off_mode = CTX_data_mode_enum(C);
+    handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
+  }
+
   if (handle) {
     ED_region_tag_refresh_ui(handle->region);
   }
@@ -2626,6 +2633,13 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
     ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
     ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
     ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
+  }
+
+  /* BFA - Tear-Off Menu/Panel: record the context this panel was torn off from so it can be
+   * hidden/restored when the editor domain or its mode changes. */
+  if (handle) {
+    handle->tear_off_mode = CTX_data_mode_enum(C);
+    handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
   }
 
   if (handle) {

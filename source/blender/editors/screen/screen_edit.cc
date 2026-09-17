@@ -677,6 +677,12 @@ void ED_screen_do_listen(bContext *C, const wmNotifier *note)
         printf("BFA-DIAG ED_screen_do_listen ND_MODE\n");
         fflush(stdout);
         region_cursor_set(win, true);
+        /* BFA - Tear-Off Menu/Panel: re-evaluate pinned tear-off visibility on mode change. */
+        for (ARegion &region : screen->regionbase) {
+          if (region.regiontype == RGN_TYPE_TEMPORARY) {
+            ED_region_tag_redraw(&region);
+          }
+        }
       }
       break;
   }
