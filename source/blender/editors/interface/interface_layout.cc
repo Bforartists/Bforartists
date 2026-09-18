@@ -6362,6 +6362,30 @@ std::optional<StringRefNull> button_asset_shelf_type_idname_get(const Button *bu
   return asset_shelf_idname_from_button_context(but);
 }
 
+/* BFA - Tear-Off Menu/Panel: draw the tear-off header row (menu/panel label on the left,
+ * pin + close icons on the right) followed by a separator line. The icons are right-aligned
+ * to the block content width after layout by #block_tear_off_align_header(); a spacer is not
+ * used because #update_flexible_spacing targets the region width, which is meaningless for
+ * popup blocks (and would shift the whole block). */
+static void tear_off_header_draw(Layout *layout,
+                                 const char *translation_context,
+                                 const char *label,
+                                 const char *collapse_op,
+                                 const char *close_op)
+{
+  const EmbossType prev_emboss = layout->emboss_or_undefined();
+  layout->emboss_set(EmbossType::Pulldown);
+  Layout *row = &layout->row(true);
+  row->label(CTX_IFACE_(translation_context, label), ICON_GRIP);
+  /* Nested non-expanding row keeps the two icons compact together. */
+  Layout *icons = &row->row(true);
+  icons->fixed_size_set(true);
+  icons->op(collapse_op, "", ICON_UNPINNED);
+  icons->op(close_op, "", ICON_PANEL_CLOSE);
+  layout->emboss_set(prev_emboss);
+  layout->separator(1.0f, LayoutSeparatorType::Line);
+}
+
 void menutype_draw(bContext *C, MenuType *mt, Layout *layout)
 {
   Menu menu{};
@@ -6379,26 +6403,11 @@ void menutype_draw(bContext *C, MenuType *mt, Layout *layout)
   if (!STREQ(mt->idname, "WM_MT_tear_off_menu") && block->handle && !is_context_menu)
   {
     if (is_tear_off) {
-      /* BFA - Tear-Off Menu: show menu label and close button in a row.
-       * Uses LayoutAlign::Left for variable-size buttons so the row is
-       * compact (tight fit), not 20 units wide like Expand gives.
-       * Extra margin is added to the close button rect because
-       * block_bounds_calc_text doesn't resize individual buttons in a
-       * row alignment group, and text_icon_width's tight fit can clip. */
-      const EmbossType prev_emboss = layout->emboss_or_undefined();
-      layout->emboss_set(EmbossType::Pulldown);
-      Layout *row = &layout->row(true);
-      row->alignment_set(LayoutAlign::Left);
-      row->label(CTX_IFACE_(mt->translation_context, mt->label), ICON_GRIP);
-      row->op("WM_OT_menu_tear_off_close", "Close Menu", ICON_PANEL_CLOSE);
-      /* BFA - Prevent "Close Menu" text truncation at draw time. */
-      if (!block->buttons_ptrs.is_empty()) {
-        block->buttons_ptrs.last()->rect.xmax += int(UI_UNIT_X * 1.0f);
-        /* BFA - Center text like the panel version (default alignment). */
-        block->buttons_ptrs.last()->drawflag &= ~BUT_TEXT_LEFT;
-      }
-      layout->emboss_set(prev_emboss);
-      layout->separator(1.0f, LayoutSeparatorType::Line);
+      tear_off_header_draw(layout,
+                           mt->translation_context,
+                           mt->label,
+                           "WM_OT_menu_tear_off_collapse",
+                           "WM_OT_menu_tear_off_close");
     }
     else {
       PointerRNA opptr = layout->op("WM_OT_menu_tear_off", "Tear Off Menu", ICON_GRIP);
@@ -6511,14 +6520,11 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
     if ((block->flag & BLOCK_POPOVER) && !show_header) {
       const bool is_tear_off = block->handle && block->handle->is_tear_off;
       if (is_tear_off) {
-        /* BFA - Tear-Off Menu/Panel: show panel label and close button in a row */
-        const EmbossType prev_emboss = body->emboss_or_undefined();
-        body->emboss_set(EmbossType::Pulldown);
-        Layout *row = &body->row(true);
-        row->label(CTX_IFACE_(pt->translation_context, pt->label), ICON_GRIP);
-        row->op("WM_OT_panel_tear_off_close", "Close Panel", ICON_PANEL_CLOSE);
-        body->emboss_set(prev_emboss);
-        body->separator(2.0f, LayoutSeparatorType::Line);
+        tear_off_header_draw(body,
+                             pt->translation_context,
+                             pt->label,
+                             "WM_OT_panel_tear_off_collapse",
+                             "WM_OT_panel_tear_off_close");
       }
       else {
         const EmbossType prev_emboss = body->emboss_or_undefined();

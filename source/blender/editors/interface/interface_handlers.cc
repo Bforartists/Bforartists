@@ -13174,6 +13174,124 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     }
   }
 
+  /* BFA - Tear-Off Menu/Panel: double-clicking a pinned tear-off panel collapses it to the
+   * pin widget. */
+  if (event->val == KM_DBL_CLICK && ELEM(event->type, LEFTMOUSE)) {
+    Block *block = menu->region->runtime->uiblocks.first();
+    if (block && block->handle && block->handle->is_tear_off &&
+        !block->handle->tear_off_collapsed)
+    {
+      int mx = event->xy[0];
+      int my = event->xy[1];
+      window_to_block(menu->region, block, &mx, &my);
+      if (BLI_rctf_isect_pt(&block->rect, mx, my)) {
+        tear_off_set_collapsed(block->handle, true, CTX_wm_window(C));
+        CTX_wm_region_popup_set(C, region_popup);
+        return WM_UI_HANDLER_BREAK;
+      }
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: handle the collapsed pin widget (hover + click). */
+  {
+    Block *block = menu->region->runtime->uiblocks.first();
+    if (block && block->handle && block->handle->is_tear_off && block->handle->tear_off_collapsed)
+    {
+      PopupBlockHandle *handle = block->handle;
+      rctf widget;
+      tear_off_pin_widget_rect(handle, &widget);
+
+      /* BFA - Tear-Off Menu/Panel: the collapsed region covers the whole window, so
+       * region-local coordinates equal window coordinates. Use the raw event position. */
+      const int mx = event->xy[0];
+      const int my = event->xy[1];
+
+      const bool inside = BLI_rctf_isect_pt(&widget, mx, my);
+      const float icon_size = UI_UNIT_Y;
+      const float pad = 0.25f * UI_UNIT_X;
+      /* Icons are right-aligned: pin then X (close). */
+      const float x_x_min = widget.xmax - pad - icon_size;
+      const float x_pin_min = x_x_min - pad - icon_size;
+      const bool over_x = inside && (mx >= x_x_min);
+      const bool over_pin = inside && (mx >= x_pin_min) && (mx < x_x_min);
+
+      if (handle->tear_off_pin_hover_x != over_x || handle->tear_off_pin_hover_pin != over_pin) {
+        handle->tear_off_pin_hover_x = over_x;
+        handle->tear_off_pin_hover_pin = over_pin;
+        ED_region_tag_redraw(menu->region);
+      }
+
+      /* BFA - Tear-Off Menu/Panel: show a move cursor over the draggable label area,
+       * restore the default cursor only if we previously set the move cursor (so other
+       * UI cursors underneath are not clobbered). */
+      {
+        wmWindow *win = CTX_wm_window(C);
+        const bool over_label = inside && !over_x && !over_pin;
+        if (event->type == MOUSEMOVE && !handle->tear_off_pin_dragging) {
+          if (over_label) {
+            WM_cursor_set(win, WM_CURSOR_MOVE);
+          }
+          else if (win->cursor == WM_CURSOR_MOVE) {
+            WM_cursor_set(win, WM_CURSOR_DEFAULT);
+          }
+        }
+      }
+
+      /* BFA - Tear-Off Menu/Panel: dragging the widget moves it. */
+      if (handle->tear_off_pin_dragging) {
+        if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
+          handle->tear_off_pin_dragging = false;
+          WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
+          CTX_wm_region_popup_set(C, region_popup);
+          return WM_UI_HANDLER_BREAK;
+        }
+        if (event->type == MOUSEMOVE) {
+          handle->tear_off_pin_xy[0] = mx - handle->tear_off_pin_drag_ofs[0];
+          handle->tear_off_pin_xy[1] = my - handle->tear_off_pin_drag_ofs[1];
+          ED_region_tag_redraw(menu->region);
+          CTX_wm_region_popup_set(C, region_popup);
+          return WM_UI_HANDLER_BREAK;
+        }
+      }
+
+      /* BFA - Tear-Off Menu/Panel: double-click expands the panel again. */
+      if (inside && event->type == LEFTMOUSE && event->val == KM_DBL_CLICK) {
+        tear_off_set_collapsed(handle, false, CTX_wm_window(C));
+        WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
+        CTX_wm_region_popup_set(C, region_popup);
+        return WM_UI_HANDLER_BREAK;
+      }
+
+      /* BFA - Tear-Off Menu/Panel: press on the X closes, press on the pin expands the
+       * panel again, press elsewhere starts a drag. */
+      if (inside && event->type == LEFTMOUSE && event->val == KM_PRESS) {
+        if (over_x) {
+          /* Close (discard) the pinned panel. */
+          handle->menuretval = RETURN_CANCEL;
+        }
+        else if (over_pin) {
+          /* Pin icon toggles back to the full panel. */
+          tear_off_set_collapsed(handle, false, CTX_wm_window(C));
+          WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
+        }
+        else {
+          /* Start dragging the widget. */
+          handle->tear_off_pin_dragging = true;
+          handle->tear_off_pin_drag_ofs[0] = mx - handle->tear_off_pin_xy[0];
+          handle->tear_off_pin_drag_ofs[1] = my - handle->tear_off_pin_xy[1];
+          WM_cursor_set(CTX_wm_window(C), WM_CURSOR_MOVE);
+        }
+        CTX_wm_region_popup_set(C, region_popup);
+        return WM_UI_HANDLER_BREAK;
+      }
+
+      if (inside) {
+        CTX_wm_region_popup_set(C, region_popup);
+        return WM_UI_HANDLER_BREAK;
+      }
+    }
+  }
+
   handle_menus_recursive(C, event, menu, 0, false, false, true);
 
   /* BFA - Tear-Off Menu/Panel */
@@ -13191,12 +13309,6 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       WM_event_add_mousemove(win);
     }
     else {
-      /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
-      printf("BFA-DIAG popup_handler closing is_tear_off=%d menuretval=%d\n",
-             menu->is_tear_off,
-             menu->menuretval);
-      fflush(stdout);
-
       // BFA - Tear-Off Menu/Panel
       /* set last pie event to allow chained pie spawning */
       if (block->flag & BLOCK_PIE_MENU) {
@@ -13269,9 +13381,6 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
    * waiting for the next event. */
   if (!popup_closed && (menu->menuretval & RETURN_CANCEL)) {
     wmWindow *win = CTX_wm_window(C);
-    /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
-    printf("BFA-DIAG popup_handler delayed-cancel closing is_tear_off=%d\n", menu->is_tear_off);
-    fflush(stdout);
     popup_block_free(C, menu);
     popup_handlers_remove(&win->runtime->modalhandlers, menu);
     CTX_wm_region_popup_set(C, nullptr);
@@ -13296,12 +13405,6 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 static void popup_handler_remove(bContext *C, void *userdata)
 {
   PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(userdata);
-
-  /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
-  printf("BFA-DIAG popup_handler_remove is_tear_off=%d menu_idname=%s\n",
-         menu->is_tear_off,
-         menu->menu_idname);
-  fflush(stdout);
 
   /* More correct would be to expect RETURN_CANCEL here, but not wanting to
    * cancel when removing handlers because of file exit is a rare exception.
@@ -13375,10 +13478,6 @@ void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle
 
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
 {
-  /* BFA-DIAG - Tear-Off Menu/Panel: temporary diagnostic logging. */
-  printf("BFA-DIAG popup_handlers_remove_all called\n");
-  fflush(stdout);
-
   /* BFA - Tear-Off Menu/Panel: keep tear-off popups open across screen/workspace changes. */
   for (wmEventHandler &handler_base : handlers->items_mutable()) {
     if (handler_base.type == WM_HANDLER_TYPE_UI) {

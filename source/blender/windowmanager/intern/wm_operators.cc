@@ -2546,14 +2546,21 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
     handle->tear_off_mode = CTX_data_mode_enum(C);
     handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
     handle->tear_off_workspace = CTX_wm_workspace(C);
+    /* BFA - Tear-Off Menu/Panel: remember the label for the collapsed pin widget. */
+    if (MenuType *mt = WM_menutype_find(idname, true)) {
+      BLI_strncpy(handle->tear_off_label,
+                  CTX_IFACE_(mt->translation_context, mt->label),
+                  sizeof(handle->tear_off_label));
+    }
   }
 
   /* BFA - Tear-Off Menu/Panel: remember the menu's top-left corner so the collapsed pin
-   * widget appears where the menu header was. */
+   * widget appears where the menu header was. Stored in window coordinates because the
+   * collapsed region covers the whole window (region-local == window). */
   if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
     ui::Block *block = handle->region->runtime->uiblocks.first();
-    handle->tear_off_pin_xy[0] = int(block->rect.xmin);
-    handle->tear_off_pin_xy[1] = int(block->rect.ymax);
+    handle->tear_off_pin_xy[0] = int(block->rect.xmin) + handle->region->winrct.xmin;
+    handle->tear_off_pin_xy[1] = int(block->rect.ymax) + handle->region->winrct.ymin;
   }
 
   if (handle) {
@@ -2615,6 +2622,44 @@ static void WM_OT_menu_tear_off_close(wmOperatorType *ot)
   ot->poll = WM_operator_winactive;
 }
 
+/* BFA - Tear-Off Menu/Panel: collapse the pinned menu to the small pin widget. */
+static wmOperatorStatus wm_menu_tear_off_collapse_exec(bContext *C, wmOperator * /*op*/)
+{
+  wmWindow *win = CTX_wm_window(C);
+  if (!win) {
+    return OPERATOR_CANCELLED;
+  }
+
+  ARegion *region = CTX_wm_region_popup(C);
+  if (!region) {
+    return OPERATOR_CANCELLED;
+  }
+
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (handler_base.type == WM_HANDLER_TYPE_UI) {
+      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
+      if (menu && menu->is_tear_off && menu->region == region) {
+        ui::tear_off_set_collapsed(menu, true, win);
+        return OPERATOR_FINISHED;
+      }
+    }
+  }
+
+  return OPERATOR_CANCELLED;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
+{
+  ot->name = "Collapse Menu";
+  ot->idname = "WM_OT_menu_tear_off_collapse";
+  ot->description = "Collapse the torn-off menu to a pin";
+
+  ot->exec = wm_menu_tear_off_collapse_exec;
+  ot->poll = WM_operator_winactive;
+}
+
 /* -------------------------------------------------------------------- */
 /** \name Tear-Off Panel Operator
  * \{ */
@@ -2650,14 +2695,21 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
     handle->tear_off_mode = CTX_data_mode_enum(C);
     handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
     handle->tear_off_workspace = CTX_wm_workspace(C);
+    /* BFA - Tear-Off Menu/Panel: remember the label for the collapsed pin widget. */
+    if (PanelType *pt = WM_paneltype_find(idname, true)) {
+      BLI_strncpy(handle->tear_off_label,
+                  CTX_IFACE_(pt->translation_context, pt->label),
+                  sizeof(handle->tear_off_label));
+    }
   }
 
   /* BFA - Tear-Off Menu/Panel: remember the panel's top-left corner so the collapsed pin
-   * widget appears where the panel header was. */
+   * widget appears where the panel header was. Stored in window coordinates because the
+   * collapsed region covers the whole window (region-local == window). */
   if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
     ui::Block *block = handle->region->runtime->uiblocks.first();
-    handle->tear_off_pin_xy[0] = int(block->rect.xmin);
-    handle->tear_off_pin_xy[1] = int(block->rect.ymax);
+    handle->tear_off_pin_xy[0] = int(block->rect.xmin) + handle->region->winrct.xmin;
+    handle->tear_off_pin_xy[1] = int(block->rect.ymax) + handle->region->winrct.ymin;
   }
 
   if (handle) {
@@ -2716,6 +2768,44 @@ static wmOperatorStatus wm_panel_tear_off_close_exec(bContext *C, wmOperator * /
   }
 
   return OPERATOR_CANCELLED;
+}
+
+/* BFA - Tear-Off Menu/Panel: collapse the pinned panel to the small pin widget. */
+static wmOperatorStatus wm_panel_tear_off_collapse_exec(bContext *C, wmOperator * /*op*/)
+{
+  wmWindow *win = CTX_wm_window(C);
+  if (!win) {
+    return OPERATOR_CANCELLED;
+  }
+
+  ARegion *region = CTX_wm_region_popup(C);
+  if (!region) {
+    return OPERATOR_CANCELLED;
+  }
+
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (handler_base.type == WM_HANDLER_TYPE_UI) {
+      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
+      if (menu && menu->is_tear_off && menu->region == region) {
+        ui::tear_off_set_collapsed(menu, true, win);
+        return OPERATOR_FINISHED;
+      }
+    }
+  }
+
+  return OPERATOR_CANCELLED;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_panel_tear_off_collapse(wmOperatorType *ot)
+{
+  ot->name = "Collapse Panel";
+  ot->idname = "WM_OT_panel_tear_off_collapse";
+  ot->description = "Collapse the torn-off panel to a pin";
+
+  ot->exec = wm_panel_tear_off_collapse_exec;
+  ot->poll = WM_operator_winactive;
 }
 
 /* BFA - Tear-Off Menu/Panel */
@@ -4589,8 +4679,10 @@ void wm_operatortypes_register()
   WM_operatortype_append(WM_OT_call_menu_pie);
   WM_operatortype_append(WM_OT_menu_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_menu_tear_off_close); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_menu_tear_off_collapse); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_panel_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_panel_tear_off_close); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_panel_tear_off_collapse); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_call_panel);
   WM_operatortype_append(WM_OT_call_asset_shelf_popover);
   WM_operatortype_append(WM_OT_radial_control);

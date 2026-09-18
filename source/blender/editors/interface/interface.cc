@@ -326,6 +326,17 @@ static void update_flexible_spacing(const ARegion *region, Block *block)
     return;
   }
 
+  /* BFA - Tear-Off Menu/Panel: this pass targets the *region* width (headers/toolbars), which
+   * is meaningless for popup blocks that are sized after this point. Worse, a torn-off panel can
+   * contain its own #SeprSpacer (e.g. the properties context pin row); the translate loop below
+   * would then shift every later button to the right, breaking the whole layout. Skip tear-offs
+   * entirely - their header icons are right-aligned by #block_tear_off_align_header instead.
+   * Check both the flag and the handle: #BLOCK_TEAR_OFF is only set after the invoking operator
+   * returns (i.e. on refreshes), while #PopupBlockHandle::is_tear_off is already known here. */
+  if ((block->flag & BLOCK_TEAR_OFF) || (block->handle && block->handle->is_tear_off)) {
+    return;
+  }
+
   rcti rect;
   button_to_pixelrect(&rect, region, block, block->buttons_ptrs.last().get());
   const float buttons_width = std::ceil(float(rect.xmax) + 8.0f * UI_SCALE_FAC);
@@ -366,6 +377,74 @@ static void update_flexible_spacing(const ARegion *region, Block *block)
     }
   }
   block_bounds_calc(block);
+}
+
+/* BFA - Tear-Off Menu/Panel: right-align the pin/close buttons of the tear-off header
+ * row to the block's content width. This runs after layout because a layout-level
+ * spacer would rely on #update_flexible_spacing, which targets the region width
+ * (meaningless for popup blocks, whose region is sized later) and previously shifted
+ * the whole block content to the right. */
+static void block_tear_off_align_header(Block *block)
+{
+  /* The tear-off header buttons are self-identifying by their operator idnames. */
+  auto is_header_but = [](const Button &but) {
+    return but.optype &&
+           (strstr(but.optype->idname, "tear_off_collapse") != nullptr ||
+            strstr(but.optype->idname, "tear_off_close") != nullptr);
+  };
+
+  if (!std::any_of(block->buttons().begin(), block->buttons().end(), is_header_but)) {
+    return;
+  }
+
+  /* Right edge of the block content, excluding the header buttons themselves. */
+  float content_xmax = -FLT_MAX;
+  for (const Button &but : block->buttons()) {
+    if (is_header_but(but)) {
+      continue;
+    }
+    content_xmax = std::max(content_xmax, but.rect.xmax);
+  }
+  if (content_xmax == -FLT_MAX) {
+    return;
+  }
+
+  /* Move the pin/close icons as a rigid group, flush with the content's right
+   * edge (minus a small padding). */
+  float group_xmax = -FLT_MAX;
+  for (const Button &but : block->buttons()) {
+    if (is_header_but(but)) {
+      group_xmax = std::max(group_xmax, but.rect.xmax);
+    }
+  }
+  /* Clamp to >= 0: when the header row is the widest content in the block (short menus),
+   * the icons are already at the right edge and must not be moved left over the label. */
+  const float offset = std::max((content_xmax - (0.25f * UI_UNIT_X)) - group_xmax, 0.0f);
+  for (Button &but : block->buttons()) {
+    if (is_header_but(but)) {
+      BLI_rctf_translate(&but.rect, offset, 0.0f);
+    }
+  }
+
+  /* Keep the block rect containing the shifted buttons. Do not recalculate the
+   * bounds here: popup blocks got extra safety padding from
+   * #block_bounds_calc_popup that must be preserved. */
+  block->rect.xmax = std::max(block->rect.xmax, group_xmax + offset);
+
+  /* BFA - Tear-Off Menu/Panel: stretch the separator line directly below the header row so it
+   * spans the full content width. The tear-off header separator is the topmost #SeprLine in the
+   * block (the title button is skipped for tear-offs, and this runs for tear-offs only). */
+  Button *sep_line = nullptr;
+  float top_ymax = -FLT_MAX;
+  for (Button &but : block->buttons()) {
+    if (but.type == ButtonType::SeprLine && but.rect.ymax > top_ymax) {
+      top_ymax = but.rect.ymax;
+      sep_line = &but;
+    }
+  }
+  if (sep_line) {
+    sep_line->rect.xmax = std::max(sep_line->rect.xmax, content_xmax);
+  }
 }
 
 static void update_window_matrix(const wmWindow *window, const ARegion *region, Block *block)
@@ -592,35 +671,6 @@ static void block_bounds_calc_popup(
     if (block->flag & BLOCK_LOOP) {
       block->bounds = 2.5f * UI_UNIT_X;
       block_bounds_calc_text(block, block->rect.xmin);
-    }
-  }
-
-  /* BFA - Tear-Off Menu: reposition the close button to the right edge of the
-   * menu without changing its width. The header row is compact
-   * (LayoutAlign::Left), but the menu width may be determined by wider items
-   * below. Move the close button so its right edge aligns with the menu's
-   * right edge, matching the panel version's layout. */
-  if (block->flag & BLOCK_TEAR_OFF) {
-    Button *close_but = nullptr;
-    for (Button &but : block->buttons()) {
-      if (but.optype && STREQ(but.optype->idname, "WM_OT_menu_tear_off_close")) {
-        close_but = &but;
-        break;
-      }
-    }
-
-    if (close_but) {
-      float menu_xmax = 0.0f;
-      for (const Button &but : block->buttons()) {
-        menu_xmax = max_ff(menu_xmax, but.rect.xmax);
-      }
-
-      if (menu_xmax > close_but->rect.xmax) {
-        const float but_width = BLI_rctf_size_x(&close_but->rect);
-        close_but->rect.xmax = menu_xmax;
-        close_but->rect.xmin = menu_xmax - but_width;
-        button_update(close_but);
-      }
     }
   }
 
@@ -2291,6 +2341,10 @@ void block_end_ex(const bContext *C,
   }
 
   update_flexible_spacing(region, block);
+
+  /* BFA - Tear-Off Menu/Panel: after bounds are final, right-align the pin/close
+   * buttons of the tear-off header row to the block content width. */
+  block_tear_off_align_header(block);
 
   block->endblock = true;
   if (!postpone_callbacks) {

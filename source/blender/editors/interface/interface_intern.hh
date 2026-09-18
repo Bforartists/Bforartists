@@ -52,6 +52,7 @@ struct wmEvent;
 struct wmKeyConfig;
 struct wmOperatorType;
 struct wmTimer;
+struct wmWindow; /* BFA - Tear-Off Menu/Panel */
 struct WorkSpace; /*BFA - Tear-Off Menu/Panel*/
 
 namespace gpu {
@@ -1128,6 +1129,11 @@ struct PopupBlockHandle {
    * the same panel reappears when the context matches again. */
   bool tear_off_hidden = false;
 
+  /** BFA - Tear-Off Menu/Panel: user-toggled collapsed state. When true (and the context
+   * matches) the panel is shown as the small two-icon pin widget instead of the full panel.
+   * Clicking the pin icon toggles this. */
+  bool tear_off_collapsed = false;
+
   /** BFA - Tear-Off Menu/Panel: while hidden, the collapsed pin widget is shown at this
    * position (region-local coordinates) and can be dragged. */
   int tear_off_pin_xy[2] = {0, 0};
@@ -1142,6 +1148,10 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: hover state for the collapsed X (close) and pin icons. */
   bool tear_off_pin_hover_x = false;
   bool tear_off_pin_hover_pin = false;
+
+  /** BFA - Tear-Off Menu/Panel: label of the torn-off panel/menu, shown in the collapsed
+   * pin widget. */
+  char tear_off_label[64] = "";
 
   /** BFA - Tear-Off Menu/Panel: workspace this panel was torn off in. Pinned panels are
    * scoped per workspace: they hide when another workspace is active and reappear when the
@@ -1301,6 +1311,21 @@ void popup_block_scrolltest(Block *block);
  * Unpinned popups (and non tear-offs) are always considered visible.
  */
 bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle);
+
+/**
+ * BFA - Tear-Off Menu/Panel: geometry of the collapsed pin widget in region-local
+ * coordinates. Shared by drawing and event handling.
+ */
+void tear_off_pin_widget_rect(const PopupBlockHandle *handle, rctf *r_rect);
+
+/**
+ * BFA - Tear-Off Menu/Panel: collapse or expand a pinned tear-off popup.
+ *
+ * Collapsing switches the popup to the small draggable pin widget and expands the region to
+ * cover the whole window so the widget is never clipped by the region scissor. Expanding
+ * re-lays-out the full panel through the normal refresh path.
+ */
+void tear_off_set_collapsed(PopupBlockHandle *handle, bool collapsed, const wmWindow *win);
 
 /** \} */
 
