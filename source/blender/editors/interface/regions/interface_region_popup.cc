@@ -33,6 +33,10 @@
 
 #include "ED_screen.hh"
 
+#include "UI_interface_c.hh"
+#include "UI_interface_icons.hh"
+#include "UI_resources.hh"
+
 #include "interface_intern.hh"
 #include "interface_regions_intern.hh"
 
@@ -452,12 +456,67 @@ static void block_region_refresh(const bContext *C, ARegion *region)
   CTX_wm_region_set(const_cast<bContext *>(C), ctx_region);
 }
 
+/* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off.
+ * Shows a small two-icon button (X close + pin) at the stored position. */
+static void tear_off_pin_widget_draw(PopupBlockHandle *handle)
+{
+  const float icon_size = UI_UNIT_Y;
+  const float pad = 0.25f * UI_UNIT_X;
+  const float widget_w = (icon_size * 2.0f) + (pad * 3.0f);
+  const float widget_h = icon_size + (pad * 2.0f);
+
+  const float x = handle->tear_off_pin_xy[0];
+  /* `tear_off_pin_xy` stores the top-left corner (region-local). */
+  const float y = handle->tear_off_pin_xy[1] - widget_h;
+
+  rctf rect;
+  rect.xmin = x;
+  rect.xmax = x + widget_w;
+  rect.ymin = y;
+  rect.ymax = y + widget_h;
+
+  /* Background. */
+  float back[4];
+  theme::get_color_4fv(TH_PANEL_HEADER, back);
+  back[3] = 0.9f;
+  draw_roundbox_4fv(&rect, true, 0.4f * UI_UNIT_Y, back);
+
+  /* Icons: X (close) then pin. */
+  const float icon_y = y + pad;
+  const float x_x = x + pad;
+  const float x_pin = x + pad + icon_size + pad;
+
+  uchar mono[4] = {255, 255, 255, 255};
+  icon_draw_ex(x_x,
+               icon_y,
+               ICON_X,
+               UI_INV_SCALE_FAC,
+               handle->tear_off_pin_hover_x ? 1.0f : 0.7f,
+               0.0f,
+               mono,
+               false,
+               UI_NO_ICON_OVERLAY_TEXT);
+  icon_draw_ex(x_pin,
+               icon_y,
+               ICON_PINNED,
+               UI_INV_SCALE_FAC,
+               handle->tear_off_pin_hover_pin ? 1.0f : 0.7f,
+               0.0f,
+               mono,
+               false,
+               UI_NO_ICON_OVERLAY_TEXT);
+}
+
 static void block_region_draw(const bContext *C, ARegion *region)
 {
   for (Block &block : region->runtime->uiblocks) {
     /* BFA - Tear-Off Menu/Panel: hide pinned tear-offs whose editor domain or mode no longer
      * matches the current context. The handle stays alive so the panel can reappear. */
     if (block.handle && !tear_off_is_visible(C, block.handle)) {
+      /* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget instead of the panel. */
+      if (block.handle->is_tear_off) {
+        tear_off_pin_widget_draw(block.handle);
+      }
       continue;
     }
     block_draw(C, &block);

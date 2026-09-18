@@ -2548,6 +2548,14 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
     handle->tear_off_workspace = CTX_wm_workspace(C);
   }
 
+  /* BFA - Tear-Off Menu/Panel: remember the menu's top-left corner so the collapsed pin
+   * widget appears where the menu header was. */
+  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
+    ui::Block *block = handle->region->runtime->uiblocks.first();
+    handle->tear_off_pin_xy[0] = int(block->rect.xmin);
+    handle->tear_off_pin_xy[1] = int(block->rect.ymax);
+  }
+
   if (handle) {
     ED_region_tag_refresh_ui(handle->region);
   }
@@ -2642,6 +2650,14 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
     handle->tear_off_mode = CTX_data_mode_enum(C);
     handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
     handle->tear_off_workspace = CTX_wm_workspace(C);
+  }
+
+  /* BFA - Tear-Off Menu/Panel: remember the panel's top-left corner so the collapsed pin
+   * widget appears where the panel header was. */
+  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
+    ui::Block *block = handle->region->runtime->uiblocks.first();
+    handle->tear_off_pin_xy[0] = int(block->rect.xmin);
+    handle->tear_off_pin_xy[1] = int(block->rect.ymax);
   }
 
   if (handle) {

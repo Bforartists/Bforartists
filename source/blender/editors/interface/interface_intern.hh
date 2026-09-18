@@ -1123,6 +1123,26 @@ struct PopupBlockHandle {
   int tear_off_mode = -1;
   char tear_off_spacetype = 0;
 
+  /** BFA - Tear-Off Menu/Panel: the pinned panel is currently hidden because its editor
+   * domain or object mode no longer matches. The handle (and its UI state) stays alive so
+   * the same panel reappears when the context matches again. */
+  bool tear_off_hidden = false;
+
+  /** BFA - Tear-Off Menu/Panel: while hidden, the collapsed pin widget is shown at this
+   * position (region-local coordinates) and can be dragged. */
+  int tear_off_pin_xy[2] = {0, 0};
+
+  /** BFA - Tear-Off Menu/Panel: while hidden, set when the pin widget is being dragged. */
+  bool tear_off_pin_dragging = false;
+
+  /** BFA - Tear-Off Menu/Panel: offset between the mouse and the pin widget origin while
+   * dragging, so the pin doesn't jump to the cursor. */
+  int tear_off_pin_drag_ofs[2] = {0, 0};
+
+  /** BFA - Tear-Off Menu/Panel: hover state for the collapsed X (close) and pin icons. */
+  bool tear_off_pin_hover_x = false;
+  bool tear_off_pin_hover_pin = false;
+
   /** BFA - Tear-Off Menu/Panel: workspace this panel was torn off in. Pinned panels are
    * scoped per workspace: they hide when another workspace is active and reappear when the
    * user returns. nullptr means unpinned. */
