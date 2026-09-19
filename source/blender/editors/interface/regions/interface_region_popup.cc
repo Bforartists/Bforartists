@@ -61,10 +61,14 @@ void popup_translate(ARegion *region, const int mdiff[2])
     BLI_rctf_init(&handle->prev_block_rect, 0, 0, 0, 0);
 
     /* BFA - Tear-Off Menu/Panel: keep the collapsed pin widget position in sync when the
-     * expanded panel is dragged, so collapsing later shows the pin where the panel is. */
+     * expanded panel is dragged, so collapsing later shows the pin where the panel is.
+     * Also update the event_xy anchor so expanding from collapsed places the panel at
+     * the dragged position. */
     if (handle->is_tear_off) {
       handle->tear_off_pin_xy[0] += mdiff[0];
       handle->tear_off_pin_xy[1] += mdiff[1];
+      handle->popup_create_vars.event_xy[0] += mdiff[0];
+      handle->popup_create_vars.event_xy[1] += mdiff[1];
     }
 
     for (SafetyRect &saferct : block.saferct) {
@@ -477,7 +481,7 @@ void tear_off_pin_widget_rect(const PopupBlockHandle *handle, rctf *r_rect)
   const float x = handle->tear_off_pin_xy[0];
   /* `tear_off_pin_xy` stores the top-left corner (region-local). Move the widget down one
    * row so it sits below the panel header line. */
-  const float y = handle->tear_off_pin_xy[1] - widget_h - UI_UNIT_Y;
+  const float y = handle->tear_off_pin_xy[1] - widget_h;
 
   r_rect->xmin = x;
   r_rect->xmax = x + widget_w;
@@ -506,6 +510,9 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
       handle->tear_off_pin_xy[0] = int(block->rect.xmin) + region->winrct.xmin;
       handle->tear_off_pin_xy[1] = int(block->rect.ymax) + region->winrct.ymin;
     }
+    /* Reset the expand offset — the pin starts at the panel's natural position. */
+    handle->tear_off_expand_ofs[0] = 0;
+    handle->tear_off_expand_ofs[1] = 0;
 
     /* Cover the whole window so the widget is never clipped and region-local == window. */
     const int2 win_size = WM_window_native_pixel_size(win);
@@ -1084,6 +1091,17 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     }
 
     handle->prev_block_rect = block->rect;
+
+    /* BFA - Tear-Off Menu/Panel: translate the block to where the collapsed pin was
+     * dragged, so the panel reappears where the user expects it. */
+    if (handle->is_tear_off && !handle->tear_off_collapsed &&
+        (handle->tear_off_expand_ofs[0] != 0 || handle->tear_off_expand_ofs[1] != 0))
+    {
+      block_translate(block, handle->tear_off_expand_ofs[0], handle->tear_off_expand_ofs[1]);
+      BLI_rctf_translate(&handle->prev_block_rect,
+                         handle->tear_off_expand_ofs[0],
+                         handle->tear_off_expand_ofs[1]);
+    }
 
     /* the block and buttons were positioned in window space as in 2.4x, now
      * these menu blocks are regions so we bring it back to region space.

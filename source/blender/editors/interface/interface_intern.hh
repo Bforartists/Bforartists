@@ -1145,6 +1145,11 @@ struct PopupBlockHandle {
    * dragging, so the pin doesn't jump to the cursor. */
   int tear_off_pin_drag_ofs[2] = {0, 0};
 
+  /** BFA - Tear-Off Menu/Panel: accumulated window offset between the panel's natural
+   * position (relative to its creation button) and the current collapsed pin position.
+   * Applied as a block translation on expand so the panel reappears where the pin was. */
+  int tear_off_expand_ofs[2] = {0, 0};
+
   /** BFA - Tear-Off Menu/Panel: hover state for the collapsed X (close) and pin icons. */
   bool tear_off_pin_hover_x = false;
   bool tear_off_pin_hover_pin = false;

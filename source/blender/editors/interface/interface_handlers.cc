@@ -11622,8 +11622,6 @@ static int handle_menu_event(bContext *C,
 
         copy_v2_v2_int(menu->grab_xy_prev, event->xy);
 
-        menu->popup_create_vars.event_xy += mdiff;
-
         popup_translate(region, mdiff);
       }
 
@@ -11768,6 +11766,11 @@ static int handle_menu_event(bContext *C,
           else if (!block_is_menu(block)) {
             break;
           }
+          /* BFA - Tear-Off Menu/Panel: tear-off panels must not fall through to
+           * arrow-key navigation which shifts block buttons and causes "floating". */
+          if (block->flag & BLOCK_TEAR_OFF) {
+            break;
+          }
           ATTR_FALLTHROUGH;
         }
         case WHEELUPMOUSE:
@@ -11787,6 +11790,11 @@ static int handle_menu_event(bContext *C,
             break;
           }
           else if (!block_is_menu(block)) {
+            break;
+          }
+          /* BFA - Tear-Off Menu/Panel: tear-off panels must not fall through to
+           * arrow-key navigation which shifts block buttons and causes "floating". */
+          if (block->flag & BLOCK_TEAR_OFF) {
             break;
           }
           ATTR_FALLTHROUGH;
@@ -13246,8 +13254,25 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
           return WM_UI_HANDLER_BREAK;
         }
         if (event->type == MOUSEMOVE) {
-          handle->tear_off_pin_xy[0] = mx - handle->tear_off_pin_drag_ofs[0];
-          handle->tear_off_pin_xy[1] = my - handle->tear_off_pin_drag_ofs[1];
+          const int new_pin_x = mx - handle->tear_off_pin_drag_ofs[0];
+          const int new_pin_y = my - handle->tear_off_pin_drag_ofs[1];
+          /* Clamp to window bounds so the widget can't be dragged off-screen. */
+          const int2 win_size = WM_window_native_pixel_size(CTX_wm_window(C));
+          const float margin = UI_SCREEN_MARGIN;
+          rctf widget;
+          tear_off_pin_widget_rect(handle, &widget);
+          const float widget_w = BLI_rctf_size_x(&widget);
+          const float widget_h = BLI_rctf_size_y(&widget);
+          const int clamped_pin_x = std::clamp(
+              new_pin_x, int(margin), int(win_size[0] - widget_w - margin));
+          const int clamped_pin_y = std::clamp(
+              new_pin_y, int(widget_h + margin), int(win_size[1] - margin));
+          const int dx = clamped_pin_x - handle->tear_off_pin_xy[0];
+          const int dy = clamped_pin_y - handle->tear_off_pin_xy[1];
+          handle->tear_off_pin_xy[0] = clamped_pin_x;
+          handle->tear_off_pin_xy[1] = clamped_pin_y;
+          handle->tear_off_expand_ofs[0] += dx;
+          handle->tear_off_expand_ofs[1] += dy;
           ED_region_tag_redraw(menu->region);
           CTX_wm_region_popup_set(C, region_popup);
           return WM_UI_HANDLER_BREAK;
@@ -13285,10 +13310,19 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
         return WM_UI_HANDLER_BREAK;
       }
 
-      if (inside) {
+      /* BFA - Tear-Off Menu/Panel: when the cursor is outside the collapsed pin widget,
+       * pass events through immediately. Don't fall through to `handle_menus_recursive`
+       * which would process stale buttons and block normal UI interaction (especially
+       * problematic with multiple collapsed tear-offs). */
+      if (!inside) {
         CTX_wm_region_popup_set(C, region_popup);
-        return WM_UI_HANDLER_BREAK;
+        return WM_UI_HANDLER_CONTINUE;
       }
+
+      /* Inside the widget but no handler matched — still block the event so stale buttons
+       * from the block aren't processed by `handle_menus_recursive`. */
+      CTX_wm_region_popup_set(C, region_popup);
+      return WM_UI_HANDLER_BREAK;
     }
   }
 
