@@ -3761,8 +3761,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, workspace_tool_items);
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_VIEW3D);
   RNA_def_property_ui_text(prop, "Drag", "Action when dragging in the viewport");
-  /* BFA - redraw so the "Drag" popover in tool headers updates while the popup is open. */
-  RNA_def_property_update(prop, NC_WINDOW, nullptr);
+  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr); /* header redraw */
 
   /* Transform */
   prop = RNA_def_property(srna, "use_proportional_edit", PROP_BOOLEAN, PROP_NONE);
