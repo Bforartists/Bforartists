@@ -787,8 +787,9 @@ static void tear_off_region_window_listener(const wmRegionListenerParams *params
       ED_region_update_rect(region);
     }
     else {
-      /* Expanded: clamp the panel to the new window bounds. */
-      tear_off_clamp_to_window(params->window, handle, &block, region);
+      /* Expanded: refresh the layout (repositions block at pin, clips to fit) so the
+       * panel "pops" to a valid position when the window is enlarged. */
+      ED_region_tag_refresh_ui(region);
     }
 
     ED_region_tag_redraw(region);
