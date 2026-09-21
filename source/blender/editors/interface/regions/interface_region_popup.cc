@@ -504,13 +504,6 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
   handle->tear_off_collapsed = collapsed;
 
   if (collapsed) {
-    /* Remember the panel's current top-left corner so the pin widget appears where the
-     * panel header was (the panel may have been dragged since it was torn off). */
-    if (Block *block = region->runtime->uiblocks.first()) {
-      handle->tear_off_pin_xy[0] = int(block->rect.xmin) + region->winrct.xmin;
-      handle->tear_off_pin_xy[1] = int(block->rect.ymax) + region->winrct.ymin;
-    }
-
     /* Cover the whole window so the widget is never clipped and region-local == window. */
     const int2 win_size = WM_window_native_pixel_size(win);
     region->winrct.xmin = 0;
