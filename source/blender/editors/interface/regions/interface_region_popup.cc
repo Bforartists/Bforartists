@@ -510,9 +510,6 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
       handle->tear_off_pin_xy[0] = int(block->rect.xmin) + region->winrct.xmin;
       handle->tear_off_pin_xy[1] = int(block->rect.ymax) + region->winrct.ymin;
     }
-    /* Reset the expand offset — the pin starts at the panel's natural position. */
-    handle->tear_off_expand_ofs[0] = 0;
-    handle->tear_off_expand_ofs[1] = 0;
 
     /* Cover the whole window so the widget is never clipped and region-local == window. */
     const int2 win_size = WM_window_native_pixel_size(win);
@@ -1091,17 +1088,6 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     }
 
     handle->prev_block_rect = block->rect;
-
-    /* BFA - Tear-Off Menu/Panel: translate the block to where the collapsed pin was
-     * dragged, so the panel reappears where the user expects it. */
-    if (handle->is_tear_off && !handle->tear_off_collapsed &&
-        (handle->tear_off_expand_ofs[0] != 0 || handle->tear_off_expand_ofs[1] != 0))
-    {
-      block_translate(block, handle->tear_off_expand_ofs[0], handle->tear_off_expand_ofs[1]);
-      BLI_rctf_translate(&handle->prev_block_rect,
-                         handle->tear_off_expand_ofs[0],
-                         handle->tear_off_expand_ofs[1]);
-    }
 
     /* the block and buttons were positioned in window space as in 2.4x, now
      * these menu blocks are regions so we bring it back to region space.

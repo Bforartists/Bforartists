@@ -13271,8 +13271,11 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
           const int dy = clamped_pin_y - handle->tear_off_pin_xy[1];
           handle->tear_off_pin_xy[0] = clamped_pin_x;
           handle->tear_off_pin_xy[1] = clamped_pin_y;
-          handle->tear_off_expand_ofs[0] += dx;
-          handle->tear_off_expand_ofs[1] += dy;
+          /* Update event_xy directly so expand places the panel where the pin is.
+           * This must be done here (not via expand_ofs) because expand_ofs resets
+           * on every collapse, losing accumulated offset across cycles. */
+          handle->popup_create_vars.event_xy[0] += dx;
+          handle->popup_create_vars.event_xy[1] += dy;
           ED_region_tag_redraw(menu->region);
           CTX_wm_region_popup_set(C, region_popup);
           return WM_UI_HANDLER_BREAK;
