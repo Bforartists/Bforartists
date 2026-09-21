@@ -46,7 +46,7 @@ namespace blender::ui {
 /** \name Utility Functions
  * \{ */
 
-void popup_translate(ARegion *region, const int mdiff[2])
+void popup_translate(ARegion *region, const int mdiff[2], const wmWindow *win)
 {
   BLI_rcti_translate(&region->winrct, UNPACK2(mdiff));
 
@@ -76,6 +76,93 @@ void popup_translate(ARegion *region, const int mdiff[2])
       BLI_rctf_translate(&saferct.safety, UNPACK2(mdiff));
     }
   }
+
+  /* BFA - Tear-Off Menu/Panel: clamp expanded tear-off panels so they can't be dragged
+   * past the window edges. */
+  if (win) {
+    for (Block &block : region->runtime->uiblocks) {
+      PopupBlockHandle *handle = block.handle;
+      if (handle && handle->is_tear_off && !handle->tear_off_collapsed) {
+        tear_off_clamp_to_window(win, handle, &block, region);
+      }
+    }
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: clamp a tear-off panel so it stays entirely within the window
+ * bounds (with margin). Handles both collapsed and expanded states. */
+bool tear_off_clamp_to_window(const wmWindow *win,
+                              PopupBlockHandle *handle,
+                              Block *block,
+                              ARegion *region)
+{
+  const int2 win_size = WM_window_native_pixel_size(win);
+  const float margin = UI_SCREEN_MARGIN;
+
+  if (handle->tear_off_collapsed) {
+    /* --- Collapsed state: clamp the pin widget position --- */
+    rctf widget;
+    tear_off_pin_widget_rect(handle, &widget);
+    const float widget_w = BLI_rctf_size_x(&widget);
+    const float widget_h = BLI_rctf_size_y(&widget);
+
+    const int clamped_x = std::clamp(
+        handle->tear_off_pin_xy[0], int(margin), int(win_size[0] - widget_w - margin));
+    const int clamped_y = std::clamp(handle->tear_off_pin_xy[1],
+                                     int(widget_h + margin),
+                                     int(win_size[1] - margin));
+
+    if (clamped_x != handle->tear_off_pin_xy[0] || clamped_y != handle->tear_off_pin_xy[1]) {
+      const int dx = clamped_x - handle->tear_off_pin_xy[0];
+      const int dy = clamped_y - handle->tear_off_pin_xy[1];
+      handle->tear_off_pin_xy[0] = clamped_x;
+      handle->tear_off_pin_xy[1] = clamped_y;
+      handle->popup_create_vars.event_xy[0] += dx;
+      handle->popup_create_vars.event_xy[1] += dy;
+      return true;
+    }
+    return false;
+  }
+
+  /* --- Expanded state: clamp the region position so the panel stays on-screen --- */
+  /* The block is in region-space. The on-screen content bounds are:
+   *   region->winrct.xmin + block->rect.xmin ... region->winrct.xmin + block->rect.xmax
+   * Clamp so these stay within [margin, win_size - margin]. */
+  const int content_xmin = region->winrct.xmin + int(block->rect.xmin);
+  const int content_xmax = region->winrct.xmin + int(block->rect.xmax);
+  const int content_ymin = region->winrct.ymin + int(block->rect.ymin);
+  const int content_ymax = region->winrct.ymin + int(block->rect.ymax);
+
+  int dx = 0, dy = 0;
+
+  if (content_xmin < int(margin)) {
+    dx = int(margin) - content_xmin;
+  }
+  else if (content_xmax > int(win_size[0] - margin)) {
+    dx = int(win_size[0] - margin) - content_xmax;
+  }
+
+  if (content_ymin < int(margin)) {
+    dy = int(margin) - content_ymin;
+  }
+  else if (content_ymax > int(win_size[1] - margin)) {
+    dy = int(win_size[1] - margin) - content_ymax;
+  }
+
+  if (dx != 0 || dy != 0) {
+    BLI_rcti_translate(&region->winrct, dx, dy);
+    ED_region_update_rect(region);
+
+    /* Sync pin and event_xy so collapsing/expanding is consistent. */
+    handle->tear_off_pin_xy[0] += dx;
+    handle->tear_off_pin_xy[1] += dy;
+    handle->popup_create_vars.event_xy[0] += dx;
+    handle->popup_create_vars.event_xy[1] += dy;
+
+    ED_region_tag_redraw(region);
+    return true;
+  }
+  return false;
 }
 
 /* position block relative to but, result is in window space */
@@ -504,6 +591,22 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
   handle->tear_off_collapsed = collapsed;
 
   if (collapsed) {
+    Block *block = region->runtime->uiblocks.first();
+    if (block) {
+      /* BFA - Tear-Off Menu/Panel: remember the expanded panel's block rect size so the
+       * collapsed pin widget can be clamped with edge-awareness. */
+      handle->tear_off_expanded_size[0] = int(BLI_rctf_size_x(&block->rect));
+      handle->tear_off_expanded_size[1] = int(BLI_rctf_size_y(&block->rect));
+
+      /* BFA - Tear-Off Menu/Panel: capture the current header position so the collapsed pin
+       * widget appears exactly where the panel header was (top-left corner in window coords).
+       * The block is in region-space; add region origin for window-space coords. */
+      handle->tear_off_pin_xy[0] = region->winrct.xmin + int(block->rect.xmin);
+      handle->tear_off_pin_xy[1] = region->winrct.ymin + int(block->rect.ymax);
+      handle->popup_create_vars.event_xy[0] = handle->tear_off_pin_xy[0];
+      handle->popup_create_vars.event_xy[1] = handle->tear_off_pin_xy[1];
+    }
+
     /* Cover the whole window so the widget is never clipped and region-local == window. */
     const int2 win_size = WM_window_native_pixel_size(win);
     region->winrct.xmin = 0;
@@ -511,6 +614,12 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
     region->winrct.xmax = win_size[0];
     region->winrct.ymax = win_size[1];
     ED_region_update_rect(region);
+
+    /* Clamp the pin widget to window bounds (basic visibility only, so the pin stays
+     * exactly where the header was). */
+    if (block) {
+      tear_off_clamp_to_window(win, handle, block, region);
+    }
   }
   else {
     /* Re-layout the full panel; `popup_block_refresh` resets `winrct` to the panel size. */
@@ -647,8 +756,8 @@ static void block_region_popup_window_listener(const wmRegionListenerParams *par
   }
 }
 
-/* BFA - Tear-Off Menu/Panel: keep the collapsed pin widget inside the window when it is
- * resized. The widget is positioned in window coordinates, so clamp it to the new bounds. */
+/* BFA - Tear-Off Menu/Panel: keep tear-off panels inside the window when it is resized.
+ * Handles both collapsed (pin widget) and expanded (full panel) states. */
 static void tear_off_region_window_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
@@ -660,30 +769,27 @@ static void tear_off_region_window_listener(const wmRegionListenerParams *params
 
   for (Block &block : region->runtime->uiblocks) {
     PopupBlockHandle *handle = block.handle;
-    if (!handle || !handle->is_tear_off || !handle->tear_off_collapsed) {
+    if (!handle || !handle->is_tear_off) {
       continue;
     }
 
-    const int2 win_size = WM_window_native_pixel_size(params->window);
-    const float margin = UI_SCREEN_MARGIN;
+    if (handle->tear_off_collapsed) {
+      /* Collapsed: clamp pin widget to the (new) window bounds and keep region covering
+       * the whole window. Expanded-size nudge happens on expand (in popup_block_refresh). */
+      tear_off_clamp_to_window(params->window, handle, &block, region);
 
-    /* Clamp the widget's top-left corner so the whole widget stays visible. */
-    rctf widget;
-    tear_off_pin_widget_rect(handle, &widget);
-    const float widget_w = BLI_rctf_size_x(&widget);
-    const float widget_h = BLI_rctf_size_y(&widget);
-
-    handle->tear_off_pin_xy[0] = std::clamp(
-        handle->tear_off_pin_xy[0], int(margin), int(win_size[0] - widget_w - margin));
-    handle->tear_off_pin_xy[1] = std::clamp(
-        handle->tear_off_pin_xy[1], int(widget_h + margin), int(win_size[1] - margin));
-
-    /* Keep the region covering the whole (new) window size. */
-    region->winrct.xmin = 0;
-    region->winrct.ymin = 0;
-    region->winrct.xmax = win_size[0];
-    region->winrct.ymax = win_size[1];
-    ED_region_update_rect(region);
+      /* Keep the region covering the whole (new) window size. */
+      const int2 win_size = WM_window_native_pixel_size(params->window);
+      region->winrct.xmin = 0;
+      region->winrct.ymin = 0;
+      region->winrct.xmax = win_size[0];
+      region->winrct.ymax = win_size[1];
+      ED_region_update_rect(region);
+    }
+    else {
+      /* Expanded: clamp the panel to the new window bounds. */
+      tear_off_clamp_to_window(params->window, handle, &block, region);
+    }
 
     ED_region_tag_redraw(region);
   }
@@ -1077,6 +1183,23 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
         const float offset = handle->prev_block_rect.ymax - block->rect.ymax;
         block_translate(block, 0, offset);
         block->rect.ymin = handle->prev_block_rect.ymin;
+      }
+    }
+
+    /* BFA - Tear-Off Menu/Panel: when expanding from collapsed (or refreshing an expanded
+     * tear-off), reposition the block to where the pin widget was, instead of the original
+     * source button. On initial creation the pin position is not yet set, so skip. */
+    if (handle->is_tear_off && !handle->tear_off_collapsed && handle->refresh) {
+      /* block->rect is in window coordinates. Translate so the panel's top-left corner
+       * (block->rect.xmin, block->rect.ymax) aligns with the stored pin position. */
+      const float dx = handle->tear_off_pin_xy[0] - block->rect.xmin;
+      const float dy = handle->tear_off_pin_xy[1] - block->rect.ymax;
+      if (dx != 0.0f || dy != 0.0f) {
+        block_translate(block, dx, dy);
+        /* Re-clip after repositioning so the panel stays within window bounds.
+         * This handles the case where the expanded panel is wider than the pin widget
+         * and would extend past the right window edge — `popup_block_clip` nudges it left. */
+        popup_block_clip(window, block);
       }
     }
 

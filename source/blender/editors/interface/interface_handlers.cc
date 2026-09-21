@@ -11622,7 +11622,7 @@ static int handle_menu_event(bContext *C,
 
         copy_v2_v2_int(menu->grab_xy_prev, event->xy);
 
-        popup_translate(region, mdiff);
+        popup_translate(region, mdiff, win);
       }
 
       return retval;
@@ -13256,26 +13256,19 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
         if (event->type == MOUSEMOVE) {
           const int new_pin_x = mx - handle->tear_off_pin_drag_ofs[0];
           const int new_pin_y = my - handle->tear_off_pin_drag_ofs[1];
-          /* Clamp to window bounds so the widget can't be dragged off-screen. */
-          const int2 win_size = WM_window_native_pixel_size(CTX_wm_window(C));
-          const float margin = UI_SCREEN_MARGIN;
-          rctf widget;
-          tear_off_pin_widget_rect(handle, &widget);
-          const float widget_w = BLI_rctf_size_x(&widget);
-          const float widget_h = BLI_rctf_size_y(&widget);
-          const int clamped_pin_x = std::clamp(
-              new_pin_x, int(margin), int(win_size[0] - widget_w - margin));
-          const int clamped_pin_y = std::clamp(
-              new_pin_y, int(widget_h + margin), int(win_size[1] - margin));
-          const int dx = clamped_pin_x - handle->tear_off_pin_xy[0];
-          const int dy = clamped_pin_y - handle->tear_off_pin_xy[1];
-          handle->tear_off_pin_xy[0] = clamped_pin_x;
-          handle->tear_off_pin_xy[1] = clamped_pin_y;
-          /* Update event_xy directly so expand places the panel where the pin is.
-           * This must be done here (not via expand_ofs) because expand_ofs resets
-           * on every collapse, losing accumulated offset across cycles. */
+          const int dx = new_pin_x - handle->tear_off_pin_xy[0];
+          const int dy = new_pin_y - handle->tear_off_pin_xy[1];
+          handle->tear_off_pin_xy[0] = new_pin_x;
+          handle->tear_off_pin_xy[1] = new_pin_y;
+          /* Pre-sync event_xy with the raw delta; tear_off_clamp_to_window will adjust
+           * if clamping occurs. */
           handle->popup_create_vars.event_xy[0] += dx;
           handle->popup_create_vars.event_xy[1] += dy;
+
+          /* Clamp to window bounds so the widget can't go off-screen.
+           * Expanded-size nudge happens on expand (in popup_block_refresh). */
+          tear_off_clamp_to_window(CTX_wm_window(C), handle, block, menu->region);
+
           ED_region_tag_redraw(menu->region);
           CTX_wm_region_popup_set(C, region_popup);
           return WM_UI_HANDLER_BREAK;

@@ -1158,6 +1158,12 @@ struct PopupBlockHandle {
    * user returns. nullptr means unpinned. */
   WorkSpace *tear_off_workspace = nullptr;
 
+  /** BFA - Tear-Off Menu/Panel: size (width, height) of the expanded panel's block rect
+   * in region-local pixels, captured at collapse time. Used by the collapsed pin widget
+   * clamping to ensure that expanding the panel at the pin position would still fit within
+   * the window. Zero when no expanded size has been recorded yet. */
+  int tear_off_expanded_size[2] = {0, 0};
+
   char menu_idname[64] = "";
 
   bool mmb_panning = false;
@@ -1300,7 +1306,7 @@ void pie_menu_level_create(Block *block,
 /**
  * Translate any popup regions (so we can drag them).
  */
-void popup_translate(ARegion *region, const int mdiff[2]);
+void popup_translate(ARegion *region, const int mdiff[2], const wmWindow *win = nullptr);
 void popup_block_free(bContext *C, PopupBlockHandle *handle);
 void popup_block_scrolltest(Block *block);
 
@@ -1326,6 +1332,21 @@ void tear_off_pin_widget_rect(const PopupBlockHandle *handle, rctf *r_rect);
  * re-lays-out the full panel through the normal refresh path.
  */
 void tear_off_set_collapsed(PopupBlockHandle *handle, bool collapsed, const wmWindow *win);
+
+/**
+ * BFA - Tear-Off Menu/Panel: clamp a tear-off panel/pin position so it stays entirely
+ * within the window bounds (with margin). Handles both collapsed and expanded states.
+ *
+ * For collapsed: clamps `tear_off_pin_xy` so the pin widget stays visible.
+ *
+ * For expanded: clamps the block and region positions so the panel doesn't go off-screen.
+ *
+ * Returns true if any clamping was applied.
+ */
+bool tear_off_clamp_to_window(const wmWindow *win,
+                              PopupBlockHandle *handle,
+                              Block *block,
+                              ARegion *region);
 
 /** \} */
 
