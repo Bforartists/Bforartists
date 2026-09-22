@@ -12,6 +12,7 @@ import dataclasses
 from nodeitems_builtins import node_tree_group_type
 from bl_ui.node_add_menu import draw_node_groups, add_empty_group, AddNodeMenu
 from bl_ui import (
+    node_add_menu,
     node_add_menu_compositor,
     node_add_menu_geometry,
     node_add_menu_shader,
@@ -326,24 +327,18 @@ class NODES_PT_relations_group_operations(AddNodePanel):
     bl_region_type = 'UI'
     bl_category = "Relations"
 
+    class LayoutBase:
+        def draw(self, context):
+            layout = self.layout
+            self.node_operator(layout, "NodeGroupInput")
+            self.node_operator(layout, "NodeGroupOutput")
+
+    layout_base = LayoutBase
+
     @classmethod
     def poll(self, context):
         tree = context.space_data.edit_tree 
         return tree in context.blend_data.node_groups.values()
-
-    def draw(self, context):
-        layout = self.layout
-        in_group = context.space_data.edit_tree in context.blend_data.node_groups.values()
-
-        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
-        # There is currently no way to determine the correct padding length other than trial-and-error.
-        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
-        entries = (
-            OperatorEntry("NodeGroupInput", poll=in_group),
-            OperatorEntry("NodeGroupOutput", poll=in_group),
-        )
-
-        self.draw_entries(context, layout, entries)
 
 
 class NODES_PT_relations_nodegroups(AddNodePanel):
@@ -352,18 +347,17 @@ class NODES_PT_relations_nodegroups(AddNodePanel):
     bl_region_type = 'UI'
     bl_category = "Relations"
 
+    class LayoutBase:
+        def draw(self, context):
+            layout = self.layout
+            self.new_empty_group(layout)
+            self.draw_group_menu(context, layout)
+
+    layout_base = LayoutBase
+
     @classmethod
     def poll(cls, context):
         return (context.space_data.tree_type in node_tree_group_type)
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.scale_y = 1.5
-        add_empty_group(col)
-        draw_node_groups(context, col)
-        return
 
 
 class NODES_PT_relations_layout(AddNodePanel):
@@ -371,19 +365,7 @@ class NODES_PT_relations_layout(AddNodePanel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Relations"
-
-    def draw(self, context):
-        layout = self.layout
-
-        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
-        # There is currently no way to determine the correct padding length other than trial-and-error.
-        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
-        entries = (
-            OperatorEntry("NodeFrame"),
-            OperatorEntry("NodeReroute"),
-        )
-
-        self.draw_entries(context, layout, entries)
+    layout_base = node_add_menu.NODE_MT_layout_base
 
 
 class NODES_PT_toolshelf_shader_add_input(AddNodePanel):

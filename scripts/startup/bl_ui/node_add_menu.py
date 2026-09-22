@@ -397,18 +397,10 @@ class NodeMenu(Menu):
         return props
 
     @classmethod
-    def draw_group_menu(cls, context, layout):
+    def draw_group_menu(cls, context, layout, **kwargs):
         """Show operators used for interacting with node groups."""
         space_node = context.space_data
         node_tree = space_node.edit_tree
-        all_node_groups = context.blend_data.node_groups
-
-        cls.new_empty_group(layout)
-
-        if node_tree in all_node_groups.values():
-            layout.separator()
-            cls.node_operator(layout, "NodeGroupInput")
-            cls.node_operator(layout, "NodeGroupOutput")
 
         # BFA - Draw node groups with corresponding icons
         use_transform = getattr(cls, "use_transform", False)
@@ -568,6 +560,19 @@ class NODE_MT_group_base(NodeMenu):
 
     def draw(self, context):
         layout = self.layout
+
+        # BFA - Separate operators from `draw_group_menu` for toolshelf purposes
+        space_node = context.space_data
+        node_tree = space_node.edit_tree
+        all_node_groups = context.blend_data.node_groups
+
+        cls.new_empty_group(layout)
+
+        if node_tree in all_node_groups.values():
+            layout.separator()
+            cls.node_operator(layout, "NodeGroupInput")
+            cls.node_operator(layout, "NodeGroupOutput")
+
         self.draw_group_menu(context, layout)
 
         self.draw_assets_for_catalog(layout, self.bl_label)
