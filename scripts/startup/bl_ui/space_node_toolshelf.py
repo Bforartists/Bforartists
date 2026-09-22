@@ -26,6 +26,30 @@ from bl_ui import (
 Separator = object()
 
 
+class CompositorNodesPanel:
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+
+class GeometryNodesPanel:
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree')
+
+
+class ShaderNodesPanel:
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'ShaderNodeTree')
+
+
+class TextureNodesPanel:
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'TextureNodeTree')
+
+
 class ChildLayoutWrapper:
     def __init__(self, layout, parent):
         self.layout = layout
@@ -364,12 +388,7 @@ class NODES_PT_relations_layout(AddNodePanel):
 
 class NODES_PT_toolshelf_shader_add_input(AddNodePanel):
     bl_label = "Input"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_input_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -422,12 +441,7 @@ class NODES_PT_toolshelf_shader_add_input(AddNodePanel):
 class NODES_PT_toolshelf_shader_add_input_constant(AddNodePanel):
     bl_label = "Constant"
     bl_parent_id = "NODES_PT_toolshelf_shader_add_input"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_input_constant_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -461,12 +475,7 @@ class NODES_PT_toolshelf_shader_add_input_constant(AddNodePanel):
 
 class NODES_PT_toolshelf_shader_add_output(AddNodePanel):
     bl_label = "Output"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_output_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -501,7 +510,6 @@ class NODES_PT_toolshelf_shader_add_output(AddNodePanel):
 
 class NODES_PT_toolshelf_shader_add_shader(AddNodePanel):
     bl_label = "Shader"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_shader_base
 
     @classmethod
@@ -571,12 +579,7 @@ class NODES_PT_toolshelf_shader_add_shader(AddNodePanel):
 
 class NODES_PT_toolshelf_shader_add_displacement(AddNodePanel):
     bl_label = "Displacement"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_displacement_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -609,12 +612,7 @@ class NODES_PT_toolshelf_shader_add_displacement(AddNodePanel):
 
 class NODES_PT_toolshelf_shader_add_color(AddNodePanel):
     bl_label = "Color"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_color_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -667,12 +665,7 @@ class NODES_PT_toolshelf_shader_add_color(AddNodePanel):
 
 class NODES_PT_toolshelf_shader_add_texture(AddNodePanel):
     bl_label = "Texture"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_texture_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -716,12 +709,7 @@ class NODES_PT_toolshelf_shader_add_texture(AddNodePanel):
 
 class NODES_PT_toolshelf_shader_add_utilities(AddNodePanel):
     bl_label = "Utilities"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_utilities_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -763,12 +751,7 @@ class NODES_PT_toolshelf_shader_add_utilities(AddNodePanel):
 class NODES_PT_toolshelf_shader_add_math(AddNodePanel):
     bl_label = "Math"
     bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_math_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -803,12 +786,7 @@ class NODES_PT_toolshelf_shader_add_math(AddNodePanel):
 class NODES_PT_toolshelf_shader_add_vector(AddNodePanel):
     bl_label = "Vector"
     bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
-
     layout_base = node_add_menu_shader.NODE_MT_shader_node_vector_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree')
 
     def __draw(self, context):
         layout = self.layout
@@ -851,310 +829,165 @@ class NODES_PT_toolshelf_shader_add_vector(AddNodePanel):
         self.draw_entries(context, layout, entries)
 
 
-class NODES_PT_toolshelf_compositor_add_input(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_input(AddNodePanel, CompositorNodesPanel):
     bl_label = "Input"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_input_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_input_constant(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_input_constant(AddNodePanel, CompositorNodesPanel):
     bl_label = "Constant"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_input_constant_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_input_scene(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_input_scene(AddNodePanel, CompositorNodesPanel):
     bl_label = "Scene"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_input_scene_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_output(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_output(AddNodePanel, CompositorNodesPanel):
     bl_label = "Output"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_output_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_color(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_color(AddNodePanel, CompositorNodesPanel):
     bl_label = "Color"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_color_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_color_adjust(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_color_adjust(AddNodePanel, CompositorNodesPanel):
     bl_label = "Adjust"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_color"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_color_adjust_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_creative(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_creative(AddNodePanel, CompositorNodesPanel):
     bl_label = "Creative"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_creative_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_filter(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_filter(AddNodePanel, CompositorNodesPanel):
     bl_label = "Filter"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_filter_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_filter_blur(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_filter_blur(AddNodePanel, CompositorNodesPanel):
     bl_label = "Blur"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_filter"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_filter_blur_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_keying(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_keying(AddNodePanel, CompositorNodesPanel):
     bl_label = "Keying"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_keying_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_mask(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_mask(AddNodePanel, CompositorNodesPanel):
     bl_label = "Mask"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_mask_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_tracking(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_tracking(AddNodePanel, CompositorNodesPanel):
     bl_label = "Tracking"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_tracking_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_texture(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_texture(AddNodePanel, CompositorNodesPanel):
     bl_label = "Texture"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_texture_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_transform(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_transform(AddNodePanel, CompositorNodesPanel):
     bl_label = "Transform"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_transform_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_utilities(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_utilities(AddNodePanel, CompositorNodesPanel):
     bl_label = "Utilities"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_utilities_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_utilities_math(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_utilities_math(AddNodePanel, CompositorNodesPanel):
     bl_label = "Math"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_math_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_utilities_matrix(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_utilities_matrix(AddNodePanel, CompositorNodesPanel):
     bl_label = "Matrix"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_utilities_matrix_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_utilities_rotation(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_utilities_rotation(AddNodePanel, CompositorNodesPanel):
     bl_label = "Rotation"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_rotation_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_utilities_vector(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_utilities_vector(AddNodePanel, CompositorNodesPanel):
     bl_label = "Vector"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_vector_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
-
-class NODES_PT_toolshelf_compositor_add_utilities_text(AddNodePanel):
+class NODES_PT_toolshelf_compositor_add_utilities_text(AddNodePanel, CompositorNodesPanel):
     bl_label = "Text"
     bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_text_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'CompositorNodeTree')
 
 
 class NODES_PT_toolshelf_texture_add_input(AddNodePanel):
     bl_label = "Input"
-
     layout_base = node_add_menu_texture.NODE_MT_texture_node_input_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
 
 
 class NODES_PT_toolshelf_texture_add_output(AddNodePanel):
     bl_label = "Output"
-
     layout_base = node_add_menu_texture.NODE_MT_texture_node_output_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
 
 
 class NODES_PT_toolshelf_texture_add_color(AddNodePanel):
     bl_label = "Color"
-
     layout_base = node_add_menu_texture.NODE_MT_texture_node_color_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
 
 
 class NODES_PT_toolshelf_texture_add_converter(AddNodePanel):
     bl_label = "Converter"
-
     layout_base = node_add_menu_texture.NODE_MT_texture_node_converter_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
 
 
 class NODES_PT_toolshelf_texture_add_distort(AddNodePanel):
     bl_label = "Distort"
-
     layout_base = node_add_menu_texture.NODE_MT_texture_node_distort_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
 
 
 class NODES_PT_toolshelf_texture_add_pattern(AddNodePanel):
     bl_label = "Pattern"
-
     layout_base = node_add_menu_texture.NODE_MT_texture_node_pattern_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
 
 
 class NODES_PT_toolshelf_texture_add_texture(AddNodePanel):
     bl_label = "Textures"
-
     layout_base = node_add_menu_texture.NODE_MT_texture_node_texture_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'TextureNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_input(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_input(AddNodePanel, GeometryNodesPanel):
     bl_label = "Input"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_input_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
 
 
-class NODES_PT_toolshelf_gn_add_input_constant(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_input_constant(AddNodePanel, GeometryNodesPanel):
     bl_label = "Constant"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
-    
     layout_base = node_add_menu_geometry.NODE_MT_gn_input_constant_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_input_gizmo(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_input_gizmo(AddNodePanel, GeometryNodesPanel):
     bl_label = "Gizmo"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
     
@@ -1165,573 +998,312 @@ class NODES_PT_toolshelf_gn_add_input_gizmo(AddNodePanel):
         return (context.space_data.tree_type == 'GeometryNodeTree') and (not is_tool_tree(context))
 
 
-class NODES_PT_toolshelf_gn_add_input_file(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_input_file(AddNodePanel, GeometryNodesPanel):
     bl_label = "Import"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_input_import_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_input_scene(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_input_scene(AddNodePanel, GeometryNodesPanel):
     bl_label = "Scene"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_input_scene_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-
-class NODES_PT_toolshelf_gn_add_output(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_output(AddNodePanel, GeometryNodesPanel):
     bl_label = "Output"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_output_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_attribute(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_attribute(AddNodePanel, GeometryNodesPanel):
     bl_label = "Attribute"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_attribute_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_geometry(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_geometry(AddNodePanel, GeometryNodesPanel):
     bl_label = "Geometry"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_geometry_read(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_read(AddNodePanel, GeometryNodesPanel):
     bl_label = "Read"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_read_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_geometry_sample(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_sample(AddNodePanel, GeometryNodesPanel):
     bl_label = "Sample"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_sample_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_geometry_write(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_write(AddNodePanel, GeometryNodesPanel):
     bl_label = "Write"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_write_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_geometry_material(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_material(AddNodePanel, GeometryNodesPanel):
     bl_label = "Material"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_material_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_geometry_operations(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_geometry_operations(AddNodePanel, GeometryNodesPanel):
     bl_label = "Operations"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_operations_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_curve(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_curve(AddNodePanel, GeometryNodesPanel):
     bl_label = "Curve"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_curve_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
-
     def draw(self, context):
         layout = self.layout
 
 
-class NODES_PT_toolshelf_gn_add_curve_read(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_curve_read(AddNodePanel, GeometryNodesPanel):
     bl_label = "Read"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_curve_read_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_curve_sample(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_curve_sample(AddNodePanel, GeometryNodesPanel):
     bl_label = "Sample"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_curve_sample_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_curve_write(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_curve_write(AddNodePanel, GeometryNodesPanel):
     bl_label = "Write"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_curve_write_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_curve_operations(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_curve_operations(AddNodePanel, GeometryNodesPanel):
     bl_label = "Operations"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_curve_operations_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_curve_primitives(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_curve_primitives(AddNodePanel, GeometryNodesPanel):
     bl_label = "Primitives"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_curve_primitives_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_curve_topology(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_curve_topology(AddNodePanel, GeometryNodesPanel):
     bl_label = "Topology"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_curve_topology_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_grease_pencil(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil(AddNodePanel, GeometryNodesPanel):
     bl_label = "Grease Pencil"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
-
     def draw(self, context):
         layout = self.layout
 
 
-class NODES_PT_toolshelf_gn_add_grease_pencil_read(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil_read(AddNodePanel, GeometryNodesPanel):
     bl_label = "Read"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_read_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_grease_pencil_write(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil_write(AddNodePanel, GeometryNodesPanel):
     bl_label = "Write"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_write_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_grease_pencil_operations(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_grease_pencil_operations(AddNodePanel, GeometryNodesPanel):
     bl_label = "Operations"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_operations_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_instances(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_instances(AddNodePanel, GeometryNodesPanel):
     bl_label = "Instances"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_instance_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_mesh(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh(AddNodePanel, GeometryNodesPanel):
     bl_label = "Mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
     def draw(self, context):
         layout = self.layout
 
 
-class NODES_PT_toolshelf_gn_add_mesh_read(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_read(AddNodePanel, GeometryNodesPanel):
     bl_label = "Read"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_read_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_mesh_sample(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_sample(AddNodePanel, GeometryNodesPanel):
     bl_label = "Sample"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_sample_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_mesh_write(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_write(AddNodePanel, GeometryNodesPanel):
     bl_label = "Write"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_write_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_mesh_operations(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_operations(AddNodePanel, GeometryNodesPanel):
     bl_label = "Operations"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_operations_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_mesh_primitives(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_primitives(AddNodePanel, GeometryNodesPanel):
     bl_label = "Primitives"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_primitives_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_mesh_topology(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_topology(AddNodePanel, GeometryNodesPanel):
     bl_label = "Topology"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_topology_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_mesh_uv(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_mesh_uv(AddNodePanel, GeometryNodesPanel):
     bl_label = "UV"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_uv_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_point(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_point(AddNodePanel, GeometryNodesPanel):
     bl_label = "Point"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_point_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_volume(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_volume(AddNodePanel, GeometryNodesPanel):
     bl_label = "Volume"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_volume_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_volume_read(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_volume_read(AddNodePanel, GeometryNodesPanel):
     bl_label = "Read"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_volume_read_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_volume_sample(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_volume_sample(AddNodePanel, GeometryNodesPanel):
     bl_label = "Sample"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_volume_sample_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_volume_write(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_volume_write(AddNodePanel, GeometryNodesPanel):
     bl_label = "Write"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_volume_write_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_volume_operations(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_volume_operations(AddNodePanel, GeometryNodesPanel):
     bl_label = "Operations"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_volume_operations_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_volume_primitives(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_volume_primitives(AddNodePanel, GeometryNodesPanel):
     bl_label = "Primitives"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_volume_primitives_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_simulation(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_simulation(AddNodePanel, GeometryNodesPanel):
     bl_label = "Simulation"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_simulation_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_color(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_color(AddNodePanel, GeometryNodesPanel):
     bl_label = "Color"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_color_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_texture(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_texture(AddNodePanel, GeometryNodesPanel):
     bl_label = "Texture"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_texture_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities(AddNodePanel, GeometryNodesPanel):
     bl_label = "Utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_math(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_math(AddNodePanel, GeometryNodesPanel):
     bl_label = "Math"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_math_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_text(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_text(AddNodePanel, GeometryNodesPanel):
     bl_label = "Text"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_text_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_vector(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_vector(AddNodePanel, GeometryNodesPanel):
     bl_label = "Vector"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_vector_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_bundle(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_bundle(AddNodePanel, GeometryNodesPanel):
     bl_label = "Bundle"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_category_utilities_bundle_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_closure(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_closure(AddNodePanel, GeometryNodesPanel):
     bl_label = "Closure"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_category_utilities_closure_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_field(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_field(AddNodePanel, GeometryNodesPanel):
     bl_label = "Field"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_field_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_lists(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_lists(AddNodePanel, GeometryNodesPanel):
     bl_label = "Lists"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_list_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_matrix(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_matrix(AddNodePanel, GeometryNodesPanel):
     bl_label = "Matrix"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_matrix_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_rotation(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_rotation(AddNodePanel, GeometryNodesPanel):
     bl_label = "Rotation"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_rotation_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_sound(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_sound(AddNodePanel, GeometryNodesPanel):
     bl_label = "Sound"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_sound_base
 
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
-
-class NODES_PT_toolshelf_gn_add_utilities_deprecated(AddNodePanel):
+class NODES_PT_toolshelf_gn_add_utilities_deprecated(AddNodePanel, GeometryNodesPanel):
     bl_label = "Deprecated"
     bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-
     layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_deprecated_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree')
 
 
 classes = (
