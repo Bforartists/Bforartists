@@ -19,6 +19,53 @@ from bl_ui import (
 )
 
 
+
+def generate_panel(name, base, template, pathing_dict=None):
+    if pathing_dict is None:
+        pathing_dict = {}
+
+    attrs = {
+        "bl_label": base.bl_label, 
+        "layout_base": base, 
+        "pathing_dict": pathing_dict
+    }
+
+    if hasattr(base, "menu_path"):
+        attrs["menu_path"] = base.menu_path
+
+        path = "/".join(base.menu_path.split("/")[:-1])
+        attrs["bl_parent_id"] = pathing_dict[path]
+
+    if "poll" in base.__dict__:
+        attrs["poll"] = base.poll
+
+    return type(name, (AddNodePanel, template), attrs)
+
+
+def generate_panels(menus, template):
+    pathing_dict = {}
+    pathing_dict = generate_pathing_dict(pathing_dict, menus)
+
+    menus = tuple(
+        generate_panel(bl_idname, layout_base, template, pathing_dict)
+        for bl_idname, layout_base in menus.items()
+    )
+
+    return menus
+
+
+def generate_pathing_dict(pathing_dict, menus):
+    for name, menu in menus.items():
+        if hasattr(menu, "menu_path"):
+            menu_path = menu.menu_path
+        else:
+            menu_path = menu.bl_label
+
+        pathing_dict[menu_path] = name
+
+    return pathing_dict
+
+
 class CompositorNodesPanel:
     @classmethod
     def poll(cls, context):
