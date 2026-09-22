@@ -43,6 +43,20 @@ class TextureNodesPanel:
         return (context.space_data.tree_type == 'TextureNodeTree')
 
 
+def use_icon_buttons(context=None):
+    if context is None:
+        context = bpy.context
+
+    return context.preferences.addons["bforartists_toolbar_settings"].preferences.Node_text_or_icon
+
+
+def filter_common(context=None):
+    if context is None:
+        context = bpy.context
+
+    return context.preferences.addons["bforartists_toolbar_settings"].preferences.Node_shader_add_common
+
+
 class LayoutWrapper:
     def __init__(self, parent):
         self.owner = parent
@@ -91,20 +105,6 @@ class PanelWrapper:
         return getattr(self.actual_class, name)
 
 
-def use_icon_buttons(context=None):
-    if context is None:
-        context = bpy.context
-
-    return context.preferences.addons["bforartists_toolbar_settings"].preferences.Node_text_or_icon
-
-
-def filter_common(context=None):
-    if context is None:
-        context = bpy.context
-
-    return context.preferences.addons["bforartists_toolbar_settings"].preferences.Node_shader_add_common
-
-
 class AddNodePanel(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = 'NODE_EDITOR'
@@ -112,13 +112,6 @@ class AddNodePanel(bpy.types.Panel):
     bl_category = "Add"
 
     menu_path = None
-
-    @classmethod
-    def do_nothing(cls, *args, **kwargs):
-        return
-
-    draw_assets_for_catalog = do_nothing
-    draw_menu = do_nothing
 
     @staticmethod
     def operator_label(label):
@@ -129,12 +122,20 @@ class AddNodePanel(bpy.types.Panel):
         return AddNodeMenu.node_operator(layout, node_type, label=cls.operator_label(label), **kwargs)
 
     @classmethod
-    def node_operator_with_searchable_enum(cls, context, layout, node_type, *args, label=None, **kwargs):
+    def node_operator_ignore_extra_entries(cls, context, layout, node_type, *args, label=None, **kwargs):
         return AddNodeMenu.node_operator(layout, node_type, label=cls.operator_label(label), **kwargs)
 
-    node_operator_with_outputs = node_operator_with_searchable_enum
-    node_operator_with_searchable_enum_socket = node_operator_with_searchable_enum
-        
+    node_operator_with_searchable_enum = node_operator_ignore_extra_entries
+    node_operator_with_outputs = node_operator_ignore_extra_entries
+    node_operator_with_searchable_enum_socket = node_operator_ignore_extra_entries
+
+    @classmethod
+    def do_nothing(cls, *args, **kwargs):
+        return
+
+    draw_assets_for_catalog = do_nothing
+    draw_menu = do_nothing
+
     def __getattr__(self, name):
         func = getattr(AddNodeMenu, name)
 
