@@ -395,7 +395,7 @@ class NODES_PT_relations_layout(AddNodePanel):
     layout_base = node_add_menu.NODE_MT_layout_base
 
 
-class NODES_PT_toolshelf_shader_add_input(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_input(AddNodePanel, ShaderNodesPanel):
     bl_label = "Input"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_input_base
 
@@ -412,7 +412,7 @@ class NODES_PT_toolshelf_shader_add_input(AddNodePanel):
         self.node_operator(layout, "ShaderNodeTexCoord")
 
 
-class NODES_PT_toolshelf_shader_add_input_constant(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_input_constant(AddNodePanel, ShaderNodesPanel):
     bl_label = "Constant"
     bl_parent_id = "NODES_PT_toolshelf_shader_add_input"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_input_constant_base
@@ -427,7 +427,7 @@ class NODES_PT_toolshelf_shader_add_input_constant(AddNodePanel):
         self.node_operator(layout, "FunctionNodeInputVector")
 
 
-class NODES_PT_toolshelf_shader_add_output(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_output(AddNodePanel, ShaderNodesPanel):
     bl_label = "Output"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_output_base
 
@@ -440,7 +440,7 @@ class NODES_PT_toolshelf_shader_add_output(AddNodePanel):
         self.node_operator(layout, "ShaderNodeOutputWorld", poll=is_shader_type(context, 'WORLD'))
 
 
-class NODES_PT_toolshelf_shader_add_shader(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_shader(AddNodePanel, ShaderNodesPanel):
     bl_label = "Shader"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_shader_base
 
@@ -469,12 +469,12 @@ class NODES_PT_toolshelf_shader_add_shader(AddNodePanel):
         self.node_operator(layout, "ShaderNodeVolumeScatter")
 
 
-class NODES_PT_toolshelf_shader_add_displacement(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_displacement(AddNodePanel, ShaderNodesPanel):
     bl_label = "Displacement"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_displacement_base
 
 
-class NODES_PT_toolshelf_shader_add_color(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_color(AddNodePanel, ShaderNodesPanel):
     bl_label = "Color"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_color_base
     
@@ -497,7 +497,7 @@ class NODES_PT_toolshelf_shader_add_color(AddNodePanel):
         self.node_operator(layout, "ShaderNodeShaderToRGB", poll=is_engine(context, 'BLENDER_EEVEE'))
 
 
-class NODES_PT_toolshelf_shader_add_texture(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_texture(AddNodePanel, ShaderNodesPanel):
     bl_label = "Texture"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_texture_base
     
@@ -512,7 +512,7 @@ class NODES_PT_toolshelf_shader_add_texture(AddNodePanel):
         self.node_operator(layout, "ShaderNodeTexVoronoi")
 
 
-class NODES_PT_toolshelf_shader_add_utilities(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_utilities(AddNodePanel, ShaderNodesPanel):
     bl_label = "Utilities"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_utilities_base
     
@@ -530,13 +530,13 @@ class NODES_PT_toolshelf_shader_add_utilities(AddNodePanel):
         self.node_operator(layout, "GeometryNodeSwitch")
 
 
-class NODES_PT_toolshelf_shader_add_math(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_math(AddNodePanel, ShaderNodesPanel):
     bl_label = "Math"
     bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_math_base
 
 
-class NODES_PT_toolshelf_shader_add_vector(AddNodePanel):
+class NODES_PT_toolshelf_shader_add_vector(AddNodePanel, ShaderNodesPanel):
     bl_label = "Vector"
     bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
     layout_base = node_add_menu_shader.NODE_MT_shader_node_vector_base
@@ -671,37 +671,37 @@ class NODES_PT_toolshelf_compositor_add_utilities_text(AddNodePanel, CompositorN
     layout_base = node_add_menu_compositor.NODE_MT_compositor_node_text_base
 
 
-class NODES_PT_toolshelf_texture_add_input(AddNodePanel):
+class NODES_PT_toolshelf_texture_add_input(AddNodePanel, TextureNodesPanel):
     bl_label = "Input"
     layout_base = node_add_menu_texture.NODE_MT_texture_node_input_base
 
 
-class NODES_PT_toolshelf_texture_add_output(AddNodePanel):
+class NODES_PT_toolshelf_texture_add_output(AddNodePanel, TextureNodesPanel):
     bl_label = "Output"
     layout_base = node_add_menu_texture.NODE_MT_texture_node_output_base
 
 
-class NODES_PT_toolshelf_texture_add_color(AddNodePanel):
+class NODES_PT_toolshelf_texture_add_color(AddNodePanel, TextureNodesPanel):
     bl_label = "Color"
     layout_base = node_add_menu_texture.NODE_MT_texture_node_color_base
 
 
-class NODES_PT_toolshelf_texture_add_converter(AddNodePanel):
+class NODES_PT_toolshelf_texture_add_converter(AddNodePanel, TextureNodesPanel):
     bl_label = "Converter"
     layout_base = node_add_menu_texture.NODE_MT_texture_node_converter_base
 
 
-class NODES_PT_toolshelf_texture_add_distort(AddNodePanel):
+class NODES_PT_toolshelf_texture_add_distort(AddNodePanel, TextureNodesPanel):
     bl_label = "Distort"
     layout_base = node_add_menu_texture.NODE_MT_texture_node_distort_base
 
 
-class NODES_PT_toolshelf_texture_add_pattern(AddNodePanel):
+class NODES_PT_toolshelf_texture_add_pattern(AddNodePanel, TextureNodesPanel):
     bl_label = "Pattern"
     layout_base = node_add_menu_texture.NODE_MT_texture_node_pattern_base
 
 
-class NODES_PT_toolshelf_texture_add_texture(AddNodePanel):
+class NODES_PT_toolshelf_texture_add_texture(AddNodePanel, TextureNodesPanel):
     bl_label = "Textures"
     layout_base = node_add_menu_texture.NODE_MT_texture_node_texture_base
 
