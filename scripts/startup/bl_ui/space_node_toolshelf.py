@@ -490,481 +490,109 @@ class NODES_PT_toolshelf_shader_add_vector(AddNodePanel, ShaderNodesPanel):
         self.node_operator(layout, "ShaderNodeVectorMath")
 
 
-class NODES_PT_toolshelf_compositor_add_input(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Input"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_input_base
+compositor_nodes_panels = {
+    "NODES_PT_toolshelf_compositor_add_input" : node_add_menu_compositor.NODE_MT_compositor_node_input_base,
+    "NODES_PT_toolshelf_compositor_add_input_constant" : node_add_menu_compositor.NODE_MT_compositor_node_input_constant_base,
+    "NODES_PT_toolshelf_compositor_add_input_scene" : node_add_menu_compositor.NODE_MT_compositor_node_input_scene_base,
+    "NODES_PT_toolshelf_compositor_add_output" : node_add_menu_compositor.NODE_MT_compositor_node_output_base,
+    "NODES_PT_toolshelf_compositor_add_color" : node_add_menu_compositor.NODE_MT_compositor_node_color_base,
+    "NODES_PT_toolshelf_compositor_add_color_adjust" : node_add_menu_compositor.NODE_MT_compositor_node_color_adjust_base,
+    "NODES_PT_toolshelf_compositor_add_creative" : node_add_menu_compositor.NODE_MT_compositor_node_creative_base,
+    "NODES_PT_toolshelf_compositor_add_filter" : node_add_menu_compositor.NODE_MT_compositor_node_filter_base,
+    "NODES_PT_toolshelf_compositor_add_filter_blur" : node_add_menu_compositor.NODE_MT_compositor_node_filter_blur_base,
+    "NODES_PT_toolshelf_compositor_add_keying" : node_add_menu_compositor.NODE_MT_compositor_node_keying_base,
+    "NODES_PT_toolshelf_compositor_add_mask" : node_add_menu_compositor.NODE_MT_compositor_node_mask_base,
+    "NODES_PT_toolshelf_compositor_add_tracking" : node_add_menu_compositor.NODE_MT_compositor_node_tracking_base,
+    "NODES_PT_toolshelf_compositor_add_texture" : node_add_menu_compositor.NODE_MT_compositor_node_texture_base,
+    "NODES_PT_toolshelf_compositor_add_transform" : node_add_menu_compositor.NODE_MT_compositor_node_transform_base,
+    "NODES_PT_toolshelf_compositor_add_utilities" : node_add_menu_compositor.NODE_MT_compositor_node_utilities_base,
+    "NODES_PT_toolshelf_compositor_add_utilities_math" : node_add_menu_compositor.NODE_MT_compositor_node_math_base,
+    "NODES_PT_toolshelf_compositor_add_utilities_matrix" : node_add_menu_compositor.NODE_MT_compositor_utilities_matrix_base,
+    "NODES_PT_toolshelf_compositor_add_utilities_rotation" : node_add_menu_compositor.NODE_MT_compositor_node_rotation_base,
+    "NODES_PT_toolshelf_compositor_add_utilities_vector" : node_add_menu_compositor.NODE_MT_compositor_node_vector_base,
+    "NODES_PT_toolshelf_compositor_add_utilities_text" : node_add_menu_compositor.NODE_MT_compositor_node_text_base,
+}
 
 
-class NODES_PT_toolshelf_compositor_add_input_constant(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Constant"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_input_constant_base
+texture_nodes_panels = {
+    "NODES_PT_toolshelf_texture_add_input" : node_add_menu_texture.NODE_MT_texture_node_input_base,
+    "NODES_PT_toolshelf_texture_add_output" : node_add_menu_texture.NODE_MT_texture_node_output_base,
+    "NODES_PT_toolshelf_texture_add_color" : node_add_menu_texture.NODE_MT_texture_node_color_base,
+    "NODES_PT_toolshelf_texture_add_converter" : node_add_menu_texture.NODE_MT_texture_node_converter_base,
+    "NODES_PT_toolshelf_texture_add_distort" : node_add_menu_texture.NODE_MT_texture_node_distort_base,
+    "NODES_PT_toolshelf_texture_add_pattern" : node_add_menu_texture.NODE_MT_texture_node_pattern_base,
+    "NODES_PT_toolshelf_texture_add_texture" : node_add_menu_texture.NODE_MT_texture_node_texture_base,
+}
 
 
-class NODES_PT_toolshelf_compositor_add_input_scene(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Scene"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_input"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_input_scene_base
+geometry_nodes_panels = {
+    "NODES_PT_toolshelf_gn_add_input" : node_add_menu_geometry.NODE_MT_gn_input_base,
+    "NODES_PT_toolshelf_gn_add_input_constant" : node_add_menu_geometry.NODE_MT_gn_input_constant_base,
+    "NODES_PT_toolshelf_gn_add_input_gizmo" : node_add_menu_geometry.NODE_MT_gn_input_gizmo_base,
+    "NODES_PT_toolshelf_gn_add_input_file" : node_add_menu_geometry.NODE_MT_gn_input_import_base,
+    "NODES_PT_toolshelf_gn_add_input_scene" : node_add_menu_geometry.NODE_MT_gn_input_scene_base,
 
-
-class NODES_PT_toolshelf_compositor_add_output(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Output"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_output_base
-
-
-class NODES_PT_toolshelf_compositor_add_color(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Color"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_color_base
-
-
-class NODES_PT_toolshelf_compositor_add_color_adjust(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Adjust"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_color"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_color_adjust_base
-
-
-class NODES_PT_toolshelf_compositor_add_creative(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Creative"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_creative_base
-
-
-class NODES_PT_toolshelf_compositor_add_filter(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Filter"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_filter_base
-
-
-class NODES_PT_toolshelf_compositor_add_filter_blur(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Blur"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_filter"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_filter_blur_base
-
-
-class NODES_PT_toolshelf_compositor_add_keying(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Keying"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_keying_base
-
-
-class NODES_PT_toolshelf_compositor_add_mask(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Mask"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_mask_base
-
-
-class NODES_PT_toolshelf_compositor_add_tracking(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Tracking"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_tracking_base
-
-
-class NODES_PT_toolshelf_compositor_add_texture(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Texture"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_texture_base
-
-
-class NODES_PT_toolshelf_compositor_add_transform(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Transform"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_transform_base
-
-
-class NODES_PT_toolshelf_compositor_add_utilities(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Utilities"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_utilities_base
-
-
-class NODES_PT_toolshelf_compositor_add_utilities_math(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Math"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_math_base
-
-
-class NODES_PT_toolshelf_compositor_add_utilities_matrix(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Matrix"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_utilities_matrix_base
-
-
-class NODES_PT_toolshelf_compositor_add_utilities_rotation(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Rotation"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_rotation_base
-
-
-class NODES_PT_toolshelf_compositor_add_utilities_vector(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Vector"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_vector_base
-
-
-class NODES_PT_toolshelf_compositor_add_utilities_text(AddNodePanel, CompositorNodesPanel):
-    bl_label = "Text"
-    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
-    layout_base = node_add_menu_compositor.NODE_MT_compositor_node_text_base
-
-
-class NODES_PT_toolshelf_texture_add_input(AddNodePanel, TextureNodesPanel):
-    bl_label = "Input"
-    layout_base = node_add_menu_texture.NODE_MT_texture_node_input_base
-
-
-class NODES_PT_toolshelf_texture_add_output(AddNodePanel, TextureNodesPanel):
-    bl_label = "Output"
-    layout_base = node_add_menu_texture.NODE_MT_texture_node_output_base
-
-
-class NODES_PT_toolshelf_texture_add_color(AddNodePanel, TextureNodesPanel):
-    bl_label = "Color"
-    layout_base = node_add_menu_texture.NODE_MT_texture_node_color_base
-
-
-class NODES_PT_toolshelf_texture_add_converter(AddNodePanel, TextureNodesPanel):
-    bl_label = "Converter"
-    layout_base = node_add_menu_texture.NODE_MT_texture_node_converter_base
-
-
-class NODES_PT_toolshelf_texture_add_distort(AddNodePanel, TextureNodesPanel):
-    bl_label = "Distort"
-    layout_base = node_add_menu_texture.NODE_MT_texture_node_distort_base
-
-
-class NODES_PT_toolshelf_texture_add_pattern(AddNodePanel, TextureNodesPanel):
-    bl_label = "Pattern"
-    layout_base = node_add_menu_texture.NODE_MT_texture_node_pattern_base
-
-
-class NODES_PT_toolshelf_texture_add_texture(AddNodePanel, TextureNodesPanel):
-    bl_label = "Textures"
-    layout_base = node_add_menu_texture.NODE_MT_texture_node_texture_base
-
-
-class NODES_PT_toolshelf_gn_add_input(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Input"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_input_base
-
-    def draw(self, context):
-        layout = self.layout
-
-
-class NODES_PT_toolshelf_gn_add_input_constant(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Constant"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_input_constant_base
-
-
-class NODES_PT_toolshelf_gn_add_input_gizmo(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Gizmo"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
+    "NODES_PT_toolshelf_gn_add_output" : node_add_menu_geometry.NODE_MT_gn_output_base,
     
-    layout_base = node_add_menu_geometry.NODE_MT_gn_input_gizmo_base
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'GeometryNodeTree') and (not is_tool_tree(context))
-
-
-class NODES_PT_toolshelf_gn_add_input_file(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Import"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_input_import_base
-
-
-class NODES_PT_toolshelf_gn_add_input_scene(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Scene"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_input"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_input_scene_base
-
-
-class NODES_PT_toolshelf_gn_add_output(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Output"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_output_base
-
-
-class NODES_PT_toolshelf_gn_add_attribute(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Attribute"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_attribute_base
-
-
-class NODES_PT_toolshelf_gn_add_geometry(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Geometry"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_base
-
-
-class NODES_PT_toolshelf_gn_add_geometry_read(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Read"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_read_base
-
-
-class NODES_PT_toolshelf_gn_add_geometry_sample(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Sample"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_sample_base
-
-
-class NODES_PT_toolshelf_gn_add_geometry_write(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Write"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_write_base
-
-
-class NODES_PT_toolshelf_gn_add_geometry_material(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Material"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_material_base
-
-
-class NODES_PT_toolshelf_gn_add_geometry_operations(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Operations"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_geometry"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_geometry_operations_base
-
-
-class NODES_PT_toolshelf_gn_add_curve(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Curve"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_curve_base
-
-    def draw(self, context):
-        layout = self.layout
-
-
-class NODES_PT_toolshelf_gn_add_curve_read(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Read"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_curve_read_base
-
-
-class NODES_PT_toolshelf_gn_add_curve_sample(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Sample"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_curve_sample_base
-
-
-class NODES_PT_toolshelf_gn_add_curve_write(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Write"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_curve_write_base
-
-
-class NODES_PT_toolshelf_gn_add_curve_operations(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Operations"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_curve_operations_base
-
-
-class NODES_PT_toolshelf_gn_add_curve_primitives(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Primitives"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_curve_primitives_base
-
-
-class NODES_PT_toolshelf_gn_add_curve_topology(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Topology"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_curve"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_curve_topology_base
-
-
-class NODES_PT_toolshelf_gn_add_grease_pencil(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Grease Pencil"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_base
-
-    def draw(self, context):
-        layout = self.layout
-
-
-class NODES_PT_toolshelf_gn_add_grease_pencil_read(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Read"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_read_base
-
-
-class NODES_PT_toolshelf_gn_add_grease_pencil_write(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Write"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_write_base
-
-
-class NODES_PT_toolshelf_gn_add_grease_pencil_operations(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Operations"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_grease_pencil"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_grease_pencil_operations_base
-
-
-class NODES_PT_toolshelf_gn_add_instances(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Instances"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_instance_base
-
-
-class NODES_PT_toolshelf_gn_add_mesh(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_base
-
-    def draw(self, context):
-        layout = self.layout
-
-
-class NODES_PT_toolshelf_gn_add_mesh_read(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Read"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_read_base
-
-
-class NODES_PT_toolshelf_gn_add_mesh_sample(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Sample"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_sample_base
-
-
-class NODES_PT_toolshelf_gn_add_mesh_write(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Write"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_write_base
-
-
-class NODES_PT_toolshelf_gn_add_mesh_operations(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Operations"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_operations_base
-
-
-class NODES_PT_toolshelf_gn_add_mesh_primitives(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Primitives"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_primitives_base
-
-
-class NODES_PT_toolshelf_gn_add_mesh_topology(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Topology"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_topology_base
-
-
-class NODES_PT_toolshelf_gn_add_mesh_uv(AddNodePanel, GeometryNodesPanel):
-    bl_label = "UV"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_mesh"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_mesh_uv_base
-
-
-class NODES_PT_toolshelf_gn_add_point(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Point"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_point_base
-
-
-class NODES_PT_toolshelf_gn_add_volume(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Volume"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_volume_base
-
-
-class NODES_PT_toolshelf_gn_add_volume_read(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Read"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_volume_read_base
-
-
-class NODES_PT_toolshelf_gn_add_volume_sample(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Sample"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_volume_sample_base
-
-
-class NODES_PT_toolshelf_gn_add_volume_write(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Write"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_volume_write_base
-
-
-class NODES_PT_toolshelf_gn_add_volume_operations(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Operations"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_volume_operations_base
-
-
-class NODES_PT_toolshelf_gn_add_volume_primitives(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Primitives"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_volume"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_volume_primitives_base
-
-
-class NODES_PT_toolshelf_gn_add_simulation(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Simulation"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_simulation_base
-
-
-class NODES_PT_toolshelf_gn_add_color(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Color"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_color_base
-
-
-class NODES_PT_toolshelf_gn_add_texture(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Texture"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_texture_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_math(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Math"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_math_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_text(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Text"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_text_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_vector(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Vector"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_vector_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_bundle(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Bundle"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_category_utilities_bundle_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_closure(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Closure"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_category_utilities_closure_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_field(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Field"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_field_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_lists(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Lists"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_list_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_matrix(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Matrix"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_matrix_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_rotation(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Rotation"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_rotation_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_sound(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Sound"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_sound_base
-
-
-class NODES_PT_toolshelf_gn_add_utilities_deprecated(AddNodePanel, GeometryNodesPanel):
-    bl_label = "Deprecated"
-    bl_parent_id = "NODES_PT_toolshelf_gn_add_utilities"
-    layout_base = node_add_menu_geometry.NODE_MT_gn_utilities_deprecated_base
+    "NODES_PT_toolshelf_gn_add_attribute" : node_add_menu_geometry.NODE_MT_gn_attribute_base,
+
+    "NODES_PT_toolshelf_gn_add_geometry" : node_add_menu_geometry.NODE_MT_gn_geometry_base,
+    "NODES_PT_toolshelf_gn_add_geometry_read" : node_add_menu_geometry.NODE_MT_gn_geometry_read_base,
+    "NODES_PT_toolshelf_gn_add_geometry_sample" : node_add_menu_geometry.NODE_MT_gn_geometry_sample_base,
+    "NODES_PT_toolshelf_gn_add_geometry_write" : node_add_menu_geometry.NODE_MT_gn_geometry_write_base,
+    "NODES_PT_toolshelf_gn_add_geometry_material" : node_add_menu_geometry.NODE_MT_gn_material_base,
+    "NODES_PT_toolshelf_gn_add_geometry_operations" : node_add_menu_geometry.NODE_MT_gn_geometry_operations_base,
+
+    "NODES_PT_toolshelf_gn_add_curve" : node_add_menu_geometry.NODE_MT_gn_curve_base,
+    "NODES_PT_toolshelf_gn_add_curve_read" : node_add_menu_geometry.NODE_MT_gn_curve_read_base,
+    "NODES_PT_toolshelf_gn_add_curve_sample" : node_add_menu_geometry.NODE_MT_gn_curve_sample_base,
+    "NODES_PT_toolshelf_gn_add_curve_write" : node_add_menu_geometry.NODE_MT_gn_curve_write_base,
+    "NODES_PT_toolshelf_gn_add_curve_operations" : node_add_menu_geometry.NODE_MT_gn_curve_operations_base,
+    "NODES_PT_toolshelf_gn_add_curve_primitives" : node_add_menu_geometry.NODE_MT_gn_curve_primitives_base,
+    "NODES_PT_toolshelf_gn_add_curve_topology" : node_add_menu_geometry.NODE_MT_gn_curve_topology_base,
+
+    "NODES_PT_toolshelf_gn_add_grease_pencil" : node_add_menu_geometry.NODE_MT_gn_grease_pencil_base,
+    "NODES_PT_toolshelf_gn_add_grease_pencil_read" : node_add_menu_geometry.NODE_MT_gn_grease_pencil_read_base,
+    "NODES_PT_toolshelf_gn_add_grease_pencil_write" : node_add_menu_geometry.NODE_MT_gn_grease_pencil_write_base,
+    "NODES_PT_toolshelf_gn_add_grease_pencil_operations" : node_add_menu_geometry.NODE_MT_gn_grease_pencil_operations_base,
+
+    "NODES_PT_toolshelf_gn_add_instances" : node_add_menu_geometry.NODE_MT_gn_instance_base,
+
+    "NODES_PT_toolshelf_gn_add_mesh" : node_add_menu_geometry.NODE_MT_gn_mesh_base,
+    "NODES_PT_toolshelf_gn_add_mesh_read" : node_add_menu_geometry.NODE_MT_gn_mesh_read_base,
+    "NODES_PT_toolshelf_gn_add_mesh_sample" : node_add_menu_geometry.NODE_MT_gn_mesh_sample_base,
+    "NODES_PT_toolshelf_gn_add_mesh_write" : node_add_menu_geometry.NODE_MT_gn_mesh_write_base,
+    "NODES_PT_toolshelf_gn_add_mesh_operations" : node_add_menu_geometry.NODE_MT_gn_mesh_operations_base,
+    "NODES_PT_toolshelf_gn_add_mesh_primitives" : node_add_menu_geometry.NODE_MT_gn_mesh_primitives_base,
+    "NODES_PT_toolshelf_gn_add_mesh_topology" : node_add_menu_geometry.NODE_MT_gn_mesh_topology_base,
+    "NODES_PT_toolshelf_gn_add_mesh_uv" : node_add_menu_geometry.NODE_MT_gn_mesh_uv_base,
+
+    "NODES_PT_toolshelf_gn_add_point" : node_add_menu_geometry.NODE_MT_gn_point_base,
+
+    "NODES_PT_toolshelf_gn_add_volume" : node_add_menu_geometry.NODE_MT_gn_volume_base,
+    "NODES_PT_toolshelf_gn_add_volume_read" : node_add_menu_geometry.NODE_MT_gn_volume_read_base,
+    "NODES_PT_toolshelf_gn_add_volume_sample" : node_add_menu_geometry.NODE_MT_gn_volume_sample_base,
+    "NODES_PT_toolshelf_gn_add_volume_write" : node_add_menu_geometry.NODE_MT_gn_volume_write_base,
+    "NODES_PT_toolshelf_gn_add_volume_operations" : node_add_menu_geometry.NODE_MT_gn_volume_operations_base,
+    "NODES_PT_toolshelf_gn_add_volume_primitives" : node_add_menu_geometry.NODE_MT_gn_volume_primitives_base,
+
+    "NODES_PT_toolshelf_gn_add_simulation" : node_add_menu_geometry.NODE_MT_gn_simulation_base,
+    "NODES_PT_toolshelf_gn_add_color" : node_add_menu_geometry.NODE_MT_gn_color_base,
+    "NODES_PT_toolshelf_gn_add_texture" : node_add_menu_geometry.NODE_MT_gn_texture_base,
+
+    "NODES_PT_toolshelf_gn_add_utilities" : node_add_menu_geometry.NODE_MT_gn_utilities_base,
+    "NODES_PT_toolshelf_gn_add_utilities_math" : node_add_menu_geometry.NODE_MT_gn_utilities_math_base,
+    "NODES_PT_toolshelf_gn_add_utilities_text" : node_add_menu_geometry.NODE_MT_gn_utilities_text_base,
+    "NODES_PT_toolshelf_gn_add_utilities_vector" : node_add_menu_geometry.NODE_MT_gn_utilities_vector_base,
+    "NODES_PT_toolshelf_gn_add_utilities_bundle" : node_add_menu_geometry.NODE_MT_category_utilities_bundle_base,
+    "NODES_PT_toolshelf_gn_add_utilities_closure" : node_add_menu_geometry.NODE_MT_category_utilities_closure_base,
+    "NODES_PT_toolshelf_gn_add_utilities_field" : node_add_menu_geometry.NODE_MT_gn_utilities_field_base,
+    "NODES_PT_toolshelf_gn_add_utilities_lists" : node_add_menu_geometry.NODE_MT_gn_utilities_list_base,
+    "NODES_PT_toolshelf_gn_add_utilities_matrix" : node_add_menu_geometry.NODE_MT_gn_utilities_matrix_base,
+    "NODES_PT_toolshelf_gn_add_utilities_rotation" : node_add_menu_geometry.NODE_MT_gn_utilities_rotation_base,
+    "NODES_PT_toolshelf_gn_add_utilities_sound" : node_add_menu_geometry.NODE_MT_gn_utilities_sound_base,
+    "NODES_PT_toolshelf_gn_add_utilities_deprecated" : node_add_menu_geometry.NODE_MT_gn_utilities_deprecated_base,
+}
 
 
 classes = (
@@ -994,112 +622,9 @@ classes = (
     NODES_PT_toolshelf_shader_add_math,
     NODES_PT_toolshelf_shader_add_vector,
     #-----------------------
-
-    #-----------------------
-    # Compositor Nodes - Add
-    NODES_PT_toolshelf_compositor_add_input,
-    NODES_PT_toolshelf_compositor_add_input_constant,
-    NODES_PT_toolshelf_compositor_add_input_scene,
-    NODES_PT_toolshelf_compositor_add_output,
-    NODES_PT_toolshelf_compositor_add_color,
-    NODES_PT_toolshelf_compositor_add_color_adjust,
-    NODES_PT_toolshelf_compositor_add_creative,
-    NODES_PT_toolshelf_compositor_add_filter,
-    NODES_PT_toolshelf_compositor_add_filter_blur,
-    NODES_PT_toolshelf_compositor_add_keying,
-    NODES_PT_toolshelf_compositor_add_mask,
-    NODES_PT_toolshelf_compositor_add_tracking,
-    NODES_PT_toolshelf_compositor_add_texture,
-    NODES_PT_toolshelf_compositor_add_transform,
-    NODES_PT_toolshelf_compositor_add_utilities,
-    NODES_PT_toolshelf_compositor_add_utilities_math,
-    NODES_PT_toolshelf_compositor_add_utilities_matrix,
-    NODES_PT_toolshelf_compositor_add_utilities_rotation,
-    NODES_PT_toolshelf_compositor_add_utilities_vector,
-    NODES_PT_toolshelf_compositor_add_utilities_text,
-    #-----------------------
-
-    #-----------------------
-    # Texture Nodes - Add
-    NODES_PT_toolshelf_texture_add_input,
-    NODES_PT_toolshelf_texture_add_output,
-    NODES_PT_toolshelf_texture_add_color,
-    NODES_PT_toolshelf_texture_add_converter,
-    NODES_PT_toolshelf_texture_add_distort,
-    NODES_PT_toolshelf_texture_add_pattern,
-    NODES_PT_toolshelf_texture_add_texture,
-    #-----------------------
-
-
-    #-----------------------
-    # Geometry Nodes - Add
-    NODES_PT_toolshelf_gn_add_input,
-    NODES_PT_toolshelf_gn_add_input_constant,
-    NODES_PT_toolshelf_gn_add_input_gizmo,
-    NODES_PT_toolshelf_gn_add_input_file,
-    NODES_PT_toolshelf_gn_add_input_scene,
-
-    NODES_PT_toolshelf_gn_add_output,
-    
-    NODES_PT_toolshelf_gn_add_attribute,
-
-    NODES_PT_toolshelf_gn_add_geometry,
-    NODES_PT_toolshelf_gn_add_geometry_read,
-    NODES_PT_toolshelf_gn_add_geometry_sample,
-    NODES_PT_toolshelf_gn_add_geometry_write,
-    NODES_PT_toolshelf_gn_add_geometry_material,
-    NODES_PT_toolshelf_gn_add_geometry_operations,
-
-    NODES_PT_toolshelf_gn_add_curve,
-    NODES_PT_toolshelf_gn_add_curve_read,
-    NODES_PT_toolshelf_gn_add_curve_sample,
-    NODES_PT_toolshelf_gn_add_curve_write,
-    NODES_PT_toolshelf_gn_add_curve_operations,
-    NODES_PT_toolshelf_gn_add_curve_primitives,
-    NODES_PT_toolshelf_gn_add_curve_topology,
-
-    NODES_PT_toolshelf_gn_add_grease_pencil,
-    NODES_PT_toolshelf_gn_add_grease_pencil_read,
-    NODES_PT_toolshelf_gn_add_grease_pencil_write,
-    NODES_PT_toolshelf_gn_add_grease_pencil_operations,
-
-    NODES_PT_toolshelf_gn_add_instances,
-
-    NODES_PT_toolshelf_gn_add_mesh,
-    NODES_PT_toolshelf_gn_add_mesh_read,
-    NODES_PT_toolshelf_gn_add_mesh_sample,
-    NODES_PT_toolshelf_gn_add_mesh_write,
-    NODES_PT_toolshelf_gn_add_mesh_operations,
-    NODES_PT_toolshelf_gn_add_mesh_primitives,
-    NODES_PT_toolshelf_gn_add_mesh_topology,
-    NODES_PT_toolshelf_gn_add_mesh_uv,
-
-    NODES_PT_toolshelf_gn_add_point,
-
-    NODES_PT_toolshelf_gn_add_volume,
-    NODES_PT_toolshelf_gn_add_volume_read,
-    NODES_PT_toolshelf_gn_add_volume_sample,
-    NODES_PT_toolshelf_gn_add_volume_write,
-    NODES_PT_toolshelf_gn_add_volume_operations,
-    NODES_PT_toolshelf_gn_add_volume_primitives,
-
-    NODES_PT_toolshelf_gn_add_simulation,
-    NODES_PT_toolshelf_gn_add_color,
-    NODES_PT_toolshelf_gn_add_texture,
-
-    NODES_PT_toolshelf_gn_add_utilities,
-    NODES_PT_toolshelf_gn_add_utilities_math,
-    NODES_PT_toolshelf_gn_add_utilities_text,
-    NODES_PT_toolshelf_gn_add_utilities_vector,
-    NODES_PT_toolshelf_gn_add_utilities_bundle,
-    NODES_PT_toolshelf_gn_add_utilities_closure,
-    NODES_PT_toolshelf_gn_add_utilities_field,
-    NODES_PT_toolshelf_gn_add_utilities_lists,
-    NODES_PT_toolshelf_gn_add_utilities_matrix,
-    NODES_PT_toolshelf_gn_add_utilities_rotation,
-    NODES_PT_toolshelf_gn_add_utilities_sound,
-    NODES_PT_toolshelf_gn_add_utilities_deprecated,
-    #-----------------------
+    *generate_panels(compositor_nodes_panels, template=CompositorNodesPanel),
+    *generate_panels(texture_nodes_panels, template=TextureNodesPanel),
+    *generate_panels(geometry_nodes_panels, template=GeometryNodesPanel),
 )
 
 # BFA - Custom panels for the sidebar toolshelf (END)
