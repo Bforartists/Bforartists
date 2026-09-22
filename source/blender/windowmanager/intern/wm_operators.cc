@@ -2247,6 +2247,22 @@ static std::string wm_call_menu_get_name(wmOperatorType *ot, PointerRNA *ptr)
                 CTX_IFACE_(ot->translation_context, ot->name);
 }
 
+static std::string wm_call_menu_get_description(bContext * /*C*/,
+                                                wmOperatorType * /*ot*/,
+                                                PointerRNA *ptr)
+{
+  char idname[BKE_ST_MAXNAME];
+  RNA_string_get(ptr, "name", idname);
+  MenuType *mt = WM_menutype_find(idname, true);
+  if (!mt) {
+    return "";
+  }
+  if (!mt->description) {
+    return "";
+  }
+  return CTX_IFACE_(mt->translation_context, mt->description);
+}
+
 static void WM_OT_call_menu(wmOperatorType *ot)
 {
   ot->name = "Call Menu";
@@ -2256,6 +2272,7 @@ static void WM_OT_call_menu(wmOperatorType *ot)
   ot->exec = wm_call_menu_exec;
   ot->poll = WM_operator_winactive;
   ot->get_name = wm_call_menu_get_name;
+  ot->get_description = wm_call_menu_get_description;
 
   ot->flag = OPTYPE_INTERNAL;
 

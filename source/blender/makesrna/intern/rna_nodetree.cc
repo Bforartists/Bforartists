@@ -9518,6 +9518,18 @@ static void def_implicit_conversion(BlenderRNA * /*brna*/, StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_socket_update");
 }
 
+static void def_comment(BlenderRNA * /*brna*/, StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  RNA_def_struct_sdna_from(srna, "NodeComment", "storage");
+
+  prop = RNA_def_property(srna, "text", PROP_STRING, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Text", "Text to show in the node");
+  RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, nullptr);
+}
+
 static void rna_def_internal_node(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -10769,6 +10781,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "NodeInternal", "NodeGroupOutput", def_group_output, ICON_GROUPOUTPUT);
   define(brna, "NodeInternal", "NodeReroute", def_reroute, ICON_NODE_REROUTE);
   define(brna, "NodeInternal", "NodeImplicitConversion", def_implicit_conversion, ICON_IMPLICIT_CONVERSION);
+  define(brna, "NodeInternal", "NodeComment", def_comment, ICON_NONE); /*BFA - WIP*/
 
   define(brna, "NodeInternal", "NodeClosureInput", def_closure_input, ICON_NODE_CLOSURE);
   define(brna, "NodeInternal", "NodeClosureOutput", def_closure_output, ICON_NODE_CLOSURE);
@@ -11160,6 +11173,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridMedian", nullptr, ICON_NODE_GRIDMEDIAN);
   define(brna, "GeometryNode", "GeometryNodeGridPrune", nullptr, ICON_NODE_PRUNEGRID);
   define(brna, "GeometryNode", "GeometryNodeGridClip", nullptr, ICON_CLIPPINGBORDER);
+  define(brna, "GeometryNode", "GeometryNodeGridSolvePoisson", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NODE_GRIDTOMESH);
   define(brna, "GeometryNode", "GeometryNodeGridToPoints", nullptr, ICON_MESH_TO_POINTS);
   define(brna, "GeometryNode", "GeometryNodeGridTopologyBoolean", nullptr, ICON_NODE_GRIDTOPLOGYBOOLEAN);
@@ -11168,6 +11182,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);
   define(brna, "GeometryNode", "GeometryNodeImportOBJ", nullptr, ICON_LOAD_OBJ);
   define(brna, "GeometryNode", "GeometryNodeImportPLY", nullptr, ICON_LOAD_PLY);
+  define(brna, "GeometryNode", "GeometryNodeImportSPZ", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeImportSTL", nullptr, ICON_LOAD_STL);
   define(brna, "GeometryNode", "GeometryNodeImportCSV", nullptr, ICON_LOAD_CSV);
   define(brna, "GeometryNode", "GeometryNodeImportText", nullptr, ICON_FILE_TEXT);
@@ -11249,6 +11264,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeOffsetPointInCurve", nullptr, ICON_OFFSET_POINT_IN_CURVE);
   define(brna, "GeometryNode", "GeometryNodePoints", nullptr, ICON_DECORATE);
   define(brna, "GeometryNode", "GeometryNodePointsOfCurve", nullptr, ICON_POINT_OF_CURVE);
+  define(brna, "GeometryNode", "GeometryNodePointsSetType", nullptr, ICON_NONE);
   define(brna, "GeometryNode", "GeometryNodePointsToCurves", nullptr, ICON_POINTS_TO_CURVES);
   define(brna, "GeometryNode", "GeometryNodePointsToSDFGrid", nullptr, ICON_NODE_POINTSTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodePointsToVertices", nullptr, ICON_POINTS_TO_VERTICES);

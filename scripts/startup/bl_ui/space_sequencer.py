@@ -1976,7 +1976,8 @@ class SEQUENCER_MT_preview_view_pie(Menu):
 
 class SEQUENCER_MT_modifier_add(Menu):
     bl_label = "Add Modifier"
-    bl_options = {"SEARCH_ON_KEY_PRESS"}
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+    bl_description = "Add a compositor or sound effect to the active strip"
 
     MODIFIER_TYPES_TO_ICONS = {
         enum_it.identifier: enum_it.icon
@@ -2954,7 +2955,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         layout.use_property_decorate = False
 
         st = context.space_data
-        ed = context.scene.sequence_editor
+        ed = context.sequencer_scene.sequence_editor
 
         col = layout.column()
 

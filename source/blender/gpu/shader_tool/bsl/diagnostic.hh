@@ -128,7 +128,8 @@ enum class Diag {
   ConstexprShiftNegative,
   ConstexprShiftTooLarge,
   ConstexprVarMustBeInitializedByConstantExpr,
-  ConstexprVarMustBeIntOrUint,
+  ConstexprVarMustBeInitializedByCorrectType,
+  ConstexprVarMustBeValidType,
   ConstexprVarMustNotBeArray,
 
   ResourceTableDeclarationAlreadyOfType,
@@ -172,6 +173,7 @@ enum class Diag {
 
   InvalidBinaryOperands,
   InvalidExprTypeChecker,
+  InvalidExprTypeCodegen,
   InvalidInlinedFunctionLocation,
   InvalidNumberLiteral,
   InvalidResourceTypeForResourceTableClass,
@@ -335,8 +337,12 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Shift count {} >= width of type 32";
     case Diag::ConstexprVarMustBeInitializedByConstantExpr:
       return "Constexpr variable '{}' must be initialized by a constant expression";
-    case Diag::ConstexprVarMustBeIntOrUint:
-      return "Constexpr variable must be of type 'int', 'uint', 'bool' or 'float'";
+    case Diag::ConstexprVarMustBeInitializedByCorrectType:
+      return "Constexpr variable '{}' must be initialized by a constant expression of type '{}' "
+             "but got '{}'";
+    case Diag::ConstexprVarMustBeValidType:
+      return "Constexpr variable must be scalar or vector of type 'int', 'uint', 'bool' or "
+             "'float'";
     case Diag::ConstexprVarMustNotBeArray:
       return "Array variables cannot be constexpr";
     case Diag::EmptyClassNotSupportedInBuffer:
@@ -400,6 +406,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Cannot inline recursive call";
     case Diag::InvalidBinaryOperands:
       return "Invalid operands to binary expression ('{}' {} '{}')";
+    case Diag::InvalidExprTypeCodegen:
+      return "Invalid expression in codegen";
     case Diag::InvalidExprTypeChecker:
       return "Invalid expression in type checker";
     case Diag::InvalidInlinedFunctionLocation:
@@ -528,7 +536,7 @@ static inline std::string_view diagnostic_message_get(Diag diag)
     case Diag::UnknownClassInstantiation:
       return "Compiler error: Can't find class symbol";
     case Diag::UnknownFunction:
-      return "Unknown function name";
+      return "Unknown function name '{}'";
     case Diag::UnknownIdentifier:
       return "Use of undeclared identifier '{}'";
     case Diag::UnknownMember:

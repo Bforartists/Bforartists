@@ -90,6 +90,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.generic.select_lasso
   ops.generic.select_line
   ops.generic.select_paint
+  ops.gpencil.carver
   ops.gpencil.draw
   ops.gpencil.draw.eraser
   ops.gpencil.draw.line
@@ -798,6 +799,7 @@ if(WITH_BLENDER)
       gp_caps_flat
       gp_caps_round
       gp_caps_sharp
+      gp_cyclic_stroke # BFA - WIP
       gp_delete_fill
       gp_delete_point
       gp_delete_stroke
