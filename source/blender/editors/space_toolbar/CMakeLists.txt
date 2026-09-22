@@ -8,6 +8,7 @@ set(INC
 	../../blenkernel
 	../../blenlib
 	../../blenloader
+	../../blenloader_core
 	../../gpu
 	../../makesdna
 	../../makesrna
