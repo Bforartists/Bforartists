@@ -19,7 +19,6 @@ from bl_ui import (
 )
 
 
-
 def generate_panel(name, base, template, pathing_dict=None):
     if pathing_dict is None:
         pathing_dict = {}
@@ -232,13 +231,6 @@ def is_engine(context, valid_engines):
 
     try:
         return context.engine in valid_engines
-    except AttributeError:
-        return False
-
-
-def is_tool_tree(context):
-    try:
-        return context.space_data.node_tree_sub_type == 'TOOL'
     except AttributeError:
         return False
 

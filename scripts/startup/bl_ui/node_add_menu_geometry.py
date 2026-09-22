@@ -10,6 +10,13 @@ from bpy.app.translations import (
 )
 
 
+def is_tool_tree(context):
+    try:
+        return context.space_data.node_tree_sub_type == 'TOOL'
+    except AttributeError:
+        return False
+
+
 class NODE_MT_gn_attribute_base(node_add_menu.NodeMenu):
     bl_label = "Attribute"
 
@@ -419,6 +426,11 @@ class NODE_MT_gn_input_gizmo_base(node_add_menu.NodeMenu):
     bl_label = "Gizmo"
     menu_path = "Input/Gizmo"
 
+    # BFA - Make poll explicit
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') and (not is_tool_tree(context))
+    
     def draw(self, context):
         del context
         layout = self.layout
