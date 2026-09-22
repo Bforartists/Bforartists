@@ -679,7 +679,6 @@ static void wm_window_title_text(wmWindowManager *wm,
     win_title.append(project->get_name());
   }
 
-  return win_title;
   win_title.append(StringRef(" — Bforartists ")); // BFA
   win_title.append(StringRef(BKE_bforartists_version_string()));
 }
