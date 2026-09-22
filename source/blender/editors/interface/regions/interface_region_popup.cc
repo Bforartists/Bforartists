@@ -1202,6 +1202,12 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
          * and would extend past the right window edge — `popup_block_clip` nudges it left. */
         popup_block_clip(window, block);
       }
+      /* Sync pin position to the clipped block position so subsequent window resize
+       * refreshes use the corrected position rather than the stale pre-clip pin. */
+      handle->tear_off_pin_xy[0] = int(block->rect.xmin);
+      handle->tear_off_pin_xy[1] = int(block->rect.ymax);
+      handle->popup_create_vars.event_xy[0] = handle->tear_off_pin_xy[0];
+      handle->popup_create_vars.event_xy[1] = handle->tear_off_pin_xy[1];
     }
 
     handle->prev_block_rect = block->rect;
