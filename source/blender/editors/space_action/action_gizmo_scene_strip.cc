@@ -2504,7 +2504,7 @@ static bool scene_strip_timing_is_modal(const bContext *C)
   if (wm == nullptr) {
     return false;
   }
-  for (wmWindow *win = static_cast<wmWindow *>(wm->windows.first); win; win = win->next) {
+  for (wmWindow *win = wm->windows.first(); win; win = win->next) {
     if (win->runtime == nullptr) {
       continue;
     }
