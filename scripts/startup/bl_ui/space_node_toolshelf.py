@@ -43,43 +43,52 @@ class TextureNodesPanel:
         return (context.space_data.tree_type == 'TextureNodeTree')
 
 
-class ChildLayoutWrapper:
-    def __init__(self, layout, parent):
-        self.layout = layout
-        self.parent = parent
-    
+class LayoutWrapper:
+    def __init__(self, parent):
+        self.owner = parent
+
+    def __getattr__(self, name):
+        if name in {"separator"}:
+            return getattr(self.owner, name)
+        else:
+            return getattr(self.owner.layout_container, name)
+
+# 
+class PanelWrapper:
+    def __init__(self, actual_class, context):
+        if use_icon_buttons(context):
+            self.layout_container = self.add_grid_flow(actual_class.layout)
+        else:
+            self.layout_container = self.add_column(actual_class.layout)
+        
+        self.base_layout = actual_class.layout
+        self.actual_class = actual_class
+
+    @staticmethod
+    def add_grid_flow(layout):
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+        flow.scale_x = 1.5
+        flow.scale_y = 1.5
+        return flow
+
+    @staticmethod
+    def add_column(layout):
+        col = layout.column(align=True)
+        col.scale_y = 1.5
+        return col
+
     def separator(self, factor=None):
         if use_icon_buttons():
-            parent = self.parent
-
-            flow = parent.layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            self.layout = flow
+            self.layout_container = self.add_grid_flow(self.base_layout)
         else:
-            layout = self.layout
-            layout.separator(factor=2/3)
-        
-    def __getattr__(self, name):
-       return getattr(self.layout, name)
-    
-
-class LayoutDummy:
-    def __init__(self, actual_class):
-        self.actual_class = actual_class
+            self.layout_container.separator(factor=2/3)
     
     @property
     def layout(self):
-        parent = self.actual_class
-
-        if parent.layout_container is None:
-            return ChildLayoutWrapper(parent.layout, parent=parent)
-        else:
-            return ChildLayoutWrapper(parent.layout_container, parent=parent)
+        return LayoutWrapper(parent=self)
         
     def __getattr__(self, name):
-       return getattr(self.actual_class, name)
+        return getattr(self.actual_class, name)
 
 
 def use_icon_buttons(context=None):
@@ -102,7 +111,6 @@ class AddNodePanel(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = "Add"
 
-    layout_container = None
     menu_path = None
 
     @classmethod
@@ -143,19 +151,7 @@ class AddNodePanel(bpy.types.Panel):
         return self.layout_base.draw
 
     def draw(self, context):
-        if use_icon_buttons(context):
-            flow = self.layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            self.layout_container = flow
-            self.draw_layout(LayoutDummy(self), context)
-        else:
-            col = self.layout.column(align=True)
-            col.scale_y = 1.5
-
-            self.layout_container = col
-            self.draw_layout(LayoutDummy(self), context)
+        self.draw_layout(PanelWrapper(self, context), context)
 
 
 def is_shader_type(context, valid_types):
