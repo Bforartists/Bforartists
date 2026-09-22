@@ -381,13 +381,11 @@ class NodeMenu(Menu):
         return props
 
     @classmethod
-    def new_empty_group(cls, layout, icon_only=False):
+    def new_empty_group(cls, layout):
         """Group Node with a newly created empty group as its assigned node-tree."""
-        label = "New Group" if not icon_only else "" # BFA - support only drawing icons
-
         props = layout.operator(
             cls.new_empty_group_operator_id,
-            text=label,
+            text="New Group",
             text_ctxt=i18n_contexts.default,
             icon='ADD',
         )

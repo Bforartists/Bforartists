@@ -129,7 +129,12 @@ class AddNodePanel(bpy.types.Panel):
     node_operator_with_searchable_enum_socket = node_operator_with_searchable_enum
         
     def __getattr__(self, name):
-       return functools.partial(getattr(AddNodeMenu, name), icon_only=use_icon_buttons())
+        func = getattr(AddNodeMenu, name)
+
+        if name not in {"new_empty_group"}:
+            return functools.partial(func, icon_only=use_icon_buttons())
+       
+        return func
 
     @property
     def draw_layout(self):
