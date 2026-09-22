@@ -131,6 +131,10 @@ class AddNodePanel(bpy.types.Panel):
     def __getattr__(self, name):
        return functools.partial(getattr(AddNodeMenu, name), icon_only=use_icon_buttons())
 
+    @property
+    def draw_layout(self):
+        return self.layout_base.draw
+
     def draw(self, context):
         if use_icon_buttons(context):
             flow = self.layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
@@ -138,13 +142,13 @@ class AddNodePanel(bpy.types.Panel):
             flow.scale_y = 1.5
 
             self.layout_container = flow
-            self.layout_base.draw(LayoutDummy(self), context)
+            self.draw_layout(LayoutDummy(self), context)
         else:
             col = self.layout.column(align=True)
             col.scale_y = 1.5
 
             self.layout_container = col
-            self.layout_base.draw(LayoutDummy(self), context)
+            self.draw_layout(LayoutDummy(self), context)
 
 
 @dataclasses.dataclass(slots=True)
@@ -323,41 +327,35 @@ class NODES_PT_toolshelf_display_settings_relations(bpy.types.Panel):
 
 class NODES_PT_relations_group_operations(AddNodePanel):
     bl_label = "Group"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
     bl_category = "Relations"
-
-    class LayoutBase:
-        def draw(self, context):
-            layout = self.layout
-            self.node_operator(layout, "NodeGroupInput")
-            self.node_operator(layout, "NodeGroupOutput")
-
-    layout_base = LayoutBase
 
     @classmethod
     def poll(self, context):
         tree = context.space_data.edit_tree 
         return tree in context.blend_data.node_groups.values()
 
+    # NOTE - Needs to be a staticmethod since the class instance is supplied explicitly
+    @staticmethod
+    def draw_layout(self, context):
+        layout = self.layout
+        self.node_operator(layout, "NodeGroupInput")
+        self.node_operator(layout, "NodeGroupOutput")
+
 
 class NODES_PT_relations_nodegroups(AddNodePanel):
     bl_label = "Nodegroups"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
     bl_category = "Relations"
-
-    class LayoutBase:
-        def draw(self, context):
-            layout = self.layout
-            self.new_empty_group(layout)
-            self.draw_group_menu(context, layout)
-
-    layout_base = LayoutBase
 
     @classmethod
     def poll(cls, context):
         return (context.space_data.tree_type in node_tree_group_type)
+
+    # NOTE - Needs to be a staticmethod since the class instance is supplied explicitly
+    @staticmethod 
+    def draw_layout(self, context):
+        layout = self.layout
+        self.new_empty_group(layout)
+        self.draw_group_menu(context, layout)
 
 
 class NODES_PT_relations_layout(AddNodePanel):
