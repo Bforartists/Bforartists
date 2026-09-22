@@ -188,7 +188,7 @@ class NodeMenu(Menu):
         return context.space_data.type == 'NODE_EDITOR'
 
     @classmethod
-    def node_operator(cls, layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True, icon_only=False):
+    def node_operator(cls, layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True, icon_only=False, **_):
         """The main operator defined for the node menu.
         \n(e.g. 'Add Node' for AddNodeMenu, or 'Swap Node' for SwapNodeMenu)."""
 
