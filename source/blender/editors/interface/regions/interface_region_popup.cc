@@ -643,6 +643,9 @@ static void tear_off_pin_widget_draw(PopupBlockHandle *handle)
   float back[4];
   theme::get_color_4fv(TH_PANEL_HEADER, back);
   back[3] = 0.9f;
+  /* BFA - Tear-Off Menu/Panel: the roundbox helpers read a module-global corner mask
+   * that other draw code leaves in arbitrary states; set the corners explicitly. */
+  draw_roundbox_corner_set(CNR_ALL);
   draw_roundbox_4fv(&rect, true, 0.4f * UI_UNIT_Y, back);
 
   /* Label on the left, with a subtle grip icon as a drag affordance. */
