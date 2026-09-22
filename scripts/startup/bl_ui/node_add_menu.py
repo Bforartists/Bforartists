@@ -188,14 +188,17 @@ class NodeMenu(Menu):
         return context.space_data.type == 'NODE_EDITOR'
 
     @classmethod
-    def node_operator(cls, layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True):
+    def node_operator(cls, layout, node_type, *, label=None, poll=None, search_weight=0.0, translate=True, icon_only=False):
         """The main operator defined for the node menu.
         \n(e.g. 'Add Node' for AddNodeMenu, or 'Swap Node' for SwapNodeMenu)."""
 
-        bl_rna = bpy.types.Node.bl_rna_get_subclass(node_type)
-        if not label:
-            label = bl_rna.name if bl_rna else n_("Unknown")
-            translate = True
+        if icon_only:
+            label = ""
+        else:
+            bl_rna = bpy.types.Node.bl_rna_get_subclass(node_type)
+            if label is None: # BFA - Allow empty labels
+                label = bl_rna.name if bl_rna else n_("Unknown")
+                translate = True
 
         if poll is True or poll is None:
             translation_context = bl_rna.translation_context if bl_rna else i18n_contexts.default
@@ -224,10 +227,15 @@ class NodeMenu(Menu):
             node_idname,
             property_name,
             search_weight=0.0,
-            defaults_callback=None):
+            defaults_callback=None, 
+            icon_only=False
+            ):
+
+        label = None if not icon_only else "" # BFA - support only drawing icons
+
         """Similar to `node_operator`, but with extra entries based on a enum property while in search."""
         operators = []
-        operators.append(cls.node_operator(layout, node_idname, search_weight=search_weight))
+        operators.append(cls.node_operator(layout, node_idname, label=label, search_weight=search_weight))
 
         if getattr(context, "is_menu_search", False):
             node_type = getattr(bpy.types, node_idname)
@@ -292,11 +300,15 @@ class NodeMenu(Menu):
 
     @classmethod
     def node_operator_with_outputs(
-            cls, context, layout, node_type, subnames, *, label=None, poll=None, search_weight=0.0):
+            cls, context, layout, node_type, subnames, *, label=None, poll=None, search_weight=0.0, icon_only=False):
         """Similar to `node_operator`, but with extra entries based on a enum socket while in search."""
         bl_rna = bpy.types.Node.bl_rna_get_subclass(node_type)
-        if not label:
-            label = bl_rna.name if bl_rna else "Unknown"
+
+        if icon_only:
+            label = ""
+        else:
+            if not label:
+                label = bl_rna.name if bl_rna else "Unknown"
 
         if poll is not None and poll is False:
             return None
@@ -318,9 +330,10 @@ class NodeMenu(Menu):
         return operators
 
     @classmethod
-    def color_mix_node(cls, context, layout, search_weight=0.0):
+    def color_mix_node(cls, context, layout, search_weight=0.0, icon_only=False):
         """The 'Mix Color' node, with its different blend modes available while in search."""
-        label = iface_("Mix Color")
+
+        label = iface_("Mix Color") if not icon_only else "" # BFA - support only drawing icons
 
         operators = []
         props = cls.node_operator(layout, "ShaderNodeMix", label=label, translate=False, search_weight=search_weight)
@@ -358,7 +371,8 @@ class NodeMenu(Menu):
         return operators
 
     @classmethod
-    def typed_bundle(cls, layout, label):
+    def typed_bundle(cls, layout, label, icon_only=False):
+        label = label if not icon_only else "" # BFA - support only drawing icons
         props = layout.operator(cls.typed_bundle_operator_id, text=label, text_ctxt=i18n_contexts.default)
 
         if hasattr(props, "use_transform"):
@@ -367,11 +381,13 @@ class NodeMenu(Menu):
         return props
 
     @classmethod
-    def new_empty_group(cls, layout):
+    def new_empty_group(cls, layout, icon_only=False):
         """Group Node with a newly created empty group as its assigned node-tree."""
+        label = "New Group" if not icon_only else "" # BFA - support only drawing icons
+
         props = layout.operator(
             cls.new_empty_group_operator_id,
-            text="New Group",
+            text=label,
             text_ctxt=i18n_contexts.default,
             icon='ADD',
         )
@@ -452,8 +468,10 @@ class NodeMenu(Menu):
         layout.menu(cls.pathing_dict[path])
 
     @classmethod
-    def simulation_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=iface_(label), translate=False, icon='TIME')
+    def simulation_zone(cls, layout, label, icon_only=False):
+        label = iface_(label) if not icon_only else "" # BFA - support only drawing icons
+
+        props = layout.operator(cls.zone_operator_id, text=label, translate=False, icon='TIME')
         props.input_node_type = "GeometryNodeSimulationInput"
         props.output_node_type = "GeometryNodeSimulationOutput"
         props.add_default_geometry_link = True
@@ -464,8 +482,10 @@ class NodeMenu(Menu):
         return props
 
     @classmethod
-    def repeat_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=iface_(label), translate=False, icon='REPEAT')
+    def repeat_zone(cls, layout, label, icon_only=False):
+        label = iface_(label) if not icon_only else "" # BFA - support only drawing icons
+
+        props = layout.operator(cls.zone_operator_id, text=label, translate=False, icon='REPEAT')
         props.input_node_type = "GeometryNodeRepeatInput"
         props.output_node_type = "GeometryNodeRepeatOutput"
         props.add_default_geometry_link = True
@@ -476,8 +496,10 @@ class NodeMenu(Menu):
         return props
 
     @classmethod
-    def for_each_element_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=iface_(label), translate=False, icon='FOR_EACH')
+    def for_each_element_zone(cls, layout, label, icon_only=False):
+        label = iface_(label) if not icon_only else "" # BFA - support only drawing icons
+
+        props = layout.operator(cls.zone_operator_id, text=label, translate=False, icon='FOR_EACH')
         props.input_node_type = "GeometryNodeForeachGeometryElementInput"
         props.output_node_type = "GeometryNodeForeachGeometryElementOutput"
         props.add_default_geometry_link = False
@@ -488,8 +510,10 @@ class NodeMenu(Menu):
         return props
 
     @classmethod
-    def closure_zone(cls, layout, label):
-        props = layout.operator(cls.zone_operator_id, text=iface_(label), translate=False, icon='NODE_CLOSURE')
+    def closure_zone(cls, layout, label, icon_only=False):
+        label = iface_(label) if not icon_only else "" # BFA - support only drawing icons
+
+        props = layout.operator(cls.zone_operator_id, text=label, translate=False, icon='NODE_CLOSURE')
         props.input_node_type = "NodeClosureInput"
         props.output_node_type = "NodeClosureOutput"
         props.add_default_geometry_link = False
