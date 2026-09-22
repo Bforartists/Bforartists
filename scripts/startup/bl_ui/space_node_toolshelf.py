@@ -7,10 +7,9 @@ from bpy.app.translations import (
 )
 
 import functools
-import dataclasses
 
 from nodeitems_builtins import node_tree_group_type
-from bl_ui.node_add_menu import draw_node_groups, add_empty_group, AddNodeMenu
+from bl_ui.node_add_menu import AddNodeMenu
 from bl_ui import (
     node_add_menu,
     node_add_menu_compositor,
@@ -18,13 +17,6 @@ from bl_ui import (
     node_add_menu_shader,
     node_add_menu_texture,
 )
-
-
-# BFA - Custom panels for the sidebar toolshelf
-# BFA - to define padding, it helps to count 2 points per character.
-
-# Null object used to abstractly represent a separator
-Separator = object()
 
 
 class CompositorNodesPanel:
@@ -166,35 +158,6 @@ class AddNodePanel(bpy.types.Panel):
             self.draw_layout(LayoutDummy(self), context)
 
 
-@dataclasses.dataclass(slots=True)
-class OperatorEntry:
-    node : str = None
-    operator : str = "node.add_node"
-    text : str = ""
-    icon : str = None
-    props : dict = None
-    settings : dict = None
-    poll : bool = True
-    pad : int = 0
-
-    as_dict = dataclasses.asdict
-
-    def __post_init__(self):
-        is_add_node_operator = (self.operator == "node.add_node")
-
-        # Determine icon automatically from node bl_rna when adding non-zone nodes and no icon is specified
-        if is_add_node_operator:
-            bl_rna = bpy.types.Node.bl_rna_get_subclass(self.node)
-            if self.icon is None:
-                self.icon = getattr(bl_rna, "icon", "NONE")
-
-            if self.text == "":
-                self.text = getattr(bl_rna, "name", iface_("Unknown"))
-
-    def __len__(self):
-        return len(self.text)
-
-
 def is_shader_type(context, valid_types):
     if not isinstance(valid_types, set):
         valid_types = {valid_types,}
@@ -234,85 +197,6 @@ def is_tool_tree(context):
         return context.space_data.node_tree_sub_type == 'TOOL'
     except AttributeError:
         return False
-
-
-class NodePanel:
-    @staticmethod
-    def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, props=None, pad=0, **kwargs):
-        if (operator == "node.add_node") or (text != ""):
-            text = " " + text + (" "*pad)
-            props = layout.operator(operator, text=text, icon=icon)
-        else:
-            props = layout.operator(operator, icon=icon)
-
-        if hasattr(props, "use_transform"):
-            props.use_transform = True
-
-        if props is not None:
-            for prop_key, prop_value in props.items():
-                setattr(props, prop_key, prop_value)
-
-        if node is not None:
-            props.type = node
-
-        if settings is not None:
-            for name, value in settings.items():
-                ops = props.settings.add()
-                ops.name = name
-                ops.value = value
-
-    @staticmethod
-    def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None, props=None, **kwargs):
-        props = layout.operator(operator, text="", icon=icon)
-        props.use_transform = True
-
-        if props is not None:
-            for prop_key, prop_value in props.items():
-                setattr(props, prop_key, prop_value)
-
-        if node is not None:
-            props.type = node
-
-        if settings is not None:
-            for name, value in settings.items():
-                ops = props.settings.add()
-                ops.name = name
-                ops.value = value
-
-    def draw_entries(self, context, layout, entries):
-        preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
-
-        # Draw Text Buttons
-        if not addon_prefs.Node_text_or_icon:
-            col = layout.column(align=True)
-            col.scale_y = 1.5
-
-            for entry in entries:
-                if entry is Separator:
-                    col.separator(factor=2/3)
-                elif isinstance(entry, OperatorEntry):
-                    if entry.poll:
-                        self.draw_text_button(col, **entry.as_dict())
-                else:
-                    self.draw_text_button(col, entry)
-
-        # Draw Icon Buttons
-        else:
-            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-            flow.scale_x = 1.5
-            flow.scale_y = 1.5
-
-            for entry in entries:
-                if entry is Separator:
-                    flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
-                    flow.scale_x = 1.5
-                    flow.scale_y = 1.5
-                elif isinstance(entry, OperatorEntry):
-                    if entry.poll:
-                        self.draw_icon_button(flow, **entry.as_dict())
-                else:
-                    self.draw_icon_button(flow, entry)
 
 
 class NODES_PT_toolshelf_display_settings_add(bpy.types.Panel):
