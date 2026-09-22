@@ -487,18 +487,6 @@ class NODE_MT_compositor_node_creative_base(node_add_menu.NodeMenu):
 
         self.draw_assets_for_catalog(layout, self.bl_label)
 
-# BFA menu
-class NODE_MT_category_compositor_LAYOUT(bpy.types.Menu):
-    bl_idname = "NODE_MT_category_compositor_LAYOUT"
-    bl_label = "Layout"
-
-    def draw(self, _context):
-        layout = self.layout
-        node_add_menu.add_node_type(layout, "NodeFrame", search_weight=-1)
-        node_add_menu.add_node_type(layout, "NodeReroute")
-
-        node_add_menu.draw_assets_for_catalog(layout, self.bl_label)
-
 
 class NODE_MT_compositor_node_all_base(node_add_menu.NodeMenu):
     bl_label = ""
@@ -598,7 +586,6 @@ swap_menus = node_add_menu.generate_menus(
 
 
 classes = (
-    NODE_MT_category_compositor_LAYOUT,  # BFA menu
     *add_menus,
     *swap_menus,
 )
