@@ -336,7 +336,7 @@ static void freeSeqData(TransInfo *t, TransDataContainer *tc, TransCustomData *c
 
   TransSeq *ts = static_cast<TransSeq *>(tc->custom.type.data);
   ListBaseT<Strip> *seqbasep = seqbase_active_get(t);
-  const bool use_sync_markers = ((static_cast<SpaceSeq *>(t->area->spacedata.first))->flag &
+  const bool use_sync_markers = ((t->area->spacedata.first_as<SpaceSeq>())->flag &
                                  SEQ_MARKER_TRANS) != 0;
   if (seq_transform_check_overlap(transformed_strips)) {
     seq::transform_handle_overlap(
@@ -543,6 +543,14 @@ static void create_trans_seq_clamp_data(TransInfo *t, const Scene *scene)
   if (only_handles_selected) {
     ts->offset_clamp.ymin = 0;
     ts->offset_clamp.ymax = 0;
+  }
+
+  /* If either axis is locked (min/max offset is zero), then movement is only possible along one
+   * axis, and distinguishing them makes no sense, so just disable both axis constraints. */
+  if ((ts->offset_clamp.xmin == 0 && ts->offset_clamp.xmax == 0) ||
+      (ts->offset_clamp.ymin == 0 && ts->offset_clamp.ymax == 0))
+  {
+    t->flag |= T_NO_CONSTRAINT;
   }
 }
 
@@ -801,7 +809,7 @@ static void recalcData_sequencer(TransInfo *t)
 static void special_aftertrans_update__sequencer(bContext *C, TransInfo *t)
 {
   Scene *scene = CTX_data_sequencer_scene(C);
-  SpaceSeq *sseq = static_cast<SpaceSeq *>(t->area->spacedata.first);
+  SpaceSeq *sseq = t->area->spacedata.first_as<SpaceSeq>();
   if ((sseq->flag & SPACE_SEQ_DESELECT_STRIP_HANDLE) != 0 &&
       transform_mode_edge_seq_slide_use_restore_handle_selection(t))
   {

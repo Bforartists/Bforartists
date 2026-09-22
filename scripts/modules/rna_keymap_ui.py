@@ -195,7 +195,7 @@ def draw_kmi(display_keymaps, kc, km, kmi, layout, level):
 
         box = col.box()
 
-        split = box.split(factor=0.4)
+        split = box.split(factor=box.property_split_factor)
         sub = split.row()
 
         if km.is_modal:
@@ -567,7 +567,7 @@ def draw_keymaps(context, layout):
 
     # layout.context_pointer_set("keyconfig", wm.keyconfigs.active)
     # row.operator("preferences.keyconfig_remove", text="", icon='X')
-    # rowsub = row.split(factor=0.3, align=True) # bfa - turned off, puts the filter_type buttons underneath
+    # rowsub = row.split(factor=row.property_split_factor, align=True) # bfa - turned off, puts the filter_type buttons underneath
     rowsub = layout.row(align=True)  # bfa - put the buttons for the filter_type prop in row
 
     # postpone drawing into rowsub, so we can set alert!

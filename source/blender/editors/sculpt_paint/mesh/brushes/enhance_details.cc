@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup edsculpt
+ */
+
 #include "editors/sculpt_paint/mesh/brushes/brushes.hh"
 
 #include "DNA_brush_types.h"
@@ -50,13 +54,14 @@ static void calc_faces(const Depsgraph &depsgraph,
                        const float strength,
                        const bke::pbvh::MeshNode &node,
                        Object &object,
-                       LocalData &tls,
                        const PositionDeformData &position_data)
 {
   SculptSession &ss = *object.runtime->sculpt_session;
 
   const Span<int> verts = node.verts();
 
+  Array<float, bke::pbvh::MESH_LEAF_LIMIT> factors(verts.size());
+  Array<float, bke::pbvh::MESH_LEAF_LIMIT> distances(verts.size());
   calc_factors_common_mesh_indexed(depsgraph,
                                    brush,
                                    object,
@@ -64,15 +69,14 @@ static void calc_faces(const Depsgraph &depsgraph,
                                    position_data.eval,
                                    vert_normals,
                                    node,
-                                   tls.factors,
-                                   tls.distances);
+                                   factors,
+                                   distances);
 
-  scale_factors(tls.factors, strength);
+  scale_factors(factors, strength);
 
-  tls.translations.resize(verts.size());
-  const MutableSpan<float3> translations = tls.translations;
-  gather_data_mesh(all_translations, verts, translations);
-  scale_translations(translations, tls.factors);
+  Array<float3, bke::pbvh::MESH_LEAF_LIMIT> translations(verts.size());
+  gather_data_mesh<float3>(all_translations, verts, translations);
+  scale_translations(translations, factors);
 
   clip_and_lock_translations(sd, ss, position_data.eval, verts, translations);
   position_data.deform(translations, verts);
@@ -230,7 +234,6 @@ void do_enhance_details_brush(const Depsgraph &depsgraph,
       MutableSpan<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
       node_mask.foreach_index(
           [&](const int i) {
-            LocalData &tls = all_tls.local();
             calc_faces(depsgraph,
                        sd,
                        brush,
@@ -240,7 +243,6 @@ void do_enhance_details_brush(const Depsgraph &depsgraph,
                        strength,
                        nodes[i],
                        object,
-                       tls,
                        position_data);
             bke::pbvh::update_node_bounds_mesh(position_data.eval, nodes[i]);
           },

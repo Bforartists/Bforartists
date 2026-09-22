@@ -18,6 +18,8 @@ struct SpaceSeq;
 struct bContext;
 struct View2D;
 struct wmEvent;
+struct rctf;
+struct ARegion;
 
 namespace ed::vse {
 
@@ -110,6 +112,8 @@ const Strip *sync_scene_strip_scrub_target_get(const bContext &C,
                                                int *r_master_frame,
                                                bool *r_is_master_fallback,
                                                const Strip **r_drag_strip);
+
+rctf sequencer_clamped_view_bounds_get(const bContext *C, ARegion *region);
 
 }  // namespace ed::vse
 }  // namespace blender

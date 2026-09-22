@@ -79,7 +79,7 @@ class RENDER_PT_color_management(RenderButtonsPanel, Panel):
         col.prop(view, "look")
 
         if view.is_hdr and not context.window.support_hdr_color:
-            row = col.split(factor=0.4)
+            row = col.split(factor=col.property_split_factor)
             row.label()
 
             if gpu.platform.backend_type_get() == 'OPENGL':
@@ -114,7 +114,7 @@ class RENDER_PT_color_management_working_space(RenderButtonsPanel, Panel):
 
         col = flow.column()
 
-        split = col.split(factor=0.4)
+        split = col.split(factor=col.property_split_factor)
         row = split.row()
         row.label(text="File")
         row.alignment = 'RIGHT'
@@ -872,14 +872,10 @@ class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
         scene = context.scene
         rd = scene.render
 
-        layout.use_property_split = False
-        layout.use_property_decorate = False  # No animation.
-
-        row = layout.row() # BFA
-        row.prop(rd, "use_high_quality_normals")
-        row.prop_decorator(rd, "use_high_quality_normals")
-        row.prop(rd, "anisotropic_filter")
-        row.prop_decorator(rd, "anisotropic_filter")
+        layout.use_property_split = True
+        
+        layout.prop(rd, "use_high_quality_normals")
+        layout.prop(rd, "anisotropic_filter")
 
 
 class CompositorPerformanceButtonsPanel:

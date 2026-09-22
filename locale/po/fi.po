@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-04-06 09:16+0000\n"
 "Last-Translator: Leevi Oksanen <laavi.oksanen@gmail.com>\n"
 "Language-Team: Finnish <https://translate.blender.org/projects/blender-ui/ui/fi/>\n"
@@ -7124,6 +7124,10 @@ msgid "Read"
 msgstr "Lue"
 
 
+msgid "Show/Hide"
+msgstr "Näytä/Piilota"
+
+
 msgid "Write"
 msgstr "Kirjoita"
 
@@ -7136,16 +7140,8 @@ msgid "Import"
 msgstr "Tuo"
 
 
-msgid "UV Mapping"
-msgstr "UV-kartoittaminen"
-
-
 msgid "Utilities"
 msgstr "Työkalut"
-
-
-msgid "Select More/Less"
-msgstr "Valitse enemmän/vähemmän"
 
 
 msgid "Math"
@@ -7154,6 +7150,14 @@ msgstr "Matematiikka"
 
 msgid "UV"
 msgstr "UV"
+
+
+msgid "UV Mapping"
+msgstr "UV-kartoittaminen"
+
+
+msgid "Select More/Less"
+msgstr "Valitse enemmän/vähemmän"
 
 
 msgid "Select Similar"
@@ -7180,20 +7184,16 @@ msgid "Light Probe"
 msgstr "Valoluotain"
 
 
+msgid "Linked"
+msgstr "Linkitetyt"
+
+
 msgid "Add Image"
 msgstr "Lisää kuva"
 
 
 msgid "Track"
 msgstr "Raide"
-
-
-msgid "Show/Hide"
-msgstr "Näytä/Piilota"
-
-
-msgid "Linked"
-msgstr "Linkitetyt"
 
 
 msgid "Hooks"
@@ -9418,10 +9418,6 @@ msgid "Lighting Mode"
 msgstr "Valotustila"
 
 
-msgid "No export"
-msgstr "Ei vientiä"
-
-
 msgid "General"
 msgstr "Yleinen"
 
@@ -10462,10 +10458,6 @@ msgid "Tool"
 msgstr "Työkalu"
 
 
-msgid "Scene Properties"
-msgstr "Kohtauksen ominaisuudet"
-
-
 msgctxt "ID"
 msgid "Render"
 msgstr "Renderöi"
@@ -10482,6 +10474,10 @@ msgstr "Tuloste"
 
 msgid "Output Properties"
 msgstr "Tulosteen ominaisuudet"
+
+
+msgid "Scene Properties"
+msgstr "Kohtauksen ominaisuudet"
 
 
 msgid "World Properties"
@@ -12309,6 +12305,10 @@ msgid "Donate"
 msgstr "Lahjoita"
 
 
+msgid "Trusted Source [Untrusted Path]"
+msgstr "Luotettava lähde [epäluotettava polku]"
+
+
 msgctxt "Operator"
 msgid "Link..."
 msgstr "Linkitä..."
@@ -13085,23 +13085,18 @@ msgid "Empties"
 msgstr "Tyhjät"
 
 
+msgctxt "Operator"
+msgid "Text"
+msgstr "Teksti"
+
+
 msgid "Raw"
 msgstr "Raaka"
 
 
 msgctxt "Operator"
-msgid "Mask..."
-msgstr "Maski..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Väri"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Teksti"
 
 
 msgid "Workbench"
@@ -16136,12 +16131,12 @@ msgid "BSDF"
 msgstr "BSDF"
 
 
-msgid "IOR"
-msgstr "IOR"
-
-
 msgid "Anisotropy"
 msgstr "Anisotropia"
+
+
+msgid "IOR"
+msgstr "IOR"
 
 
 msgid "RoughnessU"
@@ -16453,10 +16448,6 @@ msgstr "ikkunamanagerit"
 
 msgid "Load"
 msgstr "Lataa"
-
-
-msgid "Trusted Source [Untrusted Path]"
-msgstr "Luotettava lähde [epäluotettava polku]"
 
 
 msgid "Any unsaved changes will be lost."

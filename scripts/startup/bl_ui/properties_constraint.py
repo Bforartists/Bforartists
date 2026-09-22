@@ -117,6 +117,23 @@ class ConstraintButtonsPanel:
     bl_options = {'INSTANCED', 'HEADER_LAYOUT_EXPAND'}
 
     @staticmethod
+    def draw_xyz_toggles(layout, data, name, heading):
+        main_row = layout.row(align=True)
+        
+        split = main_row.split(factor=0.4)
+        split.label(text=heading)
+        
+        row = split.row(align=True)
+        row.use_property_decorate = False
+        
+        subrow = row.row(align=True)
+        subrow.prop(data, f"{name}_x", text="X", toggle=True)
+        subrow.prop(data, f"{name}_y", text="Y", toggle=True)
+        subrow.prop(data, f"{name}_z", text="Z", toggle=True)
+        
+        main_row.label(icon='BLANK1')
+
+    @staticmethod
     def draw_influence(layout, con):
         layout.separator()
         if con.type in {'IK', 'SPLINE_IK'}:
@@ -192,26 +209,12 @@ class ConstraintButtonsPanel:
 
         self.target_template(layout, con)
 
-        row = layout.row(heading="Location")
-        row.use_property_decorate = False
-        row.prop(con, "use_location_x", text="X", toggle=True)
-        row.prop(con, "use_location_y", text="Y", toggle=True)
-        row.prop(con, "use_location_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
-
-        row = layout.row(heading="Rotation")
-        row.use_property_decorate = False
-        row.prop(con, "use_rotation_x", text="X", toggle=True)
-        row.prop(con, "use_rotation_y", text="Y", toggle=True)
-        row.prop(con, "use_rotation_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
-
-        row = layout.row(heading="Scale")
-        row.use_property_decorate = False
-        row.prop(con, "use_scale_x", text="X", toggle=True)
-        row.prop(con, "use_scale_y", text="Y", toggle=True)
-        row.prop(con, "use_scale_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
+        layout.use_property_split = True
+        layout.use_property_decorate = True
+        
+        self.draw_xyz_toggles(layout, con, "use_location", heading="Location")
+        self.draw_xyz_toggles(layout, con, "use_rotation", heading="Rotation")
+        self.draw_xyz_toggles(layout, con, "use_scale", heading="Scale")
 
         row = layout.row()
         row.operator("constraint.childof_set_inverse")
@@ -511,21 +514,8 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "euler_order", text="Order")
 
-        row = layout.row(heading="Axis", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_x", text="X", toggle=True)
-        sub.prop(con, "use_y", text="Y", toggle=True)
-        sub.prop(con, "use_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
-
-        row = layout.row(heading="Invert", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "invert_x", text="X", toggle=True)
-        sub.prop(con, "invert_y", text="Y", toggle=True)
-        sub.prop(con, "invert_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
+        self.draw_xyz_toggles(layout, con, "use", heading="Axis")
+        self.draw_xyz_toggles(layout, con, "invert", heading="Invert")
 
         # bfa - goo engine - copy rotation constraint invert rotation patch
         row = layout.row()
@@ -548,21 +538,8 @@ class ConstraintButtonsPanel:
 
         self.target_template(layout, con)
 
-        row = layout.row(heading="Axis", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_x", text="X", toggle=True)
-        sub.prop(con, "use_y", text="Y", toggle=True)
-        sub.prop(con, "use_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
-
-        row = layout.row(heading="Invert", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "invert_x", text="X", toggle=True)
-        sub.prop(con, "invert_y", text="Y", toggle=True)
-        sub.prop(con, "invert_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
+        self.draw_xyz_toggles(layout, con, "use", heading="Axis")
+        self.draw_xyz_toggles(layout, con, "invert", heading="Invert")
 
         row = layout.row()
         row.use_property_split = False
@@ -580,14 +557,7 @@ class ConstraintButtonsPanel:
         layout.use_property_decorate = True
 
         self.target_template(layout, con)
-
-        row = layout.row(heading="Axis", align=True)
-        row.use_property_decorate = False
-        sub = row.row(align=True)
-        sub.prop(con, "use_x", text="X", toggle=True)
-        sub.prop(con, "use_y", text="Y", toggle=True)
-        sub.prop(con, "use_z", text="Z", toggle=True)
-        row.label(icon='BLANK1')
+        self.draw_xyz_toggles(layout, con, "use", heading="Axis")
 
         col = layout.column()
         col.prop(con, "power")

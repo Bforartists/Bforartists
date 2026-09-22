@@ -66,7 +66,7 @@ static void node_update(bNodeTree *ntree, bNode *node)
       node->custom1, NODE_INTEGER_MATH_ABSOLUTE, NODE_INTEGER_MATH_SIGN, NODE_INTEGER_MATH_NEGATE);
   const bool three_input_ops = ELEM(node->custom1, NODE_INTEGER_MATH_MULTIPLY_ADD);
 
-  bNodeSocket *sockA = static_cast<bNodeSocket *>(node->inputs.first);
+  bNodeSocket *sockA = node->inputs.first();
   bNodeSocket *sockB = sockA->next;
   bNodeSocket *sockC = sockB->next;
 
@@ -345,7 +345,7 @@ static void node_register()
 {
   static bke::bNodeType ntype;
 
-  fn_cmp_node_type_base(&ntype, "FunctionNodeIntegerMath"_ustr, FN_NODE_INTEGER_MATH);
+  common_node_type_base(&ntype, "FunctionNodeIntegerMath"_ustr, FN_NODE_INTEGER_MATH);
   ntype.ui_name = "Integer Math";
   ntype.ui_description = "Perform various math operations on the given integer inputs";
   ntype.enum_name_legacy = "INTEGER_MATH";

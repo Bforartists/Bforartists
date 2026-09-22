@@ -11,8 +11,9 @@ set(INC_GLSL
   ../../blenlib
 
   common
-  infos
   compat
+  infos
+  nodes
 )
 
 set(SRC_BSL

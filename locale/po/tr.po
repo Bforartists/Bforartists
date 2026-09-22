@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2025-07-23 15:31+0000\n"
 "Last-Translator: VertexSelection <amacsizk2021@gmail.com>\n"
 "Language-Team: Turkish <https://translate.blender.org/projects/blender-ui/ui/tr/>\n"
@@ -28703,52 +28703,80 @@ msgid "Editor menu containing buttons"
 msgstr "Düğmeler içeren düzenleyici menüsü"
 
 
-msgid "Snap"
-msgstr "Yakala"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Orantılı Düzenleme Düşüşü"
-
-
 msgid "Read"
 msgstr "Okumak"
-
-
-msgid "Mask Edit"
-msgstr "Maske Düzenleme"
 
 
 msgid "Sample"
 msgstr "Örnek"
 
 
-msgid "Automasking"
-msgstr "Otomatik maskeleme"
+msgid "Show/Hide"
+msgstr "Göster/Gizle"
 
 
 msgid "Write"
 msgstr "Yazmak"
 
 
-msgid "Face Sets Edit"
-msgstr "Yüz Setleri Düzenle"
+msgid "Clean Up"
+msgstr "Temizle"
 
 
 msgid "Primitives"
 msgstr "İlkel"
 
 
-msgid "Vertex Group Locks"
-msgstr "Vertex Grup Kilitleri"
+msgid "Pivot Point"
+msgstr "Pivot Noktası"
+
+
+msgid "Snap"
+msgstr "Yakala"
 
 
 msgid "Instances"
 msgstr "Örnekler"
 
 
+msgid "Proportional Editing Falloff"
+msgstr "Orantılı Düzenleme Düşüşü"
+
+
+msgid "Mask Edit"
+msgstr "Maske Düzenleme"
+
+
+msgid "Automasking"
+msgstr "Otomatik maskeleme"
+
+
+msgid "Face Sets Edit"
+msgstr "Yüz Setleri Düzenle"
+
+
+msgid "Vertex Group Locks"
+msgstr "Vertex Grup Kilitleri"
+
+
 msgid "Import"
 msgstr "İçe Aktar"
+
+
+msgid "Utilities"
+msgstr "Kamu hizmetleri"
+
+
+msgid "Deprecated"
+msgstr "Kullanım dışı bırakıldı"
+
+
+msgid "Math"
+msgstr "Matematik"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Mirror"
@@ -28763,16 +28791,8 @@ msgid "Local View"
 msgstr "Yerel Görünüm"
 
 
-msgid "Utilities"
-msgstr "Kamu hizmetleri"
-
-
 msgid "Viewpoint"
 msgstr "Bakış açısı"
-
-
-msgid "Deprecated"
-msgstr "Kullanım dışı bırakıldı"
 
 
 msgid "Navigation"
@@ -28793,14 +28813,6 @@ msgstr "Bölgeleri Görüntüle"
 
 msgid "Select More/Less"
 msgstr "Daha Fazla/Daha Az Seç"
-
-
-msgid "Math"
-msgstr "Matematik"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Select Similar"
@@ -28835,6 +28847,14 @@ msgid "Light Probe"
 msgstr "Işık Sondası"
 
 
+msgid "Linked"
+msgstr "Bağlantılı"
+
+
+msgid "Layout"
+msgstr "Yerleşim"
+
+
 msgid "Add Image"
 msgstr "Resim Ekle"
 
@@ -28855,24 +28875,16 @@ msgid "Track"
 msgstr "İzlemek"
 
 
+msgid "Adjust"
+msgstr "Ayarlamak"
+
+
 msgid "Quick Effects"
 msgstr "Hızlı Etkiler"
 
 
-msgid "Show/Hide"
-msgstr "Göster/Gizle"
-
-
-msgid "Linked"
-msgstr "Bağlantılı"
-
-
-msgid "Clean Up"
-msgstr "Temizle"
-
-
-msgid "Layout"
-msgstr "Yerleşim"
+msgid "Keying"
+msgstr "Anahtarlama"
 
 
 msgid "Asset"
@@ -28881,6 +28893,10 @@ msgstr "Varlık"
 
 msgid "Make Single User"
 msgstr "Tek Kullanıcı Yap"
+
+
+msgid "Tracking"
+msgstr "Takip"
 
 
 msgid "Convert"
@@ -28899,10 +28915,6 @@ msgid "Trim/Add"
 msgstr "Kırp/Ekle"
 
 
-msgid "Adjust"
-msgstr "Ayarlamak"
-
-
 msgid "Sculpt Set Pivot"
 msgstr "Heykel Seti Pivot"
 
@@ -28913,14 +28925,6 @@ msgstr "Yüz Setleri Başlatma"
 
 msgid "Random Mask"
 msgstr "Rastgele Maske"
-
-
-msgid "Keying"
-msgstr "Anahtarlama"
-
-
-msgid "Tracking"
-msgstr "Takip"
 
 
 msgid "Clear Transform"
@@ -28973,10 +28977,6 @@ msgstr "Yüz Gücünü Ayarla"
 
 msgid "Merge"
 msgstr "Birleştir"
-
-
-msgid "Pivot Point"
-msgstr "Pivot Noktası"
 
 
 msgid "Special Characters"
@@ -42396,6 +42396,14 @@ msgid "Collection of Node Sockets"
 msgstr "Düğüm Soketleri Koleksiyonu"
 
 
+msgid "From Socket"
+msgstr "Soketten"
+
+
+msgid "To Socket"
+msgstr "Sokete takmak için"
+
+
 msgid "Socket Template"
 msgstr "Soket Şablonu"
 
@@ -51207,10 +51215,6 @@ msgid "Export all materials used by included objects"
 msgstr "Dahil edilen nesneler tarafından kullanılan tüm malzemeleri dışa aktarın"
 
 
-msgid "No export"
-msgstr "İhracat yok"
-
-
 msgid "Export shape keys (morph targets)"
 msgstr "Şekil anahtarlarını dışa aktar (hedefleri biçimlendir)"
 
@@ -59923,10 +59927,6 @@ msgstr "Düğümden"
 
 msgid "From node linked to selected node"
 msgstr "Seçilen düğüme bağlı düğümden"
-
-
-msgid "From Socket"
-msgstr "Soketten"
 
 
 msgid "From socket linked to selected node"
@@ -69183,6 +69183,10 @@ msgid "Deselect All"
 msgstr "Tümünü Seçimden Çıkar"
 
 
+msgid "Add a text strip to the sequencer"
+msgstr "Sıralayıcıya bir metin şeridi ekleyin"
+
+
 msgctxt "Operator"
 msgid "Unlock Strips"
 msgstr "Şeritlerin kilidini aç"
@@ -73000,6 +73004,14 @@ msgid "View a context based online manual in a web browser"
 msgstr "Bağlam tabanlı bir çevrimiçi kılavuzu web tarayıcısında görüntüleyin"
 
 
+msgid "Trusted Source"
+msgstr "Güvenilir Kaynak"
+
+
+msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
+msgstr ".blend dosyasının komut dosyalarını otomatik olarak yürütmesine izin verin, varsayılan olarak sistem tercihlerinden erişilebilir"
+
+
 msgctxt "Operator"
 msgid "Drop to Import File"
 msgstr "Dosyayı İçe Aktarmak İçin Bırak"
@@ -73344,14 +73356,6 @@ msgstr "Kullanıcı arayüzü kurulumunu .blend dosyasına yükleyin"
 
 msgid "State"
 msgstr "Durum"
-
-
-msgid "Trusted Source"
-msgstr "Güvenilir Kaynak"
-
-
-msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
-msgstr ".blend dosyasının komut dosyalarını otomatik olarak yürütmesine izin verin, varsayılan olarak sistem tercihlerinden erişilebilir"
 
 
 msgctxt "Operator"
@@ -75404,6 +75408,14 @@ msgid "Curve Edit Mode"
 msgstr "Eğri Düzenleme Modu"
 
 
+msgid "glTF Variants"
+msgstr "glTF Çeşitleri"
+
+
+msgid "glTF Material Variants"
+msgstr "glTF Malzeme Varyantları"
+
+
 msgid "Transform Orientations"
 msgstr "Dönüştürme Yönlendirmeleri"
 
@@ -75458,14 +75470,6 @@ msgstr "Sanal Gerçeklik"
 
 msgid "VR Info"
 msgstr "VR Bilgisi"
-
-
-msgid "glTF Variants"
-msgstr "glTF Çeşitleri"
-
-
-msgid "glTF Material Variants"
-msgstr "glTF Malzeme Varyantları"
 
 
 msgid "Chain Scaling"
@@ -78620,14 +78624,6 @@ msgstr "Yeni Eğriler Araçları"
 
 msgid "Enable additional features for the new curves data block"
 msgstr "Yeni eğriler veri bloğu için ek özellikleri etkinleştirin"
-
-
-msgid "Sculpt Texture Paint"
-msgstr "Heykel Doku Boyası"
-
-
-msgid "Use texture painting in Sculpt Mode"
-msgstr "Heykel Modunda doku boyama kullanın"
 
 
 msgid "Shader Node Previews"
@@ -82470,6 +82466,10 @@ msgstr "Bölgeye özgü veriler (tür, bölge türüne bağlıdır)"
 
 msgid "Region height"
 msgstr "Bölge yüksekliği"
+
+
+msgid "Live search filtering string"
+msgstr "Canlı arama filtreleme dizesi"
 
 
 msgid "Type of this region"
@@ -86890,10 +86890,6 @@ msgid "Show only selectable objects"
 msgstr "Yalnızca seçilebilir nesneleri göster"
 
 
-msgid "Live search filtering string"
-msgstr "Canlı arama filtreleme dizesi"
-
-
 msgid "Library Override View Mode"
 msgstr "Kütüphane Geçersiz Kılma Görünüm Modu"
 
@@ -87103,10 +87099,6 @@ msgid "Active Tool and Workspace settings"
 msgstr "Etkin Araç ve Çalışma Alanı ayarları"
 
 
-msgid "Scene Properties"
-msgstr "Sahne Özellikleri"
-
-
 msgctxt "ID"
 msgid "Render"
 msgstr "İşlemek"
@@ -87123,6 +87115,10 @@ msgstr "Çıktı"
 
 msgid "Output Properties"
 msgstr "Çıktı Özellikleri"
+
+
+msgid "Scene Properties"
+msgstr "Sahne Özellikleri"
 
 
 msgctxt "ID"
@@ -98109,10 +98105,6 @@ msgid "Deleted 1 node"
 msgstr "1 düğüm silindi"
 
 
-msgid "To Socket"
-msgstr "Sokete takmak için"
-
-
 msgid "No images found to reload in this node tree"
 msgstr "Bu düğüm ağacında yeniden yüklenecek görüntü bulunamadı"
 
@@ -99526,6 +99518,10 @@ msgstr "Blender Mağazası"
 msgctxt "Operator"
 msgid "Blender Website"
 msgstr "Blender Web Sitesi"
+
+
+msgid "Trusted Source [Untrusted Path]"
+msgstr "Güvenilir Kaynak [Güvenilmeyen Yol]"
 
 
 msgctxt "Operator"
@@ -102961,16 +102957,16 @@ msgid "All View Layers"
 msgstr "Tüm Görünüm Katmanları"
 
 
-msgid "Object Contents"
-msgstr "Nesne İçeriği"
+msgid "Empties"
+msgstr "Boşlar"
 
 
 msgid "Object Children"
 msgstr "Nesne Çocukları"
 
 
-msgid "Empties"
-msgstr "Boşlar"
+msgid "Object Contents"
+msgstr "Nesne İçeriği"
 
 
 msgctxt "Operator"
@@ -103099,6 +103095,11 @@ msgstr "Sonraki Şeride Atla (Orta)"
 
 
 msgctxt "Operator"
+msgid "Text"
+msgstr "Metin"
+
+
+msgctxt "Operator"
 msgid "Fade"
 msgstr "Solmak"
 
@@ -103217,23 +103218,8 @@ msgstr "Halletmek"
 
 
 msgctxt "Operator"
-msgid "Clip..."
-msgstr "Klip..."
-
-
-msgctxt "Operator"
-msgid "Mask..."
-msgstr "Maske..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Renk"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Metin"
 
 
 msgctxt "Operator"
@@ -103326,11 +103312,6 @@ msgstr "Önizleme Yakınlaştırma"
 msgctxt "Operator"
 msgid "Change Scene..."
 msgstr "Sahneyi Değiştir..."
-
-
-msgctxt "Operator"
-msgid "Clip"
-msgstr "Klip"
 
 
 msgctxt "Operator"
@@ -113062,10 +113043,6 @@ msgid "Link inside collection"
 msgstr "Koleksiyon içindeki bağlantı"
 
 
-msgid "Move inside collection (Ctrl to link, Shift to parent)"
-msgstr "Koleksiyon içinde hareket et (Bağlantı için Ctrl, Üst öğe için Shift)"
-
-
 msgid "Move inside collection (Ctrl to link)"
 msgstr "Koleksiyon içinde hareket et (Bağlanmak için Ctrl)"
 
@@ -113280,10 +113257,6 @@ msgstr "Sequencer'a çoklu kamera seçici efekt şeridi ekleyin"
 
 msgid "Add an adjustment layer effect strip to the sequencer"
 msgstr "Sıralayıcıya bir ayarlama katmanı efekt şeridi ekleyin"
-
-
-msgid "Add a text strip to the sequencer"
-msgstr "Sıralayıcıya bir metin şeridi ekleyin"
 
 
 msgid "Add a color mix effect strip to the sequencer"
@@ -119007,6 +118980,10 @@ msgid "BSDF"
 msgstr "BSD"
 
 
+msgid "Anisotropy"
+msgstr "Anizotropi"
+
+
 msgid "IOR"
 msgstr "IOR"
 
@@ -119019,12 +118996,12 @@ msgid "Thin Film IOR"
 msgstr "İnce Film IOR"
 
 
+msgid "Rotates the direction of anisotropy, with 1.0 going full circle"
+msgstr "Anizotropinin yönünü 1.0'ın tam daireyi tamamlamasıyla döndürür"
+
+
 msgid "Thin Film"
 msgstr "İnce Film"
-
-
-msgid "Anisotropy"
-msgstr "Anizotropi"
 
 
 msgid "RoughnessU"
@@ -119101,10 +119078,6 @@ msgstr "İletkenin kırılma indisinin gerçek kısmı, genellikle n olarak adla
 
 msgid "Imaginary part of the conductor's refractive index, often called k"
 msgstr "İletkenin kırılma indisinin hayali kısmı, genellikle k olarak adlandırılır"
-
-
-msgid "Rotates the direction of anisotropy, with 1.0 going full circle"
-msgstr "Anizotropinin yönünü 1.0'ın tam daireyi tamamlamasıyla döndürür"
 
 
 msgid "Diffuse Roughness"
@@ -119866,10 +119839,6 @@ msgstr "Fabrika Varsayılan Başlangıç Dosyasını ve Tercihleri Yükle"
 
 msgid "To make changes to Preferences permanent, use \"Save Preferences\"."
 msgstr "Tercihlerde yaptığınız değişiklikleri kalıcı hale getirmek için \"Tercihleri Kaydet\"i kullanın."
-
-
-msgid "Trusted Source [Untrusted Path]"
-msgstr "Güvenilir Kaynak [Güvenilmeyen Yol]"
 
 
 msgid "Any unsaved changes will be lost."

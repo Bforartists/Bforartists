@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup edsculpt
+ */
+
 #include "editors/sculpt_paint/mesh/brushes/brushes.hh"
 
 #include "DNA_brush_types.h"
@@ -101,7 +105,8 @@ BLI_NOINLINE static void do_surface_smooth_brush_mesh(const Depsgraph &depsgraph
         auto_mask::calc_vert_factors(
             depsgraph, object, cache.automasking.get(), nodes[i], verts, factors);
 
-        calc_brush_texture_factors(ss, brush, position_data.eval, verts, factors);
+        calc_brush_texture_factors(
+            PaintMode::Sculpt, ss, brush, position_data.eval, verts, factors);
 
         scale_factors(factors, cache.bstrength);
         clamp_factors(factors);
@@ -229,7 +234,7 @@ BLI_NOINLINE static void do_surface_smooth_brush_grids(
         auto_mask::calc_grids_factors(
             depsgraph, object, cache.automasking.get(), nodes[i], grids, factors);
 
-        calc_brush_texture_factors(ss, brush, positions, factors);
+        calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, positions, factors);
 
         scale_factors(factors, cache.bstrength);
         clamp_factors(factors);
@@ -341,7 +346,7 @@ BLI_NOINLINE static void do_surface_smooth_brush_bmesh(
         auto_mask::calc_vert_factors(
             depsgraph, object, cache.automasking.get(), nodes[i], verts, factors);
 
-        calc_brush_texture_factors(ss, brush, positions, factors);
+        calc_brush_texture_factors(PaintMode::Sculpt, ss, brush, positions, factors);
 
         scale_factors(factors, cache.bstrength);
         clamp_factors(factors);

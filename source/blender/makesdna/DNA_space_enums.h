@@ -188,7 +188,20 @@ enum eSpaceOutliner_Filter : int {
   SO_FILTER_ID_TYPE = (1 << 19),
 
   SO_FILTER_NO_OB_GREASE_PENCIL = (1 << 20),
-  SO_FILTER_NO_POSE_BONE = (1 << 21), /* bfa - hide pose bones */
+
+  SO_FILTER_NO_OB_DATA = (1 << 21),
+  SO_FILTER_NO_OB_ANIMATION = (1 << 22),
+  SO_FILTER_NO_OB_CONSTRAINTS = (1 << 23),
+  SO_FILTER_NO_OB_SHAPE_KEYS = (1 << 24),
+  SO_FILTER_NO_OB_MATERIAL = (1 << 25),
+  SO_FILTER_NO_OB_DEFGROUP = (1 << 26),
+  SO_FILTER_NO_OB_MODIFIERS = (1 << 27),
+  SO_FILTER_NO_ARMATURE_BONE_COLLECTION = (1 << 28),
+  SO_FILTER_NO_GREASE_PENCIL_EFFECTS = (1 << 29),
+  /** Hide the whole "Pose" group of armatures. */
+  SO_FILTER_NO_POSE_BONES = (1 << 30),
+  /** BFA - Hide individual pose bones (per-bone, via #PCHAN_DRAW_SHOW_OUTLINER). */
+  SO_FILTER_NO_POSE_BONE = int(1u << 31),
 };
 ENUM_OPERATORS(eSpaceOutliner_Filter)
 
@@ -201,9 +214,15 @@ ENUM_OPERATORS(eSpaceOutliner_Filter)
   (SO_FILTER_OB_STATE_VISIBLE | SO_FILTER_OB_STATE_SELECTED | SO_FILTER_OB_STATE_ACTIVE | \
    SO_FILTER_OB_STATE_SELECTABLE)
 
+#define SO_FILTER_OB_CONTENT_TYPE \
+  (SO_FILTER_NO_OB_DATA | SO_FILTER_NO_OB_ANIMATION | SO_FILTER_NO_OB_CONSTRAINTS | \
+   SO_FILTER_NO_OB_SHAPE_KEYS | SO_FILTER_NO_OB_MATERIAL | SO_FILTER_NO_OB_DEFGROUP | \
+   SO_FILTER_NO_OB_MODIFIERS | SO_FILTER_NO_ARMATURE_BONE_COLLECTION | \
+   SO_FILTER_NO_GREASE_PENCIL_EFFECTS | SO_FILTER_NO_POSE_BONES | SO_FILTER_NO_POSE_BONE)
+
 #define SO_FILTER_ANY \
   (SO_FILTER_NO_OB_CONTENT | SO_FILTER_NO_CHILDREN | SO_FILTER_OB_TYPE | SO_FILTER_OB_STATE | \
-   SO_FILTER_NO_COLLECTION | SO_FILTER_NO_VIEW_LAYERS)
+   SO_FILTER_NO_COLLECTION | SO_FILTER_NO_VIEW_LAYERS | SO_FILTER_OB_CONTENT_TYPE)
 
 /** #SpaceOutliner.filter_state */
 enum eSpaceOutliner_StateFilter : char {
@@ -403,6 +422,10 @@ enum eSpaceSeq_SequencerTimelineOverlay_Flag : int {
   SEQ_TIMELINE_SHOW_GRID = (1 << 18),
   /** Show continuous sequence of thumbnails. */
   SEQ_TIMELINE_CONTINUOUS_THUMBNAILS = (1 << 19),
+  /** Show a single thumbnail in the middle. */
+  SEQ_TIMELINE_MIDDLE_THUMBNAILS = (1 << 20),
+  /** Draw thumbnails on strips. */
+  SEQ_TIMELINE_SHOW_THUMBNAILS = (1 << 21),
 };
 ENUM_OPERATORS(eSpaceSeq_SequencerTimelineOverlay_Flag)
 
@@ -889,7 +912,8 @@ enum eSpaceNodeOverlay_Flag : int {
    */
   SN_OVERLAY_SHOW_REROUTE_AUTO_LABELS = (1 << 7),
   SN_OVERLAY_SHOW_RENDER_REGION = (1 << 8),
-  SN_OVERLAY_SHOW_WORLD_CENTER = (1 << 9), /*BFA - World Center overlay*/
+  SN_OVERLAY_SHOW_TEXT_INFO = (1 << 9),
+  SN_OVERLAY_SHOW_WORLD_CENTER = (1 << 10), /*BFA - World Center overlay*/
 };
 ENUM_OPERATORS(eSpaceNodeOverlay_Flag)
 

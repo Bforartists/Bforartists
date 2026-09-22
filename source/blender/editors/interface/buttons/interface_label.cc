@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup buttons
+ */
+
 #include "BLF_api.hh"
 
 #include "BLI_rect.hh"
@@ -14,7 +18,7 @@ namespace blender::ui {
 bool button_label_is_multiline(const Button *button)
 {
   return button->type == ButtonType::Label &&
-         static_cast<const ButtonLabel *>(button)->is_multiline;
+         static_cast<const ButtonLabel *>(button)->label_type == ButtonLabelType::Multiline;
 }
 
 void label_multiline_wrap_lines(ButtonLabel *button, int icon_pad)

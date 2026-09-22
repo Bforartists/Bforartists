@@ -1249,7 +1249,7 @@ int getTransformOrientation_ex(const Main &bmain,
       else {
         const bool use_handle = v3d ? (v3d->overlay.handle_display != CURVE_HANDLE_NONE) : true;
 
-        for (nu = static_cast<Nurb *>(nurbs->first); nu; nu = nu->next) {
+        for (nu = nurbs->first(); nu; nu = nu->next) {
           /* Only bezier has a normal. */
           if (nu->type == CU_BEZIER) {
             BezTriple *bezt = nu->bezt;
@@ -1496,7 +1496,7 @@ int getTransformOrientation_ex(const Main &bmain,
     /* We need the one selected object, if its not active. */
     if (ob != nullptr) {
       bool ok = false;
-      if (activeOnly || (ob->mode & (OB_MODE_ALL_PAINT | OB_MODE_PARTICLE_EDIT))) {
+      if (activeOnly || (ob->mode & (OB_MODE_ALL_PAINT_MESH | OB_MODE_PARTICLE_EDIT))) {
         /* Ignore selection state. */
         ok = true;
       }

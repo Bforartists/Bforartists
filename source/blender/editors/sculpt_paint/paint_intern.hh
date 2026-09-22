@@ -13,6 +13,8 @@
 #include "BLI_rand.hh"
 #include "BLI_span.hh"
 
+#include "BKE_paint_types.hh"
+
 #include "DNA_object_enums.h"
 #include "DNA_scene_enums.h"
 #include "DNA_scene_types.h"
@@ -126,6 +128,7 @@ struct PaintStroke : NonCopyable, NonMovable {
   Object *object = nullptr;
   Scene *scene = nullptr;
   Paint *paint = nullptr;
+  PaintMode paint_mode = PaintMode::Invalid;
   Brush *brush = nullptr;
   UnifiedPaintSettings *ups = nullptr;
 
@@ -237,7 +240,7 @@ struct PaintStroke : NonCopyable, NonMovable {
   }
 
  protected:
-  PaintStroke(bContext *C, wmOperator *op, const wmEvent *event);
+  PaintStroke(bContext *C, wmOperator *op, const wmEvent *event, PaintMode mode);
 
   /**
    * Callback function to retrieve the object space coordinates based on screen space coordinates.
@@ -355,11 +358,6 @@ void BRUSH_OT_asset_revert(wmOperatorType *ot);
 
 /** Initialize viewport pivot from evaluated bounding box center of `ob`. */
 void paint_init_pivot(Object *ob, Scene *scene, Paint *paint);
-
-/**
- * Delete overlay cursor textures to preserve memory and invalidate all overlay flags.
- */
-void paint_cursor_delete_textures();
 
 /* `paint_vertex.cc` */
 

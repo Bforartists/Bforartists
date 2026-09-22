@@ -1092,6 +1092,8 @@ def km_user_interface(_params):
          {"properties": [("scroll_direction", 'TOP')]}),
         ("ui.view_item_page_scroll", {"type": 'END', "value": 'PRESS'},
          {"properties": [("scroll_direction", 'BOTTOM')]}),
+        ("ui.region_start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
+        ("ui.region_clear_filter", {"type": 'F', "value": 'PRESS', "alt": True}, None),
     ])
 
     return keymap
@@ -4056,6 +4058,8 @@ def km_grease_pencil_paint_mode(params):
     )
 
     items.extend([
+        # Select All
+        *_template_items_select_actions(params, "grease_pencil.select_all"),
         # Active material
         op_menu("VIEW3D_MT_greasepencil_material_active", {"type": 'U', "value": 'PRESS'}),
         # Active layer
@@ -4108,7 +4112,26 @@ def km_grease_pencil_paint_mode(params):
         *_template_asset_shelf_popup("VIEW3D_AST_brush_gpencil_paint", params.spacebar_action),
 
         *_template_items_context_panel("VIEW3D_PT_greasepencil_draw_context_menu", params.context_menu_event),
+
+        # Delete menu
+        op_menu("VIEW3D_MT_edit_greasepencil_delete", {"type": 'DEL', "value": 'PRESS'}),
+        # Copy/paste
+        ("grease_pencil.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
+        ("grease_pencil.paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
+        ("grease_pencil.paste", {"type": 'V', "value": 'PRESS', "shift": True, "ctrl": True},
+         {"properties": [("paste_back", True)]}),
+
+        # Duplicate + Move
+        ("grease_pencil.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+
+        # Transform Actions.
+        *_template_items_transform_actions(params, use_bend=True, use_mirror=True, use_tosphere=True, use_shear=True),
     ])
+
+    if params.select_mouse == 'LEFTMOUSE' and not params.legacy:
+        items.extend([
+            op_tool_cycle("builtin.select_lasso", {"type": 'W', "value": 'PRESS'}),
+        ])
 
     return keymap
 

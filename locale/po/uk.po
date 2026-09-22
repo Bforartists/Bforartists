@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'32296898e057')\n"
+"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 07:41+0000\n"
+"POT-Creation-Date: 2026-09-14 07:47+0000\n"
 "PO-Revision-Date: 2026-07-22 11:12+0000\n"
 "Last-Translator: Gamfid <gamfid@users.noreply.translate.blender.org>\n"
 "Language-Team: Ukrainian <https://translate.blender.org/projects/blender-ui/ui/uk/>\n"
@@ -26360,6 +26360,26 @@ msgid "Material slot name"
 msgstr "Назва гнізда матеріалу"
 
 
+msgid "Sample"
+msgstr "Вибірка"
+
+
+msgid "Show/Hide"
+msgstr "Показати/приховати"
+
+
+msgid "Clean Up"
+msgstr "Вичищення"
+
+
+msgid "Primitives"
+msgstr "Примітиви"
+
+
+msgid "Pivot Point"
+msgstr "Точка Опертя"
+
+
 msgid "Snap"
 msgstr "Підхоп"
 
@@ -26372,10 +26392,6 @@ msgid "Mask Edit"
 msgstr "Редагування Маски"
 
 
-msgid "Sample"
-msgstr "Вибірка"
-
-
 msgid "Automasking"
 msgstr "Автомаскування"
 
@@ -26384,16 +26400,24 @@ msgid "Face Sets Edit"
 msgstr "Редагування Наборів Граней"
 
 
-msgid "Primitives"
-msgstr "Примітиви"
-
-
 msgid "Vertex Group Locks"
 msgstr "Блокування Груп Вершин"
 
 
 msgid "Import"
 msgstr "Імпортувати"
+
+
+msgid "Utilities"
+msgstr "Утиліти"
+
+
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Mirror"
@@ -26406,10 +26430,6 @@ msgstr "Розкладання UV"
 
 msgid "Local View"
 msgstr "Огляд Локально"
-
-
-msgid "Utilities"
-msgstr "Утиліти"
 
 
 msgid "Viewpoint"
@@ -26434,14 +26454,6 @@ msgstr "Регіони Огляду"
 
 msgid "Select More/Less"
 msgstr "Вибрати більше/менше"
-
-
-msgid "Math"
-msgstr "Математика"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Select Similar"
@@ -26476,6 +26488,14 @@ msgid "Light Probe"
 msgstr "Проба Освітлення"
 
 
+msgid "Linked"
+msgstr "Пов'язане"
+
+
+msgid "Layout"
+msgstr "Розстановка"
+
+
 msgid "Add Image"
 msgstr "Додати Зображення"
 
@@ -26500,20 +26520,8 @@ msgid "Quick Effects"
 msgstr "Швидкі ефекти"
 
 
-msgid "Show/Hide"
-msgstr "Показати/приховати"
-
-
-msgid "Linked"
-msgstr "Пов'язане"
-
-
-msgid "Clean Up"
-msgstr "Вичищення"
-
-
-msgid "Layout"
-msgstr "Розстановка"
+msgid "Keying"
+msgstr "Ключування"
 
 
 msgid "Asset"
@@ -26522,6 +26530,10 @@ msgstr "Актив"
 
 msgid "Make Single User"
 msgstr "Зробити однокористувацьким"
+
+
+msgid "Tracking"
+msgstr "Стеження"
 
 
 msgid "Convert"
@@ -26542,14 +26554,6 @@ msgstr "Ліплення Задати Опертя"
 
 msgid "Face Sets Init"
 msgstr "Ініціація Наборів Граней"
-
-
-msgid "Keying"
-msgstr "Ключування"
-
-
-msgid "Tracking"
-msgstr "Стеження"
 
 
 msgid "Clear Transform"
@@ -26598,10 +26602,6 @@ msgstr "Задати Силу Грані"
 
 msgid "Merge"
 msgstr "Об'єднання"
-
-
-msgid "Pivot Point"
-msgstr "Точка Опертя"
 
 
 msgid "Special Characters"
@@ -42223,10 +42223,6 @@ msgstr "Експорт всіх матеріалів, що використов�
 
 msgid "Do not export materials, but write multiple primitive groups per mesh, keeping material slot information"
 msgstr "Не експортувати матеріали, але записати багаторазово групи примітивів на кожну сіть, зберігаючи інформацію гнізда матеріалу"
-
-
-msgid "No export"
-msgstr "Не експортувати"
 
 
 msgid "Do not export materials, and combine mesh primitive groups, losing material slot information"
@@ -59253,6 +59249,14 @@ msgid "View a context based online manual in a web browser"
 msgstr "Переглянути контекстно-базоване онлайн-керівництво у веб-оглядачі"
 
 
+msgid "Trusted Source"
+msgstr "Надійне джерело"
+
+
+msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
+msgstr "Дозволити .blend-файлу виконувати скрипти автоматично. Стандартне значення можна змінити у налаштуваннях системи"
+
+
 msgid "Scene Unit"
 msgstr "Одиниці сцени"
 
@@ -59339,14 +59343,6 @@ msgstr "Завантажити параметри користувацького
 
 msgid "State"
 msgstr "Стан"
-
-
-msgid "Trusted Source"
-msgstr "Надійне джерело"
-
-
-msgid "Allow .blend file to execute scripts automatically, default available from system preferences"
-msgstr "Дозволити .blend-файлу виконувати скрипти автоматично. Стандартне значення можна змінити у налаштуваннях системи"
 
 
 msgctxt "Operator"
@@ -65763,6 +65759,10 @@ msgid "Region height"
 msgstr "Висота області"
 
 
+msgid "Live search filtering string"
+msgstr "Рядок фільтру живого пошуку"
+
+
 msgid "Type of this region"
 msgstr "Тип цієї області"
 
@@ -69687,10 +69687,6 @@ msgid "Show only selectable objects"
 msgstr "Показати лише вибирані об'єкти"
 
 
-msgid "Live search filtering string"
-msgstr "Рядок фільтру живого пошуку"
-
-
 msgid "Show Mode Column"
 msgstr "Показ Стовпця Режиму"
 
@@ -69863,16 +69859,16 @@ msgid "Active Tool and Workspace settings"
 msgstr "Устави Активного Засобу та Робпростору"
 
 
-msgid "Scene Properties"
-msgstr "Властивості Сцени"
-
-
 msgid "Render Properties"
 msgstr "Властивості Рендера"
 
 
 msgid "Output Properties"
 msgstr "Властивості Виводу"
+
+
+msgid "Scene Properties"
+msgstr "Властивості Сцени"
 
 
 msgid "View Layer Properties"
@@ -76501,6 +76497,10 @@ msgid "Blender Website"
 msgstr "Вебсайт Blender'а"
 
 
+msgid "Trusted Source [Untrusted Path]"
+msgstr "Надійне джерело [Ненадійний шлях]"
+
+
 msgctxt "Operator"
 msgid "Link..."
 msgstr "Пов'язання..."
@@ -79036,16 +79036,16 @@ msgid "Paste Data-Blocks"
 msgstr "Вставити Блоки Даних"
 
 
-msgid "Object Contents"
-msgstr "Вміст Об'єкта"
+msgid "Empties"
+msgstr "Порожні"
 
 
 msgid "Object Children"
 msgstr "Нащадки Об'єкта"
 
 
-msgid "Empties"
-msgstr "Порожні"
+msgid "Object Contents"
+msgstr "Вміст Об'єкта"
 
 
 msgctxt "Operator"
@@ -79149,6 +79149,11 @@ msgstr "Стрибок на Попередню Смужку (Центр)"
 msgctxt "Operator"
 msgid "Jump to Next Strip (Center)"
 msgstr "Стрибок на Наступну Смужку (Центр)"
+
+
+msgctxt "Operator"
+msgid "Text"
+msgstr "Текст"
 
 
 msgctxt "Operator"
@@ -79258,23 +79263,8 @@ msgstr "Держак"
 
 
 msgctxt "Operator"
-msgid "Clip..."
-msgstr "Кліп..."
-
-
-msgctxt "Operator"
-msgid "Mask..."
-msgstr "Маска..."
-
-
-msgctxt "Operator"
 msgid "Color"
 msgstr "Колір"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Текст"
 
 
 msgctxt "Operator"
@@ -79353,11 +79343,6 @@ msgstr "Роздільності"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgctxt "Operator"
-msgid "Clip"
-msgstr "Кліп"
 
 
 msgctxt "Operator"
@@ -85799,10 +85784,6 @@ msgid "Move after collection"
 msgstr "Переміщення після колекції"
 
 
-msgid "Move inside collection (Ctrl to link, Shift to parent)"
-msgstr "Переміщення всередині колекції (Ctrl для пов'язання, Shift для приріднення)"
-
-
 msgid "Move inside collection (Ctrl to link)"
 msgstr "Перемістити всередину колекції (Ctrl для пов'язання)"
 
@@ -87822,12 +87803,12 @@ msgid "BSDF"
 msgstr "BSDF"
 
 
-msgid "IOR"
-msgstr "Показник заломлення"
-
-
 msgid "Anisotropy"
 msgstr "Анізотропія"
+
+
+msgid "IOR"
+msgstr "Показник заломлення"
 
 
 msgid "RoughnessU"
@@ -88190,10 +88171,6 @@ msgstr "Перегляд файлу Blender"
 
 msgid "Missing 'window' in context"
 msgstr "Відсутнє вікно в контексті"
-
-
-msgid "Trusted Source [Untrusted Path]"
-msgstr "Надійне джерело [Ненадійний шлях]"
 
 
 msgid "Allow Execution"

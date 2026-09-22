@@ -2,6 +2,10 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
+/** \file
+ * \ingroup nodes
+ */
+
 #include <fmt/format.h>
 
 #include "NOD_geometry_nodes_closure_eval.hh"
@@ -273,7 +277,7 @@ class LazyFunctionForClosureZone : public LazyFunction {
                                         std::move(captured_values))};
 
     params.set_output(zone_info_.indices.outputs.main[0],
-                      bke::SocketValueVariant::From(std::move(closure)));
+                      bke::SocketValueVariant::from(std::move(closure)));
   }
 };
 
@@ -817,9 +821,9 @@ void evaluate_closure_eagerly(const Closure &closure, ClosureEagerEvalParams &pa
   for (const int main_input_i : indices.inputs.main.index_range()) {
     const int lf_input_i = indices.inputs.main[main_input_i];
     if (!lf_input_values[lf_input_i]) {
-      bke::SocketValueVariant &value = scope.construct<bke::SocketValueVariant>(
+      auto value = allocator.construct<bke::SocketValueVariant>(
           closure.default_input_value(main_input_i));
-      lf_input_values[lf_input_i] = &value;
+      lf_input_values[lf_input_i] = value.release();
     }
     lf_output_values[indices.outputs.input_usages[main_input_i]] = allocator.allocate<bool>();
   }
@@ -834,8 +838,8 @@ void evaluate_closure_eagerly(const Closure &closure, ClosureEagerEvalParams &pa
   /** Set output data reference sets. */
   for (auto &&[main_output_i, lf_input_i] : indices.inputs.output_data_reference_sets.items()) {
     /* TODO: Propagate all attributes or let the caller decide. */
-    auto *value = &scope.construct<bke::GeometryNodesReferenceSet>();
-    lf_input_values[lf_input_i] = {value};
+    auto value = allocator.construct<bke::GeometryNodesReferenceSet>();
+    lf_input_values[lf_input_i] = {value.release()};
   }
   /** Set main outputs. */
   for (const int main_output_i : indices.outputs.main.index_range()) {

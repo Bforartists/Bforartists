@@ -776,7 +776,7 @@ class USERPREF_PT_animation_timeline_advanced(AnimationPanel, CenterAlignMixIn, 
         edit = prefs.edit
 
         layout.prop(edit, "use_negative_frames")
-        split = layout.split(factor=0.4)
+        split = layout.split(factor=layout.property_split_factor)
         split.active = edit.use_negative_frames
         split.separator()
         split.label_multiline(
@@ -922,7 +922,7 @@ class USERPREF_PT_system_network(SystemPanel, CenterAlignMixIn, Panel):
         # Show when the preference has been overridden and doesn't match the current preference.
         runtime_online_access = bpy.app.online_access
         if system.use_online_access != runtime_online_access:
-            row = layout.split(factor=0.4)
+            row = layout.split(factor=layout.property_split_factor)
             row.label(text="")
             if runtime_online_access:
                 text = iface_("Enabled on startup, overriding the preference.")
@@ -1016,29 +1016,27 @@ class USERPREF_PT_viewport_display(ViewportPanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         view = prefs.view
 
-        layout.label(text="Text Info Overlay")
+        header, col = layout.indented_column()
+        header.label(text="Text Info Overlay")
+        
+        col.use_property_split = True
+        col.use_property_decorate = False
+        col.prop(view, "show_object_info", text="Object Info")
+        col.prop(view, "show_view_name", text="View Name")
+        
+        header, col = col.indented_column(draw_body=view.show_playback_fps)
+        header_row = header.row()
+        header_row.alignment = 'LEFT'
+        header_row.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
 
-        col = layout.column()
-
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(view, "show_object_info", text="Object Info")
-        row = col.row()
-        row.separator()
-        row.prop(view, "show_view_name", text="View Name")
-        row = col.row()
-        row.separator()
-
-        split = row.split()
-        col = split.column()
-        col.use_property_split = False
-        col.prop(view, "show_playback_fps", text="Playback Frame Rate (FPS)")
-
-        if view.show_playback_fps:
-            split.prop(view, "playback_fps_samples", text="Samples")
+        if col:
+            header_row.label(icon='DISCLOSURE_TRI_DOWN')
+            
+            col.use_property_split = True
+            col.use_property_decorate = False
+            col.prop(view, "playback_fps_samples", text="Samples")
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')
+            header_row.label(icon='DISCLOSURE_TRI_RIGHT')
 
         layout.separator()
 
@@ -2837,7 +2835,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                 if value := bl_info["warning"]:
                     split = colsub.row().split(factor=0.15)
                     split.label(text="Warning:")
-                    split.label(text="  " + iface_(value), icon='STATUS_WARNING')
+                    split.label_multiline(text=iface_(value), icon='STATUS_WARNING')
                 del value
 
                 user_addon = USERPREF_PT_addons.is_user_addon(mod, user_addon_paths)
@@ -3214,7 +3212,7 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
             context.preferences,
             (
                 ({"property": "use_new_curves_tools"}, ("blender/blender/issues/68981", "#68981")),
-                ({"property": "use_sculpt_texture_paint"}, ("blender/blender/issues/96225", "#96225")),
+                ({"property": "use_3d_texture_paint"}, ("blender/blender/issues/156410", "#156410")),
             ),
         )
 
