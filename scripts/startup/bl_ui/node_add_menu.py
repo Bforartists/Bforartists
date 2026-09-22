@@ -564,12 +564,12 @@ class NODE_MT_group_base(NodeMenu):
         node_tree = space_node.edit_tree
         all_node_groups = context.blend_data.node_groups
 
-        cls.new_empty_group(layout)
+        self.new_empty_group(layout)
 
         if node_tree in all_node_groups.values():
             layout.separator()
-            cls.node_operator(layout, "NodeGroupInput")
-            cls.node_operator(layout, "NodeGroupOutput")
+            self.node_operator(layout, "NodeGroupInput")
+            self.node_operator(layout, "NodeGroupOutput")
 
         self.draw_group_menu(context, layout)
 
