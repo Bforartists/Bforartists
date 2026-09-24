@@ -759,7 +759,6 @@ static const EnumPropertyItem eevee_resolution_scale_items[] = {
 #  include "BKE_editmesh.hh"
 #  include "BKE_freestyle.h"
 #  include "BKE_global.hh"
-#  include "BKE_gpencil_legacy.h"
 #  include "BKE_idprop.hh"
 #  include "BKE_image.hh"
 #  include "BKE_image_format.hh"
@@ -2250,8 +2249,9 @@ static void rna_Scene_editmesh_select_mode_set(PointerRNA *ptr, const bool *valu
         Object *object = BKE_view_layer_active_object_get(view_layer);
         if (object && object->type == OB_MESH) {
           if (BMEditMesh *em = BKE_editmesh_from_object(object)) {
+            BMesh *bm = BKE_editmesh_bmesh_get_for_write(object);
             if (em->selectmode != selectmode) {
-              EDBM_selectmode_set(em, selectmode);
+              EDBM_selectmode_set(em, bm, selectmode);
             }
           }
         }
@@ -3761,6 +3761,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, workspace_tool_items);
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_EDITOR_VIEW3D);
   RNA_def_property_ui_text(prop, "Drag", "Action when dragging in the viewport");
+  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, nullptr); /* header redraw */
 
   /* Transform */
   prop = RNA_def_property(srna, "use_proportional_edit", PROP_BOOLEAN, PROP_NONE);

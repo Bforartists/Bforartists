@@ -554,6 +554,7 @@ template int implicit_test<2>();
     return 3;
   }
 }
+#line 22
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
@@ -605,6 +606,7 @@ template int chain_test<0>();
     return 3;
   }
 }
+#line 21
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
@@ -677,6 +679,7 @@ template int f<3>(int);
     return 4;
   }
 }
+#line 26
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
@@ -718,7 +721,9 @@ void f(Res res)
 }
 )";
     string expect = R"(
+
 #define E int
+#line 3
 static constexpr int E_ENUM  = 1;
 #define access_Res_i() i
 
@@ -768,6 +773,7 @@ void f(Res res)
 }
 
 #endif
+#line 23
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);

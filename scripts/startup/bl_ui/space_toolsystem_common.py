@@ -843,8 +843,15 @@ class ToolSelectPanelHelper:
                 tool_fallback_id = cls.tool_fallback_id
                 item, _select_index = cls._tool_get_by_id_active(context, tool_fallback_id)
                 label = item.label
+                # BFA - use the active fallback tool's own icon (Tweak, Select Box, Select Circle, Select Lasso)
+                # instead of the generic TOOL_SETTINGS icon.
+                popover_icon_kw = {
+                    "icon_value": ToolSelectPanelHelper._icon_value_from_icon_handle(item.icon),
+                }
             else:
                 label = "Active Tool"
+                # BFA - use the generic TOOL_SETTINGS icon for the active tool.
+                popover_icon_kw = {"icon": 'TOOL_SETTINGS'}
 
             row = layout.row(heading="Drag", heading_ctxt=i18n_contexts.editor_view3d)
             row.context_pointer_set("tool", tool)
@@ -852,7 +859,7 @@ class ToolSelectPanelHelper:
                 panel="TOPBAR_PT_tool_fallback",
                 text=iface_(label, i18n_contexts.operator_default),
                 translate=False,
-                icon='TOOL_SETTINGS', # bfa - added icon
+                **popover_icon_kw,
             )
 
         return tool

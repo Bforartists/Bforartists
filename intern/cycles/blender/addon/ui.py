@@ -1792,7 +1792,7 @@ class CYCLES_OBJECT_PT_visibility(CyclesButtonsPanel, Panel):
             row.prop_decorator(ob, "is_shadow_catcher")
             row = col.row()
             row.separator()
-            row.prop(ob, "is_holdout")
+            row.prop(ob, "is_holdout", toggle=False)
             row.prop_decorator(ob, "is_holdout")
 
 
@@ -1818,7 +1818,7 @@ class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
         split = layout.split()
 
         col = split.column(align=True)
-        col.prop(ob, "visible_camera", text="Camera")
+        col.prop(ob, "visible_camera", text="Camera", toggle=False)
         col.prop(ob, "visible_diffuse", text="Diffuse")
         col.prop(ob, "visible_glossy", text="Glossy")
 

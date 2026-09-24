@@ -584,7 +584,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         col.label(text = "Mask")
         row = col.row()
         row.separator()
-        row.prop(ob, "is_holdout")
+        row.prop(ob, "is_holdout", toggle=False)
 
 
 def has_geometry_visibility(ob):

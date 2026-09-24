@@ -296,8 +296,11 @@ SourceProcessor::Result SourceProcessor::convert_bsl()
     lower_trailing_comma_in_list_ast(parser);
     lower_assert_ast(parser, filename);
     lower_this_keyword(parser);
-
     parser.apply_mutations();
+
+    /* Lower string, assert, printf. */
+    lower_strings(parser);
+    lower_printf(parser);
 
     /* Linting phase. Detect valid syntax with invalid usage. */
     lint_reserved_tokens(parser);
@@ -316,9 +319,6 @@ SourceProcessor::Result SourceProcessor::convert_bsl()
     lower_union_setters(parser);
     lower_bitfield_setters(parser);
     lower_method_calls(parser, false);
-    /* Lower string, assert, printf. */
-    lower_strings(parser);
-    lower_printf(parser);
     /* Needs to be last. */
     lower_resource_macro_placeholder_ast(parser);
     lower_constructors(parser);
@@ -787,10 +787,20 @@ void SourceProcessor::parse_includes(Parser &parser)
     }
     string_view dependency_name = str_view_exclusive(tokens[2]);
 
-    if (dependency_name.find("defines.hh") != string::npos) {
+    if (dependency_name.find("defines.hh") != string::npos ||
+        /* WORKAROUND(fclem): Only needed in EEVEE for now. Needs the file to be in the same
+           folder. */
+        (dependency_name.ends_with(".bsl.hh") && filename.ends_with(".bsl.hh") &&
+         dependency_name.starts_with("eevee_") && filename.starts_with("eevee_")))
+    {
       /* Dependencies between create infos are not needed for reflections.
        * Only the dependencies on the defines are needed. */
-      metadata_.create_infos_dependencies.emplace_back(dependency_name);
+      if (dependency_name.ends_with(".bsl.hh")) {
+        metadata_.create_infos_dependencies.emplace_back(string(dependency_name) + ".info");
+      }
+      else {
+        metadata_.create_infos_dependencies.emplace_back(dependency_name);
+      }
     }
 
     if (dependency_name == "BLI_utildefines_variadic.hh") {
@@ -1163,6 +1173,7 @@ void SourceProcessor::parse_library_functions(Parser &parser)
             curr = curr.next();
           }
           /* Parse the type */
+          Token type_tok = curr;
           string type = string(curr.str());
           curr = curr.next();
           /* Skip optional parenthesis. */
@@ -1174,12 +1185,58 @@ void SourceProcessor::parse_library_functions(Parser &parser)
             qualifier = "out";
           }
 
-          fn.arguments.emplace_back(
-              ArgumentFormat{metadata::Qualifier(hash(qualifier)), metadata::Type(hash(type))});
+          if (type == "ShadingData" || type == "KernelGlobals") {
+            /* They are technically inout, but we declare them at the end of the input list. */
+            qualifier = "in";
+          }
+
+          metadata::Qualifier qualifier_enum = metadata::Qualifier(hash(qualifier));
+          metadata::Type type_enum = metadata::Type(hash(type));
+
+          switch (qualifier_enum) {
+            case metadata::Qualifier::in:
+            case metadata::Qualifier::out:
+            case metadata::Qualifier::inout:
+              break;
+            default:
+              report_error(arg.front(), "Unknown qualifier '" + qualifier + "'");
+              break;
+          }
+
+          switch (type_enum) {
+            case metadata::Type::float1:
+            case metadata::Type::float2:
+            case metadata::Type::float3:
+            case metadata::Type::float4:
+            case metadata::Type::float3x3:
+            case metadata::Type::float4x4:
+            case metadata::Type::int1:
+            case metadata::Type::int2:
+            case metadata::Type::int3:
+            case metadata::Type::int4:
+            case metadata::Type::bool1:
+            case metadata::Type::sampler1DArray:
+            case metadata::Type::sampler2DArray:
+            case metadata::Type::sampler2D:
+            case metadata::Type::sampler3D:
+            case metadata::Type::Closure:
+            case metadata::Type::KernelGlobals:
+            case metadata::Type::ShadingData:
+              break;
+            default:
+              report_error(type_tok, "Invalid type for node function '" + type + "'");
+              break;
+          }
+
+          fn.arguments.emplace_back(ArgumentFormat{qualifier_enum, type_enum});
         });
 
         metadata_.functions.emplace_back(fn);
       });
+
+  if (error_handler.err.has_value()) {
+    throw ParserException();
+  }
 }
 
 void SourceProcessor::parse_library_functions_ast(Parser &parser)
@@ -1187,15 +1244,15 @@ void SourceProcessor::parse_library_functions_ast(Parser &parser)
   using namespace metadata;
   for (FuncDecl func : parser.root().children_of_type<FuncDecl>()) {
     if (!func.attributes().contains_attr("node")) {
-      return;
+      continue;
     }
     if (func.return_type().str() != "void") {
       report_error(func.return_type(), "Expected void return type for node function");
-      return;
+      continue;
     }
     if (func.arguments().is_empty()) {
       report_error(func.identifier(), "Expected at least one argument for node function");
-      return;
+      continue;
     }
 
     FunctionFormat fn;
@@ -1207,18 +1264,54 @@ void SourceProcessor::parse_library_functions_ast(Parser &parser)
                      "Array arguments are not supported in node functions.");
       }
 
-      Type type = Type(hash(string(arg.type().str())));
+      Type type = Type(hash(string(arg.type().identifier().str())));
       Qualifier qualifier;
       if (arg.is_reference() && !arg.is_const()) {
-        qualifier = Qualifier(hash("inout"));
+        qualifier = Qualifier::out;
       }
       else {
-        qualifier = Qualifier(hash("in"));
+        qualifier = Qualifier::in;
       }
+
+      if (type == Type::KernelGlobals || type == Type::ShadingData) {
+        /* They are technically inout, but we declare them at the end of the input list. */
+        qualifier = Qualifier::in;
+      }
+
+      [&](Type type) {
+        switch (type) {
+          case Type::float1:
+          case Type::float2:
+          case Type::float3:
+          case Type::float4:
+          case Type::float3x3:
+          case Type::float4x4:
+          case Type::int1:
+          case Type::int2:
+          case Type::int3:
+          case Type::int4:
+          case Type::bool1:
+          case Type::sampler1DArray:
+          case Type::sampler2DArray:
+          case Type::sampler2D:
+          case Type::sampler3D:
+          case Type::Closure:
+          case Type::KernelGlobals:
+          case Type::ShadingData:
+            return;
+        }
+        report_error(arg.type().identifier(),
+                     "Invalid type for node function '" + string(arg.type().identifier().str()) +
+                         "'");
+      }(type);
 
       fn.arguments.emplace_back(qualifier, type);
     }
     metadata_.functions.emplace_back(fn);
+  }
+
+  if (error_handler.err.has_value()) {
+    throw ParserException();
   }
 }
 
@@ -1256,7 +1349,6 @@ void SourceProcessor::parse_builtins(const string &str, const string &filename, 
   else {
     /* Assume blender GLSL or BSL. */
     tokens.emplace_back("drw_debug_");
-    tokens.emplace_back("printf");
 #ifdef WITH_GPU_SHADER_ASSERT
     tokens.emplace_back("assert");
 #endif

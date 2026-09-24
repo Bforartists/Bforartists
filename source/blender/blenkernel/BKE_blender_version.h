@@ -37,9 +37,7 @@ namespace blender {
 
 /* Blender file format version. */
 #define BLENDER_FILE_VERSION BLENDER_VERSION
-/* BFA: bumped to 22 for the #6780 dope sheet scene strip gizmo defaults, which
- * are versioned separately from upstream's 5.3.19-5.3.21 subversions. */
-#define BLENDER_FILE_SUBVERSION 22
+#define BLENDER_FILE_SUBVERSION 23
 
 /* Minimum Blender version that supports reading file written with the current
  * version. Older Blender versions will test this and cancel loading the file, showing a warning to
