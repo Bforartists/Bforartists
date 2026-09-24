@@ -4,290 +4,95 @@
 
 import bpy
 from bpy.types import Panel
-from bpy.app.translations import pgettext_iface as iface_
-from bpy.app.translations import contexts as i18n_contexts
-from bl_ui.utils import PresetPanel
-from bl_ui.properties_grease_pencil_common import (
-    AnnotationDataPanel,
-)
+
 from bl_ui.space_toolsystem_common import (
-    ToolActivePanelHelper,
-    toolsystem_column_count,
-)
-from bl_ui.properties_material import (
-    EEVEE_MATERIAL_PT_settings,
-    MATERIAL_PT_viewport
-)
-from bl_ui.properties_world import (
-    WORLD_PT_viewport_display
-)
-from bl_ui.properties_data_light import (
-    DATA_PT_light,
-    DATA_PT_EEVEE_light,
+    Separator,
+    OperatorEntry,
+    draw_entries,
 )
 
 
-class NODE_PT_transform(Panel):
+class NodeToolsystemPanel(Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Node"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return view.show_toolshelf_tabs == True
+
+
+class NODE_PT_transform(NodeToolsystemPanel):
     bl_label = "Transform"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = "Node"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-     # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        space = context.space_data
-        return space.show_toolshelf_tabs
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = [            
+            OperatorEntry("transform.translate", icon="TRANSFORM_MOVE", props={"release_confirm": True}),
+            OperatorEntry("transform.rotate", icon="TRANSFORM_ROTATE"),
+            OperatorEntry("transform.resize",  icon="TRANSFORM_SCALE"),
+        ]
 
-        obj = context.object
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("transform.translate", icon = "TRANSFORM_MOVE").release_confirm = True
-            col.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
-            col.operator("transform.resize",  icon = "TRANSFORM_SCALE")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("transform.translate", text = "", icon = "TRANSFORM_MOVE").release_confirm = True
-                row.operator("transform.rotate", text = "", icon = "TRANSFORM_ROTATE")
-                row.operator("transform.resize", text = "",  icon = "TRANSFORM_SCALE")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("transform.translate", text = "", icon = "TRANSFORM_MOVE").release_confirm = True
-                row.operator("transform.rotate", text = "", icon = "TRANSFORM_ROTATE")
-                row = col.row(align=True)
-                row.operator("transform.resize", text = "",  icon = "TRANSFORM_SCALE")
-
-            elif column_count == 1:
-
-                col.operator("transform.translate", text = "", icon = "TRANSFORM_MOVE").release_confirm = True
-                col.operator("transform.rotate", text = "", icon = "TRANSFORM_ROTATE")
-                col.operator("transform.resize", text = "",  icon = "TRANSFORM_SCALE")
+        draw_entries(layout, context, entries)
 
 
-class NODE_PT_links(Panel):
+class NODE_PT_links(NodeToolsystemPanel):
     bl_label = "Links"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = "Node"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
-
-     # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        space = context.space_data
-        return space.show_toolshelf_tabs
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = [            
+            OperatorEntry("node.link_make", icon="LINK_DATA", props={"replace" : False}),
+            OperatorEntry("node.link_make", text="Make and Replace Links", icon="LINK_REPLACE", props={"replace" : True}),
+            OperatorEntry("node.links_detach", icon="DETACH_LINKS"),
+            OperatorEntry("node.move_detach_links", text="Detach Links Move", icon="DETACH_LINKS_MOVE"),
+            OperatorEntry("node.links_mute", icon="MUTE_IPO_ON"),
+        ]
 
-        obj = context.object
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("node.link_make", icon = "LINK_DATA").replace = False
-            col.operator("node.link_make", text="Make and Replace Links", icon = "LINK_REPLACE").replace = True
-            col.operator("node.links_detach", icon = "DETACH_LINKS")
-            col.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS_MOVE")
-            col.operator("node.links_mute", icon = "MUTE_IPO_ON")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("node.link_make", text="", icon = "LINK_DATA").replace = False
-                row.operator("node.link_make", text="", icon = "LINK_REPLACE").replace = True
-                row.operator("node.links_detach", text="", icon = "DETACH_LINKS")
-
-                row = col.row(align=True)
-                row.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS_MOVE")
-                row.operator("node.links_mute", text="", icon = "MUTE_IPO_ON")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("node.link_make", text="", icon = "LINK_DATA").replace = False
-                row.operator("node.link_make", text="", icon = "LINK_REPLACE").replace = True
-
-                row = col.row(align=True)
-                row.operator("node.links_detach", text="", icon = "DETACH_LINKS")
-                row.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS_MOVE")
-
-                row = col.row(align=True)
-                row.operator("node.links_mute", text="", icon = "MUTE_IPO_ON")
-
-            elif column_count == 1:
-
-                col.operator("node.link_make", text="", icon = "LINK_DATA").replace = False
-                col.operator("node.link_make", text="", icon = "LINK_REPLACE").replace = True
-                col.operator("node.links_detach", text="", icon = "DETACH_LINKS")
-                col.operator("node.move_detach_links", text = "", icon = "DETACH_LINKS_MOVE")
-                col.operator("node.links_mute", text="", icon = "MUTE_IPO_ON")
+        draw_entries(layout, context, entries)
 
 
-class NODE_PT_separate(Panel):
+class NODE_PT_separate(NodeToolsystemPanel):
     bl_label = "Separate"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = "Node"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
-     # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        space = context.space_data
-        return space.show_toolshelf_tabs
-
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = [            
+            OperatorEntry("node.group_separate", text="Copy", icon="SEPARATE_COPY", props={"type" : 'COPY'}),
+            OperatorEntry("node.group_separate", text="Move", icon="SEPARATE", props={"type" : 'MOVE'}),
+        ]
 
-        obj = context.object
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("node.group_separate", text = "Copy", icon = "SEPARATE_COPY").type = 'COPY'
-            col.operator("node.group_separate", text = "Move", icon = "SEPARATE").type = 'MOVE'
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("node.group_separate", text = "", icon = "SEPARATE_COPY").type = 'COPY'
-                row.operator("node.group_separate", text = "", icon = "SEPARATE").type = 'MOVE'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("node.group_separate", text = "", icon = "SEPARATE_COPY").type = 'COPY'
-                row.operator("node.group_separate", text = "", icon = "SEPARATE").type = 'MOVE'
-
-            elif column_count == 1:
-
-                col.operator("node.group_separate", text = "", icon = "SEPARATE_COPY").type = 'COPY'
-                col.operator("node.group_separate", text = "", icon = "SEPARATE").type = 'MOVE'
+        draw_entries(layout, context, entries)
 
 
-class NODE_PT_node_tools(Panel):
+class NODE_PT_node_tools(NodeToolsystemPanel):
     bl_label = "Frame Tools"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = "Node"
     bl_options = {'HIDE_BG'}
-
-     # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        space = context.space_data
-        return space.show_toolshelf_tabs
 
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = [            
+            OperatorEntry("node.join", text="Join in New Frame", icon="NODE_FRAMEJOIN"),
+            OperatorEntry("node.detach", text="Remove from Frame", icon="NODE_FRAMEREMOVE"),
+            OperatorEntry("node.join_nodes", text="Join Group Inputs", icon="NODE_JOINGROUP"),
+            OperatorEntry("node.join_named", icon="NODE_JOINFRAMENAMED"),
+            OperatorEntry("node.parent_set", text="Frame Make Parent", icon="NODE_FRAMEPARENT"),
+        ]
 
-        obj = context.object
+        draw_entries(layout, context, entries)
 
-        #text buttons
-        if column_count == 4:
 
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("node.join", text="Join in New Frame", icon = "NODE_FRAMEJOIN")
-            col.operator("node.detach", text="Remove from Frame", icon = "NODE_FRAMEREMOVE")
-            col.operator("node.join_nodes", text="Join Group Inputs", icon="NODE_JOINGROUP")
-            col.operator("node.join_named", icon="NODE_JOINFRAMENAMED")
-            col.operator("node.parent_set", text="Frame Make Parent", icon="NODE_FRAMEPARENT")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("node.join", text="", icon = "NODE_FRAMEJOIN")
-                row.operator("node.detach", text="", icon = "NODE_FRAMEREMOVE")
-                row.operator("node.join_nodes", text="", icon="NODE_JOINGROUP")
-
-                row = col.row(align=True)
-                row.operator("node.join_named", text="", icon="NODE_JOINFRAMENAMED")
-                row.operator("node.parent_set", text="", icon="NODE_FRAMEPARENT")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("node.join", text="", icon = "NODE_FRAMEJOIN")
-                row.operator("node.detach", text="", icon = "NODE_FRAMEREMOVE")
-
-                row = col.row(align=True)
-                row.operator("node.join_nodes", text="", icon="NODE_JOINGROUP")
-                row.operator("node.join_named", text="", icon="NODE_JOINFRAMENAMED")
-
-                row = col.row(align=True)
-                row.operator("node.parent_set", text="", icon="NODE_FRAMEPARENT")
-
-            elif column_count == 1:
-
-                col.operator("node.join", text="", icon = "NODE_FRAMEJOIN")
-                col.operator("node.detach", text="", icon = "NODE_FRAMEREMOVE")
-                col.operator("node.join_nodes", text="", icon="NODE_JOINGROUP")
-                col.operator("node.join_named", text="", icon="NODE_JOINFRAMENAMED")
-                col.operator("node.parent_set", text="", icon="NODE_FRAMEPARENT")
-
-class NODE_PT_group(Panel):
+class NODE_PT_group(NodeToolsystemPanel):
     bl_label = "Group"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = "Node"
     bl_options = {'HIDE_BG'}
 
      # just show when the toolshelf tabs toggle in the view menu is on.
@@ -299,58 +104,15 @@ class NODE_PT_group(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = [            
+            OperatorEntry("node.group_make", icon="NODE_MAKEGROUP"),
+            OperatorEntry("node.group_insert", icon="NODE_GROUPINSERT"),
+            OperatorEntry("node.group_ungroup", icon="NODE_UNGROUP"),
+            Separator,
+            OperatorEntry("node.group_edit", icon="NODE_EDITGROUP", props={"exit" : False}),
+        ]
 
-        obj = context.object
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("node.group_make", icon="NODE_MAKEGROUP")
-            col.operator("node.group_insert", icon="NODE_GROUPINSERT")
-            col.operator("node.group_ungroup", icon="NODE_UNGROUP")
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-            col.operator("node.group_edit", icon="NODE_EDITGROUP").exit = False
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("node.group_make", text="", icon="NODE_MAKEGROUP")
-                row.operator("node.group_insert", text="", icon="NODE_GROUPINSERT")
-                row.operator("node.group_ungroup", text="", icon="NODE_UNGROUP")
-
-                row = col.row(align=True)
-                row.operator("node.group_edit", text="", icon="NODE_EDITGROUP").exit = False
-
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("node.group_make", text="", icon="NODE_MAKEGROUP")
-                row.operator("node.group_insert", text="", icon="NODE_GROUPINSERT")
-
-                row = col.row(align=True)
-                row.operator("node.group_ungroup", text="", icon="NODE_UNGROUP")
-                row.operator("node.group_edit", text="", icon="NODE_EDITGROUP").exit = False
-
-            elif column_count == 1:
-
-                col.operator("node.group_make", text="", icon="NODE_MAKEGROUP")
-                col.operator("node.group_insert", text="", icon="NODE_GROUPINSERT")
-                col.operator("node.group_ungroup", text="", icon="NODE_UNGROUP")
-                col.operator("node.group_edit", text="", icon="NODE_EDITGROUP").exit = False
+        draw_entries(layout, context, entries)
 
 
 classes = (
@@ -360,6 +122,7 @@ classes = (
     NODE_PT_node_tools,
     NODE_PT_group,
 )
+
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
