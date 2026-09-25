@@ -9,8 +9,11 @@
 #define DNA_DEPRECATED_ALLOW
 
 #include "DNA_ID.h"
+#include "DNA_action_types.h"
 #include "DNA_brush_types.h"
 #include "DNA_camera_types.h"
+#include "DNA_screen_types.h"
+#include "DNA_space_types.h"
 #include "DNA_curves_types.h"
 #include "DNA_grease_pencil_types.h"
 #include "DNA_mesh_types.h"
@@ -46,9 +49,9 @@
 
 #include "versioning_common.hh"
 
-// #include "CLG_log.h"
+    // #include "CLG_log.h"
 
-namespace blender {
+    namespace blender {
 
 // static CLG_LogRef LOG = {"blend.doversion"};
 
@@ -555,6 +558,42 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
   }
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 22)) {
+    /* BFA (#6780): Dope Sheet scene strip gizmo defaults - enable the interactive
+     * gizmos, the layered "Show All Strips" indicators and both strip and scene
+     * name labels; set the indicator opacity to 0.5 for files that still carry
+     * the old default (1.0), so user-tuned opacities are left alone. "Set
+     * Preview Range" (ADS_SHOW_USE_PREVIEW_RANGE) is deliberately NOT
+     * force-enabled so the gizmo only edits the strip range until the user
+     * opts into preview-range writes.
+     *
+     * BFA: kept on its own subversion (22) rather than upstream's 19 so that
+     * files saved by upstream 5.3.19-5.3.21 still receive these defaults. */
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype == SPACE_ACTION) {
+            SpaceAction *space_action = reinterpret_cast<SpaceAction *>(&space);
+            space_action->overlays.flag |= (ADS_SHOW_SCENE_STRIP_GIZMOS |
+                                            ADS_SHOW_SCENE_STRIP_ALL |
+                                            ADS_SHOW_SCENE_STRIP_STRIP_NAME |
+                                            ADS_SHOW_SCENE_STRIP_SCENE_NAME);
+            /* Files predating the field read it as 0 (DNA fills missing fields
+             * with zero), files from intermediate builds of this branch carry
+             * the old 1.0 default - both count as "unset" here. */
+            if (space_action->overlays.all_strips_opacity <= 0.0f ||
+                space_action->overlays.all_strips_opacity >= 1.0f)
+            {
+              space_action->overlays.all_strips_opacity = 0.5f;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* BFA: bumped from upstream's 22 to 23 to avoid collision with BFA's Dope Sheet
+   * scene strip gizmo defaults above. */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 23)) {
     for (Brush &brush : bmain->brushes) {
       if (brush.paint_flags & BRUSH_PAINT_UNUSED_1) {
         brush.paint_flags &= ~BRUSH_PAINT_UNUSED_1;
@@ -563,7 +602,8 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
     }
   }
 
-  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 23)) {
+  /* BFA: bumped from upstream's 23 to 24 to avoid collision (see above). */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 24)) {
     for (Brush &brush : bmain->brushes) {
       clear_deprecated_brush_flags(brush);
     }

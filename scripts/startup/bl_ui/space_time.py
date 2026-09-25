@@ -124,6 +124,27 @@ def playback_controls(layout, context):
             sub.prop(scene, "frame_preview_end", text="End")
         row.operator("anim.end_frame_set", text="", icon="SET_POSITION")
 
+        # BFA (#6780): "Sync Scene Strip" - opt-in, one-way reconciliation of the
+        # strip's geometry with the strip scene's render range. When the user
+        # changes the scene range from the timeline, the dope-sheet gizmo (which
+        # draws the strip's extent) keeps its old width; this button adopts the
+        # new range into the strip so the gizmo reflects it and subsequent drags
+        # do not "snap". Enabled only while the dope-sheet scene-strip gizmo is
+        # on; greyed out (via the operator poll) when the strip already matches
+        # the range or while a gizmo drag is modal.
+        if is_timeline:
+            row = layout.row(align=True)
+            row.enabled = (
+                getattr(st, "overlays", None) is not None
+                and st.overlays.show_overlays
+                and st.overlays.show_scene_strip_gizmos
+            )
+            row.operator(
+                "action.scene_strip_sync_from_range",
+                text="",
+                icon="FILE_REFRESH",
+            )
+
         ### Right
         layout.separator_spacer()
 
