@@ -2995,7 +2995,7 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
         layout.operator("grease_pencil.select_fill", text="Fill", icon="GP_FILL_SELECT")
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
-        layout.operator("grease_pencil.select_linked", text="Deselect Linked").deselect = True
+        layout.operator("grease_pencil.select_linked", text="Deselect Linked", icon="LINKED_DESELECT").deselect = True
 
         layout.separator()
 

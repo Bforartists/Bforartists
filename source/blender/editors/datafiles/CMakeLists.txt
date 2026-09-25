@@ -1011,6 +1011,7 @@ if(WITH_BLENDER)
       link_blend
       link_data
       link_replace
+      linked_deselect
       linked_pick
       load_3ds
       load_abc
