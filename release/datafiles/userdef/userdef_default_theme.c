@@ -389,7 +389,8 @@ const bTheme U_theme_default = {
   },
   .space_view3d = {
     .back = RGBA(0x666666ff),
-    .back_grad = RGBA(0x30303000),
+    .back_grad = RGBA(0x40404000),
+    .background_type = 1,
     .text = RGBA(0xffffffff),
     .text_hi = RGBA(0xffffffff),
     .header = RGBA(0x333333cc),
@@ -585,6 +586,7 @@ const bTheme U_theme_default = {
     .header = RGBA(0x333333ff),
     .grid = RGBA(0x4e4e4eff),
     .wire_edit = RGBA(0x858585ff),
+    .vertex = RGBA(0xa1a1a100),
     .vertex_select = RGBA(0xff8500ff),
     .edge_select = RGBA(0xf7ffefff),
     .face = RGBA(0xffffff0a),
@@ -609,7 +611,7 @@ const bTheme U_theme_default = {
   },
   .space_text = {
     .back = RGBA(0xcccccc00),
-    .text = RGBA(0xffffffff),
+    .text = RGBA(0x000000ff),
     .text_hi = RGBA(0xffffffff),
     .header = RGBA(0x33333300),
     .shade2 = RGBA(0xc67777e6),

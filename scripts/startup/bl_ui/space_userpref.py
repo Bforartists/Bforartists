@@ -1229,6 +1229,9 @@ class USERPREF_PT_theme_user_interface(ThemePanel, CenterAlignMixIn, Panel):
     bl_label = "User Interface"
     bl_options = {'DEFAULT_CLOSED'}
 
+    def draw_header(self, _context):
+        self.layout.label(icon='WORKSPACE')  # BFA - added icon
+
     def draw(self, context):
         pass
 
@@ -1506,6 +1509,9 @@ class USERPREF_PT_theme_text_style(ThemePanel, CenterAlignMixIn, Panel):
 class USERPREF_PT_theme_color_sets(ThemePanel, Panel):
     bl_label = "Color Sets"
     bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, _context):
+        self.layout.label(icon='COLOR')  # BFA - added icon
 
     def draw(self, _context):
         pass
