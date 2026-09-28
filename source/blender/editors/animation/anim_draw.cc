@@ -22,6 +22,9 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
+#include "BLI_utildefines.hh"
+
+#include <algorithm>
 #include "BLI_rect.hh"
 #include "BLI_utildefines.hh"
 
@@ -122,19 +125,22 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   {
     return;
   }
-  WorkSpace *workspace = CTX_wm_workspace(C);
-  if (!workspace) {
+  // bfa 3d sequencer: the single "Scene Strip Gizmo" toggle (ADS_SHOW_SCENE_STRIP_GIZMOS) controls
+  // both the range shading here and the interactive gizmos, so they always stay in sync.
+  if ((space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0) {
     return;
   }
-  // bfa 3d sequencer overlay use WORKSPACE_SYNC_SCENE_BFA instead WORKSPACE_SYNC_SCENE_TIME
-  if ((workspace->flags & WORKSPACE_SYNC_SCENE_BFA) == 0) {
-    return;
-  }
-  const Scene *sequencer_scene = workspace->sequencer_scene;
-  if (!sequencer_scene) {
-    return;
-  }
-  const Strip *scene_strip = ed::vse::get_scene_strip_for_time_sync(sequencer_scene);
+  /* BFA (#6780): the strip range shading follows the same sync-agnostic strip
+   * resolution as the interactive gizmos (#ANIM_scene_strip_master_get) -
+   * whichever master store (workspace sequencer scene, or the legacy 3D
+   * Sequencer addon master) actually holds a scene strip for the active scene.
+   * The old sync-flag gate made the shading invisible until the user enabled
+   * sync, even though the gizmos (and the resolution itself) never needed it.
+   * The strip is the one referencing the active scene, found by iterating the
+   * master timeline - not the playhead position - so the shading is stable
+   * while scrubbing. */
+  Scene *sequencer_scene = nullptr;
+  const Strip *scene_strip = ANIM_scene_strip_master_get(C, &sequencer_scene);
   if (!scene_strip || !scene_strip->scene) {
     return;
   }
@@ -163,6 +169,82 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
 
   immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, start_frame, v2d->cur.ymax);
   immRectf(pos, end_frame, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+
+  immUnbindProgram();
+
+  GPU_blend(GPU_BLEND_NONE);
+}
+
+void ANIM_draw_scene_strip_scrub_target(const bContext *C, View2D *v2d)
+{
+  /* BFA (#6780): ghost highlight for the deferred timeline switch during a
+   * dopesheet playhead scrub. While the mouse is held and the playhead has
+   * left the current scene strip, this shows where the release will land:
+   * a full-width tint when the target is the master (fallback) timeline -
+   * the next scene strip is highlighted white on its ghost chip by the
+   * scene strip gizmo overlay - plus a vertical line at the landing frame
+   * in both cases. */
+  SpaceAction *space_action = CTX_wm_space_action(C);
+  if (!space_action || (space_action->overlays.flag & ADS_OVERLAY_SHOW_OVERLAYS) == 0 ||
+      (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0)
+  {
+    return;
+  }
+
+  Scene *sequencer_scene = nullptr;
+  int master_frame = 0;
+  bool is_master_fallback = false;
+  const Strip *drag_strip = nullptr;
+  const Strip *target_strip = ed::vse::sync_scene_strip_scrub_target_get(
+      *C, &sequencer_scene, &master_frame, &is_master_fallback, &drag_strip);
+  if (!sequencer_scene) {
+    return;
+  }
+
+  /* Map master frames into this dopesheet's time coordinate. In a shot
+   * timeline this is the drag strip's linear mapping - the same one the
+   * playhead itself follows (#6780 §5.7), so the ghost aligns exactly with
+   * where the playhead sits. In the master (fallback) timeline the view IS
+   * the master timeline, so master frames map 1:1 (BFA) - this also covers a
+   * drag started in the fallback, where there is no drag strip at all. */
+  auto master_to_shot = [&](const float master_frame_f) {
+    if (drag_strip && drag_strip->scene) {
+      return seq::give_frame_index(sequencer_scene, drag_strip, master_frame_f) +
+             drag_strip->scene->r.sfra + drag_strip->anim_startofs;
+    }
+    return master_frame_f;
+  };
+
+  GPU_blend(GPU_BLEND_ALPHA);
+
+  GPUVertFormat *format = immVertexFormat();
+  uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+
+  if (is_master_fallback || !target_strip) {
+    /* Switching to the full master timeline: highlight the whole view with a
+     * clearly visible tint (BFA #6780). There is no chip to highlight in
+     * this direction - the tint IS the cue - so it runs stronger than the
+     * half-strength used elsewhere and is topped with bright edge lines. */
+    immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 30, -45);
+    immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+    immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 60, -15);
+    immBegin(GPU_PRIM_LINES, 4);
+    immVertex2f(pos, v2d->cur.xmin, v2d->cur.ymin + 1.0f);
+    immVertex2f(pos, v2d->cur.xmax, v2d->cur.ymin + 1.0f);
+    immVertex2f(pos, v2d->cur.xmin, v2d->cur.ymax - 1.0f);
+    immVertex2f(pos, v2d->cur.xmax, v2d->cur.ymax - 1.0f);
+    immEnd();
+  }
+
+  /* Vertical line at the frame the playhead will land on after the switch. */
+  immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, 40, -25);
+  const float landing = master_to_shot(float(master_frame));
+  immBegin(GPU_PRIM_LINES, 2);
+  immVertex2f(pos, landing, v2d->cur.ymin);
+  immVertex2f(pos, landing, v2d->cur.ymax);
+  immEnd();
 
   immUnbindProgram();
 

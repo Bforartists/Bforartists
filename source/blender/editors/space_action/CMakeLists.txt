@@ -14,12 +14,13 @@ set(INC
 
 set(INC_SYS
 )
-
+# BFA - the action_gizmo_scene_strip.cc is a BFA addition
 set(SRC
   action_buttons.cc
   action_data.cc
   action_draw.cc
   action_edit.cc
+  action_gizmo_scene_strip.cc
   action_ops.cc
   action_select.cc
   space_action.cc
@@ -39,6 +40,7 @@ set(LIB
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::animrig
   PRIVATE bf::windowmanager
+  PRIVATE bf::sequencer # BFA - 3d sequencer scene strip gizmos need SEQ_ headers
 )
 
 blender_add_lib(bf_editor_space_action "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

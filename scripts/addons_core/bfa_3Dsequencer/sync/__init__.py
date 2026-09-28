@@ -5,7 +5,7 @@
 3D View Sync package.
 """
 
-from bfa_3Dsequencer.sync import (
+from . import (
     core,
     ops,
     ui,

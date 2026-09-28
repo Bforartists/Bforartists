@@ -26,6 +26,8 @@ from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
 )
 
+import addon_utils  # BFA - import for 3D Sequencer addon checks
+
 from rna_prop_ui import PropertyPanel
 from bl_ui.space_time import playback_controls
 from bl_ui.properties_data_camera import DATA_PT_camera_display_composition_guides
@@ -143,6 +145,20 @@ class SEQUENCER_HT_header(Header):
         row = layout.row()  # BFA - 3D Sequencer
         # Sync pinned scene button
         row.label(icon="PINNED" if context.workspace.sequencer_scene else "UNPINNED")  # BFA - 3D Sequencer
+
+        # BFA (#6780): core Sync toggle for the built-in scene time sync - same
+        # affordance as the 3D Sequencer addon's Sync button, shown only while the
+        # addon is disabled so the two never appear together.
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'} and not addon_utils.check(
+            "bfa_3Dsequencer"
+        )[0]:
+            layout.prop(
+                context.workspace,
+                "use_scene_time_sync",
+                text="Sync",
+                icon="VIEW3D",
+                toggle=True,
+            )
 
         # BFA - wip merge of new sequencer
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:

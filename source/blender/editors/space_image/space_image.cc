@@ -534,7 +534,7 @@ static void IMAGE_GGT_compositor_box_mask(wmGizmoGroupType *gzgt)
   gzgt->name = "Box Mask Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_box_mask";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::box_mask_poll_space_image;
   gzgt->setup = nodes::gizmos::box_mask_setup;
@@ -548,7 +548,7 @@ static void IMAGE_GGT_compositor_crop(wmGizmoGroupType *gzgt)
   gzgt->name = "Crop Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_crop";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::crop_poll_space_image;
   gzgt->setup = nodes::gizmos::crop_setup;
@@ -562,7 +562,7 @@ static void IMAGE_GGT_compositor_glare(wmGizmoGroupType *gzgt)
   gzgt->name = "Glare Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_glare";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::glare_poll_space_image;
   gzgt->setup = nodes::gizmos::glare_setup;
@@ -576,7 +576,7 @@ static void IMAGE_GGT_compositor_corner_pin(wmGizmoGroupType *gzgt)
   gzgt->name = "Corner Pin Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_corner_pin";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::corner_pin_poll_space_image;
   gzgt->setup = nodes::gizmos::corner_pin_setup;
@@ -590,7 +590,7 @@ static void IMAGE_GGT_compositor_ellipse_mask(wmGizmoGroupType *gzgt)
   gzgt->name = "Ellipse Mask Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_ellipse_mask";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::ellipse_mask_poll_space_image;
   gzgt->setup = nodes::gizmos::ellipse_mask_setup;
@@ -604,7 +604,7 @@ static void IMAGE_GGT_compositor_split(wmGizmoGroupType *gzgt)
   gzgt->name = "Split Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_split";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::split_poll_space_image;
   gzgt->setup = nodes::gizmos::split_setup;
@@ -618,7 +618,7 @@ static void IMAGE_GGT_compositor_translate(wmGizmoGroupType *gzgt)
   gzgt->name = "Translate Widget";
   gzgt->idname = "IMAGE_GGT_compositor_translate";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::translate_poll_space_image;
   gzgt->setup = nodes::gizmos::translate_setup;

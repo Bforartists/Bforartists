@@ -3,9 +3,8 @@
 
 import bpy
 
-from bfa_3Dsequencer.sync.core import get_sync_settings
-from bfa_3Dsequencer.sync.ops import SEQUENCER_OT_set_master_scene
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
+from .core import get_sync_settings
+from ..utils import register_classes, unregister_classes
 
 
 class SEQUENCER_PT_SyncPanel(bpy.types.Panel):
@@ -92,7 +91,9 @@ class SEQUENCER_PT_SyncPanelAdvancedSettings(bpy.types.Panel):
         if settings.sync_mode == "LEGACY":
             self.layout.prop(settings, "bidirectional")
         self.layout.prop(settings, "keep_gpencil_tool_settings")
-        self.layout.prop(settings, "use_preview_range")
+        # BFA (#6780): the preview/scene range toggles live in the dope-sheet
+        # Overlays popup (single source of truth shared with the built-in gizmos),
+        # so they are not duplicated here anymore.
         self.layout.prop(settings, "sync_all_windows")
         self.layout.prop(settings, "active_follows_playhead")
 

@@ -87,7 +87,18 @@ static SpaceLink *action_create(const ScrArea *area, const Scene *scene)
                            TIME_CACHE_RIGIDBODY | TIME_CACHE_SIMULATION_NODES |
                            TIME_CACHE_COMPOSITOR;
 
-  saction->overlays.flag |= (ADS_OVERLAY_SHOW_OVERLAYS | ADS_SHOW_SCENE_STRIP_FRAME_RANGE);
+  /* BFA (#6780): scene strip gizmo defaults - overlays on with the interactive
+   * gizmos, the layered "Show All Strips" indicators and both strip and scene
+   * name labels enabled, indicator opacity at 0.5 so stacked chips read subtle.
+   * "Set Preview Range" (ADS_SHOW_USE_PREVIEW_RANGE) is deliberately NOT
+   * force-enabled: new files start with the toggle off so the gizmo only edits
+   * the strip range (and, with clamp on, the scene range) until the user opts
+   * into preview-range writes. */
+  saction->overlays.flag |= (ADS_OVERLAY_SHOW_OVERLAYS | ADS_SHOW_SCENE_STRIP_FRAME_RANGE |
+                             ADS_SHOW_SCENE_STRIP_GIZMOS |
+                             ADS_SHOW_SCENE_STRIP_ALL |
+                             ADS_SHOW_SCENE_STRIP_STRIP_NAME | ADS_SHOW_SCENE_STRIP_SCENE_NAME);
+  saction->overlays.all_strips_opacity = 0.5f;
 
   /* header */
   region = BKE_area_region_new();
@@ -283,6 +294,7 @@ static void action_main_region_draw(const bContext *C, ARegion *region)
   ANIM_draw_previewrange(scene, v2d, 0);
 
   ANIM_draw_scene_strip_range(C, v2d);
+  ANIM_draw_scene_strip_scrub_target(C, v2d);
 
   /* callback */
   ui::view2d_view_ortho(v2d);
@@ -625,6 +637,12 @@ static void action_listener(const wmSpaceTypeListenerParams *params)
           if (wmn->action == NA_SELECTED) {
             saction->runtime.flag |= SACTION_RUNTIME_FLAG_NEED_CHAN_SYNC;
             ED_area_tag_refresh(area);
+          }
+          else {
+            /* BFA (#6780): strip edits (name, color tag, retiming) notify without
+             * NA_SELECTED - redraw so the scene strip gizmo bar and labels stay
+             * current without needing a mouse-over. */
+            ED_area_tag_redraw(area);
           }
           break;
         case ND_OB_ACTIVE:
@@ -1053,6 +1071,9 @@ void ED_spacetype_action()
 
   art = ui::ED_area_type_hud(st->spaceid);
   BLI_addhead(&st->regiontypes, art);
+
+  /* bfa 3d sequencer scene strip gizmos */
+  action_widgets();
 
   BKE_spacetype_register(std::move(st));
 }
