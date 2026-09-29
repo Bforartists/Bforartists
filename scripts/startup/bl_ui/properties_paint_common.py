@@ -1597,6 +1597,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
                 text="Size",
                 slider=True,
             )
+
             # BFA - WIP - Add grease pencil paint modes
             if not popover and size_pressure and mode in {
                 'PAINT_TEXTURE',
@@ -1920,7 +1921,7 @@ def draw_color_settings(context, layout, brush, color_type=False):
         UnifiedPaintPanel.prop_unified_color(row, context, brush, "color", text="")
         UnifiedPaintPanel.prop_unified_color(row, context, brush, "secondary_color", text="")
         row.separator()
-        row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="", emboss=False)
+        row.operator("paint.brush_colors_flip", icon="FILE_REFRESH", text="", emboss=False)
         row.prop(brush, "use_unified_color", text="", icon='BRUSHES_ALL')
 
         draw_color_jitter_panel(layout, context, brush)
@@ -2131,15 +2132,19 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings):
         )
 
         if show_vertex_color:
-            row = row.row(align=True)
-            row.scale_x = 0.33
-            row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
-            row.prop(brush, "secondary_color", text="")
-            # bfa - move brush_colors_flip and pin_draw_mode to their own row has they get squashed.
-            row = row.row(align=True)
-            row.scale_x = 1.75
-            row.operator("paint.brush_colors_flip", icon="FILE_REFRESH", text="")  # BFA
-            row.prop(gp_settings, "pin_draw_mode", text="")
+            # blender/main: use unified color owner when unified color is enabled.
+            sub_row = row.row(align=True)
+            sub_row.scale_x = 0.5
+            ups = settings.unified_paint_settings
+            prop_owner = ups if brush.use_unified_color else brush
+            sub_row.prop_with_popover(prop_owner, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
+            sub_row.prop(brush, "secondary_color", text="")  # BFA - keep secondary color visible.
+            # BFA - move brush_colors_flip to its own row as it gets squashed.
+            flip_row = row.row(align=True)
+            flip_row.scale_x = 1.75
+            flip_row.operator("paint.brush_colors_flip", icon="FILE_REFRESH", text="")
+        # blender/main: draw pin_draw_mode unconditionally, outside the vertex-color branch.
+        row.prop(gp_settings, "pin_draw_mode", text="")
 
 
 def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, compact=False):
@@ -2164,76 +2169,80 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
         size = "size"
         if brush.use_locked_size == 'SCENE' and (grease_pencil_brush_type == 'DRAW' or is_primitive_tool):
             size = "unprojected_size"
-        row = layout.row(align=True)
-        row.prop(brush, size, slider=True, text="Size")
-        row.prop(brush, "use_pressure_size", text="")
-
-        if not compact:
-            row.prop(
-                paint,
-                "show_size_curve",
-                text="",
-                icon='DOWNARROW_HLT' if paint.show_size_curve else 'RIGHTARROW',
-                emboss=False)
-
+        # blender/main: use prop_unified for unified size/strength support.
+        # BFA: pass header=False to suppress prop_unified's generic pressure popover,
+        # GP paint uses its own curve_sensitivity/curve_strength popovers below.
+        unified_size_row = UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            size,
+            pressure_name="use_pressure_size",
+            unified_name="use_unified_size",
+            text="Size",
+            slider=True,
+            header=False,
+        )
 
         ## BFA - WIP - collapsed pressure curves start
         settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         header = context.region.type == 'TOOL_HEADER'
-        
+
         if settings and not header:
-            if settings and settings.show_size_curve:
-                row = layout.row(align=True)
-
-                tool_settings = context.scene.tool_settings
-                gpencil_paint = tool_settings.gpencil_paint
-                brush = gpencil_paint.brush
-                gp_settings = brush.gpencil_settings
-
+            if settings.show_size_curve:
                 layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, show_presets=True)
 
-        if brush.use_pressure_size and header:
-            row.popover(
+        if not compact and settings:
+            curve_row = layout.row(align=True)
+            curve_row.prop(
+                paint,
+                "show_size_curve",
+                text="",
+                icon='DOWNARROW_HLT' if paint.show_size_curve else 'RIGHTARROW',
+                emboss=False,
+            )
+
+        if brush.use_pressure_size and header and unified_size_row:
+            unified_size_row.popover(
                 panel="VIEW3D_PT_gpencil_brush_settings_radius",
                 text="",
             )
         ## BFA - collapsed pressure curves end
 
-        row = layout.row(align=True)
-        row.prop(brush, "strength", slider=True, text="Strength")
-        row.prop(brush, "use_pressure_strength", text="")
+        unified_strength_row = UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "strength",
+            pressure_name="use_pressure_strength",
+            unified_name="use_unified_strength",
+            text="Strength",
+            slider=True,
+            header=False,
+        )
 
-        if not compact:
-            row.prop(
+        ## BFA - WIP collapsed strength curves start
+        if settings and not header:
+            if settings.show_strength_curve:
+                layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, show_presets=True)
+
+        if not compact and settings:
+            curve_row = layout.row(align=True)
+            curve_row.prop(
                 paint,
                 "show_strength_curve",
                 text="",
                 icon='DOWNARROW_HLT' if paint.show_strength_curve else 'RIGHTARROW',
-                emboss=False)
+                emboss=False,
+            )
 
-        ## BFA - WIP collapsed strength curves start
-        settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
-        header = context.region.type == 'TOOL_HEADER'
-
-        if settings and not header:
-            if settings and settings.show_strength_curve:
-                row = layout.row(align=True)
-
-                tool_settings = context.scene.tool_settings
-                gpencil_paint = tool_settings.gpencil_paint
-                brush = gpencil_paint.brush
-                gp_settings = brush.gpencil_settings
-
-                layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, show_presets=True)
-
-        if brush.use_pressure_strength and header:
-            row.popover(
+        if brush.use_pressure_strength and header and unified_strength_row:
+            unified_strength_row.popover(
                 panel="VIEW3D_PT_gpencil_brush_settings_strength",
                 text="",
             )
         ## BFA - collapsed strength curves end
-
-    if props:
+    elif props:
         layout.prop(props, "subdivision")
 
     # Brush details

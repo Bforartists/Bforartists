@@ -14,8 +14,8 @@ Can run in two modes:
 Usage:
     python weekly_report.py                           # Remote mode, last 7 full days
     python weekly_report.py --repo /path/to/blender   # Local repo mode
-    python weekly_report.py --since 2026-09-15 --until 2026-09-21
-    python weekly_report.py --since 2026-09-15
+    python weekly_report.py --since 2026-09-21 --until 2026-09-28
+    python weekly_report.py --since 2026-09-21
     python weekly_report.py --show-all                 # Include fixes/cleanups
 """
 
@@ -114,6 +114,42 @@ CATEGORY_KEYWORDS = [
     ("Windows Engine", ["windows"]),
     ("Workbench", ["workbench:"]),
 ]
+
+# ── Category emojis ────────────────────────────────────────────────────────
+# Maps each category display name (see CATEGORY_KEYWORDS) plus the "Other"
+# fallback to an emoji, so report headings are easier to scan at a glance.
+CATEGORY_EMOJI = {
+    "Animation": "🎞️",
+    "Assets": "📦",
+    "Compositor": "🖼️",
+    "Core": "⚙️",
+    "Cycles": "🌀",
+    "EEVEE": "⚡",
+    "Functions": "🧮",
+    "GPU": "🖥️",
+    "Geometry Nodes": "📐",
+    "Grease Pencil": "✏️",
+    "I/O": "🔄",
+    "LineArt": "✒️",
+    "Modeling": "🧱",
+    "Nodes": "🔗",
+    "Outliner": "🗂️",
+    "Paint": "🖌️",
+    "Selection": "🎯",
+    "Shader Nodes": "🎨",
+    "UI": "🎛️",
+    "VSE": "🎬",
+    "Windows Engine": "🪟",
+    "Workbench": "🧰",
+    "Other": "🔖",
+}
+
+
+def category_label(category):
+    """Return the category name prefixed with its emoji, if one is defined."""
+    emoji = CATEGORY_EMOJI.get(category)
+    return f"{emoji} {category}" if emoji else category
+
 
 # ── Filters: commits to EXCLUDE from the report ───────────────────────────
 
@@ -462,12 +498,14 @@ def generate_report(commits, show_all=False, since_date=None, until_date=None):
     for category, items in sorted(grouped.items(), key=sort_key):
         if not items:
             continue
-        report_lines.append(f"### {category}")
+        # Category → level-2 header, so each module/section is a top-level
+        # heading below the report title. Prefix with an emoji for scannability.
+        report_lines.append(f"## {category_label(category)}")
         report_lines.append("")
 
         for c in items:
-            # Build the entry line
-            entry = f"• {c['subject']} ([commit]({c['commit_link']}))"
+            # Each commit is a task under its category → level-3 header.
+            entry = f"### {c['subject']} ([commit]({c['commit_link']}))"
 
             # Add PR link if available
             if c["pr_link"]:
@@ -505,10 +543,13 @@ def generate_report(commits, show_all=False, since_date=None, until_date=None):
                     # Collapse multiple spaces
                     first_para = re.sub(r" {2,}", " ", first_para)
                     if len(first_para) > 30:
-                        report_lines.append(f"  > {first_para[:500]}")
+                        # Description → plain paragraph (no bullet/quote).
+                        report_lines.append(f"{first_para[:500]}")
                         if len(first_para) > 500:
                             report_lines[-1] += "…"
-                        report_lines.append("")
+
+            # Blank line after each task for readable spacing.
+            report_lines.append("")
 
         report_lines.append("")
 

@@ -1541,6 +1541,7 @@ static bke::CurvesGeometry simplify_fixed(bke::CurvesGeometry &curves, const int
 
 static void set_fill_attributes(bke::CurvesGeometry &fill_curves,
                                 const ViewContext &view_context,
+                                const Paint &paint,
                                 const Brush &brush,
                                 const Scene &scene,
                                 const float4x4 &to_world,
@@ -1565,6 +1566,7 @@ static void set_fill_attributes(bke::CurvesGeometry &fill_curves,
     const float pressure = 1.0f;
     radii.span[point_i] = ed::greasepencil::radius_from_input_sample(view_context.rv3d,
                                                                      view_context.region,
+                                                                     paint,
                                                                      &brush,
                                                                      pressure,
                                                                      positions[point_i],
@@ -1572,7 +1574,7 @@ static void set_fill_attributes(bke::CurvesGeometry &fill_curves,
                                                                      brush.gpencil_settings, // bfa - grease pencil settings are needed for the radius calculation to sync pressure with radius
                                                                      &scene); // bfa - grease pencil settings are needed for the radius calculation to sync pressure with radius
     opacities.span[point_i] = ed::greasepencil::opacity_from_input_sample(
-        pressure, &brush, brush.gpencil_settings);
+        pressure, paint, &brush, brush.gpencil_settings);
   }
 
   radii.finish();
@@ -1590,7 +1592,7 @@ static void set_fill_attributes(bke::CurvesGeometry &fill_curves,
       scene.toolsettings->gp_paint, &brush);
   if (use_vertex_color) {
     ColorGeometry4f vertex_color;
-    copy_v3_v3(vertex_color, brush.color);
+    copy_v3_v3(vertex_color, BKE_brush_color_get(&paint, &brush));
     vertex_color.a = brush.gpencil_settings->vertex_factor;
 
     skip_curve_attributes.add("fill_color");
@@ -1646,7 +1648,8 @@ static bool grease_pencil_apply_fill(bContext &C, wmOperator &op, const wmEvent 
   GreasePencil &grease_pencil = *id_cast<GreasePencil *>(object.data);
   auto &op_data = *static_cast<GreasePencilFillOpData *>(op.customdata);
   const ToolSettings &ts = *CTX_data_tool_settings(&C);
-  Brush &brush = *BKE_paint_brush(&ts.gp_paint->paint);
+  Paint &paint = ts.gp_paint->paint;
+  Brush &brush = *BKE_paint_brush(&paint);
   const float2 mouse_position = float2(event.mval);
   const int simplify_levels = brush.gpencil_settings->fill_simplylvl;
   const std::optional<float> opacity_threshold =
@@ -1723,6 +1726,7 @@ static bool grease_pencil_apply_fill(bContext &C, wmOperator &op, const wmEvent 
 
     set_fill_attributes(fill_curves,
                         view_context,
+                        paint,
                         brush,
                         scene,
                         layer.to_world_space(object),
