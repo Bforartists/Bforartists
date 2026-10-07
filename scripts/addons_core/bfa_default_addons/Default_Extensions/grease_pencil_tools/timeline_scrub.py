@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021-2023 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 '''Based on viewport_timeline_scrub standalone addon - Samuel Bernou'''
 
@@ -17,8 +17,6 @@ from bpy.props import (BoolProperty,
                        StringProperty,
                        IntProperty,
                        FloatVectorProperty,
-                       IntProperty,
-                       PointerProperty,
                        EnumProperty)
 
 
@@ -51,16 +49,11 @@ def draw_callback_px(self, context):
 
     # Display keyframes
     if self.use_hud_keyframes and self.batch_keyframes:
-        if self.keyframe_aspect == 'LINE':
-            gpu.state.line_width_set(3.0)
-            shader.bind()
-            shader.uniform_float("color", self.color_timeline)
-            self.batch_keyframes.draw(shader)
-        else:
-            gpu.state.line_width_set(1.0)
-            shader.bind()
-            shader.uniform_float("color", self.color_timeline)
-            self.batch_keyframes.draw(shader)
+        width = 3.0 if self.keyframe_aspect == 'LINE' else 1.0
+        gpu.state.line_width_set(width)
+        shader.bind()
+        shader.uniform_float("color", self.color_timeline)
+        self.batch_keyframes.draw(shader)
 
     # Show current frame line
     gpu.state.line_width_set(1.0)
@@ -99,16 +92,23 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
+        if not context.space_data:
+            return False
+        if context.space_data.type == 'NODE_EDITOR':
+            # Triggered by the global "Grease Pencil" keymap
+            return get_addon_prefs().ts.use_in_node_editor
         return context.space_data.type in ('VIEW_3D', 'SEQUENCE_EDITOR', 'CLIP_EDITOR')
 
     def invoke(self, context, event):
         prefs = get_addon_prefs().ts
 
         self.current_area = context.area
-        self.key = prefs.keycode
+        # Get the key that triggered the modal (Fallback to keycode if not called through a Press)
+        self.key = event.type if event.value == 'PRESS' else prefs.keycode
         self.evaluate_gp_obj_key = prefs.evaluate_gp_obj_key
         self.always_snap = prefs.always_snap
         self.rolling_mode = prefs.rolling_mode
+        self.hide_overlays = prefs.hide_overlays
 
         self.dpi = context.preferences.system.dpi
         self.ui_scale = context.preferences.system.ui_scale
@@ -152,31 +152,57 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
         ob = context.object
 
-        if context.space_data.type != 'VIEW_3D':
+        if context.space_data.type not in ('VIEW_3D', 'NODE_EDITOR'):
             ob = None  # do not consider any key
 
         if ob:  # condition to allow empty scrubing
-            if ob.type != 'GPENCIL' or self.evaluate_gp_obj_key:
+            if ob.type != 'GREASEPENCIL' or self.evaluate_gp_obj_key:
                 # Get object keyframe position
                 anim_data = ob.animation_data
                 action = None
-
                 if anim_data:
                     action = anim_data.action
                 if action:
-                    for fcu in action.fcurves:
-                        for kf in fcu.keyframe_points:
-                            if kf.co.x not in self.pos:
-                                self.pos.append(kf.co.x)
+                    fcurves = []
+                    if bpy.app.version < (5, 0, 0):
+                        # previous API without action slots
+                        fcurves = action.fcurves
+                    else:
+                        slot = ob.animation_data.action_slot
+                        if slot:
+                            ## For now only use first layer -> first strip (will need adjustement in the future)
+                            ## Using 'slot.id_data.layers' in case multiple selected object are scanned in the future
+                            ## (currently only on active object, using 'action.layers' would be fine).
+                            fcurves = [fc for fc in slot.id_data.layers[0].strips[0].channelbag(slot).fcurves]
+                    
+                    self.pos += list(set([kf.co.x for fcu in fcurves for kf in fcu.keyframe_points]))
+                    ## Expanded equivalent
+                    # for fcu in fcurves:
+                    #     for kf in fcu.keyframe_points:
+                    #         if kf.co.x not in self.pos:
+                    #             self.pos.append(kf.co.x)
 
-            if ob.type == 'GPENCIL':
+            if ob.type == 'GREASEPENCIL':
                 # Get GP frame position
                 gpl = ob.data.layers
-                layer = gpl.active
-                if layer:
-                    for frame in layer.frames:
-                        if frame.frame_number not in self.pos:
-                            self.pos.append(frame.frame_number)
+                if prefs.gp_layer_target == 'ALL':
+                    all_frames = set(f.frame_number for l in gpl for f in l.frames)
+                    self.pos += [n for n in sorted(all_frames) if n not in self.pos]
+
+                else:
+                    # 'ACTIVE': active layer keys, or keys of active group layers
+                    if group := ob.data.layer_groups.active:
+                        ## group is active (no active layer) -> consider keys of all layer in groups
+                        group_frames = [f.frame_number for l in gpl for f in l.frames if l.parent_group == group]
+                        if group_frames:
+                            self.pos += sorted(set(group_frames))
+                        ## Consider all frame if layer is empty ?
+
+                    layer = gpl.active
+                    if layer:
+                        for frame in layer.frames:
+                            if frame.frame_number not in self.pos:
+                                self.pos.append(frame.frame_number)
 
         if not ob or not self.pos:
             # Disable inverted behavior if no frame to snap
@@ -186,9 +212,15 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
                 return {'CANCELLED'}
 
         if self.rolling_mode:
-            # sorted and casted to int list since it's going to work with indexes
+            if self.lock_range:
+                # Trim before any index computation (out of range keys are not reachable)
+                self.pos = [i for i in self.pos if self.f_start <= i <= self.f_end]
+                if not self.pos:
+                    self.report({'WARNING'}, 'No keys to flip on within frame range')
+                    return {'CANCELLED'}
+            # Sorted and cast to int list since it's going to work with indices
             self.pos = sorted([int(f) for f in self.pos])
-            # find and make current frame the "starting" frame (force snap)
+            # Find and make current frame the "starting" frame (force snap)
             active_pos = [i for i, num in enumerate(self.pos) if num <= self.init_frame]
             if active_pos:
                 self.init_index = active_pos[-1]
@@ -203,18 +235,28 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         # Also snap on play bounds (sliced off for keyframe display)
         self.pos += [self.f_start, self.f_end]
 
-        # Disable Onion skin
+        # Disable Onion skin and other overlays
         self.active_space_data = context.space_data
         self.onion_skin = None
+        self.show_overlays = None
+        self.show_gizmo = None
         self.multi_frame = None
-        if context.space_data.type == 'VIEW_3D':  # and 'GPENCIL' in context.mode
+        if context.space_data.type == 'VIEW_3D':
             self.onion_skin = self.active_space_data.overlay.use_gpencil_onion_skin
             self.active_space_data.overlay.use_gpencil_onion_skin = False
 
-        if ob and ob.type == 'GPENCIL':
-            if ob.data.use_multiedit:
-                self.multi_frame = ob.data.use_multiedit
-                ob.data.use_multiedit = False
+            if self.hide_overlays:
+                # Store overlays state and disable
+                self.show_overlays = self.active_space_data.overlay.show_overlays
+                self.show_gizmo = self.active_space_data.show_gizmo
+                self.active_space_data.overlay.show_overlays = False
+                self.active_space_data.show_gizmo = False
+
+
+        if ob and ob.type == 'GREASEPENCIL':
+            if context.scene.tool_settings.use_grease_pencil_multi_frame_editing:
+                self.multi_frame = context.scene.tool_settings.use_grease_pencil_multi_frame_editing
+                context.scene.tool_settings.use_grease_pencil_multi_frame_editing = False
 
         self.hud = prefs.use_hud
         if not self.hud:
@@ -380,14 +422,23 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             self._handle = bpy.types.SpaceClipEditor.draw_handler_add(
                 draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
 
+        elif context.space_data.type == 'NODE_EDITOR':
+            self.viewtype = bpy.types.SpaceNodeEditor
+            self._handle = bpy.types.SpaceNodeEditor.draw_handler_add(
+                draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
+
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
     def _exit_modal(self, context):
         if self.onion_skin is not None:
             self.active_space_data.overlay.use_gpencil_onion_skin = self.onion_skin
+        if self.show_overlays is not None:
+            self.active_space_data.overlay.show_overlays = self.show_overlays
+        if self.show_gizmo is not None:
+            self.active_space_data.show_gizmo = self.show_gizmo
         if self.multi_frame:
-            context.object.data.use_multiedit = self.multi_frame
+            context.scene.tool_settings.use_grease_pencil_multi_frame_editing = self.multi_frame
         if self.hud and self.viewtype:
             self.viewtype.draw_handler_remove(self._handle, self.spacetype)
             context.area.tag_redraw()
@@ -503,7 +554,7 @@ class GPTS_OT_set_scrub_keymap(bpy.types.Operator):
         self.alt = event.alt
 
         if event.type not in exclude_keys and not any(x in event.type for x in exclude_in):
-            print('key:', event.type, 'value:', event.value)
+            # print('key:', event.type, 'value:', event.value)
             if event.value == 'PRESS':
                 self.report({'INFO'}, event.type)
                 # set the chosen key
@@ -551,6 +602,11 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
         description="Add the same shortcut to scrub in timeline editor windows",
         default=True,
         update=auto_rebind)
+    
+    use_in_node_editor: BoolProperty(
+        name="Use in Node editor",
+        description="Allow using the scrub shortcut in node editor the same way it's used in viewport",
+        default=True)
 
     use_shift: BoolProperty(
         name="Combine With Shift",
@@ -574,6 +630,17 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
         name='Use Gpencil Object Keyframes',
         description="Also snap on greasepencil object keyframe (else only active layer frames)",
         default=True)
+
+    gp_layer_target: EnumProperty(
+        name="Layer Target",
+        description="Grease pencil layers keys to consider when scrubbing",
+        default='ACTIVE',
+        items=(
+            ('ACTIVE', 'Active Layer Keys',
+             'Consider only keys of the active layer\n(if group item is active, consider keys of all layers in group)', 0),
+            ('ALL', 'All Layers Keys',
+             'Consider keys of all layers', 1),
+        ))
 
     pixel_step: IntProperty(
         name="Frame Interval On Screen",
@@ -625,7 +692,7 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
         description="Color of the temporary timeline")
 
     color_playhead: FloatVectorProperty(
-        name="Cusor Color",
+        name="Cursor Color",
         subtype='COLOR_GAMMA',
         size=4,
         default=(0.01, 0.64, 1.0, 0.8),
@@ -668,6 +735,11 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
              'Keyframe displayed as diamonds', 'HANDLETYPE_FREE_VEC', 2),
         ))
 
+    hide_overlays: BoolProperty(
+        name="Hide Overlays",
+        description="Hide overlays and gizmos while scrubbing is active",
+        default=False
+    )
 
 def draw_ts_pref(prefs, layout):
     # - General settings
@@ -675,7 +747,9 @@ def draw_ts_pref(prefs, layout):
     layout.prop(prefs, 'use')
     if not prefs.use:
         return
+
     layout.prop(prefs, 'evaluate_gp_obj_key')
+    layout.prop(prefs, 'gp_layer_target')
     layout.prop(prefs, 'pixel_step')
 
     # -/ Keymap -
@@ -727,11 +801,15 @@ def draw_ts_pref(prefs, layout):
         box.label(
             text="Recommended to choose at least one modifier to combine with clicks (default: Ctrl+Alt)", icon="ERROR")
 
-    row = box.row()
+    col = box.column(align=False)
+    row = col.row()
     row.prop(prefs, 'always_snap')
     row.prop(prefs, 'rolling_mode')
-    box.prop(prefs, 'use_in_timeline_editor',
-             text='Add same shortcut to scrub within timeline editors')
+    row = col.row()
+    row.prop(prefs, 'use_in_timeline_editor', text='Add shortcut to scrub in timeline editors')
+    row.prop(prefs, 'hide_overlays')
+    row = col.row()
+    row.prop(prefs, 'use_in_node_editor', text='Use scrub in node editor')
 
     # - HUD/OSD
     box = layout.box()

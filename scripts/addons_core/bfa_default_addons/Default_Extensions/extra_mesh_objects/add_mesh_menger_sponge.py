@@ -20,6 +20,8 @@ from bpy.props import (
 import mathutils
 import copy
 
+from .interface import draw_transform_props
+
 
 class MengerSponge(object):
     FACE_INDICES = [
@@ -168,6 +170,16 @@ class AddMengerSponge(bpy.types.Operator, AddObjectHelper):
             subtype='LAYER',
             options={'HIDDEN', 'SKIP_SAVE'},
             )
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        
+        layout.prop(self, 'level')
+        layout.prop(self, 'radius')
+        layout.separator()
+        draw_transform_props(self, layout)
 
     def execute(self, context):
         sponger = MengerSponge(self.level)

@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2017-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2017-2025 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 from bpy.props import (
@@ -194,36 +194,27 @@ class Braid(Operator):
             default=False
             )
     edit_mode : BoolProperty(
-            name="Show in edit mode",
+            name="Show in Edit Mode",
             default=True,
-            description="Show in edit mode"
+            description="Show in Edit Mode"
             )
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        col = box.column(align=True)
-        col.label(text="Settings:")
-        col.prop(self, "strands")
-        col.prop(self, "sides")
-
-        col = box.column(align=True)
-        col.prop(self, "radius")
-        col.prop(self, "thickness")
-        col.prop(self, "width")
-
-        col = box.column()
-        col.prop(self, "pointy")
-
-        box = layout.box()
-        col = box.column(align=True)
-        col.label(text="Geometry Options:")
+        layout.separator()
+        layout.prop(self, "strands")
+        layout.prop(self, "sides")
+        layout.prop(self, "radius")
+        layout.prop(self, "thickness")
+        layout.prop(self, "width")
+        layout.prop(self, "pointy")
+        col = layout.column(align=True)
         col.prop(self, "strandsize")
-        col.prop(self, "resolution")
-
-        col = layout.column()
-        col.row().prop(self, "edit_mode", expand=True)
+        col.prop(self, "resolution", text='Resolution')
+        layout.prop(self, "edit_mode")
 
     def execute(self, context):
          # turn off 'Enter Edit Mode'

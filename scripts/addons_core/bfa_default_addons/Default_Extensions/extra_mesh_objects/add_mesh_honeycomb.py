@@ -18,6 +18,7 @@ from bpy.props import (
         FloatVectorProperty,
         StringProperty,
         )
+from .interface import draw_transform_props
 
 
 class honeycomb_geometry():
@@ -214,7 +215,7 @@ def edge_max(diam):
 
 class add_mesh_honeycomb(bpy.types.Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.honeycomb_add"
-    bl_label = "Add HoneyComb"
+    bl_label = "Add Honeycomb"
     bl_description = "Simple honeycomb mesh generator"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -231,13 +232,13 @@ class add_mesh_honeycomb(bpy.types.Operator, object_utils.AddObjectHelper):
                 description = "change HoneyComb")
 
     rows: IntProperty(
-            name="Num of rows",
+            name="Rows",
             default=2,
             min=1, max=100,
             description='Number of the rows'
             )
     cols: IntProperty(
-            name='Num of cols',
+            name='Columns',
             default=2,
             min=1, max=100,
             description='Number of the columns'
@@ -257,6 +258,8 @@ class add_mesh_honeycomb(bpy.types.Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         layout.prop(self, 'rows', expand=True)
         layout.prop(self, 'cols', expand=True)
@@ -264,12 +267,8 @@ class add_mesh_honeycomb(bpy.types.Operator, object_utils.AddObjectHelper):
         layout.prop(self, 'edge', expand=True)
 
         if self.change == False:
-            col = layout.column(align=True)
-            col.prop(self, 'align', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'location', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     @classmethod
     def poll(cls, context):

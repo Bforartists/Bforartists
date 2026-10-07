@@ -14,6 +14,7 @@ On the Nodes Editor Properties N panel.
 """
 
 import bpy
+from ..utils import is_blender_version_4
 
 
 def init():
@@ -21,9 +22,10 @@ def init():
         ("ALL", "All Types", "", 0),
         ("BLUR", "Blur", "", 1),
         ("BOKEHBLUR", "Bokeh Blur", "", 2),
-        ("VECBLUR", "Vector Blur", "", 3),
-        ("DEFOCUS", "Defocus", "", 4),
-        ("R_LAYERS", "Render Layer", "", 5),
+        ("BILATERALBLUR", "Bilateral Blur", "", 3),
+        ("VECBLUR", "Vector Blur", "", 4),
+        ("DEFOCUS", "Defocus", "", 5),
+        ("R_LAYERS", "Render Layer", "", 6),
     )
     node = bpy.types.Node
     nodes_compo = bpy.types.CompositorNodeTree
@@ -41,22 +43,23 @@ def clear():
 
 
 class AMTH_NODE_PT_simplify(bpy.types.Panel):
-
     bl_space_type = "NODE_EDITOR"
     bl_region_type = "UI"
     bl_label = "Simplify"
-    bl_options = {"DEFAULT_CLOSED"}
 
     @classmethod
     def poll(cls, context):
         space = context.space_data
+        scene = context.scene
+        node_tree = scene.node_tree if is_blender_version_4() else scene.compositing_node_group
         return space.type == "NODE_EDITOR" \
-            and space.node_tree is not None \
+            and node_tree is not None \
             and space.tree_type == "CompositorNodeTree"
 
     def draw(self, context):
         layout = self.layout
-        node_tree = context.scene.node_tree
+        scene = context.scene
+        node_tree = scene.node_tree if is_blender_version_4() else scene.compositing_node_group
 
         if node_tree is not None:
             layout.prop(node_tree, "types")
@@ -70,15 +73,13 @@ class AMTH_NODE_PT_simplify(bpy.types.Panel):
 
 
 class AMTH_NODE_OT_toggle_mute(bpy.types.Operator):
-
     bl_idname = "node.toggle_mute"
     bl_label = "Toggle Mute"
 
     def execute(self, context):
         scene = context.scene
-        node_tree = scene.node_tree
+        node_tree = scene.node_tree if is_blender_version_4() else scene.compositing_node_group
         node_type = node_tree.types
-        rlayers = scene.render
 
         if "amaranth_pass_vector" not in scene.keys():
             scene["amaranth_pass_vector"] = []
@@ -96,7 +97,7 @@ class AMTH_NODE_OT_toggle_mute(bpy.types.Operator):
                 if node.type == node_type:
                     node.mute = node.status
                 if node_type == "VECBLUR":
-                    for layer in rlayers.layers:
+                    for layer in scene.view_layers:
                         if layer.name in pass_vector:
                             layer.use_pass_vector = True
                             pass_vector.remove(layer.name)
@@ -111,7 +112,7 @@ class AMTH_NODE_OT_toggle_mute(bpy.types.Operator):
                     node.status = node.mute
                     node.mute = True
                 if node_type == "VECBLUR":
-                    for layer in rlayers.layers:
+                    for layer in scene.view_layers:
                         if layer.use_pass_vector:
                             pass_vector.append(layer.name)
                             layer.use_pass_vector = False

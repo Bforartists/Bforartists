@@ -1,0 +1,254 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 3D Print Toolbox 1.4.0\n"
+"POT-Creation-Date: 2026-07-23\n"
+"PO-Revision-Date: 2026-07-23\n"
+"Last-Translator: LFernando <lfernando@firewalk.com.br>\n"
+"Language-Team: Mikhail Rachinskiy\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Analyze"
+msgstr "Analyze"
+
+msgid "Checks"
+msgstr "Verificações"
+
+msgid "Scale To"
+msgstr "Redimensionar para"
+
+msgid "Copy Textures"
+msgstr "Copiar Texturas"
+
+msgid "Volume"
+msgstr "Volume"
+
+msgid "Area"
+msgstr "Área"
+
+msgid "Non-manifold Edges"
+msgstr "Bordas Não Interligadas"
+
+msgid "Bad Contiguous Edges"
+msgstr "Bordas com Falhas de Continuidade"
+
+msgid "Intersect Faces"
+msgstr "Faces Sobrepostas"
+
+msgid "Zero Faces"
+msgstr "Faces Inesistentes"
+
+msgid "Zero Edges"
+msgstr "Bordas Inesistentes"
+
+msgid "Non-flat Faces"
+msgstr "Faces Não Planas"
+
+msgid "Thin Faces"
+msgstr "Faces Finas"
+
+msgid "Sharp Edges"
+msgstr "Bordas Nítidas"
+
+msgid "Overhang Faces"
+msgstr "Faces Salientes"
+
+msgid "Report the volume of the active mesh"
+msgstr "Relatório do volume da malha ativa"
+
+msgid "Report the surface area of the active mesh"
+msgstr "Relatório da área de superfície da malha ativa"
+
+msgid "Check for geometry is solid (has valid inside/outside) and correct normals"
+msgstr "Verifique se a geometria é sólida (tem valores válidos internos/externos) e se as normais estão corretas"
+
+msgid "Check for self intersections"
+msgstr "Verifique se há auto-sobrposições"
+
+msgid "Count mesh islands"
+msgstr "Conte ilhas de malha"
+
+msgid "Check for zero area faces and zero length edges"
+msgstr "Verifique se há faces de área zero e bordas de comprimento zero"
+
+msgid "Check for non-flat faces"
+msgstr "Verifique se há faces não planas"
+
+msgid "Check for wall thickness below specified value"
+msgstr "Verifique se a espessura da parede está abaixo do valor especificado"
+
+msgid "Check for edges sharper than a specified angle"
+msgstr "Verifique se as bordas são mais nítidas do que um ângulo especificado"
+
+msgid "Check for faces that overhang past a specified angle"
+msgstr "Comprobar si hay caras que sobresalen más allá de un ángulo específico"
+
+msgid "Run all checks"
+msgstr "Executar todas as verificações"
+
+msgid "Select the data associated with this report"
+msgstr "Selecionar a data associada com este relatório"
+
+msgid "Clear report"
+msgstr "Limpar relatório"
+
+msgid "Cleanup loose geometry, interior faces, non-manifold vertices and inverted normals"
+msgstr "Limpa geometria solta, faces internas, vértices não fechados e normais invertidas"
+
+msgid "Minimum Thickness"
+msgstr "Grossura Mínima"
+
+msgid "Export Directory"
+msgstr "Diretório de Exportacão"
+
+msgid "Export at specified unit scale (most slicers assume millimeters)"
+msgstr "Exportar na escala de unidade especificada (a maioria dos fatiadores assume milímetros)"
+
+msgid "Export file in ASCII format"
+msgstr "Exportar arquivo no formato ASCII"
+
+msgid "Copy textures on export to the output path"
+msgstr "Copia texturas na exportação para o caminho de saída"
+
+msgid "Export selected objects using settings below"
+msgstr "Exporte objetos selecionados usando as configurações abaixo"
+
+msgid "Create offset surface"
+msgstr "Criar superfície de deslocamento"
+
+msgid "Offset direction relative to the object surface"
+msgstr "Direção de deslocamento em relação à superfície do objeto"
+
+msgid "Surface offset in relation to original mesh"
+msgstr "Deslocamento da superfície em relação à malha original"
+
+msgid "Size of the voxel used for volume evaluation. Lower values preserve finer details"
+msgstr "Tamanho do voxel utilizado para avaliação de volume. Valores mais baixos preservam detalhes mais sutis"
+
+msgid "Hollow Duplicate"
+msgstr "Duplicar parede"
+
+msgid "Create hollowed out copy of the object"
+msgstr "Cria uma cópia oca do objeto"
+
+msgid "Offset Surface Only"
+msgstr "Somente Superfície de Deslocamento"
+
+msgid "Remove original and keep offset surface"
+msgstr "Remove o original e pega a superfície de deslocamento"
+
+msgid "Cut geometry along a plane"
+msgstr "Corte geométrico ao longo do plano"
+
+msgid "Slice on axis"
+msgstr "Fatiar no eixo"
+
+msgid "Cutting plane position"
+msgstr "Posição do plano de corte"
+
+msgid "Rotate object so the selected faces lie, on average, parallel to the XY plane"
+msgstr "Rotacione o objeto de modo que as faces selecionadas fiquem, em média, paralelas ao plano XY"
+
+msgid "Weight by Face Area"
+msgstr "Peso por Área da Face"
+
+msgid "Take face area into account when calculating rotation"
+msgstr "Leve em consideração a área da face ao calcular a rotação"
+
+msgid "Multiple selected objects. Only the active one will be evaluated"
+msgstr "Objetos Múltiplos Selecionados. Apenas o objeto ativo será validado"
+
+msgid "Report is out of date, re-run check"
+msgstr "Relatório expirado, re-execute checagem"
+
+msgid "Modified: {:+} vertices, {:+} edges, {:+} faces"
+msgstr "Modificado: {:+} vértices, {:+} bordas, {:+} faces"
+
+msgid "Make sure target mesh has closed surface and offset value is less than half of target thickness"
+msgstr "Assegure-se que a malha alvo tenha sua superfície fechada e valor de deslocamento seja menos que metade da grossura alvo"
+
+msgid "Target must have closed surface and offset value less than half of target thickness"
+msgstr "Alvo deve possuir superfície fechada e valor de deslocamento menor que metade da espessura do alvo"
+
+msgid "Scaled by {}"
+msgstr "Redimensionado por {}"
+
+msgid ", Clamping {}-Axis"
+msgstr ", Eixo {} de Limitacão"
+
+msgid "At least one mesh object must be selected"
+msgstr "Ao menos um objeto malha deve ser selecionada"
+
+msgid "Object has zero volume"
+msgstr "Objeto tem Volume Nulo"
+
+msgid "Object has zero bounds"
+msgstr "Objeto tem Volume Nulo"
+
+msgid "Exported: {!r}"
+msgstr "Exportado: {!r}"
+
+msgid "Export failed"
+msgstr "Falha na Exportação"
+
+msgctxt "Operator"
+msgid "Volume"
+msgstr "Volume"
+
+msgctxt "Operator"
+msgid "Area"
+msgstr "Área"
+
+msgctxt "Operator"
+msgid "Solid"
+msgstr "Sólido"
+
+msgctxt "Operator"
+msgid "Intersections"
+msgstr "Sobreposição"
+
+msgctxt "Operator"
+msgid "Shells"
+msgstr "Conchas"
+
+msgctxt "Operator"
+msgid "Degenerate"
+msgstr "Degeneração"
+
+msgctxt "Operator"
+msgid "Non-Planar"
+msgstr "Face não Plana"
+
+msgctxt "Operator"
+msgid "Thickness"
+msgstr "Espessura"
+
+msgctxt "Operator"
+msgid "Sharp"
+msgstr "Nítidez"
+
+msgctxt "Operator"
+msgid "Overhang"
+msgstr "Saliência"
+
+msgctxt "Operator"
+msgid "Check All"
+msgstr "Verificar Tudo"
+
+msgctxt "Operator"
+msgid "Make Manifold"
+msgstr "Fazer Interligações"
+
+msgctxt "Operator"
+msgid "Hollow"
+msgstr "Esvaziar"
+
+msgctxt "Operator"
+msgid "Align XY"
+msgstr "Alinhamento XY"
+
+msgctxt "Operator"
+msgid "Bounds"
+msgstr "Limites"

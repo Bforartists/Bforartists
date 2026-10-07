@@ -1,13 +1,13 @@
 schema_version = "1.0.0"
 id = "stored_views"
 name = "Stored Views"
-version = "0.3.9"
+version = "0.4.0"
 tagline = "Save and restore views, pov, layers & display configs"
 maintainer = "Community"
 type = "add-on"
 tags = ["3D View"]
 blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
+license = ["SPDX:GPL-3.0-or-later"]
 website = "https://projects.blender.org/extensions/space_view3d_stored_views"
 copyright = [
     "2024 nfloyd",
