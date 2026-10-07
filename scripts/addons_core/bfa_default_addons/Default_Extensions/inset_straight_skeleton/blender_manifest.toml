@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "inset_straight_skeleton"
+name = "Inset Straight Skeleton"
+version = "1.1.0"
+tagline = "Make an inset inside selection using straight skeleton algo . . "
+maintainer = "Community"
+type = "add-on"
+tags = ["Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/mesh_inset"
+copyright = ["2024 Howard Trickey"]

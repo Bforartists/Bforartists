@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "antlandscape"
+name = "A.N.T.Landscape"
+version = "0.2.0"
+tagline = "Another Noise Tool: Landscape and Displace"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Mesh"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/ant_landscape"
+copyright = ["2024 Jimmy Hazevoet"]

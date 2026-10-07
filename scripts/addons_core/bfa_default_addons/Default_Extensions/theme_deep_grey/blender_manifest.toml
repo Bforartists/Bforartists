@@ -1,0 +1,11 @@
+schema_version = "1.0.0"
+id = "theme_deep_grey"
+name = "Deep Grey"
+version = "2.1.0"
+tagline = "A comfortable medium dark theme for Blender"
+maintainer = "TheRedWaxPolice <theredwaxpolice@gmail.com>"
+type = "theme"
+tags = ["Dark"]
+blender_version_min = "5.3.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/theme_deep_grey"

@@ -1,0 +1,11 @@
+schema_version = "1.0.0"
+id = "theme_xsi"
+name = "Softimage XSI"
+version = "5.0.0"
+tagline = "Community-made theme inspired by Softimage XSI"
+maintainer = "RobWu"
+type = "theme"
+tags = ["Inspired By"]
+blender_version_min = "5.0.0"
+license = ["SPDX:GPL-3.0-or-later"]
+website = "https://projects.blender.org/extensions/theme_xsi"

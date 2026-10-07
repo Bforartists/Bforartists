@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "demo_mode"
+name = "Demo Mode"
+version = "1.0.0"
+tagline = "Demo mode lets you select multiple blend files and loop ove . . "
+maintainer = "Community"
+type = "add-on"
+tags = ["System"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/system_demo_mode"
+copyright = ["2024 Campbell Barton"]

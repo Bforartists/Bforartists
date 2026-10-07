@@ -100,6 +100,28 @@ def bfa_bundle_prefs_or_none(context):
     return addon.preferences if addon is not None else None
 
 
+def bfa_bundle_operators_draw(context, layout):
+    """
+    BFA - Draw the Legacy Add-ons and Pre-downloaded Extensions install/remove buttons (#4568).
+
+    Pass a row to draw them side by side as a left/right choice, or a column/menu to stack them.
+    The button labels and tooltips come from the operators.
+    """
+    bfa_prefs = bfa_bundle_prefs_or_none(context)
+    legacy_installed = bfa_prefs is not None and bfa_prefs.legacy_addons_installed
+    extensions_installed = bfa_prefs is not None and bfa_prefs.extensions_installed
+
+    if legacy_installed:
+        layout.operator("extensions.remove_legacy_addons", icon='CANCEL')
+    else:
+        layout.operator("extensions.install_legacy_addons", icon='IMPORT')
+
+    if extensions_installed:
+        layout.operator("extensions.uninstall_downloaded_extensions", icon='CANCEL')
+    else:
+        layout.operator("extensions.install_downloaded_extensions", icon='IMPORT')
+
+
 def module_parent_dirname(module_filepath):
     """
     Return the name of the directory above the module (it's name only).
@@ -355,26 +377,15 @@ def addons_panel_draw_missing_with_extension_impl(
 
     box = layout_panel.box()
     ## BFA - Changes to opt-into extensions and improve migration here - START
-    box.label(text="Available to install from the Online Extensions repository (extensions.blender.org).") # BFA - not Blender, made explicit
-    box.label(text="If you opt-in to use Extensions, install each addon equivalent individually or install the pre-downloaded equivalents.") # BFA - talk of how to "replace" the legacy addons
-    box.label(text="Alternatively, activate the Built-In Legacy Addons if you need to remain offline.") # BFA - talk of the addon alternative to remain offline
+    box.label(text="These add-ons are now Extensions, available online from extensions.blender.org.") # BFA - not Blender, made explicit
+    box.label(text="Install them one by one online, or all at once as Pre-downloaded Extensions.") # BFA - how to "replace" the legacy add-ons
+    box.label(text="To stay offline with the previous versions, install the Legacy Add-ons.") # BFA - the offline alternative
 
-    row = box.row()
-    if "bfa_default_addons" not in bpy.context.preferences.addons and not context.preferences.system.use_online_access:
-        row.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
-
+    # BFA - Legacy Add-ons (left) or Pre-downloaded Extensions (right), see #4568.
+    bfa_bundle_operators_draw(context, box.row())
     if not context.preferences.system.use_online_access:
-        row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - opt into being online to install missing addons conveniently
-
-    # BFA - expose the pre-downloaded extension opt-in / opt-out at top level (#4568)
-    bfa_prefs = bfa_bundle_prefs_or_none(context)
-    extensions_installed = bool(bfa_prefs.extensions_installed) if bfa_prefs is not None else False
-    row = box.row()
-    if extensions_installed:
-        row.operator("extensions.uninstall_downloaded_extensions", text="Uninstall Pre-downloaded Extensions Equivalents", icon='CANCEL')
-    else:
-        row.operator("extensions.install_downloaded_extensions", text="Install Pre-downloaded Extensions Equivalents", icon='PLUGIN')
-    box.label(text="Installing Extension equivalents keeps the Built-in Legacy Add-ons; remove them manually.", icon='INFO') # BFA - manual removal is explicit
+        box.row().operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - opt into being online to install missing addons conveniently
+    box.label(text="Disable a Legacy Add-on before you enable its Extension, and the other way around.", icon='INFO') # BFA - they conflict
     ## BFA - Changes to opt-into extensions and improve migration here - END
 
     pkg_manifest_remote = {}

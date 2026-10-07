@@ -7,15 +7,27 @@ space_view3d_copy_attributes.py = copy_attributes_menu\
 render_freestyle_svg.py
 
 [REMOVED - no extensions equivalent]
-io_mesh_uv_layout\ 
-mesh_inset\
+io_mesh_uv_layout\
 meshedgetools.py
 minilightlib\
+depsgraph_debug.py
 io_coat3D\ = coat_applink\ (no longer on extensions.blender.org)
 
-[REMOVED - not compatible with Blender 5.x (online version max 4.3)]
-real_snow.py = real_snow\
-io_import_BrushSet.py = import_brushset\
+[REMOVED - not compatible with Blender 5.x]
+real_snow.py = real_snow\ (online version max 4.3)
+io_import_BrushSet.py = import_brushset\ (online version max 4.3)
+render_povray\ = pov_at_ble\ (no longer on extensions.blender.org, needs removed Python imghdr)
+render_auto_tile_size.py (Cycles X removed tile sizes)
+storypencil\ (use storypencil_storyboard_tools\)
+greasepencil_tools\ (Grease Pencil v3, use grease_pencil_tools\)
+space_view3d_math_vis\ = math_vis_console\ (console_python was renamed to _console_python)
 
 [REMOVED - duplicate of core add-on scripts/addons_core/space_view3d_pie_menus]
 space_view3d_pie_menus\ = viewport_pie_menus\
+
+[REMOVED - Blender services only]
+blender_id\ = blender_id_authentication\
+
+[MOVED TO EXTENSIONS - legacy theme presets]
+presets\interface_theme\ = theme_deep_grey\, theme_maya\, theme_minimal_dark\, theme_modo\, theme_print_friendly\, theme_white\, theme_xsi\
+presets\operator\ = shipped inside the matching extensions
