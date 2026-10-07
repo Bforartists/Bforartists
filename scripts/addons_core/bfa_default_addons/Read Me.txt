@@ -2,7 +2,6 @@
 io_mesh_stl\ = stl_format_legacy\
 io_scene_3ds\ = autodesk_3ds_format\
 space_view3d_copy_attributes.py = copy_attributes_menu\
-space_view3d_pie_menus\ = viewport_pie_menus\
 
 [REMOVED - unmaintained bugs]
 render_freestyle_svg.py
@@ -12,3 +11,11 @@ io_mesh_uv_layout\
 mesh_inset\
 meshedgetools.py
 minilightlib\
+io_coat3D\ = coat_applink\ (no longer on extensions.blender.org)
+
+[REMOVED - not compatible with Blender 5.x (online version max 4.3)]
+real_snow.py = real_snow\
+io_import_BrushSet.py = import_brushset\
+
+[REMOVED - duplicate of core add-on scripts/addons_core/space_view3d_pie_menus]
+space_view3d_pie_menus\ = viewport_pie_menus\

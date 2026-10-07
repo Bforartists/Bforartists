@@ -4090,63 +4090,150 @@ class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
 
 
 ## BFA - custom operator to install pre-downlaoded extensions - START ##
+
+# BFA - the built-in bundle add-on which ships the pre-downloaded extensions.
+BFA_DEFAULT_ADDONS_ID = "bfa_default_addons"
+
+
+def bfa_default_addons_enable_and_opt_in_extensions():
+    """
+    BFA - Enable the built-in bundle add-on and opt into the pre-downloaded extensions.
+
+    Enabling the add-on runs ``bfa_default_addons.register_addons`` as a timer, which
+    would otherwise auto-install the Built-in Legacy Add-ons while offline. Setting the
+    ``extensions_installed`` opt-in before that timer fires prevents the legacy add-ons
+    from being installed, both now and on future startups. Removing the legacy add-ons
+    stays a separate, manual action (#4568).
+    """
+    addon_id = BFA_DEFAULT_ADDONS_ID
+    addons = bpy.context.preferences.addons
+    if addon_id not in addons:
+        bpy.ops.preferences.addon_enable(module=addon_id)
+    addon = addons.get(addon_id)
+    if addon is not None:
+        addon_prefs = addon.preferences
+        if addon_prefs is not None and hasattr(addon_prefs, "extensions_installed"):
+            addon_prefs.extensions_installed = True
+
+
+# BFA - the extension repository module the curated pre-downloaded extensions install into.
+BFA_EXTENSION_REPO_MODULE = "blender_org"
+
+
+def bfa_downloaded_extensions_paths():
+    """
+    BFA - Return ``(source_dir, destination_dir, version_path)`` for the curated
+    pre-downloaded extensions.
+
+    The source ships inside the ``bfa_default_addons`` bundle. The destination matches the
+    ``blender_org`` extension repository directory so copied extensions list in the
+    Extensions preferences.
+    """
+    current_script_path = p.dirname(__file__)
+    bundle_path = os.path.join(os.path.dirname(current_script_path), BFA_DEFAULT_ADDONS_ID)
+    source_dir = os.path.join(bundle_path, "Default_Extensions")
+
+    user_path = Path(bpy.utils.resource_path('USER')).parent
+    major_minor = '.'.join(bpy.app.version_string.split('.')[:-1])
+    version_path = Path(user_path, major_minor)
+    destination_dir = version_path / 'extensions' / BFA_EXTENSION_REPO_MODULE
+
+    return source_dir, destination_dir, version_path
+
+
+def bfa_downloaded_extensions_enabled_ids():
+    """BFA - Return the package IDs of installed pre-downloaded add-ons that are enabled."""
+    _source_dir, destination_dir, _version_path = bfa_downloaded_extensions_paths()
+    enabled = []
+    if not os.path.isdir(destination_dir):
+        return enabled
+    addons = bpy.context.preferences.addons
+    for item in sorted(os.listdir(destination_dir)):
+        if not os.path.isdir(os.path.join(destination_dir, item)):
+            continue
+        if addons.get("bl_ext.{:s}.{:s}".format(BFA_EXTENSION_REPO_MODULE, item)) is not None:
+            enabled.append(item)
+    return enabled
+
+
+def bfa_downloaded_extensions_opt_in_set(value):
+    """BFA - Set the ``extensions_installed`` opt-in on the bundle add-on (best effort)."""
+    addon = bpy.context.preferences.addons.get(BFA_DEFAULT_ADDONS_ID)
+    if addon is not None and hasattr(addon.preferences, "extensions_installed"):
+        addon.preferences.extensions_installed = value
+
+
 class EXTENSIONS_OT_install_downloaded_extensions(Operator):
-    """Copy and prepare pre-downloaded Extensions Addons when opt-in to be online is enabled"""
+    """Install the pre-downloaded Extension equivalents curated by Bforartists
+(does not remove the Built-in Legacy Add-ons, remove those manually)"""
     bl_idname = "extensions.install_downloaded_extensions"
-    bl_label = "Install Pre-downloaded Extensions curated by Bforartists"
+    bl_label = "Install Pre-downloaded Extensions"
 
     def execute(self, context):
-        # ----------
-        # Variables
+        # BFA - enable the bundle add-on without triggering the legacy add-on auto-install (#4568).
+        bfa_default_addons_enable_and_opt_in_extensions()
 
-        current_script_path = p.dirname(__file__)
+        source_ext_folder, destination_ext_folder, version_path = bfa_downloaded_extensions_paths()
 
-        # Get the addon path
-        path = os.path.join(os.path.dirname(current_script_path), "bfa_default_addons")
-
-        # Get the USER path
-        user_path = Path(bpy.utils.resource_path('USER')).parent
-
-        # Get the version string
-        version_string = bpy.app.version_string
-
-        # Split the string at the last dot to get 'MAJOR.MINOR'
-        major_minor = '.'.join(version_string.split('.')[:-1])
-
-        # Join with the user_path
-        version_path = Path(user_path, major_minor)
-
-        # Get the source files
-        source_ext = "Default_Extensions"
-        source_ext_folder = os.path.join(path, source_ext)
-
-        # Define the Extensions sub-folder path
-        destination_ext_folder = Path(os.path.join(version_path, 'extensions', 'blender_org'))
-
-        # Define the Extensions sub-folder path
+        # BFA - the user-default repository directory (created so the repository is valid).
         user_ext_folder = Path(os.path.join(version_path, 'extensions', 'user_default'))
-
-        # --------------------------
-        # Copy the extension addons
 
         # Ensure the extensions sub-folder exists
         if not destination_ext_folder.exists():
             destination_ext_folder.mkdir(parents=True)
 
-        # Ensure the extensions sub-folder exists
+        # Ensure the user_default sub-folder exists
         if not user_ext_folder.exists():
             print("NOTE: user_default folder doesn't exist, making")
             user_ext_folder.mkdir(parents=True)
 
-        # Copy the other extenions that are in sub-directories
+        # Copy the directories and files from the bundle.
+        # BFA - copy idempotently so re-running the operator updates an existing install.
         for item in os.listdir(source_ext_folder):
             s = os.path.join(source_ext_folder, item)
             d = os.path.join(destination_ext_folder, item)
             if os.path.isdir(s):
-                if not os.path.exists(d):
-                    shutil.copytree(s, d, False, None)
+                shutil.copytree(s, d, dirs_exist_ok=True)
             else:
                 shutil.copy2(s, d)  # copies also metadata
+
+        bpy.ops.extensions.repo_refresh_all()
+        bpy.ops.preferences.addon_refresh()
+
+        return {'FINISHED'}
+
+
+class EXTENSIONS_OT_uninstall_downloaded_extensions(Operator):
+    """Uninstall the pre-downloaded Extension equivalents curated by Bforartists
+(enabled extensions must be disabled first; keeps the Built-in Legacy Add-ons)"""
+    bl_idname = "extensions.uninstall_downloaded_extensions"
+    bl_label = "Uninstall Pre-downloaded Extensions"
+
+    def execute(self, context):
+        # BFA - never remove extensions while one or more of them are enabled.
+        enabled = bfa_downloaded_extensions_enabled_ids()
+        if enabled:
+            names = ", ".join(enabled)
+            self.report(
+                {'WARNING'},
+                "Disable these Extensions before uninstalling: {:s}".format(names),
+            )
+            return {'CANCELLED'}
+
+        _source_dir, destination_dir, _version_path = bfa_downloaded_extensions_paths()
+        if os.path.isdir(destination_dir):
+            for item in sorted(os.listdir(destination_dir)):
+                d = os.path.join(destination_dir, item)
+                if os.path.isdir(d):
+                    shutil.rmtree(d, ignore_errors=True)
+                else:
+                    try:
+                        os.remove(d)
+                    except Exception:
+                        pass
+
+        # BFA - clear the opt-in so the Built-in Legacy Add-ons may be auto-installed again while offline.
+        bfa_downloaded_extensions_opt_in_set(False)
 
         bpy.ops.extensions.repo_refresh_all()
         bpy.ops.preferences.addon_refresh()
@@ -4200,6 +4287,7 @@ classes = (
     EXTENSIONS_OT_userpref_allow_online,
     EXTENSIONS_OT_userpref_allow_online_popup,
     EXTENSIONS_OT_install_downloaded_extensions, # BFA - custom operator to install pre-downloaded extensions
+    EXTENSIONS_OT_uninstall_downloaded_extensions, # BFA - custom operator to uninstall pre-downloaded extensions
 )
 
 
