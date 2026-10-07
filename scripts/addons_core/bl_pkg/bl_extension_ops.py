@@ -4149,6 +4149,34 @@ def bfa_downloaded_extensions_ids():
     return sorted(item for item in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, item)))
 
 
+# BFA - extensions that used to be pre-downloaded but were dropped from the bundle,
+# so they are cleaned up from earlier installs (see `bfa_default_addons/Read Me.txt`).
+BFA_RETIRED_EXTENSION_IDS = (
+    "coat_applink",  # No longer on extensions.blender.org.
+    "import_brushset",  # Not compatible with Blender 5.x.
+    "math_vis_console",  # Fails to register in Blender 5.x.
+    "real_snow",  # Not compatible with Blender 5.x.
+    "viewport_pie_menus",  # Duplicate of the core `space_view3d_pie_menus` add-on.
+)
+
+
+def bfa_retired_extensions_remove():
+    """BFA - Disable and remove extensions that are no longer pre-downloaded. Return the removed IDs."""
+    import addon_utils
+    _source_dir, destination_dir, _version_path = bfa_downloaded_extensions_paths()
+    removed = []
+    for item in BFA_RETIRED_EXTENSION_IDS:
+        d = os.path.join(destination_dir, item)
+        if not os.path.isdir(d):
+            continue
+        module_name = "bl_ext.{:s}.{:s}".format(BFA_EXTENSION_REPO_MODULE, item)
+        if bpy.context.preferences.addons.get(module_name) is not None:
+            addon_utils.disable(module_name, default_set=True)
+        shutil.rmtree(d, ignore_errors=True)
+        removed.append(item)
+    return removed
+
+
 def bfa_downloaded_extensions_enabled_ids():
     """BFA - Return the package IDs of installed pre-downloaded add-ons that are enabled."""
     _source_dir, destination_dir, _version_path = bfa_downloaded_extensions_paths()
@@ -4260,16 +4288,18 @@ class EXTENSIONS_OT_install_downloaded_extensions(Operator):
             shutil.copytree(s, d, dirs_exist_ok=True)
             installed += 1
 
+        # BFA - clean up extensions an earlier install copied that are no longer shipped.
+        retired = bfa_retired_extensions_remove()
+
         bpy.ops.extensions.repo_refresh_all()
         bpy.ops.preferences.addon_refresh()
 
+        message = "Installed {:d} Pre-downloaded Extensions".format(installed)
         if skipped:
-            self.report(
-                {'INFO'},
-                "Installed {:d} Pre-downloaded Extensions, kept {:d} newer ones".format(installed, skipped),
-            )
-        else:
-            self.report({'INFO'}, "Installed {:d} Pre-downloaded Extensions".format(installed))
+            message += ", kept {:d} newer ones".format(skipped)
+        if retired:
+            message += ", removed retired: {:s}".format(", ".join(retired))
+        self.report({'INFO'}, message)
         return {'FINISHED'}
 
 
@@ -4298,6 +4328,7 @@ class EXTENSIONS_OT_uninstall_downloaded_extensions(Operator):
             if os.path.isdir(d):
                 shutil.rmtree(d, ignore_errors=True)
                 removed += 1
+        removed += len(bfa_retired_extensions_remove())
 
         # BFA - clear the opt-in so the Legacy Add-ons may be auto-installed again while offline.
         bfa_downloaded_extensions_opt_in_set(False)
