@@ -105,21 +105,22 @@ def bfa_bundle_operators_draw(context, layout):
     BFA - Draw the Legacy Add-ons and Pre-downloaded Extensions install/remove buttons (#4568).
 
     Pass a row to draw them side by side as a left/right choice, or a column/menu to stack them.
-    The button labels and tooltips come from the operators.
+    The button labels and tooltips come from the operators, the icons match the add-on types
+    shown in the Add-ons list (folder for legacy add-ons, plugin for extensions).
     """
     bfa_prefs = bfa_bundle_prefs_or_none(context)
     legacy_installed = bfa_prefs is not None and bfa_prefs.legacy_addons_installed
     extensions_installed = bfa_prefs is not None and bfa_prefs.extensions_installed
 
-    if legacy_installed:
-        layout.operator("extensions.remove_legacy_addons", icon='CANCEL')
-    else:
-        layout.operator("extensions.install_legacy_addons", icon='IMPORT')
-
-    if extensions_installed:
-        layout.operator("extensions.uninstall_downloaded_extensions", icon='CANCEL')
-    else:
-        layout.operator("extensions.install_downloaded_extensions", icon='IMPORT')
+    layout.operator(
+        "extensions.remove_legacy_addons" if legacy_installed else "extensions.install_legacy_addons",
+        icon=addon_type_icon[ADDON_TYPE_LEGACY_USER],
+    )
+    layout.operator(
+        "extensions.uninstall_downloaded_extensions" if extensions_installed else
+        "extensions.install_downloaded_extensions",
+        icon=addon_type_icon[ADDON_TYPE_EXTENSION],
+    )
 
 
 def module_parent_dirname(module_filepath):
