@@ -17,14 +17,17 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # -----------------------------------------------------------------------------
-# This addon is a Bforartists exclusive addons the pre-downloadeds legacy addons
-# and extensions without requiring opt-in access to the internet.
+# This addon is a Bforartists exclusive. It ships the Legacy Add-ons and the
+# Pre-downloaded Extensions, so they can be installed without internet access.
+# The Pre-downloaded Extensions operators live in `bl_pkg.bl_extension_ops`.
 # -----------------------------------------------------------------------------
 
 import bpy
+import contextlib
 import os
+import shutil
 
-import sys
+from pathlib import Path
 
 from bpy.types import (
     AddonPreferences,
@@ -32,25 +35,18 @@ from bpy.types import (
     Operator,
     UILayout,
 )
-
-import shutil
-from pathlib import Path
-from os import path as p
-from bpy.types import Operator
 from bpy.props import BoolProperty
 
 bl_info = {
-    "name": "Built-in Legacy Addons and Extensions",
+    "name": "Built-in Legacy Add-ons and Extensions",
     "author": "Draise (@trinumedia)",
-    "version": (1, 0, 1),
+    "version": (1, 1, 0),
     "blender": (4, 2, 0),
-    "location": "Preferences - Extensions",
-    "description": "Adds all the Built-in Legacy addons as a pre-downloaded bundle of addons and/or extensions",
+    "location": "Preferences > Extensions",
+    "description": "Ships the Legacy Add-ons and Pre-downloaded Extensions, to install without internet access",
     "warning": "Bforartists Exclusive",
     "doc_url": "https://github.com/Bforartists/Manual",
     "tracker_url": "https://github.com/Bforartists/Bforartists",
-    # Please go to https://github.com/BlenderDefender/implement_addon_updater to implement support for automatic library updates:
-    "endpoint_url": "",
     "support": "OFFICIAL",
     "category": "Bforartists",
 }
@@ -58,38 +54,42 @@ bl_info = {
 # ---------
 # Variables
 
-# Configure the display name and sub-folder of your Library here:
-source_ext = "Default_Extensions"
-source_addons = "Default_Addons"
+# The Legacy Add-ons shipped with this bundle.
+source_addon_folder = os.path.join(os.path.dirname(__file__), "Default_Addons")
 
-prefs = bpy.context.preferences
+# The versioned user folder, e.g. `.../Bforartists/5.3`.
+major_minor = '.'.join(bpy.app.version_string.split('.')[:-1])
+version_path = Path(Path(bpy.utils.resource_path('USER')).parent, major_minor)
 
-# Get the addon path
-path = p.dirname(__file__)
-
-# Get the extensions source files
-source_addon_folder = os.path.join(path, source_addons)
-
-# Get the USER path
-user_path = Path(bpy.utils.resource_path('USER')).parent
-
-# Get the version string
-version_string = bpy.app.version_string
-
-# Split the string at the last dot to get 'MAJOR.MINOR'
-major_minor = '.'.join(version_string.split('.')[:-1])
-
-# Join with the user_path
-version_path = Path(user_path, major_minor)
-
-# Define the addons  sub-folder path
+# Where the Legacy Add-ons get installed to.
 destination_addon_folder = version_path / 'scripts' / 'addons'
 
 user_default = version_path / 'extensions' / 'user_default'
-
-legacy_addons_installed = False
-extensions_installed = False
 # ---------
+
+
+@contextlib.contextmanager
+def silence_output():
+    """Suppress the terminal messages of installing many add-ons, so the first load does not spam."""
+    with open(os.devnull, 'w') as devnull, contextlib.redirect_stdout(devnull), contextlib.redirect_stderr(devnull):
+        yield
+
+
+def legacy_addons_installed_set(value):
+    """Store whether the Legacy Add-ons are installed on the add-on preferences."""
+    addon = bpy.context.preferences.addons.get(__package__)
+    if addon is not None:
+        addon.preferences.legacy_addons_installed = value
+
+
+def legacy_addons_install_files():
+    """Install the single file (`.py`) and zipped (`.zip`) Legacy Add-ons."""
+    destination_addon_folder.mkdir(parents=True, exist_ok=True)
+    for file in sorted(os.listdir(source_addon_folder)):
+        file_path = os.path.join(source_addon_folder, file)
+        if file.endswith((".py", ".zip")) and os.path.isfile(file_path):
+            bpy.ops.preferences.addon_install(filepath=file_path)
+
 
 # --------- INTERFACE START -------
 class DEFAULTADDON_APT_preferences(AddonPreferences):
@@ -100,306 +100,126 @@ class DEFAULTADDON_APT_preferences(AddonPreferences):
     # `BoolProperty` object, which is always truthy), which made the UI always show
     # "Remove" and never "Install" for the legacy add-ons (#4568).
     legacy_addons_installed: BoolProperty(
-        name="Legacy Addons Installed",
-        description="The Built-in Legacy Add-ons have been installed to the user preferences",
+        name="Legacy Add-ons Installed",
+        description="The Legacy Add-ons are installed to the user add-ons",
         default=False,
     )
     extensions_installed: BoolProperty(
-        name="Extensions Installed",
-        description="The pre-downloaded Extension equivalents have been installed",
+        name="Pre-downloaded Extensions Installed",
+        description="The Pre-downloaded Extensions are installed",
         default=False,
     )
 
     def draw(self, context: Context):
         layout: UILayout = self.layout
 
-        # Display addon inormation
-        #addon_version = bl_info['version']
+        # BFA - the same buttons as in the Extensions preferences (#4568).
+        from bl_pkg.bl_extension_ui import bfa_bundle_operators_draw
+        bfa_bundle_operators_draw(context, layout.row())
 
-        #layout.label(
-        #    text=f"{source_ext} - Version {'.'.join(map(str, addon_version))}")
-
-
-        box = layout.box()
-
-        # BFA - opt-in / opt-out of the curated Extension equivalents (#4568).
-        if self.extensions_installed:
-            box.operator("extensions.uninstall_downloaded_extensions", text="Uninstall Pre-downloaded Extensions Equivalents", icon='CANCEL')
-        else:
-            box.operator("extensions.install_downloaded_extensions", text="Install Pre-downloaded Extensions Equivalents", icon='PLUGIN')
-
-        # BFA - hide the legacy install action once the user opted into Extensions.
-        if not self.extensions_installed:
-            box.operator("bfa.install_legacy_addons", text="Install Built-in Legacy Add-ons", icon='IMPORT')
-        if self.legacy_addons_installed:
-            box.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Add-ons", icon='CANCEL')
-
-        layout.separator()
-
-        box = layout.box()
-        box.label(
-            text="When enabled, this installs the Built-in Legacy Add-ons to the user preferences.", icon='INFO')
-        box.label(
-            text="Installing the Pre-downloaded Extension equivalents keeps the Built-in Legacy Add-ons; remove them manually.")
-        box.label(
-            text="Built-in Legacy Add-ons can be replaced with Extensions that can update from the internet.")
-
-        layout.separator()
-
-        layout.label(
-            text="WARNING: Disable legacy Add-ons before you enable the Extension equivalent.", icon='ERROR')
+        col = layout.column()
+        col.label(text="Legacy Add-ons work offline. While offline, they are installed on first start.", icon='INFO')
+        col.label(text="Pre-downloaded Extensions replace them and can be updated when online.", icon='BLANK1')
+        col.label(text="Disable a Legacy Add-on before you enable its Extension, and the other way around.", icon='ERROR')
 # --------- INTERFACE END ---------
 
 
 class DEFAULTADDON_OT_installlegacy(Operator):
-    """Installs all legacy addons that are not core addons"""
+    """Install the Legacy Add-ons shipped with Bforartists, no internet access needed"""
     bl_idname = "bfa.install_legacy_addons"
-    bl_label = "Install Legacy Addons"
+    bl_label = "Install Legacy Add-ons"
+    bl_options = {'INTERNAL'}  # BFA - use `extensions.install_legacy_addons`.
 
     def execute(self, context):
-        # --------------------------
-        # Ensure the addons sub-folder exists
-        if not destination_addon_folder.exists():
-            destination_addon_folder.mkdir(parents=True)
+        legacy_addons_install_files()
 
-        print("INFO: Extensions not enabled, copying Built-in Legacy addons...")
-        # If extensions is not on, and the addon is on, then install the legacy addons
-
-        # Loop through each file in the source_addon_folder to install them, so the pycache is set
-        for file in os.listdir(source_addon_folder):
-            file_path = os.path.join(source_addon_folder, file)
-
-            # Check if the file is a .py file and is directly in the source_addon_folder
-            if file.endswith(".py") or file.endswith(".zip")  and os.path.isfile(file_path):
-                # install the addon
-                bpy.ops.preferences.addon_install(filepath=file_path)
-                print("Installed: " + file)
-
-        # Copy the other addons that are in sub-directories
-        # BFA - copy idempotently so re-running the operator updates an existing install.
+        # Copy the Legacy Add-ons that are in sub-directories.
+        # BFA - copy idempotently so re-running the operator updates an existing install,
+        # the zipped add-ons are already installed above.
         for item in os.listdir(source_addon_folder):
             s = os.path.join(source_addon_folder, item)
             d = os.path.join(destination_addon_folder, item)
             if os.path.isdir(s):
-                shutil.copytree(s, d, dirs_exist_ok=True)
-            else:
+                if item != "__pycache__":
+                    shutil.copytree(s, d, dirs_exist_ok=True)
+            elif item.endswith(".py"):
                 shutil.copy2(s, d)  # copies also metadata
 
-        print("INFO: Legacy addons installed")
-
-        # Refresh to see all
         bpy.ops.preferences.addon_refresh()
+        context.window_manager.addon_search = ""
 
-        bpy.data.window_managers["WinMan"].addon_search = ""
-
-        # BFA - write to the add-on preferences instance (see `register_addons`).
-        addon = bpy.context.preferences.addons.get(__package__)
-        if addon is not None:
-            addon.preferences.legacy_addons_installed = True
-
+        legacy_addons_installed_set(True)
         return {'FINISHED'}
 
 
 class DEFAULTADDON_OT_removelegacy(Operator):
-    """Removes all legacy addons that are not core addons"""
+    """Remove the Legacy Add-ons shipped with Bforartists from the user add-ons"""
     bl_idname = "bfa.remove_legacy_addons"
-    bl_label = "Remove Built-In Legacy Addons"
+    bl_label = "Remove Legacy Add-ons"
+    bl_options = {'INTERNAL'}  # BFA - use `extensions.remove_legacy_addons`.
 
     def execute(self, context):
+        with silence_output():
+            # Uninstall the add-ons found in the source_addon_folder.
+            # BFA - `addon_remove` expects a module name, not a file name.
+            for file in os.listdir(source_addon_folder):
+                if file.endswith((".py", ".zip")):
+                    try:
+                        bpy.ops.preferences.addon_remove(module=os.path.splitext(file)[0])
+                    except Exception:
+                        pass
 
-        # Redirect stdout and stderr to /dev/null - surpresses terminal messages to not spam on first load.
-        sys.stdout = open(os.devnull, 'w')
-        sys.stderr = open(os.devnull, 'w')
+            # Delete any remaining files that came from the source folder.
+            for root, _dirs, files in os.walk(source_addon_folder):
+                for file in files:
+                    dest_file = os.path.join(destination_addon_folder, os.path.relpath(os.path.join(root, file), source_addon_folder))
+                    if os.path.exists(dest_file):
+                        os.remove(dest_file)
 
-        # Batch uninstall the addons found in the source_addon_folder
-        for file in os.listdir(source_addon_folder):
-            file_path = os.path.join(source_addon_folder, file)
+            # Delete the sub-folders from the source folder that are now left without files.
+            for root, dirs, _files in os.walk(source_addon_folder):
+                for dir in dirs:
+                    dest_dir = os.path.join(destination_addon_folder, os.path.relpath(os.path.join(root, dir), source_addon_folder))
+                    if not os.path.isdir(dest_dir):
+                        continue
+                    if not any(os.path.isfile(os.path.join(dest_dir, f)) for f in os.listdir(dest_dir)):
+                        shutil.rmtree(dest_dir)
 
-            if os.path.exists(file_path) and (file.endswith(".py") or file.endswith(".zip")):
-                # Uninstall the addon.
-                # BFA - `addon_remove` expects a module name, not a file name (previously
-                # "foo.py" was passed, which failed to remove anything).
-                try:
-                    bpy.ops.preferences.addon_remove(module=os.path.splitext(file)[0])
-                except Exception:
-                    pass
-
-        # --------------------------
-        # Iterate over all files in the source folder
-        for root, dirs, files in os.walk(source_addon_folder):
-            for file in files:
-                # Construct the full filepath
-                src_file = os.path.join(root, file)
-
-                # Construct the corresponding filepath in the destination folder
-                dest_file = str(src_file).replace(str(source_addon_folder), str(destination_addon_folder))
-
-                # Skip if the file does not exist in the destination folder
-                if not os.path.exists(dest_file):
-                    continue
-
-                # If the file also exists in the destination folder, delete it
-                os.remove(dest_file)
-
-        # Iterate over all sub-folders in the source folder
-        for root, dirs, files in os.walk(source_addon_folder):
-            for dir in dirs:
-                # Construct the full directory path
-                src_dir = os.path.join(root, dir)
-
-                # Construct the corresponding directory path in the destination folder
-                dest_dir = os.path.join(destination_addon_folder, os.path.relpath(src_dir, source_addon_folder))
-
-                # Skip if the directory does not exist in the destination folder
-                if not os.path.exists(dest_dir):
-                    continue
-
-                # If the directory exists in the destination folder and is empty (contains no files), delete it
-                if not any(os.path.isfile(os.path.join(dest_dir, f)) for f in os.listdir(dest_dir)):
-                    shutil.rmtree(dest_dir)
-
-        # Reactivate the console by resetting stdout and stderr to default
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-
-        # Refresh to see all
         bpy.ops.preferences.addon_refresh()
 
-        # Force reload to reset the preferences
-        #bpy.ops.script.reload()
-
-        # BFA - write to the add-on preferences instance (see `register_addons`).
-        addon = bpy.context.preferences.addons.get(__package__)
-        if addon is not None:
-            addon.preferences.legacy_addons_installed = False
-
-        return {'FINISHED'}
-
-
-class DEFAULTADDON_OT_install_downloaded_extensions(Operator):
-    """Install the pre-downloaded Extension equivalents curated by Bforartists
-(does not remove the Built-in Legacy Add-ons, remove those manually)"""
-    bl_idname = "bfa.install_downloaded_extensions"
-    bl_label = "Install Pre-downloaded Extensions"
-
-    def execute(self, context):
-        print("NOTE: Copying Extensions..")
-        # ----------
-        # Variables
-
-        current_script_path = p.dirname(__file__)
-
-        # Get the addon path
-        path = os.path.join(os.path.dirname(current_script_path), "bfa_default_addons")
-        #path = os.path.join(os.path.dirname(current_script_path))
-
-        # Get the USER path
-        user_path = Path(bpy.utils.resource_path('USER')).parent
-
-        # Get the version string
-        version_string = bpy.app.version_string
-
-        # Split the string at the last dot to get 'MAJOR.MINOR'
-        major_minor = '.'.join(version_string.split('.')[:-1])
-
-        # Join with the user_path
-        version_path = Path(user_path, major_minor)
-
-        # Get the source files
-        source_ext = "Default_Extensions"
-        source_ext_folder = os.path.join(path, source_ext)
-
-        # Define the Extensions sub-folder path
-        destination_ext_folder = version_path / 'extensions' / 'blender_org'
-
-        # --------------------------
-        # Copy the extension addons
-
-        # Ensure the extensions sub-folder exists
-        if not destination_ext_folder.exists():
-            destination_ext_folder.mkdir(parents=True)
-
-        # Copy the directories and files from the bundle.
-        # BFA - copy idempotently so re-running the operator updates an existing install.
-        for item in os.listdir(source_ext_folder):
-            s = os.path.join(source_ext_folder, item)
-            d = os.path.join(destination_ext_folder, item)
-            if os.path.isdir(s):
-                shutil.copytree(s, d, dirs_exist_ok=True)
-            else:
-                shutil.copy2(s, d)  # copies also metadata
-
-        # BFA - persist the extensions opt-in so the legacy add-ons are not auto-installed later.
-        addon = bpy.context.preferences.addons.get(__package__)
-        if addon is not None:
-            addon.preferences.extensions_installed = True
-
-        print("NOTE: Extensions copied successfully.")
-
-        bpy.ops.extensions.repo_sync_all()
+        legacy_addons_installed_set(False)
         return {'FINISHED'}
 
 
 def register_addons():
-    """Register the built-in legacy add-ons in Bforartists, as long as the add-on is enabled."""
-    """and when Internet Access is disabled."""
+    """
+    Install the Legacy Add-ons on the first start, as long as this add-on is enabled,
+    online access is disabled and the user did not opt into the Pre-downloaded Extensions.
+    """
+    prefs = bpy.context.preferences
 
-    if bpy.context.preferences.system.use_online_access:
+    if prefs.system.use_online_access:
         return None # BFA - don't cancel, just return none.
 
     # BFA - if the user opted into the pre-downloaded extensions, never auto-install the
-    # Built-in Legacy Add-ons. Removing them stays a separate, manual action (#4568).
-    addon = bpy.context.preferences.addons.get(__package__)
+    # Legacy Add-ons. Removing them stays a separate, manual action (#4568).
+    addon = prefs.addons.get(__package__)
     if addon is not None and getattr(addon.preferences, "extensions_installed", False):
         return None
 
-    # Redirect stdout and stderr to /dev/null - surpresses terminal messages to not spam on first load.
-    sys.stdout = open(os.devnull, 'w')
-    sys.stderr = open(os.devnull, 'w')
+    # Ensure the user_default extensions sub-folder exists.
+    user_default.mkdir(parents=True, exist_ok=True)
 
-    # Ensure the addons sub-folder exists
-    if not destination_addon_folder.exists():
-        destination_addon_folder.mkdir(parents=True)
+    # Only on the first start, before the user chose to continue offline or go online.
+    if prefs.extensions.use_online_access_handled:
+        return None
 
-    # Ensure the user_default extensions sub-folder exists
-    if not user_default.exists():
-        user_default.mkdir(parents=True)
-
-    # Check if extensions is on on first load, if not, bypass
-    if prefs.extensions.use_online_access_handled == True :
-        # If addon is enabled and extensions is on, do nothing
-        #print("INFO: Extensions are already enabled, so never mind...")
-        pass
-    else:
-        print("INFO: Extensions not enabled, copying Built-in Legacy addons...")
-        # If extensions is not on, and the addon is on, then install the legacy addons
-
-        # Loop through each file in the source_addon_folder to install them, so the pycache is set
-        for file in os.listdir(source_addon_folder):
-            file_path = os.path.join(source_addon_folder, file)
-
-            # Check if the file is a .py file and is directly in the source_addon_folder
-            if file.endswith(".py") or file.endswith(".zip")  and os.path.isfile(file_path):
-                # install the addon
-                bpy.ops.preferences.addon_install(filepath=file_path)
-                print("NOTE: Installed - " + file)
-
-        # Refresh to see all
+    with silence_output():
+        legacy_addons_install_files()
         bpy.ops.preferences.addon_refresh()
 
-        bpy.data.window_managers["WinMan"].addon_search = ""
-
-        # BFA - write to the add-on preferences instance (writing to `bpy.types.AddonPreferences`
-        # only set the type attribute and never updated the stored value).
-        addon = bpy.context.preferences.addons.get(__package__)
-        if addon is not None:
-            addon.preferences.legacy_addons_installed = True
-
-        # Reactivate the console by resetting stdout and stderr to default
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-        pass
-
+    bpy.context.window_manager.addon_search = ""
+    legacy_addons_installed_set(True)
     return None
 
 
@@ -407,10 +227,9 @@ classes = (
     DEFAULTADDON_APT_preferences,
     DEFAULTADDON_OT_installlegacy,
     DEFAULTADDON_OT_removelegacy,
-    DEFAULTADDON_OT_install_downloaded_extensions
 )
 
-#Adds the the bundle when you load the addon.
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -426,5 +245,3 @@ def unregister():
         bpy.app.timers.unregister(register_addons)
     except Exception:
         pass
-
-
