@@ -4089,65 +4089,19 @@ class EXTENSIONS_OT_userpref_allow_online_popup(Operator):
             col.label(text=line, translate=False)
 
 
-## BFA - custom operator to install pre-downlaoded extensions - START ##
+## BFA - Legacy Add-ons and Pre-downloaded Extensions shipped with Bforartists (#4568) - START ##
+#
+# Bforartists ships the Legacy Add-ons and the Pre-downloaded Extensions in the
+# `bfa_default_addons` folder so they can be installed without internet access.
+# Nothing is installed automatically, the user chooses from the Extensions preferences.
+# What the user installed is stored in a small JSON file in the user config folder,
+# so the choice is respected on every start, without needing to save the preferences.
 
-# BFA - the built-in bundle add-on which ships the pre-downloaded extensions.
+# BFA - the folder which ships the Legacy Add-ons and the Pre-downloaded Extensions.
 BFA_DEFAULT_ADDONS_ID = "bfa_default_addons"
 
-
-def bfa_default_addons_enable_and_opt_in_extensions():
-    """
-    BFA - Enable the built-in bundle add-on and opt into the pre-downloaded extensions.
-
-    Enabling the add-on runs ``bfa_default_addons.register_addons`` as a timer, which
-    would otherwise auto-install the Built-in Legacy Add-ons while offline. Setting the
-    ``extensions_installed`` opt-in before that timer fires prevents the legacy add-ons
-    from being installed, both now and on future startups. Removing the legacy add-ons
-    stays a separate, manual action (#4568).
-    """
-    addon_id = BFA_DEFAULT_ADDONS_ID
-    addons = bpy.context.preferences.addons
-    if addon_id not in addons:
-        bpy.ops.preferences.addon_enable(module=addon_id)
-    addon = addons.get(addon_id)
-    if addon is not None:
-        addon_prefs = addon.preferences
-        if addon_prefs is not None and hasattr(addon_prefs, "extensions_installed"):
-            addon_prefs.extensions_installed = True
-
-
-# BFA - the extension repository module the curated pre-downloaded extensions install into.
+# BFA - the extension repository module the Pre-downloaded Extensions install into.
 BFA_EXTENSION_REPO_MODULE = "blender_org"
-
-
-def bfa_downloaded_extensions_paths():
-    """
-    BFA - Return ``(source_dir, destination_dir, version_path)`` for the curated
-    pre-downloaded extensions.
-
-    The source ships inside the ``bfa_default_addons`` bundle. The destination matches the
-    ``blender_org`` extension repository directory so copied extensions list in the
-    Extensions preferences.
-    """
-    current_script_path = p.dirname(__file__)
-    bundle_path = os.path.join(os.path.dirname(current_script_path), BFA_DEFAULT_ADDONS_ID)
-    source_dir = os.path.join(bundle_path, "Default_Extensions")
-
-    user_path = Path(bpy.utils.resource_path('USER')).parent
-    major_minor = '.'.join(bpy.app.version_string.split('.')[:-1])
-    version_path = Path(user_path, major_minor)
-    destination_dir = version_path / 'extensions' / BFA_EXTENSION_REPO_MODULE
-
-    return source_dir, destination_dir, version_path
-
-
-def bfa_downloaded_extensions_ids():
-    """BFA - Return the package IDs of the pre-downloaded extensions shipped in the bundle."""
-    source_dir, _destination_dir, _version_path = bfa_downloaded_extensions_paths()
-    if not os.path.isdir(source_dir):
-        return []
-    return sorted(item for item in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, item)))
-
 
 # BFA - extensions that used to be pre-downloaded but were dropped from the bundle,
 # so they are cleaned up from earlier installs (see `bfa_default_addons/Read Me.txt`).
@@ -4159,11 +4113,138 @@ BFA_RETIRED_EXTENSION_IDS = (
     "viewport_pie_menus",  # Duplicate of the core `space_view3d_pie_menus` add-on.
 )
 
+BFA_STATE_FILENAME = "bfa_builtin_addons.json"
+
+
+def bfa_bundle_dir(subdir):
+    """BFA - Return a sub-directory of the ``bfa_default_addons`` bundle."""
+    return os.path.join(os.path.dirname(p.dirname(__file__)), BFA_DEFAULT_ADDONS_ID, subdir)
+
+
+def bfa_downloaded_extensions_paths():
+    """BFA - Return ``(source_dir, destination_dir)`` for the Pre-downloaded Extensions."""
+    return (
+        bfa_bundle_dir("Default_Extensions"),
+        Path(bpy.utils.user_resource('EXTENSIONS', path=BFA_EXTENSION_REPO_MODULE)),
+    )
+
+
+def bfa_legacy_addons_paths():
+    """BFA - Return ``(source_dir, destination_dir)`` for the Legacy Add-ons."""
+    return (
+        bfa_bundle_dir("Default_Addons"),
+        Path(bpy.utils.user_resource('SCRIPTS', path="addons")),
+    )
+
+
+def bfa_downloaded_extensions_ids():
+    """BFA - Return the package IDs of the Pre-downloaded Extensions shipped in the bundle."""
+    source_dir, _destination_dir = bfa_downloaded_extensions_paths()
+    if not os.path.isdir(source_dir):
+        return []
+    return sorted(item for item in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, item)))
+
+
+def bfa_legacy_addons_modules():
+    """BFA - Return the module names of the Legacy Add-ons shipped in the bundle."""
+    source_dir, _destination_dir = bfa_legacy_addons_paths()
+    if not os.path.isdir(source_dir):
+        return []
+    return sorted({
+        os.path.splitext(item)[0] for item in os.listdir(source_dir)
+        if item.endswith((".py", ".zip")) or (
+            os.path.isdir(os.path.join(source_dir, item)) and item != "__pycache__"
+        )
+    })
+
+
+def bfa_legacy_addon_installed(destination_dir, module):
+    return (
+        os.path.isdir(os.path.join(destination_dir, module)) or
+        os.path.isfile(os.path.join(destination_dir, module + ".py"))
+    )
+
+
+def bfa_state_detect():
+    """
+    BFA - Detect what is installed from the files on disk, for users who installed
+    before the state file existed.
+    """
+    _source_dir, legacy_dir = bfa_legacy_addons_paths()
+    legacy = any(bfa_legacy_addon_installed(legacy_dir, module) for module in bfa_legacy_addons_modules())
+    _source_dir, extensions_dir = bfa_downloaded_extensions_paths()
+    ids = bfa_downloaded_extensions_ids()
+    # A few of these may have been installed online individually, only count a bulk install.
+    found = sum(os.path.isdir(os.path.join(extensions_dir, item)) for item in ids)
+    extensions = bool(ids) and found * 2 > len(ids)
+    return {"legacy_addons": legacy, "downloaded_extensions": extensions}
+
+
+def bfa_state_filepath():
+    return os.path.join(bpy.utils.user_resource('CONFIG'), BFA_STATE_FILENAME)
+
+
+# BFA - the state is read on every redraw, so keep it in memory once loaded.
+_bfa_state_cache = None
+
+
+def bfa_state_get():
+    """
+    BFA - Return ``{"legacy_addons": bool, "downloaded_extensions": bool}``,
+    which of the bundles the user installed.
+    """
+    global _bfa_state_cache
+    if _bfa_state_cache is not None:
+        return _bfa_state_cache.copy()
+
+    import json
+    try:
+        with open(bfa_state_filepath(), "r", encoding="utf-8") as fh:
+            state = json.load(fh)
+    except FileNotFoundError:
+        state = bfa_state_detect()
+        if any(state.values()):
+            bfa_state_write(state)
+    except (OSError, ValueError):
+        state = {}
+    _bfa_state_cache = {
+        "legacy_addons": bool(state.get("legacy_addons", False)),
+        "downloaded_extensions": bool(state.get("downloaded_extensions", False)),
+    }
+    return _bfa_state_cache.copy()
+
+
+def bfa_state_write(state):
+    global _bfa_state_cache
+    import json
+    _bfa_state_cache = dict(state)
+    filepath = bfa_state_filepath()
+    try:
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, "w", encoding="utf-8") as fh:
+            json.dump(state, fh, indent=1)
+    except OSError as ex:
+        print("Bforartists: unable to store the built-in add-ons state:", ex)
+
+
+def bfa_state_set(**kwargs):
+    state = bfa_state_get()
+    state.update(kwargs)
+    bfa_state_write(state)
+
+
+def bfa_online_access_handled_set():
+    """
+    BFA - Installing either bundle answers the online access prompt in the
+    Extensions preferences, so dismiss it (like "Continue Offline" does).
+    """
+    bpy.context.preferences.extensions.use_online_access_handled = True
+
 
 def bfa_retired_extensions_remove():
     """BFA - Disable and remove extensions that are no longer pre-downloaded. Return the removed IDs."""
     import addon_utils
-    _source_dir, destination_dir, _version_path = bfa_downloaded_extensions_paths()
+    _source_dir, destination_dir = bfa_downloaded_extensions_paths()
     removed = []
     for item in BFA_RETIRED_EXTENSION_IDS:
         d = os.path.join(destination_dir, item)
@@ -4178,8 +4259,8 @@ def bfa_retired_extensions_remove():
 
 
 def bfa_downloaded_extensions_enabled_ids():
-    """BFA - Return the package IDs of installed pre-downloaded add-ons that are enabled."""
-    _source_dir, destination_dir, _version_path = bfa_downloaded_extensions_paths()
+    """BFA - Return the package IDs of installed Pre-downloaded Extensions that are enabled."""
+    _source_dir, destination_dir = bfa_downloaded_extensions_paths()
     addons = bpy.context.preferences.addons
     return [
         item for item in bfa_downloaded_extensions_ids()
@@ -4201,17 +4282,19 @@ def bfa_manifest_version(package_dir):
     return tuple(int(x) if x.isdigit() else 0 for x in re.split(r"[.\-+]", match.group(1)))
 
 
-def bfa_downloaded_extensions_opt_in_set(value):
-    """BFA - Set the ``extensions_installed`` opt-in on the bundle add-on (best effort)."""
-    addon = bpy.context.preferences.addons.get(BFA_DEFAULT_ADDONS_ID)
-    if addon is not None and hasattr(addon.preferences, "extensions_installed"):
-        addon.preferences.extensions_installed = value
+class bfa_silence_output:
+    """BFA - Suppress the terminal messages of installing many add-ons at once."""
 
+    def __enter__(self):
+        import contextlib
+        self._stack = contextlib.ExitStack()
+        devnull = self._stack.enter_context(open(os.devnull, 'w'))
+        self._stack.enter_context(contextlib.redirect_stdout(devnull))
+        self._stack.enter_context(contextlib.redirect_stderr(devnull))
+        return self
 
-def bfa_bundle_prefs():
-    """BFA - Return the ``bfa_default_addons`` preferences, or None when the bundle is disabled."""
-    addon = bpy.context.preferences.addons.get(BFA_DEFAULT_ADDONS_ID)
-    return addon.preferences if addon is not None else None
+    def __exit__(self, *args):
+        return self._stack.__exit__(*args)
 
 
 class EXTENSIONS_OT_install_legacy_addons(Operator):
@@ -4221,17 +4304,31 @@ class EXTENSIONS_OT_install_legacy_addons(Operator):
 
     @classmethod
     def poll(cls, _context):
-        bfa_prefs = bfa_bundle_prefs()
-        if bfa_prefs is not None and bfa_prefs.extensions_installed:
+        if bfa_state_get()["downloaded_extensions"]:
             cls.poll_message_set("Remove the Pre-downloaded Extensions first, they replace the Legacy Add-ons")
             return False
         return True
 
-    def execute(self, _context):
-        # BFA - the legacy add-ons ship with (and are installed by) the bundle add-on.
-        if bfa_bundle_prefs() is None:
-            bpy.ops.preferences.addon_enable(module=BFA_DEFAULT_ADDONS_ID)
-        bpy.ops.bfa.install_legacy_addons()
+    def execute(self, context):
+        source_dir, destination_dir = bfa_legacy_addons_paths()
+        destination_dir.mkdir(parents=True, exist_ok=True)
+
+        with bfa_silence_output():
+            for item in sorted(os.listdir(source_dir)):
+                s = os.path.join(source_dir, item)
+                if item.endswith(".zip"):
+                    # Zipped add-ons are extracted, and match the folders next to them.
+                    bpy.ops.preferences.addon_install(filepath=s, overwrite=True)
+                elif item.endswith(".py"):
+                    shutil.copy2(s, os.path.join(destination_dir, item))
+                elif os.path.isdir(s) and item != "__pycache__":
+                    shutil.copytree(s, os.path.join(destination_dir, item), dirs_exist_ok=True)
+            bpy.ops.preferences.addon_refresh()
+
+        context.window_manager.addon_search = ""
+        bfa_state_set(legacy_addons=True)
+        bfa_online_access_handled_set()
+
         self.report({'INFO'}, "Installed the Legacy Add-ons, enable them from the Add-ons list")
         return {'FINISHED'}
 
@@ -4242,9 +4339,33 @@ class EXTENSIONS_OT_remove_legacy_addons(Operator):
     bl_label = "Remove Legacy Add-ons"
 
     def execute(self, _context):
-        if bfa_bundle_prefs() is None:
-            bpy.ops.preferences.addon_enable(module=BFA_DEFAULT_ADDONS_ID)
-        bpy.ops.bfa.remove_legacy_addons()
+        source_dir, destination_dir = bfa_legacy_addons_paths()
+
+        with bfa_silence_output():
+            # `addon_remove` also disables the add-on.
+            for module in bfa_legacy_addons_modules():
+                if bfa_legacy_addon_installed(destination_dir, module):
+                    try:
+                        bpy.ops.preferences.addon_remove(module=module)
+                    except Exception:
+                        pass
+
+            # Delete what `addon_remove` left, only files that came from the bundle.
+            for root, _dirs, files in os.walk(source_dir):
+                for file in files:
+                    dest_file = os.path.join(destination_dir, os.path.relpath(os.path.join(root, file), source_dir))
+                    if os.path.isfile(dest_file):
+                        os.remove(dest_file)
+            for root, dirs, _files in os.walk(source_dir, topdown=False):
+                for dir in dirs:
+                    dest_dir = os.path.join(destination_dir, os.path.relpath(os.path.join(root, dir), source_dir))
+                    if os.path.isdir(dest_dir) and not any(files for _r, _d, files in os.walk(dest_dir)):
+                        shutil.rmtree(dest_dir, ignore_errors=True)
+
+            bpy.ops.preferences.addon_refresh()
+
+        bfa_state_set(legacy_addons=False)
+
         self.report({'INFO'}, "Removed the Legacy Add-ons")
         return {'FINISHED'}
 
@@ -4255,31 +4376,17 @@ class EXTENSIONS_OT_install_downloaded_extensions(Operator):
     bl_idname = "extensions.install_downloaded_extensions"
     bl_label = "Install Pre-downloaded Extensions"
 
-    def execute(self, context):
-        # BFA - enable the bundle add-on without triggering the legacy add-on auto-install (#4568).
-        bfa_default_addons_enable_and_opt_in_extensions()
-
-        source_ext_folder, destination_ext_folder, version_path = bfa_downloaded_extensions_paths()
-
-        # BFA - the user-default repository directory (created so the repository is valid).
-        user_ext_folder = Path(os.path.join(version_path, 'extensions', 'user_default'))
-
-        # Ensure the extensions sub-folder exists
-        if not destination_ext_folder.exists():
-            destination_ext_folder.mkdir(parents=True)
-
-        # Ensure the user_default sub-folder exists
-        if not user_ext_folder.exists():
-            print("NOTE: user_default folder doesn't exist, making")
-            user_ext_folder.mkdir(parents=True)
+    def execute(self, _context):
+        source_dir, destination_dir = bfa_downloaded_extensions_paths()
+        destination_dir.mkdir(parents=True, exist_ok=True)
 
         # Copy the extension directories from the bundle.
         # BFA - copy idempotently so re-running the operator updates an existing install,
         # but never downgrade an extension the user already updated online.
         installed = skipped = 0
         for item in bfa_downloaded_extensions_ids():
-            s = os.path.join(source_ext_folder, item)
-            d = os.path.join(destination_ext_folder, item)
+            s = os.path.join(source_dir, item)
+            d = os.path.join(destination_dir, item)
             version_installed = bfa_manifest_version(d)
             version_bundled = bfa_manifest_version(s)
             if version_installed and version_bundled and version_installed > version_bundled:
@@ -4290,6 +4397,9 @@ class EXTENSIONS_OT_install_downloaded_extensions(Operator):
 
         # BFA - clean up extensions an earlier install copied that are no longer shipped.
         retired = bfa_retired_extensions_remove()
+
+        bfa_state_set(downloaded_extensions=True)
+        bfa_online_access_handled_set()
 
         bpy.ops.extensions.repo_refresh_all()
         bpy.ops.preferences.addon_refresh()
@@ -4309,7 +4419,7 @@ class EXTENSIONS_OT_uninstall_downloaded_extensions(Operator):
     bl_idname = "extensions.uninstall_downloaded_extensions"
     bl_label = "Remove Pre-downloaded Extensions"
 
-    def execute(self, context):
+    def execute(self, _context):
         # BFA - never remove extensions while one or more of them are enabled.
         enabled = bfa_downloaded_extensions_enabled_ids()
         if enabled:
@@ -4321,7 +4431,7 @@ class EXTENSIONS_OT_uninstall_downloaded_extensions(Operator):
 
         # BFA - only remove the extensions shipped in the bundle,
         # other extensions in the same repository were installed by the user.
-        _source_dir, destination_dir, _version_path = bfa_downloaded_extensions_paths()
+        _source_dir, destination_dir = bfa_downloaded_extensions_paths()
         removed = 0
         for item in bfa_downloaded_extensions_ids():
             d = os.path.join(destination_dir, item)
@@ -4330,15 +4440,14 @@ class EXTENSIONS_OT_uninstall_downloaded_extensions(Operator):
                 removed += 1
         removed += len(bfa_retired_extensions_remove())
 
-        # BFA - clear the opt-in so the Legacy Add-ons may be auto-installed again while offline.
-        bfa_downloaded_extensions_opt_in_set(False)
+        bfa_state_set(downloaded_extensions=False)
 
         bpy.ops.extensions.repo_refresh_all()
         bpy.ops.preferences.addon_refresh()
 
         self.report({'INFO'}, "Removed {:d} Pre-downloaded Extensions".format(removed))
         return {'FINISHED'}
-## BFA - custom operator to install pre-downlaoded extensions - END ##
+## BFA - Legacy Add-ons and Pre-downloaded Extensions shipped with Bforartists (#4568) - END ##
 
 
 # -----------------------------------------------------------------------------

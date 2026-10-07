@@ -94,13 +94,7 @@ def pkg_repo_module_prefix(repo):
     return "bl_ext.{:s}.".format(repo.module)
 
 
-def bfa_bundle_prefs_or_none(context):
-    """BFA - Return the ``bfa_default_addons`` preferences, or None when the bundle is disabled."""
-    addon = context.preferences.addons.get("bfa_default_addons")
-    return addon.preferences if addon is not None else None
-
-
-def bfa_bundle_operators_draw(context, layout):
+def bfa_bundle_operators_draw(_context, layout):
     """
     BFA - Draw the Legacy Add-ons and Pre-downloaded Extensions install/remove buttons (#4568).
 
@@ -108,19 +102,38 @@ def bfa_bundle_operators_draw(context, layout):
     The button labels and tooltips come from the operators, the icons match the add-on types
     shown in the Add-ons list (folder for legacy add-ons, plugin for extensions).
     """
-    bfa_prefs = bfa_bundle_prefs_or_none(context)
-    legacy_installed = bfa_prefs is not None and bfa_prefs.legacy_addons_installed
-    extensions_installed = bfa_prefs is not None and bfa_prefs.extensions_installed
+    from .bl_extension_ops import bfa_state_get
+    state = bfa_state_get()
 
     layout.operator(
-        "extensions.remove_legacy_addons" if legacy_installed else "extensions.install_legacy_addons",
+        "extensions.remove_legacy_addons" if state["legacy_addons"] else "extensions.install_legacy_addons",
         icon=addon_type_icon[ADDON_TYPE_LEGACY_USER],
     )
     layout.operator(
-        "extensions.uninstall_downloaded_extensions" if extensions_installed else
+        "extensions.uninstall_downloaded_extensions" if state["downloaded_extensions"] else
         "extensions.install_downloaded_extensions",
         icon=addon_type_icon[ADDON_TYPE_EXTENSION],
     )
+
+
+def bfa_bundle_any_installed():
+    """BFA - True when the user installed the Legacy Add-ons or the Pre-downloaded Extensions."""
+    from .bl_extension_ops import bfa_state_get
+    return any(bfa_state_get().values())
+
+
+def extensions_panel_draw_bfa_bundle_impl(panel, context):
+    """
+    BFA - Once the user installed the Legacy Add-ons or the Pre-downloaded Extensions,
+    keep the buttons to remove them (or switch) at the top of the Extensions preferences.
+    """
+    layout_header, layout_panel = panel.layout.panel("bfa_bundle", default_closed=False)
+    layout_header.label(text="Shipped with Bforartists")
+    if layout_panel is None:
+        return
+    box = layout_panel.box()
+    bfa_bundle_operators_draw(context, box.row())
+    box.label(text="Disable a Legacy Add-on before you enable its Extension, and the other way around.", icon='INFO')
 
 
 def module_parent_dirname(module_filepath):
@@ -2297,6 +2310,9 @@ def extensions_panel_draw(panel, context):
             any(repo for repo in prefs.extensions.repos if repo.enabled and repo.use_remote_url)
     ):
         extensions_panel_draw_online_extensions_request_impl(panel, context)
+    elif bfa_bundle_any_installed():
+        # BFA - the user made a choice, keep the buttons to undo it (#4568).
+        extensions_panel_draw_bfa_bundle_impl(panel, context)
 
     extensions_panel_draw_impl(
         panel,
