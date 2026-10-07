@@ -4233,14 +4233,6 @@ def bfa_state_set(**kwargs):
     bfa_state_write(state)
 
 
-def bfa_online_access_handled_set():
-    """
-    BFA - Installing either bundle answers the online access prompt in the
-    Extensions preferences, so dismiss it (like "Continue Offline" does).
-    """
-    bpy.context.preferences.extensions.use_online_access_handled = True
-
-
 def bfa_retired_extensions_remove():
     """BFA - Disable and remove extensions that are no longer pre-downloaded. Return the removed IDs."""
     import addon_utils
@@ -4326,8 +4318,8 @@ class EXTENSIONS_OT_install_legacy_addons(Operator):
             bpy.ops.preferences.addon_refresh()
 
         context.window_manager.addon_search = ""
+        # BFA - the online access choice stays with the user ("Continue Offline" / "Allow Online Access").
         bfa_state_set(legacy_addons=True)
-        bfa_online_access_handled_set()
 
         self.report({'INFO'}, "Installed the Legacy Add-ons, enable them from the Add-ons list")
         return {'FINISHED'}
@@ -4398,8 +4390,8 @@ class EXTENSIONS_OT_install_downloaded_extensions(Operator):
         # BFA - clean up extensions an earlier install copied that are no longer shipped.
         retired = bfa_retired_extensions_remove()
 
+        # BFA - the online access choice stays with the user ("Continue Offline" / "Allow Online Access").
         bfa_state_set(downloaded_extensions=True)
-        bfa_online_access_handled_set()
 
         bpy.ops.extensions.repo_refresh_all()
         bpy.ops.preferences.addon_refresh()

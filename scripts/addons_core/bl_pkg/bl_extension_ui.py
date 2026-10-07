@@ -116,16 +116,11 @@ def bfa_bundle_operators_draw(_context, layout):
     )
 
 
-def bfa_bundle_any_installed():
-    """BFA - True when the user installed the Legacy Add-ons or the Pre-downloaded Extensions."""
-    from .bl_extension_ops import bfa_state_get
-    return any(bfa_state_get().values())
-
-
 def extensions_panel_draw_bfa_bundle_impl(panel, context):
     """
-    BFA - Once the user installed the Legacy Add-ons or the Pre-downloaded Extensions,
-    keep the buttons to remove them (or switch) at the top of the Extensions preferences.
+    BFA - Keep the buttons to install, remove or switch between the Legacy Add-ons and the
+    Pre-downloaded Extensions at the top of the Extensions preferences, once the online
+    access prompt (which shows the same buttons) has been answered.
     """
     layout_header, layout_panel = panel.layout.panel("bfa_bundle", default_closed=False)
     layout_header.label(text="Shipped with Bforartists")
@@ -2310,8 +2305,8 @@ def extensions_panel_draw(panel, context):
             any(repo for repo in prefs.extensions.repos if repo.enabled and repo.use_remote_url)
     ):
         extensions_panel_draw_online_extensions_request_impl(panel, context)
-    elif bfa_bundle_any_installed():
-        # BFA - the user made a choice, keep the buttons to undo it (#4568).
+    else:
+        # BFA - keep the Legacy Add-ons / Pre-downloaded Extensions buttons available (#4568).
         extensions_panel_draw_bfa_bundle_impl(panel, context)
 
     extensions_panel_draw_impl(
