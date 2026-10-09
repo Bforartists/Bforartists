@@ -696,7 +696,6 @@ static bool brush_asset_save_poll(bContext *C)
   const std::optional<AssetLibraryReference> library_ref = get_asset_library_reference(
       *C, *paint, *brush);
   if (!library_ref) {
-    BLI_assert_unreachable();
     return false;
   }
 
@@ -759,7 +758,6 @@ static bool brush_asset_revert_poll(bContext *C)
   const std::optional<AssetLibraryReference> library_ref = get_asset_library_reference(
       *C, *paint, *brush);
   if (!library_ref) {
-    BLI_assert_unreachable();
     return false;
   }
   if (library_ref->type == ASSET_LIBRARY_LOCAL) {
@@ -784,6 +782,14 @@ static wmOperatorStatus brush_asset_revert_exec(bContext *C, wmOperator *op)
     /* bke::asset_edit_id_revert() deleted the brush for sure, even on failure. Fall back to the
      * default. */
     BKE_paint_brush_set_default(bmain, paint);
+  }
+
+  /* BFA - Grease Pencil radius/surface offset sync: reverting restores the saved brush size,
+   * update the surface offset to match. No-op unless sync is enabled. */
+  if (Scene *scene = CTX_data_scene(C)) {
+    if (BKE_brush_gpencil_surface_offset_sync(scene)) {
+      WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);
+    }
   }
 
   WM_main_add_notifier(NC_BRUSH | NA_EDITED, nullptr);

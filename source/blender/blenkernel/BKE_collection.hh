@@ -84,6 +84,12 @@ struct CollectionRuntime {
   uint8_t tag = 0;
 };
 
+struct CollectionImportRuntime {
+  /** The archive library this importer is associated with. Will be null when an import has not
+   * occurred yet or has since been cleared. */
+  Library *archive_library = nullptr;
+};
+
 }  // namespace bke
 
 /* Collections */
@@ -467,7 +473,8 @@ using BKE_scene_collections_Cb = void (*)(Collection *ob, void *data);
     { \
       Object *_object = _base->object; \
       if ((_base->flag & _base_flag) && \
-          (_object->visibility_flag & _object_visibility_flag) == 0) {
+          (_object->visibility_flag & _object_visibility_flag) == 0) \
+      {
 
 #define FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END \
   } \

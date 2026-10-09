@@ -389,6 +389,9 @@ void rna_FreestyleSettings_module_remove(ID *id,
 void rna_Scene_use_view_map_cache_update(Main *bmain, Scene *scene, PointerRNA *ptr);
 void rna_Scene_render_update(Main *bmain, Scene *scene, PointerRNA *ptr);
 void rna_Scene_freestyle_update(Main *bmain, Scene *scene, PointerRNA *ptr);
+/* bfa - Grease Pencil radius/surface offset sync, shared by the brush, unified paint settings
+ * and tool settings RNA updates. */
+void rna_ToolSettings_gpencil_surface_offset_sync_from_brush(Scene *scene);
 void rna_ViewLayer_name_set(PointerRNA *ptr, const char *value);
 void rna_ViewLayer_override_update(Main *bmain, Scene *activescene, PointerRNA *ptr);
 void rna_ViewLayer_pass_update(Main *bmain, Scene *activescene, PointerRNA *ptr);

@@ -249,6 +249,9 @@ struct SymbolParser : NodeErrorHandler {
         case ResourceType::FRAG_COORD:
           var->identifier = "gl_FragCoord";
           break;
+        case ResourceType::BARY_COORD:
+          var->identifier = "gpu_BaryCoord";
+          break;
         case ResourceType::STENCIL_REF:
           var->identifier = "gl_FragStencilRefARB";
           break;
@@ -346,6 +349,14 @@ struct SymbolParser : NodeErrorHandler {
                attr.res_type != ResourceType::RESOURCE_TABLE)
       {
         error(arg, Diag::ResourceAttributesOnlyOnEntryPointArgs);
+      }
+
+      if (!is_entry_point && attr.condition.is_valid()) {
+        error(arg, Diag::ConditionAttributeNotOnResource);
+      }
+
+      if (attr.condition.is_valid()) {
+        var->condition = attr.condition;
       }
     }
 
@@ -533,8 +544,12 @@ struct SymbolParser : NodeErrorHandler {
         error(sym->loc.tok, Diag::Redefinition, sym->identifier);
       }
     }
-    /* Set resolved identifier. */
-    sym->identifier = prefix + sym->identifier;
+    /* TODO(fclem): Not enabling this for non-class-enum to stay compatible with the older
+     * compiler. */
+    if (cls.is_enum_class()) {
+      /* Set resolved identifier. */
+      sym->identifier = prefix + sym->identifier;
+    }
   }
 
   SymbolClass *parse_class_decl(SymbolScope &scope,
@@ -1012,6 +1027,15 @@ struct SymbolParser : NodeErrorHandler {
       error(var, Diag::ResourceOutOfClassDeclaration);
     }
 
+    if (attr.condition.is_valid()) {
+      if (attr.res_type == ResourceType::NONE) {
+        error(var, Diag::ConditionAttributeNotOnResource);
+      }
+      else if (attr.res_type == ResourceType::SHARED) {
+        error(var, Diag::ConditionAttributeUnsupported, to_str(attr.res_type));
+      }
+    }
+
     const bool is_srt_local_ref = type->is_srt() && cls == nullptr;
 
     string anon_prefix;
@@ -1042,6 +1066,19 @@ struct SymbolParser : NodeErrorHandler {
 
       if (is_srt_local_ref && !is_ref) {
         error(decl, Diag::ResourceTableMustBeReference);
+      }
+
+      /* Capacity attribute. */
+      if (attr.capacity.is_valid()) {
+        if (sym->array_dimensions != 1) {
+          error(decl, Diag::CapacityArrayDimensionMismatch);
+        }
+        /* TODO(fclem): Check that this references a single reachable compilation constant. */
+        sym->capacity_value = attr.capacity;
+      }
+
+      if (attr.condition.is_valid()) {
+        sym->condition = attr.condition;
       }
 
       /* Local References. */

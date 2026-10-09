@@ -713,7 +713,7 @@ static void init_draw_infos()
 /* Declare, register and construct the infos. */
 #include "glsl_draw_infos_list.hh"
 
-  if (GPU_stencil_clasify_buffer_workaround()) {
+  if (GPU_stencil_classify_buffer_workaround()) {
     /* WORKAROUND: Adding a dummy buffer that isn't used fixes a bug inside the Qualcomm driver. */
     eevee_deferred_tile_classify.storage_buf(
         12, Qualifier::read_write, "uint", "dummy_workaround_buf[]");
@@ -779,7 +779,7 @@ void gpu_shader_create_info_init()
 #ifndef NDEBUG
     /* Automatically amend the create info for ease of use of the debug feature. */
     if (flag_is_set(info->builtins_combined(), BuiltinBits::USE_DEBUG_DRAW)) {
-      info->additional_info("draw_debug_draw");
+      info->additional_info("DebugDraw");
     }
 #endif
   }

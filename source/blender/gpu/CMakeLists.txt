@@ -556,6 +556,7 @@ set(GLSL_SRC
 
   shaders/gpu_shader_codegen_lib.glsl
 
+  shaders/python/gpu_shader_python_base.glsl
   shaders/python/gpu_shader_python_colorspace_lib.glsl
   shaders/python/gpu_shader_python_comp.glsl
   shaders/python/gpu_shader_python_frag.glsl
@@ -567,6 +568,7 @@ set(GLSL_SRC
   shaders/gpu_shader_simple.bsl.hh
 
   shaders/common/gpu_shader_attribute_load_lib.glsl
+  shaders/common/gpu_shader_attribute_load.bsl.hh
   shaders/common/gpu_shader_bicubic_sampler.bsl.hh
   shaders/common/gpu_shader_debug_gradients.bsl.hh
   shaders/common/gpu_shader_fullscreen_vert.glsl
@@ -747,6 +749,7 @@ set(GLSL_SRC
 
   shaders/compat/gpu_shader_compat_glsl.glsl
   shaders/compat/gpu_shader_glsl_extension.glsl
+  shaders/compat/gpu_shader_glsl_ray_query.glsl
 
   GPU_shader_shared_utils.hh
 )
