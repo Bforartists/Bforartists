@@ -91,6 +91,7 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
                 OperatorEntry("mesh.circularize", text="To Circle", icon='TOCIRCLE'),
                 OperatorEntry("mesh.flatten", text="Flatten", icon="FLATTEN"),
                 OperatorEntry("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon='SPACE_LOOPS_EVENLY'),
+                OperatorEntry("mesh.relax_edge_loops", text="Relax Edge Loops", icon='SMOOTH_VERTEX'),  # BFA - stand-in icon
             ])
 
         entries.extend([
