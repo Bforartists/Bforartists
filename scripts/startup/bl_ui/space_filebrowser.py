@@ -806,6 +806,7 @@ class ASSETBROWSER_MT_view(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.prop_menu_enum(params, "display_size_discrete")
+        layout.prop_menu_enum(params, "sort_method")  # BFA - exposed from the context menu
 
         layout.separator()
 
