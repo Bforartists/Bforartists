@@ -997,6 +997,7 @@ class VIEW3D_PT_sculpt_tab_sculpt(ToolsystemPanel):
             OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Trim", icon='LASSO_TRIM', props={"trim_mode": 'DIFFERENCE'}),
             OperatorEntry("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD', props={"trim_mode": 'JOIN'}),
             OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD', props={"trim_mode": 'JOIN'}),
+            OperatorEntry("sculpt.trim_polyline_gesture", text="Polyline Add", icon='LASSO_ADD', props={"trim_mode": 'JOIN'}),  # BFA - stand-in icon
             Separator,
             OperatorEntry("sculpt.project_line_gesture", text="Line Project", icon='LINE_PROJECT'),
             OperatorEntry("sculpt.face_set_edit", text="Fair Positions", icon='POSITION', props={"mode": 'FAIR_POSITIONS'}),
