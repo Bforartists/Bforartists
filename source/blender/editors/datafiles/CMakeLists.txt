@@ -669,6 +669,7 @@ if(WITH_BLENDER)
       export_collection
       exposure
       extend_vertices
+      extension
       external_data
       external_drive
       extensions_all
@@ -1914,6 +1915,9 @@ if(WITH_BLENDER)
       seq_histogram
       seq_insert_gaps
       seq_luma_waveform
+      seq_overlap_overwrite
+      seq_overlap_ripple
+      seq_overlap_shuffle
       seq_move_extend
       seq_multicam
       seq_multiply

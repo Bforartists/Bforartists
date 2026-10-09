@@ -4,12 +4,11 @@
 
 #pragma once
 
-#include "draw_shape_lib.glsl"
+#include "draw_shape.bsl.hh"
 #include "eevee_light_shared.hh"
 #include "eevee_shadow_shared.hh"
 #include "gpu_shader_math_constants.bsl.hh"
 #include "gpu_shader_math_vector_reduce.bsl.hh"
-#include "gpu_shader_utildefines.bsl.hh"
 
 /**
  * Select the smallest viewport that can contain the given rectangle of tiles to render.

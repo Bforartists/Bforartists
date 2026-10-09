@@ -2986,10 +2986,10 @@ static wmOperatorStatus image_flip_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  ED_image_undo_push_end();
-
   IMB_partial_update_mark_full(ibuf);
   IMB_mark_dirty(ibuf);
+
+  ED_image_undo_push_end();
 
   DEG_id_tag_update(&ima->id, ID_RECALC_EDITORS);
   WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, ima);
@@ -3054,10 +3054,10 @@ static wmOperatorStatus image_rotate_orthogonal_exec(bContext *C, wmOperator *op
     return OPERATOR_CANCELLED;
   }
 
-  ED_image_undo_push_end();
-
   IMB_partial_update_mark_full(ibuf);
   IMB_mark_dirty(ibuf);
+
+  ED_image_undo_push_end();
 
   WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, ima);
 
@@ -3313,10 +3313,10 @@ static wmOperatorStatus image_invert_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  ED_image_undo_push_end();
-
   IMB_partial_update_mark_full(ibuf);
   IMB_mark_dirty(ibuf);
+
+  ED_image_undo_push_end();
 
   DEG_id_tag_update(&ima->id, ID_RECALC_EDITORS);
 

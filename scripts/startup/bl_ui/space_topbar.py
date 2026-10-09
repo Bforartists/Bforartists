@@ -538,6 +538,9 @@ class TOPBAR_MT_file_import(Menu):
                 icon="LOAD_STL",
             )
 
+        if bpy.app.build_options.opentimelineio:
+            self.layout.operator("wm.otio_import", text="OpenTimelineIO (.otio)")
+
 
 class TOPBAR_MT_file_export(Menu):
     bl_idname = "TOPBAR_MT_file_export"
@@ -600,10 +603,9 @@ class TOPBAR_MT_file_export(Menu):
             )
         if bpy.app.build_options.io_stl:
             self.layout.operator(
-                "wm.stl_export",
-                text=FileHandler.label_with_extensions("IO_FH_stl"),
-                icon="SAVE_STL",
-            )
+                "wm.stl_export", text=FileHandler.label_with_extensions("IO_FH_stl"), icon="SAVE_STL")
+        if bpy.app.build_options.opentimelineio:
+            self.layout.operator("wm.otio_export", text="OpenTimelineIO (.otio)") # BFA - WIP - needs icon
 
 
 class TOPBAR_MT_file_external_data(Menu):
