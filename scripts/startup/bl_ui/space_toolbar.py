@@ -502,7 +502,7 @@ class TOOLBAR_MT_file(Menu):
 
             if bpy.app.build_options.io_fbx:
                 row.operator("wm.fbx_import", text="", icon='LOAD_FBX')
-            if "io_scene_fbx" in context.preferences.addons.keys(): # BFA - only show if addon is enabled
+            elif "io_scene_fbx" in context.preferences.addons.keys(): # BFA - legacy add-on importer, only when the C++ importer is not built
                 row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
             if bpy.app.build_options.io_wavefront_obj: # BFA - only show if built option is true
                 row.operator("wm.obj_import", text="", icon='LOAD_OBJ')
