@@ -6337,10 +6337,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("pose.reveal", text="Show Hidden", icon="HIDE_OFF")
-        layout.operator("pose.hide", text="Hide Selected", icon="HIDE_ON").unselected = False
-        # BFA - added for consistentcy with header
-        layout.operator("pose.hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
+        layout.menu("VIEW3D_MT_pose_showhide")  # BFA - Show/Hide submenu, consistent with other context menus
 
         layout.separator()
 
