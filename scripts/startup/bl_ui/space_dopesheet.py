@@ -894,7 +894,6 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.paste", icon="PASTEDOWN")
         layout.operator("action.paste", text="Paste Flipped", icon="PASTEFLIPDOWN").flipped = True
         layout.separator()
-        layout.operator("action.keyframe_insert")
         layout.operator("action.duplicate_move", icon="DUPLICATE")
 
         layout.separator()
