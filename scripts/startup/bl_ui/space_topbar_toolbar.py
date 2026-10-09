@@ -199,7 +199,6 @@ class TOPBAR_PT_main(Panel):
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "topbar_tools_parent",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_objectdata",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "topbar_tools_link_to_scn",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_linked_objects",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_join",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_origin",toggle=addon_prefs.bfa_button_style)
@@ -1222,14 +1221,6 @@ class TOPBAR_MT_tools(Menu):
                         row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
                         row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
 
-                    if addon_prefs.topbar_tools_link_to_scn:
-                        if len(bpy.data.scenes) > 10:
-                            layout.operator_context = 'INVOKE_REGION_WIN'
-                            layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
-                        else:
-                            layout.operator_context = 'EXEC_REGION_WIN'
-                            layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
-
                     if addon_prefs.topbar_tools_linked_objects:
                         row = layout.row(align=True)
                         row.operator("object.make_local", icon='MAKE_LOCAL', text="")
@@ -1300,7 +1291,6 @@ class TOPBAR_PT_tools(Panel):
 
         col.prop(addon_prefs, "topbar_tools_parent", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_objectdata", toggle=addon_prefs.bfa_button_style)
-        col.prop(addon_prefs, "topbar_tools_link_to_scn", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_linked_objects", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_join", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_origin", toggle=addon_prefs.bfa_button_style)
