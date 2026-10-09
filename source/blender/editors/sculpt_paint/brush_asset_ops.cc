@@ -784,6 +784,14 @@ static wmOperatorStatus brush_asset_revert_exec(bContext *C, wmOperator *op)
     BKE_paint_brush_set_default(bmain, paint);
   }
 
+  /* BFA - Grease Pencil radius/surface offset sync: reverting restores the saved brush size,
+   * update the surface offset to match. No-op unless sync is enabled. */
+  if (Scene *scene = CTX_data_scene(C)) {
+    if (BKE_brush_gpencil_surface_offset_sync(scene)) {
+      WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);
+    }
+  }
+
   WM_main_add_notifier(NC_BRUSH | NA_EDITED, nullptr);
   WM_main_add_notifier(NC_TEXTURE | ND_NODES, nullptr);
 

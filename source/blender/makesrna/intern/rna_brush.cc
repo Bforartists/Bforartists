@@ -761,24 +761,11 @@ static void rna_Brush_secondary_tex_update(bContext *C, PointerRNA *ptr)
 
 static void rna_Brush_size_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  Brush *brush = static_cast<Brush *>(ptr->data); /* BFA - sync brush size with surface offset */
-
   if (scene != nullptr) {
     bke::paint::invalidate_overlay_all(*scene);
 
-    /* BFA - sync brush size with surface offset */
-    ToolSettings *tool_settings = scene->toolsettings;
-    Paint *paint = (tool_settings != nullptr && tool_settings->gp_paint != nullptr) ?
-                       &tool_settings->gp_paint->paint :
-                       nullptr;
-
-    if (tool_settings != nullptr && paint != nullptr && paint->brush == brush &&
-        tool_settings->gpencil_sync_radius_surface && brush->gpencil_settings != nullptr &&
-        (brush->flag & BRUSH_LOCK_SIZE) != 0)
-    {
-      tool_settings->gpencil_surface_offset = brush->unprojected_size;
-      WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);
-    }
+    /* BFA - sync brush size with surface offset (unified size aware). */
+    rna_ToolSettings_gpencil_surface_offset_sync_from_brush(scene);
   }
 
   rna_Brush_update(bmain, scene, ptr);
@@ -3876,7 +3863,8 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, brush_size_unit_items);
   RNA_def_property_ui_text(
       prop, "Size Unit", "Measure brush size relative to the view or the scene");
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
+  /* BFA - was rna_Brush_update, re-sync GP surface offset when switching to scene units. */
+  RNA_def_property_update(prop, 0, "rna_Brush_size_update");
 
   prop = RNA_def_property(srna, "color_type", PROP_ENUM, PROP_NONE); /* as an enum */
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "flag");
@@ -4110,7 +4098,8 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(
       prop, nullptr, "unified_paint_flags", BRUSH_USE_UNIFIED_PAINT_SIZE);
   RNA_def_property_ui_text(prop, "Use Unified Size", "Use shared size for this brush");
-  RNA_def_property_update(prop, 0, "rna_Brush_update");
+  /* BFA - was rna_Brush_update, the effective size changes so re-sync GP surface offset. */
+  RNA_def_property_update(prop, 0, "rna_Brush_size_update");
 
   prop = RNA_def_property(srna, "use_unified_strength", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(

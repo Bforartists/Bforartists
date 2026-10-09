@@ -1377,6 +1377,31 @@ bool BKE_brush_use_locked_size(const Paint *paint, const Brush *brush)
              (brush->flag & BRUSH_LOCK_SIZE) != 0;
 }
 
+/* BFA - Grease Pencil radius/surface offset sync, see declaration for details. */
+bool BKE_brush_gpencil_surface_offset_sync(Scene *scene)
+{
+  ToolSettings *ts = (scene != nullptr) ? scene->toolsettings : nullptr;
+  if (ts == nullptr || !ts->gpencil_sync_radius_surface || ts->gp_paint == nullptr) {
+    return false;
+  }
+  Paint *paint = &ts->gp_paint->paint;
+  Brush *brush = BKE_paint_brush(paint);
+  /* Only Grease Pencil brushes, and only when the size is in scene units: in view units the
+   * unprojected size isn't what the user sees, the stroke code handles the offset itself then. */
+  if (brush == nullptr || brush->gpencil_settings == nullptr ||
+      !BKE_brush_use_locked_size(paint, brush))
+  {
+    return false;
+  }
+  /* Unified-aware: the shared size when "Unified Size" is enabled, else the brush's own. */
+  const float size = BKE_brush_unprojected_size_get(paint, brush);
+  if (ts->gpencil_surface_offset == size) {
+    return false;
+  }
+  ts->gpencil_surface_offset = size;
+  return true;
+}
+
 bool BKE_brush_use_size_pressure(const Brush *brush)
 {
   return brush->flag & BRUSH_SIZE_PRESSURE;

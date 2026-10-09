@@ -410,8 +410,12 @@ static bool scene_strip_gizmo_rects_get(const bContext *C, SceneStripGizmoRects 
 }
 
 /* Overlap mode of the master timeline - the same setting the VSE header cycles
- * (expand, overwrite, shuffle). Falls back to the file default when no sequencer
- * tool settings exist yet. */
+ * (ripple, overwrite, shuffle). Falls back to the file default when no sequencer
+ * tool settings exist yet.
+ *
+ * BFA: Blender's "VSE: Ripple Editing" (dd1f6182197) renamed the "Expand" overlap mode
+ * to "Ripple" (`SEQ_OVERLAP_EXPAND` -> `SEQ_OVERLAP_RIPPLE`, same DNA value, also the
+ * DNA default). */
 static eSeqOverlapMode scene_strip_overlap_mode_get(const Scene *master_scene)
 {
   if (master_scene->toolsettings != nullptr &&
@@ -420,7 +424,7 @@ static eSeqOverlapMode scene_strip_overlap_mode_get(const Scene *master_scene)
     return eSeqOverlapMode(
         master_scene->toolsettings->sequencer_tool_settings->overlap_mode);
   }
-  return SEQ_OVERLAP_EXPAND;
+  return SEQ_OVERLAP_RIPPLE;
 }
 
 /* True while the moved strip overlaps another strip on the same channel (the "bump"
@@ -444,13 +448,13 @@ static bool strip_move_bump_active(const Scene *master_scene, const Strip *strip
   return false;
 }
 
-/* Color that flags a move bump by the master timeline's overlap mode: green expand
- * (the bumped strip is pushed along the same lane), sky blue shuffle (the strip
- * slides to the nearest free spot), red overwrite (the bumped strip is trimmed). */
+/* Color that flags a move bump by the master timeline's overlap mode: green ripple
+ * (the bumped strips are pushed along), sky blue shuffle (the strip slides to the
+ * nearest free spot), red overwrite (the bumped strip is trimmed). */
 static void strip_move_bump_color(const Scene *master_scene, float r_color[4])
 {
   switch (scene_strip_overlap_mode_get(master_scene)) {
-    case SEQ_OVERLAP_EXPAND:
+    case SEQ_OVERLAP_RIPPLE:
       r_color[0] = 0.3f;
       r_color[1] = 0.9f;
       r_color[2] = 0.45f;
@@ -472,7 +476,7 @@ static void strip_move_bump_color(const Scene *master_scene, float r_color[4])
 }
 
 /* Resolve overlaps left by a move drag, like the VSE does when a strip grab is
- * released: the master timeline's overlap mode decides - expand pushes the bumped
+ * released: the master timeline's overlap mode decides - ripple pushes the bumped
  * strips along, shuffle slides this strip to the nearest free spot, overwrite trims
  * the bumped strips.
  *
@@ -486,9 +490,14 @@ static void strip_move_bump_color(const Scene *master_scene, float r_color[4])
  * temporarily clear `SEQ_SELECT` on every strip except the dragged one for the
  * duration of the resolve, so the mode helpers see the whole timeline; restore
  * the selection afterwards. The generic `transform_handle_overlap` is used for
- * all modes (as before the shuffle-only regression); the lane-only time shuffle
- * remains a last resort when a strip is still overlapping (e.g. it could not
- * move off a locked strip). */
+ * all modes (as before the shuffle-only regression).
+ *
+ * BFA: there used to be a lane-only time shuffle (`seq::transform_seqbase_shuffle_time`)
+ * after it as a last resort. Blender's "VSE: Ripple Editing" (dd1f6182197) made that
+ * function private and moved the last resort into `transform_handle_overlap` itself:
+ * strips still overlapping after the mode helper (on a locked strip, inside a
+ * transition, ...) are shuffled to a free channel and their overlap flag is cleared,
+ * same as a strip grab in the VSE. */
 static void resolve_move_overlap(Scene *master_scene, Strip *strip)
 {
   Editing *ed = seq::editing_get(master_scene);
@@ -510,17 +519,9 @@ static void resolve_move_overlap(Scene *master_scene, Strip *strip)
     s.flag &= ~SEQ_SELECT;
   }
 
+  /* Uses the master timeline's overlap mode and ripple options (VSE tool settings),
+   * and handles strips that are still overlapping afterwards itself, see above. */
   seq::transform_handle_overlap(master_scene, &ed->seqbase, source, false);
-
-  /* Last resort: if the strip is still overlapping (e.g. it could not move off
-   * a locked strip / inside a transition), do a same-lane time shuffle so it at
-   * least lands in a free spot; if that cannot either, it stays put. */
-  if (scene_strip_overlap_mode_get(master_scene) == SEQ_OVERLAP_SHUFFLE &&
-      seq::transform_test_overlap(master_scene, &ed->seqbase, strip))
-  {
-    seq::transform_seqbase_shuffle_time(
-        source, &ed->seqbase, master_scene, &master_scene->markers, false);
-  }
   strip->runtime->flag &= ~seq::StripRuntimeFlag::Overlap;
 
   for (Strip *s : reselect) {
@@ -1028,7 +1029,7 @@ static void action_gizmo_scene_strip_draw(const bContext *C, wmGizmo *gz)
     /* BFA - overlap-mode bump feedback: while a move drag leaves the strip
      * overlapping a strip on the same channel, ring the bar in the color of the
      * master timeline's overlap mode so the user sees what releasing will do to
-     * the bumped strip (green expand, sky blue shuffle, red overwrite). Strip
+     * the bumped strip (green ripple, sky blue shuffle, red overwrite). Strip
      * mode only - the no-strip fallback has no neighbours to bump. */
     if (target.is_strip() && strip_move_bump_active(master_scene, strip)) {
       float bump_color[4];
@@ -1684,7 +1685,7 @@ static std::string scene_strip_timing_get_description(bContext * /*C*/,
                   "Scene Strip on, the scene range moves with the strip and "
                   "snaps to it with lead-in/out on release. When it bumps into "
                   "another strip the sequencer overlap mode applies on release: "
-                  "expand pushes the strip, shuffle slides to the nearest free "
+                  "ripple pushes the strips along, shuffle slides to the nearest free "
                   "space, overwrite trims it. Vertical motion steps the strip "
                   "between sequencer channels");
     default:
@@ -2309,8 +2310,8 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
   {
     const char *bump_name = "";
     switch (scene_strip_overlap_mode_get(data->master_scene)) {
-      case SEQ_OVERLAP_EXPAND:
-        bump_name = "expand";
+      case SEQ_OVERLAP_RIPPLE:
+        bump_name = "ripple";
         break;
       case SEQ_OVERLAP_OVERWRITE:
         bump_name = "overwrite";

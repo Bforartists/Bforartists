@@ -669,9 +669,9 @@ if(WITH_BLENDER)
       export_collection
       exposure
       extend_vertices
-      extension
       external_data
       external_drive
+      extension
       extensions_all
       extrapolation_constant
       extrapolation_cyclic
