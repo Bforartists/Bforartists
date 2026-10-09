@@ -1632,6 +1632,12 @@ class VIEW3D_PT_gp_point_tab_point(ToolsystemPanel):
         entries = (
             OperatorEntry("grease_pencil.extrude_move", text="Extrude", icon='EXTRUDE_REGION'),
             OperatorEntry("grease_pencil.stroke_smooth", text="Smooth", icon='PARTICLEBRUSH_SMOOTH'),
+            Separator,
+            OperatorEntry("object.vertex_group_add", text="Add New Vertex Group", icon='GROUP_VERTEX'),  # BFA - from Point > Vertex Groups
+            Separator,
+            OperatorEntry("grease_pencil.set_corner_type", text="Corner Round", icon='GP_CAPS_ROUND', props={"corner_type": 'ROUND'}),  # BFA - from Point > Set Corner Type
+            OperatorEntry("grease_pencil.set_corner_type", text="Corner Flat", icon='GP_CAPS_FLAT', props={"corner_type": 'FLAT'}),
+            OperatorEntry("grease_pencil.set_corner_type", text="Corner Sharp", icon='GP_CAPS_SHARP', props={"corner_type": 'SHARP'}),
         )
 
         draw_entries(layout, context, entries)
