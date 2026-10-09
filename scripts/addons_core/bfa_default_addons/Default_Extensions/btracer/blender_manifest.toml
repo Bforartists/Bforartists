@@ -1,0 +1,12 @@
+schema_version = "1.0.0"
+id = "btracer"
+name = "BTracer"
+version = "1.2.4"
+tagline = "Tools for converting/animating objects/particles into curves"
+maintainer = "Community"
+type = "add-on"
+tags = ["Add Curve"]
+blender_version_min = "4.2.0"
+license = ["SPDX:GPL-2.0-or-later"]
+website = "https://projects.blender.org/extensions/btrace"
+copyright = ["2024 liero", "2024 crazycourier", "2024 Atom", "2024 Meta-Androcto", "2024 MacKracken"]

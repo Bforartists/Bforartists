@@ -12,6 +12,68 @@ from bpy.props import (
 
 from . import cm_init
 from . import qcd_init
+from .internals import (
+    get_w_kwargs,
+    get_transform_w_kwargs,
+    set_w_kwargs,
+    set_transform_w_kwargs,
+    )
+
+def get_color_override_kwargs(
+    name="",
+    description="",
+    default=(0, 0, 0),
+    subtype='COLOR_GAMMA',
+    min=0.0,
+    max=1.0,
+    theme_path="",
+    is_overridden_property_name="",
+    internal_property_name="",
+    blender_property_name=""
+    ):
+    return (
+        {k:v for k, v, min_version, breaking_version in
+            (
+                ("name", name, None, None),
+                ("description", description, None, None),
+                ("default", default, None, None),
+                ("subtype", subtype, None, None),
+                ("min", min, None, None),
+                ("max", max, None, None),
+                ("size", len(default), None, None),
+                ("get",
+                 get_w_kwargs(
+                    get_override_color_under_v5,
+                    theme_path=theme_path,
+                    is_overridden_property_name=is_overridden_property_name,
+                    internal_property_name=internal_property_name),
+                 None,
+                 (5, 0, 0)),
+                ("set",
+                 set_w_kwargs(
+                     set_override_color_under_v5,
+                     internal_property_name=internal_property_name),
+                 None,
+                 (5, 0, 0)),
+                ("get_transform",
+                 get_transform_w_kwargs(
+                     get_override_color_over_v5,
+                     theme_path=theme_path,
+                     is_overridden_property_name=is_overridden_property_name,
+                     blender_property_name=blender_property_name),
+                 (5, 0, 0),
+                 None),
+                ("set_transform",
+                 set_override_color_over_v5,
+                 (5, 0, 0),
+                 None),
+            )
+            if (
+                (not min_version or bpy.app.version >= min_version) and
+                (not breaking_version or bpy.app.version < breaking_version)
+               )
+        }
+    )
 
 def update_disable_objects_hotkeys_status(self, context):
     if self.enable_disable_objects_override:
@@ -45,136 +107,50 @@ def update_qcd_3dview_header_widget_status(self, context):
     else:
         qcd_init.unregister_qcd_3dview_header_widget()
 
-def get_tool_text(self):
-    if self.tool_text_override:
-        return self["tool_text_color"]
+def get_override_color_under_v5(
+    self,
+    theme_path=None,
+    is_overridden_property_name=None,
+    internal_property_name=None
+    ):
+
+    color = bpy.context.preferences.themes[0].user_interface
+    for path_element in theme_path.split("."):
+        color = getattr(color, path_element)
+
+    if not getattr(self, is_overridden_property_name):
+        self[internal_property_name] = color[:]
+    return self[internal_property_name]
+
+def get_override_color_over_v5(
+    self, curr_value, is_set,
+    theme_path=None,
+    is_overridden_property_name=None,
+    blender_property_name=None
+    ):
+
+    color = bpy.context.preferences.themes[0].user_interface
+    for path_element in theme_path.split("."):
+        color = getattr(color, path_element)
+
+    if not getattr(self, is_overridden_property_name):
+        setattr(self, blender_property_name, color[:])
+        return color[:]
     else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tool.text
-        self["tool_text_color"] = color[0], color[1], color[2]
-        return self["tool_text_color"]
+        if is_set:
+            return curr_value
+        else:
+            return color[:]
 
-def set_tool_text(self, values):
-    self["tool_text_color"] = values[0], values[1], values[2]
+def set_override_color_under_v5(
+    self, values,
+    internal_property_name=None
+    ):
 
+    self[internal_property_name] = values[:]
 
-def get_tool_text_sel(self):
-    if self.tool_text_sel_override:
-        return self["tool_text_sel_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tool.text_sel
-        self["tool_text_sel_color"] = color[0], color[1], color[2]
-        return self["tool_text_sel_color"]
-
-def set_tool_text_sel(self, values):
-    self["tool_text_sel_color"] = values[0], values[1], values[2]
-
-
-def get_tool_inner(self):
-    if self.tool_inner_override:
-        return self["tool_inner_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tool.inner
-        self["tool_inner_color"] = color[0], color[1], color[2], color[3]
-        return self["tool_inner_color"]
-
-def set_tool_inner(self, values):
-    self["tool_inner_color"] = values[0], values[1], values[2], values[3]
-
-
-def get_tool_inner_sel(self):
-    if self.tool_inner_sel_override:
-        return self["tool_inner_sel_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tool.inner_sel
-        self["tool_inner_sel_color"] = color[0], color[1], color[2], color[3]
-        return self["tool_inner_sel_color"]
-
-def set_tool_inner_sel(self, values):
-    self["tool_inner_sel_color"] = values[0], values[1], values[2], values[3]
-
-
-def get_tool_outline(self):
-    if self.tool_outline_override:
-        return self["tool_outline_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tool.outline
-        self["tool_outline_color"] = color[0], color[1], color[2], color[3]
-        return self["tool_outline_color"]
-
-def set_tool_outline(self, values):
-    self["tool_outline_color"] = values[0], values[1], values[2], values[3]
-
-
-def get_menu_back_text(self):
-    if self.menu_back_text_override:
-        return self["menu_back_text_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_menu_back.text
-        self["menu_back_text_color"] = color[0], color[1], color[2]
-        return self["menu_back_text_color"]
-
-def set_menu_back_text(self, values):
-    self["menu_back_text_color"] = values[0], values[1], values[2]
-
-
-def get_menu_back_inner(self):
-    if self.menu_back_inner_override:
-        return self["menu_back_inner_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_menu_back.inner
-        self["menu_back_inner_color"] = color[0], color[1], color[2], color[3]
-        return self["menu_back_inner_color"]
-
-def set_menu_back_inner(self, values):
-    self["menu_back_inner_color"] = values[0], values[1], values[2], values[3]
-
-
-def get_menu_back_outline(self):
-    if self.menu_back_outline_override:
-        return self["menu_back_outline_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_menu_back.outline
-        self["menu_back_outline_color"] = color[0], color[1], color[2], color[3]
-        return self["menu_back_outline_color"]
-
-def set_menu_back_outline(self, values):
-    self["menu_back_outline_color"] = values[0], values[1], values[2], values[3]
-
-
-def get_tooltip_text(self):
-    if self.tooltip_text_override:
-        return self["tooltip_text_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text
-        self["tooltip_text_color"] = color[0], color[1], color[2]
-        return self["tooltip_text_color"]
-
-def set_tooltip_text(self, values):
-    self["tooltip_text_color"] = values[0], values[1], values[2]
-
-
-def get_tooltip_inner(self):
-    if self.tooltip_inner_override:
-        return self["tooltip_inner_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
-        self["tooltip_inner_color"] = color[0], color[1], color[2], color[3]
-        return self["tooltip_inner_color"]
-
-def set_tooltip_inner(self, values):
-    self["tooltip_inner_color"] = values[0], values[1], values[2], values[3]
-
-
-def get_tooltip_outline(self):
-    if self.tooltip_outline_override:
-        return self["tooltip_outline_color"]
-    else:
-        color = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.outline
-        self["tooltip_outline_color"] = color[0], color[1], color[2], color[3]
-        return self["tooltip_outline_color"]
-
-def set_tooltip_outline(self, values):
-    self["tooltip_outline_color"] = values[0], values[1], values[2], values[3]
+def set_override_color_over_v5(self, new_value, curr_value, is_set):
+    return new_value
 
 
 class CMPreferences(AddonPreferences):
@@ -291,131 +267,124 @@ class CMPreferences(AddonPreferences):
 
     # OVERRIDE COLORS
     qcd_ogl_widget_tool_text: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tool Text Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tool.text,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        get=get_tool_text,
-        set=set_tool_text,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tool Text Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tool.text,
+            theme_path="wcol_tool.text",
+            is_overridden_property_name="tool_text_override",
+            internal_property_name="tool_text_color",
+            blender_property_name="qcd_ogl_widget_tool_text"
+            )
         )
 
     qcd_ogl_widget_tool_text_sel: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tool Text Selection Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tool.text_sel,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        get=get_tool_text_sel,
-        set=set_tool_text_sel,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tool Text Selection Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tool.text_sel,
+            theme_path="wcol_tool.text_sel",
+            is_overridden_property_name="tool_text_sel_override",
+            internal_property_name="tool_text_sel_color",
+            blender_property_name="qcd_ogl_widget_tool_text_sel"
+            )
         )
 
     qcd_ogl_widget_tool_inner: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tool Inner Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tool.inner,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        size=4,
-        get=get_tool_inner,
-        set=set_tool_inner,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tool Inner Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tool.inner,
+            theme_path="wcol_tool.inner",
+            is_overridden_property_name="tool_inner_override",
+            internal_property_name="tool_inner_color",
+            blender_property_name="qcd_ogl_widget_tool_inner"
+            )
         )
 
     qcd_ogl_widget_tool_inner_sel: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tool Inner Selection Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tool.inner_sel,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        size=4,
-        get=get_tool_inner_sel,
-        set=set_tool_inner_sel,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tool Inner Selection Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tool.inner_sel,
+            theme_path="wcol_tool.inner_sel",
+            is_overridden_property_name="tool_inner_sel_override",
+            internal_property_name="tool_inner_sel_color",
+            blender_property_name="qcd_ogl_widget_tool_inner_sel"
+            )
         )
 
     qcd_ogl_widget_tool_outline: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tool Outline Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tool.outline,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        size=4,
-        get=get_tool_outline,
-        set=set_tool_outline,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tool Outline Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tool.outline,
+            theme_path="wcol_tool.outline",
+            is_overridden_property_name="tool_outline_override",
+            internal_property_name="tool_outline_color",
+            blender_property_name="qcd_ogl_widget_tool_outline"
+            )
         )
 
     qcd_ogl_widget_menu_back_text: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Menu Back Text Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_menu_back.text,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        get=get_menu_back_text,
-        set=set_menu_back_text,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Menu Back Text Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_menu_back.text,
+            theme_path="wcol_menu_back.text",
+            is_overridden_property_name="menu_back_text_override",
+            internal_property_name="menu_back_text_color",
+            blender_property_name="qcd_ogl_widget_menu_back_text"
+            )
         )
 
     qcd_ogl_widget_menu_back_inner: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Menu Back Inner Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_menu_back.inner,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        size=4,
-        get=get_menu_back_inner,
-        set=set_menu_back_inner,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Menu Back Inner Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_menu_back.inner,
+            theme_path="wcol_menu_back.inner",
+            is_overridden_property_name="menu_back_inner_override",
+            internal_property_name="menu_back_inner_color",
+            blender_property_name="qcd_ogl_widget_menu_back_inner"
+            )
         )
 
     qcd_ogl_widget_menu_back_outline: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Menu Back Outline Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_menu_back.outline,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        size=4,
-        get=get_menu_back_outline,
-        set=set_menu_back_outline,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Menu Back Outline Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_menu_back.outline,
+            theme_path="wcol_menu_back.outline",
+            is_overridden_property_name="menu_back_outline_override",
+            internal_property_name="menu_back_outline_color",
+            blender_property_name="qcd_ogl_widget_menu_back_outline"
+            )
         )
 
     qcd_ogl_widget_tooltip_text: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tooltip Text Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        get=get_tooltip_text,
-        set=set_tooltip_text,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tooltip Text Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text,
+            theme_path="wcol_tooltip.text",
+            is_overridden_property_name="tooltip_text_override",
+            internal_property_name="tooltip_text_color",
+            blender_property_name="qcd_ogl_widget_tooltip_text"
+            )
         )
 
     qcd_ogl_widget_tooltip_inner: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tooltip Inner Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        size=4,
-        get=get_tooltip_inner,
-        set=set_tooltip_inner,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tooltip Inner Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner,
+            theme_path="wcol_tooltip.inner",
+            is_overridden_property_name="tooltip_inner_override",
+            internal_property_name="tooltip_inner_color",
+            blender_property_name="qcd_ogl_widget_tooltip_inner"
+            )
         )
 
     qcd_ogl_widget_tooltip_outline: FloatVectorProperty(
-        name="",
-        description="QCD Move Widget Tooltip Outline Color",
-        default=bpy.context.preferences.themes[0].user_interface.wcol_tooltip.outline,
-        subtype='COLOR_GAMMA',
-        min=0.0,
-        max=1.0,
-        size=4,
-        get=get_tooltip_outline,
-        set=set_tooltip_outline,
+        **get_color_override_kwargs(
+            description="QCD Move Widget Tooltip Outline Color",
+            default=bpy.context.preferences.themes[0].user_interface.wcol_tooltip.outline,
+            theme_path="wcol_tooltip.outline",
+            is_overridden_property_name="tooltip_outline_override",
+            internal_property_name="tooltip_outline_color",
+            blender_property_name="qcd_ogl_widget_tooltip_outline"
+            )
         )
 
     # NON ACTIVE ICON ALPHA

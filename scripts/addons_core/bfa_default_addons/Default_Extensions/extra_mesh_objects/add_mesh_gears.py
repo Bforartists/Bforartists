@@ -21,6 +21,7 @@ from mathutils import (
         Matrix,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 # A very simple "bridge" tool.
 # Connects two equally long vertex rows with faces.
@@ -582,7 +583,7 @@ class AddGear(Operator, object_utils.AddObjectHelper):
                 default = False,
                 description = "change Gear")
 
-    number_of_teeth: IntProperty(name="Number of Teeth",
+    number_of_teeth: IntProperty(name="Teeth",
             description="Number of teeth on the gear",
             min=2,
             soft_max=1000,
@@ -637,7 +638,7 @@ class AddGear(Operator, object_utils.AddObjectHelper):
             unit='ROTATION',
             default=radians(0.0)
             )
-    conangle: FloatProperty(name="Conical angle",
+    conangle: FloatProperty(name="Conical Angle",
             description="Conical angle of gear",
             soft_min=radians(-360.0),
             soft_max=radians(360.0),
@@ -654,31 +655,27 @@ class AddGear(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'number_of_teeth')
-
-        box = layout.box()
-        box.prop(self, 'radius')
-        box.prop(self, 'width')
-        box.prop(self, 'base')
-
-        box = layout.box()
-        box.prop(self, 'dedendum')
-        box.prop(self, 'addendum')
-
-        box = layout.box()
-        box.prop(self, 'angle')
-        box.prop(self, 'skew')
-        box.prop(self, 'conangle')
-        box.prop(self, 'crown')
+        layout.separator()
+        layout.prop(self, 'number_of_teeth')
+        layout.separator()
+        layout.prop(self, 'radius')
+        layout.prop(self, 'width')
+        layout.prop(self, 'base')
+        layout.separator()
+        layout.prop(self, 'dedendum')
+        layout.prop(self, 'addendum')
+        layout.separator()
+        layout.prop(self, 'angle')
+        layout.prop(self, 'skew')
+        layout.prop(self, 'conangle')
+        layout.prop(self, 'crown')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     @classmethod
     def poll(cls, context):
@@ -812,14 +809,14 @@ class AddWormGear(Operator, object_utils.AddObjectHelper):
                 description = "change WormGear")
 
     number_of_teeth: IntProperty(
-            name="Number of Teeth",
+            name="Teeth",
             description="Number of teeth on the gear",
             min=1,
             soft_max=1000,
             default=12
             )
     number_of_rows: IntProperty(
-            name="Number of Rows",
+            name="Rows",
             description="Number of rows on the worm gear",
             min=0,
             soft_max=1000,
@@ -884,27 +881,26 @@ class AddWormGear(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
-        box = layout.box()
-        box.prop(self, "number_of_teeth")
-        box.prop(self, "number_of_rows")
-        box.prop(self, "radius")
-        box.prop(self, "row_height")
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, "addendum")
-        box.prop(self, "dedendum")
-
-        box = layout.box()
-        box.prop(self, "angle")
-        box.prop(self, "skew")
-        box.prop(self, "crown")
+        layout.separator()
+        layout.prop(self, "number_of_teeth")
+        layout.prop(self, "number_of_rows")
+        layout.separator()
+        layout.prop(self, "radius")
+        layout.prop(self, "row_height")
+        layout.separator()
+        layout.prop(self, "addendum")
+        layout.prop(self, "dedendum")
+        layout.separator()
+        layout.prop(self, "angle")
+        layout.prop(self, "skew")
+        layout.prop(self, "crown")
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

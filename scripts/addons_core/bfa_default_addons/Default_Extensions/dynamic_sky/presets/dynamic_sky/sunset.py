@@ -1,0 +1,32 @@
+import bpy
+nodes = bpy.context.scene.world.node_tree.nodes
+
+nodes["Scene_Brightness"].inputs[1].default_value = 0.9
+nodes["Shadow_color_saturation"].inputs[1].default_value = 1.0
+nodes["Sky_and_Horizon_colors"].inputs[1].default_value = [0.2, 0.26, 0.55, 1.0]
+nodes["Sky_and_Horizon_colors"].inputs[2].default_value = [1.0, 0.42, 0.18, 1.0]
+nodes["Horizon_height"].inputs[1].default_value = 0.0
+nodes["Sky_HDRI_blend"].inputs[0].default_value = 0.0
+nodes["Cloud_color"].inputs[1].default_value = [1.0, 0.75, 0.6, 1.0]
+nodes["Cloud_opacity"].inputs[0].default_value = 1.0
+nodes["Cloud_density"].inputs[0].default_value = 0.3
+nodes["Cloud_coverage"].inputs[1].default_value = 0.0
+nodes["Cloud_softness"].inputs[1].default_value = 1.0
+nodes["Cloud_mapping"].inputs[3].default_value = [1.5, 1.5, 6.0]
+nodes["Cloud_mapping"].inputs[1].default_value[2] = 0.0
+nodes["Cloud_mapping"].inputs[2].default_value[2] = 0.0
+nodes["Cloud_drift"].inputs[0].default_value = 0.5
+nodes["Sun_color"].inputs[1].default_value = [1.0, 0.35, 0.12, 1.0]
+nodes["Sun_value"].inputs[1].default_value = 1.0
+nodes["Soft_hard"].inputs[0].default_value = 0.6
+nodes["Sky_normal"].outputs[0].default_value = [0.0, -0.993, 0.119]
+nodes["Stars_opacity"].inputs[0].default_value = 0.0
+nodes["Stars_texture"].inputs[2].default_value = 30.0
+nodes["Moon_opacity"].inputs[0].default_value = 0.0
+nodes["Moon_color"].inputs[2].default_value = [1.0, 1.0, 1.0, 1.0]
+nodes["Moon_normal"].outputs[0].default_value = [0.0, 0.0, 1.0]
+nodes["Sun_temperature"].inputs[0].default_value = 5500.0
+nodes["Sun_temperature_mix"].inputs[0].default_value = 0.0
+nodes["HDRI_rotation"].inputs[2].default_value[2] = 0.0
+nodes["Clouds_over_HDRI"].inputs[0].default_value = 0.0
+nodes["Star_size_variation"].inputs[1].default_value = 0.0

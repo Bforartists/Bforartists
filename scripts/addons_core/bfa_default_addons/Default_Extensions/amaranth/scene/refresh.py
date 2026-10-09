@@ -22,11 +22,13 @@ class AMTH_SCENE_OT_refresh(bpy.types.Operator):
     bl_label = "Refresh!"
 
     def execute(self, context):
-        get_addon = __package__ in context.preferences.addons.keys()
+        addon_name = __package__.rsplit('.', 1)[0]
+        get_addon = addon_name in context.preferences.addons.keys()
+
         if not get_addon:
             return {"CANCELLED"}
 
-        preferences = context.preferences.addons[__package__].preferences
+        preferences = get_preferences()
         scene = context.scene
 
         if preferences.use_scene_refresh:
@@ -38,7 +40,9 @@ class AMTH_SCENE_OT_refresh(bpy.types.Operator):
 
 
 def button_refresh(self, context):
-    get_addon = __package__ in context.preferences.addons.keys()
+    addon_name = __package__.rsplit('.', 1)[0]
+    get_addon = addon_name in context.preferences.addons.keys()
+
     if not get_addon:
         return
 

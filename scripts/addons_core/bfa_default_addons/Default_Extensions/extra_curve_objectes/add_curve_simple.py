@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2017-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2017-2025 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 from bpy_extras import object_utils
@@ -806,7 +806,7 @@ def menu(self, context):
     oper4.Simple_Type = "Distance"
     oper4.use_cyclic_u = False
 
-    oper5 = self.layout.operator(Simple.bl_idname, text="Ellipse", icon="MESH_TORUS")
+    oper5 = self.layout.operator(Simple.bl_idname, text="Ellipse", icon="ANTIALIASED")
     oper5.Simple_Type = "Ellipse"
     oper5.use_cyclic_u = True
 
@@ -823,7 +823,7 @@ def menu(self, context):
     oper8.Simple_Type = "Polygon"
     oper8.use_cyclic_u = True
 
-    oper9 = self.layout.operator(Simple.bl_idname, text="Polygon ab", icon="SEQ_CHROMA_SCOPE")
+    oper9 = self.layout.operator(Simple.bl_idname, text="Polygon AB", icon="SEQ_CHROMA_SCOPE")
     oper9.Simple_Type = "Polygon_ab"
     oper9.use_cyclic_u = True
 
@@ -884,7 +884,7 @@ class Simple(Operator, object_utils.AddObjectHelper):
              ('Rectangle', "Rectangle", "Construct a Rectangle"),
              ('Rhomb', "Rhomb", "Construct a Rhomb"),
              ('Polygon', "Polygon", "Construct a Polygon"),
-             ('Polygon_ab', "Polygon ab", "Construct a Polygon ab"),
+             ('Polygon_ab', "Polygon AB", "Construct a Polygon ab"),
              ('Trapezoid', "Trapezoid", "Construct a Trapezoid")
             ]
     Simple_Type : EnumProperty(
@@ -894,21 +894,21 @@ class Simple(Operator, object_utils.AddObjectHelper):
             )
     # Line properties
     Simple_endlocation : FloatVectorProperty(
-            name="",
-            description="End location",
+            name="End Location",
+            description="End Location",
             default=(2.0, 2.0, 2.0),
             subtype='TRANSLATION'
             )
     # Trapezoid properties
     Simple_a : FloatProperty(
-            name="Side a",
+            name="Side A",
             default=2.0,
             min=0.0, soft_min=0.0,
             unit='LENGTH',
             description="a side Value"
             )
     Simple_b : FloatProperty(
-            name="Side b",
+            name="Side B",
             default=1.0,
             min=0.0, soft_min=0.0,
             unit='LENGTH',
@@ -926,14 +926,14 @@ class Simple(Operator, object_utils.AddObjectHelper):
             description="Angle"
             )
     Simple_startangle : FloatProperty(
-            name="Start angle",
+            name="Start Angle",
             default=0.0,
             min=-360.0, soft_min=-360.0,
             max=360.0, soft_max=360.0,
             description="Start angle"
             )
     Simple_endangle : FloatProperty(
-            name="End angle",
+            name="End Angle",
             default=45.0,
             min=-360.0, soft_min=-360.0,
             max=360.0, soft_max=360.0,
@@ -953,7 +953,7 @@ class Simple(Operator, object_utils.AddObjectHelper):
             description="Radius"
             )
     Simple_center : BoolProperty(
-            name="Length center",
+            name="Length Center",
             default=True,
             description="Length center"
             )
@@ -961,7 +961,7 @@ class Simple(Operator, object_utils.AddObjectHelper):
     Angle_types = [('Degrees', "Degrees", "Use Degrees"),
                    ('Radians', "Radians", "Use Radians")]
     Simple_degrees_or_radians : EnumProperty(
-            name="Degrees or radians",
+            name="Degrees or Radians",
             description="Degrees or radians",
             items=Angle_types
             )
@@ -981,7 +981,7 @@ class Simple(Operator, object_utils.AddObjectHelper):
             description="Length"
             )
     Simple_rounded : FloatProperty(
-            name="Rounded",
+            name="Rounding",
             default=0.0,
             min=0.0, soft_min=0.0,
             unit='LENGTH',
@@ -997,7 +997,7 @@ class Simple(Operator, object_utils.AddObjectHelper):
             description="2D or 3D Curve"
             )
     outputType : EnumProperty(
-            name="Output splines",
+            name="Output Splines",
             description="Type of splines to output",
             items=[
             ('POLY', "Poly", "Poly Spline type"),
@@ -1011,19 +1011,19 @@ class Simple(Operator, object_utils.AddObjectHelper):
             description="make curve closed"
             )
     endp_u : BoolProperty(
-            name="Use endpoint u",
+            name="Use endpoint U",
             default=True,
             description="stretch to endpoints"
             )
     order_u : IntProperty(
-            name="Order u",
+            name="Order U",
             default=4,
             min=2, soft_min=2,
             max=6, soft_max=6,
             description="Order of nurbs spline"
             )
     handleType : EnumProperty(
-            name="Handle type",
+            name="Handle Type",
             default='VECTOR',
             description="Bezier handles type",
             items=[
@@ -1031,60 +1031,51 @@ class Simple(Operator, object_utils.AddObjectHelper):
             ('AUTO', "Auto", "Automatic type Bezier handles")]
             )
     edit_mode : BoolProperty(
-            name="Show in edit mode",
+            name="Show in Edit Mode",
             default=True,
-            description="Show in edit mode"
+            description="Show in Edit Mode"
             )
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         # general options
-        col = layout.column()
-        col.prop(self, "Simple_Type")
+        layout.separator()
+        layout.prop(self, "Simple_Type")
+        layout.separator()
 
         l = 0
         s = 0
 
         if self.Simple_Type == 'Line':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_endlocation")
+            layout.prop(self, "Simple_endlocation")
+
             v = Vector(self.Simple_endlocation) - Vector(self.location)
             l = v.length
 
         if self.Simple_Type == 'Distance':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_length")
-            col.prop(self, "Simple_center")
+            layout.prop(self, "Simple_length")
+            layout.prop(self, "Simple_center")
+
             l = self.Simple_length
 
         if self.Simple_Type == 'Angle':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_length")
-            col.prop(self, "Simple_angle")
+            layout.prop(self, "Simple_length")
+            layout.prop(self, "Simple_angle")
 
         if self.Simple_Type == 'Circle':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_sides")
-            col.prop(self, "Simple_radius")
+            layout.prop(self, "Simple_sides")
+            layout.prop(self, "Simple_radius")
 
             l = 2 * pi * abs(self.Simple_radius)
             s = pi * self.Simple_radius * self.Simple_radius
 
         if self.Simple_Type == 'Ellipse':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_a", text="Radius a")
-            col.prop(self, "Simple_b", text="Radius b")
+            col = layout.column(align=True)
+            col.prop(self, "Simple_a", text="Radius A")
+            col.prop(self, "Simple_b", text="B")
 
             l = pi * (3 * (self.Simple_a + self.Simple_b) -
                           sqrt((3 * self.Simple_a + self.Simple_b) *
@@ -1093,30 +1084,22 @@ class Simple(Operator, object_utils.AddObjectHelper):
             s = pi * abs(self.Simple_b) * abs(self.Simple_a)
 
         if self.Simple_Type == 'Arc':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_sides")
-            col.prop(self, "Simple_radius")
-
-            col = box.column(align=True)
-            col.prop(self, "Simple_startangle")
-            col.prop(self, "Simple_endangle")
+            layout.prop(self, "Simple_sides")
+            layout.prop(self, "Simple_radius")
+            col = layout.column(align=True)
+            col.prop(self, "Simple_startangle", text='Angle Start')
+            col.prop(self, "Simple_endangle", text='End')
             #row = layout.row()
             #row.prop(self, "Simple_degrees_or_radians", expand=True)
 
             l = abs(pi * self.Simple_radius * (self.Simple_endangle - self.Simple_startangle) / 180)
 
         if self.Simple_Type == 'Sector':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_sides")
-            col.prop(self, "Simple_radius")
-
-            col = box.column(align=True)
-            col.prop(self, "Simple_startangle")
-            col.prop(self, "Simple_endangle")
+            layout.prop(self, "Simple_sides")
+            layout.prop(self, "Simple_radius")
+            col = layout.column(align=True)
+            col.prop(self, "Simple_startangle", text='Angle Start')
+            col.prop(self, "Simple_endangle", text='End')
             #row = layout.row()
             #row.prop(self, "Simple_degrees_or_radians", expand=True)
 
@@ -1127,16 +1110,13 @@ class Simple(Operator, object_utils.AddObjectHelper):
                 abs(self.Simple_endangle - self.Simple_startangle) / 360
 
         if self.Simple_Type == 'Segment':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_sides")
-            col.prop(self, "Simple_a", text="Radius a")
-            col.prop(self, "Simple_b", text="Radius b")
-
-            col = box.column(align=True)
-            col.prop(self, "Simple_startangle")
-            col.prop(self, "Simple_endangle")
+            layout.prop(self, "Simple_sides")
+            col = layout.column(align=True)
+            col.prop(self, "Simple_a", text="Radius A")
+            col.prop(self, "Simple_b", text="B")
+            col = layout.column(align=True)
+            col.prop(self, "Simple_startangle", text='Angle Start')
+            col.prop(self, "Simple_endangle", text='End')
 
             #row = layout.row()
             #row.prop(self, "Simple_degrees_or_radians", expand=True)
@@ -1154,91 +1134,76 @@ class Simple(Operator, object_utils.AddObjectHelper):
             s = abs(sa - sb)
 
         if self.Simple_Type == 'Rectangle':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_width")
+            col = layout.column(align=True)
             col.prop(self, "Simple_length")
-            col.prop(self, "Simple_rounded")
+            col.prop(self, "Simple_width")
+            layout.prop(self, "Simple_rounded")
+            layout.prop(self, "Simple_center")
 
-            box.prop(self, "Simple_center")
             l = 2 * abs(self.Simple_width) + 2 * abs(self.Simple_length)
             s = abs(self.Simple_width) * abs(self.Simple_length)
 
         if self.Simple_Type == 'Rhomb':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_width")
+            col = layout.column(align=True)
             col.prop(self, "Simple_length")
-            col.prop(self, "Simple_center")
+            col.prop(self, "Simple_width")
+            layout.prop(self, "Simple_center")
 
             g = hypot(self.Simple_width / 2, self.Simple_length / 2)
             l = 4 * g
             s = self.Simple_width * self.Simple_length / 2
 
         if self.Simple_Type == 'Polygon':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_sides")
-            col.prop(self, "Simple_radius")
+            layout.prop(self, "Simple_sides")
+            layout.prop(self, "Simple_radius")
 
         if self.Simple_Type == 'Polygon_ab':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text="Polygon ab Options:")
-            col.prop(self, "Simple_sides")
-            col.prop(self, "Simple_a")
-            col.prop(self, "Simple_b")
+            layout.prop(self, "Simple_sides")
+            col = layout.column(align=True)
+            col.prop(self, "Simple_a", text='Length A')
+            col.prop(self, "Simple_b", text='B')
 
         if self.Simple_Type == 'Trapezoid':
-            box = layout.box()
-            col = box.column(align=True)
-            col.label(text=self.Simple_Type + " Options:")
-            col.prop(self, "Simple_a")
-            col.prop(self, "Simple_b")
-            col.prop(self, "Simple_h")
+            col = layout.column(align=True)
+            col.prop(self, "Simple_a", text='Length A')
+            col.prop(self, "Simple_b", text='B')
+            layout.prop(self, "Simple_h")
+            layout.prop(self, "Simple_center")
 
-            box.prop(self, "Simple_center")
             g = hypot(self.Simple_h, (self.Simple_a - self.Simple_b) / 2)
             l = self.Simple_a + self.Simple_b + g * 2
             s = (abs(self.Simple_a) + abs(self.Simple_b)) / 2 * self.Simple_h
 
-        row = layout.row()
-        row.prop(self, "shape", expand=True)
-
         # output options
-        col = layout.column()
-        col.label(text="Output Curve Type:")
-        col.row().prop(self, "outputType", expand=True)
+        if self.Simple_Type != 'Point':
+            layout.separator()
+        layout.prop(self, "outputType", text='Curve')
+        layout.row().prop(self, "shape", text='Shape', expand=True)   
 
         if self.outputType == 'NURBS':
-            col.prop(self, "order_u")
+            layout.prop(self, "order_u")
         elif self.outputType == 'BEZIER':
-            col.row().prop(self, 'handleType', expand=True)
+            layout.row().prop(self, 'handleType', expand=True)
 
-        col = layout.column()
-        col.row().prop(self, "use_cyclic_u", expand=True)
+        layout.prop(self, "use_cyclic_u")
+        layout.prop(self, "edit_mode")
 
-        col = layout.column()
-        col.row().prop(self, "edit_mode", expand=True)
-
-        col = layout.column()
+        layout.separator()
         # AddObjectHelper props
-        col.prop(self, "align")
-        col.prop(self, "location")
-        col.prop(self, "rotation")
+        layout.prop(self, "align")
+        layout.prop(self, "location")
+        layout.prop(self, "rotation")
 
         if l != 0 or s != 0:
-            box = layout.box()
-            box.label(text="Statistics:", icon="INFO")
+            layout.separator()
+            row = layout.row()
+            row.label(text="", icon="INFO")
         if l != 0:
             l_str = str(round(l, 4))
-            box.label(text="Length: " + l_str)
+            row.label(text="Length: " + l_str)
         if s != 0:
             s_str = str(round(s, 4))
-            box.label(text="Area: " + s_str)
+            row.label(text="Area: " + s_str)
 
     @classmethod
     def poll(cls, context):
@@ -1282,14 +1247,12 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    bpy.types.VIEW3D_MT_curve_add.append(menu)
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
 
-    bpy.types.VIEW3D_MT_curve_add.remove(menu)
 
 if __name__ == "__main__":
     register()

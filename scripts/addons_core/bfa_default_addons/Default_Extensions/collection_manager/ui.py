@@ -51,7 +51,8 @@ class CollectionManager(Operator):
         description="Scene Collection"
         )
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.window_open = True
 
     def draw(self, context):

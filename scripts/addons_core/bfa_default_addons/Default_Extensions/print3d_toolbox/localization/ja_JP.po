@@ -1,0 +1,254 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 3D Print Toolbox 1.4.0\n"
+"POT-Creation-Date: 2026-07-23\n"
+"PO-Revision-Date: 2026-07-23\n"
+"Last-Translator: Akihiro Komori\n"
+"Language-Team: Mikhail Rachinskiy\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Analyze"
+msgstr "解析"
+
+msgid "Checks"
+msgstr "チェック"
+
+msgid "Scale To"
+msgstr "スケール"
+
+msgid "Copy Textures"
+msgstr "テクスチャをコピー"
+
+msgid "Volume"
+msgstr "体積"
+
+msgid "Area"
+msgstr "面積"
+
+msgid "Non-manifold Edges"
+msgstr "非多様体の辺"
+
+msgid "Bad Contiguous Edges"
+msgstr "不正な連続した辺"
+
+msgid "Intersect Faces"
+msgstr "交差面"
+
+msgid "Zero Faces"
+msgstr "ゼロ面積面"
+
+msgid "Zero Edges"
+msgstr "ゼロ長の辺"
+
+msgid "Non-flat Faces"
+msgstr "非平面の面"
+
+msgid "Thin Faces"
+msgstr "薄い面"
+
+msgid "Sharp Edges"
+msgstr "鋭い辺"
+
+msgid "Overhang Faces"
+msgstr "オーバーハング面"
+
+msgid "Report the volume of the active mesh"
+msgstr "アクティブメッシュの体積を表示"
+
+msgid "Report the surface area of the active mesh"
+msgstr "アクティブメッシュの表面積を表示"
+
+msgid "Check for geometry is solid (has valid inside/outside) and correct normals"
+msgstr "ジオメトリがソリッド（有効な内外を持つ）で法線が正しいかをチェック"
+
+msgid "Check for self intersections"
+msgstr "自己交差をチェック"
+
+msgid "Count mesh islands"
+msgstr "メッシュの島の数を数える"
+
+msgid "Check for zero area faces and zero length edges"
+msgstr "ゼロ面積の面とゼロ長の辺をチェック"
+
+msgid "Check for non-flat faces"
+msgstr "非平面の面をチェック"
+
+msgid "Check for wall thickness below specified value"
+msgstr "指定値より薄い肉厚をチェック"
+
+msgid "Check for edges sharper than a specified angle"
+msgstr "指定した角度より鋭い辺をチェック"
+
+msgid "Check for faces that overhang past a specified angle"
+msgstr "指定角度を超えるオーバーハング面をチェック"
+
+msgid "Run all checks"
+msgstr "すべてのチェックを実行"
+
+msgid "Select the data associated with this report"
+msgstr "このレポートに関連するデータを選択"
+
+msgid "Clear report"
+msgstr "レポートをクリア"
+
+msgid "Cleanup loose geometry, interior faces, non-manifold vertices and inverted normals"
+msgstr "孤立したジオメトリ、内部の面、非多様体の頂点、反転した法線をクリーンアップ"
+
+msgid "Minimum Thickness"
+msgstr "最小肉厚"
+
+msgid "Export Directory"
+msgstr "エクスポート先ディレクトリ"
+
+msgid "Export at specified unit scale (most slicers assume millimeters)"
+msgstr "指定した単位でエクスポートします（ほとんどのスライサーはミリメートルを前提としています）"
+
+msgid "Export file in ASCII format"
+msgstr "ASCII形式でファイルをエクスポート"
+
+msgid "Copy textures on export to the output path"
+msgstr "エクスポート時にテクスチャを出力先パスにコピー"
+
+msgid "Export selected objects using settings below"
+msgstr "下の設定を使用して選択オブジェクトをエクスポート"
+
+msgid "Create offset surface"
+msgstr "オフセットサーフェスを作成"
+
+msgid "Offset direction relative to the object surface"
+msgstr "オブジェクト表面に対するオフセット方向"
+
+msgid "Surface offset in relation to original mesh"
+msgstr "元のメッシュに対するサーフェスのオフセット量"
+
+msgid "Size of the voxel used for volume evaluation. Lower values preserve finer details"
+msgstr "体積評価に使用するボクセルのサイズ。値を小さくすると細部がより保持されます"
+
+msgid "Hollow Duplicate"
+msgstr "中空複製"
+
+msgid "Create hollowed out copy of the object"
+msgstr "オブジェクトの中空化したコピーを作成"
+
+msgid "Offset Surface Only"
+msgstr "オフセットサーフェスのみ"
+
+msgid "Remove original and keep offset surface"
+msgstr "元を削除してオフセットサーフェスを保持"
+
+msgid "Cut geometry along a plane"
+msgstr "平面に沿ってジオメトリを切断"
+
+msgid "Slice on axis"
+msgstr "軸上でスライス"
+
+msgid "Cutting plane position"
+msgstr "切断面の位置"
+
+msgid "Rotate object so the selected faces lie, on average, parallel to the XY plane"
+msgstr "選択した面が平均してXY平面に平行になるようにオブジェクトを回転"
+
+msgid "Weight by Face Area"
+msgstr "面積で重み付け"
+
+msgid "Take face area into account when calculating rotation"
+msgstr "回転の計算時に面の面積を考慮"
+
+msgid "Multiple selected objects. Only the active one will be evaluated"
+msgstr "複数のオブジェクトが選択されています。アクティブなもののみが評価されます"
+
+msgid "Report is out of date, re-run check"
+msgstr "レポートが古くなっています。チェックを再実行してください"
+
+msgid "Modified: {:+} vertices, {:+} edges, {:+} faces"
+msgstr "変更: {:+} 頂点, {:+} 辺, {:+} 面"
+
+msgid "Make sure target mesh has closed surface and offset value is less than half of target thickness"
+msgstr "対象メッシュが閉じた表面を持ち、オフセット値が対象の肉厚の半分未満であることを確認してください"
+
+msgid "Target must have closed surface and offset value less than half of target thickness"
+msgstr "対象は閉じた表面を持ち、オフセット値が対象の肉厚の半分未満である必要があります"
+
+msgid "Scaled by {}"
+msgstr "{} 倍にスケール"
+
+msgid ", Clamping {}-Axis"
+msgstr ", {} 軸を固定"
+
+msgid "At least one mesh object must be selected"
+msgstr "少なくとも1つのメッシュオブジェクトを選択する必要があります"
+
+msgid "Object has zero volume"
+msgstr "オブジェクトの体積がゼロです"
+
+msgid "Object has zero bounds"
+msgstr "オブジェクトの境界がゼロです"
+
+msgid "Exported: {!r}"
+msgstr "エクスポート完了: {!r}"
+
+msgid "Export failed"
+msgstr "エクスポートに失敗しました"
+
+msgctxt "Operator"
+msgid "Volume"
+msgstr "体積"
+
+msgctxt "Operator"
+msgid "Area"
+msgstr "面積"
+
+msgctxt "Operator"
+msgid "Solid"
+msgstr "ソリッド"
+
+msgctxt "Operator"
+msgid "Intersections"
+msgstr "交差"
+
+msgctxt "Operator"
+msgid "Shells"
+msgstr "シェル"
+
+msgctxt "Operator"
+msgid "Degenerate"
+msgstr "縮退"
+
+msgctxt "Operator"
+msgid "Non-Planar"
+msgstr "非平面"
+
+msgctxt "Operator"
+msgid "Thickness"
+msgstr "肉厚"
+
+msgctxt "Operator"
+msgid "Sharp"
+msgstr "シャープ"
+
+msgctxt "Operator"
+msgid "Overhang"
+msgstr "オーバーハング"
+
+msgctxt "Operator"
+msgid "Check All"
+msgstr "すべてチェック"
+
+msgctxt "Operator"
+msgid "Make Manifold"
+msgstr "多様体化"
+
+msgctxt "Operator"
+msgid "Hollow"
+msgstr "中空化"
+
+msgctxt "Operator"
+msgid "Align XY"
+msgstr "XYに整列"
+
+msgctxt "Operator"
+msgid "Bounds"
+msgstr "境界"

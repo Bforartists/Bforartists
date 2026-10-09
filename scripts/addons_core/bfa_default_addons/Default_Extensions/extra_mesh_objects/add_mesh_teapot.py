@@ -14,6 +14,7 @@ import io
 import operator
 import functools
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 
 class AddTeapot(bpy.types.Operator, object_utils.AddObjectHelper):
@@ -29,7 +30,7 @@ class AddTeapot(bpy.types.Operator, object_utils.AddObjectHelper):
             min=2, max=15,
             )
     objecttype: EnumProperty(
-            name="Object Type",
+            name="Type",
             description="Type of Bezier Object",
             items=(('1', "Teapot", "Construct a teapot mesh"),
                    ('2', "Tea Spoon", "Construct a teaspoon mesh")),
@@ -38,18 +39,13 @@ class AddTeapot(bpy.types.Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'resolution')
-
-        box = layout.box()
-        box.prop(self, 'objecttype')
-
-        # generic transform props
-        box = layout.box()
-        box.prop(self, 'align', expand=True)
-        box.prop(self, 'location', expand=True)
-        box.prop(self, 'rotation', expand=True)
+        layout.prop(self, 'objecttype')
+        layout.prop(self, 'resolution')
+        layout.separator()
+        draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

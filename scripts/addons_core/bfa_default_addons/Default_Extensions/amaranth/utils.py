@@ -47,8 +47,23 @@ def cycles_is_emission(context, ob):
 
 # FUNCTION: Check if object has keyframes for a specific frame
 def is_keyframe(ob, frame):
-    if ob is not None and ob.animation_data is not None and ob.animation_data.action is not None:
-        for fcu in ob.animation_data.action.fcurves:
+    if ob is None or ob and ob.animation_data is None:
+        return False
+
+    if ob.animation_data.action is None:
+        return False
+
+    from bpy_extras import anim_utils
+    action = ob.animation_data.action
+    for slot in action.slots:
+        channelbag = anim_utils.action_get_channelbag_for_slot(action, slot)
+
+        for fcu in channelbag.fcurves:
             if frame in (p.co.x for p in fcu.keyframe_points):
                 return True
     return False
+
+
+# FUNCTION: Check if Blender's major version is older than 5.
+def is_blender_version_4():
+    return (bpy.app.version[0] < 5)

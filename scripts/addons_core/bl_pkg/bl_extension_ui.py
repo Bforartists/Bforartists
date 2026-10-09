@@ -94,6 +94,43 @@ def pkg_repo_module_prefix(repo):
     return "bl_ext.{:s}.".format(repo.module)
 
 
+def bfa_bundle_operators_draw(_context, layout):
+    """
+    BFA - Draw the Legacy Add-ons and Pre-downloaded Extensions install/remove buttons (#4568).
+
+    Pass a row to draw them side by side as a left/right choice, or a column/menu to stack them.
+    The button labels and tooltips come from the operators, the icons match the add-on types
+    shown in the Add-ons list (folder for legacy add-ons, plugin for extensions).
+    """
+    from .bl_extension_ops import bfa_state_get
+    state = bfa_state_get()
+
+    layout.operator(
+        "extensions.remove_legacy_addons" if state["legacy_addons"] else "extensions.install_legacy_addons",
+        icon=addon_type_icon[ADDON_TYPE_LEGACY_USER],
+    )
+    layout.operator(
+        "extensions.uninstall_downloaded_extensions" if state["downloaded_extensions"] else
+        "extensions.install_downloaded_extensions",
+        icon=addon_type_icon[ADDON_TYPE_EXTENSION],
+    )
+
+
+def extensions_panel_draw_bfa_bundle_impl(panel, context):
+    """
+    BFA - Keep the buttons to install, remove or switch between the Legacy Add-ons and the
+    Pre-downloaded Extensions at the top of the Extensions preferences, once the online
+    access prompt (which shows the same buttons) has been answered.
+    """
+    layout_header, layout_panel = panel.layout.panel("bfa_bundle", default_closed=False)
+    layout_header.label(text="Shipped with Bforartists")
+    if layout_panel is None:
+        return
+    box = layout_panel.box()
+    bfa_bundle_operators_draw(context, box.row())
+    box.label(text="Disable a Legacy Add-on before you enable its Extension, and the other way around.", icon='INFO')
+
+
 def module_parent_dirname(module_filepath):
     """
     Return the name of the directory above the module (it's name only).
@@ -349,16 +386,15 @@ def addons_panel_draw_missing_with_extension_impl(
 
     box = layout_panel.box()
     ## BFA - Changes to opt-into extensions and improve migration here - START
-    box.label(text="Available to install from the Online Extensions repository (extensions.blender.org).") # BFA - not Blender, made explicit
-    box.label(text="If you opt-in to use Extensions, install each addon equivalent individually.") # BFA - talk of how to "replace" the legacy addons
-    box.label(text="Alternatively, activate the Built-In Legacy Addons if you need to remain offline.") # BFA - talk of the addon alternative to remain offline
+    box.label(text="These add-ons are now Extensions, available online from extensions.blender.org.") # BFA - not Blender, made explicit
+    box.label(text="Install them one by one online, or all at once as Pre-downloaded Extensions.") # BFA - how to "replace" the legacy add-ons
+    box.label(text="To stay offline with the previous versions, install the Legacy Add-ons.") # BFA - the offline alternative
 
-    row = box.row()
-    if "bfa_default_addons" not in bpy.context.preferences.addons and not context.preferences.system.use_online_access:
-        row.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
-
+    # BFA - Legacy Add-ons (left) or Pre-downloaded Extensions (right), see #4568.
+    bfa_bundle_operators_draw(context, box.row())
     if not context.preferences.system.use_online_access:
-        row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - opt into being online to install missing addons conveniently
+        box.row().operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - opt into being online to install missing addons conveniently
+    box.label(text="Disable a Legacy Add-on before you enable its Extension, and the other way around.", icon='INFO') # BFA - they conflict
     ## BFA - Changes to opt-into extensions and improve migration here - END
 
     pkg_manifest_remote = {}
@@ -1309,10 +1345,6 @@ def extensions_panel_draw_online_extensions_request_impl(
     # )
 
 
-    row = box.row(align=True) # BFA - warning about legacy addons we ship
-    row.alignment = 'LEFT' # BFA - warning about legacy addons we ship
-    row.label(text="Online Extensions may conflict with Built-in Legacy Addon equivalents", icon="WARNING") # BFA - warning about legacy addons a user coudl potentially enable
-
     row = box.row()
     props = row.operator("wm.context_set_boolean", text="Continue Offline", icon='X')
     props.data_path = "preferences.extensions.use_online_access_handled"
@@ -1322,18 +1354,10 @@ def extensions_panel_draw_online_extensions_request_impl(
     # is it will be disabled when `--offline-mode` is forced with a useful error for why.
     row.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK')
 
-    ## BFA - Indicative Icons for types - START
-    row = box.row() # BFA
-    if "bfa_default_addons" not in bpy.context.preferences.addons and not bpy.context.preferences.system.use_online_access:
-        row.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
-    else:
-        legacy_addons = bpy.context.preferences.addons["bfa_default_addons"].preferences.legacy_addons_installed
-        if not legacy_addons:
-            row.operator("bfa.install_legacy_addons", text="Install Built-in Legacy Add-ons", icon='IMPORT')
-            row.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions Equivalents", icon='PLUGIN')
-        else:
-            row.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Add-ons", icon='CANCEL')
-    ## BFA - Indicative Icons for types - END
+    ## BFA - Legacy Add-ons (left) or Pre-downloaded Extensions (right), same grid as above (#4568) - START
+    bfa_bundle_operators_draw(bpy.context, box.row())
+    box.label(text="Disable a Legacy Add-on before you enable its Extension, and the other way around.", icon='INFO') # BFA - they conflict
+    ## BFA - Legacy Add-ons or Pre-downloaded Extensions - END
 
 extensions_map_from_legacy_addons = None
 extensions_map_from_legacy_addons_url = None
@@ -1819,7 +1843,12 @@ def extensions_panel_draw_impl(
                             params.repos_all[repo_index].name,
                         )
                     )
-                continue
+                # BFA - don't hide extensions that are installed locally just because the remote
+                # catalog is unavailable (offline). Only skip the repository when there is nothing
+                # local to display, otherwise pre-downloaded or disk-installed extensions would
+                # never appear in the Installed list, see: #4568.
+                if not pkg_manifest_local:
+                    continue
 
         for ext_ui in params.extension_ui_visible(
                 repo_index,
@@ -1969,29 +1998,12 @@ class USERPREF_MT_extensions_settings(Menu):
         layout.operator("extensions.repo_refresh_all", icon='FILE_REFRESH')  # BFA - icon added, moved to offline group
 
         ## BFA - legacy addons operators START ##
-        if "bfa_default_addons" in prefs.addons:
-            layout.separator()
-            legacy_addons = bpy.context.preferences.addons["bfa_default_addons"].preferences.legacy_addons_installed
-            if not legacy_addons:
-                self.layout.operator("bfa.install_legacy_addons", text="Install Built-in Legacy Addons", icon='IMPORT')
-            else:
-                self.layout.operator("bfa.remove_legacy_addons", text="Remove Built-in Legacy Addons", icon='CANCEL')
-
-        if "bfa_default_addons" not in bpy.context.preferences.addons and not context.preferences.system.use_online_access:
-            layout.separator()
-            layout.operator("preferences.addon_enable",text="Enable Built-in Legacy Add-ons", icon="FILE_FOLDER").module="bfa_default_addons" # BFA - added to allow a user to opt in to get his 4.1 settinsg back
+        layout.separator()
+        bfa_bundle_operators_draw(context, layout)
 
         if not context.preferences.system.use_online_access:
             layout.separator()
             layout.operator("extensions.userpref_allow_online", text="Allow Online Access", icon='CHECKMARK') # BFA - permenantly make this discoverable in Extensions (if a user continues offline)
-
-        if "bfa_default_addons" in prefs.addons:
-            extensions_installed = bpy.context.preferences.addons["bfa_default_addons"].preferences.extensions_installed
-            if extensions_installed and context.preferences.system.use_online_access:
-                layout.separator()
-                self.layout.operator("bfa.install_downloaded_extensions", text="Install Pre-downloaded Extensions", icon='PLUGIN')
-            else:
-                return
         ## BFA - legacy addons operators END ##
 
         if prefs.experimental.use_extensions_debug:
@@ -2293,6 +2305,9 @@ def extensions_panel_draw(panel, context):
             any(repo for repo in prefs.extensions.repos if repo.enabled and repo.use_remote_url)
     ):
         extensions_panel_draw_online_extensions_request_impl(panel, context)
+    else:
+        # BFA - keep the Legacy Add-ons / Pre-downloaded Extensions buttons available (#4568).
+        extensions_panel_draw_bfa_bundle_impl(panel, context)
 
     extensions_panel_draw_impl(
         panel,

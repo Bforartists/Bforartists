@@ -26,6 +26,15 @@ class AMTH_SCENE_MT_color_management_presets(bpy.types.Menu):
     draw = bpy.types.Menu.draw_preset
 
 
+class AMTH_SCENE_MT_output_color_management_presets(bpy.types.Menu):
+
+    """List of Output Color Management presets"""
+    bl_label = "Output Color Management Presets"
+    preset_subdir = "output_color"
+    preset_operator = "script.execute_preset"
+    draw = bpy.types.Menu.draw_preset
+
+
 class AMTH_AddPresetColorManagement(AddPresetBase, bpy.types.Operator):
 
     """Add or remove a Color Management preset"""
@@ -50,6 +59,29 @@ class AMTH_AddPresetColorManagement(AddPresetBase, bpy.types.Operator):
     preset_subdir = "color"
 
 
+class AMTH_AddPresetOutputColorManagement(AddPresetBase, bpy.types.Operator):
+
+    """Add or remove an Output Color Management preset"""
+    bl_idname = "scene.output_color_management_preset_add"
+    bl_label = "Add Output Color Management Preset"
+    preset_menu = "AMTH_SCENE_MT_output_color_management_presets"
+
+    preset_defines = [
+        "scene = bpy.context.scene",
+    ]
+
+    preset_values = [
+        "scene.render.image_settings.view_settings.view_transform",
+        "scene.render.image_settings.display_settings.display_device",
+        "scene.render.image_settings.view_settings.exposure",
+        "scene.render.image_settings.view_settings.gamma",
+        "scene.render.image_settings.view_settings.look",
+        "scene.render.image_settings.view_settings.use_curve_mapping",
+    ]
+
+    preset_subdir = "output_color"
+
+
 def ui_color_management_presets(self, context):
 
     layout = self.layout
@@ -63,13 +95,32 @@ def ui_color_management_presets(self, context):
     layout.separator()
 
 
+def ui_output_color_management_presets(self, context):
+
+    layout = self.layout
+
+    row = layout.row(align=True)
+    row.menu("AMTH_SCENE_MT_output_color_management_presets",
+             text=bpy.types.AMTH_SCENE_MT_color_management_presets.bl_label)
+    row.operator("scene.output_color_management_preset_add", text="", icon="ZOOM_IN")
+    row.operator("scene.output_color_management_preset_add",
+                 text="", icon="ZOOM_OUT").remove_active = True
+    layout.separator()
+
+
 def register():
     bpy.utils.register_class(AMTH_AddPresetColorManagement)
+    bpy.utils.register_class(AMTH_AddPresetOutputColorManagement)
     bpy.utils.register_class(AMTH_SCENE_MT_color_management_presets)
+    bpy.utils.register_class(AMTH_SCENE_MT_output_color_management_presets)
     bpy.types.RENDER_PT_color_management.prepend(ui_color_management_presets)
+    bpy.types.RENDER_PT_output_color_management.prepend(ui_output_color_management_presets)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_AddPresetColorManagement)
+    bpy.utils.unregister_class(AMTH_AddPresetOutputColorManagement)
     bpy.utils.unregister_class(AMTH_SCENE_MT_color_management_presets)
+    bpy.utils.unregister_class(AMTH_SCENE_MT_output_color_management_presets)
     bpy.types.RENDER_PT_color_management.remove(ui_color_management_presets)
+    bpy.types.RENDER_PT_output_color_management.remove(ui_output_color_management_presets)

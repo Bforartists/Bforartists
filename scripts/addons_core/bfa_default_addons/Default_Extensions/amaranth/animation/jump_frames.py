@@ -8,32 +8,23 @@ Jump X Frames on Shift Up/Down
 When you hit Shift Up/Down, you'll jump 10 frames forward/backwards.
 Sometimes is nice to tweak that value.
 
-In the User Preferences, Editing tab, you'll find a "Frames to Jump"
+In the Preferences, Animation tab, you'll find a "Frames to Jump"
 slider where you can adjust how many frames you'd like to move
 forwards/backwards.
 
 Make sure you save your user settings if you want to use this value from
 now on.
 
-Find it on the User Preferences, Editing.
+Find it on the Preferences, Animation.
 """
 
 import bpy
 from bpy.types import Operator, Panel
 from bpy.props import BoolProperty
 from ..prefs import get_preferences
+from ..utils import is_keyframe, is_blender_version_4
 
 KEYMAPS = list()
-
-
-# FUNCTION: Check if object has keyframes for a specific frame
-def is_keyframe(ob, frame):
-    if ob is not None and ob.animation_data is not None and ob.animation_data.action is not None:
-        for fcu in ob.animation_data.action.fcurves:
-            if frame in (p.co.x for p in fcu.keyframe_points):
-                return True
-    return False
-
 
 # monkey path is_keyframe function
 bpy.types.Object.is_keyframe = is_keyframe
@@ -115,7 +106,8 @@ class AMTH_SCREEN_OT_frame_jump(Operator):
     def execute(self, context):
         scene = context.scene
 
-        get_addon = __package__ in context.preferences.addons.keys()
+        addon_name = __package__.rsplit('.', 1)[0]
+        get_addon = addon_name in context.preferences.addons.keys()
         if not get_addon:
             return {"CANCELLED"}
 
@@ -146,22 +138,54 @@ class AMTH_USERPREF_PT_animation(Panel):
 
         col = layout.column()
         row = col.row()
-        row.label(text="Frames to Jump")
-        row.prop(preferences, "frames_jump", text="")
-
-        col = layout.column()
-        row = col.row()
-        row.label(text="Jump Operators")
+        row.label(text="Jump In-Between Keyframes")
         row.operator(AMTH_SCREEN_OT_keyframe_jump_inbetween.bl_idname,
                      icon="PREV_KEYFRAME", text="Jump to Previous").backwards = True
         row.operator(AMTH_SCREEN_OT_keyframe_jump_inbetween.bl_idname,
                      icon="NEXT_KEYFRAME", text="Jump to Next").backwards = False
 
+        if is_blender_version_4():
+            col = layout.column()
+            row = col.row()
+            row.label(text="Frames to Jump")
+            row.prop(preferences, "frames_jump", text="")
+        else:
+            layout.separator(type='LINE')
+            box = layout.box()
+            box.label(icon="INFO", text="Miss \"Frames to Jump\"? It's built-in since Blender 5.0!")
+            box.label(icon="BLANK1", text="Find it in the Timeline header or animation editors Playback Controls region.")
+
+
+def ui_playback_controls_jump(self, _context):
+    layout = self.layout
+
+    split = layout.split(factor=0.4)
+    col = split.column()
+    col.alignment = 'RIGHT'
+    col.label(text="Halfway Keys")
+    col = split.column()
+    row = col.row(align=True)
+    row.operator(AMTH_SCREEN_OT_keyframe_jump_inbetween.bl_idname, text="Previous").backwards = True
+    row.operator(AMTH_SCREEN_OT_keyframe_jump_inbetween.bl_idname, text="Next").backwards = False
+
 
 def register():
     bpy.utils.register_class(AMTH_USERPREF_PT_animation)
-    bpy.utils.register_class(AMTH_SCREEN_OT_frame_jump)
     bpy.utils.register_class(AMTH_SCREEN_OT_keyframe_jump_inbetween)
+
+    # ---------------------------------------------------------
+    # BLENDER 4.5+ UI FIX by Evandro Costa.
+    # Append to the Playback panel if it exists, otherwise
+    # fall back to the old "Jump" panel.
+    # See https://projects.blender.org/extensions/amaranth/issues/18
+    # ---------------------------------------------------------
+    if hasattr(bpy.types, "TIME_PT_playback"):
+        bpy.types.TIME_PT_playback.append(ui_playback_controls_jump)
+    elif hasattr(bpy.types, "TIME_PT_jump"):
+        bpy.types.TIME_PT_jump.append(ui_playback_controls_jump)
+
+    if is_blender_version_4():
+        bpy.utils.register_class(AMTH_SCREEN_OT_frame_jump)
 
     # register keyboard shortcuts
     wm = bpy.context.window_manager
@@ -177,21 +201,31 @@ def register():
         kmi.properties.backwards = True
         KEYMAPS.append((km, kmi))
 
-        kmi = km.keymap_items.new(
-            "screen.amaranth_frame_jump", "UP_ARROW", "PRESS", shift=True)
-        kmi.properties.forward = True
-        KEYMAPS.append((km, kmi))
+        if is_blender_version_4():
+            kmi = km.keymap_items.new(
+                "screen.amaranth_frame_jump", "UP_ARROW", "PRESS", shift=True)
+            kmi.properties.forward = True
+            KEYMAPS.append((km, kmi))
 
-        kmi = km.keymap_items.new(
-            "screen.amaranth_frame_jump", "DOWN_ARROW", "PRESS", shift=True)
-        kmi.properties.forward = False
-        KEYMAPS.append((km, kmi))
+            kmi = km.keymap_items.new(
+                "screen.amaranth_frame_jump", "DOWN_ARROW", "PRESS", shift=True)
+            kmi.properties.forward = False
+            KEYMAPS.append((km, kmi))
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_USERPREF_PT_animation)
-    bpy.utils.unregister_class(AMTH_SCREEN_OT_frame_jump)
     bpy.utils.unregister_class(AMTH_SCREEN_OT_keyframe_jump_inbetween)
+
+    # Support for Blender 4.5+
+    # See https://projects.blender.org/extensions/amaranth/issues/18
+    if hasattr(bpy.types, "TIME_PT_playback"):
+        bpy.types.TIME_PT_playback.remove(ui_playback_controls_jump)
+    elif hasattr(bpy.types, "TIME_PT_jump"):
+        bpy.types.TIME_PT_jump.remove(ui_playback_controls_jump)
+
+    if is_blender_version_4():
+        bpy.utils.unregister_class(AMTH_SCREEN_OT_frame_jump)
 
     for km, kmi in KEYMAPS:
         km.keymap_items.remove(kmi)

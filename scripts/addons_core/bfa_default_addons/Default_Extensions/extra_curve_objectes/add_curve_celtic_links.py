@@ -79,16 +79,20 @@ class CelticKnotOperator(Operator):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
         layout.prop(self, "handle_type")
 
         col = layout.column(align=True)
         col.prop(self, "weave_up")
-        col.prop(self, "weave_down")
+        col.prop(self, "weave_down", text='Down')
 
         col = layout.column(align=True)
         col.active = False if self.handle_type == 'AUTO' else True
         col.prop(self, "crossing_angle")
-        col.prop(self, "crossing_strength")
+        col.prop(self, "crossing_strength", text='Strength')
 
         layout.prop(self, "geo_bDepth")
 

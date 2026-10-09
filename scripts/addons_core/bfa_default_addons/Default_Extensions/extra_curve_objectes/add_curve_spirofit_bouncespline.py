@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2017-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2017-2025 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 from bpy.types import (
@@ -99,7 +99,7 @@ class SpiroFitSpline(Operator):
             name="Mapping",
             default='RAYCAST',
             description="Mapping method",
-            items=[('RAYCAST', 'Ray cast', 'Ray casting'),
+            items=[('RAYCAST', 'Raycast', 'Ray casting'),
                    ('CLOSESTPOINT', 'Closest point', 'Closest point on mesh')]
             )
     direction : BoolProperty(
@@ -240,6 +240,10 @@ class SpiroFitSpline(Operator):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
         col = layout.column(align=True)
         row = col.row(align=True)
 
@@ -253,13 +257,14 @@ class SpiroFitSpline(Operator):
         row.operator("object.add_spirofit_spline", text="Add")
         row.prop(self, "origin_to_start", toggle=True, icon="CURVE_DATA", icon_only=True)
 
+        layout.separator()
         col = layout.column(align=True)
         col.prop(self, "spline_name")
         col.separator()
         col.prop(self, "map_method")
         col.separator()
         col.prop(self, "spire_resolution")
-        row = col.row(align=True).split(factor=0.9, align=True)
+        row = col.row(align=True)
         row.prop(self, "spires")
         row.prop(self, "direction", toggle=True, text="", icon='ARROW_LEFTRIGHT')
         col.prop(self, "offset")
@@ -511,6 +516,10 @@ class BounceSpline(Operator):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
         col = layout.column(align=True)
         row = col.row(align=True)
         if self.auto_refresh is False:
@@ -523,11 +532,12 @@ class BounceSpline(Operator):
         row.operator("object.add_bounce_spline", text="Add")
         row.prop(self, "origin_to_start", toggle=True, icon="CURVE_DATA", icon_only=True)
 
+        layout.separator()
         col = layout.column(align=True)
         col.prop(self, "spline_name")
         col.separator()
         col.prop(self, "bounce_number")
-        row = col.row(align=True).split(factor=0.9, align=True)
+        row = col.row(align=True)
         row.prop(self, "ang_noise")
         row.prop(self, "active_face", toggle=True, text="", icon="SNAP_FACE")
         col.prop(self, "offset")
@@ -633,8 +643,8 @@ class CatenaryCurve(Operator):
             max=1024,
             )
     var_a : FloatProperty(
-            name="a",
-            description="Catenary variable a",
+            name="Bend",
+            description="Catenary variable A",
             precision=3,
             default=2.0,
             min=0.01,
@@ -645,7 +655,7 @@ class CatenaryCurve(Operator):
             default="Catenary"
             )
     spline_type : EnumProperty(
-            name="Spline",
+            name="Spline Type",
             default='BEZIER',
             description="Spline type",
             items=[('POLY', "Poly", "Poly spline"),
@@ -701,11 +711,11 @@ class CatenaryCurve(Operator):
             description="Spline handle tilt"
             )
     random_radius : FloatProperty(
-            name="Randomise",
+            name="Randomize",
             default=0.0,
             min=0.0,
             precision=3,
-            description="Randomise radius of spline controlpoints"
+            description="Randomize radius of spline controlpoints"
             )
     random_seed : IntProperty(
             name="Random Seed",
@@ -731,6 +741,10 @@ class CatenaryCurve(Operator):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
         col = layout.column(align=True)
         row = col.row(align=True)
 
@@ -744,15 +758,14 @@ class CatenaryCurve(Operator):
         row.operator("object.add_catenary_curve", text="Add")
         row.prop(self, "origin_to_start", toggle=True, icon="CURVE_DATA", icon_only=True)
 
-        col = layout.column(align=True)
-        col.prop(self, "spline_name")
-        col.separator()
-        col.prop(self, "steps")
-        col.prop(self, "var_a")
+        layout.separator()
+        layout.prop(self, "spline_name")
+        layout.separator()
+        layout.prop(self, "steps")
+        layout.prop(self, "var_a")
 
         draw_spline_settings(self)
-        col = layout.column(align=True)
-        col.prop(self, "random_seed")
+        layout.prop(self, "random_seed")
 
     @classmethod
     def poll(self, context):
@@ -893,7 +906,7 @@ def move_origin_to_start():
 
 def draw_spline_settings(self):
     layout = self.layout
-    col = layout.column(align=True)
+    col = layout.column(align=False)
 
     col.prop(self, "spline_type")
     col.separator()

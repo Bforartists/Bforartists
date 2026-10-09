@@ -17,6 +17,7 @@ from bpy.props import (
         StringProperty,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 # #####################
 # Create vertices for end of mesh
@@ -693,6 +694,7 @@ class addBeam(Operator, object_utils.AddObjectHelper):
                 description = "change Beam")
 
     Type: EnumProperty(
+            name="Beam Type",
             items=(
             ('0', "Box Profile", "Square Beam"),
             ("1", "U Profile", "U Profile Beam"),
@@ -737,25 +739,23 @@ class addBeam(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        split = box.split(factor=0.85, align=True)
-        split.prop(self, "Type", text="")
-
-        box.prop(self, "beamZ")
-        box.prop(self, "beamX")
-        box.prop(self, "beamY")
-        box.prop(self, "beamW")
-
+        layout.separator()
+        layout.prop(self, "Type")
+        layout.separator()
+        layout.prop(self, "beamZ")
+        layout.prop(self, "beamX")
+        layout.prop(self, "beamY")
+        layout.prop(self, "beamW")
         if self.Type != '0':
-            box.prop(self, "edgeA")
+            layout.prop(self, "edgeA")
 
         if self.change == False:
             # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
