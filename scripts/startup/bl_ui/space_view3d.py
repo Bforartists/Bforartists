@@ -3175,12 +3175,6 @@ class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
         layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
-        layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
-        layout.operator("paint.face_select_hide", text="Hide Selected") # BFA - WIP
-        props = layout.operator("paint.face_select_hide", text="Hide Unselected") # BFA - WIP
-        props.unselected = True
-
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
     bl_label = "Select"
@@ -3216,12 +3210,6 @@ class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
 
         layout.operator("paint.vert_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
-
-        layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
-        layout.operator("paint.vert_select_hide", text="Hide Selected") # BFA - WIP
-        props = layout.operator("paint.vert_select_hide", text="Hide Unselected") # BFA - WIP
-        props.unselected = True
 
 
 class VIEW3D_MT_select_edit_pointcloud(Menu):
@@ -5055,6 +5043,10 @@ class VIEW3D_MT_brush(Menu):
             layout.separator()
 
             layout.menu("VIEW3D_MT_facemask_showhide")  # bfa - show hide for face mask tool
+        elif mesh.use_paint_mask_vertex:
+            layout.separator()
+
+            layout.menu("VIEW3D_MT_vertexmask_showhide")  # BFA - show hide for vertex mask tool
 
         # Color picker just in vertex and texture paint
         if obj.mode in {"VERTEX_PAINT", "TEXTURE_PAINT"}:
@@ -5073,6 +5065,18 @@ class VIEW3D_MT_facemask_showhide(Menu):
         layout.operator("paint.face_select_reveal", text="Show Hidden", icon="HIDE_OFF")
         layout.operator("paint.face_select_hide", text="Hide Selected", icon="HIDE_ON").unselected = False
         layout.operator("paint.face_select_hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
+
+
+# BFA - show hide menu for vertex selection masking
+class VIEW3D_MT_vertexmask_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("paint.face_vert_reveal", text="Show Hidden", icon="HIDE_OFF")
+        layout.operator("paint.vert_select_hide", text="Hide Selected", icon="HIDE_ON").unselected = False
+        layout.operator("paint.vert_select_hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_paint_vertex(Menu):
@@ -5296,6 +5300,14 @@ class VIEW3D_MT_paint_weight(Menu):
         obj = context.active_object
         if obj.type == "MESH":
             self.draw_generic(self.layout, is_editmode=False)
+
+            # BFA - Show/Hide for selection masking, like the Brush menu in vertex and texture paint
+            if obj.data.use_paint_mask:
+                self.layout.separator()
+                self.layout.menu("VIEW3D_MT_facemask_showhide")
+            elif obj.data.use_paint_mask_vertex:
+                self.layout.separator()
+                self.layout.menu("VIEW3D_MT_vertexmask_showhide")
 
 
 # BFA menu
@@ -12467,6 +12479,7 @@ classes = (
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush,  # BFA - menu
     VIEW3D_MT_facemask_showhide,  # BFA - menu
+    VIEW3D_MT_vertexmask_showhide,  # BFA - menu
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,
