@@ -940,20 +940,17 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
         asset is in the current file). Empty, non-editable fields are not really useful.
         """
         if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(propname):
-            split = layout.split(factor=layout.property_split_factor)
             ui_name = asset_metadata.rna_type.properties[propname].name
-            sub = split.row()
-            sub.alignment = 'RIGHT'
-            sub.label(text=ui_name)
             if asset_metadata.is_property_readonly(propname):
+                split = layout.split(factor=layout.property_split_factor)
+                sub = split.row()
+                sub.alignment = 'LEFT'  # BFA - labels float left
+                sub.label(text=ui_name)
                 split.label_multiline(text=getattr(asset_metadata, propname))
             else:
-                split.textbox(
-                    asset_metadata,
-                    propname,
-                    placeholder=ui_name,
-                    initial_visible_lines=initial_visible_lines,
-                )
+                # BFA - textbox draws its own left-aligned label like a string prop (as upstream)
+                layout.textbox(asset_metadata, propname, placeholder=ui_name,
+                               initial_visible_lines=initial_visible_lines)
 
     def draw(self, context):
         layout = self.layout
@@ -1010,20 +1007,17 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
         if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(
             propname
         ):
-            split = layout.split(factor=0.4)
             ui_name = asset_metadata.rna_type.properties[propname].name
-            sub = split.row()
-            sub.alignment = 'RIGHT'
-            sub.label(text=ui_name)
             if asset_metadata.is_property_readonly(propname):
+                split = layout.split(factor=0.4)
+                sub = split.row()
+                sub.alignment = 'LEFT'  # BFA - labels float left
+                sub.label(text=ui_name)
                 split.label_multiline(text=getattr(asset_metadata, propname))
             else:
-                split.textbox(
-                    asset_metadata,
-                    propname,
-                    placeholder=ui_name,
-                    initial_visible_lines=initial_visible_lines,
-                )
+                # BFA - textbox draws its own left-aligned label like a string prop (as upstream)
+                layout.textbox(asset_metadata, propname, placeholder=ui_name,
+                               initial_visible_lines=initial_visible_lines)
 
     def draw(self, context):
         layout = self.layout
