@@ -11,6 +11,8 @@ keyconfig_data = \
     ("view3d.move", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True}, None),
     ("view3d.zoom", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("view3d.dolly", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("view3d.view_roll", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"properties": [("type", 'ANGLE')]}),  # BFA - drag to roll the view, also in camera view
     ("view3d.view_selected",
      {"type": 'F', "value": 'PRESS', "ctrl": True, "repeat": True},
      {"properties":
