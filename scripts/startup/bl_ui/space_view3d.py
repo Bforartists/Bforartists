@@ -8813,6 +8813,11 @@ class VIEW3D_PT_view3d_properties(Panel):
         if view.region_3d.view_perspective == "CAMERA":
             row = subcol.row()
             subcol.prop(view.overlay, "show_camera_passepartout", text="Passepartout")
+            # BFA - make camera view roll discoverable (also View > Navigation > Roll, and the modal roll operator)
+            row = subcol.row(align=True)
+            row.use_property_split = True
+            row.prop(view.region_3d, "view_camera_roll", text="Camera Roll")
+            row.operator("view3d.view_roll_set", text="", icon="RESET")
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
