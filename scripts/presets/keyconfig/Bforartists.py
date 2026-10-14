@@ -7468,6 +7468,10 @@ keyconfig_data = \
     ("sequencer.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
     ("sequencer.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True}, None),
     ("sequencer.select_grouped", {"type": 'G', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.select_lasso", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "ctrl": True},
+     {"properties": [("mode", 'ADD')]}),  # BFA - lasso like Dopesheet/Graph Editor
+    ("sequencer.select_lasso", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "shift": True, "ctrl": True},
+     {"properties": [("mode", 'SUB')]}),
     ("wm.call_menu",
      {"type": 'A', "value": 'PRESS', "shift": True},
      {"properties":

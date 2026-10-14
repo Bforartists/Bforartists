@@ -301,8 +301,6 @@ class NODE_MT_compositor_node_utilities_base(node_add_menu.NodeMenu):
         self.draw_menu(layout, path="Utilities/Text")
         layout.separator()
         self.draw_menu(layout, path="Utilities/Bundle")
-        self.draw_menu(layout, path="Utilities/Matrix")
-        self.draw_menu(layout, path="Utilities/Rotation")
         layout.separator()
         self.node_operator(layout, "NodeImplicitConversion")
         self.node_operator(layout, "CompositorNodeLevels")
