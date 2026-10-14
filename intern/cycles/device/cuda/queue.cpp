@@ -35,12 +35,11 @@ ConcurrentStatesParams CUDADeviceQueue::concurrent_states_params() const
   const int max_num_threads = cuda_device_->get_num_multiprocessors() *
                               cuda_device_->get_max_num_threads_per_multiprocessor();
 
-  /* Benefit stops being measurable at around 10x the baseline, but we are a bit
-   * more conservative and only grow up to 4x and shrink up to 2x. */
+  /* Benefit stops being measurable at around 10x the baseline. */
   ConcurrentStatesParams params;
   params.baseline = max(max_num_threads, 65536) * 16;
   params.min = params.baseline / 2;
-  params.max = params.baseline * 4;
+  params.max = params.baseline * 10;
   return params;
 }
 
@@ -217,6 +216,10 @@ void CUDADeviceQueue::copy_to_device(device_memory &mem)
   assert(d_ptr != 0);
   assert(mem.host_pointer != nullptr);
 
+  if (mem.is_shared(cuda_device_) && mem.host_pointer == mem.shared_pointer) {
+    return;
+  }
+
   /* Copy memory to device. */
   const CUDAContextScope scope(cuda_device_);
   assert_success(
@@ -234,6 +237,10 @@ void CUDADeviceQueue::copy_from_device(device_memory &mem)
 
   assert(mem.device_pointer != 0);
   assert(mem.host_pointer != nullptr);
+
+  if (mem.is_shared(cuda_device_) && mem.host_pointer == mem.shared_pointer) {
+    return;
+  }
 
   /* Copy memory from device. */
   const CUDAContextScope scope(cuda_device_);

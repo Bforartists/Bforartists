@@ -613,6 +613,11 @@ const EnumPropertyItem rna_enum_node_grease_pencil_stroke_type_items[] = {
      ICON_GP_DRAW_FILL,
      "Fill",
      "Set the color and opacity for the stroke fills"},
+    {GEO_NODE_GREASE_PENCIL_BOTH,
+     "BOTH",
+     ICON_GP_DRAW_BOTH,
+     "Both",
+     "Set the color and opacity for stroke points and fills together"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -11198,6 +11203,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeCombineList", def_geo_combine_list, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_COLLECTION_CHILDREN);
   define(brna, "GeometryNode", "GeometryNodeCollectionInfo", nullptr, ICON_COLLECTION_INFO);
+  define(brna, "GeometryNode", "GeometryNodeConstructCurves", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeConvexHull", nullptr, ICON_CONVEXHULL);
   define(brna, "GeometryNode", "GeometryNodeCornersOfEdge", nullptr, ICON_CORNERS_OF_EDGE);
   define(brna, "GeometryNode", "GeometryNodeCornersOfFace", nullptr, ICON_CORNERS_OF_FACE);
@@ -11251,6 +11257,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGetAttributeNames", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGetGeometryBundle", nullptr, ICON_NODE_BUNDLE_GET);
   define(brna, "GeometryNode", "GeometryNodeGetGeometryComponent", nullptr, ICON_NODE_GETGEOMETRYCOMPONENT);
+  define(brna, "GeometryNode", "GeometryNodeGetGridNames", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NODE_GET_NAMED_GRID);
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);

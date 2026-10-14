@@ -4,6 +4,7 @@
 
 #include "DNA_node_types.h"
 
+#include "BKE_compute_context_cache.hh"
 #include "BKE_compute_contexts.hh"
 #include "BKE_node.hh"
 #include "BKE_node_runtime.hh"
@@ -22,15 +23,27 @@ void RepeatZoneOperation::execute()
 {
   const int iterations_count = this->get_input("Iterations").get_single_value_default<int>();
   if (iterations_count <= 0) {
-    this->allocate_default_remaining_outputs();
+    /* Pass the inputs to the outputs directly. */
+    for (const bNodeSocket *output : this->zone().output_node()->output_sockets()) {
+      if (!is_socket_available(output)) {
+        continue;
+      }
+
+      Result &result = this->get_result(output->identifier);
+      if (result.should_compute()) {
+        const Result &input = this->get_input(output->identifier);
+        result.share_data(input);
+      }
+    }
     return;
   }
 
   std::unique_ptr<ZoneTreeOperation> last_operation;
   const IndexRange iterations_range = IndexRange(iterations_count);
   for (const int64_t i : iterations_range) {
-    const bke::RepeatZoneComputeContext compute_context(
-        &compute_context_, *this->zone().output_node(), i);
+    const bke::RepeatZoneComputeContext &compute_context =
+        this->context().compute_context_cache().for_repeat_zone(
+            &compute_context_, *this->zone().output_node(), i);
     ZoneTreeOperation *zone_tree_operation = new ZoneTreeOperation(
         this->context(), this->zone(), compute_context);
 

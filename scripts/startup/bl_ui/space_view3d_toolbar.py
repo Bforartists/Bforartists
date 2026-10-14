@@ -404,6 +404,10 @@ class VIEW3D_PT_tools_brush_select(Panel, View3DPaintBrushPanel, BrushSelectPane
     bl_context = ".paint_common"
     bl_label = "Brush Asset"
 
+    @classmethod
+    def poll(cls, context):
+        return cls.active_tool_uses_brushes(context) and cls.get_brush_mode(context) is not None
+
 
 class VIEW3D_PT_tools_brush_settings(Panel, View3DPaintBrushPanel):
     bl_context = ".paint_common"
@@ -412,7 +416,7 @@ class VIEW3D_PT_tools_brush_settings(Panel, View3DPaintBrushPanel):
     @classmethod
     def poll(cls, context):
         settings = cls.paint_settings_from_active_tool(context)
-        return settings and settings.brush is not None
+        return cls.active_tool_uses_brushes(context) and settings and settings.brush is not None
 
     def draw(self, context):
         layout = self.layout
@@ -880,6 +884,7 @@ class VIEW3D_PT_stencil_projectpaint(Panel):
 
         tool_settings = context.tool_settings
         ipaint = tool_settings.image_paint
+        brush = ipaint.brush
         ob = context.active_object
         mesh = ob.data
 
@@ -889,15 +894,16 @@ class VIEW3D_PT_stencil_projectpaint(Panel):
         col.label(text="Stencil Image")
         col.template_ID(ipaint, "stencil_image", new="image.new", open="image.open")
 
-        stencil_text = mesh.uv_layer_stencil.name if mesh.uv_layer_stencil else ""
+        if not show_experimental_texture_paint(brush):
+            stencil_text = mesh.uv_layer_stencil.name if mesh.uv_layer_stencil else ""
 
-        col.separator()
+            col.separator()
 
-        split = col.split()
-        colsub = split.column()
-        colsub.alignment = "RIGHT"
-        colsub.label(text="UV Layer")
-        split.column().menu("VIEW3D_MT_tools_projectpaint_stencil", text=stencil_text, translate=False)
+            split = col.split()
+            colsub = split.column()
+            colsub.alignment = 'RIGHT'
+            colsub.label(text="UV Layer")
+            split.column().menu("VIEW3D_MT_tools_projectpaint_stencil", text=stencil_text, translate=False)
 
         col.separator()
 
@@ -981,18 +987,6 @@ class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel, TextureMaskPanel):
     def poll(cls, context):
         settings = cls.paint_settings_from_active_tool(context)
         return (settings and settings.brush and context.image_paint_object)
-
-    def draw(self, context):
-        layout = self.layout
-
-        brush = context.tool_settings.image_paint.brush
-
-        col = layout.column()
-        mask_tex_slot = brush.mask_texture_slot
-
-        col.template_ID_preview(mask_tex_slot, "texture", new="texture.new", rows=3, cols=8)
-
-        brush_mask_texture_settings(col, brush)
 
 
 class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel, StrokePanel):
@@ -1581,17 +1575,15 @@ class VIEW3D_PT_tools_imagepaint_options_external(Panel, View3DPaintPanel):
         tool_settings = context.tool_settings
         ipaint = tool_settings.image_paint
 
-        layout.prop(ipaint, "screen_grab_size", text="Screen Grab Size")
+        layout.prop(ipaint, "screen_grab_size", text="Image Size")
 
         layout.separator()
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-        col = flow.column()
-        col.operator("image.project_edit", text="Quick Edit")
-        col = flow.column()
-        col.operator("image.project_apply", text="Apply")
-        col = flow.column()
-        col.operator("paint.project_image", text="Apply Camera Image")
+        layout.operator("image.project_edit", text="Quick Edit...")
+
+        row = layout.row(align=True)
+        row.operator("image.project_apply", text="Apply")
+        row.operator("paint.project_image", text="Apply Camera Image")
 
 
 class VIEW3D_PT_tools_imagepaint_symmetry(Panel, View3DPaintPanel):
@@ -1643,7 +1635,8 @@ class VIEW3D_PT_tools_imagepaint_symmetry_for_topbar(Panel):
 class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Options"
-    bl_options = {"DEFAULT_CLOSED"}
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 14
 
     @classmethod
     def poll(cls, context):
@@ -1837,17 +1830,6 @@ class VIEW3D_PT_tools_particlemode_options_display(View3DPanel, Panel):
 
 # Grease Pencil drawing brushes
 
-
-def tool_use_brush(context):
-    from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
-
-    tool = ToolSelectPanelHelper.tool_active_from_context(context)
-    if tool and tool.use_brushes is False:
-        return False
-
-    return True
-
-
 class GreasePencilSculptPanel:
     bl_context = ".grease_pencil_sculpt"
     bl_category = "Tool"
@@ -1855,6 +1837,10 @@ class GreasePencilSculptPanel:
 
 class VIEW3D_PT_tools_grease_pencil_sculpt_select(View3DPanel, Panel, GreasePencilSculptPanel, BrushSelectPanel):
     bl_label = "Brush Asset"
+
+    @classmethod
+    def poll(cls, context):
+        return cls.active_tool_uses_brushes(context) and cls.get_brush_mode(context) is not None
 
 
 class VIEW3D_PT_tools_grease_pencil_sculpt_settings(Panel, View3DPanel, GreasePencilSculptPanel):
@@ -1927,6 +1913,10 @@ class GreasePencilWeightPanel:
 class VIEW3D_PT_tools_grease_pencil_weight_paint_select(View3DPanel, Panel, GreasePencilWeightPanel, BrushSelectPanel):
     bl_label = "Brush Asset"
 
+    @classmethod
+    def poll(cls, context):
+        return cls.active_tool_uses_brushes(context) and cls.get_brush_mode(context) is not None
+
 
 class VIEW3D_PT_tools_grease_pencil_weight_paint_settings(Panel, View3DPanel, GreasePencilWeightPanel):
     bl_label = "Brush Settings"
@@ -1987,6 +1977,10 @@ class GreasePencilVertexPanel:
 
 class VIEW3D_PT_tools_grease_pencil_vertex_paint_select(View3DPanel, Panel, GreasePencilVertexPanel, BrushSelectPanel):
     bl_label = "Brush Asset"
+
+    @classmethod
+    def poll(cls, context):
+        return cls.active_tool_uses_brushes(context) and cls.get_brush_mode(context) is not None
 
 
 class VIEW3D_PT_tools_grease_pencil_vertex_paint_settings(Panel, View3DPanel, GreasePencilVertexPanel):
@@ -2138,7 +2132,7 @@ class VIEW3D_PT_gpencil_brush_presets(Panel, PresetPanel):
     preset_add_operator = "scene.gpencil_brush_preset_add"
 
 
-class GreasePencilV3PaintPanel:
+class GreasePencilV3PaintPanel(UnifiedPaintPanel):
     bl_context = ".grease_pencil_paint"
     bl_category = "Tool"
 
@@ -2146,7 +2140,7 @@ class GreasePencilV3PaintPanel:
     def poll(cls, context):
         if context.space_data.type in {"VIEW_3D", "PROPERTIES"}:
             # Hide for tools not using brushes.
-            if tool_use_brush(context) is False:
+            if cls.active_tool_uses_brushes(context) is False:
                 return False
 
             return True
@@ -2156,6 +2150,10 @@ class GreasePencilV3PaintPanel:
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_select(Panel, View3DPanel, GreasePencilV3PaintPanel, BrushSelectPanel):
     bl_label = "Brush Asset"
+
+    @classmethod
+    def poll(cls, context):
+        return cls.active_tool_uses_brushes(context) and cls.get_brush_mode(context) is not None
 
 
 class VIEW3D_PT_tools_grease_pencil_v3_brush_settings(Panel, View3DPanel, GreasePencilV3PaintPanel):

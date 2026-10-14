@@ -1457,6 +1457,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon="SHRINK_FATTEN")
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
             layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops")
+            layout.operator("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected") # BFA - WIP - needs icon
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
         elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES', 'EDIT_POINTCLOUD'}:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
