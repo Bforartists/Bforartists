@@ -806,6 +806,7 @@ class ASSETBROWSER_MT_view(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.prop_menu_enum(params, "display_size_discrete")
+        layout.prop_menu_enum(params, "sort_method")  # BFA - exposed from the context menu
 
         layout.separator()
 
@@ -944,10 +945,11 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
             if asset_metadata.is_property_readonly(propname):
                 split = layout.split(factor=layout.property_split_factor)
                 sub = split.row()
-                sub.alignment = 'RIGHT'
+                sub.alignment = 'LEFT'  # BFA - labels float left
                 sub.label(text=ui_name)
                 split.label_multiline(text=getattr(asset_metadata, propname))
             else:
+                # BFA - textbox draws its own left-aligned label like a string prop (as upstream)
                 layout.textbox(asset_metadata, propname, placeholder=ui_name,
                                initial_visible_lines=initial_visible_lines)
 
@@ -1006,23 +1008,17 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
         if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(
             propname
         ):
-            split = layout.split(factor=0.4)
             ui_name = asset_metadata.rna_type.properties[propname].name
-            sub = split.row()
-            sub.alignment = 'RIGHT'
-            sub.label(text=ui_name)
             if asset_metadata.is_property_readonly(propname):
+                split = layout.split(factor=0.4)
+                sub = split.row()
+                sub.alignment = 'LEFT'  # BFA - labels float left
+                sub.label(text=ui_name)
                 split.label_multiline(text=getattr(asset_metadata, propname))
             else:
-                # BFA - text="": textbox() now draws its own label (like prop()) since Blender
-                # 2ceb76079c6, the label is already drawn on the left of the split above.
-                split.textbox(
-                    asset_metadata,
-                    propname,
-                    text="",
-                    placeholder=ui_name,
-                    initial_visible_lines=initial_visible_lines,
-                )
+                # BFA - textbox draws its own left-aligned label like a string prop (as upstream)
+                layout.textbox(asset_metadata, propname, placeholder=ui_name,
+                               initial_visible_lines=initial_visible_lines)
 
     def draw(self, context):
         layout = self.layout
