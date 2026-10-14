@@ -121,12 +121,11 @@ static void draw_effect_panel_header(const bContext * /*C*/, Panel *panel)
   ui::Layout &enable_for_render_row = buttons_row.row(true);
   enable_for_render_row.prop(effect_ptr, "enable_for_render", UI_ITEM_NONE, "", ICON_NONE);
 
-  buttons_row.menu_fn("", ICON_DOWNARROW_HLT, draw_effect_extra_menu, effect);
-
-  ui::Layout &remove_row = buttons_row.row(false);
-  remove_row.emboss_set(ui::EmbossType::None);
-  PointerRNA remove_operator_ptr = remove_row.op("SCENE_OT_remove_compositor_effect", "", ICON_X);
+  /* BFA - delete button before the extra menu, same order and style as the modifier stack. */
+  PointerRNA remove_operator_ptr = buttons_row.op("SCENE_OT_remove_compositor_effect", "", ICON_X);
   RNA_string_set(&remove_operator_ptr, "name", effect->name);
+
+  buttons_row.menu_fn("", ICON_DOWNARROW_HLT, draw_effect_extra_menu, effect);
 
   layout.separator();
 }
