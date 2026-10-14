@@ -166,10 +166,8 @@ class BrushAssetShelf:
             'SCULPT_CURVES': "VIEW3D_AST_brush_sculpt_curves",
         }
         mode = UnifiedPaintPanel.get_brush_mode(context)
-        if not mode:
-            return None
 
-        return mode_map[mode]
+        return mode_map.get(mode)
 
     @staticmethod
     def draw_popup_selector(layout, context, brush, show_name=True):
@@ -217,13 +215,24 @@ def brush_asset_shelf_filter_draw(panel, context):
 def show_experimental_texture_paint(brush):
     if not bpy.context.preferences.experimental.use_3d_texture_paint or not brush:
         return False
-    return brush.image_brush_type in {'DRAW'}
+    return brush.image_brush_type in {'DRAW', 'MASK'}
 
 
 class UnifiedPaintPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     # bl_region_type = 'UI'
+
+    @staticmethod
+    def active_tool_uses_brushes(context):
+        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        tool = ToolSelectPanelHelper.tool_active_from_context(context)
+
+        if not tool:
+            # If there is no active tool, then there can't be an active brush.
+            return False
+
+        return tool.use_brushes
 
     @staticmethod
     def get_brush_mode(context):
@@ -233,16 +242,6 @@ class UnifiedPaintPanel:
 
         if mode == 'PARTICLE':
             # Particle brush settings currently completely do their own thing.
-            return None
-
-        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
-        tool = ToolSelectPanelHelper.tool_active_from_context(context)
-
-        if not tool:
-            # If there is no active tool, then there can't be an active brush.
-            return None
-
-        if not tool.use_brushes:
             return None
 
         space_data = context.space_data
@@ -462,7 +461,7 @@ class VIEW3D_PT_brush_settings_pressure_strength(Panel):
 class BrushPanel(UnifiedPaintPanel):
     @classmethod
     def poll(cls, context):
-        return cls.get_brush_mode(context) is not None
+        return cls.active_tool_uses_brushes(context) and cls.get_brush_mode(context) is not None
 
 
 class BrushSelectPanel(BrushPanel):
@@ -648,42 +647,15 @@ class TextureMaskPanel(BrushPanel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
 
         brush = context.tool_settings.image_paint.brush
+
+        col = layout.column()
         mask_tex_slot = brush.mask_texture_slot
 
-        col = layout.column()
         col.template_ID_preview(mask_tex_slot, "texture", new="texture.new", rows=3, cols=8)
 
-        # map_mode
-        layout.row().prop(mask_tex_slot, "mask_map_mode", text="Mask Mapping")
-
-        if mask_tex_slot.map_mode == "STENCIL":
-            if brush.mask_texture and brush.mask_texture.type == "IMAGE":
-                layout.operator("brush.stencil_fit_image_aspect").mask = True
-            layout.operator("brush.stencil_reset_transform").mask = True
-
-        col = layout.column()
-        col.prop(brush, "use_pressure_masking", text="Pressure Masking")
-        # angle and texture_angle_source
-        if mask_tex_slot.has_texture_angle:
-            col = layout.column()
-            col.prop(mask_tex_slot, "angle", text="Angle")
-            if mask_tex_slot.has_texture_angle_source:
-                col.use_property_split = False # BFA - Align bool property left
-                col.prop(mask_tex_slot, "use_rake", text="Rake")
-
-                if brush.brush_capabilities.has_random_texture_angle and mask_tex_slot.has_random_texture_angle:
-                    col.prop(mask_tex_slot, "use_random", text="Random")
-                    col.use_property_split = True # BFA - Align bool property left (end)
-                    if mask_tex_slot.use_random:
-                        col.prop(mask_tex_slot, "random_angle", text="Random Angle")
-
-        # scale and offset
-        col.prop(mask_tex_slot, "offset")
-        col.prop(mask_tex_slot, "scale")
+        brush_mask_texture_settings(col, brush)
 
 
 class StrokePanel(BrushPanel):
@@ -2025,11 +1997,12 @@ def brush_mask_texture_settings(layout, brush):
         col = layout.column()
         col.prop(mask_tex_slot, "angle", text="Angle")
         if mask_tex_slot.has_texture_angle_source:
-            col.use_property_split = False  # BFA
+            col.use_property_split = False  # BFA - Align bool property left
             col.prop(mask_tex_slot, "use_rake", text="Rake")
 
             if brush.brush_capabilities.has_random_texture_angle and mask_tex_slot.has_random_texture_angle:
                 col.prop(mask_tex_slot, "use_random", text="Random")
+                col.use_property_split = True  # BFA - Align bool property left (end), keep Random Angle split
                 if mask_tex_slot.use_random:
                     col.prop(mask_tex_slot, "random_angle", text="Random Angle")
 
@@ -2220,6 +2193,10 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
             slider=True,
             header=False,
         )
+        # BFA - blender/main adds UnifiedPaintPanel.prop_custom_pressure() here for size and strength,
+        # drawing brush.curve_size / brush.curve_strength. Not used: GP Draw mode evaluates
+        # gpencil_settings.curve_sensitivity / curve_strength (see radius_from_input_sample()),
+        # which the BFA collapsed curves above/below already show. Using both would add duplicate toggles.
 
         ## BFA - WIP collapsed strength curves start
         if settings and not header:
@@ -2347,7 +2324,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
 
 
 def brush_basic_grease_pencil_sculpt_settings(layout, context, brush, *, compact=False):
-    UnifiedPaintPanel.prop_unified(
+    unified_row = UnifiedPaintPanel.prop_unified(
         layout,
         context,
         brush,
@@ -2358,8 +2335,18 @@ def brush_basic_grease_pencil_sculpt_settings(layout, context, brush, *, compact
         slider=True,
         header=compact,
     )
+    if not compact:
+        UnifiedPaintPanel.prop_custom_pressure(
+            layout,
+            context,
+            unified_row,
+            brush,
+            pressure_name="use_pressure_size",
+            curve_visibility_name="show_size_curve",
+            custom_curve_name="curve_size",
+        )
 
-    UnifiedPaintPanel.prop_unified(
+    unified_row = UnifiedPaintPanel.prop_unified(
         layout,
         context,
         brush,
@@ -2369,10 +2356,20 @@ def brush_basic_grease_pencil_sculpt_settings(layout, context, brush, *, compact
         text="Strength",
         header=compact,
     )
+    if not compact:
+        UnifiedPaintPanel.prop_custom_pressure(
+            layout,
+            context,
+            unified_row,
+            brush,
+            pressure_name="use_pressure_strength",
+            curve_visibility_name="show_strength_curve",
+            custom_curve_name="curve_strength",
+        )
 
 
 def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact=False):
-    UnifiedPaintPanel.prop_unified(
+    unified_row = UnifiedPaintPanel.prop_unified(
         layout,
         context,
         brush,
@@ -2383,8 +2380,18 @@ def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact
         slider=True,
         header=compact,
     )
+    if not compact:
+        UnifiedPaintPanel.prop_custom_pressure(
+            layout,
+            context,
+            unified_row,
+            brush,
+            pressure_name="use_pressure_size",
+            curve_visibility_name="show_size_curve",
+            custom_curve_name="curve_size",
+        )
 
-    UnifiedPaintPanel.prop_unified(
+    unified_row = UnifiedPaintPanel.prop_unified(
         layout,
         context,
         brush,
@@ -2394,6 +2401,16 @@ def brush_basic_grease_pencil_weight_settings(layout, context, brush, *, compact
         text="Strength",
         header=compact,
     )
+    if not compact:
+        UnifiedPaintPanel.prop_custom_pressure(
+            layout,
+            context,
+            unified_row,
+            brush,
+            pressure_name="use_pressure_strength",
+            curve_visibility_name="show_strength_curve",
+            custom_curve_name="curve_strength",
+        )
 
     if brush.gpencil_weight_brush_type in {"WEIGHT"}:
         UnifiedPaintPanel.prop_unified(
@@ -2458,7 +2475,7 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
         layout.prop(brush, "blend", text="Blend")
         layout.separator()
 
-    UnifiedPaintPanel.prop_unified(
+    unified_row = UnifiedPaintPanel.prop_unified(
         layout,
         context,
         brush,
@@ -2469,9 +2486,19 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
         slider=True,
         header=compact,
     )
+    if not compact:
+        UnifiedPaintPanel.prop_custom_pressure(
+            layout,
+            context,
+            unified_row,
+            brush,
+            pressure_name="use_pressure_size",
+            curve_visibility_name="show_size_curve",
+            custom_curve_name="curve_size",
+        )
 
-    if brush.gpencil_vertex_brush_type in {"DRAW", "BLUR", "SMEAR"}:
-        UnifiedPaintPanel.prop_unified(
+    if brush.gpencil_vertex_brush_type in {'DRAW', 'BLUR', 'SMEAR'}:
+        unified_row = UnifiedPaintPanel.prop_unified(
             layout,
             context,
             brush,
@@ -2481,6 +2508,16 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
             text="Strength",
             header=compact,
         )
+        if not compact:
+            UnifiedPaintPanel.prop_custom_pressure(
+                layout,
+                context,
+                unified_row,
+                brush,
+                pressure_name="use_pressure_strength",
+                curve_visibility_name="show_strength_curve",
+                custom_curve_name="curve_strength",
+            )
 
     gp_settings = brush.gpencil_settings
     if brush.gpencil_vertex_brush_type in {'DRAW', 'REPLACE'}:

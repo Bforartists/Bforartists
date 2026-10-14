@@ -1014,6 +1014,7 @@ bke::CurvesGeometry curve_boolean(const CurveBooleanOpParameters op_params,
                                   const bke::CurvesGeometry &curves,
                                   ProjectionFunc project_fn,
                                   GroupedSpan<int> shapes,
+                                  const IndexMask &editable_shapes,
                                   const IndexMask &clipping_shapes);
 
 bke::CurvesGeometry curve_boolean_with_planes(const CurveBooleanOpParameters op_params,
@@ -1021,6 +1022,7 @@ bke::CurvesGeometry curve_boolean_with_planes(const CurveBooleanOpParameters op_
                                               ProjectionFunc project_fn,
                                               GroupedSpan<int> shapes,
                                               Span<float4> curve_planes,
+                                              const IndexMask &editable_shapes,
                                               const IndexMask &clipping_shapes,
                                               const float4x4 &layer_to_world,
                                               const ARegion &region);

@@ -12,7 +12,7 @@
 #include "gpu_shader_math_matrix_transform.bsl.hh"
 #include "gpu_shader_math_spherical_harmonics.bsl.hh"
 
-/* Based on Frosbite Unified Volumetric.
+/* Based on Frostbite Unified Volumetric.
  * https://www.ea.com/frostbite/news/physically-based-unified-volumetric-rendering-in-frostbite */
 
 struct UnifiedVolumeProperties {
@@ -27,7 +27,7 @@ struct UnifiedVolumeProperties {
  * Wrapped so that changing it is easier. */
 float volume_froxel_jitter(int2 froxel, float offset)
 {
-  return interleaved_gradient_noise(float2(froxel), 0.0f, offset);
+  return random::interleaved_gradient(float2(froxel), 0.0f, offset);
 }
 
 /* Volume froxel texture normalized linear Z to view space Z.

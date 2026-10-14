@@ -51,6 +51,7 @@
 #include "BKE_object.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
+#include "BKE_scene_context.hh"
 #include "BKE_screen.hh"
 #include "BKE_sound.hh"
 #include "BKE_workspace.hh"
@@ -3891,8 +3892,7 @@ static int wrap_frame_in_range(const int frame, const ScenePlaybackRange &range)
 /* function to be called outside UI context, or for redo */
 static wmOperatorStatus frame_offset_exec(bContext *C, wmOperator *op)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return OPERATOR_CANCELLED;
   }
@@ -3952,8 +3952,7 @@ static void SCREEN_OT_frame_offset(wmOperatorType *ot)
 /* function to be called outside UI context, or for redo */
 static wmOperatorStatus frame_jump_exec(bContext *C, wmOperator *op)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return OPERATOR_CANCELLED;
   }
@@ -4354,8 +4353,7 @@ static std::optional<int> get_first_marker_in_range(const ScenePlaybackRange pla
 /* function to be called outside UI context, or for redo */
 static wmOperatorStatus marker_jump_exec(bContext *C, wmOperator *op)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return OPERATOR_CANCELLED;
   }
@@ -7587,8 +7585,7 @@ static wmOperatorStatus start_playback(bContext *C, int sync, int mode)
   Main *bmain = CTX_data_main(C);
   bScreen *screen = CTX_wm_screen(C);
 
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return OPERATOR_CANCELLED;
   }
@@ -7602,6 +7599,7 @@ static wmOperatorStatus start_playback(bContext *C, int sync, int mode)
    * sound playback below have run. */
   const int frame_before_loop_jump = scene->r.cfra;
 
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
   ViewLayer *view_layer = is_sequencer ? BKE_view_layer_default_render(scene) :
                                          CTX_data_view_layer(C);
 
@@ -7678,6 +7676,13 @@ std::optional<PreScrubbingState> ED_screen_scrubbing_enable(bContext &C, bScreen
   if (!play_screen || !play_screen->animtimer) {
     return std::nullopt;
   }
+
+  /* Only continue if playback is running in this screen, so scrubbing in
+   * another screen does not interrupt playback. See #164040. */
+  if (play_screen != &screen) {
+    return std::nullopt;
+  }
+
   const ScreenAnimData *sad = static_cast<ScreenAnimData *>(play_screen->animtimer->customdata);
   if (sad == nullptr) {
     return std::nullopt;

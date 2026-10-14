@@ -781,6 +781,7 @@ static const EnumPropertyItem spreadsheet_table_id_type_items[] = {
 #  include "BKE_paint.hh"
 #  include "BKE_preferences.h"
 #  include "BKE_scene.hh"
+#  include "BKE_scene_context.hh"
 #  include "BKE_screen.hh"
 #  include "BKE_studiolight.h"
 #  include "BKE_workspace.hh"
@@ -2716,8 +2717,8 @@ static void rna_ConsoleLine_body_set(PointerRNA *ptr, const char *value)
   ConsoleLine *ci = static_cast<ConsoleLine *>(ptr->data);
   size_t len = strlen(value);
 
-  if ((len >= size_t(ci->len_alloc)) || (len * 2 < size_t(ci->len_alloc)))
-  { /* allocate a new string */
+  if ((len >= size_t(ci->len_alloc)) ||
+      (len * 2 < size_t(ci->len_alloc))) { /* allocate a new string */
     MEM_delete(ci->line);
     ci->line = MEM_new_array_uninitialized<char>(len + 1, "rna_consoleline");
     ci->len_alloc = int(len + 1);
@@ -2872,8 +2873,7 @@ static void seq_build_proxy(bContext *C, PointerRNA *ptr)
 
 static void rna_SequenceEditor_render_size_update(bContext *C, PointerRNA *ptr)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (scene == nullptr) {
     return;
   }
