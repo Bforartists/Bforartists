@@ -5503,7 +5503,7 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")  # BFA - WIP
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
 
@@ -5610,7 +5610,7 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_line_gesture", text="Line Trim", icon="LINE_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
         layout.separator()
