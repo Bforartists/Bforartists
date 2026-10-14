@@ -1002,8 +1002,6 @@ class VIEW3D_PT_sculpt_tab_sculpt(ToolsystemPanel):
             OperatorEntry("sculpt.project_line_gesture", text="Line Project", icon='LINE_PROJECT'),
             OperatorEntry("sculpt.face_set_edit", text="Fair Positions", icon='POSITION', props={"mode": 'FAIR_POSITIONS'}),
             OperatorEntry("sculpt.face_set_edit", text="Fair Tangency", icon='NODE_TANGENT', props={"mode": 'FAIR_TANGENCY'}),
-            Separator,
-            OperatorEntry("sculpt.sample_color", text="Sample Color", icon='EYEDROPPER'),
         )
 
         draw_entries(layout, context, entries)
