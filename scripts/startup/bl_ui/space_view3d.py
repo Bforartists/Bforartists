@@ -5392,6 +5392,9 @@ class VIEW3D_MT_sculpt(Menu):
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
         props.trim_mode = "JOIN"
 
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add", icon="LASSO_ADD")  # BFA - stand-in icon
+        props.trim_mode = "JOIN"
+
         layout.separator()
 
         # BFA - added icons to these
@@ -5500,10 +5503,7 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add") # BFA - WIP
-        props.trim_mode = "JOIN"
-
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")  # BFA - WIP
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
 
@@ -5610,7 +5610,7 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_line_gesture", text="Line Trim", icon="LINE_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
         layout.separator()
@@ -5621,7 +5621,7 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
         props.trim_mode = "JOIN"
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add")
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add", icon="LASSO_ADD")  # BFA - stand-in icon
         props.trim_mode = "JOIN"
 
 # BFA - Disabled as it doesn't make sense to have modal tools run from the header

@@ -1661,6 +1661,7 @@ if(WITH_BLENDER)
       polygonsides
       polyline_hide
       polyline_show
+      polyline_trim
       pose_data
       pose_from_breakdown
       pose_hlt
