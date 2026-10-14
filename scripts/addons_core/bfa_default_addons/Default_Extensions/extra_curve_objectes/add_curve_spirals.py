@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2012-2022 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 import time
@@ -16,7 +16,7 @@ from mathutils import (
         Matrix,
         )
 from math import (
-        sin, cos, pi
+        sin, cos, pi, e
         )
 from bpy_extras import object_utils
 from bpy.types import (
@@ -67,7 +67,7 @@ def make_spiral(props, context):
             cur_rad += step_rad
         if props.spiral_type == 'LOG':
             # r = a*e^{|theta| * b}
-            cur_rad = props.radius * pow(props.B_force, abs(cur_phi))
+            cur_rad = props.radius * pow(e, abs(cur_phi) * props.B_force)
 
         px = cur_rad * cos(cur_phi)
         py = cur_rad * sin(cur_phi)
@@ -338,7 +338,7 @@ class CURVE_OT_spirals(Operator, object_utils.AddObjectHelper):
     # step between turns(one turn equals 360 deg)
     # Log variables
     B_force : FloatProperty(
-            default=1.00,
+            default=0.30634,
             min=0.00, max=30.00,
             description="Factor of exponent"
             )
@@ -417,89 +417,69 @@ class CURVE_OT_spirals(Operator, object_utils.AddObjectHelper):
             ('AUTO', "Auto", "Automatic type Bezier handles")]
             )
     edit_mode : BoolProperty(
-            name="Show in edit mode",
+            name="Show in Edit Mode",
             default=True,
-            description="Show in edit mode"
+            description="Show in Edit Mode"
             )
 
     def draw(self, context):
         layout = self.layout
-        col = layout.column_flow(align=True)
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        layout.prop(self, "spiral_type")
-        layout.prop(self, "spiral_direction")
+        layout.separator()
+        layout.prop(self, "spiral_type", text='Type')
+        layout.separator()
+        layout.prop(self, "turns", text="Turns")
+        layout.prop(self, "steps", text="Steps")
 
-        col = layout.column(align=True)
-        col.label(text="Spiral Parameters:")
-        col.prop(self, "turns", text="Turns")
-        col.prop(self, "steps", text="Steps")
-
-        box = layout.box()
         if self.spiral_type == 'ARCH':
-            box.label(text="Archemedian Settings:")
-            col = box.column(align=True)
-            col.prop(self, "dif_radius", text="Radius Growth")
-            col.prop(self, "radius", text="Radius")
-            col.prop(self, "dif_z", text="Height")
+            layout.prop(self, "dif_radius", text="Radius Growth")
+            layout.prop(self, "radius", text="Radius")
+            layout.prop(self, "dif_z", text="Height")
 
         if self.spiral_type == 'LOG':
-            box.label(text="Logarithmic Settings:")
-            col = box.column(align=True)
-            col.prop(self, "radius", text="Radius")
-            col.prop(self, "B_force", text="Expansion Force")
-            col.prop(self, "dif_z", text="Height")
+            layout.prop(self, "radius", text="Radius")
+            layout.prop(self, "B_force", text="Expansion")
+            layout.prop(self, "dif_z", text="Height")
 
         if self.spiral_type == 'SPHERE':
-            box.label(text="Spheric Settings:")
-            box.prop(self, "radius", text="Radius")
+            layout.prop(self, "radius", text="Radius")
 
         if self.spiral_type == 'TORUS':
-            box.label(text="Torus Settings:")
-            col = box.column(align=True)
-            col.prop(self, "cycles", text="Number of Cycles")
-
+            layout.prop(self, "cycles", text="Number of Cycles")
             if self.dif_inner_radius == 0 and self.dif_z == 0:
                 self.cycles = 1
-            col.prop(self, "radius", text="Radius")
-
-            if self.dif_z == 0:
-                col.prop(self, "dif_z", text="Height per Cycle")
-            else:
-                box2 = box.box()
-                col2 = box2.column(align=True)
-                col2.prop(self, "dif_z", text="Height per Cycle")
-                col2.prop(self, "touch", text="Make Snail")
-
-            col = box.column(align=True)
-            col.prop(self, "curves_number", text="Curves Number")
-            col.prop(self, "inner_radius", text="Inner Radius")
-            col.prop(self, "dif_radius", text="Increase of Torus Radius")
-            col.prop(self, "dif_inner_radius", text="Increase of Inner Radius")
-
-        row = layout.row()
-        row.prop(self, "shape", expand=True)
+            layout.prop(self, "radius", text="Radius")
+            layout.prop(self, "dif_z", text="Height per Cycle")
+            row = layout.row()
+            row.enabled = self.dif_z == 0
+            row.prop(self, "touch", text="Make Snail")
+            layout.prop(self, "curves_number", text="Curves Number")
+            layout.prop(self, "inner_radius", text="Inner Radius")
+            col = layout.column(align=True)
+            col.prop(self, "dif_radius", text="Add Torus")
+            col.prop(self, "dif_inner_radius", text="Inner")
 
         # output options
-        col = layout.column()
-        col.label(text="Output Curve Type:")
-        col.row().prop(self, "curve_type", expand=True)
+        layout.separator()
+        layout.prop(self, "curve_type", text='Curve')
+        layout.row().prop(self, "shape", text='Shape', expand=True)   
+        layout.prop(self, "spiral_direction", text='Direction')
 
         if self.curve_type == 'NURBS':
-            col.prop(self, "order_u")
+            layout.prop(self, "order_u")
         elif self.curve_type == 'BEZIER':
-            col.row().prop(self, 'handleType', expand=True)
+            layout.row().prop(self, 'handleType', expand=True)
 
-        col = layout.column()
-        col.row().prop(self, "use_cyclic_u", expand=True)
+        layout.prop(self, "use_cyclic_u")
+        layout.prop(self, "edit_mode")
 
-        col = layout.column()
-        col.row().prop(self, "edit_mode", expand=True)
-
-        col = layout.column()
+        layout.separator()
         # AddObjectHelper props
-        col.prop(self, "align")
-        col.prop(self, "location")
-        col.prop(self, "rotation")
+        layout.prop(self, "align")
+        layout.prop(self, "location")
+        layout.prop(self, "rotation")
 
     @classmethod
     def poll(cls, context):

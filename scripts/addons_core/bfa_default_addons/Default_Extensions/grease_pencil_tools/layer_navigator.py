@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 import blf, gpu
@@ -35,14 +35,61 @@ def round_to_ceil_even(f):
   else:
     return math.floor(f) + 1
 
+## Check for nested lock
+def is_locked(stack_item):
+    '''Check if passed stack item (layer or group) is locked
+    either itself or by parent groups'''
+    if stack_item.lock:
+        return True
+    if stack_item.parent_group:
+        return is_locked(stack_item.parent_group)
+    return False
+
+def is_parent_locked(stack_item):
+    '''Check if passed stack item (layer or group) is locked by parent groups'''
+    if stack_item.parent_group:
+        return is_locked(stack_item.parent_group)
+    return False
+
+## Check for nested hide
+def is_hidden(stack_item):
+    '''Check if passed stack item (layer or group) is hidden
+    either itself or by parent groups'''
+    if stack_item.hide:
+        return True
+    if stack_item.parent_group:
+        return is_hidden(stack_item.parent_group)
+    return False
+
+def is_parent_hidden(stack_item):
+    '''Check if passed stack item (layer or group) is hidden by parent groups'''
+    if stack_item.parent_group:
+        return is_hidden(stack_item.parent_group)
+    return False
+
 def move_layer_to_index(l, idx):
-    a = [i for i, lay in enumerate(l.id_data.layers) if lay == l][0]
-    move = idx - a
-    if move == 0:
+    layers = l.id_data.layers
+    target_layer = layers[idx]
+    if l == target_layer:
         return
+    if target_layer.parent_group != l.parent_group:
+        ## Move in group
+        layers.move_to_layer_group(l, target_layer.parent_group)
+
+    current_index = next((i for i, lay in enumerate(layers) if lay == l), 0)
+
+    indices_in_same_group = [i for i, layer in enumerate(layers) if l.parent_group == layer.parent_group]
+    if idx not in indices_in_same_group or current_index not in indices_in_same_group:
+        # print('Layer navigator error: could not find target placement within group. keeping on top of the group)')
+        return
+
+    pos_in_group = indices_in_same_group.index(current_index)
+    target_pos_in_group = indices_in_same_group.index(idx)
+    move = target_pos_in_group - pos_in_group
+
     direction = 'UP' if move > 0 else 'DOWN'
     for _i in range(abs(move)):
-        l.id_data.layers.move(l, direction)
+        layers.move(l, direction)
 
 def get_reduced_area_coord(context):
     w, h = context.region.width, context.region.height
@@ -92,11 +139,13 @@ def draw_callback_px(self, context):
     opacitys = []
     opacity_bars = []
     active_case = []
+    group_bounds = []
     active_width = float(round_to_ceil_even(4.0 * context.preferences.system.ui_scale))
 
     ## tex icon store
-    icons = {'locked':[],'unlocked':[], 'hide_off':[], 'hide_on':[]}
+    icons = {'locked':[], 'unlocked':[], 'hide_off':[], 'hide_on':[]}
 
+    prev_group = None
     for i, l in enumerate(self.gpl):
         ## Rectangle coords CW from bottom-left corner
 
@@ -124,25 +173,25 @@ def draw_callback_px(self, context):
             # Apply offset to line tips
             active_case = [v + offset for v, offset in zip(flattened_line_pairs, case_px_offsets)]
 
+        # Add group lines
+        if l.parent_group != prev_group:
+            group_bounds += [(self.right + self.dot_gap * 4, corner.y), (self.right + self.dot_gap, corner.y)]
+            group_bounds += [(self.left - self.dot_gap * 4, corner.y), (self.left - self.dot_gap, corner.y)]
+            prev_group = l.parent_group
 
         lock_coord = corner + Vector((self.px_w - self.icons_margin_a, self.mid_height - int(self.icon_size / 2)))
 
         hide_coord = corner + Vector((self.px_w - self.icons_margin_b, self.mid_height - int(self.icon_size / 2)))
 
 
-        if l.lock:
-            lock_rects += rectangle_tris_from_coords(
-                [v + corner for v in self.case]
-            )
+        if is_locked(l):
+            lock_rects += rectangle_tris_from_coords([v + corner for v in self.case])
             icons['locked'].append([v + lock_coord for v in self.icon_tex_coord])
         else:
-            rects += rectangle_tris_from_coords(
-                [v + corner for v in self.case]
-            )
+            rects += rectangle_tris_from_coords([v + corner for v in self.case])
             icons['unlocked'].append([v + lock_coord for v in self.icon_tex_coord])
 
-
-        if l.hide:
+        if is_hidden(l):
             icons['hide_on'].append([v + hide_coord for v in self.icon_tex_coord])
         else:
             icons['hide_off'].append([v + hide_coord for v in self.icon_tex_coord])
@@ -188,13 +237,19 @@ def draw_callback_px(self, context):
     self.batch_lines.draw(shader)
 
     ## "Plus" lines
-    if self.gpl.active_index == 0:
+    active_index = layer_active_index(self.gpl)
+    if active_index == 0:
         plus_lines = self.plus_lines[:8]
     else:
-        plus_lines = self.plus_lines[self.gpl.active_index * 4 + 4:self.gpl.active_index * 4 + 8]
+        plus_lines = self.plus_lines[active_index * 4 + 4:active_index * 4 + 8]
     batch_plus = batch_for_shader(
         shader, 'LINES', {"pos": plus_lines})
     batch_plus.draw(shader)
+
+    ## Group boundary lines
+    batch_group_bounds = batch_for_shader(
+        shader, 'LINES', {"pos": group_bounds})
+    batch_group_bounds.draw(shader)
 
     ## Loop draw tex icons
     for icon_name, coord_list in icons.items():
@@ -232,10 +287,12 @@ def draw_callback_px(self, context):
         #     blf.position(font_id, self.text_x+1, self.text_pos[i]-1, 0)
         #     blf.size(font_id, self.text_size)
         #     blf.color(font_id, *self.active_layer_color)
-        #     blf.draw(font_id, l.info)
-        if l.hide:
+        #     blf.draw(font_id, l.name)
+        
+        # if l.hide:
+        if is_hidden(l):
             color = self.hided_layer_color
-        elif not len(l.frames) or (len(l.frames) == 1 and not len(l.frames[0].strokes)):
+        elif not len(l.frames) or (len(l.frames) == 1 and not len(l.frames[0].drawing.strokes)):
             # Show darker color if is empty if layer is empty (or has one empty keyframe)
             color = self.empty_layer_color
         else:
@@ -244,7 +301,7 @@ def draw_callback_px(self, context):
         blf.position(font_id, self.text_x, self.text_pos[i], 0)
         blf.size(font_id, self.text_size)
         blf.color(font_id, *color)
-        display_name = l.info if len(l.info) <= self.text_char_limit else l.info[:self.text_char_limit-3] + '...'
+        display_name = l.name if len(l.name) <= self.text_char_limit else l.name[:self.text_char_limit-3] + '...'
         blf.draw(font_id, display_name)
 
     ## Drag text
@@ -258,15 +315,18 @@ def draw_callback_px(self, context):
             blf.draw(font_id, self.drag_text)
 
 
+def layer_active_index(gpl):
+    return next((i for i, l in enumerate(gpl) if l == gpl.active), None)
+
 class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
     bl_idname = "gpencil.viewport_layer_nav_osd"
     bl_label = "GP Layer Navigator Pop up"
     bl_description = "Change active GP layer with a viewport interactive OSD"
-    bl_options = {'REGISTER', 'INTERNAL'}
+    bl_options = {'REGISTER', 'INTERNAL', 'UNDO_GROUPED'}
 
     @classmethod
     def poll(cls, context):
-        return context.object is not None and context.object.type == 'GPENCIL'
+        return context.object is not None and context.object.type == 'GREASEPENCIL'
 
     lapse = 0
     text = ''
@@ -302,8 +362,20 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         #     # Needed if delete is implemented
         #     return {'CANCELLED'}
 
-        self.layer_list = [(l.info, l) for l in self.gpl]
-        self.ui_idx = self.org_index = context.object.data.layers.active_index
+        self.layer_list = [(l.name, l) for l in self.gpl]
+        if active_grp := context.grease_pencil.layer_groups.active:
+            ## find uppermost layer related to group and set as active
+            last_layer = None
+            for l in context.grease_pencil.layers:
+                if l.parent_group == active_grp:
+                    last_layer = l
+            if last_layer is None:
+                last_layer = context.grease_pencil.layers[-1]
+
+            ## Set active layer
+            context.object.data.layers.active = last_layer
+
+        self.ui_idx = self.org_index = layer_active_index(self.gpl)
         self.id_num = len(self.layer_list)
         self.dragging = False
         self.drag_mode = None
@@ -356,14 +428,15 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         self.text_x = (self.left + mid_square) - int(self.px_w / 3)
 
         self.lines = []
-        # self.texts = []
         self.text_pos = []
+        # Initialize list for y-coordinate ranges for each layer
         self.ranges = []
+
         for i in range(self.id_num):
             y_coord = self.bottom + (i * self.px_h)
             self.lines += [(self.left, y_coord), (self.right, y_coord)]
 
-            # self.texts.append((self.gpl[i].info, self.text_bottom + (i * self.px_h)))
+            # self.texts.append((self.gpl[i].name, self.text_bottom + (i * self.px_h)))
             self.text_pos.append(self.text_bottom + (i * self.px_h))
 
             ## define index ranges
@@ -413,12 +486,12 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             Vector((self.opacity_slider_length, self.px_h - self.slider_height)),
         ]
 
-
         ## Add contour lines
         self.lines += [Vector((self.left, self.top)), Vector((self.right, self.top)),
                     Vector((self.left, self.bottom)), Vector((self.right, self.bottom)),
                     Vector((self.left, self.top)), Vector((self.left, self.bottom)),
                     Vector((self.right, self.top)), Vector((self.right, self.bottom))]
+
         shader = gpu.shader.from_builtin('UNIFORM_COLOR')
 
         self.batch_lines = batch_for_shader(
@@ -456,6 +529,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         self.left_handed = prefs.left_handed
         self.icons_margin_a = int(30 * ui_scale)
         self.icons_margin_b = int(54 * ui_scale)
+        self.dot_gap = int(2 * ui_scale)
 
         self.opacity_slider_length = int(self.px_w * 72 / 100) # As width's percentage
         # self.opacity_slider_length = self.px_w # Full width
@@ -518,9 +592,16 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
             for i, zone in enumerate(self.add_box_zones):
                 # if (zone[0].x <= self.mouse.x <= zone[2].x) and (zone[0].y <= self.mouse.y <= zone[2].y):
                 if zone[0].y <= self.mouse.y <= zone[2].y:
-                    # add layer
-                    nl = context.object.data.layers.new('GP_Layer')
-                    nl.frames.new(context.scene.frame_current, active=True)
+                    group = None
+                    if i > 0:
+                        group = self.gpl[i-1].parent_group
+                    # Add layer
+                    nl = context.object.data.layers.new('Layer', set_active=True, layer_group=group)
+                    nl.frames.new(context.scene.frame_current) # , active=True
+
+                    context.object.data.layers.update()
+                    move_layer_to_index(nl, i)
+
                     nl.use_lights = False
                     if i == 0:
                         ## bottom layer, need to get down by one
@@ -581,18 +662,18 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
                 self.org_opacity = self.gpl[self.id_src].opacity
             else:
                 ## on layer
-                self.drag_text = self.gpl[self.id_src].info
+                self.drag_text = self.gpl[self.id_src].name
                 self.drag_mode = 'layer'
         return False
 
     def modal(self, context, event):
         context.area.tag_redraw()
         self.mouse = Vector((event.mouse_region_x, event.mouse_region_y))
-        current_idx = context.object.data.layers.active_index
+        current_idx = layer_active_index(context.object.data.layers)
 
         if event.type in {'RIGHTMOUSE', 'ESC'}:
             self.stop_mod(context)
-            context.object.data.layers.active_index = self.org_index
+            context.object.data.layers.active = self.gpl[self.org_index]
             return {'CANCELLED'}
 
         if event.type == self.key and event.value == 'RELEASE':
@@ -671,7 +752,7 @@ class GPT_OT_viewport_layer_nav_osd(bpy.types.Operator):
         if self.ui_idx == current_idx:
             return {'RUNNING_MODAL'}
         else:
-            context.object.data.layers.active_index = self.ui_idx
+            context.object.data.layers.active = self.gpl[self.ui_idx]
             if self.drag_mode:
                 ## maybe add a self.state value ?
                 if self.drag_mode == 'hide' and not self.gpl[self.ui_idx].hide:
@@ -788,12 +869,13 @@ def draw_keymap_ui_custom(km, kmi, layout):
     else:
         row.label()
 
-    if (not kmi.is_user_defined) and kmi.is_user_modified:
-        ops = row.operator("gp.restore_keymap_item", text="", icon='BACK') # modified
-        ops.km_name = km.name
-        ops.kmi_name = kmi.idname
-    else:
-        row.label(text='', icon='BLANK1')
+    # if (not kmi.is_user_defined) and kmi.is_user_modified:
+    #     ## Restore ops is from another addon and should be re-implemented here to work
+    #     ops = row.operator("gp.restore_keymap_item", text="", icon='BACK')
+    #     ops.km_name = km.name
+    #     ops.kmi_name = kmi.idname
+    # else:
+    #     row.label(text='', icon='BLANK1')
 
     # Expanded, additional event settings
     if kmi.show_expanded:

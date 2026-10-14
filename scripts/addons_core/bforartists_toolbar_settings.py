@@ -145,7 +145,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     topbar_tools_cbox: BoolProperty(name='Tools', default=True, description = "Display the Topbar Tools Operators\nAll Modes",)
     topbar_tools_parent : BoolProperty(name="Parent", default=False, description = "Display the Parent Topbar\nDisplay is mode and content dependant", )
     topbar_tools_objectdata : BoolProperty(name="Object Data", default=False, description = "Display the Object Data Topbar\nDisplay is mode and content dependant", )
-    topbar_tools_link_to_scn : BoolProperty(name="Link to SCN", default=False, description = "Display the Link to SCN dropdown box\nDisplay is mode and content dependant", )
     topbar_tools_linked_objects : BoolProperty(name="Linked Objects", default=False, description = "Display the Linked Objects Topbar\nDisplay is mode and content dependant", )
     topbar_tools_join : BoolProperty(name="Join", default=False, description = "Display the Join Topbar\nDisplay is mode and content dependant", )
     topbar_tools_origin : BoolProperty(name="Origin", default=False, description = "Display the Origin Topbar\nDisplay is mode and content dependant", )
@@ -247,7 +246,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     # Tools Toolbar
     tools_parent : BoolProperty(name="Parent", default=False, description = "Display the Parent Toolbar\nDisplay is mode and content dependant", )
     tools_objectdata : BoolProperty(name="Object Data", default=False, description = "Display the Object Data Toolbar\nDisplay is mode and content dependant", )
-    tools_link_to_scn : BoolProperty(name="Link to SCN", default=False, description = "Display the Link to SCN dropdown box\nDisplay is mode and content dependant", )
     tools_linked_objects : BoolProperty(name="Linked Objects", default=False, description = "Display the Linked Objects Toolbar\nDisplay is mode and content dependant", )
     tools_join : BoolProperty(name="Join", default=False, description = "Display the Join Toolbar\nDisplay is mode and content dependant", )
     tools_origin : BoolProperty(name="Origin", default=False, description = "Display the Origin Toolbar\nDisplay is mode and content dependant", )
@@ -406,7 +404,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             grid.prop(self, "topbar_tools_parent", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "topbar_tools_objectdata", toggle=addon_prefs.bfa_button_style)
-            grid.prop(self, "topbar_tools_link_to_scn", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "topbar_tools_linked_objects", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "topbar_tools_join", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "topbar_tools_origin", toggle=addon_prefs.bfa_button_style)
@@ -551,7 +548,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
             grid.prop(self, "tools_parent", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "tools_objectdata", toggle=addon_prefs.bfa_button_style)
-            grid.prop(self, "tools_link_to_scn", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "tools_linked_objects", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "tools_join", toggle=addon_prefs.bfa_button_style)
             grid.prop(self, "tools_origin", toggle=addon_prefs.bfa_button_style)
@@ -773,7 +769,6 @@ def bfa_reset_tools(layout_function,):
         reset("topbar_tools_cbox")
         reset("topbar_tools_parent")
         reset("topbar_tools_objectdata")
-        reset("topbar_tools_link_to_scn")
         reset("topbar_tools_linked_objects")
         reset("topbar_tools_join")
         reset("topbar_tools_origin")
@@ -1059,7 +1054,6 @@ def bfa_reset_toolbar_tools(layout_function,):
 
         reset("tools_parent")
         reset("tools_objectdata")
-        reset("tools_link_to_scn")
         reset("tools_linked_objects")
         reset("tools_join")
         reset("tools_origin")

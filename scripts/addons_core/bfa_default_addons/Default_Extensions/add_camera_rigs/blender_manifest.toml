@@ -1,18 +1,32 @@
 schema_version = "1.0.0"
 id = "add_camera_rigs"
 name = "Add Camera Rigs"
-version = "1.6.2"
+version = "1.9.1"
 tagline = "Adds a Camera Rig with UI"
-maintainer = "Community"
+maintainer = "Wayne Dixon <waylowinternet@gmail.com>"
 type = "add-on"
 tags = ["Camera"]
 blender_version_min = "4.2.0"
 license = ["SPDX:GPL-3.0-or-later"]
-website = "https://projects.blender.org/extensions/add_camera_rigs"
+website = "https://github.com/waylow/add_camera_rigs"
 copyright = [
     "2024 Wayne Dixon",
     "2024 Brian Raschko",
     "2024 Kris Wittig",
     "2024 Damien Picard",
     "2024 Flavio Perez",
+    "2026 Spencer Magnusson",
+]
+
+[build]
+paths_exclude_pattern = [
+  "/.git/",
+  "__pycache__/",
+  "images/",
+  ".*",
+  "*.blend",
+  "*.blend[0123456789]",
+  "*.md",
+  "*.zip",
+  "tests/",
 ]

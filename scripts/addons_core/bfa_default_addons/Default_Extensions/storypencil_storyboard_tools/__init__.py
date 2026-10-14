@@ -1,21 +1,3 @@
-# SPDX-FileCopyrightText: 2022-2023 Blender Foundation
-#
-# SPDX-License-Identifier: GPL-2.0-or-later
-
-# ----------------------------------------------
-# Define Addon info
-# ----------------------------------------------
-bl_info = {
-    "name": "Storypencil - Storyboard Tools",
-    "description": "Storyboard tools",
-    "author": "Antonio Vazquez, Matias Mendiola, Daniel Martinez Lara, Rodrigo Blaas, Samuel Bernou",
-    "version": (1, 1, 4),
-    "blender": (3, 3, 0),
-    "location": "",
-    "warning": "",
-    "category": "Sequencer",
-}
-
 # ----------------------------------------------
 # Import modules
 # ----------------------------------------------
@@ -119,8 +101,14 @@ def unregister_keymaps():
 
 def register():
     from bpy.utils import register_class
+    
     for cls in classes:
-        register_class(cls)
+        try:
+            register_class(cls)
+        except Exception as e:
+            print(f"{cls.__name__} registering problem {e}")
+
+
     register_keymaps()
 
     Scene.storypencil_scene_duration = IntProperty(
@@ -222,8 +210,12 @@ def register():
     bpy.types.SEQUENCER_HT_header.append(synchro.draw_sync_sequencer_header)
 
     bpy.types.SEQUENCER_MT_add.append(scene_tools.draw_new_scene)
-    bpy.types.VIEW3D_MT_draw_gpencil.append(scene_tools.setup_storyboard)
 
+    if bpy.app.version >= (4, 3, 0):
+        bpy.types.VIEW3D_MT_paint_grease_pencil.append(scene_tools.setup_storyboard)
+    else:
+        bpy.types.VIEW3D_MT_draw_gpencil.append(scene_tools.setup_storyboard)
+   
 
 def unregister():
     unregister_keymaps()
@@ -242,7 +234,11 @@ def unregister():
     bpy.types.SEQUENCER_HT_header.remove(synchro.draw_sync_sequencer_header)
 
     bpy.types.SEQUENCER_MT_add.remove(scene_tools.draw_new_scene)
-    bpy.types.VIEW3D_MT_draw_gpencil.remove(scene_tools.setup_storyboard)
+
+    if bpy.app.version >= (4, 3, 0):
+        bpy.types.VIEW3D_MT_paint_grease_pencil.remove(scene_tools.setup_storyboard)
+    else:
+        bpy.types.VIEW3D_MT_draw_gpencil.remove(scene_tools.setup_storyboard)
 
     del Scene.storypencil_scene_duration
     del WindowManager.storypencil_settings

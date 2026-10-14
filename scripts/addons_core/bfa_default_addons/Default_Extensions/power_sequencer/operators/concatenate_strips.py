@@ -139,7 +139,7 @@ class POWER_SEQUENCER_OT_concatenate_strips(bpy.types.Operator):
         concatenate_start = getattr(strip_target, attribute_target)
         last_gap = 0
         for s in to_concatenate:
-            if isinstance(s, bpy.types.EffectSequence):
+            if isinstance(s, bpy.types.EffectStrip):
                 concatenate_start = (
                     s.frame_final_end - last_gap
                     if self.is_towards_left

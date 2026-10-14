@@ -18,6 +18,7 @@ from bpy.props import (
         StringProperty,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 # Create a new mesh (object) from verts/edges/faces.
 # verts/edges/faces ... List of vertices/edges/faces for the
@@ -267,19 +268,21 @@ class AddDiamond(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
-        box = layout.box()
-        box.prop(self, "segments")
-        box.prop(self, "girdle_radius")
-        box.prop(self, "table_radius")
-        box.prop(self, "crown_height")
-        box.prop(self, "pavilion_height")
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        
+        layout.separator()
+        layout.prop(self, "segments")
+        col = layout.column(align=True)
+        col.prop(self, "girdle_radius", text='Radius Girdle')
+        col.prop(self, "table_radius", text='Table')
+        col = layout.column(align=True)
+        col.prop(self, "crown_height", text='Height Crown')
+        col.prop(self, "pavilion_height", text='Pavilion')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -417,19 +420,21 @@ class AddGem(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
-        box = layout.box()
-        box.prop(self, "segments")
-        box.prop(self, "pavilion_radius")
-        box.prop(self, "crown_radius")
-        box.prop(self, "crown_height")
-        box.prop(self, "pavilion_height")
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        
+        layout.separator()
+        layout.prop(self, "segments")
+        col = layout.column(align=True)
+        col.prop(self, "crown_radius", text='Radius Crown')
+        col.prop(self, "pavilion_radius", text='Pavilion')
+        col = layout.column(align=True)
+        col.prop(self, "crown_height", text='Height Crown')
+        col.prop(self, "pavilion_height", text='Pavilion')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

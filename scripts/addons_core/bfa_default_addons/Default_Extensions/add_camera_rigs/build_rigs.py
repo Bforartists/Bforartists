@@ -1,6 +1,8 @@
-# SPDX-FileCopyrightText: 2019-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2019 Wayne Dixon
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+import logging
 
 import bpy
 from bpy.types import Operator
@@ -8,10 +10,27 @@ from bpy_extras import object_utils
 from mathutils import Vector
 from math import pi
 
-from .create_widgets import (create_root_widget,
-                             create_camera_widget, create_camera_offset_widget,
-                             create_aim_widget, create_circle_widget,
-                             create_corner_widget)
+from .create_widgets import (
+    create_root_widget,
+    create_camera_widget,
+    create_aim_widget,
+    create_corner_widget,
+    create_circle_widget,
+    create_star_widget,
+    create_cross_widget,
+    create_2d_root_widget,
+)
+
+from .operators import get_lens_expr, get_rig_and_cam
+
+
+def lock_mch_transforms(rig):
+    for bone in rig.pose.bones:
+        if bone.name.startswith("MCH-"):
+            bone.lock_location = (True, True, True)
+            bone.lock_rotation = (True, True, True)
+            bone.lock_rotation_w = True
+            bone.lock_scale = (True, True, True)
 
 
 def create_prop_driver(rig, cam, prop_from, prop_to):
@@ -19,52 +38,58 @@ def create_prop_driver(rig, cam, prop_from, prop_to):
     driver = cam.data.driver_add(prop_to)
     driver.driver.type = 'SCRIPTED'
     var = driver.driver.variables.new()
-    var.name = 'var'
+    var.name = prop_from
     var.type = 'SINGLE_PROP'
 
     # Target the custom bone property
     var.targets[0].id = rig
     var.targets[0].data_path = 'pose.bones["Camera"]["%s"]' % prop_from
-    driver.driver.expression = 'var'
+    driver.driver.expression = prop_from
+
+    return driver
 
 
 def create_dolly_bones(rig):
     """Create bones for the dolly camera rig"""
     bones = rig.data.edit_bones
 
+    # Add bone collections
+    collection_controls = rig.data.collections.new(name="Controls")
+    collection_mch = rig.data.collections.new(name="MCH")
+    collection_mch.is_visible = False
+
     # Add new bones
     root = bones.new("Root")
     root.tail = (0.0, 1.0, 0.0)
     root.show_wire = True
-    rig.data.collections.new(name="Controls")
-    rig.data.collections['Controls'].assign(root)
+    root.color.palette = 'THEME02'
+    collection_controls.assign(root)
 
-    ctrl_aim_child = bones.new("MCH-Aim_shape_rotation")
+    ctrl_aim_child = bones.new("MCH-Aim_widget")
     ctrl_aim_child.head = (0.0, 10.0, 1.7)
     ctrl_aim_child.tail = (0.0, 11.0, 1.7)
-    # Create bone collection and assign bone
-    rig.data.collections.new(name="MCH")
-    rig.data.collections['MCH'].assign(ctrl_aim_child)
-    rig.data.collections['MCH'].is_visible = False
+    collection_mch.assign(ctrl_aim_child)
 
     ctrl_aim = bones.new("Aim")
     ctrl_aim.head = (0.0, 10.0, 1.7)
     ctrl_aim.tail = (0.0, 11.0, 1.7)
     ctrl_aim.show_wire = True
-    rig.data.collections['Controls'].assign(ctrl_aim)
+    ctrl_aim.color.palette = 'THEME04'
+    collection_controls.assign(ctrl_aim)
 
     ctrl = bones.new("Camera")
     ctrl.head = (0.0, 0.0, 1.7)
     ctrl.tail = (0.0, 1.0, 1.7)
     ctrl.show_wire = True
-    rig.data.collections['Controls'].assign(ctrl)
+    ctrl.color.palette = 'THEME02'
+    collection_controls.assign(ctrl)
 
     ctrl_offset = bones.new("Camera_Offset")
     ctrl_offset.head = (0.0, 0.0, 1.7)
     ctrl_offset.tail = (0.0, 1.0, 1.7)
     ctrl_offset.show_wire = True
-    rig.data.collections['Controls'].assign(ctrl_offset)
-
+    ctrl_offset.color.palette = 'THEME09'
+    collection_controls.assign(ctrl_offset)
 
     # Setup hierarchy
     ctrl.parent = root
@@ -83,45 +108,57 @@ def create_crane_bones(rig):
     """Create bones for the crane camera rig"""
     bones = rig.data.edit_bones
 
+    # Add bone collections
+    collection_controls = rig.data.collections.new(name="Controls")
+    collection_mch = rig.data.collections.new(name="MCH")
+    collection_mch.is_visible = False
+
     # Add new bones
     root = bones.new("Root")
     root.tail = (0.0, 1.0, 0.0)
     root.show_wire = True
-    rig.data.collections.new(name="Controls")
-    rig.data.collections['Controls'].assign(root)
+    root.color.palette = 'THEME02'
+    collection_controls.assign(root)
 
-    ctrl_aim_child = bones.new("MCH-Aim_shape_rotation")
+    ctrl_aim_child = bones.new("MCH-Aim_widget")
     ctrl_aim_child.head = (0.0, 10.0, 1.7)
     ctrl_aim_child.tail = (0.0, 11.0, 1.7)
-    rig.data.collections.new(name="MCH")
-    rig.data.collections['MCH'].assign(ctrl_aim_child)
-    rig.data.collections['MCH'].is_visible = False
+    collection_mch.assign(ctrl_aim_child)
 
     ctrl_aim = bones.new("Aim")
     ctrl_aim.head = (0.0, 10.0, 1.7)
     ctrl_aim.tail = (0.0, 11.0, 1.7)
     ctrl_aim.show_wire = True
-    rig.data.collections['Controls'].assign(ctrl_aim)
+    ctrl_aim.color.palette = 'THEME04'
+    collection_controls.assign(ctrl_aim)
 
     ctrl = bones.new("Camera")
     ctrl.head = (0.0, 1.0, 1.7)
     ctrl.tail = (0.0, 2.0, 1.7)
-    rig.data.collections['Controls'].assign(ctrl)
+    ctrl.color.palette = 'THEME02'
+    collection_controls.assign(ctrl)
 
     ctrl_offset = bones.new("Camera_Offset")
     ctrl_offset.head = (0.0, 1.0, 1.7)
     ctrl_offset.tail = (0.0, 2.0, 1.7)
-    rig.data.collections['Controls'].assign(ctrl_offset)
+    ctrl_offset.color.palette = 'THEME09'
+    collection_controls.assign(ctrl_offset)
 
     arm = bones.new("Crane_Arm")
     arm.head = (0.0, 0.0, 1.7)
     arm.tail = (0.0, 1.0, 1.7)
-    rig.data.collections['Controls'].assign(arm)
+    arm.bbone_x = 0.05
+    arm.bbone_z = 0.05
+    arm.color.palette = 'THEME07'
+    collection_controls.assign(arm)
 
     height = bones.new("Crane_Height")
     height.head = (0.0, 0.0, 0.0)
     height.tail = (0.0, 0.0, 1.7)
-    rig.data.collections['Controls'].assign(height)
+    height.bbone_x = 0.05
+    height.bbone_z = 0.05
+    height.color.palette = 'THEME07'
+    collection_controls.assign(height)
 
     # Setup hierarchy
     ctrl.parent = arm
@@ -162,12 +199,31 @@ def setup_3d_rig(rig, cam):
     pb = pose_bones['Camera']
     pb["lens"] = 50.0
     ui_data = pb.id_properties_ui("lens")
-    ui_data.update(min=1.0, max=1000000.0, soft_max = 5000.0, default=50.0)
+    ui_data.update(min=1.0, max=1000000.0, soft_max=5000.0,
+                   default=50.0, subtype="DISTANCE_CAMERA")
+
+    # lens offset property
+    pb = pose_bones['Camera']
+    pb["lens_offset"] = 0.0
+    ui_data = pb.id_properties_ui("lens_offset")
+    ui_data.update(min=-1000000.0, max=1000000.0,
+                   soft_max=5000.0, soft_min=-5000.0, default=0.0)
+
+    # Lens breathing scale property
+    pb["lens_breathing_scale"] = 0.0
+    ui_data = pb.id_properties_ui("lens_breathing_scale")
+    ui_data.update(soft_min=0.0, soft_max=1.0,
+                   default=0.0, subtype='FACTOR')
+
+    # Calculated focal length (with dolly offset, but not lens breathing)
+    pb["lens_without_breathing"] = 0.0
+    ui_data = pb.id_properties_ui("lens_without_breathing")
+    ui_data.update(subtype="DISTANCE_CAMERA")
 
     # Build the widgets
     root_widget = create_root_widget("Camera_Root")
     camera_widget = create_camera_widget("Camera")
-    camera_offset_widget = create_camera_offset_widget("Camera_Offset")
+    camera_offset_widget = create_circle_widget("Camera_Offset", radius=0.23)
     aim_widget = create_aim_widget("Aim")
 
     # Add the custom bone shapes
@@ -176,11 +232,13 @@ def setup_3d_rig(rig, cam):
     pose_bones["Camera"].custom_shape = camera_widget
     pose_bones["Camera_Offset"].custom_shape = camera_offset_widget
 
+    #
+
     # Set the "Override Transform" field to the mechanism position
-    pose_bones["Aim"].custom_shape_transform = pose_bones["MCH-Aim_shape_rotation"]
+    pose_bones["Aim"].custom_shape_transform = pose_bones["MCH-Aim_widget"]
 
     # Add constraints to bones
-    con = pose_bones['MCH-Aim_shape_rotation'].constraints.new('COPY_ROTATION')
+    con = pose_bones['MCH-Aim_widget'].constraints.new('COPY_ROTATION')
     con.target = rig
     con.subtarget = "Camera"
 
@@ -194,58 +252,155 @@ def setup_3d_rig(rig, cam):
     cam.data.display_size = 1.0
     cam.rotation_euler[0] = pi / 2.0  # Rotate the camera 90 degrees in x
 
-    create_prop_driver(rig, cam, "lens", "lens")
+    # make a driver that handles everything EXCEPT breathing
+    # to make swapping focal lengths and dolly easier to manage
+    drv = rig.pose.bones["Camera"].driver_add('["lens_without_breathing"]')
+    drv.driver.type = 'SCRIPTED'
+    drv.driver.expression = get_lens_expr()
+
+    var = drv.driver.variables.new()
+    var.name = 'lens'
+    var.type = 'SINGLE_PROP'
+    var.targets[0].id = rig
+    var.targets[0].data_path = 'pose.bones["Camera"]["lens"]'
+
+    # create driver variables (for Dolly Zoom switching)
+    var = drv.driver.variables.new()
+    var.name = 'lens_offset'
+    var.type = 'SINGLE_PROP'
+    var.targets[0].id = rig
+    var.targets[0].data_path = 'pose.bones["Camera"]["lens_offset"]'
+
+    var = drv.driver.variables.new()
+    var.name = 'distance'
+    var.type = 'LOC_DIFF'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = 'Camera'
+    var.targets[1].id = rig
+    var.targets[1].bone_target = 'Aim'
+
+    var = drv.driver.variables.new()
+    var.name = 'root_scale'
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].transform_type = 'SCALE_AVG'
+    var.targets[0].bone_target = 'Root'
+
+    # camera lens driver that subtracts lens breathing
+    drv = create_prop_driver(rig, cam, "lens_without_breathing", "lens")
+    drv.driver.expression = 'lens_without_breathing - (lens_breathing_scale * lens_without_breathing / max(focus_distance, 0.001))'
+
+    var = drv.driver.variables.new()
+    var.name = 'lens_breathing_scale'
+    var.type = 'SINGLE_PROP'
+    var.targets[0].id = rig
+    var.targets[0].data_path = 'pose.bones["Camera"]["lens_breathing_scale"]'
+
+    var = drv.driver.variables.new()
+    var.name = 'focus_distance'
+    var.type = 'SINGLE_PROP'
+    var.targets[0].id = rig
+    var.targets[0].data_path = 'pose.bones["Camera"]["focus_distance"]'
+
+    # lock all transforms on MCH bones
+    lock_mch_transforms(rig)
 
 
-def create_2d_bones(context, rig, cam):
+def create_2d_bones(rig, cam):
     """Create bones for the 2D camera rig"""
-    scene = context.scene
     bones = rig.data.edit_bones
+
+    # Add bone collections
+    collection_controls = rig.data.collections.new(name="Controls")
+    collection_offsets = rig.data.collections.new(name="Offsets")
+    collection_extras = rig.data.collections.new(name="Extras")
+    collection_mch = rig.data.collections.new(name="MCH")
+    collection_mch.is_visible = False
 
     # Add new bones
     bones = rig.data.edit_bones
     root = bones.new("Root")
-    root.tail = Vector((0.0, 0.0, 1.0))
+    root.tail = (0.0, 0.0, 1.0)
     root.show_wire = True
-    rig.data.collections.new(name="Controls")
-    rig.data.collections['Controls'].assign(root)
+    root.color.palette = 'THEME02'
+    collection_controls.assign(root)
 
-    ctrl = bones.new('Camera')
-    ctrl.tail = Vector((0.0, 0.0, 1.0))
-    ctrl.show_wire = True
-    rig.data.collections['Controls'].assign(ctrl)
+    ctrl_offset = bones.new("Root_Offset")
+    ctrl_offset.head = (0.0, 0.0, 0.0)
+    ctrl_offset.tail = (0.0, 0.0, 1.0)
+    ctrl_offset.show_wire = True
+    ctrl_offset.color.palette = 'THEME04'
+    collection_offsets.assign(ctrl_offset)
+
+    ctrl_tweak = bones.new("Root_Tweak")
+    ctrl_tweak.head = (0.0, 0.0, 0.0)
+    ctrl_tweak.tail = (0.0, 0.0, 1.0)
+    ctrl_tweak.show_wire = True
+    ctrl_tweak.color.palette = 'THEME09'
+    collection_extras.assign(ctrl_tweak)
+
+    ctrl_camera = bones.new("Camera")
+    ctrl_camera.head = (0.0, 0.0, 0.0)
+    ctrl_camera.tail = (0.0, 0.0, 1.0)
+    ctrl_camera.show_wire = True
+    ctrl_camera.color.palette = 'THEME02'
+    collection_controls.assign(ctrl_camera)
+
+    ctrl_aim = bones.new("Aim")
+    ctrl_aim.head = (0.0, 10.0, 0.0)
+    ctrl_aim.tail = (0.0, 10.0, 1.0)
+    ctrl_aim.show_wire = True
+    ctrl_aim.color.palette = 'THEME04'
+    collection_offsets.assign(ctrl_aim)
 
     left_corner = bones.new("Left_Corner")
-    left_corner.head = (-3, 10, -2)
+    left_corner.head = (-3.0, 10.0, -1.7)
     left_corner.tail = left_corner.head + Vector((0.0, 0.0, 1.0))
     left_corner.show_wire = True
-    rig.data.collections['Controls'].assign(left_corner)
+    left_corner.color.palette = 'THEME02'
+    collection_controls.assign(left_corner)
 
     right_corner = bones.new("Right_Corner")
-    right_corner.head = (3, 10, -2)
+    right_corner.head = (3.0, 10.0, -1.7)
     right_corner.tail = right_corner.head + Vector((0.0, 0.0, 1.0))
     right_corner.show_wire = True
-    rig.data.collections['Controls'].assign(right_corner)
+    right_corner.color.palette = 'THEME02'
+    collection_controls.assign(right_corner)
 
     corner_distance_x = (left_corner.head - right_corner.head).length
-    corner_distance_y = -left_corner.head.z
+    corner_distance_y = ctrl_camera.head.z - left_corner.head.z
     corner_distance_z = left_corner.head.y
-    rig.data.collections['Controls'].assign(root)
+    collection_controls.assign(root)
 
     center = bones.new("MCH-Center")
     center.head = ((right_corner.head + left_corner.head) / 2.0)
     center.tail = center.head + Vector((0.0, 0.0, 1.0))
     center.show_wire = True
-    rig.data.collections.new(name="MCH")
-    rig.data.collections['MCH'].assign(center)
-    rig.data.collections['MCH'].is_visible = False
-    center.show_wire = True
+    collection_mch.assign(center)
+
+    dof = bones.new("DOF")
+    dof.head = ctrl_aim.head
+    dof.tail = ctrl_aim.tail
+    dof.show_wire = True
+    dof.color.palette = 'THEME09'
+    collection_extras.assign(dof)
+
+    dof_parent = bones.new("MCH-DOF_Parent")
+    dof_parent.head = ctrl_aim.head
+    dof_parent.tail = ctrl_aim.tail
+    dof_parent.show_wire = True
+    collection_mch.assign(dof_parent)
 
     # Setup hierarchy
-    ctrl.parent = root
-    left_corner.parent = root
-    right_corner.parent = root
-    center.parent = root
+    ctrl_offset.parent = root
+    ctrl_tweak.parent = ctrl_offset
+    ctrl_camera.parent = ctrl_tweak
+    ctrl_aim.parent = ctrl_tweak
+    left_corner.parent = ctrl_aim
+    right_corner.parent = ctrl_aim
+    center.parent = ctrl_tweak
+    dof_parent.parent = root
+    dof.parent = dof_parent
 
     # Jump into object mode and change bones to euler
     bpy.ops.object.mode_set(mode='OBJECT')
@@ -258,89 +413,140 @@ def create_2d_bones(context, rig, cam):
 
     # Center X driver
     driver = center_drivers[0].driver
-    driver.type = 'AVERAGE'
+    driver.expression = "aim + (left + right) / 2.0"
 
-    for corner in ('left', 'right'):
+    for corner in ("left", "right"):
         var = driver.variables.new()
         var.name = corner
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = corner.capitalize() + '_Corner'
+        var.targets[0].bone_target = corner.capitalize() + "_Corner"
         var.targets[0].transform_type = 'LOC_X'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
+    var = driver.variables.new()
+    var.name = "aim"
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Aim"
+    var.targets[0].transform_type = 'LOC_X'
+    var.targets[0].transform_space = 'TRANSFORM_SPACE'
+
     # Center Y driver
     driver = center_drivers[1].driver
-    driver.type = 'SCRIPTED'
-
-    driver.expression = '({distance_x} - (left_x-right_x))*(res_y/res_x)/2 + (left_y + right_y)/2'.format(
+    driver.expression = "({distance_x} - (left_x-right_x))*(res_y/res_x)/2 + aim_y + (left_y + right_y)/2".format(
         distance_x=corner_distance_x)
 
-    for direction in ('x', 'y'):
-        for corner in ('left', 'right'):
+    for corner in ("left", "right"):
+        for direction in ("x", "y"):
             var = driver.variables.new()
-            var.name = '%s_%s' % (corner, direction)
+            var.name = "%s_%s" % (corner, direction)
             var.type = 'TRANSFORMS'
             var.targets[0].id = rig
-            var.targets[0].bone_target = corner.capitalize() + '_Corner'
+            var.targets[0].bone_target = corner.capitalize() + "_Corner"
             var.targets[0].transform_type = 'LOC_' + direction.upper()
             var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
+    for direction in ("x", "y"):
         var = driver.variables.new()
-        var.name = 'res_' + direction
-        var.type = 'SINGLE_PROP'
-        var.targets[0].id_type = 'SCENE'
-        var.targets[0].id = scene
-        var.targets[0].data_path = 'render.resolution_' + direction
+        var.name = "aim_%s" % direction
+        var.type = 'TRANSFORMS'
+        var.targets[0].id = rig
+        var.targets[0].bone_target = "Aim"
+        var.targets[0].transform_type = 'LOC_' + direction.upper()
+        var.targets[0].transform_space = 'TRANSFORM_SPACE'
+
+    for direction in ("x", "y"):
+        var = driver.variables.new()
+        var.name = "res_" + direction
+        var.type = 'CONTEXT_PROP'
+        var.targets[0].context_property = 'ACTIVE_SCENE'
+        var.targets[0].data_path = "render.resolution_" + direction
 
     # Center Z driver
     driver = center_drivers[2].driver
-    driver.type = 'AVERAGE'
+    driver.expression = "aim + (left + right) / 2.0"
 
-    for corner in ('left', 'right'):
+    for corner in ("left", "right"):
         var = driver.variables.new()
         var.name = corner
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = corner.capitalize() + '_Corner'
+        var.targets[0].bone_target = corner.capitalize() + "_Corner"
         var.targets[0].transform_type = 'LOC_Z'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
+    var = driver.variables.new()
+    var.name = "aim"
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Aim"
+    var.targets[0].transform_type = 'LOC_Z'
+    var.targets[0].transform_space = 'TRANSFORM_SPACE'
+
     # Bone constraints
-    con = pose_bones["Camera"].constraints.new('DAMPED_TRACK')
-    con.target = rig
-    con.subtarget = "MCH-Center"
-    con.track_axis = 'TRACK_NEGATIVE_Z'
+    center_con = pose_bones['Camera'].constraints.new('DAMPED_TRACK')
+    center_con.target = rig
+    center_con.subtarget = "MCH-Center"
+    center_con.track_axis = 'TRACK_NEGATIVE_Z'
+
+    dof_con = pose_bones["MCH-DOF_Parent"].constraints.new('COPY_LOCATION')
+    dof_con.target = rig
+    dof_con.subtarget = "Aim"
+    dof_con.target_space = 'POSE'
+    dof_con.owner_space = 'POSE'
 
     # Build the widgets
+    root_widget = create_2d_root_widget("Camera_2D_Root")
+    root_offset_widget = create_circle_widget("Camera_2D_Offset", radius=0.68)
+    root_tweak_widget = create_star_widget("Camera_2D_Tweak", radius=0.53)
+    camera_widget = create_camera_widget("Camera_2D", scale=0.5)
+    aim_widget = create_aim_widget("Camera_2D_Aim", inner_circle=False)
     left_widget = create_corner_widget("Left_Corner", reverse=True)
     right_widget = create_corner_widget("Right_Corner")
-    parent_widget = create_circle_widget("Root", radius=0.5)
-    camera_widget = create_circle_widget("Camera_2D", radius=0.3)
+    dof_widget = create_cross_widget("Camera_2D_DOF")
 
     # Add the custom bone shapes
+    pose_bones["Root"].custom_shape = root_widget
+    pose_bones["Root_Offset"].custom_shape = root_offset_widget
+    pose_bones["Root_Tweak"].custom_shape = root_tweak_widget
+    pose_bones["Camera"].custom_shape = camera_widget
+    pose_bones["Aim"].custom_shape = aim_widget
     pose_bones["Left_Corner"].custom_shape = left_widget
     pose_bones["Right_Corner"].custom_shape = right_widget
-    pose_bones["Root"].custom_shape = parent_widget
-    pose_bones["Camera"].custom_shape = camera_widget
+    pose_bones["DOF"].custom_shape = dof_widget
+
+    # Set bone shape transforms
+    pose_bones["Root_Offset"].custom_shape_rotation_euler.x = pi / 2.0
+    pose_bones["Camera"].custom_shape_rotation_euler.x = pi / 2.0
+    pose_bones["Aim"].custom_shape_rotation_euler.x = pi / 2.0
 
     # Lock the relevant loc, rot and scale
-    pose_bones["Left_Corner"].lock_rotation = (True,) * 3
-    pose_bones["Right_Corner"].lock_rotation = (True,) * 3
+    pose_bones["Root"].lock_scale = (True,) * 3
+    pose_bones["Root_Offset"].lock_scale = (True,) * 3
+    pose_bones["Root_Tweak"].lock_scale = (True,) * 3
     pose_bones["Camera"].lock_rotation = (True,) * 3
     pose_bones["Camera"].lock_scale = (True,) * 3
+    pose_bones["Aim"].lock_rotation = (True,) * 3
+    pose_bones["Aim"].lock_scale = (True,) * 3
+    pose_bones["Left_Corner"].lock_rotation = (True,) * 3
+    pose_bones["Right_Corner"].lock_rotation = (True,) * 3
+
+    # lock all transforms on MCH bones
+    lock_mch_transforms(rig)
 
     # Camera settings
-
     cam.data.sensor_fit = "HORIZONTAL"  # Avoids distortion in portrait format
+    cam.data.dof.focus_object = rig
+    cam.data.dof.focus_subtarget = "DOF"
 
     # Property to switch between rotation and switch mode
-    pose_bones["Camera"]['rotation_shift'] = 0.0
-    ui_data = pose_bones["Camera"].id_properties_ui('rotation_shift')
+    pose_bones["Camera"]["rotation_shift"] = 0.0
+    ui_data = pose_bones["Camera"].id_properties_ui("rotation_shift")
     ui_data.update(min=0.0, max=1.0, description="rotation_shift")
 
     # Rotation / shift switch driver
-    driver = con.driver_add('influence').driver
+    driver = center_con.driver_add('influence').driver
     driver.expression = '1 - rotation_shift'
 
     var = driver.variables.new()
@@ -350,8 +556,8 @@ def create_2d_bones(context, rig, cam):
     var.targets[0].data_path = 'pose.bones["Camera"]["rotation_shift"]'
 
     # Focal length driver
-    driver = cam.data.driver_add('lens').driver
-    driver.expression = 'abs({distance_z} - (left_z + right_z)/2 + cam_z) * 36 / frame_width'.format(
+    driver = cam.data.driver_add("lens").driver
+    driver.expression = "abs({distance_z} - (left_z + right_z)/2 - aim_z + cam_z) * 36 / (frame_width or 1.0)".format(
         distance_z=corner_distance_z)
 
     var = driver.variables.new()
@@ -364,9 +570,9 @@ def create_2d_bones(context, rig, cam):
     var.targets[1].bone_target = "Right_Corner"
     var.targets[1].transform_space = 'WORLD_SPACE'
 
-    for corner in ('left', 'right'):
+    for corner in ("left", "right"):
         var = driver.variables.new()
-        var.name = corner + '_z'
+        var.name = corner + "_z"
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
         var.targets[0].bone_target = corner.capitalize() + '_Corner'
@@ -374,37 +580,54 @@ def create_2d_bones(context, rig, cam):
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
     var = driver.variables.new()
-    var.name = 'cam_z'
+    var.name = "cam_z"
     var.type = 'TRANSFORMS'
     var.targets[0].id = rig
     var.targets[0].bone_target = "Camera"
     var.targets[0].transform_type = 'LOC_Z'
     var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
-    # Orthographic scale driver
-    driver = cam.data.driver_add('ortho_scale').driver
-    driver.expression = 'abs({distance_x} - (left_x - right_x))'.format(distance_x=corner_distance_x)
+    var = driver.variables.new()
+    var.name = "aim_z"
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Aim"
+    var.targets[0].transform_type = 'LOC_Z'
+    var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
-    for corner in ('left', 'right'):
+    # Orthographic scale driver
+    driver = cam.data.driver_add("ortho_scale").driver
+    driver.expression = "abs({distance_x} - (left_x - right_x))".format(
+        distance_x=corner_distance_x)
+
+    for corner in ("left", "right"):
         var = driver.variables.new()
-        var.name = corner + '_x'
+        var.name = corner + "_x"
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = corner.capitalize() + '_Corner'
+        var.targets[0].bone_target = corner.capitalize() + "_Corner"
         var.targets[0].transform_type = 'LOC_X'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
     # Shift driver X
-    driver = cam.data.driver_add('shift_x').driver
-
-    driver.expression = 'rotation_shift * (((left_x + right_x)/2 - cam_x) * lens / abs({distance_z} - (left_z + right_z)/2 + cam_z) / 36)'.format(
-        distance_z=corner_distance_z)
+    driver = cam.data.driver_add("shift_x").driver
+    driver.expression = "rotation_shift * (((left_x + right_x)/2 + aim_x - cam_x) / (frame_width or 1.0))"
 
     var = driver.variables.new()
     var.name = 'rotation_shift'
     var.type = 'SINGLE_PROP'
     var.targets[0].id = rig
     var.targets[0].data_path = 'pose.bones["Camera"]["rotation_shift"]'
+
+    var = driver.variables.new()
+    var.name = 'frame_width'
+    var.type = 'LOC_DIFF'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Left_Corner"
+    var.targets[0].transform_space = 'WORLD_SPACE'
+    var.targets[1].id = rig
+    var.targets[1].bone_target = "Right_Corner"
+    var.targets[1].transform_space = 'WORLD_SPACE'
 
     for direction in ('x', 'z'):
         for corner in ('left', 'right'):
@@ -416,26 +639,29 @@ def create_2d_bones(context, rig, cam):
             var.targets[0].transform_type = 'LOC_' + direction.upper()
             var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
-        var = driver.variables.new()
-        var.name = 'cam_' + direction
-        var.type = 'TRANSFORMS'
-        var.targets[0].id = rig
-        var.targets[0].bone_target = "Camera"
-        var.targets[0].transform_type = 'LOC_' + direction.upper()
-        var.targets[0].transform_space = 'TRANSFORM_SPACE'
+    var = driver.variables.new()
+    var.name = "aim_x"
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Aim"
+    var.targets[0].transform_type = 'LOC_X'
+    var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
     var = driver.variables.new()
-    var.name = 'lens'
-    var.type = 'SINGLE_PROP'
-    var.targets[0].id_type = 'CAMERA'
-    var.targets[0].id = cam.data
-    var.targets[0].data_path = 'lens'
+    var.name = "cam_x"
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Camera"
+    var.targets[0].transform_type = "LOC_X"
+    var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
     # Shift driver Y
     driver = cam.data.driver_add('shift_y').driver
-
-    driver.expression = 'rotation_shift * -(({distance_y} - (left_y + right_y)/2 + cam_y) * lens / abs({distance_z} - (left_z + right_z)/2 + cam_z) / 36 - (res_y/res_x)/2)'.format(
-        distance_y=corner_distance_y, distance_z=corner_distance_z)
+    driver.expression = (
+        "rotation_shift * -("
+        "({distance_y} - (left_y + right_y)/2 - aim_y + cam_y)"
+        " / (frame_width or 1.0) - (res_y/res_x)/2)"
+    ).format(distance_y=corner_distance_y)
 
     var = driver.variables.new()
     var.name = 'rotation_shift'
@@ -443,38 +669,48 @@ def create_2d_bones(context, rig, cam):
     var.targets[0].id = rig
     var.targets[0].data_path = 'pose.bones["Camera"]["rotation_shift"]'
 
-    for direction in ('y', 'z'):
-        for corner in ('left', 'right'):
-            var = driver.variables.new()
-            var.name = '%s_%s' % (corner, direction)
-            var.type = 'TRANSFORMS'
-            var.targets[0].id = rig
-            var.targets[0].bone_target = corner.capitalize() + '_Corner'
-            var.targets[0].transform_type = 'LOC_' + direction.upper()
-            var.targets[0].transform_space = 'TRANSFORM_SPACE'
+    var = driver.variables.new()
+    var.name = 'frame_width'
+    var.type = 'LOC_DIFF'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Left_Corner"
+    var.targets[0].transform_space = 'WORLD_SPACE'
+    var.targets[1].id = rig
+    var.targets[1].bone_target = "Right_Corner"
+    var.targets[1].transform_space = 'WORLD_SPACE'
 
+    for corner in ("left", "right"):
         var = driver.variables.new()
-        var.name = 'cam_' + direction
+        var.name = "%s_y" % corner
         var.type = 'TRANSFORMS'
         var.targets[0].id = rig
-        var.targets[0].bone_target = "Camera"
-        var.targets[0].transform_type = 'LOC_' + direction.upper()
+        var.targets[0].bone_target = corner.capitalize() + "_Corner"
+        var.targets[0].transform_type = 'LOC_Y'
         var.targets[0].transform_space = 'TRANSFORM_SPACE'
+
+    var = driver.variables.new()
+    var.name = "aim_y"
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Aim"
+    var.targets[0].transform_type = 'LOC_Y'
+    var.targets[0].transform_space = 'TRANSFORM_SPACE'
+
+    var = driver.variables.new()
+    var.name = "cam_y"
+    var.type = 'TRANSFORMS'
+    var.targets[0].id = rig
+    var.targets[0].bone_target = "Camera"
+    var.targets[0].transform_type = 'LOC_Y'
+    var.targets[0].transform_space = 'TRANSFORM_SPACE'
 
     for direction in ('x', 'y'):
         var = driver.variables.new()
         var.name = 'res_' + direction
         var.type = 'SINGLE_PROP'
-        var.targets[0].id_type = 'SCENE'
-        var.targets[0].id = scene
+        var.type = 'CONTEXT_PROP'
+        var.targets[0].context_property = 'ACTIVE_SCENE'
         var.targets[0].data_path = 'render.resolution_' + direction
-
-    var = driver.variables.new()
-    var.name = 'lens'
-    var.type = 'SINGLE_PROP'
-    var.targets[0].id_type = 'CAMERA'
-    var.targets[0].id = cam.data
-    var.targets[0].data_path = 'lens'
 
 
 def build_camera_rig(context, mode):
@@ -489,7 +725,7 @@ def build_camera_rig(context, mode):
     rig_name = mode.capitalize() + "_Rig"
     rig_data = bpy.data.armatures.new(rig_name)
     rig = object_utils.object_data_add(context, rig_data, name=rig_name)
-    rig["rig_id"] = "%s" % rig_name
+    rig["rig_id"] = rig_name
     rig.location = context.scene.cursor.location
 
     bpy.ops.object.mode_set(mode='EDIT')
@@ -502,7 +738,7 @@ def build_camera_rig(context, mode):
         create_crane_bones(rig)
         setup_3d_rig(rig, cam)
     elif mode == "2D":
-        create_2d_bones(context, rig, cam)
+        create_2d_bones(rig, cam)
 
     # Parent the camera to the rig
     cam.location = (0.0, -1.0, 0.0)  # Move the camera to the correct position
@@ -517,6 +753,11 @@ def build_camera_rig(context, mode):
     rig.data.display_type = 'BBONE'
     # Change display to wire for object
     rig.display_type = 'WIRE'
+    # Set the widgets to be 1.5 width (easier to see)
+    if bpy.app.version >= (4, 2, 0):
+        for bone in rig.pose.bones:
+            if bone.custom_shape:
+                bone.custom_shape_wire_width = 1.5
 
     # Lock camera transforms
     cam.lock_location = (True,) * 3
@@ -594,6 +835,82 @@ def add_dolly_crane_buttons(self, context):
         ).mode = "2D"
 
 
+def focus_obj_get(armature_obj):
+    _, cam = get_rig_and_cam(armature_obj)
+    return (
+        cam.data.dof.focus_object.name
+        if cam.data.dof.focus_object
+        else ''
+    )
+
+
+def focus_subtarget_get(armature_obj):
+    _, cam = get_rig_and_cam(armature_obj)
+    return cam.data.dof.focus_subtarget
+
+
+def focus_obj_set(armature_obj, value):
+    _, cam = get_rig_and_cam(armature_obj)
+    if value == '' or value not in bpy.context.scene.objects:
+        cam.data.dof.focus_object = None
+    else:
+        cam.data.dof.focus_object = bpy.context.scene.objects[value]
+
+
+def focus_subtarget_set(armature_obj, value):
+    try:
+        _, cam = get_rig_and_cam(armature_obj)
+        cam.data.dof.focus_subtarget = value
+    except Exception:
+        pass
+
+def update_focus_distance_calculation(armature_obj, value):
+    # update driver variable based on which are used
+    # camera_data = armature_data.
+    rig, cam = get_rig_and_cam(armature_obj)
+    lens_driver = next((
+        fcurve.driver
+        for fcurve in cam.data.animation_data.drivers
+        if 'lens' in fcurve.data_path
+    ), None)
+    if lens_driver is None:
+        logging.getLogger('add_camera_rigs').error(
+            'update_focus_distance_calculation failed, driver doesn\'t exist!'
+        )
+        return
+
+    focus_distance = next((
+        var
+        for var in lens_driver.variables
+        if var.name == 'focus_distance'
+    ), None)
+    if focus_distance is None:
+        logging.getLogger('add_camera_rigs').error(
+            'update_focus_distance_calculation failed, driver variable doesn\'t exist!'
+        )
+        return
+
+    camera_dof_data = cam.data.dof
+
+    if camera_dof_data.focus_object is not None:
+        focus_distance.type = 'LOC_DIFF'
+        focus_distance.targets[0].id = rig
+        focus_distance.targets[0].bone_target = 'Camera'
+        if camera_dof_data.focus_subtarget:
+            # distance between target bone and camera bone
+            focus_distance.targets[1].id = camera_dof_data.focus_object
+            focus_distance.targets[1].bone_target = camera_dof_data.focus_subtarget
+        else:
+            # distance between target and camera bone
+            focus_distance.targets[1].id = camera_dof_data.focus_object
+            focus_distance.targets[1].bone_target = ''
+    else:  # just use float
+        focus_distance.type = 'SINGLE_PROP'
+        focus_distance.targets[0].id = rig
+        focus_distance.targets[0].data_path = 'pose.bones["Camera"]["focus_distance"]'
+
+
+
 classes = (
     OBJECT_OT_build_camera_rig,
 )
@@ -606,6 +923,21 @@ def register():
 
     bpy.types.VIEW3D_MT_camera_add.append(add_dolly_crane_buttons)
 
+    bpy.types.Object.acr_focus_object = bpy.props.StringProperty(
+        name='Focus Object',
+        description='Use this object to define the depth of field focal point',
+        get=focus_obj_get,
+        set=focus_obj_set,
+        update=update_focus_distance_calculation,
+    )
+    bpy.types.Object.acr_focus_subtarget = bpy.props.StringProperty(
+        name='Focus Object',
+        description='Use this object to define the depth of field focal point',
+        get=focus_subtarget_get,
+        set=focus_subtarget_set,
+        update=update_focus_distance_calculation,
+    )
+
 
 def unregister():
     from bpy.utils import unregister_class
@@ -614,6 +946,8 @@ def unregister():
 
     bpy.types.VIEW3D_MT_camera_add.remove(add_dolly_crane_buttons)
 
+    del bpy.types.Object.acr_focus_object
+    del bpy.types.Object.acr_focus_subtarget
 
 if __name__ == "__main__":
     register()

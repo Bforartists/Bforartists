@@ -105,11 +105,12 @@ class CYCLES_RENDER_PT_amaranth_samples(bpy.types.Panel):
 def init():
     if utils.cycles_exists():
         from cycles import properties as _cycles_props
-        _cycles_props.CyclesRenderSettings.use_samples_final = BoolProperty(
-            name="Use Final Render Samples",
-            description="Use current shader samples as final render samples",
-            default=False,
-        )
+        if not hasattr(_cycles_props.CyclesRenderSettings, 'use_samples_final'):
+            _cycles_props.CyclesRenderSettings.use_samples_final = BoolProperty(
+                name="Use Final Render Samples",
+                description="Use current shader samples as final render samples",
+                default=False,
+            )
 
 
 def clear():
@@ -122,11 +123,12 @@ def clear():
 def register():
     init()
     if utils.cycles_exists():
-        bpy.utils.register_class(CYCLES_RENDER_PT_amaranth_samples)
+        if not hasattr(bpy.types, 'CYCLES_RENDER_PT_amaranth_samples'):
+            bpy.utils.register_class(CYCLES_RENDER_PT_amaranth_samples)
 
 
 def unregister():
     if utils.cycles_exists():
-        bpy.utils.unregister_class(CYCLES_RENDER_PT_amaranth_samples)
-
+        if hasattr(bpy.types, 'CYCLES_RENDER_PT_amaranth_samples'):
+            bpy.utils.unregister_class(CYCLES_RENDER_PT_amaranth_samples)
     clear()

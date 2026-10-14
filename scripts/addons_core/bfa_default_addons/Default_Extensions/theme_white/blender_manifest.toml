@@ -1,0 +1,11 @@
+schema_version = "1.0.0"
+id = "theme_white"
+name = "White"
+version = "1.0.1"
+tagline = "Community-made theme"
+maintainer = "Community"
+type = "theme"
+tags = ["Light", "High Contrast"]
+blender_version_min = "5.0.0"
+license = ["SPDX:GPL-3.0-or-later"]
+website = "https://projects.blender.org/extensions/theme_white"

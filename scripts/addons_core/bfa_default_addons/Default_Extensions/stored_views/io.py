@@ -8,7 +8,7 @@ import gzip
 import os
 import pickle
 import shutil
-import toml
+import tomllib
 
 import bpy
 from bpy.types import Operator

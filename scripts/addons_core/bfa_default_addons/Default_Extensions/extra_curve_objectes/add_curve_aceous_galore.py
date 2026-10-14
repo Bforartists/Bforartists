@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2010-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2010-2025 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 from bpy_extras import object_utils
@@ -930,7 +930,7 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             ('Flower', "Flower", "Flower"),
             ('Helix', "Helix (3D)", "Helix"),
             ('Noise', "Noise (3D)", "Noise"),
-            ('Nsided', "Nsided", "Nsided"),
+            ('Nsided', "N-Sided", "N-Sided"),
             ('Profile', "Profile", "Profile"),
             ('Rectangle', "Rectangle", "Rectangle"),
             ('Splat', "Splat", "Splat"),
@@ -1047,14 +1047,14 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             description="Number of petals"
             )
     petalWidth : FloatProperty(
-            name="Petal width",
+            name="Petal Width",
             default=2.0,
             min=0.01,
             description="Petal width"
             )
     # Star properties
     starPoints : IntProperty(
-            name="Star points",
+            name="Star Points",
             default=8,
             min=2,
             description="Number of star points"
@@ -1066,23 +1066,23 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             )
     # Arc properties
     arcSides : IntProperty(
-            name="Arc sides",
+            name="Arc Sides",
             default=6,
             min=1,
             description="Sides of arc"
             )
     startAngle : FloatProperty(
-            name="Start angle",
+            name="Start Angle",
             default=0.0,
             description="Start angle"
             )
     endAngle : FloatProperty(
-            name="End angle",
+            name="End Angle",
             default=90.0,
             description="End angle"
             )
     arcType : IntProperty(
-            name="Arc type",
+            name="Arc Type",
             default=3,
             min=1,
             max=3,
@@ -1111,13 +1111,13 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             )
     # Splat properties
     splatSides : IntProperty(
-            name="Splat sides",
+            name="Splat Sides",
             default=24,
             min=3,
             description="Splat sides"
             )
     splatScale : FloatProperty(
-            name="Splat scale",
+            name="Splat Scale",
             default=1.0,
             min=0.0001,
             description="Splat scale"
@@ -1149,12 +1149,12 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             description="Helix height"
             )
     helixStart : FloatProperty(
-            name="Start angle",
+            name="Start Angle",
             default=0.0,
             description="Helix start angle"
             )
     helixEnd : FloatProperty(
-            name="Endangle",
+            name="End Angle",
             default=360.0,
             description="Helix end angle"
             )
@@ -1189,19 +1189,19 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             description="Type: Cycloid , Hypocycloid / Hypotrochoid , Epicycloid / Epitrochoid"
             )
     cyclo_a : FloatProperty(
-            name="R",
+            name="Radius A",
             default=1.0,
             min=0.01,
             description="Cycloid: R radius a"
             )
     cyclo_b : FloatProperty(
-            name="r",
+            name="Radius B",
             default=0.25,
             min=0.01,
             description="Cycloid: r radius b"
             )
     cyclo_d : FloatProperty(
-            name="d",
+            name="Distance",
             default=0.25,
             description="Cycloid: d distance"
             )
@@ -1226,25 +1226,25 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             description="Curve Length"
             )
     noiseSize : FloatProperty(
-            name="Noise size",
+            name="Noise Size",
             default=1.0,
             min=0.0001,
             description="Noise size"
             )
     noiseScaleX : FloatProperty(
-            name="Noise x",
+            name="Noise X",
             default=1.0,
             min=0.0001,
             description="Noise x"
             )
     noiseScaleY : FloatProperty(
-            name="Noise y",
+            name="Noise Y",
             default=1.0,
             min=0.0001,
             description="Noise y"
             )
     noiseScaleZ : FloatProperty(
-            name="Noise z",
+            name="Noise Z",
             default=1.0,
             min=0.0001,
             description="Noise z"
@@ -1278,146 +1278,131 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         # general options
-        col = layout.column()
-        col.prop(self, 'ProfileType')
-        col.label(text=self.ProfileType + " Options:")
+        layout.separator()
+        layout.prop(self, 'ProfileType')
+        layout.separator()
 
         # options per ProfileType
-        box = layout.box()
-        col = box.column(align=True)
-
         if self.ProfileType == 'Profile':
-            col.prop(self, "ProfileCurveType")
-            col.prop(self, "ProfileCurvevar1")
-            col.prop(self, "ProfileCurvevar2")
+            layout.prop(self, "ProfileCurveType")
+            col = layout.column(align = True)
+            col.prop(self, "ProfileCurvevar1", text='Variable 1')
+            col.prop(self, "ProfileCurvevar2", text='2')
 
         elif self.ProfileType == 'Arrow':
-            col.prop(self, "MiscCurveType")
+            layout.prop(self, "MiscCurveType")
+            col = layout.column(align = True)
             col.prop(self, "MiscCurvevar1", text="Height")
             col.prop(self, "MiscCurvevar2", text="Width")
 
         elif self.ProfileType == 'Rectangle':
-            col.prop(self, "MiscCurveType")
-            col.prop(self, "MiscCurvevar1", text="Width")
-            col.prop(self, "MiscCurvevar2", text="Height")
+            layout.prop(self, "MiscCurveType")
+            col = layout.column(align = True)
+            col.prop(self, "MiscCurvevar1", text="Height")
+            col.prop(self, "MiscCurvevar2", text="Width")
             if self.MiscCurveType == 2:
-                col.prop(self, "MiscCurvevar3", text="Corners")
+                layout.prop(self, "MiscCurvevar3", text="Corners")
 
         elif self.ProfileType == 'Flower':
-            col.prop(self, "petals")
-            col.prop(self, "petalWidth")
-
-            col = box.column(align=True)
-            col.prop(self, "innerRadius")
-            col.prop(self, "outerRadius")
+            layout.prop(self, "petals")
+            layout.prop(self, "petalWidth")
+            col = layout.column(align=True)
+            col.prop(self, "innerRadius", text='Radius Inner')
+            col.prop(self, "outerRadius", text='Outer')
 
         elif self.ProfileType == 'Star':
-            col.prop(self, "starPoints")
-            col.prop(self, "starTwist")
-
-            col = box.column(align=True)
-            col.prop(self, "innerRadius")
-            col.prop(self, "outerRadius")
+            layout.prop(self, "starPoints")
+            layout.prop(self, "starTwist")
+            col = layout.column(align=True)
+            col.prop(self, "innerRadius", text='Radius Inner')
+            col.prop(self, "outerRadius", text='Outer')
 
         elif self.ProfileType == 'Arc':
-            col.prop(self, "arcType")
-            col.prop(self, "arcSides")
-
-            col = box.column(align=True)
-            col.prop(self, "startAngle")
-            col.prop(self, "endAngle")
-
-            col = box.column(align=True)
-            col.prop(self, "innerRadius")
-            col.prop(self, "outerRadius")
+            layout.prop(self, "arcType")
+            layout.prop(self, "arcSides")
+            col = layout.column(align=True)
+            col.prop(self, "startAngle", text='Angle Start')
+            col.prop(self, "endAngle", text='End')
+            col = layout.column(align=True)
+            col.prop(self, "innerRadius", text='Radius Inner')
+            col.prop(self, "outerRadius", text='Outer')
 
         elif self.ProfileType == 'Cogwheel':
-            col.prop(self, "teeth")
-            col.prop(self, "bevel")
-
-            col = box.column(align=True)
-            col.prop(self, "innerRadius")
-            col.prop(self, "middleRadius")
-            col.prop(self, "outerRadius")
+            layout.prop(self, "teeth")
+            layout.prop(self, "bevel")
+            col = layout.column(align=True)
+            col.prop(self, "innerRadius", text='Radius Inner')
+            col.prop(self, "middleRadius", text='Middle')
+            col.prop(self, "outerRadius", text='Outer')
 
         elif self.ProfileType == 'Nsided':
-            col.prop(self, "Nsides")
-            col.prop(self, "outerRadius")
+            layout.prop(self, "Nsides")
+            layout.prop(self, "outerRadius", text='Radius Outer')
 
         elif self.ProfileType == 'Splat':
-            col.prop(self, "splatSides")
-            col.prop(self, "outerRadius")
-
-            col = box.column(align=True)
-            col.prop(self, "splatScale")
-            col.prop(self, "seed")
-            col.prop(self, "basis")
+            layout.prop(self, "splatSides", text='Sides')
+            layout.prop(self, "outerRadius", text='Radius Outer')
+            layout.prop(self, "splatScale", text='Noise Scale')
+            layout.prop(self, "seed")
+            layout.prop(self, "basis")
 
         elif self.ProfileType == 'Cycloid':
-            col.prop(self, "cycloType")
-            col.prop(self, "cycloPoints")
-
-            col = box.column(align=True)
-            col.prop(self, "cyclo_a")
-            col.prop(self, "cyclo_b")
-            if self.cycloType != 0:
-                col.prop(self, "cyclo_d")
+            layout.prop(self, "cycloType")
+            layout.prop(self, "cycloPoints")
+            col = layout.column(align=True)
+            col.prop(self, "cyclo_a", text='Radus A')
+            col.prop(self, "cyclo_b", text='B')
+            row = layout.row()
+            row.enabled = self.cycloType != 0
+            row.prop(self, "cyclo_d")
 
         elif self.ProfileType == 'Helix':
-            col.prop(self, "helixPoints")
+            layout.prop(self, "helixPoints")
+            col = layout.column(align=True)
             col.prop(self, "helixHeight")
             col.prop(self, "helixWidth")
-
-            col = box.column(align=True)
-            col.prop(self, "helixStart")
-            col.prop(self, "helixEnd")
-
-            col = box.column(align=True)
+            col = layout.column(align=True)
+            col.prop(self, "helixStart", text='Angle Start')
+            col.prop(self, "helixEnd", text='End')
+            col = layout.column(align=True)
             col.prop(self, "helix_a")
-            col.prop(self, "helix_b")
+            col.prop(self, "helix_b", text='2')
 
         elif self.ProfileType == 'Noise':
-            col.prop(self, "noiseType")
-            col.prop(self, "noisePoints")
-            col.prop(self, "noiseLength")
-
-            col = box.column(align=True)
-            col.prop(self, "noiseSize")
-            col.prop(self, "noiseScaleX")
-            col.prop(self, "noiseScaleY")
-            col.prop(self, "noiseScaleZ")
-
-            col = box.column(align=True)
-            col.prop(self, "noiseOctaves")
-            col.prop(self, "noiseBasis")
-            col.prop(self, "noiseSeed")
-
-        row = layout.row()
-        row.prop(self, "shape", expand=True)
+            layout.prop(self, "noiseType")
+            layout.prop(self, "noisePoints")
+            layout.prop(self, "noiseLength")
+            col = layout.column(align=True)
+            col.prop(self, "noiseSize", text='Noise Scale')
+            col.prop(self, "noiseScaleX", text='X')
+            col.prop(self, "noiseScaleY", text='Y')
+            col.prop(self, "noiseScaleZ", text='Z')
+            layout.prop(self, "noiseOctaves")
+            layout.prop(self, "noiseBasis")
+            layout.prop(self, "noiseSeed")
 
         # output options
-        col = layout.column()
-        col.label(text="Output Curve Type:")
-        col.row().prop(self, "outputType", expand=True)
+        layout.separator()
+        layout.row().prop(self, "outputType", text='Curve')
+        layout.row().prop(self, "shape", text='Shape', expand=True)   
 
         if self.outputType == 'NURBS':
-            col.prop(self, 'order_u')
+            layout.prop(self, 'order_u')
         elif self.outputType == 'BEZIER':
-            col.row().prop(self, 'handleType', expand=True)
+            layout.row().prop(self, 'handleType', expand=True)
 
-        col = layout.column()
-        col.row().prop(self, "use_cyclic_u", expand=True)
+        layout.prop(self, "use_cyclic_u")
+        layout.prop(self, "edit_mode")
 
-        col = layout.column()
-        col.row().prop(self, "edit_mode", expand=True)
-
-        col = layout.column()
+        layout.separator()
         # AddObjectHelper props
-        col.prop(self, "align")
-        col.prop(self, "location")
-        col.prop(self, "rotation")
+        layout.prop(self, "align")
+        layout.prop(self, "location")
+        layout.prop(self, "rotation")
 
     @classmethod
     def poll(cls, context):

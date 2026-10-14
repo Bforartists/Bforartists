@@ -1,0 +1,13 @@
+schema_version      = "1.0.0"
+id                  = "atomic_blender_pdb_xyz"
+version             = "1.9.1"
+name                = "Atomic Blender PDB/XYZ"
+tagline             = "Importing atoms listed in PDB and XYZ files into Blender"
+maintainer          = "Clemens Barth <barth at root-1 dot de>"
+type                = "add-on"
+permissions         = ["files"]
+website             = "https://projects.blender.org/extensions/io_mesh_atomic"
+tags                = ["Import-Export"]
+blender_version_min = "4.2.0"
+license             = ["SPDX:GPL-3.0-or-later",]
+copyright           = ["2024 Clemens Barth",]

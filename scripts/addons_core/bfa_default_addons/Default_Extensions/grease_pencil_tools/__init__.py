@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: 2020-2023 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# Infos
+# "location": "Sidebar > Grease Pencil > Grease Pencil Tools",
+# "tracker_url": "https://github.com/Pullusb/greasepencil_tools/issues",
 
 import bpy
 from .  import (prefs,
@@ -10,7 +14,6 @@ from .  import (prefs,
                 layer_navigator,
                 timeline_scrub,
                 draw_tools,
-                import_brush_pack,
                 ui_panels,
                 )
 
@@ -22,7 +25,6 @@ modules = (
     layer_navigator,
     timeline_scrub,
     draw_tools,
-    import_brush_pack,
     ui_panels,
 )
 

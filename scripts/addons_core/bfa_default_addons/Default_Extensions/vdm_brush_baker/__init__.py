@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Robin Hohnsbeen
+# SPDX-FileCopyrightText: 2025 Robin Hohnsbeen
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -16,7 +16,7 @@ bl_info = {
     'author': 'Robin Hohnsbeen',
     'description': 'Bake vector displacement brushes easily from a plane',
     'blender': (3, 5, 0),
-    'version': (1, 0, 3),
+    'version': (1, 0, 6),
     'location': 'Sculpt Mode: View3D > Sidebar > Tool Tab',
     'warning': '',
     'category': 'Baking',
@@ -60,7 +60,7 @@ def get_addon_data() -> vdm_brush_baker_addon_data:
 
 
 def get_output_path(filename):
-    save_path = bpy.path.abspath('/tmp')
+    save_path = bpy.app.tempdir
     if bpy.data.is_saved:
         save_path = os.path.dirname(bpy.data.filepath)
     save_path = os.path.join(save_path, 'output_vdm', filename)
@@ -318,10 +318,16 @@ class create_vdm_brush(bpy.types.Operator):
         new_brush.strength = 1.0
         new_brush.hardness = 0.9
 
+        if bpy.app.version >= (4, 3, 0):
+            new_brush.asset_mark()
+
         bpy.ops.object.mode_set(mode = default_mode)
 
         if bpy.context.object.mode == 'SCULPT':
-            context.tool_settings.sculpt.brush = new_brush
+            if bpy.app.version >= (4, 4, 0):
+                bpy.ops.brush.asset_activate(asset_library_type='LOCAL', asset_library_identifier='', relative_asset_identifier=f'Brush\{new_brush_name}')
+            else:
+                context.tool_settings.sculpt.brush = new_brush
 
         return {'FINISHED'}
 

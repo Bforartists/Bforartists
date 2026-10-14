@@ -4,19 +4,6 @@
 
 # Updated for 2.8 jan 5 2019
 
-bl_info = {
-    "name": "F2",
-    "author": "Bart Crouch, Alexander Nedovizin, Paul Kotelevets "
-              "(concept design), Adrian Rutkowski",
-    "version": (1, 8, 4),
-    "blender": (2, 80, 0),
-    "location": "Editmode > F",
-    "warning": "",
-    "description": "Extends the 'Make Edge/Face' functionality",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/f2.html",
-    "category": "Mesh",
-}
-
 # ref: https://github.com/Cfyzzz/Other-scripts/blob/master/f2.py
 
 import bmesh
@@ -307,7 +294,15 @@ def quad_from_vertex(bm, vert_sel, context, event):
 
     # toggle mode, to force correct drawing
     bpy.ops.object.mode_set(mode='OBJECT')
+
+    sel_objs = context.selected_objects
+    bpy.ops.object.select_all(action='DESELECT')
+    ob.select_set(True)
+
     bpy.ops.object.mode_set(mode='EDIT')
+
+    for obj in sel_objs:
+        obj.select_set(True)
 
 
 def expand_vert(self, context, event):

@@ -1,12 +1,34 @@
 schema_version = "1.0.0"
+
 id = "animall"
+version = "0.14.0"
 name = "AnimAll"
-version = "0.10.1"
-tagline = "Allows animation of mesh, lattice, curve and surface data"
-maintainer = "Community"
+tagline = "Animate mesh, lattice, curve and surface data"
+maintainer = "Damien Picard <dam.pic@free.fr>"
 type = "add-on"
-tags = ["Animation"]
-blender_version_min = "4.2.0"
-license = ["SPDX:GPL-2.0-or-later"]
 website = "https://projects.blender.org/extensions/animation_animall"
-copyright = ["2024 Daniel Salazar (ZanQdo)", "2024 Damien Picard (pioverfour)"]
+tags = ["Animation"]
+
+blender_version_min = "5.0.0"
+
+license = ["SPDX:GPL-3.0-or-later",]
+copyright = [
+  "2011-2014 Daniel Salazar",
+  "2019-2026 Damien Picard",
+]
+
+[build]
+paths_exclude_pattern = [
+  "/.git/",
+  "__pycache__/",
+  "docs/",
+  "pyproject.toml",
+  ".*",
+  "*.blend",
+  "*.blend[0123456789]",
+  "*.md",
+  "*.po",
+  "*.pot",
+  "*.sh",
+  "*.zip",
+]

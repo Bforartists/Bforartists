@@ -1,17 +1,150 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2022 Campbell Barton
-# SPDX-FileContributor: Mikhail Rachinskiy
-# SPDX-FileContributor: Align XY by Jaggz H.
-# SPDX-FileContributor: Hollow by Ubiratan Freitas
-
+# SPDX-FileCopyrightText: 2016-2026 Mikhail Rachinskiy
+# SPDX-FileCopyrightText: 2022 Align XY by Jaggz H.
+# SPDX-FileCopyrightText: 2024-2025 Hollow, Bisect by Ubiratan Freitas
 
 import math
 
-import bmesh
 import bpy
 from bpy.app.translations import pgettext_tip as tip_
 from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty
-from bpy.types import Operator
+from bpy.types import Object, Operator
+
+
+class MESH_OT_bisect(Operator):
+    bl_idname = "mesh.print3d_bisect"
+    bl_label = "Bisect"
+    bl_description = "Cut geometry along a plane"
+    bl_options = {"REGISTER", "UNDO", "PRESET"}
+
+    bisect_x: BoolProperty(
+        name="X",
+        description="Slice on axis",
+    )
+    bisect_y: BoolProperty(
+        name="Y",
+        description="Slice on axis",
+    )
+    bisect_z: BoolProperty(
+        name="Z",
+        description="Slice on axis",
+    )
+
+    flip_x: BoolProperty(
+        name="Flip",
+        description="Flips the direction of the slice",
+    )
+    flip_y: BoolProperty(
+        name="Flip",
+        description="Flips the direction of the slice",
+    )
+    flip_z: BoolProperty(
+        name="Flip",
+        description="Flips the direction of the slice",
+    )
+
+    factor_x: FloatProperty(
+        name="Factor",
+        description="Cutting plane position",
+        subtype="FACTOR",
+        min=0.0,
+        max=1.0,
+        default=0.5,
+    )
+    factor_y: FloatProperty(
+        name="Factor",
+        description="Cutting plane position",
+        subtype="FACTOR",
+        min=0.0,
+        max=1.0,
+        default=0.5,
+    )
+    factor_z: FloatProperty(
+        name="Factor",
+        description="Cutting plane position",
+        subtype="FACTOR",
+        min=0.0,
+        max=1.0,
+        default=0.5,
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
+
+        box = layout.box()
+        col = box.column()
+        col.use_property_split = False
+        col.prop(self, "bisect_x")
+        col = box.column()
+        col.enabled = self.bisect_x
+        col.prop(self, "factor_x")
+        col.prop(self, "flip_x")
+
+        layout.separator()
+
+        box = layout.box()
+        col = box.column()
+        col.use_property_split = False
+        col.prop(self, "bisect_y")
+        col = box.column()
+        col.enabled = self.bisect_y
+        col.prop(self, "factor_y")
+        col.prop(self, "flip_y")
+
+        layout.separator()
+
+        box = layout.box()
+        col = box.column()
+        col.use_property_split = False
+        col.prop(self, "bisect_z")
+        col = box.column()
+        col.enabled = self.bisect_z
+        col.prop(self, "factor_z")
+        col.prop(self, "flip_z")
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.app.version >= (4, 5, 0)
+
+    def execute(self, context):
+        from .. import lib
+
+        md = lib.gn_setup("Bisect", context.object)
+
+        lib.md_input_set(md, "Socket_12", self.bisect_x)
+        lib.md_input_set(md, "Socket_3", self.factor_x)
+        lib.md_input_set(md, "Socket_4", self.flip_x)
+
+        lib.md_input_set(md, "Socket_16", self.bisect_y)
+        lib.md_input_set(md, "Socket_6", self.factor_y)
+        lib.md_input_set(md, "Socket_7", self.flip_y)
+
+        lib.md_input_set(md, "Socket_14", self.bisect_z)
+        lib.md_input_set(md, "Socket_9", self.factor_z)
+        lib.md_input_set(md, "Socket_10", self.flip_z)
+
+        panels = lib.md_get_panels(md)
+
+        lib.md_panel_set(md, panels["X"], self.bisect_x)
+        lib.md_panel_set(md, panels["Y"], self.bisect_y)
+        lib.md_panel_set(md, panels["Z"], self.bisect_z)
+
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        if context.object is None or not context.object.select_get():
+            return {"CANCELLED"}
+
+        if context.mode == "EDIT_MESH":
+            bpy.ops.object.mode_set(mode="OBJECT")
+
+        wm = context.window_manager
+        return wm.invoke_props_popup(self, event)
 
 
 class MESH_OT_hollow(Operator):
@@ -21,33 +154,37 @@ class MESH_OT_hollow(Operator):
     bl_options = {"REGISTER", "UNDO", "PRESET"}
 
     offset_direction: EnumProperty(
-        items=[
-            ("INSIDE", "Inside", "Offset surface inside of object"),
-            ("OUTSIDE", "Outside", "Offset surface outside of object"),
-        ],
         name="Offset Direction",
-        description="Where the offset surface is created relative to the object",
+        description="Offset direction relative to the object surface",
+        items=(
+            ("INSIDE", "Inside", ""),
+            ("OUTSIDE", "Outside", ""),
+        ),
         default="INSIDE",
     )
     offset: FloatProperty(
         name="Offset",
         description="Surface offset in relation to original mesh",
-        default=1.0,
         subtype="DISTANCE",
         min=0.0,
         step=1,
+        default=1.0,
     )
     voxel_size: FloatProperty(
-        name="Voxel size",
+        name="Voxel Size",
         description="Size of the voxel used for volume evaluation. Lower values preserve finer details",
-        default=1.0,
+        subtype="DISTANCE",
         min=0.0001,
         step=1,
-        subtype="DISTANCE",
+        default=1.0,
     )
     make_hollow_duplicate: BoolProperty(
         name="Hollow Duplicate",
         description="Create hollowed out copy of the object",
+    )
+    offset_surface_only: BoolProperty(
+        name="Offset Surface Only",
+        description="Remove original and keep offset surface",
     )
 
     def draw(self, context):
@@ -60,22 +197,61 @@ class MESH_OT_hollow(Operator):
         layout.prop(self, "offset_direction", expand=True)
         layout.prop(self, "offset")
         layout.prop(self, "voxel_size")
-        layout.prop(self, "make_hollow_duplicate")
+        if bpy.app.version >= (5, 0, 0):
+            layout.prop(self, "offset_surface_only")
+        else:
+            layout.prop(self, "make_hollow_duplicate")
 
     def execute(self, context):
-        import numpy as np
-        import pyopenvdb as vdb
-
         if not self.offset:
             return {"FINISHED"}
 
-        obj = context.active_object
+        if bpy.app.version >= (5, 0, 0):
+            self.hollow_gn(context)
+        else:
+            self.hollow_openvdb(context)
+
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        if context.object is None or not context.object.select_get():
+            return {"CANCELLED"}
+
+        if context.mode == "EDIT_MESH":
+            bpy.ops.object.mode_set(mode="OBJECT")
+
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+    def hollow_gn(self, context):
+        from .. import lib
+
+        md = lib.gn_setup("Hollow", context.object)
+        lib.md_input_set(md, "Socket_5", self.offset_direction.title(), lib.EnumProp(self, "offset_direction"))
+        lib.md_input_set(md, "Socket_3", self.offset)
+        lib.md_input_set(md, "Socket_2", self.voxel_size)
+        lib.md_input_set(md, "Socket_4", self.offset_surface_only)
+
+        context.view_layer.update()
+        if md.node_warnings:
+            md.id_data.modifiers.remove(md)
+            self.report({"ERROR"}, "Make sure target mesh has closed surface and offset value is less than half of target thickness")
+
+    def hollow_openvdb(self, context):
+        import numpy as np
+
+        if bpy.app.version >= (4, 4, 0):
+            import openvdb as vdb
+        else:
+            import pyopenvdb as vdb
+
+        obj = context.object
         depsgraph = context.evaluated_depsgraph_get()
         mesh_target = bpy.data.meshes.new_from_object(obj.evaluated_get(depsgraph))
 
         # Apply transforms, avoid translating the mesh
         mat = obj.matrix_world.copy()
-        mat.translation = 0, 0, 0
+        mat.translation.zero()
         mesh_target.transform(mat)
 
         # Read mesh to numpy arrays
@@ -89,9 +265,8 @@ class MESH_OT_hollow(Operator):
         tris.shape = (-1, 3)
 
         # Generate VDB levelset
-        half_width = max(3.0, math.ceil(abs(self.offset) / self.voxel_size) + 2.0) # half_width has to envelop offset
-        trans = vdb.Transform()
-        trans.scale(self.voxel_size)
+        half_width = max(3.0, math.ceil(self.offset / self.voxel_size) + 2.0) # half_width has to envelop offset
+        trans = vdb.createLinearTransform(self.voxel_size)
         levelset = vdb.FloatGrid.createLevelSetFromPolygons(verts, triangles=tris, transform=trans, halfWidth=half_width)
 
         # Generate offset surface
@@ -99,7 +274,7 @@ class MESH_OT_hollow(Operator):
             newverts, newquads = levelset.convertToQuads(-self.offset)
             if newquads.size == 0:
                 self.report({"ERROR"}, "Make sure target mesh has closed surface and offset value is less than half of target thickness")
-                return {"FINISHED"}
+                return
         else:
             newverts, newquads = levelset.convertToQuads(self.offset)
 
@@ -129,14 +304,6 @@ class MESH_OT_hollow(Operator):
         else:
             bpy.data.meshes.remove(mesh_target)
 
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        if context.mode == "EDIT_MESH":
-            bpy.ops.object.mode_set(mode="OBJECT")
-        wm = context.window_manager
-        return wm.invoke_props_dialog(self)
-
 
 class OBJECT_OT_align_xy(Operator):
     bl_idname = "object.print3d_align_xy"
@@ -153,19 +320,18 @@ class OBJECT_OT_align_xy(Operator):
     def execute(self, context):
         # FIXME: Undo is inconsistent.
         # FIXME: Would be nicer if rotate could pick some object-local axis.
-
+        import bmesh
         from mathutils import Vector
 
-        self.context = context
-        mode_orig = context.mode
+        is_edit_mesh = context.mode == "EDIT_MESH"
         skip_invalid = []
 
-        for obj in context.selected_objects:
+        for obj in (ob for ob in context.selected_objects if ob.type == "MESH"):
             orig_loc = obj.location.copy()
             orig_scale = obj.scale.copy()
 
             # When in edit mode, do as the edit mode does.
-            if mode_orig == "EDIT_MESH":
+            if is_edit_mesh:
                 bm = bmesh.from_edit_mesh(obj.data)
                 faces = [f for f in bm.faces if f.select]
             else:
@@ -179,7 +345,7 @@ class OBJECT_OT_align_xy(Operator):
             normal = Vector((0.0, 0.0, 0.0))
             if self.use_face_area:
                 for face in faces:
-                    if mode_orig == "EDIT_MESH":
+                    if is_edit_mesh:
                         normal += (face.normal * face.calc_area())
                     else:
                         normal += (face.normal * face.area)
@@ -194,22 +360,26 @@ class OBJECT_OT_align_xy(Operator):
             obj.scale = orig_scale
             obj.location = orig_loc
 
-        if len(skip_invalid) > 0:
-            for name in skip_invalid:
-                print(tip_("Align to XY: Skipping object {}. No faces selected").format(name))
+        if skip_invalid:
             if len(skip_invalid) == 1:
                 self.report({"WARNING"}, tip_("Skipping object {}. No faces selected").format(skip_invalid[0]))
             else:
                 self.report({"WARNING"}, "Skipping some objects. No faces selected. See terminal")
+
+                for name in skip_invalid:
+                    print(tip_("Align to XY: Skipping object {}. No faces selected").format(name))
+
         return {"FINISHED"}
 
     def invoke(self, context, event):
-        if context.mode not in {"EDIT_MESH", "OBJECT"}:
+        if not [ob for ob in context.selected_objects if ob.type == "MESH"]:
+            self.report({"ERROR"}, "At least one mesh object must be selected")
             return {"CANCELLED"}
+
         return self.execute(context)
 
 
-def _scale(scale, report=None, report_suffix=""):
+def _scale(scale: float, report=None, report_suffix="") -> None:
     from .. import lib
 
     if scale != 1.0:
@@ -217,7 +387,7 @@ def _scale(scale, report=None, report_suffix=""):
 
     if report is not None:
         scale_fmt = lib.clean_float(scale, 6)
-        report({"INFO"}, tip_("Scaled by {}{}").format(scale_fmt, report_suffix))
+        report({"INFO"}, tip_("Scaled by {}").format(scale_fmt) + report_suffix)
 
 
 class MESH_OT_scale_to_volume(Operator):
@@ -247,22 +417,25 @@ class MESH_OT_scale_to_volume(Operator):
 
     def invoke(self, context, event):
 
-        def calc_volume(obj):
+        def calc_volume(obj: Object) -> float:
             from .. import lib
-
             bm = lib.bmesh_copy_from_object(obj, apply_modifiers=True)
             volume = bm.calc_volume(signed=True)
             bm.free()
             return volume
 
-        if not context.selectable_objects:
+        if not context.selected_objects:
             self.report({"ERROR"}, "At least one mesh object must be selected")
             return {"CANCELLED"}
 
         if context.mode == "EDIT_MESH":
             volume = calc_volume(context.edit_object)
         else:
-            volume = sum(calc_volume(obj) for obj in context.selected_editable_objects if obj.type == "MESH")
+            volume = sum(
+                calc_volume(obj)
+                for obj in context.selected_editable_objects
+                if obj.type in {"MESH", "CURVE", "SURFACE", "FONT", "META"}
+            )
 
         if volume == 0.0:
             self.report({"WARNING"}, "Object has zero volume")
@@ -287,7 +460,7 @@ class MESH_OT_scale_to_bounds(Operator):
         options={"HIDDEN"},
     )
     length: FloatProperty(
-        name="Length Limit",
+        name="Length",
         unit="LENGTH",
         min=0.0,
         max=100000.0,
@@ -303,25 +476,25 @@ class MESH_OT_scale_to_bounds(Operator):
     def invoke(self, context, event):
         from mathutils import Vector
 
-        def calc_length(vecs):
-            return max(((max(v[i] for v in vecs) - min(v[i] for v in vecs)), i) for i in range(3))
+        def calc_length(vecs: list[Vector]) -> tuple[float, int]:
+            return max(
+                ((max(v[i] for v in vecs) - min(v[i] for v in vecs)), i)
+                for i in range(3)
+            )
 
-        if not context.selectable_objects:
+        if not context.selected_objects:
             self.report({"ERROR"}, "At least one mesh object must be selected")
             return {"CANCELLED"}
 
         if context.mode == "EDIT_MESH":
-            length, axis = calc_length(
-                [Vector(v) @ obj.matrix_world for obj in [context.edit_object] for v in obj.bound_box]
-            )
+            obj = context.edit_object
+            length, axis = calc_length([Vector(v) @ obj.matrix_world for v in obj.bound_box])
         else:
-            length, axis = calc_length(
-                [
-                    Vector(v) @ obj.matrix_world for obj in context.selected_editable_objects
-                    if obj.type == "MESH"
-                    for v in obj.bound_box
-                ]
-            )
+            length, axis = calc_length([
+                Vector(v) @ obj.matrix_world
+                for obj in context.selected_editable_objects
+                for v in obj.bound_box
+            ])
 
         if length == 0.0:
             self.report({"WARNING"}, "Object has zero bounds")

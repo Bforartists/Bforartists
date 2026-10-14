@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2023 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 
@@ -45,7 +45,7 @@ def menu_boxdeform_entry(self, context):
     """Transform shortcut to append in existing menu"""
     layout = self.layout
     obj = bpy.context.object
-    if obj and obj.type == 'GPENCIL' and context.mode in {'OBJECT', 'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL'}:
+    if obj and obj.type == 'GREASEPENCIL' and context.mode in {'OBJECT', 'EDIT_GREASE_PENCIL', 'PAINT_GREASE_PENCIL'}:
         self.layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator('view3d.gp_box_deform', text='Box Deform')
 
@@ -55,24 +55,17 @@ def menu_stroke_entry(self, context):
         self.layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator('gpencil.straight_stroke', text='Straight Stroke')
 
-def menu_brush_pack(self, context):
-    layout = self.layout
-    self.layout.operator_context = 'INVOKE_DEFAULT'
-    layout.operator('gp.import_brush_pack')#, text='Import brush pack'
-
 
 def register():
     bpy.utils.register_class(GP_PT_sidebarPanel)
     ## VIEW3D_MT_edit_gpencil.append# Grease pencil menu
     bpy.types.VIEW3D_MT_transform_object.append(menu_boxdeform_entry)
-    bpy.types.VIEW3D_MT_edit_gpencil_transform.append(menu_boxdeform_entry)
-    bpy.types.VIEW3D_MT_edit_gpencil_stroke.append(menu_stroke_entry)
-    bpy.types.VIEW3D_MT_brush_gpencil_context_menu.append(menu_brush_pack)
+    bpy.types.VIEW3D_MT_transform.append(menu_boxdeform_entry)
+    bpy.types.VIEW3D_MT_edit_greasepencil_stroke.append(menu_stroke_entry)
 
 
 def unregister():
-    bpy.types.VIEW3D_MT_brush_gpencil_context_menu.remove(menu_brush_pack)
     bpy.types.VIEW3D_MT_transform_object.remove(menu_boxdeform_entry)
-    bpy.types.VIEW3D_MT_edit_gpencil_transform.remove(menu_boxdeform_entry)
-    bpy.types.VIEW3D_MT_edit_gpencil_stroke.remove(menu_stroke_entry)
+    bpy.types.VIEW3D_MT_transform.remove(menu_boxdeform_entry)
+    bpy.types.VIEW3D_MT_edit_greasepencil_stroke.remove(menu_stroke_entry)
     bpy.utils.unregister_class(GP_PT_sidebarPanel)

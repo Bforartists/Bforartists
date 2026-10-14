@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2019-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2019 Wayne Dixon
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 from bpy.types import Panel

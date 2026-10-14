@@ -163,6 +163,20 @@ class AddZFunctionSurface(Operator):
                 unit="LENGTH"
                 )
 
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
+        layout.prop(self, 'equation')
+        col = layout.column(align=True)
+        col.prop(self, 'div_x', text='Subdivisions X')
+        col.prop(self, 'div_y', text='Y')
+        col = layout.column(align=True)
+        col.prop(self, 'size_x', text='Size X')
+        col.prop(self, 'size_y', text='Y')
+
     def execute(self, context):
         equation = self.equation
         div_x = self.div_x
@@ -389,78 +403,78 @@ def xyz_function_surface_faces(self, x_eq, y_eq, z_eq,
 
 class AddXYZFunctionSurface(Operator):
     bl_idname = "mesh.primitive_xyz_function_surface"
-    bl_label = "Add X, Y, Z Function Surface"
+    bl_label = "Add XYZ Function Surface"
     bl_description = ("Add a surface defined defined by 3 functions:\n"
                       "x=F1(u,v), y=F2(u,v) and z=F3(u,v)")
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     x_eq: StringProperty(
-                name="X equation",
+                name="X Equation",
                 description="Equation for x=F(u,v). "
                             "Also available: n, a, b, c, f, g, h",
                 default="cos(v)*(1+cos(u))*sin(v/8)"
                 )
     y_eq: StringProperty(
-                name="Y equation",
+                name="Y Equation",
                 description="Equation for y=F(u,v). "
                             "Also available: n, a, b, c, f, g, h",
                 default="sin(u)*sin(v/8)+cos(v/8)*1.5"
                 )
     z_eq: StringProperty(
-                name="Z equation",
+                name="Z Equation",
                 description="Equation for z=F(u,v). "
                             "Also available: n, a, b, c, f, g, h",
                 default="sin(v)*(1+cos(u))*sin(v/8)"
                 )
     range_u_min: FloatProperty(
-                name="U min",
+                name="U Min",
                 description="Minimum U value. Lower boundary of U range",
                 min=-100.00,
                 max=0.00,
                 default=0.00
                 )
     range_u_max: FloatProperty(
-                name="U max",
+                name="U Max",
                 description="Maximum U value. Upper boundary of U range",
                 min=0.00,
                 max=100.00,
                 default=2 * pi
                 )
     range_u_step: IntProperty(
-                name="U step",
+                name="U Step",
                 description="U Subdivisions",
                 min=1,
                 max=1024,
                 default=32
                 )
     wrap_u: BoolProperty(
-                name="U wrap",
+                name="U Wrap",
                 description="U Wrap around",
                 default=True
                 )
     range_v_min: FloatProperty(
-                name="V min",
+                name="V Min",
                 description="Minimum V value. Lower boundary of V range",
                 min=-100.00,
                 max=0.00,
                 default=0.00
                 )
     range_v_max: FloatProperty(
-                name="V max",
+                name="V Max",
                 description="Maximum V value. Upper boundary of V range",
                 min=0.00,
                 max=100.00,
                 default=4 * pi
                 )
     range_v_step: IntProperty(
-                name="V step",
+                name="V Step",
                 description="V Subdivisions",
                 min=1,
                 max=1024,
                 default=128
                 )
     wrap_v: BoolProperty(
-                name="V wrap",
+                name="V Wrap",
                 description="V Wrap around",
                 default=False
                 )
@@ -471,7 +485,7 @@ class AddXYZFunctionSurface(Operator):
                 default=False
                 )
     n_eq: IntProperty(
-                name="Number of objects (n=0..N-1)",
+                name="Number of Objects (n=0..N-1)",
                 description="The parameter n will be the index "
                             "of the current object, 0 to N-1",
                 min=1,
@@ -479,45 +493,82 @@ class AddXYZFunctionSurface(Operator):
                 default=1
                 )
     a_eq: StringProperty(
-                name="A helper function",
+                name="A Helper Function",
                 description="Equation for a=F(u,v). Also available: n",
                 default="0"
                 )
     b_eq: StringProperty(
-                name="B helper function",
+                name="B Helper Function",
                 description="Equation for b=F(u,v). Also available: n",
                 default="0"
                 )
     c_eq: StringProperty(
-                name="C helper function",
+                name="C Helper Function",
                 description="Equation for c=F(u,v). Also available: n",
                 default="0"
                 )
     f_eq: StringProperty(
-                name="F helper function",
+                name="F Helper Function",
                 description="Equation for f=F(u,v). Also available: n, a, b, c",
                 default="0"
                 )
     g_eq: StringProperty(
-                name="G helper function",
+                name="G Helper Function",
                 description="Equation for g=F(u,v). Also available: n, a, b, c",
                 default="0"
                 )
     h_eq: StringProperty(
-                name="H helper function",
+                name="H Helper Function",
                 description="Equation for h=F(u,v). Also available: n, a, b, c",
                 default="0"
                 )
     show_wire : BoolProperty(
-            name="Show wireframe",
+            name="Show Wireframe",
             default=True,
             description="Add the object’s wireframe over solid drawing"
             )
     edit_mode : BoolProperty(
-            name="Show in edit mode",
+            name="Show in Edit Mode",
             default=True,
-            description="Show in edit mode"
+            description="Show in Edit Mode"
             )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
+        col = layout.column()
+        col.prop(self, 'x_eq', text='Equation X')
+        col.prop(self, 'y_eq', text='Y')
+        col.prop(self, 'z_eq', text='Z')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'range_u_min', text='U Min')
+        col.prop(self, 'range_u_max', text='Max')
+        col.prop(self, 'range_u_step', text='Step')
+        col.prop(self, 'wrap_u', text='Wrap')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'range_v_min', text='V Min')
+        col.prop(self, 'range_v_max', text='Max')
+        col.prop(self, 'range_v_step', text='Step')
+        col.prop(self, 'wrap_v', text='Wrap')
+        col.prop(self, 'close_v', text='Close')
+        layout.separator()
+        col = layout.column()
+        col.prop(self, 'n_eq', text='Objects')
+        col.prop(self, 'a_eq', text='Helper Function A')
+        col.prop(self, 'b_eq', text='B')
+        col.prop(self, 'c_eq', text='C')
+        col.prop(self, 'f_eq', text='F')
+        col.prop(self, 'g_eq', text='G')
+        col.prop(self, 'h_eq', text='H')
+        layout.separator()
+        row = layout.row(heading='Show')
+        row.prop(self, 'show_wire', text='Wireframe')
+        layout.prop(self, 'edit_mode', text='In Edit Mode')
 
     def execute(self, context):
         for n in range(0, self.n_eq):

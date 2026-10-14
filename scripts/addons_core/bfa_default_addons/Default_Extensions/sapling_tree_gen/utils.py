@@ -991,6 +991,10 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
         p.rotation_mode = 'XYZ'
     treeOb.parent = armOb
 
+    if armAnim:
+        # Assign legacy action slot to animation
+        armOb.animation_data.action_slot = armOb.animation_data.action.slots.values()[0]
+
 
 def kickstart_trunk(addstem, levels, leaves, branches, cu, curve, curveRes,
                     curveV, attractUp, length, lengthV, ratio, ratioPower,

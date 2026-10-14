@@ -14,7 +14,11 @@ class VIEW3D_PT_extra_pies(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        prefs = get_addon_prefs(context)
+        # BFA - the panel can still poll while the add-on is being disabled, after its preferences are gone.
+        try:
+            prefs = get_addon_prefs(context)
+        except KeyError:
+            return False
         return prefs.show_in_sidebar
 
     def draw(self, context):

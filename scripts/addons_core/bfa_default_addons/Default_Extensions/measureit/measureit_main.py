@@ -45,7 +45,8 @@ def save_handler(dummy):
         print("MeasureIt: Cleaning data")
         objlist = bpy.context.scene.objects
         for myobj in objlist:
-            if 'MeasureGenerator' in myobj:
+            mainobject
+            if hasattr(myobj, "MeasureGenerator") and len(myobj.MeasureGenerator) > 0:
                 mp = myobj.MeasureGenerator[0]
                 x = 0
                 for ms in mp.measureit_segments:
@@ -318,13 +319,13 @@ class MEASUREIT_PT_Edit(Panel):
     # -----------------------------------------------------
     @classmethod
     def poll(cls, context):
-        o = context.object
-        if o is None:
+        mainobject = context.object
+        if mainobject is None:
             return False
-        if 'MeasureGenerator' not in o:
+        if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
             return False
         else:
-            mp = context.object.MeasureGenerator[0]
+            mp = mainobject.MeasureGenerator[0]
             if mp.measureit_num > 0:
                 return True
             else:
@@ -338,7 +339,7 @@ class MEASUREIT_PT_Edit(Panel):
         layout = self.layout
         scene = context.scene
         if context.object is not None:
-            if 'MeasureGenerator' in context.object:
+            if hasattr(context.object, "MeasureGenerator") and len(context.object.MeasureGenerator) > 0:
                 box = layout.box()
                 row = box.row()
                 row.label(text=context.object.name)
@@ -831,7 +832,7 @@ class MEASUREIT_OT_AddSegment(Operator):
                 mylist = get_selected_vertex(mainobject)
 
             if len(mylist) >= 2:
-                if 'MeasureGenerator' not in mainobject:
+                if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                     mainobject.MeasureGenerator.add()
 
                 mp = mainobject.MeasureGenerator[0]
@@ -916,7 +917,7 @@ class MEASUREIT_OT_AddArea(Operator):
             mainobject = context.object
             mylist = get_selected_faces(mainobject)
             if len(mylist) >= 1:
-                if 'MeasureGenerator' not in mainobject:
+                if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                     mainobject.MeasureGenerator.add()
 
                 mp = mainobject.MeasureGenerator[0]
@@ -1008,7 +1009,7 @@ class MEASUREIT_OT_AddSegmentOrto(Operator):
                 mylist = get_selected_vertex(mainobject)
 
             if len(mylist) >= 1:
-                if 'MeasureGenerator' not in mainobject:
+                if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                     mainobject.MeasureGenerator.add()
 
                 mp = mainobject.MeasureGenerator[0]
@@ -1093,7 +1094,7 @@ class MEASUREIT_OT_AddAngle(Operator):
             mainobject = context.object
             mylist = get_selected_vertex_history(mainobject)
             if len(mylist) == 3:
-                if 'MeasureGenerator' not in mainobject:
+                if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                     mainobject.MeasureGenerator.add()
 
                 mp = mainobject.MeasureGenerator[0]
@@ -1174,7 +1175,7 @@ class MEASUREIT_OT_AddArc(Operator):
             mainobject = context.object
             mylist = get_selected_vertex_history(mainobject)
             if len(mylist) == 3:
-                if 'MeasureGenerator' not in mainobject:
+                if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                     mainobject.MeasureGenerator.add()
 
                 mp = mainobject.MeasureGenerator[0]
@@ -1257,7 +1258,7 @@ class MEASUREIT_OT_AddLabel(Operator):
             mainobject = context.object
             mylist = get_selected_vertex(mainobject)
             if len(mylist) == 1:
-                if 'MeasureGenerator' not in mainobject:
+                if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                     mainobject.MeasureGenerator.add()
 
                 mp = mainobject.MeasureGenerator[0]
@@ -1369,7 +1370,7 @@ class MEASUREIT_OT_AddLink(Operator):
             # Add properties
             # -------------------------------
             flag = False
-            if 'MeasureGenerator' not in mainobject:
+            if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                 mainobject.MeasureGenerator.add()
 
             mp = mainobject.MeasureGenerator[0]
@@ -1484,7 +1485,7 @@ class MEASUREIT_OT_AddOrigin(Operator):
             scene = context.scene
             mainobject = context.object
             mylist = get_selected_vertex(mainobject)
-            if 'MeasureGenerator' not in mainobject:
+            if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                 mainobject.MeasureGenerator.add()
 
             mp = mainobject.MeasureGenerator[0]
@@ -1630,7 +1631,7 @@ class MEASUREIT_OT_DeleteAllSum(Operator):
     # noinspection PyMethodMayBeStatic
     def execute(self, context):
         if context.object is not None:
-            if 'MeasureGenerator' in context.object:
+            if hasattr(context.object, "MeasureGenerator") and len(context.object.MeasureGenerator) > 0:
                 mp = context.object.MeasureGenerator[0]
                 for idx in range(mp.measureit_num):
                     ms = mp.measureit_segments[idx]
@@ -1814,7 +1815,7 @@ class MEASUREIT_OT_AddNote(Operator):
             # Add properties
             scene = context.scene
             mainobject = myempty
-            if 'MeasureGenerator' not in mainobject:
+            if not hasattr(mainobject, "MeasureGenerator") or len(mainobject.MeasureGenerator) == 0:
                 mainobject.MeasureGenerator.add()
 
             mp = mainobject.MeasureGenerator[0]
@@ -1941,7 +1942,7 @@ def draw_main(context):
     # ---------------------------------------
     for myobj in objlist:
         if myobj.visible_get() is True:
-            if 'MeasureGenerator' in myobj:
+            if hasattr(myobj, "MeasureGenerator") and len(myobj.MeasureGenerator) > 0:
                 op = myobj.MeasureGenerator[0]
                 draw_segments(context, myobj, op, region, rv3d)
 

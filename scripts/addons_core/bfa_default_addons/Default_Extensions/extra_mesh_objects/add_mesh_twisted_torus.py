@@ -11,9 +11,10 @@ from bpy.props import (
         FloatProperty,
         IntProperty,
         BoolProperty,
-        StringProperty,
+        EnumProperty,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 
 # Create a new mesh (object) from verts/edges/faces
@@ -151,7 +152,17 @@ class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change TwistedTorus")
-
+    
+    
+    method: EnumProperty(
+        name='Method',
+        description='Method for determining the size and thickness of the torus',
+        items=(
+            ('MAJOR-MINOR', 'Major / Minor', 'Uses the major radius for the overall size and the minor for the thickness'),
+            ('INT-EXT', 'Interior / Exterior', 'Uses the absolute size of the inner and outer circles to determine the size and thickness'),
+        ),
+        default='MAJOR-MINOR',
+        )
     major_radius: FloatProperty(
         name="Major Radius",
         description="Radius from the origin to the"
@@ -188,11 +199,6 @@ class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
         max=256,
         default=1
         )
-    use_abso: BoolProperty(
-        name="Use Int/Ext Controls",
-        description="Use the Int/Ext controls for torus dimensions",
-        default=False
-        )
     abso_major_rad: FloatProperty(
         name="Exterior Radius",
         description="Total Exterior Radius of the torus",
@@ -210,30 +216,32 @@ class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        layout.prop(self, 'major_radius', expand=True)
-        layout.prop(self, 'minor_radius', expand=True)
-        layout.prop(self, 'major_segments', expand=True)
-        layout.prop(self, 'minor_segments', expand=True)
+        layout.separator()
+        layout.prop(self, 'method', text='Dimensions Mode')
+        col = layout.column(align=True)
+        if self.method == 'MAJOR-MINOR':
+            col.prop(self, 'major_radius', text='Radius Major')
+            col.prop(self, 'minor_radius', text='Minor')
+        else:
+            col.prop(self, 'abso_major_rad', text='Radius Exterior')
+            col.prop(self, 'abso_minor_rad', text='Interior')
+        col = layout.column(align=True)
+        col.prop(self, 'major_segments',  text='Segments Major')
+        col.prop(self, 'minor_segments', text='Minor')
         layout.prop(self, 'twists', expand=True)
-        layout.prop(self, 'use_abso', expand=True)
-        layout.prop(self, 'abso_major_rad', expand=True)
-        layout.prop(self, 'abso_minor_rad', expand=True)
 
         if self.change == False:
-            col = layout.column(align=True)
-            col.prop(self, 'align', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'location', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'rotation', expand=True)
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
         use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
         bpy.context.preferences.edit.use_enter_edit_mode = False
 
-        if self.use_abso is True:
+        if self.method == 'INT-EXT':
             extra_helper = (self.abso_major_rad - self.abso_minor_rad) * 0.5
             self.major_radius = self.abso_minor_rad + extra_helper
             self.minor_radius = extra_helper
@@ -312,7 +320,7 @@ def TwistedTorusParameters():
         "major_segments",
         "minor_segments",
         "twists",
-        "use_abso",
+        "method",
         "abso_major_rad",
         "abso_minor_rad",
         ]

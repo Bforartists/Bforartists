@@ -542,7 +542,7 @@ class OBJECT_OT_align_tools(Operator):
     bl_idname = "object.align_tools"
     bl_label = "Align Operator"
     bl_description = "Align Object Tools"
-    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+    bl_options = {'UNDO', 'PRESET'}
 
     # property definitions
 
@@ -804,6 +804,8 @@ class OBJECT_OT_align_tools(Operator):
 
         return {'FINISHED'}
 
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
 
 # Simple Align Classes #
 

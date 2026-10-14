@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2023 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 import os
@@ -87,20 +87,20 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
 
     ## Use HUD
     canvas_use_hud: BoolProperty(
-        name = "Use Hud",
-        description = "Display angle lines and angle value as text on viewport",
-        default = False)
+        name="Use Hud",
+        description="Display angle lines and angle value as text on viewport",
+        default=False)
 
     canvas_use_view_center: BoolProperty(
-        name = "Rotate From View Center In Camera",
-        description = "Rotate from view center in camera view, Else rotate from camera center",
-        default = True)
+        name="Rotate From View Center In Camera",
+        description="Rotate from view center in camera view, Else rotate from camera center",
+        default=True)
 
     ## Canvas rotate
     canvas_use_shortcut: BoolProperty(
-        name = "Use Default Shortcut",
-        description = "Use default shortcut: mouse double-click + modifier",
-        default = True,
+        name="Use Default Shortcut",
+        description="Use default shortcut: mouse double-click + modifier",
+        default=True,
         update=auto_rebind)
 
     mouse_click : EnumProperty(
@@ -116,21 +116,27 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         update=auto_rebind)
 
     use_shift: BoolProperty(
-            name = "combine with shift",
-            description = "add shift",
-            default = False,
+            name="Combine With Shift",
+            description="add shift",
+            default=False,
             update=auto_rebind)
 
     use_alt: BoolProperty(
-            name = "combine with alt",
-            description = "add alt",
-            default = True,
+            name="Combine With Alt",
+            description="add alt",
+            default=True,
             update=auto_rebind)
 
     use_ctrl: BoolProperty(
-            name = "combine with ctrl",
-            description = "add ctrl",
-            default = True,
+            name="Combine With Ctrl",
+            description="add ctrl",
+            default=True,
+            update=auto_rebind)
+
+    use_oskey: BoolProperty(
+            name="Combine With OS Key",
+            description="Add OS key (Win on Windows, Super on Linux, Cmd on Mac)",
+            default=False,
             update=auto_rebind)
 
     rc_angle_step: FloatProperty(
@@ -181,20 +187,29 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
 
                 if self.canvas_use_shortcut:
+                    from sys import platform
 
                     row = box.row()
                     row.label(text="(Auto rebind when changing shortcut)")#icon=""
                     # row.operator("prefs.rebind_shortcut", text='Bind/Rebind shortcuts', icon='FILE_REFRESH')#EVENT_SPACEKEY
                     row = box.row(align = True)
-                    row.prop(self, "use_ctrl", text='Ctrl')#, expand=True
-                    row.prop(self, "use_alt", text='Alt')#, expand=True
-                    row.prop(self, "use_shift", text='Shift')#, expand=True
-                    row.prop(self, "mouse_click",text='')#expand=True
+                    row.prop(self, "use_ctrl", text='Ctrl')
+                    row.prop(self, "use_alt", text='Alt')
+                    row.prop(self, "use_shift", text='Shift')
+                    match platform:
+                        case "win32":
+                            oskey_label = "Win"
+                        case "darwin":
+                            oskey_label = "Cmd"
+                        case _:
+                            oskey_label = "OS"
+                    row.prop(self, "use_oskey", text=oskey_label)
+                    row.prop(self, "mouse_click", text='')
 
-                    if not self.use_ctrl and not self.use_alt and not self.use_shift:
-                        box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
+                    if not self.use_ctrl and not self.use_alt and not self.use_shift and not self.use_oskey:
+                        box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")
 
-                    if not all((self.use_ctrl, self.use_alt, self.use_shift)):
+                    if not all((self.use_ctrl, self.use_alt, self.use_shift, self.use_oskey)):
                         row = box.row(align = True)
                         snap_key_list = []
                         if not self.use_ctrl:
@@ -278,7 +293,7 @@ def register_keymaps():
     if 'view3d.rotate_canvas' not in km.keymap_items:
         km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
         kmi = km.keymap_items.new('view3d.rotate_canvas',
-        type=pref.mouse_click, value="PRESS", alt=pref.use_alt, ctrl=pref.use_ctrl, shift=pref.use_shift, any=False)
+        type=pref.mouse_click, value="PRESS", alt=pref.use_alt, ctrl=pref.use_ctrl, shift=pref.use_shift, oskey=pref.use_oskey, any=False)
 
         addon_keymaps.append((km, kmi))
 

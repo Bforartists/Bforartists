@@ -1,12 +1,26 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2022 Campbell Barton
-# SPDX-FileContributor: Mikhail Rachinskiy
+# SPDX-FileCopyrightText: 2016-2026 Mikhail Rachinskiy
 
-# Generic helper functions, to be used by any modules.
-
+import array
+import random
+from collections.abc import Iterator, MutableSequence
+from random import uniform
+from typing import Any, NamedTuple
 
 import bmesh
 import bpy
+import mathutils
+from bmesh.types import BMesh, BMFace
+from bpy.types import Modifier, Object, Operator
+from mathutils import Vector
+
+from . import var
+
+
+class EnumProp(NamedTuple):
+    op: Operator
+    prop: str
 
 
 def clean_float(value: float, precision: int = 0) -> str:
@@ -28,12 +42,10 @@ def clean_float(value: float, precision: int = 0) -> str:
 # -------------------------------------
 
 
-def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifiers=False):
+def bmesh_copy_from_object(obj: Object, transform=True, triangulate=True, apply_modifiers=False) -> BMesh:
     """Returns a transformed, triangulated copy of the mesh"""
 
-    assert obj.type == "MESH"
-
-    if apply_modifiers and obj.modifiers:
+    if (apply_modifiers and obj.modifiers) or obj.type != "MESH":
         depsgraph = bpy.context.evaluated_depsgraph_get()
         obj_eval = obj.evaluated_get(depsgraph)
         me = obj_eval.to_mesh()
@@ -53,13 +65,13 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
     # would save ram
 
     if transform:
-        matrix = obj.matrix_world.copy()
-        if not matrix.is_identity:
-            bm.transform(matrix)
-            # Update normals if the matrix has no rotation.
-            matrix.translation.zero()
-            if not matrix.is_identity:
-                bm.normal_update()
+        mat = obj.matrix_world.copy()
+        # Avoid floating-point error when object is far away from scene center
+        mat.translation.zero()
+        if not mat.is_identity:
+            bm.transform(mat)
+            # Update normals if matrix has no rotation.
+            bm.normal_update()
 
     if triangulate:
         bmesh.ops.triangulate(bm, faces=bm.faces)
@@ -67,7 +79,7 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
     return bm
 
 
-def bmesh_from_object(obj):
+def bmesh_from_object(obj: Object) -> BMesh:
     """Object/Edit Mode get mesh, use bmesh_to_object() to write back."""
     me = obj.data
 
@@ -80,7 +92,7 @@ def bmesh_from_object(obj):
     return bm
 
 
-def bmesh_to_object(obj, bm):
+def bmesh_to_object(obj: Object, bm: BMesh) -> None:
     """Object/Edit Mode update the object."""
     me = obj.data
 
@@ -91,16 +103,13 @@ def bmesh_to_object(obj, bm):
         me.update()
 
 
-def bmesh_calc_area(bm):
+def bmesh_calc_area(bm: BMesh) -> float:
     """Calculate the surface area."""
     return sum(f.calc_area() for f in bm.faces)
 
 
-def bmesh_check_self_intersect_object(obj):
+def bmesh_check_self_intersect_object(obj: Object) -> MutableSequence[int]:
     """Check if any faces self intersect returns an array of edge index values."""
-    import array
-
-    import mathutils
 
     if not obj.data.polygons:
         return array.array("i", ())
@@ -113,10 +122,7 @@ def bmesh_check_self_intersect_object(obj):
     return array.array("i", faces_error)
 
 
-def bmesh_face_points_random(f, num_points=1, margin=0.05):
-    import random
-    from random import uniform
-
+def _bmesh_face_points_random(f: BMFace, num_points=1, margin=0.05) -> Iterator[Vector]:
     # for pradictable results
     random.seed(f.index)
 
@@ -138,9 +144,7 @@ def bmesh_face_points_random(f, num_points=1, margin=0.05):
         yield vecs[0] + u1 * side1 + u2 * side2
 
 
-def bmesh_check_thick_object(obj, thickness):
-    import array
-
+def bmesh_check_thick_object(obj: Object, thickness: float) -> MutableSequence[int]:
     # Triangulate
     bm = bmesh_copy_from_object(obj, transform=True, triangulate=False)
 
@@ -175,7 +179,7 @@ def bmesh_check_thick_object(obj, thickness):
         no = f.normal
         no_sta = no * EPS_BIAS
         no_end = no * thickness
-        for p in bmesh_face_points_random(f, num_points=6):
+        for p in _bmesh_face_points_random(f, num_points=6):
             # Cast the ray backwards
             p_a = p - no_sta
             p_b = p - no_end
@@ -202,17 +206,73 @@ def bmesh_check_thick_object(obj, thickness):
     return array.array("i", faces_error)
 
 
-def face_is_distorted(ele, angle_distort):
-    no = ele.normal
-    angle_fn = no.angle
+def face_is_distorted(face: BMFace, angle: float) -> bool:
+    face_no = face.normal
+    get_angle = face_no.angle
 
-    for loop in ele.loops:
-        loopno = loop.calc_normal()
+    for loop in face.loops:
+        loop_no = loop.calc_normal()
 
-        if loopno.dot(no) < 0.0:
-            loopno.negate()
+        if loop_no.dot(face_no) < 0.0:
+            loop_no.negate()
 
-        if angle_fn(loopno, 1000.0) > angle_distort:
+        # For some reason Split Non-Planar Faces operator calculates 2x angle
+        if (get_angle(loop_no, 1000.0) * 2.0) > angle:
             return True
 
     return False
+
+
+# Asset
+# -------------------------------------
+
+
+def gn_setup(ng_name: str, ob: Object) -> Modifier:
+    if (ng := bpy.data.node_groups.get(ng_name)) is None:
+        with bpy.data.libraries.load(str(var.NODEGROUPS_FILE)) as (data_from, data_to):
+            data_to.node_groups = [ng_name]
+        ng = data_to.node_groups[0]
+
+    md = ob.modifiers.new(ng_name, "NODES")
+    md.node_group = ng
+    md.show_group_selector = False
+    if hasattr(md, "show_manage_panel"):
+        # VER >= 5.0
+        md.show_manage_panel = False
+
+    return md
+
+
+def md_input_set(md: Modifier, id: str, value: Any, enum_prop: EnumProp = ()) -> None:
+    if hasattr(md, "properties"):  # VER >= 5.2
+        getattr(md.properties.inputs, id).value = value
+    else:
+        if enum_prop:
+            enum_items = [x[1] for x in enum_prop.op.__class__.__annotations__[enum_prop.prop].keywords["items"]]
+            md[id] = enum_items.index(value)
+        else:
+            md[id] = value
+
+
+def md_panel_set(md: Modifier, id: int, value: bool) -> None:
+    if hasattr(md, "properties"):  # VER >= 5.2
+        setattr(md.properties.panels, f"open_{id}", value)
+    else:
+        md.panels[id].is_open = value
+
+
+def md_get_panels(md: Modifier) -> dict[str, int]:
+    if hasattr(md, "properties"):  # VER >= 5.2
+        return {
+            p.name: p.identifier
+            for p in md.node_group.interface.items_tree
+            if p.item_type == "PANEL"
+        }
+
+    return {
+        p.name: i
+        for i, p in enumerate(
+            p for p in md.node_group.interface.items_tree
+            if p.item_type == "PANEL"
+        )
+    }

@@ -14,6 +14,7 @@ from bpy.props import (
         StringProperty,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 # Create a new mesh (object) from verts/edges/faces.
 # verts/edges/faces ... List of vertices/edges/faces for the
@@ -157,20 +158,21 @@ class AddElbowJoint(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'radius')
-        box.prop(self, 'div')
-        box.prop(self, 'angle')
-        box.prop(self, 'startLength')
-        box.prop(self, 'endLength')
+        layout.separator()
+        layout.prop(self, 'radius')
+        layout.prop(self, 'div')
+        layout.prop(self, 'angle')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'startLength')
+        col.prop(self, 'endLength', text='End')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -293,7 +295,7 @@ def TeeJointParameters():
 
 class AddTeeJoint(Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_tee_joint_add"
-    bl_label = "Add Pipe Tee-Joint"
+    bl_label = "Add Pipe T-Joint"
     bl_description = "Construct a tee-joint pipe mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
@@ -359,21 +361,22 @@ class AddTeeJoint(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'radius')
-        box.prop(self, 'div')
-        box.prop(self, 'angle')
-        box.prop(self, 'startLength')
-        box.prop(self, 'endLength')
-        box.prop(self, 'branchLength')
+        layout.separator()
+        layout.prop(self, 'radius')
+        layout.prop(self, 'div')
+        layout.prop(self, 'angle')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'startLength')
+        col.prop(self, 'endLength', text='End')
+        col.prop(self, 'branchLength', text='Branch')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -558,7 +561,7 @@ def WyeJointParameters():
 
 class AddWyeJoint(Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_wye_joint_add"
-    bl_label = "Add Pipe Wye-Joint"
+    bl_label = "Add Pipe Y-Joint"
     bl_description = "Construct a wye-joint pipe mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
@@ -632,22 +635,25 @@ class AddWyeJoint(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'radius')
-        box.prop(self, 'div')
-        box.prop(self, 'angle1')
-        box.prop(self, 'angle2')
-        box.prop(self, 'startLength')
-        box.prop(self, 'branch1Length')
-        box.prop(self, 'branch2Length')
+        layout.separator()
+        layout.prop(self, 'radius')
+        layout.prop(self, 'div')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'angle1')
+        col.prop(self, 'angle2', text='2')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'startLength', text='Length Base')
+        col.prop(self, 'branch1Length', text='Arm 1')
+        col.prop(self, 'branch2Length', text='Arm 2')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -931,24 +937,27 @@ class AddCrossJoint(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'radius')
-        box.prop(self, 'div')
-        box.prop(self, 'angle1')
-        box.prop(self, 'angle2')
-        box.prop(self, 'angle3')
-        box.prop(self, 'startLength')
-        box.prop(self, 'branch1Length')
-        box.prop(self, 'branch2Length')
-        box.prop(self, 'branch3Length')
+        layout.separator()
+        layout.prop(self, 'radius')
+        layout.prop(self, 'div')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'angle1', text='Angle Arm 1')
+        col.prop(self, 'angle2', text='Arm 2')
+        col.prop(self, 'angle3', text='Center')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'startLength')
+        col.prop(self, 'branch1Length', text='Arm 1')
+        col.prop(self, 'branch2Length', text='Arm 2')
+        col.prop(self, 'branch3Length', text='Center')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -1218,7 +1227,7 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
         max=256
         )
     number: IntProperty(
-        name="Arms / Joints",
+        name="Arms",
         description="Number of joints / arms",
         default=5,
         min=2,
@@ -1235,19 +1244,18 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'radius')
-        box.prop(self, 'div')
-        box.prop(self, 'number')
-        box.prop(self, 'length')
+        layout.separator()
+        layout.prop(self, 'radius')
+        layout.prop(self, 'div')
+        layout.prop(self, 'number')
+        layout.prop(self, 'length')
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

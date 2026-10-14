@@ -17,6 +17,7 @@ from bpy.props import (
         BoolProperty,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 # Create a new mesh (object) from verts/edges/faces.
 # verts/edges/faces ... List of vertices/edges/faces for the
@@ -191,19 +192,19 @@ class AddStar(bpy.types.Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        layout.prop(self, 'points', expand=True)
-        layout.prop(self, 'outer_radius', expand=True)
-        layout.prop(self, 'innter_radius', expand=True)
-        layout.prop(self, 'height', expand=True)
+        layout.separator()
+        layout.prop(self, 'points')
+        layout.prop(self, 'height')
+        col = layout.column(align=True)
+        col.prop(self, 'outer_radius', text='Radius Outer')
+        col.prop(self, 'innter_radius', text='Inner')
 
         if self.change == False:
-            col = layout.column(align=True)
-            col.prop(self, 'align', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'location', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

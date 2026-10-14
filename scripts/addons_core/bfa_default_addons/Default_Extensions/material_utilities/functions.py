@@ -512,6 +512,8 @@ def mu_remove_all_materials(self, for_active_object = False):
         objects = bpy.context.selected_editable_objects
 
         for obj in objects:
+            if not hasattr(obj.data, "materials"):
+                continue
             obj.data.materials.clear()
 
         bpy.context.view_layer.objects.active = last_active

@@ -1,18 +1,5 @@
-# SPDX-FileCopyrightText: 2011-2022 Blender Foundation
-#
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
-bl_info = {
-    "name": "AnimAll",
-    "author": "Daniel Salazar (ZanQdo), Damien Picard (pioverfour)",
-    "version": (0, 10, 1),
-    "blender": (4, 0, 0),
-    "location": "3D View > Toolbox > Animation tab > AnimAll",
-    "description": "Allows animation of mesh, lattice, curve and surface data",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/animation/animall.html",
-    "category": "Animation",
-}
 
 import bpy
 from bpy.types import (Operator, Panel, AddonPreferences)
@@ -268,15 +255,15 @@ class VIEW3D_PT_animall(Panel):
         row.prop(animall_properties, "key_selected")
 
         row = layout.row(align=True)
-        row.operator("anim.insert_keyframe_animall", icon="KEY_HLT")
-        row.operator("anim.delete_keyframe_animall", icon="KEY_DEHLT")
+        row.operator("view3d.insert_keyframe_animall", icon="KEY_HLT")
+        row.operator("view3d.delete_keyframe_animall", icon="KEY_DEHLT")
         row = layout.row()
-        row.operator("anim.clear_animation_animall", icon="CANCEL")
+        row.operator("view3d.clear_animation_animall", icon="CANCEL")
 
 
 class ANIM_OT_insert_keyframe_animall(Operator):
     bl_label = "Insert Key"
-    bl_idname = "anim.insert_keyframe_animall"
+    bl_idname = "view3d.insert_keyframe_animall"
     bl_description = "Insert a Keyframe"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -395,7 +382,8 @@ class ANIM_OT_insert_keyframe_animall(Operator):
                 if animall_properties.key_uvs:
                     if data.uv_layers.active is not None:
                         for uv_i, uv in enumerate(data.uv_layers.active.data):
-                            if not animall_properties.key_selected or uv.select:
+                            select = data.attributes['.uv_select_vert'].data[uv_i].value
+                            if not animall_properties.key_selected or select:
                                 insert_key(uv, 'uv', group=data_("UV Layer %s") % uv_i)
 
                 if animall_properties.key_shape_key:
@@ -451,7 +439,7 @@ class ANIM_OT_insert_keyframe_animall(Operator):
 
 class ANIM_OT_delete_keyframe_animall(Operator):
     bl_label = "Delete Key"
-    bl_idname = "anim.delete_keyframe_animall"
+    bl_idname = "view3d.delete_keyframe_animall"
     bl_description = "Delete a Keyframe"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -515,7 +503,8 @@ class ANIM_OT_delete_keyframe_animall(Operator):
                 if animall_properties.key_uvs:
                     if data.uv_layers.active is not None:
                         for uv in data.uv_layers.active.data:
-                            if not animall_properties.key_selected or uv.select:
+                            select = data.attributes['.uv_select_vert'].data[uv_i].value
+                            if not animall_properties.key_selected or select:
                                 delete_key(uv, 'uv')
 
                 if animall_properties.key_active_attribute:
@@ -581,10 +570,9 @@ class ANIM_OT_delete_keyframe_animall(Operator):
 
 class ANIM_OT_clear_animation_animall(Operator):
     bl_label = "Clear Animation"
-    bl_idname = "anim.clear_animation_animall"
-    bl_description = ("Delete all keyframes for this object\n"
-                      "If in a specific case it doesn't work\n"
-                      "try to delete the keys manually")
+    bl_idname = "view3d.clear_animation_animall"
+    bl_description = ("Delete all keyframes for this object.\n"
+                      "If in a specific case it doesn't work, try to delete the keys manually")
     bl_options = {'REGISTER', 'UNDO'}
 
     def invoke(self, context, event):
@@ -664,7 +652,7 @@ def update_attribute_animation(_):
         ("edges", "crease"):          ("crease_edge", "FLOAT", "EDGE"),
     }
     for mesh in bpy.data.meshes:
-        if mesh.animation_data is None:
+        if mesh.animation_data is None or mesh.animation_data.action is None:
             continue
         for fcurve in mesh.animation_data.action.fcurves:
             if fcurve.data_path.startswith("vertex_colors"):

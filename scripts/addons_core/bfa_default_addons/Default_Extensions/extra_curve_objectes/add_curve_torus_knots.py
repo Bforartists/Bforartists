@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2010-2022 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 from bpy.props import (
@@ -330,7 +330,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
     # GENERAL options
     options_plus : BoolProperty(
             name="Extra Options",
-            default=False,
+            default=True,
             description="Show more options (the plus part)",
             )
     absolute_location : BoolProperty(
@@ -535,123 +535,99 @@ class torus_knot_plus(Operator, AddObjectHelper):
             description="Auto adjust curve resolution based on TK length",
             )
     edit_mode : BoolProperty(
-            name="Show in edit mode",
+            name="Show in Edit Mode",
             default=True,
-            description="Show in edit mode"
+            description="Show in Edit Mode"
             )
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         # extra parameters toggle
-        layout.prop(self, "options_plus")
+        layout.row(heading='Show').prop(self, "edit_mode", text='In Edit Mode')
 
         # TORUS KNOT Parameters
-        col = layout.column()
-        col.label(text="Torus Knot Parameters:")
+        header, panel = layout.panel("TORUSKNOT_PT_KNOT", default_closed=False)
+        header.label(text="Knot")
+        if panel:
+            row = panel.row(align=True)
+            row.prop(self, "torus_p", text="Revolutions")
+            row.prop(self, "flip_p", toggle=True, text="", icon='ARROW_LEFTRIGHT')
+            row = panel.row(align=True)
+            row.prop(self, "torus_q", text="Spins")
+            row.prop(self, "flip_q", toggle=True, text="", icon='ARROW_LEFTRIGHT')
 
-        box = layout.box()
-        split = box.split(factor=0.85, align=True)
-        split.prop(self, "torus_p", text="Revolutions")
-        split.prop(self, "flip_p", toggle=True, text="",
-                   icon='ARROW_LEFTRIGHT')
+            links = gcd(self.torus_p, self.torus_q)
+            info = "Multiple Links"
+            if links > 1:
+                info += "  ( " + str(links) + " )"
+            panel.prop(self, 'multiple_links', text=info)
 
-        split = box.split(factor=0.85, align=True)
-        split.prop(self, "torus_q", text="Spins")
-        split.prop(self, "flip_q", toggle=True, text="",
-                   icon='ARROW_LEFTRIGHT')
+            col = panel.column(align=True)
+            col.prop(self, "torus_u", text='Multiplier Rev')
+            col.prop(self, "torus_v", text='Spin')
+            col = panel.column(align=True)
+            col.prop(self, "torus_rP", text='Phase Rev')
+            col.prop(self, "torus_sP", text='Spin')
 
-        links = gcd(self.torus_p, self.torus_q)
-        info = "Multiple Links"
+            # TORUS DIMENSIONS options
+            col = panel.column(align=True)
+            col.row().prop(self, "mode", text='Radius Mode')
+            if self.mode == "MAJOR_MINOR":
+                col.prop(self, "torus_R", text='Major')
+                col.prop(self, "torus_r", text='Minor')
+            else:  # EXTERIOR-INTERIOR
+                col.prop(self, "torus_eR", text='Exterior')
+                col.prop(self, "torus_iR", text='Interior')
 
-        if links > 1:
-            info += "  ( " + str(links) + " )"
-        box.prop(self, 'multiple_links', text=info)
-
-        if self.options_plus:
-            box = box.box()
-            col = box.column(align=True)
-            col.prop(self, "torus_u")
-            col.prop(self, "torus_v")
-
-            col = box.column(align=True)
-            col.prop(self, "torus_rP")
-            col.prop(self, "torus_sP")
-
-        # TORUS DIMENSIONS options
-        col = layout.column(align=True)
-        col.label(text="Torus Dimensions:")
-        box = layout.box()
-        col = box.column(align=True)
-        col.row().prop(self, "mode", expand=True)
-
-        if self.mode == "MAJOR_MINOR":
-            col = box.column(align=True)
-            col.prop(self, "torus_R")
-            col.prop(self, "torus_r")
-        else:  # EXTERIOR-INTERIOR
-            col = box.column(align=True)
-            col.prop(self, "torus_eR")
-            col.prop(self, "torus_iR")
-
-        if self.options_plus:
-            box = box.box()
-            col = box.column(align=True)
+            col = panel.column(align=True)
             col.prop(self, "torus_s")
             col.prop(self, "torus_h")
 
         # CURVE options
-        col = layout.column(align=True)
-        col.label(text="Curve Options:")
-        box = layout.box()
-
-        col = box.column()
-        col.label(text="Output Curve Type:")
-        col.row().prop(self, "outputType", expand=True)
-
-        depends = box.column()
-        depends.prop(self, "torus_res")
-        # deactivate the "curve resolution" if "adaptive resolution" is enabled
-        depends.enabled = not self.adaptive_resolution
-
-        box.prop(self, "adaptive_resolution")
-        box.prop(self, "segment_res")
+        header, panel = layout.panel("TORUSKNOT_PT_CURVE", default_closed=False)
+        header.label(text="Curve")
+        if panel:
+            panel.row().prop(self, "outputType", text='Type')
+            panel.row(heading='Resolution').prop(self, "adaptive_resolution", text='Adaptive')
+            col = panel.column(align=True)
+            row = col.row()
+            row.enabled = not self.adaptive_resolution
+            row.prop(self, "torus_res", text='Curve')
+            col.prop(self, "segment_res", text='Segment')
 
         # SURFACE options
-        col = layout.column()
-        col.label(text="Geometry Options:")
-        box = layout.box()
-        box.prop(self, "geo_surface")
-        if self.geo_surface:
-            col = box.column(align=True)
-            col.prop(self, "geo_bDepth")
-            col.prop(self, "geo_bRes")
-
-            col = box.column(align=True)
+        header, panel = layout.panel("TORUSKNOT_PT_GEO", default_closed=True)
+        header.use_property_split = False
+        header.prop(self, "geo_surface", text='')
+        header.label(text="Geometry")
+        if panel:
+            col = panel.column()
+            col.enabled = self.geo_surface
+            col2 = col.column(align=True)
+            col2.prop(self, "geo_bDepth")
+            col2.prop(self, "geo_bRes", text='Resolution')
+            col2 = col.column(align=True)
             col.prop(self, "geo_extrude")
             col.prop(self, "geo_offset")
-
-        # COLOR options
-        col = layout.column()
-        col.label(text="Color Options:")
-        box = layout.box()
-        box.prop(self, "use_colors")
-        if self.use_colors and self.options_plus:
-            box = box.box()
-            box.prop(self, "colorSet")
-            box.prop(self, "random_colors")
-            box.prop(self, "saturation")
-
-        col = layout.column()
-        col.row().prop(self, "edit_mode", expand=True)
+            col.separator()
+            col.prop(self, "use_colors")
+            col2 = panel.column()
+            col2.enabled = self.use_colors
+            col2.prop(self, "colorSet")
+            col2.prop(self, "saturation")
+            col2.prop(self, "random_colors", text='Randomize')
 
         # TRANSFORM options
-        col = layout.column()
-        col.label(text="Transform Options:")
-        box = col.box()
-        box.prop(self, "location")
-        box.prop(self, "absolute_location")
-        box.prop(self, "rotation")
+        header, panel = layout.panel("TORUSKNOT_PT_TRANSFORM", default_closed=True)
+        header.label(text="Transform")
+        if panel:
+            panel.prop(self, "location")
+            panel.prop(self, "absolute_location", text='Absolute')
+            panel.separator()
+            panel.prop(self, "rotation")
 
     @classmethod
     def poll(cls, context):

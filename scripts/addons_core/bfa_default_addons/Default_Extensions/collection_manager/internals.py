@@ -775,7 +775,8 @@ def send_report(message):
     def report():
         window = bpy.context.window_manager.windows[0]
         ctx = {'window': window, 'screen': window.screen, }
-        bpy.ops.view3d.cm_send_report(ctx, 'INVOKE_DEFAULT', message=message)
+        with bpy.context.temp_override(**ctx):
+            bpy.ops.view3d.cm_send_report('INVOKE_DEFAULT', message=message)
 
     bpy.app.timers.register(report)
 
@@ -805,3 +806,23 @@ def add_vertical_separator_line(row):
     separator = row.row()
     separator.scale_x = 0.1
     separator.label()
+
+def get_w_kwargs(func, **kwargs):
+    def wrapper_func(self):
+        return func(self, **kwargs)
+    return wrapper_func
+
+def get_transform_w_kwargs(func, **kwargs):
+    def wrapper_func(self, curr_value, is_set):
+        return func(self, curr_value, is_set, **kwargs)
+    return wrapper_func
+
+def set_w_kwargs(func, **kwargs):
+    def wrapper_func(self, values):
+        func(self, values, **kwargs)
+    return wrapper_func
+
+def set_transform_w_kwargs(func, **kwargs):
+    def wrapper_func(self, new_value, curr_value, is_set):
+        return func(self, new_value, curr_value, is_set, **kwargs)
+    return wrapper_func

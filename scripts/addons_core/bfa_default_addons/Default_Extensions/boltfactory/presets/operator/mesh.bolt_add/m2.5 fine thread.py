@@ -1,0 +1,40 @@
+import bpy
+
+op = bpy.context.active_operator
+
+op.bf_Model_Type = "bf_Model_Bolt"
+op.bf_Head_Type = "bf_Head_Hex"
+op.bf_Bit_Type = "bf_Bit_None"
+op.bf_Nut_Type = "bf_Nut_Hex"
+op.bf_Shank_Length = 0.0
+op.bf_Shank_Dia = 2.5
+op.bf_Phillips_Bit_Depth = 0.95
+op.bf_Allen_Bit_Depth = 1.25
+op.bf_Allen_Bit_Flat_Distance = 2.0
+op.bf_Torx_Bit_Depth = 1.25
+op.bf_Torx_Size_Type = "bf_Torx_T8"
+op.bf_Hex_Head_Height = 1.7
+op.bf_Hex_Head_Flat_Distance = 4.5
+op.bf_12_Point_Head_Height = 2.4
+op.bf_12_Point_Head_Flat_Distance = 2.5
+op.bf_12_Point_Head_Flange_Dia = 4.72
+op.bf_CounterSink_Head_Dia = 5.0
+op.bf_CounterSink_Head_Angle = 1.5708
+op.bf_Cap_Head_Height = 2.4
+op.bf_Cap_Head_Dia = 4.5
+op.bf_Dome_Head_Dia = 4.6
+op.bf_Pan_Head_Dia = 4.6
+op.bf_Philips_Bit_Dia = 1.6
+op.bf_Thread_Length = 5.0
+op.bf_Major_Dia = 2.5
+op.bf_Pitch = 0.35
+op.bf_Rounded_Root_Dia = 2.071
+op.bf_Minor_Dia = 2.121
+op.bf_Crest_Percent = 12.5
+op.bf_Root_Percent = 25
+op.bf_Div_Count = 36
+op.bf_Hex_Nut_Height = 2.0
+op.bf_Hex_Nut_Flat_Distance = 5.0
+op.bf_12_Point_Nut_Height = 2.4
+op.bf_12_Point_Nut_Flat_Distance = 3.0
+op.bf_12_Point_Nut_Flange_Dia = 4.72
