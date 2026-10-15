@@ -1996,8 +1996,8 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.operator("view3d.view_roll", text="Roll Left", icon="ROLL_LEFT").type = 'LEFT'
         layout.operator("view3d.view_roll", text="Roll Right", icon="ROLL_RIGHT").type = 'RIGHT'
-        layout.operator("view3d.view_roll_set", text="Reset Roll") # BFA - WIP  - needs icon
-        layout.operator("view3d.view_flip")  # BFA - WIP - needs icon
+        layout.operator("view3d.view_roll_set", text="Reset Roll", icon="CLEAR_ROLL")  # BFA - Icon Added
+        layout.operator("view3d.view_flip", icon="FLIP")  # BFA - Icon Added
 
         layout.separator()
 
