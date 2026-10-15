@@ -130,13 +130,14 @@ static void rna_enum_add_custom_libraries(EnumPropertyItem **item,
       EnumPropertyItem tmp = {
           enum_value,
           user_library.name,
-          /* BFA - icons to tell library owners apart in the menu: folder for project-defined
-           * libraries (as before Blender merged the user/project loops into this per-owner loop),
-           * extension icon for libraries installed by an extension (matches the
-           * "View Extension" asset context menu item). User libraries keep no icon. */
-          (owner == bUserAssetLibraryOwner::Project)   ? ICON_FILE_FOLDER :
+          /* BFA - icons to tell library owners apart in the menu: folder for the user's own
+           * libraries (the Bforartists icon they had before Blender merged the user/project
+           * loops into this per-owner loop), project icon for project-defined libraries (as in
+           * the Project editor), extension icon for libraries installed by an extension (matches
+           * the "View Extension" asset context menu item). */
+          (owner == bUserAssetLibraryOwner::Project)   ? ICON_PROJECT :
           (owner == bUserAssetLibraryOwner::Extension) ? ICON_EXTENSION :
-                                                         ICON_NONE,
+                                                         ICON_FILE_FOLDER,
           user_library.name,
           /* Use library path or URL as description, it's a nice hint for users. */
           (user_library.flag & ASSET_LIBRARY_USE_REMOTE_URL) ? user_library.remote_url :

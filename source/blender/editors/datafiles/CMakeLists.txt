@@ -1335,6 +1335,7 @@ if(WITH_BLENDER)
       node_fresnel
       node_gamma
       node_geometry
+      node_get_grid_names
       node_getgeometrycomponent
       node_get_named_grid
       node_glare
