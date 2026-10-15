@@ -11166,7 +11166,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeQuaternionToRotation", nullptr, ICON_QUATERNION_TO_ROTATION);
   define(brna, "FunctionNode", "FunctionNodeRandomValue", def_fn_random_value, ICON_RANDOM_FLOAT);
   define(brna, "FunctionNode", "FunctionNodeReplaceString", nullptr, ICON_REPLACE_STRING);
-  define(brna, "FunctionNode", "FunctionNodeReverseString", nullptr, ICON_NONE);
+  define(brna, "FunctionNode", "FunctionNodeReverseString", nullptr, ICON_REVERSE_STRING); /*BFA - icon*/
   define(brna, "FunctionNode", "FunctionNodeRotateEuler", def_fn_rotate_euler, ICON_ROTATE_EULER);
   define(brna, "FunctionNode", "FunctionNodeRotateRotation", nullptr, ICON_ROTATE_EULER);
   define(brna, "FunctionNode", "FunctionNodeRotateVector", nullptr, ICON_NODE_VECTORROTATE);
@@ -11176,7 +11176,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeSeparateColor", nullptr, ICON_SEPARATE_COLOR);
   define(brna, "FunctionNode", "FunctionNodeSeparateMatrix", nullptr, ICON_SEPARATE_MATRIX);
   define(brna, "FunctionNode", "FunctionNodeSeparateTransform", nullptr, ICON_SEPARATE_TRANSFORM);
-  define(brna, "FunctionNode", "FunctionNodeSetStringCase", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "FunctionNode", "FunctionNodeSetStringCase", nullptr, ICON_SET_STRING_CASE); /*BFA - icon*/
   define(brna, "FunctionNode", "FunctionNodeSliceString", nullptr, ICON_STRING_SUBSTRING);
   define(brna, "FunctionNode", "FunctionNodeSplitString", nullptr, ICON_SPLIT_STRING);
   define(brna, "FunctionNode", "FunctionNodeStringLength", nullptr, ICON_STRING_LENGTH);
@@ -11448,7 +11448,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSubdivideMesh", nullptr, ICON_SUBDIVIDE_MESH);
   define(brna, "GeometryNode", "GeometryNodeSubdivisionSurface", nullptr, ICON_SUBDIVIDE_EDGES);
   define(brna, "GeometryNode", "GeometryNodeSwitch", nullptr, ICON_SWITCH);
-  define(brna, "GeometryNode", "GeometryNodeTagFilter", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeTagFilter", nullptr, ICON_TAG_FILTER); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeTool3DCursor", nullptr, ICON_CURSOR);
   define(brna, "GeometryNode", "GeometryNodeToolActiveElement", nullptr, ICON_ACTIVE_ELEMENT);
   define(brna, "GeometryNode", "GeometryNodeToolFaceSet", nullptr, ICON_FACE_SET);
