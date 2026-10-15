@@ -1993,6 +1993,15 @@ class NODES_PT_toolshelf_gn_add_curve(bpy.types.Panel, NodePanel):
     def draw(self, context):
         layout = self.layout
 
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeConstructCurves", pad=13),  # BFA - new node, in Add > Curve
+        )
+
+        self.draw_entries(context, layout, entries)
+
 
 class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
     bl_label = "Read"
