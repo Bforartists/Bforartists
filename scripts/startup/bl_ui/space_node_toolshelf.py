@@ -1230,6 +1230,7 @@ class NODES_PT_toolshelf_compositor_add_utilities(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("CompositorNodeLevels", pad=33),
             OperatorEntry("CompositorNodeNormalize", pad=26),
+            OperatorEntry("FunctionNodeRandomValue", pad=19),  # BFA - ported to the Compositor
             Separator,
             OperatorEntry("NodeImplicitConversion", pad=8),
             OperatorEntry("CompositorNodeSplit", pad=35),
@@ -1263,8 +1264,14 @@ class NODES_PT_toolshelf_compositor_add_utilities_math(bpy.types.Panel, NodePane
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("FunctionNodeBitMath", pad=19),  # BFA - ported to the Compositor
+            OperatorEntry("FunctionNodeBooleanMath", pad=9),  # BFA - ported to the Compositor
             OperatorEntry("ShaderNodeClamp", pad=22),
+            OperatorEntry("FunctionNodeCompare", pad=17),  # BFA - ported to the Compositor
             OperatorEntry("ShaderNodeFloatCurve", pad=13),
+            OperatorEntry("FunctionNodeFloatToInt", pad=6),  # BFA - ported to the Compositor
+            OperatorEntry("FunctionNodeHashValue", pad=13),  # BFA - ported to the Compositor
+            OperatorEntry("FunctionNodeIntegerMath", pad=10),  # BFA - ported to the Compositor
             OperatorEntry("ShaderNodeMapRange", pad=13),
             OperatorEntry("ShaderNodeMath", pad=24),
             OperatorEntry("ShaderNodeMix", pad=27),
