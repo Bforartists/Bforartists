@@ -280,6 +280,11 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
   {
     wmGizmo *gz = navgroup->gz_array[GZ_INDEX_ROLL];
     gz->scale_basis = GIZMO_SIZE / 2.0f;
+    /* Roll around the view center like the sidebar View Roll field, not the orbit pivot. */
+    wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
+    if (gzop != nullptr) {
+      RNA_boolean_set(&gzop->ptr, "use_view_center", true);
+    }
   }
 
   gzgroup->customdata = navgroup;
