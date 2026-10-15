@@ -505,6 +505,7 @@ if(WITH_BLENDER)
       constraint_bone
       constraint_data
       controlpointrow
+      convert_rotation_mode
       convexhull
       copy_id
       copy_from_object
