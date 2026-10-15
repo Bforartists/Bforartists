@@ -791,6 +791,7 @@ if(WITH_BLENDER)
       gesture_zoom
       get_id
       get_list_item
+      get_vector_component
       ghost
       ghost_disabled
       ghost_enabled
