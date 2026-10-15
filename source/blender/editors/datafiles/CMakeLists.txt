@@ -1025,6 +1025,7 @@ if(WITH_BLENDER)
       load_gltf
       load_obj
       load_ply
+      load_spz
       load_stl
       load_svg
       load_svg_gpencil
