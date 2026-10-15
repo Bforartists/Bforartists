@@ -1298,6 +1298,7 @@ if(WITH_BLENDER)
       node_colorbalance
       node_colorcorrection
       node_colorramp
+      node_combine_list
       node_combinehsv
       node_combinergb
       node_combinexyz
