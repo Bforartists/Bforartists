@@ -613,6 +613,8 @@ static void rna_UnifiedPaintSettings_size_update(bContext *C, PointerRNA *ptr)
   /* changing the unified size should invalidate the overlay but also update the brush */
   bke::paint::invalidate_overlay_all(*CTX_data_scene(C));
   rna_UnifiedPaintSettings_update(C, ptr);
+  /* bfa - keep the Grease Pencil surface offset in sync when the brush uses Unified Size. */
+  rna_ToolSettings_gpencil_surface_offset_sync_from_brush(CTX_data_scene(C));
 }
 
 static const UnifiedPaintSettings *rna_UnifiedPaintSettings_address_get(const Paint *paint)
@@ -1048,7 +1050,9 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, brush_size_unit_items);
   RNA_def_property_ui_text(
       prop, "Size Unit", "Measure brush size relative to the view or the scene");
-  RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
+  /* bfa - was rna_UnifiedPaintSettings_update, re-sync GP surface offset when switching to
+   * scene units. */
+  RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_size_update");
 }
 
 static void rna_def_mesh_automasking_settings(BlenderRNA *brna)

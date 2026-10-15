@@ -998,12 +998,13 @@ class VIEW3D_PT_sculpt_tab_sculpt(ToolsystemPanel):
             OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Trim", icon='LASSO_TRIM', props={"trim_mode": 'DIFFERENCE'}),
             OperatorEntry("sculpt.trim_box_gesture", text="Box Add", icon='BOX_ADD', props={"trim_mode": 'JOIN'}),
             OperatorEntry("sculpt.trim_lasso_gesture", text="Lasso Add", icon='LASSO_ADD', props={"trim_mode": 'JOIN'}),
+            OperatorEntry("sculpt.trim_polyline_gesture", text="Polyline Add", icon='LASSO_ADD', props={"trim_mode": 'JOIN'}),  # BFA - stand-in icon
             Separator,
             OperatorEntry("sculpt.project_line_gesture", text="Line Project", icon='LINE_PROJECT'),
             OperatorEntry("sculpt.face_set_edit", text="Fair Positions", icon='POSITION', props={"mode": 'FAIR_POSITIONS'}),
             OperatorEntry("sculpt.face_set_edit", text="Fair Tangency", icon='NODE_TANGENT', props={"mode": 'FAIR_TANGENCY'}),
             Separator,
-            OperatorEntry("sculpt.sample_color", text="Sample Color", icon='EYEDROPPER'),
+            OperatorEntry("paint.sample_color", text="Sample Color", icon='EYEDROPPER'),
         )
 
         draw_entries(layout, context, entries)
@@ -1633,6 +1634,12 @@ class VIEW3D_PT_gp_point_tab_point(ToolsystemPanel):
         entries = (
             OperatorEntry("grease_pencil.extrude_move", text="Extrude", icon='EXTRUDE_REGION'),
             OperatorEntry("grease_pencil.stroke_smooth", text="Smooth", icon='PARTICLEBRUSH_SMOOTH'),
+            Separator,
+            OperatorEntry("object.vertex_group_add", text="Add New Vertex Group", icon='GROUP_VERTEX'),  # BFA - from Point > Vertex Groups
+            Separator,
+            OperatorEntry("grease_pencil.set_corner_type", text="Corner Round", icon='GP_CAPS_ROUND', props={"corner_type": 'ROUND'}),  # BFA - from Point > Set Corner Type
+            OperatorEntry("grease_pencil.set_corner_type", text="Corner Flat", icon='GP_CAPS_FLAT', props={"corner_type": 'FLAT'}),
+            OperatorEntry("grease_pencil.set_corner_type", text="Corner Sharp", icon='GP_CAPS_SHARP', props={"corner_type": 'SHARP'}),
         )
 
         draw_entries(layout, context, entries)

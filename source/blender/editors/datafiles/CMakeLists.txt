@@ -671,6 +671,7 @@ if(WITH_BLENDER)
       extend_vertices
       external_data
       external_drive
+      extension
       extensions_all
       extrapolation_constant
       extrapolation_cyclic
@@ -1660,6 +1661,7 @@ if(WITH_BLENDER)
       polygonsides
       polyline_hide
       polyline_show
+      polyline_trim
       pose_data
       pose_from_breakdown
       pose_hlt
@@ -1914,6 +1916,9 @@ if(WITH_BLENDER)
       seq_histogram
       seq_insert_gaps
       seq_luma_waveform
+      seq_overlap_overwrite
+      seq_overlap_ripple
+      seq_overlap_shuffle
       seq_move_extend
       seq_multicam
       seq_multiply
