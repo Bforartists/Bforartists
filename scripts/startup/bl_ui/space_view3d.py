@@ -4044,7 +4044,7 @@ class VIEW3D_MT_object_animation(Menu):
 
         layout.separator()
 
-        layout.operator("anim.rotation_mode_convert") # BFA - WIP
+        layout.operator("anim.rotation_mode_convert", icon="CONVERT_ROTATION_MODE")  # BFA - Icon Added
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
