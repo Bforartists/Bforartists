@@ -806,7 +806,7 @@
           <ThemeSpaceGeneric
             back="#404040"
             header="#333333ff"
-            text="#ffffff"
+            text="#e6e6e6"
             text_hi="#ffffff"
             >
           </ThemeSpaceGeneric>

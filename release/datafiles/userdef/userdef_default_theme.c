@@ -648,7 +648,7 @@ const bTheme U_theme_default = {
   },
   .space_node = {
     .back = RGBA(0x40404000),
-    .text = RGBA(0xffffffff),
+    .text = RGBA(0xe6e6e6ff),
     .text_hi = RGBA(0xffffffff),
     .header = RGBA(0x333333ff),
     .shade2 = RGBA(0x7f707064),
