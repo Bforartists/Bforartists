@@ -74,7 +74,6 @@
 #include "kernel/svm/value.h"
 #include "kernel/svm/vector_rotate.h"
 #include "kernel/svm/vector_transform.h"
-#include "kernel/svm/vertex_color.h"
 #include "kernel/svm/voronoi.h"
 #include "kernel/svm/wave.h"
 #include "kernel/svm/wavelength.h"
@@ -156,8 +155,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       {
         const ccl_global SVMNodeClosureEmission &bsdf_node = svm_node_get<SVMNodeClosureEmission>(
             kg, &offset);
-        IF_KERNEL_NODES_FEATURE(EMISSION)
-        {
+        IF_KERNEL_NODES_FEATURE (EMISSION) {
           svm_node_closure_emission(
               kg, sd, stack, closure_weight, bsdf_node, path_visibility, path_flag);
         }
@@ -166,8 +164,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_CLOSURE_BACKGROUND)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeClosureBackground>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(EMISSION)
-        {
+        IF_KERNEL_NODES_FEATURE (EMISSION) {
           svm_node_closure_background(sd, stack, closure_weight, node);
         }
       }
@@ -183,8 +180,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_EMISSION_WEIGHT)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeEmissionWeight>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(EMISSION)
-        {
+        IF_KERNEL_NODES_FEATURE (EMISSION) {
           svm_node_emission_weight(stack, &closure_weight, node);
         }
       }
@@ -214,8 +210,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_GEOMETRY_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeGeometry>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_geometry<dual3>(kg, sd, stack, node);
         }
       }
@@ -226,8 +221,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_CONVERT_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeConvert>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_convert<dual1, dual3>(kg, stack, node);
         }
       }
@@ -241,8 +235,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_TEX_COORD_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeTexCoord>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           offset = svm_node_tex_coord_derivative(kg, sd, path_visibility, stack, node, offset);
         }
         else {
@@ -256,8 +249,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_VALUE_F_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeValueF>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_value_f<dual1>(stack, node);
         }
       }
@@ -268,8 +260,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_VALUE_V_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeValueV>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_value_v<dual3>(stack, node);
         }
       }
@@ -277,8 +268,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_ATTR)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeAttr>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_KERNEL_NODES_FEATURE (VOLUME) {
 #ifdef __VOLUME__
           svm_node_attr_volume(kg, sd, stack, node);
 #endif
@@ -291,21 +281,8 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_ATTR_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeAttr>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_attr_derivative(kg, sd, stack, node);
-        }
-      }
-      break;
-      SVM_CASE(NODE_VERTEX_COLOR)
-      svm_node_vertex_color(kg, sd, stack, svm_node_get<SVMNodeVertexColor>(kg, &offset));
-      break;
-      SVM_CASE(NODE_VERTEX_COLOR_DERIVATIVE)
-      {
-        const ccl_global auto &node = svm_node_get<SVMNodeVertexColor>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
-          svm_node_vertex_color_derivative(kg, sd, stack, node);
         }
       }
       break;
@@ -327,8 +304,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_TEX_IMAGE_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeTexImage>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_tex_image<dual3>(kg, sd, stack, node);
         }
       }
@@ -339,8 +315,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_TEX_IMAGE_BOX_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeTexImageBox>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_tex_image_box<dual3>(kg, sd, stack, node);
         }
       }
@@ -355,8 +330,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_CLOSURE_SET_NORMAL)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeClosureSetNormal>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(BUMP)
-        {
+        IF_KERNEL_NODES_FEATURE (BUMP) {
           svm_node_set_normal(sd, stack, node);
         }
       }
@@ -364,8 +338,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_ENTER_BUMP_EVAL)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeEnterBumpEval>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(BUMP_STATE)
-        {
+        IF_KERNEL_NODES_FEATURE (BUMP_STATE) {
           svm_node_enter_bump_eval(kg, sd, stack, node);
         }
       }
@@ -373,8 +346,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_LEAVE_BUMP_EVAL)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeLeaveBumpEval>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(BUMP_STATE)
-        {
+        IF_KERNEL_NODES_FEATURE (BUMP_STATE) {
           svm_node_leave_bump_eval(sd, stack, node);
         }
       }
@@ -395,8 +367,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_CLOSURE_VOLUME)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeClosureVolume>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_closure_volume<type>(kg, sd, stack, closure_weight, node);
         }
       }
@@ -405,8 +376,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       {
         const ccl_global SVMNodeVolumeCoefficients &bsdf_node =
             svm_node_get<SVMNodeVolumeCoefficients>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_volume_coefficients<type>(
               kg, sd, stack, closure_weight, bsdf_node, path_visibility, path_flag);
         }
@@ -416,8 +386,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       {
         const ccl_global SVMNodePrincipledVolume &bsdf_node =
             svm_node_get<SVMNodePrincipledVolume>(kg, &offset);
-        IF_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_principled_volume<type>(
               kg, sd, stack, closure_weight, bsdf_node, path_visibility, path_flag);
         }
@@ -438,8 +407,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_VECTOR_MATH_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeVectorMath>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_vector_math<dual3>(stack, node);
         }
       }
@@ -483,8 +451,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_TEXTURE_MAPPING_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeTextureMapping>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_texture_mapping<dual3>(stack, node);
         }
       }
@@ -495,8 +462,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_MAPPING_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeMapping>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_mapping<dual3>(stack, node);
         }
       }
@@ -514,8 +480,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_TEX_ENVIRONMENT_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeTexEnvironment>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_tex_environment<dual3>(kg, sd, stack, node);
         }
       }
@@ -571,8 +536,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_TANGENT_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeTangent>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_tangent<dual3>(kg, sd, stack, node);
         }
       }
@@ -602,8 +566,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_SEPARATE_VECTOR_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeSeparateVector>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_separate_vector<dual3>(stack, node);
         }
       }
@@ -614,8 +577,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_COMBINE_VECTOR_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeCombineVector>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_combine_vector<dual3>(stack, node);
         }
       }
@@ -627,8 +589,7 @@ ccl_device void svm_eval_nodes(KernelGlobals kg,
       SVM_CASE(NODE_GET_VECTOR_COMPONENT_DERIVATIVE)
       {
         const ccl_global auto &node = svm_node_get<SVMNodeGetVectorComponent>(kg, &offset);
-        IF_NOT_KERNEL_NODES_FEATURE(VOLUME)
-        {
+        IF_NOT_KERNEL_NODES_FEATURE (VOLUME) {
           svm_node_get_vector_component<dual3>(stack, node);
         }
       }

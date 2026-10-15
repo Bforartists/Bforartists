@@ -328,6 +328,16 @@ bool WM_toolsystem_activate_brush_and_tool(bContext *C, Paint *paint, Brush *bru
     return false;
   }
 
+  /* BFA - Grease Pencil radius/surface offset sync: the newly active brush can have a different
+   * size, update the surface offset shown in the tool header right away instead of on the next
+   * size edit. Strokes were already correct, as they sync the offset per sample. No-op unless sync
+   * is enabled and the active Grease Pencil brush uses scene units. */
+  if (Scene *scene = CTX_data_scene(C)) {
+    if (BKE_brush_gpencil_surface_offset_sync(scene)) {
+      WM_event_add_notifier(C, NC_SCENE | ND_TOOLSETTINGS, scene);
+    }
+  }
+
   if (active_tool == nullptr || active_tool->runtime == nullptr) {
     BLI_assert(G.background);
     return false;
@@ -421,6 +431,12 @@ static void toolsystem_brush_activate_from_toolref_for_object_paint(Main *bmain,
       if (tref_rt->brush_type == -1) {
         /* Update the bindings so the main brush reference matches the currently active brush. */
         toolsystem_main_brush_binding_update_from_active(paint);
+      }
+      /* BFA - Grease Pencil radius/surface offset sync: switching tool re-activates the brush
+       * remembered for it, which can have a different size. Same as in
+       * #WM_toolsystem_activate_brush_and_tool(). */
+      if (BKE_brush_gpencil_surface_offset_sync(scene)) {
+        WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, scene);
       }
     }
   }

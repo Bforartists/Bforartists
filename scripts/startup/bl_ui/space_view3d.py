@@ -1456,7 +1456,8 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
             layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon="SHRINK_FATTEN")
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
-            layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops")
+            layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops", icon="RELAX_EDGE_LOOPS")
+            layout.operator("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected", icon="CURVE_EDGE_LOOPS")
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
         elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES', 'EDIT_POINTCLOUD'}:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
@@ -3175,12 +3176,6 @@ class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
         layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
-        layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
-        layout.operator("paint.face_select_hide", text="Hide Selected") # BFA - WIP
-        props = layout.operator("paint.face_select_hide", text="Hide Unselected") # BFA - WIP
-        props.unselected = True
-
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
     bl_label = "Select"
@@ -3216,12 +3211,6 @@ class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
 
         layout.operator("paint.vert_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
-
-        layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
-        layout.operator("paint.vert_select_hide", text="Hide Selected") # BFA - WIP
-        props = layout.operator("paint.vert_select_hide", text="Hide Unselected") # BFA - WIP
-        props.unselected = True
 
 
 class VIEW3D_MT_select_edit_pointcloud(Menu):
@@ -5055,6 +5044,10 @@ class VIEW3D_MT_brush(Menu):
             layout.separator()
 
             layout.menu("VIEW3D_MT_facemask_showhide")  # bfa - show hide for face mask tool
+        elif mesh.use_paint_mask_vertex:
+            layout.separator()
+
+            layout.menu("VIEW3D_MT_vertexmask_showhide")  # BFA - show hide for vertex mask tool
 
         # Color picker just in vertex and texture paint
         if obj.mode in {"VERTEX_PAINT", "TEXTURE_PAINT"}:
@@ -5073,6 +5066,18 @@ class VIEW3D_MT_facemask_showhide(Menu):
         layout.operator("paint.face_select_reveal", text="Show Hidden", icon="HIDE_OFF")
         layout.operator("paint.face_select_hide", text="Hide Selected", icon="HIDE_ON").unselected = False
         layout.operator("paint.face_select_hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
+
+
+# BFA - show hide menu for vertex selection masking
+class VIEW3D_MT_vertexmask_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("paint.face_vert_reveal", text="Show Hidden", icon="HIDE_OFF")
+        layout.operator("paint.vert_select_hide", text="Hide Selected", icon="HIDE_ON").unselected = False
+        layout.operator("paint.vert_select_hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_paint_vertex(Menu):
@@ -5297,6 +5302,14 @@ class VIEW3D_MT_paint_weight(Menu):
         if obj.type == "MESH":
             self.draw_generic(self.layout, is_editmode=False)
 
+            # BFA - Show/Hide for selection masking, like the Brush menu in vertex and texture paint
+            if obj.data.use_paint_mask:
+                self.layout.separator()
+                self.layout.menu("VIEW3D_MT_facemask_showhide")
+            elif obj.data.use_paint_mask_vertex:
+                self.layout.separator()
+                self.layout.menu("VIEW3D_MT_vertexmask_showhide")
+
 
 # BFA menu
 class VIEW3D_MT_paint_weight_legacy(Menu):
@@ -5377,6 +5390,9 @@ class VIEW3D_MT_sculpt(Menu):
         props.trim_mode = "JOIN"
 
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
+        props.trim_mode = "JOIN"
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add", icon="LASSO_ADD")  # BFA - stand-in icon
         props.trim_mode = "JOIN"
 
         layout.separator()
@@ -5487,10 +5503,7 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add") # BFA - WIP
-        props.trim_mode = "JOIN"
-
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")  # BFA - WIP
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
 
@@ -5597,7 +5610,7 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_line_gesture", text="Line Trim", icon="LINE_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
         layout.separator()
@@ -5608,7 +5621,7 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
         props.trim_mode = "JOIN"
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add")
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add", icon="LASSO_ADD")  # BFA - stand-in icon
         props.trim_mode = "JOIN"
 
 # BFA - Disabled as it doesn't make sense to have modal tools run from the header
@@ -6337,10 +6350,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("pose.reveal", text="Show Hidden", icon="HIDE_OFF")
-        layout.operator("pose.hide", text="Hide Selected", icon="HIDE_ON").unselected = False
-        # BFA - added for consistentcy with header
-        layout.operator("pose.hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
+        layout.menu("VIEW3D_MT_pose_showhide")  # BFA - Show/Hide submenu, consistent with other context menus
 
         layout.separator()
 
@@ -12477,6 +12487,7 @@ classes = (
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush,  # BFA - menu
     VIEW3D_MT_facemask_showhide,  # BFA - menu
+    VIEW3D_MT_vertexmask_showhide,  # BFA - menu
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,
