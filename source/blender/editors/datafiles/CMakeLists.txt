@@ -1946,6 +1946,7 @@ if(WITH_BLENDER)
       set_curve_handle_positions
       set_curve_radius
       set_curve_tilt
+      set_end_frame
       set_face_set
       set_frames
       set_from_faces
@@ -1958,6 +1959,7 @@ if(WITH_BLENDER)
       set_shade_smooth
       set_smooth
       set_spline_resolution
+      set_start_frame
       set_time
       set_uppercase
       settings

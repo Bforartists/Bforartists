@@ -465,8 +465,8 @@ class SEQUENCER_MT_range(Menu):
 
         layout.separator()
 
-        layout.operator("anim.start_frame_set", text="Set Start Frame", icon="AFTER_CURRENT_FRAME")  # BFA
-        layout.operator("anim.end_frame_set", text="Set End Frame", icon="BEFORE_CURRENT_FRAME")  # BFA
+        # layout.operator("anim.start_frame_set", text="Set Start Frame", icon="AFTER_CURRENT_FRAME")  # BFA - double, in the timeline footer frame range
+        # layout.operator("anim.end_frame_set", text="Set End Frame", icon="BEFORE_CURRENT_FRAME")  # BFA - double, in the timeline footer frame range
         layout.operator(
             "sequencer.set_range_to_strips",
             text="Set Frame Range to Strips",
