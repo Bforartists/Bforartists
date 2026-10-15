@@ -386,11 +386,14 @@ void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
  * Shares the location and size of #VIEW3D_GT_navigate_rotate, where 1.0 is the ball radius.
  * \{ */
 
-/* Arc radius relative to the ball radius. */
-#define ROLL_ARC_RADIUS 1.2f
+/* Arc radius relative to the ball radius: hugs the ball, so it scales with the gizmo size
+ * and stays clear of the navigation buttons. */
+#define ROLL_ARC_RADIUS 1.05f
 /* Line width in pixels, thin like the white view circle of the rotate gizmo. */
 #define ROLL_ARC_LINE_WIDTH (2.0f * U.pixelsize)
-/* Mouse distance from the arc that still grabs it, relative to the ball radius. */
+#define ROLL_ARC_LINE_WIDTH_HIGHLIGHT (3.0f * U.pixelsize)
+/* Mouse distance from the arc that still grabs it, relative to the ball radius.
+ * Inside the ball (radius 1) the ball itself is picked first, so the band only grows outwards. */
 #define ROLL_ARC_HIT_MARGIN 0.15f
 /* Arc span, lower left, turned down a bit to stay clear of the navigation buttons. */
 #define ROLL_ARC_ANGLE_MID DEG2RADF(235.0f)
@@ -408,13 +411,14 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   const bool is_highlight = (gz->state & (WM_GIZMO_STATE_HIGHLIGHT | WM_GIZMO_STATE_MODAL)) != 0;
 
   /* Opaque colors mixed with the view background, so overlapping line joins don't show.
-   * Grey like the rotate gizmo backdrop, lighter white when highlighted. */
+   * Always light, like the white view circle of the rotate gizmo, so it is easy to find;
+   * full white and a bit thicker when highlighted. */
   float view_color[4];
   ED_view3d_background_color_get(CTX_data_scene(C), CTX_wm_view3d(C), view_color);
   view_color[3] = 1.0f;
   const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
   float color[4];
-  interp_v4_v4v4(color, view_color, white, is_highlight ? 0.8f : 0.35f);
+  interp_v4_v4v4(color, view_color, white, is_highlight ? 1.0f : 0.7f);
 
   float matrix_final[4][4];
   WM_gizmo_calc_matrix_final(gz, matrix_final);
@@ -425,11 +429,14 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   float viewport[4];
   GPU_viewport_size_get_f(viewport);
 
+  /* Line smoothing (anti-aliasing) needs blending. */
+  GPU_blend(GPU_BLEND_ALPHA);
+
   const uint pos = GPU_vertformat_attr_add(
       immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_UNIFORM_COLOR);
   immUniform2fv("viewportSize", &viewport[2]);
-  immUniform1f("lineWidth", ROLL_ARC_LINE_WIDTH);
+  immUniform1f("lineWidth", is_highlight ? ROLL_ARC_LINE_WIDTH_HIGHLIGHT : ROLL_ARC_LINE_WIDTH);
   immUniformColor4fv(color);
 
   const float angle_start = ROLL_ARC_ANGLE_MID - ROLL_ARC_ANGLE_HALF;
@@ -446,6 +453,7 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   immEnd();
 
   immUnbindProgram();
+  GPU_blend(GPU_BLEND_NONE);
   GPU_matrix_pop();
 }
 
