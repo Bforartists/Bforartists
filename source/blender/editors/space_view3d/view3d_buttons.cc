@@ -2823,7 +2823,8 @@ static void v3d_editmetaball_buts(ui::Layout &layout, Object *ob)
   if (!ELEM(RNA_enum_get(&ptr, "type"), MB_BALL)) {
     col->label(IFACE_("Size:"), ICON_NONE);
     col = &col->row(false);
-    col->separator(); /*bfa - indent*/
+    col->separator();          /*bfa - indent*/
+    col = &col->column(true); /* bfa - stack the size fields as X / Y / Z rows inside the indent */
   }
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:
