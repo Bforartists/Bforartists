@@ -10895,7 +10895,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "NodeInternal", "NodeEnableOutput", nullptr, ICON_NODE_ENABLE_OUTPUT);
   define(brna, "NodeInternal", "NodeEvaluateClosure", def_evaluate_closure, ICON_NODE_CLOSURE_EVALUATE);
   define(brna, "NodeInternal", "NodeGetBundleItem", nullptr, ICON_NODE_BUNDLE_GET_ITEM);
-  define(brna, "NodeInternal", "NodeGetNestedBundlePaths", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "NodeInternal", "NodeGetNestedBundlePaths", nullptr, ICON_NODE_BUNDLE_GET_NESTED_PATHS); /*BFA - icon*/
   define(brna, "NodeInternal", "NodeJoinBundle", nullptr, ICON_NODE_BUNDLE_JOIN);
   define(brna, "NodeInternal", "NodeSeparateBundle", def_separate_bundle, ICON_NODE_BUNDLE_SEPARATE);
   define(brna, "NodeInternal", "NodeStoreBundleItem", nullptr, ICON_NODE_BUNDLE_STORE_ITEM);

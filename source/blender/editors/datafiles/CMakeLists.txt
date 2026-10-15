@@ -1281,10 +1281,12 @@ if(WITH_BLENDER)
       node_bundle_combine
       node_bundle_get
       node_bundle_get_item
+      node_bundle_get_nested_paths
       node_bundle_join
       node_bundle_separate
       node_bundle_set
       node_bundle_store_item
+      node_bundle_typed
       node_channel
       node_checker
       node_chroma

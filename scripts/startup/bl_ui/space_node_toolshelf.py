@@ -3039,7 +3039,10 @@ class NODES_PT_toolshelf_gn_add_utilities_bundle(bpy.types.Panel, NodePanel):
             OperatorEntry("NodeJoinBundle", pad=22),  # BFA - Add menu order
             OperatorEntry("NodeSeparateBundle", pad=15),
             OperatorEntry("NodeGetBundleItem", pad=14),
+            OperatorEntry("NodeGetNestedBundlePaths"),  # BFA - new node
             OperatorEntry("NodeStoreBundleItem", pad=11),
+            Separator,
+            OperatorEntry(operator="node.add_typed_bundle", text=iface_("Typed Bundle"), icon="NODE_BUNDLE_TYPED", pad=18),  # BFA - new operator
         )
 
         self.draw_entries(context, layout, entries)
