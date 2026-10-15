@@ -11257,7 +11257,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGetAttributeNames", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeGetGeometryBundle", nullptr, ICON_NODE_BUNDLE_GET);
   define(brna, "GeometryNode", "GeometryNodeGetGeometryComponent", nullptr, ICON_NODE_GETGEOMETRYCOMPONENT);
-  define(brna, "GeometryNode", "GeometryNodeGetGridNames", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGetGridNames", nullptr, ICON_NODE_GET_GRID_NAMES); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeGetNamedGrid", nullptr, ICON_NODE_GET_NAMED_GRID);
   define(brna, "GeometryNode", "GeometryNodeGizmoDial", nullptr, ICON_DIAL_GIZMO);
   define(brna, "GeometryNode", "GeometryNodeGizmoLinear", nullptr, ICON_LINEAR_GIZMO);
