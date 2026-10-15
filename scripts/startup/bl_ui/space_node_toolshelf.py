@@ -648,7 +648,9 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
                 OperatorEntry("NodeCombineBundle", pad=17),
                 OperatorEntry("NodeSeparateBundle", pad=17),
                 Separator,
+                OperatorEntry("GeometryNodeIndexSwitch", pad=23),  # BFA - new in Shader nodes
                 OperatorEntry("GeometryNodeMenuSwitch", pad=23),
+                OperatorEntry("GeometryNodeSwitch", pad=35),  # BFA - new in Shader nodes
             )
 
         else:
@@ -662,7 +664,9 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
                 OperatorEntry("NodeSeparateBundle", pad=17),
                 OperatorEntry("NodeJoinBundle", pad=25),
                 Separator,
+                OperatorEntry("GeometryNodeIndexSwitch", pad=23),  # BFA - new in Shader nodes
                 OperatorEntry("GeometryNodeMenuSwitch", pad=23),
+                OperatorEntry("GeometryNodeSwitch", pad=35),  # BFA - new in Shader nodes
             )
 
         self.draw_entries(context, layout, entries)
