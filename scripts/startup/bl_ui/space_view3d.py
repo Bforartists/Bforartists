@@ -8826,10 +8826,7 @@ class VIEW3D_PT_view3d_properties(Panel):
             # BFA - make camera view roll discoverable (also View > Navigation > Roll, and Ctrl Alt MMB drag)
             row = subcol.row(align=True)
             row.use_property_split = True
-            row.prop(view.region_3d, "view_camera_roll", text="Camera Roll")
-            props = row.operator("wm.context_set_float", text="", icon="RESET")  # BFA - reset Camera Roll, also with Camera to View on
-            props.data_path = "space_data.region_3d.view_camera_roll"
-            props.value = 0.0
+            row.prop(view.region_3d, "view_camera_roll", text="Camera Roll")  # BFA - reset with Backspace / right-click > Reset to Default Value
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
