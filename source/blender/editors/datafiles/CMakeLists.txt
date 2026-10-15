@@ -1655,6 +1655,7 @@ if(WITH_BLENDER)
       point_translate
       pointcloud_data
       pointcloud_point
+      points_set_type
       points_to_curves
       points_to_vertices
       pokefaces
@@ -1712,6 +1713,7 @@ if(WITH_BLENDER)
       random_float
       randomize
       randomize_transform
+      rasterize_points
       raycast
       rec
       recalc_normals
