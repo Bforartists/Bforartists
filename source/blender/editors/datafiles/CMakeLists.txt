@@ -530,6 +530,7 @@ if(WITH_BLENDER)
       curve_bezcircle
       curve_bezcurve
       curve_data
+      curve_edge_loops
       curve_fill
       curve_fillet
       curve_handle_positions
@@ -1722,6 +1723,7 @@ if(WITH_BLENDER)
       redo
       redo_history
       relativepath
+      relax_edge_loops
       relax_face_sets
       relax_pose
       relax_topology
