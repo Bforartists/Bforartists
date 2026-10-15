@@ -63,7 +63,10 @@ enum {
   GZ_INDEX_CAMERA_LOCK = 7,
   GZ_INDEX_CAMERA_UNLOCK = 8,
 
-  GZ_INDEX_TOTAL = 9,
+  /* BFA - arc next to the rotate gizmo to roll the view (#6839). */
+  GZ_INDEX_ROLL = 9,
+
+  GZ_INDEX_TOTAL = 10,
 };
 
 struct NavigateGizmoInfo {
@@ -149,6 +152,12 @@ static NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
         ICON_LOCK_TO_CAMVIEW,
         navigate_context_toggle_camera_lock_init,
     }, /* BFA */
+    {
+        "VIEW3D_OT_view_roll",
+        "VIEW3D_GT_navigate_roll",
+        ICON_NONE,
+        nullptr,
+    }, /* BFA - roll gizmo #6839 */
 };
 
 static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
@@ -263,7 +272,29 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
     gz->drag_part = 0;
   }
 
+  /* BFA - roll gizmo #6839: same size as the rotate gizmo, it draws around it. */
+  {
+    wmGizmo *gz = navgroup->gz_array[GZ_INDEX_ROLL];
+    gz->scale_basis = GIZMO_SIZE / 2.0f;
+  }
+
   gzgroup->customdata = navgroup;
+}
+
+/* BFA - roll gizmo #6839: roll around the gizmo center instead of the region center, so dragging
+ * along the arc turns the view the way the mouse goes around it. Window coordinates. */
+static void navigate_roll_center_update(const ARegion *region, NavigateWidgetGroup *navgroup)
+{
+  wmGizmo *gz = navgroup->gz_array[GZ_INDEX_ROLL];
+  wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
+  if (gzop == nullptr) {
+    return;
+  }
+  const float center[2] = {
+      gz->matrix_basis[3][0] + region->winrct.xmin,
+      gz->matrix_basis[3][1] + region->winrct.ymin,
+  };
+  RNA_float_set_array(&gzop->ptr, "center", center);
 }
 
 static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
@@ -289,6 +320,7 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       (navgroup->state.rv3d.cameralock == (v3d->flag2 & V3D_LOCK_CAMERA)) &&
       (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d)))
   {
+    navigate_roll_center_update(region, navgroup); /* BFA - roll gizmo */
     return;
   }
 
@@ -353,7 +385,16 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     gz->matrix_basis[3][0] = roundf(co_rotate[0]);
     gz->matrix_basis[3][1] = roundf(co_rotate[1]);
     WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
+
+    /* BFA - roll gizmo #6839, around the rotate gizmo, unless rotation is locked. */
+    if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {
+      gz = navgroup->gz_array[GZ_INDEX_ROLL];
+      gz->matrix_basis[3][0] = roundf(co_rotate[0]);
+      gz->matrix_basis[3][1] = roundf(co_rotate[1]);
+      WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
+    }
   }
+  navigate_roll_center_update(region, navgroup); /* BFA - roll gizmo */
 
   if (show_navigate) {
     int icon_mini_slot = 0;

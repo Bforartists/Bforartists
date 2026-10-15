@@ -507,6 +507,7 @@ static void view3d_widgets()
 
   WM_gizmogrouptype_append_and_link(gzmap_type, VIEW3D_GGT_navigate);
   WM_gizmotype_append(VIEW3D_GT_navigate_rotate);
+  WM_gizmotype_append(VIEW3D_GT_navigate_roll); /* BFA - roll gizmo #6839 */
 }
 
 /* type callback, not region itself */

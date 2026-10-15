@@ -229,6 +229,7 @@ void VIEW3D_OT_ruler_add(wmOperatorType *ot);
 void VIEW3D_OT_ruler_remove(wmOperatorType *ot);
 
 void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt);
+void VIEW3D_GT_navigate_roll(wmGizmoType *gzt); /* BFA - roll gizmo #6839 */
 
 void VIEW3D_GGT_placement(wmGizmoGroupType *gzgt);
 

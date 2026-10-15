@@ -17,6 +17,7 @@
 #include <algorithm>
 
 #include "BLI_math_matrix_c.hh"
+#include "BLI_math_rotation_c.hh" /* BFA - roll gizmo */
 #include "BLI_math_vector_c.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_sort_utils.hh"
@@ -376,5 +377,145 @@ void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
 
   gzt->struct_size = sizeof(wmGizmo);
 }
+
+/* -------------------------------------------------------------------- */
+/** \name BFA - View Roll Arc Gizmo
+ *
+ * Arc around the lower left of the navigation gizmo, drag it to roll the view (#6839).
+ * Makes view and camera roll discoverable, instead of only through Ctrl+Alt+MMB.
+ * Shares the location and size of #VIEW3D_GT_navigate_rotate, where 1.0 is the ball radius.
+ * \{ */
+
+/* Center line of the arc and its thickness, relative to the ball radius. */
+#define ROLL_ARC_RADIUS 1.2f
+#define ROLL_ARC_WIDTH 0.12f
+/* Arc span, centered on the lower left diagonal. */
+#define ROLL_ARC_ANGLE_MID DEG2RADF(225.0f)
+#define ROLL_ARC_ANGLE_HALF DEG2RADF(45.0f)
+/* Arrow heads at both ends: length along the arc (radians) and half width. */
+#define ROLL_ARROW_ANGLE DEG2RADF(9.0f)
+#define ROLL_ARROW_HALF_WIDTH 0.1f
+
+static void gizmo_roll_polar(float r_co[3], const float radius, const float angle)
+{
+  r_co[0] = radius * cosf(angle);
+  r_co[1] = radius * sinf(angle);
+  r_co[2] = 0.0f;
+}
+
+static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
+{
+  const bool is_highlight = (gz->state & (WM_GIZMO_STATE_HIGHLIGHT | WM_GIZMO_STATE_MODAL)) != 0;
+
+  /* Opaque colors mixed with the view background, so overlapping line joins don't show.
+   * Grey like the rotate gizmo backdrop, lighter white when highlighted. */
+  float view_color[4];
+  ED_view3d_background_color_get(CTX_data_scene(C), CTX_wm_view3d(C), view_color);
+  view_color[3] = 1.0f;
+  const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
+  float color[4];
+  interp_v4_v4v4(color, view_color, white, is_highlight ? 0.8f : 0.35f);
+
+  float matrix_final[4][4];
+  WM_gizmo_calc_matrix_final(gz, matrix_final);
+
+  GPU_matrix_push();
+  GPU_matrix_mul(matrix_final);
+
+  float viewport[4];
+  GPU_viewport_size_get_f(viewport);
+
+  const uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32_32);
+  immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_UNIFORM_COLOR);
+  immUniform2fv("viewportSize", &viewport[2]);
+  immUniform1f("lineWidth", ROLL_ARC_WIDTH * WIDGET_RADIUS);
+  immUniformColor4fv(color);
+
+  const float angle_start = ROLL_ARC_ANGLE_MID - ROLL_ARC_ANGLE_HALF;
+  const float angle_end = ROLL_ARC_ANGLE_MID + ROLL_ARC_ANGLE_HALF;
+  float co[3];
+
+  /* Arc. */
+  const int segments = 24;
+  immBegin(GPU_PRIM_LINE_STRIP, segments + 1);
+  for (int i = 0; i <= segments; i++) {
+    gizmo_roll_polar(co, ROLL_ARC_RADIUS, angle_start + (angle_end - angle_start) * i / segments);
+    immVertex3fv(pos, co);
+  }
+  immEnd();
+
+  /* Arrow heads, pointing along the arc at both ends: rolls both ways. */
+  for (int side = 0; side < 2; side++) {
+    const float angle_base = side ? angle_end : angle_start;
+    const float angle_tip = angle_base + (side ? ROLL_ARROW_ANGLE : -ROLL_ARROW_ANGLE);
+    float tip[3];
+    gizmo_roll_polar(tip, ROLL_ARC_RADIUS, angle_tip);
+    immBegin(GPU_PRIM_LINE_STRIP, 3);
+    gizmo_roll_polar(co, ROLL_ARC_RADIUS + ROLL_ARROW_HALF_WIDTH, angle_base);
+    immVertex3fv(pos, co);
+    immVertex3fv(pos, tip);
+    gizmo_roll_polar(co, ROLL_ARC_RADIUS - ROLL_ARROW_HALF_WIDTH, angle_base);
+    immVertex3fv(pos, co);
+    immEnd();
+  }
+
+  immUnbindProgram();
+  GPU_matrix_pop();
+}
+
+static int gizmo_roll_test_select(bContext * /*C*/, wmGizmo *gz, const int mval[2])
+{
+  float point_local[2] = {float(mval[0]), float(mval[1])};
+  sub_v2_v2(point_local, gz->matrix_basis[3]);
+  mul_v2_fl(point_local, 1.0f / gz->scale_final);
+
+  /* Generous band around the arc so the thin shape is easy to grab. */
+  const float len = len_v2(point_local);
+  const float margin = ROLL_ARROW_HALF_WIDTH * 1.5f;
+  if (len < ROLL_ARC_RADIUS - margin || len > ROLL_ARC_RADIUS + margin) {
+    return -1;
+  }
+  const float angle = atan2f(point_local[1], point_local[0]);
+  /* Angle difference to the arc middle, wrapped to [-pi, pi]. */
+  const float angle_delta = angle_wrap_rad(angle - ROLL_ARC_ANGLE_MID);
+  if (fabsf(angle_delta) > ROLL_ARC_ANGLE_HALF + ROLL_ARROW_ANGLE) {
+    return -1;
+  }
+  return 0;
+}
+
+static int gizmo_roll_cursor_get(wmGizmo * /*gz*/)
+{
+  return WM_CURSOR_DEFAULT;
+}
+
+static bool gizmo_roll_screen_bounds_get(const bContext *C, wmGizmo *gz, rcti *r_bounding_box)
+{
+  ScrArea *area = CTX_wm_area(C);
+  const float rad = WIDGET_RADIUS * (ROLL_ARC_RADIUS + ROLL_ARROW_HALF_WIDTH);
+  r_bounding_box->xmin = gz->matrix_basis[3][0] + area->totrct.xmin - rad;
+  r_bounding_box->ymin = gz->matrix_basis[3][1] + area->totrct.ymin - rad;
+  r_bounding_box->xmax = gz->matrix_basis[3][0] + area->totrct.xmin + rad;
+  r_bounding_box->ymax = gz->matrix_basis[3][1] + area->totrct.ymin + rad;
+  return true;
+}
+
+void VIEW3D_GT_navigate_roll(wmGizmoType *gzt)
+{
+  /* identifiers */
+  gzt->idname = "VIEW3D_GT_navigate_roll";
+
+  /* API callbacks. */
+  gzt->setup = gizmo_axis_setup;
+  gzt->draw = gizmo_roll_draw;
+  gzt->test_select = gizmo_roll_test_select;
+  gzt->cursor_get = gizmo_roll_cursor_get;
+  gzt->screen_bounds_get = gizmo_roll_screen_bounds_get;
+
+  gzt->struct_size = sizeof(wmGizmo);
+}
+
+/** \} */
 
 }  // namespace blender
