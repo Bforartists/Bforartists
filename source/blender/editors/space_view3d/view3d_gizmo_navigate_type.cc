@@ -53,6 +53,12 @@ namespace blender {
 /* distance within this from center is considered positive. */
 #define AXIS_DEPTH_BIAS 0.01f
 
+/* BFA - #6839: the rotate circle and the roll ring around it share one look: a faint white that is
+ * always visible, so users can find them, and a lighter white when the mouse is over them.
+ * Amount of white over the viewport background. */
+#define NAVIGATE_CIRCLE_FADE 0.2f
+#define NAVIGATE_CIRCLE_FADE_HIGHLIGHT 0.45f
+
 static void gizmo_axis_draw(const bContext *C, wmGizmo *gz)
 {
   struct {
@@ -143,7 +149,11 @@ static void gizmo_axis_draw(const bContext *C, wmGizmo *gz)
   GPU_polygon_smooth(false);
 
   /* Circle defining active area. */
-  if (is_active) {
+  /* BFA - always shown faintly (Blender: only on hover), lighter on hover, matching the roll ring. */
+  {
+    /* Premultiplied alpha (like Blender's grey 0.5 / alpha 0.5): white mixed in by the fade amount. */
+    const float fade = is_active ? NAVIGATE_CIRCLE_FADE_HIGHLIGHT : NAVIGATE_CIRCLE_FADE;
+    const float circle_color[4] = {fade, fade, fade, fade};
     const float rad = WIDGET_RADIUS;
     GPU_matrix_push();
     GPU_matrix_scale_1f(1.0f / rad);
@@ -153,7 +163,7 @@ static void gizmo_axis_draw(const bContext *C, wmGizmo *gz)
     rect.xmax = rad;
     rect.ymin = -rad;
     rect.ymax = rad;
-    ui::draw_roundbox_4fv(&rect, true, rad, gz->color_hi);
+    ui::draw_roundbox_4fv(&rect, true, rad, circle_color); /* BFA - was gz->color_hi */
     GPU_matrix_pop();
   }
 
@@ -388,16 +398,16 @@ void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
 
 /* Arc radius relative to the ball radius: hugs the ball, so it scales with the gizmo size
  * and stays clear of the navigation buttons. */
-#define ROLL_ARC_RADIUS 1.05f
+#define ROLL_ARC_RADIUS 1.08f
 /* Line width in pixels, thin like the white view circle of the rotate gizmo. */
 #define ROLL_ARC_LINE_WIDTH (2.0f * U.pixelsize)
 #define ROLL_ARC_LINE_WIDTH_HIGHLIGHT (3.0f * U.pixelsize)
 /* Mouse distance from the arc that still grabs it, relative to the ball radius.
  * Inside the ball (radius 1) the ball itself is picked first, so the band only grows outwards. */
-#define ROLL_ARC_HIT_MARGIN 0.15f
+#define ROLL_ARC_HIT_MARGIN 0.1f
 /* Arc span, lower left, turned down a bit to stay clear of the navigation buttons. */
 #define ROLL_ARC_ANGLE_MID DEG2RADF(235.0f)
-#define ROLL_ARC_ANGLE_HALF DEG2RADF(60.0f) /* A third of a turn. */
+#define ROLL_ARC_ANGLE_HALF DEG2RADF(180.0f) /* Full circle. */
 
 static void gizmo_roll_polar(float r_co[3], const float radius, const float angle)
 {
@@ -411,14 +421,14 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   const bool is_highlight = (gz->state & (WM_GIZMO_STATE_HIGHLIGHT | WM_GIZMO_STATE_MODAL)) != 0;
 
   /* Opaque colors mixed with the view background, so overlapping line joins don't show.
-   * Always light, like the white view circle of the rotate gizmo, so it is easy to find;
-   * full white and a bit thicker when highlighted. */
+   * Same faint white as the rotate circle, lighter and a bit thicker when highlighted. */
   float view_color[4];
   ED_view3d_background_color_get(CTX_data_scene(C), CTX_wm_view3d(C), view_color);
   view_color[3] = 1.0f;
   const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
   float color[4];
-  interp_v4_v4v4(color, view_color, white, is_highlight ? 1.0f : 0.7f);
+  interp_v4_v4v4(
+      color, view_color, white, is_highlight ? NAVIGATE_CIRCLE_FADE_HIGHLIGHT : NAVIGATE_CIRCLE_FADE);
 
   float matrix_final[4][4];
   WM_gizmo_calc_matrix_final(gz, matrix_final);
@@ -444,7 +454,7 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   float co[3];
 
   /* Arc. */
-  const int segments = 32;
+  const int segments = 64;
   immBegin(GPU_PRIM_LINE_STRIP, segments + 1);
   for (int i = 0; i <= segments; i++) {
     gizmo_roll_polar(co, ROLL_ARC_RADIUS, angle_start + (angle_end - angle_start) * i / segments);
@@ -471,7 +481,7 @@ static int gizmo_roll_test_select(bContext * /*C*/, wmGizmo *gz, const int mval[
   const float angle = atan2f(point_local[1], point_local[0]);
   /* Angle difference to the arc middle, wrapped to [-pi, pi]. */
   const float angle_delta = angle_wrap_rad(angle - ROLL_ARC_ANGLE_MID);
-  if (fabsf(angle_delta) > ROLL_ARC_ANGLE_HALF + DEG2RADF(5.0f)) {
+  if (ROLL_ARC_ANGLE_HALF < float(M_PI) && fabsf(angle_delta) > ROLL_ARC_ANGLE_HALF + DEG2RADF(5.0f)) {
     return -1;
   }
   return 0;
