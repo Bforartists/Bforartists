@@ -8827,6 +8827,11 @@ class VIEW3D_PT_view3d_properties(Panel):
             row = subcol.row(align=True)
             row.use_property_split = True
             row.prop(view.region_3d, "view_camera_roll", text="Camera Roll")  # BFA - reset with Backspace / right-click > Reset to Default Value
+        else:
+            # BFA - the user view's roll, same as Camera Roll above: drag to roll, Backspace to level (#6839)
+            row = subcol.row(align=True)
+            row.use_property_split = True
+            row.prop(view.region_3d, "view_roll", text="View Roll")
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")

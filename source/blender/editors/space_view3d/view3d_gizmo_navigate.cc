@@ -89,6 +89,7 @@ struct NavigateWidgetGroup {
       bool is_camera;
       eRegionView3D_ViewLock viewlock;
       char cameralock;
+      bool is_axis_view; /* BFA - roll ring hidden in axis views (#6839). */
     } rv3d;
   } state;
 };
@@ -305,7 +306,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       (navgroup->state.rv3d.is_persp == rv3d->is_persp) &&
       (navgroup->state.rv3d.is_camera == (rv3d->persp == RV3D_CAMOB)) &&
       (navgroup->state.rv3d.cameralock == (v3d->flag2 & V3D_LOCK_CAMERA)) &&
-      (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d)))
+      (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d)) &&
+      (navgroup->state.rv3d.is_axis_view == RV3D_VIEW_IS_AXIS(rv3d->view))) /* BFA */
   {
     return;
   }
@@ -315,6 +317,7 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   navgroup->state.rv3d.is_camera = (rv3d->persp == RV3D_CAMOB);
   navgroup->state.rv3d.viewlock = RV3D_LOCK_FLAGS(rv3d);
   navgroup->state.rv3d.cameralock = v3d->flag2 & V3D_LOCK_CAMERA;
+  navgroup->state.rv3d.is_axis_view = RV3D_VIEW_IS_AXIS(rv3d->view); /* BFA */
 
   const bool show_navigate = (U.uiflag & USER_SHOW_GIZMO_NAVIGATE) != 0;
   const bool show_rotate_gizmo = (U.mini_axis_type == USER_MINI_AXIS_TYPE_GIZMO &&
@@ -377,8 +380,9 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     gz->matrix_basis[3][1] = roundf(co_rotate[1]);
     WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
-    /* BFA - roll gizmo #6839, around the rotate gizmo, unless rotation is locked. */
-    if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {
+    /* BFA - roll gizmo #6839, around the rotate gizmo. Hidden when rotation is locked, and in axis
+     * views (Top, Front...), where rolling would leave the axis view (and orthographic). */
+    if (((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) && !RV3D_VIEW_IS_AXIS(rv3d->view)) {
       gz = navgroup->gz_array[GZ_INDEX_ROLL];
       gz->matrix_basis[3][0] = roundf(co_rotate[0]);
       gz->matrix_basis[3][1] = roundf(co_rotate[1]);

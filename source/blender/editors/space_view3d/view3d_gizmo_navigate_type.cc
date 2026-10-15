@@ -16,6 +16,7 @@
 
 #include <algorithm>
 
+#include "BLI_listbase.hh" /* BFA - roll gizmo */
 #include "BLI_math_matrix_c.hh"
 #include "BLI_math_rotation_c.hh" /* BFA - roll gizmo */
 #include "BLI_math_vector_c.hh"
@@ -56,8 +57,24 @@ namespace blender {
 /* BFA - #6839: the rotate circle and the roll ring around it share one look: a faint white that is
  * always visible, so users can find them, and a lighter white when the mouse is over them.
  * Amount of white over the viewport background. */
-#define NAVIGATE_CIRCLE_FADE 0.2f
+#define NAVIGATE_CIRCLE_FADE 0.3f /* Filled circle. */
+#define NAVIGATE_RING_FADE 0.25f  /* Thin ring, a bit less so it doesn't read brighter than the fill. */
 #define NAVIGATE_CIRCLE_FADE_HIGHLIGHT 0.45f
+
+/* BFA - the rotate circle and the roll ring light up together when either is under the mouse. */
+static bool navigate_circles_highlight(const wmGizmo *gz)
+{
+  for (const wmGizmo &gz_iter : gz->parent_gzgroup->gizmos) {
+    if (STREQ(gz_iter.type->idname, "VIEW3D_GT_navigate_rotate") ||
+        STREQ(gz_iter.type->idname, "VIEW3D_GT_navigate_roll"))
+    {
+      if (gz_iter.state & (WM_GIZMO_STATE_HIGHLIGHT | WM_GIZMO_STATE_MODAL)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 static void gizmo_axis_draw(const bContext *C, wmGizmo *gz)
 {
@@ -152,7 +169,8 @@ static void gizmo_axis_draw(const bContext *C, wmGizmo *gz)
   /* BFA - always shown faintly (Blender: only on hover), lighter on hover, matching the roll ring. */
   {
     /* Premultiplied alpha (like Blender's grey 0.5 / alpha 0.5): white mixed in by the fade amount. */
-    const float fade = is_active ? NAVIGATE_CIRCLE_FADE_HIGHLIGHT : NAVIGATE_CIRCLE_FADE;
+    const float fade = navigate_circles_highlight(gz) ? NAVIGATE_CIRCLE_FADE_HIGHLIGHT :
+                                                         NAVIGATE_CIRCLE_FADE;
     const float circle_color[4] = {fade, fade, fade, fade};
     const float rad = WIDGET_RADIUS;
     GPU_matrix_push();
@@ -418,7 +436,7 @@ static void gizmo_roll_polar(float r_co[3], const float radius, const float angl
 
 static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
 {
-  const bool is_highlight = (gz->state & (WM_GIZMO_STATE_HIGHLIGHT | WM_GIZMO_STATE_MODAL)) != 0;
+  const bool is_highlight = navigate_circles_highlight(gz);
 
   /* Opaque colors mixed with the view background, so overlapping line joins don't show.
    * Same faint white as the rotate circle, lighter and a bit thicker when highlighted. */
@@ -428,7 +446,7 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   const float4 white = {1.0f, 1.0f, 1.0f, 1.0f};
   float color[4];
   interp_v4_v4v4(
-      color, view_color, white, is_highlight ? NAVIGATE_CIRCLE_FADE_HIGHLIGHT : NAVIGATE_CIRCLE_FADE);
+      color, view_color, white, is_highlight ? NAVIGATE_CIRCLE_FADE_HIGHLIGHT : NAVIGATE_RING_FADE);
 
   float matrix_final[4][4];
   WM_gizmo_calc_matrix_final(gz, matrix_final);
