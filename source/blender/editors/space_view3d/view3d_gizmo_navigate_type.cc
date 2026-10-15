@@ -404,9 +404,9 @@ void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
 /* Line width in pixels, thin like the white view circle of the rotate gizmo. */
 #define ROLL_ARC_LINE_WIDTH (2.0f * U.pixelsize)
 #define ROLL_ARC_LINE_WIDTH_HIGHLIGHT (3.0f * U.pixelsize)
-/* Mouse distance from the arc that still grabs it, relative to the ball radius.
- * Inside the ball (radius 1) the ball itself is picked first, so the band only grows outwards. */
-#define ROLL_ARC_HIT_MARGIN 0.1f
+/* Grab zone beyond the ring, relative to the ball radius (about 8 px at the default size). Inwards
+ * the zone reaches the edge of the rotate circle (radius 1) but never inside it. */
+#define ROLL_ARC_HIT_MARGIN 0.2f
 /* Arc span, lower left, turned down a bit to stay clear of the navigation buttons. */
 #define ROLL_ARC_ANGLE_MID DEG2RADF(235.0f)
 #define ROLL_ARC_ANGLE_HALF DEG2RADF(180.0f) /* Full circle. */
@@ -478,7 +478,8 @@ static int gizmo_roll_test_select(bContext * /*C*/, wmGizmo *gz, const int mval[
 
   /* Generous band around the arc so the thin line is easy to grab. */
   const float len = len_v2(point_local);
-  if (len < ROLL_ARC_RADIUS - ROLL_ARC_HIT_MARGIN || len > ROLL_ARC_RADIUS + ROLL_ARC_HIT_MARGIN) {
+  /* From the edge of the rotate circle (never inside it) to a margin beyond the ring. */
+  if (len < 1.0f || len > ROLL_ARC_RADIUS + ROLL_ARC_HIT_MARGIN) {
     return -1;
   }
   const float angle = atan2f(point_local[1], point_local[0]);
