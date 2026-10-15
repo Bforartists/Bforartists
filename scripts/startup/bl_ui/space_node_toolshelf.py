@@ -862,6 +862,7 @@ class NODES_PT_toolshelf_compositor_add_input_scene(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("GeometryNodeInputActiveCamera", pad=4),
             OperatorEntry("GeometryNodeCameraInfo", pad=7),
+            OperatorEntry("GeometryNodeIsViewport", pad=8),  # BFA - ported to the Compositor
             OperatorEntry("CompositorNodeRLayers", pad=4),
             OperatorEntry("CompositorNodeSceneTime", pad=8),
             OperatorEntry("CompositorNodeTime", pad=8),
