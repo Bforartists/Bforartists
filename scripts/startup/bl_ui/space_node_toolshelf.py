@@ -1239,7 +1239,8 @@ class NODES_PT_toolshelf_compositor_add_utilities(bpy.types.Panel, NodePanel):
             Separator,
             OperatorEntry("NodeImplicitConversion", pad=8),
             OperatorEntry("CompositorNodeSplit", pad=35),
-            OperatorEntry("CompositorNodeSwitch", pad=31),
+            # OperatorEntry("CompositorNodeSwitch", pad=31),  # BFA - replaced upstream by the shared Switch node
+            OperatorEntry("GeometryNodeSwitch", pad=31),
             OperatorEntry("GeometryNodeIndexSwitch", pad=19),
             OperatorEntry("GeometryNodeMenuSwitch", pad=19),
             OperatorEntry("CompositorNodeSwitchView", pad=8, text="Switch Stereo View"),
@@ -1409,7 +1410,7 @@ class NODES_PT_toolshelf_compositor_add_utilities_text(bpy.types.Panel, NodePane
             OperatorEntry("FunctionNodeMatchString", pad=14),
             OperatorEntry("FunctionNodeReplaceString", pad=10),
             OperatorEntry("FunctionNodeSliceString", pad=14),
-            OperatorEntry("FunctionNodeSplitString", pad=14),
+            # OperatorEntry("FunctionNodeSplitString", pad=14),  # BFA - not in the Compositor Add menu
             OperatorEntry("FunctionNodeTrimString", pad=14),
             Separator,
             OperatorEntry("FunctionNodeFindInString", pad=10),
