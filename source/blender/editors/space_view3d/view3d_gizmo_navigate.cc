@@ -281,22 +281,6 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
   gzgroup->customdata = navgroup;
 }
 
-/* BFA - roll gizmo #6839: roll around the gizmo center instead of the region center, so dragging
- * along the arc turns the view the way the mouse goes around it. Window coordinates. */
-static void navigate_roll_center_update(const ARegion *region, NavigateWidgetGroup *navgroup)
-{
-  wmGizmo *gz = navgroup->gz_array[GZ_INDEX_ROLL];
-  wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
-  if (gzop == nullptr) {
-    return;
-  }
-  const float center[2] = {
-      gz->matrix_basis[3][0] + region->winrct.xmin,
-      gz->matrix_basis[3][1] + region->winrct.ymin,
-  };
-  RNA_float_set_array(&gzop->ptr, "center", center);
-}
-
 static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
 {
   NavigateWidgetGroup *navgroup = static_cast<NavigateWidgetGroup *>(gzgroup->customdata);
@@ -320,7 +304,6 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       (navgroup->state.rv3d.cameralock == (v3d->flag2 & V3D_LOCK_CAMERA)) &&
       (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d)))
   {
-    navigate_roll_center_update(region, navgroup); /* BFA - roll gizmo */
     return;
   }
 
@@ -394,7 +377,6 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
   }
-  navigate_roll_center_update(region, navgroup); /* BFA - roll gizmo */
 
   if (show_navigate) {
     int icon_mini_slot = 0;

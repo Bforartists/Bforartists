@@ -381,20 +381,20 @@ void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
 /* -------------------------------------------------------------------- */
 /** \name BFA - View Roll Arc Gizmo
  *
- * Arc around the lower left of the navigation gizmo, drag it to roll the view (#6839).
+ * Thin arc around the lower left of the navigation gizmo, drag it to roll the view (#6839).
  * Makes view and camera roll discoverable, instead of only through Ctrl+Alt+MMB.
  * Shares the location and size of #VIEW3D_GT_navigate_rotate, where 1.0 is the ball radius.
  * \{ */
 
-/* Center line of the arc and its thickness, relative to the ball radius. */
+/* Arc radius relative to the ball radius. */
 #define ROLL_ARC_RADIUS 1.2f
-#define ROLL_ARC_WIDTH 0.12f
-/* Arc span, centered on the lower left diagonal. */
-#define ROLL_ARC_ANGLE_MID DEG2RADF(225.0f)
-#define ROLL_ARC_ANGLE_HALF DEG2RADF(45.0f)
-/* Arrow heads at both ends: length along the arc (radians) and half width. */
-#define ROLL_ARROW_ANGLE DEG2RADF(9.0f)
-#define ROLL_ARROW_HALF_WIDTH 0.1f
+/* Line width in pixels, thin like the white view circle of the rotate gizmo. */
+#define ROLL_ARC_LINE_WIDTH (2.0f * U.pixelsize)
+/* Mouse distance from the arc that still grabs it, relative to the ball radius. */
+#define ROLL_ARC_HIT_MARGIN 0.15f
+/* Arc span, lower left, turned down a bit to stay clear of the navigation buttons. */
+#define ROLL_ARC_ANGLE_MID DEG2RADF(235.0f)
+#define ROLL_ARC_ANGLE_HALF DEG2RADF(60.0f) /* A third of a turn. */
 
 static void gizmo_roll_polar(float r_co[3], const float radius, const float angle)
 {
@@ -429,7 +429,7 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
       immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_UNIFORM_COLOR);
   immUniform2fv("viewportSize", &viewport[2]);
-  immUniform1f("lineWidth", ROLL_ARC_WIDTH * WIDGET_RADIUS);
+  immUniform1f("lineWidth", ROLL_ARC_LINE_WIDTH);
   immUniformColor4fv(color);
 
   const float angle_start = ROLL_ARC_ANGLE_MID - ROLL_ARC_ANGLE_HALF;
@@ -437,28 +437,13 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   float co[3];
 
   /* Arc. */
-  const int segments = 24;
+  const int segments = 32;
   immBegin(GPU_PRIM_LINE_STRIP, segments + 1);
   for (int i = 0; i <= segments; i++) {
     gizmo_roll_polar(co, ROLL_ARC_RADIUS, angle_start + (angle_end - angle_start) * i / segments);
     immVertex3fv(pos, co);
   }
   immEnd();
-
-  /* Arrow heads, pointing along the arc at both ends: rolls both ways. */
-  for (int side = 0; side < 2; side++) {
-    const float angle_base = side ? angle_end : angle_start;
-    const float angle_tip = angle_base + (side ? ROLL_ARROW_ANGLE : -ROLL_ARROW_ANGLE);
-    float tip[3];
-    gizmo_roll_polar(tip, ROLL_ARC_RADIUS, angle_tip);
-    immBegin(GPU_PRIM_LINE_STRIP, 3);
-    gizmo_roll_polar(co, ROLL_ARC_RADIUS + ROLL_ARROW_HALF_WIDTH, angle_base);
-    immVertex3fv(pos, co);
-    immVertex3fv(pos, tip);
-    gizmo_roll_polar(co, ROLL_ARC_RADIUS - ROLL_ARROW_HALF_WIDTH, angle_base);
-    immVertex3fv(pos, co);
-    immEnd();
-  }
 
   immUnbindProgram();
   GPU_matrix_pop();
@@ -470,16 +455,15 @@ static int gizmo_roll_test_select(bContext * /*C*/, wmGizmo *gz, const int mval[
   sub_v2_v2(point_local, gz->matrix_basis[3]);
   mul_v2_fl(point_local, 1.0f / gz->scale_final);
 
-  /* Generous band around the arc so the thin shape is easy to grab. */
+  /* Generous band around the arc so the thin line is easy to grab. */
   const float len = len_v2(point_local);
-  const float margin = ROLL_ARROW_HALF_WIDTH * 1.5f;
-  if (len < ROLL_ARC_RADIUS - margin || len > ROLL_ARC_RADIUS + margin) {
+  if (len < ROLL_ARC_RADIUS - ROLL_ARC_HIT_MARGIN || len > ROLL_ARC_RADIUS + ROLL_ARC_HIT_MARGIN) {
     return -1;
   }
   const float angle = atan2f(point_local[1], point_local[0]);
   /* Angle difference to the arc middle, wrapped to [-pi, pi]. */
   const float angle_delta = angle_wrap_rad(angle - ROLL_ARC_ANGLE_MID);
-  if (fabsf(angle_delta) > ROLL_ARC_ANGLE_HALF + ROLL_ARROW_ANGLE) {
+  if (fabsf(angle_delta) > ROLL_ARC_ANGLE_HALF + DEG2RADF(5.0f)) {
     return -1;
   }
   return 0;
@@ -493,7 +477,7 @@ static int gizmo_roll_cursor_get(wmGizmo * /*gz*/)
 static bool gizmo_roll_screen_bounds_get(const bContext *C, wmGizmo *gz, rcti *r_bounding_box)
 {
   ScrArea *area = CTX_wm_area(C);
-  const float rad = WIDGET_RADIUS * (ROLL_ARC_RADIUS + ROLL_ARROW_HALF_WIDTH);
+  const float rad = WIDGET_RADIUS * (ROLL_ARC_RADIUS + ROLL_ARC_HIT_MARGIN);
   r_bounding_box->xmin = gz->matrix_basis[3][0] + area->totrct.xmin - rad;
   r_bounding_box->ymin = gz->matrix_basis[3][1] + area->totrct.ymin - rad;
   r_bounding_box->xmax = gz->matrix_basis[3][0] + area->totrct.xmin + rad;

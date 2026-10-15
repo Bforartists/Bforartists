@@ -279,13 +279,8 @@ static wmOperatorStatus viewroll_invoke(bContext *C, wmOperator *op, const wmEve
     /* makes op->customdata */
     vod = viewops_data_create(C, event, &ViewOpsType_roll, false);
 
-    float start_position[2] = {float(BLI_rcti_cent_x(&vod->region->winrct)),
-                               float(BLI_rcti_cent_y(&vod->region->winrct))};
-    /* BFA - the roll gizmo (#6839) rolls around its own center. */
-    PropertyRNA *prop_center = RNA_struct_find_property(op->ptr, "center");
-    if (RNA_property_is_set(op->ptr, prop_center)) {
-      RNA_property_float_get_array(op->ptr, prop_center, start_position);
-    }
+    const float start_position[2] = {float(BLI_rcti_cent_x(&vod->region->winrct)),
+                                     float(BLI_rcti_cent_y(&vod->region->winrct))};
     vod->init.dial = BLI_dial_init(start_position, FLT_EPSILON);
     op->customdata = vod;
 
@@ -341,19 +336,6 @@ void VIEW3D_OT_view_roll(wmOperatorType *ot)
                       "Roll Angle Source",
                       "How roll angle is calculated");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-
-  /* BFA - set by the roll gizmo (#6839), so dragging rolls around the gizmo, not the region. */
-  prop = RNA_def_float_vector(ot->srna,
-                              "center",
-                              2,
-                              nullptr,
-                              -FLT_MAX,
-                              FLT_MAX,
-                              "Center",
-                              "Window location to roll around, the region center when unset",
-                              -FLT_MAX,
-                              FLT_MAX);
-  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /** \} */
