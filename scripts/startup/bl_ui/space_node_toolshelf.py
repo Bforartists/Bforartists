@@ -1979,6 +1979,7 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeConvexHull", pad=24),
             OperatorEntry("GeometryNodeDeleteGeometry", pad=16),
             OperatorEntry("GeometryNodeDuplicateElements", pad=12),
+            OperatorEntry("GeometryNodeMergeByDistance", pad=12),  # BFA - moved here upstream from Mesh > Operations
             OperatorEntry("GeometryNodeMergePoints", pad=22),
             OperatorEntry("GeometryNodeSortElements", pad=22),
             OperatorEntry("GeometryNodeTransform", pad=10),
