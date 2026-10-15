@@ -880,7 +880,7 @@ class DOPESHEET_MT_key(Menu):
         # BFa - snap submenu
         layout.menu("DOPESHEET_MT_key_snap")
         layout.operator_menu_enum("action.mirror", "type", text="Mirror")
-        layout.operator_menu_enum("action.snap", "type", text="Snap")
+        # layout.operator_menu_enum("action.snap", "type", text="Snap")  # BFA - double, the Snap submenu above has the same entries with icons (as in Graph Editor)
 
         layout.separator()
 
