@@ -45,6 +45,9 @@ namespace blender {
 /* Margin around the smaller buttons. */
 #define GIZMO_MINI_OFFSET 2.0f
 
+/* BFA - gap between the roll ring and the navigation buttons, in unscaled pixels (#6839). */
+#define GIZMO_ROLL_RING_GAP 10.0f
+
 namespace {
 
 enum {
@@ -329,7 +332,12 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   float icon_offset_from_axis = icon_offset_mini * 0.75f;
   switch (eUserpref_MiniAxisType(U.mini_axis_type)) {
     case USER_MINI_AXIS_TYPE_GIZMO:
-      icon_offset_from_axis = icon_offset * 2.2f;
+      /* BFA - keep the buttons a fixed gap away from the roll ring around the gizmo, in both the
+       * horizontal and vertical layout, for any gizmo size (#6839). Blender: `icon_offset * 2.2f`. */
+      icon_offset_from_axis = icon_offset + UI_SCALE_FAC * (GIZMO_SIZE / 2.0f *
+                                                                VIEW3D_NAVIGATE_ROLL_RING_RADIUS +
+                                                            GIZMO_MINI_SIZE / 2.0f +
+                                                            GIZMO_ROLL_RING_GAP);
       break;
     case USER_MINI_AXIS_TYPE_MINIMAL:
       if (region->alignment != RGN_ALIGN_QSPLIT ||

@@ -398,7 +398,7 @@ void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
 
 /* Arc radius relative to the ball radius: hugs the ball, so it scales with the gizmo size
  * and stays clear of the navigation buttons. */
-#define ROLL_ARC_RADIUS 1.08f
+#define ROLL_ARC_RADIUS VIEW3D_NAVIGATE_ROLL_RING_RADIUS
 /* Line width in pixels, thin like the white view circle of the rotate gizmo. */
 #define ROLL_ARC_LINE_WIDTH (2.0f * U.pixelsize)
 #define ROLL_ARC_LINE_WIDTH_HIGHLIGHT (3.0f * U.pixelsize)

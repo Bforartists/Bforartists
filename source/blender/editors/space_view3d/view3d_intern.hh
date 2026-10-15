@@ -230,6 +230,9 @@ void VIEW3D_OT_ruler_remove(wmOperatorType *ot);
 
 void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt);
 void VIEW3D_GT_navigate_roll(wmGizmoType *gzt); /* BFA - roll gizmo #6839 */
+/* BFA - roll ring radius relative to the navigation ball radius, also used to space the
+ * navigation buttons around it. */
+#define VIEW3D_NAVIGATE_ROLL_RING_RADIUS 1.08f
 
 void VIEW3D_GGT_placement(wmGizmoGroupType *gzgt);
 
