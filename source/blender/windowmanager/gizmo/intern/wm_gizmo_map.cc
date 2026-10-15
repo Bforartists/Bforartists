@@ -309,9 +309,7 @@ eWM_GizmoFlagMapDrawStep WM_gizmomap_drawstep_from_gizmo_group(const wmGizmoGrou
   /* BFA - Two 2D draw-steps: explicit tool gizmos keep the tools pass, while 2D_UI flagged and
    * unflagged groups (Python gizmo-groups, scene strip gizmos) use the UI pass on top, matching
    * upstream behavior of the single 2D draw-step. */
-  else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL) {
-    /* BFA - only explicit tool gizmos: the former `!3D ||` sent every 2D group (incl. the node
-     * minimap, 2D_UI) to this pass, so view controls lost priority over node UI blocks (#6832). */
+  else if (!(gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) || (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_TOOL)) {
     step = WM_GIZMOMAP_DRAWSTEP_2D_TOOLS;
   }
   else if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) {
