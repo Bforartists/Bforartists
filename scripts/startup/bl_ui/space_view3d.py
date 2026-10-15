@@ -1996,8 +1996,8 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.operator("view3d.view_roll", text="Roll Left", icon="ROLL_LEFT").type = 'LEFT'
         layout.operator("view3d.view_roll", text="Roll Right", icon="ROLL_RIGHT").type = 'RIGHT'
-        layout.operator("view3d.view_roll_set", text="Reset Roll") # BFA - WIP  - needs icon
-        layout.operator("view3d.view_flip")  # BFA - WIP - needs icon
+        layout.operator("view3d.view_roll_set", text="Reset Roll", icon="VIEW_ROLL_RESET")  # BFA - Icon Added
+        layout.operator("view3d.view_flip", icon="VIEW_FLIP")  # BFA - Icon Added
 
         layout.separator()
 
@@ -8827,6 +8827,11 @@ class VIEW3D_PT_view3d_properties(Panel):
             row = subcol.row(align=True)
             row.use_property_split = True
             row.prop(view.region_3d, "view_camera_roll", text="Camera Roll")  # BFA - reset with Backspace / right-click > Reset to Default Value
+        else:
+            # BFA - the user view's roll, same as Camera Roll above: drag to roll, Backspace to level (#6839)
+            row = subcol.row(align=True)
+            row.use_property_split = True
+            row.prop(view.region_3d, "view_roll", text="View Roll")
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")

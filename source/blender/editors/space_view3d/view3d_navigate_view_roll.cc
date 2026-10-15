@@ -25,6 +25,16 @@
 
 namespace blender {
 
+/* BFA - roll around the view center, ignoring Orbit Around Selection / Auto Depth.
+ * Used by the navigation roll gizmo (#6839), so it matches the sidebar View Roll field. */
+static const ViewOpsType ViewOpsType_roll_view_center = {
+    /*flag*/ VIEWOPS_FLAG_NONE,
+    /*idname*/ "VIEW3D_OT_view_roll",
+    /*poll_fn*/ nullptr,
+    /*init_fn*/ nullptr,
+    /*apply_fn*/ nullptr,
+};
+
 /* -------------------------------------------------------------------- */
 /** \name View Roll Operator
  * \{ */
@@ -277,7 +287,10 @@ static wmOperatorStatus viewroll_invoke(bContext *C, wmOperator *op, const wmEve
     }
 
     /* makes op->customdata */
-    vod = viewops_data_create(C, event, &ViewOpsType_roll, false);
+    /* BFA - optionally roll around the view center (#6839). */
+    const bool use_view_center = RNA_boolean_get(op->ptr, "use_view_center");
+    vod = viewops_data_create(
+        C, event, use_view_center ? &ViewOpsType_roll_view_center : &ViewOpsType_roll, false);
 
     const float start_position[2] = {float(BLI_rcti_cent_x(&vod->region->winrct)),
                                      float(BLI_rcti_cent_y(&vod->region->winrct))};
@@ -336,6 +349,14 @@ void VIEW3D_OT_view_roll(wmOperatorType *ot)
                       "Roll Angle Source",
                       "How roll angle is calculated");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+  /* BFA - set by the navigation roll gizmo (#6839). */
+  prop = RNA_def_boolean(ot->srna,
+                         "use_view_center",
+                         false,
+                         "Roll Around View Center",
+                         "Roll around the center of the view, ignoring Orbit Around Selection");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /** \} */
