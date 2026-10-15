@@ -1768,6 +1768,7 @@ if(WITH_BLENDER)
       # ##
       retopo
       reverse_colors
+      reverse_string
       reverse_uvs
       rew
       rightarrow
@@ -1959,6 +1960,7 @@ if(WITH_BLENDER)
       set_shade_smooth
       set_smooth
       set_spline_resolution
+      set_string_case
       set_time
       set_uppercase
       settings
@@ -2123,6 +2125,7 @@ if(WITH_BLENDER)
 
       # letter t
       tag
+      tag_filter
       temp
       template
       text
