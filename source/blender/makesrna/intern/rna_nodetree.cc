@@ -10936,10 +10936,10 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeHueSaturation", nullptr, ICON_NODE_HUESATURATION);
   define(brna, "ShaderNode", "ShaderNodeInvert", nullptr, ICON_NODE_INVERT);
   define(brna, "ShaderNode", "ShaderNodeLayerWeight", nullptr, ICON_NODE_LAYERWEIGHT);
-  define(brna, "ShaderNode", "ShaderNodeLightAccumulation", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "ShaderNode", "ShaderNodeLightEvaluation", def_light_evaluation, ICON_NONE); /*BFA - WIP*/
+  define(brna, "ShaderNode", "ShaderNodeLightAccumulation", nullptr, ICON_NODE_LIGHT_ACCUMULATION); /*BFA - icon*/
+  define(brna, "ShaderNode", "ShaderNodeLightEvaluation", def_light_evaluation, ICON_NODE_LIGHT_EVALUATION); /*BFA - icon*/
   define(brna, "ShaderNode", "ShaderNodeLightFalloff", nullptr, ICON_NODE_LIGHTFALLOFF);
-  define(brna, "ShaderNode", "ShaderNodeLightInfo", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "ShaderNode", "ShaderNodeLightInfo", nullptr, ICON_NODE_LIGHT_INFO); /*BFA - icon*/
   define(brna, "ShaderNode", "ShaderNodeLightIterInternalInput", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "ShaderNode", "ShaderNodeLightIterInternalOutput", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "ShaderNode", "ShaderNodeLightPath", nullptr, ICON_NODE_LIGHTPATH);
@@ -10968,7 +10968,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeScript", def_sh_script, ICON_FILE_SCRIPT);
   define(brna, "ShaderNode", "ShaderNodeSeparateColor", def_sh_combsep_color, ICON_SEPARATE_COLOR);
   define(brna, "ShaderNode", "ShaderNodeSeparateXYZ", nullptr, ICON_NODE_SEPARATEXYZ);
-  define(brna, "ShaderNode", "ShaderNodeShadowRaycast", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "ShaderNode", "ShaderNodeShadowRaycast", nullptr, ICON_NODE_SHADOW_RAYCAST); /*BFA - icon*/
   define(brna, "ShaderNode", "ShaderNodeShaderToRGB", nullptr, ICON_NODE_RGB);
   define(brna, "ShaderNode", "ShaderNodeSqueeze", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "ShaderNode", "ShaderNodeSubsurfaceScattering", def_sh_subsurface, ICON_NODE_SSS);
