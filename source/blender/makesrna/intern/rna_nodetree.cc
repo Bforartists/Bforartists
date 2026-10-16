@@ -11343,7 +11343,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeList", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "GeometryNode", "GeometryNodeListGetItem", nullptr, ICON_GET_LIST_ITEM);
   define(brna, "GeometryNode", "GeometryNodeListLength", nullptr, ICON_NODE_LISTLENGTH);
-  define(brna, "GeometryNode", "GeometryNodeGeometryMaterials", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGeometryMaterials", nullptr, ICON_NODE_GEOMETRY_MATERIALS); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeMaterialSelection", nullptr, ICON_SELECT_BY_MATERIAL);
   define(brna, "GeometryNode", "GeometryNodeMenuSwitch", def_geo_menu_switch, ICON_MENU_SWITCH);
   define(brna, "GeometryNode", "GeometryNodeMergeByDistance", nullptr, ICON_REMOVE_DOUBLES);
