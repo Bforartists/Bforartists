@@ -1524,9 +1524,9 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base, Menu):
             if obj.mode == 'EDIT':
                 layout.separator()
 
-                layout.operator("transform.vertex_warp", text="Warp") # BFA - WIP
+                layout.operator("transform.vertex_warp", text="Warp", icon="MOD_WARP")  # BFA - icon, as for meshes
                 layout.operator_context = 'EXEC_REGION_WIN'
-                layout.operator("transform.vertex_random", text="Randomize").offset = 0.1 # BFA - WIP
+                layout.operator("transform.vertex_random", text="Randomize", icon="RANDOMIZE").offset = 0.1  # BFA - icon, as for meshes
                 layout.operator_context = 'INVOKE_REGION_WIN'
             elif obj.mode == 'POSE':
                 layout.separator()
