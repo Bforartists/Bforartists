@@ -969,7 +969,7 @@ def register():
             ('ALL', "All", "Show all extension types", "EXTENSIONS_ALL", 0), #BFA - Added Icon
             None,
             ('ADDON', "Add-ons", "Only show add-ons", "PLUGIN", 1), #BFA - Added Plugin Icon
-            ('ASSET_LIBRARY', "Asset Libraries", "Only show asset libraries", "ASSETS", 3), #BFA - Added Assets Icon
+            ('ASSET_LIBRARY', "Asset Libraries", "Only show asset libraries", "ASSET_MANAGER", 3), #BFA - Added Assets Icon, same as Preferences > Asset Libraries
             ('THEME', "Themes", "Only show themes", "COLOR", 2), #BFA - Added Color Icon
         ),
         name="Filter by Type",

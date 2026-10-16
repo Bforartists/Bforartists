@@ -939,13 +939,23 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
   /* Check for navigation gizmos first in case other UI elements are present in the same region,
    * e.g. buttons on nodes in node editors. */
   ARegion *region_check = handler->context.region ? handler->context.region : region;
-  if (region_check && region_check->runtime && region_check->runtime->gizmo_map) {
+  /* BFA - only defer mouse button events of the region's own UI. The UI must keep getting mouse
+   * moves, timers and internal events (withholding them hangs the event loop) and popups/menus
+   * must always get everything, see #6832. */
+  const bool is_mouse_button = ISMOUSE_BUTTON(event->type);
+  if (is_mouse_button && (handler->context.region_popup == nullptr) && region_check &&
+      region_check->runtime && region_check->runtime->gizmo_map)
+  {
     wmGizmoMap *gzmap = region_check->runtime->gizmo_map;
     wmGizmo *gz = wm_gizmomap_highlight_get(gzmap);
     if (gz != nullptr && gz->parent_gzgroup != nullptr) {
-      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
-          gz->parent_gzgroup);
-      if (step == WM_GIZMOMAP_DRAWSTEP_2D_UI) {
+      /* BFA - check the group flag, not the draw-step: every 2D group maps to the tools
+       * draw-step, so view controls (e.g. the node minimap) were never detected (#6832). */
+      if (gz->parent_gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) {
+        /* BFA - put the screen context back, as after a normal UI handler call. */
+        CTX_wm_area_set(C, area);
+        CTX_wm_region_set(C, region);
+        CTX_wm_region_popup_set(C, region_popup);
         return WM_HANDLER_CONTINUE;
       }
     }
@@ -3407,9 +3417,8 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
     gz_test = wm_gizmomap_highlight_find(gzmap, C, event, &part_test);
 
     if (gz_test != nullptr) {
-      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
-          gz_test->parent_gzgroup);
-      is_view_controls_gizmo = (step == WM_GIZMOMAP_DRAWSTEP_2D_UI);
+      /* BFA - group flag instead of draw-step, see the UI handler check above (#6832). */
+      is_view_controls_gizmo = (gz_test->parent_gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) != 0;
     }
   }
 

@@ -1,4 +1,5 @@
 import bpy
+# BFA - renamed from SQUARED_2K.py to match the Bforartists preset naming
 bpy.context.scene.render.resolution_x = 2048
 bpy.context.scene.render.resolution_y = 2048
 bpy.context.scene.render.resolution_percentage = 100

@@ -1305,6 +1305,7 @@ if(WITH_BLENDER)
       node_combineyuva
       node_compositing
       node_compositing_active
+      node_construct_curves
       node_corner
       node_cornerpin
       node_crop
@@ -1336,6 +1337,7 @@ if(WITH_BLENDER)
       node_gamma
       node_geometry
       node_geometry_materials
+      node_get_grid_names
       node_getgeometrycomponent
       node_get_named_grid
       node_glare
