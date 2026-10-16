@@ -3134,6 +3134,7 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry("GeometryNodeClosureToList", pad=6),
+            OperatorEntry("GeometryNodeCombineList", pad=11),  # BFA - new node
             OperatorEntry("GeometryNodeFieldToList", pad=10),
             OperatorEntry("GeometryNodeFilterList", pad=12),
             OperatorEntry("GeometryNodeListGetItem", pad=10),

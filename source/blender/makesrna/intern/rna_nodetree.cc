@@ -11200,7 +11200,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeClosureToList", def_geo_closure_to_list, ICON_NODE_CLOSURETOLIST);
   define(brna, "GeometryNode", "GeometryNodeClusterByConnected", nullptr, ICON_NODE_CLUSTERBYCONNECTED);
   define(brna, "GeometryNode", "GeometryNodeClusterByDistance", nullptr, ICON_NODE_CLUSTERBYDISTANCE);
-  define(brna, "GeometryNode", "GeometryNodeCombineList", def_geo_combine_list, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeCombineList", def_geo_combine_list, ICON_NODE_COMBINE_LIST); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeCollectionChildren", nullptr, ICON_COLLECTION_CHILDREN);
   define(brna, "GeometryNode", "GeometryNodeCollectionInfo", nullptr, ICON_COLLECTION_INFO);
   define(brna, "GeometryNode", "GeometryNodeConstructCurves", nullptr, ICON_NODE_CONSTRUCT_CURVES); /*BFA - icon*/
