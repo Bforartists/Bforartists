@@ -1305,6 +1305,7 @@ if(WITH_BLENDER)
       node_combineyuva
       node_compositing
       node_compositing_active
+      node_construct_curves
       node_corner
       node_cornerpin
       node_crop
