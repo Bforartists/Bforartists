@@ -1378,6 +1378,9 @@ if(WITH_BLENDER)
       node_keyingscreen
       node_layerweight
       node_lensdistort
+      node_light_accumulation
+      node_light_evaluation
+      node_light_info
       node_lightfalloff
       node_lightpath
       node_linestyle_output
@@ -1433,6 +1436,7 @@ if(WITH_BLENDER)
       node_separatexyz
       node_setgridbackground
       node_setgridtransform
+      node_shadow_raycast
       node_set_nurbs_order
       node_set_nurbs_weight
       node_side
@@ -1477,6 +1481,7 @@ if(WITH_BLENDER)
       node_waves
       node_white_noise
       node_wireframe
+      node_xpbd_solver
       node_zcombine
       nodetree
       nodetree_active
