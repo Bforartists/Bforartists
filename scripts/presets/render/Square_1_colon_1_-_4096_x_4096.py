@@ -1,6 +1,7 @@
 import bpy
-bpy.context.scene.render.resolution_x = 8192
-bpy.context.scene.render.resolution_y = 8192
+# BFA - renamed from SQUARED_4K.py to match the Bforartists preset naming
+bpy.context.scene.render.resolution_x = 4096
+bpy.context.scene.render.resolution_y = 4096
 bpy.context.scene.render.resolution_percentage = 100
 bpy.context.scene.render.pixel_aspect_x = 1
 bpy.context.scene.render.pixel_aspect_y = 1
