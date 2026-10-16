@@ -1477,6 +1477,7 @@ if(WITH_BLENDER)
       node_waves
       node_white_noise
       node_wireframe
+      node_xpbd_solver
       node_zcombine
       nodetree
       nodetree_active

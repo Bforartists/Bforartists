@@ -2821,6 +2821,8 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry(operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME"),
+            Separator,
+            OperatorEntry("GeometryNodeXPBDSolver", pad=7),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)

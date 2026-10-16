@@ -11470,7 +11470,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeVolumeCube", nullptr, ICON_VOLUME_CUBE);
   define(brna, "GeometryNode", "GeometryNodeVolumeToMesh", nullptr, ICON_VOLUME_TO_MESH);
   define(brna, "GeometryNode", "GeometryNodeWarning", nullptr, ICON_ERROR);
-  define(brna, "GeometryNode", "GeometryNodeXPBDSolver", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeXPBDSolver", nullptr, ICON_NODE_XPBD_SOLVER); /*BFA - icon*/
 
   /* Node group types are currently defined for each tree type individually. */
   define(brna, "ShaderNode", "ShaderNodeGroup", def_group, ICON_NONE); /* bfa - don't need 2 nodegroups icons */
