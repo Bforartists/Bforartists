@@ -1719,6 +1719,19 @@ UserDef *BKE_blendfile_userdef_from_defaults()
         userdef, "NODE_AST_compositor", "Compositing Nodegroups/Texture");
     BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
         userdef, "NODE_AST_compositor", "Compositing Nodegroups/Utilities");
+
+    /* BFA - Blender's Essentials tabs, replaced by the single "Compositing" tab below. Separate
+     * tabs would repeat our "Creative" and "Utilities" tab names. */
+    // BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+    //     userdef, "NODE_AST_compositor", "Compositing/Camera & Lens Effects");
+    // BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+    //     userdef, "NODE_AST_compositor", "Compositing/Creative");
+    // BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+    //     userdef, "NODE_AST_compositor", "Compositing/Utilities");
+    /* BFA - One tab for all compositor Essentials assets, so they list next to our library tabs
+     * (#6755). Without it they only show in the "All" tab. */
+    BKE_preferences_asset_shelf_settings_ensure_catalog_path_enabled(
+        userdef, "NODE_AST_compositor", "Compositing");
   }
   /* end BFA asset shelf default catalogs */
 
