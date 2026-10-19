@@ -11372,13 +11372,13 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeOffsetPointInCurve", nullptr, ICON_OFFSET_POINT_IN_CURVE);
   define(brna, "GeometryNode", "GeometryNodePoints", nullptr, ICON_DECORATE);
   define(brna, "GeometryNode", "GeometryNodePointsOfCurve", nullptr, ICON_POINT_OF_CURVE);
-  define(brna, "GeometryNode", "GeometryNodePointsSetType", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodePointsSetType", nullptr, ICON_POINTS_SET_TYPE); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodePointsToCurves", nullptr, ICON_POINTS_TO_CURVES);
   define(brna, "GeometryNode", "GeometryNodePointsToSDFGrid", nullptr, ICON_NODE_POINTSTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodePointsToVertices", nullptr, ICON_POINTS_TO_VERTICES);
   define(brna, "GeometryNode", "GeometryNodePointsToVolume", nullptr, ICON_POINT_TO_VOLUME);
   define(brna, "GeometryNode", "GeometryNodeProximity", nullptr, ICON_GEOMETRY_PROXIMITY);
-  define(brna, "GeometryNode", "GeometryNodeRasterizePoints", def_geo_rasterize_points, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeRasterizePoints", def_geo_rasterize_points, ICON_RASTERIZE_POINTS); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeRaycast", nullptr, ICON_RAYCAST);
   define(brna, "GeometryNode", "GeometryNodeRealizeInstances", nullptr, ICON_MOD_INSTANCE);
   define(brna, "GeometryNode", "GeometryNodeRemoveAttribute", nullptr, ICON_ATTRIBUTE_REMOVE);

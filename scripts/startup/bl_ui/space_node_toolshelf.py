@@ -2616,8 +2616,11 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodePointsToSDFGrid", pad=16),
             OperatorEntry("GeometryNodePointsToVertices", pad=17),
             OperatorEntry("GeometryNodePointsToVolume", pad=17),
+            OperatorEntry("GeometryNodeRasterizePoints", pad=19),  # BFA - new node
             Separator,
             OperatorEntry("GeometryNodeSetPointRadius", pad=19),
+            Separator,
+            OperatorEntry("GeometryNodePointsSetType", pad=11),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
