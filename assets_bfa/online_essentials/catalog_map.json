@@ -1,0 +1,4 @@
+{
+  "_comment": "Move an asset to another catalog: \"Asset name\": \"Catalog/Path\" (or the catalog UUID). Keys starting with _ are ignored.",
+  "_example Clay Strips": "Brushes/Sculpt/Draw"
+}
