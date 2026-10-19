@@ -1820,6 +1820,8 @@ class SEQUENCER_MT_context_menu(Menu):
         if strip:
             strip_type = strip.type
             total, nonsound = selected_strips_count(context)
+            # BFA - was used below but never defined (NameError on Image strips, #6916). Blender defines the same in its reorganized menu.
+            has_selection = total > 0
 
             layout.separator()
             layout.menu("SEQUENCER_MT_strip_modifiers")  # BFA - no icon
@@ -1870,7 +1872,7 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.separator()
                 layout.operator("sequencer.rendersize", icon="RENDER_REGION")
                 if has_selection:
-                   layout.operator("sequencer.images_separate", icon="SEPARATE")
+                    layout.operator("sequencer.images_separate", icon="SEPARATE")
             elif strip_type != 'SOUND':
                 layout.separator()
                 layout.operator("sequencer.rendersize")
