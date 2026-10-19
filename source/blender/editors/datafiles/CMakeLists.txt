@@ -1300,6 +1300,7 @@ if(WITH_BLENDER)
       node_colorbalance
       node_colorcorrection
       node_colorramp
+      node_combine_list
       node_combinehsv
       node_combinergb
       node_combinexyz
@@ -1307,6 +1308,7 @@ if(WITH_BLENDER)
       node_combineyuva
       node_compositing
       node_compositing_active
+      node_construct_curves
       node_corner
       node_cornerpin
       node_crop
@@ -1337,6 +1339,8 @@ if(WITH_BLENDER)
       node_fresnel
       node_gamma
       node_geometry
+      node_geometry_materials
+      node_get_grid_names
       node_getgeometrycomponent
       node_get_named_grid
       node_glare
@@ -1475,6 +1479,7 @@ if(WITH_BLENDER)
       node_waves
       node_white_noise
       node_wireframe
+      node_xpbd_solver
       node_zcombine
       nodetree
       nodetree_active
