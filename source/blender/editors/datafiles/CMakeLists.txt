@@ -2241,6 +2241,7 @@ if(WITH_BLENDER)
       # letter v
       value_to_selection
       value_to_string
+      variables
 	    variance
       vector_displace
       vertcolfromweight
