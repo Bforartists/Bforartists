@@ -436,10 +436,14 @@ class TOPBAR_MT_file(Menu):
                     row.operator("import_mesh.stl", text="", icon='LOAD_STL')
                 if bpy.app.build_options.io_ply: # bfa - only show if built option is true
                     row.operator("wm.ply_import", text="", icon='LOAD_PLY')
+                if bpy.app.build_options.io_spz: # BFA - SPZ import, only show if built option is true (#6861)
+                    row.operator("wm.spz_import", text="", icon='LOAD_SPZ')
                 if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
                 if "io_curve_svg" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_curve.svg", text="", icon='LOAD_SVG')
+                if bpy.app.build_options.opentimelineio: # BFA - OpenTimelineIO import, only show if built option is true (#6861)
+                    row.operator("wm.otio_import", text="", icon='LOAD_OTIO')
 
             ## ------------------ Export common
             if addon_prefs.topbar_file_export_common:
@@ -472,6 +476,8 @@ class TOPBAR_MT_file(Menu):
                     row.operator("wm.ply_export", text="", icon='SAVE_PLY')
                 if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
+                if bpy.app.build_options.opentimelineio: # BFA - OpenTimelineIO export, only show if built option is true (#6861)
+                    row.operator("wm.otio_export", text="", icon='SAVE_OTIO')
 
             ## ------------------ Render
             if addon_prefs.topbar_file_render:
