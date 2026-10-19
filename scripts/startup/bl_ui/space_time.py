@@ -113,7 +113,7 @@ def playback_controls(layout, context):
         # BFA - Frame range controls
         row = layout.row(align=True)
         row.prop(scene, "use_preview_range", text="", toggle=True)
-        row.operator("anim.start_frame_set", text="", icon="SET_POSITION")
+        row.operator("anim.start_frame_set", text="", icon="SET_START_FRAME")  # BFA - own start/end icons
         sub = row.row(align=True)
         sub.scale_x = 0.8
         if not scene.use_preview_range:
@@ -122,7 +122,7 @@ def playback_controls(layout, context):
         else:
             sub.prop(scene, "frame_preview_start", text="Start")
             sub.prop(scene, "frame_preview_end", text="End")
-        row.operator("anim.end_frame_set", text="", icon="SET_POSITION")
+        row.operator("anim.end_frame_set", text="", icon="SET_END_FRAME")  # BFA - own start/end icons
 
         # BFA (#6780): "Sync Scene Strip" - opt-in, one-way reconciliation of the
         # strip's geometry with the strip scene's render range. When the user

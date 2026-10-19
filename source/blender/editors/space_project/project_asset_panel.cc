@@ -177,6 +177,7 @@ void project_asset_panel_register(ARegionType &region_type)
   STRNCPY_UTF8(panel_type->idname, "PROJECT_PT_asset_libraries");
   STRNCPY_UTF8(panel_type->label, N_("Asset Libraries"));
   STRNCPY_UTF8(panel_type->category, N_("Asset Libraries"));
+  panel_type->icon = ICON_ASSET_MANAGER; /* BFA - tab icon, same as Preferences > Asset Libraries */
   STRNCPY_UTF8(panel_type->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
   STRNCPY(panel_type->context, "assets");
   panel_type->space_type = SPACE_PROJECT;

@@ -1946,6 +1946,8 @@ class NODES_PT_toolshelf_gn_add_geometry_material(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("GeometryNodeGeometryMaterials", pad=1),  # BFA - new node
+            Separator,
             OperatorEntry("GeometryNodeReplaceMaterial", pad=3),
             OperatorEntry("GeometryNodeInputMaterialIndex", pad=7),
             OperatorEntry("GeometryNodeMaterialSelection", pad=1),
@@ -2007,6 +2009,15 @@ class NODES_PT_toolshelf_gn_add_curve(bpy.types.Panel, NodePanel):
 
     def draw(self, context):
         layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeConstructCurves", pad=13),  # BFA - new node, in Add > Curve
+        )
+
+        self.draw_entries(context, layout, entries)
 
 
 class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
@@ -2653,6 +2664,7 @@ class NODES_PT_toolshelf_gn_add_volume_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("GeometryNodeGetGridNames", pad=10),  # BFA - new node
             OperatorEntry("GeometryNodeGetNamedGrid", pad=10),
             OperatorEntry("GeometryNodeGridInfo", pad=21),
             OperatorEntry("GeometryNodeInputVoxelIndex", pad=15),
@@ -2810,6 +2822,8 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry(operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME"),
+            Separator,
+            OperatorEntry("GeometryNodeXPBDSolver", pad=7),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -3123,6 +3137,7 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry("GeometryNodeClosureToList", pad=6),
+            OperatorEntry("GeometryNodeCombineList", pad=11),  # BFA - new node
             OperatorEntry("GeometryNodeFieldToList", pad=10),
             OperatorEntry("GeometryNodeFilterList", pad=12),
             OperatorEntry("GeometryNodeListGetItem", pad=10),
