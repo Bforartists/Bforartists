@@ -2266,6 +2266,7 @@ if(WITH_BLENDER)
       view_camera_unselected
       view_fill
       view_fit
+      view_flip
       view_frame
       view_front
       view_global_local
@@ -2279,6 +2280,7 @@ if(WITH_BLENDER)
       view_remove_local
       view_reset
       view_right
+      view_roll_reset
       view_selected
       view_stretch
       view_switchactivecam
