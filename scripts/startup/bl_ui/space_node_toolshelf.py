@@ -252,6 +252,7 @@ class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("NodeComment"),  # BFA - new node, Add > Layout order
             OperatorEntry("NodeFrame"),
             OperatorEntry("NodeReroute"),
         )

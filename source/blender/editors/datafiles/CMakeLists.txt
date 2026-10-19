@@ -1307,6 +1307,7 @@ if(WITH_BLENDER)
       node_combinexyz
       node_combineycbcra
       node_combineyuva
+      node_comment
       node_compositing
       node_compositing_active
       node_construct_curves
