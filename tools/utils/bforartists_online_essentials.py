@@ -217,7 +217,7 @@ def step_build(args):
     overrides = {}
     if thumbs_dir.exists():
         for f in thumbs_dir.rglob("*"):
-            if f.is_file() and f.name != ".gitkeep":
+            if f.is_file() and not f.name.startswith((".", "README")):
                 overrides[PurePosixPath(f.relative_to(thumbs_dir).as_posix())] = f
 
     replaced = 0
