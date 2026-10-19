@@ -31,8 +31,10 @@ class OnlineEssentialsLibrary : public RemoteAssetLibrary {
   OnlineEssentialsLibrary();
 
   /* Trailing slash matters! */
-  static constexpr StringRefNull URL =
-      "https://cdn.extensions.blender.org/asset-libraries/essentials/";
+  /* BFA - Bforartists hosts its own Online Essentials, so it can ship its own and extra assets
+   * independently of blender.org. It starts as a mirror of Blender's Online Essentials.
+   * Blender's URL was: "https://cdn.extensions.blender.org/asset-libraries/essentials/". */
+  static constexpr StringRefNull URL = "https://assets.bforartists.com/essentials/";
 
   std::optional<AssetLibraryReference> library_reference() const override;
 };
