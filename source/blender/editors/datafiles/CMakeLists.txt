@@ -1024,7 +1024,9 @@ if(WITH_BLENDER)
       load_fbx
       load_gltf
       load_obj
+      load_otio
       load_ply
+      load_spz
       load_stl
       load_svg
       load_svg_gpencil
@@ -1842,6 +1844,7 @@ if(WITH_BLENDER)
       save_fbx
       save_gltf
       save_obj
+      save_otio
       save_pdf
       save_ply
       save_prefs

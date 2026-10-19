@@ -523,7 +523,7 @@ class TOPBAR_MT_file_import(Menu):
                 icon="LOAD_OBJ",
             )
         if bpy.app.build_options.io_spz:
-            self.layout.operator("wm.spz_import", text=FileHandler.label_with_extensions("IO_FH_spz")) # BFA - WIP - icon not available yet
+            self.layout.operator("wm.spz_import", text=FileHandler.label_with_extensions("IO_FH_spz"), icon="LOAD_SPZ") # BFA - Icon Added
 
         if bpy.app.build_options.io_ply:
             self.layout.operator(
@@ -539,7 +539,7 @@ class TOPBAR_MT_file_import(Menu):
             )
 
         if bpy.app.build_options.opentimelineio:
-            self.layout.operator("wm.otio_import", text="OpenTimelineIO (.otio)")
+            self.layout.operator("wm.otio_import", text="OpenTimelineIO (.otio)", icon="LOAD_OTIO") # BFA - Icon Added
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -605,7 +605,7 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator(
                 "wm.stl_export", text=FileHandler.label_with_extensions("IO_FH_stl"), icon="SAVE_STL")
         if bpy.app.build_options.opentimelineio:
-            self.layout.operator("wm.otio_export", text="OpenTimelineIO (.otio)") # BFA - WIP - needs icon
+            self.layout.operator("wm.otio_export", text="OpenTimelineIO (.otio)", icon="SAVE_OTIO") # BFA - Icon Added
 
 
 class TOPBAR_MT_file_external_data(Menu):
