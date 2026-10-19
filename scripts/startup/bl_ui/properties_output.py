@@ -714,7 +714,7 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         if needs_codec and ffmpeg.codec == 'PRORES':
             layout.use_property_split = False
             layout.prop(ffmpeg, "ffmpeg_prores_profile")
-            layout.use_property_split = Tru
+            layout.use_property_split = True
 
         # Output quality
         use_crf = needs_codec and ffmpeg.codec in {

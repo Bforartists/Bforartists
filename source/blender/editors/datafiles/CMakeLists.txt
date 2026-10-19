@@ -505,6 +505,7 @@ if(WITH_BLENDER)
       constraint_bone
       constraint_data
       controlpointrow
+      convert_rotation_mode
       convexhull
       copy_id
       copy_from_object
@@ -1024,6 +1025,7 @@ if(WITH_BLENDER)
       load_fbx
       load_gltf
       load_obj
+      load_otio
       load_ply
       load_spz
       load_stl
@@ -1299,13 +1301,16 @@ if(WITH_BLENDER)
       node_colorbalance
       node_colorcorrection
       node_colorramp
+      node_combine_list
       node_combinehsv
       node_combinergb
       node_combinexyz
       node_combineycbcra
       node_combineyuva
+      node_comment
       node_compositing
       node_compositing_active
+      node_construct_curves
       node_corner
       node_cornerpin
       node_crop
@@ -1336,6 +1341,8 @@ if(WITH_BLENDER)
       node_fresnel
       node_gamma
       node_geometry
+      node_geometry_materials
+      node_get_grid_names
       node_getgeometrycomponent
       node_get_named_grid
       node_glare
@@ -1474,6 +1481,7 @@ if(WITH_BLENDER)
       node_waves
       node_white_noise
       node_wireframe
+      node_xpbd_solver
       node_zcombine
       nodetree
       nodetree_active
@@ -1656,6 +1664,7 @@ if(WITH_BLENDER)
       point_translate
       pointcloud_data
       pointcloud_point
+      points_set_type
       points_to_curves
       points_to_vertices
       pokefaces
@@ -1713,6 +1722,7 @@ if(WITH_BLENDER)
       random_float
       randomize
       randomize_transform
+      rasterize_points
       raycast
       rec
       recalc_normals
@@ -1838,6 +1848,7 @@ if(WITH_BLENDER)
       save_fbx
       save_gltf
       save_obj
+      save_otio
       save_pdf
       save_ply
       save_prefs
@@ -1947,6 +1958,7 @@ if(WITH_BLENDER)
       set_curve_handle_positions
       set_curve_radius
       set_curve_tilt
+      set_end_frame
       set_face_set
       set_frames
       set_from_faces
@@ -1959,6 +1971,7 @@ if(WITH_BLENDER)
       set_shade_smooth
       set_smooth
       set_spline_resolution
+      set_start_frame
       set_time
       set_uppercase
       settings
@@ -2231,6 +2244,7 @@ if(WITH_BLENDER)
       # letter v
       value_to_selection
       value_to_string
+      variables
 	    variance
       vector_displace
       vertcolfromweight
@@ -2255,6 +2269,7 @@ if(WITH_BLENDER)
       view_camera_unselected
       view_fill
       view_fit
+      view_flip
       view_frame
       view_front
       view_global_local
@@ -2268,6 +2283,7 @@ if(WITH_BLENDER)
       view_remove_local
       view_reset
       view_right
+      view_roll_reset
       view_selected
       view_stretch
       view_switchactivecam
