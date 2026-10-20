@@ -1684,6 +1684,121 @@ class NODE_AST_compositor(NodeAssetShelf, bpy.types.AssetShelf):
         return True
 
 
+# bfa wireless node props operators
+class NODE_OT_add_wireless_reroutes(bpy.types.Operator):
+    """Add a pair of wireless Reroute nodes (input + output)"""
+    bl_idname = "node.add_wireless_reroutes"
+    bl_label = "Add Wireless Reroutes"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    offset: bpy.props.FloatProperty(
+        name="Offset",
+        description="Horizontal distance between the two Reroutes",
+        default=200.0,
+        min=50.0,
+        soft_max=500.0,
+    )
+
+    index: bpy.props.IntProperty(
+        name="ID",
+        description="ID for random coloring display",
+        default=0,
+    )
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return (
+            space
+            and space.type == 'NODE_EDITOR'
+            and space.edit_tree is not None
+        )
+
+    def execute(self, context):
+        space = context.space_data
+        tree = space.edit_tree
+        cursor = space.cursor_location
+
+        reroute_in = tree.nodes.new(type='NodeReroute')
+        reroute_in.location = (cursor[0], cursor[1])
+        reroute_in["output"] = True
+        reroute_in["wireless"] = self.index
+        reroute_in.select = True
+
+        reroute_out = tree.nodes.new(type='NodeReroute')
+        reroute_out.location = (cursor[0] + self.offset, cursor[1])
+        reroute_out["input"] = True
+        reroute_out["wireless"] = self.index
+        reroute_out.select = True
+
+        tree.links.new(reroute_in.outputs[0], reroute_out.inputs[0])
+
+        tree.nodes.active = reroute_out
+
+        self.report({'INFO'}, "Added wireless Reroute pair")
+        return {'FINISHED'}
+
+
+class NODE_OT_set_wireless_properties(bpy.types.Operator):
+    """Set or clear 'input' / 'output' custom properties on selected nodes"""
+    bl_idname = "node.set_wireless_properties"
+    bl_label = "Set Wireless Properties"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    # --- BoolProperties ---
+    set_input: bpy.props.BoolProperty(
+        name="Input",
+        description="Add 'input' custom property to selected nodes",
+        default=False,
+    )
+
+    set_output: bpy.props.BoolProperty(
+        name="Output",
+        description="Add 'output' custom property to selected nodes",
+        default=False,
+    )
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return (
+            space
+            and space.type == 'NODE_EDITOR'
+            and space.edit_tree is not None
+            and any(n.select for n in space.edit_tree.nodes)
+        )
+
+    def execute(self, context):
+        tree = context.space_data.edit_tree
+        selected = [n for n in tree.nodes if n.select]
+
+        if not selected:
+            self.report({'WARNING'}, "No nodes selected")
+            return {'CANCELLED'}
+
+        for node in selected:
+            # Always mark as wireless
+            node["wireless"] = 0
+
+            # Input property
+            if self.set_input:
+                node["input"] = True
+            elif "input" in node:
+                del node["input"]
+
+            # Output property
+            if self.set_output:
+                node["output"] = True
+            elif "output" in node:
+                del node["output"]
+
+        self.report({'INFO'}, f"Updated {len(selected)} node(s)")
+        return {'FINISHED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "set_input")
+        layout.prop(self, "set_output")
 classes = (
     NODE_HT_header,
     NODE_MT_editor_menus,
@@ -1742,7 +1857,10 @@ classes = (
     NODE_OT_switch_editors_in_shadereditor,
     # bfa - assetshelf
     NODE_AST_geometry_node_groups,
-    NODE_AST_shader_node_groups
+    NODE_AST_shader_node_groups,
+    # bfa - node wireless display
+    NODE_OT_set_wireless_properties,
+    NODE_OT_add_wireless_reroutes
 )
 
 
