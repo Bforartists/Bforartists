@@ -11458,7 +11458,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeToolSetSelection", nullptr, ICON_SET_SELECTION);
   define(brna, "GeometryNode", "GeometryNodeTransform", nullptr, ICON_NODE_TRANSFORM);
   define(brna, "GeometryNode", "GeometryNodeTranslateInstances", nullptr, ICON_TRANSLATE_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeTransferAttributes", nullptr, ICON_TRANSFER_ATTRIBUTES); /*BFA - icon*/
+  define(brna, "GeometryNode", "GeometryNodeTransferAttributes", nullptr, ICON_ATTRIBUTE_TRANSFER); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeTriangulate", nullptr, ICON_MOD_TRIANGULATE);
   define(brna, "GeometryNode", "GeometryNodeTrimCurve", nullptr, ICON_CURVE_TRIM);
   define(brna, "GeometryNode", "GeometryNodeUVPackIslands", nullptr, ICON_PACKISLAND);

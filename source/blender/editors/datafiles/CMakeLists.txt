@@ -2160,7 +2160,6 @@ if(WITH_BLENDER)
       tracking_refine_backwards
       tracking_refine_forwards
       trademark
-      transfer_attributes
       transfer_data
       transfer_data_layout
       transfer_sculpt
