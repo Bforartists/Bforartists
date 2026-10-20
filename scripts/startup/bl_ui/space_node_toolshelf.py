@@ -1712,6 +1712,7 @@ class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeImportCSV", pad=2),  # BFA - Add menu order
             OperatorEntry("GeometryNodeImportOBJ", pad=2),
             OperatorEntry("GeometryNodeImportPLY", pad=2),
+            OperatorEntry("GeometryNodeImportSPZ", pad=3),  # BFA - new node
             OperatorEntry("GeometryNodeImportSTL", pad=3),
             OperatorEntry("GeometryNodeImportText", pad=2),
             OperatorEntry("GeometryNodeImportVDB", pad=2),
