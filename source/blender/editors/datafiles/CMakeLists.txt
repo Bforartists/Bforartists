@@ -790,6 +790,7 @@ if(WITH_BLENDER)
       gesture_pan
       gesture_rotate
       gesture_zoom
+      get_attribute_names
       get_id
       get_list_item
       ghost

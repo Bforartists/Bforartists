@@ -1802,12 +1802,14 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("GeometryNodeAttributeStatistic", pad=15),
             OperatorEntry("GeometryNodeAttributeDomainSize", pad=24),
+            OperatorEntry("GeometryNodeGetAttributeNames", pad=10),  # BFA - new node
             Separator,
             OperatorEntry("GeometryNodeBlurAttribute", pad=22),
             OperatorEntry("GeometryNodeCaptureAttribute", pad=15),
             OperatorEntry("GeometryNodeRemoveAttribute", pad=2),
             OperatorEntry("GeometryNodeRenameAttribute", pad=16),
             OperatorEntry("GeometryNodeStoreNamedAttribute", pad=7),
+            OperatorEntry("GeometryNodeTransferAttributes", pad=13),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
