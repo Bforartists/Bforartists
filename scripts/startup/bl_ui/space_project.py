@@ -72,11 +72,11 @@ class PROJECT_MT_add_variable(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("project.add_variable", text="String", icon='NONE').variable_type = 'STRING'
-        layout.operator("project.add_variable", text="Filepath", icon='NONE').variable_type = 'FILEPATH'
+        layout.operator("project.add_variable", text="String", icon='STRING').variable_type = 'STRING'  # BFA - Icon Added
+        layout.operator("project.add_variable", text="Filepath", icon='FILE_FOLDER').variable_type = 'FILEPATH'  # BFA - Icon Added
         layout.separator()
-        layout.operator("project.add_variable", text="Integer", icon='NONE').variable_type = 'INTEGER'
-        layout.operator("project.add_variable", text="Float", icon='NONE').variable_type = 'FLOAT'
+        layout.operator("project.add_variable", text="Integer", icon='INTEGER').variable_type = 'INTEGER'  # BFA - Icon Added
+        layout.operator("project.add_variable", text="Float", icon='NODE_VALUE').variable_type = 'FLOAT'  # BFA - Icon Added
 
 
 # -------------------------------------------------------------
@@ -301,6 +301,7 @@ class PROJECT_PT_variables(Panel):
     bl_space_type = 'PROJECT'
     bl_region_type = 'WINDOW'
     bl_category = "Variables"
+    bl_icon = 'VARIABLES'  # BFA - tab icon
 
     def draw(self, context):
         project = bpy.data.project

@@ -10887,7 +10887,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "NodeInternal", "NodeGroupOutput", def_group_output, ICON_GROUPOUTPUT);
   define(brna, "NodeInternal", "NodeReroute", def_reroute, ICON_NODE_REROUTE);
   define(brna, "NodeInternal", "NodeImplicitConversion", def_implicit_conversion, ICON_IMPLICIT_CONVERSION);
-  define(brna, "NodeInternal", "NodeComment", def_comment, ICON_NONE); /*BFA - WIP*/
+  define(brna, "NodeInternal", "NodeComment", def_comment, ICON_NODE_COMMENT); /*BFA - icon*/
 
   define(brna, "NodeInternal", "NodeClosureInput", def_closure_input, ICON_NODE_CLOSURE);
   define(brna, "NodeInternal", "NodeClosureOutput", def_closure_output, ICON_NODE_CLOSURE);
@@ -11254,7 +11254,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementInput", def_geo_foreach_geometry_element_input, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeForeachGeometryElementOutput", def_geo_foreach_geometry_element_output, ICON_FOR_EACH);
   define(brna, "GeometryNode", "GeometryNodeGeometryToInstance", nullptr, ICON_GEOMETRY_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeGetAttributeNames", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGetAttributeNames", nullptr, ICON_GET_ATTRIBUTE_NAMES); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeGetGeometryBundle", nullptr, ICON_NODE_BUNDLE_GET);
   define(brna, "GeometryNode", "GeometryNodeGetGeometryComponent", nullptr, ICON_NODE_GETGEOMETRYCOMPONENT);
   define(brna, "GeometryNode", "GeometryNodeGetGridNames", nullptr, ICON_NODE_GET_GRID_NAMES); /*BFA - icon*/
@@ -11281,7 +11281,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeGridMedian", nullptr, ICON_NODE_GRIDMEDIAN);
   define(brna, "GeometryNode", "GeometryNodeGridPrune", nullptr, ICON_NODE_PRUNEGRID);
   define(brna, "GeometryNode", "GeometryNodeGridClip", nullptr, ICON_CLIPPINGBORDER);
-  define(brna, "GeometryNode", "GeometryNodeGridSolvePoisson", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeGridSolvePoisson", nullptr, ICON_NODE_GRIDSOLVEPOISSON); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeGridToMesh", nullptr, ICON_NODE_GRIDTOMESH);
   define(brna, "GeometryNode", "GeometryNodeGridToPoints", nullptr, ICON_MESH_TO_POINTS);
   define(brna, "GeometryNode", "GeometryNodeGridTopologyBoolean", nullptr, ICON_NODE_GRIDTOPLOGYBOOLEAN);
@@ -11290,7 +11290,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeImageTexture", def_geo_image_texture, ICON_IMAGE_DATA);
   define(brna, "GeometryNode", "GeometryNodeImportOBJ", nullptr, ICON_LOAD_OBJ);
   define(brna, "GeometryNode", "GeometryNodeImportPLY", nullptr, ICON_LOAD_PLY);
-  define(brna, "GeometryNode", "GeometryNodeImportSPZ", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeImportSPZ", nullptr, ICON_LOAD_SPZ); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeImportSTL", nullptr, ICON_LOAD_STL);
   define(brna, "GeometryNode", "GeometryNodeImportCSV", nullptr, ICON_LOAD_CSV);
   define(brna, "GeometryNode", "GeometryNodeImportText", nullptr, ICON_FILE_TEXT);
@@ -11372,13 +11372,13 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeOffsetPointInCurve", nullptr, ICON_OFFSET_POINT_IN_CURVE);
   define(brna, "GeometryNode", "GeometryNodePoints", nullptr, ICON_DECORATE);
   define(brna, "GeometryNode", "GeometryNodePointsOfCurve", nullptr, ICON_POINT_OF_CURVE);
-  define(brna, "GeometryNode", "GeometryNodePointsSetType", nullptr, ICON_NONE);
+  define(brna, "GeometryNode", "GeometryNodePointsSetType", nullptr, ICON_POINTS_SET_TYPE); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodePointsToCurves", nullptr, ICON_POINTS_TO_CURVES);
   define(brna, "GeometryNode", "GeometryNodePointsToSDFGrid", nullptr, ICON_NODE_POINTSTOSDFGRID);
   define(brna, "GeometryNode", "GeometryNodePointsToVertices", nullptr, ICON_POINTS_TO_VERTICES);
   define(brna, "GeometryNode", "GeometryNodePointsToVolume", nullptr, ICON_POINT_TO_VOLUME);
   define(brna, "GeometryNode", "GeometryNodeProximity", nullptr, ICON_GEOMETRY_PROXIMITY);
-  define(brna, "GeometryNode", "GeometryNodeRasterizePoints", def_geo_rasterize_points, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeRasterizePoints", def_geo_rasterize_points, ICON_RASTERIZE_POINTS); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeRaycast", nullptr, ICON_RAYCAST);
   define(brna, "GeometryNode", "GeometryNodeRealizeInstances", nullptr, ICON_MOD_INSTANCE);
   define(brna, "GeometryNode", "GeometryNodeRemoveAttribute", nullptr, ICON_ATTRIBUTE_REMOVE);
@@ -11458,7 +11458,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeToolSetSelection", nullptr, ICON_SET_SELECTION);
   define(brna, "GeometryNode", "GeometryNodeTransform", nullptr, ICON_NODE_TRANSFORM);
   define(brna, "GeometryNode", "GeometryNodeTranslateInstances", nullptr, ICON_TRANSLATE_INSTANCE);
-  define(brna, "GeometryNode", "GeometryNodeTransferAttributes", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeTransferAttributes", nullptr, ICON_ATTRIBUTE_TRANSFER); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeTriangulate", nullptr, ICON_MOD_TRIANGULATE);
   define(brna, "GeometryNode", "GeometryNodeTrimCurve", nullptr, ICON_CURVE_TRIM);
   define(brna, "GeometryNode", "GeometryNodeUVPackIslands", nullptr, ICON_PACKISLAND);

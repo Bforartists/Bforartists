@@ -1584,6 +1584,23 @@ static void rna_RegionView3D_view_rotation_set(PointerRNA *ptr, const float *val
   rna_RegionView3D_view_rotation_set_validate_view_axis(rv3d);
 }
 
+/* BFA - View Roll in the sidebar, the user view's counterpart of Camera Roll (#6839). */
+static float rna_RegionView3D_view_roll_get(PointerRNA *ptr)
+{
+  RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
+  return ED_view3d_view_roll_get(rv3d->viewquat);
+}
+
+static void rna_RegionView3D_view_roll_set(PointerRNA *ptr, float value)
+{
+  RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
+  if ((rv3d->persp == RV3D_CAMOB) || (RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION)) {
+    return;
+  }
+  ED_view3d_view_roll_set(rv3d->viewquat, value);
+  rv3d->view = RV3D_VIEW_USER;
+}
+
 static void rna_RegionView3D_view_matrix_set(PointerRNA *ptr, const float *values)
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
@@ -6520,6 +6537,18 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, nullptr, "camroll");
   RNA_def_property_ui_text(prop, "Camera Roll", "Roll angle in camera view");
   RNA_def_property_range(prop, -M_PI, M_PI);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+
+  /* BFA - user view roll relative to the horizon, editable and resettable in the sidebar (#6839).
+   * Not stored: read from and written to the view rotation. */
+  prop = RNA_def_property(srna, "view_roll", PROP_FLOAT, PROP_ANGLE);
+  RNA_def_property_float_funcs(
+      prop, "rna_RegionView3D_view_roll_get", "rna_RegionView3D_view_roll_set", nullptr);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_range(prop, -M_PI, M_PI);
+  RNA_def_property_float_default(prop, 0.0f);
+  RNA_def_property_ui_text(
+      prop, "View Roll", "Roll of the view relative to the horizon, zero is level");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
   prop = RNA_def_property(srna, "pause_render", PROP_BOOLEAN, PROP_NONE);
