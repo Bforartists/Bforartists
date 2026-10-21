@@ -793,6 +793,7 @@ if(WITH_BLENDER)
       get_attribute_names
       get_id
       get_list_item
+      get_vector_component
       ghost
       ghost_disabled
       ghost_enabled
