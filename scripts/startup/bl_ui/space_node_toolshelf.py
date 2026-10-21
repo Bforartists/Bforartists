@@ -2706,6 +2706,7 @@ class NODES_PT_toolshelf_gn_add_volume_sample(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeGridDivergence", pad=11),
             OperatorEntry("GeometryNodeGridGradient", pad=16),
             OperatorEntry("GeometryNodeGridLaplacian", pad=14),
+            OperatorEntry("GeometryNodeGridSolvePoisson", pad=7),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)

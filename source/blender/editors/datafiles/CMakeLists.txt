@@ -1364,6 +1364,7 @@ if(WITH_BLENDER)
       node_gridlaplacian
       node_gridmean
       node_gridmedian
+      node_gridsolvepoisson
       node_gridtomesh
       node_gridtoplogyboolean
       node_grid_info
