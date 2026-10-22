@@ -1181,6 +1181,23 @@ float view3d_horizon_correct_quat(float quat[4],
   return angle;
 }
 
+/* BFA - roll of the user view relative to the horizon, for the sidebar View Roll field (#6839).
+ * Same horizon and fallback axis as #VIEW3D_OT_view_roll_set. */
+static const float view3d_roll_horizon_plane[3] = {0.0f, 0.0f, 1.0f};
+static const float view3d_roll_axis_fallback[3] = {1.0f, 0.0f, 0.0f};
+
+float ED_view3d_view_roll_get(const float viewquat[4])
+{
+  return view3d_horizon_angle_calc(
+      viewquat, view3d_roll_horizon_plane, false, view3d_roll_axis_fallback, 0.0f, false);
+}
+
+void ED_view3d_view_roll_set(float viewquat[4], const float angle)
+{
+  view3d_horizon_correct_quat(
+      viewquat, view3d_roll_horizon_plane, false, view3d_roll_axis_fallback, angle, 1.0f);
+}
+
 float view3d_horizon_correct_quat_ease_out(float quat[4],
                                            const float horizon_plane[3],
                                            const bool horizon_plane_no_flip,

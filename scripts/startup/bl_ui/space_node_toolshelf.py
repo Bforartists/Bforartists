@@ -252,6 +252,7 @@ class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("NodeComment"),  # BFA - new node, Add > Layout order
             OperatorEntry("NodeFrame"),
             OperatorEntry("NodeReroute"),
         )
@@ -1711,6 +1712,7 @@ class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeImportCSV", pad=2),  # BFA - Add menu order
             OperatorEntry("GeometryNodeImportOBJ", pad=2),
             OperatorEntry("GeometryNodeImportPLY", pad=2),
+            OperatorEntry("GeometryNodeImportSPZ", pad=3),  # BFA - new node
             OperatorEntry("GeometryNodeImportSTL", pad=3),
             OperatorEntry("GeometryNodeImportText", pad=2),
             OperatorEntry("GeometryNodeImportVDB", pad=2),
@@ -1800,12 +1802,14 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("GeometryNodeAttributeStatistic", pad=15),
             OperatorEntry("GeometryNodeAttributeDomainSize", pad=24),
+            OperatorEntry("GeometryNodeGetAttributeNames", pad=10),  # BFA - new node
             Separator,
             OperatorEntry("GeometryNodeBlurAttribute", pad=22),
             OperatorEntry("GeometryNodeCaptureAttribute", pad=15),
             OperatorEntry("GeometryNodeRemoveAttribute", pad=2),
             OperatorEntry("GeometryNodeRenameAttribute", pad=16),
             OperatorEntry("GeometryNodeStoreNamedAttribute", pad=7),
+            OperatorEntry("GeometryNodeTransferAttributes", pad=13),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -1945,6 +1949,8 @@ class NODES_PT_toolshelf_gn_add_geometry_material(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("GeometryNodeGeometryMaterials", pad=1),  # BFA - new node
+            Separator,
             OperatorEntry("GeometryNodeReplaceMaterial", pad=3),
             OperatorEntry("GeometryNodeInputMaterialIndex", pad=7),
             OperatorEntry("GeometryNodeMaterialSelection", pad=1),
@@ -2006,6 +2012,15 @@ class NODES_PT_toolshelf_gn_add_curve(bpy.types.Panel, NodePanel):
 
     def draw(self, context):
         layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry("GeometryNodeConstructCurves", pad=13),  # BFA - new node, in Add > Curve
+        )
+
+        self.draw_entries(context, layout, entries)
 
 
 class NODES_PT_toolshelf_gn_add_curve_read(bpy.types.Panel, NodePanel):
@@ -2604,8 +2619,11 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodePointsToSDFGrid", pad=16),
             OperatorEntry("GeometryNodePointsToVertices", pad=17),
             OperatorEntry("GeometryNodePointsToVolume", pad=17),
+            OperatorEntry("GeometryNodeRasterizePoints", pad=19),  # BFA - new node
             Separator,
             OperatorEntry("GeometryNodeSetPointRadius", pad=19),
+            Separator,
+            OperatorEntry("GeometryNodePointsSetType", pad=11),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -2688,6 +2706,7 @@ class NODES_PT_toolshelf_gn_add_volume_sample(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeGridDivergence", pad=11),
             OperatorEntry("GeometryNodeGridGradient", pad=16),
             OperatorEntry("GeometryNodeGridLaplacian", pad=14),
+            OperatorEntry("GeometryNodeGridSolvePoisson", pad=7),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -2810,6 +2829,8 @@ class NODES_PT_toolshelf_gn_add_simulation(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry(operator="node.add_simulation_zone", text="Simulation Zone", icon="TIME"),
+            Separator,
+            OperatorEntry("GeometryNodeXPBDSolver", pad=7),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -3127,6 +3148,7 @@ class NODES_PT_toolshelf_gn_add_utilities_lists(bpy.types.Panel, NodePanel):
 
         entries = (
             OperatorEntry("GeometryNodeClosureToList", pad=6),
+            OperatorEntry("GeometryNodeCombineList", pad=11),  # BFA - new node
             OperatorEntry("GeometryNodeFieldToList", pad=10),
             OperatorEntry("GeometryNodeFilterList", pad=12),
             OperatorEntry("GeometryNodeListGetItem", pad=10),
