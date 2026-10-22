@@ -10936,10 +10936,10 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeHueSaturation", nullptr, ICON_NODE_HUESATURATION);
   define(brna, "ShaderNode", "ShaderNodeInvert", nullptr, ICON_NODE_INVERT);
   define(brna, "ShaderNode", "ShaderNodeLayerWeight", nullptr, ICON_NODE_LAYERWEIGHT);
-  define(brna, "ShaderNode", "ShaderNodeLightAccumulation", nullptr, ICON_NONE); /*BFA - WIP*/
-  define(brna, "ShaderNode", "ShaderNodeLightEvaluation", def_light_evaluation, ICON_NONE); /*BFA - WIP*/
+  define(brna, "ShaderNode", "ShaderNodeLightAccumulation", nullptr, ICON_NODE_LIGHT_ACCUMULATION); /*BFA - icon*/
+  define(brna, "ShaderNode", "ShaderNodeLightEvaluation", def_light_evaluation, ICON_NODE_LIGHT_EVALUATION); /*BFA - icon*/
   define(brna, "ShaderNode", "ShaderNodeLightFalloff", nullptr, ICON_NODE_LIGHTFALLOFF);
-  define(brna, "ShaderNode", "ShaderNodeLightInfo", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "ShaderNode", "ShaderNodeLightInfo", nullptr, ICON_NODE_LIGHT_INFO); /*BFA - icon*/
   define(brna, "ShaderNode", "ShaderNodeLightIterInternalInput", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "ShaderNode", "ShaderNodeLightIterInternalOutput", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "ShaderNode", "ShaderNodeLightPath", nullptr, ICON_NODE_LIGHTPATH);
@@ -10968,7 +10968,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "ShaderNode", "ShaderNodeScript", def_sh_script, ICON_FILE_SCRIPT);
   define(brna, "ShaderNode", "ShaderNodeSeparateColor", def_sh_combsep_color, ICON_SEPARATE_COLOR);
   define(brna, "ShaderNode", "ShaderNodeSeparateXYZ", nullptr, ICON_NODE_SEPARATEXYZ);
-  define(brna, "ShaderNode", "ShaderNodeShadowRaycast", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "ShaderNode", "ShaderNodeShadowRaycast", nullptr, ICON_NODE_SHADOW_RAYCAST); /*BFA - icon*/
   define(brna, "ShaderNode", "ShaderNodeShaderToRGB", nullptr, ICON_NODE_RGB);
   define(brna, "ShaderNode", "ShaderNodeSqueeze", nullptr, ICON_NONE); /*BFA - WIP*/
   define(brna, "ShaderNode", "ShaderNodeSubsurfaceScattering", def_sh_subsurface, ICON_NODE_SSS);
@@ -11144,7 +11144,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeFindInString", nullptr, ICON_STRING_FIND);
   define(brna, "FunctionNode", "FunctionNodeFloatToInt", def_float_to_int, ICON_FLOAT_TO_INT);
   define(brna, "FunctionNode", "FunctionNodeFormatString", def_fn_format_string, ICON_FORMAT_STRING);
-  define(brna, "FunctionNode", "FunctionNodeGetVectorComponent", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "FunctionNode", "FunctionNodeGetVectorComponent", nullptr, ICON_GET_VECTOR_COMPONENT); /*BFA - icon*/
   define(brna, "FunctionNode", "FunctionNodeHashValue", nullptr, ICON_HASH);
   define(brna, "FunctionNode", "FunctionNodeInputBool", def_fn_input_bool, ICON_INPUT_BOOL);
   define(brna, "FunctionNode", "FunctionNodeInputColor", def_fn_input_color, ICON_COLOR);
@@ -11166,7 +11166,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeQuaternionToRotation", nullptr, ICON_QUATERNION_TO_ROTATION);
   define(brna, "FunctionNode", "FunctionNodeRandomValue", def_fn_random_value, ICON_RANDOM_FLOAT);
   define(brna, "FunctionNode", "FunctionNodeReplaceString", nullptr, ICON_REPLACE_STRING);
-  define(brna, "FunctionNode", "FunctionNodeReverseString", nullptr, ICON_NONE);
+  define(brna, "FunctionNode", "FunctionNodeReverseString", nullptr, ICON_REVERSE_STRING); /*BFA - icon*/
   define(brna, "FunctionNode", "FunctionNodeRotateEuler", def_fn_rotate_euler, ICON_ROTATE_EULER);
   define(brna, "FunctionNode", "FunctionNodeRotateRotation", nullptr, ICON_ROTATE_EULER);
   define(brna, "FunctionNode", "FunctionNodeRotateVector", nullptr, ICON_NODE_VECTORROTATE);
@@ -11176,7 +11176,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "FunctionNode", "FunctionNodeSeparateColor", nullptr, ICON_SEPARATE_COLOR);
   define(brna, "FunctionNode", "FunctionNodeSeparateMatrix", nullptr, ICON_SEPARATE_MATRIX);
   define(brna, "FunctionNode", "FunctionNodeSeparateTransform", nullptr, ICON_SEPARATE_TRANSFORM);
-  define(brna, "FunctionNode", "FunctionNodeSetStringCase", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "FunctionNode", "FunctionNodeSetStringCase", nullptr, ICON_SET_STRING_CASE); /*BFA - icon*/
   define(brna, "FunctionNode", "FunctionNodeSliceString", nullptr, ICON_STRING_SUBSTRING);
   define(brna, "FunctionNode", "FunctionNodeSplitString", nullptr, ICON_SPLIT_STRING);
   define(brna, "FunctionNode", "FunctionNodeStringLength", nullptr, ICON_STRING_LENGTH);
@@ -11448,7 +11448,7 @@ static void rna_def_nodes(BlenderRNA *brna)
   define(brna, "GeometryNode", "GeometryNodeSubdivideMesh", nullptr, ICON_SUBDIVIDE_MESH);
   define(brna, "GeometryNode", "GeometryNodeSubdivisionSurface", nullptr, ICON_SUBDIVIDE_EDGES);
   define(brna, "GeometryNode", "GeometryNodeSwitch", nullptr, ICON_SWITCH);
-  define(brna, "GeometryNode", "GeometryNodeTagFilter", nullptr, ICON_NONE); /*BFA - WIP*/
+  define(brna, "GeometryNode", "GeometryNodeTagFilter", nullptr, ICON_TAG_FILTER); /*BFA - icon*/
   define(brna, "GeometryNode", "GeometryNodeTool3DCursor", nullptr, ICON_CURSOR);
   define(brna, "GeometryNode", "GeometryNodeToolActiveElement", nullptr, ICON_ACTIVE_ELEMENT);
   define(brna, "GeometryNode", "GeometryNodeToolFaceSet", nullptr, ICON_FACE_SET);

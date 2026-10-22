@@ -276,6 +276,7 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
+        is_eevee_object = is_shader_type(context, 'OBJECT') and is_engine(context, 'BLENDER_EEVEE')  # BFA - EEVEE-only light nodes
 
         # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
         # There is currently no way to determine the correct padding length other than trial-and-error.
@@ -299,12 +300,15 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeFresnel", pad=22),
                 OperatorEntry("ShaderNodeNewGeometry", pad=18),
                 OperatorEntry("ShaderNodeLayerWeight", pad=12),
+                OperatorEntry("ShaderNodeLightEvaluation", pad=6, poll=is_eevee_object),  # BFA - new node
+                OperatorEntry("ShaderNodeLightInfo", pad=16, poll=is_eevee_object),  # BFA - new node
                 OperatorEntry("ShaderNodeLightPath", pad=16),
                 OperatorEntry("ShaderNodeObjectInfo", pad=14),
                 Separator,
                 OperatorEntry("ShaderNodeParticleInfo", pad=12),
                 OperatorEntry("ShaderNodePointInfo", pad=16 ),
                 OperatorEntry("ShaderNodeRaycast", pad=21),
+                OperatorEntry("ShaderNodeShadowRaycast", pad=9, poll=is_eevee_object),  # BFA - new node
                 OperatorEntry("ShaderNodeTangent", pad=20),
                 OperatorEntry("ShaderNodeTexCoord", pad=1),
                 OperatorEntry("ShaderNodeUVAlongStroke", pad=4, poll=is_shader_type(context, 'LINESTYLE')),
@@ -451,6 +455,7 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeBsdfGlossy", pad=17, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfHair", pad=22, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeHoldout", pad=26, poll=is_object),
+                OperatorEntry("ShaderNodeLightAccumulation", pad=7, poll=is_object and is_eevee),  # BFA - new node
                 OperatorEntry("ShaderNodeBsdfMetallic", pad=16, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, poll=is_object and not is_eevee),
@@ -2992,7 +2997,10 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeStringJoin", pad=14),
             OperatorEntry("FunctionNodeMatchString", pad=13),
             OperatorEntry("FunctionNodeReplaceString", pad=10),
+            OperatorEntry("FunctionNodeReverseString", pad=9),  # BFA - new node
+            OperatorEntry("FunctionNodeSetStringCase", pad=7),  # BFA - new node
             OperatorEntry("FunctionNodeSliceString", pad=15),
+            OperatorEntry("FunctionNodeSplitString", pad=15),  # BFA - was missing
             OperatorEntry("FunctionNodeTrimString", pad=15),
             Separator,
             OperatorEntry("FunctionNodeFindInString", pad=10),
@@ -3002,6 +3010,7 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
             OperatorEntry("FunctionNodeValueToString", pad=7),
             Separator,
             OperatorEntry("FunctionNodeInputSpecialCharacters", pad=1),
+            OperatorEntry("GeometryNodeTagFilter", pad=17),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -3027,6 +3036,7 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeCombineXYZ", pad=16),
+            OperatorEntry("FunctionNodeGetVectorComponent"),  # BFA - new node
             OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),
             OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=20, settings={"data_type": "'VECTOR'"}),
             OperatorEntry("ShaderNodeSeparateXYZ", pad=16),

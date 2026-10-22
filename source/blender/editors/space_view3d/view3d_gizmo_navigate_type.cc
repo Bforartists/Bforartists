@@ -30,6 +30,10 @@
 
 #include "BLF_api.hh"
 
+#include "BLI_string.hh"     /* BFA - roll gizmo angle text (#6932) */
+#include "ED_screen.hh"      /* BFA - roll gizmo redraw while dragging (#6932) */
+#include "MEM_guardedalloc.h" /* BFA - roll gizmo interaction data (#6932) */
+
 #include "UI_interface.hh"
 #include "UI_resources.hh"
 
@@ -411,6 +415,17 @@ void VIEW3D_GT_navigate_rotate(wmGizmoType *gzt)
 #define ROLL_ARC_ANGLE_MID DEG2RADF(235.0f)
 #define ROLL_ARC_ANGLE_HALF DEG2RADF(180.0f) /* Full circle. */
 
+/* BFA - #6932: angle feedback while dragging the ring, like the object rotate gizmo. */
+#define ROLL_ANGLE_FILL_ALPHA 0.18f
+#define ROLL_ANGLE_TEXT_POINTS 11.0f
+
+/** Drag state, from press to release (#6932). The angle uses the same function as the roll
+ * operator, so the indicator always shows the actual roll. */
+struct RollInteraction {
+  int start_x;
+  float angle;
+};
+
 static void gizmo_roll_polar(float r_co[3], const float radius, const float angle)
 {
   r_co[0] = radius * cosf(angle);
@@ -466,8 +481,103 @@ static void gizmo_roll_draw(const bContext *C, wmGizmo *gz)
   immEnd();
 
   immUnbindProgram();
+
+  /* BFA - #6932: while dragging, show how far the view is rolled: a wedge from the top of the
+   * ring, a line at the start and one at the current angle, and the angle in degrees. */
+  const RollInteraction *inter = static_cast<const RollInteraction *>(gz->interaction_data);
+  const bool show_angle = (gz->state & WM_GIZMO_STATE_MODAL) && (inter != nullptr);
+  if (show_angle) {
+    const float angle_top = float(M_PI_2);
+    const float sweep = std::clamp(inter->angle, -2.0f * float(M_PI), 2.0f * float(M_PI));
+
+    /* Wedge. */
+    const uint pos_fill = GPU_vertformat_attr_add(
+        immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32_32);
+    immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+    immUniformColor4f(1.0f, 1.0f, 1.0f, ROLL_ANGLE_FILL_ALPHA);
+    const int fill_segments = std::max(2, int(fabsf(sweep) / float(M_PI) * 32.0f));
+    immBegin(GPU_PRIM_TRI_FAN, fill_segments + 2);
+    immVertex3f(pos_fill, 0.0f, 0.0f, 0.0f);
+    for (int i = 0; i <= fill_segments; i++) {
+      gizmo_roll_polar(co, ROLL_ARC_RADIUS, angle_top + sweep * i / fill_segments);
+      immVertex3fv(pos_fill, co);
+    }
+    immEnd();
+    immUnbindProgram();
+
+    /* Start line (dim) and current line (white), from the center to the ring. */
+    const uint pos_line = GPU_vertformat_attr_add(
+        immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32_32);
+    immBindBuiltinProgram(GPU_SHADER_3D_POLYLINE_UNIFORM_COLOR);
+    immUniform2fv("viewportSize", &viewport[2]);
+    immUniform1f("lineWidth", ROLL_ARC_LINE_WIDTH);
+    for (int line = 0; line < 2; line++) {
+      if (line == 0) {
+        immUniformColor4fv(color);
+      }
+      else {
+        immUniformColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+      }
+      immBegin(GPU_PRIM_LINES, 2);
+      immVertex3f(pos_line, 0.0f, 0.0f, 0.0f);
+      gizmo_roll_polar(co, ROLL_ARC_RADIUS, line == 0 ? angle_top : angle_top + sweep);
+      immVertex3fv(pos_line, co);
+      immEnd();
+    }
+    immUnbindProgram();
+  }
+
   GPU_blend(GPU_BLEND_NONE);
   GPU_matrix_pop();
+
+  if (show_angle) {
+    /* Angle in degrees below the ring, on a dark backdrop so it reads over any viewport.
+     * Positive when rolling clockwise (dragging right). Region pixel space. */
+    char str[32];
+    SNPRINTF(str, "%.0f\xc2\xb0", RAD2DEGF(-inter->angle));
+    const int font_id = BLF_default();
+    BLF_size(font_id, ROLL_ANGLE_TEXT_POINTS * UI_SCALE_FAC);
+    float text_w, text_h;
+    BLF_width_and_height(font_id, str, sizeof(str), &text_w, &text_h);
+    const float pad = 4.0f * UI_SCALE_FAC;
+    const float cx = gz->matrix_basis[3][0];
+    const float top = gz->matrix_basis[3][1] - ROLL_ARC_RADIUS * WIDGET_RADIUS - pad * 2.0f;
+    rctf rect{};
+    rect.xmin = roundf(cx - text_w / 2.0f - pad);
+    rect.xmax = roundf(cx + text_w / 2.0f + pad);
+    rect.ymax = roundf(top);
+    rect.ymin = roundf(top - text_h - pad * 2.0f);
+    const float backdrop[4] = {0.0f, 0.0f, 0.0f, 0.6f};
+    draw_roundbox_corner_set(ui::CNR_ALL);
+    ui::draw_roundbox_4fv(&rect, true, pad, backdrop);
+    BLF_color4f(font_id, 1.0f, 1.0f, 1.0f, 1.0f);
+    BLF_position(font_id, rect.xmin + pad, rect.ymin + pad, 0.0f);
+    BLF_draw(font_id, str, sizeof(str));
+  }
+}
+
+/* BFA - #6932: remember where the drag started; the roll operator runs alongside. */
+static wmOperatorStatus gizmo_roll_invoke(bContext * /*C*/, wmGizmo *gz, const wmEvent *event)
+{
+  RollInteraction *inter = MEM_new_zeroed<RollInteraction>(__func__);
+  inter->start_x = event->xy[0];
+  gz->interaction_data = inter;
+  return OPERATOR_RUNNING_MODAL;
+}
+
+/* BFA - #6932: follow the drag to draw the angle (the roll itself is done by the operator). */
+static wmOperatorStatus gizmo_roll_modal(bContext *C,
+                                         wmGizmo *gz,
+                                         const wmEvent *event,
+                                         eWM_GizmoFlagTweak /*tweak_flag*/)
+{
+  RollInteraction *inter = static_cast<RollInteraction *>(gz->interaction_data);
+  if (inter != nullptr) {
+    inter->angle = view3d_roll_drag_angle(float(event->xy[0] - inter->start_x),
+                                          (event->modifier & KM_CTRL) != 0);
+    ED_region_tag_redraw(CTX_wm_region(C));
+  }
+  return OPERATOR_RUNNING_MODAL;
 }
 
 static int gizmo_roll_test_select(bContext * /*C*/, wmGizmo *gz, const int mval[2])
@@ -515,6 +625,8 @@ void VIEW3D_GT_navigate_roll(wmGizmoType *gzt)
   /* API callbacks. */
   gzt->setup = gizmo_axis_setup;
   gzt->draw = gizmo_roll_draw;
+  gzt->invoke = gizmo_roll_invoke; /* BFA - #6932 */
+  gzt->modal = gizmo_roll_modal;   /* BFA - #6932 */
   gzt->test_select = gizmo_roll_test_select;
   gzt->cursor_get = gizmo_roll_cursor_get;
   gzt->screen_bounds_get = gizmo_roll_screen_bounds_get;

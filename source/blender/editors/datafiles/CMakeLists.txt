@@ -793,6 +793,7 @@ if(WITH_BLENDER)
       get_attribute_names
       get_id
       get_list_item
+      get_vector_component
       ghost
       ghost_disabled
       ghost_enabled
@@ -1386,6 +1387,9 @@ if(WITH_BLENDER)
       node_keyingscreen
       node_layerweight
       node_lensdistort
+      node_light_accumulation
+      node_light_evaluation
+      node_light_info
       node_lightfalloff
       node_lightpath
       node_linestyle_output
@@ -1441,6 +1445,7 @@ if(WITH_BLENDER)
       node_separatexyz
       node_setgridbackground
       node_setgridtransform
+      node_shadow_raycast
       node_set_nurbs_order
       node_set_nurbs_weight
       node_side
@@ -1782,6 +1787,7 @@ if(WITH_BLENDER)
       # ##
       retopo
       reverse_colors
+      reverse_string
       reverse_uvs
       rew
       rightarrow
@@ -1951,10 +1957,7 @@ if(WITH_BLENDER)
       seq_strip
       seq_strip_data
       seq_strip_duplicate
-      seq_strip_expand
-      seq_strip_overwrite
       seq_strip_modifier
-      seq_strip_shuffle
       seq_swap_left
       seq_swap_right
       seq_text
@@ -1975,6 +1978,7 @@ if(WITH_BLENDER)
       set_shade_smooth
       set_smooth
       set_spline_resolution
+      set_string_case
       set_start_frame
       set_time
       set_uppercase
@@ -2140,6 +2144,7 @@ if(WITH_BLENDER)
 
       # letter t
       tag
+      tag_filter
       temp
       template
       text
