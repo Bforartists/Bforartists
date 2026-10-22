@@ -36,8 +36,8 @@
      id="namedview4"
      showgrid="true"
      inkscape:zoom="0.35355339"
-     inkscape:cx="1452.3973"
-     inkscape:cy="865.4987"
+     inkscape:cx="1339.2602"
+     inkscape:cy="854.18499"
      inkscape:window-x="1912"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -76,7 +76,8 @@
          sodipodi:nodetypes="ssssscsssss" /></g><g
        id="NODE_VECTORMATH"
        transform="matrix(1.0006515,0,0,1.0006515,0.50944858,0)"
-       style="stroke:#4d4d4d;stroke-width:0.0114286"><g
+       style="stroke:#4d4d4d;stroke-width:0.0114286"
+       inkscape:label="NODE_VECTOR"><g
          id="path819-1"
          style="opacity:1"><path
            style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:#000000;stroke:none;paint-order:markers stroke fill;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
@@ -89,7 +90,8 @@
            sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" /></g></g><g
        id="g1"
        transform="matrix(0.01099108,0,0,0.01099108,1.4465025,-0.68958526)"
-       style="stroke-width:0.00911014"><g
+       style="stroke-width:0.00911014"
+       inkscape:label="VECTOR"><g
          id="text1"
          style="opacity:1;stroke-width:0.00911014"><path
            style="font-weight:bold;font-size:768.998px;line-height:2;font-family:Titillium;-inkscape-font-specification:'Titillium Bold';text-align:justify;baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;stroke-width:0.00911014;stroke-linecap:round;stroke-linejoin:round;paint-order:markers stroke fill;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
