@@ -3,6 +3,8 @@
 > **Status:** 🧪 Experimental · **Branch:** [`6930-development---tools---merge---automate-the-weekly-blender-merge-experimental`](https://github.com/Bforartists/Bforartists/tree/6930-development---tools---merge---automate-the-weekly-blender-merge-experimental) · **Tracker:** #6930
 > **Started:** 2026-10-21 · The normal manual merge keeps running every week until this proves itself.
 
+> 📍 **Where we are (Oct 21):** phase 1 is written and passes the cloud tests. Next: a shadow merge in a separate checkout on your PC. See [▶️ How to run it](#️-how-to-run-it) and the [✅ Checklist](#-checklist).
+
 ## 🎯 Goals
 
 1. **Easy to run, hands off by default.** The script does the work and resolves the conflicts that are clearly easy. It only stops for the ones that need a person, then finishes, pushes and is done. Reporting stays a separate step afterwards, as today.
@@ -47,7 +49,40 @@
 | `tools/utils/merge_rules.toml` | 🆕 Path pattern → `ours` / `theirs` / `splice` / `regenerate` + risk, seeded from the wiki troublemaker table |
 | `_merge_runs/weekNN/` | 📁 Generated, git-ignored: `status.json`, conflict copies (base / ours / theirs), logs, drafts |
 
+Plus `_misc/merge-rules.md`: the reason behind every rule.
+
 Later phases add `tools/utils/bfa_ui_probe.py` (screenshots from inside Bforartists, using `screen.screenshot` + `screen.screenshot_area`) and the Saturday scheduling.
+
+## ▶️ How to run it
+
+Run everything from the repo root. `install` copies the tools into `_merge_runs/_tools/`, so they survive the
+merge script switching to `main` (which doesn't have them).
+
+```sh
+python tools/utils/bforartists_merge_auto.py install              # once, and after updating the tools
+python _merge_runs/_tools/bforartists_merge_auto.py run -w 43     # the whole chain; stops at a gate
+python _merge_runs/_tools/bforartists_merge_auto.py status        # where are we, what is waiting
+python _merge_runs/_tools/bforartists_merge_auto.py run           # continue after you fixed what the gate asked
+```
+
+**At a gate** (exit code 3), `_merge_runs/week43/triage.md` lists every conflicted file:
+
+| Icon | Meaning | What to do |
+|---|---|---|
+| 🤖 | resolved by rule | nothing |
+| ✂️ | splice | resolve in place (Blender logic + every BFA hunk), then `run` |
+| 🙋 | needs a decision (e.g. one side deleted the file) | resolve, then `decide PATH --note "what and why"`, then `run` |
+| ✅ | passed the guard | nothing |
+
+**Useful extras**
+
+- `adopt -w NN`: take over a merge you already started by hand and that's paused at conflicts. It works on your normal merge too.
+- `check --allow-marker-loss PATH="reason"`: drop a BFA marker on purpose (logged in the PR).
+- `build --target lite` · `build --clean full` (delete the whole build folder) · `build --build-dir PATH`.
+- `push`: only when you say so. While experimental, `run` never pushes unless you add `--push`.
+
+**What lands in `_merge_runs/week43/`:** `status.json` · `triage.md` · `conflicts/` (base / ours / theirs) ·
+`check.md` · `merge.log` · `build.log` · `smoke.log` + `smoke.md` (launch test) · `pr_body.md` (draft PR text).
 
 ## 🛡️ Guard rails for the Bforartists vision
 
@@ -63,13 +98,21 @@ Your normal merge continues untouched. All testing happens in a **separate check
 
 | When | What | Who |
 |---|---|---|
-| Thu Oct 22 | Write `--no-prompt`, `bforartists_merge_auto.py` (dominoes 1–6), `merge_rules.toml` on this branch | Claude |
-| Thu Oct 22 | Cloud tests: small fake repo with planted conflicts; a dropped `# BFA` hunk **must** be blocked; every step run twice | Claude |
+| ✅ Oct 21 | Write `--no-prompt`, `bforartists_merge_auto.py` (dominoes 1–7), `merge_rules.toml`, `_misc/merge-rules.md` | Claude |
+| ✅ Oct 21 | Cloud tests (results below) | Claude |
 | Fri Oct 23 | Set up a second checkout (`git worktree` or clone, e.g. `C:\3D_Stuff\bfa_merge_test`) and give Claude folder access | You (5 min) |
 | Fri Oct 23 | **Shadow merge:** run the chain on the same week you merged by hand, **no push** | Claude |
 | Fri Oct 23 | **Compare** the automated result with your manual merge, file by file → list of misses → new rules | Claude + you |
 | Sat Oct 24 | Optional: run the chain again on week 43 in the test checkout, still no push | Claude |
 | Later this week | Review together; decide what's next | You |
+
+**Cloud test results (Oct 21)**, on a fake Blender + Bforartists pair with 6 planted conflicts:
+
+- ✅ 3 of 6 resolved by rule: README (ours), theme (regenerate + to-do), `sv.po` (Blender's improved translation, the BFA translation where Blender's was empty, and the BFA-only English entry kept)
+- ✅ 2 left to splice (`space_view3d.py`, `bl_pkg`), and 1 delete-vs-modify sent for a decision
+- ✅ A splice that dropped a `# BFA` hunk was **blocked**: "BFA markers dropped: 1 in Bforartists, 0 now"
+- ✅ After a proper splice + `decide`: staged → `--resume` → `Merge: Week 43` (2 parents) → build → launch test caught a planted Python error → `pr_body.md` drafted → not pushed
+- ✅ Re-running finished steps is safe · `adopt` takes over a merge started by hand
 
 **Pass criteria for the shadow merge**
 
@@ -94,18 +137,19 @@ Your normal merge continues untouched. All testing happens in a **separate check
 
 ## ❓ Open questions
 
-- `locale/po/*.po` conflicts: take Blender's version, or keep ours?
-- `scripts/addons_core/bl_pkg/*`: does BFA carry changes there, or is it pure upstream?
-- Test checkout location and disk space (a second build folder is large).
+- ✅ `locale/po/*.po`: keep the Bforartists English, take Blender's translations → `po-splice` rule (#5701)
+- ✅ `scripts/addons_core/bl_pkg/*`: heavily reworked Extensions UX → 🔴 `splice`, escalate Blender UX changes
+- ⬜ Test checkout location and disk space (a second build folder is large)
+- ⬜ `tools/utils/weekly_report.py` exists only in the local checkout. The report step uses it when present: commit it here or on `master`?
 
 ## ✅ Checklist
 
 - [x] Tracker issue (#6930, Experimental)
 - [x] Branch + this plan
-- [ ] `--no-prompt` in the merge script
-- [ ] `bforartists_merge_auto.py` dominoes 1–6
-- [ ] `merge_rules.toml`
-- [ ] Cloud tests pass
+- [x] `--no-prompt` in the merge script
+- [x] `bforartists_merge_auto.py` dominoes 1–7 (push off by default)
+- [x] `merge_rules.toml` + `_misc/merge-rules.md`
+- [x] Cloud tests pass
 - [ ] Test checkout + folder access
 - [ ] Shadow merge + compare
 - [ ] Review together

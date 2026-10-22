@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: 2026 Bforartists Authors
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Conflict rules for the weekly Blender merge (bforartists_merge_auto.py, #6930).
+#
+# The first rule whose `path` matches wins. Patterns use fnmatch: `*` also matches `/`,
+# so `scripts/startup/bl_ui/*` covers every file below that folder.
+# The reasons behind each rule live in _misc/merge-rules.md.
+#
+# action:
+#   ours        keep the Bforartists version                      (resolved automatically)
+#   theirs      take Blender's version                            (resolved automatically)
+#   regenerate  keep ours, rebuild it from its source afterwards  (resolved automatically + to-do)
+#   po-splice   Blender's translations + Bforartists English      (resolved automatically)
+#   splice      Blender's changes + every BFA-marked hunk          (a person or Claude)
+#   escalate    always ask the maintainer                          (a person)
+# risk: low | medium | high   (sorts the triage list, shown in the PR)
+
+[default]
+action = "splice"
+risk = "high"
+note = "No rule yet: splice carefully and add a rule"
+
+# ── Bforartists identity ────────────────────────────────────────────────────
+
+[[rule]]
+path = ".github/*"
+action = "ours"
+risk = "low"
+note = "GitHub files are Bforartists' own"
+
+[[rule]]
+path = "README.md"
+action = "ours"
+risk = "low"
+
+[[rule]]
+path = "release/datafiles/userdef/userdef_default_theme.c"
+action = "regenerate"
+risk = "low"
+note = "Never merge the theme: regenerate from Bforartists.xml"
+
+[[rule]]
+path = "release/datafiles/splash*"
+action = "ours"
+risk = "low"
+
+# ── Translations (#5701) ────────────────────────────────────────────────────
+
+[[rule]]
+path = "locale/po/*.po"
+action = "po-splice"
+risk = "medium"
+note = "Keep Bforartists English entries, take Blender's translation improvements (#5701)"
+
+# ── Extensions: heavily reworked UX in Bforartists ──────────────────────────
+
+[[rule]]
+path = "scripts/addons_core/bl_pkg/*"
+action = "splice"
+risk = "high"
+note = "Bforartists reworked the Extensions UX: keep it, splice only Blender's logic; escalate Blender UX changes"
+
+# ── Interface: Bforartists layout wins, Blender logic is spliced in ─────────
+
+[[rule]]
+path = "scripts/startup/bl_ui/space_view3d.py"
+action = "splice"
+risk = "high"
+note = "Most-changed file: start from HEAD and splice Blender's changes in by hand"
+
+[[rule]]
+path = "scripts/startup/bl_ui/*"
+action = "splice"
+risk = "medium"
+note = "Interface: Bforartists layout and menu order win, Blender logic spliced in"
+
+[[rule]]
+path = "scripts/presets/keyconfig/*"
+action = "splice"
+risk = "high"
+note = "Keymap: Bforartists keymap wins"
+
+[[rule]]
+path = "scripts/addons_core/bfa_*"
+action = "ours"
+risk = "low"
+note = "Bforartists-only add-ons"
+
+[[rule]]
+path = "scripts/addons_core/smartdelete_bfa.py"
+action = "ours"
+risk = "low"
+
+# ── Known C/C++ hotspots ────────────────────────────────────────────────────
+
+[[rule]]
+path = "source/blender/makesrna/intern/rna_nodetree.cc"
+action = "splice"
+risk = "medium"
+note = "Always conflicts over node header icons: keep Bforartists icons"
+
+[[rule]]
+path = "source/blender/editors/include/UI_icons.hh"
+action = "splice"
+risk = "medium"
+note = "Keep every Bforartists icon entry; add Blender's new ones"
+
+[[rule]]
+path = "source/blender/blenloader/intern/versioning_userdef.cc"
+action = "splice"
+risk = "medium"
+
+[[rule]]
+path = "source/blender/blenkernel/BKE_blender_version.h"
+action = "splice"
+risk = "high"
+note = "Keep BFORARTISTS_VERSION* next to Blender's version"
+
+# ── Icons and art ───────────────────────────────────────────────────────────
+
+[[rule]]
+path = "release/datafiles/icons_svg/*"
+action = "ours"
+risk = "medium"
+note = "Bforartists icon art wins; report Blender icon changes as Art work"
+
+[[rule]]
+path = "release/datafiles/icons/*"
+action = "ours"
+risk = "medium"
+note = "Bforartists icon art wins; report Blender icon changes as Art work"

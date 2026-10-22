@@ -17,6 +17,7 @@ Usage:
     python tools/utils/bforartists_merge_blender.py --week-number 40 --dry-run            # Simulate run
     python tools/utils/bforartists_merge_blender.py --week-number 40 --skip-master-update # Skip master update
     python tools/utils/bforartists_merge_blender.py --week-number 40 --resume             # Resume from conflicts
+    python tools/utils/bforartists_merge_blender.py --week-number 40 --force --no-prompt  # Unattended: exit 2 at conflicts
 
 Help:
     python tools/utils/bforartists_merge_blender.py --help
@@ -202,6 +203,10 @@ def git_commit_count_ahead_behind(target):
 # ---------------------------------------------------------------------------
 # Platform helpers
 # ---------------------------------------------------------------------------
+
+# Exit code used with --no-prompt when the merge stops at conflicts.
+EXIT_CONFLICTS = 2
+
 
 def is_windows():
     return sys.platform == "win32"
@@ -466,6 +471,14 @@ def _conflict_prompt(args):
         print(f"    {Color.YELLOW}... and {len(conflicted) - max_show} more files{Color.RESET}")
 
     print()
+
+    # --no-prompt: leave the merge paused and hand over to the caller
+    # (e.g. bforartists_merge_auto.py), which resolves and resumes later.
+    if getattr(args, "no_prompt", False):
+        print_warn(f"{len(conflicted)} conflicted files left for resolution (--no-prompt).")
+        print_warn("Resolve them, then re-run with --resume.")
+        sys.exit(EXIT_CONFLICTS)
+
     print(f"  {Color.BOLD}→ Resolve all conflicts now (edit files + git add){Color.RESET}")
     print(f"  {Color.BOLD}→ Type 'ok' and press ENTER when ready to continue{Color.RESET}")
     print(f"  {Color.BOLD}→ Or type 'quit' / 'q' to abort{Color.RESET}")
@@ -653,6 +666,12 @@ Examples:
         "--dry-run",
         action="store_true",
         help="Simulate the full merge process without making changes.",
+    )
+    parser.add_argument(
+        "--no-prompt",
+        action="store_true",
+        help="Never wait for input at conflicts: leave the merge paused and exit with code 2. "
+             "Use with --force for unattended runs.",
     )
     parser.add_argument(
         "--resume",
