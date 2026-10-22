@@ -1865,14 +1865,16 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeInputID", pad=25),
-            OperatorEntry("GeometryNodeInputIndex", pad=19),
-            OperatorEntry("GeometryNodeInputNamedAttribute", pad=1),
-            OperatorEntry("GeometryNodeInputNormal", pad=18),
-            OperatorEntry("GeometryNodeInputPosition", pad=16),
-            OperatorEntry("GeometryNodeInputRadius", pad=18),
-            OperatorEntry("GeometryNodeToolActiveElement", pad=4, poll=is_tool),  # BFA - Add menu order
-            OperatorEntry("GeometryNodeToolSelection", pad=14, poll=is_tool),
+            OperatorEntry("GeometryNodeInputID", pad=32),
+            OperatorEntry("GeometryNodeInputIndex", pad=26),
+            OperatorEntry("GeometryNodeInputNamedAttribute", pad=8),
+            OperatorEntry("GeometryNodeInputNormal", pad=25),
+            OperatorEntry("GeometryNodeInputPosition", pad=23),
+            OperatorEntry("GeometryNodeInputRadius", pad=25),
+            OperatorEntry("GeometryNodeToolActiveElement", pad=11, poll=is_tool),  # BFA - Add menu order
+            OperatorEntry("GeometryNodeToolSelection", pad=21, poll=is_tool),
+            Separator,
+            OperatorEntry("GeometryNodeGetGeometryBundle"),  # BFA - new node, widest entry (others padded to match)
         )
 
         self.draw_entries(context, layout, entries)
@@ -1926,6 +1928,7 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("GeometryNodeSetGeometryBundle"),  # BFA - new node, Add menu order
             OperatorEntry("GeometryNodeSetGeometryName", pad=2),
             OperatorEntry("GeometryNodeSetID", pad=25),
             OperatorEntry("GeometryNodeSetPosition", pad=15),
@@ -3070,7 +3073,10 @@ class NODES_PT_toolshelf_gn_add_utilities_bundle(bpy.types.Panel, NodePanel):
             OperatorEntry("NodeJoinBundle", pad=22),  # BFA - Add menu order
             OperatorEntry("NodeSeparateBundle", pad=15),
             OperatorEntry("NodeGetBundleItem", pad=14),
+            OperatorEntry("NodeGetNestedBundlePaths"),  # BFA - new node
             OperatorEntry("NodeStoreBundleItem", pad=11),
+            Separator,
+            OperatorEntry(operator="node.add_typed_bundle", text=iface_("Typed Bundle"), icon="NODE_BUNDLE_TYPED", pad=18),  # BFA - new operator
         )
 
         self.draw_entries(context, layout, entries)
