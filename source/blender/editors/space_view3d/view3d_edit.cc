@@ -550,6 +550,25 @@ static wmOperatorStatus view3d_set_roll_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/* BFA - in a camera view locked to the view (Lock Camera to View) the roll can't be reset this way,
+ * the camera sets the view back, so grey out Reset Roll there (#6839). */
+static bool view3d_set_roll_poll(bContext *C)
+{
+  if (!ED_operator_rv3d_user_region_poll(C)) {
+    return false;
+  }
+  View3D *v3d;
+  ARegion *region;
+  if (ED_view3d_context_user_region(C, &v3d, &region)) {
+    const RegionView3D *rv3d = static_cast<const RegionView3D *>(region->regiondata);
+    if ((rv3d->persp == RV3D_CAMOB) && ED_view3d_camera_lock_check(v3d, rv3d)) {
+      CTX_wm_operator_poll_msg_set(C, "Unlock the camera from the view to reset its roll");
+      return false;
+    }
+  }
+  return true;
+}
+
 void VIEW3D_OT_view_roll_set(wmOperatorType *ot)
 {
   /* identifiers */
@@ -559,7 +578,7 @@ void VIEW3D_OT_view_roll_set(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = view3d_set_roll_exec;
-  ot->poll = ED_operator_rv3d_user_region_poll;
+  ot->poll = view3d_set_roll_poll; /* BFA - was ED_operator_rv3d_user_region_poll */
 
   /* properties */
   ot->prop = RNA_def_float(ot->srna, "angle", 0, -FLT_MAX, FLT_MAX, "Roll", "", -FLT_MAX, FLT_MAX);
