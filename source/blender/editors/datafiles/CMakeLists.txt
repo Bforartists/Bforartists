@@ -1955,10 +1955,7 @@ if(WITH_BLENDER)
       seq_strip
       seq_strip_data
       seq_strip_duplicate
-      seq_strip_expand
-      seq_strip_overwrite
       seq_strip_modifier
-      seq_strip_shuffle
       seq_swap_left
       seq_swap_right
       seq_text
