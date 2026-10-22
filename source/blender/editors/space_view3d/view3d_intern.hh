@@ -233,6 +233,9 @@ void VIEW3D_GT_navigate_roll(wmGizmoType *gzt); /* BFA - roll gizmo #6839 */
 /* BFA - roll ring radius relative to the navigation ball radius, also used to space the
  * navigation buttons around it. */
 #define VIEW3D_NAVIGATE_ROLL_RING_RADIUS 1.08f
+/** BFA - roll angle for a horizontal drag of `delta_x` pixels, shared by the roll operator and the
+ * roll gizmo's angle indicator so they always match (#6932). `snap`: Ctrl, numpad roll step. */
+float view3d_roll_drag_angle(float delta_x, bool snap);
 
 void VIEW3D_GGT_placement(wmGizmoGroupType *gzgt);
 

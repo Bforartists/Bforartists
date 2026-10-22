@@ -284,6 +284,8 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
     wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
     if (gzop != nullptr) {
       RNA_boolean_set(&gzop->ptr, "use_view_center", true);
+      /* BFA - #6932: drag left / right, Ctrl snaps, with an angle indicator on the ring. */
+      RNA_boolean_set(&gzop->ptr, "use_horizontal_drag", true);
     }
   }
 
