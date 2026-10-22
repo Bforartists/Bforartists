@@ -3228,7 +3228,7 @@ class SEQUENCER_PT_edit_mode(Panel):
         layout.use_property_split = False
         layout.use_property_decorate = False
 
-        layout.label(text="Ripple", icon='SEQ_OVERLAP_RIPPLE')
+        layout.label(text="Ripple")
 
         col = layout.column(align=True)
         col.label(text="Edit")
