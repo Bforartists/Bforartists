@@ -17,6 +17,7 @@ Usage:
     python tools/utils/bforartists_merge_blender.py --week-number 40 --dry-run            # Simulate run
     python tools/utils/bforartists_merge_blender.py --week-number 40 --skip-master-update # Skip master update
     python tools/utils/bforartists_merge_blender.py --week-number 40 --resume             # Resume from conflicts
+    python tools/utils/bforartists_merge_blender.py --week-number 40 --sync-essentials    # Also update the Online Essentials
 
 Help:
     python tools/utils/bforartists_merge_blender.py --help
@@ -606,6 +607,34 @@ def phase_resume_merge(args):
     # 6. Status report
     phase_status_report(args)
 
+    # 7. BFA - Online Essentials (optional)
+    if args.sync_essentials:
+        phase_sync_essentials(args)
+
+
+# BFA - Optional phase: refresh the Bforartists Online Essentials (assets.bforartists.com)
+# from Blender's published assets, with the BFA changes from assets_bfa/online_essentials.
+# Runs tools/utils/bforartists_online_essentials.py, which asks before uploading. See #6923.
+def phase_sync_essentials(args):
+    """Phase 9 (optional): Pull, build and upload the Online Essentials."""
+    print_header("Phase 9: Online Essentials (optional)")
+
+    script = Path(git_root()) / "tools" / "utils" / "bforartists_online_essentials.py"
+    if not script.exists():
+        print_warn(f"{script} not found on this branch — skipping")
+        return
+
+    cmd = [sys.executable, str(script), "update"]
+    if args.assets_repo:
+        cmd += ["--assets-repo", args.assets_repo]
+    ret = run(cmd, exit_on_error=False)
+    if ret == 0:
+        print_ok("Online Essentials step finished")
+    else:
+        # Never fail the merge because of the asset library: the merge itself is done.
+        print_warn("Online Essentials step failed — the merge is fine. Run it again later with:")
+        print(f"    {Color.BOLD}python tools/utils/bforartists_online_essentials.py update{Color.RESET}")
+
 
 # ---------------------------------------------------------------------------
 # Main
@@ -621,6 +650,7 @@ Examples:
   python tools/utils/bforartists_merge_blender.py --week-number 30 --force
   python tools/utils/bforartists_merge_blender.py --week-number 30 --dry-run
   python tools/utils/bforartists_merge_blender.py --week-number 30 --skip-master-update
+  python tools/utils/bforartists_merge_blender.py --week-number 30 --sync-essentials
         """,
     )
     parser.add_argument(
@@ -659,6 +689,18 @@ Examples:
         action="store_true",
         help="Resume the merge and LFS checkout after manual conflict resolution was completed.",
     )
+    # BFA - Online Essentials sync (#6923)
+    parser.add_argument(
+        "--sync-essentials",
+        action="store_true",
+        help="After the merge, update the Bforartists Online Essentials from Blender's published "
+             "assets (asks before uploading). See tools/utils/bforartists_online_essentials.py",
+    )
+    parser.add_argument(
+        "--assets-repo",
+        default=None,
+        help="Path to the blender-assets clone (default: ../blender-assets next to this repo)",
+    )
     return parser.parse_args()
 
 
@@ -683,6 +725,8 @@ def main():
             print("  6. Merge blender/main → merge-week{} (pause on conflicts)".format(args.week_number))
             print("  7. LFS checkout (BFA bias) + fsck")
         print("  8. Status report")
+        if args.sync_essentials:
+            print("  9. Online Essentials: pull blender-assets, build, upload (asks first)")
         print()
         print("Run without --dry-run to execute.")
         return 0
@@ -715,6 +759,10 @@ def main():
 
     # ── Phase 8: Status report ──
     phase_status_report(args)
+
+    # ── Phase 9: Online Essentials (optional, BFA) ──
+    if args.sync_essentials:
+        phase_sync_essentials(args)
 
     return 0
 
