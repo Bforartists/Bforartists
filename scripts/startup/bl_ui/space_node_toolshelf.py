@@ -2994,7 +2994,10 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeStringJoin", pad=14),
             OperatorEntry("FunctionNodeMatchString", pad=13),
             OperatorEntry("FunctionNodeReplaceString", pad=10),
+            OperatorEntry("FunctionNodeReverseString", pad=9),  # BFA - new node
+            OperatorEntry("FunctionNodeSetStringCase", pad=7),  # BFA - new node
             OperatorEntry("FunctionNodeSliceString", pad=15),
+            OperatorEntry("FunctionNodeSplitString", pad=15),  # BFA - was missing
             OperatorEntry("FunctionNodeTrimString", pad=15),
             Separator,
             OperatorEntry("FunctionNodeFindInString", pad=10),
@@ -3004,6 +3007,7 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
             OperatorEntry("FunctionNodeValueToString", pad=7),
             Separator,
             OperatorEntry("FunctionNodeInputSpecialCharacters", pad=1),
+            OperatorEntry("GeometryNodeTagFilter", pad=17),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
