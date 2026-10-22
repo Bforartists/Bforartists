@@ -3207,23 +3207,49 @@ class SEQUENCER_PT_edit_mode(Panel):
         layout = self.layout
         sequencer_tool_settings = context.sequencer_scene.tool_settings.sequencer_tool_settings
 
-        layout.label(text="Ripple")
+        # BFA - checkboxes float left under section labels, like the Snapping popover next to it (#6928)
+        # layout.label(text="Ripple")
+        #
+        # col = layout.column(heading="Edit")
+        # col.use_property_split = True
+        #
+        # col.prop(sequencer_tool_settings, "ripple_all_channels")
+        # col.prop(sequencer_tool_settings, "ripple_markers")
+        #
+        # col = layout.column(heading="Add")
+        # col.use_property_split = True
+        #
+        # col.prop(sequencer_tool_settings, "ripple_insert")
+        #
+        # col = layout.column(heading="Delete")
+        # col.use_property_split = True
+        #
+        # col.prop(sequencer_tool_settings, "ripple_clear_ranges")
+        layout.use_property_split = False
+        layout.use_property_decorate = False
 
-        col = layout.column(heading="Edit")
-        col.use_property_split = True
+        layout.label(text="Ripple", icon='SEQ_OVERLAP_RIPPLE')
 
-        col.prop(sequencer_tool_settings, "ripple_all_channels")
-        col.prop(sequencer_tool_settings, "ripple_markers")
+        col = layout.column(align=True)
+        col.label(text="Edit")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_all_channels")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_markers")
 
-        col = layout.column(heading="Add")
-        col.use_property_split = True
+        col = layout.column(align=True)
+        col.label(text="Add")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_insert")
 
-        col.prop(sequencer_tool_settings, "ripple_insert")
-
-        col = layout.column(heading="Delete")
-        col.use_property_split = True
-
-        col.prop(sequencer_tool_settings, "ripple_clear_ranges")
+        col = layout.column(align=True)
+        col.label(text="Delete")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_clear_ranges")
 
 
 class SEQUENCER_PT_snapping(Panel):
