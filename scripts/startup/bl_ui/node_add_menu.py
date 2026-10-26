@@ -359,7 +359,7 @@ class NodeMenu(Menu):
 
     @classmethod
     def typed_bundle(cls, layout, label):
-        props = layout.operator(cls.typed_bundle_operator_id, text=label, text_ctxt=i18n_contexts.default)
+        props = layout.operator(cls.typed_bundle_operator_id, text=label, text_ctxt=i18n_contexts.default, icon='NODE_BUNDLE_TYPED')  # BFA - Icon Added
 
         if hasattr(props, "use_transform"):
             props.use_transform = cls.use_transform
