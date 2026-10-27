@@ -2255,6 +2255,93 @@ struct NodeLinkDrawConfig {
   float dash_alpha;
 };
 
+  static bool node_has_prop(const bNode &node, const char *name)
+  {
+    return node.prop && IDP_GetPropertyFromGroup(node.prop, name);
+  }
+
+struct NodeWireless {
+  int id = 0;
+  bool input = false;
+  bool output = false;
+};
+
+/* "wireless" (integer group ID) is required. "input" / "output" mark the direction.
+ * Non-integer "wireless" values count as ID 0. */
+static bool node_wireless_get(const bNode &node, NodeWireless &r_info)
+{
+  if (!node.prop) {
+    return false;
+  }
+  const IDProperty *p = IDP_GetPropertyFromGroup(node.prop, "wireless");
+  if (!p) {
+    return false;
+  }
+  const std::optional<int> id = IDP_group_lookup_int(*node.prop, "wireless");
+  r_info.id = id.value_or(0);
+  r_info.input = node_has_prop(node, "input");
+  r_info.output = node_has_prop(node, "output");
+  return true;
+}
+
+/* Sender needs "output", receiver needs "input", and the IDs must match. */
+static bool node_link_is_wireless(const bNodeLink &link)
+{
+  if (!link.fromnode || !link.tonode) {
+    return false;
+  }
+  NodeWireless from_info, to_info;
+  return node_wireless_get(*link.fromnode, from_info) &&
+         node_wireless_get(*link.tonode, to_info) && from_info.output && to_info.input;
+}
+
+static const bNodeLink *first_wireless_link(const bNodeSocket &sock)
+{
+  for (const bNodeLink *other : sock.directly_linked_links()) {
+    if (node_link_is_wireless(*other)) {
+      return other;
+    }
+  }
+  return nullptr;
+}
+
+static bool node_wireless_id(const bNode &node, int &r_id)
+{
+  if (!node.prop) {
+    return false;
+  }
+
+  const IDProperty *prop = IDP_GetPropertyFromGroup(node.prop, "wireless");
+  if (!prop) {
+    r_id = 0;
+    return false;
+  }
+
+  switch (prop->type) {
+    case IDP_INT:
+      r_id = IDP_int_get(prop);
+      break;
+    case IDP_FLOAT:
+      r_id = int(IDP_float_get(prop));
+      break;
+    default:
+      r_id = 0;
+      return false;
+  }
+
+  return true;
+}
+
+static ColorTheme4f node_wireless_color(const int id)
+{
+  ColorTheme4f color(1.0f, 1.0f, 1.0f, 1.0f);
+  if (id != 0) {
+    const float hue = fmodf(float(abs(id)) * 0.618034f, 1.0f);
+    hsv_to_rgb(hue, 0.7f, 1.0f, &color.r, &color.g, &color.b);
+  }
+  return color;
+}
+
 static void nodelink_batch_add_link(const SpaceNode &snode,
                                     const std::array<float2, 4> &points,
                                     const NodeLinkDrawConfig &draw_config)
@@ -2380,6 +2467,9 @@ static NodeLinkDrawConfig nodelink_get_draw_config(const bContext &C,
 
   draw_config.dash_factor = field_link ? 0.75f : 1.0f;
   draw_config.dash_length = 10.0f * UI_SCALE_FAC;
+  if (node_link_is_wireless(link)) {
+    draw_config.dash_factor = 0.5f;
+  }
 
   const float scale = ui::view2d_scale_get_x(&v2d);
   /* Clamp the thickness to make the links more readable when zooming out. */
@@ -2448,6 +2538,44 @@ static NodeLinkDrawConfig nodelink_get_draw_config(const bContext &C,
   return draw_config;
 }
 
+static void node_draw_wireless_arcs(const float2 &center, const float2 &dir, const ColorTheme4f &base_color, const bool selected, const float scale)
+{
+  /* Too small to read: skip. */
+  if (scale < 0.25f) {
+    return;
+  }
+  const float unit = NODE_DY * 0.22f;
+  constexpr int ARC_STEPS = 12;
+  const int arc_count = (scale < 0.5f) ? 1 : (scale < 0.8f) ? 2 : 3;
+  const float base_angle = atan2f(dir.y, dir.x);
+
+  ColorTheme4f color = base_color;
+  color.a = selected ? 1.0f : 0.6f;
+
+  GPUVertFormat *format = immVertexFormat();
+  const uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  immUniformColor4fv(color);
+  GPU_blend(GPU_BLEND_ALPHA);
+  GPU_line_smooth(true);
+  GPU_line_width(2.0f * UI_SCALE_FAC * math::clamp(scale, 0.5f, 1.0f));
+
+  for (int i = 1; i <= arc_count; i++) {
+    const float rad = unit * i;
+    immBegin(GPU_PRIM_LINE_STRIP, ARC_STEPS + 1);
+    for (int s = 0; s <= ARC_STEPS; s++) {
+      const float a = base_angle + DEG2RADF(-45.0f + 90.0f * float(s) / ARC_STEPS);
+      immVertex2f(pos, center.x + cosf(a) * rad, center.y + sinf(a) * rad);
+    }
+    immEnd();
+  }
+
+  GPU_line_width(1.0f);
+  GPU_line_smooth(false);
+  GPU_blend(GPU_BLEND_NONE);
+  immUnbindProgram();
+}
+
 static void node_draw_link_bezier_ex(const SpaceNode &snode,
                                      const NodeLinkDrawConfig &draw_config,
                                      const std::array<float2, 4> &points)
@@ -2507,6 +2635,44 @@ void node_draw_link(const bContext &C,
     return;
   }
 
+  const bool wireless_link = node_link_is_wireless(link);
+  if (wireless_link) {
+    const float scale = ui::view2d_scale_get_x(&v2d);
+    if (scale < 0.25f) {
+      return;
+    }
+    const std::array<float2, 4> points = node_link_bezier_points(link);
+    if (node_link_draw_is_visible(v2d, points)) {
+      const bNode &from = *link.fromnode;
+      const bNode &to = *link.tonode;
+      const float gap = NODE_DY * 0.3f;
+
+      NodeWireless info;
+      node_wireless_get(from, info);
+      const ColorTheme4f color = node_wireless_color(info.id);
+
+      /* A reroute with wireless links on both sides points its arcs up, drawn once. */
+      const bool from_up = from.is_reroute() && first_wireless_link(from.input_socket(0));
+      const bool skip_to = to.is_reroute() && first_wireless_link(to.output_socket(0));
+
+      /* Several links can leave one socket. Only the first one draws the shared arcs. */
+      if (first_wireless_link(*link.fromsock) == &link) {
+        const float2 out_dir = from_up ? float2(0.0f, 1.0f) : float2(1.0f, 0.0f);
+        node_draw_wireless_arcs(points[0] + out_dir * gap, out_dir, color, selected, scale);
+      }
+
+      /* A single-input socket has one link. A multi-input socket draws arcs per link,
+      * since each link ends at its own offset position. */
+      if (!skip_to) {
+        node_draw_wireless_arcs(points[3] - float2(gap, 0.0f), float2(-1.0f, 0.0f), color, selected, scale);
+      }
+    }
+    if (!selected && !(link.flag & NODE_LINK_TEMP_HIGHLIGHT)) {
+      return;
+    }
+  }
+  
+
   if (link.flag & NODE_LINK_VALID) {
     /* special indicated link, on drop-node */
     if (link.flag & NODE_LINK_INSERT_TARGET && !(link.flag & NODE_LINK_INSERT_TARGET_INVALID)) {
@@ -2522,7 +2688,7 @@ void node_draw_link(const bContext &C,
     // th_col3 = -1; /* no shadow */
   }
 
-  node_draw_link_bezier(C, v2d, snode, link, th_col1, th_col2, th_col3, selected);
+  node_draw_link_bezier(C, v2d, snode, link, th_col1, th_col2, th_col3, selected && !wireless_link);
 }
 
 std::array<float2, 4> node_link_bezier_points_dragged(const SpaceNode &snode,
