@@ -153,8 +153,8 @@ IdQualified ClassDecl::identifier() const
 
 IdQualified ClassDecl::parent_class() const
 {
-  Node node = body().prev();
-  return IdQualified(node.front().prev() == Colon ? node : Node{});
+  Node node = child_first(NodeType::IdQualified);
+  return IdQualified(node.front().prev() == Colon ? node : node.next());
 }
 
 bool UsingStmt::is_namespace() const
@@ -371,6 +371,8 @@ static std::string to_string(ast::NodeType type)
       return "StructuredBinding";
     case ast::NodeType::ArrayDecl:
       return "ArrayDecl";
+    case ast::NodeType::Pointer:
+      return "Pointer";
   }
   return "Error";
 }
@@ -503,6 +505,8 @@ static bool display_type(ast::NodeType type)
     case ast::NodeType::StructuredBinding:
       return false;
     case ast::NodeType::ArrayDecl:
+      return false;
+    case ast::NodeType::Pointer:
       return false;
   }
   return false;

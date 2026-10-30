@@ -19,7 +19,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   b.add_input<decl::Int>("LightIndex"_ustr).available(is_gpu_internal);
 
-  /** WATCH: If you add more Color sockets, ensure `node_tree_update.cc`
+  /* WATCH: If you add more Color sockets, ensure `node_tree_update.cc`
    * `shader_tree_tag_by_ancestor` and `shader_tree_link_error` are updated accordingly.  */
   b.add_input<decl::Color>("Diffuse Light"_ustr)
       .default_value({0.0f, 0.0f, 0.0f, 1.0f})
@@ -77,6 +77,7 @@ void register_node_type_sh_light_accumulation()
       "Compositing Pass.\n"
       "The combined result is computed as (Diffuse Light * Diffuse Color) + (Glossy Light * "
       "Glossy Color)";
+  ntype.enum_name_legacy = "LIGHT_ACCUMULATION";
   ntype.nclass = NODE_CLASS_SHADER;
   ntype.declare = file_ns::node_declare;
   ntype.gather_link_search_ops = search_link_ops_for_shader_material_lighting_node;

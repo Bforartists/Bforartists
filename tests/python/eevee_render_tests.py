@@ -46,7 +46,7 @@ BLOCKLIST = [
     "ray_offset.blend",
     # Blocked due to difference in border texel handling between platforms (to be fixed).
     "render_passes_thinfilm_color.blend",
-    # Blocked due to a significant amount of transparency that have a different nosie pattern between devices.
+    # Blocked due to a significant amount of transparency that have a different noise pattern between devices.
     "light_path_is_shadow_ray.blend",
     # Blocked as the test seems to alternate between two different states
     "light_path_is_diffuse_ray.blend",
@@ -116,8 +116,6 @@ BLOCKLIST_VULKAN = [
 ]
 
 BLOCKLIST_OPENGL = [
-    # Fails on AMD.
-    "aov_consecutive_view_layers.blend",
 ]
 
 BLOCKLIST_INTEL = [
@@ -134,6 +132,11 @@ BLOCKLIST_AMD_VK = [
     ".*"
 ]
 
+BLOCKLIST_AMD_GL = [
+    # Fails on the AMD buildbot (to be investigated).
+    "aov_consecutive_view_layers.blend",
+]
+
 BLOCKLIST_INTEL_WINDOWS = [
     # Fails sporadically and causes all subsequent volume tests to fail (See #153612).
     "volume_instance.blend"
@@ -148,23 +151,36 @@ BLOCKLIST_NVIDIA_GL = [
 def uses_any_lit_material(scene):
     import bpy
 
-    # Define what we consider a "lit" BSDF node type in Blender
+    # Node types that receive lighting, and so are affected by light probes.
     lit_node_types = {
-        "BSDF_PRINCIPLED",
         "BSDF_DIFFUSE",
-        "BSDF_GLOSSY",
         "BSDF_GLASS",
-        "BSDF_ANISOTROPIC",
-        "BSDF_VELVET",
+        "BSDF_GLOSSY",
         "BSDF_HAIR",
+        "BSDF_HAIR_PRINCIPLED",
+        "BSDF_METALLIC",
+        "BSDF_PRINCIPLED",
+        "BSDF_REFRACTION",
+        "BSDF_SHEEN",
         "BSDF_TOON",
         "BSDF_TRANSLUCENT",
-        "BSDF_HAIR_PRINCIPLED",
-        "SUBSURFACE_SCATTERING",
-        "BSDF_HAIR_PRINCIPLED",
-        "VOLUME_SCATTER",
+        "EEVEE_SPECULAR",
         "PRINCIPLED_VOLUME",
+        "SUBSURFACE_SCATTERING",
+        "VOLUME_COEFFICIENTS",
+        "VOLUME_SCATTER",
     }
+
+    def node_tree_is_lit(node_tree, visited):
+        if node_tree is None or node_tree in visited:
+            return False
+        visited.add(node_tree)
+        for node in node_tree.nodes:
+            if node.type in lit_node_types:
+                return True
+            if node.type == "GROUP" and node_tree_is_lit(node.node_tree, visited):
+                return True
+        return False
 
     scene_materials = set()
 
@@ -183,9 +199,8 @@ def uses_any_lit_material(scene):
     for mat in scene_materials:
         # Check if the material uses the node system
         if mat.node_tree:
-            for node in mat.node_tree.nodes:
-                if node.type in lit_node_types:
-                    return True  # We found one, no need to check the rest of the nodes
+            if node_tree_is_lit(mat.node_tree, set()):
+                return True
         else:
             return True  # If use_nodes is False, Blender defaults to a basic lit surface
 
@@ -380,6 +395,8 @@ def main():
             blocklist += BLOCKLIST_INTEL_WINDOWS
         if gpu_vendor == "NVIDIA" and args.gpu_backend == "opengl":
             blocklist += BLOCKLIST_NVIDIA_GL
+        if gpu_vendor == "AMD" and args.gpu_backend == "opengl":
+            blocklist += BLOCKLIST_AMD_GL
         if gpu_vendor == "AMD" and sys.platform == "win32" and args.gpu_backend == "vulkan":
             blocklist += BLOCKLIST_AMD_WINDOWS_VK
         if gpu_vendor == "AMD" and args.gpu_backend == "vulkan":
@@ -419,17 +436,10 @@ def main():
     elif test_dir_name.startswith('attributes') and gpu_vendor == "AMD":
         # attribute_pointcloud_color
         report.set_fail_percent(0.09)
-    elif test_dir_name.startswith('ray_portal') and gpu_vendor == "AMD":
-        # AMD PRO W7600
-        report.set_fail_percent(0.09)
     elif test_dir_name.startswith('camera'):
         # camera_stereo_panoramic have some platform specific small differences
-        # Fix back to 0.14 once eevee panorama has proper filtering.
-        report.set_fail_percent(1.5)
+        report.set_fail_percent(0.14)
         report.set_fail_threshold(6.0 / 255.0)
-        if gpu_vendor == "AMD" and args.gpu_backend == "opengl":
-            # camera_fisheye_polynomial
-            report.set_fail_percent(1.8)
     elif test_dir_name.startswith('image_colorspace'):
         # image_log has hot pixels that result in platform differences.
         report.set_fail_percent(0.15)
@@ -489,6 +499,9 @@ def main():
         # normal_mapping_light_leak fireflies.
         # fresnel_layer_weight high values are accumulated differently on different platform.
         report.set_fail_percent(0.221)
+        if gpu_vendor == "AMD":
+            # holdout has very different background SSR hit detection on AMD + Windows bot.
+            report.set_fail_percent(0.29)
         if gpu_vendor == "INTEL":
             # mix_color uses implementation dependent function.
             report.set_fail_percent(0.41)
@@ -502,8 +515,8 @@ def main():
         report.set_fail_threshold(6.0 / 255.0)
     elif test_dir_name.startswith('raycast') and gpu_vendor == "AMD":
         # Some slight contour differences on AMD
-        report.set_fail_percent(0.37)
-        report.set_fail_threshold(10.0 / 255.0)
+        report.set_fail_percent(0.42)
+        report.set_fail_threshold(12.0 / 255.0)
     elif test_dir_name.startswith('pointcloud'):
         # Only because of points_transparent
         report.set_fail_threshold(8.0 / 255.0)

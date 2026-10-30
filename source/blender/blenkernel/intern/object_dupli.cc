@@ -800,7 +800,7 @@ static Object *find_family_object(
   char ch_utf8[BLI_UTF8_MAX + 1];
   size_t ch_utf8_len;
 
-  ch_utf8_len = BLI_str_utf8_from_unicode(ch, ch_utf8, sizeof(ch_utf8) - 1);
+  ch_utf8_len = BLI_str_utf8_from_unicode(ch, MutableCStr(ch_utf8, sizeof(ch_utf8) - 1));
   ch_utf8[ch_utf8_len] = '\0';
   ch_utf8_len += 1; /* Compare with null terminator. */
 
@@ -1911,7 +1911,7 @@ bke::Instances object_duplilist_legacy_instances(Depsgraph &depsgraph, Object &o
   MutableSpan<float4x4> instances_transforms = top_level_instances.transforms_for_write();
   MutableSpan<int> instances_reference_handles = top_level_instances.reference_handles_for_write();
   bke::SpanAttributeWriter<int> instances_ids =
-      top_level_instances.attributes_for_write().lookup_or_add_for_write_only_span<int>(
+      top_level_instances.attributes_for_write().ensure_for_write_only_span<int>(
           "id", bke::AttrDomain::Instance);
   for (const int i : IndexRange(instances_num)) {
     DupliObject &dob = *top_level_duplis[i];

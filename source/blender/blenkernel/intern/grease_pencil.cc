@@ -343,7 +343,8 @@ static void grease_pencil_blend_read_data(BlendDataReader *reader, ID *id)
 
   CustomData_blend_read(
       reader, &grease_pencil->layers_data_legacy, grease_pencil->layers().size());
-  grease_pencil->attribute_storage.wrap().blend_read(*reader);
+  grease_pencil->attribute_storage.wrap().blend_read(
+      *reader, [&](const bke::AttrDomain /*domain*/) { return grease_pencil->layers().size(); });
 
   /* Read materials. */
   BLO_read_pointer_array_and_validate_size(
@@ -928,17 +929,12 @@ void Drawing::set_texture_matrices(Span<float4x2> matrices, const IndexMask &sel
 {
   CurvesGeometry &curves = this->strokes_for_write();
   MutableAttributeAccessor attributes = curves.attributes_for_write();
-  SpanAttributeWriter<float> uv_rotations = attributes.lookup_or_add_for_write_span<float>(
+  SpanAttributeWriter<float> uv_rotations = attributes.ensure_for_write_span<float>(
       "uv_rotation", AttrDomain::Curve);
-  SpanAttributeWriter<float2> uv_translations = attributes.lookup_or_add_for_write_span<float2>(
+  SpanAttributeWriter<float2> uv_translations = attributes.ensure_for_write_span<float2>(
       "uv_translation", AttrDomain::Curve);
-  SpanAttributeWriter<float2> uv_scales = attributes.lookup_or_add_for_write_span<float2>(
+  SpanAttributeWriter<float2> uv_scales = attributes.ensure_for_write_span<float2>(
       "uv_scale", AttrDomain::Curve, AttributeInitValue(float2(1.0f, 1.0f)));
-
-  if (!uv_rotations || !uv_translations || !uv_scales) {
-    /* FIXME: It might be better to ensure the attributes exist and are on the right domain. */
-    return;
-  }
 
   const OffsetIndices<int> points_by_curve = curves.points_by_curve();
   const Span<float3> positions = curves.positions();
@@ -1606,6 +1602,9 @@ Layer::Layer(const Layer &other) : Layer()
   this->runtime->sorted_keys_cache_ = other.runtime->sorted_keys_cache_;
   /* Tag the frames map, so the frame storage is recreated once the DNA is saved. */
   this->tag_frames_map_changed();
+
+  /* Keep the mapping to the original layer when evaluated data is copied, e.g. by modifiers. */
+  this->runtime->orig_layer_index_ = other.runtime->orig_layer_index_;
 
   /* TODO: what about masks cache? */
 }
@@ -4295,12 +4294,10 @@ static void reorder_attribute_domain(bke::AttributeStorage &data,
     const CPPType &type = bke::attribute_type_to_cpp_type(attr.data_type());
     switch (attr.storage_type()) {
       case bke::AttrStorageType::Array: {
-        const auto &data = std::get<bke::Attribute::ArrayData>(attr.data());
-        auto new_data = bke::Attribute::ArrayData::from_constructed(type, new_by_old_map.size());
-        bke::attribute_math::gather(GSpan(type, data.data, data.size),
-                                    new_by_old_map,
-                                    GMutableSpan(type, new_data.data, new_data.size));
-        attr.assign_data(std::move(new_data));
+        GArray<> new_data(type, new_by_old_map.size());
+        array_utils::gather(
+            std::get<GSpan>(attr.data().values()), new_by_old_map, new_data.as_mutable_span());
+        attr.assign_data(bke::GList(std::move(new_data)));
         break;
       }
       case bke::AttrStorageType::Single: {
@@ -4597,22 +4594,19 @@ void GreasePencil::rename_node(Main &bmain,
 
     /* Update the layer name of the influence data of the modifiers. */
     for (ModifierData &md : object.modifiers) {
-      char *dst_layer_name = nullptr;
-      size_t dst_layer_name_maxncpy = 0;
+      MutableCStr dst_layer_name;
       /* LineArt doesn't use the `GreasePencilModifierInfluenceData` struct. */
       if (md.type == eModifierType_GreasePencilLineart) {
         auto *lmd = reinterpret_cast<GreasePencilLineartModifierData *>(&md);
-        dst_layer_name = lmd->target_layer;
-        dst_layer_name_maxncpy = sizeof(lmd->target_layer);
+        dst_layer_name = MutableCStr(lmd->target_layer);
       }
       else if (GreasePencilModifierInfluenceData *influence_data = influence_data_from_modifier(
                    &md))
       {
-        dst_layer_name = influence_data->layer_name;
-        dst_layer_name_maxncpy = sizeof(influence_data->layer_name);
+        dst_layer_name = MutableCStr(influence_data->layer_name);
       }
-      if (dst_layer_name && STREQ(dst_layer_name, old_name.c_str())) {
-        BLI_strncpy(dst_layer_name, node.name().c_str(), dst_layer_name_maxncpy);
+      if (!dst_layer_name.is_empty() && STREQ(dst_layer_name.data(), old_name.c_str())) {
+        STRNCPY(dst_layer_name, node.name().c_str());
       }
     }
   }
@@ -4629,18 +4623,19 @@ static void shrink_attribute_storage(bke::AttributeStorage &storage,
     const CPPType &type = bke::attribute_type_to_cpp_type(attr.data_type());
     switch (attr.storage_type()) {
       case bke::AttrStorageType::Array: {
-        const auto &data = std::get<bke::Attribute::ArrayData>(attr.data());
+        const GSpan data = std::get<GSpan>(attr.data().values());
 
-        auto new_data = bke::Attribute::ArrayData::from_uninitialized(type, size - 1);
-        type.copy_construct_n(data.data, new_data.data, range_before.size());
-        type.copy_construct_n(POINTER_OFFSET(data.data, type.size * range_after.start()),
-                              POINTER_OFFSET(new_data.data, type.size * index_to_remove),
+        GArray<> new_data(type, size - 1, NoInitialization());
+        type.copy_construct_n(data.data(), new_data.data(), range_before.size());
+        type.copy_construct_n(POINTER_OFFSET(data.data(), type.size * range_after.start()),
+                              POINTER_OFFSET(new_data.data(), type.size * index_to_remove),
                               range_after.size());
 
-        attr.assign_data(std::move(new_data));
+        attr.assign_data(bke::GList(std::move(new_data)));
         break;
       }
       case bke::AttrStorageType::Single: {
+        attr.data().resize(size - 1);
         break;
       }
     }
@@ -4793,13 +4788,36 @@ bke::MutableAttributeAccessor GreasePencil::attributes_for_write()
 /** \name Drawing array read/write functions
  * \{ */
 
+static size_t drawing_struct_size(const GreasePencilDrawingType type)
+{
+  switch (type) {
+    case GP_DRAWING:
+      return sizeof(GreasePencilDrawing);
+    case GP_DRAWING_REFERENCE:
+      return sizeof(GreasePencilDrawingReference);
+  }
+  return sizeof(GreasePencilDrawingBase);
+}
+
 static void read_drawing_array(GreasePencil &grease_pencil, BlendDataReader *reader)
 {
   BLO_read_pointer_array_and_validate_size(
       reader, &grease_pencil.drawing_array, &grease_pencil.drawing_array_num);
   for (int i = 0; i < grease_pencil.drawing_array_num; i++) {
-    BLO_read_struct(reader, GreasePencilDrawingBase, &grease_pencil.drawing_array[i]);
+    BLO_read_struct_with_type_size<GreasePencilDrawingBase>(
+        reader, &grease_pencil.drawing_array[i], [](const GreasePencilDrawingBase &drawing) {
+          return drawing_struct_size(GreasePencilDrawingType(drawing.type));
+        });
     GreasePencilDrawingBase *drawing_base = grease_pencil.drawing_array[i];
+
+    /* Replace drawings that failed to read from corrupt files by an empty drawing, since further
+     * reading code expects valid drawings. */
+    if (drawing_base == nullptr) {
+      grease_pencil.drawing_array[i] = reinterpret_cast<GreasePencilDrawingBase *>(
+          MEM_new<bke::greasepencil::Drawing>(__func__));
+      continue;
+    }
+
     switch (GreasePencilDrawingType(drawing_base->type)) {
       case GP_DRAWING: {
         GreasePencilDrawing *drawing = reinterpret_cast<GreasePencilDrawing *>(drawing_base);
@@ -4895,6 +4913,17 @@ static void read_layer(BlendDataReader *reader,
   node->wrap().update_from_dna_read();
 }
 
+static size_t layer_tree_node_struct_size(const GreasePencilLayerTreeNodeType type)
+{
+  switch (type) {
+    case GP_LAYER_TREE_LEAF:
+      return sizeof(GreasePencilLayer);
+    case GP_LAYER_TREE_GROUP:
+      return sizeof(GreasePencilLayerTreeGroup);
+  }
+  return sizeof(GreasePencilLayerTreeNode);
+}
+
 static void read_layer_tree_group(BlendDataReader *reader,
                                   GreasePencilLayerTreeGroup *node,
                                   GreasePencilLayerTreeGroup *parent)
@@ -4902,7 +4931,10 @@ static void read_layer_tree_group(BlendDataReader *reader,
   BLO_read_string(reader, &node->base.name);
   node->base.parent = parent;
   /* Read list of children. */
-  BLO_read_struct_list(reader, GreasePencilLayerTreeNode, &node->children);
+  BLO_read_struct_list_with_type_size<GreasePencilLayerTreeNode>(
+      reader, &node->children, [](const GreasePencilLayerTreeNode &child) {
+        return layer_tree_node_struct_size(child.type);
+      });
   for (GreasePencilLayerTreeNode &child : node->children) {
     switch (child.type) {
       case GP_LAYER_TREE_LEAF: {
@@ -4933,9 +4965,9 @@ static void read_layer_tree(GreasePencil &grease_pencil, BlendDataReader *reader
     grease_pencil.set_active_node(nullptr);
     return;
   }
-  /* Read active layer. */
-  BLO_read_struct(reader, GreasePencilLayerTreeNode, &grease_pencil.active_node);
   read_layer_tree_group(reader, grease_pencil.root_group_ptr, nullptr);
+  /* Read active layer after the tree, so it is null if its node failed to read. */
+  BLO_read_struct(reader, GreasePencilLayerTreeNode, &grease_pencil.active_node);
 
   grease_pencil.root_group_ptr->wrap().update_from_dna_read();
 }

@@ -16,6 +16,7 @@
 #include "BKE_object.hh"
 #include "BKE_paint.hh"
 #include "BKE_shader_fx.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "BKE_camera.h"
 
@@ -284,7 +285,7 @@ void Instance::begin_sync()
     float sensor_scaled = scale_camera * sensor;
 
     if (draw_ctx->rv3d != nullptr) {
-      sensor_scaled *= draw_ctx->rv3d->viewcamtexcofac[0];
+      sensor_scaled *= draw_ctx->rv3d->runtime->viewcamtexcofac[0];
     }
 
     this->dof_params[1] = aperture * fabsf(focal_len_scaled / (focus_dist - focal_len_scaled));
@@ -367,7 +368,7 @@ tObject *Instance::object_sync_do(Object *ob, ResourceHandleRange res_handle)
   gpu::Texture *tex_fill = this->dummy_tx;
   gpu::Texture *tex_stroke = this->dummy_tx;
 
-  gpu::Batch *iter_geom = nullptr;
+  Batch *iter_geom = nullptr;
   PassSimple *last_pass = nullptr;
   int vfirst = 0;
   int vcount = 0;
@@ -384,7 +385,7 @@ tObject *Instance::object_sync_do(Object *ob, ResourceHandleRange res_handle)
   };
 
   const auto drawcall_add =
-      [&](PassSimple &pass, gpu::Batch *draw_geom, const int v_first, const int v_count) {
+      [&](PassSimple &pass, Batch *draw_geom, const int v_first, const int v_count) {
 #if DISABLE_BATCHING
         pass.draw(iter_geom, 1, vcount, vfirst, res_handle);
         return;
@@ -591,7 +592,7 @@ tObject *Instance::object_sync_do(Object *ob, ResourceHandleRange res_handle)
         }
       }
 
-      gpu::Batch *geom = DRW_cache_grease_pencil_get(this->scene, ob);
+      Batch *geom = DRW_cache_grease_pencil_get(this->scene, ob);
       if (iter_geom != geom) {
         drawcall_flush(pass);
 

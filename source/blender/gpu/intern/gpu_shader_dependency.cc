@@ -42,8 +42,14 @@ extern "C" {
   extern char datatoc_##filename_underscore[];
 #include "glsl_compositor_source_list.h"
 #include "glsl_draw_source_list.h"
+#include "glsl_eevee_source_list.h"
+#include "glsl_gpencil_source_list.h"
 #include "glsl_gpu_source_list.h"
+#include "glsl_image_source_list.h"
 #include "glsl_ocio_source_list.h"
+#include "glsl_overlay_source_list.h"
+#include "glsl_select_id_source_list.h"
+#include "glsl_workbench_source_list.h"
 #ifdef WITH_OPENSUBDIV
 #  include "glsl_osd_source_list.h"
 #endif
@@ -258,35 +264,87 @@ struct GPUSource {
           shader::PrintfFormat::Block::ArgumentType::NONE;
       int64_t start = 0, end = 0, cursor = -1;
       while ((end = format.find_first_of('%', cursor + 1)) != -1) {
+        if (format[end + 1] == '%') {
+          /* Escaped `%%` stays in the current block. */
+          cursor = end + 1;
+          continue;
+        }
+
         if (end - start > 0) {
           /* Add the previous block without the newly found % character. */
           fmt.format_blocks.append({type, format.substr(start, end - start)});
         }
-        /* Format type of the next block. */
-        /* TODO(fclem): This doesn't support advance formats like `%3.2f`. */
-        switch (format[end + 1]) {
-          case 's':
-            type = shader::PrintfFormat::Block::ArgumentType::STRING;
-            break;
-          case 'x':
-          case 'u':
-            type = shader::PrintfFormat::Block::ArgumentType::UINT;
-            break;
-          case 'd':
-            type = shader::PrintfFormat::Block::ArgumentType::INT;
-            break;
-          case 'f':
-            type = shader::PrintfFormat::Block::ArgumentType::FLOAT;
-            break;
-          default:
-            BLI_assert_msg(0, "Printing format unsupported");
-            break;
+        /* Matches: %[flags][width][.precision][length]specifier */
+        static const std::regex fmt_regex(
+            "%([-+0 #]*)(\\d+|\\*)?(?:\\.(\\d+|\\*))?(hh|h|l|ll|L|j|z|t)?([diuoxXfFeEgGaAcsp])");
+        /* Find format type of the next block. */
+        std::smatch match;
+        if (std::regex_search(format.cbegin() + end,
+                              format.cend(),
+                              match,
+                              fmt_regex,
+                              std::regex_constants::match_continuous))
+        {
+          /* Group 5 captures the conversion specifier character. */
+          char specifier = match[5].str()[0];
+
+          /* Arguments are always 32 bits. Rewrite formats that make the CPU printf read a larger
+           * argument, e.g. `%ld` or `%p`. `h` and `hh` are valid for promoted integers. */
+          if (specifier == 'p') {
+            format[end + match.position(5)] = 'x';
+          }
+          /* Remove length modifier, always expect 32bit, even for short and char. */
+          if (match[4].matched) {
+            format.erase(end + match.position(4), match.length(4));
+          }
+
+          switch (specifier) {
+            case 's':
+              type = shader::PrintfFormat::Block::ArgumentType::STRING;
+              break;
+            case 'x':
+            case 'X':
+            case 'u':
+            case 'o':
+            case 'p':
+              type = shader::PrintfFormat::Block::ArgumentType::UINT;
+              break;
+            case 'd':
+            case 'i':
+            case 'c':
+              type = shader::PrintfFormat::Block::ArgumentType::INT;
+              break;
+            case 'f':
+            case 'F':
+            case 'e':
+            case 'E':
+            case 'g':
+            case 'G':
+            case 'a':
+            case 'A':
+              type = shader::PrintfFormat::Block::ArgumentType::FLOAT;
+              break;
+            default:
+              BLI_assert_msg(0, "Printing format unsupported");
+              break;
+          }
+        }
+        else {
+          BLI_assert_msg(0, "Invalid print format specifier");
+          break;
         }
         /* Start of the next block. */
         start = end;
         cursor = end;
       }
       fmt.format_blocks.append({type, format.substr(start, format.size() - start)});
+
+      /* Blocks without argument are printed as is, so unescape `%%`. */
+      for (shader::PrintfFormat::Block &block : fmt.format_blocks) {
+        if (block.type == shader::PrintfFormat::Block::ArgumentType::NONE) {
+          block.fmt = std::regex_replace(block.fmt, std::regex("%%"), "%");
+        }
+      }
 
       format_map->add(format_hash, fmt);
     }
@@ -297,7 +355,7 @@ struct GPUSource {
                     GPUFunctionDictionary *g_functions)
   {
     GPUFunction *func = MEM_new<GPUFunction>(__func__);
-    name.copy_utf8_truncated(func->name, sizeof(func->name));
+    name.copy_utf8_truncated(func->name);
     func->source = reinterpret_cast<void *>(this);
     func->totparam = 0;
     for (auto arg : arguments) {
@@ -513,8 +571,14 @@ namespace shader {
 
 #include "glsl_compositor_metadata_list.hh"
 #include "glsl_draw_metadata_list.hh"
+#include "glsl_eevee_metadata_list.hh"
+#include "glsl_gpencil_metadata_list.hh"
 #include "glsl_gpu_metadata_list.hh"
+#include "glsl_image_metadata_list.hh"
 #include "glsl_ocio_metadata_list.hh"
+#include "glsl_overlay_metadata_list.hh"
+#include "glsl_select_id_metadata_list.hh"
+#include "glsl_workbench_metadata_list.hh"
 #ifdef WITH_OPENSUBDIV
 #  include "glsl_osd_metadata_list.hh"
 #endif
@@ -550,10 +614,17 @@ void gpu_shader_dependency_init()
                                    g_formats, \
                                    gpu::shader::metadata_##filename_underscore));
 
+#include "glsl_gpu_source_list.h"
+
 #include "glsl_compositor_source_list.h"
 #include "glsl_draw_source_list.h"
-#include "glsl_gpu_source_list.h"
+#include "glsl_eevee_source_list.h"
+#include "glsl_gpencil_source_list.h"
+#include "glsl_image_source_list.h"
 #include "glsl_ocio_source_list.h"
+#include "glsl_overlay_source_list.h"
+#include "glsl_select_id_source_list.h"
+#include "glsl_workbench_source_list.h"
 #ifdef WITH_OPENSUBDIV
 #  include "glsl_osd_source_list.h"
 #endif

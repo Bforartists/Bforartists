@@ -1699,7 +1699,9 @@ bool BKE_base_is_visible(const View3D *v3d, const Base *base)
   return base->flag & BASE_ENABLED_AND_VISIBLE_IN_DEFAULT_VIEWPORT;
 }
 
-bool BKE_object_is_visible_in_viewport(const View3D *v3d, const Object *ob)
+bool BKE_object_is_visible_in_viewport_ex(const View3D *v3d,
+                                          const Object *ob,
+                                          const ObjectType ob_type)
 {
   BLI_assert(v3d != nullptr);
 
@@ -1707,7 +1709,7 @@ bool BKE_object_is_visible_in_viewport(const View3D *v3d, const Object *ob)
     return false;
   }
 
-  if ((v3d->object_type_exclude_viewport & (1 << ob->type)) != 0) {
+  if ((v3d->object_type_exclude_viewport & (1 << ob_type)) != 0) {
     return false;
   }
 
@@ -1727,6 +1729,11 @@ bool BKE_object_is_visible_in_viewport(const View3D *v3d, const Object *ob)
   }
 
   return true;
+}
+
+bool BKE_object_is_visible_in_viewport(const View3D *v3d, const Object *ob)
+{
+  return BKE_object_is_visible_in_viewport_ex(v3d, ob, ob->type);
 }
 
 /** \} */
@@ -2842,7 +2849,7 @@ void BKE_lightgroup_membership_set(LightgroupMembership **lgm, const char *name)
     if (*lgm == nullptr) {
       *lgm = MEM_new<LightgroupMembership>(__func__);
     }
-    BLI_strncpy_utf8((*lgm)->name, name, sizeof((*lgm)->name));
+    STRNCPY_UTF8((*lgm)->name, name);
   }
   else {
     if (*lgm != nullptr) {

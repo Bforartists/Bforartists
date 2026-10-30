@@ -105,6 +105,8 @@ struct SpaceType {
   int spaceid;
   /** Icon lookup for menus. */
   int iconid;
+  /** Size of the #SpaceLink derived struct. */
+  int struct_size;
 
   /**
    * Initial allocation, after this WM will call init() too.
@@ -686,6 +688,11 @@ struct ARegionRuntime {
 
   /** Tag for IME cursor position refresh on next draw. */
   bool do_ime = false;
+  /**
+   * The cursor from the last draw-time IME refresh, unset when no position was reported.
+   * Used to draw the composition preview over the region, see #ED_region_do_draw.
+   */
+  std::optional<ARegionIMECursor> ime_cursor;
 
   ARegionQuadviewIndex quadview_index = ARegionQuadviewIndex::None;
 

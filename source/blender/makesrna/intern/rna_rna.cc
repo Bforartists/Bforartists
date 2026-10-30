@@ -1319,7 +1319,7 @@ static bool rna_Function_use_self_type_get(PointerRNA *ptr)
 
 /* Blender RNA */
 
-static bool rna_struct_is_publc(CollectionPropertyIterator * /*iter*/, void *data)
+static bool rna_struct_is_public(CollectionPropertyIterator * /*iter*/, void *data)
 {
   const StructRNA **srna_ptr_ptr = static_cast<const StructRNA **>(data);
   const StructRNA *srna = *srna_ptr_ptr;
@@ -1337,7 +1337,7 @@ static void rna_BlenderRNA_structs_begin(CollectionPropertyIterator *iter, Point
                            sizeof(StructRNA *),
                            brna->structs.size(),
                            false,
-                           rna_struct_is_publc);
+                           rna_struct_is_public);
 }
 
 /* optional, for faster lookups */
@@ -1509,14 +1509,14 @@ static void rna_property_override_diff_propptr_validate_diffing(
     char buff_b[4096];
     if (nameprop_a != nullptr) {
       rna_itemname_a = RNA_property_string_get_alloc(
-          propptr_a, nameprop_a, buff_a, sizeof(buff_a), &rna_itemname_a_len);
+          propptr_a, nameprop_a, buff_a, &rna_itemname_a_len);
       //          printf("rna_itemname_a = %s\n", rna_itemname_a ? rna_itemname_a : "<NONE>");
       ptrdiff_ctx.rna_itemname_a = rna_itemname_a;
     }
     //      else printf("item of type %s a has no name property!\n", propptr_a->type->name);
     if (nameprop_b != nullptr) {
       rna_itemname_b = RNA_property_string_get_alloc(
-          propptr_b, nameprop_b, buff_b, sizeof(buff_b), &rna_itemname_b_len);
+          propptr_b, nameprop_b, buff_b, &rna_itemname_b_len);
       ptrdiff_ctx.rna_itemname_b = rna_itemname_b;
     }
 
@@ -1742,8 +1742,7 @@ static void rna_property_override_diff_propptr(Main *bmain,
           BLI_assert(*rna_itemname_a == *rna_itemname_b);
 
           char esc_item_name[RNA_PATH_BUFFSIZE];
-          const size_t esc_item_name_len = BLI_str_escape(
-              esc_item_name, rna_itemname_a->c_str(), sizeof(esc_item_name));
+          const size_t esc_item_name_len = BLI_str_escape(esc_item_name, rna_itemname_a->c_str());
           extended_rna_path_len = rna_path_len + 2 + esc_item_name_len + 2;
           if (extended_rna_path_len >= RNA_PATH_BUFFSIZE) {
             extended_rna_path = MEM_new_array_uninitialized<char>(extended_rna_path_len + 1,
@@ -2141,10 +2140,8 @@ void rna_property_override_diff_default(Main *bmain, RNAPropertyOverrideDiffCont
     case PROP_STRING: {
       char fixed_a[4096], fixed_b[4096];
       int len_str_a, len_str_b;
-      char *value_a = RNA_property_string_get_alloc(
-          ptr_a, rawprop_a, fixed_a, sizeof(fixed_a), &len_str_a);
-      char *value_b = RNA_property_string_get_alloc(
-          ptr_b, rawprop_b, fixed_b, sizeof(fixed_b), &len_str_b);
+      char *value_a = RNA_property_string_get_alloc(ptr_a, rawprop_a, fixed_a, &len_str_a);
+      char *value_b = RNA_property_string_get_alloc(ptr_b, rawprop_b, fixed_b, &len_str_b);
 /* TODO: we could do a check on length too,
  * but then we would not have a 'real' string comparison...
  * Maybe behind a eRNAOverrideMatch flag? */
@@ -3006,7 +3003,7 @@ bool rna_property_override_apply_default(Main *bmain,
     }
     case PROP_STRING: {
       char buff[256];
-      char *value = RNA_property_string_get_alloc(ptr_src, prop_src, buff, sizeof(buff), nullptr);
+      char *value = RNA_property_string_get_alloc(ptr_src, prop_src, buff, nullptr);
 
       switch (override_op) {
         case LIBOVERRIDE_OP_REPLACE:

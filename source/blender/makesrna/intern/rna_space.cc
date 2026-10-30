@@ -22,6 +22,7 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_movieclip.hh"
 #include "BKE_object_types.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "ED_asset.hh"
 #include "ED_buttons.hh"
@@ -201,7 +202,7 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
     {SPACE_PROJECT,
      "PROJECT",
      ICON_PROJECT,
-     "Project Setup",
+     "Project Settings",
      "Manage the current Blender project"},
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -1491,7 +1492,7 @@ static void rna_RegionView3D_quadview_clip_update(Main * /*main*/,
 static RenderEngine *rna_RegionView3D_engine_get(const PointerRNA *ptr)
 {
   const RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
-  return rv3d->view_render ? RE_view_engine_get(rv3d->view_render) : nullptr;
+  return rv3d->runtime->view_render ? RE_view_engine_get(rv3d->runtime->view_render) : nullptr;
 }
 
 static bool rna_RegionView3D_pause_render_get(PointerRNA *ptr)
@@ -1513,8 +1514,8 @@ static void rna_RegionView3D_pause_render_set(PointerRNA *ptr, const bool value)
         continue;
       }
       const RegionView3D *rv3d = static_cast<RegionView3D *>(region_iter.regiondata);
-      if (rv3d && rv3d->view_render) {
-        if (RenderEngine *engine = RE_view_engine_get(rv3d->view_render)) {
+      if (rv3d && rv3d->runtime->view_render) {
+        if (RenderEngine *engine = RE_view_engine_get(rv3d->runtime->view_render)) {
           RE_engine_view_pause_set(engine, value);
         }
       }
@@ -1594,7 +1595,9 @@ static float rna_RegionView3D_view_roll_get(PointerRNA *ptr)
 static void rna_RegionView3D_view_roll_set(PointerRNA *ptr, float value)
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
-  if ((rv3d->persp == RV3D_CAMOB) || (RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION)) {
+  if ((rv3d->persp == RV3D_CAMOB) ||
+      (blender::bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_ROTATION))
+  {
     return;
   }
   ED_view3d_view_roll_set(rv3d->viewquat, value);
@@ -2370,7 +2373,7 @@ static void rna_SpaceImageEditor_cursor_location_set(PointerRNA *ptr, const floa
   }
 }
 
-static void rna_SpaceImageEditor_image_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+static void rna_SpaceImageEditor_image_update(Main * /*bmain*/, Scene *scene, PointerRNA *ptr)
 {
   SpaceImage *sima = static_cast<SpaceImage *>(ptr->data);
   Image *ima = sima->image;
@@ -2385,6 +2388,12 @@ static void rna_SpaceImageEditor_image_update(Main * /*bmain*/, Scene * /*scene*
     else {
       BKE_image_multiview_index(ima, &sima->iuser);
     }
+  }
+
+  /* If the new image is the viewer image, we tag the compositor to execute to update the viewer
+   * image. */
+  if (ima && ima->source == IMA_SRC_VIEWER && ima->type == IMA_TYPE_COMPOSITE) {
+    DEG_id_tag_update(&scene->id, ID_RECALC_COMPOSITOR);
   }
 }
 
@@ -7401,11 +7410,12 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_transform_preview", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "draw_flag", SEQ_DRAW_TRANSFORM_PREVIEW);
-  RNA_def_property_ui_text(prop,
-                           "Transform Preview",
-                           "Show a preview of the start or end frame of a strip while "
-                           "transforming its respective handle");
+  RNA_def_property_boolean_sdna(prop, nullptr, "draw_flag", SEQ_DRAW_EDIT_POINT_PREVIEW);
+  RNA_def_property_ui_text(
+      prop,
+      "Preview Edit Point",
+      "While editing in the timeline, show the affected frame instead of "
+      "the current frame, such as in the blade tool, or when tweaking handles");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   /* Gizmo toggles. */

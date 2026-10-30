@@ -142,7 +142,6 @@ std::string FileHandlerType::get_default_filename(const StringRefNull name)
   char filename[FILE_MAXFILE];
   STRNCPY(filename, all_blank ? DATA_("Untitled") : name.c_str());
   BLI_path_extension_ensure(filename,
-                            sizeof(filename),
                             file_extensions.is_empty() ? "" : file_extensions.first().c_str());
   BLI_path_make_safe_filename(filename);
 
@@ -203,7 +202,8 @@ std::string FileHandlerType::label_with_extensions() const
     group_start += group_size;
   }
 
-  return std::string(label) + " (" + extensions + ")";
+  return std::string(CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, label)) + " (" + extensions +
+         ")";
 }
 
 std::optional<std::string> FileHandlerType::filter_glob_from_extensions() const

@@ -663,12 +663,24 @@ enum eCompositorDevice : int {
   SCE_COMPOSITOR_DEVICE_GPU = 1,
 };
 
-/** #RenderData::cache_flags */
+/** #RenderData::compositor_cache_flags */
 enum eCompositorCacheFlags : uint8_t {
   SCE_COMPOSITOR_CACHE_NONE = 0,
   SCE_COMPOSITOR_CACHE_FRAMES = (1 << 0),
 };
 ENUM_OPERATORS(eCompositorCacheFlags);
+
+/** #RenderData::compositor_proxy_flags */
+enum class CompositorProxyFlags : uint8_t {
+  None = 0,
+  /* Scale down input media and pixel-unit values by RenderData::compositor_proxy_preview_scale
+   * during interactive compositor preview for better performance. */
+  UsePreviewScale = (1 << 0),
+  /* Scale input media and pixel-unit values by the render resolution scale or viewport zoom, such
+   * that results match across resolution scales and viewport zoom levels. */
+  AdaptToRenderScale = (1 << 1),
+};
+ENUM_OPERATORS(CompositorProxyFlags);
 
 /** #RenderData::compositor_precision */
 enum eCompositorPrecision : int {
@@ -685,7 +697,7 @@ enum eCompositorDenoiseDevice : int {
 
 /** #RenderData::compositor_denoise_preview_quality */
 /** #RenderData::compositor_denoise_final_quality */
-enum eCompositorDenoiseQaulity : int {
+enum eCompositorDenoiseQuality : int {
   SCE_COMPOSITOR_DENOISE_HIGH = 0,
   SCE_COMPOSITOR_DENOISE_BALANCED = 1,
   SCE_COMPOSITOR_DENOISE_FAST = 2,
@@ -983,7 +995,7 @@ struct RenderData {
 
   /** Stamps flags. */
   int stamp = R_STAMP_TIME | R_STAMP_FRAME | R_STAMP_DATE | R_STAMP_CAMERA | R_STAMP_SCENE |
-              R_STAMP_FILENAME | R_STAMP_RENDERTIME | R_STAMP_MEMORY;
+              R_STAMP_FILENAME | R_STAMP_RENDERTIME;
   /** Select one of blenders bitmap fonts. */
   short stamp_font_id = 12;
   char _pad3[2] = {};
@@ -1050,7 +1062,11 @@ struct RenderData {
   /** Cache options for the interactive compositor. */
   eCompositorCacheFlags compositor_cache_flags = SCE_COMPOSITOR_CACHE_FRAMES;
 
-  char _pad10[3] = {};
+  /** Proxy options for the compositor. */
+  CompositorProxyFlags compositor_proxy_flags = CompositorProxyFlags::AdaptToRenderScale;
+  int8_t compositor_proxy_preview_scale = 50;
+
+  char _pad10[1] = {};
 
   /** Precision used by the GPU execution of the compositor tree. */
   eCompositorPrecision compositor_precision = SCE_COMPOSITOR_PRECISION_AUTO;
@@ -1059,8 +1075,8 @@ struct RenderData {
   eCompositorDenoiseDevice compositor_denoise_device = SCE_COMPOSITOR_DENOISE_DEVICE_AUTO;
 
   /** Global configuration for denoise compositor nodes. */
-  eCompositorDenoiseQaulity compositor_denoise_preview_quality = SCE_COMPOSITOR_DENOISE_BALANCED;
-  eCompositorDenoiseQaulity compositor_denoise_final_quality = SCE_COMPOSITOR_DENOISE_HIGH;
+  eCompositorDenoiseQuality compositor_denoise_preview_quality = SCE_COMPOSITOR_DENOISE_BALANCED;
+  eCompositorDenoiseQuality compositor_denoise_final_quality = SCE_COMPOSITOR_DENOISE_HIGH;
 
   /** Frames to jump manually. */
   float time_jump_delta = 1.0;
@@ -1969,7 +1985,9 @@ enum eSnapMode : short {
   SCE_SNAP_INDIVIDUAL_NEAREST = (1 << 9),
   SCE_SNAP_INDIVIDUAL_PROJECT = (1 << 10),
 
-  SCE_SNAP_TO_FACE_MIDPOINT = (1 << 11)
+  SCE_SNAP_TO_FACE_MIDPOINT = (1 << 11),
+
+  SCE_SNAP_TO_ORIGIN = (1 << 12)
 };
 ENUM_OPERATORS(eSnapMode)
 

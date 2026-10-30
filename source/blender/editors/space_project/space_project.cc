@@ -91,7 +91,20 @@ static void project_space_blend_write(BlendWriter *writer, SpaceLink *sl)
   writer->write_struct_cast<SpaceProject>(sl);
 }
 
-static void project_operatortypes() {}
+static void project_operatortypes()
+{
+  WM_operatortype_append(PROJECT_OT_new);
+  WM_operatortype_append(PROJECT_OT_open);
+  WM_operatortype_append(PROJECT_OT_close);
+  WM_operatortype_append(PROJECT_OT_config_save);
+  WM_operatortype_append(PROJECT_OT_asset_library_add);
+  WM_operatortype_append(PROJECT_OT_asset_library_remove);
+  WM_operatortype_append(PROJECT_OT_variable_add);
+  WM_operatortype_append(PROJECT_OT_variable_remove);
+  WM_operatortype_append(PROJECT_OT_variable_move);
+  WM_operatortype_append(PROJECT_OT_splash_image_create);
+  WM_operatortype_append(PROJECT_OT_splash_image_clear);
+}
 
 static void project_keymap(wmKeyConfig * /*keyconf*/) {}
 
@@ -184,7 +197,8 @@ void ED_spacetype_project()
   ARegionType *art;
 
   st->spaceid = SPACE_PROJECT;
-  STRNCPY(st->name, "Project Setup");
+  STRNCPY(st->name, "Project Settings");
+  st->struct_size = sizeof(SpaceProject);
 
   st->create = project_create;
   st->free = project_free;

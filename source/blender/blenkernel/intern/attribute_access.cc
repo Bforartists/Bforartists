@@ -10,7 +10,6 @@
 
 #include "BKE_anonymous_attribute_id.hh"
 #include "BKE_attribute_legacy_convert.hh"
-#include "BKE_attribute_math.hh"
 #include "BKE_curves.hh"
 #include "BKE_customdata.hh"
 #include "BKE_geometry_set.hh"
@@ -554,44 +553,61 @@ GSpanAttributeWriter MutableAttributeAccessor::lookup_or_add_for_write_only_span
   return {};
 }
 
-GAttributeWriter MutableAttributeAccessor::convert_or_add_for_write(
-    const StringRef name,
-    const AttrDomain domain,
-    const AttrType data_type,
-    const AttributeInit &initializer)
+GAttributeWriter MutableAttributeAccessor::ensure_for_write(const StringRef name,
+                                                            const AttrDomain domain,
+                                                            const AttrType data_type,
+                                                            const AttributeInit &initializer)
 {
   std::optional<AttributeMetaData> meta_data = this->lookup_meta_data(name);
   if (meta_data.has_value()) {
     if (meta_data->domain == domain && meta_data->data_type == data_type) {
-      return this->lookup_for_write(name);
+      if (GAttributeWriter writer = this->lookup_for_write(name)) {
+        /* Even if the domain and type match, getting a writer can fail if the original
+         * is a vertex group. */
+        return writer;
+      }
     }
     /* The attribute already exists, but with the wrong domain or type.
      * Convert it. */
-    GVArray data_on_domain = *this->lookup(name, domain, data_type);
-    auto *converted_data = new ImplicitSharedValue<GArray<>>(
-        data_on_domain.type(), data_on_domain.size(), NoInitialization());
-    data_on_domain.materialize_to_uninitialized(converted_data->data.data());
-    const bool added = this->add_override(
-        name,
-        domain,
-        data_type,
-        AttributeInitShared(converted_data->data.data(), *converted_data));
-    converted_data->remove_user_and_delete_if_last();
-    if (added) {
-      return this->lookup_for_write(name);
+    GAttributeReader data_on_domain_reader = this->lookup(name, domain, data_type);
+    if (data_on_domain_reader) {
+      GVArray data_on_domain = *data_on_domain_reader;
+      auto *converted_data = new ImplicitSharedValue<GArray<>>(
+          data_on_domain.type(), data_on_domain.size(), NoInitialization());
+      data_on_domain.materialize_to_uninitialized(converted_data->data.data());
+      const bool added = this->add_override(
+          name,
+          domain,
+          data_type,
+          AttributeInitShared(converted_data->data.data(), *converted_data));
+      converted_data->remove_user_and_delete_if_last();
+      if (added) {
+        return this->lookup_for_write(name);
+      }
     }
-    /* Transfer failed, convert_or_add_for_write() should not be used for attributes
-     * that can't be converted. */
+    else {
+      /* Attribute is of a type that cannot be converted, so just initialize it with a default
+       * value. */
+      if (this->add_override(name, domain, data_type, AttributeInitDefaultValue())) {
+        return this->lookup_for_write(name);
+      }
+    }
+    /* Transfer or override failed, ensure_for_write() should not be used for attributes
+     * that can't be overridden. */
+
     BLI_assert_unreachable();
     return {};
   }
   this->add(name, domain, data_type, initializer);
-  return this->lookup_for_write(name);
+  GAttributeWriter writer = this->lookup_for_write(name);
+  BLI_assert_msg(writer,
+                 "Attribute could not be created with this type/domain, builtin attribute maybe?");
+  return writer;
 }
 
-GAttributeWriter MutableAttributeAccessor::convert_or_add_for_write_only(const StringRef name,
-                                                                         const AttrDomain domain,
-                                                                         const AttrType data_type)
+GAttributeWriter MutableAttributeAccessor::ensure_for_write_only(const StringRef name,
+                                                                 const AttrDomain domain,
+                                                                 const AttrType data_type)
 {
   std::optional<AttributeMetaData> meta_data = this->lookup_meta_data(name);
   if (meta_data.has_value()) {
@@ -599,32 +615,38 @@ GAttributeWriter MutableAttributeAccessor::convert_or_add_for_write_only(const S
       return this->lookup_for_write(name);
     }
     /* The attribute already exists, but with the wrong domain or type.
-     * Convert it. */
+     * Override it. */
     if (this->add_override(name, domain, data_type, AttributeInitConstruct())) {
       return this->lookup_for_write(name);
     }
+    /* Override failed, ensure_for_write() should not be used for attributes
+     * that can't be overridden. */
+    BLI_assert_unreachable();
     return {};
   }
   this->add(name, domain, data_type, AttributeInitConstruct());
-  return this->lookup_for_write(name);
+  GAttributeWriter writer = this->lookup_for_write(name);
+  BLI_assert_msg(writer,
+                 "Attribute could not be created with this type/domain, builtin attribute maybe?");
+  return writer;
 }
 
-GSpanAttributeWriter MutableAttributeAccessor::convert_or_add_for_write_span(
+GSpanAttributeWriter MutableAttributeAccessor::ensure_for_write_span(
     const StringRef name,
     const AttrDomain domain,
     const AttrType data_type,
     const AttributeInit &initializer)
 {
-  GAttributeWriter attribute = this->convert_or_add_for_write(
-      name, domain, data_type, initializer);
+  GAttributeWriter attribute = this->ensure_for_write(name, domain, data_type, initializer);
   BLI_assert(attribute);
   return GSpanAttributeWriter{std::move(attribute), true};
 }
 
-GSpanAttributeWriter MutableAttributeAccessor::convert_or_add_for_write_only_span(
-    const StringRef name, const AttrDomain domain, const AttrType data_type)
+GSpanAttributeWriter MutableAttributeAccessor::ensure_for_write_only_span(const StringRef name,
+                                                                          const AttrDomain domain,
+                                                                          const AttrType data_type)
 {
-  GAttributeWriter attribute = this->convert_or_add_for_write_only(name, domain, data_type);
+  GAttributeWriter attribute = this->ensure_for_write_only(name, domain, data_type);
   BLI_assert(attribute);
   return GSpanAttributeWriter{std::move(attribute), false};
 }
@@ -780,7 +802,7 @@ void gather_attributes(const AttributeAccessor src_attributes,
       if (!dst) {
         return;
       }
-      attribute_math::gather(src.varray, indices, dst.span);
+      array_utils::gather(src.varray, indices, dst.span);
       dst.finish();
     });
   }
@@ -825,7 +847,7 @@ void gather_attributes_group_to_group(const AttributeAccessor src_attributes,
       return;
     }
     const GVArraySpan src_span = src;
-    attribute_math::gather_group_to_group(src_offsets, dst_offsets, selection, src_span, dst.span);
+    array_utils::gather_group_to_group(src_offsets, dst_offsets, selection, src_span, dst.span);
     dst.finish();
   });
 }
@@ -860,7 +882,7 @@ void gather_attributes_to_groups(const AttributeAccessor src_attributes,
       return;
     }
     const GVArraySpan src_span = src;
-    attribute_math::gather_to_groups(dst_offsets, src_selection, src_span, dst.span);
+    array_utils::gather_to_groups(dst_offsets, src_selection, src_span, dst.span);
     dst.finish();
   });
 }

@@ -6,16 +6,17 @@
  * \ingroup geo
  */
 
-#include "BKE_attribute_math.hh"
 #include "BKE_curves.hh"
 #include "BKE_curves_utils.hh"
 
+#include "BLI_array_utils.hh"
 #include "BLI_math_rotation_legacy.hh"
 #include "BLI_task.hh"
 
 #include "GEO_fillet_curves.hh"
 
 #include <cfloat>
+#include <numbers>
 
 namespace blender::geometry {
 
@@ -32,10 +33,10 @@ static void duplicate_fillet_point_data(const OffsetIndices<int> src_points_by_c
         const IndexRange dst_points = dst_points_by_curve[curve_i];
         const IndexRange offsets_range = bke::curves::per_curve_point_offsets_range(src_points,
                                                                                     curve_i);
-        bke::attribute_math::gather_to_groups(all_point_offsets.slice(offsets_range),
-                                              IndexRange(src_points.size()),
-                                              src.slice(src_points),
-                                              dst.slice(dst_points));
+        array_utils::gather_to_groups(all_point_offsets.slice(offsets_range),
+                                      IndexRange(src_points.size()),
+                                      src.slice(src_points),
+                                      dst.slice(dst_points));
       },
       exec_mode::grain_size(512));
 }
@@ -101,6 +102,26 @@ static void calculate_angles(const Span<float3> directions, MutableSpan<float> a
   angles.first() = M_PI - angle_v3v3(-directions.last(), directions.first());
   for (const int i : directions.index_range().drop_front(1)) {
     angles[i] = M_PI - angle_v3v3(-directions[i - 1], directions[i]);
+  }
+}
+
+/**
+ * The result isn't well defined for a fully reversed direction (the arc would be infinitely far
+ * away) or when a neighboring segment has zero length. Use zero radius for those points so their
+ * fillet points stay at the original position.
+ */
+static void zero_degenerate_radii(const Span<float3> directions,
+                                  const Span<float> angles,
+                                  MutableSpan<float> radii)
+{
+  const int i_last = radii.index_range().last();
+  for (const int i : radii.index_range()) {
+    const int i_prev = i == 0 ? i_last : i - 1;
+    if (angles[i] >= std::numbers::pi_v<float> || math::is_zero(directions[i_prev]) ||
+        math::is_zero(directions[i]))
+    {
+      radii[i] = 0.0f;
+    }
   }
 }
 
@@ -494,10 +515,12 @@ static bke::CurvesGeometry fillet_curves(const bke::CurvesGeometry &src_curves,
           if (limit_radius) {
             input_radii_buffer.reinitialize(src_points.size());
             radius_input.materialize_compressed(src_points, input_radii_buffer);
+            zero_degenerate_radii(directions, angles, input_radii_buffer);
             limit_radii(src_positions, angles, input_radii_buffer, cyclic[curve_i], radii);
           }
           else {
             radius_input.materialize_compressed(src_points, radii);
+            zero_degenerate_radii(directions, angles, radii);
           }
 
           calculate_fillet_positions(positions.slice(src_points),

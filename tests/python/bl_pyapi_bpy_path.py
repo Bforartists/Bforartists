@@ -35,6 +35,50 @@ class TestBpyPath(unittest.TestCase):
         self.assertEqual(ensure_ext('demoBlend', 'blend', case_sensitive=True), 'demoBlendblend')
         self.assertEqual(ensure_ext('demo', '', case_sensitive=True), 'demo')
 
+    def test_abspath(self):
+        import os
+        from bpy.path import abspath
+
+        def assert_equal_abspath(path, start, expect):
+            # Test both strings and bytes.
+            self.assertEqual(abspath(path, start=start), expect)
+            self.assertEqual(abspath(path.encode(), start=start.encode()), expect.encode())
+
+        start = os.path.join(os.sep, "foo", "bar")
+
+        assert_equal_abspath("//a.png", start, os.path.join(start, "a.png"))
+
+        # Non-relative paths are left unchanged.
+        assert_equal_abspath("a.png", start, "a.png")
+
+        # Without a start directory the result stays relative.
+        assert_equal_abspath("//a.png", "", "a.png")
+
+        # Extra slashes after the `//` prefix must not make the path absolute.
+        assert_equal_abspath("///a.png", start, os.path.join(start, "a.png"))
+        assert_equal_abspath("////a.png", start, os.path.join(start, "a.png"))
+        assert_equal_abspath("///a.png", "", "a.png")
+        assert_equal_abspath("////a.png", "", "a.png")
+        assert_equal_abspath("///", "", "")
+
+    def test_template_escape(self):
+        from bpy.path import template_escape
+
+        self.assertEqual(template_escape(''), '')
+        self.assertEqual(template_escape('/a/b.blend'), '/a/b.blend')
+        self.assertEqual(template_escape('/a/{b}/c'), '/a/{{b}}/c')
+        self.assertEqual(template_escape('{{}}'), '{{{{}}}}')
+        self.assertEqual(template_escape(path='{b}'), '{{b}}')
+
+        # Non UTF8 paths (as returned by `os.fsdecode`) must round-trip.
+        self.assertEqual(template_escape('/a/\udcff{b}'), '/a/\udcff{{b}}')
+
+        # Should work with both strings and bytes.
+        self.assertEqual(template_escape(b''), b'')
+        self.assertEqual(template_escape(b'/a/{b}/c'), b'/a/{{b}}/c')
+        self.assertEqual(template_escape(b'/a/\xff{b}'), b'/a/\xff{{b}}')
+        self.assertEqual(template_escape(b'/a/\xff/b'), b'/a/\xff/b')
+
     def test_is_autoexec(self):
         import bpy
         from bpy.path import is_autoexec

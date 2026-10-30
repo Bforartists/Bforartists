@@ -79,8 +79,7 @@ class StringRefBase {
    * fit, it will be truncated while keeping it valid UTF8 (assuming the #StringRef itself is
    * valid UTF8).
    */
-  void copy_utf8_truncated(char *dst, int64_t dst_size) const;
-  template<size_t N> void copy_utf8_truncated(char (&dst)[N]) const;
+  void copy_utf8_truncated(MutableCStr dst) const;
 
   /**
    * Copy the string into a char array. The copied string will be null-terminated. If it does not
@@ -90,8 +89,7 @@ class StringRefBase {
    * this should be used for strings which are allowed to contain arbitrary
    * byte sequences without a known encoding such as file-paths.
    */
-  void copy_bytes_truncated(char *dst, int64_t dst_size) const;
-  template<size_t N> void copy_bytes_truncated(char (&dst)[N]) const;
+  void copy_bytes_truncated(MutableCStr dst) const;
 
   /**
    * Copy the string into a buffer. The buffer has to be one byte larger than the size of the
@@ -251,16 +249,6 @@ inline void StringRefBase::copy_unsafe(char *dst) const
     memcpy(dst, data_, size_t(size_));
   }
   dst[size_] = '\0';
-}
-
-template<size_t N> inline void StringRefBase::copy_utf8_truncated(char (&dst)[N]) const
-{
-  this->copy_utf8_truncated(dst, N);
-}
-
-template<size_t N> inline void StringRefBase::copy_bytes_truncated(char (&dst)[N]) const
-{
-  this->copy_bytes_truncated(dst, N);
 }
 
 /**
@@ -512,7 +500,7 @@ constexpr StringRefNull::StringRefNull(const char *str, const int64_t size)
 constexpr StringRefNull::StringRefNull(const char *str)
     : StringRefBase(str, int64_t(std::char_traits<char>::length(str)))
 {
-  BLI_assert(str != nullptr);
+  BLI_assert(data_ != nullptr);
   BLI_assert(data_[size_] == '\0');
 }
 

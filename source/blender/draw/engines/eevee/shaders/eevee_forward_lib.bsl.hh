@@ -54,7 +54,6 @@ void forward_lighting_eval(KernelGlobals &kg,
 
     ctx.P = sd.P;
     ctx.Ng = sd.Ng;
-    ctx.V = V;
     ctx.texel = frag_co;
     ctx.thickness = thickness;
 
@@ -110,7 +109,7 @@ void forward_lighting_eval(KernelGlobals &kg,
       /* Get average normal.  */
       for (uint i = 0u; i < 3; i++) [[unroll]] {
         if (srt.constants.light_closure_eval_count_reflect > i) [[static_branch]] {
-          ClosureUndetermined cl = sd.closure_get(pipe, uchar(i)).data;
+          ClosureUndetermined cl = sd.closure_get_resolved(pipe, uchar(i), 1.0f);
           average_N += cl.N * cl.weight();
         }
       }

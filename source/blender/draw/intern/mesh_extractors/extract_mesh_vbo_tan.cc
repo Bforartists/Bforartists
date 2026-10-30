@@ -79,7 +79,7 @@ static Array<Array<float4>> extract_tan_init_common(const MeshRenderData &mr,
     }
 
     char attr_name[32], attr_safe_name[GPU_MAX_SAFE_ATTR_NAME];
-    GPU_vertformat_safe_attr_name("orco", attr_safe_name, GPU_MAX_SAFE_ATTR_NAME);
+    GPU_vertformat_safe_attr_name("orco", attr_safe_name);
     SNPRINTF(attr_name, "t%s", attr_safe_name);
     GPU_vertformat_attr_add(format, attr_name, gpu_attr_type);
     GPU_vertformat_alias_add(format, "t");
@@ -92,7 +92,7 @@ static Array<Array<float4>> extract_tan_init_common(const MeshRenderData &mr,
   for (const StringRef name : tan_layers.as_span().take_front(MAX_MTFACE)) {
     if (tan_layers.contains(name)) {
       char attr_name[32], attr_safe_name[GPU_MAX_SAFE_ATTR_NAME];
-      GPU_vertformat_safe_attr_name(name, attr_safe_name, GPU_MAX_SAFE_ATTR_NAME);
+      GPU_vertformat_safe_attr_name(name, attr_safe_name);
       /* Tangent layer name. */
       SNPRINTF(attr_name, "t%s", attr_safe_name);
       GPU_vertformat_attr_add(format, attr_name, gpu_attr_type);
@@ -165,8 +165,9 @@ gpu::VertBufPtr extract_tangents(const MeshRenderData &mr,
     for (const int i : tangents.index_range()) {
       const Span<float4> layer_data = tangents[i];
       for (int corner = 0; corner < mr.corners_num; corner++) {
-        tan_data[vbo_index] = gpu::convert_normal<short4>(float3(layer_data[corner]));
-        tan_data[vbo_index].w = (layer_data[corner][3] > 0.0f) ? SHRT_MAX : SHRT_MIN;
+        short4 value = gpu::convert_normal<short4>(float3(layer_data[corner]));
+        value.w = (layer_data[corner][3] > 0.0f) ? SHRT_MAX : SHRT_MIN;
+        tan_data[vbo_index] = value;
         vbo_index++;
       }
     }
@@ -178,8 +179,9 @@ gpu::VertBufPtr extract_tangents(const MeshRenderData &mr,
     for (const int i : tangents.index_range()) {
       const Span<float4> layer_data = tangents[i];
       for (int corner = 0; corner < mr.corners_num; corner++) {
-        tan_data[vbo_index] = gpu::convert_normal<int1010102_norm>(float3(layer_data[corner]));
-        tan_data[vbo_index].w = (layer_data[corner][3] > 0.0f) ? 1 : -2;
+        int1010102_norm value = gpu::convert_normal<int1010102_norm>(float3(layer_data[corner]));
+        value.w = (layer_data[corner][3] > 0.0f) ? 1 : -2;
+        tan_data[vbo_index] = value;
         vbo_index++;
       }
     }

@@ -12,7 +12,7 @@
 #include "ANIM_bone_collections.hh"
 
 /* Define macros in `DNA_genfile.h`. */
-#define DNA_GENFILE_VERSIONING_MACROS
+#define DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "DNA_camera_types.h"
 #include "DNA_genfile.h"
@@ -25,7 +25,7 @@
 #include "DNA_sequence_types.h"
 #include "DNA_world_types.h"
 
-#undef DNA_GENFILE_VERSIONING_MACROS
+#undef DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "RNA_path.hh"
 
@@ -247,7 +247,7 @@ static void version_principled_bsdf_update_animdata(Main *bmain, bNodeTree *ntre
     }
 
     char node_name_escaped[MAX_NAME * 2];
-    BLI_str_escape(node_name_escaped, node.name, sizeof(node_name_escaped));
+    BLI_str_escape(node_name_escaped, node.name);
     std::string prefix = "nodes[\"" + std::string(node_name_escaped) + "\"].inputs";
 
     /* Remove animdata for inputs 18 (Transmission Roughness) and 3 (Subsurface Color). */

@@ -41,6 +41,7 @@
 #include "GPU_shader_shared.hh"
 #include "GPU_state.hh"
 #include "GPU_uniform_buffer.hh"
+#include "GPU_viewport.hh"
 
 #include "DRW_engine.hh"
 
@@ -1749,6 +1750,12 @@ void draw_nodespace_back_pix(const bContext &C,
   Main *bmain = CTX_data_main(&C);
   bNodeInstanceKey active_viewer_key = (snode.nodetree ? snode.nodetree->active_viewer_key :
                                                          bke::NODE_INSTANCE_KEY_NONE);
+
+  /* Only the backdrop is color managed, which the draw manager enables when drawing it. */
+  if (GPUViewport *viewport = WM_draw_region_get_bound_viewport(&region)) {
+    GPU_viewport_colorspace_clear(viewport);
+  }
+
   GPU_matrix_push_projection();
   GPU_matrix_push();
   wmOrtho2_region_pixelspace(&region);
@@ -2045,7 +2052,7 @@ void node_draw_nodesocket(const rctf *rect,
 #define ARROW_SIZE (7 * UI_SCALE_FAC)
 
 /* Reroute arrow shape and mute bar. These are expanded here and shrunk in the GLSL code.
- * See: `gpu_shader_2D_nodelink.bsl.hh`. */
+ * See: `gpu_shader_nodelink.bsl.hh`. */
 static float arrow_verts[3][2] = {{-1.0f, 1.0f}, {0.0f, 0.0f}, {-1.0f, -1.0f}};
 static float arrow_expand_axis[3][2] = {{0.7071f, 0.7071f}, {M_SQRT2, 0.0f}, {0.7071f, -0.7071f}};
 static float mute_verts[3][2] = {{0.7071f, 1.0f}, {0.7071f, 0.0f}, {0.7071f, -1.0f}};
@@ -2200,7 +2207,14 @@ static void nodelink_batch_draw(const SpaceNode &snode)
   ui::theme::get_color_4fv(TH_ACTIVE, node_link_data.colors[nodelink_get_color_id(TH_ACTIVE)]);
   ui::theme::get_color_4fv(TH_EDGE_SELECT,
                            node_link_data.colors[nodelink_get_color_id(TH_EDGE_SELECT)]);
-  ui::theme::get_color_4fv(TH_REDALERT, node_link_data.colors[nodelink_get_color_id(TH_REDALERT)]);
+
+  /* Ensure alert wires are visible regardless of alert's alpha. */
+  float alert_color[4];
+  ui::theme::get_color_4fv(TH_REDALERT, alert_color);
+  alert_color[3] = std::min(alert_color[3] + 0.6f, 0.8f);
+  ui::theme::get_color_blend_3f(TH_WIRE_INNER, TH_REDALERT, alert_color[3], alert_color);
+  copy_v4_v4(node_link_data.colors[nodelink_get_color_id(TH_REDALERT)], alert_color);
+
   node_link_data.aspect = snode.runtime->aspect;
   node_link_data.arrow_size = ARROW_SIZE;
 
@@ -2420,6 +2434,8 @@ static NodeLinkDrawConfig nodelink_get_draw_config(const bContext &C,
     ui::theme::get_color_4fv(th_col1, draw_config.start_color);
     ui::theme::get_color_4fv(th_col2, draw_config.end_color);
   }
+
+  draw_config.outline_color.a = 1.0f;
 
   /* Highlight links connected to selected nodes. */
   if (selected) {
