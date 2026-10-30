@@ -194,13 +194,9 @@ static void node_init(bNodeTree * /*tree*/, bNode *node)
   node->storage = data;
 }
 
-static void node_label(const bNodeTree * /*ntree*/,
-                       const bNode * /*node*/,
-                       char *label,
-                       const int label_maxncpy)
+static void node_label(const bNodeTree * /*ntree*/, const bNode * /*node*/, MutableCStr label)
 {
-  BLI_strncpy_utf8(
-      label, CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "For Each Element"), label_maxncpy);
+  STRNCPY_UTF8(label, CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "For Each Element"));
 }
 
 static bool node_insert_link(bke::NodeInsertLinkParams &params)
@@ -221,6 +217,7 @@ static void node_register()
                      "GeometryNodeForeachGeometryElementInput"_ustr,
                      GEO_NODE_FOREACH_GEOMETRY_ELEMENT_INPUT);
   ntype.ui_name = "For Each Geometry Element Input";
+  ntype.ui_description = "Input data for the for each geometry element zone";
   ntype.enum_name_legacy = "FOREACH_GEOMETRY_ELEMENT_INPUT";
   ntype.nclass = NODE_CLASS_INTERFACE;
   ntype.initfunc = node_init;
@@ -464,6 +461,7 @@ static void node_register()
                      "GeometryNodeForeachGeometryElementOutput"_ustr,
                      GEO_NODE_FOREACH_GEOMETRY_ELEMENT_OUTPUT);
   ntype.ui_name = "For Each Geometry Element Output";
+  ntype.ui_description = "Output data from the for each geometry element zone";
   ntype.enum_name_legacy = "FOREACH_GEOMETRY_ELEMENT_OUTPUT";
   ntype.nclass = NODE_CLASS_INTERFACE;
   ntype.initfunc = node_init;

@@ -169,6 +169,12 @@ static Vector<StringRefNull> missing_capabilities_get(VkPhysicalDevice vk_physic
   if (!extensions.contains(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)) {
     missing_capabilities.append(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
   }
+  if (!extensions.contains(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME)) {
+    missing_capabilities.append(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
+  }
+  if (!extensions.contains(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME)) {
+    missing_capabilities.append(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME);
+  }
   if (!extensions.contains(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME)) {
     missing_capabilities.append(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME);
   }
@@ -484,7 +490,7 @@ void VKBackend::platform_init(const VKDevice &device)
   GPG.device_uuid = Array<uint8_t, 16>(Span<uint8_t>(id_properties.deviceUUID, VK_UUID_SIZE));
 
   if (id_properties.deviceLUIDValid) {
-    GPG.device_luid = Array<uint8_t, 8>(Span<uint8_t>(id_properties.deviceUUID, VK_LUID_SIZE));
+    GPG.device_luid = Array<uint8_t, 8>(Span<uint8_t>(id_properties.deviceLUID, VK_LUID_SIZE));
     GPG.device_luid_node_mask = id_properties.deviceNodeMask;
   }
   else {
@@ -819,20 +825,27 @@ BottomLevelAS *VKBackend::blas_alloc(const char *name)
   return new VKBottomLevelAS(name);
 }
 
+/**
+ * The current rendering depth of this thread.
+ *
+ * GPU_rendering_begin can be called multiple times forming a hierarchy. rendering_depth is
+ * increased for every GPU_rendering_begin and decreased when GPU_rendering_end is called.
+ * Discarded resources are released when rendering_depth is set to 0.
+ */
+static thread_local int32_t rendering_depth = 0;
+
 void VKBackend::render_begin()
 {
-  VKThreadData &thread_data = device.current_thread_data();
-  BLI_assert_msg(thread_data.rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
-  thread_data.rendering_depth += 1;
+  BLI_assert_msg(rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
+  rendering_depth += 1;
 }
 
 void VKBackend::render_end()
 {
-  VKThreadData &thread_data = device.current_thread_data();
-  thread_data.rendering_depth -= 1;
-  BLI_assert_msg(thread_data.rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
+  rendering_depth -= 1;
+  BLI_assert_msg(rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
   if (G.background) {
-    if (thread_data.rendering_depth == 0) {
+    if (rendering_depth == 0) {
       VKContext *context = VKContext::get();
       if (context != nullptr) {
         context->flush();
@@ -846,7 +859,7 @@ void VKBackend::render_end()
   /* When performing animation render we want to release any discarded resources during rendering
    * after each frame.
    */
-  if (G.is_rendering && thread_data.rendering_depth == 0 && !BLI_thread_is_main()) {
+  if (G.is_rendering && rendering_depth == 0 && !BLI_thread_is_main()) {
     std::scoped_lock lock(device.orphaned_data.mutex_get());
     device.orphaned_data.move_data(device.orphaned_data_render,
                                    device.orphaned_data.timeline_ + 1);
@@ -879,6 +892,9 @@ void VKBackend::capabilities_init(VKDevice &device)
       device.physical_device_acceleration_structure_properties_get().maxGeometryCount > 0 &&
       device.physical_device_acceleration_structure_properties_get().maxPrimitiveCount > 0 &&
       device.physical_device_acceleration_structure_properties_get().maxInstanceCount > 0;
+  if (G.debug & G_DEBUG_GPU_NO_HW_RAYTRACING) {
+    GCaps.ray_query_support = false;
+  }
 
   GCaps.multi_viewport_support = device.physical_device_features_get().multiViewport &&
                                  limits.maxViewports >= GPU_MAX_VIEWPORTS;
@@ -897,7 +913,8 @@ void VKBackend::capabilities_init(VKDevice &device)
   }
   GCaps.max_uniforms_vert = GCaps.max_uniforms_frag = min_uu(
       limits.maxPerStageDescriptorUniformBuffers, INT_MAX);
-  GCaps.max_batch_indices = min_uu(limits.maxDrawIndirectCount, INT_MAX);
+  /* Vulkan has no limit on the number of indices in a single draw call. */
+  GCaps.max_batch_indices = INT_MAX;
   GCaps.max_batch_vertices = min_uu(limits.maxDrawIndexedIndexValue, INT_MAX);
   GCaps.max_vertex_attribs = min_uu(limits.maxVertexInputAttributes, INT_MAX);
   GCaps.max_varying_floats = min_uu(limits.maxVertexOutputComponents, INT_MAX);

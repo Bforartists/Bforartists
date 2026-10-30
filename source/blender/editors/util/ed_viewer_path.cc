@@ -119,13 +119,13 @@ static void viewer_path_for_geometry_node(const SpaceNode &snode,
   BKE_viewer_path_init(&r_dst);
 
   bke::ComputeContextCache compute_context_cache;
-  const ComputeContext *socket_context = space_node::compute_context_for_edittree_socket(
-      snode, compute_context_cache, node.input_socket(0));
-  if (!socket_context) {
+  const ComputeContext *node_context = space_node::compute_context_for_edittree_node(
+      snode, compute_context_cache, node);
+  if (!node_context) {
     return;
   }
 
-  for (const ComputeContext *context = socket_context; context; context = context->parent()) {
+  for (const ComputeContext *context = node_context; context; context = context->parent()) {
     ViewerPathElem *elem = viewer_path_elem_for_compute_context(*context);
     if (!elem) {
       BKE_viewer_path_clear(&r_dst);
@@ -304,6 +304,9 @@ bool exists_geometry_nodes_viewer(const ViewerPathForGeometryNodesViewer &parsed
   for (const ViewerPathElem *path_elem : parsed_viewer_path.node_path) {
     ngroup->ensure_topology_cache();
     const bNodeTreeZones *tree_zones = ngroup->zones();
+    if (!tree_zones) {
+      return false;
+    }
     switch (path_elem->type) {
       case VIEWER_PATH_ELEM_TYPE_SIMULATION_ZONE: {
         const auto &typed_elem = *reinterpret_cast<const SimulationZoneViewerPathElem *>(
@@ -458,6 +461,9 @@ UpdateActiveGeometryNodesViewerResult update_active_geometry_nodes_viewer(const 
         snode.edittree->ensure_topology_cache();
         const bNode *viewer_node = snode.edittree->node_by_id(viewer_node_id);
         if (viewer_node == nullptr) {
+          continue;
+        }
+        if (viewer_node->type_legacy != GEO_NODE_VIEWER) {
           continue;
         }
         if (!(viewer_node->flag & NODE_DO_OUTPUT)) {

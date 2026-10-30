@@ -452,8 +452,17 @@ class TOPBAR_MT_file_project(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("project.new_project", text="New Project...", icon='ADD')
-        layout.operator("project.open_blend_in_project", icon='FILE_FOLDER')
+        layout.operator("project.new", text="New...", icon='ADD')
+        layout.operator("project.open", text="Open...", icon='FILE_FOLDER')
+        layout.operator("project.close", text="Close")
+
+        layout.separator()
+
+        if layout.template_recent_projects(rows=10):
+            layout.separator()
+            layout.operator("wm.clear_recent_projects", text="Clear Recent Projects List...", icon='TRASH')
+        else:
+            layout.label(text="No Recent Projects")
 
 
 # Include technical operators here which would otherwise have no way for users to access.
@@ -492,6 +501,7 @@ class TOPBAR_MT_file_import(Menu):
             self.layout.operator(
                 "wm.alembic_import",
                 text=FileHandler.label_with_extensions("IO_FH_alembic"),
+                translate=False,
                 icon="LOAD_ABC",
             )
 
@@ -499,6 +509,7 @@ class TOPBAR_MT_file_import(Menu):
             self.layout.operator(
                 "wm.usd_import",
                 text=FileHandler.label_with_extensions("IO_FH_usd"),
+                translate=False,
                 icon="LOAD_USD",
             )
 
@@ -506,13 +517,16 @@ class TOPBAR_MT_file_import(Menu):
             self.layout.operator(
                 "wm.grease_pencil_import_svg",
                 text=FileHandler.label_with_extensions("IO_FH_grease_pencil_svg"),
+                translate=False,
                 icon="LOAD_SVG_GPENCIL",
             )
 
+        # BFA - FBX kept above OBJ, the order Bforartists uses
         if bpy.app.build_options.io_fbx:
             self.layout.operator(
                 "wm.fbx_import",
                 text=FileHandler.label_with_extensions("IO_FH_fbx"),
+                translate=False,
                 icon="LOAD_FBX",
             )
 
@@ -520,26 +534,39 @@ class TOPBAR_MT_file_import(Menu):
             self.layout.operator(
                 "wm.obj_import",
                 text=FileHandler.label_with_extensions("IO_FH_obj"),
+                translate=False,
                 icon="LOAD_OBJ",
             )
         if bpy.app.build_options.io_spz:
-            self.layout.operator("wm.spz_import", text=FileHandler.label_with_extensions("IO_FH_spz"), icon="LOAD_SPZ") # BFA - Icon Added
+            self.layout.operator(
+                "wm.spz_import",
+                text=FileHandler.label_with_extensions("IO_FH_spz"),
+                translate=False,
+                icon="LOAD_SPZ",  # BFA - Icon Added
+            )
 
         if bpy.app.build_options.io_ply:
             self.layout.operator(
                 "wm.ply_import",
                 text=FileHandler.label_with_extensions("IO_FH_ply"),
+                translate=False,
                 icon="LOAD_PLY",
             )
         if bpy.app.build_options.io_stl:
             self.layout.operator(
                 "wm.stl_import",
                 text=FileHandler.label_with_extensions("IO_FH_stl"),
+                translate=False,
                 icon="LOAD_STL",
             )
 
         if bpy.app.build_options.opentimelineio:
-            self.layout.operator("wm.otio_import", text="OpenTimelineIO (.otio)", icon="LOAD_OTIO") # BFA - Icon Added
+            self.layout.operator(
+                "wm.otio_import",
+                text=FileHandler.label_with_extensions("IO_FH_otio"),
+                translate=False,
+                icon="LOAD_OTIO",  # BFA - Icon Added
+            )
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -560,12 +587,14 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator(
                 "wm.alembic_export",
                 text=FileHandler.label_with_extensions("IO_FH_alembic"),
+                translate=False,
                 icon="SAVE_ABC",
             )
         if bpy.app.build_options.usd:
             self.layout.operator(
                 "wm.usd_export",
                 text=FileHandler.label_with_extensions("IO_FH_usd"),
+                translate=False,
                 icon="SAVE_USD",
             )
 
@@ -593,19 +622,30 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator(
                 "wm.obj_export",
                 text=FileHandler.label_with_extensions("IO_FH_obj"),
+                translate=False,
                 icon="SAVE_OBJ",
             )
         if bpy.app.build_options.io_ply:
             self.layout.operator(
                 "wm.ply_export",
                 text=FileHandler.label_with_extensions("IO_FH_ply"),
+                translate=False,
                 icon="SAVE_PLY",
             )
         if bpy.app.build_options.io_stl:
             self.layout.operator(
-                "wm.stl_export", text=FileHandler.label_with_extensions("IO_FH_stl"), icon="SAVE_STL")
+                "wm.stl_export",
+                text=FileHandler.label_with_extensions("IO_FH_stl"),
+                translate=False,
+                icon="SAVE_STL",
+            )
         if bpy.app.build_options.opentimelineio:
-            self.layout.operator("wm.otio_export", text="OpenTimelineIO (.otio)", icon="SAVE_OTIO") # BFA - Icon Added
+            self.layout.operator(
+                "wm.otio_export",
+                text=FileHandler.label_with_extensions("IO_FH_otio"),
+                translate=False,
+                icon="SAVE_OTIO",  # BFA - Icon Added
+            )
 
 
 class TOPBAR_MT_file_external_data(Menu):
@@ -851,11 +891,12 @@ class TOPBAR_MT_edit_no_prefsfolder(bpy.types.Operator):
 
 class TOPBAR_MT_project(Menu):
     bl_label = "Project"
+    bl_translation_context = i18n_contexts.editor_preferences
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("screen.project_setup_show", text="Settings...", icon='PREFERENCES')
+        layout.operator("screen.project_settings_show", text="Settings...", icon='PREFERENCES')
 
 
 class TOPBAR_MT_window(Menu):
@@ -987,6 +1028,11 @@ class TOPBAR_MT_workspace_menu(Menu):
         layout.separator()
 
         layout.operator("workspace.reorder_to_front", text="Reorder to Front", icon="TRIA_LEFT_BAR")
+        layout.operator("workspace.reorder_to_left_right", text="Reorder to Left", icon="TRIA_LEFT").direction = "LEFT"
+        layout.operator(
+            "workspace.reorder_to_left_right",
+            text="Reorder to Right",
+            icon="TRIA_RIGHT").direction = "RIGHT"
         layout.operator("workspace.reorder_to_back", text="Reorder to Back", icon="TRIA_RIGHT_BAR")
 
         layout.separator()

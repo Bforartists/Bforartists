@@ -65,20 +65,22 @@ static void draw_background(const rcti *rect)
   immUnbindProgram();
 }
 
-static void get_current_time_str(
-    const Scene *scene, bool display_seconds, const float frame, char *r_str, uint str_maxncpy)
+void ED_time_scrub_frame_str_get(const Scene *scene,
+                                 bool display_seconds,
+                                 const float frame,
+                                 MutableCStr r_str)
 {
   if (display_seconds) {
     const float frame_len = scene->r.framelen > 0 ? scene->r.framelen : 1.0;
     const float seconds = (frame / float(scene->frames_per_second())) / frame_len;
     BLI_timecode_string_from_time(
-        r_str, str_maxncpy, -1, seconds, scene->frames_per_second(), U.timecode_style);
+        r_str, -1, seconds, scene->frames_per_second(), U.timecode_style);
   }
   else if (scene->r.flag & SCER_SHOW_SUBFRAME) {
-    BLI_snprintf_utf8(r_str, str_maxncpy, "%.02f", frame);
+    SNPRINTF_UTF8(r_str, "%.02f", frame);
   }
   else {
-    BLI_snprintf_utf8(r_str, str_maxncpy, "%d", int(frame));
+    SNPRINTF_UTF8(r_str, "%d", int(frame));
   }
 }
 
@@ -104,7 +106,7 @@ static PlayheadDimensions get_playhead_dimensions(const Scene *scene,
   PlayheadDimensions dimensions;
   constexpr int max_frame_string_len = 64;
   char frame_str[max_frame_string_len];
-  get_current_time_str(scene, display_seconds, current_frame, frame_str, max_frame_string_len);
+  ED_time_scrub_frame_str_get(scene, display_seconds, current_frame, frame_str);
 
   /* Forcing the outline width to always be a full pixel solves alignment issues between
    * the tip, the box and the stalk. */
@@ -247,7 +249,7 @@ static void draw_playhead_ghost(const float frame,
 
   constexpr int max_frame_string_len = 64;
   char frame_str[max_frame_string_len];
-  get_current_time_str(scene, display_seconds, frame, frame_str, max_frame_string_len);
+  ED_time_scrub_frame_str_get(scene, display_seconds, frame, frame_str);
   draw_playhead_box(region_x, frame_str, scrub_region_rect, dimensions, fg_color, bg_color);
 
   if (display_stalk) {
@@ -267,15 +269,23 @@ static void draw_current_frame(const Scene *scene,
 
   constexpr int max_frame_string_len = 64;
   char frame_str[max_frame_string_len];
-  get_current_time_str(scene, display_seconds, current_frame, frame_str, max_frame_string_len);
+  ED_time_scrub_frame_str_get(scene, display_seconds, current_frame, frame_str);
 
   PlayheadDimensions dimensions = get_playhead_dimensions(
       scene, scrub_region_rect, current_frame, display_seconds, region_x);
 
   if (clamp_playhead) {
-    region_x = math::clamp(region_x,
-                           scrub_region_rect->xmin + dimensions.text_width / 2.0f,
-                           scrub_region_rect->xmax - dimensions.text_width / 2.0f);
+    const float bound_left = scrub_region_rect->xmin + dimensions.text_width / 2.0f;
+    const float bound_right = scrub_region_rect->xmax - dimensions.text_width / 2.0f;
+
+    if (bound_left > bound_right) {
+      /* When the available space is smaller than the width of the playhead,
+       * align the label so its right edge sits flush with the region's edge. */
+      region_x = bound_right;
+    }
+    else {
+      region_x = math::clamp(region_x, bound_left, bound_right);
+    }
 
     dimensions = get_playhead_dimensions(
         scene, scrub_region_rect, current_frame, display_seconds, region_x);

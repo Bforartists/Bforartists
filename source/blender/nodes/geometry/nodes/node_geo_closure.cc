@@ -108,12 +108,9 @@ static void node_declare(NodeDeclarationBuilder &b)
       .custom_draw(socket_items::ui::draw_extend_socket_fn<ClosureInputItemsAccessor>());
 }
 
-static void node_label(const bNodeTree * /*ntree*/,
-                       const bNode * /*node*/,
-                       char *label,
-                       const int label_maxncpy)
+static void node_label(const bNodeTree * /*ntree*/, const bNode * /*node*/, MutableCStr label)
 {
-  BLI_strncpy_utf8(label, CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "Closure"), label_maxncpy);
+  STRNCPY_UTF8(label, CTX_IFACE_(BLT_I18NCONTEXT_ID_NODETREE, "Closure"));
 }
 
 static void node_init(bNodeTree * /*tree*/, bNode *node)
@@ -135,8 +132,9 @@ static bool node_insert_link(bke::NodeInsertLinkParams &params)
 static void node_register()
 {
   static bke::bNodeType ntype;
-  sh_geo_node_type_base(&ntype, "NodeClosureInput"_ustr, NODE_CLOSURE_INPUT);
+  common_node_type_base(&ntype, "NodeClosureInput"_ustr, NODE_CLOSURE_INPUT);
   ntype.ui_name = "Closure Input";
+  ntype.ui_description = "Input data for the closure zone";
   ntype.nclass = NODE_CLASS_INTERFACE;
   ntype.declare = node_declare;
   ntype.gather_link_search_ops = nullptr;
@@ -271,8 +269,9 @@ static void node_blend_read(bNodeTree & /*tree*/, bNode &node, BlendDataReader &
 static void node_register()
 {
   static bke::bNodeType ntype;
-  sh_geo_node_type_base(&ntype, "NodeClosureOutput"_ustr, NODE_CLOSURE_OUTPUT);
+  common_node_type_base(&ntype, "NodeClosureOutput"_ustr, NODE_CLOSURE_OUTPUT);
   ntype.ui_name = "Closure Output";
+  ntype.ui_description = "Output data from the closure zone";
   ntype.nclass = NODE_CLASS_INTERFACE;
   ntype.declare = node_declare;
   ntype.initfunc = node_init;

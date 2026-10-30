@@ -2397,6 +2397,78 @@ class WM_OT_tool_set_by_id(Operator):
             return {'CANCELLED'}
 
 
+class WM_OT_tool_set_by_id_hold(Operator):
+    """Set the tool by name while the key is held, restoring the previous tool on release (for key-maps)"""
+    bl_idname = "wm.tool_set_by_id_hold"
+    bl_label = "Set Tool by Name (Hold)"
+
+    # Only kept for identity, never inspect it's contents.
+    _active_operator = None
+
+    name: StringProperty(
+        name="Identifier",
+        description="Identifier of the tool",
+    )
+
+    space_type: rna_space_type_prop
+
+    def _active_tool_restore(self, context):
+        from bl_ui.space_toolsystem_common import activate_by_id
+        if self._tool_prev_idname:
+            activate_by_id(context, self._space_type, self._tool_prev_idname)
+        # Harmless but better not keep a dangling reference.
+        WM_OT_tool_set_by_id_hold._active_operator = None
+
+    def invoke(self, context, event):
+        from bl_ui.space_toolsystem_common import (
+            ToolSelectPanelHelper,
+            activate_by_id,
+        )
+
+        if (space_type := WM_OT_tool_set_by_id.space_type_from_operator(self, context)) is None:
+            return {'CANCELLED'}
+
+        if (
+                (op_other := context.window.modal_operators.get(self.bl_idname)) and
+                (op_other._space_type == space_type)
+        ):
+            tool_prev_idname = op_other._tool_prev_idname
+        else:
+            # Should always be set, nevertheless, if in some rare case it's not,
+            # that shouldn't prevent the tool from being activated.
+            tool_prev = ToolSelectPanelHelper.tool_active_from_context(context, space_type)
+            tool_prev_idname = "" if tool_prev is None else tool_prev.idname
+
+        if not activate_by_id(context, space_type, self.name):
+            self.report({'WARNING'}, rpt_("Tool {!r} not found for space {!r}").format(self.name, space_type))
+            return {'CANCELLED'}
+
+        self._space_type = space_type
+        self._tool_prev_idname = tool_prev_idname
+        self._event_type = event.type
+
+        WM_OT_tool_set_by_id_hold._active_operator = self
+
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
+
+    def cancel(self, context):
+        if WM_OT_tool_set_by_id_hold._active_operator is not self:
+            return
+        self._active_tool_restore(context)
+
+    def modal(self, context, event):
+        # Another operator took over.
+        if WM_OT_tool_set_by_id_hold._active_operator is not self:
+            return {'FINISHED', 'PASS_THROUGH'}
+
+        if event.type == self._event_type and event.value == 'RELEASE':
+            self._active_tool_restore(context)
+            return {'FINISHED'}
+
+        return {'PASS_THROUGH'}
+
+
 class WM_OT_tool_set_by_index(Operator):
     """Set the tool by index (for key-maps)"""
     bl_idname = "wm.tool_set_by_index"
@@ -3472,6 +3544,24 @@ class WM_MT_splash_quick_setup(Menu):
 
         layout.separator()  #BFA - added to first use
 
+class WM_MT_splash_project(Menu):
+    bl_label = "Project"
+    bl_translation_context = i18n_contexts.editor_preferences
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_DEFAULT'
+
+        have_recent = layout.template_recent_projects(rows=10)
+        if have_recent:
+            layout.separator()
+
+        layout.operator("project.new", text="New Project...", icon='ADD')
+        layout.operator("project.open", text="Open...", icon='FILE_FOLDER')
+        if bpy.data.project is not None:
+            layout.operator("project.close", text="Close")
+
+
 class WM_MT_splash(Menu):
     bl_label = "Splash"
 
@@ -3492,11 +3582,21 @@ class WM_MT_splash(Menu):
         col2 = split.column()
         col2_title = col2.row()
 
-        found_recent = col2.template_recent_files(rows=6)
+        # Show project files if a project is active, but also other recent files
+        # if there is more space available.
+        recent_rows = 6  # BFA - 6 recent files on the bigger splash (#6749), Blender uses 5
+        found_project = col2.template_recent_files(rows=recent_rows,
+                                                   filter='PROJECT', project_ratio=1.0)
+        col2_other_title = col2.row()
+        other_rows = recent_rows - 1 if found_project else recent_rows
+        found_other = col2.template_recent_files(rows=other_rows,
+                                                 filter='OTHER', project_ratio=1.0)
+        found_recent = found_project + found_other
 
         if found_recent:
-            col2_title.label(text="Recent Files")
-
+            col2_title.label(text="Project Files" if found_project else "Recent Files")
+            if found_project and found_other:
+                col2_other_title.label(text="Other Recent Files")
             col_more = col2.column()
             col_more.operator_context = 'INVOKE_DEFAULT'
             more_props = col_more.operator("wm.search_single_menu", text="More...", icon='VIEWZOOM')
@@ -3883,6 +3983,7 @@ classes = (
     WM_OT_url_open,
     WM_OT_url_open_preset,
     WM_OT_tool_set_by_id,
+    WM_OT_tool_set_by_id_hold,
     WM_OT_tool_set_by_index,
     WM_OT_tool_set_by_brush_type,
     WM_OT_toolbar,
@@ -3891,6 +3992,7 @@ classes = (
     BatchRenameAction,
     WM_OT_batch_rename,
     WM_MT_splash_quick_setup,
+    WM_MT_splash_project,
     WM_MT_splash,
     WM_MT_splash_about,
     WM_MT_region_toggle_pie,

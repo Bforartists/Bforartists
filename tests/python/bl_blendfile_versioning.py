@@ -54,10 +54,25 @@ class TestBlendFileOpenLinkSaveAllTestFiles(TestHelper):
             # opengl/ram_glsl.blend
             # Error: Not freed memory blocks: 4, total unfreed memory 0.000427 MB
             "ram_glsl.blend",
+
+            # invalid_blendfiles/invalid_pointcache_totpoint_overflow.blend
+            # Allocates a lot of memory due to invalid file, causing test failures.
+            # on Windows ARM64 CI.
+            "invalid_pointcache_totpoint_overflow.blend",
         }
 
         # Directories to exclude relative to `./tests/files/`.
         self.excluded_open_link_dirs = ()
+
+        # Some files are known broken currently for linking and appending only.
+        self.excluded_link_append_paths = {
+            # invalid_blendfiles/invalid_struct_size_boid_rule.blend
+            # invalid_blendfiles/invalid_struct_size_modifier.blend
+            # Linking from a library that fails to read leaves data-blocks with unresolved pointers
+            # in the main database (crash).
+            "invalid_struct_size_boid_rule.blend",
+            "invalid_struct_size_modifier.blend",
+        }
 
         # Some files are known broken currently on re-saving & re-opening.
         # Each file in this list should either be the source of a bug report,
@@ -115,6 +130,11 @@ class TestBlendFileOpenLinkSaveAllTestFiles(TestHelper):
             # physics/fluidsim.blend
             # Error: Not freed memory blocks: 3, total unfreed memory 0.003548 MB
             "fluidsim.blend",
+
+            # invalid_blendfiles/invalid_pointcache_totpoint_overflow.blend
+            # Allocates a lot of memory due to invalid file, causing test failures.
+            # on Windows ARM64 CI.
+            "invalid_pointcache_totpoint_overflow.blend",
         }
 
         # Directories to exclude relative to `./tests/files/`.
@@ -330,6 +350,152 @@ class TestBlendFileOpenLinkSaveAllTestFiles(TestHelper):
                 (OSError, RuntimeError),
                 "Corrupt .blend file, invalid block struct index"
             ),
+            # invalid_blendfiles/invalid_node_tree_failed_read.blend
+            # A block after a node tree references an out-of-range SDNA struct index.
+            "invalid_node_tree_failed_read.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, invalid block struct index"
+            ),
+            # invalid_blendfiles/invalid_glob_short.blend
+            # The global block is shorter than its sub-version string.
+            "invalid_glob_short.blend": (
+                (OSError, RuntimeError),
+                "is corrupt, unable to read"
+            ),
+            # invalid_blendfiles/invalid_id_short.blend
+            # An ID block is too short for the ID name.
+            "invalid_id_short.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, invalid block count"
+            ),
+            # invalid_blendfiles/invalid_id_small.blend
+            # An ID block is smaller than its struct.
+            "invalid_id_small.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, invalid block count"
+            ),
+            # invalid_blendfiles/invalid_struct_count_zero.blend
+            # A block has zero struct count.
+            "invalid_struct_count_zero.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, invalid block count"
+            ),
+            # invalid_blendfiles/invalid_glob_small.blend
+            # The global block has a struct type smaller than FileGlobal.
+            "invalid_glob_small.blend": (
+                (OSError, RuntimeError),
+                "is corrupt, unable to read"
+            ),
+            # invalid_blendfiles/invalid_id_struct_type.blend
+            # An ID block has a struct type smaller than its ID type.
+            "invalid_id_struct_type.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, block too small for its type"
+            ),
+            # invalid_blendfiles/invalid_library_id_type.blend
+            # A library block has the ID name of a larger type.
+            "invalid_library_id_type.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, block too small for its type"
+            ),
+            # invalid_blendfiles/invalid_library_missing.blend
+            # Link placeholders without a library block.
+            "invalid_library_missing.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, missing library"
+            ),
+            # invalid_blendfiles/invalid_library_as_text.blend
+            # Link placeholders after a library block renamed to a text.
+            "invalid_library_as_text.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, missing library"
+            ),
+            # invalid_blendfiles/invalid_library_filepath_unterminated.blend
+            # Library filepath without null terminator.
+            "invalid_library_filepath_unterminated.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, invalid library file path"
+            ),
+            # invalid_blendfiles/invalid_library_filepath_unterminated_listing.blend
+            # Library filepath overwriting the library flags, marking it as archive library.
+            "invalid_library_filepath_unterminated_listing.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, invalid library file path"
+            ),
+            # invalid_blendfiles/invalid_preview_rect_short.blend
+            # A preview pixel block smaller than the preview size.
+            "invalid_preview_rect_short.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, array size exceeds allocated size"
+            ),
+            # invalid_blendfiles/invalid_struct_size_*.blend
+            # A block with a type member is too small for the struct of its type.
+            "invalid_struct_size_boid_rule.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_grease_pencil_drawing.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_grease_pencil_layer.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_linestyle_modifier.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_modifier.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_node_interface_socket.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_shader_fx.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_space.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            "invalid_struct_size_strip_modifier.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, unexpected data size"
+            ),
+            # invalid_blendfiles/invalid_area_space_type.blend
+            # An area space type that does not match its active space data.
+            "invalid_area_space_type.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, mismatched area space type"
+            ),
+            # invalid_blendfiles/invalid_screen_edge_vertex.blend
+            # A screen edge without second vertex.
+            "invalid_screen_edge_vertex.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, failed to read a data-block"
+            ),
+            # invalid_blendfiles/invalid_window_area_edge_vertex.blend
+            # A window global area edge without second vertex.
+            "invalid_window_area_edge_vertex.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, failed to read window areas"
+            ),
+            # invalid_blendfiles/invalid_node_tree_interface_root_panel.blend
+            # A node tree interface root panel with socket type.
+            "invalid_node_tree_interface_root_panel.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, invalid node tree interface"
+            ),
+            # invalid_blendfiles/invalid_screen_failed_read_id_property.blend
+            # A screen failing to read, with an ID custom property.
+            "invalid_screen_failed_read_id_property.blend": (
+                (OSError, RuntimeError),
+                "Corrupt .blend file, failed to read a data-block"
+            ),
         }
 
         assert all(p.endswith("/") for p in self.excluded_open_link_dirs)
@@ -433,6 +599,8 @@ class TestBlendFileOpenLinkSaveAllTestFiles(TestHelper):
         operation_name = "link" if do_link else "append"
         for bfp in self.blendfile_paths:
             if self.skip_open_link_path_check(bfp):
+                continue
+            if os.path.basename(bfp) in self.excluded_link_append_paths:
                 continue
             bpy.ops.wm.read_homefile(use_empty=True, use_factory_startup=True)
             try:

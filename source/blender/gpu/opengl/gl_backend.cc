@@ -248,6 +248,23 @@ void GLBackend::platform_init()
         }
       }
     }
+    if (device & GPU_DEVICE_NVIDIA) {
+      if (BLI_windows_get_directx_driver_version(L"NVIDIA", &driverVersion)) {
+        /* The driver version is packed as four 16bit values, most significant first, matching the
+         * `x.x.x.x` versioning scheme used by Windows. */
+        constexpr long long last_unsupported_version = (23LL << 48) | (21LL << 32) | (13LL << 16) |
+                                                       9135LL;
+        /* Drivers 23.21.13.9135 (391.35) and older are the last of the 391 branch. They are known
+         * to be broken and are no longer updated, so they cannot run Blender. */
+        if (driverVersion <= last_unsupported_version) {
+          std::cout << "=====================================\n"
+                    << "NVIDIA drivers 23.21.13.9135 (391.35) and older are not supported.\n"
+                    << "Please update to a newer driver.\n"
+                    << "=====================================\n";
+          support_level = GPU_SUPPORT_LEVEL_UNSUPPORTED;
+        }
+      }
+    }
 #endif
     if ((device & GPU_DEVICE_INTEL) && (os & GPU_OS_WIN)) {
       /* Old Intel drivers with known bugs that cause material properties to crash.
@@ -411,6 +428,7 @@ static void detect_workarounds()
     GCaps.depth_blitting_workaround = true;
     GCaps.stencil_classify_buffer_workaround = true;
     GCaps.texture_pool_workaround = true;
+    GCaps.frontbuffer_read_workaround = true;
     GLContext::debug_layer_workaround = true;
     /* Turn off Blender features. */
     GCaps.hdr_viewport_support = false;
@@ -496,6 +514,10 @@ static void detect_workarounds()
       strstr(version, "Build 20.19.15.4285"))
   {
     GCaps.use_main_context_workaround = true;
+  }
+  /* Reading the front-buffer may not return the most recently drawn contents. */
+  if (GPU_type_matches(GPU_DEVICE_INTEL | GPU_DEVICE_INTEL_UHD, GPU_OS_WIN, GPU_DRIVER_ANY)) {
+    GCaps.frontbuffer_read_workaround = true;
   }
   /* Needed to avoid driver hangs on legacy AMD drivers (see #139939). */
   if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL) &&

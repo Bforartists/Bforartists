@@ -536,7 +536,7 @@ static void clip_drop_copy(bContext * /*C*/, wmDrag *drag, wmDropBox *drop)
   PointerRNA itemptr;
   char dir[FILE_MAX], file[FILE_MAX];
 
-  BLI_path_split_dir_file(WM_drag_get_single_path(drag), dir, sizeof(dir), file, sizeof(file));
+  BLI_path_split_dir_file(WM_drag_get_single_path(drag), dir, file);
 
   RNA_string_set(drop->ptr, "directory", dir);
 
@@ -1238,6 +1238,7 @@ void ED_spacetype_clip()
 
   st->spaceid = SPACE_CLIP;
   STRNCPY_UTF8(st->name, "Clip");
+  st->struct_size = sizeof(SpaceClip);
 
   st->create = clip_create;
   st->free = clip_free;

@@ -159,14 +159,14 @@ static wmOperatorStatus preferences_asset_library_add_exec(bContext *C, wmOperat
 
   switch (library_type) {
     case bUserAssetLibraryAddType::Local: {
-      char *dirpath = RNA_string_get_alloc(op->ptr, "directory", nullptr, 0, nullptr);
+      char *dirpath = RNA_string_get_alloc(op->ptr, "directory", std::nullopt, nullptr);
       ED_userpref_asset_library_new(C, name, dirpath, library_type, false, {}, {});
       MEM_delete(dirpath);
       break;
     }
     case bUserAssetLibraryAddType::Remote: {
-      char *remote_url = RNA_string_get_alloc(op->ptr, "remote_url", nullptr, 0, nullptr);
-      char *auth_token_str = RNA_string_get_alloc(op->ptr, "auth_token", nullptr, 0, nullptr);
+      char *remote_url = RNA_string_get_alloc(op->ptr, "remote_url", std::nullopt, nullptr);
+      char *auth_token_str = RNA_string_get_alloc(op->ptr, "auth_token", std::nullopt, nullptr);
       const bool use_auth_token = RNA_boolean_get(op->ptr, "use_auth_token");
       std::optional<char *> auth_token = {};
       if (use_auth_token) {
@@ -235,22 +235,6 @@ static void preferences_asset_library_add_ui(bContext * /*C*/, wmOperator *op)
   }
 }
 
-static constexpr EnumPropertyItem custom_library_type_items[] = {
-    {int(bUserAssetLibraryAddType::Remote),
-     "REMOTE",
-     ICON_INTERNET,
-     "Add Remote Asset Library",
-     "Add an asset library referencing a remote repository "
-     "with support for listing and updating asset libraries"},
-    {int(bUserAssetLibraryAddType::Local),
-     "LOCAL",
-     ICON_DISK_DRIVE,
-     "Add Local Asset Library",
-     "Add an asset library managed via the file system without referencing an external "
-     "repository"},
-    {0, nullptr, 0, nullptr, nullptr},
-};
-
 static const EnumPropertyItem *custom_library_type_itemf(bContext * /*C*/,
                                                          PointerRNA * /*ptr*/,
                                                          PropertyRNA * /*prop*/,
@@ -265,7 +249,7 @@ static const EnumPropertyItem *custom_library_type_itemf(bContext * /*C*/,
 
   /* Since the Remote item is the first in the list, we can just return a pointer to
    * the 2nd item in the list, when remote asset libraries should be hidden. */
-  static_assert(custom_library_type_items[0].value == int(bUserAssetLibraryAddType::Remote));
+  BLI_assert(custom_library_type_items[0].value == int(bUserAssetLibraryAddType::Remote));
   return custom_library_type_items + 1;
 }
 
@@ -452,7 +436,7 @@ static wmOperatorStatus preferences_extension_repo_add_exec(bContext *C, wmOpera
 
     if (use_access_token) {
       if (RNA_string_length(op->ptr, "access_token")) {
-        access_token = RNA_string_get_alloc(op->ptr, "access_token", nullptr, 0, nullptr);
+        access_token = RNA_string_get_alloc(op->ptr, "access_token", std::nullopt, nullptr);
       }
     }
   }
@@ -801,8 +785,8 @@ static wmOperatorStatus preferences_extension_repo_remove_invoke(bContext *C,
   if (remove_files) {
     char dirpath[FILE_MAX];
     char user_dirpath[FILE_MAX];
-    BKE_preferences_extension_repo_dirpath_get(repo, dirpath, sizeof(dirpath));
-    BKE_preferences_extension_repo_user_dirpath_get(repo, user_dirpath, sizeof(user_dirpath));
+    BKE_preferences_extension_repo_dirpath_get(repo, dirpath);
+    BKE_preferences_extension_repo_user_dirpath_get(repo, user_dirpath);
 
     if (dirpath[0] || user_dirpath[0]) {
       message = IFACE_("Remove all files in:");
@@ -868,7 +852,7 @@ static wmOperatorStatus preferences_extension_repo_remove_exec(bContext *C, wmOp
 
   if (remove_files) {
     char dirpath[FILE_MAX];
-    BKE_preferences_extension_repo_dirpath_get(repo, dirpath, sizeof(dirpath));
+    BKE_preferences_extension_repo_dirpath_get(repo, dirpath);
     if (dirpath[0] && BLI_is_dir(dirpath)) {
 
       /* Removing custom directories has the potential to remove user data
@@ -894,7 +878,7 @@ static wmOperatorStatus preferences_extension_repo_remove_exec(bContext *C, wmOp
       }
     }
 
-    BKE_preferences_extension_repo_user_dirpath_get(repo, dirpath, sizeof(dirpath));
+    BKE_preferences_extension_repo_user_dirpath_get(repo, dirpath);
     if (dirpath[0] && BLI_is_dir(dirpath)) {
       if (BLI_delete(dirpath, true, true) != 0) {
         BKE_reportf(op->reports,

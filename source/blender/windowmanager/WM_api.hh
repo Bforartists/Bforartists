@@ -175,6 +175,17 @@ void WM_init_splash_on_startup(bContext *C);
  * Show the splash screen.
  */
 void WM_init_splash(bContext *C);
+/**
+ * Absolute file path of the active project splash image, or empty if there is none.
+ */
+std::string WM_project_splash_image_filepath(const Main *bmain);
+/**
+ * Load the splash image from the given filepath, scaled to the specified width
+ * and with the Blender logo optionally composited in.
+ */
+ImBuf *WM_project_splash_image_load(StringRefNull filepath,
+                                    int width = 1000,
+                                    bool add_logo = false);
 
 /**
  * Initialization for GPU backend,
@@ -216,6 +227,8 @@ enum eWM_CapabilitiesFlag {
   WM_CAPABILITY_CLIPBOARD_PRIMARY = (1 << 2),
   /**
    * Reading from the back-buffer is supported.
+   *
+   * \note The GPU may not support this, also check #GPU_frontbuffer_read_workaround.
    */
   WM_CAPABILITY_GPU_FRONT_BUFFER_READ = (1 << 3),
   /** Ability to copy/paste system clipboard images. */
@@ -389,15 +402,13 @@ void WM_window_IME_end(wmWindow *win);
  * \param keep_composing: Reposition instead of restarting the session, as restarting cancels
  * the composition. Only true for the draw-time refresh of the region which owns it,
  * elsewhere canceling is intended, e.g. when the active region changes.
- * \param r_cursor: Optionally receives the cursor evaluated here, so a caller which needs it too
- * doesn't run `cursor_ime` twice.
- * \return true when `r_cursor` was assigned, false when no position was reported.
+ * \return The cursor evaluated here when a position was reported,
+ * so a caller which needs it too doesn't run `cursor_ime` twice.
  */
-bool WM_window_IME_region_refresh(wmWindow *win,
-                                  const ScrArea *area,
-                                  const ARegion *region,
-                                  bool keep_composing = false,
-                                  ARegionIMECursor *r_cursor = nullptr);
+std::optional<ARegionIMECursor> WM_window_IME_region_refresh(wmWindow *win,
+                                                             const ScrArea *area,
+                                                             const ARegion *region,
+                                                             bool keep_composing = false);
 
 /**
  * Return the IME data `region` should preview, null when there is nothing to draw:
@@ -574,6 +585,7 @@ bool WM_file_read(bContext *C,
                   const char *filepath,
                   const bool use_scripts_autoexec_check,
                   ReportList *reports);
+bool WM_file_read_project(bContext *C, const char *filepath, ReportList *reports);
 void WM_file_autosave_init(wmWindowManager *wm);
 bool WM_file_recover_last_session(bContext *C,
                                   const bool use_scripts_autoexec_check,
@@ -1215,9 +1227,9 @@ bool WM_operator_name_poll(bContext *C, const char *opstring);
 /**
  * Invokes operator in context.
  *
- * \param reports: If not null, use the given ReportList to be used by the called operator, instead
- * of creating a new one. Code will then assume that the reports are managed by the caller. Usefull
- * for operators called from within another operator e.g.
+ * \param reports: If not null, use the given ReportList to be used by the called operator,
+ * instead of creating a new one. Code will then assume that the reports are managed by the caller.
+ * Useful for operators called from within another operator e.g.
  *
  * \param event: Optionally pass in an event to use when context uses one of the
  * `WM_OP_INVOKE_*` values. When left unset the #wmWindow.eventstate will be used,
@@ -2000,7 +2012,7 @@ ENUM_OPERATORS(eWM_JobFlag);
 /**
  * Identifying jobs by owner alone is unreliable, this isn't saved, order can change.
  */
-enum eWM_JobType {
+enum eWM_JobType : uint8_t {
   /** Not a real type, use for querying any type. */
   WM_JOB_TYPE_ANY = 0,
 

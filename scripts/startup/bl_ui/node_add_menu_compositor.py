@@ -299,11 +299,13 @@ class NODE_MT_compositor_node_utilities_base(node_add_menu.NodeMenu):
         self.draw_menu(layout, path="Utilities/Text")
         layout.separator()
         self.draw_menu(layout, path="Utilities/Bundle")
+        self.draw_menu(layout, path="Utilities/Closure")  # BFA - new in Blender 5.3; Matrix and Rotation are already above (#6715)
         layout.separator()
         self.node_operator(layout, "NodeImplicitConversion")
         self.node_operator(layout, "CompositorNodeLevels")
         self.node_operator(layout, "CompositorNodeNormalize")
         self.node_operator(layout, "FunctionNodeRandomValue")
+        self.repeat_zone(layout, label="Repeat")
         layout.separator()
         # self.node_operator(layout, "NodeImplicitConversion")  # BFA - double, already listed above with Levels (as upstream)
         self.node_operator(layout, "CompositorNodeSplit")
@@ -421,6 +423,19 @@ class NODE_MT_compositor_utilities_bundle_base(node_add_menu.NodeMenu):
         self.node_operator(layout, "NodeStoreBundleItem")
         layout.separator()
         self.typed_bundle(layout, label=n_("Typed Bundle"))
+
+        self.draw_assets_for_catalog(layout, self.menu_path)
+
+
+class NODE_MT_compositor_utilities_closure_base(node_add_menu.NodeMenu):
+    bl_label = "Closure"
+    menu_path = "Utilities/Closure"
+
+    def draw(self, context):
+        del context
+        layout = self.layout
+        self.closure_zone(layout, label="Closure")
+        self.node_operator(layout, "NodeEvaluateClosure")
 
         self.draw_assets_for_catalog(layout, self.menu_path)
 
@@ -551,6 +566,7 @@ add_menus = {
     "NODE_MT_category_compositor_text": NODE_MT_compositor_node_text_base,
     "NODE_MT_category_compositor_matrix": NODE_MT_compositor_utilities_matrix_base,
     "NODE_MT_category_compositor_bundle": NODE_MT_compositor_utilities_bundle_base,
+    "NODE_MT_category_compositor_closure": NODE_MT_compositor_utilities_closure_base,
     "NODE_MT_category_compositor_rotation": NODE_MT_compositor_node_rotation_base,
     "NODE_MT_compositor_node_add_all": NODE_MT_compositor_node_all_base,
 }
@@ -583,6 +599,7 @@ swap_menus = {
     "NODE_MT_compositor_node_text_swap": NODE_MT_compositor_node_text_base,
     "NODE_MT_compositor_node_matrix_swap": NODE_MT_compositor_utilities_matrix_base,
     "NODE_MT_compositor_node_bundle_swap": NODE_MT_compositor_utilities_bundle_base,
+    "NODE_MT_compositor_node_closure_swap": NODE_MT_compositor_utilities_closure_base,
     "NODE_MT_compositor_node_rotation_swap": NODE_MT_compositor_node_rotation_base,
     "NODE_MT_compositor_node_swap_all": NODE_MT_compositor_node_all_base,
 }

@@ -72,13 +72,11 @@
  *    pointers to virtual member functions.
  */
 
-#include <atomic>
-
+#include "BLI_array.hh"
 #include "BLI_dynamic_stack_buffer.hh"  // IWYU pragma: keep
 #include "BLI_enum_flags.hh"
 #include "BLI_hash.hh"
 #include "BLI_index_mask_fwd.hh"
-#include "BLI_map.hh"
 #include "BLI_parameter_pack_utils.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_utility_mixins.hh"
@@ -442,12 +440,28 @@ class CPPType : NonCopyable, NonMovable {
   }
 };
 
+/**
+ * Checks if the value type of a container is the given type. If the container is statically typed,
+ * this is a static-assert. Otherwise it is a runtime-assert.
+ */
+template<typename T, typename Container>
+inline void assert_value_type([[maybe_unused]] const Container &container)
+{
+  if constexpr (requires { typename Container::value_type; }) {
+    static_assert(std::is_same_v<typename Container::value_type, T>);
+  }
+  else {
+    BLI_assert(container.type().template is<T>());
+  }
+}
+
 namespace detail {
 /**
  * Global static variable that contains the #CPPType for a given type after it has been registered
  * with #BLI_CPP_TYPE_REGISTER. This should generally be accessed through #CPPType::get<T>.
  */
 template<typename T> inline TypedBuffer<CPPType> cpp_type_impl{};
+template<typename T> inline bool is_cpp_type_registered = false;
 }  // namespace detail
 
 /**
@@ -479,11 +493,12 @@ inline bool operator!=(const CPPType &a, const CPPType &b)
 
 template<typename T> inline const CPPType &CPPType::get()
 {
-  const CPPType &type = detail::cpp_type_impl<std::decay_t<T>>.ref();
+  using DecayT = std::decay_t<T>;
   /* Should have been initialized by #BLI_CPP_TYPE_REGISTER.
    * If this is hit in test code, make sure the test calls `register_cpp_types` (for blenlib
    * tests) or `BKE_cpp_types_init` (for general tests). */
-  BLI_assert(type.size > 0);
+  BLI_assert(detail::is_cpp_type_registered<DecayT>);
+  const CPPType &type = detail::cpp_type_impl<DecayT>.ref();
   return type;
 }
 

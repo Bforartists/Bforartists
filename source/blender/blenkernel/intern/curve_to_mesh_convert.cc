@@ -11,6 +11,7 @@
 
 #include "BLI_array.hh"
 #include "BLI_array_utils.hh"
+#include "BLI_bytes_type_common.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_task.hh"
 
@@ -689,9 +690,9 @@ static void copy_main_point_domain_attribute_to_mesh(const CurvesInfo &curves_in
     }
   }
   const GSpan src_all = evaluate_attribute(*src_attribute, curves_info.main, eval_buffer);
-  attribute_math::to_static_type(src_attribute.varray.type(), [&]<typename T>() {
-    const Span<T> src = src_all.typed<T>();
-    MutableSpan<T> dst = dst_attribute.span.typed<T>();
+  attribute_math::to_static_bytes_type(src_attribute.varray.type(), [&]<typename T>() {
+    const Span<T> src = bytes_type::typed<T>(src_all);
+    MutableSpan<T> dst = bytes_type::typed<T>(dst_attribute.span);
     switch (dst_domain) {
       case AttrDomain::Point:
         foreach_curve_combination(curves_info, offsets, [&](const CombinationInfo &info) {
@@ -771,9 +772,9 @@ static void copy_profile_point_domain_attribute_to_mesh(const CurvesInfo &curves
                                                         const GSpan src_all,
                                                         GMutableSpan dst_all)
 {
-  attribute_math::to_static_type(src_all.type(), [&]<typename T>() {
-    const Span<T> src = src_all.typed<T>();
-    MutableSpan<T> dst = dst_all.typed<T>();
+  attribute_math::to_static_bytes_type(src_all.type(), [&]<typename T>() {
+    const Span<T> src = bytes_type::typed<T>(src_all);
+    MutableSpan<T> dst = bytes_type::typed<T>(dst_all);
     switch (dst_domain) {
       case AttrDomain::Point:
         foreach_curve_combination(curves_info, offsets, [&](const CombinationInfo &info) {
@@ -806,20 +807,15 @@ static void copy_profile_point_domain_attribute_to_mesh(const CurvesInfo &curves
 }
 
 template<typename T>
-static void copy_indices_to_offset_ranges(const VArray<T> &src,
+static void copy_indices_to_offset_ranges(const Span<T> src,
                                           const Span<int> curve_indices,
                                           const OffsetIndices<int> mesh_offsets,
                                           MutableSpan<T> dst)
 {
-  /* This unnecessarily instantiates the "is single" case (which should be handled elsewhere if
-   * it's ever used for attributes), but the alternative is duplicating the function for spans and
-   * other virtual arrays. */
-  devirtualize_varray(src, [&](const auto src) {
-    threading::parallel_for(curve_indices.index_range(), 512, [&](IndexRange range) {
-      for (const int i : range) {
-        dst.slice(mesh_offsets[i]).fill(src[curve_indices[i]]);
-      }
-    });
+  threading::parallel_for(curve_indices.index_range(), 512, [&](IndexRange range) {
+    for (const int i : range) {
+      dst.slice(mesh_offsets[i]).fill(src[curve_indices[i]]);
+    }
   });
 }
 
@@ -847,8 +843,10 @@ static void copy_curve_domain_attribute_to_mesh(const ResultOffsets &mesh_offset
       BLI_assert_unreachable();
       return;
   }
-  attribute_math::to_static_type(src.type(), [&]<typename T>() {
-    copy_indices_to_offset_ranges(src.typed<T>(), curve_indices, offsets, dst.typed<T>());
+  const GVArraySpan src_span(src);
+  attribute_math::to_static_bytes_type(src.type(), [&]<typename T>() {
+    copy_indices_to_offset_ranges(
+        bytes_type::typed<T>(src_span), curve_indices, offsets, bytes_type::typed<T>(dst));
   });
 }
 
@@ -869,7 +867,7 @@ static void write_sharp_bezier_edges(const CurvesInfo &curves_info,
     return;
   }
 
-  sharp_edges = mesh_attributes.lookup_or_add_for_write_span<bool>("sharp_edge", AttrDomain::Edge);
+  sharp_edges = mesh_attributes.ensure_for_write_span<bool>("sharp_edge", AttrDomain::Edge);
 
   const OffsetIndices profile_points_by_curve = profile.points_by_curve();
   const VArray<int8_t> types = profile.curve_types();
@@ -942,7 +940,7 @@ Mesh *curve_to_mesh_sweep(const CurvesGeometry &main,
   if (fill_caps) {
     /* TODO: This is used to keep the tests passing after refactoring mesh shade smooth flags. It
      * can be removed if the tests are updated and the final shading results will be the same. */
-    SpanAttributeWriter<bool> sharp_faces = mesh_attributes.lookup_or_add_for_write_span<bool>(
+    SpanAttributeWriter<bool> sharp_faces = mesh_attributes.ensure_for_write_span<bool>(
         "sharp_face", AttrDomain::Face);
     foreach_curve_combination(curves_info, offsets, [&](const CombinationInfo &info) {
       if (has_caps(info.main_cyclic, info.profile_cyclic, info.profile_segment_num)) {
@@ -976,8 +974,7 @@ Mesh *curve_to_mesh_sweep(const CurvesGeometry &main,
   write_sharp_bezier_edges(curves_info, offsets, mesh_attributes, sharp_edges);
   if (fill_caps) {
     if (!sharp_edges) {
-      sharp_edges = mesh_attributes.lookup_or_add_for_write_span<bool>("sharp_edge",
-                                                                       AttrDomain::Edge);
+      sharp_edges = mesh_attributes.ensure_for_write_span<bool>("sharp_edge", AttrDomain::Edge);
     }
     foreach_curve_combination(curves_info, offsets, [&](const CombinationInfo &info) {
       if (info.main_cyclic || !info.profile_cyclic) {

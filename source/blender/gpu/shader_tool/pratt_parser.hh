@@ -76,18 +76,21 @@ template<typename Derived, typename ResultT, typename NodeT> class PrattParser {
     TokenType type = self.to_type(t);
 
     switch (type) {
+      case This:
       case Word:
         return self.identifier(t);
       case Number:
         return self.number_literal(t);
       case String:
         return self.string_literal(t);
+      case Star:
       case Increment:
       case Decrement:
       case Plus:
       case Minus:
       case Not:
       case BitwiseNot:
+      case Ampersand:
         /* Note that '!' token is of MultiTok class and can contain many unary '!'.
          * Implementation must take care of it. */
         return self.prefix(t, BindingPower::prefix);
@@ -109,6 +112,7 @@ template<typename Derived, typename ResultT, typename NodeT> class PrattParser {
     TokenType type = self.to_type(t);
 
     switch (type) {
+      case Deref:
       case Dot:
         return self.member(left, t);
       case SquareOpen:
@@ -170,6 +174,7 @@ template<typename Derived, typename ResultT, typename NodeT> class PrattParser {
       case Decrement:
       case SquareOpen:
       case Dot:
+      case Deref:
         return 130;
       case Multiply:
       case Divide:

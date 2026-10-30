@@ -254,19 +254,19 @@ uint4 _a(A this_) {
   return floatBitsToUint(this_._0);
 }
 void _a_set_(_ref(A ,this_), uint4 v) {
-  this_._0 = uintBitsToFloat(v.a);
+  this_._0 = uintBitsToFloat(v);
 }
 int4 _b(A this_) {
   return floatBitsToInt(this_._0);
 }
 void _b_set_(_ref(A ,this_), int4 v) {
-  this_._0 = intBitsToFloat(v.b);
+  this_._0 = intBitsToFloat(v);
 }
 float4 _c(A this_) {
   return this_._0;
 }
 void _c_set_(_ref(A ,this_), float4 v) {
-  this_._0 = v.c;
+  this_._0 = v;
 }
 #line 8
 )";
@@ -301,13 +301,13 @@ uint4 _a(A_a0 this_) {
   return floatBitsToUint(this_._0);
 }
 void _a_set_(_ref(A_a0 ,this_), uint4 v) {
-  this_._0 = uintBitsToFloat(v.a);
+  this_._0 = uintBitsToFloat(v);
 }
 int4 _b(A_a0 this_) {
   return floatBitsToInt(this_._0);
 }
 void _b_set_(_ref(A_a0 ,this_), int4 v) {
-  this_._0 = intBitsToFloat(v.b);
+  this_._0 = intBitsToFloat(v);
 }
 #line 2
 struct A {
@@ -560,7 +560,7 @@ uint4 _c(A_a0 this_) {
   return floatBitsToUint(this_._0);
 }
 void _c_set_(_ref(A_a0 ,this_), uint4 v) {
-  this_._0 = uintBitsToFloat(v.c);
+  this_._0 = uintBitsToFloat(v);
 }
 #line 13
   struct A_a1 {
@@ -582,7 +582,7 @@ uint4 _e(A_a1 this_) {
   return floatBitsToUint(this_._0);
 }
 void _e_set_(_ref(A_a1 ,this_), uint4 v) {
-  this_._0 = uintBitsToFloat(v.e);
+  this_._0 = uintBitsToFloat(v);
 }
 #line 5
 struct A {
@@ -679,6 +679,51 @@ struct [[host_shared]] T {
     auto [output, _, error] = process_test_string(input);
     EXPECT_EQ(error,
               "All union members must have their type wrapped using the union_t<T> template.");
+  }
+  {
+    string input = R"(
+struct U {
+  union { float4 a; int4 b; };
+  float4 c;
+};
+void f(){
+  U u = {.c = float4(1)};
+}
+)";
+    string expect = R"(
+
+  struct U_a0 { float4 _0;  };
+#line 3
+U_a0 U_a0_ctor_() {U_a0 r;r._0=float4(0);return r;}
+
+float4 _a(U_a0 this_) {
+  return this_._0;
+}
+void _a_set_(_ref(U_a0 ,this_), float4 v) {
+  this_._0 = v;
+}
+int4 _b(U_a0 this_) {
+  return floatBitsToInt(this_._0);
+}
+void _b_set_(_ref(U_a0 ,this_), int4 v) {
+  this_._0 = intBitsToFloat(v);
+}
+#line 2
+struct U {
+  U_a0 a0_;
+  float4 c;
+};
+#line 3
+  U U_ctor_() {U r;r.a0_=U_a0_ctor_();r.c=float4(0);return r;}
+
+
+void f(){
+  U u = _ctor(U)U_a0_ctor_(),float4(1) _rotc();
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
   }
 }
 
@@ -838,6 +883,17 @@ U U_ctor_() {U r;r._pad=0;return r;}
 #line 5
                     }
 
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+enum : int { VALUE = 0 };
+)";
+    string expect = R"(
+static constexpr int VALUE  = 0;
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
@@ -1153,6 +1209,26 @@ void fn() {
     EXPECT_EQ(output, expect);
     EXPECT_EQ(error, "");
   }
+  {
+    string input = R"(
+struct T{int a,b;};
+void fn() {
+  T t10=T{.a=1,.c=1,.b=1};
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Field designator 'c' does not refer to any field in type 'T'");
+  }
+  {
+    string input = R"(
+struct T{int a,b;};
+void fn() {
+  T t10=T{.b=1,.a=1};
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Field designator 'a' needs to be specified in declaration order");
+  }
 }
 
 TEST(shader_tool, BitField)
@@ -1241,6 +1317,79 @@ void f(A t)
     string input = R"(struct A { int a : 2, b : 2; };)";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(error, "Bitfields must have single declarator");
+  }
+  {
+    string input = R"(
+struct A {
+  int a : 2;
+};
+
+void f(A t)
+{
+  t.a += 1;
+  t.a *= 1;
+  t.a /= 1 + 2;
+  t.a -= 1 * 2;
+  t.a <<= 1;
+  t.a >>= 1;
+}
+)";
+    string expect = R"(
+struct A {
+  int a    ;
+};
+#line 2
+A A_ctor_() {A r;r.a=0;return r;}
+#line 6
+void f(A t)
+{
+  bitfieldInsertAssign(t.a, bitfieldExtract(t.a, 0, 2) + (1), 0, 2) ;
+  bitfieldInsertAssign(t.a, bitfieldExtract(t.a, 0, 2) * (1), 0, 2) ;
+  bitfieldInsertAssign(t.a, bitfieldExtract(t.a, 0, 2) / (1 + 2), 0, 2) ;
+  bitfieldInsertAssign(t.a, bitfieldExtract(t.a, 0, 2) - (1 * 2), 0, 2) ;
+  bitfieldInsertAssign(t.a, bitfieldExtract(t.a, 0, 2)  <<  (1), 0, 2) ;
+  bitfieldInsertAssign(t.a, bitfieldExtract(t.a, 0, 2)  >>  (1), 0, 2) ;
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+struct A {
+  int a : 2;
+};
+
+void f(A t)
+{
+  t.a++;
+})";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Increment and decrement operators are not supported on bitfield");
+  }
+  {
+    string input = R"(
+struct A {
+  int a : 2;
+  void f() { a += 1; }
+};
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_NE(
+        output.find("bitfieldInsertAssign(this_.a, bitfieldExtract(this_.a, 0, 2) + (1), 0, 2)"),
+        string::npos);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+struct A {
+  int a : 2;
+  void f() { a++; }
+};
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Increment and decrement operators are not supported on bitfield");
   }
 }
 
@@ -1499,6 +1648,416 @@ T b;
     EXPECT_EQ(error, "Implicit 8 bytes padding at the end of 'T', add manual padding");
     auto [output_ssbo, m, error_ssbo] = process_test_storage(input, Language::BSL);
     EXPECT_EQ(error_ssbo, "Implicit 12 bytes padding before 'b', add manual padding");
+  }
+}
+
+TEST(shader_tool, Inheritance)
+{
+  {
+    string input = R"(
+struct A { int a; };
+struct B : A {};
+struct C : B {};
+void f(C c) {
+  c.a;
+}
+)";
+    string expect = R"(
+struct A { int a; };
+#line 2
+A A_ctor_() {A r;r.a=0;return r;}
+struct B {A _A;
+#line 3
+              };
+#line 3
+B B_ctor_() {B r;r._A=A_ctor_();return r;}
+struct C {B _B;
+#line 4
+              };
+#line 4
+C C_ctor_() {C r;r._B=B_ctor_();return r;}
+void f(C c) {
+  c._B._A.a;
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    /* Parameter conversion resolution and assignment cast. */
+    string input = R"(
+struct A {
+  int a;
+};
+struct B : A {};
+struct C : B {};
+struct D : C {};
+
+void f(A a) {}
+void f(C c) {}
+
+void foo(D d)
+{
+  A a = d;
+  B b = d;
+  C c = d;
+  f(a);
+  f(b);
+  f(c);
+  f(d);
+}
+)";
+    string expect = R"(
+struct A {
+  int a;
+};
+#line 2
+A A_ctor_() {A r;r.a=0;return r;}
+
+
+struct B {A _A;
+#line 5
+              };
+#line 5
+B B_ctor_() {B r;r._A=A_ctor_();return r;}
+struct C {B _B;
+#line 6
+              };
+#line 6
+C C_ctor_() {C r;r._B=B_ctor_();return r;}
+struct D {C _C;
+#line 7
+              };
+#line 7
+D D_ctor_() {D r;r._C=C_ctor_();return r;}
+
+void f(A a) {
+#line 9
+             }
+void f(C c) {
+#line 10
+             }
+
+void foo(D d)
+{
+  A a = d._C._B._A;
+  B b = d._C._B;
+  C c = d._C;
+  f(a);
+  f(b._A);
+  f(c);
+  f(d._C);
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+struct A { int a; }; struct B { int b; }; struct C { int c; };
+struct D : private A, public B, protected C {};
+)";
+    string expect = R"(
+struct A { int a; };
+#line 2
+A A_ctor_() {A r;r.a=0;return r;}
+#line 2
+                     struct B { int b; };
+#line 2
+B B_ctor_() {B r;r.b=0;return r;}         struct C { int c; };
+#line 2
+C C_ctor_() {C r;r.c=0;return r;}
+struct D {A _A; B _B; C _C;                  };
+#line 3
+D D_ctor_() {D r;r._A=A_ctor_();r._B=B_ctor_();r._C=C_ctor_();return r;}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    /* Member inheritance.. */
+    string input = R"(
+struct A {
+  int a;
+  struct U {};
+  void m() {}
+  static void s() {}
+};
+
+struct B : A {};
+
+A f(B b, bool t) {
+  b.a;
+  B::U bu;
+  b.m();
+  B::s();
+  A a;
+  a = b;
+  a = t ? b : b;
+  return b;
+}
+)";
+    string expect = R"(#line 4
+  struct A_U {int _pad;
+#line 4
+            };
+#line 4
+A_U A_U_ctor_() {A_U r;r._pad=0;return r;}
+#line 2
+struct A {
+  int a;
+#line 7
+};
+#line 2
+A A_ctor_() {A r;r.a=0;return r;}
+
+#ifndef GPU_METAL
+void _m(_ref(A ,this_));
+       void A_s();
+#endif
+#line 5
+  void _m(_ref(A ,this_)) {
+#line 5
+            }
+         void A_s() {
+#line 6
+                   }
+
+
+struct B {A _A;
+#line 9
+              };
+#line 9
+B B_ctor_() {B r;r._A=A_ctor_();return r;}
+
+A f(B b, bool t) {
+  b._A.a;
+  A_U bu;
+  _m(b._A);
+  A_s();
+  A a;
+  a = b._A;
+  a = (t ? b : b)._A;
+  return b._A;
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    /* Member hiding. */
+    string input = R"(
+struct A {
+  int a;
+  struct U {};
+  void m() {}
+  static void s() {}
+};
+
+struct B : A {
+  int a;
+  struct U {};
+  void m() {}
+  static void s() {}
+};
+
+void f(A a, B b) {
+  a.a;
+  b.a;
+  A::U au;
+  B::U bu;
+  a.m();
+  b.m();
+  A::s();
+  B::s();
+}
+)";
+    string expect = R"(#line 4
+  struct A_U {int _pad;
+#line 4
+            };
+#line 4
+A_U A_U_ctor_() {A_U r;r._pad=0;return r;}
+#line 2
+struct A {
+  int a;
+#line 7
+};
+#line 2
+A A_ctor_() {A r;r.a=0;return r;}
+
+#ifndef GPU_METAL
+void _m(_ref(A ,this_));
+       void A_s();
+#endif
+#line 5
+  void _m(_ref(A ,this_)) {
+#line 5
+            }
+         void A_s() {
+#line 6
+                   }
+#line 11
+  struct B_U {int _pad;
+#line 11
+            };
+#line 11
+B_U B_U_ctor_() {B_U r;r._pad=0;return r;}
+#line 9
+struct B {
+  A _A;
+#line 10
+  int a;
+#line 14
+};
+#line 9
+B B_ctor_() {B r;r._A=A_ctor_();r.a=0;return r;}
+
+#ifndef GPU_METAL
+void _m(_ref(B ,this_));
+       void B_s();
+#endif
+#line 12
+  void _m(_ref(B ,this_)) {
+#line 12
+            }
+         void B_s() {
+#line 13
+                   }
+
+
+void f(A a, B b) {
+  a.a;
+  b.a;
+  A_U au;
+  B_U bu;
+  _m(a);
+  _m(b);
+  A_s();
+  B_s();
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+
+  {
+    /* CRTP. */
+    string input = R"(
+struct A {};
+
+template<typename D> struct B {
+  static A samp(D d, float p)
+  {
+    return d.samp(p);
+  }
+};
+
+struct D1 : private B<D1> {
+  A samp(float p)
+  {
+    return A{};
+  }
+};
+
+void f(D1 d)
+{
+  B<D1>::samp(d, 0.0f);
+  d.samp(0.0f);
+}
+)";
+    string expect = R"(
+struct A {int _pad;
+#line 2
+          };
+#line 2
+A A_ctor_() {A r;r._pad=0;return r;}
+
+                     struct BTD1 {
+  int _pad;
+#line 9
+};
+#line 4
+BTD1 BTD1_ctor_() {BTD1 r;r._pad=0;return r;}
+#line 11
+struct D1 {
+  int _pad;
+#line 16
+};
+#line 11
+D1 D1_ctor_() {D1 r;r._pad=0;return r;}
+
+#ifndef GPU_METAL
+       A BTD1_samp(D1 d, float p);
+#endif
+
+#ifndef GPU_METAL
+A _samp(D1 this_, float p);
+#endif
+#line 5
+         A BTD1_samp(D1 d, float p)
+  {
+    return _samp(d, p);
+  }
+#line 12
+  A _samp(D1 this_, float p)
+  {
+    return A_ctor_();
+  }
+
+
+void f(D1 d)
+{
+  BTD1_samp(d, 0.0f);
+  _samp(d, 0.0f);
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    /* Diamond inheritance. */
+    string input = R"(
+struct A {
+  int a;
+};
+struct B : A {};
+struct C : A {};
+struct D : B, C {};
+)";
+    string expect = R"(
+struct A {
+  int a;
+};
+#line 2
+A A_ctor_() {A r;r.a=0;return r;}
+
+
+struct B {A _A;
+#line 5
+              };
+#line 5
+B B_ctor_() {B r;r._A=A_ctor_();return r;}
+struct C {A _A;
+#line 6
+              };
+#line 6
+C C_ctor_() {C r;r._A=A_ctor_();return r;}
+struct D {B _B; C _C;
+#line 7
+                 };
+#line 7
+D D_ctor_() {D r;r._B=B_ctor_();r._C=C_ctor_();return r;}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
   }
 }
 

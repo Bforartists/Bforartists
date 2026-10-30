@@ -96,6 +96,12 @@ static void add_group_input_node_fn(nodes::LinkSearchOpParams &params)
   /* Add a group input based on the connected socket, and add a new group input node. */
   bNodeTreeInterfaceSocket *socket_iface = bke::node_interface::add_interface_socket_from_node(
       params.node_tree, params.node, params.socket, params.socket.name);
+
+  params.node_tree.tree_interface.foreach_item([&](bNodeTreeInterfaceItem &item) {
+    item.set_selected(false);
+    return true;
+  });
+
   params.node_tree.tree_interface.active_item_set(&socket_iface->item);
 
   bNode &group_input = params.add_node("NodeGroupInput"_ustr);
@@ -455,7 +461,6 @@ static ui::Block *create_search_popup_block(bContext *C, ARegion *region, void *
   ui::Button *but = uiDefSearchBut(block,
                                    storage.search,
                                    ICON_VIEWZOOM,
-                                   sizeof(storage.search),
                                    storage.in_out() == SOCK_OUT ? 10 : 10 - ui::searchbox_size_x(),
                                    0,
                                    ui::searchbox_size_x(),
@@ -467,8 +472,8 @@ static ui::Block *create_search_popup_block(bContext *C, ARegion *region, void *
                          nullptr,
                          link_drag_search_update_fn,
                          &storage,
-                         false,
                          link_drag_search_free_fn,
+                         nullptr,
                          link_drag_search_exec_fn,
                          nullptr);
   button_flag_enable(but, ui::BUT_ACTIVATE_ON_INIT);

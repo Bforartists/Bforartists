@@ -706,6 +706,22 @@ class VectorTesting(unittest.TestCase):
         vec *= 2
         self.assertEqual(vec, prod2)
 
+    def test_vector_resized(self):
+        vec = Vector((1, 2))
+        self.assertEqual(vec.resized(4), Vector((1, 2, 0, 0)))
+        # Large enough that the result isn't allocated by Python's small object allocator.
+        vec = Vector(range(2000))
+        self.assertEqual(vec.resized(200), Vector(range(200)))
+
+    def test_vector_swizzle_set(self):
+        vec = Vector((1, 2, 3))
+        vec.zx = (10, 30)
+        self.assertEqual(vec, Vector((30, 2, 10)))
+        # Vectors with more than 4 dimensions.
+        vec = Vector(range(10))
+        vec.yx = (10, 20)
+        self.assertEqual(vec, Vector([20, 10] + list(range(2, 10))))
+
     def test_vector_freeze_is_read_only(self):
         vec = Vector((1, 3, 5))
 
@@ -1233,7 +1249,7 @@ class KDTreeTesting(unittest.TestCase):
             k.find((0,) * 3, filter=lambda i: None)
 
 
-class TesselatePolygon(unittest.TestCase):
+class TessellatePolygon(unittest.TestCase):
     def test_empty(self):
         self.assertEqual([], geometry.tessellate_polygon([]))
 

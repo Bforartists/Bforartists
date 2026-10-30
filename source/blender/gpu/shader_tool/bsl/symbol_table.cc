@@ -669,6 +669,13 @@ MatchRank SymbolTable::get_conversion_rank(const SymbolClass *from,
   }
 
   if (!from->is_builtin()) {
+    /* Check if convertible through inheritance. */
+    if (!to->is_builtin() && from->has_inheritance()) {
+      int conversion_index = from->get_conversion_index(to);
+      if (conversion_index > 0) {
+        return {MatchRank::Conversion, uint8_t(conversion_index)};
+      }
+    }
     return MatchRank::None;
   }
 
@@ -853,7 +860,7 @@ vector<SymbolTable::BuiltinFunc> SymbolTable::generate_all_builtin_functions()
                                            const vector<SymbolClass *> &types) {
     SymbolClass *scalar = types[0];
     for (size_t i = 1; i < types.size(); ++i) {
-      functions.push_back({types[i], name, {types[i], scalar, scalar}});
+      functions.push_back({types[i], name, {scalar, scalar, types[i]}});
     }
   };
 
@@ -980,12 +987,14 @@ vector<SymbolTable::BuiltinFunc> SymbolTable::generate_all_builtin_functions()
   functions.push_back({uint_cls, "packUnorm4x8", {float4_cls}});
   functions.push_back({uint_cls, "packSnorm4x8", {float4_cls}});
   functions.push_back({uint_cls, "packHalf2x16", {float2_cls}});
+  functions.push_back({uint_cls, "packSnorm3x10_1x2", {float4_cls}});
 
   functions.push_back({float2_cls, "unpackUnorm2x16", {uint_cls}});
   functions.push_back({float2_cls, "unpackSnorm2x16", {uint_cls}});
   functions.push_back({float4_cls, "unpackUnorm4x8", {uint_cls}});
   functions.push_back({float4_cls, "unpackSnorm4x8", {uint_cls}});
   functions.push_back({float2_cls, "unpackHalf2x16", {uint_cls}});
+  functions.push_back({float4_cls, "unpackSnorm3x10_1x2", {uint_cls}});
 
   for (size_t i = 1; i < f_types.size(); ++i) {
     functions.push_back({float_cls, "length", {f_types[i]}});
@@ -1148,7 +1157,7 @@ vector<SymbolTable::BuiltinFunc> SymbolTable::generate_all_builtin_functions()
       functions.push_back({void_cls, "imageFence", {image}});
 
       if (image->identifier.ends_with("Atomic")) {
-        SymbolClass *scalar = prefix == "u" ? i_types[0] : u_types[0];
+        SymbolClass *scalar = prefix == "u" ? u_types[0] : i_types[0];
         functions.push_back({scalar, "imageAtomicAdd", {image, coord_type, scalar}});
         functions.push_back({scalar, "imageAtomicMin", {image, coord_type, scalar}});
         functions.push_back({scalar, "imageAtomicMax", {image, coord_type, scalar}});

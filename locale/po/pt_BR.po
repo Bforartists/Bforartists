@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'c02032f9693d')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-10-05 07:25+0000\n"
-"PO-Revision-Date: 2026-04-13 10:12+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"PO-Revision-Date: 2026-10-20 16:12+0000\n"
 "Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 2026.6.1\n"
 "X-Poedit-SourceCharset: utf-8"
 
 
@@ -4390,7 +4390,7 @@ msgstr "Olhais para eixos"
 
 
 msgid "Off-axis frustums converging in a plane"
-msgstr "Usa olhais (ou passadores) para os eixos dos troncos de bases paralelas que convergem na direção de um plano."
+msgstr "Volumes de visão deslocados do eixo que convergem em um plano"
 
 
 msgid "Parallel"
@@ -21136,132 +21136,44 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Metaball"
-msgstr "Meta-esfera"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Tipo de decaimento para edição proporcional"
+msgid "Pivot Point"
+msgstr "Pontos de pivô"
 
 
 msgid "Snap"
 msgstr "Atrair"
 
 
-msgid "Pivot Point"
-msgstr "Pontos de pivô"
-
-
-msgid "Select More/Less"
-msgstr "Selecionar mais ou menos"
-
-
-msgid "Select Loops"
-msgstr "Selecionar anéis"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem dos ossos"
-
-
-msgid "Random Mask"
-msgstr "Máscara Aleatória"
-
-
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
-msgid "Light Probe"
-msgstr "Sonda de Luz"
-
-
-msgid "Local View"
-msgstr "Visão local"
-
-
-msgid "UV Mapping"
-msgstr "Mapeamento UV"
-
-
-msgid "Light"
-msgstr "Luz"
+msgid "Proportional Editing Falloff"
+msgstr "Tipo de decaimento para edição proporcional"
 
 
 msgid "Mirror"
 msgstr "Espelhar"
 
 
-msgid "Apply"
-msgstr "Aplicar"
+msgid "UV Mapping"
+msgstr "Mapeamento UV"
 
 
-msgid "Merge"
-msgstr "Fundir"
+msgid "Local View"
+msgstr "Visão local"
 
 
-msgid "Tracking"
-msgstr "Rastreamento"
+msgid "Viewpoint"
+msgstr "Ponto de visualização"
 
 
-msgid "Toggle Bone Options"
-msgstr "Alternar opções de ossos"
+msgid "Navigation"
+msgstr "Navegação"
 
 
-msgid "Names"
-msgstr "Nomes"
+msgid "Align View"
+msgstr "Alinhar visualização"
 
 
-msgid "Mesh Select Mode"
-msgstr "Modo de seleção de malhas"
-
-
-msgid "Disable Bone Options"
-msgstr "Desabilitar as opções de ossos"
-
-
-msgid "Enable Bone Options"
-msgstr "Habilitar opções de ossos"
-
-
-msgid "Select Linked"
-msgstr "Selecionar vinculados(as)"
-
-
-msgid "Propagate"
-msgstr "Propagar"
-
-
-msgid "Select All by Trait"
-msgstr "Selecionar todos por características..."
-
-
-msgid "In-Betweens"
-msgstr "Entre as continuidades"
-
-
-msgid "Select Similar"
-msgstr "Selecionar por similaridades"
-
-
-msgid "Clear Transform"
-msgstr "Limpar transformações"
-
-
-msgid "Hooks"
-msgstr "Ganchos"
-
-
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Convert"
-msgstr "Converter"
+msgid "Align View to Active"
+msgstr "Alinhar vista para o ativo"
 
 
 msgid "View Regions"
@@ -21272,72 +21184,160 @@ msgid "Math"
 msgstr "Matemática"
 
 
-msgid "Make Single User"
-msgstr "Tornar usuário único"
+msgid "Select More/Less"
+msgstr "Selecionar mais ou menos"
 
 
-msgid "Align View to Active"
-msgstr "Alinhar vista para o ativo"
+msgid "Select Similar"
+msgstr "Selecionar por similaridades"
 
 
-msgid "Keying"
-msgstr "Inserção de chaves"
+msgid "Select All by Trait"
+msgstr "Selecionar todos por características..."
 
 
-msgid "Align View"
-msgstr "Alinhar visualização"
+msgid "Select Linked"
+msgstr "Selecionar vinculados(as)"
 
 
-msgid "Special Characters"
-msgstr "Caracteres especiais"
+msgid "Select Loops"
+msgstr "Selecionar anéis"
 
 
-msgid "Navigation"
-msgstr "Navegação"
+msgid "Metaball"
+msgstr "Meta-esfera"
 
 
-msgid "Import"
-msgstr "Importar"
+msgid "Light"
+msgstr "Luz"
 
 
-msgid "Linked"
-msgstr "Vinculando"
-
-
-msgid "Rigid Body"
-msgstr "Corpo rígido"
-
-
-msgid "Viewpoint"
-msgstr "Ponto de visualização"
-
-
-msgid "Track"
-msgstr "Rastrear"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Quick Effects"
-msgstr "Efeitos instantâneos"
-
-
-msgid "Relations"
-msgstr "Relações"
-
-
-msgid "Add Image"
-msgstr "Adicionar Imagem"
+msgid "Light Probe"
+msgstr "Sonda de Luz"
 
 
 msgid "Instances"
 msgstr "Instâncias"
 
 
+msgid "Add Image"
+msgstr "Adicionar Imagem"
+
+
+msgid "Relations"
+msgstr "Relações"
+
+
+msgid "Import"
+msgstr "Importar"
+
+
+msgid "Rigid Body"
+msgstr "Corpo rígido"
+
+
+msgid "Apply"
+msgstr "Aplicar"
+
+
+msgid "Track"
+msgstr "Rastrear"
+
+
+msgid "Quick Effects"
+msgstr "Efeitos instantâneos"
+
+
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Make Single User"
+msgstr "Tornar usuário único"
+
+
+msgid "Convert"
+msgstr "Converter"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Hooks"
+msgstr "Ganchos"
+
+
+msgid "Random Mask"
+msgstr "Máscara Aleatória"
+
+
+msgid "Clear Transform"
+msgstr "Limpar transformações"
+
+
+msgid "In-Betweens"
+msgstr "Entre as continuidades"
+
+
+msgid "Propagate"
+msgstr "Propagar"
+
+
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Toggle Bone Options"
+msgstr "Alternar opções de ossos"
+
+
+msgid "Enable Bone Options"
+msgstr "Habilitar opções de ossos"
+
+
+msgid "Disable Bone Options"
+msgstr "Desabilitar as opções de ossos"
+
+
+msgid "Mesh Select Mode"
+msgstr "Modo de seleção de malhas"
+
+
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Merge"
+msgstr "Fundir"
+
+
+msgid "Linked"
+msgstr "Vinculando"
+
+
 msgid "Layout"
 msgstr "Organizar"
+
+
+msgid "Special Characters"
+msgstr "Caracteres especiais"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem dos ossos"
+
+
+msgid "Keying"
+msgstr "Inserção de chaves"
+
+
+msgid "Tracking"
+msgstr "Rastreamento"
 
 
 msgid "Basic"
@@ -28231,11 +28231,6 @@ msgstr "Exportar conjunto de inserção de chaves..."
 
 
 msgctxt "Operator"
-msgid "Update Animated Transform Constraints"
-msgstr "Atualizar as restrições de transformações de animação"
-
-
-msgctxt "Operator"
 msgid "Show All"
 msgstr "Mostrar tudo"
 
@@ -30424,18 +30419,6 @@ msgid "Set Start Frame"
 msgstr "Definir quadro inicial"
 
 
-msgid "Convert to Radians"
-msgstr "Converter para radianos"
-
-
-msgid ""
-"Convert f-curves/drivers affecting rotations to radians.\n"
-"Warning: Use this only once"
-msgstr ""
-"Converte controladores ou curvas-f que afetam as rotações para radianos.\n"
-"AVISO: use somente uma vez"
-
-
 msgctxt "Operator"
 msgid "Align Bones"
 msgstr "Alinhar ossos"
@@ -32055,6 +32038,10 @@ msgstr "Criar Nova Coleção"
 msgctxt "Operator"
 msgid "Export"
 msgstr "Exportar"
+
+
+msgid "Filepath"
+msgstr "Diretórios"
 
 
 msgctxt "Operator"
@@ -43688,6 +43675,10 @@ msgid "Allow Overlap"
 msgstr "Permitir sobreposições"
 
 
+msgid "Shuffle"
+msgstr "Embaralhar"
+
+
 msgid "Replace Selection"
 msgstr "Sobrepor seleção"
 
@@ -44550,10 +44541,6 @@ msgstr "Faz o cursor saltar para uma linha."
 
 msgid "Line number to jump to"
 msgstr "Número da linha para a qual saltar."
-
-
-msgid "Filepath"
-msgstr "Diretórios"
 
 
 msgctxt "Operator"
@@ -47854,16 +47841,16 @@ msgid "Motion Tracking"
 msgstr "Captura de movimentos"
 
 
-msgid "Stereoscopy"
-msgstr "Estereoscopia"
+msgid "Transform Orientations"
+msgstr "Orientações de transformação"
 
 
 msgid "Quad View"
 msgstr "Exibição Quadrante"
 
 
-msgid "Transform Orientations"
-msgstr "Orientações de transformação"
+msgid "Stereoscopy"
+msgstr "Estereoscopia"
 
 
 msgid "Bone Constraints"
@@ -48279,6 +48266,10 @@ msgstr "Diagnósticos"
 
 msgid "Helpers"
 msgstr "Assistentes"
+
+
+msgid "Splash Screen"
+msgstr "Tela de abertura"
 
 
 msgid "White Balance"
@@ -50600,6 +50591,10 @@ msgid "Display tool/property regions over the main region"
 msgstr "Desenha as regiões da estante de ferramentas e painéis de propriedade sobre a região principal"
 
 
+msgid "CUDA"
+msgstr "CUDA"
+
+
 msgid "Method of anti-aliasing in 3d viewport"
 msgstr "Método de anti serrilhado na janela de exibição 3D"
 
@@ -51092,10 +51087,6 @@ msgid "CPU"
 msgstr "CPU"
 
 
-msgid "CUDA"
-msgstr "CUDA"
-
-
 msgid "OptiX"
 msgstr "OptiX"
 
@@ -51537,7 +51528,7 @@ msgstr "Permite usar valores diferentes de semeadura (e portanto, diferentes pad
 
 
 msgid "Allow objects to be culled based on the camera frustum"
-msgstr "Permite que os objetos sejam abatidos com base no frustrum da câmera."
+msgstr "Permite descartar objetos da renderização com base no volume de visão da câmera."
 
 
 msgid "Allow objects to be culled based on the distance from camera"
@@ -53460,10 +53451,6 @@ msgid "Display strip in/out offsets"
 msgstr "Mostra os deslocamentos de entrada e saída das faixas."
 
 
-msgid "Shuffle"
-msgstr "Embaralhar"
-
-
 msgid "Bounding Box Center"
 msgstr "Centro da caixa circundante"
 
@@ -55148,6 +55135,10 @@ msgid "Show the left and right cameras"
 msgstr "Mostra as câmeras esquerda e direita."
 
 
+msgid "Show the stereo 3D frustum volume"
+msgstr "Mostrar o volume de visão estereoscópica 3D"
+
+
 msgid "3D"
 msgstr "3D"
 
@@ -55177,7 +55168,7 @@ msgstr "Alfa para o volume"
 
 
 msgid "Opacity (alpha) of the cameras' frustum volume"
-msgstr "Opacidade (alfa) do volume do tronco de bases paralelas da câmera (volume piramidal ou cônico)."
+msgstr "Opacidade (alfa) do volume de visão da câmera"
 
 
 msgid "Tracks Size"
@@ -58981,6 +58972,11 @@ msgstr "Blender é um software livre"
 
 
 msgctxt "Operator"
+msgid "Close"
+msgstr "Fechado"
+
+
+msgctxt "Operator"
 msgid "Credits"
 msgstr "Créditos"
 
@@ -60805,10 +60801,6 @@ msgid "Revert to Saved Preferences"
 msgstr "Reverter para Preferências Salvas"
 
 
-msgid "Splash Screen"
-msgstr "Tela de abertura"
-
-
 msgid "User Tooltips"
 msgstr "Dicas de Ferramentas do Usuário"
 
@@ -61712,11 +61704,6 @@ msgstr "Alternar versalete"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "Definir rolagem"
-
-
-msgctxt "Operator"
-msgid "Close"
-msgstr "Fechado"
 
 
 msgid "To 3D Cursor"
@@ -63372,10 +63359,6 @@ msgstr "Sem propriedades"
 
 msgid "Reset operator defaults"
 msgstr "Redefine o operador a seus padrões."
-
-
-msgid "File Not Found"
-msgstr "Arquivo Não Encontrado"
 
 
 msgid "Yesterday"
@@ -65768,22 +65751,6 @@ msgid "Scale X: %s   Y: %s  Z: %s%s %s"
 msgstr "Escalonando X: %s  Y: %s  Z: %s%s %s"
 
 
-msgid "Time: +%s %s"
-msgstr "Tempo: +%s %s"
-
-
-msgid "Time: %s %s"
-msgstr "Tempo: %s %s"
-
-
-msgid "Time: +%.3f %s"
-msgstr "Tempo: +%.3f %s"
-
-
-msgid "Time: %.3f %s"
-msgstr "Tempo: %.3f %s"
-
-
 msgid "ScaleB: %s%s %s"
 msgstr "Escalonando ossos: %s%s %s"
 
@@ -67065,6 +67032,10 @@ msgstr "Faltando \"janela\" no contexto."
 
 msgid "Don't Save"
 msgstr "Não Salvar"
+
+
+msgid "File Not Found"
+msgstr "Arquivo Não Encontrado"
 
 
 msgid "Modified"

@@ -49,16 +49,13 @@ static char ffmpeg_last_error_buffer[1024];
 #    pragma GCC diagnostic ignored "-Wmissing-format-attribute"
 #  endif
 
-static size_t ffmpeg_log_to_buffer(char *buffer,
-                                   const size_t buffer_maxncpy,
-                                   const char *format,
-                                   va_list arg)
+static size_t ffmpeg_log_to_buffer(MutableCStr buffer, const char *format, va_list arg)
 {
   va_list args_cpy;
   size_t n;
 
   va_copy(args_cpy, arg);
-  n = BLI_vsnprintf(buffer, buffer_maxncpy, format, args_cpy);
+  n = VSNPRINTF(buffer, format, args_cpy);
   va_end(args_cpy);
 
   return n;
@@ -95,8 +92,7 @@ static void ffmpeg_log_callback(void * /*ptr*/, int level, const char *format, v
   std::scoped_lock lock(mutex);
 
   if (ELEM(level, AV_LOG_PANIC, AV_LOG_FATAL, AV_LOG_ERROR)) {
-    const size_t n = ffmpeg_log_to_buffer(
-        ffmpeg_last_error_buffer, sizeof(ffmpeg_last_error_buffer), format, arg);
+    const size_t n = ffmpeg_log_to_buffer(ffmpeg_last_error_buffer, format, arg);
     /* Strip trailing \n. */
     ffmpeg_last_error_buffer[n - 1] = '\0';
   }
@@ -109,7 +105,7 @@ static void ffmpeg_log_callback(void * /*ptr*/, int level, const char *format, v
     static int buffer_used = 0;
 
     buffer_used += ffmpeg_log_to_buffer(
-        buffer + buffer_used, sizeof(buffer) - buffer_used, format, arg);
+        MutableCStr(buffer + buffer_used, sizeof(buffer) - buffer_used), format, arg);
 
     if (buffer_used >= sizeof(buffer) || (buffer_used > 0 && buffer[buffer_used - 1] == '\n')) {
       if (buffer[buffer_used - 1] == '\n') {
@@ -254,7 +250,7 @@ static const uint8_t ff_compat_crop_tab[256 + 2 * MAX_NEG_CROP] = {
 #  undef times256
 
 /* filter parameters: [-1 4 2 4 -1] // 8 */
-FFMPEG_INLINE void deinterlace_line(uint8_t *dst,
+static inline void deinterlace_line(uint8_t *dst,
                                     const uint8_t *lum_m4,
                                     const uint8_t *lum_m3,
                                     const uint8_t *lum_m2,
@@ -281,7 +277,7 @@ FFMPEG_INLINE void deinterlace_line(uint8_t *dst,
   }
 }
 
-FFMPEG_INLINE void deinterlace_line_inplace(
+static inline void deinterlace_line_inplace(
     uint8_t *lum_m4, uint8_t *lum_m3, uint8_t *lum_m2, uint8_t *lum_m1, uint8_t *lum, int size)
 {
   const uint8_t *cm = ff_compat_crop_tab + MAX_NEG_CROP;
@@ -307,7 +303,7 @@ FFMPEG_INLINE void deinterlace_line_inplace(
  * De-interlacing: 2 temporal taps, 3 spatial taps linear filter.
  * The top field is copied as is, but the bottom field is de-interlaced against the top field.
  */
-FFMPEG_INLINE void deinterlace_bottom_field(
+static inline void deinterlace_bottom_field(
     uint8_t *dst, int dst_wrap, const uint8_t *src1, int src_wrap, int width, int height)
 {
   const uint8_t *src_m2, *src_m1, *src_0, *src_p1, *src_p2;
@@ -335,7 +331,7 @@ FFMPEG_INLINE void deinterlace_bottom_field(
   deinterlace_line(dst, src_m2, src_m1, src_0, src_0, src_0, width);
 }
 
-FFMPEG_INLINE int deinterlace_bottom_field_inplace(uint8_t *src1,
+static inline int deinterlace_bottom_field_inplace(uint8_t *src1,
                                                    int src_wrap,
                                                    int width,
                                                    int height)
@@ -627,14 +623,14 @@ void MOV_init()
 
   ffmpeg_last_error_buffer[0] = '\0';
 
-  if (CLOG_CHECK(&LOG, CLG_LEVEL_INFO)) {
-    av_log_set_level(AV_LOG_INFO);
+  if (CLOG_CHECK(&LOG, CLG_LEVEL_TRACE)) {
+    av_log_set_level(AV_LOG_TRACE);
   }
   else if (CLOG_CHECK(&LOG, CLG_LEVEL_DEBUG)) {
     av_log_set_level(AV_LOG_DEBUG);
   }
-  else if (CLOG_CHECK(&LOG, CLG_LEVEL_TRACE)) {
-    av_log_set_level(AV_LOG_TRACE);
+  else if (CLOG_CHECK(&LOG, CLG_LEVEL_INFO)) {
+    av_log_set_level(AV_LOG_INFO);
   }
 
   /* set separate callback which could store last error to report to UI */

@@ -450,6 +450,7 @@ static WriteData *writedata_new(WriteWrap *ww)
   wd->timestamp_init = BLI_time_now_seconds();
 
   wd->sdna = DNA_sdna_current_get();
+  wd->sdna_structs_to_write = Array<bool>(wd->sdna->structs.size(), false);
   wd->stable_address_ids.sdna_pointers = std::make_unique<dna::pointers::PointersInDNA>(*wd->sdna);
 
   wd->ww = ww;
@@ -906,6 +907,8 @@ static void writestruct_at_address_nr(WriteData *wd,
     return;
   }
 
+  wd->sdna_structs_to_write[struct_nr] = true;
+
   const int64_t len_in_bytes = nr * DNA_struct_size(wd->sdna, struct_nr);
   if (!SYSTEM_SUPPORTS_WRITING_FILE_VERSION_1 ||
       USER_DEVELOPER_TOOL_TEST(&U, write_legacy_blend_file_format))
@@ -1080,7 +1083,16 @@ static void writedata(
   bh.len = int64_t(len);
 
   if (wd->debug_dst) {
-    write_raw_data_in_debug_file(wd, len, address_id, data);
+    if (filecode == BLO_CODE_DNA1) {
+      const char *error_message = nullptr;
+      const std::unique_ptr<SDNA> sdna = DNA_sdna_from_data(
+          data, int(len), false, false, &error_message);
+      BLI_assert_msg(sdna, error_message ? error_message : "Failed to parse encoded SDNA");
+      DNA_sdna_print(*sdna, *wd->debug_dst);
+    }
+    else {
+      write_raw_data_in_debug_file(wd, len, address_id, data);
+    }
   }
 
   write_bhead(wd, bh);
@@ -1404,6 +1416,9 @@ static bool write_library_if_needed(WriteData *wd,
         ids_used_from_library.append(id);
         continue;
       }
+      /* NOTE: If we ever want to support writing (and then linking) directly linked data for
+       * copy-paste, we need to also consider linked IDs flagged with `ID_FLAG_CLIPBOARD_MARK` as
+       * used here. */
       if ((id->tag & ID_TAG_INDIRECT) && (id->flag & ID_FLAG_INDIRECT_WEAK_LINK)) {
         ids_used_from_library.append(id);
         continue;
@@ -1862,11 +1877,19 @@ static bool write_file_handle(Main *mainvar,
     write_userdef(&writer, &U);
   }
 
-  /* Write DNA last, because (to be implemented) test for which structs are written.
+  /* Write SDNA last so that we know which structs are actually used and only write those.
    *
-   * Note that we *borrow* the pointer to 'DNAstr',
-   * so writing each time uses the same address and doesn't cause unnecessary undo overhead. */
-  writedata(wd, BLO_CODE_DNA1, size_t(wd->sdna->data_size), wd->sdna->data);
+   * Writing SDNA last has the downside that when opening the file one has to traverse the entire
+   * file once first to find the SDNA. In the future one could also use a heuristic to decide
+   * whether it's worth writing a partial SDNA to save space. For larger files, one could also just
+   * write the entire SDNA at the start.*/
+  if (wd->use_memfile) {
+    writedata(wd, BLO_CODE_DNA1, size_t(wd->sdna->data_size), wd->sdna->data);
+  }
+  else {
+    const Vector<uint8_t> dna_data = DNA_sdna_encode_subset(*wd->sdna, wd->sdna_structs_to_write);
+    writedata(wd, BLO_CODE_DNA1, dna_data.size(), dna_data.data());
+  }
 
   /* End of file. */
   BHead bhead{};
@@ -2045,13 +2068,13 @@ static bool BLO_write_file_impl(Main *mainvar,
 
     /* Normalize the paths in case there is some subtle difference (so they can be compared). */
     if (relbase_valid) {
-      BLI_path_split_dir_part(mainvar->filepath, dir_src, sizeof(dir_src));
+      BLI_path_split_dir_part(mainvar->filepath, dir_src);
       BLI_path_normalize(dir_src);
     }
     else {
       dir_src[0] = '\0';
     }
-    BLI_path_split_dir_part(filepath, dir_dst, sizeof(dir_dst));
+    BLI_path_split_dir_part(filepath, dir_dst);
     BLI_path_normalize(dir_dst);
 
     /* Only for relative, not relative-all, as this means making existing paths relative. */

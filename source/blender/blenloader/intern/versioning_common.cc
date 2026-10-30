@@ -26,6 +26,7 @@
 #include "BLI_string_utf8.hh"
 
 #include "BKE_animsys.hh"
+#include "BKE_compositor.hh"
 #include "BKE_grease_pencil_legacy_convert.hh"
 #include "BKE_idprop.hh"
 #include "BKE_lib_id.hh"
@@ -461,7 +462,7 @@ static void version_node_socket_index_animdata_ex(
         }
 
         char node_name_escaped[sizeof(node->name) * 2];
-        BLI_str_escape(node_name_escaped, node->name, sizeof(node_name_escaped));
+        BLI_str_escape(node_name_escaped, node->name);
         char *rna_path_prefix = BLI_sprintfN("nodes[\"%s\"].inputs", node_name_escaped);
 
         const int new_index = input_index + socket_index_offset;
@@ -786,6 +787,17 @@ bNodeTree *version_get_scene_compositor_node_tree(Main *bmain, Scene *scene)
   return scene->compositing_node_group;
 }
 
+void version_compositing_node_group_to_effect(Scene &scene, bNodeTree &node_group)
+{
+  SceneCompositorEffect &effect = bke::compositor::new_effect(scene, "Scene Effect");
+  effect.node_group = &node_group;
+  if (!node_group.compositor_node_asset_traits) {
+    node_group.compositor_node_asset_traits = MEM_new<CompositorNodeAssetTraits>(__func__);
+  }
+  node_group.compositor_node_asset_traits->flag |= COMPOSIT_NODE_ASSET_SCENE_EFFECT;
+  bke::node_update_asset_metadata(node_group);
+}
+
 static bool blendfile_or_libraries_versions_atleast(Main *bmain,
                                                     const short versionfile,
                                                     const short subversionfile)
@@ -892,6 +904,8 @@ void do_versions_after_setup(Main *new_bmain,
       scene.nodetree = nullptr;
 
       BKE_libblock_management_main_add(new_bmain, ntree);
+
+      version_compositing_node_group_to_effect(scene, *ntree);
 
       /* NOTE: The user count remains zero at this point. It will get automatically updated after
        * blend file reading is done. */

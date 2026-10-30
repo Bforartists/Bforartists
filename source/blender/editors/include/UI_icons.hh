@@ -186,6 +186,9 @@ DEF_ICON_COLOR(ALIGN_Y)
 /* letter B */
 
 DEF_ICON_COLOR(BACK)
+/* BFA - new upstream monochrome icons for backdrop navigation gizmos (Blender !165145) */
+DEF_ICON(BACKDROP_PAN)
+DEF_ICON(BACKDROP_ZOOM)
 DEF_ICON_COLOR(BACKGROUND)
 DEF_ICON_COLOR(BAKE)
 DEF_ICON_COLOR(BAKE_ACTION)
