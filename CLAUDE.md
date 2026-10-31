@@ -72,6 +72,10 @@ merge, clean the submodules (`git submodule foreach --recursive git reset --hard
 - Icons: SVG sources in `release/datafiles/icons_svg/` (many BFA-only icons), plus
   `release/datafiles/icons/`; geometry icons via `make icons_geom`.
 - Keymap: `scripts/presets/keyconfig/Bforartists.py` and `Bforartists-macOS.py`.
+- Translations: `locale/po/*.po` stay upstream; BFA entries live only in the generated block at the
+  end of each file (`tools/utils/bforartists_i18n_sync.py`, data in `tools/utils/bforartists_i18n/`).
+  When rewording an English label/tooltip, add `msgid "<BFA text>"` / `msgstr "<Blender text>"` to
+  `remap.po` and run `... write`. On a `.po` merge conflict: `git checkout --theirs <file>`, then `write`.
 - BFA add-ons in `scripts/addons_core/`: `bfa_default_addons` (bundled add-ons/extensions),
   `bfa_default_library` (node asset libraries), `bfa_3Dsequencer`, `bfa_brush_panel`,
   `bfa_find_and_replace`, `bfa_power_user_tools`, `bfa_presentation_slider`,

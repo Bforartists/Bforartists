@@ -1,0 +1,1173 @@
+# Bforartists English lookup table for translations.
+# msgid  = Bforartists UI text, msgstr = the original Blender text it replaces.
+# The Blender translation of msgstr is reused for msgid in every language.
+# After editing run: python tools/utils/bforartists_i18n_sync.py write
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+# BFA - entries moved from earlier in-place edits of locale/po (#5823, #6396, #6398, #6698)
+msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
+msgstr "Copy the selected nodes to the internal clipboard"
+
+msgctxt "Operator"
+msgid "Cut: Delete with Copy and Reconnect"
+msgstr "Delete with Copy and Reconnect"
+
+msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
+msgstr "Copy nodes to clipboard, remove and reconnect them."
+
+msgctxt "Operator"
+msgid "Set Vertex Color"
+msgstr "Set Vertex Colors"
+
+msgctxt "Operator"
+msgid "Create Pose Asset"
+msgstr "Create Pose Asset..."
+
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Pose Breakdowner"
+
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "Push Pose from Breakdown"
+
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "Relax Pose to Breakdown"
+
+# BFA - reworded strings, matched from the master vs blender/main diff and reviewed (#5701)
+msgid "      Masks"
+msgstr "Masks"
+
+msgid "     Zero Weights"
+msgstr "Zero Weights"
+
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "Join Tracks"
+
+msgid " Overscan"
+msgstr "Overscan"
+
+msgid "%d data pasted"
+msgstr "%d data-block(s) pasted"
+
+msgid "A single curve from a curves data"
+msgstr "A single curve from a curves data-block"
+
+msgid "Action data"
+msgstr "Action data-blocks"
+
+msgid "Active Action for this data"
+msgstr "Active Action for this data-block"
+
+msgid "Active item is not a boolean input socket"
+msgstr "Only boolean input sockets are supported"
+
+msgctxt "Operator"
+msgid "Add (with Targets)"
+msgstr "Add (with Targets)..."
+
+msgid "Add a circle mesh"
+msgstr "Construct a circle mesh"
+
+msgid "Add a conic mesh"
+msgstr "Construct a conic mesh"
+
+msgid "Add a cube mesh that consists of six square faces"
+msgstr "Construct a cube mesh that consists of six square faces"
+
+msgid "Add a cylinder mesh"
+msgstr "Construct a cylinder mesh"
+
+msgid "Add a filled planar mesh with 4 vertices"
+msgstr "Construct a filled planar mesh with 4 vertices"
+
+msgid "Add a new palette of indexed colors"
+msgstr "Add new palette"
+
+msgid "Add a spherical mesh that consists of equally sized triangles"
+msgstr "Construct a spherical mesh that consists of equally sized triangles"
+
+msgid "Add a subdivided plane mesh"
+msgstr "Construct a subdivided plane mesh"
+
+msgid "Add a Suzanne mesh"
+msgstr "Construct a Suzanne mesh"
+
+msgid "Add diagonal springs on quads"
+msgstr "Add diagonal springs on 4-gons"
+
+msgid "Add new Annotation data"
+msgstr "Add new Annotation data-block"
+
+msgid "Add new Annotation layer or note for the active data"
+msgstr "Add new Annotation layer or note for the active data-block"
+
+msgid "Adds the selected object to a new collection"
+msgstr "Add an object to a new collection"
+
+msgid "Adjust the font size for displaying the text"
+msgstr "Font size to use for displaying the text"
+
+msgid "All by Trait"
+msgstr "Select All by Trait"
+
+msgid "All by Type"
+msgstr "Select All by Type"
+
+msgctxt "Operator"
+msgid "All by Type"
+msgstr "Select All by Type"
+
+msgid "All curves in the data"
+msgstr "All curves in the data-block"
+
+msgid "Animation data does not have active action"
+msgstr "Animation data-block does not have active action"
+
+msgid "Animation data for data"
+msgstr "Animation data for data-block"
+
+msgid "Animation data for this data"
+msgstr "Animation data for this data-block"
+
+msgid "Animation has active action"
+msgstr "Animation data-block has active action"
+
+msgctxt "Operator"
+msgid "Apply All Shape Keys"
+msgstr "Apply All"
+
+msgid "Armature data"
+msgstr "Armature data-blocks"
+
+msgid "Armature data containing a hierarchy of bones, usually used for rigging characters"
+msgstr "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+
+msgctxt "Operator"
+msgid "Assign to New"
+msgstr "Assign to New Collection"
+
+msgid "Attribute Text Overlay"
+msgstr "Attribute Text"
+
+msgid "Auto Keyframing"
+msgstr "Auto Keying"
+
+msgid "Auto Save"
+msgstr "Auto-Save"
+
+msgid "Bake data for a Scene"
+msgstr "Bake data for a Scene data-block"
+
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "Bake to Keyframes"
+
+msgid "Base Blender Version"
+msgstr "Blender Version"
+
+msgctxt "Operator"
+msgid "Batch-Generate Preview"
+msgstr "Batch-Generate Previews..."
+
+msgid "Blobby element in a Metaball data"
+msgstr "Blobby element in a metaball data-block"
+
+msgid "Bone in an Armature data"
+msgstr "Bone in an Armature data-block"
+
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Box Select"
+
+msgid "Brush data"
+msgstr "Brush data-blocks"
+
+msgid "Brush data for storing brush settings for painting and sculpting"
+msgstr "Brush data-block for storing brush settings for painting and sculpting"
+
+msgctxt "Operator"
+msgid "By Pattern"
+msgstr "Select Pattern..."
+
+msgid "By Times Over Time=0"
+msgstr "By Times Over Zero Time"
+
+msgid "By Values Over Value=0"
+msgstr "By Values Over Zero Value"
+
+msgid "Cache Files data"
+msgstr "Cache Files data-blocks"
+
+msgid "Cached Range (Info)"
+msgstr "Cached Range"
+
+msgid "Camera data"
+msgstr "Camera data-blocks"
+
+msgid "Camera data for storing camera settings"
+msgstr "Camera data-block for storing camera settings"
+
+msgid "Cannot save asset catalogs before the .blend file is saved"
+msgstr "Cannot save asset catalogs before the Blender file is saved"
+
+msgid "Causes actions to be duplicated with the data"
+msgstr "Causes actions to be duplicated with the data-blocks"
+
+msgid "Change Context\nJump to a different tab inside the properties editor"
+msgstr "Jump to a different tab inside the properties editor"
+
+msgctxt "Operator"
+msgid "Change Keying Set"
+msgstr "Change Keying Set..."
+
+msgid "Clear all orphaned data without any users from the file"
+msgstr "Clear all orphaned data-blocks without any users from the file"
+
+msgctxt "Operator"
+msgid "Clear Data Previews"
+msgstr "Clear Data-Block Previews"
+
+msgid "Clear data previews (only for some types like objects, materials, textures, etc.)"
+msgstr "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+
+msgid "Clip Near"
+msgstr "Clip Start"
+
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Clip Start"
+
+msgid "Collection data"
+msgstr "Collection data-blocks"
+
+msgid "Collection Instances"
+msgstr "Instance Collections"
+
+msgid "Collection of Object data"
+msgstr "Collection of Object data-blocks"
+
+msgid "Construct a Monkey names Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"
+msgstr "Construct a Suzanne Grease Pencil object"
+
+msgctxt "Operator"
+msgid "Control Point row"
+msgstr "Control Point Row"
+
+msgid "Converts normal object transforms to delta transforms.\nAny existing delta transform will be included as well"
+msgstr "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+
+msgid "Copy to Clipboard (as script\nCopy the console contents for use in a script"
+msgstr "Copy the console contents for use in a script"
+
+msgctxt "Operator"
+msgid "Copy Vectors"
+msgstr "Copy Vector"
+
+msgid "Create 3D text object from active text data"
+msgstr "Create 3D text object from active text data-block"
+
+msgid "Create a new text file"
+msgstr "Create a new text data-block"
+
+msgid "Create a new world Data"
+msgstr "Create a new world Data-Block"
+
+msgid "Create an empty grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"
+msgstr "Create an empty Grease Pencil object"
+
+msgid "Curve data"
+msgstr "Curve data-blocks"
+
+msgid "Curve data storing curves, splines and NURBS"
+msgstr "Curve data-block storing curves, splines and NURBS"
+
+msgid "Curve data used for storing surfaces"
+msgstr "Curve data-block used for storing surfaces"
+
+msgid "Curve data used for storing text"
+msgstr "Curve data-block used for storing text"
+
+msgid "Data from the clipboard are pasted"
+msgstr "Paste data-blocks from the internal clipboard"
+
+msgid "Data from which the edited data is linked"
+msgstr "Data-block from which the edited data-block is linked"
+
+msgid "Data type to show"
+msgstr "Data-block type to show"
+
+msgid "Data used for annotations in the 3D view"
+msgstr "Data-block used for annotations in the 3D view"
+
+msgid "Data using these shape keys"
+msgstr "Data-block using these shape keys"
+
+msgid "Data whose nodes are being edited"
+msgstr "Data-block whose nodes are being edited"
+
+msgid "Delete all empty animation data containers from visible data"
+msgstr "Delete all empty animation data containers from visible data-blocks"
+
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Delete All"
+
+msgid "Delete selected retiming keyframes from the sequencer"
+msgstr "Delete selected retiming keys from the sequencer"
+
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Delete"
+
+msgid "Depth:"
+msgstr "Depth"
+
+msgid "Display overlay text.\nAlso affects the Geometry Nodes viewer overlay"
+msgstr "Display overlay text"
+
+msgid "Distance of object that contribute to the Cavity/Edge effect"
+msgstr "Distance of object that contribute to the cavity/edge effect"
+
+msgid "Draw a curve"
+msgstr "Draw curve"
+
+msgctxt "Operator"
+msgid "Duplicate Asset"
+msgstr "Duplicate Asset..."
+
+msgid "Duplicates the active brush asset, saves it into the default asset library, and make it the active brush"
+msgstr "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+
+msgid "Duplicates the active geometry node group and assigns it to the active modifier"
+msgstr "Duplicate the active geometry node group and assign it to the active modifier"
+
+msgid "Edge in a Mesh data"
+msgstr "Edge in a Mesh data-block"
+
+msgid "Edge Threshold"
+msgstr "SMAA Threshold"
+
+msgid "Edit properties of active object and related data"
+msgstr "Edit properties of active object and related data-blocks"
+
+msgid "Editmode bone in an armature data"
+msgstr "Edit mode bone in an armature data-block"
+
+msgid "Embed data into the .blend file"
+msgstr "Embed data-blocks into the .blend file"
+
+msgid "Euclidean Distance"
+msgstr "Euclidean"
+
+msgid "Expand/Collapse all entries by one level"
+msgstr "Expand/collapse all entries by one level"
+
+msgctxt "Operator"
+msgid "Export Keying Set"
+msgstr "Export Keying Set..."
+
+msgid "Extrude Region Vertex Normals\nExtrude region together along local normals"
+msgstr "Extrude region together along local normals"
+
+msgctxt "Operator"
+msgid "Eyedropper Data"
+msgstr "Eyedropper Data-Block"
+
+msgctxt "Operator"
+msgid "Fit Preview in window"
+msgstr "Fit Preview in Window"
+
+msgctxt "Operator"
+msgid "Frame Last Stroke"
+msgstr "Center Last Stroke"
+
+msgid "Freestyle settings for a ViewLayer"
+msgstr "Freestyle settings for a ViewLayer data-block"
+
+msgid "Global Auto Masking"
+msgstr "Auto-Masking"
+
+msgid "Global Influence"
+msgstr "Global Influence:"
+
+msgid "Go to a specific line number"
+msgstr "Jump cursor to line"
+
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "Jump cursor to line"
+
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Move"
+
+msgid "Grouped"
+msgstr "Select Grouped"
+
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Select Grouped"
+
+msgid "Hair curve data"
+msgstr "Hair curve data-blocks"
+
+msgid "Hair data for hair curves"
+msgstr "Hair data-block for hair curves"
+
+msgid "Hide selected bones in Edit Mode"
+msgstr "Tag selected bones to not be visible in Edit Mode"
+
+msgid "Hide selected bones in Pose Mode"
+msgstr "Tag selected bones to not be visible in Pose Mode"
+
+msgid "Hide selected control points"
+msgstr "Hide (un)selected control points"
+
+msgid "Hide selected metaball element(s)"
+msgstr "Hide (un)selected metaball element(s)"
+
+msgid "Hide selected vertices, edges or faces"
+msgstr "Hide (un)selected vertices, edges or faces"
+
+msgid "Hide the mask layer"
+msgstr "Temporarily hide mask layers"
+
+msgid "Image data"
+msgstr "Image data-blocks"
+
+msgid "Image data referencing an external or packed image"
+msgstr "Image data-block referencing an external or packed image"
+
+msgid "Image name"
+msgstr "Image data-block name"
+
+msgid "Image name to unpack"
+msgstr "Image data-block name to unpack"
+
+msgctxt "Operator"
+msgid "Image/Sequence"
+msgstr "Image/Sequence..."
+
+msgctxt "Operator"
+msgid "Import OpenVDB"
+msgstr "Import OpenVDB..."
+
+msgid "Include animation data with no NLA data (NLA editor only)"
+msgstr "Include animation data-blocks with no NLA data (NLA editor only)"
+
+msgid "Include visualization of animation data related to data linked to modifiers"
+msgstr "Include visualization of animation data related to data-blocks linked to modifiers"
+
+msgid "Insert a keyframe for the single property"
+msgstr "Insert a keyframe for current UI-active property"
+
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "Insert Into Group"
+
+msgctxt "Operator"
+msgid "Insert Keyframe with Keying Set"
+msgstr "Insert Keyframe with Keying Set..."
+
+msgid "Instance Collections on Appending or Linking"
+msgstr "Instance Collections on Appending"
+
+msgid "Internet access is required to install and update Extensions."
+msgstr "Internet access is required to install and update online extensions. "
+
+msgid "Invert Mouse Zoom Direction"
+msgstr "Invert Zoom Direction"
+
+msgid "Is Resumable"
+msgstr "Resumable"
+
+msgid "Keep the current data displayed"
+msgstr "Keep the current data-block displayed"
+
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "Set type of handle for selected keyframes"
+
+msgid "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgstr "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+
+msgid "Lattice data"
+msgstr "Lattice data-blocks"
+
+msgid "Lattice data defining a grid for deforming other objects"
+msgstr "Lattice data-block defining a grid for deforming other objects"
+
+msgid "Library data"
+msgstr "Library data-blocks"
+
+msgid "Library database with null library data pointer!"
+msgstr "Library database with null library data-block pointer!"
+
+msgid "Light data"
+msgstr "Light data-blocks"
+
+msgid "Light data for lighting a scene"
+msgstr "Light data-block for lighting a scene"
+
+msgid "Light Probe data"
+msgstr "Light Probe data-blocks"
+
+msgid "Light Probe data for lighting capture objects"
+msgstr "Light Probe data-block for lighting capture objects"
+
+msgid "Lighting for a World data"
+msgstr "Lighting for a World data-block"
+
+msgid "Line number to go to"
+msgstr "Line number to jump to"
+
+msgid "Line of text in a Text file"
+msgstr "Line of text in a Text data-block"
+
+msgid "Line Style data"
+msgstr "Line Style data-blocks"
+
+msgid "Link the objects or data rather than appending"
+msgstr "Link the objects or data-blocks rather than appending"
+
+msgctxt "Operator"
+msgid "Link to Existing Collection"
+msgstr "Add to Collection"
+
+msgctxt "Operator"
+msgid "Linked From"
+msgstr "Linked from"
+
+msgctxt "Operator"
+msgid "Linked To"
+msgstr "Linked to"
+
+msgid "Lock Channel\nEditability of keyframes for this channel"
+msgstr "Editability of keyframes for this channel"
+
+msgid "Lock Channel\nEditability of NLA Strips in this track"
+msgstr "Editability of NLA Strips in this track"
+
+msgid "Lock view rotation in side views"
+msgstr "Lock view rotation of side views to Top/Front/Right"
+
+msgid "Loop in a Mesh data"
+msgstr "Loop in a Mesh data-block"
+
+msgid "Main data structure representing a .blend file and all its data"
+msgstr "Main data structure representing a .blend file and all its data-blocks"
+
+msgid "Make library linked data local to this file"
+msgstr "Make library linked data-blocks local to this file"
+
+msgid "Make materials local to each data"
+msgstr "Make materials local to each data-block"
+
+msgid "Make the selected active boolean input socket a top-level toggle located in its parent panel"
+msgstr "Make the active boolean socket a toggle for its parent panel"
+
+msgid "Manhattan Distance"
+msgstr "Manhattan"
+
+msgid "Mark selected edges as sharp"
+msgstr "(Un)mark selected edges as sharp"
+
+msgid "Mask data defining mask for compositing"
+msgstr "Mask data-block defining mask for compositing"
+
+msgid "Masks data"
+msgstr "Masks data-blocks"
+
+msgid "Material data"
+msgstr "Material data-blocks"
+
+msgid "Material data to define the appearance of geometric objects for rendering"
+msgstr "Material data-block to define the appearance of geometric objects for rendering"
+
+msgid "Material data used by this material slot"
+msgstr "Material data-block used by this material slot"
+
+msgid "Max B_Frames"
+msgstr "Max B-frames"
+
+msgctxt "Operator"
+msgid "Menu Search"
+msgstr "Menu Search..."
+
+msgid "Mesh data"
+msgstr "Mesh data-blocks"
+
+msgctxt "Operator"
+msgid "Mesh Plane"
+msgstr "Mesh Plane..."
+
+msgid "Metaball data"
+msgstr "Metaball data-blocks"
+
+msgid "Metaball data to define blobby surfaces"
+msgstr "Metaball data-block to define blobby surfaces"
+
+msgid "Mirror selected items"
+msgstr "Mirror selected items around one or more axes"
+
+msgctxt "Operator"
+msgid "Mirror Shape Key (Topology)"
+msgstr "Flip (Topology)"
+
+msgid "Mist settings for a World data"
+msgstr "Mist settings for a World data-block"
+
+msgid "Mixdown and export the scene's audio to a sound file"
+msgstr "Mix the scene's audio to a sound file"
+
+msgctxt "Operator"
+msgid "Mixdown Audio"
+msgstr "Mixdown"
+
+msgid "Movie Clip data"
+msgstr "Movie Clip data-blocks"
+
+msgid "MovieClip data referencing an external movie file"
+msgstr "MovieClip data-block referencing an external movie file"
+
+msgid "Name of parent object in specified data to which parenting happens"
+msgstr "Name of parent object in specified data-block to which parenting happens"
+
+msgid "Name of parent sub-object in specified data to which parenting happens"
+msgstr "Name of parent sub-object in specified data-block to which parenting happens"
+
+msgid "Nearest Frame"
+msgstr "Selection to Nearest Frame"
+
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "Selection to Nearest Frame"
+
+msgid "Nearest Second"
+msgstr "Selection to Nearest Second"
+
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "Selection to Nearest Second"
+
+msgid "New File from Template"
+msgstr "New File"
+
+msgid "No orphaned data to purge"
+msgstr "No orphaned data-blocks to purge"
+
+msgid "No selected data to copy"
+msgstr "No selected data-blocks to copy"
+
+msgid "Node group data"
+msgstr "Node group data-blocks"
+
+msgid "Node tree consisting of linked nodes used for materials (and other shading data)"
+msgstr "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+
+msgid "Number of anti-aliasing supersamples done per pixel in final render"
+msgstr "Number of supersampling anti-aliasing samples per pixel for final render"
+
+msgid "Object data defining an object in a scene"
+msgstr "Object data-block defining an object in a scene"
+
+msgid "Open a new text file"
+msgstr "Open a new text data-block"
+
+msgid "Operator Search"
+msgstr "Operator Search..."
+
+msgctxt "Operator"
+msgid "Operator Search"
+msgstr "Operator Search..."
+
+msgid "Orientation:"
+msgstr "Orientation"
+
+msgid "Overridden data names are not editable"
+msgstr "Overridden data-blocks names are not editable"
+
+msgid "Overview of scene graph and all available data"
+msgstr "Overview of scene graph and all available data-blocks"
+
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
+msgstr "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+
+msgid "Paint Curves data"
+msgstr "Paint Curves data-blocks"
+
+msgid "Palette data"
+msgstr "Palette data-blocks"
+
+msgid "Parameters defining how a MovieClip data is used by another data"
+msgstr "Parameters defining how a MovieClip data-block is used by another data-block"
+
+msgid "Parameters defining how an Image data is used by another data"
+msgstr "Parameters defining how an Image data-block is used by another data-block"
+
+msgid "Particle data"
+msgstr "Particle data-blocks"
+
+msgid "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"
+msgstr "Paste nodes from the internal clipboard to the active node tree"
+
+msgid "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgstr "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+
+msgid "Paste transform onto frames that have a selected key, potentially creating new keys on those frames"
+msgstr "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+
+msgid "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled"
+msgstr "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+
+msgctxt "Operator"
+msgid "Paste Vectors"
+msgstr "Paste Vector"
+
+msgid "Path from the data to the currently edited node tree"
+msgstr "Path from the data-block to the currently edited node tree"
+
+msgid "Pattern Area"
+msgstr "Pattern Area:"
+
+msgid "Place the cursor"
+msgstr "Place cursor"
+
+msgid "Play in"
+msgstr "Play In"
+
+msgid "Point cloud data"
+msgstr "Point cloud data-block"
+
+msgctxt "Operator"
+msgid "Point normals to target"
+msgstr "Point to Target..."
+
+msgid "Polygon in a Mesh data"
+msgstr "Polygon in a Mesh data-block"
+
+msgid "Pop-up a search panel for all available operators in current context"
+msgstr "Pop-up a search over all available operators in current context"
+
+msgid "Pose Library based on the asset system"
+msgstr "Pose Library based on the asset system."
+
+msgid "Properties Editor and Sidebars"
+msgstr "Properties and Sidebars"
+
+msgid "Radius X"
+msgstr "Radius X:"
+
+msgctxt "Operator"
+msgid "Refresh Data Previews"
+msgstr "Refresh Data-Block Previews"
+
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "Release Notes"
+
+msgid "Reload active text file"
+msgstr "Reload active text data-block from its file"
+
+msgid "Reload all Python Scripts, including the UI"
+msgstr "Reload scripts"
+
+msgctxt "Operator"
+msgid "Remove Action"
+msgstr "Unlink Action"
+
+msgid "Remove active font"
+msgstr "Unlink active font data-block"
+
+msgid "Remove active text"
+msgstr "Unlink active text data-block"
+
+msgctxt "Operator"
+msgid "Remove Annotation"
+msgstr "Annotation Unlink"
+
+msgid "Remove the active Annotation"
+msgstr "Unlink active Annotation data-block"
+
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
+msgstr "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+
+msgid "Removes an existing Render Region rectangle"
+msgstr "Clear the boundaries of the render region and disable render region"
+
+msgid "Removes an existing Render Region rectangle, clearning the boundaries of the render border"
+msgstr "Clear the boundaries of the border render and disable border render"
+
+msgctxt "Operator"
+msgid "Rename Active Node"
+msgstr "Rename Active Node..."
+
+msgctxt "Operator"
+msgid "Rename Active Object"
+msgstr "Rename Active Object..."
+
+msgctxt "Operator"
+msgid "Render Audio"
+msgstr "Render Audio..."
+
+msgid "Render the world background as transparent. This allows compositing the rendered image over another background"
+msgstr "World background is transparent, for compositing the render over another background"
+
+msgid "Rendering settings for a Scene"
+msgstr "Rendering settings for a Scene data-block"
+
+msgid "Restore all packed linked data  to their original locations"
+msgstr "Restore all packed linked data-blocks to their original locations"
+
+msgid "Reveals the hidden layer(s)"
+msgstr "Reveal temporarily hidden mask layers"
+
+msgid "Sample a data from the 3D View to store in a property"
+msgstr "Sample a data-block from the 3D View to store in a property"
+
+msgctxt "Operator"
+msgid "Save a Copy"
+msgstr "Save a Copy..."
+
+msgid "Save active text file"
+msgstr "Save active text data-block"
+
+msgctxt "Operator"
+msgid "Save Blend File"
+msgstr "Save Blender File"
+
+msgid "Save the baking map in an internal image file"
+msgstr "Save the baking map in an internal image data-block"
+
+msgid "Save the current Blend file"
+msgstr "Save the current Blender file"
+
+msgid "Saves the image with another name and/or settings"
+msgstr "Save the image with another name and/or settings"
+
+msgid "Scene data"
+msgstr "Scene data-blocks"
+
+msgid "Scene, consisting in objects and defining time and render related settings"
+msgstr "Scene data-block, consisting in objects and defining time and render related settings"
+
+msgid "Screen data"
+msgstr "Screen data-blocks"
+
+msgid "Screen data, defining the layout of areas in a window"
+msgstr "Screen data-block, defining the layout of areas in a window"
+
+msgid "Search Area"
+msgstr "Search Area:"
+
+msgid "Search in all text data, instead of only the active one"
+msgstr "Search in all text data-blocks, instead of only the active one"
+
+msgid "Select all visible objects that are linked to the active element"
+msgstr "Select all visible objects that are linked"
+
+msgid "Select and slide a paint curve point"
+msgstr "Select and slide paint curve point"
+
+msgid "Select by Image Border"
+msgstr "Image Border"
+
+msgid "Selected data are copied to the clipboard"
+msgstr "Copy the selected data-blocks to the internal clipboard"
+
+msgid "Sequence editing data for a Scene data"
+msgstr "Sequence editing data for a Scene data-block"
+
+msgid "Set as default rounded caps"
+msgstr "Set as default rounded"
+
+msgid "Shape Key data"
+msgstr "Shape Key data-blocks"
+
+msgid "Shape key in a shape keys data"
+msgstr "Shape key in a shape keys data-block"
+
+msgid "Shape keys data containing different shapes of geometric data"
+msgstr "Shape keys data-block containing different shapes of geometric data-blocks"
+
+msgid "Show annotation data which belongs to active track"
+msgstr "Show annotation data-block which belongs to active track"
+
+msgid "Show annotation data which belongs to movie clip"
+msgstr "Show annotation data-block which belongs to movie clip"
+
+msgid "Show Bforartists version"
+msgstr "Show Version"
+
+msgid "Show Face Sets"
+msgstr "Face Sets"
+
+msgid "Show files and data that are normally hidden"
+msgstr "Show files and data-blocks that are normally hidden"
+
+msgid "Show Hidden Files/Data"
+msgstr "Show Hidden Files/Data-Blocks"
+
+msgid "Show in"
+msgstr "Show In"
+
+msgid "Show Mask"
+msgstr "Mask"
+
+msgid "Show only data of one type"
+msgstr "Show only data-blocks of one type"
+
+msgid "Show or hide the entire Pose Bones group of armatures in the Outliner"
+msgstr "Show pose bones of armatures"
+
+msgid "Show Show menus in the header"
+msgstr "Show menus in the header"
+
+msgid "Show the X axis line in perspective / orthographic views"
+msgstr "Show the X axis line"
+
+msgid "Show the Y axis line in perspective / orthographic views"
+msgstr "Show the Y axis line"
+
+msgid "Show the Z axis line in perspective / orthographic views"
+msgstr "Show the Z axis line"
+
+msgid "Show World data"
+msgstr "Show World data-blocks"
+
+msgid "Show:"
+msgstr "Show"
+
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Shrink/Fatten"
+
+msgid "Similar"
+msgstr "Select Similar"
+
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Select Similar"
+
+msgid "SMAA Threshold (Render)"
+msgstr "SMAA Threshold Render"
+
+msgid "SMAA Threshold (Viewport)"
+msgstr "SMAA Threshold Viewport"
+
+msgid "Sort Data"
+msgstr "Sort Data-Blocks"
+
+msgid "Sort Search by Most Recent"
+msgstr "Sort by Most Recent"
+
+msgid "Sound data"
+msgstr "Sound data-blocks"
+
+msgid "Sound data referencing an external or packed sound file"
+msgstr "Sound data-block referencing an external or packed sound file"
+
+msgid "Sound data used by this speaker"
+msgstr "Sound data-block used by this speaker"
+
+msgid "Sound data used by this strip"
+msgstr "Sound data-block used by this strip"
+
+msgid "Sound sample file used by this Sound data"
+msgstr "Sound sample file used by this Sound data-block"
+
+msgid "Speaker data"
+msgstr "Speaker data-blocks"
+
+msgid "Speaker data´for 3D audio speaker objects"
+msgstr "Speaker data-block for 3D audio speaker objects"
+
+msgctxt "Operator"
+msgid "Split Selection"
+msgstr "Select Split"
+
+msgid "Stereoscopy settings for a Camera data"
+msgstr "Stereoscopy settings for a Camera data-block"
+
+msgctxt "Operator"
+msgid "Stop Tweaking Action"
+msgstr "Stop Tweaking Strip Actions"
+
+msgid "Supersampling"
+msgstr "SSAA Samples"
+
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Nurbs Circle"
+
+msgctxt "Operator"
+msgid "Surface Cylinder"
+msgstr "Nurbs Cylinder"
+
+msgctxt "Operator"
+msgid "Surface Patch"
+msgstr "Nurbs Surface"
+
+msgctxt "Operator"
+msgid "Surface Sphere"
+msgstr "Nurbs Sphere"
+
+msgctxt "Operator"
+msgid "Surface Torus"
+msgstr "Nurbs Torus"
+
+msgid "Temporarily hide selected objects from the viewport"
+msgstr "Temporarily hide objects from the viewport"
+
+msgid "Tessellated triangle in a Mesh data"
+msgstr "Tessellated triangle in a Mesh data-block"
+
+msgid "Text file referencing an external or packed text file"
+msgstr "Text data-block referencing an external or packed text file"
+
+msgid "Texture data"
+msgstr "Texture data-blocks"
+
+msgid "Texture slot for textures in a Brush data"
+msgstr "Texture slot for textures in a Brush data-block"
+
+msgid "Texture slot for textures in a LineStyle data"
+msgstr "Texture slot for textures in a LineStyle data-block"
+
+msgid "Texture slot for textures in a Particle Settings data"
+msgstr "Texture slot for textures in a Particle Settings data-block"
+
+msgid "Texture used by materials, lights, worlds and brushes"
+msgstr "Texture data-block used by materials, lights, worlds and brushes"
+
+msgid "Texture used by this texture slot"
+msgstr "Texture data-block used by this texture slot"
+
+msgid "The Drivers/Expressions for this data"
+msgstr "The Drivers/Expressions for this data-block"
+
+msgid "Tracking Options Extras"
+msgstr "Tracking Settings Extras"
+
+msgid "Translate the names of new data (objects, materials...)"
+msgstr "Translate the names of new data-blocks (objects, materials...)"
+
+msgctxt "Operator"
+msgid "Tweak Action (Full Stack)"
+msgstr "Start Tweaking Strip Actions (Full Stack)"
+
+msgctxt "Operator"
+msgid "Tweak Action (Lower Stack)"
+msgstr "Start Tweaking Strip Actions (Lower Stack)"
+
+msgid "Type:"
+msgstr "Type"
+
+msgid "Unassigned (Catalogue)"
+msgstr "Unassigned"
+
+msgctxt "Operator"
+msgid "Uninstall from System"
+msgstr "Uninstall"
+
+msgid "Unmarked Assets"
+msgstr "Non-Assets"
+
+msgid "Unmarked Assets:"
+msgstr "Non-Assets"
+
+msgid "Use internal text data"
+msgstr "Use internal text data-block"
+
+msgid "Use Speed Vectors"
+msgstr "Speed Vectors"
+
+msgid "Vector font data"
+msgstr "Vector font data-blocks"
+
+msgid "Vertex Color affects to Fill only"
+msgstr "Painting affects only fills, not strokes"
+
+msgid "Vertex Color affects to Stroke and Fill"
+msgstr "Painting affects both strokes and fills"
+
+msgid "Vertex Color affects to Stroke only"
+msgstr "Painting affects only strokes, not fills"
+
+msgid "Viewport Line Width"
+msgstr "Line Width"
+
+msgctxt "Operator"
+msgid "Visit Extensions Website"
+msgstr "Visit Extensions Platform"
+
+msgid "Volume data"
+msgstr "Volume data-blocks"
+
+msgid "Volume data for 3D volume grids"
+msgstr "Volume data-block for 3D volume grids"
+
+msgid "Volume file used by this Volume"
+msgstr "Volume file used by this Volume data-block"
+
+msgid "When drawing new strokes, the new stroke is drawn below of all strokes in the layer"
+msgstr "New strokes are drawn below of all strokes in the layer"
+
+msgid "Whether the IES file is loaded from disk or from a text data"
+msgstr "Whether the IES file is loaded from disk or from a text data-block"
+
+msgid "Which data previews to clear"
+msgstr "Which data-block previews to clear"
+
+msgid "Window manager data"
+msgstr "Window manager data-blocks"
+
+msgid "Window manager data defining open windows and other user interface data"
+msgstr "Window manager data-block defining open windows and other user interface data"
+
+msgid "Workspace data"
+msgstr "Workspace data-blocks"
+
+msgid "Workspace data, defining the working environment for the user"
+msgstr "Workspace data-block, defining the working environment for the user"
+
+msgid "World data"
+msgstr "World data-blocks"
+
+msgid "World data describing the environment and ambient lighting of a scene"
+msgstr "World data-block describing the environment and ambient lighting of a scene"
+
+msgid "You can adjust online access from \"System\" preferences."
+msgstr "You can adjust this later from \"System\" preferences."
+
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "Zoom to Border"
+
+msgid "Zoom Direction"
+msgstr "Zoom direction"
+
+msgid "Zooms in or out to fit the display of the selected channels"
+msgstr "Reset viewable area to show the selected channels"
+
+msgid "Zooms in or out to fit the display to show full keyframe range"
+msgstr "Reset viewable area to show full keyframe range"
+
+msgid "Zooms in or out to fit the display to show full strips range"
+msgstr "Reset viewable area to show full strips range"
+
+msgid "Zooms in or out to fit the display to show selected keyframe range"
+msgstr "Reset viewable area to show selected keyframe range"
+
+msgid "Zooms in or out to fit the display to show selected keyframes range"
+msgstr "Reset viewable area to show selected keyframes range"
+
+msgid "Zooms in or out to fit the display to show selected strips range"
+msgstr "Reset viewable area to show selected strips range"
+
+msgid "Zooms in or out to fit the display to show the channel under the cursor"
+msgstr "Reset viewable area to show the channel under the cursor"
