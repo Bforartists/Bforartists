@@ -64,13 +64,12 @@ optional<vector<MatchRank>> SymbolFunction::get_match_ranks(
     ranks.push_back(rank);
   }
 
-  /* Check if remaining parameters are optional. */
+  /* Check if remaining parameters are optional. Defaulted parameters are not ranked, so that
+   * every viable candidate returns one rank per supplied argument and stays comparable. */
   for (size_t i = param_types.size(); i < arg_types.size(); ++i) {
     if (!arg_defaults[i].is_valid()) {
       return {}; /* Missing required argument. */
     }
-    /* Default arguments are generally treated as an exact match for scoring purposes. */
-    ranks.push_back(MatchRank::Exact);
   }
 
   return ranks;
@@ -143,8 +142,8 @@ Result<SymbolFunction *> SymbolFunction::lookup_overload(IdQualified id,
           is_ambiguous = false;
         }
         else if (current_is_template && !best_is_template) {
-          /* Best is non-template, current is template. Best maintains its win. */
-          is_ambiguous = false;
+          /* Best is non-template, current is template. Best maintains its win, but keep any
+           * ambiguity with an earlier non-template candidate. */
         }
         else {
           /* Both are templates, or both are non-templates. It is truly ambiguous. */
@@ -189,6 +188,59 @@ void SymbolFunction::add_argument(bool is_const, SymbolClass *type, Expr default
   this->arg_const.emplace_back(is_const);
   this->arg_types.emplace_back(type);
   this->arg_defaults.emplace_back(default_value);
+}
+
+bool SymbolFunction::is_compatible(ResourceType res_type)
+{
+  switch (res_type) {
+    case ResourceType::BASE_INSTANCE:
+    case ResourceType::CLIP_CONTROL:
+    case ResourceType::CLIP_DISTANCES:
+    case ResourceType::INSTANCE_ID:
+    case ResourceType::INSTANCE_INDEX:
+    case ResourceType::VERTEX_ID:
+    case ResourceType::POSITION:
+    case ResourceType::POINT_SIZE:
+      return entry_point_type == EntryPointType::VERT;
+    case ResourceType::FRONT_FACING:
+    case ResourceType::FRAG_COORD:
+    case ResourceType::BARY_COORD:
+    case ResourceType::POINT_COORD:
+    case ResourceType::SUBPASS_IN:
+    case ResourceType::FRAG_DEPTH:
+    case ResourceType::STENCIL_REF:
+      return entry_point_type == EntryPointType::FRAG;
+    case ResourceType::LOCAL_INVOCATION_ID:
+    case ResourceType::LOCAL_INVOCATION_INDEX:
+    case ResourceType::GLOBAL_INVOCATION_ID:
+    case ResourceType::WORK_GROUP_ID:
+    case ResourceType::NUM_WORK_GROUP:
+      return entry_point_type == EntryPointType::COMP;
+    case ResourceType::VIEWPORT_INDEX:
+    case ResourceType::LAYER:
+    case ResourceType::IN:
+    case ResourceType::OUT:
+      return entry_point_type == EntryPointType::VERT || entry_point_type == EntryPointType::FRAG;
+    default:
+      return false;
+  }
+  assert(0);
+  return false;
+}
+
+std::string to_str(SymbolFunction::EntryPointType type)
+{
+  switch (type) {
+    case SymbolFunction::EntryPointType::NONE:
+      return "none";
+    case SymbolFunction::EntryPointType::FRAG:
+      return "fragment";
+    case SymbolFunction::EntryPointType::VERT:
+      return "vertex";
+    case SymbolFunction::EntryPointType::COMP:
+      return "compute";
+  }
+  return "Unknown";
 }
 
 }  // namespace bsl

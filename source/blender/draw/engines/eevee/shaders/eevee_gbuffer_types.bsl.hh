@@ -100,14 +100,15 @@ GBufferMode closure_type_to_mode(ClosureType type, bool is_grayscale)
       return is_grayscale ? GBUF_THIN_REFRACTION_COLORLESS : GBUF_THIN_REFRACTION;
     case CLOSURE_BSSRDF_BURLEY_ID:
       return GBUF_SUBSURFACE;
-    default:
+    case CLOSURE_NONE_ID:
       return GBUF_NONE;
   }
+  return GBUF_NONE;
 }
 
 ClosureType mode_to_closure_type(uint mode)
 {
-  switch (mode) {
+  switch (GBufferMode(mode)) {
     case GBUF_DIFFUSE:
       return ClosureType(CLOSURE_BSDF_DIFFUSE_ID);
     case GBUF_TRANSLUCENT:
@@ -123,9 +124,11 @@ ClosureType mode_to_closure_type(uint mode)
     case GBUF_THIN_REFRACTION_COLORLESS:
     case GBUF_THIN_REFRACTION:
       return ClosureType(CLOSURE_BSDF_THIN_GLASS_TRANSMISSION_ID);
-    default:
+    case GBUF_NONE:
+    case GBUF_UNLIT:
       return ClosureType(CLOSURE_NONE_ID);
   }
+  return ClosureType(CLOSURE_NONE_ID);
 }
 
 bool color_is_grayscale(float3 color)
@@ -473,9 +476,9 @@ struct Header {
     /* NOTE: Need to be adjusted for different global GBUFFER_LAYER_MAX. */
     constexpr uint bits_per_layer = uint(GBUFFER_HEADER_BITS_PER_BIN);
     /* TODO(@fclem): Compiler should allow uchar to uint cast in constexpr. */
-    /*constexpr */ uint header_mask = (uint(GBUF_TRANSMISSION_BIT) << (bits_per_layer * 0)) |
-                                      (uint(GBUF_TRANSMISSION_BIT) << (bits_per_layer * 1)) |
-                                      (uint(GBUF_TRANSMISSION_BIT) << (bits_per_layer * 2));
+    /*constexpr*/ uint header_mask = (uint(GBUF_TRANSMISSION_BIT) << (bits_per_layer * 0)) |
+                                     (uint(GBUF_TRANSMISSION_BIT) << (bits_per_layer * 1)) |
+                                     (uint(GBUF_TRANSMISSION_BIT) << (bits_per_layer * 2));
     return (this->header_ & header_mask) != 0;
   }
 

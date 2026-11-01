@@ -21,7 +21,7 @@
 #include "BLI_hash_c.hh"
 #include "BLI_heap.hh"
 #include "BLI_kdopbvh.hh"
-#include "BLI_kdtree.hh"
+#include "BLI_kdtree_new.hh"
 #include "BLI_lasso_2d.hh"
 #include "BLI_listbase.hh"
 #include "BLI_map.hh"
@@ -6506,11 +6506,8 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
     }
   }
 
-  KDTree<float> *tree_1d = kdtree_new<float>(points_1d.size());
-  for (const auto &[pos, index] : points_1d.items()) {
-    kdtree_insert(tree_1d, index, pos);
-  }
-  kdtree_balance<float>(tree_1d);
+  const Vector<float> values_1d(points_1d.keys().begin(), points_1d.keys().end());
+  const KDTree<float> tree_1d(values_1d);
 
   for (Object *ob : objects) {
     BMesh *bm = BKE_editmesh_bmesh_get_for_write(ob);
@@ -6568,7 +6565,6 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
     }
   }
 
-  kdtree_free<float>(tree_1d);
   return OPERATOR_FINISHED;
 }
 
@@ -6619,11 +6615,8 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
     }
   }
 
-  KDTree<float> *tree_1d = kdtree_new<float>(points_1d.size());
-  for (const auto &[pos, index] : points_1d.items()) {
-    kdtree_insert(tree_1d, index, pos);
-  }
-  kdtree_balance<float>(tree_1d);
+  const Vector<float> values_1d(points_1d.keys().begin(), points_1d.keys().end());
+  const KDTree<float> tree_1d(values_1d);
 
   for (Object *ob : objects) {
     BMesh *bm = BKE_editmesh_bmesh_get_for_write(ob);
@@ -6681,7 +6674,6 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
     }
   }
 
-  kdtree_free<float>(tree_1d);
   return OPERATOR_FINISHED;
 }
 
@@ -6750,11 +6742,8 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
     }
   }
 
-  KDTree<float> *tree_1d = kdtree_new<float>(points_1d.size());
-  for (const auto &[pos, index] : points_1d.items()) {
-    kdtree_insert(tree_1d, index, pos);
-  }
-  kdtree_balance<float>(tree_1d);
+  const Vector<float> values_1d(points_1d.keys().begin(), points_1d.keys().end());
+  const KDTree<float> tree_1d(values_1d);
 
   for (const int ob_index : objects.index_range()) {
     Object *ob = objects[ob_index];
@@ -6815,7 +6804,6 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
     }
   }
 
-  kdtree_free<float>(tree_1d);
   return OPERATOR_FINISHED;
 }
 
@@ -6877,11 +6865,8 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
     }
   }
 
-  KDTree<float> *tree_1d = kdtree_new<float>(points_1d.size());
-  for (const auto &[pos, index] : points_1d.items()) {
-    kdtree_insert(tree_1d, index, pos);
-  }
-  kdtree_balance<float>(tree_1d);
+  const Vector<float> values_1d(points_1d.keys().begin(), points_1d.keys().end());
+  const KDTree<float> tree_1d(values_1d);
 
   int tot_island_index = 0;
   for (const int ob_index : objects.index_range()) {
@@ -6938,7 +6923,6 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
 
   MEM_SAFE_DELETE(island_array);
   MEM_SAFE_DELETE(island_list_ptr);
-  kdtree_free<float>(tree_1d);
 
   return OPERATOR_FINISHED;
 }

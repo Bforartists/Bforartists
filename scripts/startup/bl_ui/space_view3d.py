@@ -57,6 +57,12 @@ def _toggle_xray_operator(layout, context, text=None):
     )
 
 
+def _has_selected_object_type(context, types):
+    # WARNING: this loops over all selected objects, *never* call from a poll function
+    # as it's too slow, only use when drawing menus.
+    return any(ob.type in types for ob in context.selected_objects)
+
+
 class VIEW3D_HT_tool_header(Header):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOL_HEADER"
@@ -1458,6 +1464,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
             layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops", icon="RELAX_EDGE_LOOPS")
             layout.operator("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected", icon="CURVE_EDGE_LOOPS")
+            layout.operator("mesh.fit_edge_loops_to_annotation", text="Fit Edge Loops To Annotation")  # BFA - TODO: needs icon, new in Blender 5.3
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
         elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES', 'EDIT_POINTCLOUD'}:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
@@ -3350,7 +3357,11 @@ class VIEW3D_MT_curve_add(Menu):
         layout.separator()
 
         layout.operator("object.curves_empty_hair_add", text="Empty Hair", icon="OUTLINER_OB_CURVES")
-        layout.operator("object.quick_fur", text="Fur", icon="OUTLINER_OB_CURVES")
+        # Greyed out here instead of the operator's poll function, see: #163934.
+        col = layout.column()
+        col.enabled = _has_selected_object_type(context, {'MESH'})
+        col.operator("object.quick_fur", text="Fur", icon="OUTLINER_OB_CURVES")
+        del col
 
         experimental = context.preferences.experimental
         if experimental.use_new_curves_tools:
@@ -4792,10 +4803,16 @@ class VIEW3D_MT_object_modifiers(Menu):
 class VIEW3D_MT_object_quick_effects(Menu):
     bl_label = "Quick Effects"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.quick_fur", icon="CURVES")
+        # NOTE: greying out the menu item would be better handled by the operator's poll function,
+        # however `execute` changes the active object & selection (adding curves objects),
+        # so a poll that checks for mesh objects fails on redo, see: #163934.
+        col = layout.column()
+        col.enabled = _has_selected_object_type(context, {'MESH'})
+        col.operator("object.quick_fur", icon="CURVES")
+        del col
         layout.operator("object.quick_explode", icon="MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon="MOD_SMOKE")
         layout.operator("object.quick_liquid", icon="MOD_FLUIDSIM")

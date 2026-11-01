@@ -79,9 +79,10 @@ struct Resources {
 
   [[push_constant]] const float2 viewport_size;
   [[push_constant]] const int resource_id;
-  [[push_constant]] const int num_points;
   /* [[push_constant]] const uint inst_id; */
   /* [[push_constant]] const uint base_inst; */
+  [[push_constant]] int invocs_start;
+  [[push_constant]] int invocs_count;
 
   Gaussian get(uint gs_id) const
   {
@@ -139,13 +140,9 @@ SplatData eval_splat(Gaussian gs,
     return SplatData::culled();
   }
 
-  float4x4 viewmat = view.viewmat * obj.model;
-  float3x3 covmat = get_covmat(gs.rotation, gs.scale);
-
   /* Project Gaussian to screen-space, recovering 2D axes for a splat billboard. */
-  float3 covmat_proj = project_covmat(
-      gs.mean, viewmat, view.winmat, covmat, srt.viewport_size, view.is_perspective());
-  AxisTuple axes = covmat_to_axes(covmat_proj);
+  float3 covmat_2d_v = project_gaussian(obj, view, gs);
+  AxisTuple axes = covmat_to_axes(covmat_2d_v);
 
   /* Discard splat if it is not partially/entirely inside/enclosing the viewport. */
   if (!detail::is_inside_viewport(axes, hP, srt.viewport_size)) {
@@ -252,20 +249,21 @@ template float3 eval_radiance<4>(Gaussian,
     [[resource_table]] const draw::Model &models,
     [[global_invocation_id]] const uint3 global_id)
 {
-  if (global_id.x >= uint(srt.num_points)) {
+  int gs_index = int(global_id.x) + srt.invocs_start;
+  if (gs_index >= uint(srt.invocs_count)) {
     return;
   }
 
   /* TODO(not_mark): This does not account for instancing. */
   const ObjectMatrices obj = models.get(srt.resource_id);
   const ViewMatrices view = views.get(0);
-  const Gaussian gs = srt.get(global_id.x);
+  const Gaussian gs = srt.get(gs_index);
 
   /* Splat computation and output. */
   SplatData splat = SplatData::culled();
   if (pipeline.do_ellipses) [[static_branch]] {
     splat = eval_splat(gs, obj, view, srt);
-    srt.ellipses_comp[global_id.x] = splat.is_culled() ? uint2(0) : splat.pack();
+    srt.ellipses_comp[gs_index] = splat.is_culled() ? uint2(0) : splat.pack();
   }
 
   /* Base/full radiance computation and output. */
@@ -283,7 +281,7 @@ template float3 eval_radiance<4>(Gaussian,
     }
 
     /* Radiance is packed to fp16. */
-    srt.radiance_comp[global_id.x] = uint2(packHalf2x16(radiance.xy), packHalf2x16(radiance.zw));
+    srt.radiance_comp[gs_index] = uint2(packHalf2x16(radiance.xy), packHalf2x16(radiance.zw));
   }
 }
 

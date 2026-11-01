@@ -129,6 +129,8 @@ struct ParsedResource {
   std::string res_condition;
   /** For images, storage, uniforms and samplers. */
   std::string res_frequency = "PASS";
+  /** True if the resource contains BDA (Buffer Device Address). */
+  bool contains_pointer = false;
 
   std::string serialize() const;
 };
@@ -286,6 +288,7 @@ struct Source {
   std::vector<VertexInputs> vertex_inputs;
   std::vector<Symbol> symbol_table;
   std::vector<TemplateDefinition> template_definitions;
+  std::vector<std::string> visited_files;
 
   /* Serialize Metadata for this source file. */
   std::string serialize(const std::string &function_name) const;

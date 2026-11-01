@@ -89,7 +89,7 @@ Result<ParsedAttribute> resource_type_from_attributes(AttrList list)
         {"num_work_groups",                         {ResourceTableType::ENTRY_POINT,    ResourceType::NUM_WORK_GROUP,          0}},
         {"frag_depth",                              {ResourceTableType::ENTRY_POINT,    ResourceType::FRAG_DEPTH,              1}},
         {"frag_coord",                              {ResourceTableType::ENTRY_POINT,    ResourceType::FRAG_COORD,              0}},
-        {"frag_stencil_ref",                        {ResourceTableType::ENTRY_POINT,    ResourceType::STENCIL_REF,        0}},
+        {"frag_stencil_ref",                        {ResourceTableType::ENTRY_POINT,    ResourceType::STENCIL_REF,             0}},
         /* Misc. */
         {"fallthrough",                             {ResourceTableType::NONE,           ResourceType::NONE,                    0}},
         {"maybe_unused",                            {ResourceTableType::NONE,           ResourceType::NONE,                    0}},
@@ -115,7 +115,7 @@ Result<ParsedAttribute> resource_type_from_attributes(AttrList list)
       int param_count = params.child_count();
       if (expected_param_count >= 0) {
         if (param_count != expected_param_count) {
-          result.err = AstNodeException(params,
+          result.err = AstNodeException(attr,
                                         Diag::ExpectedNParametersForAttribute,
                                         to_string(expected_param_count),
                                         attr_str);
@@ -126,7 +126,7 @@ Result<ParsedAttribute> resource_type_from_attributes(AttrList list)
         /* Negative value denote a range of parameter count. */
         int max_param_count = abs(expected_param_count);
         if (param_count < 1 || param_count > max_param_count) {
-          result.err = AstNodeException(params,
+          result.err = AstNodeException(attr,
                                         Diag::ExpectedRangeParametersForAttribute,
                                         to_string(max_param_count),
                                         attr_str);

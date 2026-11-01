@@ -73,6 +73,8 @@ struct SymbolVariable : Symbol {
   bool is_macro = false;
   bool is_const = false;
   bool is_compilation_const = false;
+  bool is_ptr = false;
+  bool is_this = false;
 
   SymbolVariable(SymbolScope *parent,
                  SymbolClass *type,

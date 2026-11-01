@@ -165,8 +165,8 @@ struct VertSlideParams {
 static void vert_slide_update_input(TransInfo *t)
 {
   VertSlideParams *slp = static_cast<VertSlideParams *>(t->custom.mode.data);
-  VertSlideData *sld = static_cast<VertSlideData *>(
-      TRANS_DATA_CONTAINER_FIRST_OK(t)->custom.mode.data);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
+  VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   TransDataVertSlideVert *sv = &sld->sv[sld->curr_sv_index];
 
   const float3 co_orig_3d = sv->co_orig_3d();
@@ -317,7 +317,7 @@ static eRedrawFlag handleEventVertSlide(TransInfo *t, const wmEvent *event)
 
 static void drawVertSlide(TransInfo *t)
 {
-  TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_OK(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   if (sld) {
     const VertSlideParams *slp = static_cast<const VertSlideParams *>(t->custom.mode.data);
@@ -498,7 +498,7 @@ static void doVertSlide(TransInfo *t, float perc)
 
 static void vert_slide_snap_apply(TransInfo *t, float *value)
 {
-  TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_OK(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   TransDataVertSlideVert *sv = &sld->sv[sld->curr_sv_index];
   float3 co_orig_3d = sv->co_orig_3d();
@@ -553,14 +553,14 @@ static void applyVertSlide(TransInfo *t)
   t->values_final[0] = final;
 
   /* Header string. */
-  ofs += BLI_strncpy_utf8_rlen(str + ofs, IFACE_("Vertex Slide: "), sizeof(str) - ofs);
+  ofs += STRNCPY_UTF8_RLEN(MutableCStr(str).drop_front(ofs), IFACE_("Vertex Slide: "));
   if (hasNumInput(&t->num)) {
     char c[NUM_STR_REP_LEN];
     outputNumInput(&(t->num), c, t->scene->unit);
-    ofs += BLI_strncpy_utf8_rlen(str + ofs, &c[0], sizeof(str) - ofs);
+    ofs += STRNCPY_UTF8_RLEN(MutableCStr(str).drop_front(ofs), &c[0]);
   }
   else {
-    ofs += BLI_snprintf_utf8_rlen(str + ofs, sizeof(str) - ofs, "%.4f ", final);
+    ofs += SNPRINTF_UTF8_RLEN(MutableCStr(str).drop_front(ofs), "%.4f ", final);
   }
   /* Done with header string. */
 
@@ -614,7 +614,7 @@ static void vert_slide_transform_matrix_fn(TransInfo *t, float mat_xform[4][4])
   float delta[3];
 
   VertSlideParams *slp = static_cast<VertSlideParams *>(t->custom.mode.data);
-  TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_OK(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   TransDataVertSlideVert &sv_active = sld->sv[sld->curr_sv_index];
   float3 orig_co = sv_active.co_orig_3d();

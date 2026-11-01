@@ -11,6 +11,7 @@ from bpy.types import (
 )
 from bpy.app.translations import (
     contexts as i18n_contexts,
+    pgettext_n as n_,
     pgettext_iface as iface_,
     pgettext_rpt as rpt_,
 )
@@ -1552,10 +1553,10 @@ class USERPREF_PT_theme_bone_color_sets(ThemePanel, CenterAlignMixIn, Panel):
 
         row.separator()
 
-        normal_col = self.create_column(row, heading="Normal")
-        selected_col = self.create_column(row, heading="Selected")
-        active_col = self.create_column(row, heading="Active")
-        constraints_col = self.create_column(row, heading="Colored Constraints", width=10)
+        normal_col = self.create_column(row, heading=n_("Regular"))
+        selected_col = self.create_column(row, heading=n_("Selected"))
+        active_col = self.create_column(row, heading=n_("Active"))
+        constraints_col = self.create_column(row, heading=n_("Colored Constraints"), width=10)
 
         for i, ui in enumerate(theme.bone_color_sets, 1):
             color_set_col.label(text=iface_("Color Set {:d}").format(i), translate=False)
@@ -2000,6 +2001,7 @@ class USERPREF_PT_saveload_blend(SaveLoadPanel, CenterAlignMixIn, Panel):
         flow.prop(paths, "use_relative_paths")
         flow.prop(paths, "use_file_compression")
         flow.prop(paths, "use_load_ui")
+        flow.prop(prefs, "use_project_remember")  # BFA - new in Blender 5.3, kept in the BFA checkbox list instead of a "Startup" heading
         flow.prop(paths, "use_tabs_as_spaces")
 
         layout.separator()
@@ -3232,7 +3234,6 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_extended_asset_browser"},
                  ("blender/blender/projects/10", "Pipeline, Assets & IO Project Page")),
                 ({"property": "use_shader_node_previews"}, ("blender/blender/issues/110353", "#110353")),
-                ({"property": "use_collection_importer"}, ("blender/blender/issues/132171", "#132171")),
             ),
         )
 

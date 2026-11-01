@@ -447,7 +447,7 @@ static void update_duplicate_subtarget(EditBone *dup_bone,
         STRNCPY_UTF8(ct.subtarget, newtarget->name);
       }
       else if (lookup_mirror_subtarget) {
-        BLI_string_flip_side_name(name_flipped, ct.subtarget, false, sizeof(name_flipped));
+        BLI_string_flip_side_name(name_flipped, ct.subtarget, false);
         if (bPoseChannel *flipped_bone = BKE_pose_channel_find_name(ct.tar->pose, name_flipped)) {
           STRNCPY_UTF8(ct.subtarget, flipped_bone->name);
         }
@@ -536,14 +536,15 @@ static void update_duplicate_action_constraint_settings(
     animrig::Action &action = act->wrap();
     animrig::Channelbag *cbag = animrig::channelbag_for_action_slot(action,
                                                                     act_con->action_slot_handle);
-    Span<FCurve *> fcurves = {};
+    Vector<const FCurve *> fcurves = {};
     if (cbag) {
-      fcurves = cbag->fcurves();
+      for (const FCurve *fcurve : cbag->fcurves()) {
+        if (animrig::fcurve_matches_collection_path(*fcurve, "pose.bones[", orig_bone->name)) {
+          fcurves.append(fcurve);
+        }
+      }
     }
     for (const FCurve *old_fcurve : fcurves) {
-      if (!animrig::fcurve_matches_collection_path(*old_fcurve, "pose.bones[", orig_bone->name)) {
-        continue;
-      }
       const char *new_path = BLI_string_replaceN(
           old_fcurve->rna_path().c_str(), orig_bone->name, dup_bone->name);
       FCurve &new_curve = cbag->fcurve_clone(
@@ -971,7 +972,7 @@ static void update_duplicate_custom_bone_shapes(bContext *C, EditBone *dup_bone,
     char name_flip[MAX_ID_NAME - 2];
 
     /* Skip the first two chars in the object name as those are used to store object type */
-    BLI_string_flip_side_name(name_flip, pchan->custom->id.name + 2, false, sizeof(name_flip));
+    BLI_string_flip_side_name(name_flip, pchan->custom->id.name + 2, false);
     Object *shape_ob = reinterpret_cast<Object *>(BKE_libblock_find_name(bmain, ID_OB, name_flip));
 
     /* If name_flip doesn't exist, BKE_libblock_find_name() returns pchan->custom (best match) */
@@ -1014,7 +1015,7 @@ static void mirror_bone_collection_assignments(bArmature &armature,
   /* Find all collections from source_bone that can be flipped. */
   for (BoneCollectionReference &collection_reference : source_bone.bone_collections) {
     BoneCollection *collection = collection_reference.bcoll;
-    BLI_string_flip_side_name(name_flip, collection->name, false, sizeof(name_flip));
+    BLI_string_flip_side_name(name_flip, collection->name, false);
     if (STREQ(name_flip, collection->name)) {
       /* Name flipping failed. */
       continue;
@@ -1163,8 +1164,7 @@ static wmOperatorStatus armature_duplicate_selected(bContext *C,
         const char *new_bone_name = ebone_iter->name;
 
         if (do_flip_names) {
-          BLI_string_flip_side_name(
-              new_bone_name_buff, ebone_iter->name, false, sizeof(new_bone_name_buff));
+          BLI_string_flip_side_name(new_bone_name_buff, ebone_iter->name, false);
 
           /* Only use flipped name if not yet in use. Otherwise we'd get again inconsistent
            * namings (different numbers), better keep default behavior in this case. */
@@ -1394,7 +1394,7 @@ static wmOperatorStatus armature_symmetrize_exec(bContext *C, wmOperator *op)
       }
 
       char name_flip[MAXBONENAME];
-      BLI_string_flip_side_name(name_flip, ebone_iter.name, false, sizeof(name_flip));
+      BLI_string_flip_side_name(name_flip, ebone_iter.name, false);
 
       if (STREQ(name_flip, ebone_iter.name)) {
         /* Skipping ebones without flippable as they don't have the potential to be mirrored. */
@@ -1465,7 +1465,7 @@ static wmOperatorStatus armature_symmetrize_exec(bContext *C, wmOperator *op)
 
         char name_flip[MAXBONENAME];
 
-        BLI_string_flip_side_name(name_flip, ebone_iter->name, false, sizeof(name_flip));
+        BLI_string_flip_side_name(name_flip, ebone_iter->name, false);
 
         /* mirrored bones must have a side-suffix */
         if (!STREQ(name_flip, ebone_iter->name)) {
@@ -1771,7 +1771,7 @@ static wmOperatorStatus armature_extrude_exec(bContext *C, wmOperator *op)
 
           if (flipbone && forked_iter) { /* only set if mirror edit */
             if (strlen(newbone->name) < (MAXBONENAME - 2)) {
-              BLI_strncat(newbone->name, (a == 0) ? "_L" : "_R", sizeof(newbone->name));
+              BLI_strncat(newbone->name, (a == 0) ? "_L" : "_R");
             }
           }
           ED_armature_ebone_unique_name(arm->edbo, newbone->name, nullptr);

@@ -306,7 +306,7 @@ bool selection_update(const ViewContext *vc,
     /* Use #ID_RECALC_GEOMETRY instead of #ID_RECALC_SELECT because it is handled as a
      * generic attribute for now. */
     DEG_id_tag_update(object->data, ID_RECALC_GEOMETRY);
-    WM_event_add_notifier(vc->C, NC_GEOM | ND_DATA, object->data);
+    WM_main_add_notifier(NC_GEOM | ND_DATA, object->data);
   }
 
   return changed;
@@ -1049,22 +1049,26 @@ bool ensure_selection_domain(ToolSettings *ts, Object *object)
       changed |= true;
     }
 
-    /* Convert selection domain. */
-    const GVArray src = *attributes.lookup(".selection", domain);
-    if (src) {
-      auto *dst = new ImplicitSharedValue<GArray<>>(src.type(), src.size(), NoInitialization());
-      src.materialize_to_uninitialized(dst->data.data());
+    for (const StringRef selection_attribute_name :
+         ed::curves::get_curves_selection_attribute_names(curves))
+    {
+      /* Convert selection domain. */
+      const GVArray src = *attributes.lookup(selection_attribute_name, domain);
+      if (src) {
+        auto *dst = new ImplicitSharedValue<GArray<>>(src.type(), src.size(), NoInitialization());
+        src.materialize_to_uninitialized(dst->data.data());
 
-      attributes.remove(".selection");
-      attributes.add(".selection",
-                     domain,
-                     bke::cpp_type_to_attribute_type(dst->data.type()),
-                     bke::AttributeInitShared(dst->data.data(), *dst));
-      dst->remove_user_and_delete_if_last();
+        attributes.remove(selection_attribute_name);
+        attributes.add(selection_attribute_name,
+                       domain,
+                       bke::cpp_type_to_attribute_type(dst->data.type()),
+                       bke::AttributeInitShared(dst->data.data(), *dst));
+        dst->remove_user_and_delete_if_last();
 
-      changed = true;
+        changed = true;
 
-      /* TODO: expand point selection to segments when in 'segment' mode. */
+        /* TODO: expand point selection to segments when in 'segment' mode. */
+      }
     }
   }
 

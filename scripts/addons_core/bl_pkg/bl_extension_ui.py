@@ -53,10 +53,10 @@ USE_ADDON_IGNORE_EXTENSION_MANIFEST_HACK = True
 def size_as_fmt_string(num: float, *, precision: int = 1) -> str:
     for unit in ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"):
         if abs(num) < 1024.0:
-            return "{:3.{:d}f}{:s}".format(num, precision, unit)
+            return "{:3.{:d}f} {:s}".format(num, precision, unit)
         num /= 1024.0
     unit = "YB"
-    return "{:.{:d}f}{:s}".format(num, precision, unit)
+    return "{:.{:d}f} {:s}".format(num, precision, unit)
 
 
 def sizes_as_percentage_string(size_partial: int, size_final: int) -> str:
@@ -214,6 +214,12 @@ addon_type_icon = (
     'FILE_FOLDER',  # `ADDON_TYPE_LEGACY_USER`.
     'PACKAGE',  # `ADDON_TYPE_LEGACY_OTHER`.
 )
+
+extension_type_labels = {
+    "add-on": n_("Add-on", i18n_contexts.editor_preferences),
+    "asset-library": n_("Asset Library", i18n_contexts.editor_preferences),
+    "theme": n_("Theme", i18n_contexts.editor_preferences),
+}
 
 if USE_ADDON_IGNORE_EXTENSION_MANIFEST_HACK:
     # WARNING: poor performance, acceptable as it's only called for expanded add-ons (but not ideal).
@@ -1413,6 +1419,7 @@ def extension_draw_item(
         is_enabled,  # `bool`
         is_outdated,  # `bool`
         show,  # `bool`.
+        show_type,  # `bool`.
         mark,  # `bool | None`.
 
         # General vars.
@@ -1486,6 +1493,15 @@ def extension_draw_item(
     row_right_toplevel.alignment = 'RIGHT'
     row_right = row_right_toplevel.row()
     row_right.alignment = 'RIGHT'
+
+    # When not filtering by type, show the extension type to avoid confusion
+    # as there could be two extensions with similar names but different types.
+    if show_type:
+        sub = row_right.row()
+        sub.alignment = 'RIGHT'
+        sub.active = False
+        sub.label(text=extension_type_labels.get(item.type, item.type), text_ctxt=i18n_contexts.editor_preferences)
+        del sub
 
     if has_remote and (item_remote is not None):
         if pkg_block is not None:
@@ -1618,7 +1634,7 @@ def extension_draw_item(
         else:
             col_b.label(text=item.version, translate=False)
 
-        if has_remote and (item_remote is not None):
+        if item.type == "add-on" and has_remote and (item_remote is not None):
             col_a.label(text="Size")
             col_b.label(text=size_as_fmt_string(item_remote.archive_size), translate=False)
 
@@ -1931,6 +1947,7 @@ def extensions_panel_draw_impl(
                 is_enabled=ext_ui.is_enabled,
                 is_outdated=ext_ui.is_outdated,
                 show=(ext_ui.pkg_id, ext_ui.repo_index) in blender_extension_show,
+                show_type=(params.filter_by_type == ""),
                 mark=((ext_ui.pkg_id, ext_ui.repo_index) in blender_extension_mark) if show_development else None,
 
                 # General vars.

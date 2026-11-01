@@ -678,13 +678,14 @@ bool BKE_lib_override_library_create_from_tag(Main *bmain,
       /* In case we created new overrides as 'no main', they are not accessible directly in this
        * loop, but we can get to them through their reference's `newid` pointer. */
       if (do_no_main && id->lib == id_root_reference->lib && id->newid != nullptr) {
+        BLI_assert(id != id->newid);
         other_id = id->newid;
         /* Otherwise we cannot properly distinguish between IDs that are actually from the
          * linked library (and should not be remapped), and IDs that are overrides re-generated
          * from the reference from the linked library, and must therefore be remapped.
          *
          * This is reset afterwards at the end of this loop. */
-        other_id->lib = nullptr;
+        bke::id::id_lib_set(*other_id, nullptr);
       }
       else {
         other_id = id;
@@ -716,7 +717,7 @@ bool BKE_lib_override_library_create_from_tag(Main *bmain,
         }
       }
       if (other_id != id) {
-        other_id->lib = id_root_reference->lib;
+        bke::id::id_lib_set(*other_id, id_root_reference->lib);
       }
     }
     FOREACH_MAIN_ID_END;
@@ -2366,7 +2367,7 @@ static bool lib_override_library_resync(Main *bmain,
 
     if ((id_resync_root->tag & ID_TAG_NO_MAIN) != 0) {
       CLOG_ERROR(&LOG_RESYNC,
-                 "While dealing with root '%s', resync root ID '%s' (%p) found to be alreaady "
+                 "While dealing with root '%s', resync root ID '%s' (%p) found to be already "
                  "resynced.\n",
                  id_root->name,
                  id_resync_root->name,
@@ -2375,7 +2376,7 @@ static bool lib_override_library_resync(Main *bmain,
     //    if (no_main_ids_list && BLI_findindex(no_main_ids_list, id_resync_root) != -1) {
     //      CLOG_ERROR(
     //          &LOG,
-    //          "While dealing with root '%s', resync root ID '%s' found to be alreaady
+    //          "While dealing with root '%s', resync root ID '%s' found to be already
     //          resynced.\n", id_root->name, id_resync_root->name);
     //    }
 
@@ -2552,7 +2553,7 @@ static bool lib_override_library_resync(Main *bmain,
       BLI_assert(/* `!ID_IS_LINKED(id_override_new) ||` */ id_override_new->lib ==
                  id_reference_iter->lib);
       BLI_assert(id_override_old == nullptr || id_override_old->lib == id_root->lib);
-      id_override_new->lib = id_root->lib;
+      bke::id::id_lib_set(*id_override_new, id_root->lib);
 
       /* The old override may have been created as linked data and then referenced by local data
        * during a previous Blender session, in which case it became directly linked and a reference
@@ -3707,10 +3708,10 @@ static bool lib_override_library_main_resync_on_library_indirect_level(
     }
 
     const bool need_resync = (id->tag & ID_TAG_LIBOVERRIDE_NEED_RESYNC) != 0;
-    const bool need_reseync_original = (id->override_library->runtime != nullptr &&
-                                        (id->override_library->runtime->tag &
-                                         IDOverrideLibraryTag::TAG_NEED_RESYNC_ORIGINAL) !=
-                                            IDOverrideLibraryTag(0));
+    const bool need_resync_original = (id->override_library->runtime != nullptr &&
+                                       (id->override_library->runtime->tag &
+                                        IDOverrideLibraryTag::TAG_NEED_RESYNC_ORIGINAL) !=
+                                           IDOverrideLibraryTag(0));
     const bool is_isolated_from_root = (id->override_library->runtime != nullptr &&
                                         (id->override_library->runtime->tag &
                                          IDOverrideLibraryTag::TAG_RESYNC_ISOLATED_FROM_ROOT) !=
@@ -3742,7 +3743,7 @@ static bool lib_override_library_main_resync_on_library_indirect_level(
       }
     }
     else if (need_resync) {
-      if (need_reseync_original) {
+      if (need_resync_original) {
         CLOG_DEBUG(&LOG_RESYNC,
                    "ID override %s from library level %d still found as needing resync after "
                    "tackling library level %d. Since it was originally tagged as such by "
@@ -3769,7 +3770,7 @@ static bool lib_override_library_main_resync_on_library_indirect_level(
         id->tag &= ~ID_TAG_LIBOVERRIDE_NEED_RESYNC;
       }
     }
-    else if (need_reseync_original) {
+    else if (need_resync_original) {
       /* Just cleanup of temporary tag, the ID has been resynced successfully. */
       id->override_library->runtime->tag &= ~IDOverrideLibraryTag::TAG_NEED_RESYNC_ORIGINAL;
     }
@@ -5524,7 +5525,7 @@ void BKE_lib_override_library_update(Main *bmain, ID *local)
   /* Remove the pair (idname, lib) of this temp id from the name map. */
   BKE_main_namemap_remove_id(*bmain, *tmp_id);
 
-  tmp_id->lib = local->lib;
+  bke::id::id_lib_set(*tmp_id, local->lib);
 
   /* This ID name is problematic, since it is an 'rna name property' it should not be editable or
    * different from reference linked ID. But local ID names need to be unique in a given type
@@ -5539,7 +5540,7 @@ void BKE_lib_override_library_update(Main *bmain, ID *local)
   if (local_key != nullptr && tmp_key != nullptr) {
     tmp_key->id.flag |= (local_key->id.flag & ID_FLAG_EMBEDDED_DATA_LIB_OVERRIDE);
     BKE_main_namemap_remove_id(*bmain, tmp_key->id);
-    tmp_key->id.lib = local_key->id.lib;
+    bke::id::id_lib_set(tmp_key->id, local_key->id.lib);
     STRNCPY(tmp_key->id.name, local_key->id.name);
   }
 

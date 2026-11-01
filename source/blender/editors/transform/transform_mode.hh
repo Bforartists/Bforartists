@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BLI_span.hh"
+
 #include "ED_transform.hh"
 
 #include "transform.hh"
@@ -82,7 +84,7 @@ void constraintScaleLim(const TransInfo *t, const TransDataContainer *tc, int td
 /**
  * Used by Transform Rotation and Transform Normal Rotation.
  */
-void headerRotation(TransInfo *t, char *str, int str_maxncpy, float final);
+void headerRotation(TransInfo *t, MutableCStr str, float final);
 /**
  * Applies values of rotation to `td->loc` and `td->ext->quat`
  * based on a rotation matrix (mat) and a pivot (center).
@@ -101,7 +103,7 @@ void ElementRotation(const TransInfo *t,
                      TransDataExtension *td_ext,
                      const float mat[3][3],
                      short around);
-void headerResize(TransInfo *t, const float vec[3], char *str, int str_maxncpy);
+void headerResize(TransInfo *t, const float vec[3], MutableCStr str);
 void ElementResize(const TransInfo *t,
                    const TransDataContainer *tc,
                    int td_index,
@@ -115,13 +117,17 @@ void transform_mode_default_modal_orientation_set(TransInfo *t, int type);
 void transform_mode_rotation_axis_get(const TransInfo *t, float3 &r_axis);
 bool transform_mode_is_axis_pointing_to_screen(const TransInfo *t, const float3 &axis);
 
+/**
+ * Get the first valid TransDataContainer *.
+ *
+ * Note we cannot trust TRANS_DATA_CONTAINER_FIRST_OK because of multi-object that
+ * may leave items with invalid custom data in the transform data container.
+ */
+TransDataContainer *transform_mode_container_first_ok(TransInfo *t);
+
 /* `transform_mode_align.cc` */
 
 extern TransModeInfo TransMode_align;
-
-/* `transform_mode_baketime.cc` */
-
-extern TransModeInfo TransMode_baketime;
 
 /* `transform_mode_bbone_resize.cc` */
 

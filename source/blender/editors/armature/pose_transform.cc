@@ -74,9 +74,9 @@ namespace blender {
 /** \name Local Utilities
  * \{ */
 
-static void pose_copybuffer_filepath_get(char filepath[FILE_MAX], size_t filepath_maxncpy)
+static void pose_copybuffer_filepath_get(MutableCStr filepath)
 {
-  BLI_path_join(filepath, filepath_maxncpy, BKE_tempdir_base(), "copybuffer_pose.blend");
+  BLI_path_join(filepath, BKE_tempdir_base(), "copybuffer_pose.blend");
 }
 
 /** \} */
@@ -615,16 +615,23 @@ void POSE_OT_visual_transform_apply(wmOperatorType *ot)
  */
 static void blend_bbone_values(const bPoseChannel &copy_bone,
                                bPoseChannel &paste_bone,
-                               const float factor)
+                               const float factor,
+                               const bool do_flip)
 {
+  const float flip_factor = do_flip ? -1 : 1;
+  const float curve_in_x = copy_bone.curve_in_x * flip_factor;
+  const float curve_out_x = copy_bone.curve_out_x * flip_factor;
+  const float roll1 = copy_bone.roll1 * flip_factor;
+  const float roll2 = copy_bone.roll2 * flip_factor;
+
   /* B-Bone posing options should also be included... */
-  paste_bone.curve_in_x = interpf(copy_bone.curve_in_x, paste_bone.curve_in_x, factor);
+  paste_bone.curve_in_x = interpf(curve_in_x, paste_bone.curve_in_x, factor);
   paste_bone.curve_in_z = interpf(copy_bone.curve_in_z, paste_bone.curve_in_z, factor);
-  paste_bone.curve_out_x = interpf(copy_bone.curve_out_x, paste_bone.curve_out_x, factor);
+  paste_bone.curve_out_x = interpf(curve_out_x, paste_bone.curve_out_x, factor);
   paste_bone.curve_out_z = interpf(copy_bone.curve_out_z, paste_bone.curve_out_z, factor);
 
-  paste_bone.roll1 = interpf(copy_bone.roll1, paste_bone.roll1, factor);
-  paste_bone.roll2 = interpf(copy_bone.roll2, paste_bone.roll2, factor);
+  paste_bone.roll1 = interpf(roll1, paste_bone.roll1, factor);
+  paste_bone.roll2 = interpf(roll2, paste_bone.roll2, factor);
   paste_bone.ease1 = interpf(copy_bone.ease1, paste_bone.ease1, factor);
   paste_bone.ease2 = interpf(copy_bone.ease2, paste_bone.ease2, factor);
 
@@ -745,7 +752,7 @@ static bPoseChannel *pose_bone_blend_to(Object &paste_ob,
 
   /* Get the name of the bone to paste to - if flipping, we must flip this first. */
   if (flip) {
-    BLI_string_flip_side_name(name, copy_transformable.name().c_str(), false, sizeof(name));
+    BLI_string_flip_side_name(name, copy_transformable.name().c_str(), false);
   }
   else {
     STRNCPY_UTF8(name, copy_transformable.name().c_str());
@@ -765,13 +772,17 @@ static bPoseChannel *pose_bone_blend_to(Object &paste_ob,
   }
 
   ed::AnimTransformable paste_transformable(paste_ob, *paste_bone);
+  ed::TransformFloats location = copy_transformable.get_property(
+      ed::AnimTransformable::PropertyType::LOCATION);
+  ed::Rotation rotation = copy_transformable.get_rotation();
+  if (flip) {
+    /* Flips on the y-z plane. Has to be done here to correctly blend to the flipped pose. */
+    location[0] *= -1;
+    rotation.mirror();
+  }
   paste_transformable.blend_property_to(
-      ed::AnimTransformable::PropertyType::LOCATION,
-      copy_transformable.get_property(ed::AnimTransformable::PropertyType::LOCATION),
-      factor,
-      ed::AXIS_MUTABLE_ALL);
-  paste_transformable.blend_rotation_to(
-      copy_transformable.get_rotation(), factor, ed::AXIS_MUTABLE_ALL);
+      ed::AnimTransformable::PropertyType::LOCATION, location, factor, ed::AXIS_MUTABLE_ALL);
+  paste_transformable.blend_rotation_to(rotation, factor, ed::AXIS_MUTABLE_ALL);
   paste_transformable.blend_property_to(
       ed::AnimTransformable::PropertyType::SCALE,
       copy_transformable.get_property(ed::AnimTransformable::PropertyType::SCALE),
@@ -780,39 +791,7 @@ static bPoseChannel *pose_bone_blend_to(Object &paste_ob,
 
   bPoseChannel *copy_bone = copy_transformable.data<bPoseChannel *>();
   /* B-Bone posing options should also be included... */
-  blend_bbone_values(*copy_bone, *paste_bone, factor);
-
-  /* Flips pose directly by modifying transform parameters. */
-  if (flip) {
-    paste_bone->loc[0] *= -1;
-
-    paste_bone->curve_in_x *= -1;
-    paste_bone->curve_out_x *= -1;
-    paste_bone->roll1 *= -1; /* XXX? */
-    paste_bone->roll2 *= -1; /* XXX? */
-
-    if (paste_bone->rotmode > 0) {
-      paste_bone->eul[1] *= -1;
-      paste_bone->eul[2] *= -1;
-    }
-    else if (paste_bone->rotmode == ROT_MODE_AXISANGLE) {
-      float eul[3];
-
-      axis_angle_to_eulO(eul, EULER_ORDER_DEFAULT, paste_bone->rotAxis, paste_bone->rotAngle);
-      eul[1] *= -1;
-      eul[2] *= -1;
-      eulO_to_axis_angle(paste_bone->rotAxis, &paste_bone->rotAngle, eul, EULER_ORDER_DEFAULT);
-    }
-    else {
-      /* Has to be done as eulers. */
-      float eul[3];
-      normalize_qt(paste_bone->quat);
-      quat_to_eul(eul, paste_bone->quat);
-      eul[1] *= -1;
-      eul[2] *= -1;
-      eul_to_quat(paste_bone->quat, eul);
-    }
-  }
+  blend_bbone_values(*copy_bone, *paste_bone, factor, flip);
 
   /* ID properties. */
   if (copy_bone->prop) {
@@ -858,6 +837,7 @@ static wmOperatorStatus pose_copy_exec(bContext *C, wmOperator *op)
   if (ID_IS_PACKED(&ob->id)) {
     /* Direct link/append of packed IDs is not supported currently, so neither is their
      * copy/pasting. */
+    /* TODO: Think that this is not necessary in fact, since we 'make local' the copied object? */
     BKE_report(op->reports, RPT_ERROR, "Cannot copy/paste packed data");
     return OPERATOR_CANCELLED;
   }
@@ -890,7 +870,7 @@ static wmOperatorStatus pose_copy_exec(bContext *C, wmOperator *op)
       });
 
   char filepath[FILE_MAX];
-  pose_copybuffer_filepath_get(filepath, sizeof(filepath));
+  pose_copybuffer_filepath_get(filepath);
   copybuffer.write_as_copypaste_buffer(filepath, *op->reports);
 
   /* We are all done! */
@@ -936,7 +916,7 @@ static wmOperatorStatus pose_paste_exec(bContext *C, wmOperator *op)
 
   /* Read copy buffer .blend file. */
   char filepath[FILE_MAX];
-  pose_copybuffer_filepath_get(filepath, sizeof(filepath));
+  pose_copybuffer_filepath_get(filepath);
 
   Main *bmain = CTX_data_main(C);
   Main *temp_bmain = BKE_copybuffer_read(*bmain, filepath, op->reports, FILTER_ID_OB);
@@ -1542,7 +1522,7 @@ static void pose_bone_copy_transform_values(Object &paste_ob,
   copy_v4_v4(paste_bone->quat, copy_bone.quat);
   copy_v3_v3(paste_bone->scale, copy_bone.scale);
 
-  blend_bbone_values(copy_bone, *paste_bone, 1.0);
+  blend_bbone_values(copy_bone, *paste_bone, 1.0, /*flip=*/false);
 
   /* ID properties */
   if (copy_bone.prop && paste_bone->prop) {

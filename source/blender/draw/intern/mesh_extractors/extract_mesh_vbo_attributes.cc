@@ -31,7 +31,7 @@ static GPUVertFormat attribute_vbo_format(const MeshRenderData &mr,
                                           const bke::AttrType type)
 {
   char attr_name[32], attr_safe_name[GPU_MAX_SAFE_ATTR_NAME];
-  GPU_vertformat_safe_attr_name(name, attr_safe_name, GPU_MAX_SAFE_ATTR_NAME);
+  GPU_vertformat_safe_attr_name(name, attr_safe_name);
   /* Attributes use auto-name. */
   SNPRINTF(attr_name, "a%s", attr_safe_name);
 
@@ -265,8 +265,15 @@ gpu::VertBufPtr extract_attr_viewer(const MeshRenderData &mr, MeshBufferCache &c
       "attribute_value", gpu::VertAttrType::SFLOAT_32_32_32_32);
   const StringRefNull attr_name = ".viewer";
   const bke::AttributeAccessor attributes = mr.mesh->attributes();
-  const bke::GAttributeReader attr = attributes.lookup(
+  bke::GAttributeReader attr = attributes.lookup(
       attr_name, std::nullopt, bke::AttrType::ColorFloat);
+
+  /* The GPU edge to corner gather only uses one edge per corner. Interpolate on the CPU instead,
+   * mixing both face edges adjacent to each corner, so the value shows along the edge. */
+  if (attr && attr.domain == bke::AttrDomain::Edge) {
+    attr = attributes.lookup(attr_name, bke::AttrDomain::Corner, bke::AttrType::ColorFloat);
+  }
+
   return extract_attribute_data(mr, cache, attr, format);
 }
 

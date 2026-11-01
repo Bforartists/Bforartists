@@ -410,8 +410,7 @@ static std::string template_status_tooltip(bContext *C, void * /*argN*/, const S
     char bfa_writer_ver_str[12];
     BKE_bforartists_version_blendfile_string_from_blender(
         bfa_writer_ver_str, sizeof(bfa_writer_ver_str), bmain->versionfile, true);
-    BKE_blender_version_blendfile_string_from_values(
-        writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, -1);
+    BKE_blender_version_blendfile_string_from_values(writer_ver_str, bmain->versionfile, -1);
     tooltip_message += fmt::format(
         fmt::runtime(
             RPT_("File saved by newer Bforartists {}\n(Blender {}), expect loss of data")),

@@ -95,7 +95,10 @@ void cull_main([[resource_table]] Cull &srt,
       sphere.center = light.position();
       sphere.radius = light.local.local.influence_radius_max;
       break;
-    default:
+    case LIGHT_SUN:
+    case LIGHT_SUN_ORTHO:
+      /* Should already be handled above. */
+      assert(false);
       break;
   }
 
@@ -317,7 +320,7 @@ struct CullingTile {
     angle_cosine = min(angle_cosine, dot(center, v10));
     angle_cosine = min(angle_cosine, dot(center, v11));
     /* Widen by moving to next representable float to account for float rounding. */
-    angle_cosine = uintBitsToFloat(floatBitsToUint(angle_cosine) - 1u);
+    angle_cosine = uintBitsToFloat(max(floatBitsToUint(angle_cosine), 1u) - 1u);
     return float4(center, angle_cosine);
   }
 
@@ -440,7 +443,13 @@ void tile_main([[resource_table]] const draw::View &views,
         intersect_tile = intersect_tile && tile.intersect(bbox);
         break;
       }
-      default:
+      case LIGHT_SUN:
+      case LIGHT_SUN_ORTHO:
+        /* Should not go into this function. */
+        assert(false);
+        break;
+      case LIGHT_OMNI_DISK:
+      case LIGHT_OMNI_SPHERE:
         break;
     }
 

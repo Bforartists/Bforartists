@@ -61,6 +61,7 @@
 #include "BKE_customdata.hh"
 #include "BKE_deform.hh"
 #include "BKE_lattice.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh" /* for Main */
 #include "BKE_mesh.hh" /* for ME_ defines (patching) */
 #include "BKE_mesh_legacy_convert.hh"
@@ -1541,7 +1542,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
       Image *ima;
       for (ima = bmain->images.first(); ima; ima = static_cast<Image *>(ima->id.next)) {
         if (STREQ(ima->filepath, "Compositor")) {
-          BLI_strncpy_utf8(ima->id.name + 2, "Viewer Node", sizeof(ima->id.name) - 2);
+          STRNCPY_UTF8(MutableCStr(ima->id.name).drop_front(2), "Viewer Node");
           STRNCPY(ima->filepath, "Viewer Node");
         }
       }
@@ -2120,7 +2121,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 
         /* needed for proper libdata lookup */
         blo_do_versions_oldnewmap_insert(fd->libmap, psys->part, psys->part, 0);
-        part->id.lib = ob->id.lib;
+        bke::id::id_lib_set(part->id, ob->id.lib);
 
         part->id.us--;
         BLO_readfile_id_runtime_tags_for_write(part->id).needs_linking =

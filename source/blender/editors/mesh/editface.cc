@@ -39,19 +39,17 @@ namespace blender {
 
 /* own include */
 
-void paintface_flush_flags(bContext *C,
-                           Object *ob,
+void paintface_flush_flags(Depsgraph &depsgraph,
+                           Object *ob_orig,
                            const bool flush_selection,
                            const bool flush_hidden)
 {
-  Mesh *mesh = BKE_mesh_from_object(ob);
+  Mesh *mesh = BKE_mesh_from_object(ob_orig);
   const int *index_array = nullptr;
 
   BLI_assert(flush_selection || flush_hidden);
 
-  if (mesh == nullptr) {
-    return;
-  }
+  Object *ob_eval = DEG_get_evaluated(&depsgraph, ob_orig);
 
   /* NOTE: call #BKE_mesh_flush_hidden_from_verts_ex first when changing hidden flags. */
 
@@ -61,28 +59,29 @@ void paintface_flush_flags(bContext *C,
     bke::mesh_select_face_flush(*mesh);
   }
 
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  Object *ob_eval = DEG_get_evaluated(depsgraph, ob);
-
   if (ob_eval == nullptr) {
     return;
   }
 
   bke::AttributeAccessor attributes_me = mesh->attributes();
-  Mesh *me_orig = id_cast<Mesh *>(ob_eval->runtime->data_orig);
-  bke::MutableAttributeAccessor attributes_orig = me_orig->attributes_for_write();
+  /* TODO: Conceptually this access and the sync to the `mesh_orig` attributes do not make sense,
+   * as `mesh` and `mesh_orig` should both be the same data. This should be verified and
+   * reevaluated or further explained. */
+  Mesh *mesh_orig = id_cast<Mesh *>(ob_eval->runtime->data_orig);
+  bke::MutableAttributeAccessor attributes_orig = mesh_orig->attributes_for_write();
+
+  /* Note: Using `BKE_object_get_evaluated_mesh` here doesn't work with a subdiv surface */
   Mesh *mesh_eval = id_cast<Mesh *>(ob_eval->runtime->data_eval);
   bke::MutableAttributeAccessor attributes_eval = mesh_eval->attributes_for_write();
   bool updated = false;
 
-  if (me_orig != nullptr && mesh_eval != nullptr && me_orig->faces_num == mesh->faces_num) {
+  if (mesh_orig->faces_num == mesh->faces_num) {
     /* Update the evaluated copy of the mesh. */
     if (flush_hidden) {
       const VArray<bool> hide_poly_me = *attributes_me.lookup_or_default<bool>(
           ".hide_poly", bke::AttrDomain::Face, false);
       bke::SpanAttributeWriter<bool> hide_poly_orig =
-          attributes_orig.lookup_or_add_for_write_only_span<bool>(".hide_poly",
-                                                                  bke::AttrDomain::Face);
+          attributes_orig.ensure_for_write_only_span<bool>(".hide_poly", bke::AttrDomain::Face);
       hide_poly_me.materialize(hide_poly_orig.span);
       hide_poly_orig.finish();
     }
@@ -90,8 +89,7 @@ void paintface_flush_flags(bContext *C,
       const VArray<bool> select_poly_me = *attributes_me.lookup_or_default<bool>(
           ".select_poly", bke::AttrDomain::Face, false);
       bke::SpanAttributeWriter<bool> select_poly_orig =
-          attributes_orig.lookup_or_add_for_write_only_span<bool>(".select_poly",
-                                                                  bke::AttrDomain::Face);
+          attributes_orig.ensure_for_write_only_span<bool>(".select_poly", bke::AttrDomain::Face);
       select_poly_me.materialize(select_poly_orig.span);
       select_poly_orig.finish();
     }
@@ -104,8 +102,7 @@ void paintface_flush_flags(bContext *C,
         const VArray<bool> hide_poly_orig = *attributes_orig.lookup_or_default<bool>(
             ".hide_poly", bke::AttrDomain::Face, false);
         bke::SpanAttributeWriter<bool> hide_poly_eval =
-            attributes_eval.lookup_or_add_for_write_only_span<bool>(".hide_poly",
-                                                                    bke::AttrDomain::Face);
+            attributes_eval.ensure_for_write_only_span<bool>(".hide_poly", bke::AttrDomain::Face);
         for (const int i : IndexRange(mesh_eval->faces_num)) {
           const int orig_face_index = index_array[i];
           if (orig_face_index != ORIGINDEX_NONE) {
@@ -118,8 +115,8 @@ void paintface_flush_flags(bContext *C,
         const VArray<bool> select_poly_orig = *attributes_orig.lookup_or_default<bool>(
             ".select_poly", bke::AttrDomain::Face, false);
         bke::SpanAttributeWriter<bool> select_poly_eval =
-            attributes_eval.lookup_or_add_for_write_only_span<bool>(".select_poly",
-                                                                    bke::AttrDomain::Face);
+            attributes_eval.ensure_for_write_only_span<bool>(".select_poly",
+                                                             bke::AttrDomain::Face);
         for (const int i : IndexRange(mesh_eval->faces_num)) {
           const int orig_face_index = index_array[i];
           if (orig_face_index != ORIGINDEX_NONE) {
@@ -141,16 +138,16 @@ void paintface_flush_flags(bContext *C,
       BKE_mesh_batch_cache_dirty_tag(mesh_eval, BKE_MESH_BATCH_DIRTY_SELECT_PAINT);
     }
 
-    DEG_id_tag_update(ob->data, ID_RECALC_SELECT);
+    DEG_id_tag_update(ob_orig->data, ID_RECALC_SELECT);
   }
   else {
-    DEG_id_tag_update(ob->data, ID_RECALC_SYNC_TO_EVAL | ID_RECALC_SELECT);
+    DEG_id_tag_update(ob_orig->data, ID_RECALC_SYNC_TO_EVAL | ID_RECALC_SELECT);
   }
 
-  WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
+  WM_main_add_notifier(NC_GEOM | ND_SELECT, ob_orig->data);
 }
 
-void paintface_hide(bContext *C, Object *ob, const bool unselected)
+void paintface_hide(Depsgraph &depsgraph, Object *ob, const bool unselected)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   if (mesh == nullptr || mesh->faces_num == 0) {
@@ -158,9 +155,9 @@ void paintface_hide(bContext *C, Object *ob, const bool unselected)
   }
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> hide_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> hide_poly = attributes.ensure_for_write_span<bool>(
       ".hide_poly", bke::AttrDomain::Face);
-  bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
       ".select_poly", bke::AttrDomain::Face);
 
   for (int i = 0; i < mesh->faces_num; i++) {
@@ -180,10 +177,10 @@ void paintface_hide(bContext *C, Object *ob, const bool unselected)
 
   bke::mesh_hide_face_flush(*mesh);
 
-  paintface_flush_flags(C, ob, true, true);
+  paintface_flush_flags(depsgraph, ob, true, true);
 }
 
-void paintface_reveal(bContext *C, Object *ob, const bool select)
+void paintface_reveal(Depsgraph &depsgraph, Object *ob, const bool select)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   if (mesh == nullptr || mesh->faces_num == 0) {
@@ -195,7 +192,7 @@ void paintface_reveal(bContext *C, Object *ob, const bool select)
   if (select) {
     const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
         ".hide_poly", bke::AttrDomain::Face, false);
-    bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+    bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
         ".select_poly", bke::AttrDomain::Face);
     for (const int i : hide_poly.index_range()) {
       if (hide_poly[i]) {
@@ -209,7 +206,7 @@ void paintface_reveal(bContext *C, Object *ob, const bool select)
 
   bke::mesh_hide_face_flush(*mesh);
 
-  paintface_flush_flags(C, ob, true, true);
+  paintface_flush_flags(depsgraph, ob, true, true);
 }
 
 /**
@@ -276,7 +273,7 @@ static void paintface_select_linked_faces(Mesh &mesh,
   bke::MutableAttributeAccessor attributes = mesh.attributes_for_write();
   const VArray<bool> uv_seams = *attributes.lookup_or_default<bool>(
       "uv_seam", bke::AttrDomain::Edge, false);
-  bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
       ".select_poly", bke::AttrDomain::Face);
 
   Set<int> selected_roots;
@@ -305,7 +302,8 @@ static void paintface_select_linked_faces(Mesh &mesh,
   select_poly.finish();
 }
 
-void paintface_select_linked(bContext *C, Object *ob, const int mval[2], const bool select)
+void paintface_select_linked(
+    bContext *C, Depsgraph &depsgraph, Object *ob, const int mval[2], const bool select)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   if (mesh == nullptr || mesh->faces_num == 0) {
@@ -313,7 +311,7 @@ void paintface_select_linked(bContext *C, Object *ob, const int mval[2], const b
   }
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
       ".select_poly", bke::AttrDomain::Face);
 
   Vector<int> indices;
@@ -341,7 +339,7 @@ void paintface_select_linked(bContext *C, Object *ob, const int mval[2], const b
   select_poly.finish();
 
   paintface_select_linked_faces(*mesh, indices, select);
-  paintface_flush_flags(C, ob, true, false);
+  paintface_flush_flags(depsgraph, ob, true, false);
 }
 
 static int get_opposing_edge_index(const IndexRange face,
@@ -411,13 +409,13 @@ static bool follow_face_loop(const int face_start_index,
   return false;
 }
 
-void paintface_select_loop(bContext *C, Object *ob, const int mval[2], const bool select)
+void paintface_select_loop(
+    bContext *C, Depsgraph &depsgraph, Object *ob, const int mval[2], const bool select)
 {
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  ViewContext vc = ED_view3d_viewcontext_init(C, depsgraph);
+  ViewContext vc = ED_view3d_viewcontext_init(C, &depsgraph);
   ED_view3d_select_id_validate(&vc);
 
-  Object *ob_eval = DEG_get_evaluated(depsgraph, ob);
+  Object *ob_eval = DEG_get_evaluated(&depsgraph, ob);
   if (!ob_eval) {
     return;
   }
@@ -476,7 +474,7 @@ void paintface_select_loop(bContext *C, Object *ob, const int mval[2], const boo
                      faces_to_select);
   }
 
-  bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
       ".select_poly", bke::AttrDomain::Face);
 
   /* Toggling behavior. When one of the faces of the picked edge is already selected,
@@ -489,7 +487,7 @@ void paintface_select_loop(bContext *C, Object *ob, const int mval[2], const boo
   select_poly.span.fill_indices(faces_to_select.as_span(), select_toggle);
 
   select_poly.finish();
-  paintface_flush_flags(C, ob, true, false);
+  paintface_flush_flags(depsgraph, ob, true, false);
 }
 
 static bool poly_has_selected_neighbor(Span<int> face_edges,
@@ -518,9 +516,9 @@ static bool poly_has_selected_neighbor(Span<int> face_edges,
 void paintface_select_more(Mesh *mesh, const bool face_step)
 {
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
       ".select_poly", bke::AttrDomain::Face);
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
   const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
       ".hide_poly", bke::AttrDomain::Face, false);
@@ -570,7 +568,7 @@ static bool poly_has_unselected_neighbor(Span<int> face_edges,
 void paintface_select_less(Mesh *mesh, const bool face_step)
 {
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
       ".select_poly", bke::AttrDomain::Face);
   const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
       ".hide_poly", bke::AttrDomain::Face, false);
@@ -610,7 +608,7 @@ void paintface_select_less(Mesh *mesh, const bool face_step)
   select_poly.finish();
 }
 
-bool paintface_deselect_all_visible(bContext *C, Object *ob, int action, bool flush_flags)
+bool paintface_deselect_all_visible(Depsgraph &depsgraph, Object *ob, int action, bool flush_flags)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   if (mesh == nullptr) {
@@ -620,7 +618,7 @@ bool paintface_deselect_all_visible(bContext *C, Object *ob, int action, bool fl
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
       ".hide_poly", bke::AttrDomain::Face, false);
-  bke::SpanAttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_poly = attributes.ensure_for_write_span<bool>(
       ".select_poly", bke::AttrDomain::Face);
 
   if (action == SEL_TOGGLE) {
@@ -662,7 +660,7 @@ bool paintface_deselect_all_visible(bContext *C, Object *ob, int action, bool fl
 
   if (changed) {
     if (flush_flags) {
-      paintface_flush_flags(C, ob, true, false);
+      paintface_flush_flags(depsgraph, ob, true, false);
     }
   }
   return changed;
@@ -707,6 +705,7 @@ bool paintface_minmax(Object *ob, float r_min[3], float r_max[3])
 }
 
 bool paintface_mouse_select(bContext *C,
+                            Depsgraph &depsgraph,
                             const int mval[2],
                             const SelectPick_Params &params,
                             Object *ob)
@@ -721,7 +720,7 @@ bool paintface_mouse_select(bContext *C,
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   const VArray<bool> hide_poly = *attributes.lookup_or_default<bool>(
       ".hide_poly", bke::AttrDomain::Face, false);
-  bke::AttributeWriter<bool> select_poly = attributes.lookup_or_add_for_write<bool>(
+  bke::AttributeWriter<bool> select_poly = attributes.ensure_for_write<bool>(
       ".select_poly", bke::AttrDomain::Face);
 
   if (ED_mesh_pick_face(C, ob, mval, ED_MESH_PICK_DEFAULT_FACE_DIST, &index)) {
@@ -738,7 +737,7 @@ bool paintface_mouse_select(bContext *C,
     }
     else if (found || params.deselect_all) {
       /* Deselect everything. */
-      changed |= paintface_deselect_all_visible(C, ob, SEL_DESELECT, false);
+      changed |= paintface_deselect_all_visible(depsgraph, ob, SEL_DESELECT, false);
     }
   }
 
@@ -763,7 +762,7 @@ bool paintface_mouse_select(bContext *C,
 
     /* image window redraw */
 
-    paintface_flush_flags(C, ob, true, false);
+    paintface_flush_flags(depsgraph, ob, true, false);
     ED_region_tag_redraw(CTX_wm_region(C)); /* XXX: should redraw all 3D views. */
     changed = true;
   }
@@ -795,9 +794,8 @@ void paintvert_flush_flags(Object *ob)
 
   const VArray<bool> hide_vert_orig = *attributes_orig.lookup_or_default<bool>(
       ".hide_vert", bke::AttrDomain::Point, false);
-  bke::SpanAttributeWriter<bool> hide_vert_eval =
-      attributes_eval.lookup_or_add_for_write_only_span<bool>(".hide_vert",
-                                                              bke::AttrDomain::Point);
+  bke::SpanAttributeWriter<bool> hide_vert_eval = attributes_eval.ensure_for_write_only_span<bool>(
+      ".hide_vert", bke::AttrDomain::Point);
   if (orig_indices) {
     for (const int i : hide_vert_eval.span.index_range()) {
       if (orig_indices[i] != ORIGINDEX_NONE) {
@@ -813,8 +811,7 @@ void paintvert_flush_flags(Object *ob)
   const VArray<bool> select_vert_orig = *attributes_orig.lookup_or_default<bool>(
       ".select_vert", bke::AttrDomain::Point, false);
   bke::SpanAttributeWriter<bool> select_vert_eval =
-      attributes_eval.lookup_or_add_for_write_only_span<bool>(".select_vert",
-                                                              bke::AttrDomain::Point);
+      attributes_eval.ensure_for_write_only_span<bool>(".select_vert", bke::AttrDomain::Point);
   if (orig_indices) {
     for (const int i : select_vert_eval.span.index_range()) {
       if (orig_indices[i] != ORIGINDEX_NONE) {
@@ -830,8 +827,7 @@ void paintvert_flush_flags(Object *ob)
   BKE_mesh_batch_cache_dirty_tag(mesh, BKE_MESH_BATCH_DIRTY_ALL);
 }
 
-static void paintvert_select_linked_vertices(bContext *C,
-                                             Object *ob,
+static void paintvert_select_linked_vertices(Object *ob,
                                              const Span<int> vertex_indices,
                                              const bool select)
 {
@@ -853,7 +849,7 @@ static void paintvert_select_linked_vertices(bContext *C,
   });
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   Set<int> selected_roots;
@@ -875,7 +871,7 @@ static void paintvert_select_linked_vertices(bContext *C,
   select_vert.finish();
 
   paintvert_flush_flags(ob);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
 }
 
 void paintvert_select_linked_pick(bContext *C,
@@ -889,10 +885,10 @@ void paintvert_select_linked_pick(bContext *C,
     return;
   }
 
-  paintvert_select_linked_vertices(C, ob, {int(index)}, select);
+  paintvert_select_linked_vertices(ob, {int(index)}, select);
 }
 
-void paintvert_select_linked(bContext *C, Object *ob)
+void paintvert_select_linked(Object *ob)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   if (mesh == nullptr || mesh->faces_num == 0) {
@@ -900,7 +896,7 @@ void paintvert_select_linked(bContext *C, Object *ob)
   }
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   Vector<int> indices;
@@ -911,13 +907,13 @@ void paintvert_select_linked(bContext *C, Object *ob)
     indices.append(i);
   }
   select_vert.finish();
-  paintvert_select_linked_vertices(C, ob, indices, true);
+  paintvert_select_linked_vertices(ob, indices, true);
 }
 
 void paintvert_select_more(Mesh *mesh, const bool face_step)
 {
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
   const VArray<bool> hide_edge = *attributes.lookup_or_default<bool>(
       ".hide_edge", bke::AttrDomain::Edge, false);
@@ -973,7 +969,7 @@ void paintvert_select_more(Mesh *mesh, const bool face_step)
 void paintvert_select_less(Mesh *mesh, const bool face_step)
 {
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
   const VArray<bool> hide_edge = *attributes.lookup_or_default<bool>(
       ".hide_edge", bke::AttrDomain::Edge, false);
@@ -1023,10 +1019,10 @@ void paintvert_select_less(Mesh *mesh, const bool face_step)
   select_vert.finish();
 }
 
-void paintvert_tag_select_update(bContext *C, Object *ob)
+void paintvert_tag_select_update(Object *ob)
 {
   DEG_id_tag_update(ob->data, ID_RECALC_SYNC_TO_EVAL | ID_RECALC_SELECT);
-  WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
+  WM_main_add_notifier(NC_GEOM | ND_SELECT, ob->data);
 }
 
 bool paintvert_deselect_all_visible(Object *ob, int action, bool flush_flags)
@@ -1039,7 +1035,7 @@ bool paintvert_deselect_all_visible(Object *ob, int action, bool flush_flags)
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   const VArray<bool> hide_vert = *attributes.lookup_or_default<bool>(
       ".hide_vert", bke::AttrDomain::Point, false);
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   if (action == SEL_TOGGLE) {
@@ -1114,7 +1110,7 @@ void paintvert_select_ungrouped(Object *ob, bool extend, bool flush_flags)
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   const VArray<bool> hide_vert = *attributes.lookup_or_default<bool>(
       ".hide_vert", bke::AttrDomain::Point, false);
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   for (const int i : select_vert.span.index_range()) {
@@ -1133,7 +1129,7 @@ void paintvert_select_ungrouped(Object *ob, bool extend, bool flush_flags)
   }
 }
 
-void paintvert_hide(bContext *C, Object *ob, const bool unselected)
+void paintvert_hide(Object *ob, const bool unselected)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   if (mesh == nullptr || mesh->verts_num == 0) {
@@ -1141,9 +1137,9 @@ void paintvert_hide(bContext *C, Object *ob, const bool unselected)
   }
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> hide_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> hide_vert = attributes.ensure_for_write_span<bool>(
       ".hide_vert", bke::AttrDomain::Point);
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   for (const int i : hide_vert.span.index_range()) {
@@ -1163,10 +1159,10 @@ void paintvert_hide(bContext *C, Object *ob, const bool unselected)
   bke::mesh_hide_vert_flush(*mesh);
 
   paintvert_flush_flags(ob);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
 }
 
-void paintvert_reveal(bContext *C, Object *ob, const bool select)
+void paintvert_reveal(Object *ob, const bool select)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   if (mesh == nullptr || mesh->verts_num == 0) {
@@ -1176,7 +1172,7 @@ void paintvert_reveal(bContext *C, Object *ob, const bool select)
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
   const VArray<bool> hide_vert = *attributes.lookup_or_default<bool>(
       ".hide_vert", bke::AttrDomain::Point, false);
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   for (const int i : select_vert.span.index_range()) {
@@ -1193,7 +1189,7 @@ void paintvert_reveal(bContext *C, Object *ob, const bool select)
   bke::mesh_hide_vert_flush(*mesh);
 
   paintvert_flush_flags(ob);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
 }
 
 /* Walk along an edge loop (Vertex based).
@@ -1325,7 +1321,7 @@ void paintvert_select_loop(bContext *C, Object *ob, const int mval[2], const boo
                      edges_in_loop);
   }
 
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   VectorSet<int> verts_to_select;
@@ -1344,7 +1340,7 @@ void paintvert_select_loop(bContext *C, Object *ob, const int mval[2], const boo
   select_vert.finish();
 
   paintvert_flush_flags(ob);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
 }
 
 }  // namespace blender

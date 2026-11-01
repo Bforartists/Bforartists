@@ -9,6 +9,7 @@ from ..utils.nodes import (
     NWBase,
     nw_check,
     nw_check_selected,
+    get_input_by_name,
 )
 
 
@@ -21,9 +22,13 @@ class NODE_OT_change_factor(Operator, NWBase):
     bl_options = {'REGISTER', 'UNDO'}
 
     @staticmethod
-    def get_socket_min_and_max(socket):
-        prop = socket.bl_rna.properties["default_value"]
-        return prop.soft_min, prop.soft_max
+    def get_socket_min_and_max(node, socket):
+        if group := getattr(node, "node_tree", None):
+            interface_item = group.interface.items_tree[socket.identifier]
+            return interface_item.min_value, interface_item.max_value
+        else:
+            prop = socket.bl_rna.properties["default_value"]
+            return prop.soft_min, prop.soft_max
 
     @classmethod
     def poll(cls, context):
@@ -40,21 +45,21 @@ class NODE_OT_change_factor(Operator, NWBase):
 
         if option in {0.0, 1.0}:
             for node in context.selected_nodes:
-                if socket := node.inputs.get("Factor"):
+                if socket := get_input_by_name(node, "Factor", socket_types={'VALUE'}):
                     socket.hide = False
                     if socket.default_value != option:
                         socket.default_value = option
                         any_socket_modified = True
         else:
             for node in context.selected_nodes:
-                if socket := node.inputs.get("Factor"):
+                if socket := get_input_by_name(node, "Factor", socket_types={'VALUE'}):
                     socket.hide = False
-                    min_fac, max_fac = self.get_min_and_max(socket)
+                    min_fac, max_fac = self.get_socket_min_and_max(node, socket)
                     if (option < 0.0) and (socket.default_value > min_fac):
-                        socket.default_value = max(0.0, socket.default_value + option)
+                        socket.default_value = max(min_fac, socket.default_value + option)
                         any_socket_modified = True
                     elif (option > 0.0) and (socket.default_value < max_fac):
-                        socket.default_value = min(1.0, socket.default_value + option)
+                        socket.default_value = min(max_fac, socket.default_value + option)
                         any_socket_modified = True
 
         if not any_socket_modified:

@@ -368,6 +368,7 @@ class UnifiedPaintPanel:
             pressure_name,
             curve_visibility_name,
             custom_curve_name,
+            prop_owner=None,
     ):
         paint = UnifiedPaintPanel.paint_settings_from_active_tool(context)
 
@@ -382,7 +383,10 @@ class UnifiedPaintPanel:
         if is_active:
             subcol = layout.column()
             subcol.active = getattr(brush, pressure_name)
-            subcol.template_curve_mapping(brush, custom_curve_name, brush=True, show_presets=True)
+            if prop_owner is None:
+                subcol.template_curve_mapping(brush, custom_curve_name, brush=True, show_presets=True)
+            else:
+                subcol.template_curve_mapping(prop_owner, custom_curve_name, brush=True, show_presets=True)
 
     @staticmethod
     def prop_unified_color(parent, context, brush, prop_name, *, text=None):
@@ -2193,10 +2197,10 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
             slider=True,
             header=False,
         )
-        # BFA - blender/main adds UnifiedPaintPanel.prop_custom_pressure() here for size and strength,
-        # drawing brush.curve_size / brush.curve_strength. Not used: GP Draw mode evaluates
-        # gpencil_settings.curve_sensitivity / curve_strength (see radius_from_input_sample()),
-        # which the BFA collapsed curves above/below already show. Using both would add duplicate toggles.
+        # BFA - blender/main draws UnifiedPaintPanel.prop_custom_pressure() here for size and strength.
+        # Since week 43 it passes prop_owner=gp_settings (curve_sensitivity / curve_strength), the same
+        # curves GP Draw mode evaluates. Not used: the BFA collapsed curves above/below already show them,
+        # with header popovers. Using both would add duplicate toggles.
 
         ## BFA - WIP collapsed strength curves start
         if settings and not header:
@@ -2324,6 +2328,7 @@ def brush_basic_grease_pencil_paint_settings(layout, context, brush, props, *, c
 
 
 def brush_basic_grease_pencil_sculpt_settings(layout, context, brush, *, compact=False):
+    gp_settings = brush.gpencil_settings
     unified_row = UnifiedPaintPanel.prop_unified(
         layout,
         context,
@@ -2343,7 +2348,8 @@ def brush_basic_grease_pencil_sculpt_settings(layout, context, brush, *, compact
             brush,
             pressure_name="use_pressure_size",
             curve_visibility_name="show_size_curve",
-            custom_curve_name="curve_size",
+            custom_curve_name="curve_sensitivity",
+            prop_owner=gp_settings,
         )
 
     unified_row = UnifiedPaintPanel.prop_unified(
@@ -2365,6 +2371,7 @@ def brush_basic_grease_pencil_sculpt_settings(layout, context, brush, *, compact
             pressure_name="use_pressure_strength",
             curve_visibility_name="show_strength_curve",
             custom_curve_name="curve_strength",
+            prop_owner=gp_settings,
         )
 
 
@@ -2471,6 +2478,7 @@ class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
 
 
 def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact=False):
+    gp_settings = brush.gpencil_settings
     if brush.gpencil_vertex_brush_type == 'DRAW':
         layout.prop(brush, "blend", text="Blend")
         layout.separator()
@@ -2494,7 +2502,8 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
             brush,
             pressure_name="use_pressure_size",
             curve_visibility_name="show_size_curve",
-            custom_curve_name="curve_size",
+            custom_curve_name="curve_sensitivity",
+            prop_owner=gp_settings,
         )
 
     if brush.gpencil_vertex_brush_type in {'DRAW', 'BLUR', 'SMEAR'}:
@@ -2517,9 +2526,9 @@ def brush_basic_grease_pencil_vertex_settings(layout, context, brush, *, compact
                 pressure_name="use_pressure_strength",
                 curve_visibility_name="show_strength_curve",
                 custom_curve_name="curve_strength",
+                prop_owner=gp_settings,
             )
 
-    gp_settings = brush.gpencil_settings
     if brush.gpencil_vertex_brush_type in {'DRAW', 'REPLACE'}:
         if context.region.type == 'TOOL_HEADER':
             row = layout.row(align=True)

@@ -286,6 +286,11 @@ void GPU_viewport_colorspace_set(GPUViewport *viewport,
       &viewport->display_settings, viewport->view_settings.view_transform);
 }
 
+void GPU_viewport_colorspace_clear(GPUViewport *viewport)
+{
+  viewport->do_color_management = false;
+}
+
 void GPU_viewport_stereo_composite(GPUViewport *viewport, Stereo3dFormat *stereo_format)
 {
   if (!ELEM(stereo_format->display_mode, S3D_DISPLAY_ANAGLYPH, S3D_DISPLAY_INTERLACE)) {
@@ -306,6 +311,8 @@ void GPU_viewport_stereo_composite(GPUViewport *viewport, Stereo3dFormat *stereo
 
   GPUVertFormat *vert_format = immVertexFormat();
   uint pos = GPU_vertformat_attr_add(vert_format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+  uint tex_coord = GPU_vertformat_attr_add(
+      vert_format, "texCoord", gpu::VertAttrType::SFLOAT_32_32);
   GPU_framebuffer_bind(viewport->stereo_comp_fb);
   GPU_matrix_push();
   GPU_matrix_push_projection();
@@ -337,9 +344,13 @@ void GPU_viewport_stereo_composite(GPUViewport *viewport, Stereo3dFormat *stereo
 
   immBegin(GPU_PRIM_TRI_STRIP, 4);
 
+  immAttr2f(tex_coord, 0.0f, 0.0f);
   immVertex2f(pos, -1.0f, -1.0f);
+  immAttr2f(tex_coord, 1.0f, 0.0f);
   immVertex2f(pos, 1.0f, -1.0f);
+  immAttr2f(tex_coord, 0.0f, 1.0f);
   immVertex2f(pos, -1.0f, 1.0f);
+  immAttr2f(tex_coord, 1.0f, 1.0f);
   immVertex2f(pos, 1.0f, 1.0f);
 
   immEnd();

@@ -14,7 +14,7 @@
 #define DNA_DEPRECATED_ALLOW
 
 /* Define macros in `DNA_genfile.h`. */
-#define DNA_GENFILE_VERSIONING_MACROS
+#define DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -42,7 +42,7 @@
 
 #include "DNA_genfile.h"
 
-#undef DNA_GENFILE_VERSIONING_MACROS
+#undef DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "BKE_anim_data.hh"
 #include "BKE_animsys.hh"
@@ -306,7 +306,7 @@ static void do_version_hue_sat_node(bNodeTree *ntree, bNode *node)
   AnimData *adt = BKE_animdata_from_id(&ntree->id);
   if (adt != nullptr && adt->action != nullptr) {
     char node_name_esc[sizeof(node->name) * 2];
-    BLI_str_escape(node_name_esc, node->name, sizeof(node_name_esc));
+    BLI_str_escape(node_name_esc, node->name);
     const char *prefix = BLI_sprintfN("nodes[\"%s\"]", node_name_esc);
     for (FCurve &fcu : adt->action->curves) {
       if (fcu.rna_path().startswith(prefix)) {

@@ -21,6 +21,7 @@
 
 #include "BLT_translation.hh"
 
+#include "BKE_animsys.hh"
 #include "BKE_context.hh"
 #include "BKE_idprop.hh"
 #include "BKE_layer.hh"
@@ -1526,13 +1527,15 @@ static wmOperatorStatus ed_marker_select_exec(bContext *C, wmOperator *op)
   const View2D *v2d = ui::view2d_fromcontext(C);
 
   const float marker_frame = ui::view2d_region_to_view_x(v2d, mval[0]);
-  ListBaseT<TimeMarker> *markers = ED_context_get_markers(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  ListBaseT<TimeMarker> *markers = is_sequencer ? ED_sequencer_context_get_markers(C) :
+                                                  ED_context_get_markers(C);
   const TimeMarker *marker = ED_markers_find_nearest_marker(markers, marker_frame);
   const bool is_over_marker = region_position_is_over_marker(v2d, markers, mval[0]);
 
   const bool camera = RNA_boolean_get(op->ptr, "camera");
 
-  if (camera && marker->camera && CTX_data_mode_enum(C) != CTX_MODE_OBJECT) {
+  if (camera && marker && marker->camera && CTX_data_mode_enum(C) != CTX_MODE_OBJECT) {
     /* Supporting mode switching from this operator doesn't seem so useful.
      * So only select the camera in object-mode. */
     BKE_report(op->reports,
@@ -2014,9 +2017,7 @@ static wmOperatorStatus ed_marker_make_links_scene_exec(bContext *C, wmOperator 
   /* copy markers */
   for (TimeMarker &marker : *markers) {
     if (marker.flag & SELECT) {
-      marker_new = MEM_dupalloc(&marker);
-      marker_new->prev = marker_new->next = nullptr;
-
+      marker_new = BKE_copy_time_marker(marker, 0);
       BLI_addtail(&scene_to->markers, marker_new);
     }
   }

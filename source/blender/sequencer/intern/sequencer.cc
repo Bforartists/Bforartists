@@ -64,6 +64,8 @@
 
 #include "BLO_read_write.hh"
 
+#include "WM_api.hh"
+
 #include "cache/compositor_cache.hh"
 #include "cache/final_image_cache.hh"
 #include "cache/intra_frame_cache.hh"
@@ -1127,10 +1129,7 @@ static bool strip_doversion_250_sound_proxy_update_cb(Strip *strip, void *user_d
   Main *bmain = static_cast<Main *>(user_data);
   if (strip->type == STRIP_TYPE_SOUND_HD) {
     char filepath_abs[FILE_MAX];
-    BLI_path_join(filepath_abs,
-                  sizeof(filepath_abs),
-                  strip->data->dirpath,
-                  strip->data->stripdata->filename);
+    BLI_path_join(filepath_abs, strip->data->dirpath, strip->data->stripdata->filename);
     BLI_path_abs(filepath_abs, BKE_main_blendfile_path(bmain));
     strip->sound = BKE_sound_new_file(bmain, filepath_abs);
     strip->type = STRIP_TYPE_SOUND;
@@ -1372,6 +1371,20 @@ ListBaseT<SeqTimelineChannel> *Editing::current_channels() const
   }
   /* NOTE: Const correctness is non-existent with ListBaseT anyway. */
   return &const_cast<ListBaseT<SeqTimelineChannel> &>(this->channels);
+}
+
+std::optional<int> Editing::edit_point() const
+{
+  return this->runtime->edit_point;
+}
+
+void Editing::edit_point_set(Scene *scene, const std::optional<int> frame)
+{
+  if (this->runtime->edit_point == frame) {
+    return;
+  }
+  this->runtime->edit_point = frame;
+  WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 }
 
 bool Strip::is_effect() const

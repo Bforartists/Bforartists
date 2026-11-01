@@ -58,14 +58,6 @@ namespace eevee {
 
   init_interface(interp, id.raw_id);
 
-  /* TODO(not_mark): Disabled compute pass for now, due to incompatibility with instancing. */
-  /* draw::gsplat::SplatShape gs;
-  if (pipe.is_shadow_pipe) [[static_branch]] {
-    gs = shape.get_splat_fallback(uint(vert_id), obj, view);
-  }
-  else {
-    gs = shape.get_splat(uint(vert_id), obj, view);
-  } */
   draw::gsplat::SplatShape gs = shape.get_splat(uint(vert_id), obj, view);
   if (gs.is_culled()) {
     out_position = float4(NAN_FLT);

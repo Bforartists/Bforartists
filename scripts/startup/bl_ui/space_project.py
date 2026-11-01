@@ -7,6 +7,7 @@ from bpy.types import Header, Menu, Panel
 
 from bpy.app.translations import (
     pgettext_iface as iface_,
+    pgettext_rpt as rpt_,
     contexts as i18n_contexts,
 )
 
@@ -28,6 +29,12 @@ class PROJECT_HT_header(Header):
         layout.template_header()
         PROJECT_MT_editor_menus.draw_collapsible(context, layout)
         layout.separator_spacer()
+
+        project = bpy.data.project
+        if project:
+            row = layout.row()
+            row.label(text=project.name, translate=False)
+            row.active = False
 
 
 class PROJECT_MT_editor_menus(Menu):
@@ -63,20 +70,20 @@ class PROJECT_MT_save_load(Menu):
         prefs = context.preferences
 
         layout.prop(prefs, "use_project_auto_save", text="Auto-Save Project")
-        layout.operator("project.save_project", text="Save Project", icon='FILE_TICK')
+        layout.operator("project.config_save", text="Save Project", icon='FILE_TICK')  # BFA - Icon Added
 
 
-class PROJECT_MT_add_variable(Menu):
+class PROJECT_MT_variable_add(Menu):
     bl_label = "Add Variable"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("project.add_variable", text="String", icon='STRING').variable_type = 'STRING'  # BFA - Icon Added
-        layout.operator("project.add_variable", text="Filepath", icon='FILE_FOLDER').variable_type = 'FILEPATH'  # BFA - Icon Added
+        layout.operator("project.variable_add", text="String", icon='STRING').variable_type = 'STRING'  # BFA - Icon Added
+        layout.operator("project.variable_add", text="Filepath", icon='FILE_FOLDER').variable_type = 'FILEPATH'  # BFA - Icon Added
         layout.separator()
-        layout.operator("project.add_variable", text="Integer", icon='INTEGER').variable_type = 'INTEGER'  # BFA - Icon Added
-        layout.operator("project.add_variable", text="Float", icon='NODE_VALUE').variable_type = 'FLOAT'  # BFA - Icon Added
+        layout.operator("project.variable_add", text="Integer", icon='INTEGER').variable_type = 'INTEGER'  # BFA - Icon Added
+        layout.operator("project.variable_add", text="Float", icon='NODE_VALUE').variable_type = 'FLOAT'  # BFA - Icon Added
 
 
 # -------------------------------------------------------------
@@ -102,7 +109,7 @@ class PROJECT_PT_save_project(Panel):
             # It is shown to the left so that it is visible when the sidebar is narrow,
             # and for consistency with unsaved files in the title bar.
             layout.operator(
-                "project.save_project",
+                "project.config_save",
                 text=("* " if bpy.data.project.is_dirty else "") + iface_("Save Project"),
                 icon='FILE_TICK',
                 translate=False,
@@ -165,6 +172,23 @@ class PROJECT_PT_main(Panel, CenterAlignMixIn):
         col.prop(project, "root_path")
 
 
+class PROJECT_PT_splash_screen(Panel, CenterAlignMixIn):
+    bl_label = "Splash Screen"
+    bl_space_type = 'PROJECT'
+    bl_region_type = 'WINDOW'
+    bl_category = MAIN_SECTION_NAME
+    bl_parent_id = "PROJECT_PT_main"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_centered(self, context, layout):
+        split = layout.split(factor=layout.property_split_factor)
+        row = split.row()
+        row.alignment = 'RIGHT'
+        row.label(text="Artwork")
+        col = split.column()
+        col.template_project_splash()
+
+
 class PROJECT_PT_color_management(Panel, CenterAlignMixIn):
     bl_label = "Color Management"
     bl_space_type = 'PROJECT'
@@ -199,8 +223,9 @@ class PROJECT_PT_color_management(Panel, CenterAlignMixIn):
             row = layout.split(factor=0.4)
             row.label()
             row.label(
-                text=f"Overridden by the {config_source} environment variable",
+                text=rpt_("Overridden by the {} environment variable").format(config_source),
                 icon='STATUS_INFO',
+                translate=False,
             )
 
         if needs_reload:
@@ -230,53 +255,24 @@ class PROJECT_PT_main_unset(Panel, CenterAlignMixIn):
         col = layout.column()
         col.separator(factor=2.0)
 
-        if context.blend_data.filepath == "":
-            row = col.row()
-            row.alignment = 'CENTER'
-            row.label(
-                text="No active project.",
-                icon='STATUS_INFO',
-            )
-            col.separator()
+        row = col.row()
+        row.alignment = 'CENTER'
+        row.label(
+            text="No active project.",
+            icon='STATUS_INFO',
+        )
+        col.separator()
 
-            row = col.row()
-            row.label_multiline(
-                text="Save the current file, and make sure to place it in a folder that will be part of the project",
-                alignment='CENTER')
+        row = col.row()
+        row.label_multiline(
+            text="Create a new project, or open an existing project or a file inside of one.",
+            alignment='CENTER')
 
-            row = col.row()
-            row.label_multiline(
-                text="Alternatively, open a file inside of a project directory to see its settings.",
-                alignment='CENTER')
-
-            col.separator()
-            row = col.row()
-            row.alignment = 'CENTER'
-            row.operator("wm.save_as_mainfile", text="Save File...", icon='FILE_TICK')
-            row.operator("project.open_blend_in_project", icon='FILE_FOLDER')
-        else:
-            row = col.row()
-            row.alignment = 'CENTER'
-            row.label(
-                text="No active project.",
-                icon='STATUS_INFO',
-            )
-            col.separator()
-
-            row = col.row()
-            row.label_multiline(
-                text="Set up a new project by choosing any parent directory of the current file.",
-                alignment='CENTER')
-            row = col.row()
-            row.label_multiline(
-                text="Alternatively, open a file inside of a project directory to see its settings.",
-                alignment='CENTER')
-
-            col.separator()
-            row = col.row()
-            row.alignment = 'CENTER'
-            row.operator("project.new_project", text="New Project...", icon='ADD')
-            row.operator("project.open_blend_in_project", icon='FILE_FOLDER')
+        col.separator()
+        row = col.row()
+        row.alignment = 'CENTER'
+        row.operator("project.new", text="New Project...", icon='ADD')
+        row.operator("project.open", icon='FILE_FOLDER')
 
 
 class PROJECT_UL_variables(bpy.types.UIList):
@@ -320,11 +316,11 @@ class PROJECT_PT_variables(Panel):
         )
 
         col = row.column(align=True)
-        col.menu("PROJECT_MT_add_variable", text="", icon='ADD')
-        col.operator("project.remove_variable", text="", icon='REMOVE')
+        col.menu("PROJECT_MT_variable_add", text="", icon='ADD')
+        col.operator("project.variable_remove", text="", icon='REMOVE')
         col.separator()
-        col.operator("project.move_variable", text="", icon='TRIA_UP').direction = 'UP'
-        col.operator("project.move_variable", text="", icon='TRIA_DOWN').direction = 'DOWN'
+        col.operator("project.variable_move", text="", icon='TRIA_UP').direction = 'UP'
+        col.operator("project.variable_move", text="", icon='TRIA_DOWN').direction = 'DOWN'
 
         if project.active_variable_index >= 0 and project.active_variable_index < len(project.variables):
             var = project.variables[project.active_variable_index]
@@ -350,11 +346,12 @@ classes = (
     PROJECT_MT_editor_menus,
     PROJECT_MT_view,
     PROJECT_MT_save_load,
-    PROJECT_MT_add_variable,
+    PROJECT_MT_variable_add,
     PROJECT_PT_navigation_bar,
     PROJECT_PT_save_project,
     PROJECT_PT_main_unset,
     PROJECT_PT_main,
+    PROJECT_PT_splash_screen,
     PROJECT_PT_color_management,
     PROJECT_PT_variables,
     PROJECT_UL_variables,

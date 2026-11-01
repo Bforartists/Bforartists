@@ -35,6 +35,8 @@ extern "C" {
 #  include "ffmpeg_compat.h"
 }
 
+#  include "BLI_span.hh"
+
 #  ifdef WITH_AUDASPACE
 #    include "BKE_sound_types.hh"
 #  endif
@@ -72,7 +74,7 @@ struct MovieWriter {
 
   /* Image frame in Blender's own pixel format, may need conversion to the output pixel format. */
   AVFrame *img_convert_frame = nullptr;
-  SwsContext *img_convert_ctx = nullptr;
+  SwsContext *sws_ctx = nullptr;
 
   uint8_t *audio_input_buffer = nullptr;
   uint8_t *audio_deinterleave_buffer = nullptr;
@@ -102,8 +104,7 @@ AVStream *alloc_audio_stream(MovieWriter *context,
                              int audio_channels,
                              AVCodecID codec_id,
                              AVFormatContext *of,
-                             char *error,
-                             int error_maxncpy,
+                             MutableCStr error,
                              ReportList *reports);
 void write_audio_frames(MovieWriter *context, double to_pts);
 

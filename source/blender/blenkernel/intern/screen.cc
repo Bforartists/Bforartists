@@ -44,6 +44,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "BLO_read_write.hh"
 
@@ -378,6 +379,8 @@ Span<std::unique_ptr<SpaceType>> BKE_spacetypes_list()
 
 void BKE_spacetype_register(std::unique_ptr<SpaceType> st)
 {
+  BLI_assert(st->struct_size >= int(sizeof(SpaceLink)));
+
   /* sanity check */
   SpaceType *stype = BKE_spacetype_from_id(st->spaceid);
   if (stype) {
@@ -1357,29 +1360,6 @@ void BKE_screen_view3d_shading_blend_read_data(BlendDataReader *reader, View3DSh
   }
 }
 
-static void zero_regionview3d_runtime_fields(RegionView3D &rv3d)
-{
-  /* Some values like winmat/viewmat/viewinv/persmat/persinv/is_persp/pixsize are derived but are
-   * not zeroed. They can be read before they are recomputed when a file is newly loaded,
-   * especially when running Blender in background mode. */
-  zero_v4(rv3d.viewcamtexcofac);
-  zero_m4(rv3d.viewmatob);
-  zero_m4(rv3d.persmatob);
-  memset(rv3d.clip_local, 0, sizeof(rv3d.clip_local));
-  zero_m4(rv3d.twmat);
-  zero_v3(rv3d.tw_axis_min);
-  zero_v3(rv3d.tw_axis_max);
-  zero_m3(rv3d.tw_axis_matrix);
-  rv3d.twdrawflag = 0;
-  rv3d.rflag &= ~(RV3D_NAVIGATING | RV3D_GPULIGHT_UPDATE | RV3D_PAINTING);
-  rv3d.runtime_viewlock = {};
-  rv3d.ndof_rot_angle = 0;
-  zero_v3(rv3d.ndof_rot_axis);
-  rv3d.view_render = nullptr;
-  rv3d.sms = nullptr;
-  rv3d.smooth_timer = nullptr;
-}
-
 static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
 {
   writer->write_struct(region, [](BlendStructWriter<ARegion> &struct_writer) {
@@ -1421,13 +1401,13 @@ static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
         if (region->regiontype == RGN_TYPE_WINDOW) {
           RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
           writer->write_struct(rv3d, [](BlendStructWriter<RegionView3D> &struct_writer) {
-            zero_regionview3d_runtime_fields(struct_writer.shallow_data);
+            struct_writer.shallow_data.runtime = nullptr;
           });
 
           if (rv3d->localvd) {
             writer->write_struct(rv3d->localvd,
                                  [](BlendStructWriter<RegionView3D> &struct_writer) {
-                                   zero_regionview3d_runtime_fields(struct_writer.shallow_data);
+                                   struct_writer.shallow_data.runtime = nullptr;
                                  });
           }
           if (rv3d->clipbb) {
@@ -1636,16 +1616,10 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
         }
 
         RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
+        rv3d->runtime = MEM_new<bke::RegionView3DRuntime>(__func__);
 
         BLO_read_struct(reader, RegionView3D, &rv3d->localvd);
         BLO_read_struct(reader, BoundBox, &rv3d->clipbb);
-
-        rv3d->view_render = nullptr;
-        rv3d->sms = nullptr;
-        rv3d->smooth_timer = nullptr;
-
-        rv3d->rflag &= ~(RV3D_NAVIGATING | RV3D_PAINTING);
-        rv3d->runtime_viewlock = eRegionView3D_ViewLock{};
       }
     }
     if (region->regiontype == RGN_TYPE_ASSET_SHELF) {
@@ -1670,6 +1644,7 @@ void BKE_screen_view3d_do_versions_250(View3D *v3d, ListBaseT<ARegion> *regions)
       rv3d->dist = v3d->dist;
       copy_v3_v3(rv3d->ofs, v3d->ofs);
       copy_qt_qt(rv3d->viewquat, v3d->viewquat);
+      rv3d->runtime = MEM_new<bke::RegionView3DRuntime>(__func__);
       region.regiondata = rv3d;
     }
   }
@@ -1682,8 +1657,28 @@ void BKE_screen_view3d_do_versions_250(View3D *v3d, ListBaseT<ARegion> *regions)
 
 static void direct_link_area(BlendDataReader *reader, ScrArea *area)
 {
-  BLO_read_struct_list(reader, SpaceLink, &(area->spacedata));
+  const bool has_spacedata = area->spacedata.first() != nullptr;
+  BLO_read_struct_list_with_type_size<SpaceLink>(
+      reader, &area->spacedata, [](const SpaceLink &sl) {
+        const SpaceType *space_type = BKE_spacetype_from_id(sl.spacetype);
+        return space_type ? size_t(space_type->struct_size) : sizeof(SpaceLink);
+      });
   BLO_read_struct_list(reader, ARegion, &(area->regionbase));
+
+  /* The first space data is the active one, its type must match the area space type. If it
+   * failed to read, leave the area empty. Files before 2.50 can have areas without space data
+   * of their own type (e.g. the info header), which versioning handles. */
+  const SpaceLink *sl_active = area->spacedata.first();
+  if (sl_active == nullptr) {
+    /* Space types removed from DNA (e.g. timeline and logic editors) are handled below. */
+    if (has_spacedata && BKE_spacetype_exists(area->spacetype)) {
+      area->spacetype = SPACE_EMPTY;
+    }
+  }
+  else if (sl_active->spacetype != area->spacetype && BLO_read_fileversion_get(reader) >= 250) {
+    BLO_read_data_invalidate(reader, "Corrupt .blend file, mismatched area space type.");
+    area->spacetype = SPACE_EMPTY;
+  }
 
   area->handlers.clear_no_delete();
   area->type = nullptr; /* spacetype callbacks */
@@ -1765,8 +1760,8 @@ bool BKE_screen_area_map_blend_read_data(BlendDataReader *reader, ScrAreaMap *ar
     BLO_read_struct(reader, ScrVert, &se.v1);
     BLO_read_struct(reader, ScrVert, &se.v2);
 
-    if (se.v1 == nullptr) {
-      BLI_remlink(&area_map->edgebase, &se);
+    if (se.v1 == nullptr || se.v2 == nullptr) {
+      BLI_freelinkN(&area_map->edgebase, &se);
 
       return false;
     }

@@ -16,6 +16,8 @@
 #include "DNA_curves_types.h"
 #include "DNA_grease_pencil_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_modifier_types.h"
+#include "DNA_node_tree_interface_types.h"
 #include "DNA_object_types.h"
 #include "DNA_pointcloud_types.h"
 #include "DNA_scene_types.h"
@@ -35,6 +37,7 @@
 #include "BKE_camera.h"
 #include "BKE_colorband.hh"
 #include "BKE_compositor.hh"
+#include "BKE_idprop.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_node.hh"
@@ -42,6 +45,8 @@
 #include "BKE_paint.hh"
 #include "BKE_paint_types.hh"
 #include "BKE_screen.hh"
+
+#include "NOD_geometry_nodes_srna.hh"
 
 #include "SEQ_iterator.hh"
 #include "SEQ_sequencer.hh"
@@ -88,23 +93,6 @@ static void do_version_merge_layers_options_to_inputs(bNodeTree &ntree, bNode &n
   }
   bNodeSocket &socket = version_node_add_socket(ntree, node, SOCK_IN, "NodeSocketMenu", "Mode");
   socket.default_value_typed<bNodeSocketValueMenu>()->value = storage.mode;
-}
-
-static void compositing_node_group_to_effect(Main &main, Scene &scene)
-{
-  bNodeTree *node_group = version_get_scene_compositor_node_tree(&main, &scene);
-  if (!node_group) {
-    return;
-  }
-
-  SceneCompositorEffect &effect = bke::compositor::new_effect(scene, "Scene Effect");
-  effect.node_group = node_group;
-  if (!node_group->compositor_node_asset_traits) {
-    node_group->compositor_node_asset_traits = MEM_new<CompositorNodeAssetTraits>(__func__);
-  }
-  node_group->compositor_node_asset_traits->flag |= COMPOSIT_NODE_ASSET_SCENE_EFFECT;
-  bke::node_update_asset_metadata(*node_group);
-  scene.compositing_node_group = nullptr;
 }
 
 static float version_503_camera_view_viewfac(const int sensor_fit,
@@ -216,6 +204,39 @@ static void clear_deprecated_brush_flags(Brush &brush)
   brush.flag &= ~(BRUSH_UNUSED_7 | BRUSH_UNUSED_8);
 }
 
+/**
+ * Modifier inputs created for Layer Selection sockets used to get the Value type, even though the
+ * modifier only displayed the layer name.
+ */
+static void version_layer_selection_modifier_inputs(NodesModifierData &nmd)
+{
+  if (!nmd.node_group || !nmd.modifier.system_properties) {
+    return;
+  }
+  IDProperty *inputs = IDP_GetPropertyTypeFromGroup(
+      nmd.modifier.system_properties, "inputs", IDP_GROUP);
+  if (!inputs) {
+    return;
+  }
+  const bNodeTree &ntree = *nmd.node_group;
+  ntree.ensure_interface_cache();
+  for (const bNodeTreeInterfaceSocket *input : ntree.interface_inputs()) {
+    if (!(input->flag & NODE_INTERFACE_SOCKET_LAYER_SELECTION) ||
+        !STREQ(input->socket_type, "NodeSocketBool"))
+    {
+      continue;
+    }
+    IDProperty *group = IDP_GetPropertyTypeFromGroup(inputs, input->identifier, IDP_GROUP);
+    if (!group) {
+      continue;
+    }
+    IDProperty *type = IDP_GetPropertyTypeFromGroup(group, "type", IDP_INT);
+    if (type && IDP_int_get(type) == int(nodes::GeometryNodesInputType::Value)) {
+      IDP_int_set(type, int(nodes::GeometryNodesInputType::Layer));
+    }
+  }
+}
+
 void do_versions_after_linking_503(FileData * /*fd*/, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 8)) {
@@ -225,7 +246,10 @@ void do_versions_after_linking_503(FileData * /*fd*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 15)) {
     for (Scene &scene : bmain->scenes) {
-      compositing_node_group_to_effect(*bmain, scene);
+      if (scene.compositing_node_group) {
+        version_compositing_node_group_to_effect(scene, *scene.compositing_node_group);
+        scene.compositing_node_group = nullptr;
+      }
     }
   }
   else {
@@ -308,6 +332,16 @@ void do_versions_after_linking_503(FileData * /*fd*/, Main *bmain)
             }
             space_outliner->flag &= ~SO_FLAG_UNUSED_4;
           }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 30)) {
+    for (Object &object : bmain->objects) {
+      for (ModifierData &md : object.modifiers) {
+        if (md.type == eModifierType_Nodes) {
+          version_layer_selection_modifier_inputs(reinterpret_cast<NodesModifierData &>(md));
         }
       }
     }
@@ -711,6 +745,27 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       SequencerToolSettings *sequencer_tool_settings = seq::tool_settings_ensure(&scene);
       sequencer_tool_settings->ripple_flag = SEQ_RIPPLE_ALL_CHANNELS | SEQ_RIPPLE_MARKERS |
                                              SEQ_RIPPLE_CLEAR_RANGES;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 28)) {
+    /* Some old files have node editors without a sidebar region. */
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype != SPACE_NODE) {
+            continue;
+          }
+          ListBaseT<ARegion> *regionbase = (&space == area.spacedata.first_) ? &area.regionbase :
+                                                                               &space.regionbase;
+          if (ARegion *new_sidebar = do_versions_add_region_if_not_found(
+                  regionbase, RGN_TYPE_UI, "node editor sidebar", RGN_TYPE_HEADER))
+          {
+            new_sidebar->alignment = RGN_ALIGN_RIGHT;
+            new_sidebar->flag |= RGN_FLAG_HIDDEN;
+          }
+        }
+      }
     }
   }
 

@@ -683,7 +683,7 @@ bool convert_psys_to_mesh(ReportList * /*reports*/,
   MutableSpan<int2> edges = mesh->edges_for_write();
 
   bke::MutableAttributeAccessor attributes = mesh->attributes_for_write();
-  bke::SpanAttributeWriter<bool> select_vert = attributes.lookup_or_add_for_write_span<bool>(
+  bke::SpanAttributeWriter<bool> select_vert = attributes.ensure_for_write_span<bool>(
       ".select_vert", bke::AttrDomain::Point);
 
   int edge_index = 0;
@@ -3574,7 +3574,12 @@ static wmOperatorStatus geometry_node_tree_copy_assign_exec(bContext *C, wmOpera
 {
   Main *bmain = CTX_data_main(C);
   Object *ob = context_active_object(C);
-  ModifierData *md = BKE_object_active_modifier(ob);
+  PointerRNA ctx_ptr = CTX_data_pointer_get_type(C, "modifier", RNA_Modifier);
+  ModifierData *md = ctx_ptr.data_as<ModifierData>();
+  if (!md) {
+    md = BKE_object_active_modifier(ob);
+  }
+
   if (!(md && md->type == eModifierType_Nodes)) {
     return OPERATOR_CANCELLED;
   }

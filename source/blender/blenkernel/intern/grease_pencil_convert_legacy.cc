@@ -570,7 +570,7 @@ class AnimDataConvertor {
         /* Create a new action. */
         animrig::Action &action = animrig::action_add(
             this->conversion_data.bmain,
-            this->animdata_src->action ? this->animdata_src->action->id.name + 2 : nullptr);
+            this->animdata_src->action ? this->animdata_src->action->id.name + 2 : "");
         action.slot_add_for_id(this->id_dst);
 
         const bool ok = animrig::assign_action(&action, {this->id_dst, *this->animdata_dst});
@@ -588,7 +588,7 @@ class AnimDataConvertor {
         /* Create a new tmpact. */
         animrig::Action &tmpact = animrig::action_add(
             this->conversion_data.bmain,
-            this->animdata_src->tmpact ? this->animdata_src->tmpact->id.name + 2 : nullptr);
+            this->animdata_src->tmpact ? this->animdata_src->tmpact->id.name + 2 : "");
         tmpact.slot_add_for_id(this->id_dst);
 
         const bool ok = animrig::assign_tmpaction(&tmpact, {this->id_dst, *this->animdata_dst});
@@ -857,33 +857,32 @@ static Drawing legacy_gpencil_frame_to_grease_pencil_drawing(
                                                    MutableSpan<float3>();
   MutableSpan<float> radii = drawing.radii_for_write();
   MutableSpan<float> opacities = drawing.opacities_for_write();
-  /* Note: Since we *know* the drawing are created from scratch, we assume that the following
-   * `lookup_or_add_for_write_span` calls always return valid writers. */
-  SpanAttributeWriter<float> delta_times = attributes.lookup_or_add_for_write_span<float>(
+
+  SpanAttributeWriter<float> delta_times = attributes.ensure_for_write_span<float>(
       "delta_time", AttrDomain::Point);
-  SpanAttributeWriter<float> rotations = attributes.lookup_or_add_for_write_span<float>(
+  SpanAttributeWriter<float> rotations = attributes.ensure_for_write_span<float>(
       "rotation", AttrDomain::Point);
   MutableSpan<ColorGeometry4f> vertex_colors = drawing.vertex_colors_for_write();
-  SpanAttributeWriter<bool> selection = attributes.lookup_or_add_for_write_span<bool>(
-      ".selection", AttrDomain::Point);
+  SpanAttributeWriter<bool> selection = attributes.ensure_for_write_span<bool>(".selection",
+                                                                               AttrDomain::Point);
   MutableSpan<MDeformVert> dverts = use_dverts ? curves.wrap().deform_verts_for_write() :
                                                  MutableSpan<MDeformVert>();
 
   /* Curve Attributes. */
-  SpanAttributeWriter<bool> stroke_cyclic = attributes.lookup_or_add_for_write_span<bool>(
+  SpanAttributeWriter<bool> stroke_cyclic = attributes.ensure_for_write_span<bool>(
       "cyclic", AttrDomain::Curve);
-  SpanAttributeWriter<float> stroke_init_times = attributes.lookup_or_add_for_write_span<float>(
+  SpanAttributeWriter<float> stroke_init_times = attributes.ensure_for_write_span<float>(
       "init_time", AttrDomain::Curve);
-  SpanAttributeWriter<int8_t> stroke_start_caps = attributes.lookup_or_add_for_write_span<int8_t>(
+  SpanAttributeWriter<int8_t> stroke_start_caps = attributes.ensure_for_write_span<int8_t>(
       "start_cap", AttrDomain::Curve);
-  SpanAttributeWriter<int8_t> stroke_end_caps = attributes.lookup_or_add_for_write_span<int8_t>(
+  SpanAttributeWriter<int8_t> stroke_end_caps = attributes.ensure_for_write_span<int8_t>(
       "end_cap", AttrDomain::Curve);
-  SpanAttributeWriter<float> stroke_softness = attributes.lookup_or_add_for_write_span<float>(
+  SpanAttributeWriter<float> stroke_softness = attributes.ensure_for_write_span<float>(
       "softness", AttrDomain::Curve);
-  SpanAttributeWriter<float> stroke_point_aspect_ratios =
-      attributes.lookup_or_add_for_write_span<float>("aspect_ratio", AttrDomain::Curve);
+  SpanAttributeWriter<float> stroke_point_aspect_ratios = attributes.ensure_for_write_span<float>(
+      "aspect_ratio", AttrDomain::Curve);
   MutableSpan<ColorGeometry4f> stroke_fill_colors = drawing.fill_colors_for_write();
-  SpanAttributeWriter<int> stroke_materials = attributes.lookup_or_add_for_write_span<int>(
+  SpanAttributeWriter<int> stroke_materials = attributes.ensure_for_write_span<int>(
       "material_index", AttrDomain::Curve);
 
   Array<float4x2> legacy_texture_matrices(num_strokes);
@@ -1099,7 +1098,7 @@ static void legacy_gpencil_to_grease_pencil(ConversionData &conversion_data,
   /* NOTE: Layer Adjustments like the tint and the radius offsets are deliberately ignored here!
    * These are converted to modifiers at the bottom of the stack to keep visual compatibility with
    * GPv2. */
-  SpanAttributeWriter<int> layer_passes = layer_attributes.lookup_or_add_for_write_span<int>(
+  SpanAttributeWriter<int> layer_passes = layer_attributes.ensure_for_write_span<int>(
       "pass_index", bke::AttrDomain::Layer);
 
   for (const auto [layer_idx, gpl] : gpd.layers.enumerate()) {
@@ -1152,7 +1151,7 @@ static void legacy_gpencil_to_grease_pencil(ConversionData &conversion_data,
     for (const Layer *layer_iter : grease_pencil.layers()) {
       /* Data comes from versioned GPv2 layers, which have a fixed max length. */
       char layer_name_esc[sizeof((bGPDlayer{}).info) * 2];
-      BLI_str_escape(layer_name_esc, layer_iter->name().c_str(), sizeof(layer_name_esc));
+      BLI_str_escape(layer_name_esc, layer_iter->name().c_str());
       std::string layer_root_path = fmt::format("layers[\"{}\"]", layer_name_esc);
       animdata_gpdata_transfer.root_path_dst = layer_root_path;
       animdata_gpdata_transfer.root_path_src = layer_root_path;
@@ -1299,7 +1298,7 @@ static void thickness_factor_to_modifier(ConversionData &conversion_data,
 
   if (has_thickness_factor_animation) {
     char modifier_name_esc[MAX_NAME * 2];
-    BLI_str_escape(modifier_name_esc, md->name, sizeof(modifier_name_esc));
+    BLI_str_escape(modifier_name_esc, md->name);
     animdata_thickness_transfer.root_path_dst = fmt::format("modifiers[\"{}\"]",
                                                             modifier_name_esc);
 
@@ -1350,7 +1349,7 @@ static void legacy_object_thickness_modifier_thickness_anim(ConversionData &conv
     }
 
     char modifier_name[MAX_NAME * 2];
-    BLI_str_escape(modifier_name, tmd.name, sizeof(modifier_name));
+    BLI_str_escape(modifier_name, tmd.name);
     animdata_convert_thickness.root_path_src = fmt::format("modifiers[\"{}\"]", modifier_name);
     animdata_convert_thickness.root_path_dst = fmt::format("modifiers[\"{}\"]", modifier_name);
 
@@ -1389,7 +1388,7 @@ static void layer_adjustments_to_modifiers(ConversionData &conversion_data,
     const int thickness_px = gpl.line_change;
 
     char layer_name_esc[sizeof(gpl.info) * 2];
-    BLI_str_escape(layer_name_esc, gpl.info, sizeof(layer_name_esc));
+    BLI_str_escape(layer_name_esc, gpl.info);
     animdata_tint_transfer.root_path_src = fmt::format("layers[\"{}\"]", layer_name_esc);
     animdata_thickness_transfer.root_path_src = fmt::format("layers[\"{}\"]", layer_name_esc);
 
@@ -1421,7 +1420,7 @@ static void layer_adjustments_to_modifiers(ConversionData &conversion_data,
 
       if (has_tint_adjustment_animation) {
         char modifier_name_esc[MAX_NAME * 2];
-        BLI_str_escape(modifier_name_esc, md->name, sizeof(modifier_name_esc));
+        BLI_str_escape(modifier_name_esc, md->name);
         animdata_tint_transfer.root_path_dst = fmt::format("modifiers[\"{}\"]", modifier_name_esc);
 
         animdata_tint_transfer.fcurves_convert();
@@ -1488,7 +1487,7 @@ static void layer_adjustments_to_modifiers(ConversionData &conversion_data,
 
       if (has_thickness_adjustment_animation) {
         char modifier_name_esc[MAX_NAME * 2];
-        BLI_str_escape(modifier_name_esc, md->modifier.name, sizeof(modifier_name_esc));
+        BLI_str_escape(modifier_name_esc, md->modifier.name);
         animdata_thickness_transfer.root_path_dst = fmt::format("modifiers[\"{}\"]",
                                                                 modifier_name_esc);
 
@@ -1548,11 +1547,11 @@ static ModifierData &legacy_object_modifier_common(ConversionData &conversion_da
     AnimDataConvertor anim_convertor(conversion_data, object.id);
 
     char legacy_name_esc[MAX_NAME * 2];
-    BLI_str_escape(legacy_name_esc, legacy_md.name, sizeof(legacy_name_esc));
+    BLI_str_escape(legacy_name_esc, legacy_md.name);
     anim_convertor.root_path_src = fmt::format("grease_pencil_modifiers[\"{}\"]", legacy_name_esc);
 
     char new_name_esc[MAX_NAME * 2];
-    BLI_str_escape(new_name_esc, new_md.name, sizeof(new_name_esc));
+    BLI_str_escape(new_name_esc, new_md.name);
     anim_convertor.root_path_dst = fmt::format("modifiers[\"{}\"]", new_name_esc);
 
     anim_convertor.fcurves_convert();
@@ -2151,7 +2150,7 @@ static void legacy_object_modifier_opacity(ConversionData &conversion_data,
 
   /* Account for animation on renamed properties. */
   char modifier_name[MAX_NAME * 2];
-  BLI_str_escape(modifier_name, md.name, sizeof(modifier_name));
+  BLI_str_escape(modifier_name, md.name);
   AnimDataConvertor anim_convertor_factor(
       conversion_data, object.id, object.id, {{".factor", ".color_factor"}});
   anim_convertor_factor.root_path_src = fmt::format("modifiers[\"{}\"]", modifier_name);
@@ -3215,10 +3214,12 @@ static void convert_grease_pencil_drawing_material_stroke_fill_toggle_to_attribu
           layer_name_string.c_str(),
           frame_number);
     }
-    SpanAttributeWriter hide_stroke = attributes.lookup_or_add_for_write_only_span<bool>(
-        hide_stroke_name, AttrDomain::Curve);
-    hide_stroke.span.copy_from(material_hides_stroke);
-    hide_stroke.finish();
+    if (SpanAttributeWriter hide_stroke = attributes.lookup_or_add_for_write_only_span<bool>(
+            hide_stroke_name, AttrDomain::Curve))
+    {
+      hide_stroke.span.copy_from(material_hides_stroke);
+      hide_stroke.finish();
+    }
   }
 
   /* Optimization: If no fills are used in this drawing, don't create the attribute. */
@@ -3242,8 +3243,8 @@ static void convert_grease_pencil_drawing_material_stroke_fill_toggle_to_attribu
           layer_name_string.c_str(),
           frame_number);
     }
-    SpanAttributeWriter fill_ids = attributes.lookup_or_add_for_write_only_span<int>(
-        "fill_id", AttrDomain::Curve);
+    SpanAttributeWriter fill_ids = attributes.ensure_for_write_only_span<int>("fill_id",
+                                                                              AttrDomain::Curve);
     int current_fill_id = 1;
     for (const int curve_i : curves.curves_range()) {
       if (material_uses_fill[curve_i]) {

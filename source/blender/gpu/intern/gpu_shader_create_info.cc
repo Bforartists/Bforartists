@@ -118,9 +118,6 @@ std::string ShaderCreateInfo::resource_guard_defines(Span<CompilationConstant> c
 {
   std::string defines;
   defines += "#define CREATE_INFO_" + name_ + "\n";
-  for (const StageInterfaceInfo *interface : this->vertex_out_interfaces_) {
-    defines += "#define IFACE_INFO_" + interface->name + "\n";
-  }
   for (const auto &additional_info : additional_infos_) {
     const ShaderCreateInfo &info = *reinterpret_cast<const ShaderCreateInfo *>(
         gpu_shader_create_info_get(additional_info.name.c_str()));
@@ -128,6 +125,15 @@ std::string ShaderCreateInfo::resource_guard_defines(Span<CompilationConstant> c
     if (additional_info.conditions.evaluate(constants)) {
       defines += info.resource_guard_defines(constants);
     }
+  }
+  return defines;
+}
+
+std::string ShaderCreateInfo::iface_guard_defines() const
+{
+  std::string defines;
+  for (const StageInterfaceInfo *interface : this->vertex_out_interfaces_) {
+    defines += "#define IFACE_INFO_" + interface->name + "\n";
   }
   return defines;
 }
@@ -163,10 +169,7 @@ void ShaderCreateInfo::finalize(const bool recursive)
      * TODO: Optimize create info preparation to include each individual "additional_info"
      * only a single time. */
     vertex_inputs_.extend_non_duplicates(info.vertex_inputs_);
-    fragment_outputs_.extend_non_duplicates(info.fragment_outputs_);
     vertex_out_interfaces_.extend_non_duplicates(info.vertex_out_interfaces_);
-    geometry_out_interfaces_.extend_non_duplicates(info.geometry_out_interfaces_);
-    subpass_inputs_.extend_non_duplicates(info.subpass_inputs_);
     specialization_constants_.extend_non_duplicates(info.specialization_constants_);
     compilation_constants_.extend_non_duplicates(info.compilation_constants_);
 
@@ -189,6 +192,15 @@ void ShaderCreateInfo::finalize(const bool recursive)
     }
     for (const auto &res : info.geometry_resources_) {
       extend_predicate(geometry_resources_, res, additional_info.conditions);
+    }
+    for (const auto &res : info.fragment_outputs_) {
+      extend_predicate(fragment_outputs_, res, additional_info.conditions);
+    }
+    for (const auto &res : info.subpass_inputs_) {
+      extend_predicate(subpass_inputs_, res, additional_info.conditions);
+    }
+    for (const auto &res : info.geometry_out_interfaces_) {
+      extend_predicate(geometry_out_interfaces_, res, additional_info.conditions);
     }
 
     /* API-specific parameters.
@@ -270,24 +282,6 @@ void ShaderCreateInfo::finalize(const bool recursive)
     BLI_assert(0);
   }
 }
-
-void ShaderCreateInfo::extend_predicate(Vector<Resource, 0> &resource_vector,
-                                        ShaderCreateInfo::Resource res_copy,
-                                        Span<ConditionFn> additional_conditions) const
-{
-  res_copy.conditions.extend(additional_conditions);
-  /** IMPORTANT: We keep duplicates until we evaluate the conditions. */
-  resource_vector.append(res_copy);
-};
-
-void ShaderCreateInfo::extend_predicate(Vector<ShaderCreateInfo::PushConst, 0> &resource_vector,
-                                        ShaderCreateInfo::PushConst res_copy,
-                                        Span<ConditionFn> additional_conditions) const
-{
-  res_copy.conditions.extend(additional_conditions);
-  /** IMPORTANT: We keep duplicates until we evaluate the conditions. */
-  resource_vector.append(res_copy);
-};
 
 void ShaderCreateInfo::assert_no_overlap(const ShaderCreateInfo &info,
                                          const bool test,
@@ -712,12 +706,44 @@ static void init_draw_infos()
 {
 /* Declare, register and construct the infos. */
 #include "glsl_draw_infos_list.hh"
+}
+
+static void init_eevee_infos()
+{
+/* Declare, register and construct the infos. */
+#include "glsl_eevee_infos_list.hh"
 
   if (GPU_stencil_classify_buffer_workaround()) {
     /* WORKAROUND: Adding a dummy buffer that isn't used fixes a bug inside the Qualcomm driver. */
     eevee_deferred_tile_classify.storage_buf(
         12, Qualifier::read_write, "uint", "dummy_workaround_buf[]");
   }
+}
+
+static void init_overlay_infos()
+{
+/* Declare, register and construct the infos. */
+#include "glsl_select_id_infos_list.hh"
+/* Requires select id infos. */
+#include "glsl_overlay_infos_list.hh"
+}
+
+static void init_image_infos()
+{
+/* Declare, register and construct the infos. */
+#include "glsl_image_infos_list.hh"
+}
+
+static void init_gpencil_infos()
+{
+/* Declare, register and construct the infos. */
+#include "glsl_gpencil_infos_list.hh"
+}
+
+static void init_workbench_infos()
+{
+/* Declare, register and construct the infos. */
+#include "glsl_workbench_infos_list.hh"
 }
 
 static void init_gpu_infos()
@@ -747,6 +773,11 @@ void gpu_shader_create_info_init()
 
   init_compositor_infos();
   init_draw_infos();
+  init_eevee_infos();
+  init_overlay_infos();
+  init_image_infos();
+  init_gpencil_infos();
+  init_workbench_infos();
   init_gpu_infos();
   init_ocio_infos();
   init_osd_infos();

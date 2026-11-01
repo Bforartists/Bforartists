@@ -341,6 +341,8 @@ if(WITH_BLENDER)
 
       # letter B
       back
+      backdrop_pan
+      backdrop_zoom
       background
       bake
       bake_action

@@ -499,16 +499,11 @@ IndexMask IndexMask::from_bits(const IndexMask &universe,
       exec_mode::grain_size(max_segment_size));
 }
 
-static void segments_from_batch_predicate(
-    const IndexMaskSegment universe_segment,
-    LinearAllocator<> &allocator,
-    const FunctionRef<int64_t(const IndexMaskSegment &universe_segment,
-                              IndexRangesBuilder<int16_t> &builder)> batch_predicate,
-    Vector<IndexMaskSegment, 16> &r_segments)
+void index_ranges_to_mask_segments(const IndexRangesBuilder<int16_t> &builder,
+                                   const int64_t offset,
+                                   LinearAllocator<> &allocator,
+                                   Vector<IndexMaskSegment, 16> &r_segments)
 {
-  IndexRangesBuilderBuffer<int16_t, max_segment_size> builder_buffer;
-  IndexRangesBuilder<int16_t> builder{builder_buffer};
-  const int64_t segment_shift = batch_predicate(universe_segment, builder);
   if (builder.is_empty()) {
     return;
   }
@@ -519,6 +514,20 @@ static void segments_from_batch_predicate(
    * be beneficial to have more ranges if that means that there are more ranges which can be
    * processed more efficiently. This could be exposed to the caller in the future. */
   constexpr int64_t threshold = 64;
+  auto use_static_indices = [&](const IndexRange range) {
+    return range.size() > threshold || builder.size() == 1;
+  };
+
+  /* Indices of shorter ranges are copied into a single new array. */
+  int64_t copied_indices_num = 0;
+  for (const int64_t i : builder.index_range()) {
+    const IndexRange range = builder[i];
+    if (!use_static_indices(range)) {
+      copied_indices_num += range.size();
+    }
+  }
+  MutableSpan<int16_t> copied_indices = allocator.allocate_array<int16_t>(copied_indices_num);
+
   int64_t next_range_to_process = 0;
   int64_t skipped_indices_num = 0;
 
@@ -528,21 +537,22 @@ static void segments_from_batch_predicate(
     if (skipped_indices_num == 0) {
       return;
     }
-    MutableSpan<int16_t> indices = allocator.allocate_array<int16_t>(skipped_indices_num);
+    MutableSpan<int16_t> indices = copied_indices.take_front(skipped_indices_num);
+    copied_indices = copied_indices.drop_front(skipped_indices_num);
     int64_t counter = 0;
     for (const int64_t i : IndexRange::from_begin_end(next_range_to_process, end_range_i)) {
       const IndexRange range = builder[i];
       array_utils::fill_index_range(indices.slice(counter, range.size()), int16_t(range.first()));
       counter += range.size();
     }
-    r_segments.append(IndexMaskSegment{segment_shift, indices});
+    r_segments.append(IndexMaskSegment{offset, indices});
   };
 
   for (const int64_t i : builder.index_range()) {
     const IndexRange range = builder[i];
-    if (range.size() > threshold || builder.size() == 1) {
+    if (use_static_indices(range)) {
       consolidate_skipped_ranges(i);
-      r_segments.append(IndexMaskSegment{segment_shift, static_indices.slice(range)});
+      r_segments.append(IndexMaskSegment{offset, static_indices.slice(range)});
       next_range_to_process = i + 1;
       skipped_indices_num = 0;
     }
@@ -551,6 +561,19 @@ static void segments_from_batch_predicate(
     }
   }
   consolidate_skipped_ranges(builder.size());
+}
+
+static void segments_from_batch_predicate(
+    const IndexMaskSegment universe_segment,
+    LinearAllocator<> &allocator,
+    const FunctionRef<int64_t(const IndexMaskSegment &universe_segment,
+                              IndexRangesBuilder<int16_t> &builder)> batch_predicate,
+    Vector<IndexMaskSegment, 16> &r_segments)
+{
+  IndexRangesBuilderBuffer<int16_t, max_segment_size> builder_buffer;
+  IndexRangesBuilder<int16_t> builder{builder_buffer};
+  const int64_t segment_shift = batch_predicate(universe_segment, builder);
+  index_ranges_to_mask_segments(builder, segment_shift, allocator, r_segments);
 }
 
 IndexMask IndexMask::from_batch_predicate(
@@ -697,6 +720,39 @@ IndexMask IndexMask::from_ranges(OffsetIndices<T> offsets,
   return IndexMask::from_segments(segments, memory);
 }
 
+template<typename T>
+IndexMask IndexMask::from_grouped_indices(const GroupedSpan<T> indices,
+                                          const IndexMask &mask,
+                                          LinearAllocator<> &memory)
+{
+  Vector<IndexMaskSegment, 16> segments;
+  constexpr int64_t min_grain_size = 4096;
+  constexpr int64_t max_grain_size = max_segment_size;
+  if (mask.size() <= min_grain_size) {
+    mask.foreach_index(
+        [&](const int64_t i) { segments_from_indices(indices[i], memory, segments); });
+  }
+  else {
+    const int64_t threads_num = BLI_system_thread_count();
+    /* Can be faster with a larger grain size, but only when there are enough indices. */
+    const int grain_size = int(
+        std::clamp(mask.size() / (threads_num * 4), min_grain_size, max_grain_size));
+
+    ParallelSegmentsCollector segments_collector;
+    mask.foreach_index(
+        [&](const int64_t i) {
+          ParallelSegmentsCollector::LocalData &local_data =
+              segments_collector.data_by_thread.local();
+          segments_from_indices(indices[i], local_data.allocator, local_data.segments);
+        },
+        exec_mode::grain_size(grain_size));
+    segments_collector.reduce(memory, segments);
+  }
+  const int64_t consolidated_segments_num = consolidate_index_mask_segments(segments, memory);
+  segments.resize(consolidated_segments_num);
+  return IndexMask::from_segments(segments, memory);
+}
+
 IndexMask IndexMask::from_union(const IndexMask &mask_a,
                                 const IndexMask &mask_b,
                                 LinearAllocator<> &memory)
@@ -783,11 +839,22 @@ void IndexMask::set_bits(MutableBitSpan r_bits, const int64_t offset) const
       r_bits.slice(shifted_range).set_all();
     }
     else {
+      /* Accumulate bits of each integer in a register to avoid read-modify-write operations. */
       const IndexMaskSegment indices = segment;
-      const IndexMaskSegment shifted_indices = indices.shift(offset);
+      const IndexMaskSegment shifted_indices = indices.shift(offset + r_bits.bit_range().start());
+      bits::BitInt *data = r_bits.data();
+      int64_t int_i = shifted_indices[0] >> bits::BitToIntIndexShift;
+      bits::BitInt value = 0;
       for (const int64_t i : shifted_indices) {
-        r_bits[i].set();
+        const int64_t new_int_i = i >> bits::BitToIntIndexShift;
+        if (new_int_i != int_i) {
+          data[int_i] |= value;
+          int_i = new_int_i;
+          value = 0;
+        }
+        value |= bits::mask_single_bit(i & int64_t(bits::BitIndexMask));
       }
+      data[int_i] |= value;
     }
   });
 }
@@ -1265,6 +1332,12 @@ template IndexMask IndexMask::from_ranges(OffsetIndices<int32_t>,
 template IndexMask IndexMask::from_ranges(OffsetIndices<int64_t>,
                                           const IndexMask &,
                                           LinearAllocator<> &);
+template IndexMask IndexMask::from_grouped_indices(GroupedSpan<int32_t>,
+                                                   const IndexMask &,
+                                                   LinearAllocator<> &);
+template IndexMask IndexMask::from_grouped_indices(GroupedSpan<int64_t>,
+                                                   const IndexMask &,
+                                                   LinearAllocator<> &);
 
 IndexMask random_mask(const IndexMask &mask,
                       const int64_t universe_size,

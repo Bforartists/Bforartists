@@ -6,6 +6,8 @@
  * \ingroup spseq
  */
 
+#include <fmt/format.h>
+
 #include "MEM_guardedalloc.h"
 
 #include "DNA_scene_types.h"
@@ -15,7 +17,6 @@
 #include "BKE_screen.hh"
 
 #include "BLI_math_base_c.hh"
-#include "BLI_string.hh"
 #include "BLI_utildefines.hh"
 
 #include "ED_screen.hh"
@@ -47,13 +48,6 @@ static float channel_height_pixelspace_get(const View2D *timeline_region_v2d)
 {
   return ui::view2d_view_to_region_y(timeline_region_v2d, 1.0f) -
          ui::view2d_view_to_region_y(timeline_region_v2d, 0.0f);
-}
-
-static float frame_width_pixelspace_get(const View2D *timeline_region_v2d)
-{
-
-  return ui::view2d_view_to_region_x(timeline_region_v2d, 1.0f) -
-         ui::view2d_view_to_region_x(timeline_region_v2d, 0.0f);
 }
 
 static float icon_width_get(const SeqChannelDrawContext *context)
@@ -91,8 +85,7 @@ static std::string draw_channel_widget_tooltip(bContext * /*C*/,
                                                void *argN,
                                                const StringRef /*tip*/)
 {
-  char *dyn_tooltip = static_cast<char *>(argN);
-  return dyn_tooltip;
+  return *static_cast<const std::string *>(argN);
 }
 
 static float draw_channel_widget_mute(const SeqChannelDrawContext *context,
@@ -125,9 +118,12 @@ static float draw_channel_widget_mute(const SeqChannelDrawContext *context,
                                        0,
                                        std::nullopt);
 
-  char *tooltip = BLI_sprintfN(
-      "%s channel %d", channel->is_muted() ? "Unmute" : "Mute", channel_index);
-  button_func_tooltip_set(but, draw_channel_widget_tooltip, tooltip, MEM_delete_void);
+  button_func_tooltip_set(
+      but,
+      draw_channel_widget_tooltip,
+      MEM_new<std::string>(
+          __func__,
+          fmt::format("{} channel {}", channel->is_muted() ? "Unmute" : "Mute", channel_index)));
 
   return width;
 }
@@ -163,9 +159,12 @@ static float draw_channel_widget_lock(const SeqChannelDrawContext *context,
                                        0,
                                        "");
 
-  char *tooltip = BLI_sprintfN(
-      "%s channel %d", channel->is_locked() ? "Unlock" : "Lock", channel_index);
-  button_func_tooltip_set(but, draw_channel_widget_tooltip, tooltip, MEM_delete_void);
+  button_func_tooltip_set(
+      but,
+      draw_channel_widget_tooltip,
+      MEM_new<std::string>(
+          __func__,
+          fmt::format("{} channel {}", channel->is_locked() ? "Unlock" : "Lock", channel_index)));
 
   return width;
 }
@@ -315,7 +314,6 @@ void channel_draw_context_init(const bContext *C,
   r_context->timeline_region_v2d = &r_context->timeline_region->v2d;
 
   r_context->channel_height = channel_height_pixelspace_get(r_context->timeline_region_v2d);
-  r_context->frame_width = frame_width_pixelspace_get(r_context->timeline_region_v2d);
   r_context->draw_offset = draw_offset_get(r_context->timeline_region_v2d);
 
   r_context->scale = min_ff(r_context->channel_height / (U.widget_unit * 0.6), 1);

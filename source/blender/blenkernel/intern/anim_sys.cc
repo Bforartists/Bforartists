@@ -3950,9 +3950,18 @@ void BKE_time_markers_blend_read(BlendDataReader *reader, ListBaseT<TimeMarker> 
   }
 }
 
+TimeMarker *BKE_copy_time_marker(const TimeMarker &marker_src, const int flag)
+{
+  TimeMarker *marker_dst = MEM_dupalloc(&marker_src);
+  if (marker_dst->prop != nullptr) {
+    marker_dst->prop = IDP_CopyProperty_ex(marker_dst->prop, flag);
+  }
+  return marker_dst;
+}
+
 void BKE_copy_time_markers(ListBaseT<TimeMarker> &markers_dst,
                            const ListBaseT<TimeMarker> &markers_src,
-                           int flag)
+                           const int flag)
 {
   BLI_duplicatelist(&markers_dst, &markers_src);
   for (TimeMarker &marker : markers_dst) {
@@ -3960,6 +3969,22 @@ void BKE_copy_time_markers(ListBaseT<TimeMarker> &markers_dst,
       marker.prop = IDP_CopyProperty_ex(marker.prop, flag);
     }
   }
+}
+
+void BKE_free_time_marker(TimeMarker &marker, const bool do_id_user)
+{
+  if (marker.prop != nullptr) {
+    IDP_FreeProperty_ex(marker.prop, do_id_user);
+  }
+  MEM_delete(&marker);
+}
+
+void BKE_free_time_markers(ListBaseT<TimeMarker> &markers, const bool do_id_user)
+{
+  for (TimeMarker &marker : markers.items_mutable()) {
+    BKE_free_time_marker(marker, do_id_user);
+  }
+  markers.clear_no_delete();
 }
 
 }  // namespace blender

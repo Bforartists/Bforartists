@@ -69,6 +69,7 @@
 #include "BKE_paint_types.hh"
 #include "BKE_scene.hh"
 #include "BKE_subdiv_ccg.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
@@ -998,7 +999,7 @@ static void paint_brush_default_essentials_name_get(const bke::paint::AssetCateg
       }
       break;
     case bke::paint::AssetCategory::GPencilSculpt:
-      name = "Smooth";
+      name = "Pull";
       if (brush_type) {
         switch (eBrushGPSculptType(*brush_type)) {
           case GPSCULPT_BRUSH_TYPE_CLONE:
@@ -2761,7 +2762,7 @@ bool BKE_sculptsession_use_pbvh_draw(const Object *ob, const RegionView3D *rv3d)
 
   /* External render engines like Cycles do not have access to the pbvh::Tree
    * like Eevee does, and need evaluated mesh geometry to render from. */
-  const bool external_engine = rv3d && rv3d->view_render != nullptr;
+  const bool external_engine = rv3d && rv3d->runtime->view_render != nullptr;
 
   if (pbvh->type() == bke::pbvh::Type::Mesh) {
     /* Regular mesh only draws from pbvh::Tree without modifiers and shape keys,

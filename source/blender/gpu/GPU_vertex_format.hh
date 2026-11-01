@@ -12,7 +12,9 @@
 
 #include "BLI_assert.hh"
 #include "BLI_compiler_compat.hh"
-#include "BLI_math_vector_types.hh"
+#include "BLI_math_vector_types.hh"    /* IWYU pragma: export */
+#include "BLI_normalized_int_types.hh" /* IWYU pragma: export */
+#include "BLI_span.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_sys_types.hh"
 
@@ -113,6 +115,8 @@ enum class VertAttrType : uint8_t {
   SINT_16_16_(impl) \
   SINT_16_16_16_16_(impl) \
 \
+  SNORM_16_16_16_16_(impl) \
+\
   SINT_32_(impl) \
   SINT_32_32_(impl) \
   SINT_32_32_32_(impl) \
@@ -132,6 +136,9 @@ enum class VertAttrType : uint8_t {
   SFLOAT_32_32_(impl) \
   SFLOAT_32_32_32_(impl) \
   SFLOAT_32_32_32_32_(impl) \
+\
+  SNORM_10_10_10_2_(impl) \
+  UNORM_10_10_10_2_(impl) \
 \
   /* UFLOAT_11_11_10_(impl) Available on Metal (and maybe VK) but not on GL. */ \
   /* UFLOAT_9_9_9_EXP_5_(impl) Available on Metal (and maybe VK) but not on GL. */
@@ -410,6 +417,6 @@ void GPU_vertformat_attr_rename(GPUVertFormat *format, int attr, const char *new
  * \warning Always add a prefix to the result of this function as
  * the generated string can start with a number and not be a valid attribute name.
  */
-void GPU_vertformat_safe_attr_name(StringRef attr_name, char *r_safe_name, uint max_len);
+void GPU_vertformat_safe_attr_name(StringRef attr_name, MutableCStr r_safe_name);
 
 }  // namespace blender

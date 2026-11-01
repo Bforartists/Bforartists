@@ -922,29 +922,29 @@ static bool bake_targets_output_external(const BakeAPIRender *bkr,
     UNUSED_VARS_NDEBUG(errors);
 
     if (bkr->is_automatic_name) {
-      BLI_path_suffix(filepath, FILE_MAX, ob->id.name + 2, "_");
-      BLI_path_suffix(filepath, FILE_MAX, bkr->identifier, "_");
+      BLI_path_suffix(filepath, ob->id.name + 2, "_");
+      BLI_path_suffix(filepath, bkr->identifier, "_");
     }
 
     if (bkr->is_split_materials) {
       if (ob_eval->mat[i]) {
-        BLI_path_suffix(filepath, FILE_MAX, ob_eval->mat[i]->id.name + 2, "_");
+        BLI_path_suffix(filepath, ob_eval->mat[i]->id.name + 2, "_");
       }
       else if (mesh_eval->mat[i]) {
-        BLI_path_suffix(filepath, FILE_MAX, mesh_eval->mat[i]->id.name + 2, "_");
+        BLI_path_suffix(filepath, mesh_eval->mat[i]->id.name + 2, "_");
       }
       else {
         /* if everything else fails, use the material index */
         char tmp[5];
         SNPRINTF_UTF8(tmp, "%d", i % 1000);
-        BLI_path_suffix(filepath, FILE_MAX, tmp, "_");
+        BLI_path_suffix(filepath, tmp, "_");
       }
     }
 
     if (bk_image->tile_number) {
       char tmp[12];
       SNPRINTF_UTF8(tmp, "%d", bk_image->tile_number);
-      BLI_path_suffix(filepath, FILE_MAX, tmp, "_");
+      BLI_path_suffix(filepath, tmp, "_");
     }
 
     /* save it externally */
@@ -1176,7 +1176,7 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
   Mesh *mesh = id_cast<Mesh *>(ob->data);
   const StringRef attr_name = mesh->active_color_attribute;
   const bke::AttrDomain domain = [&]() {
-    if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+    if (const BMesh *bm = BKE_editmesh_bmesh_get(mesh)) {
       return BM_data_layer_lookup(*bm, attr_name).domain;
     }
     bke::AttributeAccessor attributes = mesh->attributes();

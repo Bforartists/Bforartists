@@ -9,7 +9,9 @@
 #include "overlay_antialiasing.bsl.hh" /* IWYU pragma: export */
 #include "overlay_armature.bsl.hh"     /* IWYU pragma: export */
 #include "overlay_common.bsl.hh"       /* IWYU pragma: export */
+#include "overlay_edit_mesh.bsl.hh"    /* IWYU pragma: export */
 #include "overlay_gsplat.bsl.hh"       /* IWYU pragma: export */
+#include "overlay_volume.bsl.hh"       /* IWYU pragma: export */
 #include "overlay_xray_fade.bsl.hh"    /* IWYU pragma: export */
 
 void main() {}

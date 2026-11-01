@@ -1400,6 +1400,13 @@ static void node_region_listener(const wmRegionListenerParams *params)
       if (wmn->data == ND_LAYOUTSET || wmn->action == NA_EDITED) {
         WM_gizmomap_tag_refresh(gzmap);
       }
+      /* If a new workspace was chosen, execute the compositor if its viewer result is visible. */
+      if (wmn->data == ND_LAYOUTSET &&
+          bke::compositor::is_compositor_viewer_visible(*params->area))
+      {
+        Scene *scene = WM_window_get_active_scene(params->window);
+        DEG_id_tag_update(&scene->id, ID_RECALC_COMPOSITOR);
+      }
       switch (wmn->data) {
         case ND_ANIMPLAY:
         case ND_LAYER:
@@ -1542,6 +1549,10 @@ static void node_widgets()
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_ellipse_mask);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_split);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_translate);
+  WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_transform);
+  WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_scale);
+  // WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_rotate);
+  /* BFA - node minimap, kept last as before */
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_minimap);
   WM_gizmotype_append(NODE_GT_minimap);
 }
@@ -1845,6 +1856,7 @@ void ED_spacetype_node()
 
   st->spaceid = SPACE_NODE;
   STRNCPY_UTF8(st->name, "Node");
+  st->struct_size = sizeof(SpaceNode);
 
   st->create = node_create;
   st->free = node_free;

@@ -95,6 +95,7 @@ template<typename... Args> std::string format(const std::string &fmt, Args &&...
 
 enum class Diag {
   CompilerErrorADLOnTypesNotAllowed,
+  CompilerErrorInvalidFunctionLookup,
   CompilerErrorMemberFuncNoClass,
   CompilerErrorChildScopeNotFound,
 
@@ -136,6 +137,7 @@ enum class Diag {
   ConstexprDivisionByZero,
   ConstexprGlobalNonStatic,
   ConstexprIfConditionNotConstexpr,
+  ConstexprIntegerOverflow,
   ConstexprMemberNonStatic,
   ConstexprShiftNegative,
   ConstexprShiftTooLarge,
@@ -175,6 +177,7 @@ enum class Diag {
   FieldDesignatorOutOfOrder,
 
   FunctionCallNotAllowedInReferenceDefinition,
+  FunctionOutOfClassDefinition,
 
   ImplicitPadding12BytesArrayElement,
   ImplicitPaddingArrayElementStd140,
@@ -191,12 +194,17 @@ enum class Diag {
   InvalidResourceTypeForResourceTableClass,
   InvalidSubscript,
   InvalidUnaryArgumentType,
+  InvalidPointerCast,
 
   MissingParameterForCall,
 
+  OperatorAddressOfUnsupported,
   OperatorCalledIsNotFunction,
   OperatorTokenInvalid,
+  OperatorInvalidIndirection,
+  OperatorInvalidPointer,
   OperatorInvalidTernary,
+  OperatorBitfieldInvalid,
 
   OverloadAmbiguous,
   OverloadNotFound,
@@ -214,6 +222,13 @@ enum class Diag {
 
   ParserTrailingInput,
 
+  PointerMultiIndirection,
+  PointerArithmetic,
+  PointerDeclIsInitializerList,
+  PointerNeedsInitialization,
+  PointerMixedVarDecl,
+  PointerNotResource,
+
   InliningRecursive,
 
   Redefinition,
@@ -227,6 +242,7 @@ enum class Diag {
   ReferenceTypeMismatch,
   ReferenceVariableRequiresInitializer,
 
+  ResourceAttributesIncompatibleEntryPoint,
   ResourceAttributesOnlyOnEntryPointArgs,
   ResourceTableConstructorNotAllowed,
   ResourceTableMustBeReference,
@@ -333,6 +349,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Runtime capacity requires the array to be sized to its maximum size";
     case Diag::CompilerErrorADLOnTypesNotAllowed:
       return "Cannot use ADL on types";
+    case Diag::CompilerErrorInvalidFunctionLookup:
+      return "Compiler error: invalid function lookup";
     case Diag::CompilerErrorMemberFuncNoClass:
       return "Compiler error: member function has no class";
     case Diag::CompilerErrorChildScopeNotFound:
@@ -343,6 +361,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Non-static global variable cannot be constexpr; did you intend to make it static?";
     case Diag::ConstexprIfConditionNotConstexpr:
       return "Constexpr if condition is not a constant expression";
+    case Diag::ConstexprIntegerOverflow:
+      return "Integer overflow during constexpr evaluation";
     case Diag::ConstexprMemberNonStatic:
       return "Non-static data member cannot be constexpr; did you intend to make it static?";
     case Diag::ConstexprShiftNegative:
@@ -405,6 +425,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Field designator '{}' needs to be specified in declaration order";
     case Diag::FunctionCallNotAllowedInReferenceDefinition:
       return "Function calls are not allowed in reference definition";
+    case Diag::FunctionOutOfClassDefinition:
+      return "Out-of-line definition of '{}' does not match any declaration in '{}'";
     case Diag::ImplicitPadding12BytesArrayElement:
       return "Implicit padding of 4 bytes per array element, do not use 12 bytes types in arrays";
     case Diag::ImplicitPaddingArrayElementStd140:
@@ -434,6 +456,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Subscripted value is not an array, pointer, or vector";
     case Diag::InvalidUnaryArgumentType:
       return "Invalid argument type '{0}' to unary expression ({0}'{1}')";
+    case Diag::InvalidPointerCast:
+      return "Cannot cast '{}' into '{}'";
     case Diag::MissingParameterForCall:
       return "Missing parameter for call to '{}'";
     case Diag::ConditionAttributeDeclaredHere:
@@ -468,10 +492,18 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "In instantiation of function template specialization '{}' requested here";
     case Diag::NotePreviousDefinition:
       return "Previous definition of '{}' is here";
+    case Diag::OperatorAddressOfUnsupported:
+      return "Unary operator address-of '&' is not supported";
     case Diag::OperatorCalledIsNotFunction:
       return "Called object type '{}' is not a function";
+    case Diag::OperatorInvalidIndirection:
+      return "Indirection requires pointer operand ('{}' invalid)";
+    case Diag::OperatorInvalidPointer:
+      return "Member reference type '{}' is not a pointer; did you mean to use '.'?";
     case Diag::OperatorInvalidTernary:
       return "Incompatible operand types ('{}' and '{}')";
+    case Diag::OperatorBitfieldInvalid:
+      return "Increment and decrement operators are not supported on bitfield";
     case Diag::OperatorTokenInvalid:
       return "Invalid operator token '{}'";
     case Diag::OverloadAmbiguous:
@@ -480,6 +512,19 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "No matching function for call to '{}' for parameters {} with candidates: {}";
     case Diag::ParserTrailingInput:
       return "Trailing input";
+    case Diag::PointerMultiIndirection:
+      return "Multi-indirection pointers are not supported";
+    case Diag::PointerArithmetic:
+      return "Pointer arithmetic is not supported";
+    case Diag::PointerDeclIsInitializerList:
+      return "Pointer initialized using initializer list";
+    case Diag::PointerNeedsInitialization:
+      return "Pointer needs to be initialized";
+    case Diag::PointerMixedVarDecl:
+      return "Variable declaration must declare either no pointer or only pointer";
+    case Diag::PointerNotResource:
+      return "Pointer types are only allowed on 'storage', 'uniform' and 'push_constant' "
+             "resource declaration";
     case Diag::Redefinition:
       return "Redefinition of '{}'";
     case Diag::RedefinitionOfEntryPointFunction:
@@ -498,6 +543,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Reference to type '{}' cannot bind to a value of unrelated type '{}'";
     case Diag::ReferenceVariableRequiresInitializer:
       return "Declaration of reference variable '{}' requires an initializer";
+    case Diag::ResourceAttributesIncompatibleEntryPoint:
+      return "Argument '{}' has type '{}' which is not compatible with '{}' entry point";
     case Diag::ResourceAttributesOnlyOnEntryPointArgs:
       return "Resource attributes are only supported on entry point arguments";
     case Diag::ResourceOutOfClassDeclaration:

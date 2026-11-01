@@ -26,7 +26,7 @@
 #include "BLI_color_types.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_kdopbvh.hh"
-#include "BLI_kdtree.hh"
+#include "BLI_kdtree_new.hh"
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_math_vector.hh"
@@ -966,8 +966,6 @@ static void grease_pencil_fill_extension_lines_from_circles(
   Array<float2> view_centers(max_kd_entries);
   Array<float> view_radii(max_kd_entries);
 
-  KDTree<float2> *kdtree = kdtree_new<float2>(max_kd_entries);
-
   /* Insert points for overlap tests. */
   for (const int point_i : circles_range.index_range()) {
     const float2 center =
@@ -978,14 +976,12 @@ static void grease_pencil_fill_extension_lines_from_circles(
     const int kd_index = circles_range[point_i];
     view_centers[kd_index] = center;
     view_radii[kd_index] = radius;
-
-    kdtree_insert<float2>(kdtree, kd_index, center);
   }
   for (const int i_point : feature_points_range.index_range()) {
     /* TODO Insert feature points into the KDTree. */
     UNUSED_VARS(i_point);
   }
-  kdtree_balance<float2>(kdtree);
+  const KDTree<float2> kdtree(view_centers.as_span().slice(circles_range));
 
   struct {
     Vector<float3> starts;
@@ -1001,36 +997,29 @@ static void grease_pencil_fill_extension_lines_from_circles(
     const float radius = view_radii[kd_index];
 
     bool found = false;
-    kdtree_range_search_cb<float2>(
-        kdtree,
-        center,
-        radius,
-        [&](const int other_point_i, const float2 & /*co*/, float /*dist_sq*/) {
-          if (other_point_i == kd_index) {
-            return true;
-          }
+    kdtree.foreach_in_radius(center, radius, [&](const int other_point_i, float /*dist_sq*/) {
+      if (other_point_i == kd_index) {
+        return;
+      }
 
-          found = true;
-          connection_lines.starts.append(extension_data.circles.centers[point_i]);
-          if (circles_range.contains(other_point_i)) {
-            connection_lines.ends.append(extension_data.circles.centers[other_point_i]);
-          }
-          else if (feature_points_range.contains(other_point_i)) {
-            /* TODO copy feature point to connection_lines (beware of start index!). */
-            connection_lines.ends.append(float3(0));
-          }
-          else {
-            BLI_assert_unreachable();
-          }
-          return true;
-        });
+      found = true;
+      connection_lines.starts.append(extension_data.circles.centers[point_i]);
+      if (circles_range.contains(other_point_i)) {
+        connection_lines.ends.append(extension_data.circles.centers[other_point_i]);
+      }
+      else if (feature_points_range.contains(other_point_i)) {
+        /* TODO copy feature point to connection_lines (beware of start index!). */
+        connection_lines.ends.append(float3(0));
+      }
+      else {
+        BLI_assert_unreachable();
+      }
+    });
     /* Keep the circle if no extension line was found. */
     if (!found) {
       keep_circle_indices.append(point_i);
     }
   }
-
-  kdtree_free<float2>(kdtree);
 
   /* Add new extension lines. */
   extension_data.lines.starts.extend(connection_lines.starts);
@@ -1557,9 +1546,9 @@ static void set_fill_attributes(bke::CurvesGeometry &fill_curves,
 
   bke::MutableAttributeAccessor attributes = fill_curves.attributes_for_write();
   const Span<float3> positions = fill_curves.positions();
-  bke::SpanAttributeWriter<float> radii = attributes.lookup_or_add_for_write_span<float>(
+  bke::SpanAttributeWriter<float> radii = attributes.ensure_for_write_span<float>(
       "radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.01f));
-  bke::SpanAttributeWriter<float> opacities = attributes.lookup_or_add_for_write_span<float>(
+  bke::SpanAttributeWriter<float> opacities = attributes.ensure_for_write_span<float>(
       "opacity", bke::AttrDomain::Point, bke::AttributeInitValue(1.0f));
 
   for (const int point_i : fill_curves.points_range()) {
@@ -1599,16 +1588,15 @@ static void set_fill_attributes(bke::CurvesGeometry &fill_curves,
 
     skip_curve_attributes.add("fill_color");
     bke::SpanAttributeWriter<ColorGeometry4f> fill_colors =
-        attributes.lookup_or_add_for_write_span<ColorGeometry4f>("fill_color",
-                                                                 bke::AttrDomain::Curve);
+        attributes.ensure_for_write_span<ColorGeometry4f>("fill_color", bke::AttrDomain::Curve);
     fill_colors.span.fill(vertex_color);
     fill_colors.finish();
 
     if (brush.gpencil_settings->flag2 & GP_BRUSH_USE_STROKE) {
       skip_point_attributes.add("vertex_color");
       bke::SpanAttributeWriter<ColorGeometry4f> vertex_colors =
-          attributes.lookup_or_add_for_write_span<ColorGeometry4f>("vertex_color",
-                                                                   bke::AttrDomain::Point);
+          attributes.ensure_for_write_span<ColorGeometry4f>("vertex_color",
+                                                            bke::AttrDomain::Point);
       vertex_colors.span.fill(vertex_color);
       vertex_colors.finish();
     }
@@ -1767,7 +1755,7 @@ static bool grease_pencil_apply_fill(bContext &C, wmOperator &op, const wmEvent 
         !dst_curves.attributes().contains("fill_opacity"))
     {
       bke::SpanAttributeWriter<float> fill_opacities =
-          dst_curves.attributes_for_write().lookup_or_add_for_write_span<float>(
+          dst_curves.attributes_for_write().ensure_for_write_span<float>(
               "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f));
       fill_opacities.finish();
     }
@@ -2286,22 +2274,17 @@ static wmOperatorStatus grease_pencil_erase_lasso_exec(bContext *C, wmOperator *
                                                       {float2(0.0f), float2(0.0f)});
       editable_strokes.foreach_index(
           [&](const int curve) {
-            screen_space_curve_bounds[curve] = *bounds::min_max(
+            Bounds<float2> bounds = *bounds::min_max(
                 screen_space_positions.as_span().slice(points_by_curve[curve]));
+            /* Pad to avoid empty bounds from horizontal, vertical and single-point strokes, as
+             * such bounds would otherwise always fail the intersection test. */
+            bounds.pad(1);
+            screen_space_curve_bounds[curve] = bounds;
           },
           exec_mode::grain_size(512));
 
       const IndexMask curve_selection = IndexMask::from_predicate(
           editable_strokes, memory, [&](const int64_t index) {
-            /* For a single point curve, its screen_space_curve_bounds Bounds will be empty (by
-             * definition), so intersecting will fail. Check if the single point is in the bounds
-             * instead. */
-            const IndexRange points = points_by_curve[index];
-            if (points.size() == 1) {
-              return is_point_inside_bounds(lasso_bounds_int,
-                                            int2(screen_space_positions[points.first()]));
-            }
-
             return bounds::intersect(lasso_bounds, screen_space_curve_bounds[index]).has_value();
           });
 

@@ -1724,7 +1724,7 @@ static wmOperatorStatus image_file_browse_exec(bContext *C, wmOperator *op)
 
   /* If loading into a tiled texture, ensure that the filename is tokenized. */
   if (ima->source == IMA_SRC_TILED) {
-    BKE_image_ensure_tile_token(filepath, sizeof(filepath));
+    BKE_image_ensure_tile_token(filepath);
   }
 
   PropertyRNA *imaprop;
@@ -2426,7 +2426,7 @@ static wmOperatorStatus image_save_sequence_exec(bContext *C, wmOperator *op)
   }
 
   /* get a filename for menu */
-  BLI_path_split_dir_part(first_ibuf->filepath.c_str(), di, sizeof(di));
+  BLI_path_split_dir_part(first_ibuf->filepath.c_str(), di);
   BKE_reportf(op->reports, RPT_INFO, "%d image(s) will be saved in %s", tot, di);
 
   iter = IMB_cacheIter_new(image->runtime->cache);
@@ -3718,9 +3718,19 @@ bool ED_space_image_color_sample(
   if (sima->image == nullptr) {
     return false;
   }
+
   float uv[2];
   ui::view2d_region_to_view(&region->v2d, mval[0], mval[1], &uv[0], &uv[1]);
-  int tile = BKE_image_get_tile_from_pos(sima->image, uv, uv, nullptr);
+  const int tile = BKE_image_get_tile_from_pos(sima->image, uv, uv, nullptr);
+  const bool is_repeat_display = sima->image->source != IMA_SRC_TILED &&
+                                 ((sima->flag & SI_DRAW_TILE) != 0);
+  if (is_repeat_display) {
+    /* When displaying with "Repeat Image" and the mouse outside the main view, make sure we still
+     * sample from the ImBuf (so warp back the uv), otherwise we would sample directly from the GPU
+     * buffer. */
+    uv[0] -= floorf(uv[0]);
+    uv[1] -= floorf(uv[1]);
+  }
 
   void *lock;
   ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, tile, true);

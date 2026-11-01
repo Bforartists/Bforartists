@@ -477,7 +477,7 @@ struct Resources {
 void vert_main([[resource_table]] const Resources &srt,
                [[resource_table]] const draw::View &views,
                [[vertex_id]] const int vert_id,
-               [[instance_id]] const int inst_id,
+               [[instance_index]] const int inst_id,
                [[position]] float4 &out_position,
                [[out]] VertOut &v_out)
 {
@@ -486,10 +486,10 @@ void vert_main([[resource_table]] const Resources &srt,
 
 #if 0 /* Debug surfel lists. TODO allow in release build with a dedicated shader. */
   if (vert_id == 0 && surfel.next > -1) {
-    Surfel surfel_next = surfels_buf[surfel.next];
+    Surfel surfel_next = srt.surfels_buf[surfel.next];
     float4 line_color = (surfel.prev == -1)      ? float4(1.0f, 1.0f, 0.0f, 1.0f) :
-                      (surfel_next.next == -1) ? float4(0.0f, 1.0f, 1.0f, 1.0f) :
-                                                 float4(0.0f, 1.0f, 0.0f, 1.0f);
+                        (surfel_next.next == -1) ? float4(0.0f, 1.0f, 1.0f, 1.0f) :
+                                                   float4(0.0f, 1.0f, 0.0f, 1.0f);
     /* WORKAROUND: Avoid compilation error because this gets parsed before dead code removal. */
     drw_ debug_line(surfel_next.position, surfel.position, line_color);
   }

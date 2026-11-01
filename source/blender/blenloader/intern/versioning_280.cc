@@ -21,7 +21,7 @@
 #include "BLI_string_utf8.hh"
 
 /* Define macros in `DNA_genfile.h`. */
-#define DNA_GENFILE_VERSIONING_MACROS
+#define DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -60,7 +60,7 @@
 #include "DNA_workspace_types.h"
 #include "DNA_world_types.h"
 
-#undef DNA_GENFILE_VERSIONING_MACROS
+#undef DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "BKE_anim_data.hh"
 #include "BKE_annotations_geom.h"
@@ -284,7 +284,7 @@ static void do_version_layers_to_collections(Main *bmain, Scene *scene)
           SNPRINTF_UTF8(name, DATA_("Collection %d"), layer + 1);
 
           Collection *collection = BKE_collection_add(bmain, collection_master, name);
-          collection->id.lib = scene->id.lib;
+          bke::id::id_lib_set(collection->id, scene->id.lib);
           if (ID_IS_LINKED(collection)) {
             collection->id.tag |= ID_TAG_INDIRECT;
           }
@@ -422,7 +422,7 @@ static void do_version_collection_propagate_lib_to_children(Collection *collecti
   if (ID_IS_LINKED(collection)) {
     for (CollectionChild &collection_child : collection->children) {
       if (!ID_IS_LINKED(collection_child.collection)) {
-        collection_child.collection->id.lib = collection->id.lib;
+        bke::id::id_lib_set(collection_child.collection->id, collection->id.lib);
       }
       do_version_collection_propagate_lib_to_children(collection_child.collection);
     }
@@ -1711,13 +1711,13 @@ static void update_mapping_node_fcurve_rna_path_callback(FCurve *fcurve,
   }
   else if (minimumNode && BLI_str_endswith(old_fcurve_rna_path, "max")) {
     char node_name_esc[sizeof(minimumNode->name) * 2];
-    BLI_str_escape(node_name_esc, minimumNode->name, sizeof(node_name_esc));
+    BLI_str_escape(node_name_esc, minimumNode->name);
     fcurve->rna_path_set_move(
         BLI_sprintfN("nodes[\"%s\"].%s", node_name_esc, "inputs[1].default_value"));
   }
   else if (maximumNode && BLI_str_endswith(old_fcurve_rna_path, "min")) {
     char node_name_esc[sizeof(maximumNode->name) * 2];
-    BLI_str_escape(node_name_esc, maximumNode->name, sizeof(node_name_esc));
+    BLI_str_escape(node_name_esc, maximumNode->name);
     fcurve->rna_path_set_move(
         BLI_sprintfN("nodes[\"%s\"].%s", node_name_esc, "inputs[1].default_value"));
   }
@@ -1835,7 +1835,7 @@ static void update_mapping_node_inputs_and_properties(bNodeTree *ntree)
       node.storage = nullptr;
 
       char node_name_esc[sizeof(node.name) * 2];
-      BLI_str_escape(node_name_esc, node.name, sizeof(node_name_esc));
+      BLI_str_escape(node_name_esc, node.name);
 
       char *nodePath = BLI_sprintfN("nodes[\"%s\"]", node_name_esc);
       animrig::versioning::fcurves_id_cb(&ntree->id, [&](ID * /*id*/, FCurve *fcu) {
@@ -3655,14 +3655,17 @@ void blo_do_versions_280(FileData *fd, Library * /*lib*/, Main *bmain)
         }
         mat.metallic = mat.ray_mirror;
       }
+    }
 
-      for (bScreen &screen : bmain->screens) {
-        for (ScrArea &area : screen.areabase) {
-          for (SpaceLink &sl : area.spacedata) {
-            if (sl.spacetype == SPACE_VIEW3D) {
-              View3D *v3d = reinterpret_cast<View3D *>(&sl);
-              v3d->shading.flag |= V3D_SHADING_SPECULAR_HIGHLIGHT;
-            }
+    /* Specular highlight was instroduced in 2.4x, but its default changed in 2.80. During 2.80
+     * many viewport migrations were merged into a single subversion. Result: we always enable
+     * specular highlights. */
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &sl : area.spacedata) {
+          if (sl.spacetype == SPACE_VIEW3D) {
+            View3D *v3d = reinterpret_cast<View3D *>(&sl);
+            v3d->shading.flag |= V3D_SHADING_SPECULAR_HIGHLIGHT;
           }
         }
       }

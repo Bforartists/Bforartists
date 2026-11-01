@@ -86,6 +86,8 @@ class FrameChangeModalData {
   AnimKeylist *keylist;
   /** Playback state to restore when scrubbing ends. */
   std::optional<PreScrubbingState> pre_scrubbing;
+  /** Frame to restore when scrubbing is cancelled. */
+  float initial_frame = 0.0f;
 
   FrameChangeModalData()
   {
@@ -697,6 +699,15 @@ static wmOperatorStatus change_frame_invoke(bContext *C, wmOperator *op, const w
   FrameChangeModalData *op_data = MEM_new<FrameChangeModalData>(__func__);
   op->customdata = op_data;
 
+  {
+    const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+    const Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+
+    if (scene) {
+      op_data->initial_frame = BKE_scene_frame_get(scene);
+    }
+  }
+
   /* This check is done in case scrubbing and strip tweaking in the sequencer are bound to the same
    * event (e.g. RCS keymap where both are activated on left mouse press). Tweaking should take
    * precedence. */
@@ -779,6 +790,13 @@ static void change_frame_cancel(bContext *C, wmOperator *op)
   }
 }
 
+static void change_frame_restore_initial(bContext *C, wmOperator *op)
+{
+  FrameChangeModalData *op_data = static_cast<FrameChangeModalData *>(op->customdata);
+  RNA_float_set(op->ptr, "frame", op_data->initial_frame);
+  change_frame_apply(C, op, true);
+}
+
 /* Modal event handling of frame changing */
 static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
@@ -786,9 +804,8 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
   /* execute the events */
   switch (event->type) {
     case EVT_ESCKEY:
-      /* BFA (#6780): drop any deferred timeline switch on Esc. */
-      blender::ed::vse::sync_scene_strip_scrub_cancel();
-      ret = OPERATOR_FINISHED;
+      change_frame_restore_initial(C, op);
+      ret = OPERATOR_CANCELLED;
       break;
 
     case MOUSEMOVE:
@@ -797,10 +814,19 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
       break;
 
     case LEFTMOUSE:
-    case RIGHTMOUSE:
     case MIDDLEMOUSE:
       /* We check for either mouse-button to end, to work with all user keymaps. */
       if (event->val == KM_RELEASE) {
+        ret = OPERATOR_FINISHED;
+      }
+      break;
+
+    case RIGHTMOUSE:
+      if (event->val == KM_PRESS) {
+        change_frame_restore_initial(C, op);
+        ret = OPERATOR_CANCELLED;
+      }
+      else if (event->val == KM_RELEASE) {
         ret = OPERATOR_FINISHED;
       }
       break;
@@ -838,15 +864,21 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
     bScreen *screen = CTX_wm_screen(C);
     FrameChangeModalData *op_data = static_cast<FrameChangeModalData *>(op->customdata);
     if (screen) {
-      ED_screen_scrubbing_disable(*C, *screen, op_data->pre_scrubbing);
+      const std::optional<PreScrubbingState> resume = (ret == OPERATOR_CANCELLED) ?
+                                                          std::nullopt :
+                                                          op_data->pre_scrubbing;
+      ED_screen_scrubbing_disable(*C, *screen, resume);
     }
     MEM_delete(op_data);
     op->customdata = nullptr;
 
     /* BFA (#6780): mouse release in the dopesheet applies the deferred
-     * timeline switch (a no-op when no target was recorded; after an Esc the
-     * defer state was already cancelled). */
-    if (CTX_wm_area(C) && CTX_wm_area(C)->spacetype == SPACE_ACTION) {
+     * timeline switch (a no-op when no target was recorded). Esc and right-click
+     * cancel the scrub and restore the frame (Blender #161063), so they drop it. */
+    if (ret == OPERATOR_CANCELLED) {
+      blender::ed::vse::sync_scene_strip_scrub_cancel();
+    }
+    else if (CTX_wm_area(C) && CTX_wm_area(C)->spacetype == SPACE_ACTION) {
       blender::ed::vse::sync_scene_strip_scrub_end(*C);
     }
 

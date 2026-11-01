@@ -57,6 +57,7 @@ std::string ParsedResource::serialize() const
     ss << ", \"" << var_type << "\"";
     ss << ", \"" << var_name << var_array << "\"";
     ss << ", Frequency::" << res_frequency;
+    ss << ", " << (contains_pointer ? "true" : "false");
     ss << res_condition_lambda << ")";
   }
   else if (res_type == "storage") {
@@ -65,6 +66,7 @@ std::string ParsedResource::serialize() const
     ss << ", \"" << var_type << "\"";
     ss << ", \"" << var_name << var_array << "\"";
     ss << ", Frequency::" << res_frequency;
+    ss << ", " << (contains_pointer ? "true" : "false");
     ss << res_condition_lambda << ")";
   }
   else if (res_type == "acceleration_structure") {
@@ -77,14 +79,13 @@ std::string ParsedResource::serialize() const
     ss << "GROUP_SHARED(" << var_type << ", " << var_name << var_array << ")";
   }
   else if (res_type == "push_constant") {
-    if (!var_array.empty()) {
-      ss << "PUSH_CONSTANT_ARRAY(" << var_type << ", " << var_name << ", "
-         << var_array.substr(1, var_array.size() - 2) << ")";
-    }
-    else {
-      ss << ".push_constant(Type::" << var_type << "_t, \"" << var_name << "\", 0"
-         << res_condition_lambda << ")";
-    }
+    const std::string array_size = var_array.empty() ? "0" :
+                                                       var_array.substr(1, var_array.size() - 2);
+    ss << ".push_constant(Type::" << var_type << "_t";
+    ss << ", \"" << var_name << "\"";
+    ss << ", " << array_size;
+    ss << ", " << (contains_pointer ? "true" : "false");
+    ss << res_condition_lambda << ")";
   }
   else if (res_type == "compilation_constant") {
     /* Needs to be defined on the shader declaration. */
@@ -148,7 +149,7 @@ std::string ParsedFragInput::serialize() const
 {
   std::stringstream ss;
   ss << "SUBPASS_IN(" << slot << ", " << var_type << ", " << image_type << ", " << var_name << ", "
-     << raster_order_group << ")";
+     << (raster_order_group.empty() ? "-1" : raster_order_group) << ")";
   return ss.str();
 }
 

@@ -35,6 +35,7 @@
 #include "BKE_layer.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "GHOST_ISystem.hh"
 #include "GHOST_IWindow.hh"
@@ -419,6 +420,28 @@ static void wm_region_draw_overlay(bContext *C, const ScrArea *area, ARegion *re
   wmWindowViewport(win);
 }
 
+#ifdef WITH_INPUT_IME
+/**
+ * Draw the IME composition preview over the region,
+ * using the cursor from the last refresh, see #ED_region_do_draw.
+ */
+static void wm_region_draw_ime(const wmWindow *win, const ScrArea *area, const ARegion *region)
+{
+  if (!region->runtime->ime_cursor) {
+    return;
+  }
+  const wmIMEData *ime_data = WM_window_IME_data_get(win, region);
+  if (ime_data == nullptr) {
+    return;
+  }
+  wmViewport(&region->winrct);
+  wmOrtho2_region_pixelspace(region);
+  ui::theme::theme_set(area->spacetype, region->regiontype);
+  wm_window_IME_region_preview_draw(region, *ime_data, *region->runtime->ime_cursor);
+  wmWindowViewport(win);
+}
+#endif
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -450,8 +473,9 @@ static bool wm_draw_region_stereo_set(Main *bmain,
         View3D *v3d = area->spacedata.first_as<View3D>();
         if (v3d->camera && v3d->camera->type == OB_CAMERA) {
           RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-          RenderEngine *engine = rv3d->view_render ? RE_view_engine_get(rv3d->view_render) :
-                                                     nullptr;
+          RenderEngine *engine = rv3d->runtime->view_render ?
+                                     RE_view_engine_get(rv3d->runtime->view_render) :
+                                     nullptr;
           if (engine && !(engine->type->flag & RE_USE_STEREO_VIEWPORT)) {
             return false;
           }
@@ -537,7 +561,9 @@ static void wm_region_test_render_do_draw(const Scene *scene,
   /* Tag region for redraw from render engine preview running inside of it. */
   if (area->spacetype == SPACE_VIEW3D && region->regiontype == RGN_TYPE_WINDOW) {
     RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-    RenderEngine *engine = rv3d->view_render ? RE_view_engine_get(rv3d->view_render) : nullptr;
+    RenderEngine *engine = rv3d->runtime->view_render ?
+                               RE_view_engine_get(rv3d->runtime->view_render) :
+                               nullptr;
     GPUViewport *viewport = WM_draw_region_get_viewport(region);
 
     if (engine && (engine->flag & RE_ENGINE_DO_DRAW)) {
@@ -1190,6 +1216,9 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
       if (!region.runtime->visible) {
         continue;
       }
+#ifdef WITH_INPUT_IME
+      wm_region_draw_ime(win, area, &region);
+#endif
       const bool do_paint_cursor = (wm->runtime->paintcursors.first() &&
                                     &region == screen->active_region);
       const bool do_draw_overlay = (region.runtime->type && region.runtime->type->draw_overlay);
@@ -1233,18 +1262,18 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
   wm_draw_callbacks(win);
   wmWindowViewport(win);
 
+  /* Always draw, not only when screen tagged. */
+  if (win->runtime->gesture.first_) {
+    wm_gesture_draw(win);
+    wmWindowViewport(win);
+  }
+
   /* Blend in floating regions (menus). */
   for (ARegion &region : screen->regionbase) {
     if (!region.runtime->visible) {
       continue;
     }
     wm_draw_region_blend(&region, 0, true);
-  }
-
-  /* Always draw, not only when screen tagged. */
-  if (win->runtime->gesture.first_) {
-    wm_gesture_draw(win);
-    wmWindowViewport(win);
   }
 
   /* Needs pixel coords in screen. */
@@ -1558,9 +1587,24 @@ bool WM_window_pixels_read_sample_from_offscreen(bContext *C,
   return true;
 }
 
+/**
+ * Return true when the front-buffer can be read reliably.
+ */
+static bool wm_window_pixels_read_use_frontbuffer()
+{
+  if ((WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ) == 0) {
+    return false;
+  }
+  /* Not part of #WM_capabilities_flag as it depends on the GPU driver, not GHOST. */
+  if (GPU_frontbuffer_read_workaround()) {
+    return false;
+  }
+  return true;
+}
+
 uint8_t *WM_window_pixels_read(bContext *C, wmWindow *win, int r_size[2])
 {
-  if (WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ) {
+  if (wm_window_pixels_read_use_frontbuffer()) {
     return WM_window_pixels_read_from_frontbuffer(CTX_wm_manager(C), win, r_size);
   }
   return WM_window_pixels_read_from_offscreen(C, win, r_size);
@@ -1568,7 +1612,7 @@ uint8_t *WM_window_pixels_read(bContext *C, wmWindow *win, int r_size[2])
 
 bool WM_window_pixels_read_sample(bContext *C, wmWindow *win, const int pos[2], float r_col[3])
 {
-  if (WM_capabilities_flag() & WM_CAPABILITY_GPU_FRONT_BUFFER_READ) {
+  if (wm_window_pixels_read_use_frontbuffer()) {
     WM_window_pixels_read_sample_from_frontbuffer(CTX_wm_manager(C), win, pos, r_col);
     return true;
   }

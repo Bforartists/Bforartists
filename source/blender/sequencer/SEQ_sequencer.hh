@@ -124,11 +124,10 @@ struct EditingRuntime {
   std::optional<float> temporary_animation_frame;
 
   /**
-   * Used for rendering a different frame using sequencer_draw_get_transform_preview from the box
-   * blade tool.
+   * During some tools/operators like blade tool or handle tweaking, this is set to a different
+   * frame to temporarily render in the preview if #SEQ_DRAW_EDIT_POINT_PREVIEW is set.
    */
-  int transform_preview_frame = 0;
-  bool show_transform_preview = false;
+  std::optional<int> edit_point;
 
   CompositorCache &ensure_compositor_cache();
 };
@@ -215,11 +214,6 @@ Strip *lookup_strip_by_name(Editing *ed, const char *key);
  * Find strips using \a key as their input scene.
  */
 Span<Strip *> lookup_strips_by_scene(Editing *ed, const Scene *key);
-
-/**
- * Returns a map of scenes to the scene strips using them.
- */
-Map<const Scene *, VectorSet<Strip *>> &lookup_strips_by_scene_map_get(Editing *ed);
 
 /**
  * Find all strips using \a key as their compositor node tree.

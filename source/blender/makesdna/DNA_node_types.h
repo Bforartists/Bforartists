@@ -183,15 +183,15 @@ enum eViewerNodeShortcut {
   NODE_VIEWER_SHORTCUT_NONE = 0,
   /* Users can set custom keys to shortcuts,
    * but shortcuts should always be referred to as enums. */
-  NODE_VIEWER_SHORCTUT_SLOT_1 = 1,
-  NODE_VIEWER_SHORCTUT_SLOT_2 = 2,
-  NODE_VIEWER_SHORCTUT_SLOT_3 = 3,
-  NODE_VIEWER_SHORCTUT_SLOT_4 = 4,
-  NODE_VIEWER_SHORCTUT_SLOT_5 = 5,
-  NODE_VIEWER_SHORCTUT_SLOT_6 = 6,
-  NODE_VIEWER_SHORCTUT_SLOT_7 = 7,
-  NODE_VIEWER_SHORCTUT_SLOT_8 = 8,
-  NODE_VIEWER_SHORCTUT_SLOT_9 = 9
+  NODE_VIEWER_SHORTCUT_SLOT_1 = 1,
+  NODE_VIEWER_SHORTCUT_SLOT_2 = 2,
+  NODE_VIEWER_SHORTCUT_SLOT_3 = 3,
+  NODE_VIEWER_SHORTCUT_SLOT_4 = 4,
+  NODE_VIEWER_SHORTCUT_SLOT_5 = 5,
+  NODE_VIEWER_SHORTCUT_SLOT_6 = 6,
+  NODE_VIEWER_SHORTCUT_SLOT_7 = 7,
+  NODE_VIEWER_SHORTCUT_SLOT_8 = 8,
+  NODE_VIEWER_SHORTCUT_SLOT_9 = 9
 };
 
 enum NodeWarningPropagation : int8_t {
@@ -466,7 +466,7 @@ enum eNodeProxy_Flag : char {
 };
 
 /* Conductive fresnel types */
-enum eNodeConducetiveFresnel_Type : short {
+enum eNodeConductiveFresnel_Type : short {
   SHD_PHYSICAL_CONDUCTOR = 0,
   SHD_CONDUCTOR_F82 = 1,
 };
@@ -2057,7 +2057,8 @@ struct bNodeTree {
   Span<bNode *> group_input_nodes();
   Span<const bNode *> group_input_nodes() const;
 
-  /** Zones in the node tree. Currently there are only simulation zones in geometry nodes. */
+  /** Zones in the node tree. This is a valid but empty structure if no zones exist in the node
+   * tree. It is nullptr if the zones in the node tree are malformed. */
   const bke::bNodeTreeZones *zones() const;
 
   /**
@@ -2497,7 +2498,7 @@ struct NodeDefocus {
 
   char bktype = 0;
   DNA_DEPRECATED char gamco = 0;
-  char no_zbuf = 0;
+  char no_zbuf = 1;
   char _pad0 = {};
   float fstop = 0;
   float maxblur = 0;
@@ -3091,7 +3092,7 @@ struct NodeInputIntVector {
 struct NodeInputColor {
   DNA_DEFINE_CXX_METHODS(NodeInputColor)
 
-  float color[4] = {};
+  float color[4] = {0.5f, 0.5f, 0.5f, 1.0f};
 };
 
 struct NodeInputString {

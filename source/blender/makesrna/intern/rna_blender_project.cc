@@ -114,6 +114,14 @@ static void rna_BlenderProject_update(Main * /*bmain*/, Scene * /*scene*/, Point
   WM_main_add_notifier(NC_WINDOW, nullptr);
 }
 
+/* The project name is displayed in the window title. */
+static void rna_BlenderProject_name_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+  rna_BlenderProject_update(bmain, scene, ptr);
+
+  WM_main_add_notifier(NC_WM | ND_PROJECT_CHANGED, nullptr);
+}
+
 static void rna_ProjectVariable_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
   BlenderProject *project = ptr->parent().data_as<BlenderProject>();
@@ -584,6 +592,38 @@ static std::optional<std::string> rna_BlenderProject_ocio_config_path_filter(
   return "*.ocio";
 }
 
+static void rna_BlenderProject_splash_image_path_get(PointerRNA *ptr, char *value)
+{
+  bke::with_blender_project_read_lock([&] {
+    const bke::BlenderProject *project = ptr->data_as<bke::BlenderProject>();
+    strcpy(value, project->get_splash_image_path().c_str());
+  });
+}
+
+static int rna_BlenderProject_splash_image_path_length(PointerRNA *ptr)
+{
+  int splash_image_path_length;
+  bke::with_blender_project_read_lock([&] {
+    const bke::BlenderProject *project = ptr->data_as<bke::BlenderProject>();
+    splash_image_path_length = project->get_splash_image_path().size();
+  });
+  return splash_image_path_length;
+}
+
+static void rna_BlenderProject_splash_image_path_set(PointerRNA *ptr, const char *value)
+{
+  bke::with_blender_project_write_lock([&] {
+    bke::BlenderProject *project = ptr->data_as<bke::BlenderProject>();
+    project->set_splash_image_path(value);
+  });
+}
+
+static std::optional<std::string> rna_BlenderProject_splash_image_path_filter(
+    const bContext * /*C*/, PointerRNA * /*ptr*/, PropertyRNA * /*prop*/)
+{
+  return "*.png;*.jpg;*.jpeg;*.webp";
+}
+
 static bool rna_BlenderProject_is_dirty_get(PointerRNA *ptr)
 {
   bool is_dirty;
@@ -635,10 +675,15 @@ static void rna_BlenderProject_active_asset_library_set(PointerRNA *ptr, int val
 static bUserAssetLibrary *rna_BlenderProject_asset_library_new(const bContext *C,
                                                                const char *name,
                                                                const char *directory,
-                                                               const char *uuid_str)
+                                                               const char *uuid_str,
+                                                               const char *remote_url)
 {
+  /* Keep this function in sync with the logic in project_asset_library_add in
+   * blender_project_config.cc. */
+
   bUserAssetLibrary *new_library;
   Main *bmain = CTX_data_main(C);
+  const bool is_remote = remote_url && remote_url[0];
 
   BKE_blender_project_write_callback(bmain, [&](bke::BlenderProject *project) {
     std::optional<UUID> uuid = {};
@@ -658,8 +703,9 @@ static bUserAssetLibrary *rna_BlenderProject_asset_library_new(const bContext *C
 
     new_library = ED_userpref_asset_library_new(C,
                                                 name ? name : "",
-                                                directory_str.c_str(),
-                                                bUserAssetLibraryAddType::Local,
+                                                is_remote ? remote_url : directory_str.c_str(),
+                                                is_remote ? bUserAssetLibraryAddType::Remote :
+                                                            bUserAssetLibraryAddType::Local,
                                                 true,
                                                 uuid,
                                                 {});
@@ -749,6 +795,7 @@ static void rna_def_project_variable_string(BlenderRNA *brna)
                               "rna_ProjectVariableString_subtype_get",
                               "rna_ProjectVariableString_subtype_set",
                               nullptr);
+  RNA_def_property_update(prop, 0, "rna_ProjectVariable_update");
 }
 
 static void rna_def_project_variable_integer(BlenderRNA *brna)
@@ -905,6 +952,12 @@ static void rna_def_project_asset_library_collection(BlenderRNA *brna, PropertyR
   RNA_def_string(func, "name", nullptr, sizeof(bUserAssetLibrary::name), "Name", "");
   RNA_def_string(func, "directory", nullptr, sizeof(bUserAssetLibrary::dirpath), "Directory", "");
   RNA_def_string(func, "uuid", nullptr, sizeof(bUserAssetLibrary::uuid), "UUID", "");
+  RNA_def_string(func,
+                 "remote_url",
+                 nullptr,
+                 sizeof(bUserAssetLibrary::remote_url),
+                 "Remote URL",
+                 "When set, add a remote asset library instead of a local directory");
   /* return type */
   parm = RNA_def_pointer(func, "library", "ProjectAssetLibrary", "", "Newly added asset library");
   RNA_def_function_return(func, parm);
@@ -936,7 +989,7 @@ static void rna_def_blender_project(BlenderRNA *brna)
                                 "rna_BlenderProject_name_set");
   RNA_def_property_ui_text(prop, "Name", "The project's name");
   RNA_def_struct_name_property(srna, prop);
-  RNA_def_property_update(prop, 0, "rna_BlenderProject_update");
+  RNA_def_property_update(prop, 0, "rna_BlenderProject_name_update");
 
   prop = RNA_def_property(srna, "root_path", PROP_STRING, PROP_DIRPATH);
   RNA_def_property_string_maxlength(prop, FILE_MAX);
@@ -968,6 +1021,22 @@ static void rna_def_blender_project(BlenderRNA *brna)
       "Path to the OpenColorIO configuration to use for this project. May be an absolute file "
       "path, project relative path with {project_root}, or an ocio:// built-in OpenColorIO "
       "config");
+  RNA_def_property_update(prop, 0, "rna_BlenderProject_update");
+
+  prop = RNA_def_property(srna, "splash_image_path", PROP_STRING, PROP_FILEPATH);
+  RNA_def_property_string_maxlength(prop, FILE_MAX);
+  RNA_def_property_flag(prop, PROP_PATH_SUPPORTS_TEMPLATES);
+  RNA_def_property_path_template_type(prop, PROP_VARIABLES_PROJECT);
+  RNA_def_property_string_funcs(prop,
+                                "rna_BlenderProject_splash_image_path_get",
+                                "rna_BlenderProject_splash_image_path_length",
+                                "rna_BlenderProject_splash_image_path_set");
+  RNA_def_property_string_filepath_filter_func(prop,
+                                               "rna_BlenderProject_splash_image_path_filter");
+  RNA_def_property_ui_text(
+      prop,
+      "Splash Artwork",
+      "Image to show in the splash screen for this project. Expected size is 1000x500 pixels");
   RNA_def_property_update(prop, 0, "rna_BlenderProject_update");
 
   prop = RNA_def_property(srna, "active_variable_index", PROP_INT, PROP_NONE);
@@ -1015,7 +1084,7 @@ static void rna_def_blender_project(BlenderRNA *brna)
                              nullptr);
   RNA_def_property_ui_text(prop,
                            "Active Asset Library",
-                           "Index of the asset library being edited in the Project Setup UI");
+                           "Index of the asset library being edited in the Project Settings UI");
 }
 
 void RNA_def_blender_project(BlenderRNA *brna)

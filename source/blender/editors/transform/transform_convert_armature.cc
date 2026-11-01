@@ -577,7 +577,7 @@ static void free_pose_transdata(TransInfo *t, TransDataContainer *tc, TransCusto
 {
   /* Free any data in custom_data->data. */
   if (custom_data->data != nullptr) {
-    MEM_delete_void(custom_data->data);
+    MEM_delete(static_cast<PoseInitData_Mirror *>(custom_data->data));
     custom_data->data = nullptr;
   }
 
@@ -1460,6 +1460,7 @@ static void recalcData_pose(TransInfo *t)
     }
   }
   else {
+    Set<Object *> motionpath_updates;
     FOREACH_TRANS_DATA_CONTAINER (t, tc) {
       Object *ob = tc->poseobj;
       bPose *pose = ob->pose;
@@ -1491,7 +1492,22 @@ static void recalcData_pose(TransInfo *t)
         autokeyframe_pose(t->context, t->scene, ob, targetless_ik, t->mode, t->data_len_all > 1);
       }
 
+      if (motionpath_need_update_pose(t->scene, ob)) {
+        motionpath_updates.add(ob);
+        /* We have to tag the pose for recalc so `animviz_build_motionpath_targets` will gather the
+         * targets. */
+        ob->pose->avs.recalc |= ANIMVIZ_RECALC_PATHS;
+      }
+
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+    }
+    if (!motionpath_updates.is_empty()) {
+      Depsgraph *evaluated_dg = CTX_data_ensure_evaluated_depsgraph(t->context);
+      Vector<MPathTarget> targets;
+      for (Object *ob : motionpath_updates) {
+        animviz_build_motionpath_targets(ob, targets);
+      }
+      animviz_update_motionpath_preview(*evaluated_dg, targets);
     }
   }
 }
@@ -1747,8 +1763,18 @@ static void special_aftertrans_update__pose(bContext *C, TransInfo *t)
 
       if (t->mode != TFM_DUMMY && motionpath_need_update_pose(t->scene, ob)) {
         motionpath_updates.add(ob);
+        ob->pose->avs.recalc |= ANIMVIZ_RECALC_PATHS;
       }
     }
+    /* This needs to happen before the call to `ED_pose_recalculate_paths` because that clears the
+     * `ANIMVIZ_RECALC_PATHS` flag which makes the `animviz_build_motionpath_targets` find no
+     * targets. */
+    Vector<MPathTarget> targets;
+    for (Object *ob : motionpath_updates) {
+      animviz_build_motionpath_targets(ob, targets);
+    }
+    animviz_clear_motionpath_preview(targets);
+
     if (!canceled) {
       /* Update motion paths once for all transformed bones in an object. */
       for (Object *ob : motionpath_updates) {

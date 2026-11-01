@@ -22,6 +22,7 @@
 
 #include "GPU_capabilities.hh"
 #include "GPU_ray_tracing.hh"
+#include <string>
 
 namespace blender::workbench {
 
@@ -253,6 +254,7 @@ struct SceneResources {
   static const int jitter_tx_size = 64;
 
   StringRefNull current_matcap = {};
+  std::string current_matcap_working_space = {};
   Texture matcap_tx = "matcap_tx";
 
   TextureFromPool object_id_tx = "wb_object_id_tx";
@@ -279,12 +281,10 @@ struct SceneResources {
   Texture dummy_tile_data_tx = {"dummy_tile_data"};
   Texture dummy_tile_array_tx = {"dummy_tile_array"};
 
-  gpu::Batch *volume_cube_batch = nullptr;
+  BatchPtr volume_cube_batch;
 
   ~SceneResources()
   {
-    /* TODO(fclem): Auto destruction. */
-    GPU_BATCH_DISCARD_SAFE(volume_cube_batch);
     if (missing_texture.gpu.texture) {
       GPU_texture_free(missing_texture.gpu.texture);
     }
