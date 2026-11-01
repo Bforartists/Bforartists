@@ -738,7 +738,8 @@ msgid "Animation Data"
 msgstr "ข้อมูลแอนิเมชัน"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "ข้อมูลแอนิเมชันสำหรับบล็อกข้อมูล"
 
 
@@ -746,7 +747,8 @@ msgid "Action"
 msgstr "กระทำ"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "การดำเนินการเชิงรุกสำหรับบล็อกข้อมูลนี้"
 
 
@@ -882,7 +884,8 @@ msgid "Drivers"
 msgstr "ตัวขับ"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "ตัวขับ/นิพจน์สำหรับบล็อกข้อมูลนี้"
 
 
@@ -1386,7 +1389,8 @@ msgid "Show Menus"
 msgstr "แสดงเมนู"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "แสดงเมนูในส่วนหัว"
 
 
@@ -1514,7 +1518,8 @@ msgid "Outliner"
 msgstr "โครงร่าง"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "ภาพรวมของกราฟฉากและบล็อกข้อมูลทั้งหมดที่มีอยู่"
 
 
@@ -1522,7 +1527,8 @@ msgid "Properties"
 msgstr "คุณสมบัติ"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "แก้ไขคุณสมบัติของวัตถุที่ใช้งานอยู่และบล็อกข้อมูลที่เกี่ยวข้อง"
 
 
@@ -2155,7 +2161,8 @@ msgid "Worlds"
 msgstr "โลก"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "แสดงบล็อกข้อมูลโลก"
 
 
@@ -2574,7 +2581,8 @@ msgid "Bake Data"
 msgstr "ข้อมูลการอบ"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "อบข้อมูลสำหรับบล็อกข้อมูลฉาก"
 
 
@@ -2774,7 +2782,8 @@ msgid "Internal"
 msgstr "ภายใน"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "บันทึกแผนผังการอบลงในบล็อกข้อมูลรูปภาพภายใน"
 
 
@@ -3050,11 +3059,13 @@ msgid "Blend-File Data"
 msgstr "ข้อมูลไฟล์เบลนด์"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "โครงสร้างข้อมูลหลักที่แสดงถึงไฟล์ .blend และบล็อกข้อมูลทั้งหมดในไฟล์นั้น"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "บล็อกข้อมูลการกระทำ"
 
 
@@ -3066,23 +3077,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "บล็อกข้อมูลบรรณนิทัศน์ (ดินสอเทียนแบบเก่า)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "บล็อกข้อมูลโครงหุ่น"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "บล็อกข้อมูลแปรง"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "บล็อกข้อมูลไฟล์แคช"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "บล็อกข้อมูลกล้อง"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "บล็อกข้อมูลการรวบรวม"
 
 
@@ -3094,7 +3110,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "ข้อมูลเกี่ยวกับพื้นที่สีที่ใช้สำหรับบล็อกข้อมูลในไฟล์ Blend"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "บล็อกข้อมูลเส้นโค้ง"
 
 
@@ -3110,7 +3127,8 @@ msgid "Vector Fonts"
 msgstr "ฟอนต์เวกเตอร์"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "บล็อกข้อมูลแบบอักษรเวกเตอร์"
 
 
@@ -3118,11 +3136,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "บล็อกข้อมูลดินสอเทียน"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "บล็อกข้อมูลเส้นโค้งของเส้นผม"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "บล็อกข้อมูลภาพ"
 
 
@@ -3142,7 +3162,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "เซสชันปัจจุบันถูกบันทึกเป็นไฟล์ .blend ลงดิสก์แล้วหรือยัง"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "บล็อกข้อมูลโครงตาข่าย"
 
 
@@ -3150,15 +3171,18 @@ msgid "Libraries"
 msgstr "คลัง"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "บล็อกข้อมูลคลัง"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "บล็อกข้อมูลหัววัดแสง"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "บล็อกข้อมูลแสง"
 
 
@@ -3166,27 +3190,33 @@ msgid "Line Styles"
 msgstr "ลีลาเส้น"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "บล็อกข้อมูลแบบอย่างเส้น"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "บล็อกข้อมูลหน้ากาก"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "บล็อกข้อมูลวัสดุ"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "บล็อกข้อมูลเมช"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "บล็อกข้อมูลเมตาบอล"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "บล็อกข้อมูลคลิปวิดีโอ"
 
 
@@ -3194,7 +3224,8 @@ msgid "Node Groups"
 msgstr "กลุ่มจุดต่อ"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "บล็อกข้อมูลกลุ่มจุดต่อ"
 
 
@@ -3202,11 +3233,13 @@ msgid "Object data-blocks"
 msgstr "บล็อกข้อมูลวัตถุ"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "บล็อกข้อมูลการระบายสีเส้นโค้ง"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "บล็อกข้อมูลจานสี"
 
 
@@ -3214,7 +3247,8 @@ msgid "Particles"
 msgstr "อนุภาค"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "บล็อกข้อมูลอนุภาค"
 
 
@@ -3222,7 +3256,8 @@ msgid "Point cloud data-blocks"
 msgstr "บล็อกข้อมูลจุดก้อนเมฆ"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "บล็อกข้อมูลฉาก"
 
 
@@ -3230,7 +3265,8 @@ msgid "Screens"
 msgstr "หน้าจอ"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "บล็อกข้อมูลหน้าจอ"
 
 
@@ -3238,15 +3274,18 @@ msgid "Shape Keys"
 msgstr "กุญแจรูปทรง"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "บล็อกข้อมูลกุญแจรูปทรง"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "บล็อกข้อมูลเสียง"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "บล็อกข้อมูลลำโพง"
 
 
@@ -3254,7 +3293,8 @@ msgid "Text data-blocks"
 msgstr "บล็อกข้อมูลข้อความ"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "บล็อกข้อมูลผิวสัมผัส"
 
 
@@ -3274,7 +3314,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "รูปแบบไฟล์เวอร์ชันที่บันทึกไฟล์ .blend ไว้"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "บล็อกข้อมูลปริมาตร"
 
 
@@ -3282,15 +3323,18 @@ msgid "Window Managers"
 msgstr "ตัวจัดการหน้าต่าง"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "บล็อกข้อมูลตัวจัดการหน้าต่าง"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "บล็อกข้อมูลพื้นที่ทำงาน"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "บล็อกข้อมูลโลก"
 
 
@@ -5727,7 +5771,8 @@ msgid "Projected (2D)"
 msgstr "แบบฉาย (สองมิติ)"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "สร้างเมชวงกลม"
 
 
@@ -5750,7 +5795,8 @@ msgid "Add Cylinder"
 msgstr "เพิ่มทรงกระบอก"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "สร้างเมชทรงกระบอก"
 
 
@@ -5774,7 +5820,8 @@ msgid "Add Plane"
 msgstr "เพิ่มระนาบ"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "สร้างเมชพื้นผิวด้วยจุดยอด 4 จุด เชื่อมโยงกัน"
 
 
@@ -6217,8 +6264,9 @@ msgid "Save Copy"
 msgstr "บันทึกการคัดลอก"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "บันทึกเป็นไฟล์ Blender"
 
 
@@ -7301,8 +7349,9 @@ msgid "Render Animation"
 msgstr "เรนเดอร์อนิเมชัน"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "เรนเดอร์เสียง..."
 
 
@@ -7370,8 +7419,9 @@ msgid "Render Image"
 msgstr "เรนเดอร์ภาพ"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "ค้นหาตัวดำเนินการ..."
 
 
@@ -8237,3 +8287,75 @@ msgstr "ไม่พบ %s '%s'"
 msgid "Import-Export"
 msgstr "นำเข้า-ส่งออก"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      หน้ากาก"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "เลือกโดยช่องขอบเขต (Legacy)"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "ลบ"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "ความลึก"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "เคลื่อนที่"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "ไฟล์ใหม่"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "ค้นหาตัวดำเนินการ..."
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "การปรับทิศทาง"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "หน้ากาก"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "แสดง"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "ชนิด"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "ความหนาเส้น"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "ออกจาก Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Install Application Template"
+msgstr "ติดตั้งแม่แบบแอปพลิเคชั่น"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "ตัวเรนเดอร์ของ Bforartists"

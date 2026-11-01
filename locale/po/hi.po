@@ -3763,7 +3763,8 @@ msgid "Add Cylinder"
 msgstr "बेलन जोड़ें"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "एक बेलन जाल का निर्माण"
 
 
@@ -4360,12 +4361,14 @@ msgid "Save Startup File"
 msgstr "प्राथमिक संचिका सहेजें"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "ब्लेंडर संचिका सहेजें"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "वर्तमान ब्लेंडर संचिका सहेजें"
 
 
@@ -5746,7 +5749,10 @@ msgid "Make channels grouped under this channel visible"
 msgstr "सरणि दिखाई इस सरणि के तहत समूहीकृत करें"
 
 
-msgid "Editability of keyframes for this channel"
+# BFA - reworded, Blender: "Editability of keyframes for this channel"
+msgid ""
+"Lock Channel\n"
+"Editability of keyframes for this channel"
 msgstr "इस सरणि के लिए keyframes के editability"
 
 
@@ -6495,3 +6501,50 @@ msgstr "बंद/बुझ प्रणाली कंसोल"
 msgid "Import-Export"
 msgstr "आयात-निर्यात"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      आवरण"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "मिटाएँ"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "गहनता"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "स्थानांतर"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "आवरण"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "दिखाएँ"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "सिकोड़ें/मोटा करें"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "इसी प्रकार का चयन करें"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "इसी प्रकार का चयन करें"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "प्रकार"

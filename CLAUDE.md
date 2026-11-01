@@ -50,7 +50,8 @@ When resolving conflicts: keep upstream logic changes, but preserve every hunk c
 marker comment (see below). Blender often moves/renames UI code, so BFA edits may need to be
 re-applied at the new location rather than simply kept. For interface files, Bforartists (`HEAD`)
 wins by default. Frequent conflict hotspots are `scripts/startup/bl_ui/space_view3d.py`,
-`source/blender/makesrna/intern/rna_nodetree.cc` and theme files. If a build misbehaves after a
+`source/blender/makesrna/intern/rna_nodetree.cc` and theme files. In `locale/po` conflicts keep our
+English `msgid` line and take Blender's `msgstr`; at the end of a file keep both sides, Blender's first. If a build misbehaves after a
 merge, clean the submodules (`git submodule foreach --recursive git reset --hard` / `git clean -fd`).
 
 ## Bforartists change conventions
@@ -72,6 +73,12 @@ merge, clean the submodules (`git submodule foreach --recursive git reset --hard
 - Icons: SVG sources in `release/datafiles/icons_svg/` (many BFA-only icons), plus
   `release/datafiles/icons/`; geometry icons via `make icons_geom`.
 - Keymap: `scripts/presets/keyconfig/Bforartists.py` and `Bforartists-macOS.py`.
+- Translations (#5701): Blender looks translations up by their exact English text (`msgid` in
+  `locale/po/<lang>.po`). When rewording a label or tooltip, search and replace the old English in the
+  whole repo, `locale/po` included, so every language keeps its translation. Renamed entries carry a
+  `# BFA - reworded, Blender: "..."` comment; BFA-only strings sit in a section at the end of each
+  file. `python tools/utils/bforartists_i18n_audit.py` (`--since origin/master` for a branch) lists
+  UI strings no `.po` translates; the weekly merge script runs it since the last merge.
 - BFA add-ons in `scripts/addons_core/`: `bfa_default_addons` (bundled add-ons/extensions),
   `bfa_default_library` (node asset libraries), `bfa_3Dsequencer`, `bfa_brush_panel`,
   `bfa_find_and_replace`, `bfa_power_user_tools`, `bfa_presentation_slider`,

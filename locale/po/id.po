@@ -902,7 +902,8 @@ msgid "Animation Data"
 msgstr "Data Animasi"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Data animasi untuk data-blok"
 
 
@@ -910,7 +911,8 @@ msgid "Action"
 msgstr "Aksi"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Aksi aktif untuk data-blok ini"
 
 
@@ -1046,7 +1048,8 @@ msgid "Drivers"
 msgstr "Driver"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "Driver/Ekspresi untuk data-blok ini"
 
 
@@ -1602,7 +1605,8 @@ msgid "Show Menus"
 msgstr "Melihat Menu"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Melihat menu di header"
 
 
@@ -1730,7 +1734,8 @@ msgid "Outliner"
 msgstr "Penggarisan Luar"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "Gambaran umum grafik adegan dan semua data-blok yang tersedia"
 
 
@@ -1738,7 +1743,8 @@ msgid "Properties"
 msgstr "Properti"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Mengedit properti benda aktif dan data-blok yang berkaitan"
 
 
@@ -2487,7 +2493,8 @@ msgid "Worlds"
 msgstr "Dunia-dunia"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Tampilkan Dunia data-blok"
 
 
@@ -2942,7 +2949,8 @@ msgid "Bake Data"
 msgstr "Panggang Data"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "Panggang data untuk sebuah data-blok Adegan"
 
 
@@ -3142,7 +3150,8 @@ msgid "Internal"
 msgstr "Intern"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Simpan map yang dipanggang di data-blok gambar internal"
 
 
@@ -3430,11 +3439,13 @@ msgid "Blend-File Data"
 msgstr "Data Blend-Berkas"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Struktur data utama merepresentasikan dokumen .blend dan semua data-bloknya"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Aksi data-blok"
 
 
@@ -3454,23 +3465,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "Anotasi data-blok (Pencil Grease warisan)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Armatur data-blok"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Kuas data-blok"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Berkas Cache data-blok"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Kamera data-blok"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Koleksi data-blok"
 
 
@@ -3482,7 +3498,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "Informasi mengenai ruang warna yang digunakan untuk blok-data dalam berkas blend"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Kurva data-blok"
 
 
@@ -3498,7 +3515,8 @@ msgid "Vector Fonts"
 msgstr "Font Vektor"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Font vektor data-blok"
 
 
@@ -3506,11 +3524,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Data-blok Pensil Grease"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Data-blok kurva rambut"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Gambar data-blok"
 
 
@@ -3530,7 +3550,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Apakah sesi saat ini telah disimpan ke disk sebagai dokumen .blend"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Data-blok kisi"
 
 
@@ -3538,15 +3559,18 @@ msgid "Libraries"
 msgstr "Perpustakaan"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Perpustakaan data-lbok"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Probe Cahaya data-blok"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Cahaya data-blok"
 
 
@@ -3554,27 +3578,33 @@ msgid "Line Styles"
 msgstr "Gaya Garis"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Gaya Garis data-blok"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Masker data-blok"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Bahan data-blok"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Jaring 3D data-blok"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Metabola data-blok"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Klip film data-blok"
 
 
@@ -3582,7 +3612,8 @@ msgid "Node Groups"
 msgstr "Kelompok Node"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Kelompok node data-blok"
 
 
@@ -3590,11 +3621,13 @@ msgid "Object data-blocks"
 msgstr "Objek data-blok"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Kurva Cat data-blok"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Palet data-blok"
 
 
@@ -3602,7 +3635,8 @@ msgid "Particles"
 msgstr "Partikel"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Partikel data-blok"
 
 
@@ -3619,7 +3653,8 @@ msgid "The currently active Blender project, if any"
 msgstr "Proyek Blender yang saat ini aktif, jika ada"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Adegan data-blok"
 
 
@@ -3627,7 +3662,8 @@ msgid "Screens"
 msgstr "Layar"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Layar data-blok"
 
 
@@ -3635,15 +3671,18 @@ msgid "Shape Keys"
 msgstr "Kunci Bentuk"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Kunci Bentuk data-blok"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Suara data-blok"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Objek data-blok"
 
 
@@ -3651,7 +3690,8 @@ msgid "Text data-blocks"
 msgstr "Teks data-blok"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Tekstur data-blok"
 
 
@@ -3671,7 +3711,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Versi format dokumen .blend disimpan dengan"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Volume data-blok"
 
 
@@ -3679,15 +3720,18 @@ msgid "Window Managers"
 msgstr "Pengelola Jendela"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Pengelola jendela data-blok"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Spasi kerja data-blok"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Dunia data-blok"
 
 
@@ -4888,7 +4932,8 @@ msgid "Volume"
 msgstr "Volume"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "Tulang di sebuah data-blok Armatur"
 
 
@@ -6690,7 +6735,8 @@ msgid "Stroke"
 msgstr "Sapuan"
 
 
-msgid "Painting affects only strokes, not fills"
+# BFA - reworded, Blender: "Painting affects only strokes, not fills"
+msgid "Vertex Color affects to Stroke only"
 msgstr "Pewarnaan hanya memengaruhi goresan, bukan area yang diisi"
 
 
@@ -6698,7 +6744,8 @@ msgid "Fill"
 msgstr "Isi"
 
 
-msgid "Painting affects only fills, not strokes"
+# BFA - reworded, Blender: "Painting affects only fills, not strokes"
+msgid "Vertex Color affects to Fill only"
 msgstr "Pewarnaan hanya memengaruhi area terisi, bukan garis"
 
 
@@ -6706,7 +6753,8 @@ msgid "Both"
 msgstr "Keduanya"
 
 
-msgid "Painting affects both strokes and fills"
+# BFA - reworded, Blender: "Painting affects both strokes and fills"
+msgid "Vertex Color affects to Stroke and Fill"
 msgstr "Pewarnaan memengaruhi baik goresan maupun pengisian"
 
 
@@ -7034,7 +7082,8 @@ msgid "Stereo"
 msgstr "Stereo"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "Pengaturan stereoskopi untuk blok-data Kamera"
 
 
@@ -10419,7 +10468,8 @@ msgid "Include Missing NLA"
 msgstr "Muat NLA yang Hilang"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "Muatkan animasi data-blok dengan tidak ada data NLA (editor NLA saja)"
 
 
@@ -10535,7 +10585,8 @@ msgid "Source"
 msgstr "Sumber"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "Menyortir Data-Blok"
 
 
@@ -14485,7 +14536,8 @@ msgid "Panoramic"
 msgstr "Panorama"
 
 
-msgid "Collection of Object data-blocks"
+# BFA - reworded, Blender: "Collection of Object data-blocks"
+msgid "Collection of Object data"
 msgstr "Koleksi Objek data-blok"
 
 
@@ -15827,7 +15879,8 @@ msgid "Wood Texture"
 msgstr "Tekstur"
 
 
-msgid "Window manager data-block defining open windows and other user interface data"
+# BFA - reworded, Blender: "Window manager data-block defining open windows and other user interface data"
+msgid "Window manager data defining open windows and other user interface data"
 msgstr "Manajer jendela data-blok mendefinisikan jendela terbuka dan data antarmuka pengguna lainnya"
 
 
@@ -15903,7 +15956,8 @@ msgid "Workspace"
 msgstr "Spasi kerja"
 
 
-msgid "Workspace data-block, defining the working environment for the user"
+# BFA - reworded, Blender: "Workspace data-block, defining the working environment for the user"
+msgid "Workspace data, defining the working environment for the user"
 msgstr "Data-blok spasi kerja, mendefinisikan lingkungan kerja untuk pengguna"
 
 
@@ -19364,7 +19418,8 @@ msgid "Movie Clip User"
 msgstr "Pengguna Klip Film"
 
 
-msgid "Parameters defining how a MovieClip data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how a MovieClip data-block is used by another data-block"
+msgid "Parameters defining how a MovieClip data is used by another data"
 msgstr "Parameter mendefinisikan bagaimana data-blok FilmKlip digunakan oleh data-blok lain"
 
 
@@ -21500,8 +21555,9 @@ msgid "Create New Action"
 msgstr "Buat Aksi Baru"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "Putuskan hubungan Aksi"
 
 
@@ -22259,7 +22315,8 @@ msgid "Bone Size"
 msgstr "Ukuran Tulang"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "Modus Sunting"
 
 
@@ -22671,7 +22728,8 @@ msgid "Delete Active Frame"
 msgstr "Hapus Frame Aktif"
 
 
-msgid "Add new Annotation data-block"
+# BFA - reworded, Blender: "Add new Annotation data-block"
+msgid "Add new Annotation data"
 msgstr "Tambah data-blok Anotasi baru"
 
 
@@ -23582,7 +23640,8 @@ msgid "Add Plane"
 msgstr "Menambahkan Bidang"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "Membangun jaring 3D planar yang terisi dengan 4 titik-titik sudut"
 
 
@@ -24101,12 +24160,14 @@ msgid "Add a camera object to the scene"
 msgstr "Tambah objek kamera ke adegan"
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "Tambah ke Koleksi"
 
 
-msgid "Add an object to a new collection"
+# BFA - reworded, Blender: "Add an object to a new collection"
+msgid "Adds the selected object to a new collection"
 msgstr "Tambah objek ke koleksi baru"
 
 
@@ -24333,7 +24394,8 @@ msgid "Make object animation data local to each object"
 msgstr "Buat data animasi benda agar lokal ke setiap benda"
 
 
-msgid "Make materials local to each data-block"
+# BFA - reworded, Blender: "Make materials local to each data-block"
+msgid "Make materials local to each data"
 msgstr "Buat bahan agar lokal ke setiap data-blok"
 
 
@@ -25097,6 +25159,7 @@ msgid "Blur strength per iteration"
 msgstr "Kekuatan buram tiap iterasi"
 
 
+# BFA - reworded, Blender: "Set Vertex Colors"
 msgctxt "Operator"
 msgid "Set Vertex Color"
 msgstr "Warna Standar"
@@ -25153,7 +25216,8 @@ msgid "Name of the Palette"
 msgstr "Nama Palet"
 
 
-msgid "Add new palette"
+# BFA - reworded, Blender: "Add new palette"
+msgid "Add a new palette of indexed colors"
 msgstr "Tambah palet baru"
 
 
@@ -26302,11 +26366,13 @@ msgid "Jump"
 msgstr "Lompat"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "Lompat kursor ke garis"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "Angka garis melompat ke"
 
 
@@ -26350,7 +26416,8 @@ msgid "New Text"
 msgstr "Teks Baru"
 
 
-msgid "Create a new text data-block"
+# BFA - reworded, Blender: "Create a new text data-block"
+msgid "Create a new text file"
 msgstr "Buat data-blok teks baru"
 
 
@@ -26359,7 +26426,8 @@ msgid "Open Text"
 msgstr "Buka Teks"
 
 
-msgid "Open a new text data-block"
+# BFA - reworded, Blender: "Open a new text data-block"
+msgid "Open a new text file"
 msgstr "Buka data-blok teks baru"
 
 
@@ -26394,7 +26462,8 @@ msgid "Save"
 msgstr "Simpan"
 
 
-msgid "Save active text data-block"
+# BFA - reworded, Blender: "Save active text data-block"
+msgid "Save active text file"
 msgstr "Simpan teks aktif data-blok"
 
 
@@ -26777,8 +26846,9 @@ msgid "Amount of Faces in Island"
 msgstr "Jumlah Wajah di Pulau"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Pilih Pisahan"
 
 
@@ -27408,8 +27478,9 @@ msgid "Save Startup File"
 msgstr "Data Animasi"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Situs Blender"
 
 
@@ -27598,7 +27669,8 @@ msgid "Add a new workspace"
 msgstr "Tambah spasi kerja baru"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "Tambah Data-Blok dunia baru"
 
 
@@ -29706,7 +29778,8 @@ msgid "Active Action"
 msgstr "Aksi Aktif"
 
 
-msgid "Animation data-block has active action"
+# BFA - reworded, Blender: "Animation data-block has active action"
+msgid "Animation has active action"
 msgstr "Data-blok animasi mempunyai aksi aktif"
 
 
@@ -29714,7 +29787,8 @@ msgid "No Active Action"
 msgstr "Tidak Ada Aksi Aktif"
 
 
-msgid "Animation data-block does not have active action"
+# BFA - reworded, Blender: "Animation data-block does not have active action"
+msgid "Animation data does not have active action"
 msgstr "Data-blok animasi tidak mempunyai aksi aktif"
 
 
@@ -31181,7 +31255,8 @@ msgid "Priority"
 msgstr "Prioritas"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "Border Gambar"
 
 
@@ -32285,8 +32360,9 @@ msgid "Replace..."
 msgstr "Gantikkan..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Simpan Salinan..."
 
 
@@ -32490,8 +32566,9 @@ msgid "Sound..."
 msgstr "Suara..."
 
 
+# BFA - reworded, Blender: "Image/Sequence..."
 msgctxt "Operator"
-msgid "Image/Sequence..."
+msgid "Image/Sequence"
 msgstr "Gambar/Rangkaian..."
 
 
@@ -32656,8 +32733,9 @@ msgid "Render Animation"
 msgstr "Render Animasi"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Render Suara..."
 
 
@@ -32736,7 +32814,8 @@ msgid "Video Memory"
 msgstr "Memori Video"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Versi Blender"
 
 
@@ -32859,8 +32938,9 @@ msgid "Child"
 msgstr "Anak"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Pilih Pola..."
 
 
@@ -34801,7 +34881,8 @@ msgid "Vertices Data:"
 msgstr "Data Verteks:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Radius X:"
 
 
@@ -35397,7 +35478,8 @@ msgid "Axis U"
 msgstr "Sumbu U"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Pengaruh Global:"
 
 
@@ -36299,3 +36381,201 @@ msgstr "Posisi Referensi"
 msgid "Lock Tips"
 msgstr "Kunci Tips"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Masker"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Hapus"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " Pindai Berlebihan (Overscan)"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "Data animasi untuk data-blok ini"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Pilihan Kotak (Legacy)"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "Klip Mulai"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Klip Mulai"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "Koleksi-koleksi Contoh"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Hapus"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Kedalaman"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "Lompat kursor ke garis"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Gerak"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "Seleksi"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Seleksi"
+
+# BFA - reworded, Blender: "Instance Collections on Appending"
+msgid "Instance Collections on Appending or Linking"
+msgstr "Koleksi Instansi saat Penambahan"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "Dapat dilanjutkan"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "Seleksi ke Frame Terdekat"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "Seleksi ke Frame Terdekat"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "Seleksi ke Detik Terdekat"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "Seleksi ke Detik Terdekat"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "Berkas Baru"
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Orientasi"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "Catatan Rilis"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "Tampilkan Versi"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Masker"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Tampilkan"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Seleksi"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Seleksi"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Tipe"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "Kecepatan Vektor"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Menampilkan aset yang sekarang tersedia di sesi Bforartists ini"
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "Impor aset sebagai blok data tertaut"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "Impor aset sebagai blok data yang disalin, tanpa tautan ke blok data aset aslinya"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Situs Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "Tentang Bforartists"
+
+# BFA - reworded Blender string
+msgid "Open a window with information about Bforartists"
+msgstr "Buka jendela dengan informasi tentang Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "Bforartists adalah perangkat lunak yang gratis"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Website Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Versi Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Render Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Drivers Editor"
+msgstr "Editor Drivers Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Info Log"
+msgstr "Info Log Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Tampilan Berkas Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Meningkatkan ke versi macOS terbaru mungkin dapat meningkatkan dukungan Bforartists"
