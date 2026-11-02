@@ -295,12 +295,20 @@ void userpref_asset_libraries_panel_draw(const bContext *C, Panel *panel)
                                    bUserAssetLibraryOwner::Project);
   /* Only user libraries can be removed here, extension libraries are removed by uninstalling
    * the extension & project libraries from the project settings. */
+  ui::Layout &sub_col = sub.column(true); // bfa added
   sub.enabled_set(active_library && (BKE_preferences_asset_library_owner_get(active_library) ==
                                      bUserAssetLibraryOwner::User));
-  PointerRNA props = sub.op("preferences.asset_library_remove", "", ICON_REMOVE);
+  PointerRNA props = sub_col.op("preferences.asset_library_remove", "", ICON_REMOVE);
   if (active_library) {
     RNA_int_set(&props, "index", BKE_preferences_asset_library_get_index(&U, active_library));
   }
+
+  // bfa add asset libraries move
+  props = sub_col.op("preferences.asset_library_move", "", ICON_TRIA_UP);
+  RNA_enum_set(&props, "direction", 0);
+  props = sub_col.op("preferences.asset_library_move", "", ICON_TRIA_DOWN);
+  RNA_enum_set(&props, "direction", 1);
+
 
   if (!active_idx_in_range) {
     return;

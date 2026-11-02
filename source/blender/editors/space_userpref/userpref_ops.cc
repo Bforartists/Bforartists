@@ -387,6 +387,95 @@ static void PREFERENCES_OT_asset_library_remove(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name BFA Asset libraries move
+ * \{ */
+
+
+static int asset_library_ui_offset()
+{
+  return 2;
+}
+
+static bUserAssetLibrary *asset_library_active_get()
+{
+  const int list_index = U.active_asset_library - asset_library_ui_offset();
+  if (list_index < 0) {
+    return nullptr;
+  }
+  return static_cast<bUserAssetLibrary *>(BLI_findlink(&U.asset_libraries, list_index));
+}
+
+static bool asset_library_move_poll(bContext *C)
+{
+  if (U.asset_libraries.is_empty()) {
+    CTX_wm_operator_poll_msg_set(C, "There is no asset library to move");
+    return false;
+  }
+  return asset_library_active_get() != nullptr;
+}
+
+static wmOperatorStatus asset_library_move_exec(bContext *C, wmOperator *op)
+{
+  bUserAssetLibrary *library = asset_library_active_get();
+  if (library == nullptr) {
+    BKE_report(op->reports, RPT_INFO, "Selected library cannot be moved");
+    return OPERATOR_CANCELLED;
+  }
+
+  const int step = (RNA_enum_get(op->ptr, "direction") == 0) ? -1 : 1;
+
+  /* Get neighbor from the direction of travel. */
+  const bUserAssetLibrary *neighbor = (step < 0) ? library->prev : library->next;
+  if (neighbor == nullptr) {
+    BKE_report(op->reports, RPT_INFO, "Library is already at the end of the list");
+    return OPERATOR_CANCELLED;
+  }
+
+  /* Since there is builtin library above, with the 2 offset 
+   * this make sure it does not cross into the other owner's group. */
+  if (BKE_preferences_asset_library_owner_get(neighbor) !=
+      BKE_preferences_asset_library_owner_get(library))
+  {
+    BKE_report(op->reports, RPT_INFO, "Library is already at the end of user added library list");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!BLI_listbase_link_move(&U.asset_libraries, library, step)) {
+    return OPERATOR_CANCELLED;
+  }
+  U.active_asset_library = BLI_findindex(&U.asset_libraries, library) +
+                           asset_library_ui_offset();
+
+  blender::ed::asset::list::clear_all_library(C);
+  WM_main_add_notifier(NC_SPACE | ND_SPACE_ASSET_PARAMS, nullptr);
+  U.runtime.is_dirty = true;
+
+  return OPERATOR_FINISHED;
+}
+
+static void PREFERENCES_OT_asset_library_move(wmOperatorType *ot)
+{
+  static const EnumPropertyItem direction_items[] = {
+      {0, "UP", 0, "Move Up", ""},
+      {1, "DOWN", 0, "Move Down", ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  ot->name = "Move Asset Library";
+  ot->idname = "PREFERENCES_OT_asset_library_move";
+  ot->description = "Move the active asset library up or down";
+
+  ot->exec = asset_library_move_exec;
+  ot->poll = asset_library_move_poll;
+  ot->flag = OPTYPE_INTERNAL;
+
+  RNA_def_enum(ot->srna, "direction", direction_items, 0, "Direction",
+               "Which way to move the active library");
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Add Extension Repository Operator
  * \{ */
 
@@ -1291,6 +1380,7 @@ void ED_operatortypes_userpref()
 
   WM_operatortype_append(PREFERENCES_OT_asset_library_add);
   WM_operatortype_append(PREFERENCES_OT_asset_library_remove);
+  WM_operatortype_append(PREFERENCES_OT_asset_library_move); // bfa asset libraries move
 
   WM_operatortype_append(PREFERENCES_OT_extension_repo_add);
   WM_operatortype_append(PREFERENCES_OT_extension_repo_remove);

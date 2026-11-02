@@ -1351,40 +1351,6 @@ class PREFERENCES_OT_filepaths_show(Operator):
         bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
         return {'FINISHED'}
 
-# BFA
-class PREFERENCES_OT_asset_library_move(Operator):
-    '''Move the currently selected library to the specified direction'''
-    bl_idname = "preferences.asset_library_move"
-    bl_label = "Move Asset Library"
-
-    direction: EnumProperty(
-        name="Direction",
-        description="Specifies which location the active item is moved to",
-        items=(
-            ('UP', "Move Up", ""),
-            ('DOWN', "Move Down", "")
-        ),
-    )
-
-    def execute(self, context):
-        filepaths = context.preferences.filepaths
-
-        active_library_index = filepaths.active_asset_library
-
-        if self.direction == 'UP':
-            new_index = active_library_index - 1
-        else:
-            new_index = active_library_index + 1
-
-        if (new_index < 0) or (new_index > len(filepaths.asset_libraries) - 1):
-            self.report({'INFO'}, "Library is already at the end of the list.")
-            return {'CANCELLED'}
-
-        # BFA: Use the RNA move function to reorder asset libraries in the collection
-        filepaths.asset_libraries.move(active_library_index, new_index)
-
-        return {'FINISHED'}
-
 
 classes = (
     PREFERENCES_OT_addon_disable,
@@ -1414,5 +1380,4 @@ classes = (
     PREFERENCES_OT_filepaths_show, # BFA
     PREFERENCES_OT_script_directory_new,
     PREFERENCES_OT_script_directory_remove,
-    PREFERENCES_OT_asset_library_move, # BFA
 )
