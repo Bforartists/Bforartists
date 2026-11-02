@@ -1,0 +1,72 @@
+# BFA - Publish the shared icon library to https://assets.bforartists.com/icons/index.html
+# (Server 2.0, issue #6935). Bforartists-only workflow, not part of Blender.
+#
+# Runs when icons change on master, or by hand (Actions > Publish icons > Run workflow).
+# Needs two repository secrets: R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY
+# (a Cloudflare R2 token with Object Read & Write on the bforartists-assets bucket only).
+#
+# Icons deleted from the repo are NOT deleted online, so links on the websites never break.
+
+name: Publish icons
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - "release/datafiles/icons_svg/**"
+      - "tools/utils/bforartists_icons_publish.py"
+      - ".github/workflows/icons.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: publish-icons
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    if: github.repository == 'Bforartists/Bforartists'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RCLONE_CONFIG_R2_TYPE: s3
+      RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+      RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      RCLONE_CONFIG_R2_ENDPOINT: https://f0ef23a91e4d9e24647c889d0b3b3415.r2.cloudflarestorage.com
+      RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
+    steps:
+      - name: Check secrets
+        run: |
+          if [ -z "$RCLONE_CONFIG_R2_ACCESS_KEY_ID" ] || [ -z "$RCLONE_CONFIG_R2_SECRET_ACCESS_KEY" ]; then
+            echo "::error::Add the repository secrets R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY first."
+            exit 1
+          fi
+
+      # Only the icons and the tool are needed, not the whole repository.
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          sparse-checkout: |
+            release/datafiles/icons_svg
+            tools/utils
+
+      - name: Build icon library
+        run: python3 tools/utils/bforartists_icons_publish.py --out build_icons
+
+      - name: Install rclone
+        run: curl -fsSL https://rclone.org/install.sh | sudo bash
+
+      - name: Upload to assets.bforartists.com/icons
+        run: |
+          # Icons + index.json: only changed files are uploaded; browsers may cache for an hour.
+          rclone copy build_icons/icons r2:bforartists-assets/icons \
+            --exclude index.html --checksum --transfers 16 \
+            --header-upload "Cache-Control: public, max-age=3600" --stats-one-line -v
+          # The gallery page is always fresh.
+          rclone copyto build_icons/icons/index.html r2:bforartists-assets/icons/index.html \
+            --header-upload "Cache-Control: no-cache" -v
+          echo "### ✅ Icons published" >> "$GITHUB_STEP_SUMMARY"
+          echo "Gallery: https://assets.bforartists.com/icons/index.html" >> "$GITHUB_STEP_SUMMARY"
