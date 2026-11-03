@@ -4399,6 +4399,49 @@ def s_p8_shadow_band():
 SC["p8_shadow_band"] = s_p8_shadow_band
 
 
+def s_p8_covered_scroll():
+    """A newer tear-off over the older's arrow zone keeps the mouse moves, and the older one's timer
+    still ticks. Tall, because the older one must not reach the end of its range during this."""
+    yield from begin()
+    b = yield from opened(open_menu("SIM_MT_tall"), "m", "the tall menu opens")
+    yield from crop(b, 500)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    n = yield from opened(open_tpanel("SIM_PT_field"), "two", "the newer one opens", base="c")
+    # The right half of the older one's bottom arrow zone goes under the newer one.
+    yield from title_drag(n, TITLE_Y, mid_x(v) - n[0], v[1] + 30 - n[3])
+    yield from grab("over")
+    log("older", v, "newer was", n)
+    y = v[1] + 6
+    rows = (v[0] + 2, v[1] + 20, mid_x(v) - 2, v[3] - STRIP_MENU - 1)
+    # The baseline: the part of the arrow zone that isn't covered auto-scrolls.
+    move(v[0] + 10, y); yield 0.2
+    move(v[0] + 10, y); yield 0.3
+    yield from grab("a0")
+    yield from grab("a1")
+    m = rdiff("a0", "a1", rows)
+    check("the arrow zone auto-scrolls", m > 100, m)
+    # In one move, so the older one never sees the cursor leave its zone.
+    x = mid_x(v) + 20
+    move(x, y); yield 0.4
+    yield from grab("c0")
+    yield 0.8
+    yield from grab("c1")
+    m = rdiff("c0", "c1", rows)
+    check("under the newer one it stops", m < 30, m)
+    # Moving back starts it again.
+    move(v[0] + 10, y); yield 0.2
+    move(v[0] + 10, y); yield 0.3
+    yield from grab("b0")
+    yield from grab("b1")
+    m = rdiff("b0", "b1", rows)
+    check("uncovered again it scrolls", m > 100, m)
+    yield from park()
+
+
+SC["p8_covered_scroll"] = s_p8_covered_scroll
+
+
 def s_p8_fractional_crop():
     """125% makes the arrow zones, so the smallest crop, end on half a pixel. A wheel step's point
     is clamped to the block's bottom, which has to stay inside it."""

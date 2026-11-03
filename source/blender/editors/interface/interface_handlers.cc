@@ -11670,6 +11670,9 @@ static int handle_menu_mmb_event(bContext *C,
   return retval;
 }
 
+/* BFA - Tear-Off Menu/Panel: with the other tear-off helpers, below. */
+static bool tear_off_covered_at(const bContext *C, const PopupBlockHandle *menu, const int xy[2]);
+
 static int handle_menu_event(bContext *C,
                              const wmEvent *event,
                              PopupBlockHandle *menu,
@@ -11763,7 +11766,11 @@ static int handle_menu_event(bContext *C,
     }
   }
   else if (event->type == TIMER && event->customdata == menu->scrolltimer) {
-    if (!menu_scroll_test(block, {mx, my})) {
+    /* BFA - Tear-Off Menu/Panel: a newer popup keeps the mouse moves, so a covered tear-off never
+     * sees the cursor leave its arrow zone. The next move that reaches it adds the timer again. */
+    if (!menu_scroll_test(block, {mx, my}) ||
+        (menu->is_tear_off && tear_off_covered_at(C, menu, event->xy)))
+    {
       WM_event_timer_remove(CTX_wm_manager(C), win, menu->scrolltimer);
       menu->scrolltimer = nullptr;
     }
