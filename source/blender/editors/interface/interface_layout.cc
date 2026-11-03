@@ -123,6 +123,8 @@ enum class ItemType : int8_t {
   LayoutRadial, /* AKA: menu pie. */
 
   LayoutRoot,
+  /* BFA - Tear-Off Menu/Panel: what a torn-off panel draws in, standing in for the root. */
+  LayoutTearOffBody,
 #if 0
   TemplateColumnFlow,
   TemplateSplit,
@@ -606,6 +608,7 @@ LayoutDirection Layout::local_direction() const
 {
   switch (this->type()) {
     case ItemType::LayoutRoot:
+    case ItemType::LayoutTearOffBody: /* BFA - Tear-Off Menu/Panel */
     case ItemType::LayoutRow:
     case ItemType::LayoutOverlap:
     case ItemType::LayoutPanelHeader:
@@ -5944,7 +5947,10 @@ void Layout::resolve_dynamic_height()
 
   /* For simplicity a column is a grid of n rows and 1 columns, and a row is a grid of 1 rows and n
    * columns. */
-  const LayoutDirection direction = this->type() == ItemType::LayoutRoot ?
+  /* BFA - Tear-Off Menu/Panel: the tear-off's body stacks its items as the root does. */
+  const LayoutDirection direction = ELEM(this->type(),
+                                         ItemType::LayoutRoot,
+                                         ItemType::LayoutTearOffBody) ?
                                         this->root_->direction :
                                     this->type() == ItemType::LayoutSplit ?
                                         LayoutDirection::Horizontal :
@@ -6796,12 +6802,16 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
       /* BFA - Tear-Off Menu/Panel: draw sets active, enabled, scale and use_property_split on its
        * layout. resolve() applies the first three to everything in that layout, and children
        * inherit the last, so they would reach the close icon, the header checkbox and the
-       * children. In a region these are separate layouts. */
+       * children. In a region these are separate layouts.
+       * A plain column wouldn't do: a root counts as horizontal for #Layout::local_direction, so
+       * an expanded enum or a vector on it makes a row, and in a column it would stack. */
       Layout *draw_layout = body;
       if (block->handle && block->handle->is_tear_off) {
-        draw_layout = &body->column(false);
+        draw_layout = MEM_new<LayoutColumn>(__func__, ItemType::LayoutTearOffBody, nullptr);
+        LayoutInternal::init_from_parent(draw_layout, body, false);
         /* Keep the spacing of `body`, because a plain column uses buttonspacey. */
         LayoutInternal::layout_space_set(draw_layout, LayoutInternal::layout_space_get(body));
+        block_layout_set_current(block, draw_layout);
       }
       panel->layout = draw_layout;
       pt->draw(C, panel);
