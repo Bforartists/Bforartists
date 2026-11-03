@@ -6466,6 +6466,11 @@ void tear_off_header_draw(Layout *layout,
   const EmbossType prev_emboss = layout->emboss_or_undefined();
   layout->emboss_set(EmbossType::Pulldown);
   Layout *row = &layout->row(true);
+  /* BFA - Tear-Off Menu/Panel: a menu's width comes from its contents, so the title must measure
+   * itself rather than take the estimated 10 units. Panels keep the width they were given. */
+  if (!(layout->block()->flag & BLOCK_POPOVER)) {
+    row->alignment_set(LayoutAlign::Left);
+  }
   row->label(CTX_IFACE_(translation_context, label), ICON_GRIP);
   /* Nested non-expanding row keeps the two icons compact together. */
   Layout *icons = &row->row(true);
@@ -6570,7 +6575,7 @@ static bool layout_has_panel_label(const Layout *layout, const PanelType *pt)
 
 /* BFA - Tear-Off Menu/Panel: #tear_off_header_draw for a panel, with its own header buttons. The
  * root of a popover skips draw_header, so enable checkboxes vanished. The preset goes before the
- * icons, because #block_tear_off_multi_column_start needs the close icon right before the line. */
+ * icons, which #block_tear_off_align_header keeps at the right edge. */
 static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel, Layout *layout)
 {
   const char *label = CTX_IFACE_(pt->translation_context, pt->label);

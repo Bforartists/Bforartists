@@ -257,6 +257,12 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
     /* Minimum width to enforce. */
     if (!pup->but->drawstr.empty()) {
       minwidth = BLI_rctf_size_x(&pup->but->rect);
+      /* BFA - Tear-Off Menu/Panel: rows of a fitted menu can be narrower than any row used to be,
+       * and a submenu must open as wide as it does from anywhere else. */
+      const PopupBlockHandle *parent = pup->but->block->handle;
+      if (parent && parent->is_tear_off && !(pup->but->block->flag & BLOCK_POPOVER)) {
+        minwidth = std::max<int>(minwidth, UI_MENU_WIDTH_MIN);
+      }
     }
     else {
       /* For buttons with no text, use the minimum (typically icon only). */
@@ -264,7 +270,8 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
     }
   }
   else {
-    minwidth = UI_MENU_WIDTH_MIN;
+    /* BFA - Tear-Off Menu/Panel: no button to line up with, so the rows decide the width. */
+    minwidth = handle->is_tear_off ? 0 : UI_MENU_WIDTH_MIN;
   }
 
   /* Find block direction. */

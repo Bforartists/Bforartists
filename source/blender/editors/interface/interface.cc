@@ -502,42 +502,27 @@ static bool but_is_row_alignment_group(const Button *left, const Button *right)
   return is_same_align_group && (left->rect.xmin < right->rect.xmin);
 }
 
-/* BFA - Tear-Off Menu/Panel: the header row spans all columns, so with several columns it can't be
- * sized as part of the first one. That would make the first column as wide as the whole menu and
- * stack the label and icons in one rect, leaving only one icon clickable. Returns where column
- * sizing starts. The header takes the offset the sizing loop would have given it.
- * #block_tear_off_align_header then places its icons and line. */
-static std::unique_ptr<Button> *block_tear_off_multi_column_start(Block *block, const float offset)
+/* BFA - Tear-Off Menu/Panel: the header spans all columns, so it can't be sized as part of the
+ * first one. Sized with the rows it would also add the row padding as dead space. It sets the
+ * minimum instead, which #block_bounds_calc_text gives to the last column. Returns where column
+ * sizing starts. */
+static std::unique_ptr<Button> *block_tear_off_header_skip(Block *block, const float offset)
 {
-  std::unique_ptr<Button> *begin = block->buttons_ptrs.begin();
+  std::unique_ptr<Button> *content = block->buttons_ptrs.begin();
   std::unique_ptr<Button> *end = block->buttons_ptrs.end();
-  if (!(block->flag & BLOCK_TEAR_OFF)) {
-    return begin;
-  }
-  /* The header is everything up to its line, which #tear_off_header_draw always adds. Align groups
-   * can't find it, because the label that starts the row isn't in one. */
-  std::unique_ptr<Button> *content = begin;
-  while (content < end && (*content)->type != ButtonType::SeprLine) {
-    content++;
-  }
-  if (content == begin || content == end || !but_is_tear_off_header_icon(*content[-1])) {
-    return begin;
-  }
-  content++;
-  bool is_multi_column = false;
-  for (std::unique_ptr<Button> *bt = content; bt + 1 < end; bt++) {
-    if ((*bt)->rect.xmin < bt[1]->rect.xmin && !but_is_row_alignment_group(bt->get(), bt[1].get()))
-    {
-      is_multi_column = true;
-      break;
+  float xmin = FLT_MAX, xmax = -FLT_MAX;
+  for (; content < end && (*content)->tear_off_header; content++) {
+    Button &but = **content;
+    but.rect.xmin += offset;
+    but.rect.xmax += offset;
+    if (!ELEM(but.type, ButtonType::Sepr, ButtonType::SeprLine)) {
+      xmin = std::min(xmin, but.rect.xmin);
+      xmax = std::max(xmax, but.rect.xmax);
     }
   }
-  if (!is_multi_column) {
-    return begin;
-  }
-  for (std::unique_ptr<Button> *bt = begin; bt < content; bt++) {
-    (*bt)->rect.xmin += offset;
-    (*bt)->rect.xmax += offset;
+  if (xmax > xmin) {
+    /* The right padding matches #block_tear_off_align_header. */
+    block->minbounds = std::max(block->minbounds, int(ceilf(xmax - xmin + 0.25f * UI_UNIT_X)));
   }
   return content;
 }
@@ -555,7 +540,7 @@ static void block_bounds_calc_text(Block *block, float offset)
   std::unique_ptr<Button> *end = block->buttons_ptrs.end();
 
   std::unique_ptr<Button> *init_col_bt = block->buttons_ptrs.begin();
-  init_col_bt = block_tear_off_multi_column_start(block, offset); /* BFA - Tear-Off Menu/Panel */
+  init_col_bt = block_tear_off_header_skip(block, offset); /* BFA - Tear-Off Menu/Panel */
   for (std::unique_ptr<Button> *bt = init_col_bt; bt < end; bt++) {
     if (!ELEM((*bt)->type, ButtonType::Sepr, ButtonType::SeprLine, ButtonType::SeprSpacer)) {
       j = BLF_width(style->widget.uifont_id, (*bt)->drawstr.c_str(), (*bt)->drawstr.size());
