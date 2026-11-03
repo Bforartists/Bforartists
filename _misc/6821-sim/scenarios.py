@@ -3671,6 +3671,68 @@ def s_p8_pan_release():
 SC["p8_pan_release"] = s_p8_pan_release
 
 
+def s_p8_pan_hidden():
+    """Keys stay with a middle mouse pan, and a hide that comes from elsewhere ends the pan. Without
+    the continuous grab, because the simulated cursor wouldn't follow a wrapped one. The grab itself
+    letting go during a hide is a hand test."""
+    yield from begin()
+    bpy.context.preferences.inputs.use_mouse_continuous = False
+    ob = bpy.context.view_layer.objects.active
+    # The baseline: Tab does switch modes here, without a tear-off.
+    yield from type_key("TAB", *PARK)
+    yield 0.8
+    tab_works = ob.mode == "EDIT"
+    log("baseline Tab", ob.mode)
+    if tab_works:
+        yield from type_key("TAB", *PARK)
+        yield 0.8
+    yield from park()
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    x, y = mid_x(v), mid_y(v)
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    press(x, y, "MIDDLEMOUSE"); yield 0.1
+    move(x, y + 30); yield 0.1
+    yield from type_key("TAB", x, y + 30)
+    yield 0.8
+    if tab_works:
+        check("a key stays with the pan", ob.mode == "OBJECT", ob.mode)
+    else:
+        log("INCONCLUSIVE: Tab doesn't switch modes here even without a tear-off")
+    release(x, y + 30, "MIDDLEMOUSE"); yield 0.4
+    if ob.mode != "OBJECT":
+        with bpy.context.temp_override(**override()):
+            bpy.ops.object.mode_set(mode="OBJECT")
+        yield 0.8
+    # Hidden during a pan by something other than a key. The release goes nowhere.
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    press(x, y, "MIDDLEMOUSE"); yield 0.1
+    move(x, y + 10); yield 0.1
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.mode_set(mode="EDIT")
+    yield 0.8
+    move(x, y + 20); yield 0.2
+    release(x, y + 20, "MIDDLEMOUSE"); yield 0.2
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.mode_set(mode="OBJECT")
+    yield 0.8
+    yield from park()
+    yield from grab("back")
+    move(x, y); yield 0.2
+    move(x, y + 40); yield 0.2
+    yield from park()
+    yield from grab("later")
+    n = rdiff("back", "later", v)
+    check("back in its mode, a move doesn't pan", n < 30, n)
+
+
+SC["p8_pan_hidden"] = s_p8_pan_hidden
+
+
 # ---------------------------------------------------------------- Phase 8: the bottom edge
 def crop_round(tag, b, by, strip_h):
     """Frame tag+"m" has the tear-off with box b, at rest. Ends with no crop."""

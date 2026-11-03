@@ -13467,14 +13467,28 @@ static void tear_off_hover_clear_older(wmWindow *win, const PopupBlockHandle *me
 
 /* BFA - Tear-Off Menu/Panel: for a tear-off that hides or collapses. It passes everything on, so
  * it could never end these. */
-static void tear_off_edges_reset(wmWindow *win, PopupBlockHandle *menu)
+static void tear_off_edges_reset(bContext *C, PopupBlockHandle *menu)
 {
+  wmWindow *win = CTX_wm_window(C);
   if (menu->tear_off_hover_zone || menu->tear_off_drag_zone) {
     menu->tear_off_hover_zone = 0;
     menu->tear_off_drag_zone = 0;
     WM_cursor_set(win, WM_CURSOR_DEFAULT);
     win->tag_cursor_refresh = true;
     ED_region_tag_redraw(menu->region);
+  }
+  /* A middle mouse pan's release would never arrive either. The cursor would stay wrapped inside
+   * a block nobody can see, and the pan would resume with no button held when it shows again. */
+  if (menu->mmb_panning) {
+    menu->mmb_panning = false;
+    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    WM_cursor_grab_disable(win, nullptr);
+    win->tag_cursor_refresh = true;
+  }
+  /* Only the menu handling stops this timer, and it doesn't run here. */
+  if (menu->scrolltimer) {
+    WM_event_timer_remove(CTX_wm_manager(C), win, menu->scrolltimer);
+    menu->scrolltimer = nullptr;
   }
 }
 
@@ -13638,7 +13652,7 @@ static bool tear_off_edges_handle(bContext *C,
     return false;
   }
   if (menu->tear_off_collapsed) {
-    tear_off_edges_reset(win, menu);
+    tear_off_edges_reset(C, menu);
     return false;
   }
   if (menu->tear_off_drag_zone) {
@@ -13799,7 +13813,8 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       block && (block->flag & BLOCK_TEAR_OFF))
   {
     const Button *but = region_find_active_but(menu->region);
-    tear_off_was_modal = menu->is_grab || menu->tear_off_drag_zone ||
+    /* A middle mouse pan too: a key reaching the editor could hide this tear-off mid-pan. */
+    tear_off_was_modal = menu->is_grab || menu->tear_off_drag_zone || menu->mmb_panning ||
                          (but && button_modal_state(but->active->state));
     /* BFA - Tear-Off Menu/Panel: modal ownership stays with the tear-off that started it,
      * whichever one is under the cursor, so the release or click reaches it. Timers still run
@@ -13832,7 +13847,7 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     Block *block = menu->region->runtime->uiblocks.first();
     if (block && block->handle && !tear_off_is_visible(C, block->handle)) {
       /* A hidden tear-off keeps its width as it is at that moment. */
-      tear_off_edges_reset(CTX_wm_window(C), block->handle);
+      tear_off_edges_reset(C, block->handle);
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
     }
