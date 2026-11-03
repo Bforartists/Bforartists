@@ -6294,11 +6294,19 @@ static void draw_popover_back_impl(const uiWidgetColors *wcol,
 void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const rcti *rect)
 {
   WidgetType *wt = widget_type(WidgetStyle::MenuBack);
+  /* BFA - Tear-Off Menu/Panel: a panel torn off the shelf keeps the shelf's color, near black
+   * would change its look. Forced opaque, because the theme's alpha is 0 (an overlapping shelf is
+   * see-through) and a floating panel can sit over anything. */
+  uiWidgetColors wcol = *wt->wcol_theme;
+  if (block_is_tear_off_shelf(block)) {
+    theme::get_color_4ubv(TH_BACK, wcol.inner);
+    wcol.inner[3] = 255;
+  }
 
   float mval_origin[2] = {float(block->bounds_offset[0]), float(block->bounds_offset[1])};
   window_to_block_fl(region, block, &mval_origin[0], &mval_origin[1]);
   draw_popover_back_impl(
-      wt->wcol_theme, rect, block->direction, U.widget_unit / block->aspect, mval_origin);
+      &wcol, rect, block->direction, U.widget_unit / block->aspect, mval_origin);
 
   draw_clip_tri(block, rect, wt);
 }

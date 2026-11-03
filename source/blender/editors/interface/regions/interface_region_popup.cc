@@ -1174,7 +1174,10 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
   }
 
   block->flag |= BLOCK_LOOP;
-  block_theme_style_set(block, BLOCK_THEME_STYLE_POPUP);
+  /* BFA - Tear-Off Menu/Panel: labels and checkboxes as in the shelf, to go with its color. */
+  block_theme_style_set(block,
+                        block_is_tear_off_shelf(block) ? BLOCK_THEME_STYLE_REGULAR :
+                                                         BLOCK_THEME_STYLE_POPUP);
 
   /* defer this until blocks are translated (below) */
   block->oldblock = nullptr;
