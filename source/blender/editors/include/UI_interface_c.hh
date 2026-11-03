@@ -2474,6 +2474,12 @@ void popup_handlers_add(bContext *C,
 void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle *popup);
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers);
 /**
+ * BFA - Tear-Off Menu/Panel: false if the user turned tear-offs off in the Preferences. Every way
+ * of creating a tear-off must check this, so that the feature can be fully turned off. Open
+ * tear-offs close by themselves on the next event once this is false.
+ */
+bool tear_off_enabled();
+/**
  * BFA - Tear-Off Menu/Panel: tear-off handlers outlive the area they were created in, so drop
  * their reference when that area exits, and rebuild their buttons, which may point into its
  * space data. Other popups are left untouched.

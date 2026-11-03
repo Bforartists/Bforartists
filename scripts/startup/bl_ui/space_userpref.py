@@ -258,6 +258,8 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(prefs, "show_hidden_ids", text="Show Hidden")
         # bfa - gooengine disable_search_on_keypress
         flow.prop(prefs, "disable_search_on_keypress", text="Disable Search on Key Press")
+        # BFA - Tear-Off Menu/Panel: lets users opt out of the Bforartists-only tear-off feature
+        flow.prop(prefs, "use_tear_off", text="Tear-Off Menus and Panels")
         # bfa - gooengine disable_material_icon
         flow.prop(prefs, "disable_material_icon", text="Disable Material Icon Rendering")
 

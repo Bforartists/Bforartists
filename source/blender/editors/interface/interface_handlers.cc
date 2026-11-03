@@ -13202,6 +13202,12 @@ static PopupBlockHandle *popup_from_handler(wmEventHandler *handler_base)
              nullptr;
 }
 
+/* BFA - Tear-Off Menu/Panel */
+bool tear_off_enabled()
+{
+  return (U.bfa_ui_flag & USER_BFA_TEAR_OFF_DISABLED) == 0;
+}
+
 /* BFA - Tear-Off Menu/Panel: the window handler that runs this popup. */
 static wmEventHandler *popup_handler_find(wmWindow *win, const PopupBlockHandle *menu)
 {
@@ -13328,6 +13334,32 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
      */
 
     retval = WM_UI_HANDLER_CONTINUE;
+  }
+
+  /* BFA - Tear-Off Menu/Panel: the preference is off, whether it was just unchecked or loaded
+   * from a file. The property update can't close tear-offs itself, because it runs during
+   * handler dispatch, possibly from a button in this tear-off. This comes before the early
+   * returns below, so hidden, collapsed and covered tear-offs close too. The steps match a
+   * regular close further down. */
+  if (menu->is_tear_off && !tear_off_enabled()) {
+    wmWindow *win = CTX_wm_window(C);
+    /* A collapsed pin sets this cursor over its label and nothing else would restore it. */
+    if (menu->tear_off_collapsed && win->cursor == WM_CURSOR_MOVE) {
+      WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    }
+    popup_block_free(C, menu);
+    popup_handlers_remove(&win->runtime->modalhandlers, menu);
+    CTX_wm_region_popup_set(C, nullptr);
+#ifdef USE_DRAG_TOGGLE
+    WM_event_free_ui_handler_all(C,
+                                 &win->runtime->modalhandlers,
+                                 handler_region_drag_toggle,
+                                 handler_region_drag_toggle_remove);
+#endif
+    /* Also wakes the next tear-off in this window, since a closing popup keeps the event. */
+    WM_event_add_mousemove(win);
+    apply_but_funcs_after(C);
+    return retval;
   }
 
   /* BFA - Tear-Off Menu/Panel: tear-off menus/panels are persistent. Keyboard events must

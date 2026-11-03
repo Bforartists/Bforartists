@@ -381,6 +381,19 @@ static void rna_userdef_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *
   USERDEF_TAG_DIRTY;
 }
 
+/* BFA - Tear-Off Menu/Panel: this runs during handler dispatch, so nothing is freed here. Each
+ * tear-off closes itself in popup_handler once the preference is off, so wake every window. */
+static void rna_userdef_tear_off_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+  wmWindowManager *wm = bmain->wm.first();
+  if (wm && !ui::tear_off_enabled()) {
+    for (wmWindow &win : wm->windows) {
+      WM_event_add_mousemove(&win);
+    }
+  }
+  rna_userdef_update(bmain, scene, ptr);
+}
+
 #if 0
 /* BFA - Unused: upstream Blender renamed this callback but Bforartists uses
  * the more featureful rna_userdef_panel_tabs_compact_update instead which also
@@ -8440,6 +8453,17 @@ void RNA_def_userdef(BlenderRNA *brna)
                            "Ignore menus tagged with Search On Key Press, and fallback to using "
                            "accelerator keys instead");
   /* BFA - GooEngine end */
+
+  /* BFA - Tear-Off Menu/Panel: turning this off closes open tear-offs and removes all ways of
+   * creating one, for those who prefer plain menus and panels. */
+  prop = RNA_def_property(srna, "use_tear_off", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, nullptr, "bfa_ui_flag", USER_BFA_TEAR_OFF_DISABLED);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop,
+                           "Tear-Off Menus and Panels",
+                           "Allow menus and panels to be torn off into floating panels that "
+                           "stay open. Turning this off closes any that are open");
+  RNA_def_property_update(prop, 0, "rna_userdef_tear_off_update");
 
   /* BFA - GooEngine disable_material_icon */
   prop = RNA_def_property(srna, "disable_material_icon", PROP_BOOLEAN, PROP_NONE);
