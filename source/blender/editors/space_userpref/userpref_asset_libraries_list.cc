@@ -285,6 +285,7 @@ void userpref_asset_libraries_panel_draw(const bContext *C, Panel *panel)
   }
 
   ui::Layout &sub = col.row(true);
+  ui::Layout &sub_col = sub.column(true); // bfa add asset libraries move
   const bool active_idx_in_range = U.active_asset_library >= 0 &&
                                    U.active_asset_library < libraries.size();
   const bUserAssetLibrary *active_library = active_idx_in_range ?
@@ -295,7 +296,6 @@ void userpref_asset_libraries_panel_draw(const bContext *C, Panel *panel)
                                    bUserAssetLibraryOwner::Project);
   /* Only user libraries can be removed here, extension libraries are removed by uninstalling
    * the extension & project libraries from the project settings. */
-  ui::Layout &sub_col = sub.column(true); // bfa add asset libraries move
   sub_col.enabled_set(active_library && (BKE_preferences_asset_library_owner_get(active_library) ==
                                      bUserAssetLibraryOwner::User));
   PointerRNA props = sub_col.op("preferences.asset_library_remove", "", ICON_REMOVE);
