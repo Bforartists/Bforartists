@@ -9875,7 +9875,9 @@ static void button_activate_exit(
 #endif
 
     /* popup menu memory */
-    if (block->flag & BLOCK_POPUP_MEMORY) {
+    /* BFA - Tear-Off Menu/Panel: the row is an addition, so the menu keeps its remembered item. It
+     * would open with the row under the cursor, one quick click from another tear-off. */
+    if ((block->flag & BLOCK_POPUP_MEMORY) && !is_tear_off_row) {
       popup_menu_memory_set(block, but);
     }
 
