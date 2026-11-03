@@ -21,7 +21,7 @@ Line numbers are from the mid-merge tree and will drift.
 | 3. Preference toggle | Committed | `99c93ab4370`, `d800b242ae2` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
 | 2 and 3. Review findings | Committed, not built yet | `9851fa1a14b`, `babd3140507`, `7846ed92b8e` | Code review only so far |
 | 4. Enum tear-offs | Done | `e0b8b93c0da`..`a255c080db4` | Built with no errors. Full GUI suite passes: 33 scenarios, no crashes. Needs a hand test: Transform Pivot, Set Keyframe Type, toolbar Keyframe Type |
-| 5. Tear off any panel | Committed, not built yet | `769cde7b580`..`f0f014951d6` (6 commits), `d4753f7e807` | Code review only. Scenarios `p5_*` written but never run, no hand test |
+| 5. Tear off any panel | Committed, not built yet | `769cde7b580`..`f0f014951d6` (6 commits), `d4753f7e807`, review fixes `6419db72fe1`..`bfa156ed802` (4 commits) | Code review only. Scenarios `p5_*` written but never run, no hand test |
 | 6. Tool shelf | Committed, not built yet | `ff3c405326d`, `062c8f43a0a`, `85166c8e111`, `23c3c3ac026` | Code review only. Scenarios `p6_*` written but never run, no hand test |
 | 7 and 8 | Not started | | Build and test Phases 5 and 6 first |
 
@@ -188,6 +188,13 @@ The source panel stays where it is. The tear-off is a second live view of it, wh
 - `draw_header` and `draw_header_preset` go in a new `tear_off_panel_header_draw()`, not in `tear_off_header_draw()`, which menus also use.
 - A panel torn off a region has `is_popover == False` and shows full region content. Row tear-offs keep `True`.
 - A torn-off Properties panel shows "Not available" on other tabs and comes back with its tab.
+- A tear-off re-polls on an allow-list of space notifiers: Properties, Image, Node, Sequencer, Clip, Dope Sheet and Graph. The Sequencer's `view_type` sent no notifier, so it now does. The 3D View and Info report notifiers stay out, because they fire too often.
+- A popup's preview job and `Render` belong to its region, and are freed when it closes. The free is skipped while any job is running, because the `Render` list has no lock. That rare case keeps the `Render` until exit, as upstream does for a closed area.
+- A screen or workspace change during the Shift+press wait ends the gesture first (`panel_tear_off_gesture_cancel_all`). Otherwise the handler is dropped by area and its state leaks.
+
+**Memory checks for Phase 5:**
+- The exit report can't catch a kept preview `Render`, because `RE_FreeAllRender` empties the list before it runs. A non-undo file load also drops the result buffers, though the `Render` itself stays until exit. So compare the count during the session, with no file load in between: `p5_preview_close` prints `new render` from `wm.memory_statistics`, and the count must stay the same across its rounds.
+- `harness.py` ends with `os._exit`, which skips the exit report and loses buffered stdout, so `--debug-memory` alone shows nothing for a scenario. Scenarios that check memory end with `finish_with_memory_report`, which quits for real, and `run.sh` prints the lines to compare. `p5_workspace_gone` must print no `panel_tear_off_gesture_begin` line.
 
 ## Phase 6: Tool shelf (item 4)
 
