@@ -1565,7 +1565,8 @@ void draw_aligned_panel(const ARegion *region,
 void draw_layout_panels_backdrop(const ARegion *region,
                                  const Panel *panel,
                                  const float radius,
-                                 float subpanel_backcolor[4]);
+                                 float subpanel_backcolor[4],
+                                 float inset = 0.0f); /* BFA - Tear-Off Menu/Panel */
 void panel_drag_collapse_handler_add(const bContext *C, const bool was_open);
 void panel_tag_search_filter_match(Panel *panel);
 /** Toggles layout panel open state and returns the new state. */

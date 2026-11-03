@@ -6525,7 +6525,10 @@ void tear_off_header_draw(Layout *layout,
   icons->op(collapse_op, "", ICON_UNPINNED);
   icons->op(close_op, "", ICON_PANEL_CLOSE);
   layout->emboss_set(prev_emboss);
-  layout->separator(1.0f, LayoutSeparatorType::Line);
+  /* BFA - Tear-Off Menu/Panel: with the panel colors, the header's own color is what ends it. */
+  layout->separator(1.0f,
+                    block_has_tear_off_panel_colors(layout->block()) ? LayoutSeparatorType::Space :
+                                                                       LayoutSeparatorType::Line);
   block_tear_off_header_tag(layout->block());
 }
 

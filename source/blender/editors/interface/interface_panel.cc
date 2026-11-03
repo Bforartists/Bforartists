@@ -1227,7 +1227,8 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
 void draw_layout_panels_backdrop(const ARegion *region,
                                  const Panel *panel,
                                  const float radius,
-                                 float subpanel_backcolor[4])
+                                 float subpanel_backcolor[4],
+                                 const float inset) /* BFA - Tear-Off Menu/Panel */
 {
   /* Draw backdrops for layout panels. */
   const float aspect = block_is_popup_any(panel->runtime->block) ? panel->runtime->block->aspect :
@@ -1262,7 +1263,14 @@ void draw_layout_panels_backdrop(const ARegion *region,
     rcti panel_pixelspace = rect_to_pixelrect(region, panel->runtime->block, &panel_blockspace);
     rctf panel_pixelspacef;
     BLI_rctf_rcti_copy(&panel_pixelspacef, &panel_pixelspace);
-    draw_roundbox_4fv(&panel_pixelspacef, true, radius, subpanel_backcolor);
+    /* BFA - Tear-Off Menu/Panel: an opaque color would cover the outline of a tear-off. */
+    panel_pixelspacef.xmin += inset;
+    panel_pixelspacef.xmax -= inset;
+    if (is_main_panel_end) {
+      panel_pixelspacef.ymin += inset;
+    }
+    draw_roundbox_4fv(
+        &panel_pixelspacef, true, std::max(radius - inset, 0.0f), subpanel_backcolor);
   }
 }
 

@@ -6112,6 +6112,13 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
 
   const float zoom = 1.0f / but->block->aspect;
   wt->state(wt, &state, but->emboss);
+  /* BFA - Tear-Off Menu/Panel: the title sits on the panel header color, which regions pair with
+   * panel_title, see #panel_title_color_get. */
+  if (but->type == ButtonType::Label && but->tear_off_header &&
+      block_has_tear_off_panel_colors(but->block))
+  {
+    copy_v3_v3_uchar(wt->wcol.text, tui->panel_title);
+  }
   if (wt->custom) {
     wt->custom(but, &wt->wcol, rect, &state, roundboxalign, zoom);
   }
@@ -6316,7 +6323,8 @@ static void tear_off_panel_colors_get(const Block *block, float r_back[4], float
 
   interp_v3_v3v3(r_back, region_back, panel_back, panel_back[3]);
   r_back[3] = 1.0f;
-  interp_v3_v3v3(r_header, r_back, panel_header, panel_header[3]);
+  /* A region's header and body don't overlap, so this blends over the region too. */
+  interp_v3_v3v3(r_header, region_back, panel_header, panel_header[3]);
   r_header[3] = 1.0f;
 }
 

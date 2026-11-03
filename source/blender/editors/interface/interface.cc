@@ -2552,7 +2552,12 @@ void block_draw(const bContext *C, Block *block)
                   BLI_rcti_size_x(&content_px),
                   std::max(BLI_rcti_size_y(&content_px), 0));
     }
-    draw_layout_panels_backdrop(region, block->panel, radius, subpanel_backcolor);
+    /* BFA - Tear-Off Menu/Panel: see the inset's comment. */
+    draw_layout_panels_backdrop(region,
+                                block->panel,
+                                radius,
+                                subpanel_backcolor,
+                                block_has_tear_off_panel_colors(block) ? U.pixelsize : 0.0f);
     if (sticky) {
       GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
     }
