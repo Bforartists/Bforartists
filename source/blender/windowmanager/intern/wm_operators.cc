@@ -2618,6 +2618,10 @@ static wmOperatorStatus wm_menu_tear_off_close_exec(bContext *C, wmOperator * /*
       ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
       if (menu && menu->is_tear_off && menu->region == region) {
         menu->menuretval = ui::RETURN_CANCEL;
+        /* BFA - Tear-Off Menu/Panel: popup_handler consumes menuretval on the next event.
+         * Force one, because after-funcs may free popups so popup_handler can't safely read
+         * the handle again after running them. */
+        WM_event_add_mousemove(win);
         return OPERATOR_FINISHED;
       }
     }
@@ -2740,6 +2744,12 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
         break;
       }
     }
+    /* BFA - Tear-Off Menu/Panel: the source closes on the next event, which has to get past the
+     * new tear-off under the cursor. */
+    WM_event_add_mousemove(CTX_wm_window(C));
+    if (handle) {
+      handle->tear_off_pass_next_mousemove = true;
+    }
   }
 
   return status;
@@ -2777,6 +2787,10 @@ static wmOperatorStatus wm_panel_tear_off_close_exec(bContext *C, wmOperator * /
       ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
       if (menu && menu->is_tear_off && menu->region == region) {
         menu->menuretval = ui::RETURN_CANCEL;
+        /* BFA - Tear-Off Menu/Panel: popup_handler consumes menuretval on the next event.
+         * Force one, because after-funcs may free popups so popup_handler can't safely read
+         * the handle again after running them. */
+        WM_event_add_mousemove(win);
         return OPERATOR_FINISHED;
       }
     }

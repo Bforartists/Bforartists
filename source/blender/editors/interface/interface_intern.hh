@@ -1172,6 +1172,10 @@ struct PopupBlockHandle {
    * the window. Zero when no expanded size has been recorded yet. */
   int tear_off_expanded_size[2] = {0, 0};
 
+  /** BFA - Tear-Off Menu/Panel: let the next mouse move pass through this new tear-off, so it
+   * reaches the popup this one was torn off from and closes it. */
+  bool tear_off_pass_next_mousemove = false;
+
   char menu_idname[64] = "";
 
   bool mmb_panning = false;

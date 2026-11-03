@@ -9851,8 +9851,8 @@ static void button_activate_exit(
    * We do NOT set menuretval here because that would close the popover before
    * the operator runs (via apply_but_funcs_after). Instead, the operator saves
    * CTX_wm_region_popup, creates the tear-off, then sets RETURN_CANCEL on the
-   * original. The delayed check in popup_handler closes it after the operator
-   * finishes. This ensures the operator can properly access the original popover. */
+   * original and forces a mouse move, so the next event closes it. This ensures the
+   * operator can properly access the original popover. */
 
   if (!onfree && !data->cancel) {
     /* autokey & undo push */
@@ -13185,16 +13185,6 @@ static int handler_region_menu(bContext *C, const wmEvent *event, void * /*userd
   /* delayed apply callbacks */
   apply_but_funcs_after(C);
 
-  /* BFA - Tear-Off Menu/Panel: if a deferred callback (e.g., the tear-off
-   * operator) set menuretval on the popover, close it immediately rather than
-   * waiting for the next event. This mirrors the delayed RETURN_CANCEL check
-   * in popup_handler and ensures the original popover closes right away when
-   * a tear-off is performed, even if the mouse is still hovering over it. */
-  if (but && but->active && but->active->menu && but->active->menu->menuretval) {
-    handle_button_return_submenu(C, event, but);
-    retval = WM_UI_HANDLER_BREAK;
-  }
-
   /* Reset to previous context region. */
   CTX_wm_region_popup_set(C, region_popup);
 
@@ -13239,14 +13229,23 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   /* BFA - Tear-Off Menu/Panel: tear-off menus/panels are persistent. Keyboard events must
    * pass straight through to the global keymap so hotkeys keep working, and must never be
    * processed by the menu handler. Without this, a mode-switch hotkey (e.g. Tab) reaches
-   * `handle_menus_recursive`, sets `menuretval = RETURN_CANCEL`, and the delayed-cancel
-   * block below frees the tear-off. */
+   * `handle_menus_recursive`, sets `menuretval = RETURN_CANCEL`, and the `menuretval`
+   * check below frees the tear-off. */
   if (ISKEYBOARD(event->type)) {
     Block *block = menu->region->runtime->uiblocks.first();
     if (block && (block->flag & BLOCK_TEAR_OFF)) {
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
     }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: a new panel tear-off opens under the cursor and is first in the
+   * handler list, so it would swallow the mouse move that closes the popup it was torn off from
+   * (see wm_panel_tear_off_exec). That popup would stay open until the cursor leaves. */
+  if (menu->tear_off_pass_next_mousemove && event->type == MOUSEMOVE) {
+    menu->tear_off_pass_next_mousemove = false;
+    CTX_wm_region_popup_set(C, region_popup);
+    return WM_UI_HANDLER_CONTINUE;
   }
 
   /* BFA - Tear-Off Menu/Panel: a pinned tear-off that is currently hidden (editor domain or
@@ -13482,18 +13481,6 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 
   /* delayed apply callbacks */
   apply_but_funcs_after(C);
-  // BFA - Tear-Off Menu/Panel
-  /* If a delayed callback (e.g. Close Menu operator, or the tear-off panel operator
-   * closing the original popover) set RETURN_CANCEL, close the popup now rather than
-   * waiting for the next event. */
-  if (!popup_closed && (menu->menuretval & RETURN_CANCEL)) {
-    wmWindow *win = CTX_wm_window(C);
-    popup_block_free(C, menu);
-    popup_handlers_remove(&win->runtime->modalhandlers, menu);
-    CTX_wm_region_popup_set(C, nullptr);
-    WM_event_add_mousemove(win);
-    popup_closed = true;
-  }
 
   if (reset_pie) {
     /* Reacquire window in case pie invalidates it somehow. */
