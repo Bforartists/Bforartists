@@ -499,6 +499,43 @@ static bool but_is_row_alignment_group(const Button *left, const Button *right)
   return is_same_align_group && (left->rect.xmin < right->rect.xmin);
 }
 
+/* BFA - Tear-Off Menu/Panel: the header row spans all columns, so with several columns it can't be
+ * sized as part of the first one. That would make the first column as wide as the whole menu and
+ * stack the label and icons in one rect, leaving only one icon clickable. Returns where column
+ * sizing starts. The header takes the offset the sizing loop would have given it.
+ * #block_tear_off_align_header then places its icons and line. */
+static std::unique_ptr<Button> *block_tear_off_multi_column_start(Block *block, const float offset)
+{
+  std::unique_ptr<Button> *begin = block->buttons_ptrs.begin();
+  std::unique_ptr<Button> *end = block->buttons_ptrs.end();
+  if (!(block->flag & BLOCK_TEAR_OFF) || (end - begin) < 2 ||
+      !but_is_row_alignment_group(begin->get(), begin[1].get()))
+  {
+    return begin;
+  }
+  const int alignnr = (*begin)->alignnr;
+  std::unique_ptr<Button> *content = begin;
+  while (content < end && (*content)->alignnr == alignnr) {
+    content++;
+  }
+  bool is_multi_column = false;
+  for (std::unique_ptr<Button> *bt = content; bt + 1 < end; bt++) {
+    if ((*bt)->rect.xmin < bt[1]->rect.xmin && !but_is_row_alignment_group(bt->get(), bt[1].get()))
+    {
+      is_multi_column = true;
+      break;
+    }
+  }
+  if (!is_multi_column) {
+    return begin;
+  }
+  for (std::unique_ptr<Button> *bt = begin; bt < content; bt++) {
+    (*bt)->rect.xmin += offset;
+    (*bt)->rect.xmax += offset;
+  }
+  return content;
+}
+
 static void block_bounds_calc_text(Block *block, float offset)
 {
   if (block->buttons_ptrs.is_empty()) {
@@ -512,6 +549,7 @@ static void block_bounds_calc_text(Block *block, float offset)
   std::unique_ptr<Button> *end = block->buttons_ptrs.end();
 
   std::unique_ptr<Button> *init_col_bt = block->buttons_ptrs.begin();
+  init_col_bt = block_tear_off_multi_column_start(block, offset); /* BFA - Tear-Off Menu/Panel */
   for (std::unique_ptr<Button> *bt = init_col_bt; bt < end; bt++) {
     if (!ELEM((*bt)->type, ButtonType::Sepr, ButtonType::SeprLine, ButtonType::SeprSpacer)) {
       j = BLF_width(style->widget.uifont_id, (*bt)->drawstr.c_str(), (*bt)->drawstr.size());
