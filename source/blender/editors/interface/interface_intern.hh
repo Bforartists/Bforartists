@@ -1331,6 +1331,9 @@ void pie_menu_level_create(Block *block,
 
 /**
  * Translate any popup regions (so we can drag them).
+ *
+ * BFA - Tear-Off Menu/Panel: `win` is an addition, so a dragged tear-off can be clamped to the
+ * window. Other popups aren't affected.
  */
 void popup_translate(ARegion *region, const int mdiff[2], const wmWindow *win = nullptr);
 void popup_block_free(bContext *C, PopupBlockHandle *handle);

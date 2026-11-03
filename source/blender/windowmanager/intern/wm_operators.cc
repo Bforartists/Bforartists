@@ -2675,6 +2675,8 @@ static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
   ot->poll = WM_operator_winactive;
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Tear-Off Panel Operator
  * \{ */

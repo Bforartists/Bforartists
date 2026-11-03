@@ -33,6 +33,7 @@
 
 #include "ED_screen.hh"
 
+/* BFA - Tear-Off Menu/Panel: used to draw the collapsed pin widget. */
 #include "UI_interface_c.hh"
 #include "UI_interface_icons.hh"
 #include "UI_resources.hh"
@@ -46,6 +47,8 @@ namespace blender::ui {
 /** \name Utility Functions
  * \{ */
 
+/* BFA - Tear-Off Menu/Panel: `win` is an addition, so a dragged tear-off can be clamped to the
+ * window. Other popups aren't affected. */
 void popup_translate(ARegion *region, const int mdiff[2], const wmWindow *win)
 {
   BLI_rcti_translate(&region->winrct, UNPACK2(mdiff));
@@ -1577,6 +1580,7 @@ bool screen_has_blocking_popup(const bScreen *screen)
 void popup_block_free(bContext *C, PopupBlockHandle *handle)
 {
   bool is_submenu = false;
+
   /* If this popup is created from a popover which does NOT have keep-open flag set,
    * then close the popover too. We could extend this to other popup types too. */
   ARegion *region = handle->popup_create_vars.butregion;

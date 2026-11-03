@@ -335,12 +335,13 @@ static Button *button_under_cursor_or_active(bContext *C)
     wmWindow *win = CTX_wm_window(C);
     int xy[2];
     if (win && wm_cursor_position_get(win, &xy[0], &xy[1])) {
-      if (ARegion *region_main = CTX_wm_region(C)) {
-        but = button_find_mouse_over_ex(region_main, xy, false, false, nullptr, nullptr);
-      }
-      ARegion *region_popup = CTX_wm_region_popup(C);
-      if (!but && region_popup) {
+      /* Popup first: it floats over the region, so a button under it isn't the one hovered. */
+      if (ARegion *region_popup = CTX_wm_region_popup(C)) {
         but = button_find_mouse_over_ex(region_popup, xy, false, false, nullptr, nullptr);
+      }
+      ARegion *region_main = CTX_wm_region(C);
+      if (!but && region_main) {
+        but = button_find_mouse_over_ex(region_main, xy, false, false, nullptr, nullptr);
       }
     }
   }
@@ -357,6 +358,19 @@ static bool copy_python_command_button_poll(bContext *C)
   }
 
   return false;
+}
+
+/* BFA - Tear-Off Menu/Panel: undo the temporary tear-off context swap, including when the saved
+ * values are null (handler context is cleared by a workspace switch). */
+static void tear_off_op_context_restore(bContext *C,
+                                        const bool restored,
+                                        ScrArea *area,
+                                        ARegion *region)
+{
+  if (restored) {
+    CTX_wm_area_set(C, area);
+    CTX_wm_region_set(C, region);
+  }
 }
 
 static wmOperatorStatus copy_python_command_button_exec(bContext *C, wmOperator * /*op*/)
@@ -400,27 +414,13 @@ static wmOperatorStatus copy_python_command_button_exec(bContext *C, wmOperator 
     WM_clipboard_text_set(str.c_str(), false);
 
     /* BFA - Tear-Off Menu/Panel Restore context if it was modified for tear-off menu */
-    if (context_restored) {
-      if (ctx_area_saved) {
-        CTX_wm_area_set(C, ctx_area_saved);
-      }
-      if (ctx_region_saved) {
-        CTX_wm_region_set(C, ctx_region_saved);
-      }
-    }
+    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
     return OPERATOR_FINISHED;
   }
 
   /* BFA - Tear-Off Menu/Panel Restore context if it was modified for tear-off menu */
-  if (context_restored) {
-    if (ctx_area_saved) {
-      CTX_wm_area_set(C, ctx_area_saved);
-    }
-    if (ctx_region_saved) {
-      CTX_wm_region_set(C, ctx_region_saved);
-    }
-  }
+  tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
   return OPERATOR_CANCELLED;
 }
@@ -2391,6 +2391,9 @@ static wmOperatorStatus editsource_exec_finish(bContext *C,
 // BFA - Tear-Off Menu/Panel
 static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
 {
+  /* BFA - Tear-Off Menu/Panel: upstream only looks at the active button of one region. A tear-off
+   * stays open over the main UI and its button may not be active, and the operator can run with
+   * the tear-off as context popup, so this needs a wider lookup and a temporary context swap. */
   Button *but = nullptr;
   ARegion *region = nullptr;
 
@@ -2418,62 +2421,45 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
           CTX_wm_region_set(C, handle->ctx_region);
         }
         context_restored = true;
-        printf("EDITSOURCE: restored context - area=%p region=%p\n",
-               (void *)handle->ctx_area, (void *)handle->ctx_region);
       }
     }
   }
 
-  /* BFA - Tear-Off Menu/Panel: when a popup is open, buttons in the main UI
-   * don't get activated because the popup handler intercepts events.
-   * Find the button under the mouse cursor instead of relying on "active" state. */
-  wmWindow *win = CTX_wm_window(C);
-  if (win) {
-    int xy[2];
-    if (wm_cursor_position_get(win, &xy[0], &xy[1])) {
-      /* Search main region first (where user likely clicked) */
-      ARegion *region_main = CTX_wm_region(C);
-      if (region_main) {
-        but = button_find_mouse_over_ex(region_main, xy, false, false, nullptr, nullptr);
-        if (but) {
-          region = region_main;
-        }
-      }
-      /* Then search popup region */
-      if (!but) {
-        ARegion *region_popup = CTX_wm_region_popup(C);
-        if (region_popup) {
-          but = button_find_mouse_over_ex(region_popup, xy, false, false, nullptr, nullptr);
-          if (but) {
-            region = region_popup;
-          }
-        }
-      }
-
-      printf("EDITSOURCE_CURSOR: xy=%d,%d main_reg=%p popup_reg=%p but=%p\n",
-             xy[0],
-             xy[1],
-             (void *)CTX_wm_region(C),
-             (void *)CTX_wm_region_popup(C),
-             (void *)but);
+  /* BFA - Tear-Off Menu/Panel: the cursor comes last, as in Copy Python Command. It can't come
+   * first: when this runs from a context menu item, the cursor is over whatever is under that
+   * item. "popup_region" is upstream's lookup, set by the button context menu. */
+  {
+    const bContextStore *ctx_store = CTX_store_get(C);
+    const PointerRNA *region_ptr = ctx_store ? CTX_store_ptr_lookup(
+                                                   ctx_store, "popup_region", RNA_Region) :
+                                               nullptr;
+    if (region_ptr && region_ptr->has_data()) {
+      region = region_ptr->data_as<ARegion>();
+      but = region_find_active_but(region);
     }
   }
-
-  /* Fallback to active button search */
   if (!but) {
     but = context_active_but_get(C);
     region = CTX_wm_region(C);
-    if (but) {
-      printf("EDITSOURCE_ACTIVE: context_active_but_get found but=%p '%s'\n",
-             (void *)but, but->drawstr.c_str());
-    }
   }
   if (!but) {
     but = context_active_but_get_respect_popup(C);
-    if (but) {
-      region = CTX_wm_region_popup(C);
-      printf("EDITSOURCE_ACTIVE: context_active_but_get_respect_popup found but=%p '%s'\n",
-             (void *)but, but->drawstr.c_str());
+    region = CTX_wm_region_popup(C);
+  }
+  /* Last resort for a tear-off with nothing active: popup first, it floats over the region. */
+  if (!but) {
+    wmWindow *win = CTX_wm_window(C);
+    int xy[2];
+    if (win && wm_cursor_position_get(win, &xy[0], &xy[1])) {
+      for (ARegion *region_test : {CTX_wm_region_popup(C), CTX_wm_region(C)}) {
+        if (region_test) {
+          but = button_find_mouse_over_ex(region_test, xy, false, false, nullptr, nullptr);
+          if (but) {
+            region = region_test;
+            break;
+          }
+        }
+      }
     }
   }
 
@@ -2486,12 +2472,12 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     BKE_report(op->reports,
                RPT_ERROR,
                "Cannot edit source in popup regions that does not support refresh.");
+    /* BFA - Tear-Off Menu/Panel: don't leave the context swapped. */
+    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
     return OPERATOR_CANCELLED;
   }
 
   if (but) {
-    printf("EDITSOURCE: found but=%p '%s' type=%d region=%p\n",
-           (void *)but, but->drawstr.c_str(), int(but->type), (void *)region);
     /* needed else the active button does not get tested */
     UI_screen_free_active_but_highlight(C, CTX_wm_screen(C));
 
@@ -2504,14 +2490,7 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     region_redraw_immediately(C, region);
 
     /* Restore context if it was modified for tear-off menu */
-    if (context_restored) {
-      if (ctx_area_saved) {
-        CTX_wm_area_set(C, ctx_area_saved);
-      }
-      if (ctx_region_saved) {
-        CTX_wm_region_set(C, ctx_region_saved);
-      }
-    }
+    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
     return editsource_exec_finish(C, op, region, true);
   }
@@ -2525,11 +2504,6 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     if (ctx_store) {
       const PointerRNA *btn_ptr = CTX_store_ptr_lookup(ctx_store, "button_pointer");
       const PointerRNA *btn_prop = CTX_store_ptr_lookup(ctx_store, "button_prop");
-      printf("EDITSOURCE_CTXSTORE: ctx_store=%p btn_ptr=%p btn_ptr->data=%p btn_prop=%p btn_prop->data=%p\n",
-             (const void *)ctx_store, (const void *)btn_ptr,
-             btn_ptr ? btn_ptr->data : nullptr,
-             (const void *)btn_prop,
-             btn_prop ? btn_prop->data : nullptr);
       if (btn_ptr && btn_ptr->data && btn_prop && btn_prop->data) {
         PropertyRNA *prop = static_cast<PropertyRNA *>(btn_prop->data);
         bScreen *screen = CTX_wm_screen(C);
@@ -2546,8 +2520,6 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
                     if (but_iter.rnapoin.data == btn_ptr->data && but_iter.rnaprop == prop) {
                       but = &but_iter;
                       region = reg_iter;
-                      printf("EDITSOURCE_CTXSTORE: matched but=%p '%s' region=%p\n",
-                             (void *)but, but->drawstr.c_str(), (void *)region);
                       break;
                     }
                   }
@@ -2562,9 +2534,6 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
         }
       }
     }
-    else {
-      printf("EDITSOURCE_CTXSTORE: ctx_store is NULL\n");
-    }
     if (but) {
       UI_screen_free_active_but_highlight(C, CTX_wm_screen(C));
       editsource_active_but_set(but);
@@ -2576,18 +2545,10 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
       region_redraw_immediately(C, region);
 
       /* Restore context if it was modified for tear-off menu */
-      if (context_restored) {
-        if (ctx_area_saved) {
-          CTX_wm_area_set(C, ctx_area_saved);
-        }
-        if (ctx_region_saved) {
-          CTX_wm_region_set(C, ctx_region_saved);
-        }
-      }
+      tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
       return editsource_exec_finish(C, op, region, true);
     }
-    printf("EDITSOURCE_CTXSTORE: no matching button found\n");
   }
 
   /* BFA - Tear-Off Menu/Panel Fallback 2: when no active button is found (can happen when a tear-off popup is open and the
@@ -2603,30 +2564,21 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     bScreen *screen = CTX_wm_screen(C);
 
     EditSourceButStore *but_store = nullptr;
-    int region_count = 0;
-    int button_count = 0;
-    int hash_hits = 0;
     if (screen) {
       for (ScrArea *area = screen->areabase.first(); area; area = area->next) {
         for (ARegion *reg_iter = area->regionbase.first(); reg_iter; reg_iter = reg_iter->next) {
           if (reg_iter->runtime == nullptr) {
             continue;
           }
-          region_count++;
           for (Block &block_base : reg_iter->runtime->uiblocks) {
             Block *block_pair[2] = {&block_base, block_base.oldblock};
             for (Block *block : Span(block_pair, block_pair[1] ? 2 : 1)) {
               for (Button &but_iter : block->buttons()) {
-                button_count++;
                 std::unique_ptr<EditSourceButStore> *store_ptr = editsource_info->hash.lookup_ptr(&but_iter);
                 if (store_ptr) {
-                  hash_hits++;
                   if ((*store_ptr)->py_dbg_line_number != -1) {
                     but_store = store_ptr->get();
                     region = reg_iter;
-                    printf("EDITSOURCE_BROAD: found but_store=%p line=%d but=%p '%s' region=%p\n",
-                           (void *)but_store, but_store->py_dbg_line_number,
-                           (void *)&but_iter, but_iter.drawstr.c_str(), (void *)region);
                     break;
                   }
                 }
@@ -2640,8 +2592,6 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
         if (but_store) break;
       }
     }
-    printf("EDITSOURCE_BROAD: regions=%d buttons=%d hash_hits=%d but_store=%p\n",
-           region_count, button_count, hash_hits, (void *)but_store);
 
     if (but_store) {
       region_redraw_immediately(C, region);
@@ -2655,27 +2605,13 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     editsource_active_but_clear();
 
     /* Restore context if it was modified for tear-off menu */
-    if (context_restored) {
-      if (ctx_area_saved) {
-        CTX_wm_area_set(C, ctx_area_saved);
-      }
-      if (ctx_region_saved) {
-        CTX_wm_region_set(C, ctx_region_saved);
-      }
-    }
+    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
     return ret;
   }
 
   /* BFA - Tear-Off Menu/Panel Restore context if it was modified for tear-off menu */
-  if (context_restored) {
-    if (ctx_area_saved) {
-      CTX_wm_area_set(C, ctx_area_saved);
-    }
-    if (ctx_region_saved) {
-      CTX_wm_region_set(C, ctx_region_saved);
-    }
-  }
+  tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
   BKE_report(op->reports, RPT_ERROR, "Active button not found");
   return OPERATOR_CANCELLED;

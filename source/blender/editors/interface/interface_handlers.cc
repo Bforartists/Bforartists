@@ -12197,12 +12197,6 @@ static int handle_menu_event(bContext *C,
                 else {
                   menu->menuretval = RETURN_OUT;
                 }
-                // printf("MENUDBG: click outside set menuretval=%d flags=0x%x\n",
-                //        menu->menuretval,
-                //        block->flag);
-              }
-              else {
-                // printf("MENUDBG: click outside SKIPPED tear-off flags=0x%x\n", block->flag);
               }
             }
             else if (saferct && !BLI_rctf_isect_pt(
@@ -12215,12 +12209,6 @@ static int handle_menu_event(bContext *C,
                 else {
                   menu->menuretval = (U.flag & USER_MENU_CLOSE_LEAVE) ? RETURN_OUT : RETURN_CANCEL;
                 }
-                // printf("MENUDBG: saferct outside set menuretval=%d flags=0x%x\n",
-                //        menu->menuretval,
-                //        block->flag);
-              }
-              else {
-                // printf("MENUDBG: saferct outside SKIPPED tear-off flags=0x%x\n", block->flag);
               }
             }
           }
@@ -12248,7 +12236,8 @@ static int handle_menu_event(bContext *C,
 #endif
       else if (event->type == EVT_ESCKEY && event->val == KM_PRESS) {
         /* Escape cancels this and all preceding menus.
-         * Don't close tear-off menus so they stay open until the Close Menu button is used. */
+         * BFA - Tear-Off Menu/Panel: don't close tear-off menus, so they stay open until the
+         * Close Menu button is used. */
         if (!(block->flag & BLOCK_TEAR_OFF)) {
           menu->menuretval = RETURN_CANCEL;
         }
@@ -12302,11 +12291,6 @@ static int handle_menu_event(bContext *C,
       }
 #endif
       else {
-        // printf("MENUDBG: mouse-towards check inside=%d flags=0x%x event=%d\n",
-        //        inside,
-        //        block->flag,
-        //        event->type);
-
         /* check mouse moving outside of the menu */
         /* BFA - Tear-Off Menu/Panel: exclude tear-off from mouse-leave quit */
         if (inside == false && (block->flag & (BLOCK_MOVEMOUSE_QUIT | BLOCK_POPOVER)) &&
@@ -13616,7 +13600,8 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
           handler->context.area = nullptr;
           handler->context.region = nullptr;
           continue;
-        }        if (menu->region && menu->region->runtime->uiblocks.first()) {
+        }
+        if (menu->region && menu->region->runtime->uiblocks.first()) {
           Block *block = menu->region->runtime->uiblocks.first();
           if (block->flag & BLOCK_TEAR_OFF) {
             /* BFA - Tear-Off Menu/Panel: clear stale context so
