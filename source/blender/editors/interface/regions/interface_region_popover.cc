@@ -145,10 +145,22 @@ static void tear_off_shelf_width_measure(const ARegion *region,
 
 /* BFA - Tear-Off Menu/Panel: the floor fits the grip and the two header icons. A one column shelf
  * has about 38 units of layout, too narrow for the header. */
-static int tear_off_shelf_layout_width(const PopupBlockHandle *handle)
+int tear_off_layout_width(const wmWindow *win, const PopupBlockHandle *handle)
 {
   const float width = (handle->tear_off_width - handle->tear_off_width_chrome) * UI_SCALE_FAC;
-  return std::max(int(width + 0.5f), 3 * UI_UNIT_X);
+  /* BFA - Tear-Off Menu/Panel: a window made smaller must not leave a wider panel behind. */
+  const int max_width = WM_window_native_pixel_size(win)[0] - 2 * UI_SCREEN_MARGIN -
+                        U.widget_unit;
+  return std::max(std::min(int(width + 0.5f), max_width), 3 * UI_UNIT_X);
+}
+
+/* BFA - Tear-Off Menu/Panel: same formula as #popover_panel_create. */
+static int tear_off_panel_designed_ui_size(const Popover *pup)
+{
+  const int ui_units_x = (pup->panel_type->ui_units_x == 0) ? UI_POPOVER_WIDTH_UNITS :
+                                                              pup->panel_type->ui_units_x;
+  return int(ui_units_x * U.widget_unit *
+             (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS));
 }
 
 /* BFA - Tear-Off Menu/Panel: tool shelf panels keep the shelf's look and column count. Other
@@ -178,13 +190,10 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
      * (same formula as popover_panel_create) or the panel keeps its old pixel width. */
     if (handle->is_tear_off && pup->panel_type) {
       if (handle->tear_off_width > 0.0f) {
-        pup->ui_size_x = tear_off_shelf_layout_width(handle);
+        pup->ui_size_x = tear_off_layout_width(CTX_wm_window(C), handle);
       }
       else {
-        const int ui_units_x = (pup->panel_type->ui_units_x == 0) ? UI_POPOVER_WIDTH_UNITS :
-                                                                    pup->panel_type->ui_units_x;
-        pup->ui_size_x = ui_units_x * U.widget_unit *
-                         (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS);
+        pup->ui_size_x = tear_off_panel_designed_ui_size(pup);
       }
     }
     popover_create_block(C, handle->region, pup, wm::OpCallContext::InvokeRegionWin);
@@ -291,8 +300,7 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
     block_theme_style_set(block, BLOCK_THEME_STYLE_POPUP);
     block_direction_set(block, block->direction);
     /* BFA - Tear-Off Menu/Panel: the shelf width is exact, the minimum would widen it. */
-    block->minbounds = (handle->is_tear_off && handle->tear_off_width > 0.0f) ? 0 :
-                                                                                UI_MENU_WIDTH_MIN;
+    block->minbounds = (handle->tear_off_width_default > 0.0f) ? 0 : UI_MENU_WIDTH_MIN;
 
     if (!handle->refresh) {
       const Button *but = nullptr;

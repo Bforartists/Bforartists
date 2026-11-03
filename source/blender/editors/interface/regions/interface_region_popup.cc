@@ -1456,6 +1456,7 @@ PopupBlockHandle *popup_block_create(bContext *C,
     /* Known before the first layout, so the popup is placed with its real width and Python never
      * measures the source region. */
     handle->tear_off_width = tear_off_init.width;
+    handle->tear_off_width_default = tear_off_init.width;
     handle->tear_off_width_chrome = tear_off_init.width_chrome;
   }
 

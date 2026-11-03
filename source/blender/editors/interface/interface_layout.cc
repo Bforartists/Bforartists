@@ -3034,7 +3034,10 @@ float tear_off_layout_width_get(const Layout *layout)
 {
   const Block *block = layout->block();
   const PopupBlockHandle *handle = block ? block->handle : nullptr;
-  return (handle && handle->is_tear_off) ? handle->tear_off_width : 0.0f;
+  /* Only a shelf's width means anything to Python. */
+  return (handle && handle->is_tear_off && handle->tear_off_width_default > 0.0f) ?
+             handle->tear_off_width :
+             0.0f;
 }
 
 static Button *item_menu(Layout *layout,
