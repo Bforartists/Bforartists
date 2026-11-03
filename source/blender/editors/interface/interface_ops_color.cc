@@ -100,6 +100,19 @@ static void colorspaces_menu_draw(const bContext *C, Menu *menu)
   PropertyRNA *prop = nullptr;
   std::optional<StringRefNull> parent_path = colorspace_rna_details_from_context(C, &ptr, &prop);
 
+  /* BFA - Tear-Off Menu/Panel: opened from a torn-off panel, the active button lookup checks this
+   * menu's own popup region and finds nothing, which left the menu empty. Use the button that
+   * opened it. Regular popups are left as upstream. */
+  if (prop == nullptr && menu->layout->block()->handle) {
+    const Button *source_but = menu->layout->block()->handle->popup_create_vars.but;
+    if (source_but && source_but->rnaprop && source_but->block->handle &&
+        source_but->block->handle->is_tear_off)
+    {
+      ptr = source_but->rnapoin;
+      prop = source_but->rnaprop;
+    }
+  }
+
   /* In case menu is invoked from invalid context. */
   if (!ptr || prop == nullptr) {
     return;
