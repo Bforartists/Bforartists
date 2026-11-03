@@ -13731,6 +13731,26 @@ void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle
   WM_event_remove_ui_handler(handlers, popup_handler, popup_handler_remove, popup, false);
 }
 
+/* BFA - Tear-Off Menu/Panel: a tear-off survives a screen change but a submenu it opened doesn't.
+ * The submenu's region isn't moved to the new screen and it has no handler of its own, so it
+ * would be left behind on the old screen. It closes without touching the handler list. */
+static void tear_off_submenu_close(bContext *C, PopupBlockHandle *menu)
+{
+  Button *but = region_find_active_but(menu->region);
+  if (but == nullptr || but->active->menu == nullptr) {
+    return;
+  }
+  ARegion *region_popup = CTX_wm_region_popup(C);
+  CTX_wm_region_popup_set(C, menu->region);
+  button_active_free(C, but);
+  /* The previous context popup may be the submenu that was just closed. */
+  bScreen *screen = CTX_wm_screen(C);
+  if (region_popup && !(screen && BLI_findindex(&screen->regionbase, region_popup) != -1)) {
+    region_popup = nullptr;
+  }
+  CTX_wm_region_popup_set(C, region_popup);
+}
+
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
 {
   /* BFA - Tear-Off Menu/Panel: keep tear-off popups open across screen/workspace changes. */
@@ -13740,6 +13760,7 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
       if (handler->handle_fn == popup_handler && handler->remove_fn == popup_handler_remove) {
         PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
         if (menu->is_tear_off) {
+          tear_off_submenu_close(C, menu); /* BFA - Tear-Off Menu/Panel */
           /* BFA - Tear-Off Menu/Panel: clear stale context so
            * WM_event_remove_handlers_by_area doesn't remove this handler. */
           handler->context.area = nullptr;
@@ -13749,6 +13770,7 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
         if (menu->region && menu->region->runtime->uiblocks.first()) {
           Block *block = menu->region->runtime->uiblocks.first();
           if (block->flag & BLOCK_TEAR_OFF) {
+            tear_off_submenu_close(C, menu); /* BFA - Tear-Off Menu/Panel */
             /* BFA - Tear-Off Menu/Panel: clear stale context so
              * WM_event_remove_handlers_by_area doesn't remove this handler. */
             handler->context.area = nullptr;
