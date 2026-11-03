@@ -13379,8 +13379,14 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
        * panel again, press elsewhere starts a drag. */
       if (inside && event->type == LEFTMOUSE && event->val == KM_PRESS) {
         if (over_x) {
-          /* Close (discard) the pinned panel. */
-          handle->menuretval = RETURN_CANCEL;
+          /* BFA - Tear-Off Menu/Panel: close now. This branch always returns before the
+           * menuretval check below, so a tag would be applied only after expanding. */
+          wmWindow *win = CTX_wm_window(C);
+          popup_block_free(C, menu);
+          popup_handlers_remove(&win->runtime->modalhandlers, menu);
+          CTX_wm_region_popup_set(C, nullptr);
+          WM_event_add_mousemove(win);
+          return WM_UI_HANDLER_BREAK;
         }
         else if (over_pin) {
           /* Pin icon toggles back to the full panel. */
