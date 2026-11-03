@@ -373,6 +373,7 @@ static wmOperatorStatus copy_python_command_button_exec(bContext *C, wmOperator 
     Block *block = region_popup->runtime->uiblocks.first();
     if (block && (block->flag & BLOCK_TEAR_OFF) && block->handle) {
       PopupBlockHandle *handle = static_cast<PopupBlockHandle *>(block->handle);
+      tear_off_context_ensure(C, handle); /* BFA - Tear-Off Menu/Panel */
       if (handle->ctx_area || handle->ctx_region) {
         /* Save current context and restore original context from popup handle */
         ctx_area_saved = CTX_wm_area(C);
@@ -2405,6 +2406,7 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     Block *block = region_popup->runtime->uiblocks.first();
     if (block && (block->flag & BLOCK_TEAR_OFF) && block->handle) {
       PopupBlockHandle *handle = static_cast<PopupBlockHandle *>(block->handle);
+      tear_off_context_ensure(C, handle); /* BFA - Tear-Off Menu/Panel */
       if (handle->ctx_area || handle->ctx_region) {
         /* Save current context and restore original context from popup handle */
         ctx_area_saved = CTX_wm_area(C);

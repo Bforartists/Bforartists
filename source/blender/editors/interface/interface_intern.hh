@@ -1345,6 +1345,13 @@ void popup_block_scrolltest(Block *block);
 bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle);
 
 /**
+ * BFA - Tear-Off Menu/Panel: make `ctx_area` / `ctx_region` valid for the current screen. They
+ * are only compared, never dereferenced, while unverified. If invalid, re-resolve to an area of
+ * the same space type. No-op for other popups and for tear-offs on another workspace.
+ */
+void tear_off_context_ensure(bContext *C, PopupBlockHandle *handle);
+
+/**
  * BFA - Tear-Off Menu/Panel: geometry of the collapsed pin widget in region-local
  * coordinates. Shared by drawing and event handling.
  */

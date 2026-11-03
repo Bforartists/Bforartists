@@ -11436,6 +11436,7 @@ static int handle_menu_button(bContext *C, const wmEvent *event, PopupBlockHandl
 
   int retval;
   if (but) {
+    tear_off_context_ensure(C, menu); /* BFA - Tear-Off Menu/Panel */
     ScrArea *ctx_area = CTX_wm_area(C);
     ARegion *ctx_region = CTX_wm_region(C);
 

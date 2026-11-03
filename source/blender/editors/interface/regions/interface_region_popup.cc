@@ -514,6 +514,21 @@ static void block_region_refresh(const bContext *C, ARegion *region)
   ScrArea *ctx_area = CTX_wm_area(C);
   ARegion *ctx_region = CTX_wm_region(C);
 
+  /* BFA - Tear-Off Menu/Panel: this runs on every window draw, so it's the one place that
+   * sees a tear-off becoming visible again, and scale changes from all paths (macOS native
+   * resolution, DPI hint, Resolution Scale). */
+  for (Block &block : region->runtime->uiblocks) {
+    PopupBlockHandle *handle = block.handle;
+    if (!handle || !handle->is_tear_off || !tear_off_is_visible(C, handle)) {
+      continue;
+    }
+    if (handle->tear_off_refresh_pending || (handle->tear_off_scale_fac != UI_SCALE_FAC)) {
+      handle->tear_off_refresh_pending = false;
+      handle->tear_off_scale_fac = UI_SCALE_FAC;
+      region->runtime->do_draw |= RGN_REFRESH_UI;
+    }
+  }
+
   if (region->runtime->do_draw & RGN_REFRESH_UI) {
     ScrArea *handle_ctx_area;
     ARegion *handle_ctx_region;
@@ -522,7 +537,15 @@ static void block_region_refresh(const bContext *C, ARegion *region)
     for (Block &block : region->runtime->uiblocks.items_mutable()) {
       PopupBlockHandle *handle = block.handle;
 
+      /* BFA - Tear-Off Menu/Panel: a hidden tear-off may reference another screen or a
+       * freed area. Defer its refresh until it is visible. */
+      if (handle->is_tear_off && !tear_off_is_visible(C, handle)) {
+        handle->tear_off_refresh_pending = true;
+        continue;
+      }
+
       if (handle->can_refresh) {
+        tear_off_context_ensure(const_cast<bContext *>(C), handle); /* BFA - Tear-Off Menu/Panel */
         handle_ctx_area = handle->ctx_area;
         handle_ctx_region = handle->ctx_region;
 
@@ -1409,6 +1432,50 @@ PopupBlockHandle *popup_block_create(bContext *C,
   }
 
   return handle;
+}
+
+/* BFA - Tear-Off Menu/Panel: a tear-off outlives the area and region it stored at creation, so
+ * they can dangle after an area close, a maximize restore or a layout delete. */
+void tear_off_context_ensure(bContext *C, PopupBlockHandle *handle)
+{
+  if (!handle->is_tear_off || handle->tear_off_spacetype == 0) {
+    return;
+  }
+  const wmWindow *win = CTX_wm_window(C);
+  const bScreen *screen = CTX_wm_screen(C);
+  if (!win || !screen) {
+    return;
+  }
+  /* A tear-off hidden on another workspace keeps its real area for when it returns. */
+  if (handle->tear_off_workspace && CTX_wm_workspace(C) != handle->tear_off_workspace) {
+    return;
+  }
+
+  ScrArea *area_valid = nullptr;
+  ED_screen_areas_iter (win, screen, area) {
+    if (area == handle->ctx_area && area->spacetype == handle->tear_off_spacetype) {
+      area_valid = area;
+      break;
+    }
+  }
+  if (area_valid && handle->ctx_region &&
+      BLI_findindex(&area_valid->regionbase, handle->ctx_region) != -1)
+  {
+    return;
+  }
+  if (!area_valid) {
+    ED_screen_areas_iter (win, screen, area) {
+      if (area->spacetype == handle->tear_off_spacetype) {
+        area_valid = area;
+        break;
+      }
+    }
+  }
+  handle->ctx_area = area_valid;
+  handle->ctx_region = area_valid ?
+                           BKE_area_find_region_type(area_valid,
+                                                     handle->tear_off_ctx_region_type) :
+                           nullptr;
 }
 
 bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)
