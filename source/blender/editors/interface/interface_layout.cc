@@ -6463,7 +6463,7 @@ static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt)
                            "WM_OT_menu_tear_off_collapse",
                            "WM_OT_menu_tear_off_close");
     }
-    else {
+    else if (tear_off_enabled()) { /* BFA - Tear-Off Menu/Panel: no row when turned off. */
       PointerRNA opptr = layout->op("WM_OT_menu_tear_off", "Tear Off Menu", ICON_GRIP);
       if (opptr.data) {
         RNA_string_set(&opptr, "menu_idname", mt->idname);
@@ -6592,7 +6592,7 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
                              "WM_OT_panel_tear_off_collapse",
                              "WM_OT_panel_tear_off_close");
       }
-      else {
+      else if (tear_off_enabled()) { /* BFA - Tear-Off Menu/Panel: no row when turned off. */
         const EmbossType prev_emboss = body->emboss_or_undefined();
         body->emboss_set(EmbossType::Pulldown);
         PointerRNA opptr = body->op("WM_OT_panel_tear_off", "Tear Off Panel", ICON_GRIP);

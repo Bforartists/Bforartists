@@ -2531,6 +2531,13 @@ static void WM_OT_quit_blender(wmOperatorType *ot)
 /** \name Tear-Off Menu Operator
  * \{ */
 
+/* BFA - Tear-Off Menu/Panel: shared by all tear-off operators, which must not run when the
+ * preference is off, whichever way they are called. */
+static bool wm_tear_off_poll(bContext *C)
+{
+  return ui::tear_off_enabled() && WM_operator_winactive(C);
+}
+
 /* BFA - Tear-Off Menu/Panel: finish a popup just created as a tear-off. `label` names the
  * collapsed pin widget, null leaves it empty. Does nothing if the popup wasn't created. */
 static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle, const char *label)
@@ -2591,7 +2598,7 @@ static void WM_OT_menu_tear_off(wmOperatorType *ot)
   ot->description = "Tear-Off menu to a persistent floating window";
 
   ot->exec = wm_menu_tear_off_exec;
-  ot->poll = WM_operator_winactive;
+  ot->poll = wm_tear_off_poll;
 
   RNA_def_string(ot->srna, "menu_idname", "Menu", MAX_NAME, "Menu", "");
 }
@@ -2629,7 +2636,7 @@ static void WM_OT_menu_tear_off_close(wmOperatorType *ot)
   ot->description = "Close the torn-off menu";
 
   ot->exec = wm_tear_off_close_exec;
-  ot->poll = WM_operator_winactive;
+  ot->poll = wm_tear_off_poll;
 }
 
 /* BFA - Tear-Off Menu/Panel: collapse the pinned menu or panel to the small pin widget. */
@@ -2652,7 +2659,7 @@ static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
   ot->description = "Collapse the torn-off menu to a pin";
 
   ot->exec = wm_tear_off_collapse_exec;
-  ot->poll = WM_operator_winactive;
+  ot->poll = wm_tear_off_poll;
 }
 
 /** \} */
@@ -2700,7 +2707,7 @@ static void WM_OT_panel_tear_off(wmOperatorType *ot)
   ot->description = "Tear-Off panel to a persistent floating window";
 
   ot->exec = wm_panel_tear_off_exec;
-  ot->poll = WM_operator_winactive;
+  ot->poll = wm_tear_off_poll;
 
   RNA_def_string(ot->srna, "panel_idname", "Panel", MAX_NAME, "Panel", "");
 }
@@ -2713,7 +2720,7 @@ static void WM_OT_panel_tear_off_collapse(wmOperatorType *ot)
   ot->description = "Collapse the torn-off panel to a pin";
 
   ot->exec = wm_tear_off_collapse_exec;
-  ot->poll = WM_operator_winactive;
+  ot->poll = wm_tear_off_poll;
 }
 
 /* BFA - Tear-Off Menu/Panel */
@@ -2724,7 +2731,7 @@ static void WM_OT_panel_tear_off_close(wmOperatorType *ot)
   ot->description = "Close the torn-off panel";
 
   ot->exec = wm_tear_off_close_exec;
-  ot->poll = WM_operator_winactive;
+  ot->poll = wm_tear_off_poll;
 }
 
 /** \} */
