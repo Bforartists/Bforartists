@@ -6455,6 +6455,32 @@ static void block_tear_off_header_tag(Block *block)
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: a narrow shelf has too little room for the grip, the title and the
+ * header icons. Give up the grip first, then a clipped title. Below 2.5 units a clipped title says
+ * nothing, and the collapsed pin still shows the name. */
+static void tear_off_shelf_title_get(const Block *block,
+                                     const char *label,
+                                     const int reserved,
+                                     int *r_icon,
+                                     const char **r_title)
+{
+  *r_icon = ICON_GRIP;
+  *r_title = label;
+  if (!block_is_tear_off_shelf(block)) {
+    return;
+  }
+  const bContext *C = static_cast<const bContext *>(block->evil_C);
+  const int room = tear_off_layout_width(CTX_wm_window(C), block->handle) - reserved;
+  const int text_w = fontstyle_string_width(UI_FSTYLE_WIDGET, label);
+  /* The padding factors of #text_pad_none, with and without the icon. */
+  if (text_w + int(ceilf(UI_UNIT_X * 1.75f)) > room) {
+    const bool show_text = text_w + int(ceilf(UI_UNIT_X * 0.25f)) <= room ||
+                           room >= int(2.5f * UI_UNIT_X);
+    *r_icon = show_text ? ICON_NONE : ICON_GRIP;
+    *r_title = show_text ? label : "";
+  }
+}
+
 /* BFA - Tear-Off Menu/Panel: draw the tear-off header row (menu/panel label on the left,
  * pin + close icons on the right) followed by a separator line. The icons are right-aligned
  * to the block content width after layout by #block_tear_off_align_header(); a spacer is not
@@ -6474,7 +6500,15 @@ void tear_off_header_draw(Layout *layout,
   if (!(layout->block()->flag & BLOCK_POPOVER)) {
     row->alignment_set(LayoutAlign::Left);
   }
-  row->label(CTX_IFACE_(translation_context, label), ICON_GRIP);
+  /* The reserved room is the two header icons. */
+  int title_icon;
+  const char *title;
+  tear_off_shelf_title_get(layout->block(),
+                           CTX_IFACE_(translation_context, label),
+                           2 * UI_UNIT_X,
+                           &title_icon,
+                           &title);
+  row->label(title, title_icon);
   /* Nested non-expanding row keeps the two icons compact together. */
   Layout *icons = &row->row(true);
   icons->fixed_size_set(true);
@@ -6600,7 +6634,12 @@ static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel,
     row->label(layout_has_panel_label(left, pt) ? "" : label, ICON_NONE);
   }
   else {
-    row->label(label, ICON_GRIP);
+    /* The reserved room is the two header icons and the preset. */
+    int title_icon;
+    const char *title;
+    const int reserved = (2 + ((pt->draw_header_preset && has_header) ? 1 : 0)) * UI_UNIT_X;
+    tear_off_shelf_title_get(layout->block(), label, reserved, &title_icon, &title);
+    row->label(title, title_icon);
   }
   if (pt->draw_header_preset && has_header) {
     Layout *preset = &row->row(true);
