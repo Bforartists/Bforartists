@@ -454,6 +454,15 @@ PopupBlockHandle *popup_menu_create(bContext *C,
       can_refresh);
 }
 
+/* BFA - Tear-Off Menu/Panel: a menu with no source button, drawn from `menu_func` on each refresh.
+ * The title stays null: #PopupMenu::title doesn't own its string, and the header shows the label
+ * anyway. */
+PopupBlockHandle *popup_menu_tear_off_create(bContext *C,
+                                             std::function<void(bContext *, Layout *)> menu_func)
+{
+  return popup_menu_create_impl(C, nullptr, nullptr, nullptr, std::move(menu_func), true, true);
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */

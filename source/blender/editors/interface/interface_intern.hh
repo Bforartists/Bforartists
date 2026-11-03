@@ -1415,8 +1415,32 @@ struct EnumMenuDrawParams {
   bool copy_descriptions = false;
   /** Called for each item button. */
   std::function<void(Button &, const EnumPropertyItem &)> item_fn;
+  /** The button that opened this dropdown, which offers the Tear Off row. Null in a tear-off. */
+  const Button *tear_off_row_source = nullptr;
 };
 void enum_menu_draw(bContext *C, Layout *layout, const EnumMenuDrawParams &params);
+
+/* BFA - Tear-Off Menu/Panel: enum tear-offs draw the same header as menu tear-offs, and have no
+ * #MenuType to create their popup from. */
+void tear_off_header_draw(Layout *layout,
+                          const char *translation_context,
+                          const char *label,
+                          const char *collapse_op,
+                          const char *close_op);
+PopupBlockHandle *popup_menu_tear_off_create(bContext *C,
+                                             std::function<void(bContext *, Layout *)> menu_func);
+
+/* BFA - Tear-Off Menu/Panel: `interface_region_tear_off_enum.cc`. */
+void enum_tear_off_row_draw_property(bContext *C, Layout *layout, const Button *but);
+void enum_tear_off_row_draw_operator(Layout *layout,
+                                     const Button *but,
+                                     const char *opname,
+                                     const char *propname,
+                                     wm::OpCallContext opcontext);
+void enum_tear_off_unavailable_draw(Layout *layout);
+PopupBlockHandle *enum_tear_off_popup_create(bContext *C,
+                                             PointerRNA *op_ptr,
+                                             std::string &r_label);
 
 /** \} */
 

@@ -2662,6 +2662,57 @@ static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
   ot->poll = wm_tear_off_poll;
 }
 
+/* BFA - Tear-Off Menu/Panel: stores identifiers rather than a button, because the source button
+ * can be freed on redraw and pointers don't survive undo. */
+static wmOperatorStatus wm_enum_tear_off_exec(bContext *C, wmOperator *op)
+{
+  std::string label;
+  ui::PopupBlockHandle *handle = ui::enum_tear_off_popup_create(C, op->ptr, label);
+  if (handle == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
+  tear_off_handle_init(C, handle, label.c_str());
+  return OPERATOR_INTERFACE;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_enum_tear_off(wmOperatorType *ot)
+{
+  ot->name = "Tear-Off Enum Menu";
+  ot->idname = "WM_OT_enum_tear_off";
+  ot->description = "Tear-Off this list to a persistent floating window";
+
+  ot->exec = wm_enum_tear_off_exec;
+  ot->poll = wm_tear_off_poll;
+  ot->flag = OPTYPE_INTERNAL;
+
+  PropertyRNA *prop;
+  prop = RNA_def_string(
+      ot->srna, "data_path", nullptr, 0, "Data Path", "Path to the enum property");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_boolean(
+      ot->srna, "use_context", false, "Use Context", "Resolve the path from the context");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_int(
+      ot->srna, "id_type", 0, SHRT_MIN, SHRT_MAX, "ID Type", "", SHRT_MIN, SHRT_MAX);
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  WM_operator_properties_id_lookup(ot, false); /* Adds a hidden "session_uid". */
+  prop = RNA_def_string(ot->srna, "op_idname", nullptr, 0, "Operator", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_string(ot->srna, "op_propname", nullptr, 0, "Operator Property", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_int(ot->srna,
+                     "op_context",
+                     int(wm::OpCallContext::InvokeRegionWin),
+                     0,
+                     int(wm::OpCallContext::ExecScreen),
+                     "Operator Context",
+                     "",
+                     0,
+                     int(wm::OpCallContext::ExecScreen));
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -4598,6 +4649,7 @@ void wm_operatortypes_register()
   WM_operatortype_append(WM_OT_menu_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_menu_tear_off_close); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_menu_tear_off_collapse); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_enum_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_panel_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_panel_tear_off_close); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_panel_tear_off_collapse); /* BFA - Tear-Off Menu/Panel */

@@ -4942,6 +4942,12 @@ void enum_menu_draw(bContext *C, Layout *layout, const EnumMenuDrawParams &param
     layout->separator();
   }
 
+  /* BFA - Tear-Off Menu/Panel: after the title, where a menu draws its row. A torn-off copy can't
+   * tear off again, so it passes no source. */
+  if (params.tear_off_row_source) {
+    enum_tear_off_row_draw_property(C, layout, params.tear_off_row_source);
+  }
+
   /* NOTE: `item_array[...]` is reversed on access. */
 
   /* create items */
@@ -5085,6 +5091,7 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
   params.aspect = but->block->aspect;
   /* Show title when no categories and calling button has no text or prior label. */
   params.show_title = !but->str[0] || !prior_label;
+  params.tear_off_row_source = but;
   enum_menu_draw(C, layout, params);
 }
 

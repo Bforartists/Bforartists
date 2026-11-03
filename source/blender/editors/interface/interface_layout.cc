@@ -6427,11 +6427,11 @@ std::optional<StringRefNull> button_asset_shelf_type_idname_get(const Button *bu
  * to the block content width after layout by #block_tear_off_align_header(); a spacer is not
  * used because #update_flexible_spacing targets the region width, which is meaningless for
  * popup blocks (and would shift the whole block). */
-static void tear_off_header_draw(Layout *layout,
-                                 const char *translation_context,
-                                 const char *label,
-                                 const char *collapse_op,
-                                 const char *close_op)
+void tear_off_header_draw(Layout *layout,
+                          const char *translation_context,
+                          const char *label,
+                          const char *collapse_op,
+                          const char *close_op)
 {
   const EmbossType prev_emboss = layout->emboss_or_undefined();
   layout->emboss_set(EmbossType::Pulldown);
