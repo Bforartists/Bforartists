@@ -13785,23 +13785,6 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
     }
   }
 }
-// BFA - Tear-Off Menu/Panel
-void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *handlers)
-{
-  /* BFA - Tear-Off Menu/Panel: remove ALL popups including tear-offs.
-   * Needed for script reload where Python callbacks become invalid. */
-  for (wmEventHandler &handler_base : handlers->items_mutable()) {
-    if (handler_base.type == WM_HANDLER_TYPE_UI) {
-      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
-      if (handler->handle_fn == popup_handler && handler->remove_fn == popup_handler_remove) {
-        PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
-        popup_handler_remove(C, menu);
-        BLI_remlink(handlers, handler);
-        wm_event_free_handler(&handler->head);
-      }
-    }
-  }
-}
 
 /* BFA - Tear-Off Menu/Panel */
 void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area)

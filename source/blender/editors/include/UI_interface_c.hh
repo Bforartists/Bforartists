@@ -2474,11 +2474,6 @@ void popup_handlers_add(bContext *C,
 void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle *popup);
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers);
 /**
- * BFA - Tear-Off Menu/Panel: close all popups including tear-offs.
- * Needed for script reload where Python callbacks become invalid.
- */
-void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *handlers);
-/**
  * BFA - Tear-Off Menu/Panel: tear-off handlers outlive the area they were created in, so drop
  * their reference when that area exits, and rebuild their buttons, which may point into its
  * space data. Other popups are left untouched.
