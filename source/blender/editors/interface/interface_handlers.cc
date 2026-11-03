@@ -9817,6 +9817,12 @@ static void button_activate_exit(
   Block *block = but->block;
   /* BFA - Tear-Off Menu/Panel: read this now, #apply_but moves the operator out of the button. */
   const bool is_tear_off_row = !data->cancel && button_is_tear_off_row(but);
+  /* And where the popup is: a menu closes before its operator runs. */
+  if (is_tear_off_row && but->opptr) {
+    const int source_xy[2] = {int(block->rect.xmin) + data->region->winrct.xmin,
+                              int(block->rect.ymax) + data->region->winrct.ymin};
+    RNA_int_set_array(but->opptr, "source_xy", source_xy);
+  }
 
   if (ELEM(but->type, ButtonType::Grip, ButtonType::TextBox)) {
     WM_cursor_modal_restore(win);

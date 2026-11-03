@@ -2581,8 +2581,6 @@ struct TearOffSourceContext {
   bContext *C;
   ScrArea *area;
   ARegion *region;
-  bool has_popup_xy = false;
-  int popup_xy[2] = {0, 0};
 
   explicit TearOffSourceContext(bContext *C)
       : C(C), area(CTX_wm_area(C)), region(CTX_wm_region(C))
@@ -2593,21 +2591,6 @@ struct TearOffSourceContext {
     if (source && source->ctx_area && source->ctx_region) {
       CTX_wm_area_set(C, source->ctx_area);
       CTX_wm_region_set(C, source->ctx_region);
-    }
-    if (block) {
-      has_popup_xy = true;
-      popup_xy[0] = int(block->rect.xmin) + popup->winrct.xmin;
-      popup_xy[1] = int(block->rect.ymax) + popup->winrct.ymin;
-    }
-  }
-
-  /* The new tear-off's top left stays where the popup's was, so tearing off holds it in place and
-   * doesn't jump to the cursor. The refresh tagged by #tear_off_handle_init moves it there. */
-  void place(ui::PopupBlockHandle *handle) const
-  {
-    if (handle && has_popup_xy) {
-      copy_v2_v2_int(handle->tear_off_pin_xy, popup_xy);
-      copy_v2_v2_int(handle->popup_create_vars.event_xy, popup_xy);
     }
   }
   ~TearOffSourceContext()
@@ -2631,6 +2614,21 @@ static void tear_off_grab_prop_def(wmOperatorType *ot)
 {
   PropertyRNA *prop = RNA_def_boolean(ot->srna, "use_grab", false, "Grab", "");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  /* Set by a row, see #button_activate_exit. */
+  prop = RNA_def_int_vector(
+      ot->srna, "source_xy", 2, nullptr, INT_MIN, INT_MAX, "", "", INT_MIN, INT_MAX);
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+}
+
+/* BFA - Tear-Off Menu/Panel: the new tear-off's top left stays where the popup's was, so tearing
+ * off holds it in place and doesn't jump to the cursor. The refresh tagged by
+ * #tear_off_handle_init moves it there. */
+static void tear_off_place_at_source(wmOperator *op, ui::PopupBlockHandle *handle)
+{
+  if (handle && RNA_struct_property_is_set(op->ptr, "source_xy")) {
+    RNA_int_get_array(op->ptr, "source_xy", handle->tear_off_pin_xy);
+    copy_v2_v2_int(handle->popup_create_vars.event_xy, handle->tear_off_pin_xy);
+  }
 }
 
 /* BFA - Tear-Off Menu/Panel */
@@ -2648,7 +2646,7 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
   /* BFA - Tear-Off Menu/Panel */
   const MenuType *mt = WM_menutype_find(idname, true);
   tear_off_handle_init(C, handle, mt ? CTX_IFACE_(mt->translation_context, mt->label) : nullptr);
-  source_context.place(handle);
+  tear_off_place_at_source(op, handle);
   tear_off_grab_begin(C, op, handle);
 
   return status;
@@ -2738,7 +2736,7 @@ static wmOperatorStatus wm_enum_tear_off_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
   tear_off_handle_init(C, handle, label.c_str());
-  source_context.place(handle);
+  tear_off_place_at_source(op, handle);
   tear_off_grab_begin(C, op, handle);
   return OPERATOR_INTERFACE;
 }
@@ -2819,7 +2817,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
 
   /* BFA - Tear-Off Menu/Panel */
   tear_off_handle_init(C, handle, CTX_IFACE_(pt->translation_context, pt->label));
-  source_context.place(handle);
+  tear_off_place_at_source(op, handle);
 
   tear_off_grab_begin(C, op, handle); /* BFA - Tear-Off Menu/Panel */
 
