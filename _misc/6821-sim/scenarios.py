@@ -1504,6 +1504,40 @@ def s_p5_repoll():
 SC["p5_repoll"] = s_p5_repoll
 
 
+def space_poll_round(cls, t, prop, on, off):
+    """Change only a property that the panel polls. No frame change as in repoll_round, because
+    that would refresh the tear-off with or without the property's own notifier."""
+    st = cls.state
+    a = max((a for a in scr().areas if a.type != "VIEW_3D"), key=lambda a: a.width * a.height)
+    a.type = t; yield 0.8
+    idx = [x.as_pointer() for x in scr().areas if x.type == t].index(a.as_pointer())
+    sp = a.spaces.active
+    name = prop + "_" + off
+    setattr(sp, prop, on)
+    st.update(show=True, prop=prop, value=on); yield 0.6
+    r = yield from tear_center(cls.bl_idname, t=t, rt="UI", idx=idx)
+    check(name + ": operator runs", r == {"INTERFACE"}, r)
+    check(name + ": it drew itself", st["draw_popup"] > 0, st)
+    polled, drawn = st["poll_popup"], st["draw_popup"]
+    setattr(sp, prop, off); yield 0.8
+    check(name + ": the change re-polled the tear-off", st["poll_popup"] > polled, st)
+    check(name + ": no draw with the poll failing", st["draw_popup"] == drawn, st)
+    setattr(sp, prop, on); yield 0.8
+    check(name + ": it comes back", st["draw_popup"] > drawn, st)
+    st["show"] = False
+    yield from close_all()
+
+
+def s_p5_seq_view():
+    yield from setup()
+    # No sequence editor here, so prefetch can't send its own notifier and hide a missing one.
+    yield from space_poll_round(SIM_PT_seq_poll, "SEQUENCE_EDITOR", "view_type",
+                                "SEQUENCER", "PREVIEW")
+
+
+SC["p5_seq_view"] = s_p5_seq_view
+
+
 def s_p5_root_flags():
     yield from setup()
     st = SIM_PT_hdr.state

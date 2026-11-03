@@ -233,6 +233,18 @@ class SimColumnsPanel(SimTearPanel):
         SimTearPanel.draw_rows(self, context)
 
 
+class SimSpacePollPanel(SimTearPanel):
+    """Polls a property of its editor, which the scenario picks, as the real panels there do."""
+
+    @classmethod
+    def poll(cls, context):
+        st = cls.state
+        st["poll"] += 1
+        if context.region_popup:
+            st["poll_popup"] += 1
+        return st["show"] and getattr(context.space_data, st["prop"]) == st["value"]
+
+
 class SIM_PT_tear_anchor(SimTearPanel, bpy.types.Panel):
     """Stays above the panel under test, so its tab stays and its rect shows in a frame diff."""
     bl_idname = "SIM_PT_tear_anchor"; bl_label = "Sim Anchor"
@@ -350,6 +362,12 @@ class SIM_PT_ui_cols(SimColumnsPanel, bpy.types.Panel):
     state = sim_state(popup={}, region={})
 
 
+class SIM_PT_seq_poll(SimSpacePollPanel, bpy.types.Panel):
+    bl_idname = "SIM_PT_seq_poll"; bl_label = "Sim Sequencer Poll"
+    bl_space_type = "SEQUENCE_EDITOR"
+    state = sim_state(prop="", value="")
+
+
 bpy.utils.register_class(SIM_PT_field)
 bpy.utils.register_class(SIM_OT_dialog)
 bpy.utils.register_class(SIM_PT_enum)
@@ -359,7 +377,8 @@ bpy.utils.register_class(SIM_MT_cols)
 # Parents first, and each anchor before the panel it sits above.
 for sim_cls in (SIM_PT_tear_anchor, SIM_PT_tear, SIM_PT_tear_sub, SIM_PT_tear_sub2, SIM_PT_hdr,
                 SIM_PT_once, SIM_PT_place, SIM_PT_props, SIM_PT_none, SIM_PT_tool_tab,
-                SIM_PT_cols_anchor, SIM_PT_cols, SIM_PT_clip_cols, SIM_PT_ui_cols):
+                SIM_PT_cols_anchor, SIM_PT_cols, SIM_PT_clip_cols, SIM_PT_ui_cols,
+                SIM_PT_seq_poll):
     bpy.utils.register_class(sim_cls)
 
 # ---------------------------------------------------------------- scenarios
