@@ -5776,9 +5776,9 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
         wt = widget_type(WidgetStyle::Swatch);
         break;
       case ButtonType::Label:
-        /* BFA - Tear-Off Menu/Panel: the title of a shelf tear-off sits on the shelf's color, so
+        /* BFA - Tear-Off Menu/Panel: the title of a torn-off panel sits on the panel color, so
          * the menu's text color could be unreadable there with a custom theme. */
-        if (block_is_tear_off_shelf(but->block)) {
+        if (block_is_tear_off_panel(but->block)) {
           wt = widget_type(WidgetStyle::Label);
           break;
         }
@@ -6302,11 +6302,11 @@ static void draw_popover_back_impl(const uiWidgetColors *wcol,
 void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const rcti *rect)
 {
   WidgetType *wt = widget_type(WidgetStyle::MenuBack);
-  /* BFA - Tear-Off Menu/Panel: a panel torn off the shelf keeps the shelf's color, near black
-   * would change its look. Forced opaque, because the theme's alpha is 0 (an overlapping shelf is
-   * see-through) and a floating panel can sit over anything. */
+  /* BFA - Tear-Off Menu/Panel: a torn-off panel keeps the color panels have in the editors, near
+   * black is what menus and popups use. Forced opaque, because the theme's alpha is 0 (an
+   * overlapping shelf is see-through) and a floating panel can sit over anything. */
   uiWidgetColors wcol = *wt->wcol_theme;
-  if (block_is_tear_off_shelf(block)) {
+  if (block_is_tear_off_panel(block)) {
     theme::get_color_4ubv(TH_BACK, wcol.inner);
     wcol.inner[3] = 255;
   }

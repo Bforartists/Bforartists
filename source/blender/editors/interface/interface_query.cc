@@ -718,6 +718,12 @@ bool block_is_tear_off_shelf(const Block *block)
 }
 
 /* BFA - Tear-Off Menu/Panel: see the declaration. */
+bool block_is_tear_off_panel(const Block *block)
+{
+  return block->handle && block->handle->is_tear_off && (block->flag & BLOCK_POPOVER);
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
 float block_scroll_top(const Block *block)
 {
   if (block->tear_off_header_ymin <= 0.0f) {
