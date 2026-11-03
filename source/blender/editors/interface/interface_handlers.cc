@@ -9425,8 +9425,13 @@ static void button_tooltip_timer_reset(bContext *C, Button *but)
       if (!wm->runtime->drags.first_) {
         const bool is_quick_tip = but_has_quick_tooltip(but);
         const double delay = is_quick_tip ? UI_TOOLTIP_DELAY_QUICK : UI_TOOLTIP_DELAY;
-        WM_tooltip_timer_init_ex(
-            C, data->window, data->area, data->region, but_tooltip_init, delay);
+        /* BFA - Tear-Off Menu/Panel: see #tear_off_handlers_area_exit. */
+        WM_tooltip_timer_init_ex(C,
+                                 data->window,
+                                 data->area ? data->area : CTX_wm_area(C),
+                                 data->region,
+                                 but_tooltip_init,
+                                 delay);
         if (is_quick_tip) {
           bScreen *screen = WM_window_get_active_screen(data->window);
           if (screen->tool_tip) {
@@ -9789,7 +9794,12 @@ static void button_activate_init(bContext *C,
     /* Show a label for this button. */
     bScreen *screen = WM_window_get_active_screen(data->window);
     if ((BLI_time_now_seconds() - WM_tooltip_time_closed()) < 0.1) {
-      WM_tooltip_immediate_init(C, CTX_wm_window(C), data->area, region, but_tooltip_init);
+      /* BFA - Tear-Off Menu/Panel: see #tear_off_handlers_area_exit. */
+      WM_tooltip_immediate_init(C,
+                                CTX_wm_window(C),
+                                data->area ? data->area : CTX_wm_area(C),
+                                region,
+                                but_tooltip_init);
       if (screen->tool_tip) {
         screen->tool_tip->pass = 1;
       }
@@ -14363,6 +14373,13 @@ void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area)
     PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
     if (!menu->is_tear_off) {
       continue;
+    }
+    /* BFA - Tear-Off Menu/Panel: a region's active button can't outlive its area, but a tear-off's
+     * can, and a tooltip would use the freed area. */
+    if (Button *active = region_find_active_but(menu->region)) {
+      if (active->active->area == area) {
+        active->active->area = nullptr;
+      }
     }
     /* BFA - Tear-Off Menu/Panel: buttons may point into this area's space data, which is about to
      * be freed, and no notifier that follows an area close refreshes a tear-off. Tag them all,
