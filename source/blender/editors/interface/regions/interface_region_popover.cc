@@ -25,6 +25,9 @@
  * - No title.
  */
 
+#include <cstring> /* BFA - Tear-Off Menu/Panel: strcmp in STREQ. */
+#include <memory>  /* BFA - Tear-Off Menu/Panel: the space type list holds unique_ptr. */
+
 #include "MEM_guardedalloc.h"
 
 #include "DNA_userdef_types.h"
@@ -33,6 +36,7 @@
 
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
+#include "BLI_utildefines.hh" /* BFA - Tear-Off Menu/Panel: STREQ. */
 
 #include "BKE_context.hh"
 #include "BKE_report.hh"
@@ -243,6 +247,13 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
         }
       }
 
+      /* BFA - Tear-Off Menu/Panel: a tear-off opens with its header under the cursor. Placing a
+       * selected toggle there would jump the panel, and a grab would hold it by that toggle.
+       * `but_first` is on the header row: the collapse icon or a draw_header checkbox. */
+      if (handle->is_tear_off) {
+        but = nullptr;
+      }
+
       if (but) {
         bounds_offset[0] = -(but->rect.xmin + 0.8f * BLI_rctf_size_x(&but->rect));
         bounds_offset[1] = -BLI_rctf_cent_y(&but->rect);
@@ -278,7 +289,9 @@ PopupBlockHandle *popover_panel_create(bContext *C,
                                        Button *but,
                                        PopoverCreateFunc popover_func,
                                        const PanelType *panel_type,
-                                       const bool is_tear_off) // BFA - Tear-Off Menu/Panel
+                                       const bool is_tear_off, // BFA - Tear-Off Menu/Panel
+                                       /* BFA - Tear-Off Menu/Panel */
+                                       const TearOffInit &tear_off_init)
 {
   wmWindow *window = CTX_wm_window(C);
   const uiStyle *style = style_get_dpi();
@@ -302,13 +315,25 @@ PopupBlockHandle *popover_panel_create(bContext *C,
   {
     /* Ideally this would be passed in. */
     const wmEvent *event = window->runtime->eventstate;
-    pup->is_once = (event->type == LEFTMOUSE) && (event->val == KM_PRESS);
+    /* BFA - Tear-Off Menu/Panel: "once" closes the popup on a release over a button, and
+     * RETURN_CANCEL frees even a tear-off. Tearing off during a drag has the left button held, so
+     * this would be true. Without it, the is_grab path doesn't depend on who gets the release. */
+    pup->is_once = !is_tear_off && (event->type == LEFTMOUSE) && (event->val == KM_PRESS);
   }
 #endif
 
   /* Create popup block. */
-  PopupBlockHandle *handle = popup_block_create(
-      C, butregion, but, nullptr, block_func_POPOVER, pup, block_free_func_POPOVER, true, is_tear_off); // BFA - Tear-Off Menu/Panel
+  /* BFA - Tear-Off Menu/Panel: is_tear_off and tear_off_init. */
+  PopupBlockHandle *handle = popup_block_create(C,
+                                                butregion,
+                                                but,
+                                                nullptr,
+                                                block_func_POPOVER,
+                                                pup,
+                                                block_free_func_POPOVER,
+                                                true,
+                                                is_tear_off,
+                                                tear_off_init);
 
   /* Add handlers. If attached to a button, the button will already
    * add a modal handler and pass on events. */
@@ -327,23 +352,17 @@ PopupBlockHandle *popover_panel_create(bContext *C,
 /** \name Standard Popover Panels
  * \{ */
 
-wmOperatorStatus popover_panel_invoke(
-    bContext *C,
-    const char *idname,
-    bool keep_open,
-    bool use_numselect,
-    ReportList *reports,  // BFA - Tear-Off Menu/Panel
-    PopupBlockHandle **r_handle, // BFA - Tear-Off Menu/Panel
-    const bool is_tear_off) // BFA - Tear-Off Menu/Panel
-
+/* BFA - Tear-Off Menu/Panel: split out of #popover_panel_invoke, because most C panels can't be
+ * found by name in #WM_paneltype_find. */
+wmOperatorStatus popover_paneltype_invoke(bContext *C,
+                                          PanelType *pt,
+                                          bool keep_open,
+                                          bool use_numselect,
+                                          PopupBlockHandle **r_handle,
+                                          const bool is_tear_off,
+                                          const TearOffInit &tear_off_init)
 {
   Layout *layout;
-  PanelType *pt = WM_paneltype_find(idname, true);
-  if (pt == nullptr) {
-    BKE_reportf(reports, RPT_ERROR, "Panel \"%s\" not found", idname);
-    return OPERATOR_CANCELLED;
-  }
-
   if (pt->poll && (pt->poll(C, pt) == false)) {
     /* cancel but allow event to pass through, just like operators do */
     return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
@@ -352,7 +371,9 @@ wmOperatorStatus popover_panel_invoke(
   Block *block = nullptr;
   PopupBlockHandle *handle = nullptr; // BFA - Tear-Off Menu/Panel
   if (keep_open) {
-    handle = popover_panel_create(C, nullptr, nullptr, item_paneltype_func, pt, is_tear_off); // BFA - Tear-Off Menu/Panel
+    /* BFA - Tear-Off Menu/Panel: is_tear_off and tear_off_init. */
+    handle = popover_panel_create(
+        C, nullptr, nullptr, item_paneltype_func, pt, is_tear_off, tear_off_init);
     Popover *pup = static_cast<Popover *>(handle->popup_create_vars.arg);
     pup->use_numselect = use_numselect;
     block = pup->block;
@@ -383,6 +404,57 @@ wmOperatorStatus popover_panel_invoke(
     *r_handle = handle; // BFA - Tear-Off Menu/Panel
   }
   return OPERATOR_INTERFACE;
+}
+
+wmOperatorStatus popover_panel_invoke(
+    bContext *C,
+    const char *idname,
+    bool keep_open,
+    bool use_numselect,
+    ReportList *reports,  // BFA - Tear-Off Menu/Panel
+    PopupBlockHandle **r_handle, // BFA - Tear-Off Menu/Panel
+    const bool is_tear_off) // BFA - Tear-Off Menu/Panel
+
+{
+  PanelType *pt = WM_paneltype_find(idname, true);
+  if (pt == nullptr) {
+    BKE_reportf(reports, RPT_ERROR, "Panel \"%s\" not found", idname);
+    return OPERATOR_CANCELLED;
+  }
+  return popover_paneltype_invoke(C, pt, keep_open, use_numselect, r_handle, is_tear_off);
+}
+
+/* BFA - Tear-Off Menu/Panel: search the source region first. A region can draw another space's
+ * list (`category_override`, see #ED_view3d_buttons_region_layout_ex), so all spaces are the
+ * last resort. */
+PanelType *tear_off_paneltype_find(const bContext *C, const char *idname)
+{
+  auto find_in = [&](ARegionType &art) -> PanelType * {
+    for (PanelType &pt : art.paneltypes) {
+      if (STREQ(pt.idname, idname)) {
+        return &pt;
+      }
+    }
+    return nullptr;
+  };
+  if (const ARegion *region = CTX_wm_region(C)) {
+    if (region->runtime->type) {
+      if (PanelType *pt = find_in(*region->runtime->type)) {
+        return pt;
+      }
+    }
+  }
+  if (PanelType *pt = WM_paneltype_find(idname, true)) {
+    return pt;
+  }
+  for (const std::unique_ptr<SpaceType> &st : BKE_spacetypes_list()) {
+    for (ARegionType &art : st->regiontypes) {
+      if (PanelType *pt = find_in(art)) {
+        return pt;
+      }
+    }
+  }
+  return nullptr;
 }
 
 /** \} */

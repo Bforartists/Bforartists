@@ -1192,6 +1192,10 @@ struct PopupBlockHandle {
    * button that opened it has no value to apply. */
   bool tear_off_row_used = false;
 
+  /** BFA - Tear-Off Menu/Panel: torn off a region's panel, not a popover's row. Set at creation,
+   * because the first layout reads it. */
+  bool tear_off_from_region = false;
+
   char menu_idname[64] = "";
 
   bool mmb_panning = false;
@@ -1277,6 +1281,11 @@ void popup_menu_memory_set(Block *block, Button *but);
  */
 Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butregion, Button *but);
 
+/* BFA - Tear-Off Menu/Panel: known before the first layout, like is_tear_off. */
+struct TearOffInit {
+  bool from_region = false;
+};
+
 PopupBlockHandle *popup_block_create(bContext *C,
                                      ARegion *butregion,
                                      Button *but,
@@ -1285,7 +1294,9 @@ PopupBlockHandle *popup_block_create(bContext *C,
                                      void *arg,
                                      FreeArgFunc arg_free,
                                      bool can_refresh,
-                                     bool is_tear_off = false); // BFA - Tear-Off Menu/Panel
+                                     bool is_tear_off = false, // BFA - Tear-Off Menu/Panel
+                                     /* BFA - Tear-Off Menu/Panel */
+                                     const TearOffInit &tear_off_init = {});
 /**
  * \param can_refresh: Allow menus to re-run their layout definitions using
  *    `ED_region_tag_refresh_ui()`. This can be used to update the grayed out state of items or the
@@ -1315,7 +1326,19 @@ PopupBlockHandle *popover_panel_create(bContext *C,
                                        Button *but,
                                        PopoverCreateFunc popover_func,
                                        const PanelType *panel_type,
-                                       bool is_tear_off = false); // BFA - Tear-Off Menu/Panel
+                                       bool is_tear_off = false, // BFA - Tear-Off Menu/Panel
+                                       /* BFA - Tear-Off Menu/Panel */
+                                       const TearOffInit &tear_off_init = {});
+/* BFA - Tear-Off Menu/Panel: #popover_panel_invoke for a known type. */
+wmOperatorStatus popover_paneltype_invoke(bContext *C,
+                                          PanelType *pt,
+                                          bool keep_open,
+                                          bool use_numselect,
+                                          PopupBlockHandle **r_handle,
+                                          bool is_tear_off,
+                                          const TearOffInit &tear_off_init = {});
+/* BFA - Tear-Off Menu/Panel: most C panels are only on a region type, not in #WM_paneltype_find. */
+PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);
 
 /* `interface_region_menu_pie.cc` */
 

@@ -2723,21 +2723,38 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
 {
   char idname[MAX_NAME];
   RNA_string_get(op->ptr, "panel_idname", idname);
+  const bool from_region_panel = RNA_boolean_get(op->ptr, "from_region_panel");
 
   /* BFA - Tear-Off Menu/Panel: save the original popup region before creating
    * the tear-off, since popover_panel_invoke changes CTX_wm_region_popup. */
   ARegion *region_popup_orig = CTX_wm_region_popup(C);
 
+  /* BFA - Tear-Off Menu/Panel: resolved once, so the panel and its label can't disagree. */
+  PanelType *pt = ui::tear_off_paneltype_find(C, idname);
+  if (pt == nullptr) {
+    BKE_reportf(op->reports, RPT_ERROR, "Panel \"%s\" not found", idname);
+    return OPERATOR_CANCELLED;
+  }
+
+  ui::TearOffInit tear_off_init;
+  tear_off_init.from_region = from_region_panel;
+
   ui::PopupBlockHandle *handle = nullptr;
-  wmOperatorStatus status = ui::popover_panel_invoke(C, idname, true, false, op->reports, &handle, true);
+  wmOperatorStatus status = ui::popover_paneltype_invoke(
+      C, pt, true, false, &handle, true, tear_off_init);
 
   /* BFA - Tear-Off Menu/Panel */
-  const PanelType *pt = WM_paneltype_find(idname, true);
-  tear_off_handle_init(C, handle, pt ? CTX_IFACE_(pt->translation_context, pt->label) : nullptr);
+  tear_off_handle_init(C, handle, CTX_IFACE_(pt->translation_context, pt->label));
 
-  /* BFA - Tear-Off Menu/Panel: close the original popover/menu
-   * so it behaves like tear-off menus (original closes when torn off). */
-  if (region_popup_orig) {
+  /* BFA - Tear-Off Menu/Panel: Shift+drag holds the new float until the release. */
+  if (handle && RNA_boolean_get(op->ptr, "use_grab")) {
+    handle->is_grab = true;
+    copy_v2_v2_int(handle->grab_xy_prev, CTX_wm_window(C)->runtime->eventstate->xy);
+  }
+
+  /* BFA - Tear-Off Menu/Panel: close the original popover/menu so it behaves like tear-off menus
+   * (original closes when torn off). A region panel stays in place: it's a second live view. */
+  if (region_popup_orig && !from_region_panel) {
     ui::tear_off_source_popup_close_tag(region_popup_orig);
     /* BFA - Tear-Off Menu/Panel: the source closes on the next event, which has to get past the
      * new tear-off under the cursor. */
@@ -2761,6 +2778,12 @@ static void WM_OT_panel_tear_off(wmOperatorType *ot)
   ot->poll = wm_tear_off_poll;
 
   RNA_def_string(ot->srna, "panel_idname", "Panel", MAX_NAME, "Panel", "");
+  /* BFA - Tear-Off Menu/Panel: set by the panel header gesture and context menu. */
+  PropertyRNA *prop = RNA_def_boolean(
+      ot->srna, "from_region_panel", false, "From Region Panel", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_boolean(ot->srna, "use_grab", false, "Grab", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /* BFA - Tear-Off Menu/Panel */

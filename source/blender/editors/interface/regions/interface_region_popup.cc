@@ -1368,7 +1368,9 @@ PopupBlockHandle *popup_block_create(bContext *C,
                                      void *arg,
                                      FreeArgFunc arg_free,
                                      const bool can_refresh,
-                                     const bool is_tear_off) // BFA - Tear-Off Menu/Panel
+                                     const bool is_tear_off, // BFA - Tear-Off Menu/Panel
+                                     /* BFA - Tear-Off Menu/Panel */
+                                     const TearOffInit &tear_off_init)
 {
   wmWindow *window = CTX_wm_window(C);
 
@@ -1403,6 +1405,7 @@ PopupBlockHandle *popup_block_create(bContext *C,
     handle->ctx_region_popup = nullptr;
     handle->tear_off_ctx_region_type = handle->ctx_region ? handle->ctx_region->regiontype : -1;
     handle->tear_off_scale_fac = UI_SCALE_FAC;
+    handle->tear_off_from_region = tear_off_init.from_region;
   }
 
   /* store vars to refresh popup (RGN_REFRESH_UI) */
