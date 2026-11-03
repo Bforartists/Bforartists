@@ -198,7 +198,8 @@ class CenterAlignMixIn:
         width = context.region.width
         ui_scale = context.preferences.system.ui_scale
         # No horizontal margin if region is rather small.
-        is_wide = width > (350 * ui_scale)
+        # BFA - a torn-off panel is much narrower than the region it reports, so margins squeeze it.
+        is_wide = width > (350 * ui_scale) and context.region_popup is None
 
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
