@@ -13190,7 +13190,7 @@ static int handler_region_menu(bContext *C, const wmEvent *event, void * /*userd
 }
 
 /* BFA - Tear-Off Menu/Panel: the popup a window handler runs, or null if it isn't a live popup
- * handler. A handler tagged for freeing may hold a freed popup, so check the tag before reading. */
+ * handler. A handler tagged for freeing may hold a freed popup, so check that tag first. */
 static PopupBlockHandle *popup_from_handler(wmEventHandler *handler_base)
 {
   if (handler_base->type != WM_HANDLER_TYPE_UI || bool(handler_base->flag & WM_HANDLER_DO_FREE)) {
@@ -13330,9 +13330,9 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   {
     const Button *but = region_find_active_but(menu->region);
     tear_off_was_modal = menu->is_grab || (but && button_modal_state(but->active->state));
-    /* BFA - Tear-Off Menu/Panel: modal ownership stays with the tear-off that started it, whichever
-     * one is under the cursor, so the release or click reaches it. Timers still run here, because
-     * this tear-off's own tooltips and scrolling need them. */
+    /* BFA - Tear-Off Menu/Panel: modal ownership stays with the tear-off that started it,
+     * whichever one is under the cursor, so the release or click reaches it. Timers still run
+     * here, because this tear-off's own tooltips and scrolling need them. */
     if (event->type != TIMER && !tear_off_owns_input(menu) && tear_off_older_owns_input(C, menu)) {
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
