@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <functional>
+#include <string> /* BFA - Tear-Off Menu/Panel: #PopupMenu::title_owned. */
 
 #include "MEM_guardedalloc.h"
 
@@ -165,6 +166,9 @@ struct PopupMenu {
 
   /* Menu hash is created from this, to keep a memory of recently opened menus. */
   StringRef title;
+  /* BFA - Tear-Off Menu/Panel: what #title refers to in a tear-off. A translated title points into
+   * the translation catalog, and a tear-off outlives it when the language changes. */
+  std::string title_owned;
 
   int mx, my;
   bool popup, slideout;
@@ -413,7 +417,14 @@ static PopupBlockHandle *popup_menu_create_impl(
   wmWindow *window = CTX_wm_window(C);
 
   PopupMenu *pup = MEM_new<PopupMenu>(__func__);
-  pup->title = title;
+  /* BFA - Tear-Off Menu/Panel: see #PopupMenu::title_owned. */
+  if (is_tear_off && title) {
+    pup->title_owned = title;
+    pup->title = pup->title_owned;
+  }
+  else {
+    pup->title = title;
+  }
   /* menu is created from a callback */
   pup->menu_func = menu_func;
   if (but) {
@@ -639,7 +650,8 @@ static PopupBlockHandle *popup_menu_create_from_menutype(bContext *C, // BFA - T
       nullptr,
       nullptr,
       title,
-      [mt, title, icon](bContext *C, Layout *layout) -> void {
+      /* BFA - Tear-Off Menu/Panel: it doesn't draw the title, so it mustn't keep the pointer. */
+      [mt, title = is_tear_off ? nullptr : title, icon](bContext *C, Layout *layout) -> void {
         Block *block = layout->block(); // BFA - Tear-Off Menu/Panel
         if (title && title[0] && !(block->handle && block->handle->is_tear_off)) { // BFA - Tear-Off Menu/Panel
           create_title_button(*layout, title, icon);
