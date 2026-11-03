@@ -8458,7 +8458,6 @@ void RNA_def_userdef(BlenderRNA *brna)
    * creating one, for those who prefer plain menus and panels. */
   prop = RNA_def_property(srna, "use_tear_off", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "bfa_ui_flag", USER_BFA_TEAR_OFF_DISABLED);
-  RNA_def_property_boolean_default(prop, true);
   RNA_def_property_ui_text(prop,
                            "Tear-Off Menus and Panels",
                            "Allow menus and panels to be torn off into floating panels that "
