@@ -20,7 +20,8 @@ Line numbers are from the mid-merge tree and will drift.
 | 2. Shared cleanup and related fixes | Committed | `a14f3d0e234`, `440b786824e`, `35b9d9bf6fc`, `ab1209481c2`, `63438649de9`, `40348728360` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
 | 3. Preference toggle | Committed | `99c93ab4370`, `d800b242ae2` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
 | 2 and 3. Review findings | Committed, not built yet | `9851fa1a14b`, `babd3140507`, `7846ed92b8e` | Code review only so far |
-| 4 to 8 | Not started | | Phase 4 is next |
+| 4. Enum tear-offs | Committed, not built yet | `e0b8b93c0da`..`b224b56b657` (7 commits), scenarios in `25d3ab2d03d` | Code review only so far. The scenarios are written but not run |
+| 5 to 8 | Not started | | Phase 5 is next |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
 
@@ -137,18 +138,26 @@ This comes before the new entry points, so each one is gated from the start.
 
 ## Phase 4: Enum menus (item 2)
 
-**Why it needs different handling:** an enum dropdown depends on its source `Button`. `def_but_rna__menu` reads it directly (`interface.cc:4779-4806`), and items write to `handle->retvalue`, which is only applied back through that active button. Once detached, the button can be freed on redraw and clicks wouldn't change the property.
+**Status: implemented as below, not built yet.** The logic is in `interface_region_tear_off_enum.cc`, and `WM_OT_enum_tear_off` is in `wm_operators.cc`.
+
+**Why it needs different handling:** an enum dropdown depends on its source `Button`. `def_but_rna__menu` reads it directly, and items write to `handle->retvalue`, which is only applied back through that active button. Once detached, the button can be freed on redraw and clicks wouldn't change the property.
 
 **Design:**
-- New `WM_OT_enum_tear_off` stores `id_session_uid`, `data_path` and `prop_name`, not a button. The session UID avoids raw ID pointers across undo and file load.
-- Re-resolve the property on every refresh. If it no longer resolves, show a grayed "Not available" row and keep the header.
-- Factor the item, column and heading logic out of `def_but_rna__menu` so both paths share it and the torn-off version looks identical. The torn-off path uses live property buttons, which write directly and highlight the current value.
+- New `WM_OT_enum_tear_off` stores identifiers, not a button: `id_type`, `session_uid` and `data_path`, or `use_context` and `data_path` for data of the context's scene. The session UID avoids raw ID pointers across undo. Scene data follows the window's scene, as the source button does.
+- Re-resolve the property on every refresh and every click, so no RNA pointer is kept between the two. If it no longer resolves, show a grayed "Not available" row and keep the header.
+- Factor the item, column and heading logic out of `def_but_rna__menu` into `enum_menu_draw()`, so both paths share it and the torn-off version looks identical. Torn-off items are `ButMenu` buttons with no RNA, like attached ones, not live property buttons. Each has an `apply_func` that resolves the path again on click, then sets the value, with autokey, update and undo as the attached path does. The highlight comes from `UI_SELECT_DRAW` on each refresh.
 - Use the same tear-off row and `tear_off_header_draw()` as menus, and reuse the menu close and collapse operators.
-- Don't set `BLOCK_MOVEMOUSE_QUIT` on tear-offs (`interface.cc:4784`).
+- **File load closes the tear-off,** with no crash and no gray row (`wm_files.cc` removes all handlers first). Keeping one open would mean changing load for all tear-offs.
+
+**Fixes this phase needed first:**
+- Delayed callbacks now run in the tear-off's own area.
+- The row writes no value. It used to set a dropdown to its first item, because the return value was still 0.
+- The row no longer takes the number keys.
+- The header stays intact in multi-column menus.
 
 **Scope:**
-- **In:** RNA property dropdowns. `operator_menu_enum` too, storing the operator name and property so each click runs the operator; check `interface_layout.cc:3809` first.
-- **Out for now:** enum search popups, and properties with no ID-based path (preferences, operator redo properties). These get no tear-off row.
+- **In:** RNA property dropdowns. `operator_menu_enum` too, storing the operator name, property and call context so each click runs the operator.
+- **Out for now,** with no tear-off row: enum search popups, flag enums, dropdowns in operator dialogs, source buttons or blocks with callbacks, operator menus with preset properties or a context pointer, Screen or Window Manager owned properties, and properties with no ID-based path (preferences, operator redo properties).
 
 ## Phase 5: Tear off any panel (item 3)
 
@@ -221,7 +230,7 @@ Keep the bottom-edge grip, top-anchored crop, `draw_widget_scroll()` with theme 
 
 | Area | Files (`source/blender/` unless noted) |
 |---|---|
-| Popup core | `editors/interface/regions/interface_region_popup.cc`, `interface_region_popover.cc`, `interface_region_menu_popup.cc`, `editors/interface/interface_intern.hh`, `editors/include/UI_interface_c.hh` |
+| Popup core | `editors/interface/regions/interface_region_popup.cc`, `interface_region_popover.cc`, `interface_region_menu_popup.cc`, `interface_region_tear_off_enum.cc`, `editors/interface/interface_intern.hh`, `editors/include/UI_interface_c.hh` |
 | Events | `editors/interface/interface_handlers.cc`, `interface_panel.cc`, `interface_context_menu.cc` |
 | Layout | `editors/interface/interface.cc`, `interface_layout.cc`, `interface_ops.cc` |
 | Operators | `windowmanager/intern/wm_operators.cc`, `wm_window.cc` |
@@ -237,7 +246,7 @@ There are no automated tests for this area, and CI only checks that it compiles.
 | 0 | Copy Python Command from main region, popover and tear-off, including when the context menu item sits over another button. Edit Source still works |
 | 1 | Move a regular dialog, then trigger a refresh: it stays put. Type in a text field in a torn-off panel. Double-click a number field: it edits, not collapses. Hotkeys still reach the editor. Resize the window. Switch workspace, close the source area, then interact. Change the resolution scale. File > New and Open with tear-offs open |
 | 3 | Toggle off: no rows or entries, open tear-offs close, and the setting survives a restart. An old preferences file comes up enabled. The file opens in Blender |
-| 4 | Tear off an enum, click items: the property changes and the highlight follows. Change the value elsewhere: it updates. Undo and redo. Delete the owning object: "Not available", no crash. Multi-column enum looks the same |
+| 4 | Tear off an enum, click items: the property changes and the highlight follows. Change the value elsewhere: it updates. Undo and redo. Delete the owning object: "Not available", no crash. Load a file: it closes, no crash. Multi-column enum looks the same |
 | 5 | Shift+click still pins. Shift+drag tears off and follows the cursor. Context menu entry works, including in regions without tabs. Header checkbox works. Move to a context where poll fails: "Not available", no Python errors. Modifier panels offer no tear-off |
 | 6 | Compare side by side at each column count, in each shelf editor. Resize the real shelf: the tear-off doesn't change. Width survives collapse and expand. Tool switching works |
 | 7 | The test matrix in the width doc. Translations and high DPI. Panel grip reflows content. Regular menus unchanged |
