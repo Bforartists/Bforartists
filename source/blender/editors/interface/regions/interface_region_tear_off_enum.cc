@@ -152,7 +152,8 @@ static void enum_tear_off_row_draw(Layout *layout, const EnumTearOffSource &sour
 
 void enum_tear_off_row_draw_property(bContext *C, Layout *layout, const Button *but)
 {
-  if (!tear_off_enabled()) {
+  /* No handle means no open popup, the same check as #enum_tear_off_row_draw_operator. */
+  if (!tear_off_enabled() || layout->block()->handle == nullptr) {
     return;
   }
   /* A modal dialog owns the input. */
@@ -180,7 +181,10 @@ void enum_tear_off_row_draw_operator(Layout *layout,
                                      const char *propname,
                                      const wm::OpCallContext opcontext)
 {
-  if (!tear_off_enabled()) {
+  /* Menu Search draws these menus on a block with no popup handle to collect their buttons, and
+   * the row would become a search result. This tests the block being drawn: the source button's
+   * block has no handle under any header menu, where the row is wanted. */
+  if (!tear_off_enabled() || layout->block()->handle == nullptr) {
     return;
   }
   const PopupBlockHandle *parent = but->block->handle;
