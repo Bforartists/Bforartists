@@ -6458,6 +6458,11 @@ static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt)
   Block *block = layout->block();
   const bool is_context_menu = BLI_strcasestr(mt->idname, "_context_menu") != nullptr;
   const bool is_tear_off = block->handle && block->handle->is_tear_off;
+  /* BFA - Tear-Off Menu/Panel: a menu opened from a button bound to a property or carrying context
+   * pointers reads them while drawing. A tear-off has no source button and can't store them, so it
+   * would redraw empty (for example the color space menu). */
+  const Button *source_but = block->handle ? block->handle->popup_create_vars.but : nullptr;
+  const bool menu_needs_source_but = source_but && (source_but->rnaprop || source_but->context);
   if (!STREQ(mt->idname, "WM_MT_tear_off_menu") && block->handle && !is_context_menu)
   {
     if (is_tear_off) {
@@ -6467,7 +6472,7 @@ static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt)
                            "WM_OT_menu_tear_off_collapse",
                            "WM_OT_menu_tear_off_close");
     }
-    else if (tear_off_enabled()) { /* BFA - Tear-Off Menu/Panel: no row when turned off. */
+    else if (tear_off_enabled() && !menu_needs_source_but) { /* BFA - No row when turned off. */
       PointerRNA opptr = layout->op("WM_OT_menu_tear_off", "Tear Off Menu", ICON_GRIP);
       if (opptr.data) {
         RNA_string_set(&opptr, "menu_idname", mt->idname);
