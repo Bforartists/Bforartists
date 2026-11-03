@@ -13310,6 +13310,24 @@ static bool tear_off_key_for_hovered_button(const bContext *C,
          popup_contains_point(menu, event->xy) && !tear_off_covered_at(C, menu, event->xy);
 }
 
+/* BFA - Tear-Off Menu/Panel: true if a regular popup is open above this tear-off. That popup can
+ * hold raw pointers into the tear-off: a context menu keeps the clicked Button in its callbacks
+ * and the tear-off's region as its handler's popup context, so the tear-off must outlive it. */
+static bool tear_off_under_regular_popup(const bContext *C, const PopupBlockHandle *menu)
+{
+  wmEventHandler *handler = popup_handler_find(CTX_wm_window(C), menu);
+  if (handler == nullptr) {
+    return false;
+  }
+  for (wmEventHandler *newer = handler->prev; newer; newer = newer->prev) {
+    const PopupBlockHandle *other = popup_from_handler(newer);
+    if (other && !other->is_tear_off) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /* two types of popups, one with operator + enum, other with regular callbacks */
 static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 {
@@ -13340,8 +13358,9 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
    * from a file. The property update can't close tear-offs itself, because it runs during
    * handler dispatch, possibly from a button in this tear-off. This comes before the early
    * returns below, so hidden, collapsed and covered tear-offs close too. The steps match a
-   * regular close further down. */
-  if (menu->is_tear_off && !tear_off_enabled()) {
+   * regular close further down. A tear-off under a regular popup waits, because timers still
+   * get past that popup. The mouse move added when the popup closes brings it back here. */
+  if (menu->is_tear_off && !tear_off_enabled() && !tear_off_under_regular_popup(C, menu)) {
     wmWindow *win = CTX_wm_window(C);
     /* A collapsed pin sets this cursor over its label and nothing else would restore it. */
     if (menu->tear_off_collapsed && win->cursor == WM_CURSOR_MOVE) {
