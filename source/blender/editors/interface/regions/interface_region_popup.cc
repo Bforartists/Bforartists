@@ -1428,10 +1428,13 @@ bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)
   /* Requirement 2: the originating editor domain must still exist in the active screen.
    * If another editor of the same domain exists, the panel stays visible. */
   const bScreen *screen = CTX_wm_screen(C);
-  if (screen) {
+  const wmWindow *win = CTX_wm_window(C);
+  if (screen && win) {
     bool domain_found = false;
-    for (const ScrArea &area : screen->areabase) {
-      if (area.spacetype == handle->tear_off_spacetype) {
+    /* BFA - Tear-Off Menu/Panel: include global areas. The top bar isn't in
+     * `screen->areabase`, so its torn-off menus would hide immediately. */
+    ED_screen_areas_iter (win, screen, area) {
+      if (area->spacetype == handle->tear_off_spacetype) {
         domain_found = true;
         break;
       }
