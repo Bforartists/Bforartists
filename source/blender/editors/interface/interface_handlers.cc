@@ -11745,6 +11745,7 @@ static int handle_menu_event(bContext *C,
     /* BFA - Tear-Off Menu/Panel: with the focus gone no release is coming. A tear-off counts as
      * modal while it's held, so it would follow the cursor and take keys until the next click. */
     if (event->type == LEFTMOUSE || (event->type == WINDEACTIVATE && menu->is_tear_off)) {
+      menu->tear_off_skip_release = event->type == WINDEACTIVATE;
       menu->is_grab = false;
       WM_cursor_set(win, WM_CURSOR_DEFAULT);
       retval = WM_UI_HANDLER_BREAK;
@@ -13702,6 +13703,7 @@ static bool tear_off_edges_handle(bContext *C,
         tear_off_drag_cancel(menu, block);
       }
       tear_off_drag_end(win, menu);
+      menu->tear_off_skip_release = true;
       return false;
     }
     if (ISTIMER(event->type)) {
@@ -13728,6 +13730,14 @@ static bool tear_off_edges_handle(bContext *C,
       }
     }
     return true; /* Keys don't reach the editor during a drag. */
+  }
+  /* Tear-offs ignore Esc, so with the focus gone this pan would never end. */
+  if (menu->mmb_panning && event->type == WINDEACTIVATE) {
+    menu->mmb_panning = false;
+    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    WM_cursor_grab_disable(win, nullptr);
+    win->tag_cursor_refresh = true;
+    return false;
   }
   if (was_modal || menu->mmb_panning) {
     return false;
@@ -13887,6 +13897,14 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     if (block && block->handle && !tear_off_is_visible(C, block->handle)) {
       /* A hidden tear-off keeps its width as it is at that moment. */
       tear_off_edges_reset(C, block->handle);
+      /* It passes the release on, so its pin drag could never end. Not in the reset, which runs on
+       * every event of a collapsed tear-off and would end every pin drag at once. */
+      if (block->handle->tear_off_pin_dragging) {
+        wmWindow *win = CTX_wm_window(C);
+        block->handle->tear_off_pin_dragging = false;
+        WM_cursor_set(win, WM_CURSOR_DEFAULT);
+        win->tag_cursor_refresh = true;
+      }
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
     }
@@ -13905,6 +13923,14 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 
   /* BFA - Tear-Off Menu/Panel: before the title double-click, so a grip's double-click resets it
    * even at the end of the title, and before the menu handling, which would run the row below. */
+  if (menu->tear_off_skip_release && event->type == LEFTMOUSE) {
+    /* A press means that release was lost, and this click is a normal one. */
+    menu->tear_off_skip_release = false;
+    if (event->val == KM_RELEASE) {
+      CTX_wm_region_popup_set(C, region_popup);
+      return WM_UI_HANDLER_BREAK;
+    }
+  }
   if (tear_off_edges_handle(C, event, menu, tear_off_was_modal)) {
     CTX_wm_region_popup_set(C, region_popup);
     return WM_UI_HANDLER_BREAK;
@@ -13981,6 +14007,11 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 
       /* BFA - Tear-Off Menu/Panel: dragging the widget moves it. */
       if (handle->tear_off_pin_dragging) {
+        /* BFA - Tear-Off Menu/Panel: with the focus gone no release is coming. */
+        if (event->type == WINDEACTIVATE) {
+          handle->tear_off_pin_dragging = false;
+          WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
+        }
         if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
           handle->tear_off_pin_dragging = false;
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);

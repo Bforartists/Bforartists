@@ -1233,6 +1233,9 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: where the width grip stops, in the units of #tear_off_width. Read
    * at the press, so reflowing can't move the limit during the drag. */
   float tear_off_drag_min_width = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: a held state ended with the focus. If the button is still down when
+   * the focus returns, its release must not run the row under the cursor. */
+  bool tear_off_skip_release = false;
   /** BFA - Tear-Off Menu/Panel: the height the user cropped the block to, without UI scale, so
    * scale changes recompute it. 0 for no crop. For this session only, and kept through collapse
    * and expand. */
