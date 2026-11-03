@@ -15,6 +15,8 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h" /* BFA - Tear-Off Menu/Panel */
+#include "DNA_space_types.h" /* BFA - Tear-Off Menu/Panel */
 #include "DNA_userdef_types.h"
 
 #include "BLI_array.hh"
@@ -44,6 +46,7 @@
 
 #include "UI_interface_layout.hh"
 
+#include "ED_buttons.hh" /* BFA - Tear-Off Menu/Panel */
 #include "ED_id_management.hh"
 
 #include "WM_api.hh"
@@ -6541,11 +6544,56 @@ static bool layout_has_panel_label(const Layout *layout, const PanelType *pt)
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: a region only polls top level panels, and it filters Properties
+ * panels by tab, so panels rely on both. A tear-off has neither check, so a refresh would draw
+ * with the None its poll guards against, and raise a Python error. Subpanels need the parent's
+ * poll too. With no source region left, no poll can be trusted. */
+static bool tear_off_panel_available(const bContext *C,
+                                     const PopupBlockHandle *handle,
+                                     PanelType *pt)
+{
+  if (handle->tear_off_spacetype != 0 &&
+      (handle->ctx_area == nullptr || handle->ctx_region == nullptr))
+  {
+    return false;
+  }
+  const PanelType *root = pt;
+  while (root->parent) {
+    root = root->parent;
+  }
+  /* Only a region's panels were filtered by tab. A popover row can show a panel of any context,
+   * such as STRIP_PT_color_tag_picker with its "none". */
+  if (handle->tear_off_from_region) {
+    if (const SpaceProperties *sbuts = CTX_wm_space_properties(C)) {
+      /* The Tool tab shows 3D View panels, and hide by mode already filters those. */
+      const bool is_tool_tab = sbuts->mainb == BCONTEXT_TOOL;
+      if (root->space_type != SPACE_PROPERTIES) {
+        if (!is_tool_tab) {
+          return false;
+        }
+      }
+      else if (root->context[0] != '\0' &&
+               (is_tool_tab || !STREQ(root->context, ED_buttons_tab_context_string(sbuts->mainb))))
+      {
+        return false;
+      }
+    }
+  }
+  for (PanelType *iter = pt; iter; iter = iter->parent) {
+    if (iter->poll && !iter->poll(C, iter)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool show_header)
 {
   Block *block = layout->block();
   Panel *panel = BKE_panel_new(pt);
-  panel->flag = PNL_POPOVER;
+  /* BFA - Tear-Off Menu/Panel: a panel from a region shows what the region shows. Panels hide
+   * content under is_popover because the tool header already has it, and a tear-off has none. */
+  panel->flag = (block->handle && block->handle->tear_off_from_region) ? 0 : PNL_POPOVER;
 
   if (pt->listener) {
     block_add_dynamic_listener(block, pt->listener);
@@ -6590,16 +6638,21 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
     body = layout;
   }
 
+  bool tear_off_unavailable = false; /* BFA - Tear-Off Menu/Panel */
   if (body) {
     /* BFA - Tear-Off Menu/Panel Tear-off affordance for popover root panels. */
     if ((block->flag & BLOCK_POPOVER) && !show_header) {
       const bool is_tear_off = block->handle && block->handle->is_tear_off;
       if (is_tear_off) {
+        tear_off_unavailable = !tear_off_panel_available(C, block->handle, pt);
         tear_off_header_draw(body,
                              pt->translation_context,
                              pt->label,
                              "WM_OT_panel_tear_off_collapse",
                              "WM_OT_panel_tear_off_close");
+        if (tear_off_unavailable) {
+          enum_tear_off_unavailable_draw(body);
+        }
       }
       else if (tear_off_enabled()) { /* BFA - Tear-Off Menu/Panel: no row when turned off. */
         const EmbossType prev_emboss = body->emboss_or_undefined();
@@ -6613,14 +6666,28 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
       }
     }
 
-    panel->layout = body;
-    pt->draw(C, panel);
-    panel->layout = nullptr;
+    /* BFA - Tear-Off Menu/Panel: a panel with only children has no draw, see area.cc. */
+    if (pt->draw && !tear_off_unavailable) {
+      /* BFA - Tear-Off Menu/Panel: draw sets active, enabled, scale and use_property_split on its
+       * layout. resolve() applies the first three to everything in that layout, and children
+       * inherit the last, so they would reach the close icon, the header checkbox and the
+       * children. In a region these are separate layouts. */
+      Layout *draw_layout = body;
+      if (block->handle && block->handle->is_tear_off) {
+        draw_layout = &body->column(false);
+        /* Keep the spacing of `body`, because a plain column uses buttonspacey. */
+        LayoutInternal::layout_space_set(draw_layout, LayoutInternal::layout_space_get(body));
+      }
+      panel->layout = draw_layout;
+      pt->draw(C, panel);
+      panel->layout = nullptr;
+    }
   }
   BLI_assert(panel->runtime->custom_data_ptr == nullptr);
 
   BKE_panel_free(panel);
-  if (!body) {
+  /* BFA - Tear-Off Menu/Panel: children may rely on the poll that just failed. */
+  if (!body || tear_off_unavailable) {
     return;
   }
   /* Draw child panels. */

@@ -1143,6 +1143,9 @@ static void rna_Space_show_toolshelf_tabs_update(bContext * /*C*/, PointerRNA *p
   if (region) {
     ED_region_tag_redraw(region);
   }
+  /* BFA - Tear-Off Menu/Panel: tab panels poll this, and a tear-off has no other reason to
+   * re-poll. Plain NC_WINDOW reaches the refresh path. */
+  WM_main_add_notifier(NC_WINDOW, nullptr);
 }
 
 static bool rna_Space_show_region_tool_props_get(PointerRNA *ptr)

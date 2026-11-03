@@ -786,9 +786,14 @@ static bool tear_off_notifier_invalidates_buttons(const wmNotifier *wmn)
 {
   switch (wmn->category) {
     case NC_SCREEN:
-    case NC_SPACE:
     case NC_UI:
       return false;
+    case NC_SPACE:
+      /* BFA - Tear-Off Menu/Panel: these change what a panel's poll answers: the Properties tab,
+       * the Image editor mode, the node tree type, the sequencer view. Other space notifiers
+       * stay out, because ND_SPACE_VIEW3D fires on every view change. */
+      return ELEM(
+          wmn->data, ND_SPACE_PROPERTIES, ND_SPACE_IMAGE, ND_SPACE_NODE, ND_SPACE_SEQUENCER);
     case NC_WM:
       return ELEM(wmn->data, ND_UNDO, ND_DATACHANGED);
     default:
