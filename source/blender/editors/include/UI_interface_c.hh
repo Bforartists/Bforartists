@@ -54,6 +54,7 @@ struct PointerRNA;
 struct PropertyRNA;
 struct ReportList;
 struct ResultBLF;
+struct ScrArea; /* BFA - Tear-Off Menu/Panel: for #tear_off_handlers_area_exit. */
 struct bContext;
 struct bContextStore;
 struct bNode;
@@ -2476,6 +2477,11 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
  * Needed for script reload where Python callbacks become invalid.
  */
 void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *handlers);
+/**
+ * BFA - Tear-Off Menu/Panel: tear-off handlers outlive the area they were created in, so drop
+ * their reference when that area exits. Other popups are left untouched.
+ */
+void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area);
 
 /**
  * Tags for refresh popup/menu handlers referencing a #StructRNA that is being unregistered,

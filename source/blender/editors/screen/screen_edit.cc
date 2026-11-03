@@ -997,6 +997,8 @@ void ED_area_exit(bContext *C, ScrArea *area)
 
   WM_event_remove_handlers(C, &area->handlers);
   WM_event_modal_handler_area_replace(win, area, nullptr);
+  /* BFA - Tear-Off Menu/Panel: a tear-off outlives its area, don't restore a freed one. */
+  ui::tear_off_handlers_area_exit(win, area);
 
   CTX_wm_area_set(C, prevsa);
 }

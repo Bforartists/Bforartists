@@ -13650,6 +13650,24 @@ void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *han
   }
 }
 
+/* BFA - Tear-Off Menu/Panel */
+void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area)
+{
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (handler_base.type != WM_HANDLER_TYPE_UI || bool(handler_base.flag & WM_HANDLER_DO_FREE)) {
+      continue;
+    }
+    wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+    if (handler->handle_fn != popup_handler || handler->context.area != area) {
+      continue;
+    }
+    if (static_cast<PopupBlockHandle *>(handler->user_data)->is_tear_off) {
+      handler->context.area = nullptr;
+      handler->context.region = nullptr;
+    }
+  }
+}
+
 /**
  * Returns true if the button is referencing \a srna.
  * \note This would fail to properly determine if the Button is referencing \a srna if the
