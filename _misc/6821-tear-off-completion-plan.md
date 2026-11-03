@@ -23,10 +23,12 @@ Line numbers are from the mid-merge tree and will drift.
 | 4. Enum tear-offs | Done | `e0b8b93c0da`..`a255c080db4` | Built with no errors. Full GUI suite passes: 33 scenarios, no crashes. Needs a hand test: Transform Pivot, Set Keyframe Type, toolbar Keyframe Type |
 | 5. Tear off any panel | Done | `769cde7b580`..`f0f014951d6` (6 commits), `d4753f7e807`, review fixes `6419db72fe1`..`bfa156ed802` (4 commits) | Built with no errors at `780e9363f02`. Full GUI suite passes: 59 scenarios, no crashes. Needs a hand test: Shift+double-click, real Cycles and node panels, tree views |
 | 6. Tool shelf | Done | `ff3c405326d`, `062c8f43a0a`, `85166c8e111`, `23c3c3ac026`, `e6cd5c1dde1` | Built with no errors at `780e9363f02`. Scenarios `p6_*` pass at 1 to 4 columns. Needs a side-by-side hand test in each editor |
-| 7. Dynamic width | Committed, not built yet | `b3545d24156`..`402c43aa474` (6 commits) | Code review only. No scenarios written, no hand test |
-| 8. Vertical resize and scroll | Committed, not built yet | `fc9a8fb6547`, `781307e4f37`, `82ca5a551ee`, `b34059e410d` | Code review only. No scenarios written, no hand test |
+| 7. Dynamic width | Committed, not built yet | `b3545d24156`..`402c43aa474` (6 commits) | Code review only. Scenarios `p7_*` written, not run. No hand test |
+| 8. Vertical resize and scroll | Committed, not built yet | `fc9a8fb6547`, `781307e4f37`, `82ca5a551ee`, `b34059e410d` | Code review only. Scenarios `p8_*` written, not run. No hand test |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
+
+**Reference shots:** `p7_attached` and `p8_regular` compare attached menus and popovers with a build that doesn't have Phases 7 and 8, because a build compared with itself passes whatever it does. Record them on such a build with `SIM_RECORD_REF=1 run.sh p7_attached p8_regular` (`SIM_EXE` picks the build). Without a recording those steps only log `INCONCLUSIVE`.
 
 ## Context
 

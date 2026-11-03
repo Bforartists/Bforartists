@@ -386,6 +386,175 @@ class SIM_PT_graph_poll(SimSpacePollPanel, bpy.types.Panel):
     state = sim_state(prop="", value="")
 
 
+# ---------------------------------------------------------------- Phases 7 and 8
+LONG_TITLE = "A Menu With A Rather Long Title For Its Rows"
+LONG_ROW = "A Row With A Very Long Label That Has To Fit In The Menu Width"
+FIELDS = 30
+
+
+class SIM_OT_row_probe(bpy.types.Operator):
+    """Says which row ran, where SIM_OT_area_probe only says that one did. A row scrolled to the
+    wrong place still runs something, so only the index can show it."""
+    bl_idname = "sim.row_probe"; bl_label = "Sim Row Probe"
+    index: bpy.props.IntProperty(name="Index")
+    state = {"last": None, "runs": 0}
+
+    def execute(self, context):
+        st = SIM_OT_row_probe.state
+        st["last"] = self.index
+        st["runs"] += 1
+        return {"FINISHED"}
+
+
+class SimRowsMenu:
+    """Rows that report their index, and a draw count, because a refresh doesn't show by itself."""
+    rows = 3
+    row_text = "Row"
+    state = None
+
+    def draw(self, context):
+        self.__class__.state["draws"] += 1
+        for i in range(self.rows):
+            self.layout.operator("sim.row_probe", text=f"{self.row_text} {i:02d}").index = i
+
+
+class SimColsMenu:
+    """Two columns. The left reports 0 up and the right 100 up, so a click shows its column."""
+    rows = 4
+
+    def draw(self, context):
+        split = self.layout.split()
+        for side, base in (("L", 0), ("R", 100)):
+            col = split.column()
+            for i in range(self.rows):
+                col.operator("sim.row_probe", text=f"{side}{i}").index = base + i
+
+
+class SIM_MT_short(SimRowsMenu, bpy.types.Menu):
+    bl_idname = "SIM_MT_short"; bl_label = "Sim Short"
+    state = {"draws": 0}
+
+
+class SIM_MT_short_title(SimRowsMenu, bpy.types.Menu):
+    bl_idname = "SIM_MT_short_title"; bl_label = LONG_TITLE
+    state = {"draws": 0}
+
+
+class SIM_MT_long(SimRowsMenu, bpy.types.Menu):
+    bl_idname = "SIM_MT_long"; bl_label = "Sim Long"
+    row_text = LONG_ROW
+    state = {"draws": 0}
+
+
+class SIM_MT_mid(SimRowsMenu, bpy.types.Menu):
+    """Fits in the window from the center, so its natural height can be measured."""
+    bl_idname = "SIM_MT_mid"; bl_label = "Sim Mid"
+    rows = 18
+    state = {"draws": 0}
+
+
+class SIM_MT_tall(SimRowsMenu, bpy.types.Menu):
+    """Taller than the window, so the window clamps it."""
+    bl_idname = "SIM_MT_tall"; bl_label = "Sim Tall"
+    rows = 80
+    state = {"draws": 0}
+
+
+class SIM_MT_parent(bpy.types.Menu):
+    bl_idname = "SIM_MT_parent"; bl_label = "Sim Parent"
+
+    def draw(self, context):
+        self.layout.menu("SIM_MT_short")
+        for i in range(2):
+            self.layout.operator("sim.row_probe", text=f"Row {i}").index = i
+
+
+class SIM_MT_arrows(bpy.types.Menu):
+    """Every row has a submenu arrow at its right end, where a scrollbar could cover it."""
+    bl_idname = "SIM_MT_arrows"; bl_label = "Sim Arrows"
+
+    def draw(self, context):
+        for _ in range(18):
+            self.layout.menu("SIM_MT_short")
+
+
+class SIM_MT_cols_long(SimColsMenu, bpy.types.Menu):
+    """The header is wider than both columns, so the last column has to take up the rest."""
+    bl_idname = "SIM_MT_cols_long"; bl_label = LONG_TITLE
+
+
+class SIM_MT_cols_tall(SimColsMenu, bpy.types.Menu):
+    bl_idname = "SIM_MT_cols_tall"; bl_label = "Sim Columns Tall"
+    rows = 60
+
+
+class SimRowsPanel(SimTearPanel):
+    """Rows of operators that report their index, with whatever a scenario asks for above them."""
+
+    def draw_rows(self, context):
+        st = self.__class__.state
+        layout = self.layout
+        if st["layout_panels"]:
+            for name in ("a", "b"):
+                header, body = layout.panel("SIM_rows_" + name, default_closed=False)
+                header.label(text="Layout Panel " + name)
+                st["open_" + name] = body is not None
+                if body:
+                    body.label(text="Layout Body " + name)
+        if st["curve"]:
+            layout.operator("sim.row_probe", text="Above the Curve").index = 1000
+            layout.template_curve_mapping(context.scene.view_settings, "curve_mapping")
+        for i in range(st["rows"]):
+            row = layout.row()
+            row.scale_y = 3.0 if st["big"] else 1.0
+            row.operator("sim.row_probe", text=f"Tall Row {i:02d}").index = i
+
+
+class SIM_PT_tall(SimRowsPanel, bpy.types.Panel):
+    bl_idname = "SIM_PT_tall"; bl_label = "Sim Tall"
+    state = sim_state(rows=80, big=False, curve=False, layout_panels=False)
+
+
+class SIM_PT_mid(SimRowsPanel, bpy.types.Panel):
+    """Fits in the window from the center, so its natural height can be measured."""
+    bl_idname = "SIM_PT_mid"; bl_label = "Sim Mid"
+    state = sim_state(rows=14, big=False, curve=False, layout_panels=False)
+
+
+class SIM_PT_wrap(SimTearPanel, bpy.types.Panel):
+    """A field that fills the row, so a wider panel has to lay it out again. Row 1 is a checkbox
+    and row 2 an operator, which is what a grip's release must not run."""
+    bl_idname = "SIM_PT_wrap"; bl_label = "Sim Wrap"
+    state = sim_state()
+
+    def draw_rows(self, context):
+        layout = self.layout
+        layout.prop(context.scene, "frame_current")
+        layout.prop(context.scene, "use_gravity")
+        layout.operator("sim.row_probe", text="Probe").index = 7
+
+
+class SIM_PT_small(SimTearPanel, bpy.types.Panel):
+    """Designed narrower than UI_MENU_WIDTH_MIN, so the block is wider than its layout."""
+    bl_idname = "SIM_PT_small"; bl_label = "Sim Small"
+    bl_ui_units_x = 6
+    state = sim_state()
+    rows = 2
+
+
+class SIM_PT_fields(SimTearPanel, bpy.types.Panel):
+    """Number fields only, for Tab to walk through and for an arrow beside the scrollbar."""
+    bl_idname = "SIM_PT_fields"; bl_label = "Sim Fields"
+    state = sim_state()
+
+    def draw_rows(self, context):
+        for i in range(FIELDS):
+            self.layout.prop(context.scene, "sim_values", index=i, text=f"F{i:02d}")
+
+
+bpy.types.Scene.sim_values = bpy.props.IntVectorProperty(name="Sim Values", size=FIELDS)
+
+
 bpy.utils.register_class(SIM_PT_field)
 bpy.utils.register_class(SIM_OT_dialog)
 bpy.utils.register_class(SIM_PT_enum)
@@ -397,6 +566,11 @@ for sim_cls in (SIM_PT_tear_anchor, SIM_PT_tear, SIM_PT_tear_sub, SIM_PT_tear_su
                 SIM_PT_once, SIM_PT_place, SIM_PT_props, SIM_PT_none, SIM_PT_tool_tab,
                 SIM_PT_cols_anchor, SIM_PT_cols, SIM_PT_clip_cols, SIM_PT_ui_cols,
                 SIM_PT_seq_poll, SIM_PT_clip_poll, SIM_PT_dope_poll, SIM_PT_graph_poll):
+    bpy.utils.register_class(sim_cls)
+# Phases 7 and 8. Operators and submenus before what uses them.
+for sim_cls in (SIM_OT_row_probe, SIM_MT_short, SIM_MT_short_title, SIM_MT_long, SIM_MT_mid,
+                SIM_MT_tall, SIM_MT_parent, SIM_MT_arrows, SIM_MT_cols_long, SIM_MT_cols_tall,
+                SIM_PT_tall, SIM_PT_mid, SIM_PT_wrap, SIM_PT_small, SIM_PT_fields):
     bpy.utils.register_class(sim_cls)
 
 # ---------------------------------------------------------------- scenarios

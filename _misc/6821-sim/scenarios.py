@@ -704,12 +704,14 @@ def items_box(b):
 
 
 def first_item_box(b):
-    return b[0] + 6, b[3] - 50, b[0] + 150, b[3] - 32
+    # A fitted menu can be narrower than this, and the viewport beside it isn't part of the item.
+    return b[0] + 6, b[3] - 50, min(b[0] + 150, b[2] - 6), b[3] - 32
 
 
 def label_box(b):
-    """The left of the header row. The icons can move, because the width follows the content."""
-    return b[0], b[3] - 24, b[0] + 100, b[3]
+    """The left of the header row. The icons can move, because the width follows the content, and
+    on a fitted menu they start 60 to 100 in."""
+    return b[0], b[3] - 24, b[0] + 60, b[3]
 
 
 def panel_row(i=0):
@@ -2483,3 +2485,1751 @@ def s_p6_look():
 
 
 SC["p6_look"] = s_p6_look
+
+
+# ---------------------------------------------------------------- Phases 7 and 8
+# Not run yet, and the code they test hasn't been built. Positions come from frame diffs at run
+# time and every box is logged, so the first run can calibrate. A frame diff's box is the block's
+# rect here: on p6_look-other.png nothing outside it differs and its outline is the box's edge.
+# Measured on earlier shots (100% scale):
+# - STRIP_MENU: the header's line is 28 down from the top, on multicol_header-m.png.
+# - STRIP_PANEL: that line is 37 down, on number-base_po.png. Rows there are 20 tall, 25 apart.
+# - TITLE_MENU: the enum scenarios' 14 down, TITLE_Y is the panels' 17.
+# Inferred, so check these first if a step fails:
+# - PARK: must stay left of every tear-off opened at the center, and clear of the shelf.
+# - BAR_X: inside the scrollbar, from tear_off_scrollbar_calc, which isn't in any shot yet.
+# - The grips' bands, from tear_off_zone_at: 6 outside and 3 inside. The steps press 2 outside.
+# - The wheel moves content by one UI_UNIT_Y, 20 px, as menu_scroll_to_y does.
+#
+# Double-clicks can't be simulated, and cursors don't show in a screenshot, so a grip's reset and
+# every cursor shape stay hand tests. "Same as before" needs a build without these phases, see
+# ref_check.
+PARK = (250, 200)
+STRIP_MENU = 29
+STRIP_PANEL = 38
+TITLE_MENU = 14
+PANEL_ROW0 = 55
+PANEL_ROW = 25
+BAR_X = 5
+# The header's line stops 8 short of the edge, on multicol_header-m.png.
+LINE_GAP = 12
+# UI_MENU_WIDTH_MIN is 180 at 100%, and a box's far edge is its last pixel.
+FLOOR = 178
+
+
+def park():
+    """Over the viewport, so nothing is hovered and no row or grip is lit."""
+    move(*PARK); yield 0.3
+    move(*PARK); yield 0.3
+
+
+def begin(*states):
+    """Only the tear-off may differ between frames, so no tooltips and no overlay text. The panels
+    show from the start, because their tab appearing in the sidebar would be in every diff."""
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    for st in states:
+        st["show"] = True
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("base")
+
+
+def mid_x(b):
+    return (b[0] + b[2]) // 2
+
+
+def mid_y(b):
+    return (b[1] + b[3]) // 2
+
+
+def width(b):
+    return b[2] - b[0]
+
+
+def height(b):
+    return b[3] - b[1]
+
+
+def strip_box(b, h):
+    """The header of a tear-off with box b, down to its line."""
+    return b[0] + 2, b[3] - h, b[2] - 2, b[3] - 1
+
+
+def rows_box(b, h):
+    """What scrolls in a tear-off with box b."""
+    return b[0] + 2, b[1] + 2, b[2] - 2, b[3] - h - 1
+
+
+def need(b, what):
+    """Every later step clicks relative to this box, and without it would only add noise."""
+    check(what, b is not None, b)
+    if b is None:
+        raise RuntimeError("no box: " + what)
+    return b
+
+
+def need_box(n1, n2, what):
+    return need(bbox(n1, n2), what)
+
+
+def open_menu(name):
+    move(*center()); yield 0.3
+    tear_menu(name); yield 0.8
+    yield from park()
+
+
+def open_tpanel(name):
+    move(*center()); yield 0.3
+    tear_panel(name); yield 0.8
+    yield from park()
+
+
+def opened(gen, frame, what, base="base"):
+    yield from gen
+    yield from grab(frame)
+    return need_box(base, frame, what)
+
+
+def call_menu(name):
+    with bpy.context.temp_override(**override("VIEW_3D", "HEADER")):
+        bpy.ops.wm.call_menu(name=name)
+
+
+def call_panel(name):
+    with bpy.context.temp_override(**override("VIEW_3D", "HEADER")):
+        bpy.ops.wm.call_panel(name=name, keep_open=True)
+
+
+def dismiss():
+    """Close a regular popup, and anything a failed step left open with it."""
+    yield from esc()
+    yield from esc()
+    yield from park()
+
+
+def title_drag(b, title_y, dx, dy):
+    # Not drag_title: at 80 in, a fitted menu's title is already its pin icon.
+    yield from drag(b[0] + 40, b[3] - title_y, dx, dy)
+    yield from park()
+
+
+def collapse(b, title_y, name, base="base", box=None):
+    """Press the pin icon. Returns the box of the pin it leaves."""
+    yield from click(b[2] - PIN_ICON, b[3] - title_y)
+    yield from park()
+    yield from grab(name)
+    c = need(box_bbox(base, name, box) if box else bbox(base, name), "collapsed: " + name)
+    check("the pin icon collapses it: " + name, height(c) < 60, c)
+    return c
+
+
+def expand(c, name):
+    yield from click(c[2] - 40, mid_y(c))
+    yield from park()
+    yield from grab(name)
+
+
+def closes(b, title_y, name, base="base"):
+    yield from click(b[2] - X_ICON, b[3] - title_y)
+    yield from park()
+    yield from grab(name)
+    n = rdiff(base, name, b)
+    check("the X closes it: " + name, n < 200, n)
+
+
+def wheel(x, y, down=True, n=1, gap=0.1):
+    t = "WHEELDOWNMOUSE" if down else "WHEELUPMOUSE"
+    move(x, y); yield W
+    move(x, y); yield W
+    for _ in range(n):
+        win().event_simulate(type=t, value="PRESS", x=int(x), y=int(y)); yield gap
+
+
+def crop(b, by):
+    """Drag the bottom grip up from just below the block."""
+    yield from drag(mid_x(b), b[1] - 2, 0, by)
+    yield from park()
+
+
+def uncrop(v, by):
+    """Drag the bottom grip down past where a crop of `by` started, as far as the window allows."""
+    yield from drag(mid_x(v), v[1] - 2, 0, -min(by + 40, v[1] - 5))
+    yield from park()
+
+
+def grip_cancel(x, y, tx, ty, cancel="ESC"):
+    """Press a grip, go to (tx, ty), cancel with the button still down, and only then release."""
+    move(x, y); yield W
+    move(x, y); yield W
+    press(x, y); yield 0.1
+    for i in range(1, 5):
+        move(x + (tx - x) * i // 4, y + (ty - y) * i // 4); yield 0.05
+    yield 0.2
+    if cancel == "RIGHTMOUSE":
+        press(tx, ty, cancel); yield 0.1
+        release(tx, ty, cancel); yield 0.2
+    else:
+        key(cancel, tx, ty); yield 0.05
+        key(cancel, tx, ty, None, "RELEASE"); yield 0.2
+    release(tx, ty); yield 0.4
+
+
+def ink(name, box, margin=0.2):
+    """The box of what stands out from the median color of a box: text and icons."""
+    x0, y0, x1, y1 = box
+    if x1 <= x0 or y1 <= y0:
+        return None
+    f = FRAME[name][y0:y1 + 1, x0:x1 + 1]
+    d = np.abs(f - np.median(f.reshape(-1, 3), axis=0)).max(axis=2) > margin
+    if not d.any():
+        return None
+    ys, xs = np.where(d)
+    return int(xs.min()) + x0, int(ys.min()) + y0, int(xs.max()) + x0, int(ys.max()) + y0
+
+
+def text_w(text):
+    """The width of text in the UI font. Inferred: that's the default font at the widget size."""
+    import blf
+    points = bpy.context.preferences.ui_styles[0].widget.points
+    blf.size(0, points * bpy.context.preferences.system.ui_scale)
+    return blf.dimensions(0, text)[0]
+
+
+def text_whole(name, box, text):
+    """Whether text in a box is as wide as the font says. A clipped text ends sooner, in dots."""
+    t, want = ink(name, box), text_w(text)
+    log("ink", t, "font width", want, "for", text)
+    return t is not None and width(t) >= 0.9 * want
+
+
+def title_whole(name, b, title, title_y=TITLE_MENU):
+    # Starts past the grip, and ends before the pin icon.
+    box = (b[0] + 24, b[3] - title_y - 9, b[2] - PIN_ICON - 8, b[3] - title_y + 9)
+    return text_whole(name, box, title)
+
+
+def field_right(name, b, y):
+    """The first pixel from the block's right edge in row y that isn't the block's background."""
+    row = FRAME[name][y]
+    bg = row[b[2] - 4]
+    x = b[2] - 4
+    while x > b[0] and np.abs(row[x] - bg).max() < 0.04:
+        x -= 1
+    return x
+
+
+def line_extent(name, b, down):
+    """How far the header's line reaches, down from the top of box b."""
+    y = b[3] - down
+    xs = np.where(np.abs(FRAME[name][y, b[0] + 3:b[2] - 1] -
+                         FRAME[name][y + 4, b[0] + 3:b[2] - 1]).max(axis=1) > 0.03)[0]
+    return (int(xs.min()) + b[0] + 3, int(xs.max()) + b[0] + 3) if xs.size else None
+
+
+def patch_diff(n1, x1, y1, n2, x2, y2, w, h, thresh=0.04):
+    """Pixels that differ between a patch of one frame and one elsewhere in another."""
+    a = FRAME[n1][y1:y1 + h, x1:x1 + w]
+    b = FRAME[n2][y2:y2 + h, x2:x2 + w]
+    return int((np.abs(a - b).max(axis=2) > thresh).sum())
+
+
+def color_count(name, box, xy, thresh=0.03):
+    """Pixels in a box that aren't the color at xy, for something faint like a resting bar."""
+    x0, y0, x1, y1 = box
+    return int((np.abs(FRAME[name][y0:y1 + 1, x0:x1 + 1] - FRAME[name][xy[1], xy[0]]).max(axis=2) >
+                thresh).sum())
+
+
+def load_shot(path):
+    img = bpy.data.images.load(path, check_existing=False)
+    w, h = img.size
+    a = np.empty(w * h * 4, dtype=np.float32); img.pixels.foreach_get(a)
+    bpy.data.images.remove(img)
+    return a.reshape(h, w, 4)[:, :, :3]
+
+
+def ref_check(shot_name, box):
+    """Same pixels as a build without Phases 7 and 8. Record with SIM_RECORD_REF=1 run.sh ... on
+    such a build, into ref/ beside the shots. Without a recording this only says so, because
+    comparing a build with itself would pass whatever it does."""
+    import shutil
+    src = os.path.join(SHOTS, f"{SCEN}-{shot_name}.png")
+    ref_dir = os.path.join(OUT, "ref")
+    ref = os.path.join(ref_dir, f"{SCEN}-{shot_name}.png")
+    if os.environ.get("SIM_RECORD_REF"):
+        os.makedirs(ref_dir, exist_ok=True)
+        shutil.copyfile(src, ref)
+        log("REF recorded", ref)
+        return
+    if not os.path.exists(ref):
+        log("INCONCLUSIVE: nothing to compare with, record", ref)
+        return
+    x0, y0, x1, y1 = box
+    n = int((np.abs(load_shot(ref)[y0:y1 + 1, x0:x1 + 1] -
+                    FRAME[shot_name][y0:y1 + 1, x0:x1 + 1]).max(axis=2) > 0.01).sum())
+    check("same pixels as before these phases: " + shot_name, n == 0, n)
+
+
+# ---------------------------------------------------------------- Phase 7: menus
+def s_p7_menu_fit():
+    yield from begin()
+    P = SIM_OT_row_probe.state
+    # The attached menu keeps the floor, which is what the torn-off one has to drop.
+    move(*center()); yield 0.3
+    call_menu("SIM_MT_short"); yield 0.8
+    yield from grab("att")
+    a = need_box("base", "att", "the attached menu opens")
+    check("the attached menu keeps its floor", width(a) >= FLOOR, a)
+    yield from dismiss()
+
+    # Short rows and a short title: the title decides.
+    b = yield from opened(open_menu("SIM_MT_short"), "m", "the tear-off opens")
+    check("narrower than the floor", width(b) < FLOOR, b)
+    check("narrower than the attached menu", width(b) < width(a), (b, a))
+    check("no narrower than its header", title_whole("m", b, "Sim Short"), b)
+    for i in (0, 2):
+        x, y = tear_row(b, i)
+        yield from click(x, y); yield 0.3
+        check(f"row {i} clicks", P["last"] == i, P)
+    yield from park()
+    c = yield from collapse(b, TITLE_MENU, "col")
+    yield from expand(c, "exp")
+    check("the pin expands it in place", rdiff("m", "exp", b) < 100, rdiff("m", "exp", b))
+    yield from closes(b, TITLE_MENU, "closed")
+
+    # Short rows and a long title: the header sets the width, and its icons stay reachable.
+    b = yield from opened(open_menu("SIM_MT_short_title"), "t", "the long title opens")
+    check("the title isn't clipped", title_whole("t", b, LONG_TITLE), b)
+    c = yield from collapse(b, TITLE_MENU, "tcol")
+    yield from expand(c, "texp")
+    yield from closes(b, TITLE_MENU, "tclosed")
+
+    # A long row: the rows set the width.
+    b = yield from opened(open_menu("SIM_MT_long"), "l", "the long row opens")
+    x, y = tear_row(b, 0)
+    row = (b[0] + 2, y - 9, b[2] - 2, y + 9)
+    check("the longest row isn't clipped", text_whole("l", row, LONG_ROW + " 00"), b)
+    check("the title stays", title_whole("l", b, "Sim Long"), b)
+    yield from click(x, y); yield 0.3
+    check("the long row clicks", P["last"] == 0, P)
+    yield from park()
+    yield from closes(b, TITLE_MENU, "lclosed")
+
+
+SC["p7_menu_fit"] = s_p7_menu_fit
+
+
+def s_p7_attached():
+    """An attached menu doesn't change, with or without a tear-off open beside it."""
+    yield from begin()
+    move(*center()); yield 0.3
+    call_menu("SIM_MT_short"); yield 0.8
+    yield from grab("att1")
+    a = need_box("base", "att1", "the attached menu opens")
+    check("it keeps its floor", width(a) >= FLOOR, a)
+    ref_check("att1", a)
+    yield from dismiss()
+    b = yield from opened(open_menu("SIM_MT_short"), "m", "the tear-off opens")
+    yield from title_drag(b, TITLE_MENU, -300, -200)
+    move(*center()); yield 0.3
+    call_menu("SIM_MT_short"); yield 0.8
+    yield from grab("att2")
+    n = rdiff("att1", "att2", a)
+    check("the same with a tear-off open", n < 20, n)
+    yield from dismiss()
+
+
+SC["p7_attached"] = s_p7_attached
+
+
+def s_p7_menu_cols():
+    yield from begin()
+    P = SIM_OT_row_probe.state
+    # The header is wider than the columns, and goes to the last one.
+    b = yield from opened(open_menu("SIM_MT_cols_long"), "m", "the tear-off opens")
+    check("the title isn't clipped", title_whole("m", b, LONG_TITLE), b)
+    y = b[3] - TEAR_ROW0
+    yield from click(b[0] + 30, y); yield 0.3
+    check("a row in the first column clicks", P["last"] == 0, P)
+    yield from click(b[2] - 30, y); yield 0.3
+    check("a row in the last column clicks", P["last"] == 100, P)
+    yield from park()
+    line = line_extent("m", b, 28); log("line", line)
+    check("the line spans the columns", line is not None and line[1] >= b[2] - LINE_GAP, (line, b))
+    c = yield from collapse(b, TITLE_MENU, "col")
+    yield from expand(c, "exp")
+    check("the pin expands it in place", rdiff("m", "exp", b) < 100, rdiff("m", "exp", b))
+    yield from closes(b, TITLE_MENU, "closed")
+    # The columns are wider than the title. Measured at 259 wide before these phases.
+    b = yield from opened(open_menu("SIM_MT_cols"), "s", "the shorter title opens")
+    check("no wider than it used to be", width(b) <= 259, b)
+    st = SIM_OT_area_probe.state
+    yield from click(b[2] - 60, b[3] - TEAR_ROW0); yield 0.3
+    check("its last column clicks", st["runs"] == 1, st)
+    yield from park()
+    yield from closes(b, TITLE_MENU, "sclosed")
+
+
+SC["p7_menu_cols"] = s_p7_menu_cols
+
+
+def s_p7_menu_enum():
+    yield from begin()
+    ts = bpy.context.tool_settings
+    was = ts.transform_pivot_point
+    move(*center()); yield 0.3
+    r = tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    check("the operator runs", r == {"INTERFACE"}, r)
+    check("tearing off leaves the value", ts.transform_pivot_point == was, was)
+    yield from park()
+    yield from grab("m")
+    b = need_box("base", "m", "the tear-off opens")
+    # Measured at 291 wide before these phases, when the title always took 10 units.
+    check("narrower than it used to be", width(b) < 291, b)
+    check("the title isn't clipped", title_whole("m", b, "Transform Pivot Point"), b)
+    for i in (0, 1, 2, 4, 3):
+        x, y = tear_row(b, i)
+        yield from click(x, y); yield 0.3
+        check("item applies: " + PIVOTS[i], ts.transform_pivot_point == PIVOTS[i],
+              ts.transform_pivot_point)
+    yield from park()
+    # Only in the viewport, because the items changed the pivot icon in its header.
+    c = yield from collapse(b, TITLE_MENU, "col", box=VIEW)
+    yield from expand(c, "exp")
+    yield from closes(b, TITLE_MENU, "closed")
+
+
+SC["p7_menu_enum"] = s_p7_menu_enum
+
+
+def sub_width(parent, y, before, name):
+    """Open the submenu of the row at y, and return the width of what opens beside the parent."""
+    yield from click(mid_x(parent), y); yield 0.5
+    yield from grab(name)
+    s = box_bbox(before, name, (parent[2] + 1, 0, 1599, 999))
+    log("submenu", name, s, "beside", parent)
+    return width(s) if s else None
+
+
+def s_p7_submenu():
+    """A submenu of a fitted menu keeps the floor, or it would open as narrow as its parent."""
+    yield from begin()
+    move(*center()); yield 0.3
+    call_menu("SIM_MT_parent"); yield 0.8
+    yield from grab("att")
+    a = need_box("base", "att", "the attached parent opens")
+    # Two rows below it, measured up from the bottom edge, because this menu also has a title.
+    w_att = yield from sub_width(a, a[1] + MENU_BOTTOM + ROW * 2, "att", "att_sub")
+    yield from dismiss()
+    yield from dismiss()
+    b = yield from opened(open_menu("SIM_MT_parent"), "m", "the torn-off parent opens")
+    check("the torn-off parent is fitted", width(b) < FLOOR, b)
+    w_torn = yield from sub_width(b, tear_row(b, 0)[1], "m", "torn_sub")
+    check("it opens from the attached parent", w_att is not None, w_att)
+    check("it opens from the torn-off parent", w_torn is not None, w_torn)
+    check("it keeps the floor", w_torn is not None and w_torn >= 165, w_torn)
+    # Inferred tolerance: the attached one follows its row, the torn-off one is the floor itself.
+    check("the same width from both", w_att is not None and w_torn is not None and
+          abs(w_att - w_torn) <= 12, (w_att, w_torn))
+    yield from dismiss()
+
+
+SC["p7_submenu"] = s_p7_submenu
+
+
+# ---------------------------------------------------------------- Phase 7: the right edge
+def s_p7_width_reflow():
+    st = SIM_PT_wrap.state
+    yield from begin(st)
+    b = yield from opened(open_tpanel("SIM_PT_wrap"), "m", "the tear-off opens")
+    y = mid_y(b)
+    field_y = b[3] - PANEL_ROW0
+    edge0 = field_right("m", b, field_y)
+    log("field edge", edge0, "of", b)
+    check("the field is measured, not the block", b[2] - edge0 >= 6, (edge0, b))
+    draws = st["draw_popup"]
+    yield from drag(b[2] + 2, y, 120, 0)
+    yield from park()
+    yield from grab("wide")
+    v = need_box("base", "wide", "after the drag")
+    check("wider by the drag", abs(width(v) - width(b) - 120) <= 2, (b, v))
+    check("the left edge stays", abs(v[0] - b[0]) <= 1, (b, v))
+    check("the height stays", abs(height(v) - height(b)) <= 1, (b, v))
+    check("Python drew it again", st["draw_popup"] > draws, st["draw_popup"])
+    # Reflow, not a stretched image: the field's edge follows and its margin keeps its size, and
+    # what's left of the field is the same pixels.
+    edge1 = field_right("wide", v, field_y)
+    log("field edge", edge1, "of", v)
+    check("the field got wider", abs(edge1 - edge0 - 120) <= 2, (edge0, edge1))
+    check("its margin stays", abs((v[2] - edge1) - (b[2] - edge0)) <= 1, (edge0, edge1))
+    left = (b[0] + 2, b[1] + 2, b[0] + 60, b[3] - 2)
+    check("the left of the rows doesn't stretch", rdiff("m", "wide", left) < 30,
+          rdiff("m", "wide", left))
+    # Back to the designed width.
+    yield from drag(v[2] + 2, y, -400, 0)
+    yield from park()
+    yield from grab("back")
+    w = need_box("base", "back", "after the drag back")
+    check("back at the designed width", same_box(b, w, 1), (b, w))
+    check("the same pixels as at the start", rdiff("m", "back", b) < 50, rdiff("m", "back", b))
+    yield from closes(b, TITLE_Y, "closed")
+
+
+SC["p7_width_reflow"] = s_p7_width_reflow
+
+
+def s_p7_width_limits():
+    st, small = SIM_PT_wrap.state, SIM_PT_small.state
+    ui = SIM_PT_ui_cols.state
+    yield from begin(st, small, ui)
+    b = yield from opened(open_tpanel("SIM_PT_wrap"), "m", "the tear-off opens")
+    y = mid_y(b)
+    # The maximum: the window, and the left edge doesn't give way.
+    x = b[2] + 2
+    yield from drag(x, y, 1598 - x, 0)
+    yield from park()
+    yield from grab("max")
+    v = need_box("base", "max", "dragged past the window")
+    log("at the window edge", v)
+    check("the right edge stays in the window", v[2] <= 1590, v)
+    check("the left edge stays", abs(v[0] - b[0]) <= 1, (b, v))
+    check("it did grow", width(v) > width(b) + 300, (b, v))
+    # The minimum: the designed width.
+    yield from drag(v[2] + 2, y, 10 - (v[2] + 2), 0)
+    yield from park()
+    yield from grab("min")
+    w = need_box("base", "min", "dragged far left")
+    check("the minimum is the designed width", same_box(b, w, 1), (b, w))
+    yield from close_all()
+    yield from park()
+
+    # The block is wider than this panel's layout, and one pixel must not narrow it to the layout.
+    s = yield from opened(open_tpanel("SIM_PT_small"), "s", "the small panel opens")
+    check("the block has the minimum width", width(s) >= FLOOR, s)
+    yield from drag(s[2] + 2, mid_y(s), 1, 0)
+    yield from park()
+    yield from grab("s1")
+    v = need_box("base", "s1", "after one pixel")
+    check("one pixel never narrows it", width(v) >= width(s), (s, v))
+    check("one pixel does no more than that", width(v) <= width(s) + 3, (s, v))
+    yield from drag(v[2] + 2, mid_y(s), 40, 0)
+    yield from park()
+    yield from grab("s2")
+    v = need_box("base", "s2", "after more")
+    check("then it grows with the drag", abs(width(v) - width(s) - 41) <= 3, (s, v))
+    yield from drag(v[2] + 2, mid_y(s), -300, 0)
+    yield from park()
+    yield from grab("s3")
+    v = need_box("base", "s3", "dragged back")
+    check("it returns to its first width", same_box(s, v, 1), (s, v))
+    yield from close_all()
+    yield from park()
+
+    # Python only ever sees a shelf's width. It did draw, so a stale 0 can't pass.
+    p = yield from opened(open_tpanel("SIM_PT_ui_cols"), "u", "the other panel opens")
+    draws = ui["popup"].get("draws", 0)
+    yield from drag(p[2] + 2, mid_y(p), 60, 0)
+    yield from park()
+    check("it drew again after the drag", ui["popup"].get("draws", 0) > draws, ui["popup"])
+    check("Python still sees no width", ui["popup"].get("width") == 0, ui["popup"])
+
+
+SC["p7_width_limits"] = s_p7_width_limits
+
+
+def s_p7_width_cancel():
+    st = SIM_PT_wrap.state
+    P = SIM_OT_row_probe.state
+    sc = bpy.context.scene
+    yield from begin(st)
+    ob = bpy.context.view_layer.objects.active
+    b = yield from opened(open_tpanel("SIM_PT_wrap"), "m", "the tear-off opens")
+    gy = mid_y(b)
+    # A press in the outer band is over the viewport, which must not see it.
+    check("the cube starts selected", ob.select_get(), None)
+    yield from click(b[2] + 2, gy)
+    yield from park()
+    yield from grab("pressed")
+    check("the band keeps the selection", ob.select_get(), None)
+    check("a press alone doesn't resize", same_box(b, bbox("base", "pressed"), 1),
+          bbox("base", "pressed"))
+    yield from drag(b[2] + 2, gy, 80, 0)
+    yield from park()
+    yield from grab("wide")
+    w = need_box("base", "wide", "after the drag")
+    check("wider by the drag", abs(width(w) - width(b) - 80) <= 2, (b, w))
+    # Over a row with the button down. A cancel must restore the size and swallow the release.
+    row_y = b[3] - PANEL_ROW0 - PANEL_ROW * 2
+    for cancel in ("ESC", "RIGHTMOUSE"):
+        runs = P["runs"]
+        yield from grip_cancel(w[2] + 2, row_y, mid_x(b), row_y, cancel)
+        yield from park()
+        yield from grab("cancel_" + cancel)
+        v = bbox("base", "cancel_" + cancel)
+        check(cancel + " restores the width", same_box(w, v, 1), (w, v))
+        check(cancel + ": the release runs no row", P["runs"] == runs, P)
+    # And input isn't stuck after that.
+    yield from click(mid_x(b), row_y); yield 0.3
+    check("the row still clicks after a cancel", P["last"] == 7, P)
+    yield from park()
+    # A checkbox waiting to start a drag-toggle finishes, wherever the release lands.
+    was = sc.use_gravity
+    x, y = b[0] + 60, b[3] - PANEL_ROW0 - PANEL_ROW
+    move(x, y); yield W
+    move(x, y); yield W
+    press(x, y); yield 0.1
+    move(x + 30, y); yield 0.05
+    move(w[2] + 2, y); yield 0.2
+    release(w[2] + 2, y); yield 0.4
+    yield from park()
+    yield from grab("toggled")
+    check("a checkbox dragged into the band still toggles", sc.use_gravity != was, sc.use_gravity)
+    # Only in the viewport, because the checkbox could also show in the Properties editor.
+    v = box_bbox("base", "toggled", VIEW)
+    check("and that doesn't resize", same_box(w, v, 1), (w, v))
+    # The baseline for the band: the same press with no tear-off does deselect.
+    yield from close_all()
+    yield from click(b[2] + 2, gy)
+    yield from park()
+    if ob.select_get():
+        log("INCONCLUSIVE: a press on that spot doesn't deselect without a tear-off either")
+    else:
+        check("without a tear-off that press deselects", True)
+
+
+SC["p7_width_cancel"] = s_p7_width_cancel
+
+
+def s_p7_width_two():
+    """Modal ownership stays with the older tear-off, and the newer one clears its hover."""
+    st = SIM_PT_wrap.state
+    yield from begin(st)
+    a0 = yield from opened(open_tpanel("SIM_PT_wrap"), "a_m", "the older tear-off opens")
+    yield from title_drag(a0, TITLE_Y, -300, -150)
+    yield from grab("a")
+    a = need_box("base", "a", "the older tear-off moved")
+    b = yield from opened(open_tpanel("SIM_PT_field"), "two", "the newer tear-off opens", base="a")
+    log("older", a, "newer", b)
+    # Hover: the line shows on the older, and goes when the cursor is inside the newer.
+    x, y = a[2] + 2, mid_y(a)
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    yield from grab("hover")
+    edge = (a[2] - 4, a[1] + 10, a[2] + 1, a[3] - 10)
+    line = box_bbox("two", "hover", edge)
+    check("the grip lights while hovered", line is not None, line)
+    # In one move, so the older one never sees the cursor leave its band.
+    tx, ty = b[0] + 60, b[3] - TITLE_Y
+    move(tx, ty); yield 0.3
+    move(tx, ty); yield 0.3
+    yield from grab("moved")
+    gone = box_bbox("two", "moved", a)
+    check("inside the newer one the older goes dark", gone is None, gone)
+    # Press on the older and release over the newer.
+    yield from park()
+    tx, ty = mid_x(b), mid_y(b)
+    yield from drag(x, y, tx - x, ty - y)
+    yield from park()
+    yield from grab("released")
+    own = (a[0] - 2, a[1], 1599, a[3])
+    v = need(box_bbox("base", "released", own), "the older tear-off after the drag")
+    check("the older one took the drag", abs(v[2] - a[2] - (tx - x)) <= 2, (a, v))
+    check("the newer one is untouched", rdiff("two", "released", b) < 50,
+          rdiff("two", "released", b))
+    # A later move changes nothing, so the drag did end.
+    move(tx, ty); yield 0.2
+    move(x + 60, y); yield 0.2
+    move(tx, ty - 10); yield 0.2
+    yield from park()
+    yield from grab("later")
+    check("a later move changes nothing", rdiff("released", "later", own) < 50,
+          rdiff("released", "later", own))
+
+
+SC["p7_width_two"] = s_p7_width_two
+
+
+def s_p7_width_keep():
+    st = SIM_PT_wrap.state
+    view = bpy.context.preferences.view
+    yield from begin(st)
+    # A frame to diff at the other scale.
+    view.ui_scale = 1.5; yield 1.5
+    yield from park()
+    yield from grab("base15")
+    view.ui_scale = 1.0; yield 1.5
+    yield from park()
+    yield from grab("base")
+    b = yield from opened(open_tpanel("SIM_PT_wrap"), "m", "the tear-off opens")
+    yield from drag(b[2] + 2, mid_y(b), 100, 0)
+    yield from park()
+    yield from grab("wide")
+    v = need_box("base", "wide", "after the drag")
+    c = yield from collapse(v, TITLE_Y, "col")
+    yield from expand(c, "exp")
+    w = need_box("base", "exp", "after expanding")
+    check("collapse and expand keep the width", same_box(v, w, 1), (v, w))
+    view.ui_scale = 1.5; yield 1.5
+    yield from park()
+    yield from grab("big")
+    g = need_box("base15", "big", "at 150%")
+    log("at 150%", g, "at 100%", v)
+    check("a scale change scales it", abs(width(g) - 1.5 * width(v)) <= 6, (v, g))
+    view.ui_scale = 1.0; yield 1.5
+    yield from park()
+    yield from grab("small")
+    s = need_box("base", "small", "back at 100%")
+    check("and returns", abs(width(s) - width(v)) <= 2, (v, s))
+
+
+SC["p7_width_keep"] = s_p7_width_keep
+
+
+# ---------------------------------------------------------------- Phase 7: the tool shelf
+def s_p7_shelf_steps():
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    # The shelf doesn't resize here, but the stats would still be in the diff.
+    area().spaces.active.overlay.show_text = False
+    C = SIM_PT_cols.state
+    yield from open_tab("TOOLS", "SimTear", SIM_PT_cols_anchor.state, C)
+    yield from park()
+    yield from grab("base")
+    shelf_w = shelf().width
+    yield from tear_center("SIM_PT_cols", rt="TOOLS")
+    yield from park()
+    yield from grab("m")
+    v = need(torn_box("base", "m"), "the shelf tear-off opens")
+    region_count = C["popup"].get("region_count")
+    log("torn off at", C["popup"])
+    check("it has a shelf width", C["popup"].get("width", 0) > 0, C["popup"])
+    steps = {92.0, 132.0, 172.0, 212.0, 100.0, 140.0, 180.0, 220.0}
+
+    def on_step(w):
+        return w is not None and any(abs(w - s) < 1.0 for s in steps)
+
+    def grip(name, dx):
+        nonlocal v
+        yield from drag(v[2] + 2, mid_y(v), dx, 0)
+        yield from park()
+        yield from grab(name)
+        v = need(torn_box("base", name), name)
+        rec = C["popup"]
+        title = (v[0] + 2, v[3] - TITLE_Y - 9, v[2] - PIN_ICON - 8, v[3] - TITLE_Y + 9)
+        # Read by hand with the shot, because a screenshot diff can't judge clipping.
+        log(name, "width", rec.get("width"), "count", rec.get("count"), "box", v,
+            "title ink", ink(name, title))
+        return rec.get("width"), rec.get("count")
+
+    def title_moves(name):
+        """The title still drags at this width. At the left, past the hidden grip's place."""
+        nonlocal v
+        yield from drag(v[0] + 12, v[3] - TITLE_Y, 0, -30)
+        yield from park()
+        yield from grab(name)
+        w = need(torn_box("base", name), name)
+        check("the title drags: " + name,
+              abs(w[3] - v[3] + 30) <= 2 and abs(width(w) - width(v)) <= 2, (v, w))
+        v = w
+
+    # Narrowest first, then one column at a time.
+    w, n = yield from grip("n1", -300)
+    check("far left is the narrowest step", on_step(w) and n == 1, (w, n))
+    yield from title_moves("n1_title")
+    seen = [n]
+    for i in (2, 3, 4):
+        w, n = yield from grip(f"n{i}", 40)
+        check(f"step {i} is a snap point", on_step(w), w)
+        seen.append(n)
+        yield from title_moves(f"n{i}_title")
+    check("the count goes 1, 2, 3, 4", seen == [1, 2, 3, 4], seen)
+    # Free above the last step, as the real shelf's text list.
+    w4 = C["popup"]["width"]
+    w, n = yield from grip("free", 60)
+    check("free above the last step", w is not None and abs(w - w4 - 60) < 2 and not on_step(w),
+          (w4, w))
+    check("and still 4 columns", n == 4, n)
+    # None of this reaches the real shelf.
+    check("the shelf keeps its width", shelf().width == shelf_w, (shelf_w, shelf().width))
+    check("its own count doesn't change", C["popup"].get("region_count") == region_count,
+          C["popup"])
+    # Back to one column, where the header is tightest.
+    w, n = yield from grip("n1b", -400)
+    check("back to the narrowest step", on_step(w) and n == 1, (w, n))
+    c = yield from collapse(v, TITLE_Y, "col", box=free_box())
+    yield from expand(c, "exp")
+    w2 = need(torn_box("base", "exp"), "after expanding")
+    check("one column expands to the same box", same_box(v, w2, 1), (v, w2))
+    yield from closes(v, TITLE_Y, "closed")
+
+
+SC["p7_shelf_steps"] = s_p7_shelf_steps
+
+
+# ---------------------------------------------------------------- Phase 8: the sticky header
+def sticky_round(tag, b, strip_h, title_y, base="base"):
+    """Frame tag+"m" has the tear-off with box b, at rest. Ends with it closed."""
+    m = tag + "m"
+    s, rows = strip_box(b, strip_h), rows_box(b, strip_h)
+    check(tag + ": the header shows", ink(m, s) is not None, ink(m, s))
+    x, y = mid_x(b), mid_y(b)
+    yield from wheel(x, y, True, 5)
+    yield from park()
+    yield from grab(tag + "down")
+    moved = box_bbox(m, tag + "down", s)
+    check(tag + ": the header doesn't change", moved is None, moved)
+    check(tag + ": the content moved", box_bbox(m, tag + "down", rows) is not None,
+          box_bbox(m, tag + "down", rows))
+    # #menu_scroll_step passes a point above the block, which a clamp to the header would stop.
+    yield from wheel(x, y, False, 5)
+    yield from park()
+    yield from grab(tag + "up")
+    n = rdiff(m, tag + "up", b)
+    check(tag + ": as many wheel-ups return to the start", n < 30, n)
+    # Everything in the header works at a scrolled position.
+    yield from wheel(x, y, True, 5)
+    yield from park()
+    c = yield from collapse(b, title_y, tag + "col", base)
+    yield from expand(c, tag + "exp")
+    n = rdiff(tag + "down", tag + "exp", b)
+    check(tag + ": the pin returns to the same scroll position", n < 100, n)
+    yield from closes(b, title_y, tag + "closed", base)
+
+
+def s_p8_sticky():
+    st = SIM_PT_tall.state
+    yield from begin(st)
+    b = yield from opened(open_menu("SIM_MT_tall"), "menu_m", "the tall menu opens")
+    yield from sticky_round("menu_", b, STRIP_MENU, TITLE_MENU)
+    b = yield from opened(open_tpanel("SIM_PT_tall"), "panel_m", "the tall panel opens")
+    yield from sticky_round("panel_", b, STRIP_PANEL, TITLE_Y)
+
+
+SC["p8_sticky"] = s_p8_sticky
+
+
+def s_p8_sticky_kinds():
+    """A multi-column menu and an enum tear-off, whose headers are found another way."""
+    yield from begin()
+    P = SIM_OT_row_probe.state
+    ts = bpy.context.tool_settings
+    b = yield from opened(open_menu("SIM_MT_cols_tall"), "cols0", "the tall columns open")
+    x, y = mid_x(b), mid_y(b)
+    row_y = tear_row(b, 2)[1]
+    yield from wheel(x, y, True, 3)
+    yield from click(b[0] + 30, row_y); yield 0.3
+    check("a scrolled row in the first column", P["last"] == 5, P)
+    yield from click(b[2] - 30, row_y); yield 0.3
+    check("a scrolled row in the last column", P["last"] == 105, P)
+    yield from wheel(x, y, False, 3)
+    yield from park()
+    yield from grab("cols_m")
+    yield from sticky_round("cols_", b, STRIP_MENU, TITLE_MENU)
+
+    yield from close_all()
+    ts.transform_pivot_point = "ACTIVE_ELEMENT"; yield 0.4
+    yield from park()
+    yield from grab("b3")
+    move(*center()); yield 0.3
+    tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    yield from park()
+    yield from grab("enum0")
+    e = need_box("b3", "enum0", "the enum tear-off opens")
+    yield from crop(e, 30)
+    yield from grab("enum_m")
+    v = need_box("b3", "enum_m", "the enum tear-off cropped")
+    check("the crop applies to an enum", abs(height(e) - 30 - height(v)) <= 2, (e, v))
+    yield from wheel(mid_x(v), mid_y(v), True, 1)
+    x, y = tear_row(v, 1)
+    yield from click(x, y); yield 0.3
+    check("a scrolled item applies", ts.transform_pivot_point == PIVOTS[2],
+          ts.transform_pivot_point)
+    yield from park()
+    yield from grab("enum_clicked")
+    s = strip_box(v, STRIP_MENU)
+    check("its header doesn't change", box_bbox("enum_m", "enum_clicked", s) is None,
+          box_bbox("enum_m", "enum_clicked", s))
+    yield from closes(v, TITLE_MENU, "enum_closed", "b3")
+
+
+SC["p8_sticky_kinds"] = s_p8_sticky_kinds
+
+
+def s_p8_sticky_hit():
+    """A row half under the header must not take a press meant for the title. Rows are 60 tall, so
+    one can stay highlighted while the cursor moves up onto the title inside its rect."""
+    st = SIM_PT_tall.state
+    st.update(rows=20, big=True)
+    P = SIM_OT_row_probe.state
+    yield from begin(st)
+    b = yield from opened(open_tpanel("SIM_PT_tall"), "m", "the tall panel opens")
+    x = b[0] + 60
+    # Row 0 runs from 45 to 105 down. Two wheel steps put its top 5 down, under the title.
+    yield from wheel(mid_x(b), mid_y(b), True, 2)
+    yield from park()
+    yield from grab("scrolled")
+    y = b[3] - 60
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    yield from grab("hover")
+    lit = box_bbox("scrolled", "hover", rows_box(b, STRIP_PANEL))
+    check("its visible half highlights", lit is not None, lit)
+    runs = P["runs"]
+    ty = b[3] - TITLE_Y
+    move(x, ty); yield 0.3
+    yield from grab("on_title")
+    check("over the title it isn't highlighted any more",
+          box_bbox("scrolled", "on_title", rows_box(b, STRIP_PANEL)) is None,
+          box_bbox("scrolled", "on_title", rows_box(b, STRIP_PANEL)))
+    press(x, ty); yield 0.1
+    for i in range(1, 5):
+        move(x - 100 * i // 4, ty); yield 0.05
+    release(x - 100, ty); yield 0.4
+    yield from park()
+    yield from grab("moved")
+    check("the press ran no row", P["runs"] == runs, P)
+    v = need_box("base", "moved", "after the press")
+    check("it started a title drag", abs(v[0] - b[0] + 100) <= 2 and abs(width(v) - width(b)) <= 2,
+          (b, v))
+
+
+SC["p8_sticky_hit"] = s_p8_sticky_hit
+
+
+def find_layout_header(st, name, x, top, lo, hi):
+    """Click down from lo to hi below top until the layout panel flips, and return that y. Any
+    other row this hits only runs the probe. No shot has these headers yet, so this finds them."""
+    was = st["open_" + name]
+    for off in range(lo, hi, 6):
+        yield from click(x, top - off); yield 0.2
+        if st["open_" + name] != was:
+            log("layout panel", name, "flips at", off, "down")
+            return top - off
+    return None
+
+
+def s_p8_layout_panels():
+    st = SIM_PT_tall.state
+    st.update(rows=40, layout_panels=True)
+    yield from begin(st)
+    b = yield from opened(open_tpanel("SIM_PT_tall"), "m", "the tall panel opens")
+    x = b[0] + 30
+    # The baseline: a press on a header does flip it.
+    ya = yield from find_layout_header(st, "a", x, b[3], 44, 80)
+    check("a layout panel's header flips it", ya is not None, ya)
+    yb = None
+    if ya is not None:
+        yield from click(x, ya); yield 0.3
+        yb = yield from find_layout_header(st, "b", x, b[3], b[3] - ya + 30, b[3] - ya + 80)
+        check("so does the next one's", yb is not None, yb)
+    if ya is None or yb is None:
+        raise RuntimeError("no layout panel headers")
+    yield from click(x, yb); yield 0.3
+    check("both are open again", st["open_a"] and st["open_b"], st)
+    cx, cy = mid_x(b), mid_y(b)
+    # Under the title: this press is a title press, whatever is under it.
+    yield from wheel(cx, cy, True, 2)
+    yield from click(x, ya + 40); yield 0.3
+    check("a press on the title doesn't flip what's under it", st["open_a"], st)
+    # In the top arrow zone, 41 to 55 down.
+    yield from wheel(cx, cy, True, 1)
+    y = yb + 60
+    log("the second header is now", b[3] - y, "down")
+    yield from click(x, b[3] - 47); yield 0.3
+    check("a press in the arrow zone doesn't flip what's under it", st["open_b"], st)
+    # Dragging a visible header up past the title flips that one and not the hidden one above it.
+    yield from wheel(cx, cy, False, 1)
+    y = yb + 40
+    yield from drag(x, y, 0, (b[3] + 5) - y)
+    check("the drag flips the visible header", not st["open_b"], st)
+    check("the drag doesn't flip the hidden one", st["open_a"], st)
+    # Below a crop, in the bottom arrow zone.
+    yield from click(x, y); yield 0.3
+    yield from wheel(cx, cy, False, 2)
+    check("open again before the crop", st["open_b"], st)
+    yield from park()
+    yield from crop(b, height(b) - 120)
+    yield from grab("cropped")
+    v = need_box("base", "cropped", "cropped above the second header")
+    check("cropped to the asked height", abs(height(v) - 120) <= 3, v)
+    yield from click(x, v[1] + 8); yield 0.3
+    check("a press in the bottom arrow zone doesn't flip what's under it", st["open_b"], st)
+
+
+SC["p8_layout_panels"] = s_p8_layout_panels
+
+
+def s_p8_curve():
+    """A curve replaces the scissor with its own, and leaves the test off afterwards."""
+    st = SIM_PT_tall.state
+    st.update(rows=30, curve=True)
+    yield from begin(st)
+    b = yield from opened(open_tpanel("SIM_PT_tall"), "m", "the panel with a curve opens")
+    s = strip_box(b, STRIP_PANEL)
+    x, y = mid_x(b), mid_y(b)
+    last = "m"
+    for i in range(1, 8):
+        yield from wheel(x, y, True, 3, 0.05)
+        yield from park()
+        name = f"w{i}"
+        yield from grab(name)
+        n = box_bbox("m", name, s)
+        check(f"the header is untouched, {i * 60} px scrolled", n is None, n)
+        check(f"the content moved, {i * 60} px scrolled",
+              box_bbox(last, name, rows_box(b, STRIP_PANEL)) is not None, name)
+        last = name
+
+
+SC["p8_curve"] = s_p8_curve
+
+
+def s_p8_header_look():
+    """The header is drawn in its own pass once clipped, and must look the same as it did."""
+    th = bpy.context.preferences.themes[0]
+    th.user_interface.panel_text = (1.0, 0.0, 0.0)
+    th.user_interface.wcol_menu_back.text = (0.0, 1.0, 0.0)
+    C = SIM_PT_cols.state
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    yield from open_tab("TOOLS", "SimTear", SIM_PT_cols_anchor.state, C)
+    yield from park()
+    yield from grab("base")
+    # A menu. The crop adds a gutter that moves its icons, so the title is what's compared.
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, 200)
+    yield from grab("mc")
+    title = (b[0] + 2, b[3] - STRIP_MENU, b[0] + 70, b[3] - 1)
+    n = rdiff("m", "mc", title)
+    check("a clipped menu's title looks the same", n < 5, n)
+    yield from close_all()
+    yield from park()
+    # A shelf panel: its title has the regular color, not the menu's. No gutter, so the whole strip.
+    yield from tear_center("SIM_PT_cols", rt="TOOLS")
+    yield from park()
+    yield from grab("s")
+    v = need(torn_box("base", "s"), "the shelf tear-off opens")
+    yield from crop(v, 20)
+    yield from grab("sc")
+    w = need(torn_box("base", "sc"), "the shelf tear-off cropped")
+    check("the crop applies", abs(height(v) - 20 - height(w)) <= 2, (v, w))
+    n = rdiff("s", "sc", strip_box(v, STRIP_PANEL))
+    check("a clipped shelf panel's header looks the same", n < 5, n)
+    check("and that header has the regular color",
+          count_color("sc", strip_box(v, STRIP_PANEL), 0, 1) > 10,
+          count_color("sc", strip_box(v, STRIP_PANEL), 0, 1))
+
+
+SC["p8_header_look"] = s_p8_header_look
+
+
+def s_p8_tab_scroll():
+    """Tab is the only way to reach a field out of view, and typing into a hidden one is blind."""
+    st = SIM_PT_fields.state
+    sc = bpy.context.scene
+    yield from begin(st)
+    b = yield from opened(open_tpanel("SIM_PT_fields"), "m", "the fields open")
+    yield from crop(b, height(b) - 150)
+    yield from grab("cropped")
+    v = need_box("base", "cropped", "cropped to a few fields")
+    x, y = mid_x(v), v[3] - PANEL_ROW0
+    yield from click(x, y); yield 0.3
+    yield from grab("edit0")
+    for _ in range(6):
+        yield from type_key("TAB", x, y)
+    yield 0.3
+    yield from grab("edit6")
+    # The second row is in neither text edit, so only a scroll can change it.
+    row_y = v[3] - PANEL_ROW0 - PANEL_ROW
+    row = (v[0] + 2, row_y - 9, v[2] - 12, row_y + 9)
+    n = rdiff("edit0", "edit6", row)
+    check("Tab scrolled to the field", n > 20, n)
+    yield from type_key("SEVEN", x, y, "7")
+    yield from type_key("SEVEN", x, y, "7")
+    yield 0.3
+    yield from grab("typed")
+    shown = box_bbox("edit6", "typed", rows_box(v, STRIP_PANEL))
+    check("what's typed shows", shown is not None, shown)
+    yield from type_key("RET", x, y); yield 0.4
+    check("it went into the field Tab reached", sc.sim_values[6] == 77, list(sc.sim_values)[:8])
+    check("and nothing into the first one", sc.sim_values[0] == 0, list(sc.sim_values)[:8])
+
+
+SC["p8_tab_scroll"] = s_p8_tab_scroll
+
+
+def s_p8_pin_bottom():
+    """A pin parks near the window bottom, and clipping alone would open a sliver from there."""
+    yield from begin()
+    P = SIM_OT_row_probe.state
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    c = yield from collapse(b, TITLE_MENU, "col")
+    yield from drag(c[0] + 40, mid_y(c), 0, 12 - mid_y(c))
+    yield from park()
+    yield from grab("parked")
+    c2 = need_box("base", "parked", "the pin at the bottom")
+    log("pin", c, "->", c2)
+    check("the pin went down", c2[1] < c[1] - 100, (c, c2))
+    yield from expand(c2, "exp")
+    v = need_box("base", "exp", "expanded")
+    log("expanded", v)
+    # Inferred: the header, one row and both arrow zones are 32 + 20 + 28.
+    check("taller than a sliver", height(v) >= 75, v)
+    n = patch_diff("m", b[0] + 2, b[3] - 26, "exp", v[0] + 2, v[3] - 26, 60, 24)
+    check("the title is whole", n < 20, n)
+    # Row 1, because the wheel puts an arrow zone on row 0.
+    x, y = mid_x(v), v[3] - TEAR_ROW0 - ROW
+    yield from click(x, y); yield 0.3
+    first = P["last"]
+    check("a row clicks", first == 1, P)
+    yield from wheel(x, y, True, 1)
+    yield from click(x, y); yield 0.3
+    check("wheel-down moves the content the right way", P["last"] == first + 1, P)
+    yield from park()
+    yield from closes(v, TITLE_MENU, "closed")
+
+
+SC["p8_pin_bottom"] = s_p8_pin_bottom
+
+
+def s_p8_wheel_outside():
+    yield from begin()
+    rv = area().spaces.active.region_3d
+    # The baseline: this does zoom the viewport, without a tear-off.
+    d0 = rv.view_distance
+    yield from wheel(*PARK, True, 2)
+    yield 0.4
+    d1 = rv.view_distance
+    log("baseline zoom", d0, "->", d1)
+    yield from park()
+    yield from grab("base")
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    d2 = rv.view_distance
+    yield from wheel(*PARK, True, 2)
+    yield 0.4
+    d3 = rv.view_distance
+    yield from park()
+    yield from grab("outside")
+    if d0 == d1:
+        log("INCONCLUSIVE: the wheel doesn't zoom here even without a tear-off")
+    else:
+        check("the viewport gets the wheel", d3 != d2, (d2, d3))
+    n = rdiff("c", "outside", v)
+    check("the tear-off doesn't scroll", n < 100, n)
+    # Inside it does still scroll, and the viewport stays.
+    yield from wheel(mid_x(v), mid_y(v), True, 2)
+    yield from park()
+    yield from grab("inside")
+    n = rdiff("outside", "inside", rows_box(v, STRIP_MENU))
+    check("inside, the tear-off scrolls", n > 100, n)
+    check("inside, the viewport keeps its zoom", rv.view_distance == d3, rv.view_distance)
+
+
+SC["p8_wheel_outside"] = s_p8_wheel_outside
+
+
+def s_p8_pan_release():
+    """A middle mouse pan released over a newer tear-off still ends. Without the continuous grab,
+    because the simulated cursor wouldn't follow a wrapped one."""
+    yield from begin()
+    bpy.context.preferences.inputs.use_mouse_continuous = False
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    yield from title_drag(v, TITLE_MENU, -300, 0)
+    yield from grab("older")
+    a = need_box("base", "older", "the older one moved")
+    yield from open_tpanel("SIM_PT_field")
+    yield from grab("two")
+    n = need(box_bbox("older", "two", (a[2] + 4, 0, 1599, 999)), "the newer one opens")
+    ax, ay = mid_x(a), mid_y(a)
+    tx, ty = mid_x(n), mid_y(n)
+    move(ax, ay); yield 0.3
+    move(ax, ay); yield 0.3
+    press(ax, ay, "MIDDLEMOUSE"); yield 0.1
+    move(ax, ay + 30); yield 0.1
+    move(tx, ty); yield 0.2
+    release(tx, ty, "MIDDLEMOUSE"); yield 0.4
+    yield from park()
+    yield from grab("panned")
+    m = rdiff("two", "panned", rows_box(a, STRIP_MENU))
+    check("the pan moved the older one", m > 100, m)
+    move(ax, ay); yield 0.2
+    move(ax, ay + 40); yield 0.2
+    yield from park()
+    yield from grab("later")
+    m = rdiff("panned", "later", a)
+    check("a later move doesn't pan", m < 30, m)
+
+
+SC["p8_pan_release"] = s_p8_pan_release
+
+
+# ---------------------------------------------------------------- Phase 8: the bottom edge
+def crop_round(tag, b, by, strip_h):
+    """Frame tag+"m" has the tear-off with box b, at rest. Ends with no crop."""
+    x = mid_x(b)
+    yield from crop(b, by)
+    yield from grab(tag + "crop")
+    v = need_box("base", tag + "crop", tag + ": cropped")
+    check(tag + ": shorter by the drag", abs(height(b) - by - height(v)) <= 2, (b, v))
+    check(tag + ": the top and left stay", abs(v[3] - b[3]) <= 1 and abs(v[0] - b[0]) <= 1, (b, v))
+    y = mid_y(v)
+    yield from wheel(x, y, True, 2)
+    yield from park()
+    yield from grab(tag + "wheel")
+    moved = box_bbox(tag + "crop", tag + "wheel", rows_box(v, strip_h))
+    check(tag + ": the wheel scrolls it", moved is not None, moved)
+    yield from wheel(x, y, False, 2)
+    yield from park()
+    yield from grab(tag + "unwheel")
+    n = rdiff(tag + "crop", tag + "unwheel", v)
+    check(tag + ": and scrolls it back", n < 30, n)
+    # Past its natural height: the crop must be able to grow, then go away.
+    yield from uncrop(v, by)
+    yield from grab(tag + "back")
+    w = bbox("base", tag + "back")
+    check(tag + ": dragging past natural height restores it", same_box(b, w, 1), (b, w))
+    n = rdiff(tag + "m", tag + "back", b)
+    check(tag + ": with the same pixels", n < 50, n)
+
+
+def s_p8_crop():
+    st = SIM_PT_mid.state
+    P = SIM_OT_row_probe.state
+    ts = bpy.context.tool_settings
+    yield from begin(st)
+    ob = bpy.context.view_layer.objects.active
+    b = yield from opened(open_menu("SIM_MT_mid"), "menu_m", "the menu opens")
+    yield from crop_round("menu_", b, 200, STRIP_MENU)
+    # A press in the outer band is over the viewport, which must not see it.
+    check("the cube starts selected", ob.select_get(), None)
+    yield from click(mid_x(b), b[1] - 2)
+    yield from park()
+    check("the band keeps the selection", ob.select_get(), None)
+    # Canceled over a row with the button down: the restored block is under the cursor.
+    runs = P["runs"]
+    x, y = mid_x(b), b[1] - 2
+    yield from grip_cancel(x, y, x, y + 120)
+    yield from park()
+    yield from grab("menu_esc")
+    v = bbox("base", "menu_esc")
+    check("Esc restores the height", same_box(b, v, 1), (b, v))
+    check("the release runs no row", P["runs"] == runs, P)
+    yield from click(x, y + 120); yield 0.3
+    check("a row still clicks after that", P["runs"] == runs + 1, P)
+    yield from park()
+    yield from closes(b, TITLE_MENU, "menu_closed")
+
+    b = yield from opened(open_tpanel("SIM_PT_mid"), "panel_m", "the panel opens")
+    yield from crop_round("panel_", b, 200, STRIP_PANEL)
+    yield from closes(b, TITLE_Y, "panel_closed")
+
+    was = ts.transform_pivot_point
+    move(*center()); yield 0.3
+    tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    yield from park()
+    yield from grab("enum_m")
+    b = need_box("base", "enum_m", "the enum opens")
+    yield from crop_round("enum_", b, 30, STRIP_MENU)
+    check("the grip ran no item", ts.transform_pivot_point == was, ts.transform_pivot_point)
+
+
+SC["p8_crop"] = s_p8_crop
+
+
+def keep_round(tag, b, by, title_y, draws):
+    """The crop and scroll position survive a refresh, and a collapse with the pin moved."""
+    sc = bpy.context.scene
+    yield from crop(b, by)
+    yield from grab(tag + "crop")
+    v = need(box_bbox("base", tag + "crop", VIEW), tag + ": cropped")
+    yield from wheel(mid_x(v), mid_y(v), True, 3)
+    yield from park()
+    yield from grab(tag + "scrolled")
+    n0 = draws()
+    sc.frame_current += 1; yield 1.0
+    yield from park()
+    yield from grab(tag + "frame")
+    check(tag + ": the frame change did refresh it", draws() > n0, (n0, draws()))
+    n = rdiff(tag + "scrolled", tag + "frame", v)
+    check(tag + ": the crop and scroll position survive it", n < 100, n)
+    c = yield from collapse(v, title_y, tag + "col", box=VIEW)
+    yield from drag(c[0] + 40, mid_y(c), 120, -60)
+    yield from park()
+    yield from grab(tag + "pinned")
+    c2 = need(box_bbox("base", tag + "pinned", VIEW), tag + ": the pin moved")
+    check(tag + ": the pin did move", abs(c2[0] - c[0] - 120) <= 2, (c, c2))
+    yield from expand(c2, tag + "exp")
+    e = need(box_bbox("base", tag + "exp", VIEW), tag + ": expanded")
+    log(tag, "expanded", e, "from", v)
+    check(tag + ": the same size",
+          abs(width(e) - width(v)) <= 1 and abs(height(e) - height(v)) <= 1, (v, e))
+    check(tag + ": where the pin was", abs(e[0] - c2[0]) <= 2 and abs(e[3] - c2[3]) <= 2, (c2, e))
+    n = patch_diff(tag + "scrolled", v[0], v[1], tag + "exp", e[0], e[1], width(v), height(v))
+    check(tag + ": the same content", n < 150, n)
+    yield from closes(e, title_y, tag + "closed")
+
+
+def s_p8_crop_keep():
+    st = SIM_PT_mid.state
+    yield from begin(st)
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from keep_round("menu_", b, 200, TITLE_MENU, lambda: SIM_MT_mid.state["draws"])
+    # The frame change shows in the timeline, which the next whole window diff would catch.
+    yield from grab("base")
+    b = yield from opened(open_tpanel("SIM_PT_mid"), "p", "the panel opens")
+    yield from keep_round("panel_", b, 200, TITLE_Y, lambda: st["draw_popup"])
+
+
+SC["p8_crop_keep"] = s_p8_crop_keep
+
+
+def s_p8_crop_limits():
+    st = SIM_PT_mid.state
+    P = SIM_OT_row_probe.state
+    yield from begin(st)
+    # The minimum: the header and a row, however hard it's dragged.
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    x, y = mid_x(b), b[1] - 2
+    yield from drag(x, y, 0, min(800, 990 - y))
+    yield from park()
+    yield from grab("min")
+    v = need_box("base", "min", "dragged up hard")
+    log("at the minimum", v)
+    check("the top stays", abs(v[3] - b[3]) <= 1, (b, v))
+    check("it stops at the minimum", 75 <= height(v) <= 130, v)
+    check("the header stays", title_whole("min", v, "Sim Mid"), v)
+    yield from click(mid_x(v), v[3] - TEAR_ROW0); yield 0.3
+    check("and its row clicks", P["last"] == 0, P)
+    yield from park()
+    # A title drag keeps the height.
+    yield from title_drag(v, TITLE_MENU, 120, -80)
+    yield from grab("moved")
+    w = need_box("base", "moved", "after a title drag")
+    check("a title drag keeps the size",
+          abs(height(w) - height(v)) <= 1 and abs(width(w) - width(v)) <= 1, (v, w))
+    check("and moves it", abs(w[0] - v[0] - 120) <= 2 and abs(w[3] - v[3] + 80) <= 2, (v, w))
+    yield from close_all()
+    yield from park()
+
+    # A panel's corner takes both axes.
+    b = yield from opened(open_tpanel("SIM_PT_mid"), "p", "the panel opens")
+    yield from drag(b[2] + 2, b[1] - 2, 60, 40)
+    yield from park()
+    yield from grab("corner")
+    v = need_box("base", "corner", "after the corner")
+    check("the corner widens it", abs(width(v) - width(b) - 60) <= 2, (b, v))
+    check("the corner crops it", abs(height(b) - height(v) - 40) <= 2, (b, v))
+    check("the top left stays", abs(v[0] - b[0]) <= 1 and abs(v[3] - b[3]) <= 1, (b, v))
+    yield from close_all()
+    yield from park()
+
+    # Press on the older and release over the newer.
+    a0 = yield from opened(open_menu("SIM_MT_mid"), "a0", "the older one opens")
+    yield from title_drag(a0, TITLE_MENU, -300, 0)
+    yield from grab("a")
+    a = need_box("base", "a", "the older one moved")
+    yield from open_tpanel("SIM_PT_field")
+    yield from grab("two")
+    n = need(box_bbox("a", "two", (a[2] + 4, 0, 1599, 999)), "the newer one opens")
+    x, y = mid_x(a), a[1] - 2
+    tx, ty = mid_x(n), mid_y(n)
+    yield from drag(x, y, tx - x, ty - y)
+    yield from park()
+    yield from grab("released")
+    own = (a[0] - 2, a[1], a[2] + 18, a[3])
+    v = need(box_bbox("base", "released", own), "the older one after the drag")
+    check("the older one took the drag", height(v) < height(a) - 100, (a, v))
+    check("the newer one is untouched", rdiff("two", "released", n) < 50,
+          rdiff("two", "released", n))
+    move(tx, ty); yield 0.2
+    move(x, y + 40); yield 0.2
+    move(tx, ty - 10); yield 0.2
+    yield from park()
+    yield from grab("later")
+    check("a later move changes nothing", rdiff("released", "later", own) < 50,
+          rdiff("released", "later", own))
+
+
+SC["p8_crop_limits"] = s_p8_crop_limits
+
+
+def s_p8_scrolled_click():
+    st = SIM_PT_mid.state
+    P = SIM_OT_row_probe.state
+    ts = bpy.context.tool_settings
+    ts.transform_pivot_point = "ACTIVE_ELEMENT"
+    yield from begin(st)
+    # A menu: its rows are as far apart as a wheel step.
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    x, y = tear_row(v, 3)
+    yield from click(x, y); yield 0.3
+    check("a row before scrolling", P["last"] == 3, P)
+    yield from wheel(x, y, True, 2)
+    yield from click(x, y); yield 0.3
+    check("the same spot, two wheel steps down", P["last"] == 5, P)
+    # A panel: rows are 25 apart, so four take five wheel steps.
+    yield from close_all()
+    yield from park()
+    b = yield from opened(open_tpanel("SIM_PT_mid"), "p", "the panel opens")
+    yield from crop(b, 200)
+    yield from grab("pc")
+    v = need_box("base", "pc", "cropped")
+    x, y = mid_x(v), v[3] - PANEL_ROW0 - PANEL_ROW * 2
+    yield from click(x, y); yield 0.3
+    check("a panel row before scrolling", P["last"] == 2, P)
+    yield from wheel(x, y, True, 5)
+    yield from click(x, y); yield 0.3
+    check("the same spot, a hundred pixels down", P["last"] == 6, P)
+    # An enum: the row's click re-resolves its property.
+    yield from close_all()
+    yield from park()
+    yield from grab("b3")
+    move(*center()); yield 0.3
+    tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    yield from park()
+    yield from grab("e")
+    e = need_box("b3", "e", "the enum opens")
+    yield from crop(e, 30)
+    yield from grab("ec")
+    v = need_box("b3", "ec", "cropped")
+    yield from wheel(mid_x(v), mid_y(v), True, 1)
+    x, y = tear_row(v, 2)
+    yield from click(x, y); yield 0.3
+    check("an enum item, one wheel step down", ts.transform_pivot_point == PIVOTS[3],
+          ts.transform_pivot_point)
+
+
+SC["p8_scrolled_click"] = s_p8_scrolled_click
+
+
+def s_p8_tall():
+    """Clamped by the window, with no crop: this works without anyone touching a grip."""
+    yield from begin()
+    P = SIM_OT_row_probe.state
+    b = yield from opened(open_menu("SIM_MT_tall"), "m", "the tall menu opens")
+    log("clamped", b)
+    check("the window clamps it", height(b) > 900, b)
+    s = strip_box(b, STRIP_MENU)
+    check("its header is in the window from the first frame", title_whole("m", b, "Sim Tall"), b)
+    x, y = tear_row(b, 5)
+    yield from click(x, y); yield 0.3
+    check("a row before scrolling", P["last"] == 5, P)
+    yield from wheel(x, y, True, 6)
+    yield from click(x, y); yield 0.3
+    check("the same spot, six wheel steps down", P["last"] == 11, P)
+    # All the way down. The range is about 34 steps, from 80 rows in a 980 tall block.
+    yield from wheel(x, mid_y(b), True, 60, 0.04)
+    yield from park()
+    yield from grab("end")
+    moved = box_bbox("m", "end", s)
+    check("the header stays at the far end", moved is None, moved)
+    yield from click(x, b[1] + MENU_BOTTOM); yield 0.3
+    check("the last row can be reached", P["last"] == 79, P)
+    yield from wheel(x, mid_y(b), False, 70, 0.04)
+    yield from park()
+    yield from grab("top")
+    n = rdiff("m", "top", b)
+    check("all the way back up", n < 30, n)
+    # A crop on top of the window's clamp.
+    yield from crop(b, 300)
+    yield from grab("cropped")
+    v = need_box("base", "cropped", "cropped")
+    check("the crop applies", abs(height(b) - 300 - height(v)) <= 3, (b, v))
+    check("the top stays", abs(v[3] - b[3]) <= 1, (b, v))
+    moved = box_bbox("m", "cropped", (b[0] + 2, b[3] - STRIP_MENU, b[0] + 60, b[3] - 1))
+    check("and the title too", moved is None, moved)
+    c = yield from collapse(v, TITLE_MENU, "col")
+    yield from expand(c, "exp")
+    w = need_box("base", "exp", "expanded")
+    check("the pin brings back the same box", same_box(v, w, 1), (v, w))
+    yield from closes(v, TITLE_MENU, "closed")
+
+
+SC["p8_tall"] = s_p8_tall
+
+
+# ---------------------------------------------------------------- Phase 8: the scrollbar
+def s_p8_scrollbar():
+    yield from begin()
+    P = SIM_OT_row_probe.state
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    check("no gutter while it fits", width(b) < FLOOR, b)
+    yield from crop(b, 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    log("cropped", v, "from", b)
+    gutter = width(v) - width(b)
+    check("a gutter while it overflows", 10 <= gutter <= 18, gutter)
+    bar = (b[2] + 1, v[1] + 6, v[2] - 1, v[3] - STRIP_MENU - 4)
+    n = color_count("c", bar, (v[0] + 4, mid_y(v)))
+    check("the bar shows at rest", n > 20, n)
+    line = line_extent("c", v, 28); log("line", line)
+    check("the header's line reaches the edge",
+          line is not None and line[1] >= v[2] - LINE_GAP, (line, v))
+    s = strip_box(v, STRIP_MENU)
+    x = v[2] - BAR_X
+    runs = P["runs"]
+    # The thumb starts at the top of the track.
+    y = v[3] - STRIP_MENU - 16
+    yield from drag(x, y, 0, -40)
+    yield from park()
+    yield from grab("d1")
+    moved = box_bbox("c", "d1", rows_box((v[0], v[1], b[2], v[3]), STRIP_MENU))
+    check("dragging the thumb scrolls", moved is not None, moved)
+    check("the header doesn't change", box_bbox("c", "d1", s) is None, box_bbox("c", "d1", s))
+    # To the far end.
+    yield from drag(x, y - 40, 0, 5 - (y - 40))
+    yield from park()
+    yield from grab("d2")
+    check("dragging the bar ran no row", P["runs"] == runs, P)
+    yield from click(mid_x(v), v[1] + MENU_BOTTOM); yield 0.3
+    check("the far end shows the last row", P["last"] == 17, P)
+    runs = P["runs"]
+    yield from park()
+    # And back from where the thumb is now.
+    y2 = v[1] + 12
+    yield from drag(x, y2, 0, 995 - y2)
+    yield from park()
+    yield from grab("d3")
+    n = rdiff("c", "d3", v)
+    check("dragging back returns to the start", n < 30, n)
+    # A press on the empty track jumps there, and Esc goes back with the release swallowed.
+    yield from click(x, y2)
+    yield from park()
+    yield from grab("jump")
+    moved = box_bbox("c", "jump", rows_box((v[0], v[1], b[2], v[3]), STRIP_MENU))
+    check("a press on the track jumps", moved is not None, moved)
+    yield from drag(x, y2, 0, 995 - y2)
+    yield from park()
+    yield from grab("d4")
+    n = rdiff("c", "d4", v)
+    check("back at the start for the next step", n < 30, n)
+    yield from grip_cancel(x, y2, x, y2)
+    yield from park()
+    yield from grab("esc")
+    n = rdiff("c", "esc", v)
+    check("Esc undoes the jump", n < 30, n)
+    check("no press on the bar ran a row", P["runs"] == runs, P)
+    # The header follows the gutter.
+    c = yield from collapse(v, TITLE_MENU, "col")
+    yield from expand(c, "exp")
+    w = need_box("base", "exp", "expanded")
+    check("the pin brings back the same box", same_box(v, w, 1), (v, w))
+    # No crop, no bar and no gutter.
+    yield from uncrop(v, 200)
+    yield from grab("reset")
+    w = bbox("base", "reset")
+    check("back at the natural size", same_box(b, w, 1), (b, w))
+    n = rdiff("m", "reset", b)
+    check("with nothing of the bar left", n < 30, n)
+    yield from closes(b, TITLE_MENU, "closed")
+
+
+SC["p8_scrollbar"] = s_p8_scrollbar
+
+
+def s_p8_bar_gutter():
+    """The bar sits beside a menu's rows. Without the gutter it would cover their arrows."""
+    yield from begin()
+    b = yield from opened(open_menu("SIM_MT_arrows"), "m", "the menu opens")
+    yield from crop(b, 150)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    log("cropped", v, "from", b)
+    check("a gutter while it overflows", width(v) > width(b) + 8, (b, v))
+    rows = (b[0] + 2, v[3] - TEAR_ROW0 - ROW * 4, b[2], v[3] - STRIP_MENU)
+    n = rdiff("m", "c", rows)
+    check("the rows and their arrows are the same pixels", n < 10, n)
+    n = color_count("c", (b[2] + 1, v[1] + 6, v[2] - 1, v[3] - STRIP_MENU - 4),
+                    (v[0] + 4, v[1] + 12))
+    check("the bar shows at rest", n > 20, n)
+    # Hovered it's at its widest, and must still stay out of them. On the bar and not beside it,
+    # because a row with a submenu can open by itself when hovered, right over the bar.
+    x, y = v[2] - BAR_X, mid_y(rows)
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    yield from grab("wide")
+    n = rdiff("m", "wide", rows)
+    check("the widest bar stays out of the rows", n < 10, n)
+    gutter = (b[2] + 1, v[1] + 6, v[2], v[3] - STRIP_MENU - 4)
+    log("the bar widened by", rdiff("c", "wide", gutter))
+    yield from park()
+    yield from closes(v, TITLE_MENU, "closed")
+
+
+SC["p8_bar_gutter"] = s_p8_bar_gutter
+
+
+def s_p8_panel_bar():
+    """A panel gets no gutter, so its bar fits in its margin and leaves the fields alone."""
+    st = SIM_PT_fields.state
+    sc = bpy.context.scene
+    th = bpy.context.preferences.themes[0]
+    yield from begin(st)
+    b = yield from opened(open_tpanel("SIM_PT_fields"), "m", "the fields open")
+    yield from crop(b, height(b) - 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    check("no gutter on a panel", abs(width(v) - width(b)) <= 1, (b, v))
+    n = color_count("c", (v[2] - 9, v[1] + 8, v[2] - 3, v[3] - STRIP_PANEL - 6),
+                    (v[0] + 4, mid_y(v)))
+    check("the bar shows at rest", n > 20, n)
+    # The arrow of a field that fills the row, 12 in from the edge and beside the bar.
+    y = v[3] - PANEL_ROW0
+    was = sc.sim_values[0]
+    yield from click(v[2] - 12, y); yield 0.3
+    check("the field's arrow still works", sc.sim_values[0] == was + 1, sc.sim_values[0])
+    yield from park()
+    yield from grab("stepped")
+    # The bar itself.
+    x = v[2] - BAR_X
+    y = v[3] - STRIP_PANEL - 14
+    yield from drag(x, y, 0, -40)
+    yield from park()
+    yield from grab("d1")
+    moved = box_bbox("stepped", "d1", rows_box(v, STRIP_PANEL))
+    check("dragging the thumb scrolls", moved is not None, moved)
+    s = strip_box(v, STRIP_PANEL)
+    check("the header doesn't change", box_bbox("stepped", "d1", s) is None,
+          box_bbox("stepped", "d1", s))
+    # A theme whose bar is transparent takes another branch, as in view2d_scrollers_draw.
+    ui = th.user_interface.wcol_scroll
+    inner = tuple(ui.inner)
+    ui.inner = (inner[0], inner[1], inner[2], 0.0)
+    area_redraw(); yield 0.4
+    move(x, mid_y(v)); yield 0.3
+    move(x, mid_y(v)); yield 0.3
+    yield from grab("clear_theme")
+    ui.inner = inner
+    yield from park()
+    # Only in the free box, because this color reaches every region's own scrollbars.
+    w = torn_box("base", "clear_theme")
+    check("it stays whole with a transparent theme", same_box(v, w, 1), (v, w))
+    # The width grip gave way to the bar, and works from outside.
+    yield from drag(v[2] + 2, mid_y(v), 60, 0)
+    yield from park()
+    yield from grab("wider")
+    w = need_box("base", "wider", "wider")
+    check("the width grip still works beside the bar", abs(width(w) - width(v) - 60) <= 2, (v, w))
+
+
+SC["p8_panel_bar"] = s_p8_panel_bar
+
+
+# ---------------------------------------------------------------- Phase 8: everything else
+def regular_round(tag, a, strip_h):
+    """A regular popup with box a is open, and stays open: moving out of it would close it, so the
+    cursor stays on it and its row highlights in all of these frames."""
+    x, y = mid_x(a), mid_y(a)
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    yield from grab(tag + "hover")
+    ref_check(tag + "hover", a)
+    win().event_simulate(type="WHEELDOWNMOUSE", value="PRESS", x=x, y=y); yield 0.2
+    for _ in range(4):
+        win().event_simulate(type="WHEELDOWNMOUSE", value="PRESS", x=x, y=y); yield 0.2
+    yield 0.3
+    yield from grab(tag + "down")
+    ref_check(tag + "down", a)
+    s = strip_box(a, strip_h)
+    moved = box_bbox(tag + "hover", tag + "down", s)
+    check(tag + ": its top scrolls away, as upstream", moved is not None, moved)
+    bar = (a[2] - 9, a[1] + 30, a[2] - 2, a[3] - 40)
+    moved = box_bbox(tag + "hover", tag + "down", bar)
+    check(tag + ": it has no scrollbar", moved is None, moved)
+    for _ in range(5):
+        win().event_simulate(type="WHEELUPMOUSE", value="PRESS", x=x, y=y); yield 0.2
+    yield 0.3
+    yield from grab(tag + "up")
+    n = rdiff(tag + "hover", tag + "up", a)
+    check(tag + ": and returns", n < 30, n)
+
+
+def s_p8_regular():
+    st = SIM_PT_tall.state
+    yield from begin(st)
+    move(*center()); yield 0.3
+    call_menu("SIM_MT_tall"); yield 0.8
+    yield from grab("att")
+    a = need_box("base", "att", "the attached menu opens")
+    check("the window clamps it", height(a) > 900, a)
+    ref_check("att", a)
+    yield from regular_round("menu_", a, STRIP_MENU)
+    yield from dismiss()
+    move(*center()); yield 0.3
+    call_panel("SIM_PT_tall"); yield 0.8
+    yield from grab("pop")
+    p = need_box("base", "pop", "the popover opens")
+    check("the window clamps it too", height(p) > 900, p)
+    ref_check("pop", p)
+    yield from regular_round("pop_", p, STRIP_PANEL)
+    yield from dismiss()
+
+
+SC["p8_regular"] = s_p8_regular
+
+
+def s_p8_scale():
+    """The offsets at 150%. A region's aspect is 1 either way, but the units aren't."""
+    S = 1.5
+    st = SIM_PT_mid.state
+    yield from setup()
+    prefs = bpy.context.preferences
+    prefs.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    st["show"] = True
+    prefs.view.ui_scale = S; yield 1.5
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("base")
+    P = SIM_OT_row_probe.state
+
+    def scaled_round(tag, b, strip_h):
+        s = strip_box(b, int(strip_h * S))
+        check(tag + ": the header shows", ink(tag + "m", s) is not None, ink(tag + "m", s))
+        yield from crop(b, 150)
+        yield from grab(tag + "c")
+        v = need_box("base", tag + "c", tag + ": cropped")
+        check(tag + ": shorter by the drag", abs(height(b) - 150 - height(v)) <= 3, (b, v))
+        x, y = mid_x(v), mid_y(v)
+        yield from wheel(x, y, True, 3)
+        yield from park()
+        yield from grab(tag + "w")
+        check(tag + ": the wheel doesn't touch the header",
+              box_bbox(tag + "c", tag + "w", s) is None, box_bbox(tag + "c", tag + "w", s))
+        check(tag + ": it moves the content",
+              box_bbox(tag + "c", tag + "w", rows_box(v, int(strip_h * S))) is not None, tag)
+        yield from click(x, y); yield 0.3
+        check(tag + ": a row clicks", P["runs"] > 0, P)
+        P["runs"] = 0
+        yield from wheel(x, y, False, 3)
+        yield from park()
+        yield from grab(tag + "u")
+        n = rdiff(tag + "c", tag + "u", v)
+        check(tag + ": and returns", n < 30, n)
+        yield from uncrop(v, 150)
+        yield from grab(tag + "back")
+        w = bbox("base", tag + "back")
+        check(tag + ": the crop can go", same_box(b, w, 1), (b, w))
+
+    b = yield from opened(open_menu("SIM_MT_mid"), "menu_m", "the menu opens")
+    yield from scaled_round("menu_", b, STRIP_MENU)
+    yield from close_all()
+    yield from park()
+    b = yield from opened(open_tpanel("SIM_PT_mid"), "panel_m", "the panel opens")
+    yield from scaled_round("panel_", b, STRIP_PANEL)
+    prefs.view.ui_scale = 1.0; yield 1.0
+
+
+SC["p8_scale"] = s_p8_scale

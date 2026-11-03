@@ -1,6 +1,7 @@
 #!/bin/bash
 # usage: run.sh scenario...   One process per scenario, so a crash only ends that scenario.
-S="$(cd "$(dirname "$0")" && pwd)"; EXE=/c/3D_Stuff/bfa_build_windows_Release_x64_vc17_Release/bin/bforartists.exe
+# SIM_EXE picks another build. SIM_RECORD_REF=1 records reference shots, see ref_check.
+S="$(cd "$(dirname "$0")" && pwd)"; EXE="${SIM_EXE:-/c/3D_Stuff/bfa_build_windows_Release_x64_vc17_Release/bin/bforartists.exe}"
 export BLENDER_USER_CONFIG="$S/config" BLENDER_USER_SCRIPTS="$S/config/scripts" BLENDER_USER_DATAFILES="$S/config/data"
 for s in "$@"; do
   rm -f "$S/$s.log"
