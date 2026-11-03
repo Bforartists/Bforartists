@@ -6319,11 +6319,47 @@ void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const
   draw_clip_tri(block, rect, wt);
 }
 
+/* BFA - Tear-Off Menu/Panel: the scrollbar, drawn as #view2d_scrollers_draw does so it looks the
+ * same in every theme. */
+static void draw_tear_off_scrollbar(const ARegion *region, const Block *block)
+{
+  const PopupBlockHandle *handle = block->handle;
+  rctf track, thumb;
+  if (!tear_off_scrollbar_calc(handle, block, &track, &thumb)) {
+    return;
+  }
+  const bTheme *btheme = theme::theme_get();
+  uiWidgetColors wcol = btheme->tui.wcol_scroll; /* A copy, #draw_widget_scroll changes it. */
+  const float alpha = handle->tear_off_scroll_alpha / 255.0f;
+  const float alpha_fac = alpha * (1.0f - V2D_SCROLL_MIN_ALPHA) + V2D_SCROLL_MIN_ALPHA;
+  if (wcol.inner[3] == 0) {
+    wcol.inner[3] = 0.25f * handle->tear_off_scroll_alpha;
+  }
+  else {
+    wcol.inner[3] *= alpha_fac;
+  }
+  wcol.item[3] *= alpha_fac;
+  wcol.outline[3] = 0;
+  const char emboss_alpha = btheme->tui.widget_emboss[3];
+  const_cast<bTheme *>(btheme)->tui.widget_emboss[3] = 0;
+  const rcti vert = rect_to_pixelrect(region, block, &track);
+  const rcti slider = rect_to_pixelrect(region, block, &thumb);
+  GPU_blend(GPU_BLEND_ALPHA);
+  draw_widget_scroll(&wcol,
+                     &vert,
+                     &slider,
+                     (handle->tear_off_drag_zone & TEAR_OFF_ZONE_SCROLLBAR) ? SCROLL_PRESSED : 0);
+  GPU_blend(GPU_BLEND_NONE);
+  const_cast<bTheme *>(btheme)->tui.widget_emboss[3] = emboss_alpha;
+}
+
 /* BFA - Tear-Off Menu/Panel: a grip shows as a line on its edge while hovered or dragged, so it's
  * clear what a press would resize. Nothing draws at rest. #TEAR_OFF_ZONE_WAIT_RELEASE has no edge
  * bit, so nothing lights after a drag ended early. */
 void draw_tear_off_edges(const ARegion *region, const Block *block)
 {
+  draw_tear_off_scrollbar(region, block);
+
   const PopupBlockHandle *handle = block->handle;
   const uint8_t zone = handle->tear_off_drag_zone ? handle->tear_off_drag_zone :
                                                     handle->tear_off_hover_zone;

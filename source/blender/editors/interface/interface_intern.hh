@@ -1237,8 +1237,13 @@ struct PopupBlockHandle {
    * scale changes recompute it. 0 for no crop. For this session only, and kept through collapse
    * and expand. */
   float tear_off_user_height = 0.0f;
-  /** BFA - Tear-Off Menu/Panel: block height at the press on the bottom edge. */
+  /** BFA - Tear-Off Menu/Panel: block height at the press on the bottom edge, or the scroll
+   * position a scrollbar drag counts from, which is after any jump to the press. */
   float tear_off_drag_ref = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: scroll position at the press on the scrollbar, for cancel. */
+  float tear_off_drag_scroll = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: how far the scrollbar has faded in, as #View2D::alpha_vert. */
+  uchar tear_off_scroll_alpha = 0;
 
   char menu_idname[64] = "";
 
@@ -1999,6 +2004,15 @@ bool block_is_tear_off_shelf(const Block *block) ATTR_WARN_UNUSED_RESULT;
  * anything without a sticky header, so regular popups compare and clip as upstream. Never below
  * `rect.ymin`, so it's safe as a clamp limit in a window too small for the header. */
 float block_scroll_top(const Block *block) ATTR_WARN_UNUSED_RESULT;
+/* BFA - Tear-Off Menu/Panel: the scrollbar's rects in block space, shared by drawing and events.
+ * Returns false when there is nothing to scroll or no room. */
+bool tear_off_scrollbar_calc(const PopupBlockHandle *handle,
+                             const Block *block,
+                             rctf *r_track,
+                             rctf *r_thumb);
+/* BFA - Tear-Off Menu/Panel: fades the scrollbar by the cursor's distance to it. `xy` is in window
+ * space. */
+void tear_off_scroll_alpha_update(PopupBlockHandle *handle, const Block *block, const int xy[2]);
 bool block_is_pie_menu(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_popup_any(const Block *block) ATTR_WARN_UNUSED_RESULT;
 

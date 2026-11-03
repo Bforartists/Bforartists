@@ -13458,6 +13458,10 @@ static void tear_off_hover_clear_older(wmWindow *win, const PopupBlockHandle *me
     if (other->tear_off_hover_zone) {
       tear_off_hover_set(nullptr, win, other, 0);
     }
+    if (other->tear_off_scroll_alpha) {
+      other->tear_off_scroll_alpha = 0;
+      ED_region_tag_redraw(other->region);
+    }
   }
 }
 
@@ -13484,14 +13488,23 @@ static uint8_t tear_off_zone_at(const PopupBlockHandle *menu, const Block *block
   const rctf &r = block->rect;
   const float out = 6.0f * UI_SCALE_FAC, in = 3.0f * UI_SCALE_FAC;
   const bool is_panel = block->flag & BLOCK_POPOVER;
+  rctf track, thumb;
+  const bool has_bar = tear_off_scrollbar_calc(menu, block, &track, &thumb);
   uint8_t zone = 0;
-  if (is_panel && mx >= r.xmax - in && mx <= r.xmax + out && my >= r.ymin - out && my <= r.ymax) {
+  if (is_panel && mx >= r.xmax - (has_bar ? 0.0f : in) && mx <= r.xmax + out &&
+      my >= r.ymin - out && my <= r.ymax)
+  {
     zone |= TEAR_OFF_ZONE_WIDTH;
   }
   if (mx >= r.xmin && mx <= r.xmax + (is_panel ? out : 0.0f) && my >= r.ymin - out &&
       my <= r.ymin + in)
   {
     zone |= TEAR_OFF_ZONE_HEIGHT;
+  }
+  if (zone == 0 && has_bar && mx >= track.xmin && mx <= r.xmax && my >= r.ymin &&
+      my < block_scroll_top(block))
+  {
+    zone = TEAR_OFF_ZONE_SCROLLBAR;
   }
   return zone;
 }
@@ -13512,11 +13525,34 @@ static void tear_off_drag_begin(bContext *C,
   if (zone & TEAR_OFF_ZONE_HEIGHT) {
     menu->tear_off_drag_ref = BLI_rctf_size_y(&block->rect);
   }
+  if (zone & TEAR_OFF_ZONE_SCROLLBAR) {
+    menu->tear_off_scroll_alpha = 255;
+    ED_region_tag_redraw(menu->region);
+    /* Before the jump, because a cancel goes back to where the content was. */
+    menu->tear_off_drag_scroll = menu->scrolloffset;
+    /* A press on the empty track centers the thumb on it. */
+    rctf track, thumb;
+    if (tear_off_scrollbar_calc(menu, block, &track, &thumb)) {
+      int mx = xy[0], my = xy[1];
+      window_to_block(menu->region, block, &mx, &my);
+      const float room = BLI_rctf_size_y(&track) - BLI_rctf_size_y(&thumb);
+      if (room > 0.0f && (my > thumb.ymax || my < thumb.ymin)) {
+        const float thumb_ymax = my + 0.5f * BLI_rctf_size_y(&thumb);
+        const float fac = std::clamp((track.ymax - thumb_ymax) / room, 0.0f, 1.0f);
+        const float target = menu->scrollmin + fac * (menu->scrollmax - menu->scrollmin);
+        const float dy = target - menu->scrolloffset;
+        if (dy != 0.0f) { /* #menu_scroll_apply_offset_y asserts on 0. */
+          menu_scroll_apply_offset_y(menu->region, block, dy);
+        }
+      }
+    }
+    menu->tear_off_drag_ref = menu->scrolloffset;
+  }
 }
 
 static void tear_off_drag_apply(wmWindow *win,
                                 PopupBlockHandle *menu,
-                                const Block *block,
+                                Block *block,
                                 const int xy[2])
 {
   if (menu->tear_off_drag_zone & TEAR_OFF_ZONE_WIDTH) {
@@ -13540,6 +13576,23 @@ static void tear_off_drag_apply(wmWindow *win,
       ED_region_tag_refresh_ui(menu->region);
     }
   }
+  if (menu->tear_off_drag_zone & TEAR_OFF_ZONE_SCROLLBAR) {
+    rctf track, thumb;
+    if (tear_off_scrollbar_calc(menu, block, &track, &thumb)) {
+      const float range = menu->scrollmax - menu->scrollmin;
+      const float room = BLI_rctf_size_y(&track) - BLI_rctf_size_y(&thumb);
+      /* The thumb can fill the track on a tiny crop. */
+      if (room > 0.0f) {
+        const float target = menu->tear_off_drag_ref +
+                             (menu->tear_off_drag_xy[1] - xy[1]) * range / room;
+        const float dy = std::clamp(target, menu->scrollmin, menu->scrollmax) -
+                         menu->scrolloffset;
+        if (dy != 0.0f) { /* #menu_scroll_apply_offset_y asserts on 0. */
+          menu_scroll_apply_offset_y(menu->region, block, dy);
+        }
+      }
+    }
+  }
 }
 
 static void tear_off_drag_wait_release(wmWindow *win, PopupBlockHandle *menu)
@@ -13558,8 +13611,16 @@ static void tear_off_drag_end(wmWindow *win, PopupBlockHandle *menu)
   WM_event_add_mousemove(win);
 }
 
-static void tear_off_drag_cancel(PopupBlockHandle *menu, Block * /*block*/)
+static void tear_off_drag_cancel(PopupBlockHandle *menu, Block *block)
 {
+  /* The bar changes no size, so there's nothing to refresh. */
+  if (menu->tear_off_drag_zone & TEAR_OFF_ZONE_SCROLLBAR) {
+    const float dy = menu->tear_off_drag_scroll - menu->scrolloffset;
+    if (dy != 0.0f) { /* #menu_scroll_apply_offset_y asserts on 0. */
+      menu_scroll_apply_offset_y(menu->region, block, dy);
+    }
+    return;
+  }
   menu->tear_off_width = menu->tear_off_drag_field[0];
   menu->tear_off_user_height = menu->tear_off_drag_field[1];
   ED_region_tag_refresh_ui(menu->region);
@@ -13624,6 +13685,7 @@ static bool tear_off_edges_handle(bContext *C,
     return false;
   }
   if (event->type == MOUSEMOVE) {
+    tear_off_scroll_alpha_update(menu, block, event->xy);
     const uint8_t zone = tear_off_zone_at(menu, block, event->xy);
     if (zone != 0 || popup_contains_point(menu, event->xy)) {
       /* Before this tear-off's cursor, so a grip here isn't overwritten. */
@@ -13647,7 +13709,8 @@ static bool tear_off_edges_handle(bContext *C,
   if (zone == 0) {
     return false;
   }
-  if (event->val == KM_DBL_CLICK) {
+  /* A fast second press on the bar is just another press. */
+  if (event->val == KM_DBL_CLICK && zone != TEAR_OFF_ZONE_SCROLLBAR) {
     if (zone & TEAR_OFF_ZONE_WIDTH) {
       menu->tear_off_width = menu->tear_off_width_default;
     }
@@ -13659,7 +13722,7 @@ static bool tear_off_edges_handle(bContext *C,
     tear_off_drag_wait_release(win, menu);
     return true; /* BREAK stops the replay as a press. */
   }
-  if (event->val == KM_PRESS) {
+  if (ELEM(event->val, KM_PRESS, KM_DBL_CLICK)) {
     tear_off_drag_begin(C, win, menu, block, zone, event->xy);
   }
   return true;

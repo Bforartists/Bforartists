@@ -21,6 +21,8 @@
 
 #include "BKE_screen.hh"
 
+#include "ED_screen.hh" /* BFA - Tear-Off Menu/Panel */
+
 #include "UI_view2d.hh"
 
 #include "RNA_access.hh"
@@ -722,6 +724,66 @@ float block_scroll_top(const Block *block)
     return block->rect.ymax;
   }
   return std::max(std::min(block->tear_off_header_ymin, block->rect.ymax), block->rect.ymin);
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. Width follows the alpha, as in
+ * #view2d_scrollers_calc. */
+bool tear_off_scrollbar_calc(const PopupBlockHandle *handle,
+                             const Block *block,
+                             rctf *r_track,
+                             rctf *r_thumb)
+{
+  const float range = handle->scrollmax - handle->scrollmin;
+  if (range <= 0.0f) {
+    return false;
+  }
+  const float top = block_scroll_top(block);
+  const float pad = 2.0f * UI_SCALE_FAC;
+  float width = V2D_SCROLL_MIN_WIDTH + (V2D_SCROLL_WIDTH - V2D_SCROLL_MIN_WIDTH) *
+                                           (handle->tear_off_scroll_alpha / 255.0f);
+  if (block->flag & BLOCK_POPOVER) {
+    /* A panel has no gutter, only its margin. Past it the bar would cover and take over the right
+     * edge of its fields. */
+    width = std::min(width, block->bounds / block->aspect - pad);
+  }
+  r_track->xmax = block->rect.xmax - pad;
+  r_track->xmin = r_track->xmax - width;
+  r_track->ymin = block->rect.ymin + 2.0f * pad;
+  r_track->ymax = top - pad;
+  const float track_h = BLI_rctf_size_y(r_track);
+  if (track_h <= width) {
+    return false;
+  }
+  const float visible = top - block->rect.ymin;
+  const float thumb_h = std::min(
+      track_h, std::max(track_h * visible / (visible + range), float(V2D_SCROLL_THUMB_SIZE_MIN)));
+  const float fac = (handle->scrolloffset - handle->scrollmin) / range;
+  *r_thumb = *r_track;
+  r_thumb->ymax = r_track->ymax - fac * (track_h - thumb_h);
+  r_thumb->ymin = r_thumb->ymax - thumb_h;
+  return true;
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. The same model as vertical bars in
+ * #area_actionzone_refresh_xy: only a mouse move changes it, there is no timer. */
+void tear_off_scroll_alpha_update(PopupBlockHandle *handle, const Block *block, const int xy[2])
+{
+  int mx = xy[0], my = xy[1];
+  window_to_block(handle->region, block, &mx, &my);
+  uchar alpha = 0;
+  rctf track, thumb;
+  if (BLI_rctf_isect_pt(&block->rect, mx, my) &&
+      tear_off_scrollbar_calc(handle, block, &track, &thumb))
+  {
+    /* The full width, so the bar doesn't fade again as it narrows under the cursor. */
+    const float band_xmin = track.xmax - V2D_SCROLL_WIDTH;
+    const float dist = std::max(band_xmin - mx, 0.0f);
+    alpha = uchar(255.0f * (1.0f - std::clamp(dist / V2D_SCROLL_HIDE_HEIGHT, 0.0f, 1.0f)));
+  }
+  if (alpha != handle->tear_off_scroll_alpha) {
+    handle->tear_off_scroll_alpha = alpha;
+    ED_region_tag_redraw(handle->region);
+  }
 }
 
 bool block_is_pie_menu(const Block *block)

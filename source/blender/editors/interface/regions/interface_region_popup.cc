@@ -43,6 +43,7 @@
 #include "UI_interface_c.hh"
 #include "UI_interface_icons.hh"
 #include "UI_resources.hh"
+#include "UI_view2d.hh" /* BFA - Tear-Off Menu/Panel: the scrollbar's width. */
 
 #include "interface_intern.hh"
 #include "interface_regions_intern.hh"
@@ -1157,6 +1158,23 @@ static void tear_off_height_apply(wmWindow *window, const PopupBlockHandle *hand
   if (handle->tear_off_user_height > 0.0f) {
     const float crop = std::max(handle->tear_off_user_height * UI_SCALE_FAC, min_h);
     block->rect.ymin = std::max(block->rect.ymin, block->rect.ymax - crop);
+  }
+  /* A menu's rows reach its edge, and the bar must not cover their arrows and shortcuts. Panels
+   * have their margin. Comparing heights also catches a block trimmed at the top, whose buttons
+   * only move down later, in #tear_off_header_scroll_prepare. */
+  if (!(block->flag & BLOCK_POPOVER) && natural > BLI_rctf_size_y(&block->rect) + 0.5f) {
+    const float gutter = V2D_SCROLL_WIDTH + 2.0f * UI_SCALE_FAC;
+    block->rect.xmax += gutter;
+    /* #block_tear_off_align_header already ran, so the icons and line must follow the edge. */
+    for (Button &bt : block->buttons()) {
+      if (bt.tear_off_header && bt.optype) {
+        BLI_rctf_translate(&bt.rect, gutter, 0.0f);
+      }
+      else if (bt.tear_off_header && bt.type == ButtonType::SeprLine) {
+        bt.rect.xmax += gutter;
+      }
+    }
+    popup_block_clip(window, block);
   }
 }
 
