@@ -564,3 +564,82 @@ def s_hotkeys2():
 
 
 SC["hotkeys2"] = s_hotkeys2
+
+
+def s_pref_off():
+    yield from setup(); yield from grab("base")
+    prefs = bpy.context.preferences
+    log("use_tear_off starts", prefs.use_tear_off)
+    check("defaults to on", prefs.use_tear_off is True)
+    check("menu operator polls while on", bpy.ops.wm.menu_tear_off.poll())
+    yield from click(406, 933); yield 0.4
+    yield from grab("menu_on")
+    on = bbox("base", "menu_on"); log("menu with row", on)
+    yield from esc(); yield from esc()
+    move(*center()); yield 0.4
+    # An expanded, a collapsed and a hidden tear-off must all close when turned off.
+    tear_menu(); yield 0.8
+    yield from grab("torn")
+    b = bbox("base", "torn")
+    yield from click(b[2] - 34, b[3] - 14)   # collapse it
+    move(*center()); yield 0.3
+    move(center()[0] - 400, center()[1]); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    move(*center()); yield 0.3
+    prefs.use_tear_off = False
+    yield 0.6
+    move(*center()); yield 0.5
+    yield from grab("off")
+    check("turning it off closes open tear-offs", rdiff("base", "off") < 300, rdiff("base", "off"))
+    check("menu operator fails poll while off", not bpy.ops.wm.menu_tear_off.poll())
+    check("panel operator fails poll while off", not bpy.ops.wm.panel_tear_off.poll())
+    yield from click(406, 933); yield 0.4
+    yield from grab("menu_off")
+    off = bbox("base", "menu_off"); log("menu without row", off)
+    # The menu's bottom row sits lower with the extra row, so that strip only differs when on.
+    strip = (400, 200, 570, 215)
+    check("menu has the row while on", rdiff("base", "menu_on", strip) > 200, rdiff("base", "menu_on", strip))
+    check("menu has no row while off", rdiff("base", "menu_off", strip) < 50, rdiff("base", "menu_off", strip))
+    yield from esc(); yield from esc()
+    prefs.use_tear_off = True
+    yield 0.4
+    move(*center()); yield 0.3
+    tear_menu(); yield 0.8
+    yield from grab("again")
+    check("works again after turning it back on", bbox("base", "again") is not None)
+
+
+SC["pref_off"] = s_pref_off
+
+
+def s_hover_keys():
+    yield from setup(); yield from grab("base")
+    yield from open_panel()
+    wm = bpy.context.window_manager
+    fx, fy = PANEL["frame"]
+    sc = bpy.context.scene
+    sc.frame_current = 42
+    yield 0.4
+    move(fx, fy); yield 0.3
+    move(fx, fy); yield 0.3
+    win().event_simulate(type="C", value="PRESS", ctrl=True, x=fx, y=fy); yield 0.05
+    win().event_simulate(type="C", value="RELEASE", ctrl=True, x=fx, y=fy); yield 0.5
+    check("Ctrl+C copies the hovered torn-off field", wm.clipboard.strip() == "42", repr(wm.clipboard))
+    wm.clipboard = "7"
+    yield 0.2
+    move(fx + 2, fy); yield 0.3
+    win().event_simulate(type="V", value="PRESS", ctrl=True, x=fx + 2, y=fy); yield 0.05
+    win().event_simulate(type="V", value="RELEASE", ctrl=True, x=fx + 2, y=fy); yield 0.5
+    check("Ctrl+V pastes into the hovered torn-off field", sc.frame_current == 7, sc.frame_current)
+    k_none = find_kmi("Object Mode", "object.select_all", action="DESELECT")
+    k_all = find_kmi("Object Mode", "object.select_all", action="SELECT")
+    yield from send_kmi(k_none, fx, fy)
+    check("plain hotkey over a torn-off field still reaches the editor", len(bpy.context.view_layer.objects.selected) == 0, len(bpy.context.view_layer.objects.selected))
+    yield from send_kmi(k_all, fx, fy)
+    check("second hotkey too", len(bpy.context.view_layer.objects.selected) > 0)
+    yield from grab("end")
+    box = (PANEL["xmin"] + 20, PANEL["ymax"] - 40, PANEL["xmin"] + 180, PANEL["ymax"] - 8)
+    check("hotkeys do not close the tear-off", rdiff("end", "base_po", box) < 400, rdiff("end", "base_po", box))
+
+
+SC["hover_keys"] = s_hover_keys
