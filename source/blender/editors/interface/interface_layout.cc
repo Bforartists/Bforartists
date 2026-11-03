@@ -6782,13 +6782,13 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
           tear_off_panel_header_draw(C, pt, panel, body);
         }
       }
-      /* BFA - Tear-Off Menu/Panel: no row when turned off. A tear-off has no source button, so a
-       * panel reading context pointers from that button would redraw empty, the same rule as
-       * `menu_needs_source_but`. A property on the button doesn't count: panels opened with
-       * #Layout::prop_with_popover read their own data. */
-      else if (tear_off_enabled() && !(block->handle && block->handle->popup_create_vars.but &&
-                                       block->handle->popup_create_vars.but->context))
-      {
+      /* BFA - Tear-Off Menu/Panel: no row when turned off. A tear-off has no source button or
+       * creator, so a panel reading context from them would redraw empty, the same rule as
+       * `menu_needs_source_but`. Both end up on this layout: the button's in
+       * #popover_create_block, and a creator sets its own, as the asset shelf's shortcut does. A
+       * property on the button doesn't count: panels opened with #Layout::prop_with_popover read
+       * their own data. */
+      else if (tear_off_enabled() && !body->context()) {
         const EmbossType prev_emboss = body->emboss_or_undefined();
         body->emboss_set(EmbossType::Pulldown);
         PointerRNA opptr = body->op("WM_OT_panel_tear_off", "Tear Off Panel", ICON_GRIP);
