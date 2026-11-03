@@ -13391,6 +13391,23 @@ static bool tear_off_older_owns_input(const bContext *C, const PopupBlockHandle 
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: see #PopupBlockHandle::tear_off_skip_release. True for the release
+ * to skip. Shared, because with the focus back the cursor can be over a row of another tear-off,
+ * and the newest one gets the event first. A press means that release was lost, and this click is
+ * a normal one. */
+static bool tear_off_skip_release_test(wmWindow *win, const wmEvent *event)
+{
+  bool skip = false;
+  for (wmEventHandler &handler : win->runtime->modalhandlers) {
+    PopupBlockHandle *other = popup_from_handler(&handler);
+    if (other && other->is_tear_off && other->tear_off_skip_release) {
+      other->tear_off_skip_release = false;
+      skip = true;
+    }
+  }
+  return skip && event->val == KM_RELEASE;
+}
+
 /* BFA - Tear-Off Menu/Panel: true if the window position is over this popup or an open submenu
  * of it. Submenus have no handler of their own, so they are only reachable through the parent. */
 static bool popup_contains_point(const PopupBlockHandle *menu, const int xy[2])
@@ -13881,6 +13898,14 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     return WM_UI_HANDLER_CONTINUE;
   }
 
+  /* BFA - Tear-Off Menu/Panel: before everything that can pass the event on. */
+  if (menu->is_tear_off && event->type == LEFTMOUSE &&
+      tear_off_skip_release_test(CTX_wm_window(C), event))
+  {
+    CTX_wm_region_popup_set(C, region_popup);
+    return WM_UI_HANDLER_BREAK;
+  }
+
   /* BFA - Tear-Off Menu/Panel: tear-off menus/panels are persistent. Keyboard events must
    * pass straight through to the global keymap so hotkeys keep working, and must never be
    * processed by the menu handler. Without this, a mode-switch hotkey (e.g. Tab) reaches
@@ -13957,14 +13982,6 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 
   /* BFA - Tear-Off Menu/Panel: before the title double-click, so a grip's double-click resets it
    * even at the end of the title, and before the menu handling, which would run the row below. */
-  if (menu->tear_off_skip_release && event->type == LEFTMOUSE) {
-    /* A press means that release was lost, and this click is a normal one. */
-    menu->tear_off_skip_release = false;
-    if (event->val == KM_RELEASE) {
-      CTX_wm_region_popup_set(C, region_popup);
-      return WM_UI_HANDLER_BREAK;
-    }
-  }
   if (tear_off_edges_handle(C, event, menu, tear_off_was_modal)) {
     CTX_wm_region_popup_set(C, region_popup);
     return WM_UI_HANDLER_BREAK;
@@ -14044,6 +14061,7 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
         /* BFA - Tear-Off Menu/Panel: with the focus gone no release is coming. */
         if (event->type == WINDEACTIVATE) {
           handle->tear_off_pin_dragging = false;
+          handle->tear_off_skip_release = true;
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
         }
         if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
