@@ -163,6 +163,41 @@ static int tear_off_panel_designed_ui_size(const Popover *pup)
              (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS));
 }
 
+/* BFA - Tear-Off Menu/Panel: in the units of #tear_off_width. The minimum can make the block wider
+ * than its layout, and the grip must start from what shows or the first move does nothing. */
+static float tear_off_panel_width_designed(const PopupBlockHandle *handle)
+{
+  const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
+  const float block_px = tear_off_panel_designed_ui_size(pup) + U.widget_unit;
+  return (std::max<float>(block_px, UI_MENU_WIDTH_MIN) - U.widget_unit) / UI_SCALE_FAC;
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+bool tear_off_panel_width_drag(PopupBlockHandle *handle,
+                               const float start_field,
+                               const float delta_px,
+                               const float room_px)
+{
+  const float max_width = (room_px - U.widget_unit) / UI_SCALE_FAC + handle->tear_off_width_chrome;
+  const float base = start_field > 0.0f ? start_field : tear_off_panel_width_designed(handle);
+  const float wanted = base + delta_px / UI_SCALE_FAC;
+  float width;
+  if (handle->tear_off_width_default > 0.0f) {
+    /* Above 0, because 0 would mean the designed width. */
+    width = std::max(std::min(wanted, max_width), 1.0f);
+  }
+  else {
+    const float min_width = tear_off_panel_width_designed(handle);
+    /* At the minimum it's the designed width again, which follows the scale formula. */
+    width = wanted <= min_width ? 0.0f : std::min(wanted, std::max(max_width, min_width));
+  }
+  if (width == handle->tear_off_width) {
+    return false;
+  }
+  handle->tear_off_width = width;
+  return true;
+}
+
 /* BFA - Tear-Off Menu/Panel: tool shelf panels keep the shelf's look and column count. Other
  * panels keep their designed width, including the Clip and File Browser `TOOLS` regions, which
  * don't use the column count. */

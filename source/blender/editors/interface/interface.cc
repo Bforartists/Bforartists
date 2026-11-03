@@ -2576,6 +2576,11 @@ void block_draw(const bContext *C, Block *block)
   block_views_draw_overlays(region, block);
   GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
 
+  /* BFA - Tear-Off Menu/Panel: after the content, because a grip reaches into its edge. */
+  if (block->handle && block->handle->is_tear_off && !block->handle->tear_off_collapsed) {
+    draw_tear_off_edges(region, block);
+  }
+
   /* restore matrix */
   GPU_matrix_pop_projection();
   GPU_matrix_pop();

@@ -13250,7 +13250,7 @@ static bool tear_off_owns_input(const PopupBlockHandle *menu)
   if (menu->tear_off_collapsed) {
     return menu->tear_off_pin_dragging;
   }
-  if (menu->is_grab) {
+  if (menu->is_grab || menu->tear_off_drag_zone) {
     return true;
   }
   const Button *but = region_find_active_but(menu->region);
@@ -13351,6 +13351,253 @@ static bool tear_off_under_regular_popup(const bContext *C, const PopupBlockHand
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: which cursor shows the edge a grip acts on. A modal operator's cursor
+ * stays. There is no diagonal cursor, so a corner uses the scroll one. */
+static void tear_off_zone_cursor_set(wmWindow *win, const uint8_t zone)
+{
+  if (win->modalcursor) {
+    return;
+  }
+  const bool w = zone & TEAR_OFF_ZONE_WIDTH, h = zone & TEAR_OFF_ZONE_HEIGHT;
+  WM_cursor_set(win,
+                (w && h) ? WM_CURSOR_NSEW_SCROLL :
+                w        ? WM_CURSOR_X_MOVE :
+                h        ? WM_CURSOR_Y_MOVE :
+                           WM_CURSOR_DEFAULT);
+}
+
+/* BFA - Tear-Off Menu/Panel: a grip takes over from a highlighted row and the auto-scroll timer,
+ * because the inner band overlaps the bottom arrow zone. */
+static void tear_off_edges_take_over(bContext *C, PopupBlockHandle *menu)
+{
+  if (Button *but = region_find_active_but(menu->region)) {
+    but->active->cancel = true;
+    button_activate_exit(C, but, but->active, false, false);
+  }
+  if (menu->scrolltimer) {
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), menu->scrolltimer);
+    menu->scrolltimer = nullptr;
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: zone != 0 needs a real C, zone == 0 touches no button, so it's safe
+ * on another handle. */
+static void tear_off_hover_set(bContext *C,
+                               wmWindow *win,
+                               PopupBlockHandle *menu,
+                               const uint8_t zone)
+{
+  const bool was_hover = menu->tear_off_hover_zone != 0;
+  if (zone != 0) {
+    /* First: #button_activate_exit sets the default cursor when the button changed it. */
+    tear_off_edges_take_over(C, menu);
+    tear_off_zone_cursor_set(win, zone);
+  }
+  else if (was_hover) {
+    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    /* The editor's own cursor comes back through #region_cursor_set_ex. */
+    win->tag_cursor_refresh = true;
+  }
+  menu->tear_off_hover_zone = zone;
+  ED_region_tag_redraw(menu->region);
+}
+
+/* BFA - Tear-Off Menu/Panel: a newer tear-off keeps mouse events inside its block, so the older
+ * one never sees the move that leaves its grip. Nothing is freed here, so this is safe during
+ * handler iteration. */
+static void tear_off_hover_clear_older(wmWindow *win, const PopupBlockHandle *menu)
+{
+  wmEventHandler *handler = popup_handler_find(win, menu);
+  for (wmEventHandler *older = handler ? handler->next : nullptr; older; older = older->next) {
+    PopupBlockHandle *other = popup_from_handler(older);
+    if (!other || !other->is_tear_off) {
+      continue;
+    }
+    if (other->tear_off_hover_zone) {
+      tear_off_hover_set(nullptr, win, other, 0);
+    }
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: for a tear-off that hides or collapses. It passes everything on, so
+ * it could never end these. */
+static void tear_off_edges_reset(wmWindow *win, PopupBlockHandle *menu)
+{
+  if (menu->tear_off_hover_zone || menu->tear_off_drag_zone) {
+    menu->tear_off_hover_zone = 0;
+    menu->tear_off_drag_zone = 0;
+    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    win->tag_cursor_refresh = true;
+    ED_region_tag_redraw(menu->region);
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: which edge is under the cursor. The bands reach outside the block,
+ * where #region_contains_point_px already keeps buttons out, and only a few pixels into it.
+ * #tear_off_edges_handle runs before button handling, so buttons never see these events. */
+static uint8_t tear_off_zone_at(const PopupBlockHandle *menu, const Block *block, const int xy[2])
+{
+  int mx = xy[0], my = xy[1];
+  window_to_block(menu->region, block, &mx, &my);
+  const rctf &r = block->rect;
+  const float out = 6.0f * UI_SCALE_FAC, in = 3.0f * UI_SCALE_FAC;
+  const bool is_panel = block->flag & BLOCK_POPOVER;
+  uint8_t zone = 0;
+  if (is_panel && mx >= r.xmax - in && mx <= r.xmax + out && my >= r.ymin - out && my <= r.ymax) {
+    zone |= TEAR_OFF_ZONE_WIDTH;
+  }
+  return zone;
+}
+
+static void tear_off_drag_begin(bContext *C,
+                                wmWindow *win,
+                                PopupBlockHandle *menu,
+                                Block * /*block*/,
+                                const uint8_t zone,
+                                const int xy[2])
+{
+  tear_off_edges_take_over(C, menu);
+  tear_off_zone_cursor_set(win, zone);
+  menu->tear_off_drag_zone = zone;
+  copy_v2_v2_int(menu->tear_off_drag_xy, xy);
+  menu->tear_off_drag_field[0] = menu->tear_off_width;
+}
+
+static void tear_off_drag_apply(wmWindow *win,
+                                PopupBlockHandle *menu,
+                                const Block *block,
+                                const int xy[2])
+{
+  if (menu->tear_off_drag_zone & TEAR_OFF_ZONE_WIDTH) {
+    const float room = WM_window_native_pixel_size(win)[0] - UI_SCREEN_MARGIN -
+                       (menu->region->winrct.xmin + block->rect.xmin);
+    if (tear_off_panel_width_drag(
+            menu, menu->tear_off_drag_field[0], xy[0] - menu->tear_off_drag_xy[0], room))
+    {
+      ED_region_tag_refresh_ui(menu->region);
+    }
+  }
+}
+
+static void tear_off_drag_wait_release(wmWindow *win, PopupBlockHandle *menu)
+{
+  menu->tear_off_drag_zone = TEAR_OFF_ZONE_WAIT_RELEASE;
+  menu->tear_off_hover_zone = 0;
+  WM_cursor_set(win, WM_CURSOR_DEFAULT);
+  win->tag_cursor_refresh = true;
+  ED_region_tag_redraw(menu->region);
+}
+
+static void tear_off_drag_end(wmWindow *win, PopupBlockHandle *menu)
+{
+  tear_off_drag_wait_release(win, menu);
+  menu->tear_off_drag_zone = 0;
+  WM_event_add_mousemove(win);
+}
+
+static void tear_off_drag_cancel(PopupBlockHandle *menu, Block * /*block*/)
+{
+  menu->tear_off_width = menu->tear_off_drag_field[0];
+  ED_region_tag_refresh_ui(menu->region);
+}
+
+/* BFA - Tear-Off Menu/Panel: the resize grips. Returns true when the event is used up. */
+static bool tear_off_edges_handle(bContext *C,
+                                  const wmEvent *event,
+                                  PopupBlockHandle *menu,
+                                  const bool was_modal)
+{
+  Block *block = menu->region->runtime->uiblocks.first();
+  wmWindow *win = CTX_wm_window(C);
+  if (!menu->is_tear_off || !block) {
+    return false;
+  }
+  if (menu->tear_off_collapsed) {
+    tear_off_edges_reset(win, menu);
+    return false;
+  }
+  if (menu->tear_off_drag_zone) {
+    const bool waiting = menu->tear_off_drag_zone == TEAR_OFF_ZONE_WAIT_RELEASE;
+    if (event->type == WINDEACTIVATE) {
+      /* No release is coming. BREAK would be cleared anyway, for an always-pass event. */
+      if (!waiting) {
+        tear_off_drag_cancel(menu, block);
+      }
+      tear_off_drag_end(win, menu);
+      return false;
+    }
+    if (ISTIMER(event->type)) {
+      return false;
+    }
+    if (event->type == LEFTMOUSE) {
+      if (event->val == KM_RELEASE) {
+        tear_off_drag_end(win, menu);
+      }
+      else {
+        /* The last release was lost. This press's release is still to come. */
+        tear_off_drag_wait_release(win, menu);
+      }
+    }
+    else if (!waiting) {
+      if (ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE) && event->val == KM_PRESS) {
+        /* The left button is still down. Ending here would let its release run the row that the
+         * restored size puts under the cursor. */
+        tear_off_drag_cancel(menu, block);
+        tear_off_drag_wait_release(win, menu);
+      }
+      else if (event->type == MOUSEMOVE) {
+        tear_off_drag_apply(win, menu, block, event->xy);
+      }
+    }
+    return true; /* Keys don't reach the editor during a drag. */
+  }
+  if (was_modal || menu->mmb_panning) {
+    return false;
+  }
+  /* A checkbox waiting to start a drag-toggle, or a row in its flash delay, must finish. */
+  const Button *active = region_find_active_but(menu->region);
+  if (active && active->active->state != BUTTON_STATE_HIGHLIGHT) {
+    return false;
+  }
+  if (event->type == MOUSEMOVE) {
+    const uint8_t zone = tear_off_zone_at(menu, block, event->xy);
+    if (zone != 0 || popup_contains_point(menu, event->xy)) {
+      /* Before this tear-off's cursor, so a grip here isn't overwritten. */
+      tear_off_hover_clear_older(win, menu);
+    }
+    if (zone != menu->tear_off_hover_zone) {
+      tear_off_hover_set(C, win, menu, zone);
+    }
+    else if (zone != 0) {
+      /* A regular popup that opened and closed here forced the default cursor. */
+      tear_off_zone_cursor_set(win, zone);
+    }
+    /* BREAK keeps the cursor: #ED_screen_set_active_region only runs if no modal handler broke. */
+    return zone != 0;
+  }
+  if (event->type != LEFTMOUSE || event->val == KM_RELEASE) {
+    /* A release here isn't ours: it could be a window drop or a button's drag. */
+    return false;
+  }
+  const uint8_t zone = tear_off_zone_at(menu, block, event->xy);
+  if (zone == 0) {
+    return false;
+  }
+  if (event->val == KM_DBL_CLICK) {
+    if (zone & TEAR_OFF_ZONE_WIDTH) {
+      menu->tear_off_width = menu->tear_off_width_default;
+    }
+    ED_region_tag_refresh_ui(menu->region);
+    /* The block grows back under the cursor, and the release must not run a row. */
+    tear_off_drag_wait_release(win, menu);
+    return true; /* BREAK stops the replay as a press. */
+  }
+  if (event->val == KM_PRESS) {
+    tear_off_drag_begin(C, win, menu, block, zone, event->xy);
+  }
+  return true;
+}
+
 /* two types of popups, one with operator + enum, other with regular callbacks */
 static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 {
@@ -13422,7 +13669,8 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       block && (block->flag & BLOCK_TEAR_OFF))
   {
     const Button *but = region_find_active_but(menu->region);
-    tear_off_was_modal = menu->is_grab || (but && button_modal_state(but->active->state));
+    tear_off_was_modal = menu->is_grab || menu->tear_off_drag_zone ||
+                         (but && button_modal_state(but->active->state));
     /* BFA - Tear-Off Menu/Panel: modal ownership stays with the tear-off that started it,
      * whichever one is under the cursor, so the release or click reaches it. Timers still run
      * here, because this tear-off's own tooltips and scrolling need them. */
@@ -13453,6 +13701,8 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   {
     Block *block = menu->region->runtime->uiblocks.first();
     if (block && block->handle && !tear_off_is_visible(C, block->handle)) {
+      /* A hidden tear-off keeps its width as it is at that moment. */
+      tear_off_edges_reset(CTX_wm_window(C), block->handle);
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
     }
@@ -13467,6 +13717,13 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   {
     CTX_wm_region_popup_set(C, region_popup);
     return WM_UI_HANDLER_CONTINUE;
+  }
+
+  /* BFA - Tear-Off Menu/Panel: before the title double-click, so a grip's double-click resets it
+   * even at the end of the title, and before the menu handling, which would run the row below. */
+  if (tear_off_edges_handle(C, event, menu, tear_off_was_modal)) {
+    CTX_wm_region_popup_set(C, region_popup);
+    return WM_UI_HANDLER_BREAK;
   }
 
   /* BFA - Tear-Off Menu/Panel: double-clicking a pinned tear-off panel collapses it to the

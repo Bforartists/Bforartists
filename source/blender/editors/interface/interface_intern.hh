@@ -1058,6 +1058,15 @@ struct PopupBlockCreate {
   Button *but = nullptr;
 };
 
+/** BFA - Tear-Off Menu/Panel: #PopupBlockHandle::tear_off_hover_zone and #tear_off_drag_zone. */
+enum {
+  TEAR_OFF_ZONE_WIDTH = 1 << 0,
+  TEAR_OFF_ZONE_HEIGHT = 1 << 1,
+  TEAR_OFF_ZONE_SCROLLBAR = 1 << 2,
+  /* The drag is over, but its left button is still down. Swallows input until the release. */
+  TEAR_OFF_ZONE_WAIT_RELEASE = 1 << 3,
+};
+
 struct PopupBlockHandle {
   /* internal */
   ARegion *region = nullptr;
@@ -1213,6 +1222,13 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: how much of #tear_off_width wasn't layout in the shelf (tab strip,
    * panel margins), in the same units. Set once. */
   float tear_off_width_chrome = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: the edge under the cursor, and the edge being dragged. */
+  uint8_t tear_off_hover_zone = 0;
+  uint8_t tear_off_drag_zone = 0;
+  /** BFA - Tear-Off Menu/Panel: cursor position at the press. */
+  int tear_off_drag_xy[2] = {0, 0};
+  /** BFA - Tear-Off Menu/Panel: width and height fields at the press, for cancel. */
+  float tear_off_drag_field[2] = {0.0f, 0.0f};
 
   char menu_idname[64] = "";
 
@@ -1365,6 +1381,13 @@ PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);
 TearOffInit tear_off_init_from_region(const bContext *C, const PanelType *pt);
 /* BFA - Tear-Off Menu/Panel: pixel width of the layout for a non-zero #tear_off_width. */
 int tear_off_layout_width(const wmWindow *win, const PopupBlockHandle *handle);
+/* BFA - Tear-Off Menu/Panel: applies a right-edge drag of `delta_px` from `start_field`, the
+ * #tear_off_width at the press. `room_px` is how wide the block may get. Returns true on a change,
+ * which needs a refresh. */
+bool tear_off_panel_width_drag(PopupBlockHandle *handle,
+                               float start_field,
+                               float delta_px,
+                               float room_px);
 
 /* `interface_region_menu_pie.cc` */
 
@@ -1700,6 +1723,8 @@ gpu::Batch *batch_roundbox_shadow_get();
 
 void draw_menu_back(uiStyle *style, Block *block, const rcti *rect);
 void draw_popover_back(ARegion *region, uiStyle *style, Block *block, const rcti *rect);
+/* BFA - Tear-Off Menu/Panel: for a block of an expanded tear-off. */
+void draw_tear_off_edges(const ARegion *region, const Block *block);
 void draw_pie_center(Block *block);
 const uiWidgetColors *tooltip_get_theme();
 

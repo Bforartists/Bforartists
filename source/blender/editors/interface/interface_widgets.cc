@@ -6317,6 +6317,37 @@ void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const
   draw_clip_tri(block, rect, wt);
 }
 
+/* BFA - Tear-Off Menu/Panel: a grip shows as a line on its edge while hovered or dragged, so it's
+ * clear what a press would resize. Nothing draws at rest. #TEAR_OFF_ZONE_WAIT_RELEASE has no edge
+ * bit, so nothing lights after a drag ended early. */
+void draw_tear_off_edges(const ARegion *region, const Block *block)
+{
+  const PopupBlockHandle *handle = block->handle;
+  const uint8_t zone = handle->tear_off_drag_zone ? handle->tear_off_drag_zone :
+                                                    handle->tear_off_hover_zone;
+  if (!(zone & TEAR_OFF_ZONE_WIDTH)) {
+    return;
+  }
+  /* The rect of the block, not of its last button. */
+  rcti rect;
+  button_to_pixelrect(&rect, region, block, nullptr);
+
+  const bTheme *btheme = theme::theme_get();
+  const float thickness = 2.0f * UI_SCALE_FAC;
+  /* Stops short of the rounded corners, where a straight line would stick out. */
+  const float corner = btheme->tui.wcol_menu_back.roundness * U.widget_unit / block->aspect;
+  float color[4];
+  rgba_uchar_to_float(color, btheme->tui.wcol_scroll.item);
+
+  rctf line;
+  line.xmin = float(rect.xmax) - thickness;
+  line.xmax = float(rect.xmax);
+  line.ymin = float(rect.ymin) + corner;
+  line.ymax = float(rect.ymax) - corner;
+  draw_roundbox_corner_set(CNR_ALL);
+  draw_roundbox_4fv(&line, true, thickness / 2.0f, color);
+}
+
 static void draw_disk_shaded(float start,
                              float angle,
                              float radius_int,

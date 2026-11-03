@@ -1024,6 +1024,12 @@ static void popup_block_remove(bContext *C, PopupBlockHandle *handle)
     WM_cursor_set(win, WM_CURSOR_DEFAULT);
     WM_cursor_grab_disable(win, nullptr);
   }
+  /* BFA - Tear-Off Menu/Panel: a free through Reload Scripts or the preference switch must not
+   * leave the grip cursor. */
+  if (handle->tear_off_hover_zone || handle->tear_off_drag_zone) {
+    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    win->tag_cursor_refresh = true;
+  }
 }
 
 void layout_panel_popup_scroll_apply(Panel *panel, const float dy)
