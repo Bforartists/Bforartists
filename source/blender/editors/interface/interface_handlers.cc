@@ -11858,6 +11858,9 @@ static int handle_menu_event(bContext *C,
           if (event->modifier) {
             /* pass */
           }
+          else if ((block->flag & BLOCK_TEAR_OFF) && !inside) {
+            /* BFA - Tear-Off Menu/Panel: the wheel belongs to whatever is under the cursor. */
+          }
           else if (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM)) {
             const float dy = event->xy[1] - event->prev_xy[1];
             if (dy != 0.0f) {
@@ -11885,6 +11888,9 @@ static int handle_menu_event(bContext *C,
         case WHEELDOWNMOUSE: {
           if (event->modifier) {
             /* pass */
+          }
+          else if ((block->flag & BLOCK_TEAR_OFF) && !inside) {
+            /* BFA - Tear-Off Menu/Panel: the wheel belongs to whatever is under the cursor. */
           }
           else if (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM)) {
             const int scroll_dir = (event->type == WHEELUPMOUSE) ? 1 : -1;
@@ -13285,7 +13291,8 @@ static bool tear_off_owns_input(const PopupBlockHandle *menu)
   if (menu->tear_off_collapsed) {
     return menu->tear_off_pin_dragging;
   }
-  if (menu->is_grab || menu->tear_off_drag_zone) {
+  /* A middle mouse pan too: released over a newer tear-off it would never end. */
+  if (menu->is_grab || menu->tear_off_drag_zone || menu->mmb_panning) {
     return true;
   }
   const Button *but = region_find_active_but(menu->region);
