@@ -12179,7 +12179,9 @@ static int handle_menu_event(bContext *C,
       if ((inside == false) && (menu->menuretval == 0)) {
         SafetyRect *saferct = block->saferct.first();
 
-        if (event->type == MOUSEMOVE) {
+        /* BFA - Tear-Off Menu/Panel: a tear-off isn't modal, so tooltips of the UI outside it
+         * must survive mouse moves. Its own buttons clear theirs on exit. */
+        if ((event->type == MOUSEMOVE) && !(block->flag & BLOCK_TEAR_OFF)) {
           WM_tooltip_clear(C, win);
         }
 
