@@ -4362,3 +4362,66 @@ def s_p8_top_band():
 
 
 SC["p8_top_band"] = s_p8_top_band
+
+
+def s_p8_shadow_band():
+    """The theme's shadow margin belongs to the editor under a tear-off, so hovering it at the height
+    of an arrow zone doesn't start the auto-scroll. The default theme's width is 0."""
+    yield from begin()
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    ui = bpy.context.preferences.themes[0].user_interface
+    ui.menu_shadow_width = 12
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("shadow")
+    rows = rows_box(v, STRIP_MENU)
+    x, y = v[0] - 4, v[1] + 6
+    move(x, y); yield 0.3
+    move(x, y); yield 1.2
+    yield from park()
+    yield from grab("beside")
+    n = rdiff("shadow", "beside", rows)
+    check("beside the block nothing scrolls", n < 30, n)
+    # The baseline: the arrow zone itself does auto-scroll.
+    x = mid_x(v)
+    move(x, y); yield 0.3
+    move(x, y); yield 1.2
+    yield from park()
+    yield from grab("inside")
+    n = rdiff("beside", "inside", rows)
+    check("in the arrow zone it scrolls", n > 100, n)
+    ui.menu_shadow_width = 0
+
+
+SC["p8_shadow_band"] = s_p8_shadow_band
+
+
+def s_p8_fractional_crop():
+    """125% makes the arrow zones, so the smallest crop, end on half a pixel. A wheel step's point
+    is clamped to the block's bottom, which has to stay inside it."""
+    S = 1.25
+    yield from setup()
+    prefs = bpy.context.preferences
+    prefs.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    prefs.view.ui_scale = S; yield 1.5
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("base")
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, height(b))
+    yield from grab("c")
+    v = need_box("base", "c", "cropped to the minimum")
+    log("minimum", v, "from", b)
+    yield from wheel(mid_x(v), mid_y(v), True, 3)
+    yield from park()
+    yield from grab("w")
+    n = rdiff("c", "w", rows_box(v, int(STRIP_MENU * S)))
+    check("the wheel scrolls down", n > 20, n)
+    prefs.view.ui_scale = 1.0; yield 1.0
+
+
+SC["p8_fractional_crop"] = s_p8_fractional_crop

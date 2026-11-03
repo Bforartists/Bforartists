@@ -11282,8 +11282,12 @@ static bool mouse_motion_keynav_test(KeyNavLock *keynav, const wmEvent *event)
 static char menu_scroll_test(Block *block, int2 xy)
 {
   rctf auto_scroll_bounds = block->rect;
-  const float shadow_width = theme::get_menu_shadow_width() / block->aspect;
-  BLI_rctf_pad(&auto_scroll_bounds, shadow_width, shadow_width);
+  /* BFA - Tear-Off Menu/Panel: a tear-off passes outside events on, so its shadow margin belongs
+   * to the editor under it. The auto-scroll timer must follow the same edge as the wheel. */
+  if (!(block->flag & BLOCK_TEAR_OFF)) {
+    const float shadow_width = theme::get_menu_shadow_width() / block->aspect;
+    BLI_rctf_pad(&auto_scroll_bounds, shadow_width, shadow_width);
+  }
   if (!BLI_rctf_isect_pt(&auto_scroll_bounds, UNPACK2(xy))) {
     return 0;
   }
@@ -11363,12 +11367,17 @@ static bool menu_scroll_to_but(ARegion *region, Block *block, Button *but_target
 /** Scroll to y location (in block space, see #window_to_block). */
 static bool menu_scroll_to_y(ARegion *region, Block *block, int y)
 {
+  /* BFA - Tear-Off Menu/Panel: a crop can leave a fractional ymin, for example at 125% UI scale.
+   * Truncated it would be just below a block with no shadow margin in #menu_scroll_test, and the
+   * wheel would silently stop scrolling down. Regular popups truncate, as upstream. */
+  const int ymin = (block->flag & BLOCK_TEAR_OFF) ?
+                       std::min<int>(ceilf(block->rect.ymin), block_scroll_top(block)) :
+                       int(block->rect.ymin);
   /* BFA - Tear-Off Menu/Panel: #menu_scroll_step passes a point above the block, and clamped to
    * the top of a sticky header it wouldn't be in the top arrow zone, so wheel-up would stop. */
   const char test = menu_scroll_test(
       block,
-      {int(BLI_rctf_cent_x(&block->rect)),
-       std::clamp<int>(y, block->rect.ymin, block_scroll_top(block))});
+      {int(BLI_rctf_cent_x(&block->rect)), std::clamp<int>(y, ymin, block_scroll_top(block))});
   float dy = 0.0f;
   if (test == 't') {
     dy = -UI_UNIT_Y / block->aspect; /* scroll to the top */
