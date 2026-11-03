@@ -10637,6 +10637,18 @@ static int handle_button_event(bContext *C, const wmEvent *event, Button *but)
         break;
       }
       case MOUSEMOVE: {
+        /* BFA - Tear-Off Menu/Panel: dragging a Tear Off row carries the new tear-off away, as
+         * Shift+drag does on a panel header. The release then ends the carry and runs nothing. */
+        if (button_is_tear_off_row(but) && but->opptr &&
+            len_manhattan_v2v2_int(event->xy, event->prev_press_xy) >
+                WM_event_drag_threshold(event))
+        {
+          RNA_boolean_set(but->opptr, "use_grab", true);
+          data->cancel = false;
+          button_activate_state(C, but, BUTTON_STATE_EXIT);
+          break;
+        }
+
         /* deselect the button when moving the mouse away */
         /* also de-activate for buttons that only show highlights */
         if (button_contains_point_px(but, region, event->xy)) {

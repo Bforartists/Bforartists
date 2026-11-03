@@ -2600,6 +2600,22 @@ struct TearOffSourceContext {
   }
 };
 
+/* BFA - Tear-Off Menu/Panel: a drag holds the new float until the release, see the callers. */
+static void tear_off_grab_begin(bContext *C, wmOperator *op, ui::PopupBlockHandle *handle)
+{
+  if (handle && RNA_boolean_get(op->ptr, "use_grab")) {
+    handle->is_grab = true;
+    copy_v2_v2_int(handle->grab_xy_prev, CTX_wm_window(C)->runtime->eventstate->xy);
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: set by a drag on the row, and by the panel header gesture. */
+static void tear_off_grab_prop_def(wmOperatorType *ot)
+{
+  PropertyRNA *prop = RNA_def_boolean(ot->srna, "use_grab", false, "Grab", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+}
+
 /* BFA - Tear-Off Menu/Panel */
 static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
 {
@@ -2615,6 +2631,7 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
   /* BFA - Tear-Off Menu/Panel */
   const MenuType *mt = WM_menutype_find(idname, true);
   tear_off_handle_init(C, handle, mt ? CTX_IFACE_(mt->translation_context, mt->label) : nullptr);
+  tear_off_grab_begin(C, op, handle);
 
   return status;
 }
@@ -2630,6 +2647,7 @@ static void WM_OT_menu_tear_off(wmOperatorType *ot)
   ot->poll = wm_tear_off_poll;
 
   RNA_def_string(ot->srna, "menu_idname", "Menu", MAX_NAME, "Menu", "");
+  tear_off_grab_prop_def(ot); /* BFA - Tear-Off Menu/Panel */
 }
 
 /* BFA - Tear-Off Menu/Panel: the tear-off an operator was called from, or null. The operators run
@@ -2702,6 +2720,7 @@ static wmOperatorStatus wm_enum_tear_off_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
   tear_off_handle_init(C, handle, label.c_str());
+  tear_off_grab_begin(C, op, handle);
   return OPERATOR_INTERFACE;
 }
 
@@ -2741,6 +2760,7 @@ static void WM_OT_enum_tear_off(wmOperatorType *ot)
                      0,
                      int(wm::OpCallContext::ExecScreen));
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  tear_off_grab_prop_def(ot);
 }
 
 /** \} */
@@ -2781,11 +2801,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
   /* BFA - Tear-Off Menu/Panel */
   tear_off_handle_init(C, handle, CTX_IFACE_(pt->translation_context, pt->label));
 
-  /* BFA - Tear-Off Menu/Panel: Shift+drag holds the new float until the release. */
-  if (handle && RNA_boolean_get(op->ptr, "use_grab")) {
-    handle->is_grab = true;
-    copy_v2_v2_int(handle->grab_xy_prev, CTX_wm_window(C)->runtime->eventstate->xy);
-  }
+  tear_off_grab_begin(C, op, handle); /* BFA - Tear-Off Menu/Panel */
 
   /* BFA - Tear-Off Menu/Panel: close the original popover/menu so it behaves like tear-off menus
    * (original closes when torn off). A region panel stays in place: it's a second live view. */
@@ -2817,8 +2833,7 @@ static void WM_OT_panel_tear_off(wmOperatorType *ot)
   PropertyRNA *prop = RNA_def_boolean(
       ot->srna, "from_region_panel", false, "From Region Panel", "");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
-  prop = RNA_def_boolean(ot->srna, "use_grab", false, "Grab", "");
-  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  tear_off_grab_prop_def(ot);
 }
 
 /* BFA - Tear-Off Menu/Panel */
