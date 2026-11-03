@@ -6485,7 +6485,8 @@ static void tear_off_shelf_title_get(const Block *block,
   if (text_w + int(ceilf(UI_UNIT_X * 1.75f)) > room) {
     const bool show_text = text_w + int(ceilf(UI_UNIT_X * 0.25f)) <= room ||
                            room >= int(2.5f * UI_UNIT_X);
-    *r_icon = show_text ? ICON_NONE : ICON_GRIP;
+    /* Only the two icons fit in a one column shelf. The margin around them still drags it. */
+    *r_icon = (show_text || room < UI_UNIT_X) ? ICON_NONE : ICON_GRIP;
     *r_title = show_text ? label : "";
   }
 }
@@ -6648,7 +6649,10 @@ static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel,
     const char *title;
     const int reserved = (2 + ((pt->draw_header_preset && has_header) ? 1 : 0)) * UI_UNIT_X;
     tear_off_shelf_title_get(layout->block(), label, reserved, &title_icon, &title);
-    row->label(title, title_icon);
+    /* An empty label would still take up room from the icons. */
+    if (title[0] != '\0' || title_icon != ICON_NONE) {
+      row->label(title, title_icon);
+    }
   }
   if (pt->draw_header_preset && has_header) {
     Layout *preset = &row->row(true);

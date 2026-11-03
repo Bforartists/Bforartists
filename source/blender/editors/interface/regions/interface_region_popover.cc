@@ -146,15 +146,15 @@ static void tear_off_shelf_width_measure(const ARegion *region,
   init.width_chrome = init.width - layout_width / UI_SCALE_FAC;
 }
 
-/* BFA - Tear-Off Menu/Panel: the floor fits the grip and the two header icons. A one column shelf
- * has about 38 units of layout, too narrow for the header. */
+/* BFA - Tear-Off Menu/Panel: the floor fits the two header icons, about what a one column shelf
+ * has of layout, so its tools stay as wide as in the shelf. */
 int tear_off_layout_width(const wmWindow *win, const PopupBlockHandle *handle)
 {
   const float width = (handle->tear_off_width - handle->tear_off_width_chrome) * UI_SCALE_FAC;
   /* BFA - Tear-Off Menu/Panel: a window made smaller must not leave a wider panel behind. */
   const int max_width = WM_window_native_pixel_size(win)[0] - 2 * UI_SCREEN_MARGIN -
                         U.widget_unit;
-  return std::max(std::min(int(width + 0.5f), max_width), 3 * UI_UNIT_X);
+  return std::max(std::min(int(width + 0.5f), max_width), 2 * UI_UNIT_X);
 }
 
 /* BFA - Tear-Off Menu/Panel: same formula as #popover_panel_create. */
