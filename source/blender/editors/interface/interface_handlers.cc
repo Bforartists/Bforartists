@@ -13559,14 +13559,18 @@ void popup_handlers_add(bContext *C,
    * Button owned sessions are kept, the popup may belong to the button being edited
    * (a search menu for e.g.), see #wmIMEOwnerType. */
   if (wmWindow *win = CTX_wm_window(C)) {
-    if (win->runtime->ime_owner == bke::wmIMEOwnerType::Region) {
+    /* BFA - Tear-Off Menu/Panel: a tear-off isn't modal, so keep the editor's session. */
+    if (win->runtime->ime_owner == bke::wmIMEOwnerType::Region && !popup->is_tear_off) {
       WM_window_IME_end(win);
     }
   }
 #endif
 
-  WM_event_add_ui_handler(
-      C, handlers, popup_handler, popup_handler_remove, popup, eWM_EventHandlerFlag(flag));
+  eWM_EventHandlerFlag handler_flag = eWM_EventHandlerFlag(flag);
+  if (popup->is_tear_off) { /* BFA - Tear-Off Menu/Panel: see #WM_HANDLER_KEEP_UI_WHEEL. */
+    handler_flag |= WM_HANDLER_KEEP_UI_WHEEL;
+  }
+  WM_event_add_ui_handler(C, handlers, popup_handler, popup_handler_remove, popup, handler_flag);
 }
 
 void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle *popup)

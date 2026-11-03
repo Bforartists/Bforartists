@@ -961,6 +961,9 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
     }
   }
 
+  /* BFA - Tear-Off Menu/Panel: read the flag now, the call below can free the handler. */
+  const bool keep_ui_wheel = bool(handler->head.flag & WM_HANDLER_KEEP_UI_WHEEL);
+
   int retval = handler->handle_fn(C, event, handler->user_data);
 
   /* Putting back screen context. */
@@ -982,7 +985,7 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
   }
 
   /* Event not handled in UI, if wheel then we temporarily disable it. */
-  if (is_wheel) {
+  if (is_wheel && !keep_ui_wheel) { /* BFA - Tear-Off Menu/Panel */
     do_wheel_ui = false;
   }
 
