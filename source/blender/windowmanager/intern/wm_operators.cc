@@ -2594,36 +2594,29 @@ static void WM_OT_menu_tear_off(wmOperatorType *ot)
   RNA_def_string(ot->srna, "menu_idname", "Menu", MAX_NAME, "Menu", "");
 }
 
-/* BFA - Tear-Off Menu/Panel */
-static wmOperatorStatus wm_menu_tear_off_close_exec(bContext *C, wmOperator * /*op*/)
+/* BFA - Tear-Off Menu/Panel: the tear-off an operator was called from, or null. The operators run
+ * from buttons in the tear-off, and popup_handler sets the context popup before dispatching. */
+static ui::PopupBlockHandle *tear_off_handle_from_context(bContext *C)
 {
   wmWindow *win = CTX_wm_window(C);
-  if (!win) {
-    return OPERATOR_CANCELLED;
-  }
-
-  /* popup_handler sets region_popup to the popup region before dispatching events. */
   ARegion *region = CTX_wm_region_popup(C);
-  if (!region) {
+  return (win && region) ? ui::tear_off_handle_from_region(win, region) : nullptr;
+}
+
+/* BFA - Tear-Off Menu/Panel: shared by the menu and panel close operators. */
+static wmOperatorStatus wm_tear_off_close_exec(bContext *C, wmOperator * /*op*/)
+{
+  ui::PopupBlockHandle *menu = tear_off_handle_from_context(C);
+  if (menu == nullptr) {
     return OPERATOR_CANCELLED;
   }
 
-  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
-    if (handler_base.type == WM_HANDLER_TYPE_UI) {
-      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
-      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
-      if (menu && menu->is_tear_off && menu->region == region) {
-        menu->menuretval = ui::RETURN_CANCEL;
-        /* BFA - Tear-Off Menu/Panel: popup_handler consumes menuretval on the next event.
-         * Force one, because after-funcs may free popups so popup_handler can't safely read
-         * the handle again after running them. */
-        WM_event_add_mousemove(win);
-        return OPERATOR_FINISHED;
-      }
-    }
-  }
-
-  return OPERATOR_CANCELLED;
+  menu->menuretval = ui::RETURN_CANCEL;
+  /* BFA - Tear-Off Menu/Panel: popup_handler consumes menuretval on the next event.
+   * Force one, because after-funcs may free popups so popup_handler can't safely read
+   * the handle again after running them. */
+  WM_event_add_mousemove(CTX_wm_window(C));
+  return OPERATOR_FINISHED;
 }
 
 /* BFA - Tear-Off Menu/Panel */
@@ -2633,35 +2626,20 @@ static void WM_OT_menu_tear_off_close(wmOperatorType *ot)
   ot->idname = "WM_OT_menu_tear_off_close";
   ot->description = "Close the torn-off menu";
 
-  ot->exec = wm_menu_tear_off_close_exec;
+  ot->exec = wm_tear_off_close_exec;
   ot->poll = WM_operator_winactive;
 }
 
-/* BFA - Tear-Off Menu/Panel: collapse the pinned menu to the small pin widget. */
-static wmOperatorStatus wm_menu_tear_off_collapse_exec(bContext *C, wmOperator * /*op*/)
+/* BFA - Tear-Off Menu/Panel: collapse the pinned menu or panel to the small pin widget. */
+static wmOperatorStatus wm_tear_off_collapse_exec(bContext *C, wmOperator * /*op*/)
 {
-  wmWindow *win = CTX_wm_window(C);
-  if (!win) {
+  ui::PopupBlockHandle *menu = tear_off_handle_from_context(C);
+  if (menu == nullptr) {
     return OPERATOR_CANCELLED;
   }
 
-  ARegion *region = CTX_wm_region_popup(C);
-  if (!region) {
-    return OPERATOR_CANCELLED;
-  }
-
-  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
-    if (handler_base.type == WM_HANDLER_TYPE_UI) {
-      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
-      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
-      if (menu && menu->is_tear_off && menu->region == region) {
-        ui::tear_off_set_collapsed(menu, true, win);
-        return OPERATOR_FINISHED;
-      }
-    }
-  }
-
-  return OPERATOR_CANCELLED;
+  ui::tear_off_set_collapsed(menu, true, CTX_wm_window(C));
+  return OPERATOR_FINISHED;
 }
 
 /* BFA - Tear-Off Menu/Panel */
@@ -2671,7 +2649,7 @@ static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
   ot->idname = "WM_OT_menu_tear_off_collapse";
   ot->description = "Collapse the torn-off menu to a pin";
 
-  ot->exec = wm_menu_tear_off_collapse_exec;
+  ot->exec = wm_tear_off_collapse_exec;
   ot->poll = WM_operator_winactive;
 }
 
@@ -2758,71 +2736,13 @@ static void WM_OT_panel_tear_off(wmOperatorType *ot)
 }
 
 /* BFA - Tear-Off Menu/Panel */
-static wmOperatorStatus wm_panel_tear_off_close_exec(bContext *C, wmOperator * /*op*/)
-{
-  wmWindow *win = CTX_wm_window(C);
-  if (!win) {
-    return OPERATOR_CANCELLED;
-  }
-
-  ARegion *region = CTX_wm_region_popup(C);
-  if (!region) {
-    return OPERATOR_CANCELLED;
-  }
-
-  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
-    if (handler_base.type == WM_HANDLER_TYPE_UI) {
-      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
-      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
-      if (menu && menu->is_tear_off && menu->region == region) {
-        menu->menuretval = ui::RETURN_CANCEL;
-        /* BFA - Tear-Off Menu/Panel: popup_handler consumes menuretval on the next event.
-         * Force one, because after-funcs may free popups so popup_handler can't safely read
-         * the handle again after running them. */
-        WM_event_add_mousemove(win);
-        return OPERATOR_FINISHED;
-      }
-    }
-  }
-
-  return OPERATOR_CANCELLED;
-}
-
-/* BFA - Tear-Off Menu/Panel: collapse the pinned panel to the small pin widget. */
-static wmOperatorStatus wm_panel_tear_off_collapse_exec(bContext *C, wmOperator * /*op*/)
-{
-  wmWindow *win = CTX_wm_window(C);
-  if (!win) {
-    return OPERATOR_CANCELLED;
-  }
-
-  ARegion *region = CTX_wm_region_popup(C);
-  if (!region) {
-    return OPERATOR_CANCELLED;
-  }
-
-  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
-    if (handler_base.type == WM_HANDLER_TYPE_UI) {
-      wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
-      ui::PopupBlockHandle *menu = static_cast<ui::PopupBlockHandle *>(handler->user_data);
-      if (menu && menu->is_tear_off && menu->region == region) {
-        ui::tear_off_set_collapsed(menu, true, win);
-        return OPERATOR_FINISHED;
-      }
-    }
-  }
-
-  return OPERATOR_CANCELLED;
-}
-
-/* BFA - Tear-Off Menu/Panel */
 static void WM_OT_panel_tear_off_collapse(wmOperatorType *ot)
 {
   ot->name = "Collapse Panel";
   ot->idname = "WM_OT_panel_tear_off_collapse";
   ot->description = "Collapse the torn-off panel to a pin";
 
-  ot->exec = wm_panel_tear_off_collapse_exec;
+  ot->exec = wm_tear_off_collapse_exec;
   ot->poll = WM_operator_winactive;
 }
 
@@ -2833,7 +2753,7 @@ static void WM_OT_panel_tear_off_close(wmOperatorType *ot)
   ot->idname = "WM_OT_panel_tear_off_close";
   ot->description = "Close the torn-off panel";
 
-  ot->exec = wm_panel_tear_off_close_exec;
+  ot->exec = wm_tear_off_close_exec;
   ot->poll = WM_operator_winactive;
 }
 

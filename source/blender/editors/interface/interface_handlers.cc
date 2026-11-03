@@ -13843,6 +13843,18 @@ void tear_off_source_popup_close_tag(ARegion *region_popup)
   }
 }
 
+/* BFA - Tear-Off Menu/Panel */
+PopupBlockHandle *tear_off_handle_from_region(wmWindow *win, const ARegion *region)
+{
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    PopupBlockHandle *menu = popup_from_handler(&handler_base);
+    if (menu && menu->is_tear_off && menu->region == region) {
+      return menu;
+    }
+  }
+  return nullptr;
+}
+
 /**
  * Returns true if the button is referencing \a srna.
  * \note This would fail to properly determine if the Button is referencing \a srna if the

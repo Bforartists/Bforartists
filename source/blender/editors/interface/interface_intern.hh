@@ -1362,6 +1362,12 @@ void tear_off_context_ensure(bContext *C, PopupBlockHandle *handle);
 void tear_off_source_popup_close_tag(ARegion *region_popup);
 
 /**
+ * BFA - Tear-Off Menu/Panel: the live tear-off shown in this region of the window, or null. Only
+ * looks at popup handlers, because other UI handlers keep something else in their user data.
+ */
+PopupBlockHandle *tear_off_handle_from_region(wmWindow *win, const ARegion *region);
+
+/**
  * BFA - Tear-Off Menu/Panel: geometry of the collapsed pin widget in region-local
  * coordinates. Shared by drawing and event handling.
  */
