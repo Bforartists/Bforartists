@@ -440,7 +440,8 @@ static void block_tear_off_align_header(Block *block)
   Button *sep_line = nullptr;
   float top_ymax = -FLT_MAX;
   for (Button &but : block->buttons()) {
-    if (but.type == ButtonType::SeprLine && but.rect.ymax > top_ymax) {
+    /* A panel's header has no line, and a line in its content must stay as it is. */
+    if (but.tear_off_header && but.type == ButtonType::SeprLine && but.rect.ymax > top_ymax) {
       top_ymax = but.rect.ymax;
       sep_line = &but;
     }
@@ -2518,6 +2519,7 @@ void block_draw(const bContext *C, Block *block)
   }
   else if (block->flag & BLOCK_POPOVER) {
     draw_popover_back(region, &style, block, &rect);
+    draw_tear_off_panel_header_back(region, block); /* BFA - Tear-Off Menu/Panel */
   }
   else if (block->flag & BLOCK_LOOP) {
     draw_menu_back(&style, block, &rect);
@@ -2535,6 +2537,10 @@ void block_draw(const bContext *C, Block *block)
   if (block->panel && ELEM(region->regiontype, RGN_TYPE_HUD, RGN_TYPE_TEMPORARY)) {
     /* TODO: Add as theme color. */
     float subpanel_backcolor[4]{0.2f, 0.3f, 0.33f, 0.05f};
+    /* BFA - Tear-Off Menu/Panel: subpanels as in the region this panel came from. */
+    if (block_has_tear_off_panel_colors(block)) {
+      theme::get_color_4fv(TH_PANEL_SUB_BACK, subpanel_backcolor);
+    }
     const bTheme *btheme = theme::theme_get();
     const float aspect = block->panel->runtime->block->aspect;
     const float radius = btheme->tui.panel_roundness * U.widget_unit * 0.5f / aspect;

@@ -6663,7 +6663,10 @@ static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel,
   icons->op("WM_OT_panel_tear_off_collapse", "", ICON_UNPINNED);
   icons->op("WM_OT_panel_tear_off_close", "", ICON_PANEL_CLOSE);
   layout->emboss_set(prev_emboss);
-  layout->separator(1.0f, LayoutSeparatorType::Line);
+  /* With the panel colors, the header's own color is what ends it. */
+  layout->separator(1.0f,
+                    block_has_tear_off_panel_colors(layout->block()) ? LayoutSeparatorType::Space :
+                                                                       LayoutSeparatorType::Line);
   block_tear_off_header_tag(layout->block());
 }
 

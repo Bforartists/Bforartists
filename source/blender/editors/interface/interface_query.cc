@@ -720,7 +720,14 @@ bool block_is_tear_off_shelf(const Block *block)
 /* BFA - Tear-Off Menu/Panel: see the declaration. */
 bool block_is_tear_off_panel(const Block *block)
 {
-  return block->handle && block->handle->is_tear_off && (block->flag & BLOCK_POPOVER);
+  return block->handle && block->handle->is_tear_off && block->handle->tear_off_from_region &&
+         (block->flag & BLOCK_POPOVER);
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+bool block_has_tear_off_panel_colors(const Block *block)
+{
+  return block_is_tear_off_panel(block) && !block_is_tear_off_shelf(block);
 }
 
 /* BFA - Tear-Off Menu/Panel: see the declaration. */

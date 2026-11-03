@@ -5776,8 +5776,8 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
         wt = widget_type(WidgetStyle::Swatch);
         break;
       case ButtonType::Label:
-        /* BFA - Tear-Off Menu/Panel: the title of a torn-off panel sits on the panel color, so
-         * the menu's text color could be unreadable there with a custom theme. */
+        /* BFA - Tear-Off Menu/Panel: the title of a panel torn off a region sits on panel colors,
+         * so the menu's text color could be unreadable there with a custom theme. */
         if (block_is_tear_off_panel(but->block)) {
           wt = widget_type(WidgetStyle::Label);
           break;
@@ -6299,16 +6299,83 @@ static void draw_popover_back_impl(const uiWidgetColors *wcol,
   GPU_blend(GPU_BLEND_NONE);
 }
 
+/* BFA - Tear-Off Menu/Panel: the colors of a panel in the region it came from. A region's panels
+ * blend over the region, and a floating one can sit over anything, so this is that result, opaque.
+ * The source's theme, because the region's color can differ per editor. */
+static void tear_off_panel_colors_get(const Block *block, float r_back[4], float r_header[4])
+{
+  const PopupBlockHandle *handle = block->handle;
+  theme::bThemeState theme_state;
+  theme::theme_store(&theme_state);
+  theme::theme_set(handle->tear_off_spacetype, handle->tear_off_ctx_region_type);
+  float region_back[4], panel_back[4], panel_header[4];
+  theme::get_color_4fv(TH_BACK, region_back);
+  theme::get_color_4fv(TH_PANEL_BACK, panel_back);
+  theme::get_color_4fv(TH_PANEL_HEADER, panel_header);
+  theme::theme_restore(&theme_state);
+
+  interp_v3_v3v3(r_back, region_back, panel_back, panel_back[3]);
+  r_back[3] = 1.0f;
+  interp_v3_v3v3(r_header, r_back, panel_header, panel_header[3]);
+  r_header[3] = 1.0f;
+}
+
+/* BFA - Tear-Off Menu/Panel: as #panel_draw_aligned_backdrop. */
+static float tear_off_panel_roundness()
+{
+  return theme::theme_get()->tui.panel_roundness * 0.5f;
+}
+
+void draw_tear_off_panel_header_back(const ARegion *region, const Block *block)
+{
+  if (!block_has_tear_off_panel_colors(block)) {
+    return;
+  }
+  float header_ymin = FLT_MAX;
+  for (const Button &but : block->buttons()) {
+    if (but.tear_off_header && !ELEM(but.type, ButtonType::Sepr, ButtonType::SeprLine)) {
+      header_ymin = std::min(header_ymin, but.rect.ymin);
+    }
+  }
+  if (header_ymin == FLT_MAX) {
+    return;
+  }
+  /* A little below the row, as a region's header has around its row. */
+  rctf strip = block->rect;
+  strip.ymin = std::max(header_ymin - 3.0f * UI_SCALE_FAC, block->rect.ymin);
+  const rcti strip_px = rect_to_pixelrect(region, block, &strip);
+  rctf strip_pxf;
+  BLI_rctf_rcti_copy(&strip_pxf, &strip_px);
+  /* Inside the outline. */
+  strip_pxf.xmin += U.pixelsize;
+  strip_pxf.xmax -= U.pixelsize;
+  strip_pxf.ymax -= U.pixelsize;
+
+  float back[4], header[4];
+  tear_off_panel_colors_get(block, back, header);
+  GPU_blend(GPU_BLEND_ALPHA);
+  draw_roundbox_corner_set(CNR_TOP_LEFT | CNR_TOP_RIGHT);
+  draw_roundbox_4fv(&strip_pxf, true, tear_off_panel_roundness() * U.widget_unit, header);
+  GPU_blend(GPU_BLEND_NONE);
+}
+
 void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const rcti *rect)
 {
   WidgetType *wt = widget_type(WidgetStyle::MenuBack);
-  /* BFA - Tear-Off Menu/Panel: a torn-off panel keeps the color panels have in the editors, near
-   * black is what menus and popups use. Forced opaque, because the theme's alpha is 0 (an
-   * overlapping shelf is see-through) and a floating panel can sit over anything. */
+  /* BFA - Tear-Off Menu/Panel: a tear-off keeps the look of what it came from, see
+   * #block_is_tear_off_panel. A popover needs nothing here. The shelf's color is forced opaque,
+   * because the theme's alpha is 0 (an overlapping shelf is see-through) and a floating panel can
+   * sit over anything. */
   uiWidgetColors wcol = *wt->wcol_theme;
-  if (block_is_tear_off_panel(block)) {
+  if (block_is_tear_off_shelf(block)) {
     theme::get_color_4ubv(TH_BACK, wcol.inner);
     wcol.inner[3] = 255;
+  }
+  else if (block_has_tear_off_panel_colors(block)) {
+    float back[4], header[4];
+    tear_off_panel_colors_get(block, back, header);
+    rgba_float_to_uchar(wcol.inner, back);
+    wcol.roundness = tear_off_panel_roundness();
   }
 
   float mval_origin[2] = {float(block->bounds_offset[0]), float(block->bounds_offset[1])};

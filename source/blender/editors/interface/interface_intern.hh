@@ -2006,9 +2006,15 @@ bool block_is_menu(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_popover(const Block *block) ATTR_WARN_UNUSED_RESULT;
 /* BFA - Tear-Off Menu/Panel: a panel torn off the tool shelf, which draws like the shelf. */
 bool block_is_tear_off_shelf(const Block *block) ATTR_WARN_UNUSED_RESULT;
-/* BFA - Tear-Off Menu/Panel: any torn-off panel. It has the color of a panel, to tell it apart
- * from a torn-off menu at a glance. */
+/* BFA - Tear-Off Menu/Panel: a panel torn off a region, as opposed to a popover torn off through
+ * its row. A tear-off keeps the look of what it came from, to tell at a glance what is pinned: this
+ * one looks like a panel, a popover keeps the popup color and a menu the menu color. */
 bool block_is_tear_off_panel(const Block *block) ATTR_WARN_UNUSED_RESULT;
+/* BFA - Tear-Off Menu/Panel: a region's panel, with the panel header and background colors. The
+ * tool shelf has a tear-off panel too, but its tools float on the region with no panel behind. */
+bool block_has_tear_off_panel_colors(const Block *block) ATTR_WARN_UNUSED_RESULT;
+/* BFA - Tear-Off Menu/Panel: the header's color, under its buttons. */
+void draw_tear_off_panel_header_back(const ARegion *region, const Block *block);
 /* BFA - Tear-Off Menu/Panel: top edge of the scrolling content. Equal to `rect.ymax` exactly for
  * anything without a sticky header, so regular popups compare and clip as upstream. Never below
  * `rect.ymin`, so it's safe as a clamp limit in a window too small for the header. */
