@@ -778,6 +778,22 @@ static void block_region_popup_window_listener(const wmRegionListenerParams *par
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: notifiers after which a tear-off's buttons may be stale. */
+static bool tear_off_notifier_invalidates_buttons(const wmNotifier *wmn)
+{
+  switch (wmn->category) {
+    case NC_SCREEN:
+    case NC_SPACE:
+    case NC_UI:
+      return false;
+    case NC_WM:
+      return ELEM(wmn->data, ND_UNDO, ND_DATACHANGED);
+    default:
+      /* Includes plain NC_WINDOW, which undo sends (see ed_undo.cc). */
+      return true;
+  }
+}
+
 /* BFA - Tear-Off Menu/Panel: keep tear-off panels inside the window when it is resized.
  * Handles both collapsed (pin widget) and expanded (full panel) states. */
 static void tear_off_region_window_listener(const wmRegionListenerParams *params)
@@ -786,6 +802,11 @@ static void tear_off_region_window_listener(const wmRegionListenerParams *params
   const wmNotifier *wmn = params->notifier;
 
   if (wmn->category != NC_WINDOW || wmn->action != NA_EDITED) {
+    /* BFA - Tear-Off Menu/Panel: a tear-off stays open across data changes, unlike a modal popup,
+     * so its buttons must not keep pointers to deleted data until the next hover. */
+    if (tear_off_notifier_invalidates_buttons(wmn)) {
+      ED_region_tag_refresh_ui(region);
+    }
     return;
   }
 
@@ -816,6 +837,22 @@ static void tear_off_region_window_listener(const wmRegionListenerParams *params
 
     ED_region_tag_redraw(region);
   }
+}
+
+/* BFA - Tear-Off Menu/Panel: tear-offs need their own region type. The type in
+ * popup_block_create is shared and reset by every new popup, which would drop this listener,
+ * and it could also give tear-offs the centered-popup listener by accident. */
+static ARegionType *tear_off_region_type_get()
+{
+  static ARegionType type;
+  if (type.draw == nullptr) {
+    memset(&type, 0, sizeof(ARegionType));
+    type.draw = block_region_draw;
+    type.layout = block_region_refresh;
+    type.regionid = RGN_TYPE_TEMPORARY;
+    type.listener = tear_off_region_window_listener;
+  }
+  return &type;
 }
 
 static void popup_block_clip(wmWindow *window, Block *block)
@@ -1384,6 +1421,9 @@ PopupBlockHandle *popup_block_create(bContext *C,
   type.layout = block_region_refresh;
   type.regionid = RGN_TYPE_TEMPORARY;
   region->runtime->type = &type;
+  if (is_tear_off) { /* BFA - Tear-Off Menu/Panel */
+    region->runtime->type = tear_off_region_type_get();
+  }
 
   region_handlers_add(&region->runtime->handlers);
 
@@ -1425,10 +1465,6 @@ PopupBlockHandle *popup_block_create(bContext *C,
   /* keep centered on window resizing */
   if (block->bounds_type == BLOCK_BOUNDS_POPUP_CENTER) {
     type.listener = block_region_popup_window_listener;
-  }
-  /* BFA - Tear-Off Menu/Panel: keep the collapsed pin widget inside the window on resize. */
-  else if (handle->is_tear_off) {
-    type.listener = tear_off_region_window_listener;
   }
 
   return handle;
