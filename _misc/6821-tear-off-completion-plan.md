@@ -23,7 +23,8 @@ Line numbers are from the mid-merge tree and will drift.
 | 4. Enum tear-offs | Done | `e0b8b93c0da`..`a255c080db4` | Built with no errors. Full GUI suite passes: 33 scenarios, no crashes. Needs a hand test: Transform Pivot, Set Keyframe Type, toolbar Keyframe Type |
 | 5. Tear off any panel | Done | `769cde7b580`..`f0f014951d6` (6 commits), `d4753f7e807`, review fixes `6419db72fe1`..`bfa156ed802` (4 commits) | Built with no errors at `780e9363f02`. Full GUI suite passes: 59 scenarios, no crashes. Needs a hand test: Shift+double-click, real Cycles and node panels, tree views |
 | 6. Tool shelf | Done | `ff3c405326d`, `062c8f43a0a`, `85166c8e111`, `23c3c3ac026`, `e6cd5c1dde1` | Built with no errors at `780e9363f02`. Scenarios `p6_*` pass at 1 to 4 columns. Needs a side-by-side hand test in each editor |
-| 7 and 8 | In progress | | Being written, see the commits after `780e9363f02` |
+| 7. Dynamic width | Committed, not built yet | `b3545d24156`..`402c43aa474` (6 commits) | Code review only. No scenarios written, no hand test |
+| 8. Vertical resize and scroll | Committed, not built yet | `fc9a8fb6547`, `781307e4f37`, `82ca5a551ee`, `b34059e410d` | Code review only. No scenarios written, no hand test |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
 
@@ -230,6 +231,14 @@ Test in the 3D View, Image/UV, Node and Sequencer editors.
 - Minimum is the panel's designed width (or the shelf's narrowest column step). Maximum is the window.
 - Double-clicking the grip resets it. The cursor is `WM_CURSOR_X_MOVE`.
 
+**As written, where it differs from the above:**
+- One width field, not two: `tear_off_width`, where 0 means the designed width. `tear_off_width_default` above 0 means a shelf panel and holds the reset value. This replaces `tear_off_user_width`.
+- The grips are handled in `popup_handler` by `tear_off_edges_handle`, not in `popup_block_position`, and run before button handling.
+- Torn-off menus have no `UI_MENU_WIDTH_MIN` floor. Explicit `ui_units_x` still counts, and submenus of a torn-off menu keep the floor.
+- The panel corner resizes both axes with `WM_CURSOR_NSEW_SCROLL`, because no diagonal cursor exists.
+- Shelf steps are the real snap points, `tabs + n*40 + 32`, and the width is free above the last one.
+- A narrow shelf gives up the grip first, then a clipped title, below 2.5 units of room.
+
 ## Phase 8: Vertical resize and scroll (item 6)
 
 Follow `_misc/tear_off_panel_vertical_resize.md`, with these corrections:
@@ -248,6 +257,15 @@ Follow `_misc/tear_off_panel_vertical_resize.md`, with these corrections:
    - Gate all of this on `is_tear_off`. Regular popups stay as upstream.
 
 Keep the bottom-edge grip, top-anchored crop, `draw_widget_scroll()` with theme colors and View2D-style fade. Grip hit areas (right and bottom) must stay out of button hit-testing. Height stays session-only.
+
+**As written, where it differs from the above:**
+- The fade is the real View2D model: alpha comes from the cursor's distance on each mouse move, with no timer. The doc's redraw ramp isn't how View2D works.
+- Minimum height is the header, one row and both arrow zones. A pin parked at the window bottom lifts the block to that height when expanded, and the pin stays at the lifted spot.
+- The content has its own scissor and the header draws in a separate pass, so a row half under the header is cut by the pixel. Curve and scope widgets replace the scissor, so six sites in `interface_draw.cc` now limit it through `but_scissor_limit`, and the curve points are limited too.
+- Menus gain a gutter for the bar only while overflowing. Panels get none, and their bar is capped to fit their margin.
+- Esc or right-click during a grip drag restores the previous size, and input is swallowed until the left button's release.
+- The scroll arrows stay alongside the bar. Tab between fields scrolls to the field. Arrow keys stay with the editor.
+- Not done: `draw_but_TRACKPREVIEW` sets two more scissors of its own, which a track preview scrolled under the header can still paint past.
 
 ## Files
 
