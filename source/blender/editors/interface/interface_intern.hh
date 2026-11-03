@@ -364,6 +364,11 @@ struct Button : NonMovable {
 
   std::function<bool(const Button &)> pushed_state_func;
 
+  /** BFA - Tear-Off Menu/Panel: part of the tear-off header, which stays put while the content
+   * scrolls and is sized apart from the rows. Tagged at draw time, because afterwards nothing
+   * reliably tells its label from a row's. */
+  bool tear_off_header = false;
+
   /* pointer back */
   Block *block = nullptr;
 

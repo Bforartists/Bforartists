@@ -1105,6 +1105,9 @@ static void but_update_old_active_from_new(Button *oldbut, Button *but)
   /* still stuff needs to be copied */
   oldbut->rect = but->rect;
   oldbut->context = but->context; /* set by Layout */
+  /* BFA - Tear-Off Menu/Panel: pairing by order can match the same property across the header and
+   * the body, so the new button decides which side this one is on now. */
+  oldbut->tear_off_header = but->tear_off_header;
 
   /* drawing */
   oldbut->icon = but->icon;

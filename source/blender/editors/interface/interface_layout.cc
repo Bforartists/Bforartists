@@ -6443,6 +6443,15 @@ std::optional<StringRefNull> button_asset_shelf_type_idname_get(const Button *bu
   return asset_shelf_idname_from_button_context(but);
 }
 
+/* BFA - Tear-Off Menu/Panel: everything so far is the header, because it's the first thing drawn
+ * in a tear-off. That includes the invisible padding button above it, which must not scroll. */
+static void block_tear_off_header_tag(Block *block)
+{
+  for (Button &but : block->buttons()) {
+    but.tear_off_header = true;
+  }
+}
+
 /* BFA - Tear-Off Menu/Panel: draw the tear-off header row (menu/panel label on the left,
  * pin + close icons on the right) followed by a separator line. The icons are right-aligned
  * to the block content width after layout by #block_tear_off_align_header(); a spacer is not
@@ -6465,6 +6474,7 @@ void tear_off_header_draw(Layout *layout,
   icons->op(close_op, "", ICON_PANEL_CLOSE);
   layout->emboss_set(prev_emboss);
   layout->separator(1.0f, LayoutSeparatorType::Line);
+  block_tear_off_header_tag(layout->block());
 }
 
 /* BFA - Tear-Off Menu/Panel: called only from #item_menutype_func, the root and submenu entry.
@@ -6598,6 +6608,7 @@ static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel,
   icons->op("WM_OT_panel_tear_off_close", "", ICON_PANEL_CLOSE);
   layout->emboss_set(prev_emboss);
   layout->separator(1.0f, LayoutSeparatorType::Line);
+  block_tear_off_header_tag(layout->block());
 }
 
 /* BFA - Tear-Off Menu/Panel: a region only polls top level panels, and it filters Properties
