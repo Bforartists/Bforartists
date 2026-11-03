@@ -1495,6 +1495,8 @@ def repoll_round(name):
 
 def s_p5_repoll():
     yield from setup()
+    # The round changes the frame, and the overlay text prints it, which widens the measured box.
+    area().spaces.active.overlay.show_text = False
     yield from open_tab("UI", "SimTear", ANCHOR, T)
     yield from repoll_round("SIM_PT_tear")
     # It has no poll, so this also proves the parent's poll is walked.
@@ -1626,6 +1628,7 @@ def tab_round(name, st, here, other):
 
 def s_p5_tool_tab():
     yield from setup()
+    area("PROPERTIES").spaces.active.show_properties_tool = True; yield 0.4
     # Its space type isn't Properties, which is what made it gray on its own tab at first.
     yield from tab_round("SIM_PT_tool_tab", SIM_PT_tool_tab.state, "TOOL", "SCENE")
     yield from tab_round("SIM_PT_props", SIM_PT_props.state, "SCENE", "OUTPUT")
@@ -1697,6 +1700,11 @@ def rmb(x, y):
     release(x, y, "RIGHTMOUSE"); yield 0.5
 
 
+# From the top of the menu. Tear-off rows have no accelerator key, see menu_block_set_keyaccels.
+CTX_ROW_SEARCH = 95
+CTX_ROW_NO_SEARCH = 68
+
+
 def s_p5_ctx_menu():
     yield from setup()
     prefs = bpy.context.preferences
@@ -1705,12 +1713,12 @@ def s_p5_ctx_menu():
     pin0 = T["pin"]
     yield from to_rest()
     yield from grab("before")
-    # A tabbed sidebar, where the entry sits among others. T is its accelerator key.
+    # A tabbed sidebar, where the entry sits among others.
     yield from rmb(hx, hy)
     yield from grab("menu")
     d_on = box_bbox("before", "menu", main_box()); log("sidebar menu", d_on)
     check("the sidebar menu opens", is_popup(d_on), d_on)
-    yield from type_key("T", hx, hy, "t"); yield 0.8
+    yield from click(hx, d_on[3] - CTX_ROW_SEARCH); yield 0.8
     check("the entry tears off", T["draw_popup"] > 0, T)
     check("the region route was used", T["popover"] is False, T)
     check("the sidebar's pin didn't change", T["pin"] == pin0, T)
@@ -1734,7 +1742,8 @@ def s_p5_ctx_menu():
     yield from grab("menu_sub")
     d = box_bbox("before_sub", "menu_sub", main_box()); log("subpanel menu", d)
     check("the subpanel menu opens", is_popup(d), d)
-    yield from click((s[0] + s[2]) // 2, d[1] + MENU_BOTTOM); yield 0.8
+    # A menu with one row opens with that row under the cursor.
+    yield from click((s[0] + s[2]) // 2, s[3] - SUB_HEADER_Y); yield 0.8
     check("the subpanel entry tears off", S2["draw_popup"] > 0, S2)
     yield from close_all()
     P = SIM_PT_props.state
@@ -1749,7 +1758,7 @@ def s_p5_ctx_menu():
     d = box_bbox("before_props", "menu_props", region_box(region_of(area("PROPERTIES"))))
     log("Properties menu", d)
     check("the Properties menu opens", d is not None and d[3] - d[1] > 30, d)
-    yield from click(px, d[1] + MENU_BOTTOM); yield 0.8
+    yield from click(px, py); yield 0.8
     check("the Properties entry tears off", P["draw_popup"] > 0, P)
     yield from close_all()
     # Preference off: the menu is shorter by the entry, and its key does nothing.
@@ -1763,9 +1772,8 @@ def s_p5_ctx_menu():
     check("the menu has no entry while off",
           d_off is not None and (d_on[3] - d_on[1]) - (d_off[3] - d_off[1]) >= ROW,
           (d_on, d_off))
-    yield from type_key("T", hx, hy, "t"); yield 0.5
     yield from type_key("ESC", hx, hy); yield 0.5
-    check("its key does nothing while off", T["draw_popup"] == drawn, T)
+    check("nothing tore off while off", T["draw_popup"] == drawn, T)
 
 
 SC["p5_ctx_menu"] = s_p5_ctx_menu
@@ -1920,8 +1928,8 @@ def s_p5_once():
     b = yield from panel_rect(st, region_box(region_of(area(), "UI")), "rect")
     yield from to_rest()
     yield from grab("before")
-    # The middle of the source header is its checkbox, which takes the press, so use the grip.
-    gx, gy = grip_xy(b)
+    # The checkbox label covers the header up to the grip, and takes the press. Use the arrow.
+    gx, gy = b[0] + 13, b[3] - HEADER_Y
     tx, ty = yield from shift_drag_to_free(gx, gy)
     yield from grab("held")
     v1 = torn_box("before", "held"); log("held", v1)
@@ -2025,11 +2033,20 @@ def s_p5_preview_close():
     bpy.context.view_layer.objects.active.data.materials.append(
         bpy.data.materials.new("SimPreview"))
     area("PROPERTIES").spaces.active.context = "MATERIAL"; yield 0.8
+    yield from to_rest()
+    yield from grab("base")
     for i in range(4):
         r = yield from tear_center("MATERIAL_PT_preview", t="PROPERTIES", rt="WINDOW")
         check(f"round {i}: operator runs", r == {"INTERFACE"}, r)
-        ran = yield from wait_for_previews()
-        check(f"round {i}: the preview rendered", ran)
+        yield from wait_for_previews()
+        yield 2.0
+        yield from to_rest()
+        yield from grab(f"round{i}")
+        v = torn_box("base", f"round{i}"); log("tear-off", v)
+        # The job can finish between two polls, so look at the picture: a sphere on checkers.
+        spread = (float(np.std(FRAME[f"round{i}"][v[1] + 30:v[3] - 50, v[0] + 20:v[2] - 60]))
+                  if real(v, 150) else 0.0)
+        check(f"round {i}: the preview rendered", spread > 0.1, spread)
         yield from close_all()
         if i == 0:
             bpy.ops.wm.memory_statistics()
@@ -2192,7 +2209,8 @@ def shelf_resize(target, category="SimTear"):
     """Drag the real shelf's edge, and return its width. The zone is around the edge, see
     region_azone_edge, and inside it comes first, because a miss outside presses the viewport."""
     r = shelf()
-    w0, y = r.width, r.y + r.height // 2
+    # Beside the top panels, because a region that overlaps has its edge zone only next to them.
+    w0, y = r.width, r.y + r.height - 60
     for off in (-1, 1):
         x = r.x + w0 + off
         yield from drag(x, y, target - w0, 0, steps=8); yield 0.4
@@ -2208,6 +2226,8 @@ def shelf_resize(target, category="SimTear"):
 
 def s_p6_columns():
     yield from setup()
+    # The shelf resizes, and the overlay text moves with it, which widens the measured box.
+    area().spaces.active.overlay.show_text = False
     sc = bpy.context.scene
     C = SIM_PT_cols.state
     yield from open_tab("TOOLS", "SimTear", SIM_PT_cols_anchor.state, C)
@@ -2235,8 +2255,12 @@ def s_p6_columns():
     b = yield from panel_rect(C, region_box(shelf()), "cols")
     hx, hy = header_xy(b)
     C["popup"].clear()
+    yield from to_rest()
+    yield from grab("before_ctx")
     yield from rmb(hx, hy)
-    yield from type_key("T", hx, hy, "t"); yield 0.8
+    yield from grab("ctx")
+    d = box_bbox("before_ctx", "ctx", main_box()); log("shelf menu", d)
+    yield from click(hx, d[3] - CTX_ROW_NO_SEARCH); yield 0.8
     route_checks("context menu")
     yield from close_all()
     C["popup"].clear()
@@ -2263,19 +2287,21 @@ def s_p6_columns():
           C["popup"])
     yield from to_rest()
     yield from grab("resized")
-    v2 = torn_box("before", "resized"); log("tear-off after the resize", v2, "shelf", w2)
+    # Right of the wider shelf and of the stats text that moves with it.
+    mid = (420, main_box()[1], region_of(area(), "UI").x - 1, main_box()[3])
+    v2 = box_bbox("before", "resized", mid); log("tear-off after the resize", v2, "shelf", w2)
     check("the box keeps its width", v2 is not None and abs((v2[2] - v2[0]) - (v[2] - v[0])) <= 2,
           (v, v2))
     # Collapse and expand keep it too.
     yield from click(v[2] - PIN_ICON, v[3] - TITLE_Y)
     yield from to_rest()
     yield from grab("col")
-    c = torn_box("before", "col"); log("collapsed", c)
+    c = box_bbox("before", "col", mid); log("collapsed", c)
     check("pin icon collapses", c is not None and (c[3] - c[1]) < 60, c)
     yield from click(c[2] - 40, (c[1] + c[3]) // 2)
     yield from to_rest()
     yield from grab("exp")
-    v3 = torn_box("before", "exp"); log("expanded", v3)
+    v3 = box_bbox("before", "exp", mid); log("expanded", v3)
     check("collapse and expand keep the box width",
           v3 is not None and abs((v3[2] - v3[0]) - (v[2] - v[0])) <= 2,
           (v, v3))
