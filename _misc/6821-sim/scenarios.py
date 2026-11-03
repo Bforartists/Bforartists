@@ -2446,8 +2446,8 @@ def s_p6_look():
     check("the other tear-off appears", real(v), v)
     inner = (v[0] + 8, v[1] + 8, v[2] - 8, v[3] - 8)
     col = median_color("other", inner); log("other tear-off color", col)
-    check("the other panel has the shelf's color too",
-          near(col, th.regions.sidebars.back[:3], 0.05), col)
+    check("a region panel isn't the popup color",
+          not near(col, th.user_interface.wcol_menu_back.inner[:3], 0.05), col)
     check("its labels have the regular style, red", count_color("other", inner, 0, 1) > 10,
           count_color("other", inner, 0, 1))
     yield from close_all()
@@ -3215,9 +3215,10 @@ def s_p7_shelf_steps():
         return rec.get("width"), rec.get("count")
 
     def title_moves(name):
-        """The title still drags at this width. At the left, past the hidden grip's place."""
+        """The header still drags at this width. In its left margin, because at one column the
+        pin icon starts right after it."""
         nonlocal v
-        yield from drag(v[0] + 12, v[3] - TITLE_Y, 0, -30)
+        yield from drag(v[0] + 5, v[3] - TITLE_Y, 0, -30)
         yield from park()
         yield from grab(name)
         w = need(torn_box("base", name), name)
@@ -4753,31 +4754,7 @@ def s_p9_shelf_selector():
 SC["p9_shelf_selector"] = s_p9_shelf_selector
 
 
-def s_p9_panel_color():
-    """A torn-off panel has the region grey. A menu keeps the near black."""
-    SIM_PT_mid.state["show"] = True
-    yield from begin()
-    p = yield from opened(open_tpanel("SIM_PT_mid"), "p", "the panel opens")
-    bg = FRAME["p"][p[1] + 8, p[0] + 6]
-    yield from close_all()
-    yield from park()
-    m = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
-    mb = FRAME["m"][m[1] + 3, m[0] + 3]
-    yield from close_all()
-    log("panel bg", bg, "menu bg", mb)
-    check("the panel isn't the menu's color", abs(float(bg[0]) - float(mb[0])) > 0.02, (bg, mb))
-    # The text follows the theme's regular text, not the menu's.
-    th = bpy.context.preferences.themes[0]
-    th.user_interface.wcol_menu_back.text = (0.0, 1.0, 0.0)
-    yield from park()
-    p = yield from opened(open_tpanel("SIM_PT_mid"), "p2", "the panel opens again")
-    area_px = FRAME["p2"][p[1]:p[3], p[0]:p[2]]
-    n = int(((area_px[:, :, 1] > 0.6) & (area_px[:, :, 0] < 0.3) & (area_px[:, :, 2] < 0.3)).sum())
-    check("no text in the menu's color", n < 5, n)
-    yield from close_all()
 
-
-SC["p9_panel_color"] = s_p9_panel_color
 
 
 def s_p9_width_min():
@@ -5212,3 +5189,210 @@ def s_p9_shortcut_popover():
 
 
 SC["p9_shortcut_popover"] = s_p9_shortcut_popover
+
+
+def tear_props(name, tab):
+    props = area("PROPERTIES")
+    props.spaces.active.context = tab
+    area_redraw(); yield 0.5
+    move(*center()); yield 0.3
+    with bpy.context.temp_override(**override("PROPERTIES", "WINDOW")):
+        bpy.ops.wm.panel_tear_off(panel_idname=name, from_region_panel=True)
+    yield 1.0
+
+
+def s_p10_looks():
+    """What is torn off keeps the look it had: panel colors, popup color, menu color."""
+    th = bpy.context.preferences.themes[0]
+    SIM_PT_tear.state["show"] = True
+    SIM_PT_small.state["show"] = True
+    yield from begin()
+    # A popover through its row keeps the popup color.
+    p = yield from opened(open_tpanel("SIM_PT_small"), "pop", "the popover opens")
+    popup_col = FRAME["pop"][p[1] + 8, p[0] + 6]
+    yield from close_all()
+    yield from park()
+    # A panel from the region has a header color, and another color below it.
+    yield from tear_center("SIM_PT_tear")
+    yield from park()
+    yield from grab("reg")
+    v = need(popup_box("base", "reg"), "the panel opens")
+    log("region panel", v)
+    head = FRAME["reg"][v[3] - 8, v[0] + 40]
+    body = FRAME["reg"][v[1] + 8, v[0] + 6]
+    log("header", head, "body", body, "popup", popup_col)
+    check("the popover has the popup color",
+          near(popup_col, th.user_interface.wcol_menu_back.inner[:3], 0.1), popup_col)
+    check("the panel's body isn't the popup color", not near(body, popup_col, 0.05), (body, popup_col))
+    check("its header differs from its body", not near(head, body, 0.01), (head, body))
+    yield from close_all()
+    yield from park()
+    # A menu has no header color, and stays the menu color.
+    m = yield from opened(open_menu("SIM_MT_short"), "menu", "the menu opens")
+    check("a menu keeps the menu color",
+          near(FRAME["menu"][m[1] + 3, m[0] + 3], th.user_interface.wcol_menu_back.inner[:3], 0.1),
+          FRAME["menu"][m[1] + 3, m[0] + 3])
+    yield from close_all()
+    yield from park()
+    # Subpanels, in the panel from the report. A shot to look at.
+    bpy.context.scene.view_settings.use_white_balance = True
+    yield from tear_props("RENDER_PT_color_management", "RENDER")
+    yield from park()
+    yield from grab("subs")
+    yield from close_all()
+
+
+SC["p10_looks"] = s_p10_looks
+
+
+def s_p10_preset_arrow():
+    """The arrow of a popover opened in a tear-off points at its button."""
+    yield from begin()
+    yield from tear_props("RENDER_PT_format", "OUTPUT")
+    yield from park()
+    yield from grab("torn")
+    v = need(popup_box("base", "torn"), "it tears off")
+    log("torn", v)
+    # The preset button sits left of the pin and X.
+    x, y = v[2] - 68, v[3] - 19
+    yield from click(x, y); yield 0.8
+    yield from grab("open")
+    t = popup_box("torn", "open")
+    log("preset", (x, y), t)
+    # The arrow is the only part of the popup above its body: the topmost pixels of the difference.
+    d = np.abs(FRAME["torn"] - FRAME["open"]).max(axis=2) > 0.04
+    d[:, :30] = False
+    d[:25, :] = False
+    ys = np.where(d[:y + 1].any(axis=1))[0]
+    check("the popup opens", t is not None, t)
+    tip_y = int(ys.max()) if len(ys) else None
+    if tip_y is not None:
+        xs = np.where(d[tip_y - 2])[0]
+        tip_x = int(xs.mean()) if len(xs) else None
+        log("arrow at", tip_x, tip_y)
+        check("the arrow is at the button", tip_x is not None and abs(tip_x - x) <= 12, (tip_x, x))
+    yield from esc(); yield 0.3
+    yield from close_all()
+
+
+SC["p10_preset_arrow"] = s_p10_preset_arrow
+
+
+def s_p10_shelf_narrow():
+    """One column torn off is as narrow as the column, and still drags."""
+    C = SIM_PT_cols.state
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    yield from open_tab("TOOLS", "SimTear", SIM_PT_cols_anchor.state, C)
+    yield from park()
+    yield from grab("base")
+    yield from tear_center("SIM_PT_cols", rt="TOOLS")
+    yield from park()
+    yield from grab("m")
+    v = need(torn_box("base", "m"), "it opens")
+    yield from drag(v[2] + 2, mid_y(v), -300, 0)
+    yield from park()
+    yield from grab("one")
+    w = need(torn_box("base", "one"), "at one column")
+    log("one column", w, C["popup"])
+    check("it's about as narrow as the column", width(w) <= 64, w)
+    # The margin above the icons drags it.
+    yield from drag(mid_x(w), w[3] - 3, 40, -30)
+    yield from park()
+    yield from grab("moved")
+    x = need(torn_box("base", "moved"), "dragged")
+    check("the margin above the icons drags it", abs(x[0] - w[0] - 40) <= 2 and abs(x[3] - w[3] + 30) <= 2, (w, x))
+    # The X is reachable.
+    yield from close_all()
+    yield from park()
+
+
+SC["p10_shelf_narrow"] = s_p10_shelf_narrow
+
+
+def hold_round(tag, open_popup, row_y):
+    yield from open_popup()
+    yield from grab(tag + "att")
+    a = need(popup_box("base", tag + "att"), "it opens: " + tag)
+    yield from click(a[0] + 60, row_y(a)); yield 0.6
+    yield from park()
+    yield from grab(tag + "torn")
+    v = need(popup_box("base", tag + "torn"), "it tears off: " + tag)
+    log(tag, "attached", a, "torn", v)
+    check(tag + ": the left edge holds", abs(v[0] - a[0]) <= 2, (a, v))
+    check(tag + ": the top edge holds", abs(v[3] - a[3]) <= 2, (a, v))
+    yield from close_all()
+    yield from park()
+
+
+def s_p10_hold():
+    """Clicking Tear Off holds the popup's place."""
+    SIM_PT_small.state["show"] = True
+    yield from begin()
+
+    def menu():
+        move(*center()); yield 0.3
+        call_menu("SIM_MT_short"); yield 0.8
+
+    def panel():
+        move(*center()); yield 0.3
+        call_panel("SIM_PT_small"); yield 0.8
+    yield from hold_round("menu_", menu, row_y_menu)
+    yield from hold_round("panel_", panel, row_y_popover)
+
+
+SC["p10_hold"] = s_p10_hold
+
+
+def s_p10_ctx_addon():
+    """The Tear Off entry shows on a panel an add-on registers, in its own sidebar tab."""
+    A = SIM_PT_tear.state
+    A["show"] = True
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    yield from open_tab("UI", "SimTear", A)
+    yield from park()
+    yield from grab("base")
+    r = region_of(area(), "UI")
+    x, y = r.x + 70, r.y + r.height - 26
+    move(x, y); yield W
+    move(x, y); yield W
+    press(x, y, "RIGHTMOUSE"); yield 0.05
+    release(x, y, "RIGHTMOUSE"); yield 0.6
+    yield from grab("menu")
+    b = popup_box("base", "menu")
+    log("menu", b)
+    yield from esc(); yield 0.3
+
+
+SC["p10_ctx_addon"] = s_p10_ctx_addon
+
+
+def s_p10_tall_low():
+    """A corner low in the window doesn't crop a tall panel. Its left edge still holds."""
+    SIM_PT_mid.state["show"] = True
+    yield from begin()
+    with bpy.context.temp_override(**override("VIEW_3D", "UI")):
+        bpy.ops.wm.panel_tear_off(panel_idname="SIM_PT_mid", from_region_panel=True)
+    yield 0.8
+    yield from park()
+    yield from grab("full")
+    b = need(popup_box("base", "full"), "it opens")
+    yield from close_all()
+    yield from park()
+    with bpy.context.temp_override(**override("VIEW_3D", "UI")):
+        bpy.ops.wm.panel_tear_off(panel_idname="SIM_PT_mid", from_region_panel=True,
+                                  source_xy=(500, 150))
+    yield 0.8
+    yield from park()
+    yield from grab("low")
+    v = need(popup_box("base", "low"), "it opens low")
+    log("full", b, "low", v)
+    check("the whole panel shows", abs(height(v) - height(b)) <= 2, (b, v))
+    check("the left edge holds", abs(v[0] - 500) <= 2, v)
+    yield from close_all()
+
+
+SC["p10_tall_low"] = s_p10_tall_low

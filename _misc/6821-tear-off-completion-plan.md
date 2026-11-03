@@ -27,6 +27,9 @@ Line numbers are from the mid-merge tree and will drift.
 | 8. Vertical resize and scroll | Done | `fc9a8fb6547`, `781307e4f37`, `82ca5a551ee`, `b34059e410d`, review fixes `02f42967a43`..`235d8011651` (7 commits) | Built with no errors at `974eb50069e`. Scenarios `p8_*` pass. The pixels of regular menus and popovers match a build without these phases. Needs a hand test: trackpad, clip Track panel under the header, Waveform and Vectorscope, large Python menus in a Debug build |
 | Feedback: row drag, panel color, width floor, bar inside | Done | `735332951b0`..`aecfa55a07f` (6 commits), `07d5c9fc7a0` | Scenarios `p9_*`. Maintainer's hand test feedback after Phase 8 |
 | Review findings, 3 rounds | Done | `801bfad6b8c`..`de214e83f9f` (4 commits), `129bf5a6afa`..`4d3a87ba8e8` (8 commits), `74d78ef57bc` | Rounds found 5, 11 and 1 issues. Those the simulator can't reach need a hand test: focus loss, language change, leaving a maximized area |
+| Consistency: each tear-off keeps its source's look, preset arrow, narrow shelf, hold in place | Done | `c136cc5fc64`, `e794fc3f01d`, `a09dace7020`, `26c6909e657`, `2cbc0c35468`, review fixes `c86bd2a4f70`, `467c4c6d395` | Scenarios `p10_*` and a smoke set, all passing at `467c4c6d395`. Not the full suite, by the maintainer's request to run only what a task touches |
+
+**The look rule:** a menu or enum keeps the menu color, a popover torn off through its row keeps the popup color, a panel torn off a region has the panel header, background and subpanel colors, and a tool shelf panel keeps the plain region color. See `block_is_tear_off_panel` and `block_has_tear_off_panel_colors`.
 
 **Not built, on the maintainer's call:** saving tear-offs in workspaces. It waits until a user asks for it. If it comes back: custom properties on the workspace, so no DNA change and files stay compatible.
 
