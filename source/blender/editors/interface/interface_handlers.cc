@@ -12048,6 +12048,12 @@ static int handle_menu_event(bContext *C,
             for (Button &but : block->buttons()) {
               bool doit = false;
 
+              /* BFA - Tear-Off Menu/Panel: the row is an addition, so regular items keep their
+               * number keys. Otherwise key 1 would tear off and key 2 pick the first item. */
+              if (button_is_tear_off_row(&but)) {
+                continue;
+              }
+
               if (!ELEM(but.type,
                         ButtonType::Label,
                         ButtonType::Sepr,
