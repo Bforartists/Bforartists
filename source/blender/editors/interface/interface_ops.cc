@@ -2217,7 +2217,6 @@ struct EditSourceStore {
   Button but_orig;
   Map<const Button *, std::unique_ptr<EditSourceButStore>> hash;
 
-  EditSourceStore() = default; // BFA - Tear-Off Menu/Panel
   EditSourceStore(const Button &but) : but_orig{but} {};
 };
 
@@ -2234,13 +2233,6 @@ static void editsource_active_but_set(Button *but)
   BLI_assert(editsource_info == nullptr);
 
   editsource_info = MEM_new<EditSourceStore>(__func__, *but);
-}
-// BFA - Tear-Off Menu/Panel
-static void editsource_enable()
-{
-  BLI_assert(editsource_info == nullptr);
-
-  editsource_info = MEM_new<EditSourceStore>(__func__);
 }
 
 static void editsource_active_but_clear()
@@ -2495,10 +2487,11 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     return editsource_exec_finish(C, op, region, true);
   }
 
-  /* BFA - Tear-Off Menu/Panel Fallback 1: use context store to find the button by RNA pointer/property.
-   * When a tear-off popup is open, CTX_wm_region(C) may be a region with no UI
-   * blocks (e.g., the popup's own region or a header). Search ALL regions in the
-   * current area to find the button. */
+  /* BFA - Tear-Off Menu/Panel Fallback: use context store to find the button by RNA
+   * pointer/property. When a tear-off popup is open, CTX_wm_region(C) may be a region with no UI
+   * blocks (e.g., the popup's own region or a header). Search ALL regions of the screen to find
+   * the button. This runs from a button's context menu, when a rebuild dropped that button while
+   * the menu was open and the same property is shown elsewhere. */
   {
     const bContextStore *ctx_store = CTX_store_get(C);
     if (ctx_store) {
@@ -2549,65 +2542,6 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
 
       return editsource_exec_finish(C, op, region, true);
     }
-  }
-
-  /* BFA - Tear-Off Menu/Panel Fallback 2: when no active button is found (can happen when a tear-off popup is open and the
-   * main region was redrawn, causing the active button to be freed). Enable editsource mode and
-   * search ALL regions for any button with Python debug info. */
-  {
-    wmOperatorStatus ret;
-
-    UI_screen_free_active_but_highlight(C, CTX_wm_screen(C));
-
-    editsource_enable();
-
-    bScreen *screen = CTX_wm_screen(C);
-
-    EditSourceButStore *but_store = nullptr;
-    if (screen) {
-      for (ScrArea *area = screen->areabase.first(); area; area = area->next) {
-        for (ARegion *reg_iter = area->regionbase.first(); reg_iter; reg_iter = reg_iter->next) {
-          if (reg_iter->runtime == nullptr) {
-            continue;
-          }
-          for (Block &block_base : reg_iter->runtime->uiblocks) {
-            Block *block_pair[2] = {&block_base, block_base.oldblock};
-            for (Block *block : Span(block_pair, block_pair[1] ? 2 : 1)) {
-              for (Button &but_iter : block->buttons()) {
-                std::unique_ptr<EditSourceButStore> *store_ptr = editsource_info->hash.lookup_ptr(&but_iter);
-                if (store_ptr) {
-                  if ((*store_ptr)->py_dbg_line_number != -1) {
-                    but_store = store_ptr->get();
-                    region = reg_iter;
-                    break;
-                  }
-                }
-              }
-              if (but_store) break;
-            }
-            if (but_store) break;
-          }
-          if (but_store) break;
-        }
-        if (but_store) break;
-      }
-    }
-
-    if (but_store) {
-      region_redraw_immediately(C, region);
-      ret = editsource_text_edit(C, op, but_store->py_dbg_fn, but_store->py_dbg_line_number);
-    }
-    else {
-      BKE_report(op->reports, RPT_ERROR, "Active button not found");
-      ret = OPERATOR_CANCELLED;
-    }
-
-    editsource_active_but_clear();
-
-    /* Restore context if it was modified for tear-off menu */
-    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
-
-    return ret;
   }
 
   /* BFA - Tear-Off Menu/Panel Restore context if it was modified for tear-off menu */
