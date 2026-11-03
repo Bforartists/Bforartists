@@ -61,14 +61,10 @@ void popup_translate(ARegion *region, const int mdiff[2], const wmWindow *win)
     BLI_rctf_init(&handle->prev_block_rect, 0, 0, 0, 0);
 
     /* BFA - Tear-Off Menu/Panel: keep the collapsed pin widget position in sync when the
-     * expanded panel is dragged, so collapsing later shows the pin where the panel is.
-     * Also update the event_xy anchor so expanding from collapsed places the panel at
-     * the dragged position. */
+     * expanded panel is dragged, so collapsing later shows the pin where the panel is. */
     if (handle->is_tear_off) {
       handle->tear_off_pin_xy[0] += mdiff[0];
       handle->tear_off_pin_xy[1] += mdiff[1];
-      handle->popup_create_vars.event_xy[0] += mdiff[0];
-      handle->popup_create_vars.event_xy[1] += mdiff[1];
     }
 
     for (SafetyRect &saferct : block.saferct) {
