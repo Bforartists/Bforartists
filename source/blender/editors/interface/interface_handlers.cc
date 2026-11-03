@@ -13189,6 +13189,66 @@ static int handler_region_menu(bContext *C, const wmEvent *event, void * /*userd
   return WM_UI_HANDLER_BREAK;
 }
 
+/* BFA - Tear-Off Menu/Panel: the popup a window handler runs, or null if it isn't a live popup
+ * handler. A handler tagged for freeing may hold a freed popup, so check the tag before reading. */
+static PopupBlockHandle *popup_from_handler(wmEventHandler *handler_base)
+{
+  if (handler_base->type != WM_HANDLER_TYPE_UI || bool(handler_base->flag & WM_HANDLER_DO_FREE)) {
+    return nullptr;
+  }
+  wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(handler_base);
+  return (handler->handle_fn == popup_handler) ?
+             static_cast<PopupBlockHandle *>(handler->user_data) :
+             nullptr;
+}
+
+/* BFA - Tear-Off Menu/Panel: the window handler that runs this popup. */
+static wmEventHandler *popup_handler_find(wmWindow *win, const PopupBlockHandle *menu)
+{
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (popup_from_handler(&handler_base) == menu) {
+      return &handler_base;
+    }
+  }
+  return nullptr;
+}
+
+/* BFA - Tear-Off Menu/Panel: true if this tear-off is in a state only it can end. A collapsed
+ * pin skips the menu handling, so a button state left on its block must not count, or it would
+ * capture input for good. */
+static bool tear_off_owns_input(const PopupBlockHandle *menu)
+{
+  if (menu->tear_off_collapsed) {
+    return menu->tear_off_pin_dragging;
+  }
+  if (menu->is_grab) {
+    return true;
+  }
+  const Button *but = region_find_active_but(menu->region);
+  return but && button_modal_state(but->active->state);
+}
+
+/* BFA - Tear-Off Menu/Panel: true if an older visible tear-off owns the input. Newer popups are
+ * called first and keep mouse events inside their block, so without this a drag released over a
+ * newer tear-off never ends, and the older one keeps following the cursor and capturing keys.
+ * Hidden tear-offs don't count, because they pass everything on and could never end the state. */
+static bool tear_off_older_owns_input(const bContext *C, const PopupBlockHandle *menu)
+{
+  wmEventHandler *handler = popup_handler_find(CTX_wm_window(C), menu);
+  if (handler == nullptr) {
+    return false;
+  }
+  for (wmEventHandler *older = handler->next; older; older = older->next) {
+    const PopupBlockHandle *other = popup_from_handler(older);
+    if (other && other->is_tear_off && tear_off_owns_input(other) &&
+        tear_off_is_visible(C, other))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 /* two types of popups, one with operator + enum, other with regular callbacks */
 static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 {
@@ -13230,6 +13290,13 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   {
     const Button *but = region_find_active_but(menu->region);
     tear_off_was_modal = menu->is_grab || (but && button_modal_state(but->active->state));
+    /* BFA - Tear-Off Menu/Panel: modal ownership stays with the tear-off that started it, whichever
+     * one is under the cursor, so the release or click reaches it. Timers still run here, because
+     * this tear-off's own tooltips and scrolling need them. */
+    if (event->type != TIMER && !tear_off_owns_input(menu) && tear_off_older_owns_input(C, menu)) {
+      CTX_wm_region_popup_set(C, region_popup);
+      return WM_UI_HANDLER_CONTINUE;
+    }
     if (ISKEYBOARD(event->type) && !tear_off_was_modal) {
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
