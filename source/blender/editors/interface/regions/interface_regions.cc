@@ -15,6 +15,8 @@
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
 
+#include "WM_api.hh" /* BFA - Tear-Off Menu/Panel */
+
 #include "wm_draw.hh"
 
 #include "ED_screen.hh"
@@ -42,6 +44,12 @@ void region_temp_remove(bContext *C, bScreen *screen, ARegion *region)
   BLI_assert(BLI_findindex(&screen->regionbase, region) != -1);
   if (win) {
     wm_draw_region_clear(win, region);
+  }
+
+  /* BFA - Tear-Off Menu/Panel: a preview job in a popup is owned by the region, see
+   * #ED_preview_draw. */
+  if (!region->ui_previews.is_empty()) {
+    WM_jobs_kill_all_from_owner(CTX_wm_manager(C), region);
   }
 
   ED_region_exit(C, region);

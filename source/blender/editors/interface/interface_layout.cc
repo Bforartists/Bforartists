@@ -2861,7 +2861,8 @@ void Layout::textbox(const bContext *C,
                      const int initial_visible_lines)
 {
   TextboxState *textbox_state = textbox_ensure_state(
-      CTX_wm_region(C),
+      /* BFA - Tear-Off Menu/Panel: same reason as #template_preview. */
+      CTX_wm_region_popup(C) ? CTX_wm_region_popup(C) : CTX_wm_region(C),
       fmt::format("{}.{}", RNA_struct_identifier(ptr->type), propname),
       initial_visible_lines);
   this->textbox_with_state(ptr, propname, textbox_state, name_opt, placeholder);
