@@ -21,9 +21,9 @@ Line numbers are from the mid-merge tree and will drift.
 | 3. Preference toggle | Committed | `99c93ab4370`, `d800b242ae2` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
 | 2 and 3. Review findings | Committed, not built yet | `9851fa1a14b`, `babd3140507`, `7846ed92b8e` | Code review only so far |
 | 4. Enum tear-offs | Done | `e0b8b93c0da`..`a255c080db4` | Built with no errors. Full GUI suite passes: 33 scenarios, no crashes. Needs a hand test: Transform Pivot, Set Keyframe Type, toolbar Keyframe Type |
-| 5. Tear off any panel | Committed, not built yet | `769cde7b580`..`f0f014951d6` (6 commits), `d4753f7e807`, review fixes `6419db72fe1`..`bfa156ed802` (4 commits) | Code review only. Scenarios `p5_*` written but never run, no hand test |
-| 6. Tool shelf | Committed, not built yet | `ff3c405326d`, `062c8f43a0a`, `85166c8e111`, `23c3c3ac026` | Code review only. Scenarios `p6_*` written but never run, no hand test |
-| 7 and 8 | Not started | | Build and test Phases 5 and 6 first |
+| 5. Tear off any panel | Done | `769cde7b580`..`f0f014951d6` (6 commits), `d4753f7e807`, review fixes `6419db72fe1`..`bfa156ed802` (4 commits) | Built with no errors at `780e9363f02`. Full GUI suite passes: 59 scenarios, no crashes. Needs a hand test: Shift+double-click, real Cycles and node panels, tree views |
+| 6. Tool shelf | Done | `ff3c405326d`, `062c8f43a0a`, `85166c8e111`, `23c3c3ac026`, `e6cd5c1dde1` | Built with no errors at `780e9363f02`. Scenarios `p6_*` pass at 1 to 4 columns. Needs a side-by-side hand test in each editor |
+| 7 and 8 | In progress | | Being written, see the commits after `780e9363f02` |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
 
