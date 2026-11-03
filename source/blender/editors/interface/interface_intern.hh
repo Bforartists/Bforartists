@@ -1337,7 +1337,8 @@ wmOperatorStatus popover_paneltype_invoke(bContext *C,
                                           PopupBlockHandle **r_handle,
                                           bool is_tear_off,
                                           const TearOffInit &tear_off_init = {});
-/* BFA - Tear-Off Menu/Panel: most C panels are only on a region type, not in #WM_paneltype_find. */
+/* BFA - Tear-Off Menu/Panel: most C panels are only on a region type, not in
+ * #WM_paneltype_find. */
 PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);
 
 /* `interface_region_menu_pie.cc` */
@@ -1478,6 +1479,8 @@ int handler_panel_region(bContext *C,
                          const wmEvent *event,
                          ARegion *region,
                          const Button *active_but);
+/* BFA - Tear-Off Menu/Panel: whether the panel header offers tearing off. */
+bool panel_can_be_torn_off(const ARegion *region, const Panel *panel);
 /**
  * Draw a panel integrated in buttons-window, tool/property lists etc.
  */

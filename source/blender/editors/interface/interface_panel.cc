@@ -2434,6 +2434,26 @@ static void handle_panel_header(const bContext *C,
   }
 }
 
+/* BFA - Tear-Off Menu/Panel */
+bool panel_can_be_torn_off(const ARegion *region, const Panel *panel)
+{
+  if (!tear_off_enabled() || panel == nullptr || panel->type == nullptr) {
+    return false;
+  }
+  /* The redo panel shows the last operator and can't outlive it. */
+  if (region->alignment == RGN_ALIGN_FLOAT) {
+    return false;
+  }
+  /* Instanced panels need per-instance data. Their subpanels don't carry the flag, see
+   * #modifier_subpanel_register, so check the whole chain and the data itself. */
+  for (const PanelType *pt = panel->type; pt; pt = pt->parent) {
+    if (pt->flag & PANEL_TYPE_INSTANCED) {
+      return false;
+    }
+  }
+  return panel->runtime->custom_data_ptr == nullptr;
+}
+
 bool panel_category_is_visible(const ARegion *region)
 {
   /* Check for more than one category. */
