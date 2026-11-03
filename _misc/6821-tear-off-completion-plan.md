@@ -24,7 +24,7 @@ Line numbers are from the mid-merge tree and will drift.
 | 5. Tear off any panel | Done | `769cde7b580`..`f0f014951d6` (6 commits), `d4753f7e807`, review fixes `6419db72fe1`..`bfa156ed802` (4 commits) | Built with no errors at `780e9363f02`. Full GUI suite passes: 59 scenarios, no crashes. Needs a hand test: Shift+double-click, real Cycles and node panels, tree views |
 | 6. Tool shelf | Done | `ff3c405326d`, `062c8f43a0a`, `85166c8e111`, `23c3c3ac026`, `e6cd5c1dde1` | Built with no errors at `780e9363f02`. Scenarios `p6_*` pass at 1 to 4 columns. Needs a side-by-side hand test in each editor |
 | 7. Dynamic width | Committed, not built yet | `b3545d24156`..`402c43aa474` (6 commits) | Code review only. Scenarios `p7_*` written, not run. No hand test |
-| 8. Vertical resize and scroll | Committed, not built yet | `fc9a8fb6547`, `781307e4f37`, `82ca5a551ee`, `b34059e410d` | Code review only. Scenarios `p8_*` written, not run. No hand test |
+| 8. Vertical resize and scroll | Committed, not built yet | `fc9a8fb6547`, `781307e4f37`, `82ca5a551ee`, `b34059e410d`, review fixes `02f42967a43`..`235d8011651` (7 commits) | Code review only. Scenarios `p8_*` written, not run. No hand test |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
 
@@ -267,6 +267,9 @@ Keep the bottom-edge grip, top-anchored crop, `draw_widget_scroll()` with theme 
 - Menus gain a gutter for the bar only while overflowing. Panels get none, and their bar is capped to fit their margin.
 - Esc or right-click during a grip drag restores the previous size, and input is swallowed until the left button's release.
 - The scroll arrows stay alongside the bar. Tab between fields scrolls to the field. Arrow keys stay with the editor.
+- A middle mouse pan keeps the keys, as a grip drag does, and ends if its tear-off hides or collapses another way. Esc during a pan does nothing, because Esc never closes a tear-off. Scenario `p8_pan_hidden`.
+- A refresh moves a block whose pin is above the popup clip's limit, instead of trimming it, which would invent a scroll range. Scenario `p8_top_band`.
+- A tear-off's arrow zones stop at its real edge, without the theme's shadow margin, and its auto-scroll stops while a newer popup is under the cursor. Scenarios `p8_shadow_band`, `p8_fractional_crop`, `p8_covered_scroll`. Histogram outline: `p8_scope`. The track preview needs a real clip, so it's a hand test.
 
 ## Files
 
