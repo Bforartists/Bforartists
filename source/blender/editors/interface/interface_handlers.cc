@@ -13233,9 +13233,17 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
    * processed by the menu handler. Without this, a mode-switch hotkey (e.g. Tab) reaches
    * `handle_menus_recursive`, sets `menuretval = RETURN_CANCEL`, and the `menuretval`
    * check below frees the tear-off. */
-  if (ISKEYBOARD(event->type)) {
-    Block *block = menu->region->runtime->uiblocks.first();
-    if (block && (block->flag & BLOCK_TEAR_OFF)) {
+  /* BFA - Tear-Off Menu/Panel: a modal button (text edit, number drag, open dropdown) or a
+   * title drag owns the input, as in a regular popup. Tear-offs have no modal handler of
+   * their own because `handle->popup` is set (see button_activate_state), so without this
+   * typed keys would go to the editor under the cursor instead of the field. */
+  bool tear_off_was_modal = false;
+  if (Block *block = menu->region->runtime->uiblocks.first();
+      block && (block->flag & BLOCK_TEAR_OFF))
+  {
+    const Button *but = region_find_active_but(menu->region);
+    tear_off_was_modal = menu->is_grab || (but && button_modal_state(but->active->state));
+    if (ISKEYBOARD(event->type) && !tear_off_was_modal) {
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
     }
@@ -13462,7 +13470,10 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 
       /* BFA - Tear-Off Menu/Panel, pass through events that occur outside the menu. */
       Block *block = menu->region->runtime->uiblocks.first();
-      if (block->flag & BLOCK_TEAR_OFF) {
+      /* BFA - Tear-Off Menu/Panel: an event that ended a modal state stays here, so a click
+       * that commits a field or dismisses a submenu doesn't also select in the editor. Timers
+       * still pass, because other handlers own them. */
+      if ((block->flag & BLOCK_TEAR_OFF) && (!tear_off_was_modal || event->type == TIMER)) {
         Button *but = region_find_active_but(menu->region);
         HandleButtonData *data = (but) ? but->active : nullptr;
         PopupBlockHandle *submenu = (data) ? data->menu : nullptr;
