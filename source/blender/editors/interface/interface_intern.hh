@@ -809,6 +809,10 @@ struct Block {
 
   PopupBlockHandle *handle = nullptr;
 
+  /** BFA - Tear-Off Menu/Panel: bottom of the sticky header in region space, 0 if there is none.
+   * Set in #popup_block_refresh. Read it through #block_scroll_top. */
+  float tear_off_header_ymin = 0.0f;
+
   /** use so presets can find the operator,
    * across menus and from nested popups which fail for operator context. */
   wmOperator *ui_operator = nullptr;
@@ -1985,6 +1989,10 @@ bool block_is_menu(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_popover(const Block *block) ATTR_WARN_UNUSED_RESULT;
 /* BFA - Tear-Off Menu/Panel: a panel torn off the tool shelf, which draws like the shelf. */
 bool block_is_tear_off_shelf(const Block *block) ATTR_WARN_UNUSED_RESULT;
+/* BFA - Tear-Off Menu/Panel: top edge of the scrolling content. Equal to `rect.ymax` exactly for
+ * anything without a sticky header, so regular popups compare and clip as upstream. Never below
+ * `rect.ymin`, so it's safe as a clamp limit in a window too small for the header. */
+float block_scroll_top(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_pie_menu(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_popup_any(const Block *block) ATTR_WARN_UNUSED_RESULT;
 

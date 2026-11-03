@@ -8,6 +8,8 @@
  * Utilities to inspect the interface, extract information.
  */
 
+#include <algorithm> /* BFA - Tear-Off Menu/Panel */
+
 #include "BLI_listbase.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
@@ -284,6 +286,14 @@ bool button_contains_point_px(const Button *but, const ARegion *region, const in
   float mx = xy[0], my = xy[1];
   window_to_block_fl(region, block, &mx, &my);
 
+  /* BFA - Tear-Off Menu/Panel: a highlighted row half under the sticky header would otherwise take
+   * the press, where the header is what shows. */
+  if (block->tear_off_header_ymin > 0.0f && !but->tear_off_header &&
+      my > block_scroll_top(block))
+  {
+    return false;
+  }
+
   if (but->pie_dir != UI_RADIAL_NONE) {
     if (!but_isect_pie_seg(block, but)) {
       return false;
@@ -351,14 +361,22 @@ Button *button_find_mouse_over_ex(const ARegion *region,
   for (Block &block : region->runtime->uiblocks) {
     float mx = xy[0], my = xy[1];
     window_to_block_fl(region, &block, &mx, &my);
+    /* BFA - Tear-Off Menu/Panel: content can run under the sticky header, and later buttons win
+     * below, so over the header only the header counts. */
+    const float scroll_top = block_scroll_top(&block);
+    const bool over_header = scroll_top < block.rect.ymax && my > scroll_top;
     /* Skip when the mouse is hovering auto-scroll handlers. */
-    if ((block.flag & BLOCK_CLIPTOP && block.rect.ymax - UI_MENU_SCROLL_MOUSE < my) ||
-        (block.flag & BLOCK_CLIPBOTTOM && block.rect.ymin + UI_MENU_SCROLL_MOUSE > my))
+    if (!over_header &&
+        ((block.flag & BLOCK_CLIPTOP && scroll_top - UI_MENU_SCROLL_MOUSE < my) ||
+         (block.flag & BLOCK_CLIPBOTTOM && block.rect.ymin + UI_MENU_SCROLL_MOUSE > my)))
     {
       continue;
     }
     for (Button &but : block.buttons() | std::views::reverse) {
       if (find_poll && find_poll(&but, find_custom_data) == false) {
+        continue;
+      }
+      if (over_header && !but.tear_off_header) {
         continue;
       }
       if (button_is_interactive_ex(&but, labeledit, for_tooltip)) {
@@ -439,6 +457,10 @@ Button *listbox_find_mouse_over_ex(const ARegion *region, const int xy[2])
   for (Block &block : region->runtime->uiblocks) {
     float mx = xy[0], my = xy[1];
     window_to_block_fl(region, &block, &mx, &my);
+    /* BFA - Tear-Off Menu/Panel: a list scrolled under the sticky header is out of sight. */
+    if (block.tear_off_header_ymin > 0.0f && my > block_scroll_top(&block)) {
+      continue;
+    }
     for (Button &but : block.buttons() | std::views::reverse) {
       if (but.type == ButtonType::ListBox && button_contains_pt(&but, mx, my)) {
         return &but;
@@ -691,6 +713,15 @@ bool block_is_tear_off_shelf(const Block *block)
 {
   return block->handle && block->handle->is_tear_off &&
          block->handle->tear_off_width_default > 0.0f;
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+float block_scroll_top(const Block *block)
+{
+  if (block->tear_off_header_ymin <= 0.0f) {
+    return block->rect.ymax;
+  }
+  return std::max(std::min(block->tear_off_header_ymin, block->rect.ymax), block->rect.ymin);
 }
 
 bool block_is_pie_menu(const Block *block)

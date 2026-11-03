@@ -6149,8 +6149,10 @@ static void draw_clip_tri(Block *block, const rcti *rect, WidgetType *wt)
     draw_color[3] = 1.0f;
 
     if (block->flag & BLOCK_CLIPTOP) {
+      /* BFA - Tear-Off Menu/Panel: the arrow sits below a sticky header. */
+      const float top_ofs = (block->rect.ymax - block_scroll_top(block)) / block->aspect;
       draw_icon_tri(BLI_rcti_cent_x(rect),
-                    rect->ymax - (6 * UI_SCALE_FAC) / block->aspect,
+                    rect->ymax - (6 * UI_SCALE_FAC) / block->aspect - top_ofs,
                     't',
                     draw_color,
                     block->aspect);

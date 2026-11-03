@@ -10479,6 +10479,9 @@ static bool button_value_default(Button *but, double *r_value)
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: Tab in a tear-off scrolls to the field, in #handle_button_event. */
+static bool menu_scroll_to_but(ARegion *region, Block *block, Button *but_target);
+
 static int handle_button_event(bContext *C, const wmEvent *event, Button *but)
 {
   HandleButtonData *data = but->active;
@@ -10773,6 +10776,12 @@ static int handle_button_event(bContext *C, const wmEvent *event, Button *but)
        * needs refreshing the ranges. */
       button_range_set_soft(post_but);
       button_range_set_hard(post_but);
+
+      /* BFA - Tear-Off Menu/Panel: arrow keys stay with the editor on a tear-off, so Tab is the
+       * only way to reach a field out of view, and typing into a hidden one would be blind. */
+      if (post_but->block->handle && post_but->block->handle->is_tear_off) {
+        menu_scroll_to_but(region, post_but->block, post_but);
+      }
 
       button_activate_init(C, region, post_but, post_type);
     }
@@ -11280,7 +11289,11 @@ static char menu_scroll_test(Block *block, int2 xy)
   }
   if (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM)) {
     if (block->flag & BLOCK_CLIPTOP) {
-      if (xy[1] > block->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect) {
+      /* BFA - Tear-Off Menu/Panel: hovering the sticky header must not auto-scroll. */
+      const float top = block_scroll_top(block);
+      if (xy[1] > top - UI_MENU_SCROLL_MOUSE / block->aspect &&
+          (xy[1] <= top || top == block->rect.ymax))
+      {
         return 't';
       }
     }
@@ -11307,6 +11320,10 @@ static void menu_scroll_apply_offset_y(ARegion *region, Block *block, float dy)
 
   /* apply scroll offset */
   for (Button &bt : block->buttons()) {
+    /* BFA - Tear-Off Menu/Panel: the sticky header stays put. */
+    if (bt.tear_off_header) {
+      continue;
+    }
     bt.rect.ymin += dy;
     bt.rect.ymax += dy;
   }
@@ -11320,10 +11337,15 @@ static void menu_scroll_apply_offset_y(ARegion *region, Block *block, float dy)
 /** Scroll to activated button. */
 static bool menu_scroll_to_but(ARegion *region, Block *block, Button *but_target)
 {
+  /* BFA - Tear-Off Menu/Panel: the sticky header never scrolls, and the content ends below it. */
+  if (but_target->tear_off_header) {
+    return false;
+  }
+  const float top = block_scroll_top(block);
   float dy = 0.0;
   if (block->flag & BLOCK_CLIPTOP) {
-    if (but_target->rect.ymax > block->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect) {
-      dy = block->rect.ymax - but_target->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect;
+    if (but_target->rect.ymax > top - UI_MENU_SCROLL_MOUSE / block->aspect) {
+      dy = top - but_target->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect;
     }
   }
   if (block->flag & BLOCK_CLIPBOTTOM) {
@@ -11341,9 +11363,12 @@ static bool menu_scroll_to_but(ARegion *region, Block *block, Button *but_target
 /** Scroll to y location (in block space, see #window_to_block). */
 static bool menu_scroll_to_y(ARegion *region, Block *block, int y)
 {
-  const char test = menu_scroll_test(block,
-                                     {int(BLI_rctf_cent_x(&block->rect)),
-                                      std::clamp<int>(y, block->rect.ymin, block->rect.ymax)});
+  /* BFA - Tear-Off Menu/Panel: #menu_scroll_step passes a point above the block, and clamped to
+   * the top of a sticky header it wouldn't be in the top arrow zone, so wheel-up would stop. */
+  const char test = menu_scroll_test(
+      block,
+      {int(BLI_rctf_cent_x(&block->rect)),
+       std::clamp<int>(y, block->rect.ymin, block_scroll_top(block))});
   float dy = 0.0f;
   if (test == 't') {
     dy = -UI_UNIT_Y / block->aspect; /* scroll to the top */
@@ -12831,6 +12856,16 @@ static int handle_menus_recursive(bContext *C,
         window_to_block(menu->region, &block, &mx, &my);
         if (!IN_RANGE(float(mx), block.rect.xmin, block.rect.xmax)) {
           break;
+        }
+        /* BFA - Tear-Off Menu/Panel: a layout panel under the sticky header, an arrow zone or a
+         * crop is out of sight. */
+        if (menu->is_tear_off) {
+          const float arrow = UI_MENU_SCROLL_MOUSE / block.aspect;
+          if (my > block_scroll_top(&block) - ((block.flag & BLOCK_CLIPTOP) ? arrow : 0.0f) ||
+              my < block.rect.ymin + ((block.flag & BLOCK_CLIPBOTTOM) ? arrow : 0.0f))
+          {
+            break;
+          }
         }
         LayoutPanelHeader *header = layout_panel_header_under_mouse(*block.panel, my);
         if (header) {

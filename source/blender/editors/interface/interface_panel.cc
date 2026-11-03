@@ -2204,6 +2204,11 @@ static void panel_drag_collapse(const bContext *C,
     window_to_block_fl(region, &block, &xy_a_block[0], &xy_a_block[1]);
     window_to_block_fl(region, &block, &xy_b_block[0], &xy_b_block[1]);
 
+    /* BFA - Tear-Off Menu/Panel: dragging past the title or crop must not flip hidden panels. */
+    if (block.tear_off_header_ymin > 0.0f) {
+      xy_b_block[1] = std::clamp(xy_b_block[1], block.rect.ymin, block_scroll_top(&block));
+    }
+
     for (LayoutPanelHeader &header : panel->runtime->layout_panels.headers) {
       rctf rect = block.rect;
       rect.ymin = block.rect.ymax + header.start_y;

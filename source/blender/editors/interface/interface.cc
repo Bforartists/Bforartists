@@ -2493,6 +2493,14 @@ void block_draw(const bContext *C, Block *block)
   rcti rect;
   button_to_pixelrect(&rect, region, block, nullptr);
 
+  /* BFA - Tear-Off Menu/Panel: the header is drawn apart, because cached widgets flush at whatever
+   * scissor is active later. */
+  const bool sticky = block_scroll_top(block) < block->rect.ymax &&
+                      (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM));
+  rctf content_block = block->rect;
+  content_block.ymax = block_scroll_top(block);
+  const rcti content_px = rect_to_pixelrect(region, block, &content_block);
+
   /* pixel space for AA widgets */
   GPU_matrix_push_projection();
   GPU_matrix_push();
@@ -2529,7 +2537,37 @@ void block_draw(const bContext *C, Block *block)
     const bTheme *btheme = theme::theme_get();
     const float aspect = block->panel->runtime->block->aspect;
     const float radius = btheme->tui.panel_roundness * U.widget_unit * 0.5f / aspect;
+    /* BFA - Tear-Off Menu/Panel: otherwise a faint band shows behind a sticky header, and the
+     * backdrop reaches into the shadow margin below a crop. */
+    if (sticky) {
+      GPU_scissor(content_px.xmin,
+                  content_px.ymin,
+                  BLI_rcti_size_x(&content_px),
+                  std::max(BLI_rcti_size_y(&content_px), 0));
+    }
     draw_layout_panels_backdrop(region, block->panel, radius, subpanel_backcolor);
+    if (sticky) {
+      GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: in its own pass, flushed before the content's scissor applies. */
+  if (sticky) {
+    BLF_batch_draw_begin();
+    widgetbase_draw_cache_begin();
+    for (Button &but : block->buttons()) {
+      if (but.tear_off_header && !(but.flag & UI_HIDDEN)) {
+        rcti but_rect;
+        button_to_pixelrect(&but_rect, region, block, &but);
+        if (but_pixelrect_in_view(region, &but_rect) && but_rect.xmin < but_rect.xmax &&
+            but_rect.ymin < but_rect.ymax)
+        {
+          draw_button(C, region, &style, &but, &but_rect);
+        }
+      }
+    }
+    widgetbase_draw_cache_end();
+    BLF_batch_draw_end();
   }
 
   BLF_batch_draw_begin();
@@ -2537,13 +2575,21 @@ void block_draw(const bContext *C, Block *block)
 
   if (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM)) {
     const int arrow_size = UI_MENU_SCROLL_MOUSE / block->aspect;
-    const int ymax = rect.ymax - ((block->flag & BLOCK_CLIPTOP) ? arrow_size : 0.0f);
+    /* BFA - Tear-Off Menu/Panel: content ends below a sticky header, and the height can be
+     * negative in a window too small for the header. */
+    const int ymax = (sticky ? content_px.ymax : rect.ymax) -
+                     ((block->flag & BLOCK_CLIPTOP) ? arrow_size : 0.0f);
     const int ymin = rect.ymin + ((block->flag & BLOCK_CLIPBOTTOM) ? arrow_size : 0.0f);
-    GPU_scissor(rect.xmin, ymin, BLI_rcti_size_x(&rect), ymax - ymin);
+    GPU_scissor(
+        rect.xmin, ymin, BLI_rcti_size_x(&rect), sticky ? std::max(ymax - ymin, 0) : ymax - ymin);
   }
   /* widgets */
   for (Button &but : block->buttons()) {
     if (but.flag & (UI_HIDDEN | UI_SCROLLED)) {
+      continue;
+    }
+    /* BFA - Tear-Off Menu/Panel: drawn in its own pass above. */
+    if (sticky && but.tear_off_header) {
       continue;
     }
 
@@ -2568,6 +2614,11 @@ void block_draw(const bContext *C, Block *block)
     /* and material preview is redrawn in main window (temp fix for bug #23848) */
     if (rect.xmin < rect.xmax && rect.ymin < rect.ymax) {
       draw_button(C, region, &style, &but, &rect);
+      /* BFA - Tear-Off Menu/Panel: scope and curve widgets end with the test off, and rows drawn
+       * after them would paint over the sticky header. */
+      if (sticky) {
+        GPU_scissor_test(true);
+      }
     }
   }
 

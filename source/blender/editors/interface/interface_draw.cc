@@ -491,6 +491,17 @@ static void histogram_draw_one(float r,
   GPU_line_smooth(false);
 }
 
+/* BFA - Tear-Off Menu/Panel: these widgets replace the scissor with their own rect, so one
+ * scrolling under the sticky header would paint over it. The current scissor already excludes the
+ * header. Everything else keeps the region, as upstream. */
+static rcti but_scissor_limit(const ARegion *region, const Button *but, const int scissor[4])
+{
+  if (but->block->tear_off_header_ymin > 0.0f) {
+    return {scissor[0], scissor[0] + scissor[2], scissor[1], scissor[1] + scissor[3]};
+  }
+  return {0, region->winx, 0, region->winy};
+}
+
 #define HISTOGRAM_TOT_GRID_LINES 4
 
 void draw_but_HISTOGRAM(ARegion *region,
@@ -531,7 +542,7 @@ void draw_but_HISTOGRAM(ARegion *region,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -746,7 +757,7 @@ void draw_but_WAVEFORM(const bContext *C,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -1081,7 +1092,7 @@ void draw_but_VECTORSCOPE(const bContext *C,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -1663,7 +1674,7 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
   scissor_new.ymin = rect->ymin;
   scissor_new.xmax = rect->xmax;
   scissor_new.ymax = rect->ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -1904,6 +1915,10 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
       0, scissor_new.xmax + int(point_size * ((cumap->clipr.xmax == cumap->curr.xmax) ? 1 : 0)));
   scissor_for_points.ymax = std::max(
       0, scissor_new.ymax + int(point_size * ((cumap->clipr.ymax == cumap->curr.ymax) ? 1 : 0)));
+  /* BFA - Tear-Off Menu/Panel: points reach past the widget, but not into a sticky header. */
+  if (but->block->tear_off_header_ymin > 0.0f) {
+    BLI_rcti_isect(&scissor_for_points, &scissor_region, &scissor_for_points);
+  }
 
   GPU_scissor(scissor_for_points.xmin,
               scissor_for_points.ymin,
@@ -2051,7 +2066,7 @@ void draw_but_CURVEPROFILE(ARegion *region,
   scissor_new.xmax = rect->xmax;
   scissor_new.ymax = rect->ymax;
 
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -2266,6 +2281,10 @@ void draw_but_CURVEPROFILE(ARegion *region,
       0,
       scissor_new.ymax +
           int(point_size * ((profile->clip_rect.ymax == profile->view_rect.ymax) ? 1 : 0)));
+  /* BFA - Tear-Off Menu/Panel: points reach past the widget, but not into a sticky header. */
+  if (but->block->tear_off_header_ymin > 0.0f) {
+    BLI_rcti_isect(&scissor_for_points, &scissor_region, &scissor_for_points);
+  }
 
   GPU_scissor(scissor_for_points.xmin,
               scissor_for_points.ymin,
@@ -2440,7 +2459,7 @@ void draw_but_TRACKPREVIEW(ARegion *region,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,

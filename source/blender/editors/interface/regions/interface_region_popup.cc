@@ -532,6 +532,10 @@ static void block_region_refresh(const bContext *C, ARegion *region)
       continue;
     }
     if (handle->tear_off_refresh_pending || (handle->tear_off_scale_fac != UI_SCALE_FAC)) {
+      /* Unlike the size fields this one is in pixels, and must show the same rows afterwards. */
+      if (handle->tear_off_scale_fac != UI_SCALE_FAC && handle->tear_off_scale_fac > 0.0f) {
+        handle->scrolloffset *= UI_SCALE_FAC / handle->tear_off_scale_fac;
+      }
       handle->tear_off_refresh_pending = false;
       handle->tear_off_scale_fac = UI_SCALE_FAC;
       region->runtime->do_draw |= RGN_REFRESH_UI;
@@ -955,12 +959,18 @@ void popup_block_scrolltest(Block *block)
     block->flag |= BLOCK_CLIPBOTTOM;
   }
 
+  /* BFA - Tear-Off Menu/Panel: content ends at the bottom of a sticky header, which never
+   * hides. */
+  const float scroll_top = block_scroll_top(block);
   for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header) {
+      continue;
+    }
     /* Tag buttons that are outside boundary */
     if (bt.rect.ymax < block->rect.ymin) {
       bt.flag |= UI_SCROLLED;
     }
-    if (bt.rect.ymin > block->rect.ymax) {
+    if (bt.rect.ymin > scroll_top) {
       bt.flag |= UI_SCROLLED;
     }
     /* Tag buttons overlapping arrows, if we have them */
@@ -970,7 +980,7 @@ void popup_block_scrolltest(Block *block)
       }
     }
     if (block->flag & BLOCK_CLIPTOP) {
-      if (bt.rect.ymin > block->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect) {
+      if (bt.rect.ymin > scroll_top - UI_MENU_SCROLL_MOUSE / block->aspect) {
         bt.flag |= UI_SCROLLED;
       }
     }
@@ -1105,6 +1115,66 @@ void popup_dummy_panel_set(ARegion *region, Block *block, StringRef idname)
   panel->runtime->layout_panel_states_storage = &popup_persistent_layout_panel_states(idname);
   block->panel = panel;
   panel->runtime->block = block;
+}
+
+/* BFA - Tear-Off Menu/Panel: natural height, and the least that keeps the header and one whole row
+ * usable. Before any scroll offset, so the top button is the top of the header. */
+static float tear_off_height_min(const Block *block, float *r_natural)
+{
+  float header_ymin = FLT_MAX, ymin = FLT_MAX, ymax = -FLT_MAX;
+  for (const Button &bt : block->buttons()) {
+    ymin = std::min(ymin, bt.rect.ymin);
+    ymax = std::max(ymax, bt.rect.ymax);
+    if (bt.tear_off_header) {
+      header_ymin = std::min(header_ymin, bt.rect.ymin);
+    }
+  }
+  const float bounds = block->bounds / block->aspect;
+  *r_natural = ymax - ymin + 2.0f * bounds;
+  if (header_ymin == FLT_MAX) {
+    return 0.0f;
+  }
+  return std::min(*r_natural,
+                  ymax - header_ymin + bounds + UI_UNIT_Y + 2.0f * UI_MENU_SCROLL_MOUSE);
+}
+
+/* BFA - Tear-Off Menu/Panel: a pin can park 30 px above the window bottom, and the clip only
+ * trims, so expanding there would leave a block shorter than its header. Grow upward instead. The
+ * pin sync after this records the new position. */
+static void tear_off_height_apply(wmWindow *window, Block *block)
+{
+  float natural;
+  const float min_h = tear_off_height_min(block, &natural);
+  const float lack = min_h - BLI_rctf_size_y(&block->rect);
+  if (lack > 0.0f) {
+    const float top_limit = WM_window_native_pixel_size(window)[1] - UI_POPUP_MENU_TOP;
+    const float lift = std::min(lack, std::max(top_limit - block->rect.ymax, 0.0f));
+    block_translate(block, 0.0f, lift);
+    block->rect.ymin -= lift;
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: the header stays, so the content scrolls below it. If the window
+ * trimmed the top of the block, move everything down, or the header would stay cut off. */
+static void tear_off_header_scroll_prepare(Block *block, const float bounds)
+{
+  float ymin = FLT_MAX, ymax = -FLT_MAX;
+  for (const Button &bt : block->buttons()) {
+    if (bt.tear_off_header) {
+      ymin = std::min(ymin, bt.rect.ymin);
+      ymax = std::max(ymax, bt.rect.ymax);
+    }
+  }
+  if (ymin == FLT_MAX) {
+    return;
+  }
+  const float excess = std::max(ymax + bounds - block->rect.ymax, 0.0f);
+  for (Button &bt : block->buttons()) {
+    bt.rect.ymin -= excess;
+    bt.rect.ymax -= excess;
+  }
+  /* Above 0 even in a window too small for the header, because 0 means there is none. */
+  block->tear_off_header_ymin = std::max(ymin - excess, 1.0f);
 }
 
 Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butregion, Button *but)
@@ -1317,6 +1387,7 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
          * and would extend past the right window edge — `popup_block_clip` nudges it left. */
         popup_block_clip(window, block);
       }
+      tear_off_height_apply(window, block);
       /* Sync pin position to the clipped block position so subsequent window resize
        * refreshes use the corrected position rather than the stale pre-clip pin. */
       handle->tear_off_pin_xy[0] = int(block->rect.xmin);
@@ -1348,10 +1419,17 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     }
 
     block_translate(block, -region->winrct.xmin, -region->winrct.ymin);
+    if (handle->is_tear_off) {
+      tear_off_header_scroll_prepare(block, block->bounds / block->aspect);
+    }
     /* Popups can change size, fix scroll offset if a panel was closed. */
     float ymin = FLT_MAX;
     float ymax = -FLT_MAX;
     for (const Button &bt : block->buttons()) {
+      /* BFA - Tear-Off Menu/Panel: the sticky header isn't part of what scrolls. */
+      if (bt.tear_off_header) {
+        continue;
+      }
       ymin = min_ff(ymin, bt.rect.ymin);
       ymax = max_ff(ymax, bt.rect.ymax);
     }
@@ -1364,6 +1442,10 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     /* apply scroll offset */
     if (handle->scrolloffset != 0.0f) {
       for (Button &bt : block->buttons()) {
+        /* BFA - Tear-Off Menu/Panel: the sticky header stays put. */
+        if (bt.tear_off_header) {
+          continue;
+        }
         bt.rect.ymin += handle->scrolloffset;
         bt.rect.ymax += handle->scrolloffset;
       }
