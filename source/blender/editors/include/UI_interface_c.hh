@@ -2480,6 +2480,11 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
  */
 bool tear_off_enabled();
 /**
+ * BFA - Tear-Off Menu/Panel: #PopupBlockHandle::tear_off_width for the block of this layout, 0
+ * when it isn't in a tear-off. For RNA, which can't see the handle.
+ */
+float tear_off_layout_width_get(const Layout *layout);
+/**
  * BFA - Tear-Off Menu/Panel: tear-off handlers outlive the area they were created in, so drop
  * their reference when that area exits, and rebuild their buttons, which may point into its
  * space data. Other popups are left untouched.

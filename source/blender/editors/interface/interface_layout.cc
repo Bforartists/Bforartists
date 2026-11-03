@@ -3024,6 +3024,14 @@ void item_paneltype_func(bContext *C, Layout *layout, void *arg_pt)
   UI_paneltype_draw(C, pt, layout);
 }
 
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+float tear_off_layout_width_get(const Layout *layout)
+{
+  const Block *block = layout->block();
+  const PopupBlockHandle *handle = block ? block->handle : nullptr;
+  return (handle && handle->is_tear_off) ? handle->tear_off_width : 0.0f;
+}
+
 static Button *item_menu(Layout *layout,
                          const StringRef name,
                          int icon,

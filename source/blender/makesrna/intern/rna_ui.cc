@@ -1523,6 +1523,12 @@ static int rna_UILayout_direction_get(PointerRNA *ptr)
   return int(ptr->data_as<const Layout>()->local_direction());
 }
 
+/* BFA - Tear-Off Menu/Panel: lets Python keep the shelf's columns in a tear-off. */
+static float rna_UILayout_tear_off_width_get(PointerRNA *ptr)
+{
+  return ui::tear_off_layout_width_get(ptr->data_as<const Layout>());
+}
+
 static float rna_UILayout_scale_x_get(PointerRNA *ptr)
 {
   return ptr->data_as<const Layout>()->scale_x();
@@ -1854,6 +1860,15 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, direction_items);
   RNA_def_property_enum_funcs(prop, "rna_UILayout_direction_get", nullptr, nullptr);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
+  /* BFA - Tear-Off Menu/Panel: lets the tool shelf panels keep their columns in a tear-off. */
+  prop = RNA_def_property(srna, "tear_off_width", PROP_FLOAT, PROP_UNSIGNED);
+  RNA_def_property_float_funcs(prop, "rna_UILayout_tear_off_width_get", nullptr, nullptr);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop,
+                           "Tear-Off Width",
+                           "Width of the tool shelf this panel was torn off from, without zoom or "
+                           "UI scale. 0 when the layout isn't in a tear-off from a tool shelf");
 
   prop = RNA_def_property(srna, "scale_x", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_float_funcs(

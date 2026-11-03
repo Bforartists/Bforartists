@@ -654,7 +654,7 @@ class ToolSelectPanelHelper:
         Choose an appropriate layout for the toolbar.
         """
         # BFA - Refactored to use shared helper function
-        column_count = toolsystem_column_count(region)
+        column_count = toolsystem_column_count(region, layout)
 
         # BFA - change to 3 column
         if column_count == 4:
@@ -1261,20 +1261,29 @@ def _keymap_from_item(context, item):
 
 
 # BFA - Helper function for determining column count of tool system panels.
-def toolsystem_column_count(region):
-    system = bpy.context.preferences.system
-    view2d = region.view2d
-    view2d_scale = (
-        view2d.region_to_view(1.0, 0.0)[0] -
-        view2d.region_to_view(0.0, 0.0)[0]
-    )
-    width_scale = region.width * view2d_scale / system.ui_scale
+# BFA - Tear-Off Menu/Panel: layout, a panel torn off the shelf must not follow the real shelf's
+# width.
+def toolsystem_column_count(region, layout=None):
+    tear_off_width = layout.tear_off_width if layout is not None else 0.0
+    if tear_off_width > 0.0:
+        width_scale = tear_off_width
+        # BFA - Tear-Off Menu/Panel: already part of the captured width, see
+        # tear_off_shelf_width_measure.
+        tabs_offset = 0.0
+    else:
+        system = bpy.context.preferences.system
+        view2d = region.view2d
+        view2d_scale = (
+            view2d.region_to_view(1.0, 0.0)[0] -
+            view2d.region_to_view(0.0, 0.0)[0]
+        )
+        width_scale = region.width * view2d_scale / system.ui_scale
 
-    # BFA - Check if toolshelf tabs are visible to adjust thresholds.
-    # When tabs are hidden the snap unit is smaller by ~20px (tabs_width).
-    space = bpy.context.space_data
-    show_tabs = getattr(space, 'show_toolshelf_tabs', True)
-    tabs_offset = 0.0 if show_tabs else 20.0
+        # BFA - Check if toolshelf tabs are visible to adjust thresholds.
+        # When tabs are hidden the snap unit is smaller by ~20px (tabs_width).
+        space = bpy.context.space_data
+        show_tabs = getattr(space, 'show_toolshelf_tabs', True)
+        tabs_offset = 0.0 if show_tabs else 20.0
 
     # Standard thresholds for column count
     if width_scale > (200.0 - tabs_offset):
@@ -1357,7 +1366,7 @@ class SetOperatorContext:
 
 
 def draw_entries(layout, context, entries):
-    column_count = toolsystem_column_count(context.region)
+    column_count = toolsystem_column_count(context.region, layout)
 
     if column_count == 4:
         draw_text_buttons(layout, entries)

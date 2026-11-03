@@ -66,7 +66,7 @@ class BrushPanelBase(bpy.types.Panel):
     def draw(self, context: bpy.types.Context):
         layout = self.layout
         layout.scale_y = 2
-        num_cols = toolsystem_column_count(context.region)
+        num_cols = toolsystem_column_count(context.region, layout)
 
         if isinstance(self.tool_name, str):
             brushes = [

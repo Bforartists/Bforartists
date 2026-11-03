@@ -168,7 +168,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(Panel):
             draw_entries(layout, context, entries)
 
         except Exception:
-            if toolsystem_column_count(context.region) > 1:
+            if toolsystem_column_count(context.region, layout) > 1:
                 func = layout.label_multiline
             else:
                 func = layout.label

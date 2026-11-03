@@ -31,7 +31,7 @@ class BFA_PT_toolshelf_animation(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        num_cols = toolsystem_column_count(context.region)
+        num_cols = toolsystem_column_count(context.region, layout)
 
         #text buttons
         if num_cols == 4:
@@ -169,7 +169,7 @@ class BFA_PT_toolshelf_frames(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        num_cols = toolsystem_column_count(context.region)
+        num_cols = toolsystem_column_count(context.region, layout)
 
         #text buttons
         if num_cols == 4:
