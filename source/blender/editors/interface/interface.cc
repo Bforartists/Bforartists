@@ -1406,6 +1406,14 @@ static bool but_is_rna_undo(const Button *but)
 
 /** \} */
 
+/* BFA - Tear-Off Menu/Panel: the row has no flag of its own, its operator is what marks it. */
+bool button_is_tear_off_row(const Button *but)
+{
+  return but->optype && (STREQ(but->optype->idname, "WM_OT_menu_tear_off") ||
+                         STREQ(but->optype->idname, "WM_OT_panel_tear_off") ||
+                         STREQ(but->optype->idname, "WM_OT_enum_tear_off"));
+}
+
 /* -------------------------------------------------------------------- */
 /** \name Menu Key Accelerators
  * \{ */
@@ -1444,9 +1452,7 @@ static void menu_block_set_keyaccels(Block *block)
       }
 
       /* BFA - Tear-Off Menu/Panel: the row is an addition, so regular items keep their keys. */
-      if (but.optype && (STREQ(but.optype->idname, "WM_OT_menu_tear_off") ||
-                         STREQ(but.optype->idname, "WM_OT_panel_tear_off")))
-      {
+      if (button_is_tear_off_row(&but)) {
         continue;
       }
 

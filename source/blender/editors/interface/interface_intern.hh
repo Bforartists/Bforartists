@@ -1188,6 +1188,10 @@ struct PopupBlockHandle {
    * reaches the popup this one was torn off from and closes it. */
   bool tear_off_pass_next_mousemove = false;
 
+  /** BFA - Tear-Off Menu/Panel: this popup closes because its Tear Off row was clicked, so the
+   * button that opened it has no value to apply. */
+  bool tear_off_row_used = false;
+
   char menu_idname[64] = "";
 
   bool mmb_panning = false;
@@ -1396,6 +1400,9 @@ bool tear_off_clamp_to_window(const wmWindow *win,
                               PopupBlockHandle *handle,
                               Block *block,
                               ARegion *region);
+
+/** BFA - Tear-Off Menu/Panel: the row an entry point adds above its regular items. */
+bool button_is_tear_off_row(const Button *but);
 
 /** \} */
 

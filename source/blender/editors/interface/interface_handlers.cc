@@ -9805,6 +9805,8 @@ static void button_activate_exit(
 {
   wmWindow *win = data->window;
   Block *block = but->block;
+  /* BFA - Tear-Off Menu/Panel: read this now, #apply_but moves the operator out of the button. */
+  const bool is_tear_off_row = !data->cancel && button_is_tear_off_row(but);
 
   if (ELEM(but->type, ButtonType::Grip, ButtonType::TextBox)) {
     WM_cursor_modal_restore(win);
@@ -9845,6 +9847,7 @@ static void button_activate_exit(
 
       menu = block->handle;
       menu->menuretval = (data->cancel) ? RETURN_CANCEL : RETURN_OK;
+      menu->tear_off_row_used = is_tear_off_row; /* BFA - Tear-Off Menu/Panel */
     }
   }
   /* BFA - Tear-Off Menu/Panel: tear-off panel operators are handled differently.
@@ -11060,6 +11063,20 @@ static void handle_button_return_submenu(bContext *C, const wmEvent *event, Butt
 {
   HandleButtonData *data = but->active;
   PopupBlockHandle *menu = data->menu;
+
+  /* BFA - Tear-Off Menu/Panel: the row chose no value, and #PopupBlockHandle::retvalue is still 0,
+   * so a normal exit would set a dropdown to its first item and run its update, undo and autokey.
+   * `onfree` skips all of those and still returns OK, so the menus above this one close as after a
+   * normal pick. The row's operator is already queued. A menu above skips its own apply too. */
+  if ((menu->menuretval & RETURN_OK) && menu->tear_off_row_used) {
+    PopupBlockHandle *parent = but->block->handle;
+    const bool parent_closes = parent && !(but->block->flag & BLOCK_KEEP_OPEN);
+    button_activate_exit(C, but, data, true, true);
+    if (parent_closes) {
+      parent->tear_off_row_used = true;
+    }
+    return;
+  }
 
   /* copy over return values from the closing menu */
   if ((menu->menuretval & RETURN_OK) || (menu->menuretval & RETURN_UPDATE)) {
