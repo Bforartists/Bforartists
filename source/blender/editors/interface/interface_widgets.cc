@@ -5776,6 +5776,12 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
         wt = widget_type(WidgetStyle::Swatch);
         break;
       case ButtonType::Label:
+        /* BFA - Tear-Off Menu/Panel: the title of a shelf tear-off sits on the shelf's color, so
+         * the menu's text color could be unreadable there with a custom theme. */
+        if (block_is_tear_off_shelf(but->block)) {
+          wt = widget_type(WidgetStyle::Label);
+          break;
+        }
         widget_draw_text_icon(&style->widget, &tui->wcol_menu_back, but, rect);
         break;
       case ButtonType::Sepr:
