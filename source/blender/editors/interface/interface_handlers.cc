@@ -13356,10 +13356,13 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
                                  handler_region_drag_toggle,
                                  handler_region_drag_toggle_remove);
 #endif
-    /* Also wakes the next tear-off in this window, since a closing popup keeps the event. */
+    /* Refreshes the highlight of whatever was under the closed tear-off. */
     WM_event_add_mousemove(win);
     apply_but_funcs_after(C);
-    return retval;
+    /* The event carries on, so it closes any other tear-off in this window and still reaches its
+     * target. Keeping it could swallow the release of a press on the preference's own checkbox,
+     * leaving that button waiting to start a drag-toggle with no mouse button held. */
+    return WM_UI_HANDLER_CONTINUE;
   }
 
   /* BFA - Tear-Off Menu/Panel: tear-off menus/panels are persistent. Keyboard events must
