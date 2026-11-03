@@ -3440,7 +3440,7 @@ def s_p8_layout_panels():
     check("a press in the arrow zone doesn't flip what's under it", st["open_b"], st)
     check("nor anything else", st["open_a"], st)
     # Dragging a visible header up past the title flips that one and not the hidden one above it.
-    yield from wheel(cx, cy, False, 1)
+    # The press on the arrow already moved up the one row this needs.
     y = yb + 40
     yield from drag(x, y, 0, (b[3] + 5) - y)
     check("the drag flips the visible header", not st["open_b"], st)
@@ -4398,61 +4398,20 @@ def s_p8_shadow_band():
     yield from grab("beside")
     n = rdiff("shadow", "beside", rows)
     check("beside the block nothing scrolls", n < 30, n)
-    # The baseline: the arrow zone itself does auto-scroll.
+    # The baseline: a click on the arrow itself does scroll.
     x = mid_x(v)
-    move(x, y); yield 0.3
-    move(x, y); yield 1.2
+    yield from click(x, y)
     yield from park()
     yield from grab("inside")
     n = rdiff("beside", "inside", rows)
-    check("in the arrow zone it scrolls", n > 100, n)
+    check("a click on the arrow scrolls", n > 100, n)
     ui.menu_shadow_width = 0
 
 
 SC["p8_shadow_band"] = s_p8_shadow_band
 
 
-def s_p8_covered_scroll():
-    """A newer tear-off over the older's arrow zone keeps the mouse moves, and the older one's timer
-    still ticks. Tall, because the older one must not reach the end of its range during this."""
-    yield from begin()
-    b = yield from opened(open_menu("SIM_MT_tall"), "m", "the tall menu opens")
-    yield from crop(b, 500)
-    yield from grab("c")
-    v = need_box("base", "c", "cropped")
-    n = yield from opened(open_tpanel("SIM_PT_field"), "two", "the newer one opens", base="c")
-    # The right half of the older one's bottom arrow zone goes under the newer one.
-    yield from title_drag(n, TITLE_Y, mid_x(v) - n[0], v[1] + 30 - n[3])
-    yield from grab("over")
-    log("older", v, "newer was", n)
-    y = v[1] + 6
-    rows = (v[0] + 2, v[1] + 20, mid_x(v) - 2, v[3] - STRIP_MENU - 1)
-    # The baseline: the part of the arrow zone that isn't covered auto-scrolls.
-    move(v[0] + 10, y); yield 0.2
-    move(v[0] + 10, y); yield 0.3
-    yield from grab("a0")
-    yield from grab("a1")
-    m = rdiff("a0", "a1", rows)
-    check("the arrow zone auto-scrolls", m > 100, m)
-    # In one move, so the older one never sees the cursor leave its zone.
-    x = mid_x(v) + 20
-    move(x, y); yield 0.4
-    yield from grab("c0")
-    yield 0.8
-    yield from grab("c1")
-    m = rdiff("c0", "c1", rows)
-    check("under the newer one it stops", m < 30, m)
-    # Moving back starts it again.
-    move(v[0] + 10, y); yield 0.2
-    move(v[0] + 10, y); yield 0.3
-    yield from grab("b0")
-    yield from grab("b1")
-    m = rdiff("b0", "b1", rows)
-    check("uncovered again it scrolls", m > 100, m)
-    yield from park()
 
-
-SC["p8_covered_scroll"] = s_p8_covered_scroll
 
 
 def s_p8_fractional_crop():
@@ -5396,3 +5355,88 @@ def s_p10_tall_low():
 
 
 SC["p10_tall_low"] = s_p10_tall_low
+
+
+def s_p11_arrows():
+    """A pinned menu's arrows act on a click only. Crossing them changes nothing."""
+    P = SIM_OT_row_probe.state
+    yield from begin()
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    yield from crop(b, 200)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    rows = rows_box(v, STRIP_MENU)
+    x = mid_x(v) - 20
+    bottom = v[1] + 8
+    # Scrolled on purpose, so both arrows show.
+    yield from wheel(x, mid_y(v), True, 3)
+    yield from park()
+    yield from grab("pos")
+    top = v[3] - STRIP_MENU - 8
+    runs = P["runs"]
+    for name, y in (("bottom", bottom), ("top", top)):
+        move(x, y); yield 0.3
+        move(x, y); yield 1.2
+        yield from grab(name + "_over")
+        yield from park()
+        yield from grab(name + "_left")
+        n = rdiff("pos", name + "_left", rows)
+        check("hovering the " + name + " arrow doesn't scroll", n < 30, n)
+    # A slow crossing, as on the way to a row: nothing moves and nothing runs.
+    for i in range(6):
+        move(x, bottom + i); yield 0.1
+    for i in range(6):
+        move(x, top - i); yield 0.1
+    yield from park()
+    yield from grab("crossed")
+    n = rdiff("pos", "crossed", rows)
+    check("crossing them doesn't scroll", n < 30, n)
+    check("and runs no row", P["runs"] == runs, P)
+    # One click, one row, and the release runs nothing.
+    yield from click(x, bottom)
+    yield from park()
+    yield from grab("down1")
+    n = rdiff("pos", "down1", rows)
+    check("a click on the bottom arrow scrolls", n > 100, n)
+    check("the click runs no row", P["runs"] == runs, P)
+    yield from park()
+    yield from grab("down1b")
+    n = rdiff("down1", "down1b", rows)
+    check("and only moves once", n < 30, n)
+    yield from click(x, top)
+    yield from park()
+    yield from grab("up1")
+    n = rdiff("pos", "up1", rows)
+    check("a click on the top arrow moves back the same row", n < 30, n)
+    check("still no row ran", P["runs"] == runs, P)
+    # The other ways still work, and a row outside the arrows still runs.
+    yield from wheel(x, mid_y(v), True, 1)
+    yield from park()
+    yield from grab("wheel")
+    n = rdiff("pos", "wheel", rows)
+    check("the wheel still scrolls", n > 100, n)
+    yield from click(x, mid_y(v)); yield 0.3
+    check("a row in the middle still runs", P["runs"] == runs + 1, P)
+    yield from close_all()
+
+
+SC["p11_arrows"] = s_p11_arrows
+
+
+def s_p11_arrow_submenu():
+    """A submenu row cut by an arrow doesn't open from under it."""
+    yield from begin()
+    b = yield from opened(open_menu("SIM_MT_arrows"), "m", "the menu opens")
+    yield from crop(b, 150)
+    yield from grab("c")
+    v = need_box("base", "c", "cropped")
+    move(mid_x(v) - 20, v[1] + 7); yield 0.3
+    move(mid_x(v) - 20, v[1] + 7); yield 1.5
+    yield from grab("over")
+    outside = (v[2] + 2, 30, 1340, 900)
+    n = rdiff("c", "over", outside)
+    check("no submenu opens over the arrow", n < 30, n)
+    yield from close_all()
+
+
+SC["p11_arrow_submenu"] = s_p11_arrow_submenu
