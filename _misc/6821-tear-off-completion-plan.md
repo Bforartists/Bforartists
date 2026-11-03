@@ -15,9 +15,12 @@ Line numbers are from the mid-merge tree and will drift.
 | 0. Merge conflict | Done | `b61865f64fa` | Built with no errors. Copy Python Command and Edit Source still need a hand test |
 | 1. Bug fixes, first series | Done | `c9eb2d90783`..`1848c80ea57` (20 fixes) | Built with no errors, scripted GUI suite |
 | 1. Reload Scripts crash | Done | `91f52f1a813` | Crash reproduced in the app, gone after the fix |
-| 1. Review findings | Committed, not built yet | `f40393e8038`..`4b55dee679f` (6 commits) | Code review only so far |
-| 1. Hand test | Waiting on the maintainer | | |
-| 2 to 8 | Not started | | Phase 2 starts after the hand test |
+| 1. Review findings | Done | `f40393e8038`..`4b55dee679f` (6 commits) | Built with no errors. Written after the hand test build, so not hand tested |
+| 1. Hand test | Done | | Maintainer, on the `91f52f1a813` build |
+| 2. Shared cleanup and related fixes | Committed | `a14f3d0e234`, `440b786824e`, `35b9d9bf6fc`, `ab1209481c2`, `63438649de9`, `40348728360` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
+| 3. Preference toggle | Committed | `99c93ab4370`, `d800b242ae2` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
+| 2 and 3. Review findings | Committed, not built yet | `9851fa1a14b`, `babd3140507`, `7846ed92b8e` | Code review only so far |
+| 4 to 8 | Not started | | Phase 4 is next |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
 
@@ -87,8 +90,6 @@ Also remove the `COPY_PYTHON_CMD` `printf` at line 396.
 - Closing an area leaving a tear-off's buttons pointing at freed space data, and leaving Quad View leaving a freed region in the handler.
 
 **Known gaps, none blocking:**
-- Hover shortcuts in tear-offs (Ctrl+C and Ctrl+V over a button) don't work yet. Phase 2.
-- A dropdown left open under a tear-off on a screen change. Phase 2.
 - Grab offset lost at the window edge, an arrow cursor left behind, and a stale hit rectangle. Polish.
 - Possible playback stall while hovering a tear-off, refresh cost during playback, and the paint cursor while hovering one. These need the hand test.
 
@@ -116,13 +117,19 @@ Merge the duplicated code before adding a third tear-off type:
 - The menu and panel close and collapse operators are near-identical. Keep one handle-lookup helper.
 - Move the post-creation setup (flags, mode, space type, workspace, label, pin position) into `tear_off_handle_init()`.
 
+**Also fixed in this phase**, both known gaps left by Phase 1:
+- Hover shortcuts in tear-offs (Ctrl+C and Ctrl+V over a button), in `35b9d9bf6fc`.
+- A dropdown left open under a tear-off on a screen change, in `ab1209481c2`.
+
 ## Phase 3: Preference toggle (item 7)
 
 This comes before the new entry points, so each one is gated from the start.
 
 **Storage:** take one byte from BFA's `_pad_custom[4]` in `DNA_userdef_types.h`: `char bfa_ui_flag` with a *disabled* bit, leaving `_pad_custom[3]`. Zero means enabled, so existing preference files default to on and need no versioning.
 
-**RNA:** `Preferences.use_tear_off` using a negative sdna bit, next to `disable_search_on_keypress` in `rna_userdef.cc:8436`. It gets an update callback that force-closes open tear-offs through `popup_handlers_remove_all_force()`.
+**RNA:** `Preferences.use_tear_off` using a negative sdna bit, next to `disable_search_on_keypress` in `rna_userdef.cc`. The default of true already comes from DNA through that bit, so it isn't set again.
+
+**Closing:** the update callback frees nothing, because it runs during handler dispatch. It only wakes each window with `WM_event_add_mousemove()`, and each tear-off closes itself in `popup_handler` once `tear_off_enabled()` is false. All tear-offs in a window close on one event, and that event carries on to its target. A tear-off under a regular popup waits until that popup closes, because the popup can hold raw pointers into it.
 
 **UI:** a left-aligned checkbox in `space_userpref.py:259-262`, labelled "Tear-Off Menus and Panels".
 
