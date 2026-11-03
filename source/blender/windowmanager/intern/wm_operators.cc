@@ -2627,6 +2627,12 @@ static void tear_off_place_at_source(wmOperator *op, ui::PopupBlockHandle *handl
 {
   if (handle && RNA_struct_property_is_set(op->ptr, "source_xy")) {
     RNA_int_get_array(op->ptr, "source_xy", handle->tear_off_pin_xy);
+    /* The top only holds while the block fits below it. A context menu's corner has no relation to
+     * the panel's height, and the clip only trims, so a lower top would crop the panel. */
+    if (const ui::Block *block = handle->region->runtime->uiblocks.first()) {
+      handle->tear_off_pin_xy[1] = std::max(handle->tear_off_pin_xy[1],
+                                            int(BLI_rctf_size_y(&block->rect)) + UI_SCREEN_MARGIN);
+    }
     copy_v2_v2_int(handle->popup_create_vars.event_xy, handle->tear_off_pin_xy);
   }
 }
