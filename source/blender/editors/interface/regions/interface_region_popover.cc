@@ -117,6 +117,14 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
 
   /* Create UI block and layout now if it wasn't done between begin/end. */
   if (!pup->layout) {
+    /* BFA - Tear-Off Menu/Panel: a tear-off survives scale changes, so recompute the width
+     * (same formula as popover_panel_create) or the panel keeps its old pixel width. */
+    if (handle->is_tear_off && pup->panel_type) {
+      const int ui_units_x = (pup->panel_type->ui_units_x == 0) ? UI_POPOVER_WIDTH_UNITS :
+                                                                  pup->panel_type->ui_units_x;
+      pup->ui_size_x = ui_units_x * U.widget_unit *
+                       (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS);
+    }
     popover_create_block(C, handle->region, pup, wm::OpCallContext::InvokeRegionWin);
 
     if (pup->popover_func) {
