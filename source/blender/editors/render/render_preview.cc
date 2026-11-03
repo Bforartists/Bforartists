@@ -825,6 +825,25 @@ void ED_previews_tag_dirty_by_id(const Main &bmain, const ID &id)
   }
 }
 
+/* BFA - Tear-Off Menu/Panel */
+void ED_preview_render_free_owner(wmWindowManager *wm, const void *owner)
+{
+  /* The list of Renders has no lock, and a running job can be walking it on its own thread. Jobs
+   * only start on this thread, so none can start before the free. Keeping a Render until exit is
+   * what upstream does for a closed area, so that's the safe side. Threads outside the job system
+   * aren't covered, the same exposure as #NestedTreePreviews freeing its Render. */
+  if (WM_jobs_has_running(wm, nullptr, WM_JOB_TYPE_ANY)) {
+    return;
+  }
+  if (Render *re = RE_GetRender(owner)) {
+    RE_FreeRender(re);
+  }
+  /* The second half of a split preview, see #shader_preview_render. */
+  if (Render *re = RE_GetRender(static_cast<const char *>(owner) + 1)) {
+    RE_FreeRender(re);
+  }
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */

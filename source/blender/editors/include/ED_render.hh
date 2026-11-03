@@ -160,6 +160,14 @@ void ED_preview_draw(
  */
 void ED_previews_tag_dirty_by_id(const Main &bmain, const ID &id);
 
+/**
+ * BFA - Tear-Off Menu/Panel: free the #Render of a preview owner that is going away. Upstream
+ * keeps a Render until exit, which adds up for a popup, because every popup is a new owner. The
+ * owner's jobs must be killed first. The Render stays when any job is running, see the comment
+ * inside.
+ */
+void ED_preview_render_free_owner(wmWindowManager *wm, const void *owner);
+
 void ED_render_clear_mtex_copybuf();
 
 void ED_render_internal_init();

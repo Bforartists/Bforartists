@@ -8,5 +8,7 @@ for s in "$@"; do
   c=$?
   echo "== $s exit=$c last: $(tail -n 1 "$S/$s.log" 2>/dev/null | cut -c1-120)"
   grep -E '^(FAIL|EXCEPTION)' "$S/$s.log" 2>/dev/null | cut -c1-200
+  # Only scenarios ending in finish_with_memory_report print these, see there.
+  grep -aE 'Not freed memory|new render|panel_tear_off_gesture_begin' "$S/$s.out" | head -8 | cut -c1-120
   [ $c -ne 0 ] && grep -aE 'Error|EXCEPTION|double|free|corrupt|access violation|Traceback' "$S/$s.out" | head -6 | cut -c1-200
 done

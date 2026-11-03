@@ -1992,6 +1992,53 @@ def s_p5_region_gone():
 SC["p5_region_gone"] = s_p5_region_gone
 
 
+def finish_with_memory_report():
+    """harness.py ends with os._exit, which skips the exit report and loses what a release build
+    still has buffered for stdout, so a memory check has to quit for real. run.sh then prints the
+    lines to compare, since Python can't read them back. Needs --debug-memory, as in run.sh."""
+    log("DONE", "ALLPASS" if all(r[1] for r in results) else "SOMEFAIL",
+        f"{sum(r[1] for r in results)}/{len(results)}")
+    bpy.ops.wm.memory_statistics()
+    with bpy.context.temp_override(window=win()):
+        bpy.ops.wm.quit_blender()
+    yield 30
+
+
+def wait_for_previews(seconds=8.0):
+    """Until the preview jobs are done, and return whether one ran."""
+    ran = False
+    for _ in range(int(seconds / 0.25)):
+        running = bpy.app.is_job_running("RENDER_PREVIEW")
+        ran = ran or running
+        if ran and not running:
+            break
+        yield 0.25
+    return ran
+
+
+def s_p5_preview_close():
+    """Every popup with a preview is a new owner of a Render. The count of `new render` in the
+    lines run.sh prints must stay the same, because rounds 2 to 4 only repeat round 1. The exit
+    report can't show this: RE_FreeAllRender empties the list before it runs. Each round waits for
+    the jobs, because one running at close keeps the Render on purpose."""
+    yield from setup()
+    bpy.context.view_layer.objects.active.data.materials.append(
+        bpy.data.materials.new("SimPreview"))
+    area("PROPERTIES").spaces.active.context = "MATERIAL"; yield 0.8
+    for i in range(4):
+        r = yield from tear_center("MATERIAL_PT_preview", t="PROPERTIES", rt="WINDOW")
+        check(f"round {i}: operator runs", r == {"INTERFACE"}, r)
+        ran = yield from wait_for_previews()
+        check(f"round {i}: the preview rendered", ran)
+        yield from close_all()
+        if i == 0:
+            bpy.ops.wm.memory_statistics()
+    yield from finish_with_memory_report()
+
+
+SC["p5_preview_close"] = s_p5_preview_close
+
+
 def s_p5_pref_off():
     yield from setup()
     prefs = bpy.context.preferences
