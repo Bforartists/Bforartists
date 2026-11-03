@@ -13249,6 +13249,46 @@ static bool tear_off_older_owns_input(const bContext *C, const PopupBlockHandle 
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: true if the window position is over this popup or an open submenu
+ * of it. Submenus have no handler of their own, so they are only reachable through the parent. */
+static bool popup_contains_point(const PopupBlockHandle *menu, const int xy[2])
+{
+  if (menu->tear_off_collapsed) {
+    /* The collapsed region covers the whole window, so only the pin widget counts. Its rect is
+     * in window coordinates for the same reason. */
+    rctf widget;
+    tear_off_pin_widget_rect(menu, &widget);
+    return BLI_rctf_isect_pt(&widget, xy[0], xy[1]);
+  }
+  for (const Block &block : menu->region->runtime->uiblocks) {
+    int mx = xy[0];
+    int my = xy[1];
+    window_to_block(menu->region, &block, &mx, &my);
+    if (BLI_rctf_isect_pt(&block.rect, mx, my)) {
+      return true;
+    }
+  }
+  const Button *but = region_find_active_but(menu->region);
+  return but && but->active->menu && popup_contains_point(but->active->menu, xy);
+}
+
+/* BFA - Tear-Off Menu/Panel: true if a popup called before this tear-off is under the position.
+ * Those are the newer popups, which also draw on top. */
+static bool tear_off_covered_at(const bContext *C, const PopupBlockHandle *menu, const int xy[2])
+{
+  wmEventHandler *handler = popup_handler_find(CTX_wm_window(C), menu);
+  if (handler == nullptr) {
+    return false;
+  }
+  for (wmEventHandler *newer = handler->prev; newer; newer = newer->prev) {
+    const PopupBlockHandle *other = popup_from_handler(newer);
+    if (other && tear_off_is_visible(C, other) && popup_contains_point(other, xy)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /* two types of popups, one with operator + enum, other with regular callbacks */
 static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 {
@@ -13320,6 +13360,17 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
     }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: popups return CONTINUE for a double-click so it comes back as a
+   * press (#47532). A tear-off under the popup must not take it on the way past. That would make
+   * a tear-off the user can't see collapse, expand or press a stale highlighted button, and
+   * handling it would cancel the press, losing the top popup's fast click. */
+  if (event->val == KM_DBL_CLICK && menu->is_tear_off && !tear_off_owns_input(menu) &&
+      tear_off_covered_at(C, menu, event->xy))
+  {
+    CTX_wm_region_popup_set(C, region_popup);
+    return WM_UI_HANDLER_CONTINUE;
   }
 
   /* BFA - Tear-Off Menu/Panel: double-clicking a pinned tear-off panel collapses it to the
