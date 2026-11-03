@@ -6757,6 +6757,19 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
     if (!layout_has_panel_label(header, pt)) {
       header->label(CTX_IFACE_(pt->translation_context, pt->label), ICON_NONE);
     }
+    /* BFA - Tear-Off Menu/Panel: a region draws a child's preset too, see area.cc, and a popover
+     * doesn't. A tear-off is a live view of the region's panel. A sub-row, because presets set
+     * emboss on their layout. */
+    if (block->handle && block->handle->is_tear_off && pt->draw_header_preset &&
+        !(pt->flag & PANEL_TYPE_NO_HEADER))
+    {
+      Layout *preset = &header->row(true);
+      preset->fixed_size_set(true);
+      preset->emboss_set(EmbossType::Emboss);
+      panel->layout = preset;
+      pt->draw_header_preset(C, panel);
+      panel->layout = nullptr;
+    }
   }
   else {
     body = layout;
