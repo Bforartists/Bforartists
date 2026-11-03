@@ -2,8 +2,6 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
-#include "BLI_string_utf8.hh"
-
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
 
@@ -33,8 +31,9 @@ static void node_declare(NodeDeclarationBuilder &b)
 static void node_init(bNodeTree * /*ntree*/, bNode *node)
 {
   NodeConvertColorSpace *ncs = MEM_new<NodeConvertColorSpace>("node colorspace");
-  STRNCPY_UTF8(ncs->from_color_space, "scene_linear");
-  STRNCPY_UTF8(ncs->to_color_space, "scene_linear");
+  IMB_colormanagement_colorspace_name_set(
+      ncs->from_color_space, ncs->from_interop_id, "scene_linear");
+  IMB_colormanagement_colorspace_name_set(ncs->to_color_space, ncs->to_interop_id, "scene_linear");
   node->storage = ncs;
 }
 
@@ -168,7 +167,7 @@ class ConvertColorSpaceOperation : public NodeOperation {
     }
   }
 
-  bool is_identity()
+  bool is_identity() const
   {
     const char *source = node_storage(node()).from_color_space;
     const char *target = node_storage(node()).to_color_space;
@@ -183,6 +182,12 @@ class ConvertColorSpaceOperation : public NodeOperation {
     }
 
     return false;
+  }
+
+  bool uses_asynchronous_execution() const override
+  {
+    const Result &input_image = this->get_input("Image");
+    return !this->is_identity() && !input_image.is_single_value();
   }
 };
 

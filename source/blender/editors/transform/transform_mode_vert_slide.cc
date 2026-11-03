@@ -165,8 +165,8 @@ struct VertSlideParams {
 static void vert_slide_update_input(TransInfo *t)
 {
   VertSlideParams *slp = static_cast<VertSlideParams *>(t->custom.mode.data);
-  VertSlideData *sld = static_cast<VertSlideData *>(
-      TRANS_DATA_CONTAINER_FIRST_OK(t)->custom.mode.data);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
+  VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   TransDataVertSlideVert *sv = &sld->sv[sld->curr_sv_index];
 
   const float3 co_orig_3d = sv->co_orig_3d();
@@ -317,7 +317,7 @@ static eRedrawFlag handleEventVertSlide(TransInfo *t, const wmEvent *event)
 
 static void drawVertSlide(TransInfo *t)
 {
-  TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_OK(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   if (sld) {
     const VertSlideParams *slp = static_cast<const VertSlideParams *>(t->custom.mode.data);
@@ -498,7 +498,7 @@ static void doVertSlide(TransInfo *t, float perc)
 
 static void vert_slide_snap_apply(TransInfo *t, float *value)
 {
-  TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_OK(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   TransDataVertSlideVert *sv = &sld->sv[sld->curr_sv_index];
   float3 co_orig_3d = sv->co_orig_3d();
@@ -553,14 +553,14 @@ static void applyVertSlide(TransInfo *t)
   t->values_final[0] = final;
 
   /* Header string. */
-  ofs += BLI_strncpy_utf8_rlen(str + ofs, IFACE_("Vertex Slide: "), sizeof(str) - ofs);
+  ofs += STRNCPY_UTF8_RLEN(MutableCStr(str).drop_front(ofs), IFACE_("Vertex Slide: "));
   if (hasNumInput(&t->num)) {
     char c[NUM_STR_REP_LEN];
     outputNumInput(&(t->num), c, t->scene->unit);
-    ofs += BLI_strncpy_utf8_rlen(str + ofs, &c[0], sizeof(str) - ofs);
+    ofs += STRNCPY_UTF8_RLEN(MutableCStr(str).drop_front(ofs), &c[0]);
   }
   else {
-    ofs += BLI_snprintf_utf8_rlen(str + ofs, sizeof(str) - ofs, "%.4f ", final);
+    ofs += SNPRINTF_UTF8_RLEN(MutableCStr(str).drop_front(ofs), "%.4f ", final);
   }
   /* Done with header string. */
 
@@ -574,11 +574,12 @@ static void applyVertSlide(TransInfo *t)
 
 static void vert_slide_status(TransInfo *t)
 {
-  VertSlideParams *slp = static_cast<VertSlideParams *>(t->custom.mode.data);
-  wmOperator *op = slp->op;
-  if (!op) {
+  if (t->keymap == nullptr) {
     return;
   }
+  const wmKeyMap &keymap = *t->keymap;
+
+  VertSlideParams *slp = static_cast<VertSlideParams *>(t->custom.mode.data);
   if (!slp->update_status_bar) {
     return;
   }
@@ -592,15 +593,15 @@ static void vert_slide_status(TransInfo *t)
   const bool is_snap_invert = t->modifiers & MOD_SNAP_INVERT;
 
   WorkspaceStatus status(t->context);
-  status.opmodal(IFACE_("Confirm"), op->type, TFM_MODAL_CONFIRM);
-  status.opmodal(IFACE_("Cancel"), op->type, TFM_MODAL_CANCEL);
-  status.opmodal(IFACE_("Snap"), op->type, TFM_MODAL_SNAP_TOGGLE, is_snap);
-  status.opmodal(IFACE_("Snap Invert"), op->type, TFM_MODAL_SNAP_INV_ON, is_snap_invert);
-  status.opmodal(IFACE_("Set Snap Base"), op->type, TFM_MODAL_EDIT_SNAP_SOURCE_ON);
-  status.opmodal(IFACE_("Move"), op->type, TFM_MODAL_TRANSLATE);
-  status.opmodal(IFACE_("Rotate"), op->type, TFM_MODAL_ROTATE);
-  status.opmodal(IFACE_("Resize"), op->type, TFM_MODAL_RESIZE);
-  status.opmodal(IFACE_("Precision Mode"), op->type, TFM_MODAL_PRECISION, is_precision);
+  status.modal_keymap(IFACE_("Confirm"), keymap, TFM_MODAL_CONFIRM);
+  status.modal_keymap(IFACE_("Cancel"), keymap, TFM_MODAL_CANCEL);
+  status.modal_keymap(IFACE_("Snap"), keymap, TFM_MODAL_SNAP_TOGGLE, is_snap);
+  status.modal_keymap(IFACE_("Snap Invert"), keymap, TFM_MODAL_SNAP_INV_ON, is_snap_invert);
+  status.modal_keymap(IFACE_("Set Snap Base"), keymap, TFM_MODAL_EDIT_SNAP_SOURCE_ON);
+  status.modal_keymap(IFACE_("Move"), keymap, TFM_MODAL_TRANSLATE);
+  status.modal_keymap(IFACE_("Rotate"), keymap, TFM_MODAL_ROTATE);
+  status.modal_keymap(IFACE_("Resize"), keymap, TFM_MODAL_RESIZE);
+  status.modal_keymap(IFACE_("Precision Mode"), keymap, TFM_MODAL_PRECISION, is_precision);
   status.item_bool(IFACE_("Clamp"), is_clamp, ICON_EVENT_C, ICON_EVENT_ALT);
   status.item_bool(IFACE_("Even"), use_even, ICON_EVENT_E);
   if (use_even) {
@@ -613,7 +614,7 @@ static void vert_slide_transform_matrix_fn(TransInfo *t, float mat_xform[4][4])
   float delta[3];
 
   VertSlideParams *slp = static_cast<VertSlideParams *>(t->custom.mode.data);
-  TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_OK(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   VertSlideData *sld = static_cast<VertSlideData *>(tc->custom.mode.data);
   TransDataVertSlideVert &sv_active = sld->sv[sld->curr_sv_index];
   float3 orig_co = sv_active.co_orig_3d();

@@ -53,6 +53,9 @@ enum RenderEngineTypeFlag {
   RE_USE_CUSTOM_FREESTYLE = (1 << 8),
   RE_USE_NO_IMAGE_SAVE = (1 << 9),
   RE_USE_MATERIALX = (1 << 10),
+  /** The `view_draw` callback writes depth to the active viewport framebuffer.
+   * This depth information should be used instead of doing our own depth pass. */
+  RE_WRITE_VIEWPORT_DEPTH = (1 << 11),
 };
 
 /** #RenderEngine.flag */
@@ -121,8 +124,6 @@ struct RenderEngineType {
                                struct Scene *scene,
                                struct ViewLayer *view_layer);
   void (*update_custom_camera)(struct RenderEngine *engine, struct Camera *cam);
-
-  struct DrawEngineType *draw_engine;
 
   /* RNA integration */
   ExtensionRNA rna_ext;

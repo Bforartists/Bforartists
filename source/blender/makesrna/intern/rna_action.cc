@@ -95,6 +95,7 @@ const EnumPropertyItem default_ActionSlot_target_id_type_items[] = {
 #  include "BLI_string.hh"
 #  include "BLI_string_utf8.hh"
 
+#  include "BKE_animsys.hh"
 #  include "BKE_fcurve.hh"
 #  include "BKE_main.hh"
 #  include "BKE_report.hh"
@@ -294,7 +295,7 @@ static std::optional<std::string> rna_ActionSlot_path(const PointerRNA *ptr)
   animrig::Slot &slot = rna_data_slot(ptr);
 
   char identifier_esc[sizeof(slot.identifier) * 2];
-  BLI_str_escape(identifier_esc, slot.identifier, sizeof(identifier_esc));
+  BLI_str_escape(identifier_esc, slot.identifier);
   return fmt::format("slots[\"{}\"]", identifier_esc);
 }
 
@@ -396,7 +397,7 @@ static std::optional<std::string> rna_ActionLayer_path(const PointerRNA *ptr)
   animrig::Layer &layer = rna_data_layer(ptr);
 
   char name_esc[sizeof(layer.name) * 2];
-  BLI_str_escape(name_esc, layer.name, sizeof(name_esc));
+  BLI_str_escape(name_esc, layer.name);
   return fmt::format("layers[\"{}\"]", name_esc);
 }
 
@@ -909,7 +910,7 @@ static std::optional<std::string> rna_ActionGroup_path(const PointerRNA *ptr)
   BLI_assert_msg(channelbag_path, "ActionChannelbag instances should have an RNA path");
 
   char name_esc[sizeof(group->name) * 2];
-  BLI_str_escape(name_esc, group->name, sizeof(name_esc));
+  BLI_str_escape(name_esc, group->name);
 
   return fmt::format("{}.groups[\"{}\"]", *channelbag_path, name_esc);
 }
@@ -1042,7 +1043,7 @@ static void rna_Action_pose_markers_remove(bAction *act,
     return;
   }
 
-  MEM_delete(marker);
+  BKE_free_time_marker(*marker, true);
   marker_ptr->invalidate();
 }
 

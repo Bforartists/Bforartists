@@ -20,6 +20,7 @@ from bpy.props import (
         IntProperty,
         StringProperty,
         )
+from .interface import draw_transform_props
 
 
 def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0., 0., 0.),
@@ -354,23 +355,29 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
     radius: FloatProperty(
             name="Radius",
             description="Radius of vertices for sphere, capsule or cuboid bevel",
-            default=0.2, min=0.0, soft_min=0.01, step=10
+            default=1, min=0.0, soft_min=0.01, step=10
             )
     size: FloatVectorProperty(
             name="Size",
             description="Size",
             subtype='XYZ',
-            default=(2.0, 2.0, 2.0),
+            default=(0.0, 0.0, 0.0),
             )
     arc_div: IntProperty(
             name="Arc Divisions",
             description="Arc curve divisions, per quadrant, 0=derive from Linear",
-            default=4, min=1
+            default=8, min=1
             )
     lin_div: FloatProperty(
             name="Linear Divisions",
             description="Linear unit divisions (Edges/Faces), 0=derive from Arc",
             default=0.0, min=0.0, step=100, precision=1
+            )
+    no_limit: BoolProperty(
+            name='No Vertex Limit',
+            description='Do not limit to ' + str(sanity_check_verts) + ' vertices (sanity check)',
+            options={'HIDDEN'},
+            default=False
             )
     div_type: EnumProperty(
             name='Type',
@@ -385,11 +392,6 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
             name='Odd Axis Align',
             description='Align odd arc divisions with axes (Note: triangle corners!)',
             )
-    no_limit: BoolProperty(
-            name='No Limit',
-            description='Do not limit to ' + str(sanity_check_verts) + ' vertices (sanity check)',
-            options={'HIDDEN'}
-            )
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -401,11 +403,10 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
                         "Either Arc Divisions or Linear Divisions must be greater than zero")
             return {'CANCELLED'}
 
-        if not self.no_limit:
-            if self.vert_count > self.sanity_check_verts:
-                self.report({'ERROR'}, 'More than ' + str(self.sanity_check_verts) +
-                            ' vertices!  Check "No Limit" to proceed')
-                return {'CANCELLED'}
+        if not self.no_limit and self.vert_count > self.sanity_check_verts:
+            self.report({'ERROR'}, 'More than ' + str(self.sanity_check_verts) +
+                        ' vertices!  Check "No Limit" to proceed')
+            return {'CANCELLED'}
 
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
@@ -474,42 +475,38 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
     def draw(self, context):
         self.check(context)
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
+        layout.separator()
         layout.prop(self, 'radius')
         layout.column().prop(self, 'size', expand=True)
+        layout.separator()
 
-        box = layout.box()
-        row = box.row()
-        row.alignment = 'CENTER'
-        row.scale_y = 0.1
-        row.label(text='Divisions')
-        row = box.row()
-        col = row.column()
-        col.alignment = 'RIGHT'
-        col.label(text='Arc:')
-        col.prop(self, 'arc_div', text='')
-        col.label(text='[ {} ]'.format(self.arcdiv))
-        col = row.column()
-        col.alignment = 'RIGHT'
-        col.label(text='Linear:')
-        col.prop(self, 'lin_div', text='')
-        col.label(text='[ {:.3g} ]'.format(self.lindiv))
-        box.row().prop(self, 'div_type')
-        row = box.row()
-        row.active = self.arcdiv % 2
-        row.prop(self, 'odd_axis_align')
+        layout.prop(self, 'div_type', text='Division Method')
+        layout.prop(self, 'arc_div', text='Arc')
+        row = layout.row()
+        row.enabled = (
+            self.div_type != 'CORNERS' and 
+            (
+                self.size[0] > self.radius*2 or
+                self.size[1] > self.radius*2 or
+                self.size[2] > self.radius*2
+            )
+        )
+        row.prop(self, 'lin_div', text='Linear')
 
         row = layout.row()
         row.alert = self.vert_count > self.sanity_check_verts
-        row.prop(self, 'no_limit', text='No limit ({})'.format(self.vert_count))
+        row.prop(self, 'no_limit')
+        
+        row = layout.row()
+        row.active = self.arcdiv % 2
+        row.prop(self, 'odd_axis_align', text='Triangle Corners')
 
         if self.change == False:
-            col = layout.column(align=True)
-            col.prop(self, 'align', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'location', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
 def RoundCubeParameters():
     RoundCubeParameters = [

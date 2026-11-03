@@ -53,6 +53,7 @@
 #include "RNA_access.hh"
 #include "RNA_define.hh"
 #include "RNA_enum_types.hh"
+#include "RNA_path.hh"
 #include "RNA_prototypes.hh"
 
 #include "SEQ_modifier.hh"
@@ -604,8 +605,7 @@ static wmOperatorStatus node_swap_group_asset_invoke(bContext *C,
   RNA_collection_add(&ptr, "settings", &itemptr);
   RNA_string_set(&itemptr, "name", "node_tree");
 
-  std::string setting_value = "bpy.data.node_groups[\"" +
-                              std::string(BKE_id_name(node_group->id)) + "\"]";
+  const std::string setting_value = RNA_path_full_ID_py(&node_group->id);
   RNA_string_set(&itemptr, "value", setting_value.c_str());
 
   WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &ptr, nullptr);
@@ -1251,6 +1251,9 @@ static wmOperatorStatus node_add_import_node_exec(bContext *C, wmOperator *op)
     }
     else if (is_geometry_tree && path.endswith(".ply")) {
       node = add_node(*C, "GeometryNodeImportPLY"_ustr, snode->runtime->cursor);
+    }
+    else if (is_geometry_tree && path.endswith(".spz")) {
+      node = add_node(*C, "GeometryNodeImportSPZ"_ustr, snode->runtime->cursor);
     }
     else if (is_geometry_tree && path.endswith(".stl")) {
       node = add_node(*C, "GeometryNodeImportSTL"_ustr, snode->runtime->cursor);

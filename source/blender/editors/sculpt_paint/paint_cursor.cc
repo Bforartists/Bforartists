@@ -38,6 +38,7 @@
 #include "BKE_paint.hh"
 #include "BKE_paint_types.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "NOD_texture.h"
 
@@ -1151,7 +1152,7 @@ static void paint_cursor_draw_3D_view_brush_cursor(PaintCursorContext &pcontext)
 static bool paint_cursor_is_3d_view_navigating(const PaintCursorContext &pcontext)
 {
   const ViewContext *vc = &pcontext.vc;
-  return vc->rv3d && (vc->rv3d->rflag & RV3D_NAVIGATING);
+  return vc->rv3d && (vc->rv3d->runtime->tags & bke::RV3D_TAG_NAVIGATING);
 }
 
 static bool paint_cursor_is_brush_cursor_enabled(const PaintCursorContext &pcontext)
@@ -1180,7 +1181,7 @@ static void paint_cursor_update_rake_rotation(PaintCursorContext &pcontext)
   float2 mouse = {pcontext.translation.x - region->winrct.xmin,
                   pcontext.translation.y - region->winrct.ymin};
   if (!paint_runtime->stroke_active) {
-    paint_calculate_rake_rotation(
+    BKE_paint_calculate_rake_rotation(
         *pcontext.paint, *pcontext.brush, mouse, pcontext.mode, false, false);
   }
 }

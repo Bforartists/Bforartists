@@ -6,6 +6,7 @@
 
 #include "GPU_batch.hh"
 #include "GPU_batch_utils.hh"
+#include "GPU_capabilities.hh"
 #include "GPU_context.hh"
 #include "draw_shader.hh"
 #include "draw_testing.hh"
@@ -263,10 +264,12 @@ static void test_eevee_shadow_tag_update()
   pass.bind_ssbo("tiles_buf", tiles_data);
   pass.bind_ssbo("bounds_buf", &manager.bounds_buf.previous());
   pass.bind_ssbo("resource_ids_buf", past_casters_updated);
-  pass.draw(box_batch, past_casters_updated.size() * tilemaps_data.size());
+  /* The test owns the batch; wrap it without ownership for command recording. */
+  Batch batch(box_batch, false);
+  pass.draw(&batch, past_casters_updated.size() * tilemaps_data.size());
   pass.bind_ssbo("bounds_buf", &manager.bounds_buf.current());
   pass.bind_ssbo("resource_ids_buf", curr_casters_updated);
-  pass.draw(box_batch, curr_casters_updated.size() * tilemaps_data.size());
+  pass.draw(&batch, curr_casters_updated.size() * tilemaps_data.size());
   pass.barrier(GPU_BARRIER_SHADER_STORAGE);
 
   pass.shader_set(sh_propagate);
@@ -762,14 +765,24 @@ class TestAlloc {
 
 static void test_eevee_shadow_alloc()
 {
-  TestAlloc(SHADOW_MAX_PAGE);
-  TestAlloc(1);
-  TestAlloc(0);
+  {
+    TestAlloc test(SHADOW_MAX_PAGE);
+  }
+  {
+    TestAlloc test(1);
+  }
+  {
+    TestAlloc test(0);
+  }
 }
 DRAW_TEST(eevee_shadow_alloc)
 
 static void test_eevee_shadow_finalize()
 {
+  if (!GPU_multi_viewport_support()) {
+    GTEST_SKIP() << "Device does not support multi viewport.";
+  }
+
   GPU_render_begin();
   ShadowTileMapDataBuf tilemaps_data = {"tilemaps_data"};
   ShadowTileDataBuf tiles_data = {"tiles_data"};
@@ -903,6 +916,7 @@ static void test_eevee_shadow_finalize()
   pass.bind_ssbo("render_view_buf", render_views_buf);
   pass.bind_ssbo("tilemaps_clip_buf", tilemaps_clip);
   pass.bind_image("tilemaps_img", tilemap_tx);
+  pass.push_constant("use_multi_viewport", GPU_multi_viewport_support());
   pass.dispatch(int3(1, 1, tilemaps_data.size()));
   pass.barrier(GPU_BARRIER_SHADER_STORAGE);
 
@@ -1279,12 +1293,12 @@ static void test_eevee_shadow_tilemap_amend()
   /* Setup one directional light with 3 tilemaps. Fill only the needed data. */
   LightData light;
   light.type = LIGHT_SUN;
-  light.sun().clipmap_lod_min = 0;
-  light.sun().clipmap_lod_max = 2;
+  light.sun.clipmap_lod_min = 0;
+  light.sun.clipmap_lod_max = 2;
   /* Shift LOD0 by 1 tile towards bottom. */
-  light.sun().clipmap_base_offset_neg = int2(0, 1 << 0);
+  light.sun.clipmap_base_offset_neg = int2(0, 1 << 0);
   /* Shift LOD1 by 1 tile towards right. */
-  light.sun().clipmap_base_offset_pos = int2(1 << 1, 0);
+  light.sun.clipmap_base_offset_pos = int2(1 << 1, 0);
   light.tilemap_index = 0;
 
   LightDataBuf culling_light_buf = {"Lights_culled"};

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 07:47+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
 "PO-Revision-Date: 2025-07-31 16:24+0000\n"
 "Last-Translator: leif larsen <linuxdk1978@gmail.com>\n"
 "Language-Team: Danish <https://translate.blender.org/projects/blender-ui/ui/da/>\n"
@@ -3028,6 +3028,10 @@ msgid "Use the active Collection of the current View Layer to instantiate import
 msgstr "Brug den aktive samling af det aktuelle visningslag til at instantiere importerede samlinger og objekter"
 
 
+msgid "Path"
+msgstr "Sti"
+
+
 msgid "Level"
 msgstr "Niveau"
 
@@ -3469,10 +3473,6 @@ msgid "Mirror Ball"
 msgstr "Splejlkugle"
 
 
-msgid "Path"
-msgstr "Sti"
-
-
 msgid "Mean"
 msgstr "Middelværdi"
 
@@ -3830,6 +3830,10 @@ msgid "Error Message"
 msgstr "Fejl besked"
 
 
+msgid "Motion"
+msgstr "Bevægelse"
+
+
 msgid "3D View"
 msgstr "3D visning"
 
@@ -3872,10 +3876,6 @@ msgstr "udseende"
 
 msgid "Keyframe not in F-Curve"
 msgstr "Nøglebillede er ikke i F-kurve"
-
-
-msgid "Motion"
-msgstr "Bevægelse"
 
 
 msgid "Key Color"

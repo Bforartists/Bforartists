@@ -8,14 +8,10 @@
 
 #include "multires_reshape.hh"
 
-#include "MEM_guardedalloc.h"
-
 #include "DNA_mesh_types.h"
 
 #include "BLI_function_ref.hh"
 #include "BLI_math_matrix.hh"
-#include "BLI_math_matrix_c.hh"
-#include "BLI_math_vector_c.hh"
 #include "BLI_task.hh"
 #include "BLI_utildefines.hh"
 
@@ -24,8 +20,8 @@
 #include "BKE_multires.hh"
 #include "BKE_subdiv.hh"
 #include "BKE_subdiv_eval.hh"
-#include "BKE_subdiv_foreach.hh"
 #include "BKE_subdiv_mesh.hh"
+#include "BKE_subdiv_mesh_layout.hh"
 
 #include "opensubdiv_converter_capi.hh"
 #ifdef WITH_OPENSUBDIV
@@ -33,7 +29,6 @@
 #endif
 #include "opensubdiv_evaluator_capi.hh"
 
-#include "atomic_ops.h"
 #include "subdiv_converter.hh"
 
 namespace blender {
@@ -65,22 +60,6 @@ struct Vertex {
   /* All grid coordinates which the vertex corresponding to.
    * For a vertices which are created from inner points of grids there is always one coordinate. */
   Vector<GridCoord> grid_coords = {};
-
-  float sharpness = 0.0f;
-  bool is_infinite_sharp = false;
-};
-
-struct Corner {
-  /* Indexes into the geometry.vertices array */
-  int vert_index = 0;
-  int grid_index = 0;
-};
-
-struct Edge {
-  int v1 = 0;
-  int v2 = 0;
-
-  float sharpness = 0.0f;
 };
 
 /* Storage of data which is linearly interpolated from the reshape level to the top level. */
@@ -116,18 +95,19 @@ struct MultiresReshapeSmoothContext : NonCopyable, NonMovable {
   /* Geometry at a reshape multires level. */
   struct {
     Array<Vertex> vertices;
+    /* Sharpness of each vertex, including the infinite sharpness of vertices which are adjacent
+     * to a loose edge. See #OpenSubdiv_Converter::vert_sharpness. */
+    Array<float> vert_sharpness;
 
-    /* Maximum number of edges which might be stored in the edges array.
-     * Is calculated based on the number of edges in the base mesh and the subdivision level. */
-    int max_edges;
+    /* Sparse storage of edges. Will only include edges which have non-zero sharpness. */
+    Array<int2> edges;
+    /* Sharpness of each of the edges above. */
+    Array<float> edge_sharpness;
 
-    /* Sparse storage of edges. Will only include edges which have non-zero sharpness.
-     *
-     * NOTE: Different type from others to be able to easier use atomic ops. */
-    size_t num_edges;
-    Array<Edge> edges;
-
-    Array<Corner> corners;
+    /* Indexes into the geometry.vertices array */
+    Array<int> corner_verts;
+    /* The grid each corner was created for. All the corners of a face share the same grid. */
+    Array<int> corner_grid_indices;
 
     /* Face topology of subdivision level. */
     Array<int> face_offsets;
@@ -141,9 +121,6 @@ struct MultiresReshapeSmoothContext : NonCopyable, NonMovable {
   /* Grids of data which is linearly interpolated between grid elements at the reshape level.
    * The data is actually stored as a delta, which is then to be added to the higher levels. */
   LinearGrids linear_delta_grids;
-
-  /* From #Mesh::loose_edges(). May be empty. */
-  BitVector<> loose_base_edges = {};
 
   /* Subdivision surface created for geometry at a reshape level. */
   bke::subdiv::Subdiv *reshape_subdiv = nullptr;
@@ -304,13 +281,12 @@ static void base_surface_grids_write(MultiresReshapeSmoothContext *reshape_smoot
 static int get_face_grid_index(const MultiresReshapeSmoothContext *reshape_smooth_context,
                                const IndexRange face)
 {
-  const Corner *first_corner = &reshape_smooth_context->geometry.corners[face.start()];
-  const int grid_index = first_corner->grid_index;
+  const Span<int> corner_grid_indices = reshape_smooth_context->geometry.corner_grid_indices;
+  const int grid_index = corner_grid_indices[face.start()];
 
 #  ifndef NDEBUG
   for (const int corner_index : face) {
-    const Corner *corner = &reshape_smooth_context->geometry.corners[corner_index];
-    BLI_assert(corner->grid_index == grid_index);
+    BLI_assert(corner_grid_indices[corner_index] == grid_index);
   }
 #  endif
 
@@ -341,9 +317,9 @@ static std::array<std::optional<GridCoord>, 4> grid_coords_from_face_verts(
 
   for (const int i : face.index_range()) {
     const int corner_index = face[i];
-    Corner *corner = &reshape_smooth_context->geometry.corners[corner_index];
+    const int vert_index = reshape_smooth_context->geometry.corner_verts[corner_index];
     result[i] = vert_grid_coord_with_grid_index(
-        &reshape_smooth_context->geometry.vertices[corner->vert_index], grid_index);
+        &reshape_smooth_context->geometry.vertices[vert_index], grid_index);
     BLI_assert(result[i].has_value());
   }
   return result;
@@ -469,42 +445,25 @@ static float get_effective_crease_float(const MultiresReshapeSmoothContext *resh
   return crease;
 }
 
-static bool foreach_topology_info(const bke::subdiv::ForeachContext *foreach_context,
-                                  const int num_vertices,
-                                  const int num_edges,
-                                  const int num_loops,
-                                  const int num_faces,
-                                  const Span<int> /*subdiv_face_offset*/)
+static void geometry_allocate(MultiresReshapeSmoothContext *reshape_smooth_context,
+                              const bke::subdiv::MeshLayout &layout)
 {
-  MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<MultiresReshapeSmoothContext *>(foreach_context->user_data);
-  const int max_edges = reshape_smooth_context->smoothing_type ==
-                                MultiresSubdivideModeType::Linear ?
-                            num_edges :
-                            reshape_smooth_context->geometry.max_edges;
+  reshape_smooth_context->geometry.vertices.reinitialize(layout.verts_num);
+  reshape_smooth_context->geometry.vert_sharpness = Array<float>(layout.verts_num, 0.0f);
 
-  reshape_smooth_context->geometry.vertices.reinitialize(num_vertices);
+  reshape_smooth_context->geometry.corner_verts.reinitialize(layout.corners_num);
+  reshape_smooth_context->geometry.corner_grid_indices.reinitialize(layout.corners_num);
 
-  reshape_smooth_context->geometry.max_edges = max_edges;
-  reshape_smooth_context->geometry.edges.reinitialize(max_edges);
-
-  reshape_smooth_context->geometry.corners.reinitialize(num_loops);
-
-  reshape_smooth_context->geometry.face_offsets.reinitialize(num_faces + 1);
+  reshape_smooth_context->geometry.face_offsets.reinitialize(layout.faces_num + 1);
   offset_indices::fill_constant_group_size(4, 0, reshape_smooth_context->geometry.face_offsets);
-  reshape_smooth_context->geometry.face_offsets.last() = num_loops;
-
-  return true;
+  reshape_smooth_context->geometry.face_offsets.last() = layout.corners_num;
 }
 
-static void foreach_single_vert(const bke::subdiv::ForeachContext *foreach_context,
-                                const GridCoord *grid_coord,
-                                const int coarse_vert_index,
-                                const int subdiv_vert_index)
+static void add_grid_coord_to_vert(MultiresReshapeSmoothContext *reshape_smooth_context,
+                                   const GridCoord *grid_coord,
+                                   const int coarse_vert_index,
+                                   const int subdiv_vert_index)
 {
-  MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<MultiresReshapeSmoothContext *>(foreach_context->user_data);
-
   BLI_assert(subdiv_vert_index < reshape_smooth_context->geometry.vertices.size());
 
   Vertex *vert = &reshape_smooth_context->geometry.vertices[subdiv_vert_index];
@@ -526,20 +485,23 @@ static void foreach_single_vert(const bke::subdiv::ForeachContext *foreach_conte
   }
 
   crease = get_effective_crease_float(reshape_smooth_context, crease);
-  vert->sharpness = bke::subdiv::crease_to_sharpness(crease);
+  reshape_smooth_context->geometry.vert_sharpness[subdiv_vert_index] =
+      bke::subdiv::crease_to_sharpness(crease);
 }
 
 /* TODO(sergey): De-duplicate with similar function in multires_reshape_vertcos.cc */
-static void foreach_vert(const bke::subdiv::ForeachContext *foreach_context,
-                         const PTexCoord *ptex_coord,
-                         const int coarse_vert_index,
-                         const int subdiv_vert_index)
+static void add_ptex_coord_to_vert(MultiresReshapeSmoothContext *reshape_smooth_context,
+                                   const bke::subdiv::PtexCoord &coord,
+                                   const int coarse_vert_index,
+                                   const int subdiv_vert_index)
 {
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(foreach_context->user_data);
   const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
 
-  const GridCoord grid_coord = multires_reshape_ptex_coord_to_grid(reshape_context, ptex_coord);
+  PTexCoord ptex_coord{};
+  ptex_coord.ptex_face_index = coord.ptex_face_index;
+  ptex_coord.u = coord.uv.x;
+  ptex_coord.v = coord.uv.y;
+  const GridCoord grid_coord = multires_reshape_ptex_coord_to_grid(reshape_context, &ptex_coord);
   const int face_index = multires_reshape_grid_to_face_index(reshape_context,
                                                              grid_coord.grid_index);
 
@@ -551,13 +513,14 @@ static void foreach_vert(const bke::subdiv::ForeachContext *foreach_context,
     for (int current_corner = 0; current_corner < num_corners; ++current_corner) {
       GridCoord corner_grid_coord = grid_coord;
       corner_grid_coord.grid_index = start_grid_index + current_corner;
-      foreach_single_vert(
-          foreach_context, &corner_grid_coord, coarse_vert_index, subdiv_vert_index);
+      add_grid_coord_to_vert(
+          reshape_smooth_context, &corner_grid_coord, coarse_vert_index, subdiv_vert_index);
     }
     return;
   }
 
-  foreach_single_vert(foreach_context, &grid_coord, coarse_vert_index, subdiv_vert_index);
+  add_grid_coord_to_vert(
+      reshape_smooth_context, &grid_coord, coarse_vert_index, subdiv_vert_index);
 
   if (grid_coord.u == 0.0f) {
     GridCoord prev_grid_coord;
@@ -565,7 +528,8 @@ static void foreach_vert(const bke::subdiv::ForeachContext *foreach_context,
     prev_grid_coord.u = grid_coord.v;
     prev_grid_coord.v = 0.0f;
 
-    foreach_single_vert(foreach_context, &prev_grid_coord, coarse_vert_index, subdiv_vert_index);
+    add_grid_coord_to_vert(
+        reshape_smooth_context, &prev_grid_coord, coarse_vert_index, subdiv_vert_index);
   }
 
   if (grid_coord.v == 0.0f) {
@@ -574,202 +538,149 @@ static void foreach_vert(const bke::subdiv::ForeachContext *foreach_context,
     next_grid_coord.u = 0.0f;
     next_grid_coord.v = grid_coord.u;
 
-    foreach_single_vert(foreach_context, &next_grid_coord, coarse_vert_index, subdiv_vert_index);
+    add_grid_coord_to_vert(
+        reshape_smooth_context, &next_grid_coord, coarse_vert_index, subdiv_vert_index);
   }
 }
 
-static void foreach_vert_inner(const bke::subdiv::ForeachContext *foreach_context,
-                               void * /*tls*/,
-                               const int ptex_face_index,
-                               const float ptex_face_u,
-                               const float ptex_face_v,
-                               const int /*coarse_face_index*/,
-                               const int /*coarse_corner*/,
-                               const int subdiv_vert_index)
+static void geometry_create_inner_verts(MultiresReshapeSmoothContext *reshape_smooth_context,
+                                        const bke::subdiv::MeshLayout &layout)
 {
-  PTexCoord ptex_coord{};
-  ptex_coord.ptex_face_index = ptex_face_index;
-  ptex_coord.u = ptex_face_u;
-  ptex_coord.v = ptex_face_v;
-  foreach_vert(foreach_context, &ptex_coord, -1, subdiv_vert_index);
-}
-
-static void foreach_vert_every_corner(const bke::subdiv::ForeachContext *foreach_context,
-                                      void * /*tls_v*/,
-                                      const int ptex_face_index,
-                                      const float ptex_face_u,
-                                      const float ptex_face_v,
-                                      const int coarse_vert_index,
-                                      const int /*coarse_face_index*/,
-                                      const int /*coarse_face_corner*/,
-                                      const int subdiv_vert_index)
-{
-  PTexCoord ptex_coord{};
-  ptex_coord.ptex_face_index = ptex_face_index;
-  ptex_coord.u = ptex_face_u;
-  ptex_coord.v = ptex_face_v;
-  foreach_vert(foreach_context, &ptex_coord, coarse_vert_index, subdiv_vert_index);
-}
-
-static void foreach_vert_every_edge(const bke::subdiv::ForeachContext *foreach_context,
-                                    void * /*tls_v*/,
-                                    const int ptex_face_index,
-                                    const float ptex_face_u,
-                                    const float ptex_face_v,
-                                    const int /*coarse_edge_index*/,
-                                    const int /*coarse_face_index*/,
-                                    const int /*coarse_face_corner*/,
-                                    const int subdiv_vert_index)
-{
-  PTexCoord ptex_coord{};
-  ptex_coord.ptex_face_index = ptex_face_index;
-  ptex_coord.u = ptex_face_u;
-  ptex_coord.v = ptex_face_v;
-  foreach_vert(foreach_context, &ptex_coord, -1, subdiv_vert_index);
-}
-
-static void foreach_loop(const bke::subdiv::ForeachContext *foreach_context,
-                         void * /*tls*/,
-                         const int /*ptex_face_index*/,
-                         const float /*ptex_face_u*/,
-                         const float /*ptex_face_v*/,
-                         const int /*coarse_loop_index*/,
-                         const int coarse_face_index,
-                         const int coarse_corner,
-                         const int subdiv_loop_index,
-                         const int subdiv_vert_index,
-                         const int /*subdiv_edge_index*/)
-{
-  MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<MultiresReshapeSmoothContext *>(foreach_context->user_data);
   const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
-
-  BLI_assert(subdiv_loop_index < reshape_smooth_context->geometry.corners.size());
-
-  Corner *corner = &reshape_smooth_context->geometry.corners[subdiv_loop_index];
-  corner->vert_index = subdiv_vert_index;
-
-  const int first_grid_index = reshape_context->base_faces[coarse_face_index].start();
-  corner->grid_index = first_grid_index + coarse_corner;
+  const OffsetIndices<int> inner_verts_by_face = layout.inner_verts_by_face();
+  const Span<int> face_ptex_offset = bke::subdiv::face_ptex_offset_get(reshape_context->subdiv);
+  threading::parallel_for(
+      reshape_context->base_faces.index_range(),
+      layout.base_face_grain_size(),
+      [&](const IndexRange range) {
+        const IndexRange chunk_verts = inner_verts_by_face[range];
+        Array<bke::subdiv::PtexCoord> ptex_coords(chunk_verts.size());
+        bke::subdiv::fill_inner_vert_ptex_coords(
+            layout, *reshape_context->base_mesh, face_ptex_offset, range, ptex_coords);
+        for (const int i : ptex_coords.index_range()) {
+          add_ptex_coord_to_vert(reshape_smooth_context,
+                                 ptex_coords[i],
+                                 -1,
+                                 layout.inner_verts_start + chunk_verts[i]);
+        }
+      });
 }
 
-static void foreach_vert_of_loose_edge(const bke::subdiv::ForeachContext *foreach_context,
-                                       void * /*tls*/,
-                                       const int /*coarse_edge_index*/,
-                                       const float /*u*/,
-                                       const int vert_index)
+static void geometry_create_corner_grid_indices(
+    MultiresReshapeSmoothContext *reshape_smooth_context, const bke::subdiv::MeshLayout &layout)
 {
-  MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<MultiresReshapeSmoothContext *>(foreach_context->user_data);
-  Vertex *vert = &reshape_smooth_context->geometry.vertices[vert_index];
-
-  vert->is_infinite_sharp = !vert->grid_coords.is_empty();
+  const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
+  const OffsetIndices<int> base_faces = reshape_context->base_faces;
+  const OffsetIndices<int> faces_by_base_face = layout.faces_by_base_face();
+  const Span<int> face_ptex_offset = bke::subdiv::face_ptex_offset_get(reshape_context->subdiv);
+  MutableSpan<int> corner_grid_indices = reshape_smooth_context->geometry.corner_grid_indices;
+  threading::parallel_for(
+      base_faces.index_range(), layout.base_face_grain_size(), [&](const IndexRange range) {
+        const IndexRange chunk_faces = faces_by_base_face[range];
+        Array<int> face_base_corners(chunk_faces.size());
+        bke::subdiv::fill_corner_ptex_coords(
+            layout, *reshape_context->base_mesh, face_ptex_offset, range, {}, face_base_corners);
+        for (const int base_face : range) {
+          /* The first grid index of a face is the index of its first corner. */
+          const int first_grid_index = base_faces[base_face].start();
+          for (const int face : faces_by_base_face[base_face]) {
+            const int base_corner = face_base_corners[face - chunk_faces.start()];
+            corner_grid_indices.slice(face * 4, 4).fill(first_grid_index + base_corner);
+          }
+        }
+      });
 }
 
-static void store_edge(MultiresReshapeSmoothContext *reshape_smooth_context,
-                       const int subdiv_v1,
-                       const int subdiv_v2,
-                       const float crease)
+static void geometry_tag_loose_edge_verts_sharp(
+    MultiresReshapeSmoothContext *reshape_smooth_context)
 {
-  /* This is a bit overhead to use atomics in such a simple function called from many threads,
-   * but this allows to save quite measurable amount of memory. */
-  const int edge_index = atomic_fetch_and_add_z(&reshape_smooth_context->geometry.num_edges, 1);
-  BLI_assert(edge_index < reshape_smooth_context->geometry.max_edges);
-
-  Edge *edge = &reshape_smooth_context->geometry.edges[edge_index];
-  edge->v1 = subdiv_v1;
-  edge->v2 = subdiv_v2;
-  edge->sharpness = bke::subdiv::crease_to_sharpness(crease);
+  const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
+  const Span<int2> base_edges = reshape_context->base_edges;
+  auto &geometry = reshape_smooth_context->geometry;
+  /* NOTE: This runs after every other vertex is processed, so it is fine to override the
+   * sharpness which may have been set from the vertex crease. The vertices inside of loose edges
+   * are never used by faces, so only the base mesh vertices at the ends of the edges (which have
+   * the same indices in the subdivided mesh) are relevant. */
+  reshape_context->base_mesh->loose_edges().foreach_index([&](const int edge) {
+    for (const int vert : {base_edges[edge][0], base_edges[edge][1]}) {
+      if (!geometry.vertices[vert].grid_coords.is_empty()) {
+        geometry.vert_sharpness[vert] = OPENSUBDIV_SHARPNESS_INFINITE;
+      }
+    }
+  });
 }
 
-static void foreach_edge(const bke::subdiv::ForeachContext *foreach_context,
-                         void * /*tls*/,
-                         const int coarse_edge_index,
-                         const int /*subdiv_edge_index*/,
-                         const bool is_loose,
-                         const int subdiv_v1,
-                         const int subdiv_v2)
+static void geometry_create_edges(MultiresReshapeSmoothContext *reshape_smooth_context,
+                                  const bke::subdiv::MeshLayout &layout)
 {
-  MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<MultiresReshapeSmoothContext *>(foreach_context->user_data);
+  const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
+  const Mesh &base_mesh = *reshape_context->base_mesh;
+  auto &geometry = reshape_smooth_context->geometry;
+  const int edges_per_base_edge = layout.resolution - 1;
+
+  /* Loose edges are not communicated to OpenSubdiv. */
+  IndexMaskMemory memory;
+  const IndexMask non_loose_edges = base_mesh.loose_edges().complement(
+      IndexRange(base_mesh.edges_num), memory);
 
   if (reshape_smooth_context->smoothing_type == MultiresSubdivideModeType::Linear) {
-    if (!is_loose) {
-      store_edge(reshape_smooth_context, subdiv_v1, subdiv_v2, 1.0f);
-    }
+    /* All edges are infinitely sharp. */
+    const int base_edge_edges_num = non_loose_edges.size() * edges_per_base_edge;
+    const int inner_edges_num = layout.edges_num - layout.inner_edges_start;
+    geometry.edges.reinitialize(base_edge_edges_num + inner_edges_num);
+    bke::subdiv::fill_base_edge_edges(
+        layout,
+        reshape_context->base_edges,
+        non_loose_edges,
+        geometry.edges.as_mutable_span().take_front(base_edge_edges_num));
+    bke::subdiv::fill_inner_edges(
+        layout, base_mesh, geometry.edges.as_mutable_span().drop_front(base_edge_edges_num));
+    geometry.edge_sharpness = Array<float>(geometry.edges.size(),
+                                           bke::subdiv::crease_to_sharpness(1.0f));
     return;
   }
 
-  /* Ignore all inner face edges as they have sharpness of zero. */
-  if (coarse_edge_index == ORIGINDEX_NONE) {
-    return;
-  }
-  /* Ignore all loose edges as well, as they are not communicated to the OpenSubdiv. */
-  if (!reshape_smooth_context->loose_base_edges.is_empty()) {
-    if (reshape_smooth_context->loose_base_edges[coarse_edge_index]) {
-      return;
-    }
-  }
-  /* Edges without crease are to be ignored as well. */
-  const float crease = get_effective_crease(reshape_smooth_context, coarse_edge_index);
-  if (crease == 0.0f) {
-    return;
-  }
-  store_edge(reshape_smooth_context, subdiv_v1, subdiv_v2, crease);
-}
-
-static void geometry_init_loose_information(MultiresReshapeSmoothContext *reshape_smooth_context)
-{
-  const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
-  const Mesh *base_mesh = reshape_context->base_mesh;
-
-  const IndexMask &loose_edges = base_mesh->loose_edges();
-  if (loose_edges.is_empty()) {
-    reshape_smooth_context->loose_base_edges.resize(base_mesh->edges_num);
-    loose_edges.to_bits(reshape_smooth_context->loose_base_edges);
-  }
-
-  IndexMaskMemory memory;
-  const IndexMask non_loose_edges = loose_edges.complement(IndexRange(base_mesh->edges_num),
-                                                           memory);
-  int num_used_edges = 0;
-  non_loose_edges.foreach_index([&](const int edge) {
+  /* Edges without crease and edges inside of base mesh faces have zero sharpness, so they are
+   * ignored. */
+  const IndexMask creased_edges = IndexMask::from_predicate(
+      non_loose_edges, memory, [&](const int edge) {
+        return get_effective_crease(reshape_smooth_context, edge) != 0.0f;
+      });
+  geometry.edges.reinitialize(creased_edges.size() * edges_per_base_edge);
+  bke::subdiv::fill_base_edge_edges(
+      layout, reshape_context->base_edges, creased_edges, geometry.edges);
+  geometry.edge_sharpness.reinitialize(geometry.edges.size());
+  creased_edges.foreach_index([&](const int edge, const int pos) {
     const float crease = get_effective_crease(reshape_smooth_context, edge);
-    if (crease == 0.0f) {
-      return;
-    }
-    num_used_edges++;
+    geometry.edge_sharpness.as_mutable_span()
+        .slice(pos * edges_per_base_edge, edges_per_base_edge)
+        .fill(bke::subdiv::crease_to_sharpness(crease));
   });
-
-  const int resolution = get_reshape_level_resolution(reshape_context);
-  const int num_subdiv_vertices_per_base_edge = resolution - 2;
-  reshape_smooth_context->geometry.max_edges = num_used_edges *
-                                               (num_subdiv_vertices_per_base_edge + 1);
 }
 
 static void geometry_create(MultiresReshapeSmoothContext *reshape_smooth_context)
 {
   const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
 
-  bke::subdiv::ForeachContext foreach_context{};
-  foreach_context.topology_info = foreach_topology_info;
-  foreach_context.vert_inner = foreach_vert_inner;
-  foreach_context.vert_every_corner = foreach_vert_every_corner;
-  foreach_context.vert_every_edge = foreach_vert_every_edge;
-  foreach_context.loop = foreach_loop;
-  foreach_context.vert_of_loose_edge = foreach_vert_of_loose_edge;
-  foreach_context.edge = foreach_edge;
-  foreach_context.user_data = reshape_smooth_context;
+  const bke::subdiv::MeshLayout layout = bke::subdiv::build_mesh_layout(
+      *reshape_context->base_mesh, get_reshape_level_resolution(reshape_context));
+  geometry_allocate(reshape_smooth_context, layout);
+  geometry_create_edges(reshape_smooth_context, layout);
+  bke::subdiv::fill_corner_verts_and_edges(layout,
+                                           *reshape_context->base_mesh,
+                                           reshape_context->base_faces.index_range(),
+                                           reshape_smooth_context->geometry.corner_verts,
+                                           {});
+  geometry_create_corner_grid_indices(reshape_smooth_context, layout);
+  geometry_create_inner_verts(reshape_smooth_context, layout);
+  multires_reshape_foreach_boundary_vert_ptex_coord(
+      reshape_context,
+      layout,
+      [&](const bke::subdiv::PtexCoord &coord, const int base_vert, const int subdiv_vert) {
+        add_ptex_coord_to_vert(reshape_smooth_context, coord, base_vert, subdiv_vert);
+      });
 
-  geometry_init_loose_information(reshape_smooth_context);
-
-  bke::subdiv::ToMeshSettings mesh_settings;
-  mesh_settings.resolution = get_reshape_level_resolution(reshape_context);
-  mesh_settings.use_optimal_display = false;
-
-  /* TODO(sergey): Tell the foreach() to ignore loose vertices. */
-  bke::subdiv::foreach_subdiv_geometry(
-      reshape_context->subdiv, &foreach_context, &mesh_settings, reshape_context->base_mesh);
+  geometry_tag_loose_edge_verts_sharp(reshape_smooth_context);
 }
 
 /** \} */
@@ -778,149 +689,25 @@ static void geometry_create(MultiresReshapeSmoothContext *reshape_smooth_context
 /** \name Generation of OpenSubdiv evaluator for topology created form reshape level
  * \{ */
 
-static OpenSubdiv_SchemeType get_scheme_type(const OpenSubdiv_Converter * /*converter*/)
-{
-  return OSD_SCHEME_CATMARK;
-}
-
-static OpenSubdiv_VtxBoundaryInterpolation get_vtx_boundary_interpolation(
-    const OpenSubdiv_Converter *converter)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-  const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
-  const bke::subdiv::Settings *settings = &reshape_context->subdiv->settings;
-
-  return OpenSubdiv_VtxBoundaryInterpolation(
-      bke::subdiv::converter_vtx_boundary_interpolation_from_settings(settings));
-}
-
-static OpenSubdiv_FVarLinearInterpolation get_fvar_linear_interpolation(
-    const OpenSubdiv_Converter *converter)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-  const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
-  const bke::subdiv::Settings *settings = &reshape_context->subdiv->settings;
-
-  return OpenSubdiv_FVarLinearInterpolation(
-      bke::subdiv::converter_fvar_linear_from_settings(settings));
-}
-
-static bool specifies_full_topology(const OpenSubdiv_Converter * /*converter*/)
-{
-  return false;
-}
-
-static int get_num_vertices(const OpenSubdiv_Converter *converter)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-
-  return reshape_smooth_context->geometry.vertices.size();
-}
-
-static void get_face_vertices(const OpenSubdiv_Converter *converter,
-                              int face_index,
-                              int *face_vertices)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-  BLI_assert(face_index < reshape_smooth_context->geometry.faces().size());
-
-  const IndexRange face = reshape_smooth_context->geometry.faces()[face_index];
-
-  for (const int i : face.index_range()) {
-    const int corner_index = face[i];
-    const Corner *corner = &reshape_smooth_context->geometry.corners[corner_index];
-    face_vertices[i] = corner->vert_index;
-  }
-}
-
-static int get_num_edges(const OpenSubdiv_Converter *converter)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-  return reshape_smooth_context->geometry.num_edges;
-}
-
-static void get_edge_vertices(const OpenSubdiv_Converter *converter,
-                              const int edge_index,
-                              int edge_vertices[2])
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-  BLI_assert(edge_index < reshape_smooth_context->geometry.num_edges);
-
-  const Edge *edge = &reshape_smooth_context->geometry.edges[edge_index];
-  edge_vertices[0] = edge->v1;
-  edge_vertices[1] = edge->v2;
-}
-
-static float get_edge_sharpness(const OpenSubdiv_Converter *converter, const int edge_index)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-  BLI_assert(edge_index < reshape_smooth_context->geometry.num_edges);
-
-  const Edge *edge = &reshape_smooth_context->geometry.edges[edge_index];
-  return edge->sharpness;
-}
-
-static float get_vert_sharpness(const OpenSubdiv_Converter *converter, const int vert_index)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-  BLI_assert(vert_index < reshape_smooth_context->geometry.vertices.size());
-
-  const Vertex *vertex = &reshape_smooth_context->geometry.vertices[vert_index];
-  return vertex->sharpness;
-}
-
-static bool is_infinite_sharp_vertex(const OpenSubdiv_Converter *converter, int vert_index)
-{
-  const MultiresReshapeSmoothContext *reshape_smooth_context =
-      static_cast<const MultiresReshapeSmoothContext *>(converter->user_data);
-
-  BLI_assert(vert_index < reshape_smooth_context->geometry.vertices.size());
-
-  const Vertex *vertex = &reshape_smooth_context->geometry.vertices[vert_index];
-  return vertex->is_infinite_sharp;
-}
-
 static void converter_init(const MultiresReshapeSmoothContext *reshape_smooth_context,
                            OpenSubdiv_Converter *converter)
 {
-  converter->getSchemeType = get_scheme_type;
-  converter->getVtxBoundaryInterpolation = get_vtx_boundary_interpolation;
-  converter->getFVarLinearInterpolation = get_fvar_linear_interpolation;
-  converter->specifiesFullTopology = specifies_full_topology;
+  const MultiresReshapeContext *reshape_context = reshape_smooth_context->reshape_context;
+  const bke::subdiv::Settings &settings = reshape_context->subdiv->settings;
 
-  converter->faces = reshape_smooth_context->geometry.faces();
+  converter->scheme_type = OSD_SCHEME_CATMARK;
+  converter->vtx_boundary_interpolation = OpenSubdiv_VtxBoundaryInterpolation(
+      bke::subdiv::converter_vtx_boundary_interpolation_from_settings(&settings));
+  converter->fvar_linear_interpolation = OpenSubdiv_FVarLinearInterpolation(
+      bke::subdiv::converter_fvar_linear_from_settings(&settings));
 
-  converter->getNumEdges = get_num_edges;
-  converter->getNumVertices = get_num_vertices;
+  converter->verts_num = reshape_smooth_context->geometry.vertices.size();
 
-  converter->getFaceVertices = get_face_vertices;
-  converter->getFaceEdges = nullptr;
-
-  converter->getEdgeVertices = get_edge_vertices;
-  converter->getNumEdgeFaces = nullptr;
-  converter->getEdgeFaces = nullptr;
-  converter->getEdgeSharpness = get_edge_sharpness;
-
-  converter->getNumVertexEdges = nullptr;
-  converter->getVertexEdges = nullptr;
-  converter->getNumVertexFaces = nullptr;
-  converter->getVertexFaces = nullptr;
-  converter->isInfiniteSharpVertex = is_infinite_sharp_vertex;
-  converter->getVertexSharpness = get_vert_sharpness;
-
-  converter->getNumUVLayers = nullptr;
-  converter->precalcUVLayer = nullptr;
-  converter->finishUVLayer = nullptr;
-  converter->getNumUVCoordinates = nullptr;
-  converter->getFaceCornerUVIndex = nullptr;
+  converter->edges = reshape_smooth_context->geometry.edges.as_span().cast<std::pair<int, int>>();
+  converter->face_offsets = reshape_smooth_context->geometry.face_offsets.as_span();
+  converter->corner_verts = reshape_smooth_context->geometry.corner_verts;
+  converter->edge_sharpness = reshape_smooth_context->geometry.edge_sharpness;
+  converter->vert_sharpness = reshape_smooth_context->geometry.vert_sharpness;
 
   converter->freeUserData = nullptr;
 
@@ -973,7 +760,7 @@ BLI_INLINE const GridCoord *reshape_subdiv_refine_vert_grid_coord(const Vertex *
 {
   if (vert->grid_coords.is_empty()) {
     /* This is a loose vertex, the coordinate is not important. */
-    /* TODO(sergey): Once the subdiv_foreach() supports properly ignoring loose elements this
+    /* TODO(sergey): Once loose elements are excluded from the topology at the reshape level this
      * should become an assert instead. */
     return nullptr;
   }

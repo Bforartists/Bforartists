@@ -104,11 +104,11 @@ Array<float3> BKE_crazyspace_get_mapped_editverts(Depsgraph *depsgraph, Object *
   }
 
   /* Now get the cage. */
-  BMEditMesh *em = BKE_editmesh_from_object(obedit);
   const Mesh *mesh_eval_cage = bke::editbmesh_get_eval_cage(
-      depsgraph, scene_eval, obedit_eval, em, &CD_MASK_BAREMESH);
+      depsgraph, scene_eval, obedit_eval, &CD_MASK_BAREMESH);
 
-  const int nverts = em->bm->totvert;
+  const BMesh *bm = BKE_editmesh_bmesh_get(obedit);
+  const int nverts = bm->totvert;
   Array<float3> vertexcos(nverts);
   bke::mesh_get_mapped_verts_coords(mesh_eval_cage, vertexcos);
 
@@ -120,7 +120,7 @@ Array<float3> BKE_crazyspace_get_mapped_editverts(Depsgraph *depsgraph, Object *
   return vertexcos;
 }
 
-void BKE_crazyspace_set_quats_editmesh(BMEditMesh *em,
+void BKE_crazyspace_set_quats_editmesh(BMesh *bm,
                                        const Span<float3> origcos,
                                        const Span<float3> mappedcos,
                                        float (*quats)[4],
@@ -133,14 +133,14 @@ void BKE_crazyspace_set_quats_editmesh(BMEditMesh *em,
 
   {
     BMVert *v;
-    BM_ITER_MESH_INDEX (v, &iter, em->bm, BM_VERTS_OF_MESH, index) {
+    BM_ITER_MESH_INDEX (v, &iter, bm, BM_VERTS_OF_MESH, index) {
       BM_elem_flag_disable(v, BM_ELEM_TAG);
       BM_elem_index_set(v, index); /* set_inline */
     }
-    em->bm->elem_index_dirty &= ~BM_VERT;
+    bm->elem_index_dirty &= ~BM_VERT;
   }
 
-  BM_ITER_MESH (f, &iter, em->bm, BM_FACES_OF_MESH) {
+  BM_ITER_MESH (f, &iter, bm, BM_FACES_OF_MESH) {
     BMLoop *l_iter, *l_first;
 
     l_iter = l_first = BM_FACE_FIRST_LOOP(f);
@@ -233,7 +233,9 @@ int BKE_crazyspace_get_first_deform_matrices_editbmesh(Depsgraph *depsgraph,
   Mesh *me_input = id_cast<Mesh *>(ob->data);
   Mesh *mesh = nullptr;
   int i, modifiers_left_num = 0;
-  const int verts_num = em->bm->totvert;
+  /* The evaluated mesh may not have an edit-mesh, use the original. */
+  const BMesh *bm = BKE_editmesh_bmesh_get(DEG_get_original(ob));
+  const int verts_num = bm->totvert;
   int cageIndex = BKE_modifiers_get_cage_index(scene, ob, nullptr, true);
   VirtualModifierData virtual_modifier_data;
   ModifierEvalContext mectx = {depsgraph, ob, ModifierApplyFlag(0)};
@@ -268,7 +270,7 @@ int BKE_crazyspace_get_first_deform_matrices_editbmesh(Depsgraph *depsgraph,
         deformmats.reinitialize(verts_num);
         deformmats.fill(float3x3::identity());
       }
-      mti->deform_matrices_EM(md, &mectx, em, mesh, deformcos, deformmats);
+      mti->deform_matrices_EM(md, &mectx, mesh, deformcos, deformmats);
     }
     else {
       break;
@@ -657,6 +659,8 @@ GeometryDeformation get_evaluated_grease_pencil_drawing_deformation(
     return deformation;
   }
 
+  bool uses_drawing_hints = false;
+
   /* If there are edit hints, use the positions of those. */
   if (geometry_eval->has<GeometryComponentEditData>()) {
     const GeometryComponentEditData &edit_component_eval =
@@ -674,8 +678,39 @@ GeometryDeformation get_evaluated_grease_pencil_drawing_deformation(
         if (drawing_hints->deform_mats.has_value()) {
           deformation.deform_mats = *drawing_hints->deform_mats;
         }
+        uses_drawing_hints = true;
       }
     }
+  }
+  if (uses_drawing_hints) {
+    return deformation;
+  }
+
+  /* Use the positions of the evaluated drawing that corresponds to the original drawing, if the
+   * number of points matches. */
+  const GreasePencil *grease_pencil_eval = geometry_eval->get_grease_pencil();
+  if (grease_pencil_eval == nullptr) {
+    return deformation;
+  }
+
+  const Span<const greasepencil::Layer *> orig_layers = grease_pencil_orig.layers();
+  for (const greasepencil::Layer *layer_eval : grease_pencil_eval->layers()) {
+    const int orig_layer_index = layer_eval->runtime->orig_layer_index_;
+    if (!orig_layers.index_range().contains(orig_layer_index)) {
+      continue;
+    }
+    const greasepencil::Drawing *drawing_orig_at_frame = grease_pencil_orig.get_drawing_at(
+        *orig_layers[orig_layer_index], grease_pencil_eval->runtime->eval_frame);
+    if (drawing_orig_at_frame != &drawing_orig) {
+      continue;
+    }
+    const greasepencil::Drawing *drawing_eval = grease_pencil_eval->get_eval_drawing(*layer_eval);
+    if (drawing_eval != nullptr &&
+        drawing_eval->strokes().points_num() == drawing_orig.strokes().points_num())
+    {
+      deformation.positions = drawing_eval->strokes().positions();
+    }
+    break;
   }
 
   return deformation;

@@ -98,6 +98,13 @@ def align_view_buttons(self, context):
         if hasattr(bpy.ops, "reset_3d_view"):
             row.operator("view3d.reset_3d_view", text="", icon ="VIEW_RESET")
 
+    # BFA - roll and flip, same as View > Navigation (#6839)
+    if addon_prefs.reset_roll:
+        row.operator("view3d.view_roll_set", text="", icon="VIEW_ROLL_RESET")
+    if addon_prefs.flip_view:
+        if context.space_data.region_3d.view_perspective == "CAMERA":
+            row.operator("view3d.view_flip", text="", icon="VIEW_FLIP")
+
     #overlay
     row.separator(factor = 0.5)
 
@@ -167,6 +174,12 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "reset_3dview")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "reset_roll")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "flip_view")
 
         #overlay
         col = layout.column(align = True)
@@ -214,6 +227,8 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
     frame_all : BoolProperty(name="Frame All", default=False, description = "Center the view at all content and zoom to fit", )
 
     reset_3dview : BoolProperty(name="Reset 3D View", default=False, description = "Resets the 3d view to the defaults.\rNote that this is the reset 3dview addon, so this button might not show if the addon is off!", )
+    reset_roll : BoolProperty(name="Reset Roll", default=False, description = "Level the view, or reset the roll of the camera view", ) # BFA - #6839
+    flip_view : BoolProperty(name="Flip View", default=False, description = "Flip the camera view\nJust active in camera view", ) # BFA - #6839
 
     #Overlay
     groundgrid : BoolProperty(name="Groundgrid", default=False, description = "Show or hide the groundgrid", )

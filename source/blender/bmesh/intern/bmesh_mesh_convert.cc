@@ -230,14 +230,12 @@ static Vector<MeshToBMeshLayerInfo> mesh_to_bm_copy_info_calc(const Mesh &mesh,
     if (attr && attr->domain() == domain) {
       switch (attr->storage_type()) {
         case bke::AttrStorageType::Array: {
-          const auto &array_data = std::get<bke::Attribute::ArrayData>(attr->data());
-          info.mesh_data = array_data.data;
+          info.mesh_data = std::get<GSpan>(attr->data().values()).data();
           info.mesh_stride = bke::attribute_type_to_cpp_type(attr->data_type()).size;
           break;
         }
         case bke::AttrStorageType::Single: {
-          const auto &single_data = std::get<bke::Attribute::SingleData>(attr->data());
-          info.mesh_data = single_data.value;
+          info.mesh_data = std::get<GPointer>(attr->data().values()).get();
           info.mesh_stride = 0;
           break;
         }
@@ -1245,7 +1243,7 @@ static Vector<BMeshToMeshLayerInfo> bm_to_mesh_copy_info_calc(const CustomData &
     BMeshToMeshLayerInfo info{};
     info.type = cd_type;
     info.bmesh_offset = bm_layer.offset;
-    info.mesh_data = std::get<bke::Attribute::ArrayData>(attr.data_for_write()).data;
+    info.mesh_data = std::get<GMutableSpan>(attr.data().values_for_write()).data();
     info.elem_size = bke::attribute_type_to_cpp_type(attr.data_type()).size;
     infos.append(info);
   }
@@ -1395,9 +1393,7 @@ class AttrSingleValueChecker {
     can_be_single_.reinitialize(attrs_.size());
     for (const int attr_i : attrs_.index_range()) {
       BLI_assert(attrs_[attr_i]->storage_type() == bke::AttrStorageType::Array);
-      const auto &data = std::get<bke::Attribute::ArrayData>(attrs_[attr_i]->data());
-      const CPPType &type = bke::attribute_type_to_cpp_type(attrs_[attr_i]->data_type());
-      spans_[attr_i] = GSpan(type, data.data, data.size);
+      spans_[attr_i] = std::get<GSpan>(attrs_[attr_i]->data().values());
       can_be_single_[attr_i] = attrs_[attr_i]->data_type() != bke::AttrType::String;
     }
   }
@@ -1432,7 +1428,8 @@ class AttrSingleValueChecker {
       }
       if (can_be_single_[attr_i]) {
         const GPointer value(spans_[attr_i].type(), spans_[attr_i][0]);
-        attrs_[attr_i]->assign_data(bke::Attribute::SingleData::from_value(value));
+        attrs_[attr_i]->assign_data(bke::GList(
+            *value.type(), bke::GList::SingleData::ForValue(value), spans_[attr_i].size()));
       }
     }
   }
@@ -1776,43 +1773,39 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *mesh, const BMeshToMeshParam
   bke::SpanAttributeWriter<bool> uv_select_face;
   bke::SpanAttributeWriter<int> material_index;
   if (need_select_vert) {
-    select_vert = attrs.lookup_or_add_for_write_only_span<bool>(".select_vert", AttrDomain::Point);
+    select_vert = attrs.ensure_for_write_only_span<bool>(".select_vert", AttrDomain::Point);
   }
   if (need_hide_vert) {
-    hide_vert = attrs.lookup_or_add_for_write_only_span<bool>(".hide_vert", AttrDomain::Point);
+    hide_vert = attrs.ensure_for_write_only_span<bool>(".hide_vert", AttrDomain::Point);
   }
   if (need_select_edge) {
-    select_edge = attrs.lookup_or_add_for_write_only_span<bool>(".select_edge", AttrDomain::Edge);
+    select_edge = attrs.ensure_for_write_only_span<bool>(".select_edge", AttrDomain::Edge);
   }
   if (need_sharp_edge) {
-    sharp_edge = attrs.lookup_or_add_for_write_only_span<bool>("sharp_edge", AttrDomain::Edge);
+    sharp_edge = attrs.ensure_for_write_only_span<bool>("sharp_edge", AttrDomain::Edge);
   }
   if (need_uv_seams) {
-    uv_seams = attrs.lookup_or_add_for_write_only_span<bool>("uv_seam", AttrDomain::Edge);
+    uv_seams = attrs.ensure_for_write_only_span<bool>("uv_seam", AttrDomain::Edge);
   }
   if (need_hide_edge) {
-    hide_edge = attrs.lookup_or_add_for_write_only_span<bool>(".hide_edge", AttrDomain::Edge);
+    hide_edge = attrs.ensure_for_write_only_span<bool>(".hide_edge", AttrDomain::Edge);
   }
   if (need_select_poly) {
-    select_poly = attrs.lookup_or_add_for_write_only_span<bool>(".select_poly", AttrDomain::Face);
+    select_poly = attrs.ensure_for_write_only_span<bool>(".select_poly", AttrDomain::Face);
   }
   if (need_hide_poly) {
-    hide_poly = attrs.lookup_or_add_for_write_only_span<bool>(".hide_poly", AttrDomain::Face);
+    hide_poly = attrs.ensure_for_write_only_span<bool>(".hide_poly", AttrDomain::Face);
   }
   if (need_sharp_face) {
-    sharp_face = attrs.lookup_or_add_for_write_only_span<bool>("sharp_face", AttrDomain::Face);
+    sharp_face = attrs.ensure_for_write_only_span<bool>("sharp_face", AttrDomain::Face);
   }
   if (need_uv_select) {
-    uv_select_vert = attrs.lookup_or_add_for_write_only_span<bool>(".uv_select_vert",
-                                                                   AttrDomain::Corner);
-    uv_select_edge = attrs.lookup_or_add_for_write_only_span<bool>(".uv_select_edge",
-                                                                   AttrDomain::Corner);
-    uv_select_face = attrs.lookup_or_add_for_write_only_span<bool>(".uv_select_face",
-                                                                   AttrDomain::Face);
+    uv_select_vert = attrs.ensure_for_write_only_span<bool>(".uv_select_vert", AttrDomain::Corner);
+    uv_select_edge = attrs.ensure_for_write_only_span<bool>(".uv_select_edge", AttrDomain::Corner);
+    uv_select_face = attrs.ensure_for_write_only_span<bool>(".uv_select_face", AttrDomain::Face);
   }
   if (need_material_index) {
-    material_index = attrs.lookup_or_add_for_write_only_span<int>("material_index",
-                                                                  AttrDomain::Face);
+    material_index = attrs.ensure_for_write_only_span<int>("material_index", AttrDomain::Face);
   }
 
   attrs.add<float3>("position", bke::AttrDomain::Point, bke::AttributeInitConstruct());
@@ -1968,10 +1961,10 @@ void BM_mesh_bm_to_me(Main *bmain, BMesh *bm, Mesh *mesh, const BMeshToMeshParam
   }
 }
 
-void BM_mesh_bm_to_me_compact(BMesh &bm,
-                              Mesh &mesh,
-                              const CustomData_MeshMasks *mask,
-                              const bool add_mesh_attributes)
+static void mesh_bm_to_me_compact(BMesh &bm,
+                                  Mesh &mesh,
+                                  const CustomData_MeshMasks *mask,
+                                  const bool only_select_and_hide)
 {
   /* NOTE: The function is called from multiple threads with the same input BMesh and different
    * mesh objects. */
@@ -1989,7 +1982,8 @@ void BM_mesh_bm_to_me_compact(BMesh &bm,
   mesh.faces_num = bm.totface;
 
   /* Will have been cleared when clearing geometry. */
-  const bool need_uv_select = CustomData_has_layer(&bm.ldata, CD_PROP_FLOAT2);
+  const bool need_uv_select = !only_select_and_hide &&
+                              CustomData_has_layer(&bm.ldata, CD_PROP_FLOAT2);
   if (need_uv_select && bm.uv_select_sync_valid) {
     mesh.flag |= ME_FLAG_UV_SELECT_SYNC_VALID;
   }
@@ -2045,7 +2039,13 @@ void BM_mesh_bm_to_me_compact(BMesh &bm,
       });
   bm.elem_index_dirty &= ~(BM_VERT | BM_EDGE | BM_FACE | BM_LOOP);
 
-  if (add_mesh_attributes) {
+  if (only_select_and_hide) {
+    need_material_index = false;
+    need_sharp_edge = false;
+    need_sharp_face = false;
+    need_uv_seams = false;
+  }
+  else {
     const CustomData_MeshMasks &mask_final = mask ? *mask : CD_MASK_DERIVEDMESH;
 
     const CustomData &bm_data = get_bm_custom_data(bm, AttrDomain::Corner);
@@ -2058,16 +2058,16 @@ void BM_mesh_bm_to_me_compact(BMesh &bm,
     add_bm_cd_to_mesh(bm, bke::AttrDomain::Edge, mask_final.emask, mesh);
     add_bm_cd_to_mesh(bm, bke::AttrDomain::Face, mask_final.pmask, mesh);
     add_bm_cd_to_mesh(bm, bke::AttrDomain::Corner, mask_final.lmask, mesh);
-  }
 
-  if (const char *name = CustomData_get_active_layer_name(&bm.ldata, CD_PROP_FLOAT2)) {
-    MEM_SAFE_DELETE(mesh.active_uv_map_attribute);
-    mesh.active_uv_map_attribute = BLI_strdup(name);
-  }
+    if (const char *name = CustomData_get_active_layer_name(&bm.ldata, CD_PROP_FLOAT2)) {
+      MEM_SAFE_DELETE(mesh.active_uv_map_attribute);
+      mesh.active_uv_map_attribute = BLI_strdup(name);
+    }
 
-  if (const char *name = CustomData_get_render_layer_name(&bm.ldata, CD_PROP_FLOAT2)) {
-    MEM_SAFE_DELETE(mesh.default_uv_map_attribute);
-    mesh.default_uv_map_attribute = BLI_strdup(name);
+    if (const char *name = CustomData_get_render_layer_name(&bm.ldata, CD_PROP_FLOAT2)) {
+      MEM_SAFE_DELETE(mesh.default_uv_map_attribute);
+      mesh.default_uv_map_attribute = BLI_strdup(name);
+    }
   }
 
   /* Add optional mesh attributes before parallel iteration. */
@@ -2087,49 +2087,40 @@ void BM_mesh_bm_to_me_compact(BMesh &bm,
   bke::SpanAttributeWriter<int> material_index;
 
   bke::MutableAttributeAccessor attrs = mesh.attributes_for_write();
-  if (add_mesh_attributes) {
-    if (need_select_vert) {
-      select_vert = attrs.lookup_or_add_for_write_only_span<bool>(".select_vert",
-                                                                  AttrDomain::Point);
-    }
-    if (need_hide_vert) {
-      hide_vert = attrs.lookup_or_add_for_write_only_span<bool>(".hide_vert", AttrDomain::Point);
-    }
-    if (need_select_edge) {
-      select_edge = attrs.lookup_or_add_for_write_only_span<bool>(".select_edge",
-                                                                  AttrDomain::Edge);
-    }
-    if (need_sharp_edge) {
-      sharp_edge = attrs.lookup_or_add_for_write_only_span<bool>("sharp_edge", AttrDomain::Edge);
-    }
-    if (need_uv_seams) {
-      uv_seams = attrs.lookup_or_add_for_write_only_span<bool>("uv_seam", AttrDomain::Edge);
-    }
-    if (need_hide_edge) {
-      hide_edge = attrs.lookup_or_add_for_write_only_span<bool>(".hide_edge", AttrDomain::Edge);
-    }
-    if (need_select_poly) {
-      select_poly = attrs.lookup_or_add_for_write_only_span<bool>(".select_poly",
-                                                                  AttrDomain::Face);
-    }
-    if (need_hide_poly) {
-      hide_poly = attrs.lookup_or_add_for_write_only_span<bool>(".hide_poly", AttrDomain::Face);
-    }
-    if (need_sharp_face) {
-      sharp_face = attrs.lookup_or_add_for_write_only_span<bool>("sharp_face", AttrDomain::Face);
-    }
-    if (need_uv_select) {
-      uv_select_vert = attrs.lookup_or_add_for_write_only_span<bool>(".uv_select_vert",
-                                                                     AttrDomain::Corner);
-      uv_select_edge = attrs.lookup_or_add_for_write_only_span<bool>(".uv_select_edge",
-                                                                     AttrDomain::Corner);
-      uv_select_face = attrs.lookup_or_add_for_write_only_span<bool>(".uv_select_face",
-                                                                     AttrDomain::Face);
-    }
-    if (need_material_index) {
-      material_index = attrs.lookup_or_add_for_write_only_span<int>("material_index",
-                                                                    AttrDomain::Face);
-    }
+  if (need_select_vert) {
+    select_vert = attrs.ensure_for_write_only_span<bool>(".select_vert", AttrDomain::Point);
+  }
+  if (need_hide_vert) {
+    hide_vert = attrs.ensure_for_write_only_span<bool>(".hide_vert", AttrDomain::Point);
+  }
+  if (need_select_edge) {
+    select_edge = attrs.ensure_for_write_only_span<bool>(".select_edge", AttrDomain::Edge);
+  }
+  if (need_sharp_edge) {
+    sharp_edge = attrs.ensure_for_write_only_span<bool>("sharp_edge", AttrDomain::Edge);
+  }
+  if (need_uv_seams) {
+    uv_seams = attrs.ensure_for_write_only_span<bool>("uv_seam", AttrDomain::Edge);
+  }
+  if (need_hide_edge) {
+    hide_edge = attrs.ensure_for_write_only_span<bool>(".hide_edge", AttrDomain::Edge);
+  }
+  if (need_select_poly) {
+    select_poly = attrs.ensure_for_write_only_span<bool>(".select_poly", AttrDomain::Face);
+  }
+  if (need_hide_poly) {
+    hide_poly = attrs.ensure_for_write_only_span<bool>(".hide_poly", AttrDomain::Face);
+  }
+  if (need_sharp_face) {
+    sharp_face = attrs.ensure_for_write_only_span<bool>("sharp_face", AttrDomain::Face);
+  }
+  if (need_uv_select) {
+    uv_select_vert = attrs.ensure_for_write_only_span<bool>(".uv_select_vert", AttrDomain::Corner);
+    uv_select_edge = attrs.ensure_for_write_only_span<bool>(".uv_select_edge", AttrDomain::Corner);
+    uv_select_face = attrs.ensure_for_write_only_span<bool>(".uv_select_face", AttrDomain::Face);
+  }
+  if (need_material_index) {
+    material_index = attrs.ensure_for_write_only_span<int>("material_index", AttrDomain::Face);
   }
 
   attrs.add<float3>("position", bke::AttrDomain::Point, bke::AttributeInitConstruct());
@@ -2201,26 +2192,24 @@ void BM_mesh_bm_to_me_compact(BMesh &bm,
         }
       });
 
-  if (add_mesh_attributes) {
-    select_vert.finish();
-    hide_vert.finish();
-    select_edge.finish();
-    hide_edge.finish();
-    sharp_edge.finish();
-    uv_seams.finish();
-    select_poly.finish();
-    hide_poly.finish();
-    sharp_face.finish();
-    uv_select_vert.finish();
-    uv_select_edge.finish();
-    uv_select_face.finish();
-    material_index.finish();
+  select_vert.finish();
+  hide_vert.finish();
+  select_edge.finish();
+  hide_edge.finish();
+  sharp_edge.finish();
+  uv_seams.finish();
+  select_poly.finish();
+  hide_poly.finish();
+  sharp_face.finish();
+  uv_select_vert.finish();
+  uv_select_edge.finish();
+  uv_select_face.finish();
+  material_index.finish();
 
-    vert_single_checker.optimize_storage();
-    edge_single_checker.optimize_storage();
-    face_single_checker.optimize_storage();
-    corner_single_checker.optimize_storage();
-  }
+  vert_single_checker.optimize_storage();
+  edge_single_checker.optimize_storage();
+  face_single_checker.optimize_storage();
+  corner_single_checker.optimize_storage();
 }
 
 void BM_mesh_bm_to_me_for_eval(BMesh &bm, Mesh &mesh, const CustomData_MeshMasks *cd_mask_extra)
@@ -2233,7 +2222,12 @@ void BM_mesh_bm_to_me_for_eval(BMesh &bm, Mesh &mesh, const CustomData_MeshMasks
   }
   mask.vmask &= ~CD_MASK_SHAPEKEY;
 
-  BM_mesh_bm_to_me_compact(bm, mesh, &mask, true);
+  mesh_bm_to_me_compact(bm, mesh, &mask, false);
+}
+
+void BM_mesh_bm_to_me_only_select_and_hide(BMesh &bm, Mesh &mesh)
+{
+  mesh_bm_to_me_compact(bm, mesh, nullptr, true);
 }
 
 }  // namespace blender

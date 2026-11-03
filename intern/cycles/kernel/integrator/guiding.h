@@ -101,6 +101,22 @@ ccl_device_forceinline float3 clamp_guiding_position(const float3 p)
   return clamp(p, make_float3(-GUIDING_FLT_LARGE / 5.0f), make_float3(GUIDING_FLT_LARGE / 5.0f));
 }
 
+ccl_device_forceinline bool guiding_has_next_segment(KernelGlobals kg)
+{
+  return kg->opgl_path_segment_storage->GetNumSegments() < kg->opgl_path_segment_storage_size;
+}
+
+ccl_device_forceinline openpgl::cpp::PathSegment *guiding_next_segment(KernelGlobals kg)
+{
+  const bool has_next_segment = guiding_has_next_segment(kg);
+  /* Ideally we should always have a next segment, if not we might need to investigate our
+   * training data generation procedure.
+   * NOTE: Currently SSS events generate one additional event that is not counted as actual bounce.
+   */
+  kernel_assert(has_next_segment);
+  return has_next_segment ? kg->opgl_path_segment_storage->NextSegment() : nullptr;
+}
+
 #endif
 
 /* Path recording for guiding. */
@@ -120,14 +136,13 @@ ccl_device_forceinline void guiding_record_surface_segment(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const pgl_vec3f zero = guiding_vec3f(zero_float3());
   const pgl_vec3f one = guiding_vec3f(one_float3());
 
-  state->guiding.path_segment = kg->opgl_path_segment_storage->NextSegment();
-  /* FIXME: investigate and fix why state->guiding.path_segment could be nullptr. */
-  kernel_assert(state->guiding.path_segment != nullptr);
+  state->guiding.path_segment = guiding_next_segment(kg);
+
   if (state->guiding.path_segment != nullptr) {
     float3 p = sd->P;
     kernel_assert(is_guiding_valid(p));
@@ -159,7 +174,7 @@ ccl_device_forceinline void guiding_record_surface_bounce(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const float min_roughness = safe_sqrtf(fminf(roughness.x, roughness.y));
   const bool is_delta = (min_roughness == 0.0f);
@@ -193,7 +208,7 @@ ccl_device_forceinline void guiding_record_surface_emission(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   kernel_assert(state->guiding.path_segment != nullptr);
   if (state->guiding.path_segment != nullptr) {
@@ -222,14 +237,13 @@ ccl_device_forceinline void guiding_record_bssrdf_segment(ccl_attr_maybe_unused 
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const pgl_vec3f zero = guiding_vec3f(zero_float3());
   const pgl_vec3f one = guiding_vec3f(one_float3());
 
-  state->guiding.path_segment = kg->opgl_path_segment_storage->NextSegment();
-  /* FIXME: investigate and fix why state->guiding.path_segment could be nullptr. */
-  kernel_assert(state->guiding.path_segment != nullptr);
+  state->guiding.path_segment = guiding_next_segment(kg);
+
   if (state->guiding.path_segment != nullptr) {
     kernel_assert(is_guiding_valid(P));
     float3 p = clamp_guiding_position(P);
@@ -257,7 +271,7 @@ ccl_device_forceinline void guiding_record_bssrdf_weight(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   /* NOTE: Albedo left out here, will be included in guiding_record_bssrdf_bounce. */
   const float3 weight_rgb = spectrum_to_rgb(safe_divide_color(weight, albedo));
@@ -292,7 +306,7 @@ ccl_device_forceinline void guiding_record_bssrdf_bounce(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const float3 normal = clamp(N, -one_float3(), one_float3());
   const float3 weight_rgb = spectrum_to_rgb(weight * albedo);
@@ -324,14 +338,13 @@ ccl_device_forceinline void guiding_record_volume_segment(ccl_attr_maybe_unused 
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const pgl_vec3f zero = guiding_vec3f(zero_float3());
   const pgl_vec3f one = guiding_vec3f(one_float3());
 
-  state->guiding.path_segment = kg->opgl_path_segment_storage->NextSegment();
-  /* FIXME: investigate and fix why state->guiding.path_segment could be nullptr. */
-  kernel_assert(state->guiding.path_segment != nullptr);
+  state->guiding.path_segment = guiding_next_segment(kg);
+
   if (state->guiding.path_segment != nullptr) {
     kernel_assert(is_guiding_valid(P));
     float3 p = clamp_guiding_position(P);
@@ -360,7 +373,7 @@ ccl_device_forceinline void guiding_record_volume_bounce(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const float3 weight_rgb = spectrum_to_rgb(weight);
   const float3 normal = make_float3(0.0f, 0.0f, 1.0f);
@@ -392,7 +405,7 @@ ccl_device_forceinline void guiding_record_volume_transmission(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   if (state->guiding.path_segment) {
     // TODO (sherholz): need to find a better way to avoid this check
@@ -423,7 +436,7 @@ ccl_device_forceinline void guiding_record_volume_emission(ccl_attr_maybe_unused
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   if (state->guiding.path_segment) {
     const float3 Le_rgb = spectrum_to_rgb(Le);
@@ -450,7 +463,7 @@ ccl_device_forceinline void guiding_record_light_surface_segment(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const pgl_vec3f zero = guiding_vec3f(zero_float3());
   const pgl_vec3f one = guiding_vec3f(one_float3());
@@ -458,9 +471,8 @@ ccl_device_forceinline void guiding_record_light_surface_segment(
   const float3 ray_D = INTEGRATOR_STATE(state, ray, D);
   const float3 P = ray_P + isect->t * ray_D;
 
-  state->guiding.path_segment = kg->opgl_path_segment_storage->NextSegment();
-  /* FIXME: investigate and fix why state->guiding.path_segment could be nullptr. */
-  kernel_assert(state->guiding.path_segment != nullptr);
+  state->guiding.path_segment = guiding_next_segment(kg);
+
   if (state->guiding.path_segment != nullptr) {
     kernel_assert(is_guiding_valid(P));
     float3 p = clamp_guiding_position(P);
@@ -493,7 +505,7 @@ ccl_device_forceinline void guiding_record_background(ccl_attr_maybe_unused Kern
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   const float3 L_rgb = spectrum_to_rgb(L);
   const float3 ray_P = INTEGRATOR_STATE(state, ray, P);
@@ -509,7 +521,9 @@ ccl_device_forceinline void guiding_record_background(ccl_attr_maybe_unused Kern
   openpgl::cpp::SetDirectionOut(&background_segment, guiding_vec3f(-ray_D));
   openpgl::cpp::SetDirectContribution(&background_segment, guiding_vec3f(L_rgb));
   openpgl::cpp::SetMiWeight(&background_segment, mis_weight);
-  kg->opgl_path_segment_storage->AddSegment(background_segment);
+  if (guiding_has_next_segment(kg)) {
+    kg->opgl_path_segment_storage->AddSegment(background_segment);
+  }
 #endif
 }
 
@@ -588,7 +602,7 @@ ccl_device_forceinline void guiding_record_continuation_probability(
     return;
   }
 
-  assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
+  kernel_assert((INTEGRATOR_STATE(state, path, flag) & PATH_RAY_SHADOW_CATCHER_PASS) == 0);
 
   if (state->guiding.path_segment) {
     openpgl::cpp::SetRussianRouletteProbability(state->guiding.path_segment,

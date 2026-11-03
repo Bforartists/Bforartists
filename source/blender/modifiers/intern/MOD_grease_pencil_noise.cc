@@ -13,7 +13,7 @@
 
 #include "BLO_read_write.hh"
 
-#include "DNA_gpencil_modifier_types.h"
+#include "DNA_grease_pencil_modifier_types.h"
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
 
@@ -215,7 +215,7 @@ static void deform_drawing(const GreasePencilNoiseModifierData &mmd,
   }
 
   if (mmd.factor_uvs > 0.0f) {
-    if (bke::SpanAttributeWriter<float> rotations = attributes.lookup_or_add_for_write_span<float>(
+    if (bke::SpanAttributeWriter<float> rotations = attributes.ensure_for_write_span<float>(
             "rotation", bke::AttrDomain::Point))
     {
       filtered_strokes.foreach_index(

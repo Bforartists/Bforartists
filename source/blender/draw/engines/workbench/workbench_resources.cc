@@ -15,6 +15,7 @@
 #include "BLI_math_vector_c.hh"
 
 #include "GPU_batch_utils.hh"
+#include "IMB_colormanagement.hh"
 #include "IMB_imbuf.hh"
 #include "IMB_imbuf_types.hh"
 
@@ -118,6 +119,7 @@ void SceneResources::init(const SceneState &scene_state, const DRWContext *ctx)
 
   world_buf.viewport_size = ctx->viewport_size_get();
   world_buf.viewport_size_inv = 1.0f / world_buf.viewport_size;
+  world_buf.xray_mode = scene_state.xray_mode;
   world_buf.xray_alpha = shading.xray_alpha;
   world_buf.background_color = scene_state.background_color;
   world_buf.object_outline_color = float4(float3(shading.object_outline_color), 1.0f);
@@ -134,9 +136,13 @@ void SceneResources::init(const SceneState &scene_state, const DRWContext *ctx)
   else {
     if (shading.light == V3D_LIGHTING_MATCAP) {
       studio_light = BKE_studiolight_find(shading.matcap, STUDIOLIGHT_TYPE_MATCAP);
-      if (studio_light && studio_light->name != current_matcap) {
+      const StringRefNull working_space = IMB_colormanagement_working_space_get();
+      if (studio_light &&
+          (studio_light->name != current_matcap || working_space != current_matcap_working_space))
+      {
         if (get_matcap_tx(matcap_tx, *studio_light)) {
           current_matcap = studio_light->name;
+          current_matcap_working_space = working_space;
         }
       }
     }
@@ -213,7 +219,7 @@ void SceneResources::init(const SceneState &scene_state, const DRWContext *ctx)
                                      float4(0.0f, 0.0f, 0.0f, 0.0f));
 
   if (volume_cube_batch == nullptr) {
-    volume_cube_batch = GPU_batch_unit_cube();
+    volume_cube_batch = make_batch(GPU_batch_unit_cube());
   }
 }
 

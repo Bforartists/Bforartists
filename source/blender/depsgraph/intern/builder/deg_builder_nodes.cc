@@ -59,8 +59,8 @@
 #include "BKE_constraint.h"
 #include "BKE_curve.hh"
 #include "BKE_fcurve_driver.h"
-#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_grease_pencil.hh"
+#include "BKE_grease_pencil_modifiers.h"
 #include "BKE_idprop.hh"
 #include "BKE_image.hh"
 #include "BKE_key.hh"
@@ -807,7 +807,7 @@ void DepsgraphNodeBuilder::build_object(int base_index,
   if (object->greasepencil_modifiers.first() != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
-    BKE_gpencil_modifiers_foreach_ID_link(object, modifier_walk, &data);
+    BKE_grease_pencil_modifiers_foreach_ID_link(object, modifier_walk, &data);
   }
   /* Shader FX. */
   if (object->shader_fx.first() != nullptr) {
@@ -1326,6 +1326,11 @@ void DepsgraphNodeBuilder::build_action(bAction *action)
 
   build_idproperties(action->id.properties);
   build_idproperties(action->id.system_properties);
+
+  for (TimeMarker &marker : action->markers) {
+    build_idproperties(marker.prop);
+  }
+
   add_operation_node(&action->id, NodeType::ANIMATION, OperationCode::ANIMATION_EVAL);
 }
 

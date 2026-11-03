@@ -184,10 +184,12 @@ static bool update_auto_handle_types(bke::CurvesGeometry &curves,
     return false;
   }
   bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-  bke::SpanAttributeWriter handle_types = attributes.lookup_or_add_for_write_span<int8_t>(
-      handle_type_name, bke::AttrDomain::Point);
-  index_mask::masked_fill(handle_types.span, int8_t(BEZIER_HANDLE_ALIGN), convert_to_align);
-  handle_types.finish();
+  if (bke::SpanAttributeWriter handle_types = attributes.lookup_or_add_for_write_span<int8_t>(
+          handle_type_name, bke::AttrDomain::Point))
+  {
+    index_mask::masked_fill(handle_types.span, int8_t(BEZIER_HANDLE_ALIGN), convert_to_align);
+    handle_types.finish();
+  }
   return true;
 }
 
@@ -207,7 +209,7 @@ static bool update_vector_handle_types(bke::CurvesGeometry &curves,
     return false;
   }
 
-  bke::SpanAttributeWriter handle_types = attributes.lookup_or_add_for_write_span<int8_t>(
+  bke::SpanAttributeWriter handle_types = attributes.ensure_for_write_span<int8_t>(
       handle_type_name, bke::AttrDomain::Point);
   index_mask::masked_fill(handle_types.span, int8_t(BEZIER_HANDLE_FREE), selected_vector);
   handle_types.finish();
@@ -264,17 +266,24 @@ bool update_handle_types_for_transform(const eTfmMode mode,
 }
 
 static MutableSpan<float3> append_positions_to_custom_data(const IndexMask selection,
-                                                           Span<float3> positions,
+                                                           std::optional<Span<float3>> positions,
                                                            TransCustomData &custom_data)
 {
   CurvesTransformData &transform_data = *static_cast<CurvesTransformData *>(custom_data.data);
   transform_data.selection_by_layer.append(selection);
   const int data_offset = transform_data.layer_offsets.last();
   transform_data.layer_offsets.append(data_offset + selection.size());
-  array_utils::gather(
-      positions,
-      selection,
-      transform_data.positions.as_mutable_span().slice(data_offset, selection.size()));
+  if (positions) {
+    array_utils::gather(
+        *positions,
+        selection,
+        transform_data.positions.as_mutable_span().slice(data_offset, selection.size()));
+  }
+  else {
+    transform_data.positions.as_mutable_span()
+        .slice(data_offset, selection.size())
+        .fill(float3(0.0f));
+  }
   return transform_data.positions.as_mutable_span().slice(transform_data.layer_offsets.last(1),
                                                           selection.size());
 }
@@ -376,7 +385,7 @@ static void createTransCurvesVerts(bContext *C, TransInfo *t)
     bke::SpanAttributeWriter<float> attribute_writer;
     if (t->mode == TFM_CURVE_SHRINKFATTEN) {
       bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-      attribute_writer = attributes.lookup_or_add_for_write_span<float>(
+      attribute_writer = attributes.ensure_for_write_span<float>(
           "radius",
           bke::AttrDomain::Point,
           bke::AttributeInitVArray(VArray<float>::from_single(0.01f, curves.points_num())));
@@ -384,8 +393,7 @@ static void createTransCurvesVerts(bContext *C, TransInfo *t)
     }
     else if (t->mode == TFM_TILT) {
       bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-      attribute_writer = attributes.lookup_or_add_for_write_span<float>("tilt",
-                                                                        bke::AttrDomain::Point);
+      attribute_writer = attributes.ensure_for_write_span<float>("tilt", bke::AttrDomain::Point);
       value_attribute = attribute_writer.span;
     }
 
@@ -544,10 +552,8 @@ void curve_populate_trans_data_structs(const TransInfo &t,
                                        const IndexMask &bezier_curves,
                                        void *extra)
 {
-  const std::array<Span<float3>, 3> src_positions_per_selection_attr = {
-      curves.positions(),
-      curves.handle_positions_left().value_or(Span<float3>()),
-      curves.handle_positions_right().value_or(Span<float3>())};
+  const std::array<std::optional<Span<float3>>, 3> src_positions_per_selection_attr = {
+      curves.positions(), curves.handle_positions_left(), curves.handle_positions_right()};
   const View3D *v3d = (t.spacetype == SPACE_VIEW3D) ? static_cast<const View3D *>(t.view) :
                                                       nullptr;
   const bool hide_handles = (v3d != nullptr) ? (v3d->overlay.handle_display == CURVE_HANDLE_NONE) :

@@ -83,6 +83,7 @@ struct SeqDropCoords {
   bool has_read_mouse_pos = false;
   bool is_intersecting;
   bool use_snapping;
+  bool use_ripple;
   float2 snap_point;
   uint8_t type;
 };
@@ -111,6 +112,7 @@ static bool generic_poll_operations(const bContext *C, const wmEvent *event, uin
   const bool do_invert = event->modifier & KM_CTRL;
   g_drop_coords.use_snapping = do_invert ? (ts->snap_flag_seq & SCE_SNAP) == 0 :
                                            (ts->snap_flag_seq & SCE_SNAP) != 0;
+  g_drop_coords.use_ripple = (event->modifier & KM_SHIFT) != 0;
   return true;
 }
 
@@ -338,6 +340,8 @@ static float update_overlay_strip_position_data(bContext *C, const int mval[2])
 
 static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 {
+  Scene *scene = CTX_data_sequencer_scene(C);
+
   if (g_drop_coords.in_use) {
     if (!g_drop_coords.has_read_mouse_pos) {
       /* We didn't read the mouse position, so we need to do it manually here. */
@@ -357,13 +361,15 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 
     RNA_int_set(drop->ptr, "frame_start", g_drop_coords.start_frame);
     RNA_int_set(drop->ptr, "channel", g_drop_coords.channel);
-    RNA_boolean_set(drop->ptr, "overlap_shuffle_override", true);
     RNA_boolean_set(drop->ptr, "skip_locked_or_muted_channels", false);
+    RNA_enum_set(drop->ptr,
+                 "overlap_mode",
+                 g_drop_coords.use_ripple ? SEQ_OVERLAP_RIPPLE :
+                                            seq::tool_settings_overlap_mode_get(scene));
   }
   else {
     /* We are dropped inside the preview region. Put the strip on top of the
      * current displayed frame. */
-    Scene *scene = CTX_data_sequencer_scene(C);
     Editing *ed = seq::editing_ensure(scene);
     ListBaseT<Strip> *seqbase = seq::active_seqbase_get(ed);
     ListBaseT<SeqTimelineChannel> *channels = seq::channels_displayed_get(ed);
@@ -380,6 +386,9 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
 
     if (max_channel != -1) {
       RNA_int_set(drop->ptr, "channel", max_channel);
+    }
+    if (CTX_wm_window(C)->runtime->eventstate->modifier & KM_SHIFT) {
+      RNA_enum_set(drop->ptr, "overlap_mode", SEQ_OVERLAP_RIPPLE);
     }
   }
 
@@ -403,7 +412,7 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
       Image *ima = id_cast<Image *>(id);
       PointerRNA itemptr;
       char dir[FILE_MAX], file[FILE_MAX];
-      BLI_path_split_dir_file(ima->filepath, dir, sizeof(dir), file, sizeof(file));
+      BLI_path_split_dir_file(ima->filepath, dir, file);
       RNA_string_set(drop->ptr, "directory", dir);
       RNA_collection_clear(drop->ptr, "files");
       RNA_collection_add(drop->ptr, "files", &itemptr);
@@ -446,7 +455,7 @@ static void sequencer_drop_copy(bContext *C, wmDrag *drag, wmDropBox *drop)
       PointerRNA itemptr;
       char dir[FILE_MAX], file[FILE_MAX];
 
-      BLI_path_split_dir_file(path, dir, sizeof(dir), file, sizeof(file));
+      BLI_path_split_dir_file(path, dir, file);
 
       RNA_string_set(drop->ptr, "directory", dir);
 
@@ -613,7 +622,7 @@ static void draw_strip_in_view(bContext *C, wmWindow * /*win*/, wmDrag *drag, co
 
     if (sseq->timeline_overlay.flag & SEQ_TIMELINE_SHOW_STRIP_NAME) {
       if (is_filepath) {
-        BLI_path_split_file_part(path, filename, FILE_MAX);
+        BLI_path_split_file_part(path, filename);
         text_array[len_text_arr++] = filename;
       }
       else {
@@ -636,8 +645,7 @@ static void draw_strip_in_view(bContext *C, wmWindow * /*win*/, wmDrag *drag, co
 
     BLI_assert(len_text_arr <= ARRAY_SIZE(text_array));
 
-    const size_t text_display_len = BLI_string_join_array(
-        text_display, FILE_MAX, text_array, len_text_arr);
+    const size_t text_display_len = BLI_string_join_array(text_display, text_array, len_text_arr);
 
     ui::view2d_text_cache_add_rectf(
         &region->v2d, &rect, text_display, text_display_len, text_color);
@@ -708,8 +716,8 @@ static void prefetch_data_fn(void *custom_data, wmJobWorkerStatus * /*worker_sta
 
   /* The movie reader is not used to access pixel data here, so avoid internal colorspace
    * conversions that ensures typical color pipeline in Blender as they might be expensive. */
-  char colorspace[/*MAX_COLORSPACE_NAME*/ 64] = "\0";
-  MovieReader *anim = openanim(job_data->path, ImBufFlags::Zero, 0, true, colorspace);
+  ColorManagedColorspaceSettings colorspace_settings;
+  MovieReader *anim = openanim(job_data->path, ImBufFlags::Zero, 0, true, &colorspace_settings);
 
   if (anim != nullptr) {
     g_drop_coords.strip_length = MOV_get_duration_frames(anim);

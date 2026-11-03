@@ -1,61 +1,17 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2013-2022 Campbell Barton
-# SPDX-FileContributor: Mikhail Rachinskiy
+# SPDX-FileCopyrightText: 2016-2026 Mikhail Rachinskiy
 
-
-import math
-
-import bmesh
 import bpy
 from bpy.app.translations import pgettext_tip as tip_
 from bpy.props import FloatProperty, IntProperty
 from bpy.types import Operator
 
 
-class MESH_OT_clean_distorted(Operator):
-    bl_idname = "mesh.print3d_clean_distorted"
-    bl_label = "3D Print Clean Distorted"
-    bl_description = "Tessellate distorted faces"
-    bl_options = {"REGISTER", "UNDO"}
-
-    angle: FloatProperty(
-        name="Angle",
-        description="Limit for checking distorted faces",
-        subtype="ANGLE",
-        default=math.radians(45.0),
-        min=0.0,
-        max=math.radians(180.0),
-        step=100,
-    )
-
-    def execute(self, context):
-        from .. import lib
-
-        obj = context.active_object
-        bm = lib.bmesh_from_object(obj)
-        bm.normal_update()
-        elems_triangulate = [ele for ele in bm.faces if lib.face_is_distorted(ele, self.angle)]
-
-        if elems_triangulate:
-            bmesh.ops.triangulate(bm, faces=elems_triangulate)
-            lib.bmesh_to_object(obj, bm)
-
-        self.report({"INFO"}, tip_("Triangulated {} faces").format(len(elems_triangulate)))
-
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        self.angle = context.scene.print_3d.angle_distort
-
-        wm = context.window_manager
-        wm.invoke_props_popup(self, event)
-        return self.execute(context)
-
-
 class MESH_OT_clean_non_manifold(Operator):
     bl_idname = "mesh.print3d_clean_non_manifold"
-    bl_label = "3D Print Clean Non-Manifold"
-    bl_description = "Cleanup problems, like holes, non-manifold vertices and inverted normals"
+    bl_label = "Make Manifold"
+    bl_description = "Cleanup loose geometry, interior faces, non-manifold vertices and inverted normals"
     bl_options = {"REGISTER", "UNDO"}
 
     threshold: FloatProperty(
@@ -71,6 +27,10 @@ class MESH_OT_clean_non_manifold(Operator):
         description="Number of sides in hole required to fill (zero fills all holes)",
     )
 
+    @classmethod
+    def poll(cls, context):
+        return context.object is not None and context.object.type == "MESH"
+
     def execute(self, context):
         # TODO bow-tie quads
 
@@ -83,7 +43,6 @@ class MESH_OT_clean_non_manifold(Operator):
         self.delete_loose()
         self.delete_interior()
         self.remove_doubles(self.threshold)
-        self.dissolve_degenerate(self.threshold)
         self.fix_non_manifold(context, self.sides)  # may take a while
         self.make_normals_consistently_outwards()
 
@@ -102,6 +61,7 @@ class MESH_OT_clean_non_manifold(Operator):
 
     @staticmethod
     def elem_count(context):
+        import bmesh
         bm = bmesh.from_edit_mesh(context.edit_object.data)
         return len(bm.verts), len(bm.edges), len(bm.faces)
 
@@ -113,7 +73,7 @@ class MESH_OT_clean_non_manifold(Operator):
         bpy.ops.mesh.reveal()
 
     @staticmethod
-    def remove_doubles(threshold):
+    def remove_doubles(threshold: float):
         """remove duplicate vertices"""
         bpy.ops.mesh.select_all(action="SELECT")
         bpy.ops.mesh.remove_doubles(threshold=threshold)
@@ -132,19 +92,13 @@ class MESH_OT_clean_non_manifold(Operator):
         bpy.ops.mesh.delete(type="FACE")
 
     @staticmethod
-    def dissolve_degenerate(threshold):
-        """dissolve zero area faces and zero length edges"""
-        bpy.ops.mesh.select_all(action="SELECT")
-        bpy.ops.mesh.dissolve_degenerate(threshold=threshold)
-
-    @staticmethod
     def make_normals_consistently_outwards():
         """have all normals face outwards"""
         bpy.ops.mesh.select_all(action="SELECT")
         bpy.ops.mesh.normals_make_consistent()
 
     @classmethod
-    def fix_non_manifold(cls, context, sides):
+    def fix_non_manifold(cls, context, sides: int):
         """naive iterate-until-no-more approach for fixing manifolds"""
         total_non_manifold = cls.count_non_manifold_verts(context)
 
@@ -186,13 +140,13 @@ class MESH_OT_clean_non_manifold(Operator):
     @classmethod
     def count_non_manifold_verts(cls, context):
         """return a set of coordinates of non-manifold vertices"""
+        import bmesh
         cls.select_non_manifold_verts(use_wire=True, use_boundary=True, use_verts=True)
-
         bm = bmesh.from_edit_mesh(context.edit_object.data)
         return sum((1 for v in bm.verts if v.select))
 
     @classmethod
-    def fill_non_manifold(cls, sides):
+    def fill_non_manifold(cls, sides: int):
         """fill in any remnant non-manifolds"""
         bpy.ops.mesh.select_all(action="SELECT")
         bpy.ops.mesh.fill_holes(sides=sides)

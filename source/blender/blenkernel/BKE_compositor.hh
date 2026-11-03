@@ -8,31 +8,42 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 
-#include "BLI_compute_context.hh"
 #include "BLI_map.hh"
 #include "BLI_mutex.hh"
 #include "BLI_set.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
 
+#include "BKE_compute_context_cache_fwd.hh"
+
 namespace blender {
 
 struct Scene;
 struct View3D;
 struct RegionView3D;
+struct SpaceNode;
+struct ScrArea;
 struct BlendWriter;
 struct BlendDataReader;
 struct Main;
 struct ViewLayer;
 struct LibraryForeachIDData;
 struct ImBuf;
+struct bNode;
 struct bContext;
 struct SceneCompositorEffect;
 struct DepsNodeHandle;
 struct bNodeTree;
 struct PointerRNA;
+
+class ComputeContext;
+
+namespace bke {
+class bNodeTreeZone;
+}
 
 namespace bke::compositor {
 
@@ -187,6 +198,15 @@ bool is_viewport_compositor_enabled(const View3D &view_3d, const RegionView3D &r
 /* Checks if the viewport compositor is currently being used in any 3D viewport. */
 bool is_viewport_compositor_used(const bContext &context);
 
+/* Checks if the given area has a compositor viewer visible. */
+bool is_compositor_viewer_visible(const ScrArea &area);
+
+/* Checks if the given area has compositor node previews visible. */
+bool are_compositor_node_previews_visible(const ScrArea &area);
+
+/* Get the compositor node editor that has the active viewer. */
+const SpaceNode *get_active_compositor_node_editor(const bContext &C);
+
 /* --------------------------------------------------------------------
  * Depsgraph.
  */
@@ -201,12 +221,25 @@ void add_depsgraph_relations(Scene &scene,
  * Compute Contexts.
  */
 
-/* Computes the hash of the compositor active compute context. The active compute context is the
- * context that the user last interacted with, see root_node_group.active_viewer_key for more
- * information. */
-ComputeContextHash compute_active_compute_context_hash(const Scene &scene);
-ComputeContextHash compute_active_compute_context_hash(const Scene &scene,
-                                                       const bNodeTree &root_node_group);
+/* Get the compute context of the zone that the given node lies inside given the compute context of
+ * the owner tree or zone. If the node does not lie inside a zone, the given compute context is
+ * simply returned. The compute context is assumed to be that of a viewer node, so compute contexts
+ * will be constructed using inspection index for repeat zone for instance. If the node lies inside
+ * a context that does not support viewers, like closures, nullptr is returned. */
+const ComputeContext *get_zone_viewer_compute_context(
+    const bNode &node,
+    const bke::bNodeTreeZone *zone,
+    const ComputeContext &compute_context,
+    bke::ComputeContextCache &compute_context_cache);
+
+/* Computes the compute context of the active viewer node. If no active viewer node exists, a
+ * nullptr is returned. */
+const ComputeContext *compute_viewer_compute_context(
+    const Scene &scene, bke::ComputeContextCache &compute_context_cache);
+const ComputeContext *compute_viewer_compute_context(
+    const Scene &scene,
+    const bNodeTree &root_node_group,
+    bke::ComputeContextCache &compute_context_cache);
 
 }  // namespace bke::compositor
 }  // namespace blender

@@ -16,6 +16,8 @@ from bpy.props import (
         EnumProperty,
         FloatProperty,
         )
+from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 
 def checkEditMode():
@@ -37,9 +39,9 @@ def exitEditMode():
             bpy.ops.object.editmode_toggle()
 
 
-class MakeTriangle(Operator):
+class MakeTriangle(Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.make_triangle"
-    bl_label = "Triangle"
+    bl_label = "Add Triangle"
     bl_description = "Construct different types of Triangle Meshes"
     bl_options = {"REGISTER", "UNDO"}
 
@@ -57,10 +59,10 @@ class MakeTriangle(Operator):
             ('SCALENERIGHTANGLE', "Scalene right angled", "90° angle, no equal sides", 3)
             ]
     triangleFaceList = [
-            ('DEFAULT', "Normal", "1 Tri(angle) face", 0),
-            ('TRIANGLES', "3 Tri faces", "4 Vertices & 3 Tri(angle) faces", 1),
-            ('QUADS', "3 Quad faces", "7 Vertices & 3 Quad faces", 2),
-            ('SAFEQUADS', "6 Quad faces", "12 Vertices & 6 Quad faces", 3)
+            ('DEFAULT', "Triangle", "1 Triangle face", 0),
+            ('TRIANGLES', "3 Triangles", "4 Vertices & 3 Triangle faces", 1),
+            ('QUADS', "3 Quads", "7 Vertices & 3 Quad faces", 2),
+            ('SAFEQUADS', "6 Quads", "12 Vertices & 6 Quad faces", 3)
             ]
 
     # add definitions for some manipulation buttons
@@ -87,29 +89,33 @@ class MakeTriangle(Operator):
             )
     triangleFace: EnumProperty(
             items=triangleFaceList,
-            name="Face types",
+            name="Face Types",
             description="Triangle Face Types"
             )
     at_3Dcursor: BoolProperty(
             name="Use 3D Cursor",
             description="Draw the triangle where the 3D cursor is",
-            default=False
+            default=True
             )
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        col = layout.column(align=True)
+        col = layout.column()
         col.prop(self, "triangleType", text="Type")
+        col.prop(self, "triangleFace", text="Fill Type")
         col.prop(self, "scale")
-        col.prop(self, "triangleFace", text="Face")
-
-        col = layout.column(align=True)
-        col.prop(self, "at_3Dcursor", text="3D Cursor", toggle=True)
-
-        row = col.row(align=True)
-        row.prop(self, "flipX", toggle=True)
-        row.prop(self, "flipY", toggle=True)
+        col.separator()
+        row = col.row(heading='At')
+        row.prop(self, "at_3Dcursor", text="3D Cursor")
+        col.separator()
+        row = col.row(heading='Flip')
+        row.prop(self, "flipX", text='X')
+        col.prop(self, "flipY", text='Y')
+        col.separator()
+        draw_transform_props(self, col)
 
     def drawBasicTriangleShape(self):
         # set everything to 0

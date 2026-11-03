@@ -263,23 +263,18 @@ void BKE_bforartists_version_blendfile_string_from_blender(char *str_buff,
 
 /* -------------- bfa - end -----------------*/
 
-void BKE_blender_version_blendfile_string_from_values(char *str_buff,
-                                                      const size_t str_buff_maxncpy,
+void BKE_blender_version_blendfile_string_from_values(MutableCStr str_buff,
                                                       const short file_version,
                                                       const short file_subversion)
 {
   const short file_version_major = file_version / 100;
   const short file_version_minor = file_version % 100;
   if (file_subversion >= 0) {
-    BLI_snprintf_utf8(str_buff,
-                      str_buff_maxncpy,
-                      "%d.%d sub %d", // bfa remove sub brackets
-                      file_version_major,
-                      file_version_minor,
-                      file_subversion);
+    SNPRINTF_UTF8(
+        str_buff, "%d.%d sub %d", file_version_major, file_version_minor, file_subversion); // bfa remove sub brackets
   }
   else {
-    BLI_snprintf_utf8(str_buff, str_buff_maxncpy, "%d.%d", file_version_major, file_version_minor);
+    SNPRINTF_UTF8(str_buff, "%d.%d", file_version_major, file_version_minor);
   }
 }
 
@@ -305,14 +300,13 @@ void BKE_blender_globals_init()
   blender_version_init();
   bforartists_version_init(); /*bfa version string*/
 
-  memset(&G, 0, sizeof(Global));
+  G = Global{};
 
   U.savetime = 1;
 
   BKE_blender_globals_main_replace(BKE_main_new());
 
   STRNCPY(G.filepath_last_image, "//");
-  G.filepath_last_blend[0] = '\0';
 
 #ifndef WITH_PYTHON_SECURITY /* default */
   G.f |= G_FLAG_SCRIPT_AUTOEXEC;
@@ -321,8 +315,6 @@ void BKE_blender_globals_init()
 #endif
 
   G.log.level = CLG_LEVEL_WARN;
-
-  G.profile_gpu = false;
 }
 
 void BKE_blender_globals_clear()
@@ -361,11 +353,12 @@ void BKE_blender_globals_crash_path_get(char filepath[FILE_MAX])
    * de-referencing. */
 
   if (!(G_MAIN && G_MAIN->filepath[0])) {
-    BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), "bforartists.crash.txt"); /* bfa - our name */
+    BLI_path_join(MutableCStr(filepath, FILE_MAX), BKE_tempdir_base(), "bforartists.crash.txt"); /* bfa - our name */
   }
   else {
-    BLI_path_join(filepath, FILE_MAX, BKE_tempdir_base(), BLI_path_basename(G_MAIN->filepath));
-    BLI_path_extension_replace(filepath, FILE_MAX, ".crash.txt");
+    BLI_path_join(
+        MutableCStr(filepath, FILE_MAX), BKE_tempdir_base(), BLI_path_basename(G_MAIN->filepath));
+    BLI_path_extension_replace(MutableCStr(filepath, FILE_MAX), ".crash.txt");
   }
 }
 

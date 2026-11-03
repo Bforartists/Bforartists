@@ -5,6 +5,12 @@
 #include <limits>
 #include <memory>
 
+#define FMT_USE_RTTI 1
+#include <fmt/format.h>
+#include <fmt/std.h>
+
+#include "PRF_profile.hh"
+
 #include "BLI_map.hh"
 #include "BLI_string_ref.hh"
 
@@ -25,11 +31,13 @@ Operation::~Operation() = default;
 
 void Operation::evaluate()
 {
+  PRF_scope_with_name("compositor::Operation", ProfileCategory::Default);
+  PRF_scope_set_dynamic_name("%s", fmt::format("{}", typeid(*this)).c_str());
+
   this->evaluate_input_processors();
   this->execute();
   this->log_data();
   this->release_inputs();
-  this->context().evaluate_operation_post();
 }
 
 Result &Operation::get_input(StringRef identifier) const
@@ -38,6 +46,11 @@ Result &Operation::get_input(StringRef identifier) const
 }
 
 Result &Operation::get_result(StringRef identifier)
+{
+  return results_.lookup(identifier);
+}
+
+const Result &Operation::get_result(StringRef identifier) const
 {
   return results_.lookup(identifier);
 }
@@ -101,13 +114,13 @@ void Operation::evaluate_input_processors()
    * value of all inputs, so previous input processors for all inputs needs to be added and
    * evaluated first. */
 
-  for (const StringRef &identifier : results_mapped_to_inputs_.keys()) {
+  for (const std::string &identifier : results_mapped_to_inputs_.keys()) {
     SimpleOperation *conversion = ConversionOperation::construct_if_needed(
         this->context(), this->get_input(identifier), this->get_input_descriptor(identifier));
     this->add_and_evaluate_input_processor(identifier, conversion);
   }
 
-  for (const StringRef &identifier : results_mapped_to_inputs_.keys()) {
+  for (const std::string &identifier : results_mapped_to_inputs_.keys()) {
     SimpleOperation *realize_on_domain = RealizeOnDomainOperation::construct_if_needed(
         this->context(),
         this->get_input(identifier),

@@ -163,14 +163,17 @@ static void read_typed_property_sample(const ICompoundProperty &parent,
     using ValueType = typename TArrayProperty::value_type;
 
     const SamplePtr sample_ptr = array_prop.getValue(selector);
-    bke::SpanAttributeWriter<TWriteValue> writer =
-        attribute_accessor.lookup_or_add_for_write_span<TWriteValue>(name, bke::AttrDomain::Point);
-    MutableSpan<TWriteValue> span = writer.span;
-    for (const int64_t i : IndexRange(std::min(span.size(), int64_t(sample_ptr->size())))) {
-      ValueType value = (*sample_ptr)[i];
-      span[i] = convert_abc_value<TWriteValue>(value);
+    if (bke::SpanAttributeWriter<TWriteValue> writer =
+            attribute_accessor.lookup_or_add_for_write_span<TWriteValue>(name,
+                                                                         bke::AttrDomain::Point))
+    {
+      MutableSpan<TWriteValue> span = writer.span;
+      for (const int64_t i : IndexRange(std::min(span.size(), int64_t(sample_ptr->size())))) {
+        ValueType value = (*sample_ptr)[i];
+        span[i] = convert_abc_value<TWriteValue>(value);
+      }
+      writer.finish();
     }
-    writer.finish();
   }
 }
 
@@ -266,7 +269,7 @@ void AbcPointsReader::read_geometry(bke::GeometrySet &geometry_set,
   }
 
   if (pointcloud->totpoint != positions->size()) {
-    pointcloud = BKE_pointcloud_new_nomain(positions->size());
+    pointcloud = BKE_pointcloud_new_nomain(PointCloudType::Points, positions->size());
   }
 
   bke::MutableAttributeAccessor attribute_accessor = pointcloud->attributes_for_write();
@@ -274,13 +277,36 @@ void AbcPointsReader::read_geometry(bke::GeometrySet &geometry_set,
   MutableSpan<float3> point_positions = pointcloud->positions_for_write();
   read_points_sample(m_schema, sample_sel, point_positions);
 
+  bool widths_handled = false;
   if (widths) {
-    MutableSpan<float> point_radii = pointcloud->radius_for_write();
-    for (const int64_t i : IndexRange(std::min(point_radii.size(), int64_t(widths->size())))) {
-      point_radii[i] = (*widths)[i] / 2.0f;
+    switch (widths_param.getScope()) {
+      case Alembic::AbcGeom::kConstantScope: {
+        if (widths->size() >= 1) {
+          const float radius = (*widths)[0] / 2.0f;
+          attribute_accessor.remove("radius");
+          attribute_accessor.add<float>(
+              "radius", bke::AttrDomain::Point, bke::AttributeInitValue(radius));
+          widths_handled = true;
+        }
+        break;
+      }
+      case Alembic::AbcGeom::kUniformScope:
+      case Alembic::AbcGeom::kVaryingScope:
+      case Alembic::AbcGeom::kVertexScope:
+      case Alembic::AbcGeom::kFacevaryingScope: {
+        MutableSpan<float> point_radii = pointcloud->radius_for_write();
+        for (const int64_t i : IndexRange(std::min(point_radii.size(), int64_t(widths->size())))) {
+          point_radii[i] = (*widths)[i] / 2.0f;
+        }
+        widths_handled = true;
+        break;
+      }
+      case Alembic::AbcGeom::kUnknownScope:
+        break;
     }
   }
-  else {
+
+  if (!widths_handled) {
     attribute_accessor.remove("radius");
     attribute_accessor.add<float>(
         "radius", bke::AttrDomain::Point, bke::AttributeInitValue(0.01f));
@@ -293,8 +319,7 @@ void AbcPointsReader::read_geometry(bke::GeometrySet &geometry_set,
         m_schema, sample_sel, read_params.velocity_name);
     if (velocities && pointcloud->totpoint == int(velocities->size())) {
       bke::SpanAttributeWriter<float3> velocity_writer =
-          attribute_accessor.lookup_or_add_for_write_span<float3>("velocity",
-                                                                  bke::AttrDomain::Point);
+          attribute_accessor.ensure_for_write_span<float3>("velocity", bke::AttrDomain::Point);
       MutableSpan<float3> point_velocity = velocity_writer.span;
       for (const int64_t i :
            IndexRange(std::min(point_velocity.size(), int64_t(velocities->size()))))

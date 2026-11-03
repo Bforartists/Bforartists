@@ -8,6 +8,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 #include "MEM_guardedalloc.h"
 
@@ -21,6 +22,7 @@
 #include "BLT_translation.hh"
 
 #include "BKE_appdir.hh"
+#include "BKE_blender_project.hh"
 #include "BKE_context.hh"
 #include "BKE_library.hh"
 #include "BKE_main.hh"
@@ -196,6 +198,28 @@ static bool file_browse_operator_relative_paths_supported(wmOperator *op)
   return true;
 }
 
+static void file_browse_apply_path_templates(const Main *bmain,
+                                             PropertyRNA *prop,
+                                             std::string &path)
+{
+  if (!(RNA_property_flag(prop) & PROP_PATH_SUPPORTS_TEMPLATES)) {
+    return;
+  }
+
+  /* Store paths in project settings relative to the project root. */
+  if (RNA_property_path_template_type(prop) == PROP_VARIABLES_PROJECT) {
+    const bool path_is_template = false;
+    path = BKE_blender_project_read_callback(bmain, [&](const bke::BlenderProject *project) {
+      return project ? BKE_blender_project_path_make_relative(path, path_is_template, *project) :
+                       BKE_path_template_escape(path);
+    });
+    return;
+  }
+
+  /* Escape the path's curly braces. */
+  path = BKE_path_template_escape(path);
+}
+
 static wmOperatorStatus file_browse_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
@@ -212,7 +236,7 @@ static wmOperatorStatus file_browse_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  path = RNA_string_get_alloc(op->ptr, path_prop, nullptr, 0, nullptr);
+  path = RNA_string_get_alloc(op->ptr, path_prop, std::nullopt, nullptr);
 
   if (path[0]) {
     /* Check relative paths are supported here as this option will be hidden
@@ -237,7 +261,7 @@ static wmOperatorStatus file_browse_exec(bContext *C, wmOperator *op)
       }
 
       if (prop_subtype == PROP_DIRPATH) {
-        BLI_path_slash_ensure(path_buf, sizeof(path_buf));
+        BLI_path_slash_ensure(path_buf);
       }
 
       if (make_relative) {
@@ -247,9 +271,13 @@ static wmOperatorStatus file_browse_exec(bContext *C, wmOperator *op)
     }
   }
 
-  RNA_property_string_set(&fbo->ptr, fbo->prop, path);
-  RNA_property_update(C, &fbo->ptr, fbo->prop);
+  std::string path_str = path;
   MEM_delete(path);
+
+  file_browse_apply_path_templates(bmain, fbo->prop, path_str);
+
+  RNA_property_string_set(&fbo->ptr, fbo->prop, path_str.c_str());
+  RNA_property_update(C, &fbo->ptr, fbo->prop);
 
   if (fbo->is_undo) {
     const char *undostr = RNA_property_identifier(fbo->prop);
@@ -304,7 +332,7 @@ static wmOperatorStatus file_browse_invoke(bContext *C, wmOperator *op, const wm
     return OPERATOR_CANCELLED;
   }
 
-  path = RNA_property_string_get_alloc(&ptr, prop, nullptr, 0, nullptr);
+  path = RNA_property_string_get_alloc(&ptr, prop, std::nullopt, nullptr);
 
   if ((RNA_property_flag(prop) & PROP_PATH_SUPPORTS_TEMPLATES) != 0) {
     const std::optional<bke::path_templates::VariableMap> variables =
@@ -398,10 +426,10 @@ static wmOperatorStatus file_browse_invoke(bContext *C, wmOperator *op, const wm
         STRNCPY(fonts_path, U.fontdir);
         /* The file selector will expand the blend-file relative prefix. */
       }
-      else if (!BKE_appdir_font_folder_default(fonts_path, ARRAY_SIZE(fonts_path))) {
+      else if (!BKE_appdir_font_folder_default(fonts_path)) {
         STRNCPY(fonts_path, BKE_appdir_folder_default_or_root());
       }
-      BLI_path_slash_ensure(fonts_path, ARRAY_SIZE(fonts_path));
+      BLI_path_slash_ensure(fonts_path);
       MEM_delete(path);
       path = BLI_strdup(fonts_path);
     }
@@ -411,7 +439,7 @@ static wmOperatorStatus file_browse_invoke(bContext *C, wmOperator *op, const wm
     /* Find a reasonable folder to start in if none found. */
     char default_path[FILE_MAX] = {0};
     STRNCPY(default_path, BKE_appdir_folder_default_or_root());
-    BLI_path_slash_ensure(default_path, ARRAY_SIZE(default_path));
+    BLI_path_slash_ensure(default_path);
     MEM_delete(path);
     path = BLI_strdup(default_path);
   }

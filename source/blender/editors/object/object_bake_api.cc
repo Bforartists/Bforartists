@@ -123,7 +123,7 @@ struct BakeAPIRender {
   float *progress;
   bool *do_update;
 
-  /* To check for job cancelation. */
+  /* To check for job cancellation. */
   bool *stop;
 
   /* Operator state. */
@@ -922,29 +922,29 @@ static bool bake_targets_output_external(const BakeAPIRender *bkr,
     UNUSED_VARS_NDEBUG(errors);
 
     if (bkr->is_automatic_name) {
-      BLI_path_suffix(filepath, FILE_MAX, ob->id.name + 2, "_");
-      BLI_path_suffix(filepath, FILE_MAX, bkr->identifier, "_");
+      BLI_path_suffix(filepath, ob->id.name + 2, "_");
+      BLI_path_suffix(filepath, bkr->identifier, "_");
     }
 
     if (bkr->is_split_materials) {
       if (ob_eval->mat[i]) {
-        BLI_path_suffix(filepath, FILE_MAX, ob_eval->mat[i]->id.name + 2, "_");
+        BLI_path_suffix(filepath, ob_eval->mat[i]->id.name + 2, "_");
       }
       else if (mesh_eval->mat[i]) {
-        BLI_path_suffix(filepath, FILE_MAX, mesh_eval->mat[i]->id.name + 2, "_");
+        BLI_path_suffix(filepath, mesh_eval->mat[i]->id.name + 2, "_");
       }
       else {
         /* if everything else fails, use the material index */
         char tmp[5];
         SNPRINTF_UTF8(tmp, "%d", i % 1000);
-        BLI_path_suffix(filepath, FILE_MAX, tmp, "_");
+        BLI_path_suffix(filepath, tmp, "_");
       }
     }
 
     if (bk_image->tile_number) {
       char tmp[12];
       SNPRINTF_UTF8(tmp, "%d", bk_image->tile_number);
-      BLI_path_suffix(filepath, FILE_MAX, tmp, "_");
+      BLI_path_suffix(filepath, tmp, "_");
     }
 
     /* save it externally */
@@ -1176,8 +1176,8 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
   Mesh *mesh = id_cast<Mesh *>(ob->data);
   const StringRef attr_name = mesh->active_color_attribute;
   const bke::AttrDomain domain = [&]() {
-    if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
-      return BM_data_layer_lookup(*em->bm, attr_name).domain;
+    if (const BMesh *bm = BKE_editmesh_bmesh_get(mesh)) {
+      return BM_data_layer_lookup(*bm, attr_name).domain;
     }
     bke::AttributeAccessor attributes = mesh->attributes();
     return attributes.lookup_meta_data(attr_name)->domain;
@@ -1210,12 +1210,12 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
       }
     }
 
-    if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
-      const BMDataLayerLookup attr = BM_data_layer_lookup(*em->bm, attr_name);
+    if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+      const BMDataLayerLookup attr = BM_data_layer_lookup(*bm, attr_name);
       BMVert *v;
       BMIter viter;
       int i = 0;
-      BM_ITER_MESH (v, &viter, em->bm, BM_VERTS_OF_MESH) {
+      BM_ITER_MESH (v, &viter, bm, BM_VERTS_OF_MESH) {
         void *data = BM_ELEM_CD_GET_VOID_P(v, attr.offset);
         if (attr.type == bke::AttrType::ColorFloat) {
           memcpy(data, &mcol[i], sizeof(MPropCol));
@@ -1245,12 +1245,12 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
     MEM_SAFE_DELETE(num_loops_for_vertex);
   }
   else if (domain == bke::AttrDomain::Corner) {
-    if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
-      const BMDataLayerLookup attr = BM_data_layer_lookup(*em->bm, attr_name);
+    if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+      const BMDataLayerLookup attr = BM_data_layer_lookup(*bm, attr_name);
       BMFace *f;
       BMIter fiter;
       int i = 0;
-      BM_ITER_MESH (f, &fiter, em->bm, BM_FACES_OF_MESH) {
+      BM_ITER_MESH (f, &fiter, bm, BM_FACES_OF_MESH) {
         BMLoop *l;
         BMIter liter;
         BM_ITER_ELEM (l, &liter, f, BM_LOOPS_OF_FACE) {
@@ -1854,7 +1854,7 @@ static void bake_init_api_data(wmOperator *op, bContext *C, BakeAPIRender *bkr)
 {
   bScreen *screen = CTX_wm_screen(C);
 
-  bkr->ob = CTX_data_active_object(C);
+  bkr->ob = context_active_object(C);
   bkr->main = CTX_data_main(C);
   bkr->view_layer = CTX_data_view_layer(C);
   bkr->scene = CTX_data_scene(C);

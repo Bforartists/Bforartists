@@ -344,10 +344,6 @@ string MetalDevice::preprocess_source(MetalPipelineType pso_type,
     global_defines += "#define __KERNEL_FEATURES__ " + to_string(kernel_features) + "\n";
   }
 
-  if (use_local_atomic_sort()) {
-    global_defines += "#define __KERNEL_LOCAL_ATOMIC_SORT__\n";
-  }
-
   if (use_metalrt) {
     global_defines += "#define __KERNEL_METALRT__\n";
     if (motion_blur) {
@@ -1037,7 +1033,8 @@ void MetalDevice::const_copy_to(const char *name, void *host, const size_t size)
            sizeof(IntegratorStateGPU) - pointer_block_size);
   }
 #  define KERNEL_DATA_ARRAY(data_type, tex_name) \
-    else if (strcmp(name, #tex_name) == 0) { \
+    else if (strcmp(name, #tex_name) == 0) \
+    { \
       update_launch_pointers(offsetof(KernelParamsMetal, tex_name), host, size); \
     }
 #  include "kernel/data_arrays.h"
@@ -1282,11 +1279,6 @@ void MetalDevice::image_free(device_image &mem)
     erase_allocation(mem);
   }
   image_info_id_map[image_info_id] = nil;
-}
-
-bool MetalDevice::has_unified_memory_any() const
-{
-  return true;
 }
 
 unique_ptr<DeviceQueue> MetalDevice::gpu_queue_create()

@@ -3,21 +3,15 @@
 
 import bpy
 
-from bfa_3Dsequencer.sync.core import get_sync_settings
+from ..sync.core import get_sync_settings
 
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
+from ..utils import register_classes, unregister_classes
 
 
 class SequenceSettings(bpy.types.PropertyGroup):
     """
     Sequence related settings.
     """
-
-    overlay_dopesheet: bpy.props.BoolProperty(
-        name="Dopesheet Overlay",
-        description="Display Sequence timeline overlay in dopesheet editors",
-        default=True,
-    )
 
     def shot_active_index_get_cb(self):
         """Get sequence active scene index."""
@@ -27,7 +21,7 @@ class SequenceSettings(bpy.types.PropertyGroup):
         """Set sequence active scene index."""
         # Move to beginning of scene strip in master scene.
         scene = get_sync_settings().master_scene
-        frame = scene.sequence_editor.strips[idx].frame_final_start
+        frame = scene.sequence_editor.strips[idx].left_handle
         scene.frame_set(frame)
 
     shot_active_index: bpy.props.IntProperty(

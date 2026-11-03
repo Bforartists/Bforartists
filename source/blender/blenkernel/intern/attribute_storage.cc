@@ -8,9 +8,9 @@
 
 #include "CLG_log.h"
 
-#include "BLI_array_utils.hh"
 #include "BLI_assert.hh"
 #include "BLI_color_types.hh"
+#include "BLI_generic_array.hh"
 #include "BLI_implicit_sharing.hh"
 #include "BLI_memory_counter.hh"
 #include "BLI_resource_scope.hh"
@@ -41,61 +41,6 @@ static CLG_LogRef LOG = {"geom.attribute"};
 
 namespace bke {
 
-class ArrayDataImplicitSharing : public ImplicitSharingInfo {
- private:
-  void *data_;
-  int64_t size_;
-  const CPPType &type_;
-  /* This struct could also store caches about the array data, like the min and max values. */
-
- public:
-  ArrayDataImplicitSharing(void *data, const int64_t size, const CPPType &type)
-      : ImplicitSharingInfo(), data_(data), size_(size), type_(type)
-  {
-  }
-
- private:
-  void delete_self_with_data() override
-  {
-    if (data_ != nullptr) {
-      type_.destruct_n(data_, size_);
-      MEM_delete_void(data_);
-    }
-    MEM_delete(this);
-  }
-
-  void delete_data_only() override
-  {
-    type_.destruct_n(data_, size_);
-    MEM_delete_void(data_);
-    data_ = nullptr;
-    size_ = 0;
-  }
-};
-
-Attribute::ArrayData Attribute::ArrayData::from_value(const GPointer &value,
-                                                      const int64_t domain_size)
-{
-  Attribute::ArrayData data{};
-  const CPPType &type = *value.type();
-  const void *value_ptr = value.get();
-
-  /* Prefer `calloc` to zeroing after allocation since it is faster. */
-  if (memory_is_zero(value_ptr, type.size)) {
-    data.data = MEM_new_array_zeroed_aligned(domain_size, type.size, type.alignment, __func__);
-  }
-  else {
-    data.data = MEM_new_array_uninitialized_aligned(
-        domain_size, type.size, type.alignment, __func__);
-    type.fill_construct_n(value_ptr, data.data, domain_size);
-  }
-
-  data.size = domain_size;
-  BLI_assert(type.is_trivially_destructible);
-  data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.data));
-  return data;
-}
-
 static GPointer default_value_for_type(const CPPType &type)
 {
   if (type.is<ColorGeometry4f>()) {
@@ -109,74 +54,17 @@ static GPointer default_value_for_type(const CPPType &type)
   return GPointer(type, type.default_value());
 }
 
-Attribute::ArrayData Attribute::ArrayData::from_default_value(const CPPType &type,
-                                                              const int64_t domain_size)
+Attribute::Attribute(std::string name, const AttrDomain domain, GList data)
+    : name_(std::move(name)), domain_(domain), data_(std::move(data))
 {
-  return from_value(default_value_for_type(type), domain_size);
+  BLI_assert(&attribute_type_to_cpp_type(cpp_type_to_attribute_type(data_.cpp_type())) ==
+             &data_.cpp_type());
 }
 
-Attribute::ArrayData Attribute::ArrayData::from_uninitialized(const CPPType &type,
-                                                              const int64_t domain_size)
+GList Attribute::default_array_data(const CPPType &type, const int64_t domain_size)
 {
-  Attribute::ArrayData data{};
-  data.data = MEM_new_array_uninitialized_aligned(
-      domain_size, type.size, type.alignment, __func__);
-  data.size = domain_size;
-  BLI_assert(type.is_trivially_destructible);
-  data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.data));
-  return data;
-}
-
-Attribute::ArrayData Attribute::ArrayData::from_constructed(const CPPType &type,
-                                                            const int64_t domain_size)
-{
-  Attribute::ArrayData data = Attribute::ArrayData::from_uninitialized(type, domain_size);
-  type.default_construct_n(data.data, domain_size);
-  return data;
-}
-
-Attribute::SingleData Attribute::SingleData::from_value(const GPointer &value)
-{
-  Attribute::SingleData data{};
-  const CPPType &type = *value.type();
-  data.value = MEM_new_uninitialized_aligned(type.size, type.alignment, __func__);
-  type.copy_construct(value.get(), data.value);
-  BLI_assert(type.is_trivially_destructible);
-  data.sharing_info = ImplicitSharingPtr<>(implicit_sharing::info_for_mem_free(data.value));
-  return data;
-}
-
-Attribute::SingleData Attribute::SingleData::from_default_value(const CPPType &type)
-{
-  return from_value(default_value_for_type(type));
-}
-
-Attribute::DataVariant &Attribute::data_for_write()
-{
-  if (auto *data = std::get_if<Attribute::ArrayData>(&data_)) {
-    if (!data->sharing_info) {
-      BLI_assert(data->size == 0);
-      return data_;
-    }
-    if (data->sharing_info->is_mutable()) {
-      data->sharing_info->tag_ensured_mutable();
-      return data_;
-    }
-    const CPPType &type = attribute_type_to_cpp_type(type_);
-    ArrayData new_data = ArrayData::from_uninitialized(type, data->size);
-    array_utils::copy(GVArray::from_span({type, data->data, data->size}),
-                      GMutableSpan(type, new_data.data, data->size));
-    *data = std::move(new_data);
-  }
-  else if (auto *data = std::get_if<Attribute::SingleData>(&data_)) {
-    if (data->sharing_info->is_mutable()) {
-      data->sharing_info->tag_ensured_mutable();
-      return data_;
-    }
-    const CPPType &type = attribute_type_to_cpp_type(type_);
-    *data = SingleData::from_value(GPointer(type, data->value));
-  }
-  return data_;
+  return GList(
+      type, GList::ArrayData::ForValue(default_value_for_type(type), domain_size), domain_size);
 }
 
 AttributeStorage::AttributeStorage()
@@ -269,19 +157,13 @@ Attribute *AttributeStorage::lookup(const StringRef name)
   return attribute->get();
 }
 
-Attribute &AttributeStorage::add(std::string name,
-                                 const AttrDomain domain,
-                                 const AttrType data_type,
-                                 Attribute::DataVariant data)
+Attribute &AttributeStorage::add(std::string name, const AttrDomain domain, GList data)
 {
   BLI_assert(!name.empty());
   BLI_assert(!this->lookup(name));
-  std::unique_ptr<Attribute> ptr = std::make_unique<Attribute>();
+  std::unique_ptr<Attribute> ptr = std::make_unique<Attribute>(
+      std::move(name), domain, std::move(data));
   Attribute &attribute = *ptr;
-  attribute.name_ = std::move(name);
-  attribute.domain_ = domain;
-  attribute.type_ = data_type;
-  attribute.data_ = std::move(data);
   this->runtime->attributes.add_new(std::move(ptr));
   return attribute;
 }
@@ -386,26 +268,7 @@ void AttributeStorage::resize(const AttrDomain domain, const int64_t new_size)
     if (attr.domain() != domain) {
       continue;
     }
-    const CPPType &type = attribute_type_to_cpp_type(attr.data_type());
-    switch (attr.storage_type()) {
-      case bke::AttrStorageType::Array: {
-        const auto &data = std::get<bke::Attribute::ArrayData>(attr.data());
-        const int64_t old_size = data.size;
-
-        auto new_data = bke::Attribute::ArrayData::from_uninitialized(type, new_size);
-        type.copy_construct_n(data.data, new_data.data, std::min(old_size, new_size));
-        if (old_size < new_size) {
-          type.default_construct_n(POINTER_OFFSET(new_data.data, type.size * old_size),
-                                   new_size - old_size);
-        }
-
-        attr.assign_data(std::move(new_data));
-        break;
-      }
-      case bke::AttrStorageType::Single: {
-        break;
-      }
-    }
+    attr.data_.resize(new_size);
   }
 }
 
@@ -456,46 +319,54 @@ static void read_shared_array(BlendDataReader &reader,
                               void **data,
                               const ImplicitSharingInfo **sharing_info)
 {
-  const char *func = __func__;
   *sharing_info = BLO_read_shared(&reader, data, [&]() -> const ImplicitSharingInfo * {
     read_array_data(reader, dna_attr_type, size, data);
     if (*data == nullptr) {
       return nullptr;
     }
     const CPPType &cpp_type = attribute_type_to_cpp_type(AttrType(dna_attr_type));
-    return MEM_new<ArrayDataImplicitSharing>(func, *data, size, cpp_type);
+    return new ImplicitSharedValue<GArray<>>(cpp_type, *data, size);
   });
 }
 
-static std::optional<Attribute::DataVariant> read_attr_data(BlendDataReader &reader,
-                                                            const int8_t dna_storage_type,
-                                                            const int8_t dna_attr_type,
-                                                            blender::Attribute &dna_attr)
+static std::optional<GList> read_attr_data(BlendDataReader &reader,
+                                           const int8_t dna_storage_type,
+                                           const int8_t dna_attr_type,
+                                           const int64_t domain_size,
+                                           blender::Attribute &dna_attr)
 {
+  const CPPType &cpp_type = attribute_type_to_cpp_type(AttrType(dna_attr_type));
   switch (dna_storage_type) {
     case int8_t(AttrStorageType::Array): {
       BLO_read_struct(&reader, AttributeArray, &dna_attr.data);
-      auto &data = *static_cast<blender::AttributeArray *>(dna_attr.data);
+      auto *dna_data = static_cast<blender::AttributeArray *>(dna_attr.data);
+      dna_attr.data = nullptr;
+      BLI_SCOPED_DEFER([&]() { MEM_delete(dna_data); });
+      auto &data = *dna_data;
       read_shared_array(reader, dna_attr_type, data.size, &data.data, &data.sharing_info);
       if (data.size != 0 && !data.data) {
         return std::nullopt;
       }
-      Attribute::ArrayData array_data{
-          data.data, data.size, ImplicitSharingPtr<>(data.sharing_info)};
+      GList::ArrayData array_data{data.data, ImplicitSharingPtr<>(data.sharing_info)};
       if (data.is_single && data.size) {
-        const CPPType &cpp_type = attribute_type_to_cpp_type(AttrType(dna_attr_type));
-        return Attribute::SingleData::from_value(GPointer(cpp_type, data.data));
+        return GList(
+            cpp_type, GList::SingleData::ForValue(GPointer(cpp_type, data.data)), domain_size);
       }
-      return array_data;
+      return GList(cpp_type, std::move(array_data), data.size);
     }
     case int8_t(AttrStorageType::Single): {
       BLO_read_struct(&reader, AttributeSingle, &dna_attr.data);
-      auto &data = *static_cast<blender::AttributeSingle *>(dna_attr.data);
+      auto *dna_data = static_cast<blender::AttributeSingle *>(dna_attr.data);
+      dna_attr.data = nullptr;
+      BLI_SCOPED_DEFER([&]() { MEM_delete(dna_data); });
+      auto &data = *dna_data;
       read_shared_array(reader, dna_attr_type, 1, &data.data, &data.sharing_info);
       if (!data.data) {
         return std::nullopt;
       }
-      return Attribute::SingleData{data.data, ImplicitSharingPtr<>(data.sharing_info)};
+      return GList(cpp_type,
+                   GList::SingleData{data.data, ImplicitSharingPtr<>(data.sharing_info)},
+                   domain_size);
     }
     default:
       return std::nullopt;
@@ -505,16 +376,39 @@ static std::optional<Attribute::DataVariant> read_attr_data(BlendDataReader &rea
 void AttributeStorage::count_memory(MemoryCounter &memory) const
 {
   for (const std::unique_ptr<Attribute> &attr : this->runtime->attributes) {
-    const CPPType &type = attribute_type_to_cpp_type(attr->data_type());
-    if (const auto *data = std::get_if<Attribute::ArrayData>(&attr->data())) {
+    const CPPType &type = attr->data().cpp_type();
+    if (const auto *data = std::get_if<GList::ArrayData>(&attr->data().data())) {
       memory.add_shared(data->sharing_info.get(), [&](MemoryCounter &shared_memory) {
-        shared_memory.add(data->size * type.size);
+        shared_memory.add(attr->data().size() * type.size);
       });
     }
-    else if (const auto *data = std::get_if<Attribute::SingleData>(&attr->data())) {
+    else if (const auto *data = std::get_if<GList::SingleData>(&attr->data().data())) {
       memory.add_shared(data->sharing_info.get(),
                         [&](MemoryCounter &shared_memory) { shared_memory.add(type.size); });
     }
+  }
+}
+
+static std::optional<AttrType> read_attr_type(const int16_t dna_type)
+{
+  switch (dna_type) {
+    case int16_t(AttrType::Bool):
+    case int16_t(AttrType::Int8):
+    case int16_t(AttrType::Int16_2D):
+    case int16_t(AttrType::Int32):
+    case int16_t(AttrType::Int32_2D):
+    case int16_t(AttrType::Float):
+    case int16_t(AttrType::Float2):
+    case int16_t(AttrType::Float3):
+    case int16_t(AttrType::Float4x4):
+    case int16_t(AttrType::ColorByte):
+    case int16_t(AttrType::ColorFloat):
+    case int16_t(AttrType::Quaternion):
+    case int16_t(AttrType::String):
+    case int16_t(AttrType::Float4):
+      return AttrType(dna_type);
+    default:
+      return std::nullopt;
   }
 }
 
@@ -534,7 +428,8 @@ static std::optional<AttrDomain> read_attr_domain(const int8_t dna_domain)
   }
 }
 
-void AttributeStorage::blend_read(BlendDataReader &reader)
+void AttributeStorage::blend_read(BlendDataReader &reader,
+                                  const FunctionRef<int(AttrDomain)> get_domain_size)
 {
   this->runtime = MEM_new<AttributeStorageRuntime>(__func__);
 
@@ -550,19 +445,18 @@ void AttributeStorage::blend_read(BlendDataReader &reader)
     if (!domain) {
       continue;
     }
+    if (!read_attr_type(dna_attr.data_type)) {
+      continue;
+    }
 
-    std::optional<Attribute::DataVariant> data = read_attr_data(
-        reader, dna_attr.storage_type, dna_attr.data_type, dna_attr);
-    BLI_SCOPED_DEFER([&]() { MEM_SAFE_DELETE_VOID(dna_attr.data); });
+    std::optional<GList> data = read_attr_data(
+        reader, dna_attr.storage_type, dna_attr.data_type, get_domain_size(*domain), dna_attr);
     if (!data) {
       continue;
     }
 
-    std::unique_ptr<Attribute> attribute = std::make_unique<Attribute>();
-    attribute->name_ = dna_attr.name;
-    attribute->domain_ = *domain;
-    attribute->type_ = AttrType(dna_attr.data_type);
-    attribute->data_ = std::move(*data);
+    std::unique_ptr<Attribute> attribute = std::make_unique<Attribute>(
+        dna_attr.name, *domain, std::move(*data));
 
     if (!this->runtime->attributes.add(std::move(attribute))) {
       CLOG_ERROR(&LOG, "Ignoring attribute with duplicate name: \"%s\"", dna_attr.name);
@@ -643,37 +537,38 @@ void attribute_storage_blend_write_prepare(AttributeStorage &data,
      * Using a #ResourceScope is a simple way to get pointer stability when adding every new data
      * struct without the cost of many small allocations or unnecessary overhead of storing a full
      * array for every storage type. */
-    const auto create_dna_array = [&](const Attribute::ArrayData &array_data) -> AttributeArray & {
+    const auto create_dna_array = [&](const GList::ArrayData &array_data,
+                                      const int64_t size) -> AttributeArray & {
       auto &array_dna = write_data.scope.construct<AttributeArray>();
-      array_dna.data = array_data.data;
+      array_dna.data = const_cast<void *>(array_data.data);
       array_dna.sharing_info = array_data.sharing_info.get();
-      array_dna.size = array_data.size;
+      array_dna.size = size;
       return array_dna;
     };
 
-    if (const auto *data = std::get_if<Attribute::ArrayData>(&attr.data())) {
+    if (const auto *data = std::get_if<GList::ArrayData>(&attr.data().data())) {
       attribute_dna.storage_type = int8_t(AttrStorageType::Array);
-      attribute_dna.data = &create_dna_array(*data);
+      attribute_dna.data = &create_dna_array(*data, attr.data().size());
     }
-    else if (const auto *data = std::get_if<Attribute::SingleData>(&attr.data())) {
+    else if (const auto *data = std::get_if<GList::SingleData>(&attr.data().data())) {
       if (use_5_0_compatibility) {
         attribute_dna.storage_type = int8_t(AttrStorageType::Array);
         /* Convert single value storage to array storage for forward compatibility.
          * See #AttributeArray::is_single comment for more details. */
-        const CPPType &cpp_type = attribute_type_to_cpp_type(attr.data_type());
+        const CPPType &cpp_type = attr.data().cpp_type();
         const GPointer value(cpp_type, data->value);
         const int domain_size = get_domain_size(attr.domain());
-        auto &array_data = write_data.scope.construct<Attribute::ArrayData>(
-            Attribute::ArrayData::from_value(value, domain_size));
+        auto &array_data = write_data.scope.construct<GList::ArrayData>(
+            GList::ArrayData::ForValue(value, domain_size));
 
-        auto &array_dna = create_dna_array(array_data);
+        auto &array_dna = create_dna_array(array_data, domain_size);
         array_dna.is_single = true;
         attribute_dna.data = &array_dna;
       }
       else {
         attribute_dna.storage_type = int8_t(AttrStorageType::Single);
         auto &single_dna = write_data.scope.construct<blender::AttributeSingle>();
-        single_dna.data = data->value;
+        single_dna.data = const_cast<void *>(data->value);
         single_dna.sharing_info = data->sharing_info.get();
         attribute_dna.data = &single_dna;
       }
@@ -709,7 +604,7 @@ void AttributeStorage::blend_write(BlendWriter &writer,
   writer.write_struct_array_by_name("Attribute",
                                     write_data.attributes.size(),
                                     write_data.attributes.data(),
-                                    [](BlendStructWriter &struct_writer) {
+                                    [](BlendStructWriterVoid &struct_writer) {
                                       struct_writer.generated_ptr(
                                           offsetof(blender::Attribute, data));
                                     });
@@ -744,14 +639,18 @@ void AttributeStorage::blend_write(BlendWriter &writer,
 void AttributeStorage::foreach_working_space_color(const IDTypeForeachColorFunctionCallback &fn)
 {
   for (const std::unique_ptr<Attribute> &attribute : this->runtime->attributes) {
-    if (attribute->type_ == bke::AttrType::ColorFloat) {
-      if (auto *data = std::get_if<Attribute::ArrayData>(&attribute->data_)) {
+    if (attribute->data_type() == bke::AttrType::ColorFloat) {
+      if (auto *data = std::get_if<GList::ArrayData>(&attribute->data_.data())) {
         fn.implicit_sharing_array(
-            data->sharing_info, reinterpret_cast<ColorGeometry4f *&>(data->data), data->size);
+            data->sharing_info,
+            reinterpret_cast<ColorGeometry4f *&>(const_cast<void *&>(data->data)),
+            attribute->data_.size());
       }
-      else if (auto *data = std::get_if<Attribute::SingleData>(&attribute->data_)) {
+      else if (auto *data = std::get_if<GList::SingleData>(&attribute->data_.data())) {
         fn.implicit_sharing_array(
-            data->sharing_info, reinterpret_cast<ColorGeometry4f *&>(data->value), 1);
+            data->sharing_info,
+            reinterpret_cast<ColorGeometry4f *&>(const_cast<void *&>(data->value)),
+            1);
       }
     }
     /* Byte colors are always Rec.709 sRGB, no conversion needed. */

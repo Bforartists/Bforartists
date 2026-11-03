@@ -6,7 +6,8 @@
 
 #include "gpu_shader_compat.hh"
 
-enum class ThicknessMode : bool { Slab = false, Sphere = true };
+/* Follow eMaterial_ThicknessMode. */
+enum class ThicknessMode : bool { Sphere = false, Slab = true };
 
 struct ThicknessIsect {
   /* Normal at the intersection point on the sphere. */
@@ -45,7 +46,7 @@ class Thickness {
     return data > 0.0 ? ThicknessMode::Sphere : ThicknessMode::Slab;
   }
 
-  ThicknessIsect shape_intersect(float3 N, float3 L)
+  ThicknessIsect shape_intersect(float3 N, float3 L) const
   {
     if (mode() == ThicknessMode::Sphere) {
       return sphere_intersect(value(), N, L);
@@ -60,10 +61,10 @@ class Thickness {
    * Assumes N and L are normalized.
    * Everything is relative to the entrance shading point.
    */
-  ThicknessIsect sphere_intersect(float diameter, float3 N, float3 L)
+  ThicknessIsect sphere_intersect(float diameter, float3 N, float3 L) const
   {
     ThicknessIsect isect;
-    float cos_alpha = dot(L, -N);
+    const float cos_alpha = dot(L, -N);
     isect.hit_N = normalize(N + L * (cos_alpha * 2.0f));
     isect.hit_P = L * (cos_alpha * diameter);
     return isect;
@@ -75,10 +76,10 @@ class Thickness {
    * Assumes N and L are normalized.
    * Everything is relative to the entrance shading point.
    */
-  ThicknessIsect plane_intersect(float plane_distance, float3 N, float3 L)
+  ThicknessIsect plane_intersect(float plane_distance, float3 N, float3 L) const
   {
     ThicknessIsect isect;
-    float distance_from_shading_plane = dot(L, -N);
+    const float distance_from_shading_plane = dot(L, -N);
     isect.hit_N = -N;
     isect.hit_P = L * (plane_distance / distance_from_shading_plane);
     return isect;

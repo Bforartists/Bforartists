@@ -62,10 +62,13 @@ void VKVertexBuffer::ensure_buffer_view()
   buffer_view_info.format = to_vk_format();
   buffer_view_info.range = buffer_.size_in_bytes();
 
-  const VKDevice &device = VKBackend::get().device;
+  VKDevice &device = VKBackend::get().device;
   device.functions.vkCreateBufferView(
       device.vk_handle(), &buffer_view_info, nullptr, &vk_buffer_view_);
   debug::object_label(vk_buffer_view_, "VertexBufferView");
+
+  BLI_assert(buffer_.resource().resource_handle != 0);
+  device.resources.register_view(buffer_.resource().resource_handle, vk_buffer_view_);
 }
 
 void VKVertexBuffer::wrap_handle(uint64_t /*handle*/)
@@ -99,21 +102,31 @@ void VKVertexBuffer::copy_sub(VertBuf &source_buf,
                               uint vertex_len)
 {
   BLI_assert(format.stride == source_buf.format.stride);
-  BLI_assert_msg(size_t(source_first_vertex) + vertex_len <= source_buf.vertex_alloc,
+  BLI_assert_msg(size_t(source_first_vertex) + vertex_len <= source_buf.vertex_len,
                  "Copy source range exceeds the source vertex buffer bounds");
-  BLI_assert_msg(size_t(dest_first_vertex) + vertex_len <= vertex_alloc,
+  BLI_assert_msg(size_t(dest_first_vertex) + vertex_len <= this->vertex_len,
                  "Copy destination range exceeds the vertex buffer bounds");
   VKVertexBuffer &source_vertex_buffer = unwrap(source_buf);
   BLI_assert_msg(buffer_.is_allocated(), "GPU_vertbuf_use() not called on this buffer");
   BLI_assert_msg(source_vertex_buffer.buffer_.is_allocated(),
                  "GPU_vertbuf_use() not called on the source buffer");
+  /* Allocating huge buffers can fail, in that case we skip copying data. */
+  if (!buffer_.is_allocated() || !source_vertex_buffer.buffer_.is_allocated()) {
+    return;
+  }
+  const VkDeviceSize copy_size = VkDeviceSize(vertex_len) * format.stride;
+  if (copy_size == 0) {
+    return;
+  }
+
   VKContext &context = *VKContext::get();
   render_graph::VKCopyBufferNode::CreateInfo copy_buffer = {};
   copy_buffer.src_buffer = source_vertex_buffer.buffer_.resource();
   copy_buffer.dst_buffer = buffer_.resource();
-  copy_buffer.region.srcOffset = source_first_vertex * source_vertex_buffer.format.stride;
-  copy_buffer.region.dstOffset = dest_first_vertex * format.stride;
-  copy_buffer.region.size = vertex_len * format.stride;
+  copy_buffer.region.srcOffset = VkDeviceSize(source_first_vertex) *
+                                 source_vertex_buffer.format.stride;
+  copy_buffer.region.dstOffset = VkDeviceSize(dest_first_vertex) * format.stride;
+  copy_buffer.region.size = copy_size;
   context.render_graph().add_node(copy_buffer);
 }
 
@@ -166,11 +179,6 @@ void VKVertexBuffer::resize_data()
 
 void VKVertexBuffer::release_data()
 {
-  if (vk_buffer_view_ != VK_NULL_HANDLE) {
-    VKDiscardPool::discard_pool_get().discard_buffer_view(vk_buffer_view_);
-    vk_buffer_view_ = VK_NULL_HANDLE;
-  }
-
   MEM_SAFE_DELETE(data_);
 }
 

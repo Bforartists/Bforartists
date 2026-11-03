@@ -47,6 +47,7 @@
 
 #include "BLT_translation.hh"
 
+#include "BKE_autoexec.hh"
 #include "BKE_blender_version.h"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
@@ -558,6 +559,15 @@ void wm_window_close(bContext *C, wmWindowManager *wm, wmWindow *win)
   WM_main_add_notifier(NC_WINDOW | NA_REMOVED, nullptr);
 }
 
+/** If a project is active, append its name to `win_title`. */
+static void wm_window_title_project_append(fmt::memory_buffer &win_title)
+{
+  if (const bke::BlenderProject *project = BKE_blender_project_get(G_MAIN)) {
+    win_title.append(StringRef(" - "));
+    win_title.append(project->get_name());
+  }
+}
+
 /**
  * Construct the title text for `win`.
  * The window may *not* have been created, any calls depending on `win->runtime->ghostwin` are
@@ -565,11 +575,13 @@ void wm_window_close(bContext *C, wmWindowManager *wm, wmWindow *win)
  *
  * \param window_filepath_fn: When non `nullopt` the title text does not need to contain
  * the file-path (typically based on #WM_CAPABILITY_WINDOW_PATH).
+ * \param win_title: The title text is appended, the inline buffer avoids allocating in practice.
+ * The text is *not* null terminated, callers that need a C string must terminate it.
  */
-static std::string wm_window_title_text(
-    wmWindowManager *wm,
-    wmWindow *win,
-    std::optional<FunctionRef<void(const char *)>> window_filepath_fn)
+static void wm_window_title_text(wmWindowManager *wm,
+                                 wmWindow *win,
+                                 std::optional<FunctionRef<void(const char *)>> window_filepath_fn,
+                                 fmt::memory_buffer &win_title)
 {
   if (win->parent || WM_window_is_temp_screen(win)) {
     /* Not a main window. */
@@ -577,9 +589,17 @@ static std::string wm_window_title_text(
     const bool is_single = screen && BLI_listbase_is_single(&screen->areabase);
     ScrArea *area = (screen) ? screen->areabase.first() : nullptr;
     if (is_single && area && area->spacetype != SPACE_EMPTY) {
-      return IFACE_(ED_area_name(area).c_str());
+      win_title.append(StringRef(IFACE_(ED_area_name(area).c_str())));
+
+      /* Append the project name to the Project Settings editor. */
+      if (area->spacetype == SPACE_PROJECT) {
+        wm_window_title_project_append(win_title);
+      }
     }
-    return "Bforartists"; /*bfa   we are not Blender*/
+    else {
+      win_title.append(StringRef("Bforartists")); /*bfa   we are not Blender*/
+    }
+    return;
   }
 
   /* This path may contain invalid UTF8 byte sequences on UNIX systems,
@@ -596,8 +616,7 @@ static std::string wm_window_title_text(
                              BLI_str_utf8_invalid_substitute_if_needed(filepath_as_bytes,
                                                                        strlen(filepath_as_bytes),
                                                                        '?',
-                                                                       _filepath_utf8_buf,
-                                                                       sizeof(_filepath_utf8_buf));
+                                                                       _filepath_utf8_buf);
 
   const char *filename = BLI_path_basename(filepath);
   const bool has_filepath = filepath[0] != '\0';
@@ -608,27 +627,29 @@ static std::string wm_window_title_text(
   const bool include_filepath = has_filepath && (filepath != filename) && !native_filepath_display;
 
   /* File saved state. */
-  std::string win_title = wm->file_saved ? "" : "* ";
+  if (!wm->file_saved) {
+    win_title.append(StringRef("* "));
+  }
 
   /* File name. Show the file extension if the full file path is not included in the title. */
   if (include_filepath) {
-    const size_t filename_no_ext_len = BLI_path_extension_or_end(filename) - filename;
-    win_title.append(filename, filename_no_ext_len);
+    const char *filename_no_ext_end = BLI_path_extension_or_end(filename);
+    win_title.append(filename, filename_no_ext_end);
   }
   else if (has_filepath) {
-    win_title.append(filename);
+    win_title.append(StringRef(filename));
   }
   /* New / Unsaved file default title. Shows "Untitled" on macOS following the Apple HIGs. */
   else {
 #ifdef __APPLE__
-    win_title.append(IFACE_("Untitled"));
+    win_title.append(StringRef(IFACE_("Untitled")));
 #else
-    win_title.append(IFACE_("(Unsaved)"));
+    win_title.append(StringRef(IFACE_("(Unsaved)")));
 #endif
   }
 
   if (G_MAIN->recovered) {
-    win_title.append(IFACE_(" (Recovered)"));
+    win_title.append(StringRef(IFACE_(" (Recovered)")));
   }
 
   if (include_filepath) {
@@ -651,26 +672,26 @@ static std::string wm_window_title_text(
         }
         if ((home_dir_len > 0) && BLI_path_ncmp(home_dir, filepath_as_bytes, home_dir_len) == 0) {
           if (filepath_as_bytes[home_dir_len] == SEP) {
-            win_title.append(fmt::format(" [~{}]", filepath + home_dir_len));
+            win_title.append(StringRef(" [~"));
+            win_title.append(StringRef(filepath + home_dir_len));
+            win_title.push_back(']');
             add_filepath = false;
           }
         }
       }
     }
     if (add_filepath) {
-      win_title.append(fmt::format(" [{}]", filepath));
+      win_title.append(StringRef(" ["));
+      win_title.append(StringRef(filepath));
+      win_title.push_back(']');
     }
   }
 
   /* If a project is active, display its name. */
-  bke::BlenderProject *project = BKE_blender_project_get(G_MAIN);
-  if (project) {
-    win_title.append(fmt::format(" - {}", project->get_name()));
-  }
+  wm_window_title_project_append(win_title);
 
-  win_title.append(fmt::format(" - Bforartists {}", BKE_bforartists_version_string())); // BFA
-
-  return win_title;
+  win_title.append(StringRef(" — Bforartists ")); // BFA
+  win_title.append(StringRef(BKE_bforartists_version_string()));
 }
 
 static void wm_window_title_state_refresh(wmWindowManager *wm, wmWindow *win)
@@ -705,8 +726,10 @@ void WM_window_title_refresh(wmWindowManager *wm, wmWindow *win)
                                   ghost_window->setPath(filepath);
                                 }) :
                                 std::nullopt;
-  std::string win_title = wm_window_title_text(wm, win, window_filepath_fn);
-  ghost_window->setTitle(win_title.c_str());
+  fmt::memory_buffer win_title;
+  wm_window_title_text(wm, win, window_filepath_fn, win_title);
+  win_title.push_back('\0');
+  ghost_window->setTitle(win_title.data());
   wm_window_title_state_refresh(wm, win);
 }
 
@@ -990,6 +1013,9 @@ static void wm_window_ghostwindow_add(wmWindowManager *wm,
   if (G.debug & G_DEBUG_GPU) {
     gpu_settings.flags |= GHOST_gpuDebugContext;
   }
+  if (G.debug & G_DEBUG_GPU_NO_HW_RAYTRACING) {
+    gpu_settings.flags |= GHOST_gpuNoHWRaytracing;
+  }
 
   GPUBackendType gpu_backend = GPU_backend_type_selection_get();
   gpu_settings.context_type = wm_ghost_drawing_context_type(gpu_backend);
@@ -1136,8 +1162,10 @@ static void wm_window_ghostwindow_ensure(wmWindowManager *wm, wmWindow *win, boo
                                     STRNCPY(win_filepath, filepath);
                                   }) :
                                   std::nullopt;
-    std::string win_title = wm_window_title_text(wm, win, window_filepath_fn);
-    wm_window_ghostwindow_add(wm, win_title.c_str(), win, is_dialog);
+    fmt::memory_buffer win_title;
+    wm_window_title_text(wm, win, window_filepath_fn, win_title);
+    win_title.push_back('\0');
+    wm_window_ghostwindow_add(wm, win_title.data(), win, is_dialog);
   }
 
   if (win->runtime->ghostwin != nullptr) {
@@ -1982,7 +2010,7 @@ static bool ghost_event_proc(const GHOST_IEvent *ghost_event, GHOST_TUserDataPtr
     case GHOST_kEventOpenMainFile: {
       const char *path = static_cast<const char *>(data);
 
-      if (path) {
+      if (path && path[0] != '\0') {
         wmOperatorType *ot = WM_operatortype_find("WM_OT_open_mainfile", false);
         /* Operator needs a valid window in context, ensures it is correctly set. */
         CTX_wm_window_set(C, win);
@@ -1990,6 +2018,15 @@ static bool ghost_event_proc(const GHOST_IEvent *ghost_event, GHOST_TUserDataPtr
         PointerRNA props_ptr = WM_operator_properties_create_ptr(ot);
         RNA_string_set(&props_ptr, "filepath", path);
         RNA_boolean_set(&props_ptr, "display_file_selector", false);
+        /* There is no file selector to show the "Trusted Source" option, use its default. */
+        RNA_boolean_set(&props_ptr,
+                        "use_scripts",
+                        BKE_autoexec_default_trust_source(path,
+                                                          {
+                                                              .skip_overrides = false,
+                                                              .canonicalize = true,
+                                                              .strip_filename = true,
+                                                          }));
         WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
         WM_operator_properties_free(&props_ptr);
 
@@ -2528,6 +2565,15 @@ void WM_event_timer_sleep(wmWindowManager *wm, wmWindow * /*win*/, wmTimer *time
   timer->sleep = do_sleep;
 }
 
+/** Start the timer's cycle from now, keeping its step. */
+static void wm_window_timer_reset(wmTimer *wt)
+{
+  wt->time_last = BLI_time_now_seconds();
+  wt->time_next = wt->time_last + wt->time_step;
+  wt->time_start = wt->time_last;
+  wt->time_duration = 0.0;
+}
+
 wmTimer *WM_event_timer_add(wmWindowManager *wm,
                             wmWindow *win,
                             const wmEventType event_type,
@@ -2539,10 +2585,8 @@ wmTimer *WM_event_timer_add(wmWindowManager *wm,
   BLI_assert(time_step >= 0.0f);
 
   wt->event_type = event_type;
-  wt->time_last = BLI_time_now_seconds();
-  wt->time_next = wt->time_last + time_step;
-  wt->time_start = wt->time_last;
   wt->time_step = time_step;
+  wm_window_timer_reset(wt);
   wt->win = win;
 
   BLI_addtail(&wm->runtime->timers, wt);
@@ -2559,10 +2603,8 @@ wmTimer *WM_event_timer_add_notifier(wmWindowManager *wm,
   BLI_assert(time_step >= 0.0f);
 
   wt->event_type = TIMERNOTIFIER;
-  wt->time_last = BLI_time_now_seconds();
-  wt->time_next = wt->time_last + time_step;
-  wt->time_start = wt->time_last;
   wt->time_step = time_step;
+  wm_window_timer_reset(wt);
   wt->win = win;
   wt->customdata = POINTER_FROM_UINT(type);
   wt->flags |= WM_TIMER_NO_FREE_CUSTOM_DATA;
@@ -3514,16 +3556,15 @@ void WM_window_IME_end(wmWindow *win)
   win->runtime->ime_data_is_composing = false;
 }
 
-bool WM_window_IME_region_refresh(wmWindow *win,
-                                  const ScrArea *area,
-                                  const ARegion *region,
-                                  const bool keep_composing,
-                                  ARegionIMECursor *r_cursor)
+std::optional<ARegionIMECursor> WM_window_IME_region_refresh(wmWindow *win,
+                                                             const ScrArea *area,
+                                                             const ARegion *region,
+                                                             const bool keep_composing)
 {
   if (win->runtime->ime_owner == bke::wmIMEOwnerType::Button) {
     /* A text button owns the session, possibly in a popup over this region,
      * see #textedit_ime_begin. */
-    return false;
+    return std::nullopt;
   }
 
   /* A temporary popup is modal, it takes precedence over the region below it,
@@ -3533,7 +3574,7 @@ bool WM_window_IME_region_refresh(wmWindow *win,
   if (!screen->regionbase.is_empty() &&
       (BKE_screen_find_region_type(screen, RGN_TYPE_TEMPORARY) != nullptr))
   {
-    return false;
+    return std::nullopt;
   }
 
   /* NOTE: ending mid-composition cancels it, so the draw-time refresh opts out via
@@ -3550,7 +3591,7 @@ bool WM_window_IME_region_refresh(wmWindow *win,
     WM_window_IME_end(win);
 
     if (!region || !region->runtime->type->cursor_ime) {
-      return false;
+      return std::nullopt;
     }
   }
 
@@ -3563,14 +3604,11 @@ bool WM_window_IME_region_refresh(wmWindow *win,
     if (composing) {
       WM_window_IME_end(win);
     }
-    return false;
+    return std::nullopt;
   }
   if (*cursor_state != ARegionIMECursorState::PositionSet) {
     /* Pending because of a transient lack of position, so keep the session where it is. */
-    return false;
-  }
-  if (r_cursor) {
-    *r_cursor = cursor;
+    return std::nullopt;
   }
 
   /* Convert to window coordinates, clamped to the region so a cursor scrolled out of view
@@ -3592,7 +3630,7 @@ bool WM_window_IME_region_refresh(wmWindow *win,
     /* #WM_window_IME_end above ended any session, so this is always a fresh begin. */
     WM_window_IME_begin(win, x, y, w, h, bke::wmIMEOwnerType::Region);
   }
-  return true;
+  return cursor;
 }
 
 const wmIMEData *WM_window_IME_data_get(const wmWindow *win, const ARegion *region)
@@ -3659,6 +3697,9 @@ GHOST_IContext *WM_system_gpu_context_create()
   gpu_settings.context_type = wm_ghost_drawing_context_type(gpu_backend);
   if (G.debug & G_DEBUG_GPU) {
     gpu_settings.flags |= GHOST_gpuDebugContext;
+  }
+  if (G.debug & G_DEBUG_GPU_NO_HW_RAYTRACING) {
+    gpu_settings.flags |= GHOST_gpuNoHWRaytracing;
   }
   gpu_settings.preferred_device = GPU_backend_preferred_device_get();
   if (GPU_backend_vsync_is_overridden()) {

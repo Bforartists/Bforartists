@@ -19,7 +19,7 @@
 #include "BLI_utildefines.hh"
 
 /* Define macros in `DNA_genfile.h`. */
-#define DNA_GENFILE_VERSIONING_MACROS
+#define DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -30,7 +30,7 @@
 #include "DNA_fluid_types.h"
 #include "DNA_genfile.h"
 #include "DNA_gpencil_legacy_types.h"
-#include "DNA_gpencil_modifier_types.h"
+#include "DNA_grease_pencil_modifier_types.h"
 #include "DNA_light_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
@@ -49,8 +49,9 @@
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 
-#undef DNA_GENFILE_VERSIONING_MACROS
+#undef DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
+#include "BKE_annotations.h"
 #include "BKE_armature.hh"
 #include "BKE_collection.hh"
 #include "BKE_colortools.hh"
@@ -58,7 +59,6 @@
 #include "BKE_curve.hh"
 #include "BKE_customdata.hh"
 #include "BKE_fcurve.hh"
-#include "BKE_gpencil_legacy.h"
 #include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh.hh"
@@ -251,7 +251,7 @@ static void strip_convert_transform_crop(const Scene *scene,
   t->yofs = old_image_center_y - scene->r.ysch / 2;
 
   char name_esc[(sizeof(strip->name) - 2) * 2], *path;
-  BLI_str_escape(name_esc, strip->name + 2, sizeof(name_esc));
+  BLI_str_escape(name_esc, strip->name + 2);
 
   path = BLI_sprintfN("sequence_editor.sequences_all[\"%s\"].transform.offset_x", name_esc);
   strip_convert_transform_animation(strip, scene, path, image_size_x, scene->r.xsch);
@@ -329,7 +329,7 @@ static void strip_convert_transform_crop_2(const Scene *scene,
   c->right /= scale_to_fit_factor;
 
   char name_esc[(sizeof(strip->name) - 2) * 2], *path;
-  BLI_str_escape(name_esc, strip->name + 2, sizeof(name_esc));
+  BLI_str_escape(name_esc, strip->name + 2);
   path = BLI_sprintfN("sequence_editor.sequences_all[\"%s\"].transform.scale_x", name_esc);
   strip_convert_transform_animation_2(scene, path, scale_to_fit_factor);
   MEM_delete(path);
@@ -581,7 +581,7 @@ void do_versions_after_linking_290(FileData * /*fd*/, Main *bmain)
         for (bGPDlayer &gpl : gpd->layers) {
           bGPDframe *gpf = gpl.frames.first();
           if (gpf && gpf->framenum > scene->r.sfra) {
-            bGPDframe *gpf_dup = BKE_gpencil_frame_duplicate(gpf, true);
+            bGPDframe *gpf_dup = BKE_annotations_frame_duplicate(gpf, true);
             gpf_dup->framenum = scene->r.sfra;
             BLI_addhead(&gpl.frames, gpf_dup);
           }

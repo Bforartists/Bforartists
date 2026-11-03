@@ -244,39 +244,39 @@ struct MTLContextTextureUtils {
    * use a compute shader to write to depth, so we must instead render to a depth target.
    * These processes use vertex/fragment shaders to render texture data from an intermediate
    * source, in order to prime the depth buffer. */
-  Map<DepthTextureUpdateRoutineSpecialisation, gpu::Shader *> depth_2d_update_shaders;
+  Map<DepthTextureUpdateRoutineSpecialization, gpu::Shader *> depth_2d_update_shaders;
   gpu::Shader *fullscreen_blit_shader = nullptr;
 
   /* Texture Read/Update routines */
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>> texture_1d_read_compute_psos;
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>> texture_1d_read_compute_psos;
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>>
       texture_1d_array_read_compute_psos;
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>> texture_2d_read_compute_psos;
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>> texture_2d_read_compute_psos;
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>>
       texture_2d_array_read_compute_psos;
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>> texture_3d_read_compute_psos;
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>> texture_3d_read_compute_psos;
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>>
       texture_cube_read_compute_psos;
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>>
       texture_cube_array_read_compute_psos;
-  Map<TextureReadRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureReadRoutineSpecialization, id<MTLComputePipelineState>>
       texture_buffer_read_compute_psos;
 
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_1d_update_compute_psos;
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_1d_array_update_compute_psos;
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_2d_update_compute_psos;
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_2d_array_update_compute_psos;
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_3d_update_compute_psos;
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_cube_update_compute_psos;
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_cube_array_update_compute_psos;
-  Map<TextureUpdateRoutineSpecialisation, id<MTLComputePipelineState>>
+  Map<TextureUpdateRoutineSpecialization, id<MTLComputePipelineState>>
       texture_buffer_update_compute_psos;
 
   template<typename T> void free_cached_pso_map(Map<T, id<MTLComputePipelineState>> &map)
@@ -476,6 +476,9 @@ class MTLCommandBufferManager {
   id<MTLCommandBuffer> active_command_buffer_ = nil;
   id<MTLCommandBuffer> last_submitted_command_buffer_ = nil;
   volatile std::atomic<int> num_active_cmd_bufs = 0;
+  /* Safe free list referenced by the active command buffer from its creation until it has
+   * completed, so that buffers freed while it is encoded aren't reused before it is executed. */
+  MTLSafeFreeList *active_safe_free_list_ = nullptr;
 
   /* Active MTLCommandEncoders. */
   enum {

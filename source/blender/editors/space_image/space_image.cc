@@ -16,6 +16,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BKE_compositor.hh"
 #include "BLI_listbase.hh"
 #include "BLI_string_utf8.hh"
 #include "BLI_threads.hh"
@@ -55,6 +56,8 @@
 
 #include "UI_interface.hh"
 #include "UI_view2d.hh"
+
+#include "DEG_depsgraph.hh"
 
 #include "BLO_read_write.hh"
 
@@ -534,7 +537,7 @@ static void IMAGE_GGT_compositor_box_mask(wmGizmoGroupType *gzgt)
   gzgt->name = "Box Mask Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_box_mask";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::box_mask_poll_space_image;
   gzgt->setup = nodes::gizmos::box_mask_setup;
@@ -548,7 +551,7 @@ static void IMAGE_GGT_compositor_crop(wmGizmoGroupType *gzgt)
   gzgt->name = "Crop Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_crop";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::crop_poll_space_image;
   gzgt->setup = nodes::gizmos::crop_setup;
@@ -562,7 +565,7 @@ static void IMAGE_GGT_compositor_glare(wmGizmoGroupType *gzgt)
   gzgt->name = "Glare Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_glare";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::glare_poll_space_image;
   gzgt->setup = nodes::gizmos::glare_setup;
@@ -576,7 +579,7 @@ static void IMAGE_GGT_compositor_corner_pin(wmGizmoGroupType *gzgt)
   gzgt->name = "Corner Pin Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_corner_pin";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::corner_pin_poll_space_image;
   gzgt->setup = nodes::gizmos::corner_pin_setup;
@@ -590,7 +593,7 @@ static void IMAGE_GGT_compositor_ellipse_mask(wmGizmoGroupType *gzgt)
   gzgt->name = "Ellipse Mask Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_ellipse_mask";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::ellipse_mask_poll_space_image;
   gzgt->setup = nodes::gizmos::ellipse_mask_setup;
@@ -604,7 +607,7 @@ static void IMAGE_GGT_compositor_split(wmGizmoGroupType *gzgt)
   gzgt->name = "Split Node Widget";
   gzgt->idname = "IMAGE_GGT_compositor_split";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::split_poll_space_image;
   gzgt->setup = nodes::gizmos::split_setup;
@@ -618,13 +621,41 @@ static void IMAGE_GGT_compositor_translate(wmGizmoGroupType *gzgt)
   gzgt->name = "Translate Widget";
   gzgt->idname = "IMAGE_GGT_compositor_translate";
 
-  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT;
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_2D_TOOL; /* BFA - compositor tool gizmos draw in the 2D tools pass */
 
   gzgt->poll = nodes::gizmos::translate_poll_space_image;
   gzgt->setup = nodes::gizmos::translate_setup;
   gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
   gzgt->draw_prepare = nodes::gizmos::bbox_draw_prepare_space_image;
   gzgt->refresh = nodes::gizmos::translate_refresh;
+}
+
+static void IMAGE_GGT_compositor_transform(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "Transform Widget";
+  gzgt->idname = "IMAGE_GGT_compositor_transform";
+
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+
+  gzgt->poll = nodes::gizmos::transform_poll_space_image;
+  gzgt->setup = nodes::gizmos::transform_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->draw_prepare = nodes::gizmos::bbox_draw_prepare_space_image;
+  gzgt->refresh = nodes::gizmos::transform_refresh;
+}
+
+static void IMAGE_GGT_compositor_scale(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "Transform Widget";
+  gzgt->idname = "IMAGE_GGT_compositor_scale";
+
+  gzgt->flag |= WM_GIZMOGROUPTYPE_PERSISTENT | WM_GIZMOGROUPTYPE_DRAW_MODAL_ALL;
+
+  gzgt->poll = nodes::gizmos::scale_poll_space_image;
+  gzgt->setup = nodes::gizmos::scale_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->draw_prepare = nodes::gizmos::bbox_draw_prepare_space_image;
+  gzgt->refresh = nodes::gizmos::scale_refresh;
 }
 
 static void image_widgets()
@@ -646,6 +677,8 @@ static void image_widgets()
   WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_ellipse_mask);
   WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_split);
   WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_translate);
+  WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_transform);
+  WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_compositor_scale);
 }
 
 /************************** main region ***************************/
@@ -943,6 +976,13 @@ static void image_main_region_listener(const wmRegionListenerParams *params)
       }
       if (wmn->action == NA_EDITED) {
         ED_region_tag_redraw(region);
+      }
+      /* If a new workspace was chosen, execute the compositor if its viewer result is visible. */
+      if (wmn->data == ND_LAYOUTSET &&
+          bke::compositor::is_compositor_viewer_visible(*params->area))
+      {
+        Scene *scene = WM_window_get_active_scene(params->window);
+        DEG_id_tag_update(&scene->id, ID_RECALC_COMPOSITOR);
       }
       break;
   }
@@ -1323,7 +1363,7 @@ static void image_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink 
 #if 0
   sima->gpd = newdataadr(fd, sima->gpd);
   if (sima->gpd) {
-    BKE_gpencil_blend_read_data(fd, sima->gpd);
+    BKE_annotations_blend_read_data(fd, sima->gpd);
   }
 #endif
 }
@@ -1343,6 +1383,7 @@ void ED_spacetype_image()
 
   st->spaceid = SPACE_IMAGE;
   STRNCPY_UTF8(st->name, "Image");
+  st->struct_size = sizeof(SpaceImage);
 
   st->create = image_create;
   st->free = image_free;

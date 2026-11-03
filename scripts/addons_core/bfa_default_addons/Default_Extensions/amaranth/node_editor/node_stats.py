@@ -5,27 +5,33 @@
 """
 Nodes Stats
 
-Display the number of selected and total nodes on the compositor. On the
-Compositing Nodes Editor.
+Display the number of selected and total nodes in the compositor.
 """
 
 import bpy
-
+from ..utils import is_blender_version_4
 
 def node_stats(self, context):
-    if context.scene.node_tree:
-        tree_type = context.space_data.tree_type
-        nodes = context.scene.node_tree.nodes
-        nodes_total = len(nodes.keys())
+    scene = context.scene
+    is_compositor = context.space_data.tree_type == 'CompositorNodeTree'
+    node_tree = scene.node_tree if is_blender_version_4() else scene.compositing_node_group
+
+    if is_compositor == 'CompositorNodeTree' and node_tree:
+        nodes = node_tree.nodes
+        skip_node_types = ['REROUTE', 'FRAME']
+        nodes_total = len([n for n in nodes if n.type not in skip_node_types])
         nodes_selected = 0
+
         for n in nodes:
+            if n.type in skip_node_types:
+                continue
+
             if n.select:
                 nodes_selected = nodes_selected + 1
 
-        if tree_type == 'CompositorNodeTree':
-            layout = self.layout
-            row = layout.row(align=True)
-            row.label(text="Nodes: %s/%s" % (nodes_selected, str(nodes_total)))
+        layout = self.layout
+        row = layout.row(align=True)
+        row.label(text="Nodes: %s/%s" % (nodes_selected, str(nodes_total)))
 
 
 def register():

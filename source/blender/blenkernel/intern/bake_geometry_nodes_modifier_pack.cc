@@ -11,6 +11,7 @@
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_packedFile.hh"
+#include "BKE_path_templates.hh"
 #include "BKE_report.hh"
 
 #include "DNA_modifier_types.h"
@@ -89,7 +90,7 @@ bool unpack_bake_to_disk(const NodesModifierPackedBake &packed_bake,
 {
   auto unpack_file = [&](const StringRefNull directory, const NodesModifierBakeFile &bake_file) {
     char file_path[FILE_MAX];
-    BLI_path_join(file_path, sizeof(file_path), directory.c_str(), bake_file.name);
+    BLI_path_join(file_path, directory.c_str(), bake_file.name);
     if (!BLI_file_ensure_parent_dir_exists(file_path)) {
       BKE_reportf(reports, RPT_ERROR, "Cannot ensure directory: %s", directory.c_str());
       return false;
@@ -185,7 +186,7 @@ UnpackGeometryNodesBakeResult unpack_geometry_nodes_bake(Main &bmain,
         bmain, object, nmd, bake.id);
     bake.flag |= NODES_MODIFIER_BAKE_CUSTOM_PATH;
     MEM_SAFE_DELETE(bake.directory);
-    bake.directory = BLI_strdup(directory.c_str());
+    bake.directory = BLI_strdup(BKE_path_template_escape(directory).c_str());
     const char *base_path = ID_BLEND_PATH(&bmain, &object.id);
     char absolute_dir[FILE_MAX];
     STRNCPY(absolute_dir, directory.c_str());

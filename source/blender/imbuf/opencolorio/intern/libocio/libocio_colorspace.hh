@@ -8,6 +8,8 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_set.hh"
+
 #include "OCIO_colorspace.hh"
 
 #include "../cpu_processor_cache.hh"
@@ -23,14 +25,23 @@ class LibOCIOColorSpace : public ColorSpace {
   std::string family_;
   StringRefNull interop_id_;
   bool is_primary_interop_id_ = false;
+  std::string alternate_interop_id_;
 
   CPUProcessorCache to_scene_linear_cpu_processor_;
   CPUProcessorCache from_scene_linear_cpu_processor_;
 
+  /* Configuration whose scene linear role is the target of the to/from scene linear processors.
+   * Usually this is #ocio_config_, but can also be something else if the color space is not
+   * part of a new config but still preserved. */
+  OCIO_NAMESPACE::ConstConfigRcPtr scene_linear_config_;
+
+  void initialize_alternate_interop_id();
+
  public:
   LibOCIOColorSpace(int index,
                     const OCIO_NAMESPACE::ConstConfigRcPtr &ocio_config,
-                    const OCIO_NAMESPACE::ConstColorSpaceRcPtr &ocio_color_space);
+                    const OCIO_NAMESPACE::ConstColorSpaceRcPtr &ocio_color_space,
+                    Set<StringRef> &primary_interop_ids);
 
   StringRefNull name() const override
   {
@@ -51,6 +62,10 @@ class LibOCIOColorSpace : public ColorSpace {
     return interop_id_;
   }
   bool is_primary_interop_id() const override;
+  StringRefNull alternate_interop_id() const override
+  {
+    return alternate_interop_id_;
+  }
 
   std::string icc_profile_path() const override;
 
@@ -69,6 +84,13 @@ class LibOCIOColorSpace : public ColorSpace {
 
   const CPUProcessor *get_to_scene_linear_cpu_processor() const override;
   const CPUProcessor *get_from_scene_linear_cpu_processor() const override;
+
+  void switch_scene_linear_config(const OCIO_NAMESPACE::ConstConfigRcPtr &ocio_config);
+
+  const OCIO_NAMESPACE::ConstColorSpaceRcPtr &ocio_color_space() const
+  {
+    return ocio_color_space_;
+  }
 
   void clear_caches();
 

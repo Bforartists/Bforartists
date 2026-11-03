@@ -24,7 +24,7 @@ namespace blender {
 
 struct BezTriple;
 struct BevList;
-struct BMEditMesh;
+struct BMesh;
 struct BPoint;
 struct Curve;
 struct Depsgraph;
@@ -285,14 +285,8 @@ void BKE_nurb_knot_calc_v(Nurb *nu);
 bool BKE_nurb_check_valid_u(const Nurb *nu);
 bool BKE_nurb_check_valid_v(const Nurb *nu);
 bool BKE_nurb_check_valid_uv(const Nurb *nu);
-bool BKE_nurb_valid_message(int pnts,
-                            short order,
-                            short flag,
-                            short type,
-                            bool is_surf,
-                            int dir,
-                            char *message_dst,
-                            size_t maxncpy);
+bool BKE_nurb_valid_message(
+    int pnts, short order, short flag, short type, bool is_surf, int dir, MutableCStr message_dst);
 
 bool BKE_nurb_order_clamp_u(Nurb *nu);
 bool BKE_nurb_order_clamp_v(Nurb *nu);
@@ -435,7 +429,7 @@ void BKE_curve_deform_coords_with_editmesh(const Object *ob_curve,
                                            int defgrp_index,
                                            short flag,
                                            short defaxis,
-                                           const BMEditMesh *em_target);
+                                           const BMesh &bm_target);
 
 /**
  * \param orco: Input vec and orco = local coord in curve space

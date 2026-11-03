@@ -85,8 +85,8 @@ struct ProjectAssetLibraryListItem : public AssetLibraryListItemCommon {
       sub.label(IFACE_("Built-In"), ICON_NONE);
     }
 
-    if (library.user_library && library.user_library->is_enabled() && is_remote_library &&
-        !library.user_library->remote_url[0])
+    if (library.user_library && !(library.user_library->flag & ASSET_LIBRARY_DISABLED) &&
+        is_remote_library && !library.user_library->remote_url[0])
     {
       row.label("", ICON_ERROR);
     }
@@ -103,26 +103,38 @@ struct ProjectAssetLibraryListItem : public AssetLibraryListItemCommon {
                "enabled",
                UI_ITEM_NONE,
                "",
-               library.user_library->is_enabled() ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT);
+               (library.user_library->flag & ASSET_LIBRARY_DISABLED) ? ICON_CHECKBOX_DEHLT :
+                                                                       ICON_CHECKBOX_HLT);
     }
   }
 
   void on_activate(bContext &C) override
   {
     bke::BlenderProject *project = BKE_blender_project_get(CTX_data_main(&C));
+    if (!project) {
+      return;
+    }
     project->active_asset_library_index = index_in_list;
   }
   std::optional<bool> should_be_active() const override
   {
-    bke::BlenderProject *project = BKE_blender_project_get(G_MAIN);
+    const bke::BlenderProject *project = BKE_blender_project_get(G_MAIN);
+    if (!project) {
+      return std::nullopt;
+    }
     return project->active_asset_library_index == index_in_list;
   }
 };
 
 static void project_asset_panel_draw(const bContext *C, Panel *panel)
 {
+  const bke::BlenderProject *project = BKE_blender_project_get(CTX_data_main(C));
+  if (!project) {
+    /* The category is always shown, but there is nothing to edit without a project. */
+    return;
+  }
+
   Vector<AnyAssetLibraryDefinition> libraries = project_ui_asset_libraries();
-  bke::BlenderProject *project = BKE_blender_project_get(CTX_data_main(C));
   int active_asset_library = project->active_asset_library_index;
 
   ui::Layout &layout = *panel->layout;
@@ -134,7 +146,7 @@ static void project_asset_panel_draw(const bContext *C, Panel *panel)
 
   ui::Layout &col = row.column(true);
   if (USER_EXPERIMENTAL_TEST(&U, use_remote_asset_libraries)) {
-    PointerRNA props = col.op("project.asset_library_add", "", ICON_ADD);
+    col.op_menu_enum(C, "project.asset_library_add", "type", "", ICON_ADD);
   }
   else {
     PointerRNA props = col.op("project.asset_library_add", "", ICON_ADD);
@@ -165,12 +177,13 @@ void project_asset_panel_register(ARegionType &region_type)
   STRNCPY_UTF8(panel_type->idname, "PROJECT_PT_asset_libraries");
   STRNCPY_UTF8(panel_type->label, N_("Asset Libraries"));
   STRNCPY_UTF8(panel_type->category, N_("Asset Libraries"));
+  panel_type->icon = ICON_ASSET_MANAGER; /* BFA - tab icon, same as Preferences > Asset Libraries */
   STRNCPY_UTF8(panel_type->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
   STRNCPY(panel_type->context, "assets");
   panel_type->space_type = SPACE_PROJECT;
   panel_type->region_type = RGN_TYPE_WINDOW;
   panel_type->draw = project_asset_panel_draw;
-  panel_type->order = 10; /* Make sure the category are put after the other base categoies. */
+  panel_type->order = 10; /* Make sure the category are put after the other base categories. */
   BLI_addtail(&region_type.paneltypes, panel_type);
 }
 

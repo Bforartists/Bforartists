@@ -323,11 +323,10 @@ ccl_device_forceinline
 /* MSVC has very long compilation time (x20) if we force inline this function */
 ccl_device
 #endif
-    ShaderEvalResult
-    integrate_surface_direct_light(KernelGlobals kg,
-                                   IntegratorState state,
-                                   ccl_private ShaderData *sd,
-                                   const ccl_private RNGState *rng_state)
+    ShaderEvalResult integrate_surface_direct_light(KernelGlobals kg,
+                                                    IntegratorState state,
+                                                    ccl_private ShaderData *sd,
+                                                    const ccl_private RNGState *rng_state)
 {
   /* Test if there is a light or BSDF that needs direct light. */
   if (!(kernel_data.integrator.use_direct_light && (sd->runtime_flag & SR_BSDF_HAS_EVAL))) {
@@ -661,8 +660,8 @@ ccl_device_forceinline bool integrate_surface_terminate(IntegratorState state,
 {
   const float continuation_probability = (path_flag & PATH_RAY_TERMINATE_ON_NEXT_SURFACE) ?
                                              0.0f :
-                                             INTEGRATOR_STATE(
-                                                 state, path, continuation_probability);
+                                             float(INTEGRATOR_STATE(
+                                                 state, path, continuation_probability));
   if (continuation_probability == 0.0f) {
     return true;
   }
@@ -845,11 +844,11 @@ ccl_device int integrate_surface(KernelGlobals kg,
       /* Write render passes. */
 #ifdef __PASSES__
       PROFILING_EVENT(PROFILING_SHADE_SURFACE_PASSES);
-      film_write_data_passes(kg, state, &sd, render_buffer);
+      film_write_data_passes(kg, state, path_flag, &sd, render_buffer);
 #endif
 
 #ifdef __DENOISING_FEATURES__
-      film_write_denoising_features_surface(kg, state, &sd, render_buffer);
+      film_write_denoising_features_surface(kg, state, path_flag, &sd, render_buffer);
 #endif
     }
 

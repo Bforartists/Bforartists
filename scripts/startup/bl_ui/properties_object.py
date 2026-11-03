@@ -91,7 +91,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
         row.separator(factor=1.0) # bfa - helps the icon has spacer!
         row.use_property_decorate = False # bfa - no decorator before 4L/blank icon
         row.prop(ob, "rotation_mode", text="") # bfa - no label 
-        row.operator_menu_enum("anim.rotation_mode_convert", "mode", icon='SWAP', text="") # BFA - new
+        row.menu("ANIM_MT_rotation_mode_convert", text="", icon='CONVERT_ROTATION_MODE') # BFA - own icon
         if draw4L:
             row.prop(ob, "lock_rotations_4d", text="", emboss=True, icon='4L_ON' if ob.lock_rotations_4d else '4L_OFF')
         else:
@@ -262,7 +262,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
                 'VOLUME',
                 'CURVES',
                 'POINTCLOUD'})
-        has_bounds = (is_geometry or obj_type in {'LATTICE', 'ARMATURE'})
+        has_bounds = (is_geometry or obj_type in {'LATTICE', 'ARMATURE', 'LIGHT_PROBE'})
         is_empty_image = (obj_type == 'EMPTY' and obj.empty_display_type == 'IMAGE')
         is_dupli = (obj.instance_type != 'NONE')
         is_gpencil = (obj_type == 'GREASEPENCIL')
@@ -584,7 +584,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         col.label(text = "Mask")
         row = col.row()
         row.separator()
-        row.prop(ob, "is_holdout")
+        row.prop(ob, "is_holdout", toggle=False)
 
 
 def has_geometry_visibility(ob):

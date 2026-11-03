@@ -256,6 +256,10 @@ void MTLVertBuf::copy_sub(VertBuf &source_buf,
                           uint vertex_len)
 {
   BLI_assert(format.stride == source_buf.format.stride);
+  BLI_assert_msg(size_t(source_first_vertex) + vertex_len <= source_buf.vertex_len,
+                 "Copy source range exceeds the source vertex buffer bounds");
+  BLI_assert_msg(size_t(dest_first_vertex) + vertex_len <= this->vertex_len,
+                 "Copy destination range exceeds the vertex buffer bounds");
   MTLVertBuf &src = static_cast<MTLVertBuf &>(source_buf);
   BLI_assert_msg(vbo_, "GPU_vertbuf_use() not called on this buffer");
   BLI_assert_msg(src.vbo_, "GPU_vertbuf_use() not called on the source buffer");
@@ -381,7 +385,7 @@ void MTLVertBuf::read(void *data) const
              sourceOffset:0
                  toBuffer:dest_buffer
         destinationOffset:0
-                     size:min_ulul([dest_buffer length], [dest_buffer length])];
+                     size:min_ulul([source_buffer length], [dest_buffer length])];
 
     /* Flush newly copied data back to host-side buffer, if one exists.
      * Ensures data and cache coherency for managed MTLBuffers. */

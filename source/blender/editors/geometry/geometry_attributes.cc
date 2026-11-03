@@ -13,6 +13,8 @@
 #include "DNA_pointcloud_types.h"
 
 #include "BLI_color.hh"
+#include "BLI_generic_array.hh"
+#include "BLI_implicit_sharing.hh"
 #include "BLI_listbase.hh"
 
 #include "BKE_attribute.hh"
@@ -234,8 +236,8 @@ bool attribute_set_poll(bContext &C, const ID &object_data)
 
   if (owner.type() == AttributeOwnerType::Mesh) {
     const Mesh *mesh = owner.get_mesh();
-    if (mesh->runtime->edit_mesh) {
-      BMDataLayerLookup attr = BM_data_layer_lookup(*mesh->runtime->edit_mesh->bm, *name);
+    if (const BMesh *bm = BKE_editmesh_bmesh_get(mesh)) {
+      BMDataLayerLookup attr = BM_data_layer_lookup(*bm, *name);
       if (ELEM(attr.type,
                bke::AttrType::String,
                bke::AttrType::Float4x4,
@@ -379,9 +381,8 @@ static wmOperatorStatus geometry_attribute_add_exec(bContext *C, wmOperator *op)
 
   if (owner.type() == AttributeOwnerType::Mesh) {
     Mesh &mesh = *id_cast<Mesh *>(id);
-    if (BMEditMesh *em = mesh.runtime->edit_mesh.get()) {
-      CustomDataLayer *layer = BKE_attribute_new(
-          mesh, *em->bm, name, cd_type, domain, op->reports);
+    if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(&mesh)) {
+      CustomDataLayer *layer = BKE_attribute_new(mesh, *bm, name, cd_type, domain, op->reports);
       if (layer == nullptr) {
         return OPERATOR_CANCELLED;
       }
@@ -406,11 +407,9 @@ static wmOperatorStatus geometry_attribute_add_exec(bContext *C, wmOperator *op)
   const int domain_size = accessor.domain_size(bke::AttrDomain(domain));
 
   const CPPType &cpp_type = bke::attribute_type_to_cpp_type(type);
-  bke::Attribute &attr = attributes.add(
-      BKE_attribute_calc_unique_name(owner, name),
-      bke::AttrDomain(domain),
-      type,
-      bke::Attribute::ArrayData::from_default_value(cpp_type, domain_size));
+  bke::Attribute &attr = attributes.add(BKE_attribute_calc_unique_name(owner, name),
+                                        bke::AttrDomain(domain),
+                                        bke::Attribute::default_array_data(cpp_type, domain_size));
 
   BKE_attributes_active_set(owner, attr.name());
 
@@ -550,8 +549,8 @@ static wmOperatorStatus geometry_color_attribute_add_exec(bContext *C, wmOperato
 
   if (owner.type() == AttributeOwnerType::Mesh) {
     Mesh *mesh = owner.get_mesh();
-    if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
-      CustomDataLayer *layer = BKE_attribute_new(*mesh, *em->bm, name, type, domain, op->reports);
+    if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+      CustomDataLayer *layer = BKE_attribute_new(*mesh, *bm, name, type, domain, op->reports);
       if (layer == nullptr) {
         return OPERATOR_CANCELLED;
       }
@@ -653,17 +652,17 @@ bool convert_attribute(AttributeOwner &owner,
   const std::string name_copy = name;
   const GVArray varray = *attributes.lookup_or_default(name_copy, dst_domain, dst_type);
 
-  const CPPType &cpp_type = varray.type();
-  void *new_data = MEM_new_uninitialized_aligned(
-      varray.size() * cpp_type.size, cpp_type.alignment, __func__);
-  varray.materialize_to_uninitialized(new_data);
+  GArray<> new_data(varray.type(), varray.size(), NoInitialization());
+  varray.materialize_to_uninitialized(new_data.data());
   if (!BKE_attribute_remove(owner, name_copy, reports)) {
-    MEM_delete_void(new_data);
     return false;
   }
-  if (!attributes.add(name_copy, dst_domain, dst_type, bke::AttributeInitMoveArray(new_data))) {
-    MEM_delete_void(new_data);
-  }
+  auto *sharing_info = new ImplicitSharedValue<GArray<>>(std::move(new_data));
+  attributes.add(name_copy,
+                 dst_domain,
+                 dst_type,
+                 bke::AttributeInitShared(sharing_info->data.data(), *sharing_info));
+  sharing_info->remove_user_and_delete_if_last();
 
   if (was_active) {
     /* The attribute active status is stored as an index. Changing the attribute's domain will
@@ -825,8 +824,8 @@ static wmOperatorStatus geometry_color_attribute_set_render_exec(bContext *C, wm
   char name[MAX_NAME];
   RNA_string_get(op->ptr, "name", name);
   Mesh *mesh = id_cast<Mesh *>(id);
-  if (mesh->runtime->edit_mesh) {
-    const BMDataLayerLookup attr = BM_data_layer_lookup(*mesh->runtime->edit_mesh->bm, name);
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+    const BMDataLayerLookup attr = BM_data_layer_lookup(*bm, name);
     if (!attr) {
       return OPERATOR_CANCELLED;
     }

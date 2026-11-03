@@ -70,6 +70,11 @@ void action_operatortypes()
   WM_operatortype_append(ACTION_OT_view_frame);
 
   WM_operatortype_append(ACTION_OT_markers_make_local);
+
+  /* bfa 3d sequencer scene strip gizmos */
+  WM_operatortype_append(ACTION_OT_scene_strip_timing);
+  WM_operatortype_append(ACTION_OT_scene_strip_scrub);
+  WM_operatortype_append(ACTION_OT_scene_strip_sync_from_range);
 }
 
 void ED_operatormacros_action()

@@ -66,7 +66,7 @@ def render_main(self, context, animation=False):
         # -----------------------------
         for myobj in objlist:
             if myobj.visible_get() is True:
-                if 'MeasureGenerator' in myobj:
+                if hasattr(myobj, "MeasureGenerator") and len(myobj.MeasureGenerator) > 0:
                     op = myobj.MeasureGenerator[0]
                     draw_segments(context, myobj, op, None, None)
         # -----------------------------

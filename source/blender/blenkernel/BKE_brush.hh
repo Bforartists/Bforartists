@@ -212,6 +212,24 @@ void BKE_brush_weight_set(Paint *paint, Brush *brush, float value);
 int BKE_brush_input_samples_get(const Paint *paint, const Brush *brush);
 void BKE_brush_input_samples_set(Paint *paint, Brush *brush, int value);
 
+/**
+ * BFA - Grease Pencil radius/surface offset sync (`ToolSettings.gpencil_sync_radius_surface`).
+ *
+ * Copy the effective size of the active Grease Pencil Draw mode brush into
+ * `ToolSettings.gpencil_surface_offset`, so the offset shown in the tool header matches the
+ * brush. Reads through #BKE_brush_unprojected_size_get(), so it follows the shared size when the
+ * brush uses "Unified Size", same as the stroke does. Only applies when sync is enabled and the
+ * size is measured in scene units.
+ *
+ * Call whenever the effective size can change: brush or unified size edits, toggling
+ * "Use Unified Size" or the size unit, and activating another brush.
+ * Kept in BKE so both RNA updates and the tool system can share it.
+ *
+ * \return true when the offset was changed, so callers can send a redraw notifier
+ * (`NC_SCENE | ND_TOOLSETTINGS`), BKE can't do that itself.
+ */
+bool BKE_brush_gpencil_surface_offset_sync(Scene *scene);
+
 bool BKE_brush_use_locked_size(const Paint *paint, const Brush *brush);
 bool BKE_brush_use_alpha_pressure(const Brush *brush);
 bool BKE_brush_use_size_pressure(const Brush *brush);
@@ -237,7 +255,8 @@ bool BKE_brush_has_cube_tip(const Brush *brush, PaintMode paint_mode);
 
 namespace bke::brush {
 float normal_weight_get(const Brush &brush, bool invert);
-}
+float tip_rotation_get(const Paint &paint, const Brush &brush);
+}  // namespace bke::brush
 
 /* debugging only */
 void BKE_brush_debug_print_state(Brush *br);
@@ -265,6 +284,7 @@ bool supports_plane_height(const Brush &brush);
 bool supports_plane_depth(const Brush &brush);
 bool supports_jitter(const Brush &brush);
 bool supports_normal_weight(const Brush &brush);
+bool supports_rake(const Brush &brush);
 bool supports_rake_factor(const Brush &brush);
 bool supports_persistence(const Brush &brush);
 bool supports_pinch_factor(const Brush &brush);

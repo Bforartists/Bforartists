@@ -215,7 +215,7 @@ const EnumPropertyItem rna_enum_metaelem_type_items[] = {
     {MB_TUBE, "CAPSULE", ICON_META_CAPSULE, "Capsule", ""},
     {MB_PLANE, "PLANE", ICON_META_PLANE, "Plane", ""},
     /* NOTE: typo at original definition! */
-    {MB_ELIPSOID, "ELLIPSOID", ICON_META_ELLIPSOID, "Ellipsoid", ""},
+    {MB_ELLIPSOID, "ELLIPSOID", ICON_META_ELLIPSOID, "Ellipsoid", ""},
     {MB_CUBE, "CUBE", ICON_META_CUBE, "Cube", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -498,7 +498,7 @@ static void rna_Object_active_shape_update(Main *bmain, Scene * /*scene*/, Point
 
         DEG_id_tag_update(&mesh->id, 0);
 
-        BKE_editmesh_looptris_and_normals_calc(em);
+        BKE_editmesh_looptris_and_normals_calc(em, BKE_editmesh_bmesh_get_for_write(mesh));
         break;
       }
       case OB_CURVES_LEGACY:
@@ -521,9 +521,12 @@ static void rna_Object_active_shape_update(Main *bmain, Scene * /*scene*/, Point
 
 static void rna_Object_dependency_update(Main *bmain, Scene * /*scene*/, PointerRNA *ptr)
 {
+  Object *ob = id_cast<Object *>(ptr->owner_id);
   DEG_id_tag_update(ptr->owner_id, ID_RECALC_TRANSFORM);
   DEG_relations_tag_update(bmain);
   WM_main_add_notifier(NC_OBJECT | ND_PARENT, ptr->owner_id);
+
+  BKE_collection_object_parented_sort_index_reset(*bmain, *ob);
 }
 
 void rna_Object_data_update(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -1028,10 +1031,7 @@ void rna_object_vgroup_name_index_set(PointerRNA *ptr, const char *value, short 
   *index = BKE_object_defgroup_name_index(ob, value) + 1;
 }
 
-void rna_object_vgroup_name_set(PointerRNA *ptr,
-                                const char *value,
-                                char *result,
-                                int result_maxncpy)
+void rna_object_vgroup_name_set(PointerRNA *ptr, const char *value, MutableCStr result)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   if (!BKE_object_supports_vertex_groups(ob)) {
@@ -1042,17 +1042,14 @@ void rna_object_vgroup_name_set(PointerRNA *ptr,
   bDeformGroup *dg = BKE_object_defgroup_find_name(ob, value);
   if (dg) {
     /* No need for BLI_strncpy_utf8, since this matches an existing group. */
-    BLI_strncpy(result, value, result_maxncpy);
+    STRNCPY(result, value);
     return;
   }
 
   result[0] = '\0';
 }
 
-void rna_object_uvlayer_name_set(PointerRNA *ptr,
-                                 const char *value,
-                                 char *result,
-                                 int result_maxncpy)
+void rna_object_uvlayer_name_set(PointerRNA *ptr, const char *value, MutableCStr result)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   Mesh *mesh;
@@ -1061,7 +1058,7 @@ void rna_object_uvlayer_name_set(PointerRNA *ptr,
     mesh = id_cast<Mesh *>(ob->data);
 
     if (mesh->uv_map_names().contains(value)) {
-      BLI_strncpy(result, value, result_maxncpy);
+      STRNCPY(result, value);
       return;
     }
   }
@@ -1069,10 +1066,7 @@ void rna_object_uvlayer_name_set(PointerRNA *ptr,
   result[0] = '\0';
 }
 
-void rna_object_vcollayer_name_set(PointerRNA *ptr,
-                                   const char *value,
-                                   char *result,
-                                   int result_maxncpy)
+void rna_object_vcollayer_name_set(PointerRNA *ptr, const char *value, MutableCStr result)
 {
   Object *ob = reinterpret_cast<Object *>(ptr->owner_id);
   Mesh *mesh;
@@ -1086,7 +1080,7 @@ void rna_object_vcollayer_name_set(PointerRNA *ptr,
       layer = &mesh->fdata_legacy.layers[a];
 
       if (layer->type == CD_MCOL && STREQ(layer->name, value)) {
-        BLI_strncpy(result, value, result_maxncpy);
+        STRNCPY(result, value);
         return;
       }
     }
@@ -1619,9 +1613,12 @@ static void rna_Object_active_constraint_set(PointerRNA *ptr,
   BKE_constraints_active_set(&ob->constraints, static_cast<bConstraint *>(value.data));
 }
 
-static bConstraint *rna_Object_constraints_new(Object *object, Main *bmain, int type)
+static bConstraint *rna_Object_constraints_new(Object *object,
+                                               Main *bmain,
+                                               int type,
+                                               const char *name)
 {
-  bConstraint *new_con = BKE_constraint_add_for_object(object, nullptr, eBConstraint_Types(type));
+  bConstraint *new_con = BKE_constraint_add_for_object(object, name, eBConstraint_Types(type));
 
   ed::object::constraint_tag_update(bmain, object, new_con);
   WM_main_add_notifier(NC_OBJECT | ND_CONSTRAINT | NA_ADDED, object);
@@ -2507,6 +2504,12 @@ static void rna_def_object_constraints(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_enum(
       func, "type", rna_enum_constraint_type_items, 1, "", "Constraint type to add");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  RNA_def_string(func,
+                 "name",
+                 nullptr,
+                 0,
+                 "",
+                 "Name of the new constraint. If empty, the name of the constraint type is used");
   /* return type */
   parm = RNA_def_pointer(func, "constraint", "Constraint", "", "New constraint");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, ParameterFlag(0));
@@ -2827,6 +2830,8 @@ static void rna_def_object_lineart(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "ObjectLineArt");
   RNA_def_struct_path_func(srna, "rna_ObjectLineArt_path");
 
+  RNA_define_lib_overridable(true);
+
   prop = RNA_def_property(srna, "usage", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, prop_feature_line_usage_items);
   RNA_def_property_ui_text(prop, "Usage", "How to use this object in Line Art calculation");
@@ -2859,6 +2864,8 @@ static void rna_def_object_lineart(BlenderRNA *brna)
                            "The intersection line will be included into the object with the "
                            "higher intersection priority value");
   RNA_def_property_update(prop, NC_GPENCIL | ND_SHADING, "rna_object_lineart_update");
+
+  RNA_define_lib_overridable(false);
 }
 
 static void rna_def_object_visibility(StructRNA *srna)
@@ -2929,6 +2936,7 @@ static void rna_def_object_visibility(StructRNA *srna)
   prop = RNA_def_property(srna, "visible_camera", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, nullptr, "visibility_flag", OB_HIDE_CAMERA);
   RNA_def_property_ui_text(prop, "Camera Visibility", "Object visibility to camera rays");
+  RNA_def_property_ui_icon(prop, ICON_INDIRECT_ONLY_OFF, 1);
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
 
   prop = RNA_def_property(srna, "visible_diffuse", PROP_BOOLEAN, PROP_NONE);
@@ -2966,6 +2974,7 @@ static void rna_def_object_visibility(StructRNA *srna)
       "Holdout",
       "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to "
       "fill out in compositing with real footage or another render");
+  RNA_def_property_ui_icon(prop, ICON_HOLDOUT_OFF, 1);
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_hide_update");
 
   prop = RNA_def_property(srna, "is_shadow_catcher", PROP_BOOLEAN, PROP_NONE);
@@ -2983,7 +2992,7 @@ static void rna_def_object_visibility(StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "Raycast Visibility",
-      "Object visibility to raycast rays. Implicitly false for Blended materials.");
+      "Object visibility to raycast rays. Implicitly false for Blended materials in EEVEE.");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
 }
 

@@ -15,7 +15,7 @@ else:
     _redraw_yasiamevil.arg = dict(type='DRAW_WIN_SWAP', iterations=1)
 
 
-def _points_from_object(depsgraph, scene, obj, source):
+def _points_from_object(context, depsgraph, obj, source):
 
     _source_all = {
         'PARTICLE_OWN', 'PARTICLE_CHILD',
@@ -50,7 +50,7 @@ def _points_from_object(depsgraph, scene, obj, source):
             matrix = obj.matrix_world.copy()
             points.extend([matrix @ v.co for v in mesh.vertices])
         else:
-            ob_eval = ob.evaluated_get(depsgraph)
+            ob_eval = obj.evaluated_get(depsgraph)
             try:
                 mesh = ob_eval.to_mesh()
             except:
@@ -89,15 +89,17 @@ def _points_from_object(depsgraph, scene, obj, source):
         return [point.co.copy() for point in stroke.points]
 
     def get_splines(gp):
-        if gp.layers.active:
-            frame = gp.layers.active.active_frame
-            return [get_points(stroke) for stroke in frame.strokes]
+        if gp.layers.active_index:
+            for layer in gp.layers:
+                if layer.info == gp.layers.active_note:
+                    frame = layer.active_frame
+                    return [get_points(stroke) for stroke in frame.strokes]
         else:
             return []
 
     if 'PENCIL' in source:
         # Used to be from object in 2.7x, now from scene.
-        gp = scene.grease_pencil
+        gp = context.annotation_data
         if gp:
             points.extend([p for spline in get_splines(gp) for p in spline])
 
@@ -129,11 +131,11 @@ def cell_fracture_objects(
     # -------------------------------------------------------------------------
     # GET POINTS
 
-    points = _points_from_object(depsgraph, scene, obj, source)
+    points = _points_from_object(context, depsgraph, obj, source)
 
     if not points:
         # print using fallback
-        points = _points_from_object(depsgraph, scene, obj, {'VERT_OWN'})
+        points = _points_from_object(context, depsgraph, obj, {'VERT_OWN'})
 
     if not points:
         print("no points found")

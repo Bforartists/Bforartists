@@ -23,19 +23,21 @@ enum ExprFlag : uint8_t {
 struct ExpressionResult {
   SymbolClass *type;
   /* Value if constexpr. */
-  ConstexprValue value = 0;
+  ConstexprValue value = ConstexprError(0);
   /* Array dimension of the current temporary. */
   uint8_t array_dim = 0;
 
   ExprFlag flags = ExprFlag::IsNone;
   bool is_temporary = false;
+  bool is_ptr = false;
 
   ExpressionResult(SymbolVariable *var)
       : type(var->type),
         value(var->value),
         array_dim(var->array_dimensions),
         flags(ExprFlag((var->is_constexpr ? ExprFlag::IsConstexpr : ExprFlag::IsNone) |
-                       (var->is_const ? ExprFlag::IsConstant : ExprFlag::IsNone)))
+                       (var->is_const ? ExprFlag::IsConstant : ExprFlag::IsNone))),
+        is_ptr(var->is_ptr)
   {
   }
 

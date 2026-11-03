@@ -5,11 +5,10 @@
 import math
 import os
 import pathlib
-import pprint
 import sys
 import tempfile
 import unittest
-from pxr import Gf, Sdf, Usd, UsdGeom, UsdLux, UsdMtlx, UsdShade, UsdSkel, UsdUI, UsdUtils, UsdVol
+from pxr import Gf, Sdf, Usd, UsdGeom, UsdLux, UsdMtlx, UsdShade, UsdSkel, UsdUI, UsdUtils, UsdVol, UsdValidation
 
 import bpy
 
@@ -53,33 +52,24 @@ class AbstractUSDTest(unittest.TestCase):
         self.assertEqual({'FINISHED'}, res, f"Unable to export to {export_path}")
 
         # Validate resulting file
-        checker = UsdUtils.ComplianceChecker(
-            arkit=False,
-            skipARKitRootLayerCheck=False,
-            rootPackageOnly=False,
-            skipVariants=False,
-            verbose=False,
-        )
-        checker.CheckCompliance(export_path)
 
-        failed_checks = {}
+        # Any validators to exclude. E.g. "usdUtilsValidators:MissingReferenceValidator"
+        to_skip = []
 
-        # The ComplianceChecker does not know how to resolve <UDIM> tags, so
-        # it will flag "textures/test_grid_<UDIM>.png" as a missing reference.
-        # That reference is in fact OK, so we skip the rule for this test.
-        to_skip = ("MissingReferenceChecker",)
-        for rule in checker._rules:
-            name = rule.__class__.__name__
-            if name in to_skip:
-                continue
+        validation_reg = UsdValidation.ValidationRegistry()
+        metadata = [m for m in validation_reg.GetAllValidatorMetadata() if m.name not in to_skip]
+        metadata = sorted(metadata, key=lambda m: m.name)
 
-            issues = rule.GetFailedChecks() + rule.GetWarnings() + rule.GetErrors()
-            if not issues:
-                continue
+        stage = Usd.Stage.Open(export_path)
 
-            failed_checks[name] = issues
+        validation_ctx = UsdValidation.ValidationContext(metadata=metadata)
+        failures = validation_ctx.Validate(stage)
+        failure_msgs = []
+        for failure in failures:
+            failure_msgs.append(f"{failure.GetIdentifier()} : {failure.GetMessage()}")
 
-        self.assertFalse(failed_checks, pprint.pformat(failed_checks))
+        stage = None
+        self.assertEqual(len(failure_msgs), 0, failure_msgs)
 
 
 class USDExportTest(AbstractUSDTest):
@@ -1443,7 +1433,7 @@ class USDExportTest(AbstractUSDTest):
         shader_id = shader.GetIdAttr().Get()
         self.assertEqual(shader_id, "ND_open_pbr_surface_surfaceshader", "Shader is not an OpenPBR Surface")
 
-    def test_get_prim_map_export_xfrom_not_merged_animated(self):
+    def test_get_prim_map_export_xform_not_merged_animated(self):
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_anim_test.blend"))
         bpy.data.scenes["Scene"].frame_end = 2
         bpy.utils.register_class(GetPrimMapUsdExportHook)
@@ -1473,7 +1463,7 @@ class USDExportTest(AbstractUSDTest):
 
         self.assertDictEqual(prim_map, expected_prim_map)
 
-    def test_get_prim_map_export_xfrom_not_merged(self):
+    def test_get_prim_map_export_xform_not_merged(self):
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_extent_test.blend"))
         bpy.utils.register_class(GetPrimMapUsdExportHook)
         bpy.ops.wm.usd_export(filepath=str(self.tempdir / "test_prim_map_export.usda"), merge_parent_xform=False)
@@ -1496,7 +1486,7 @@ class USDExportTest(AbstractUSDTest):
 
         self.assertDictEqual(prim_map, expected_prim_map)
 
-    def test_get_prim_map_export_xfrom_merged(self):
+    def test_get_prim_map_export_xform_merged(self):
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "usd_extent_test.blend"))
         bpy.utils.register_class(GetPrimMapUsdExportHook)
         bpy.ops.wm.usd_export(filepath=str(self.tempdir / "test_prim_map_export.usda"), merge_parent_xform=True)
@@ -1730,7 +1720,7 @@ class USDExportTest(AbstractUSDTest):
         self.assertEqual(self.round_vector(xf.GetTranslateOp().Get()), [10, 20, 30])
 
     def test_export_native_instancing_true(self):
-        """Test exporting instanced objects to native (scne graph) instances."""
+        """Test exporting instanced objects to native (scene graph) instances."""
         bpy.ops.wm.open_mainfile(filepath=str(self.testdir / "nested_instancing_test.blend"))
 
         export_path = self.tempdir / "usd_export_nested_instancing_true.usda"
@@ -1768,7 +1758,7 @@ class USDExportTest(AbstractUSDTest):
         assert prim
         assert prim.IsInstance()
 
-        # Ensure all the prototype paths are under the pototypes root.
+        # Ensure all the prototype paths are under the prototypes root.
         for prim in stage.Traverse():
             if prim.IsInstance():
                 arcs = Usd.PrimCompositionQuery.GetDirectReferences(prim).GetCompositionArcs()
@@ -1828,7 +1818,7 @@ class USDExportTest(AbstractUSDTest):
             prim = stage.GetPrimAtPath(prim_path)
             self.assertEqual(prim.IsInstance(), expected, f"Unexpected result for {prim_path}")
 
-        # Ensure all the prototype paths are under the pototypes root.
+        # Ensure all the prototype paths are under the prototypes root.
         protos_root_path = Sdf.Path("/root/prototypes")
         for prim in stage.Traverse():
             if prim.IsInstance():
@@ -2450,7 +2440,7 @@ class ExportTextureUSDHook(bpy.types.USDHook):
     def on_material_export(export_context, bl_material, usd_material):
         """
         If a texture image node exists in the given material's
-        node tree, call exprt_texture() on the image and cache
+        node tree, call export_texture() on the image and cache
         the returned path.
         """
         tex_image_node = None

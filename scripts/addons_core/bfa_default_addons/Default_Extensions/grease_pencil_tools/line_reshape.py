@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2022 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 '''Based on GP_refine_stroke 0.2.4 - Author: Samuel Bernou'''
 
@@ -26,7 +26,7 @@ def vector_len_from_coord(a, b):
     if type(a) is Vector:
         return (a - b).length
     else:
-        return (a.co - b.co).length
+        return (a.position - b.position).length
 
 def point_from_dist_in_segment_3d(a, b, ratio):
     '''return the tuple coords of a point on 3D segment ab according to given ratio (some distance divided by total segment length)'''
@@ -63,8 +63,8 @@ def to_straight_line(s, keep_points=True, influence=100, straight_pressure=True)
                 p.pressure = mean_pressure
 
     else:
-        A = s.points[0].co
-        B = s.points[-1].co
+        A = s.points[0].position
+        B = s.points[-1].position
         # ab_dist = vector_len_from_coord(A,B)
         full_dist = get_stroke_length(s)
         dist_from_start = 0.0
@@ -79,10 +79,10 @@ def to_straight_line(s, keep_points=True, influence=100, straight_pressure=True)
         # apply change
         for i in range(1, p_len-1):
             ## Direct super straight 100%
-            #s.points[i].co = coord_list[i-1]
+            #s.points[i].position = coord_list[i-1]
 
             ## With influence
-            s.points[i].co = point_from_dist_in_segment_3d(s.points[i].co, coord_list[i-1], influence / 100)
+            s.points[i].position = point_from_dist_in_segment_3d(s.points[i].position, coord_list[i-1], influence / 100)
 
     return
 
@@ -103,8 +103,8 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None and context.object.type == 'GPENCIL'
-        #and context.mode in ('PAINT_GPENCIL', 'EDIT_GREASE_PENCIL')
+        return context.active_object is not None and context.object.type == 'GREASEPENCIL'
+        #and context.mode in ('PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL')
 
     influence_val : bpy.props.FloatProperty(name="Straight force", description="Straight interpolation percentage",
     default=100, min=0, max=100, step=2, precision=1, subtype='PERCENTAGE', unit='NONE')
@@ -115,31 +115,31 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
         if not gpl:
             return {"CANCELLED"}
 
-        if context.mode == 'PAINT_GPENCIL':
-            if not gpl.active or not gpl.active.active_frame:
+        if context.mode == 'PAINT_GREASE_PENCIL':
+            if not gpl.active or not gpl.active.current_frame():
                 self.report({'ERROR'}, 'No Grease pencil frame found')
                 return {"CANCELLED"}
 
-            if not len(gpl.active.active_frame.strokes):
+            if not len(gpl.active.current_frame().drawing.strokes):
                 self.report({'ERROR'}, 'No strokes found.')
                 return {"CANCELLED"}
 
-            s = gpl.active.active_frame.strokes[get_last_index(context)]
+            s = gpl.active.current_frame().drawing.strokes[get_last_index(context)]
             to_straight_line(s, keep_points=True, influence=self.influence_val)
 
         elif context.mode == 'EDIT_GREASE_PENCIL':
             ct = 0
             for l in gpl:
-                if l.lock or l.hide or not l.active_frame:
+                if l.lock or l.hide or not l.current_frame():
                     # avoid locked, hidden, empty layers
                     continue
-                if gp.use_multiedit:
+                if context.scene.tool_settings.use_grease_pencil_multi_frame_editing:
                     target_frames = [f for f in l.frames if f.select]
                 else:
-                    target_frames = [l.active_frame]
+                    target_frames = [l.current_frame()]
 
                 for f in target_frames:
-                    for s in f.strokes:
+                    for s in f.drawing.strokes:
                         if s.select:
                             ct += 1
                             to_straight_line(s, keep_points=True, influence=self.influence_val)
@@ -149,11 +149,11 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
                 return {"CANCELLED"}
 
         ## filter method
-        # if context.mode == 'PAINT_GPENCIL':
+        # if context.mode == 'PAINT_GREASE_PENCIL':
         #     L, F, S = 'ACTIVE', 'ACTIVE', 'LAST'
         # elif context.mode == 'EDIT_GREASE_PENCIL'
         #     L, F, S = 'ALL', 'ACTIVE', 'SELECT'
-        #     if gp.use_multiedit: F = 'SELECT'
+        #     if context.scene.tool_settings.use_grease_pencil_multi_frame_editing: F = 'SELECT'
         # else : return {"CANCELLED"}
         # for s in strokelist(t_layer=L, t_frame=F, t_stroke=S):
         #     to_straight_line(s, keep_points=True, influence = self.influence_val)#, straight_pressure=True
@@ -165,7 +165,7 @@ class GPENCIL_OT_straight_stroke(bpy.types.Operator):
         layout.prop(self, "influence_val")
 
     def invoke(self, context, event):
-        if context.mode not in ('PAINT_GPENCIL', 'EDIT_GREASE_PENCIL'):
+        if context.mode not in ('PAINT_GREASE_PENCIL', 'EDIT_GREASE_PENCIL'):
             return {"CANCELLED"}
         if event.shift:
             self.influence_val = 100

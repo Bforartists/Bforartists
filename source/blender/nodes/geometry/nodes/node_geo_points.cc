@@ -71,15 +71,15 @@ static void node_geo_exec(GeoNodeExecParams params)
   Field<float3> position_field = params.extract_input<Field<float3>>("Position"_ustr);
   Field<float> radius_field = params.extract_input<Field<float>>("Radius"_ustr);
 
-  PointCloud *points = BKE_pointcloud_new_nomain(count);
+  PointCloud *points = BKE_pointcloud_new_nomain(PointCloudType::Points, count);
   MutableAttributeAccessor attributes = points->attributes_for_write();
 
   PointsFieldContext context{count};
   fn::FieldEvaluator evaluator{context, count};
   evaluator.add_with_destination(position_field, points->positions_for_write());
   if (radius_field.depends_on_input()) {
-    AttributeWriter<float> output_radii = attributes.lookup_or_add_for_write<float>(
-        "radius", AttrDomain::Point);
+    AttributeWriter<float> output_radii = attributes.ensure_for_write<float>("radius",
+                                                                             AttrDomain::Point);
     evaluator.add_with_destination(radius_field, output_radii.varray);
     evaluator.evaluate();
     output_radii.finish();

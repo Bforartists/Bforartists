@@ -27,12 +27,12 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BKE_annotations.h"
 #include "BKE_asset.hh"
 #include "BKE_compositor.hh"
 #include "BKE_compute_context_cache.hh"
 #include "BKE_compute_contexts.hh"
 #include "BKE_context.hh"
-#include "BKE_gpencil_legacy.h"
 #include "BKE_idprop.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_lib_query.hh"
@@ -1125,7 +1125,7 @@ static bool node_import_file_drop_poll(bContext *C, wmDrag *drag, const wmEvent 
     }
     if (is_geometry_tree &&
         (path.endswith(".csv") || path.endswith(".obj") || path.endswith(".ply") ||
-         path.endswith(".stl") || path.endswith(".vdb")))
+         path.endswith(".stl") || path.endswith(".vdb") || path.endswith(".spz")))
     {
       return true;
     }
@@ -1400,6 +1400,13 @@ static void node_region_listener(const wmRegionListenerParams *params)
       if (wmn->data == ND_LAYOUTSET || wmn->action == NA_EDITED) {
         WM_gizmomap_tag_refresh(gzmap);
       }
+      /* If a new workspace was chosen, execute the compositor if its viewer result is visible. */
+      if (wmn->data == ND_LAYOUTSET &&
+          bke::compositor::is_compositor_viewer_visible(*params->area))
+      {
+        Scene *scene = WM_window_get_active_scene(params->window);
+        DEG_id_tag_update(&scene->id, ID_RECALC_COMPOSITOR);
+      }
       switch (wmn->data) {
         case ND_ANIMPLAY:
         case ND_LAYER:
@@ -1542,6 +1549,10 @@ static void node_widgets()
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_ellipse_mask);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_split);
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_translate);
+  WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_transform);
+  WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_scale);
+  // WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_compositor_rotate);
+  /* BFA - node minimap, kept last as before */
   WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_minimap);
   WM_gizmotype_append(NODE_GT_minimap);
 }
@@ -1795,7 +1806,7 @@ static void node_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 
   if (snode->gpd) {
     BLO_read_struct(reader, bGPdata, &snode->gpd);
-    BKE_gpencil_blend_read_data(reader, snode->gpd);
+    BKE_annotations_blend_read_data(reader, snode->gpd);
   }
 
   BLO_read_struct_list(reader, bNodeTreePath, &snode->treepath);
@@ -1806,7 +1817,9 @@ static void node_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 static void node_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   SpaceNode *snode = reinterpret_cast<SpaceNode *>(sl);
-  writer->write_struct_cast<SpaceNode>(snode);
+  writer->write_struct_cast<SpaceNode>(snode, [](BlendStructWriter<SpaceNode> &struct_writer) {
+    struct_writer.shallow_data.runtime = nullptr;
+  });
 
   for (bNodeTreePath &path : snode->treepath) {
     writer->write_struct(&path);
@@ -1843,6 +1856,7 @@ void ED_spacetype_node()
 
   st->spaceid = SPACE_NODE;
   STRNCPY_UTF8(st->name, "Node");
+  st->struct_size = sizeof(SpaceNode);
 
   st->create = node_create;
   st->free = node_free;

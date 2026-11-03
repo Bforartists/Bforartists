@@ -26,6 +26,8 @@ from bl_ui.space_toolsystem_common import (
     ToolActivePanelHelper,
 )
 
+import addon_utils  # BFA - import for 3D Sequencer addon checks
+
 from rna_prop_ui import PropertyPanel
 from bl_ui.space_time import playback_controls
 from bl_ui.properties_data_camera import DATA_PT_camera_display_composition_guides
@@ -144,6 +146,20 @@ class SEQUENCER_HT_header(Header):
         # Sync pinned scene button
         row.label(icon="PINNED" if context.workspace.sequencer_scene else "UNPINNED")  # BFA - 3D Sequencer
 
+        # BFA (#6780): core Sync toggle for the built-in scene time sync - same
+        # affordance as the 3D Sequencer addon's Sync button, shown only while the
+        # addon is disabled so the two never appear together.
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'} and not addon_utils.check(
+            "bfa_3Dsequencer"
+        )[0]:
+            layout.prop(
+                context.workspace,
+                "use_scene_time_sync",
+                text="Sync",
+                icon="VIEW3D",
+                toggle=True,
+            )
+
         # BFA - wip merge of new sequencer
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             row = layout.row(align=True)
@@ -156,7 +172,11 @@ class SEQUENCER_HT_header(Header):
 
         if sequencer_tool_settings and st.view_type in {"SEQUENCER", "SEQUENCER_PREVIEW"}:
             row = layout.row(align=True)
-            row.prop(sequencer_tool_settings, "overlap_mode", text="", icon_only=True)  # BFA - icon only
+            row.prop(sequencer_tool_settings, "overlap_mode", expand=True, icon_only=True)
+            row.popover(
+                text="",
+                panel="SEQUENCER_PT_edit_mode",
+            )
 
         if tool_settings:
             row = layout.row(align=True)
@@ -445,8 +465,8 @@ class SEQUENCER_MT_range(Menu):
 
         layout.separator()
 
-        layout.operator("anim.start_frame_set", text="Set Start Frame", icon="AFTER_CURRENT_FRAME")  # BFA
-        layout.operator("anim.end_frame_set", text="Set End Frame", icon="BEFORE_CURRENT_FRAME")  # BFA
+        # layout.operator("anim.start_frame_set", text="Set Start Frame", icon="AFTER_CURRENT_FRAME")  # BFA - double, in the timeline footer frame range
+        # layout.operator("anim.end_frame_set", text="Set End Frame", icon="BEFORE_CURRENT_FRAME")  # BFA - double, in the timeline footer frame range
         layout.operator(
             "sequencer.set_range_to_strips",
             text="Set Frame Range to Strips",
@@ -1086,8 +1106,7 @@ class SEQUENCER_MT_add_clip(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        for clip in bpy.data.movieclips:
-            layout.operator("sequencer.movieclip_strip_add", text=clip.name, translate=False).clip = clip.name
+        layout.operator_enum("sequencer.movieclip_strip_add", "clip")
 
 
 class SEQUENCER_MT_add_mask(Menu):
@@ -1097,8 +1116,7 @@ class SEQUENCER_MT_add_mask(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        for mask in bpy.data.masks:
-            layout.operator("sequencer.mask_strip_add", text=mask.name, translate=False).mask = mask.name
+        layout.operator_enum("sequencer.mask_strip_add", "mask")
 
 
 class SEQUENCER_MT_add_transitions(Menu):
@@ -1210,12 +1228,10 @@ class SEQUENCER_MT_strip_transform(Menu):
             col.operator("transform.resize", text="Scale", icon="TRANSFORM_SCALE")
         else:
             col.operator("transform.seq_slide", text="Move", icon="TRANSFORM_MOVE").view2d_edge_pan = True
-            col.operator(
-                "transform.transform",
-                text="Move/Extend from Current Frame",
-                icon="SEQ_MOVE_EXTEND",
-            ).mode = "TIME_EXTEND"
+            col.operator("transform.transform", text="Move/Extend from Current Frame", icon="SEQ_MOVE_EXTEND",).mode = "TIME_EXTEND"
             col.operator("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS")
+            col.operator("sequencer.ripple_trim", text="Ripple Trim Start").side = 'LEFT' # BFA - WIP, needs icon
+            col.operator("sequencer.ripple_trim", text="Ripple Trim End").side = 'RIGHT' # BFA - WIP, needs icon
 
         # TODO (for preview)
         if has_sequencer:
@@ -1559,11 +1575,13 @@ class SEQUENCER_MT_strip(Menu):
                     "sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT"
                 )
                 props.type = "SOFT"
+                props.only_selected = True
 
                 props = layout.operator(
-                    "sequencer.split", text="Hold Split", text_ctxt=i18n_contexts.id_sequence, icon="HOLD_SPLIT"
+                    "sequencer.split", text="Hard Split", text_ctxt=i18n_contexts.id_sequence, icon="HOLD_SPLIT"
                 )
                 props.type = "HARD"
+                props.only_selected = True
 
             layout.separator()
 
@@ -1762,7 +1780,12 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.operator_context = "INVOKE_REGION_WIN"
 
-        layout.operator("sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT").type = "SOFT"
+        props = layout.operator("sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT")
+        props.type = "SOFT"
+        props.only_selected = True
+        # BFA - keeps its own context menu layout. Blender reorganized its menu by selection
+        # in week 43; the behavior changes (only_selected, keep_offset, no cursor position)
+        # are applied to the BFA entries below.
 
         layout.separator()
 
@@ -1781,8 +1804,8 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS")
-        layout.operator("sequencer.snap", icon="SEQ_SNAP_STRIP")
+        layout.operator("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS").use_cursor_position = False
+        layout.operator("sequencer.snap", icon="SEQ_SNAP_STRIP").keep_offset = True
 
         layout.separator()
 
@@ -1802,6 +1825,8 @@ class SEQUENCER_MT_context_menu(Menu):
         if strip:
             strip_type = strip.type
             total, nonsound = selected_strips_count(context)
+            # BFA - was used below but never defined (NameError on Image strips, #6916). Blender defines the same in its reorganized menu.
+            has_selection = total > 0
 
             layout.separator()
             layout.menu("SEQUENCER_MT_strip_modifiers")  # BFA - no icon
@@ -1852,7 +1877,7 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.separator()
                 layout.operator("sequencer.rendersize", icon="RENDER_REGION")
                 if has_selection:
-                   layout.operator("sequencer.images_separate", icon="SEPARATE")
+                    layout.operator("sequencer.images_separate", icon="SEPARATE")
             elif strip_type != 'SOUND':
                 layout.separator()
                 layout.operator("sequencer.rendersize")
@@ -1953,7 +1978,7 @@ class SEQUENCER_MT_view_pie(Menu):
         pie = layout.menu_pie()
         pie.operator("sequencer.view_all")
         pie.operator("sequencer.view_selected", text="Frame Selected", icon="ZOOM_SELECTED")
-        pie.separator()
+        pie.operator("sequencer.view_frame", icon="VIEW_FRAME")  # BFA - icon
         if context.sequencer_scene.use_preview_range:
             pie.operator("anim.scene_range_frame", text="Frame Preview Range")
         else:
@@ -1976,7 +2001,8 @@ class SEQUENCER_MT_preview_view_pie(Menu):
 
 class SEQUENCER_MT_modifier_add(Menu):
     bl_label = "Add Modifier"
-    bl_options = {"SEARCH_ON_KEY_PRESS"}
+    bl_options = {'SEARCH_ON_KEY_PRESS'}
+    bl_description = "Add a compositor or sound effect to the active strip"
 
     MODIFIER_TYPES_TO_ICONS = {
         enum_it.identifier: enum_it.icon
@@ -2024,12 +2050,15 @@ class SEQUENCER_MT_modifier_add(Menu):
         else:
             self.operator_modifier_add(layout, "BRIGHT_CONTRAST")
             self.operator_modifier_add(layout, "COLOR_BALANCE")
-            self.operator_modifier_add(layout, 'COMPOSITOR')
             self.operator_modifier_add(layout, 'CURVES')
             self.operator_modifier_add(layout, 'HUE_CORRECT')
             self.operator_modifier_add(layout, 'MASK')
             self.operator_modifier_add(layout, 'TONEMAP')
             self.operator_modifier_add(layout, 'WHITE_BALANCE')
+            # BFA - Compositor moved to the bottom as in Blender. The asset catalogs stay
+            # in the separate Add Asset Modifier menu (#6598), so they are not listed here.
+            layout.separator()
+            self.operator_modifier_add(layout, 'COMPOSITOR')
 
 
 class SequencerButtonsPanel:
@@ -2954,7 +2983,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         layout.use_property_decorate = False
 
         st = context.space_data
-        ed = context.scene.sequence_editor
+        ed = context.sequencer_scene.sequence_editor
 
         col = layout.column()
 
@@ -3170,6 +3199,65 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
     _context_path = "active_strip"
     _property_type = (bpy.types.Strip,)
     bl_category = "Strip"
+
+
+class SEQUENCER_PT_edit_mode(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Edit Mode"
+    bl_ui_units_x = 11
+
+    @classmethod
+    def poll(cls, context):
+        return context.sequencer_scene is not None
+
+    def draw(self, context):
+        layout = self.layout
+        sequencer_tool_settings = context.sequencer_scene.tool_settings.sequencer_tool_settings
+
+        # BFA - checkboxes float left under section labels, like the Snapping popover next to it (#6928)
+        # layout.label(text="Ripple")
+        #
+        # col = layout.column(heading="Edit")
+        # col.use_property_split = True
+        #
+        # col.prop(sequencer_tool_settings, "ripple_all_channels")
+        # col.prop(sequencer_tool_settings, "ripple_markers")
+        #
+        # col = layout.column(heading="Add")
+        # col.use_property_split = True
+        #
+        # col.prop(sequencer_tool_settings, "ripple_insert")
+        #
+        # col = layout.column(heading="Delete")
+        # col.use_property_split = True
+        #
+        # col.prop(sequencer_tool_settings, "ripple_clear_ranges")
+        layout.use_property_split = False
+        layout.use_property_decorate = False
+
+        layout.label(text="Ripple")
+
+        col = layout.column(align=True)
+        col.label(text="Edit")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_all_channels")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_markers")
+
+        col = layout.column(align=True)
+        col.label(text="Add")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_insert")
+
+        col = layout.column(align=True)
+        col.label(text="Delete")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "ripple_clear_ranges")
 
 
 class SEQUENCER_PT_snapping(Panel):
@@ -3459,6 +3547,8 @@ classes = (
     SEQUENCER_PT_preview,
     SEQUENCER_PT_annotation,
     SEQUENCER_PT_annotation_onion,
+
+    SEQUENCER_PT_edit_mode,
     SEQUENCER_PT_snapping,
     SEQUENCER_PT_preview_snapping,
     SEQUENCER_PT_sequencer_snapping,

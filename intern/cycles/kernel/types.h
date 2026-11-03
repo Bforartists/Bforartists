@@ -64,6 +64,15 @@ CCL_NAMESPACE_BEGIN
 #  define INTEGRATOR_SHADOW_ISECT_SIZE INTEGRATOR_SHADOW_ISECT_SIZE_CPU
 #endif
 
+/* All ShaderData structs need to have the same alignment. */
+#ifdef __KERNEL_ONEAPI__
+/* On Intel GPUs, for large structs in private memory, an alignment of 64 gives the best
+ * performance. */
+#  define SHADER_DATA_ALIGNMENT 64
+#else
+#  define SHADER_DATA_ALIGNMENT 16
+#endif
+
 // NOLINTEND
 
 /* Sampling Patterns */
@@ -166,12 +175,16 @@ enum PathRayVisibilityFlag : uint32_t {
   PATH_RAY_VISIBILITY_SHADOW = (PATH_RAY_VISIBILITY_SHADOW_OPAQUE |
                                 PATH_RAY_VISIBILITY_SHADOW_TRANSPARENT),
 
+  /* Set of flags used for path ray visibility. */
+  PATH_RAY_VISIBILITY_ALL = ((1U << 7U) - 1U),
+
+  /* Raycast shader node rays, not part of the path. */
   PATH_RAY_VISIBILITY_RAYCAST = (1U << 7U),
 
-  /* Set of flags used for ray visibility for intersection.
+  /* Set of all flags an object can be visible to.
    *
    * NOTE: SHADOW_CATCHER and OSL macros below assume there are no more than 16 visibility bits. */
-  PATH_RAY_VISIBILITY_ALL = ((1U << 8U) - 1U),
+  PATH_RAY_VISIBILITY_OBJECT_ALL = (PATH_RAY_VISIBILITY_ALL | PATH_RAY_VISIBILITY_RAYCAST),
 
   /* Special flag to tag unaligned BVH nodes.
    * Only set and used in BVH nodes to distinguish how to interpret bounding box information stored
@@ -308,7 +321,7 @@ enum PathRayMNEE {
  * On shadow catcher paths we want to ignore any intersections with non-catchers,
  * whereas on regular paths we want to intersect all objects. */
 
-static_assert(PATH_RAY_VISIBILITY_ALL <= 0xffff);
+static_assert(PATH_RAY_VISIBILITY_OBJECT_ALL <= 0xffff);
 
 #define SHADOW_CATCHER_VISIBILITY_SHIFT(visibility) (uint32_t(visibility) << 16)
 
@@ -327,7 +340,7 @@ static_assert(PATH_RAY_VISIBILITY_ALL <= 0xffff);
  * Note that while the entire PathRayVisibilityFlag flags are stored in the rayrtype, only part of
  * the PathRayFlag is stored. */
 
-static_assert(PATH_RAY_VISIBILITY_ALL <= 0xffff);
+static_assert(PATH_RAY_VISIBILITY_OBJECT_ALL <= 0xffff);
 
 #define OSL_RAYTYPE_PACK(visibility, path_flag) \
   (int((uint32_t((path_flag) & 0xffff) << 16) | uint32_t((visibility) & 0xffff)))
@@ -668,7 +681,12 @@ struct Intersection {
 #  define KERNEL_STRUCT_BEGIN(name) struct dummy_##name {
 #  define KERNEL_STRUCT_BEGIN_PACKED(parent_struct, feature) struct packed_##parent_struct {
 #  define KERNEL_STRUCT_MEMBER(parent_struct, type, name, feature)
-#  define KERNEL_STRUCT_MEMBER_PACKED(parent_struct, type, name, feature) type name;
+#  ifdef __KERNEL_GPU__
+#    define KERNEL_STRUCT_MEMBER_PACKED(parent_struct, type, name, feature) type name;
+#  else
+#    define KERNEL_STRUCT_MEMBER_PACKED(parent_struct, type, name, feature) \
+      gpu_state_storage<type>::gpu_type name;
+#  endif
 #  define KERNEL_STRUCT_ARRAY_MEMBER(parent_struct, type, name, feature) type name;
 #  define KERNEL_STRUCT_END(name) \
     } \
@@ -703,20 +721,24 @@ enum PrimitiveType {
   PRIMITIVE_POINT = (1 << 3),
   PRIMITIVE_VOLUME = (1 << 4),
   PRIMITIVE_LAMP = (1 << 5),
+  PRIMITIVE_GSPLAT = (1 << 6),
 
-  PRIMITIVE_MOTION = (1 << 6),
+  PRIMITIVE_MOTION = (1 << 7),
   PRIMITIVE_MOTION_TRIANGLE = (PRIMITIVE_TRIANGLE | PRIMITIVE_MOTION),
   PRIMITIVE_MOTION_CURVE_THICK = (PRIMITIVE_CURVE_THICK | PRIMITIVE_MOTION),
   PRIMITIVE_MOTION_CURVE_RIBBON = (PRIMITIVE_CURVE_RIBBON | PRIMITIVE_MOTION),
   PRIMITIVE_MOTION_CURVE_THICK_LINEAR = (PRIMITIVE_CURVE_THICK_LINEAR | PRIMITIVE_MOTION),
   PRIMITIVE_MOTION_POINT = (PRIMITIVE_POINT | PRIMITIVE_MOTION),
+  PRIMITIVE_MOTION_GSPLAT = (PRIMITIVE_GSPLAT | PRIMITIVE_MOTION),
 
   PRIMITIVE_CURVE = (PRIMITIVE_CURVE_THICK | PRIMITIVE_CURVE_RIBBON),
 
   PRIMITIVE_ALL = (PRIMITIVE_TRIANGLE | PRIMITIVE_CURVE | PRIMITIVE_POINT | PRIMITIVE_VOLUME |
-                   PRIMITIVE_LAMP | PRIMITIVE_MOTION),
+                   PRIMITIVE_LAMP | PRIMITIVE_GSPLAT | PRIMITIVE_MOTION),
 
-  PRIMITIVE_NUM_SHAPES = 6,
+  PRIMITIVE_ANY_POINT = (PRIMITIVE_POINT | PRIMITIVE_GSPLAT),
+
+  PRIMITIVE_NUM_SHAPES = 7,
   PRIMITIVE_NUM_BITS = PRIMITIVE_NUM_SHAPES + 1, /* All shapes + motion bit. */
   PRIMITIVE_NUM = PRIMITIVE_NUM_SHAPES * 2,      /* With and without motion. */
 };
@@ -811,6 +833,12 @@ enum AttributeStandard : int {
   ATTR_STD_POINTINESS,
   ATTR_STD_RANDOM_PER_ISLAND,
   ATTR_STD_SHADOW_TRANSPARENCY,
+  ATTR_STD_GSPLAT_RADIANCE_BASE,
+  ATTR_STD_GSPLAT_RADIANCE_SPHERICAL_HARMONICS_REST,
+  ATTR_STD_GSPLAT_RADIANCE,
+  ATTR_STD_GSPLAT_ROTATION,
+  ATTR_STD_GSPLAT_SCALE,
+
   ATTR_STD_NUM,
 
   ATTR_STD_NOT_FOUND = -0x7fffffff
@@ -1028,7 +1056,7 @@ enum ShaderDataObjectFlag : uint {
                      SD_OBJECT_HAS_VOLUME_MOTION | SD_OBJECT_HAS_CORNER_NORMALS)
 };
 
-struct ccl_align(16) ShaderData {
+struct ccl_align(SHADER_DATA_ALIGNMENT) ShaderData {
   /* position */
   float3 P;
   /* smooth normal for shading */
@@ -1116,13 +1144,13 @@ struct ccl_align(16) ShaderData {
 #ifdef __KERNEL_GPU__
 /* ShaderDataTinyStorage needs the same alignment as ShaderData, or else
  * the pointer cast in AS_SHADER_DATA invokes undefined behavior. */
-struct ccl_align(16) ShaderDataTinyStorage {
+struct ccl_align(SHADER_DATA_ALIGNMENT) ShaderDataTinyStorage {
   char pad[sizeof(ShaderData) - sizeof(ShaderClosure) * MAX_CLOSURE];
 };
 
 /* ShaderDataCausticsStorage needs the same alignment as ShaderData, or else
  * the pointer cast in AS_SHADER_DATA invokes undefined behavior. */
-struct ccl_align(16) ShaderDataCausticsStorage {
+struct ccl_align(SHADER_DATA_ALIGNMENT) ShaderDataCausticsStorage {
   char pad[sizeof(ShaderData) - sizeof(ShaderClosure) * (MAX_CLOSURE - CAUSTICS_MAX_CLOSURE)];
 };
 #else
@@ -1460,6 +1488,17 @@ struct KernelObject {
 
       int normal_offset;
     } mesh_volume;
+
+    /* Information about Gaussian splat objects. */
+    struct {
+      /* Offset for the attributes.
+       * The least significant bit denotes whether the attribute has motion. */
+      int scale_offset_and_flag;
+      int rotation_offset_and_flag;
+      int radiance_base_offset_and_flag;
+
+      int radiance_spherical_harmonics_rest_offset;
+    } gsplat;
   };
 
   float cryptomatte_object;

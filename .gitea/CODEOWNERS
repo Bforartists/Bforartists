@@ -133,6 +133,8 @@ source/blender/nodes/geometry/.*           @JacquesLucke
 
 source/blender/nodes/geometry/.*           @LukasTonne
 
+scripts/startup/bl_ui/node_add_menu_geometry.py     @zazizizou
+
 # --------------------------------------------------
 # Blenlib.
 source/blender/blenlib/BLI_allocator.*                     @JacquesLucke
@@ -206,8 +208,6 @@ intern/ghost/intern/GHOST_ContextVK.*                   @Jeroen-Bakker
 intern/ghost/intern/GHOST_Xr.*                          @Jeroen-Bakker
 intern/opensubdiv/internal/evaluator/gpu.*              @Jeroen-Bakker
 intern/opensubdiv/internal/evaluator/shaders/.*         @Jeroen-Bakker
-source/blender/blenkernel/intern/image_gpu.*            @Jeroen-Bakker
-source/blender/blenkernel/intern/image_partial_update.* @Jeroen-Bakker
 source/blender/gpu/vulkan/.*                            @Jeroen-Bakker
 source/blender/python/gpu/.*                            @Jeroen-Bakker
 source/blender/eevee/.*                                 @fclem
@@ -224,8 +224,8 @@ source/blender/editors/space_node/.*      @LukasTonne
 
 # --------------------------------------------------
 # VSE.
-source/blender/sequencer/.*                  @eliphaz
-source/blender/editors/space_sequencer/.*    @eliphaz
+source/blender/sequencer/.*                  @johnkiril
+source/blender/editors/space_sequencer/.*    @johnkiril
 
 # --------------------------------------------------
 # Compositor.
@@ -365,7 +365,6 @@ source/blender/editors/sculpt_paint/curves/.*           @LukasTonne
 
 scripts/addons_core/pose_library/.*                         @dr.sybren
 scripts/addons_core/rigify/.*                               @dr.sybren
-scripts/modules/_animsys_refactor.py                        @dr.sybren
 scripts/modules/_keyingsets_utils.py                        @dr.sybren
 scripts/modules/bpy_extras/anim_utils.py                    @dr.sybren
 source/blender/animrig/.*                                   @dr.sybren

@@ -24,6 +24,7 @@
 #include "DRW_render.hh"
 #include "UI_resources.hh"
 #include "draw_manager.hh"
+#include "draw_meshlet.hh"
 #include "draw_pass.hh"
 #include "draw_view_data.hh"
 #include "gpu_shader_create_info.hh"
@@ -329,15 +330,6 @@ struct VertexTriple {
  * Contains all overlay generic geometry batches.
  */
 class ShapeCache {
- private:
-  struct BatchDeleter {
-    void operator()(gpu::Batch *shader)
-    {
-      GPU_BATCH_DISCARD_SAFE(shader);
-    }
-  };
-  using BatchPtr = std::unique_ptr<gpu::Batch, BatchDeleter>;
-
  public:
   BatchPtr bone_box;
   BatchPtr bone_box_wire;
@@ -458,6 +450,7 @@ class ShaderModule {
   StaticShader attribute_viewer_mesh = shader_clippable("overlay_viewer_attribute_mesh");
   StaticShader attribute_viewer_pointcloud = shader_clippable(
       "overlay_viewer_attribute_pointcloud");
+  StaticShader attribute_viewer_gsplat = shader_clippable("overlay_viewer_attribute_gsplat");
   StaticShader attribute_viewer_curve = shader_clippable("overlay_viewer_attribute_curve");
   StaticShader attribute_viewer_curves = shader_clippable("overlay_viewer_attribute_curves");
   StaticShader background_fill = {"overlay_background"};
@@ -485,16 +478,14 @@ class ShaderModule {
   StaticShader mesh_edit_vert = shader_clippable("overlay_edit_mesh_vert");
   StaticShader mesh_edit_skin_root = shader_clippable("overlay_edit_mesh_skin_root");
   StaticShader mesh_face_normal = shader_clippable("overlay_mesh_face_normal");
-  StaticShader mesh_face_normal_subdiv = shader_clippable("overlay_mesh_face_normal_subdiv");
   StaticShader mesh_loop_normal = shader_clippable("overlay_mesh_loop_normal");
-  StaticShader mesh_loop_normal_subdiv = shader_clippable("overlay_mesh_loop_normal_subdiv");
   StaticShader mesh_vert_normal = shader_clippable("overlay_mesh_vert_normal");
-  StaticShader mesh_vert_normal_subdiv = shader_clippable("overlay_mesh_vert_normal_subdiv");
   StaticShader motion_path_line = shader_clippable("overlay_motion_path_line");
   StaticShader motion_path_vert = shader_clippable("overlay_motion_path_point");
   StaticShader outline_detect = {"overlay_outline_detect"};
   StaticShader outline_prepass_curves = shader_clippable("overlay_outline_prepass_curves");
   StaticShader outline_prepass_gpencil = shader_clippable("overlay_outline_prepass_gpencil");
+  StaticShader outline_prepass_gsplat = shader_clippable("overlay_outline_prepass_gsplat");
   StaticShader outline_prepass_mesh = shader_clippable("overlay_outline_prepass_mesh");
   StaticShader outline_prepass_pointcloud = shader_clippable("overlay_outline_prepass_pointcloud");
   StaticShader outline_prepass_wire = shader_clippable("overlay_outline_prepass_wire");
@@ -507,6 +498,7 @@ class ShaderModule {
   StaticShader paint_weight_fake_shading = shader_clippable("overlay_paint_weight_fake_shading");
   StaticShader particle_edit_vert = shader_clippable("overlay_edit_particle_point");
   StaticShader particle_edit_edge = shader_clippable("overlay_edit_particle_strand");
+  StaticShader gsplat_points = shader_clippable("overlay_edit_gsplat");
   StaticShader pointcloud_points = shader_clippable("overlay_edit_pointcloud");
   StaticShader sculpt_curves = shader_clippable("overlay_sculpt_curves_selection");
   StaticShader sculpt_curves_cage = shader_clippable("overlay_sculpt_curves_cage");
@@ -540,6 +532,7 @@ class ShaderModule {
   StaticShader depth_mesh = shader_selectable("overlay_depth_mesh");
   StaticShader depth_mesh_conservative = shader_selectable("overlay_depth_mesh_conservative");
   StaticShader depth_pointcloud = shader_selectable("overlay_depth_pointcloud");
+  StaticShader depth_gsplat = shader_selectable("overlay_depth_gsplat");
   StaticShader extra_shape = shader_selectable("overlay_extra");
   StaticShader extra_point = shader_selectable("overlay_extra_point");
   StaticShader extra_wire = shader_selectable("overlay_extra_wire");
@@ -558,16 +551,14 @@ class ShaderModule {
   StaticShader wireframe_points_with_radius = shader_selectable(
       "overlay_wireframe_points_with_radius");
   StaticShader wireframe_curve = shader_selectable("overlay_wireframe_curve");
+  StaticShader wireframe_gsplat = shader_selectable("overlay_wireframe_gsplat");
 
-  StaticShader fluid_grid_lines_flags = shader_selectable_no_clip(
-      "overlay_volume_gridlines_flags");
-  StaticShader fluid_grid_lines_flat = shader_selectable_no_clip("overlay_volume_gridlines_flat");
-  StaticShader fluid_grid_lines_range = shader_selectable_no_clip(
-      "overlay_volume_gridlines_range");
-  StaticShader fluid_velocity_streamline = shader_selectable_no_clip(
-      "overlay_volume_velocity_streamline");
-  StaticShader fluid_velocity_mac = shader_selectable_no_clip("overlay_volume_velocity_mac");
-  StaticShader fluid_velocity_needle = shader_selectable_no_clip("overlay_volume_velocity_needle");
+  StaticShader fluid_grid_lines_flags = shader_selectable("overlay_volume_gridlines_flags");
+  StaticShader fluid_grid_lines_flat = shader_selectable("overlay_volume_gridlines_flat");
+  StaticShader fluid_grid_lines_range = shader_selectable("overlay_volume_gridlines_range");
+  StaticShader fluid_velocity_streamline = shader_selectable("overlay_volume_velocity_streamline");
+  StaticShader fluid_velocity_mac = shader_selectable("overlay_volume_velocity_mac");
+  StaticShader fluid_velocity_needle = shader_selectable("overlay_volume_velocity_needle");
 
   /** Module */
   /** Only to be used by Instance constructor. */
@@ -715,6 +706,7 @@ struct Resources : public select::SelectMap {
     shaders->depth_curves.ensure_compile_async();
     shaders->depth_grease_pencil.ensure_compile_async();
     shaders->depth_mesh.ensure_compile_async();
+    shaders->depth_gsplat.ensure_compile_async();
     shaders->depth_pointcloud.ensure_compile_async();
     shaders->extra_grid.ensure_compile_async();
     shaders->extra_ground_line.ensure_compile_async();
@@ -730,6 +722,7 @@ struct Resources : public select::SelectMap {
     shaders->fluid_velocity_needle.ensure_compile_async();
     shaders->fluid_velocity_streamline.ensure_compile_async();
     shaders->grid.ensure_compile_async();
+    shaders->gsplat_points.ensure_compile_async();
     shaders->image_plane_depth_bias.ensure_compile_async();
     shaders->lattice_points.ensure_compile_async();
     shaders->lattice_wire.ensure_compile_async();
@@ -749,6 +742,7 @@ struct Resources : public select::SelectMap {
     shaders->outline_detect.ensure_compile_async();
     shaders->outline_prepass_curves.ensure_compile_async();
     shaders->outline_prepass_gpencil.ensure_compile_async();
+    shaders->outline_prepass_gsplat.ensure_compile_async();
     shaders->outline_prepass_mesh.ensure_compile_async();
     shaders->outline_prepass_pointcloud.ensure_compile_async();
     shaders->outline_prepass_wire.ensure_compile_async();
@@ -992,7 +986,7 @@ struct Resources : public select::SelectMap {
 /* Reference to a flat object.
  * Allow deferred rendering condition of flat object for special purpose. */
 struct FlatObjectRef {
-  gpu::Batch *geom;
+  Batch *geom;
   ResourceHandleRange handle;
   int flattened_axis_id;
 
@@ -1039,7 +1033,7 @@ struct FlatObjectRef {
     return -1;
   }
 
-  using Callback = FunctionRef<void(gpu::Batch *geom, ResourceID handle)>;
+  using Callback = FunctionRef<void(Batch *geom, ResourceID handle)>;
 
   /* Execute callback for every handles that is orthogonal to the view.
    * Note: Only works in orthogonal view. */
@@ -1085,7 +1079,7 @@ template<typename InstanceDataT> struct ShapeInstanceBuf : private select::Selec
     data_buf.append(data);
   }
 
-  void end_sync(PassSimple::Sub &pass, gpu::Batch *shape)
+  void end_sync(PassSimple::Sub &pass, Batch *shape)
   {
     if (data_buf.is_empty()) {
       return;
@@ -1097,7 +1091,7 @@ template<typename InstanceDataT> struct ShapeInstanceBuf : private select::Selec
   }
 
   void end_sync(PassSimple::Sub &pass,
-                gpu::Batch *shape,
+                Batch *shape,
                 GPUPrimType primitive_type,
                 uint primitive_len)
   {

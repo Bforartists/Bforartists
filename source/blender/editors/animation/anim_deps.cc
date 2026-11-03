@@ -28,9 +28,9 @@
 
 #include "BKE_action.hh"
 #include "BKE_anim_data.hh"
+#include "BKE_annotations.h"
 #include "BKE_context.hh"
 #include "BKE_fcurve.hh"
-#include "BKE_gpencil_legacy.h"
 #include "BKE_grease_pencil.hh"
 #include "BKE_screen.hh"
 #include "BKE_workspace.hh"
@@ -190,9 +190,7 @@ static void animchan_sync_fcurve_scene(bAnimListElem *ale)
 
   /* Only affect if F-Curve involves sequence_editor.strips. */
   char strip_name[sizeof(strip->name)];
-  if (!BLI_str_quoted_substr(
-          fcu->rna_path().c_str(), "strips_all[", strip_name, sizeof(strip_name)))
-  {
+  if (!BLI_str_quoted_substr(fcu->rna_path().c_str(), "strips_all[", strip_name)) {
     return;
   }
 
@@ -371,7 +369,7 @@ void ANIM_animdata_update(bAnimContext *ac, ListBaseT<bAnimListElem> *anim_data)
       if (ale.update & ANIM_UPDATE_ORDER) {
         ale.update &= ~ANIM_UPDATE_ORDER;
         if (gpl) {
-          BKE_gpencil_layer_frames_sort(gpl, nullptr);
+          BKE_annotations_layer_frames_sort(gpl, nullptr);
         }
       }
 

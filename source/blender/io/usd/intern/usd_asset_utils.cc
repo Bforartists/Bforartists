@@ -20,7 +20,6 @@
 #include "BLI_fileops.hh"
 #include "BLI_path_utils.hh"
 #include "BLI_string.hh"
-#include "BLI_string_utils.hh"
 
 #include "WM_api.hh"
 
@@ -73,10 +72,10 @@ static std::string get_asset_base_name(const std::string &src_path, ReportList *
                   src_path.c_str());
       return src_path;
     }
-    BLI_path_split_file_part(split.second.c_str(), base_name, sizeof(base_name));
+    BLI_path_split_file_part(split.second.c_str(), base_name);
   }
   else {
-    BLI_path_split_file_part(src_path.c_str(), base_name, sizeof(base_name));
+    BLI_path_split_file_part(src_path.c_str(), base_name);
   }
 
   return base_name;
@@ -91,7 +90,7 @@ static std::string copy_asset_to_directory(const std::string &src_path,
   std::string base_name = get_asset_base_name(src_path, reports);
 
   char dest_file_path[FILE_MAX];
-  BLI_path_join(dest_file_path, sizeof(dest_file_path), dest_dir_path, base_name.c_str());
+  BLI_path_join(dest_file_path, dest_dir_path, base_name.c_str());
   BLI_path_normalize(dest_file_path);
 
   if (name_collision_mode == TexNameCollisionMode::UseExisting && BLI_is_file(dest_file_path)) {
@@ -140,7 +139,7 @@ static std::string copy_udim_asset_to_directory(const std::string &src_path,
 
   const std::string src_file_name = get_asset_base_name(src_path, reports);
   char ret_udim_path[FILE_MAX];
-  BLI_path_join(ret_udim_path, sizeof(ret_udim_path), dest_dir_path, src_file_name.c_str());
+  BLI_path_join(ret_udim_path, dest_dir_path, src_file_name.c_str());
 
   /* Blender only recognizes the <UDIM> pattern, not the
    * alternative UDIM_PATTERN2, so we make sure the returned
@@ -340,7 +339,7 @@ std::string import_asset(const std::string &src,
 static bool parent_dir_exists_on_file_system(const std::string &path)
 {
   char dir_path[FILE_MAX];
-  BLI_path_split_dir_part(path.c_str(), dir_path, FILE_MAX);
+  BLI_path_split_dir_part(path.c_str(), dir_path);
   return BLI_is_dir(dir_path);
 }
 
@@ -419,7 +418,7 @@ const char *temp_textures_dir()
   static char temp_dir[FILE_MAXDIR] = {'\0'};
 
   if (!inited) {
-    BLI_path_join(temp_dir, sizeof(temp_dir), BKE_tempdir_session(), "usd_textures_tmp", SEP_STR);
+    BLI_path_join(temp_dir, BKE_tempdir_session(), "usd_textures_tmp", SEP_STR);
     inited = true;
   }
 
@@ -556,14 +555,16 @@ std::string get_relative_path(const std::string &path, const std::string &anchor
 
   if (BLI_is_file(path.c_str()) && BLI_is_file(anchor.c_str())) {
     /* Treat the paths as standard files. */
+    char anchor_dir[FILE_MAX];
+    BLI_path_split_dir_part(anchor.c_str(), anchor_dir);
+
+    const bool walk_up = true;
     char rel_path[FILE_MAX];
-    STRNCPY(rel_path, path.c_str());
-    BLI_path_rel(rel_path, anchor.c_str());
-    if (!BLI_path_is_rel(rel_path)) {
+    if (!BLI_path_relative_to(path.c_str(), anchor_dir, walk_up, rel_path)) {
       return path;
     }
-    BLI_string_replace_char(rel_path, '\\', '/');
-    return rel_path + 2;
+    BLI_path_slash_forward_from_native(rel_path);
+    return rel_path;
   }
 
   /* If we got here, the paths may be URIs or files on the file system. */
@@ -606,23 +607,21 @@ std::string get_relative_path(const std::string &path, const std::string &anchor
   resolved_anchor = "/root" + resolved_anchor.substr(last_slash_pos);
 
   char anchor_parent_dir[FILE_MAX];
-  BLI_path_split_dir_part(resolved_anchor.c_str(), anchor_parent_dir, FILE_MAX);
+  BLI_path_split_dir_part(resolved_anchor.c_str(), anchor_parent_dir);
 
   if (anchor_parent_dir[0] == '\0') {
     return path;
   }
 
+  const bool walk_up = true;
   char result_path[FILE_MAX];
-  STRNCPY(result_path, resolved_path.c_str());
-  BLI_path_rel(result_path, anchor_parent_dir);
-
-  if (BLI_path_is_rel(result_path)) {
-    /* Strip the Blender relative path marker, and set paths to Unix-style. */
-    BLI_string_replace_char(result_path, '\\', '/');
-    return std::string(result_path + 2);
+  if (!BLI_path_relative_to(resolved_path.c_str(), anchor_parent_dir, walk_up, result_path)) {
+    return path;
   }
 
-  return path;
+  /* Set paths to Unix-style. */
+  BLI_path_slash_forward_from_native(result_path);
+  return std::string(result_path);
 }
 
 void USD_path_abs(char *path, const char *basepath, bool for_import)

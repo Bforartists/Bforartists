@@ -11,6 +11,8 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_color_types.h"
+
 #include "BLI_endian_switch.hh"
 #include "BLI_fileops.hh"
 #include "BLI_math_base.hh"
@@ -22,6 +24,8 @@
 #include "BLI_utildefines.hh"
 
 #include "CLG_log.h"
+
+#include "IMB_colormanagement.hh"
 
 #include "MOV_read.hh"
 
@@ -64,16 +68,16 @@ static int proxy_size_to_array_index(IMB_Proxy_Size pr_size)
   }
 }
 
-static void get_proxy_dir(const MovieReader *anim, char *proxy_dir, size_t proxy_dir_maxncpy)
+static void get_proxy_dir(const MovieReader *anim, MutableCStr proxy_dir)
 {
   if (!anim->proxy_dir[0]) {
     char filename[FILE_MAXFILE];
     char dirname[FILE_MAXDIR];
-    BLI_path_split_dir_file(anim->filepath, dirname, sizeof(dirname), filename, sizeof(filename));
-    BLI_path_join(proxy_dir, proxy_dir_maxncpy, dirname, "BL_proxy", filename);
+    BLI_path_split_dir_file(anim->filepath, dirname, filename);
+    BLI_path_join(proxy_dir, dirname, "BL_proxy", filename);
   }
   else {
-    BLI_strncpy(proxy_dir, anim->proxy_dir, proxy_dir_maxncpy);
+    STRNCPY(proxy_dir, anim->proxy_dir);
   }
 }
 
@@ -99,13 +103,13 @@ static bool get_proxy_filepath(const MovieReader *anim,
 
   SNPRINTF(proxy_name, name, int(proxy_fac[i] * 100), stream_suffix, anim->suffix);
 
-  get_proxy_dir(anim, proxy_dir, sizeof(proxy_dir));
+  get_proxy_dir(anim, proxy_dir);
 
   if (BLI_path_ncmp(anim->filepath, proxy_dir, FILE_MAXDIR) == 0) {
     return false;
   }
 
-  BLI_path_join(filepath, FILE_MAXFILE + FILE_MAXDIR, proxy_dir, proxy_name);
+  BLI_path_join(MutableCStr(filepath, FILE_MAXFILE + FILE_MAXDIR), proxy_dir, proxy_name);
   return true;
 }
 
@@ -325,7 +329,7 @@ static void add_to_proxy_output_ffmpeg(proxy_output_ctx *ctx,
   if (ctx->sws_ctx && frame &&
       (frame->data[0] || frame->data[1] || frame->data[2] || frame->data[3]))
   {
-    ffmpeg_sws_scale_frame(ctx->sws_ctx, ctx->frame, frame);
+    sws_scale_frame(ctx->sws_ctx, ctx->frame, frame);
   }
 
   frame = ctx->sws_ctx ? (frame ? ctx->frame : nullptr) : frame;
@@ -373,9 +377,6 @@ static void add_to_proxy_output_ffmpeg(proxy_output_ctx *ctx,
 
     packet->stream_index = ctx->st->index;
     av_packet_rescale_ts(packet, ctx->c->time_base, ctx->st->time_base);
-#  ifdef FFMPEG_USE_DURATION_WORKAROUND
-    my_guess_pkt_duration(ctx->of, ctx->st, packet);
-#  endif
 
     int write_ret = av_interleaved_write_frame(ctx->of, packet);
     if (write_ret != 0) {
@@ -934,7 +935,9 @@ MovieReader *movie_open_proxy(MovieReader *anim, IMB_Proxy_Size preview_size)
    *
    * Also skip any colorspace conversion to the color pipeline design as it helps performance and
    * the image buffers from the proxy builder are not used anywhere else in Blender. */
-  anim->proxy_anim[i] = MOV_open_file(filepath, ImBufFlags::Zero, 0, true, anim->colorspace);
+  ColorManagedColorspaceSettings colorspace_settings;
+  IMB_colormanagement_colorspace_settings_set(&colorspace_settings, anim->colorspace);
+  anim->proxy_anim[i] = MOV_open_file(filepath, ImBufFlags::Zero, 0, true, &colorspace_settings);
 
   anim->proxies_tried |= preview_size;
 

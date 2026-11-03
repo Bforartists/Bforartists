@@ -60,139 +60,7 @@ class CARVER_OT_operator(bpy.types.Operator):
     bl_label = "Carver"
     bl_description = "Cut or create Meshes in Object mode"
     bl_options = {'REGISTER', 'UNDO'}
-
-    def __init__(self):
-        context = bpy.context
-        # Carve mode: Cut, Object, Profile
-        self.CutMode = False
-        self.CreateMode = False
-        self.ObjectMode = False
-        self.ProfileMode = False
-
-        # Create mode
-        self.ExclusiveCreateMode = False
-        if len(context.selected_objects) == 0:
-            self.ExclusiveCreateMode = True
-            self.CreateMode = True
-
-        # Cut type (Rectangle, Circle, Line)
-        self.rectangle = 0
-        self.line = 1
-        self.circle = 2
-
-        # Cut Rectangle coordinates
-        self.rectangle_coord = []
-
-        # Selected type of cut
-        self.CutType = 0
-
-        # Boolean operation
-        self.difference = 0
-        self.union = 1
-
-        self.BoolOps = self.difference
-
-        self.CurrentSelection = context.selected_objects.copy()
-        self.CurrentActive = context.active_object
-        self.all_sel_obj_list = context.selected_objects.copy()
-        self.save_active_obj = None
-
-        args = (self, context)
-        self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
-
-        self.mouse_path = [(0, 0), (0, 0)]
-
-        # Keyboard event
-        self.shift = False
-        self.ctrl = False
-        self.alt = False
-
-        self.dont_apply_boolean = context.scene.mesh_carver.DontApply
-        self.Auto_BevelUpdate = True
-
-        # Circle variables
-        self.stepAngle = [2, 4, 5, 6, 9, 10, 15, 20, 30, 40, 45, 60, 72, 90]
-        self.step = 4
-
-        # Primitives Position
-        self.xpos = 0
-        self.ypos = 0
-        self.InitPosition = False
-
-        # Close polygonal shape
-        self.Closed = False
-
-        # Depth Cursor
-        self.snapCursor = context.scene.mesh_carver.DepthCursor
-
-        # Help
-        self.AskHelp = False
-
-        # Working object
-        self.OpsObj = context.active_object
-
-        # Rebool forced (cut line)
-        self.ForceRebool = False
-
-        self.ViewVector = Vector()
-        self.CurrentObj = None
-
-        # Brush
-        self.BrushSolidify = False
-        self.WidthSolidify = False
-        self.CarveDepth = False
-        self.BrushDepth = False
-        self.BrushDepthOffset = 0.0
-        self.snap = False
-
-        self.ObjectScale = False
-
-        #Init create circle primitive
-        self.CLR_C = []
-
-        # Cursor location
-        self.CurLoc = Vector((0.0, 0.0, 0.0))
-        self.SavCurLoc = Vector((0.0, 0.0, 0.0))
-
-        # Mouse region
-        self.mouse_region = -1, -1
-        self.SavMousePos = None
-        self.xSavMouse = 0
-
-        # Scale, rotate object
-        self.ascale = 0
-        self.aRotZ = 0
-        self.nRotZ = 0
-        self.quat_rot_axis = None
-        self.quat_rot = None
-
-        self.RandomRotation = context.scene.mesh_carver.ORandom
-
-        self.ShowCursor = True
-
-        self.Instantiate = context.scene.mesh_carver.OInstanciate
-
-        self.ProfileBrush = None
-        self.ObjectBrush = None
-
-        self.InitBrush = {
-        'location' : None,
-        'scale' : None,
-        'rotation_quaternion' : None,
-        'rotation_euler' : None,
-        'display_type' : 'WIRE',
-        'show_in_front' : False
-        }
-
-        # Array variables
-        self.nbcol = 1
-        self.nbrow = 1
-        self.gapx = 0
-        self.gapy = 0
-        self.scale_x = 1
-        self.scale_y = 1
-        self.GridScaleX = False
-        self.GridScaleY = False
+       
 
     @classmethod
     def poll(cls, context):
@@ -897,6 +765,139 @@ class CARVER_OT_operator(bpy.types.Operator):
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
     def invoke(self, context, event):
+        # INITIALIZE
+
+        # Carve mode: Cut, Object, Profile
+        self.CutMode = False
+        self.CreateMode = False
+        self.ObjectMode = False
+        self.ProfileMode = False
+
+        # Create mode
+        self.ExclusiveCreateMode = False
+        if len(context.selected_objects) == 0:
+            self.ExclusiveCreateMode = True
+            self.CreateMode = True
+
+        # Cut type (Rectangle, Circle, Line)
+        self.rectangle = 0
+        self.line = 1
+        self.circle = 2
+
+        # Cut Rectangle coordinates
+        self.rectangle_coord = []
+
+        # Selected type of cut
+        self.CutType = 0
+
+        # Boolean operation
+        self.difference = 0
+        self.union = 1
+
+        self.BoolOps = self.difference
+
+        self.CurrentSelection = context.selected_objects.copy()
+        self.CurrentActive = context.active_object
+        self.all_sel_obj_list = context.selected_objects.copy()
+        self.save_active_obj = None
+
+        args = (self, context)
+        self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
+
+        self.mouse_path = [(0, 0), (0, 0)]
+
+        # Keyboard event
+        self.shift = False
+        self.ctrl = False
+        self.alt = False
+
+        self.dont_apply_boolean = context.scene.mesh_carver.DontApply
+        self.Auto_BevelUpdate = True
+
+        # Circle variables
+        self.stepAngle = [2, 4, 5, 6, 9, 10, 15, 20, 30, 40, 45, 60, 72, 90]
+        self.step = 4
+
+        # Primitives Position
+        self.xpos = 0
+        self.ypos = 0
+        self.InitPosition = False
+
+        # Close polygonal shape
+        self.Closed = False
+
+        # Depth Cursor
+        self.snapCursor = context.scene.mesh_carver.DepthCursor
+
+        # Help
+        self.AskHelp = False
+
+        # Working object
+        self.OpsObj = context.active_object
+
+        # Rebool forced (cut line)
+        self.ForceRebool = False
+
+        self.ViewVector = Vector()
+        self.CurrentObj = None
+
+        # Brush
+        self.BrushSolidify = False
+        self.WidthSolidify = False
+        self.CarveDepth = False
+        self.BrushDepth = False
+        self.BrushDepthOffset = 0.0
+        self.snap = False
+
+        self.ObjectScale = False
+
+        #Init create circle primitive
+        self.CLR_C = []
+
+        # Cursor location
+        self.CurLoc = Vector((0.0, 0.0, 0.0))
+        self.SavCurLoc = Vector((0.0, 0.0, 0.0))
+
+        # Mouse region
+        self.mouse_region = -1, -1
+        self.SavMousePos = None
+        self.xSavMouse = 0
+
+        # Scale, rotate object
+        self.ascale = 0
+        self.aRotZ = 0
+        self.nRotZ = 0
+        self.quat_rot_axis = None
+        self.quat_rot = None
+
+        self.RandomRotation = context.scene.mesh_carver.ORandom
+
+        self.ShowCursor = True
+
+        self.Instantiate = context.scene.mesh_carver.OInstanciate
+
+        self.ProfileBrush = None
+        self.ObjectBrush = None
+
+        self.InitBrush = {
+        'location' : None,
+        'scale' : None,
+        'rotation_quaternion' : None,
+        'rotation_euler' : None,
+        'display_type' : 'WIRE',
+        'show_in_front' : False
+        }
+
+        # Array variables
+        self.nbcol = 1
+        self.nbrow = 1
+        self.gapx = 0
+        self.gapy = 0
+        self.scale_x = 1
+        self.scale_y = 1
+        self.GridScaleX = False
+        self.GridScaleY = False
+
         if context.area.type != 'VIEW_3D':
             self.report({'WARNING'},
                         "View3D not found or not currently active. Operation Cancelled")

@@ -7,6 +7,7 @@
  */
 
 #include "BLI_array_utils.hh"
+#include "BLI_implicit_sharing.hh"
 #include "BLI_math_base_c.hh"
 #include "BLI_ordered_edge.hh"
 #include "BLI_task.hh"
@@ -243,6 +244,7 @@ void mesh_calc_edges(Mesh &mesh,
 
   if (mesh.corners_num == 0 && !keep_existing_edges) {
     CustomData_free(&mesh.edge_data);
+    mesh.attribute_storage.wrap().resize(AttrDomain::Edge, 0);
     mesh.edges_num = 0;
     mesh.tag_loose_edges_none();
     /* BLI_assert(mesh_is_valid(mesh)); */
@@ -315,8 +317,8 @@ void mesh_calc_edges(Mesh &mesh,
   IndexRange back_range_of_new_edges;
   IndexMask src_to_dst_mask;
 
-  MutableSpan<int2> edge_verts(MEM_new_array_uninitialized<int2>(result_edges_num, AT),
-                               result_edges_num);
+  auto *edge_verts_data = new ImplicitSharedValue<Array<int2>>(result_edges_num);
+  MutableSpan<int2> edge_verts = edge_verts_data->data;
 #ifndef NDEBUG
   edge_verts.fill(int2(-1));
 #endif
@@ -505,19 +507,19 @@ void mesh_calc_edges(Mesh &mesh,
     }
     switch (attr.storage_type()) {
       case AttrStorageType::Single: {
+        attr.data().resize(result_edges_num);
         break;
       }
       case AttrStorageType::Array: {
         const CPPType &type = bke::attribute_type_to_cpp_type(attr.data_type());
-        const auto &src_data = std::get<bke::Attribute::ArrayData>(attr.data());
-        auto dst_data = bke::Attribute::ArrayData::from_uninitialized(type, result_edges_num);
-        const GSpan src(type, src_data.data, mesh.edges_num);
-        GMutableSpan dst(type, dst_data.data, result_edges_num);
+        const GSpan src = std::get<GSpan>(attr.data().values());
+        GArray<> dst_data(type, result_edges_num, NoInitialization());
+        GMutableSpan dst = dst_data.as_mutable_span();
         array_utils::gather(src, src_to_dst_mask, dst.take_front(src_to_dst_mask.size()));
         type.fill_construct_n(type.default_value(),
                               dst.slice(back_range_of_new_edges).data(),
                               dst.slice(back_range_of_new_edges).size());
-        attr.assign_data(std::move(dst_data));
+        attr.assign_data(bke::GList(std::move(dst_data)));
         break;
       }
     }
@@ -545,7 +547,8 @@ void mesh_calc_edges(Mesh &mesh,
   mesh.edges_num = result_edges_num;
 
   dst_attributes.add<int2>(
-      ".edge_verts", AttrDomain::Edge, AttributeInitMoveArray(edge_verts.data()));
+      ".edge_verts", AttrDomain::Edge, AttributeInitShared(edge_verts.data(), *edge_verts_data));
+  edge_verts_data->remove_user_and_delete_if_last();
 
   if (select_new_edges) {
     dst_attributes.remove(".select_edge");
@@ -554,7 +557,7 @@ void mesh_calc_edges(Mesh &mesh,
       dst_attributes.add<bool>(".select_edge", AttrDomain::Edge, AttributeInitValue(fill_value));
     }
     else {
-      SpanAttributeWriter<bool> select_edge = dst_attributes.lookup_or_add_for_write_span<bool>(
+      SpanAttributeWriter<bool> select_edge = dst_attributes.ensure_for_write_span<bool>(
           ".select_edge", AttrDomain::Edge);
       select_edge.span.drop_back(back_range_of_new_edges.size()).fill(false);
       select_edge.span.take_back(back_range_of_new_edges.size()).fill(true);

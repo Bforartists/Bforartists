@@ -10,14 +10,17 @@
 #pragma once
 
 #include "DNA_listBase.h"
+#include "DNA_scene_types.h"
 
 #include "BLI_index_mask.hh"
+#include "BLI_vector_set.hh"
 
 #include "ED_grease_pencil.hh"
 
 #include "UI_view2d.hh"
 
 #include "transform.hh"
+
 struct TransData;
 struct TransDataCurveHandleFlags;
 struct TransInfo;
@@ -326,6 +329,7 @@ struct TransMeshDataCrazySpace {
 };
 
 void transform_convert_mesh_islands_calc(BMEditMesh *em,
+                                         BMesh *bm,
                                          bool calc_single_islands,
                                          bool calc_island_center,
                                          bool calc_island_axismtx,
@@ -341,6 +345,7 @@ void transform_convert_mesh_connectivity_distance(BMesh *bm,
                                                   float *dists,
                                                   int *index);
 void transform_convert_mesh_mirrordata_calc(BMEditMesh *em,
+                                            BMesh *bm,
                                             bool use_select,
                                             bool use_topology,
                                             const bool mirror_axis[3],
@@ -352,7 +357,6 @@ void transform_convert_mesh_mirrordata_free(TransMirrorData *mirror_data);
  */
 void transform_convert_mesh_crazyspace_detect(TransInfo *t,
                                               TransDataContainer *tc,
-                                              BMEditMesh *em,
                                               TransMeshDataCrazySpace *r_crazyspace_data);
 void transform_convert_mesh_crazyspace_transdata_set(const float mtx[3][3],
                                                      const float smtx[3][3],
@@ -360,6 +364,8 @@ void transform_convert_mesh_crazyspace_transdata_set(const float mtx[3][3],
                                                      const float quat[4],
                                                      TransData *r_td);
 void transform_convert_mesh_crazyspace_free(TransMeshDataCrazySpace *r_crazyspace_data);
+
+float *transform_convert_mesh_shell_factor_calc(const TransDataContainer *tc);
 
 Array<TransDataVertSlideVert> transform_mesh_vert_slide_data_create(
     const TransDataContainer *tc, Vector<float3> &r_loc_dst_buffer);
@@ -440,6 +446,9 @@ struct TransSeq {
 
   /* Strips that aren't selected, but their position entirely depends on transformed strips. */
   VectorSet<Strip *> time_dependent_strips;
+
+  /* Overlap mode when the transform started, restored if the transform is canceled. */
+  eSeqOverlapMode overlap_mode_orig = SEQ_OVERLAP_OVERWRITE;
 };
 
 bool seq_transform_check_overlap(Span<Strip *> transformed_strips);

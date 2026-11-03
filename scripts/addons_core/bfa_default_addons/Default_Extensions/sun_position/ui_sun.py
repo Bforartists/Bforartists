@@ -1,13 +1,14 @@
-# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
+# SPDX-FileCopyrightText: 2011-2012 Michael Martin
+# SPDX-FileCopyrightText: 2019-2025 Damien Picard
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 from bpy.types import Operator
 from bl_operators.presets import AddPresetBase
 from bl_ui.utils import PresetPanel
 
-from .sun_calc import format_time, format_hms, sun
+from .sun_calc import format_time, format_hms
 
 
 # -------------------------------------------------------------------
@@ -29,9 +30,7 @@ class SUNPOS_OT_AddPreset(AddPresetBase, Operator):
     preset_menu = "SUNPOS_PT_Presets"
 
     # variable used for all preset values
-    preset_defines = [
-        "sun_props = bpy.context.scene.sun_pos_properties"
-    ]
+    preset_defines = ["sun_props = bpy.context.scene.sun_pos_properties"]
 
     # properties to store in the preset
     preset_values = [
@@ -54,6 +53,7 @@ class SUNPOS_OT_AddPreset(AddPresetBase, Operator):
 #   Draw the Sun Panel, sliders, et. al.
 #
 # -------------------------------------------------------------------
+
 
 class SUNPOS_PT_Panel(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
@@ -84,18 +84,14 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
         layout = self.layout
 
         col = layout.column(align=True)
-        col.prop_search(sun_props, "sun_object",
-                        context.view_layer, "objects")
+        col.prop_search(sun_props, "sun_object", context.view_layer, "objects")
         if context.scene.world is not None:
             if context.scene.world.node_tree is not None:
-                col.prop_search(sun_props, "env_texture",
-                                context.scene.world.node_tree, "nodes")
+                col.prop_search(sun_props, "env_texture", context.scene.world.node_tree, "nodes")
             else:
-                col.label(text="Please activate Use Nodes in the World panel.",
-                          icon="ERROR")
+                col.label(text="Please activate Use Nodes in the World panel.", icon="ERROR")
         else:
-            col.label(text="Please select World in the World panel.",
-                      icon="ERROR")
+            col.label(text="Please select World in the World panel.", icon="ERROR")
 
         layout.use_property_decorate = True
 
@@ -105,7 +101,7 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
         row = col.row(align=True)
         row.active = not sun_props.bind_to_sun
         row.prop(sun_props, "env_elevation")
-        col.prop(sun_props, "sun_distance")
+        col.prop(sun_props, "env_distance")
         col.separator()
 
         col = layout.column(align=True)
@@ -130,20 +126,25 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
 
         if context.scene.world is not None:
             if context.scene.world.node_tree is not None:
-                col.prop_search(sun_props, "sky_texture",
-                                context.scene.world.node_tree, "nodes")
+                col.prop_search(sun_props, "sky_texture", context.scene.world.node_tree, "nodes")
             else:
-                col.label(text="Please activate Use Nodes in the World panel.",
-                          icon="ERROR")
+                col.label(text="Please activate Use Nodes in the World panel.", icon="ERROR")
         else:
-            col.label(text="Please select World in the World panel.",
-                      icon="ERROR")
+            col.label(text="Please select World in the World panel.", icon="ERROR")
 
         if addon_prefs.show_overlays:
             col = layout.column(align=True, heading="Show")
             col.prop(sun_props, "show_north", text="North")
-            col.prop(sun_props, "show_analemmas", text="Analemmas")
-            col.prop(sun_props, "show_surface", text="Surface")
+
+            row = col.row(align=True)
+            row.prop(sun_props, "show_analemmas", text="Analemmas")
+            if sun_props.show_analemmas:
+                row.operator("world.sunpos_create_analemmas_object", text="Create Object")
+
+            row = col.row(align=True)
+            row.prop(sun_props, "show_surface", text="Surface")
+            if sun_props.show_surface:
+                row.operator("world.sunpos_create_surface_object", text="Create Object")
 
         if addon_prefs.show_refraction:
             col = layout.column(align=True, heading="Use")
@@ -225,11 +226,8 @@ class SUNPOS_PT_Time(bpy.types.Panel):
         col.prop(sun_props, "use_daylight_savings")
         col.separator()
 
-        local_time = format_time(sun_props.time,
-                                 sun_props.use_daylight_savings)
-        utc_time = format_time(sun_props.time,
-                               sun_props.use_daylight_savings,
-                               sun_props.UTC_zone)
+        local_time = format_time(sun_props.time, sun_props.use_daylight_savings)
+        utc_time = format_time(sun_props.time, sun_props.use_daylight_savings, sun_props.UTC_zone)
 
         col = layout.column(align=True)
         col.alignment = 'CENTER'
@@ -246,8 +244,8 @@ class SUNPOS_PT_Time(bpy.types.Panel):
         col.separator()
 
         if addon_prefs.show_rise_set:
-            sunrise = format_hms(sun.sunrise)
-            sunset = format_hms(sun.sunset)
+            sunrise = format_hms(sun_props.sunrise_time)
+            sunset = format_hms(sun_props.sunset_time)
 
             col = layout.column(align=True)
             col.alignment = 'CENTER'

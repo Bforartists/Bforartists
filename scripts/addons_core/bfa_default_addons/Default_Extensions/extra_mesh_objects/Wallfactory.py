@@ -36,6 +36,7 @@ from .Blocks import (
         stepBack,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 class add_mesh_wallb(Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.wall_add"
@@ -466,166 +467,159 @@ class add_mesh_wallb(Operator, object_utils.AddObjectHelper):
     # Display the toolbox options
     def draw(self, context):
         layout = self.layout
-
-        box = layout.box()
-        box.prop(self, 'ConstructTog')
-
-        # Wall area (size/position)
-        box = layout.box()
-        box.label(text="Wall Size (area)")
-
-        col = box.column(align=True)
-        col.prop(self, "WallStart")
-        col.prop(self, "WallEnd")
-
-        col = box.column(align=True)
-        col.prop(self, "WallBottom")
-        col.prop(self, "WallTop")
-        box.prop(self, "EdgeOffset")
-
-        # Wall block sizing
-        box = layout.box()
-        box.label(text="Block Sizing")
-        box.prop(self, "MergeBlock")
-
-        # add checkbox for "fixed" sizing (ignore variance) a.k.a. bricks
-        col = box.column(align=True)
-        col.prop(self, "Width")
-        col.prop(self, "WidthVariance")
-        col.prop(self, "WidthMinimum")
-
-        col = box.column(align=True)
-        col.prop(self, "Height")
-        col.prop(self, "HeightVariance")
-        col.prop(self, "HeightMinimum")
-
-        col = box.column(align=True)
-        col.prop(self, "Depth")
-        col.prop(self, "DepthVariance")
-        col.prop(self, "DepthMinimum")
-
-        # grout settings
-        box = layout.box()
-        box.label(text="Grout")
-
-        col = box.column(align=True)
-        col.prop(self, "Grout")
-        col.prop(self, "GroutVariance")
-
-        col = box.column(align=True)
-        col.prop(self, "GroutDepth")
-        col.prop(self, "GroutDepthVariance")
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         # Wall shape modifiers
-        box = layout.box()
-        box.label(text="Wall Shape")
-        row = box.row(align=True)
-        row.prop(self, "RadialTog", toggle=True)
-        row.prop(self, "SlopeTog", toggle=True)
+        layout.prop(self, 'ConstructTog')
+
+        # Wall area (size/position)
+        header, panel = layout.panel("WALLFACTORY_PT_AREA", default_closed=False)
+        header.label(text="Wall Size")
+        if panel:
+                panel.prop(self, "RadialTog")
+                panel.prop(self, "SlopeTog")
+                col = panel.column(align=True)
+                col.prop(self, "WallStart")
+                col.prop(self, "WallEnd")
+                col = panel.column(align=True)
+                col.prop(self, "WallBottom")
+                col.prop(self, "WallTop")
+                panel.prop(self, "EdgeOffset")
+
+        # Wall block sizing
+        header, panel = layout.panel("WALLFACTORY_PT_BLOCKS", default_closed=False)
+        header.label(text="Block Size")
+        if panel:
+                panel.prop(self, "MergeBlock")
+                # add checkbox for "fixed" sizing (ignore variance) a.k.a. bricks
+                col = panel.column(align=True)
+                col.prop(self, "Width")
+                col.prop(self, "WidthVariance")
+                col.prop(self, "WidthMinimum")
+                col = panel.column(align=True)
+                col.prop(self, "Height")
+                col.prop(self, "HeightVariance")
+                col.prop(self, "HeightMinimum")
+                col = panel.column(align=True)
+                col.prop(self, "Depth")
+                col.prop(self, "DepthVariance")
+                col.prop(self, "DepthMinimum")
+
+        # grout settings
+        header, panel = layout.panel("WALLFACTORY_PT_GROUT", default_closed=True)
+        header.label(text="Grout")
+        if panel:
+            col = panel.column(align=True)
+            col.prop(self, "Grout")
+            col.prop(self, "GroutVariance")
+            col = panel.column(align=True)
+            col.prop(self, "GroutDepth")    
+            col.prop(self, "GroutDepthVariance")
 
         # Openings (doors, windows; arched)
-        box = layout.box()
-        box.prop(self, 'Opening1Tog')
-        if self.Opening1Tog:
-            col = box.column(align=True)
+        header, panel = layout.panel("WALLFACTORY_PT_OPENINGS", default_closed=True)
+        header.use_property_split = False
+        header.prop(self, 'Opening1Tog', text='')
+        header.label(text="Openings")
+        if panel:
+            openings_col = panel.column()
+            openings_col.enabled = self.Opening1Tog
+            openings_col.use_property_split = True
+            col = openings_col.column(align=True)
             col.prop(self, "Opening1Width")
             col.prop(self, "Opening1Height")
             col.prop(self, "Opening1X")
             col.prop(self, "Opening1Z")
             col.prop(self, "Opening1Bevel")
-
-            box.prop(self, "Opening1Repeat", toggle=True)
-
-            sub_box = box.box()
-            sub_box.prop(self, "Opening1TopArchTog")
-            if self.Opening1TopArchTog:
-                col = sub_box.column(align=True)
-                col.prop(self, "Opening1TopArch")
-                col.prop(self, "Opening1TopArchThickness")
-
-            sub_box = box.box()
-            sub_box.prop(self, "Opening1BtmArchTog")
-            if self.Opening1BtmArchTog:
-                col = sub_box.column(align=True)
-                col.prop(self, "Opening1BtmArch")
-                col.prop(self, "Opening1BtmArchThickness")
+            openings_col.prop(self, "Opening1Repeat", toggle=True)
+            openings_col.prop(self, "Opening1TopArchTog")
+            col = openings_col.column(align=True)
+            col.enabled = self.Opening1TopArchTog
+            col.prop(self, "Opening1TopArch")
+            col.prop(self, "Opening1TopArchThickness")
+            openings_col.prop(self, "Opening1BtmArchTog")
+            col = openings_col.column(align=True)
+            col.enabled = self.Opening1BtmArchTog
+            col.prop(self, "Opening1BtmArch")
+            col.prop(self, "Opening1BtmArchThickness")
 
         # Slots (narrow openings)
-        box = layout.box()
-        box.prop(self, "SlotTog")
-        if self.SlotTog:
-            col = box.column(align=True)
+        header, panel = layout.panel("WALLFACTORY_PT_SLOTS", default_closed=True)
+        header.use_property_split = False
+        header.prop(self, 'SlotTog', text='')
+        header.label(text="Slots")
+        if panel:
+            panel.enabled = self.SlotTog
+            panel.prop(self, "SlotRpt")
+            col = panel.column(align=True)
             col.prop(self, "SlotX")
             col.prop(self, "SlotGap")
-
-            box.prop(self, "SlotRpt", toggle=True)
-
-            sub_box = box.box()
-            sub_box.prop(self, "SlotV")
-            if self.SlotV:
-                col = sub_box.column(align=True)
-                col.prop(self, "SlotVH")
-                col.prop(self, "SlotVBtm")
-
-            sub_box = box.box()
-            sub_box.prop(self, "SlotH")
-            if self.SlotH:
-                col = sub_box.column(align=True)
-                col.prop(self, "SlotHW")
-                col.prop(self, "SlotHBtm")
+            panel.prop(self, "SlotV")
+            col = panel.column(align=True)
+            col.enabled = self.SlotV
+            col.prop(self, "SlotVH")
+            col.prop(self, "SlotVBtm")
+            panel.prop(self, "SlotH")
+            col = panel.column(align=True)
+            col.enabled = self.SlotH
+            col.prop(self, "SlotHW")
+            col.prop(self, "SlotHBtm")
 
         # Crenels, gaps in top of wall
-        box = layout.box()
-        box.prop(self, "CrenelTog")
-        if self.CrenelTog:
-            col = box.column(align=True)
+        header, panel = layout.panel("WALLFACTORY_PT_CRENELS", default_closed=True)
+        header.use_property_split = False
+        header.prop(self, 'CrenelTog', text='')
+        header.label(text="Crenels")
+        if panel:
+            panel.enabled = self.CrenelTog
+            col = panel.column(align=True)
             col.prop(self, "CrenelXP")
             col.prop(self, "CrenelZP")
 
         # Shelfing (protrusions)
-        box = layout.box()
-        box.prop(self, 'ShelfTog')
-        if self.ShelfTog:
-            col = box.column(align=True)
+        header, panel = layout.panel("WALLFACTORY_PT_SHELF", default_closed=True)
+        header.use_property_split = False
+        header.prop(self, 'ShelfTog', text='')
+        header.label(text="Shelf")
+        if panel:
+            panel.enabled = self.ShelfTog
+            col = panel.column(align=True)
             col.prop(self, "ShelfX")
             col.prop(self, "ShelfZ")
-
-            col = box.column(align=True)
+            col = panel.column(align=True)
             col.prop(self, "ShelfW")
             col.prop(self, "ShelfH")
             col.prop(self, "ShelfD")
-
-            box.prop(self, "ShelfBack")
+            panel.prop(self, "ShelfBack")
 
         # Steps
-        box = layout.box()
-        box.prop(self, 'StepTog')
-        if self.StepTog:
-            col = box.column(align=True)
+        header, panel = layout.panel("WALLFACTORY_PT_STEPS", default_closed=True)
+        header.use_property_split = False
+        header.prop(self, 'StepTog', text='')
+        header.label(text="Steps")
+        if panel:
+            panel.enabled = self.StepTog
+            col = panel.column(align=True)
             col.prop(self, "StepX")
             col.prop(self, "StepZ")
-
-            col = box.column(align=True)
+            col = panel.column(align=True)
             col.prop(self, "StepH")
             col.prop(self, "StepW")
             col.prop(self, "StepD")
-
-            col = box.column(align=True)
+            col = panel.column(align=True)
             col.prop(self, "StepV")
             col.prop(self, "StepT")
-
-            col = box.column(align=True)
-            row = col.row(align=True)
-            row.prop(self, "StepLeft", toggle=True)
-            row.prop(self, "StepOnly", toggle=True)
-            col.prop(self, "StepBack", toggle=True)
+            col = panel.column(align=True)
+            panel.prop(self, "StepLeft")
+            panel.prop(self, "StepOnly")
+            panel.prop(self, "StepBack")
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+                header, panel = layout.panel("WALLFACTORY_PT_TRANSFORM", default_closed=True)
+                header.label(text="Transform")
+                if panel:
+                        draw_transform_props(self, panel)
 
     # Respond to UI - get the properties set by user.
     # Check and process UI settings to generate masonry

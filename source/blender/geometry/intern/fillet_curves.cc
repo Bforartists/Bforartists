@@ -6,14 +6,17 @@
  * \ingroup geo
  */
 
-#include "BKE_attribute_math.hh"
 #include "BKE_curves.hh"
 #include "BKE_curves_utils.hh"
 
+#include "BLI_array_utils.hh"
 #include "BLI_math_rotation_legacy.hh"
 #include "BLI_task.hh"
 
 #include "GEO_fillet_curves.hh"
+
+#include <cfloat>
+#include <numbers>
 
 namespace blender::geometry {
 
@@ -30,10 +33,10 @@ static void duplicate_fillet_point_data(const OffsetIndices<int> src_points_by_c
         const IndexRange dst_points = dst_points_by_curve[curve_i];
         const IndexRange offsets_range = bke::curves::per_curve_point_offsets_range(src_points,
                                                                                     curve_i);
-        bke::attribute_math::gather_to_groups(all_point_offsets.slice(offsets_range),
-                                              IndexRange(src_points.size()),
-                                              src.slice(src_points),
-                                              dst.slice(dst_points));
+        array_utils::gather_to_groups(all_point_offsets.slice(offsets_range),
+                                      IndexRange(src_points.size()),
+                                      src.slice(src_points),
+                                      dst.slice(dst_points));
       },
       exec_mode::grain_size(512));
 }
@@ -99,6 +102,26 @@ static void calculate_angles(const Span<float3> directions, MutableSpan<float> a
   angles.first() = M_PI - angle_v3v3(-directions.last(), directions.first());
   for (const int i : directions.index_range().drop_front(1)) {
     angles[i] = M_PI - angle_v3v3(-directions[i - 1], directions[i]);
+  }
+}
+
+/**
+ * The result isn't well defined for a fully reversed direction (the arc would be infinitely far
+ * away) or when a neighboring segment has zero length. Use zero radius for those points so their
+ * fillet points stay at the original position.
+ */
+static void zero_degenerate_radii(const Span<float3> directions,
+                                  const Span<float> angles,
+                                  MutableSpan<float> radii)
+{
+  const int i_last = radii.index_range().last();
+  for (const int i : radii.index_range()) {
+    const int i_prev = i == 0 ? i_last : i - 1;
+    if (angles[i] >= std::numbers::pi_v<float> || math::is_zero(directions[i_prev]) ||
+        math::is_zero(directions[i]))
+    {
+      radii[i] = 0.0f;
+    }
   }
 }
 
@@ -253,6 +276,43 @@ static void calculate_fillet_positions(const Span<float3> src_positions,
 }
 
 /**
+ * Return the type for `handle`. Keep it aligned if recalculating it from `other_handle` preserves
+ * its position. Otherwise, use a free handle to preserve the circular arc constructed by the
+ * fillet.
+ */
+static HandleType fillet_handle_type(const float3 &position,
+                                     const float3 &handle,
+                                     const float3 &other_handle)
+{
+  const float3 handle_offset = handle - position;
+  const float3 other_direction = math::normalize(other_handle - position);
+  if (math::is_zero(other_direction) || math::is_zero(handle_offset)) {
+    return BEZIER_HANDLE_ALIGN;
+  }
+  if (math::dot(handle_offset, other_direction) >= 0.0f) {
+    return BEZIER_HANDLE_FREE;
+  }
+  const float length = math::length(handle_offset);
+  const float3 aligned_handle = position - other_direction * length;
+  /* Allow rounding when reconstructing the handle, including cancellation near zero after
+   * translation. Use a floating-point error bound rather than a scene-space epsilon.
+   * gamma(12) bounds the accumulated relative error of the reconstruction operations. */
+  constexpr double unit_roundoff = FLT_EPSILON / 2.0;
+  constexpr double relative_error = 12 * unit_roundoff / (1 - 12 * unit_roundoff);
+  /* All components must agree within the rounding bound to preserve the handle's 3D position.
+   * A mismatch on any axis means alignment would change the circular arc. */
+  for (const int axis : IndexRange(3)) {
+    const double rounding_bound = relative_error * length +
+                                  unit_roundoff * (std::abs(double(position[axis])) +
+                                                   std::abs(double(handle[axis])));
+    if (std::abs(double(aligned_handle[axis]) - handle[axis]) > rounding_bound) {
+      return BEZIER_HANDLE_FREE;
+    }
+  }
+  return BEZIER_HANDLE_ALIGN;
+}
+
+/**
  * Set handles for the "Bezier" mode where we rely on setting the inner handles to approximate a
  * circular arc. The outer (previous and next) handles outside the result fillet segment are set
  * to vector handles.
@@ -307,13 +367,15 @@ static void calculate_bezier_handles_bezier_mode(const Span<float3> src_handles_
       dst_types_l[i_dst_a] = BEZIER_HANDLE_VECTOR;
       dst_types_r[i_dst_b] = BEZIER_HANDLE_VECTOR;
 
-      /* The inner handles are aligned with the aligned with the outer vector
-       * handles, but have a specific length to best approximate a circle. */
+      /* Preserve the original corner's arc tangents. Alignment is only valid when the outer
+       * vector handles provide the opposite direction (or no direction for coincident points). */
       const float handle_length = (4.0f / 3.0f) * radius * std::tan(angle / 4.0f);
       dst_handles_r[i_dst_a] = arc_start - prev_dir * handle_length;
       dst_handles_l[i_dst_b] = arc_end - next_dir * handle_length;
-      dst_types_r[i_dst_a] = BEZIER_HANDLE_ALIGN;
-      dst_types_l[i_dst_b] = BEZIER_HANDLE_ALIGN;
+      dst_types_r[i_dst_a] = fillet_handle_type(
+          arc_start, dst_handles_r[i_dst_a], dst_handles_l[i_dst_a]);
+      dst_types_l[i_dst_b] = fillet_handle_type(
+          arc_end, dst_handles_l[i_dst_b], dst_handles_r[i_dst_b]);
     }
   });
 }
@@ -453,10 +515,12 @@ static bke::CurvesGeometry fillet_curves(const bke::CurvesGeometry &src_curves,
           if (limit_radius) {
             input_radii_buffer.reinitialize(src_points.size());
             radius_input.materialize_compressed(src_points, input_radii_buffer);
+            zero_degenerate_radii(directions, angles, input_radii_buffer);
             limit_radii(src_positions, angles, input_radii_buffer, cyclic[curve_i], radii);
           }
           else {
             radius_input.materialize_compressed(src_points, radii);
+            zero_degenerate_radii(directions, angles, radii);
           }
 
           calculate_fillet_positions(positions.slice(src_points),

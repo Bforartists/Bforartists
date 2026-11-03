@@ -1565,10 +1565,10 @@ Array<PointTransferData> compute_topology_change(
 
   /* Display intersections with flat caps. */
   if (!keep_caps) {
-    bke::SpanAttributeWriter<int8_t> dst_start_caps =
-        dst_attributes.lookup_or_add_for_write_span<int8_t>("start_cap", bke::AttrDomain::Curve);
-    bke::SpanAttributeWriter<int8_t> dst_end_caps =
-        dst_attributes.lookup_or_add_for_write_span<int8_t>("end_cap", bke::AttrDomain::Curve);
+    bke::SpanAttributeWriter<int8_t> dst_start_caps = dst_attributes.ensure_for_write_span<int8_t>(
+        "start_cap", bke::AttrDomain::Curve);
+    bke::SpanAttributeWriter<int8_t> dst_end_caps = dst_attributes.ensure_for_write_span<int8_t>(
+        "end_cap", bke::AttrDomain::Curve);
 
     threading::parallel_for(dst.curves_range(), 4096, [&](const IndexRange dst_curves) {
       for (const int dst_curve : dst_curves) {
@@ -1645,19 +1645,21 @@ static float pixel_radius_to_world_space_radius(const RegionView3D *rv3d,
 
 static float brush_radius_at_location(const RegionView3D *rv3d,
                                       const ARegion *region,
+                                      const Paint *paint,
                                       const Brush *brush,
                                       const float3 location,
                                       const float4x4 to_world)
 {
   if ((brush->flag & BRUSH_LOCK_SIZE) == 0) {
     return pixel_radius_to_world_space_radius(
-        rv3d, region, location, to_world, float(brush->size) / 2.0f);
+        rv3d, region, location, to_world, BKE_brush_radius_get(paint, brush));
   }
-  return brush->unprojected_size / 2.0f;
+  return BKE_brush_unprojected_radius_get(paint, brush);
 }
 
 float radius_from_input_sample(const RegionView3D *rv3d,
                                const ARegion *region,
+                               const Paint &paint,
                                const Brush *brush,
                                const float pressure,
                                const float3 &location,
@@ -1665,7 +1667,7 @@ float radius_from_input_sample(const RegionView3D *rv3d,
                                const BrushGpencilSettings *settings, // bfa
                                const Scene * /*scene*/) // bfa
 {
-  float radius = brush_radius_at_location(rv3d, region, brush, location, to_world);
+  float radius = brush_radius_at_location(rv3d, region, &paint, brush, location, to_world);
   if (BKE_brush_use_size_pressure(brush)) {
     radius *= BKE_curvemapping_evaluateF(settings->curve_sensitivity, 0, pressure);
   }
@@ -1673,10 +1675,11 @@ float radius_from_input_sample(const RegionView3D *rv3d,
 }
 
 float opacity_from_input_sample(const float pressure,
+                                const Paint &paint,
                                 const Brush *brush,
                                 const BrushGpencilSettings *settings)
 {
-  float opacity = brush->alpha;
+  float opacity = BKE_brush_alpha_get(&paint, brush);
   if (BKE_brush_use_alpha_pressure(brush)) {
     opacity *= BKE_curvemapping_evaluateF(settings->curve_strength, 0, pressure);
   }
@@ -1716,40 +1719,40 @@ static StrokeVisibilityStatus get_visibility_status_for_draw_operator(Object *ob
   return StrokeVisibilityStatus::Visible;
 }
 
-wmOperatorStatus grease_pencil_draw_operator_invoke(bContext *C,
-                                                    wmOperator *op,
-                                                    const bool use_duplicate_previous_key)
+bool grease_pencil_draw_operator_begin(bContext *C,
+                                       wmOperator *op,
+                                       const bool use_duplicate_previous_key)
 {
   const Scene *scene = CTX_data_scene(C);
   Object *object = CTX_data_active_object(C);
   if (!object || object->type != OB_GREASE_PENCIL) {
-    return OPERATOR_CANCELLED;
+    return false;
   }
 
   GreasePencil &grease_pencil = *id_cast<GreasePencil *>(object->data);
   if (!grease_pencil.has_active_layer()) {
     BKE_report(op->reports, RPT_ERROR, "No active Grease Pencil layer");
-    return OPERATOR_CANCELLED;
+    return false;
   }
 
   const Paint *paint = BKE_paint_get_active_from_context(C);
   const Brush *brush = BKE_paint_brush_for_read(paint);
   if (brush == nullptr) {
-    return OPERATOR_CANCELLED;
+    return false;
   }
 
   bke::greasepencil::Layer &active_layer = *grease_pencil.get_active_layer();
 
   if (!active_layer.is_editable()) {
     BKE_report(op->reports, RPT_ERROR, "Active layer is locked or hidden");
-    return OPERATOR_CANCELLED;
+    return false;
   }
 
   if (ed::greasepencil::check_brush_needs_new_material(object, brush) &&
       (!ID_IS_EDITABLE(&object->id) || ID_IS_OVERRIDE_LIBRARY(&object->id)))
   {
     BKE_report(op->reports, RPT_ERROR, "Cannot create new material on linked object");
-    return OPERATOR_CANCELLED;
+    return false;
   }
 
   /* Ensure a drawing at the current keyframe. */
@@ -1758,7 +1761,7 @@ wmOperatorStatus grease_pencil_draw_operator_invoke(bContext *C,
           *scene, grease_pencil, active_layer, use_duplicate_previous_key, inserted_keyframe))
   {
     BKE_report(op->reports, RPT_ERROR, "No Grease Pencil frame to draw on");
-    return OPERATOR_CANCELLED;
+    return false;
   }
 
   if (inserted_keyframe) {
@@ -1788,7 +1791,7 @@ wmOperatorStatus grease_pencil_draw_operator_invoke(bContext *C,
         break;
     }
   }
-  return OPERATOR_RUNNING_MODAL;
+  return true;
 }
 
 float4x2 calculate_texture_space(const Scene *scene,
@@ -1890,7 +1893,7 @@ void add_single_curve(bke::greasepencil::Drawing &drawing, const bool at_end)
       return;
     }
     bke::GSpanAttributeWriter dst = attributes.lookup_for_write_span(iter.name);
-    bke::attribute_math::shift_right(dst.span, 0, dst.span.size() - 1, dst.span.size());
+    array_utils::shift_right(dst.span, 0, dst.span.size() - 1, dst.span.size());
     dst.finish();
   });
 }
@@ -1934,7 +1937,7 @@ void resize_single_curve(bke::CurvesGeometry &curves, const bool at_end, const i
       }
 
       bke::GSpanAttributeWriter dst = attributes.lookup_for_write_span(iter.name);
-      bke::attribute_math::shift_right(
+      array_utils::shift_right(
           dst.span, last_active_point, dst.span.size() - added_points_num, dst.span.size());
       dst.finish();
     });
@@ -1952,7 +1955,7 @@ void resize_single_curve(bke::CurvesGeometry &curves, const bool at_end, const i
       }
 
       bke::GSpanAttributeWriter dst = attributes.lookup_for_write_span(iter.name);
-      bke::attribute_math::shift_left(
+      array_utils::shift_left(
           dst.span, new_points_num + removed_points_num, dst.span.size(), new_points_num);
       dst.finish();
     });
@@ -2128,7 +2131,7 @@ void apply_eval_grease_pencil_data(const GreasePencil &eval_grease_pencil,
       if (!attributes.contains("material_index")) {
         continue;
       }
-      SpanAttributeWriter<int> material_indices = attributes.lookup_or_add_for_write_span<int>(
+      SpanAttributeWriter<int> material_indices = attributes.ensure_for_write_span<int>(
           "material_index", AttrDomain::Curve);
       for (int &material_index : material_indices.span) {
         if (material_indices_map.index_range().contains(material_index)) {
@@ -2169,8 +2172,7 @@ void apply_eval_grease_pencil_data(const GreasePencil &eval_grease_pencil,
     if (!dst) {
       return;
     }
-    attribute_math::gather(
-        src.varray, eval_to_orig_layer_indices_map, mapped_orig_layers, dst.span);
+    array_utils::gather(src.varray, eval_to_orig_layer_indices_map, mapped_orig_layers, dst.span);
     dst.finish();
   });
 

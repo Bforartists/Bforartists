@@ -23,6 +23,7 @@
 #include "eevee_shadow_tilemap_lib.bsl.hh"
 #include "gpu_shader_debug_gradients.bsl.hh"
 #include "gpu_shader_fullscreen.bsl.hh"
+#include "gpu_shader_math_matrix_construct.bsl.hh"
 #include "gpu_shader_math_vector_compare.bsl.hh"
 
 namespace eevee {
@@ -44,13 +45,13 @@ struct SearchDebugLightCtx {
   int debug_tilemap_index;
   uint light_index;
 
-  void eval_directional([[resource_table]] LightRenderData & /*res*/, uint l_idx, LightData light)
+  void eval_directional(LightRenderData & /*res*/, uint l_idx, LightData light)
   {
     if (light.tilemap_index == debug_tilemap_index) {
       light_index = l_idx;
     }
   }
-  void eval_local([[resource_table]] LightRenderData & /*res*/, uint l_idx, LightData light)
+  void eval_local(LightRenderData & /*res*/, uint l_idx, LightData light)
   {
     if (light.tilemap_index == debug_tilemap_index) {
       light_index = l_idx;
@@ -63,8 +64,8 @@ template void light::foreach<SearchDebugLightCtx, LightRenderData>(const LightRe
                                                                    LightRenderData &);
 
 struct ShadowDebug {
-  [[resource_table]] srt_t<LightRenderData> light_data;
-  [[resource_table]] srt_t<ShadowRenderData> shadow_data;
+  [[resource_table]] LightRenderData light_data;
+  [[resource_table]] ShadowRenderData shadow_data;
 
   [[storage(5, read)]] ShadowTileMapData (&tilemaps_buf)[];
   [[storage(6, read)]] uint (&tiles_buf)[];
@@ -78,7 +79,7 @@ struct ShadowDebug {
 
   float3 debug_random_color(int2 v) const
   {
-    float r = interleaved_gradient_noise(float2(v), 0.0f, 0.0f);
+    float r = random::interleaved_gradient(float2(v), 0.0f, 0.0f);
     return hue_gradient(r);
   }
 
@@ -144,23 +145,20 @@ struct ShadowDebug {
 
   ShadowSamplingTile debug_tile_get(float3 P, LightData light) const
   {
-    [[resource_table]] const ShadowRenderData &srd = shadow_data;
     ShadowCoordinates coord = debug_coord_get(P, light);
-    return shadow_tile_data_get(srd.shadow_tilemaps_tx, coord);
+    return shadow_tile_data_get(shadow_data.shadow_tilemaps_tx, coord);
   }
 
   LightData debug_light_get()
   {
-    [[resource_table]] LightRenderData &lrd = light_data;
-
     SearchDebugLightCtx ctx = {
         .debug_tilemap_index = this->debug_tilemap_index,
         .light_index = 0,
     };
 
-    light::foreach(lrd, ctx, lrd);
+    light::foreach(light_data, ctx, light_data);
 
-    return lrd.light_buf[ctx.light_index];
+    return light_data.light_buf[ctx.light_index];
   }
 };
 
@@ -176,14 +174,9 @@ struct ShadowDebugOutput {
   float depth;
 };
 
-ShadowDebugOutput debug_tilemaps([[resource_table]] const ShadowDebug &srt,
-                                 float3 /*P*/,
-                                 LightData light,
-                                 int2 texel,
-                                 bool do_debug_sample_tile)
+ShadowDebugOutput debug_tilemaps(
+    const ShadowDebug &srt, float3 /*P*/, LightData light, int2 texel, bool do_debug_sample_tile)
 {
-  [[resource_table]] const ShadowRenderData &srd = srt.shadow_data;
-
   /** Control the scaling of the tile-map splat. */
   constexpr int debug_tile_size_px = 4;
 
@@ -195,7 +188,7 @@ ShadowDebugOutput debug_tilemaps([[resource_table]] const ShadowDebug &srt,
       /* Debug values in the tilemap_tx. */
       uint2 tilemap_texel = shadow_tile_coord_in_atlas(uint2(px), tilemap_index);
       ShadowSamplingTile tile = shadow_sampling_tile_unpack(
-          texelFetch(srd.shadow_tilemaps_tx, int2(tilemap_texel), 0).x);
+          texelFetch(srt.shadow_data.shadow_tilemaps_tx, int2(tilemap_texel), 0).x);
       /* Leave 1 px border between tile-maps. */
       if (!any(equal(texel % (SHADOW_TILEMAP_RES * debug_tile_size_px), int2(0)))) {
         return {.valid = true,
@@ -222,9 +215,7 @@ ShadowDebugOutput debug_tilemaps([[resource_table]] const ShadowDebug &srt,
   return {false, float4(0.0f), float4(1.0f), 1.0f};
 }
 
-ShadowDebugOutput debug_tile_state([[resource_table]] const ShadowDebug &srt,
-                                   float3 P,
-                                   LightData light)
+ShadowDebugOutput debug_tile_state(const ShadowDebug &srt, float3 P, LightData light)
 {
   ShadowSamplingTile tile_samp = srt.debug_tile_get(P, light);
   ShadowCoordinates coord = srt.debug_coord_get(P, light);
@@ -238,41 +229,39 @@ ShadowDebugOutput debug_tile_state([[resource_table]] const ShadowDebug &srt,
           .depth = default_depth};
 }
 
-ShadowDebugOutput debug_atlas_values([[resource_table]] const ShadowDebug &srt,
-                                     float3 P,
-                                     LightData light)
+ShadowDebugOutput debug_atlas_values(const ShadowDebug &srt, float3 P, LightData light)
 {
-  [[resource_table]] const ShadowRenderData &srd = srt.shadow_data;
+  const ShadowRenderData &srd = srt.shadow_data;
 
   ShadowCoordinates coord = srt.debug_coord_get(P, light);
   float depth = srd.read_depth(coord);
-  return {
-      .valid = true,
-      .color_add = float4((depth == -1) ? float3(1.0f, 0.0f, 0.0f) : float3(1.0f / depth), 0.0f) *
-                   0.5f,
-      .color_mul = float4(0.5f),
-      .depth = default_depth};
+  return {.valid = true,
+          .color_add = float4((depth == -1.0f) ? float3(1.0f, 0.0f, 0.0f) : float3(1.0f / depth),
+                              0.0f) *
+                       0.5f,
+          .color_mul = float4(0.5f),
+          .depth = default_depth};
 }
 
 struct AtomicCostCtx {
   float3 P;
   float cost;
 
-  float atomic_cost([[resource_table]] const ShadowDebug &srt, LightData light)
+  float atomic_cost(const ShadowDebug &srt, LightData light)
   {
-    [[resource_table]] const ShadowRenderData &srd = srt.shadow_data;
+    const ShadowRenderData &srd = srt.shadow_data;
 
     ShadowCoordinates coord = srt.debug_coord_get(P, light);
     uint u_cost = floatBitsToUint(srd.read_depth(coord));
     return float(u_cost - floatBitsToUint(FLT_MAX));
   }
 
-  void eval_directional([[resource_table]] ShadowDebug &srt, uint /*l_idx*/, LightData light)
+  void eval_directional(ShadowDebug &srt, uint /*l_idx*/, LightData light)
   {
     cost += atomic_cost(srt, light);
   }
 
-  void eval_local([[resource_table]] ShadowDebug &srt, uint /*l_idx*/, LightData light)
+  void eval_local(ShadowDebug &srt, uint /*l_idx*/, LightData light)
   {
     cost += atomic_cost(srt, light);
   }
@@ -282,9 +271,7 @@ template void light::foreach<AtomicCostCtx, ShadowDebug>(const LightRenderData &
                                                          AtomicCostCtx &,
                                                          ShadowDebug &);
 
-ShadowDebugOutput debug_atomic_cost([[resource_table]] ShadowDebug &srt,
-                                    float3 P,
-                                    LightData /*light*/)
+ShadowDebugOutput debug_atomic_cost(ShadowDebug &srt, float3 P, LightData /*light*/)
 {
   AtomicCostCtx ctx = {.P = P, .cost = 0.0f};
 
@@ -297,9 +284,7 @@ ShadowDebugOutput debug_atomic_cost([[resource_table]] ShadowDebug &srt,
           .depth = default_depth};
 }
 
-ShadowDebugOutput debug_random_tile_color([[resource_table]] const ShadowDebug &srt,
-                                          float3 P,
-                                          LightData light)
+ShadowDebugOutput debug_random_tile_color(const ShadowDebug &srt, float3 P, LightData light)
 {
   ShadowSamplingTile tile = srt.debug_tile_get(P, light);
   return {.valid = true,
@@ -308,9 +293,7 @@ ShadowDebugOutput debug_random_tile_color([[resource_table]] const ShadowDebug &
           .depth = default_depth};
 }
 
-ShadowDebugOutput debug_random_tilemap_color([[resource_table]] const ShadowDebug &srt,
-                                             float3 P,
-                                             LightData light)
+ShadowDebugOutput debug_random_tilemap_color(const ShadowDebug &srt, float3 P, LightData light)
 {
   ShadowCoordinates coord = srt.debug_coord_get(P, light);
   return {.valid = true,
@@ -380,7 +363,7 @@ void debug_shadow_frag([[resource_table]] ShadowDebug &srt,
 
 PipelineGraphic eevee_shadow_debug(eevee::debug_fullscreen_vert,
                                    eevee::debug_shadow_frag,
-                                   eevee::ShadowRenderData{.shadow_random = false});
+                                   eevee::ShadowRenderConstants{.shadow_random = false});
 
 namespace eevee::debug::irradiance_grid {
 
@@ -494,7 +477,7 @@ struct Resources {
 void vert_main([[resource_table]] const Resources &srt,
                [[resource_table]] const draw::View &views,
                [[vertex_id]] const int vert_id,
-               [[instance_id]] const int inst_id,
+               [[instance_index]] const int inst_id,
                [[position]] float4 &out_position,
                [[out]] VertOut &v_out)
 {
@@ -503,10 +486,10 @@ void vert_main([[resource_table]] const Resources &srt,
 
 #if 0 /* Debug surfel lists. TODO allow in release build with a dedicated shader. */
   if (vert_id == 0 && surfel.next > -1) {
-    Surfel surfel_next = surfels_buf[surfel.next];
+    Surfel surfel_next = srt.surfels_buf[surfel.next];
     float4 line_color = (surfel.prev == -1)      ? float4(1.0f, 1.0f, 0.0f, 1.0f) :
-                      (surfel_next.next == -1) ? float4(0.0f, 1.0f, 1.0f, 1.0f) :
-                                                 float4(0.0f, 1.0f, 0.0f, 1.0f);
+                        (surfel_next.next == -1) ? float4(0.0f, 1.0f, 1.0f, 1.0f) :
+                                                   float4(0.0f, 1.0f, 0.0f, 1.0f);
     /* WORKAROUND: Avoid compilation error because this gets parsed before dead code removal. */
     drw_ debug_line(surfel_next.position, surfel.position, line_color);
   }
@@ -546,7 +529,7 @@ void vert_main([[resource_table]] const Resources &srt,
 
 float3 debug_random_color(int v)
 {
-  float r = interleaved_gradient_noise(float2(v, 0), 0.0f, 0.0f);
+  float r = random::interleaved_gradient(float2(v, 0), 0.0f, 0.0f);
   return hue_gradient(r);
 }
 

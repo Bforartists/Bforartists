@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 07:47+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
 "PO-Revision-Date: 2025-07-23 15:34+0000\n"
 "Last-Translator: Just Adam <adam.abbas2009@gmail.com>\n"
 "Language-Team: Bulgarian <https://translate.blender.org/projects/blender-ui/ui/bg/>\n"
@@ -1124,14 +1124,6 @@ msgid "Type of event"
 msgstr "Вид събитие"
 
 
-msgid "Release"
-msgstr "Освобождаване"
-
-
-msgid "Click"
-msgstr "Клик"
-
-
 msgid "Mix"
 msgstr "Смесване"
 
@@ -1148,16 +1140,16 @@ msgid "ID Type"
 msgstr "ID тип"
 
 
-msgid "Import"
-msgstr "Внеси"
-
-
 msgid "UV Mapping"
 msgstr "UV Картиране"
 
 
 msgid "Light"
 msgstr "Светлина"
+
+
+msgid "Import"
+msgstr "Внеси"
 
 
 msgid "Rigid Body"
@@ -2228,6 +2220,10 @@ msgstr "Шаблон"
 
 msgid "Animated"
 msgstr "Анимирани"
+
+
+msgid "Release"
+msgstr "Освобождаване"
 
 
 msgid "Cancel"

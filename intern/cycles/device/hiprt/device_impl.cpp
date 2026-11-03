@@ -478,20 +478,12 @@ hiprtGeometryBuildInput HIPRTDevice::prepare_curve_blas(BVHHIPRT *bvh, Hair *hai
   bvh->custom_primitive_bound.alloc(num_segments);
 
   int num_bounds = 0;
-  const packed_float3 *curve_keys = hair->get_position();
 
   for (uint j = 0; j < num_curves; j++) {
     const Hair::Curve curve = hair->get_curve(j);
     const float *curve_radius = hair->get_radius();
-    int first_key = curve.first_key;
     for (int k = 0; k < curve.num_keys - 1; k++) {
       if (!has_motion) {
-        float3 current_keys[4];
-        current_keys[0] = curve_keys[max(first_key + k - 1, first_key)];
-        current_keys[1] = curve_keys[first_key + k];
-        current_keys[2] = curve_keys[first_key + k + 1];
-        current_keys[3] = curve_keys[min(first_key + k + 2, first_key + curve.num_keys - 1)];
-
         BoundBox bounds = BoundBox::empty;
         curve.bounds_grow(k, hair->get_position(), curve_radius, bounds);
 
@@ -739,14 +731,14 @@ hiprtScene HIPRTDevice::build_tlas(BVHHIPRT * /*bvh*/, const vector<Object *> &o
         assert(motion_size != 1);
 
         array<Transform> tfm_array = ob->get_motion();
-        float time_iternval = 1 / (float)(motion_size - 1);
+        float time_interval = 1 / (float)(motion_size - 1);
         current_header.frameCount = motion_size;
 
         vector<hiprtFrameMatrix> tfm_hiprt_mb;
         tfm_hiprt_mb.resize(motion_size);
         for (int i = 0; i < motion_size; i++) {
           get_hiprt_transform(tfm_hiprt_mb[i].matrix, tfm_array[i]);
-          tfm_hiprt_mb[i].time = (float)i * time_iternval;
+          tfm_hiprt_mb[i].time = (float)i * time_interval;
           transform_matrix.push_back_slow(tfm_hiprt_mb[i]);
         }
       }

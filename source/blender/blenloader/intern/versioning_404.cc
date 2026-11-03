@@ -11,7 +11,7 @@
 #include <fmt/format.h>
 
 /* Define macros in `DNA_genfile.h`. */
-#define DNA_GENFILE_VERSIONING_MACROS
+#define DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "DNA_anim_types.h"
 #include "DNA_brush_types.h"
@@ -22,7 +22,7 @@
 #include "DNA_sequence_types.h"
 #include "DNA_workspace_types.h"
 
-#undef DNA_GENFILE_VERSIONING_MACROS
+#undef DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "BLI_listbase.hh"
 #include "BLI_math_vector.hh"
@@ -148,7 +148,7 @@ static void do_version_glare_node_options_to_inputs(const Scene *scene,
 
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -291,7 +291,7 @@ static void do_version_glare_node_bloom_strength(const Scene *scene,
 
   /* Compute the RNA path of the strength input. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string strength_rna_path = fmt::format("nodes[\"{}\"].inputs[4].default_value",
                                                     escaped_node_name);
 

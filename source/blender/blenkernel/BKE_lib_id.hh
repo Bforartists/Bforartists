@@ -74,9 +74,9 @@ struct ID_Runtime_Remap {
 
 struct ID_Runtime {
   /**
-   * The last modifification time of the source .blend file where this ID was loaded from.
+   * The last modification time of the source .blend file where this ID was loaded from.
    */
-  int64_t src_blend_modifification_time;
+  int64_t src_blend_modification_time;
 
   ID_Runtime_Remap remap = {};
   /**
@@ -714,6 +714,22 @@ void id_fake_user_set(ID *id);
 void id_fake_user_clear(ID *id);
 void BKE_id_newptr_and_tag_clear(ID *id);
 
+namespace bke::id {
+
+/**
+ * Safely/sanely set the library of an ID.
+ *
+ * Currently, it mostly ensures that its embedded IDs, if any, are in sync.
+ *
+ * \note: It _does not_ handle shapekeys. Even though these behave almost as embedded data, they
+ * are still registered in the Main database, and the various ID maps, which makes changing their
+ * libraries having various potential side-effects. Caller is responsible to ensure that the
+ * relevant shapekeys libraries are properly updated.
+ */
+void id_lib_set(ID &id, Library *lib);
+
+}  // namespace bke::id
+
 /** Flags to control make local code behavior. */
 enum {
   /**
@@ -737,6 +753,9 @@ enum {
 
   /** Clear any liboverride data as part of making this linked data local. */
   LIB_ID_MAKELOCAL_LIBOVERRIDE_CLEAR = 1 << 17,
+
+  /** Do not make linked packed data local. */
+  LIB_ID_MAKELOCAL_LINKEDPACKED_KEEP = 1 << 18,
 };
 
 /**

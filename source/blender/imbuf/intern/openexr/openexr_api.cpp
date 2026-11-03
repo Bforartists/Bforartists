@@ -505,6 +505,12 @@ static int openexr_header_get_compression(const Header &header)
     case HTJ2K32_COMPRESSION:
       return R_IMF_EXR_CODEC_HTJ2K;
 #endif
+#if COMBINED_OPENEXR_VERSION >= 30500
+    case LJ2K_COMPRESSION:
+      return R_IMF_EXR_CODEC_HTJ2K;
+    case ZSTD_COMPRESSION:
+      return R_IMF_EXR_CODEC_ZIP;
+#endif
     case NUM_COMPRESSION_METHODS:
       return R_IMF_EXR_CODEC_NONE;
   }
@@ -525,10 +531,12 @@ static bool openexr_metadata_skip_read(const char *name, const bool is_multi)
 static bool openexr_metadata_skip_write(const char *name, const bool is_multi)
 {
   /* Do not blindly pass along compression or colorInteropID, as they might have changed
-   * and will already be written when appropriate.
+   * and will already be written when appropriate. Same for metadata about the software
+   * that wrote the file and the type (scanline, tiled, deep).
    *
    * Multi-layer name and view are skipped, see #openexr_metadata_skip_read. */
-  return STR_ELEM(name, "compression", "colorInteropID") ||
+  return STR_ELEM(
+             name, "compression", "colorInteropID", "Software", "BlenderMultiChannel", "type") ||
          (is_multi && STR_ELEM(name, "name", "view"));
 }
 
@@ -1018,10 +1026,10 @@ static void openexr_header_metadata_multi(ExrWriteHandle *handle,
   BKE_stamp_info_callback(
       &header,
       const_cast<StampData *>(stamp),
-      [](void *data, const char *propname, char *prop, int /*len*/) {
+      [](void *data, const char *propname, MutableCStr prop) {
         if (!openexr_metadata_skip_write(propname, true)) {
           Header *header = (Header *)data;
-          header->insert(propname, StringAttribute(prop));
+          header->insert(propname, StringAttribute(prop.data()));
         }
       },
       false);
@@ -1543,11 +1551,12 @@ static bool imb_exr_multi_read_single_pass(ExrReadHandle *handle, ImBuf *ibuf)
   }
   ExrPassInfo *chosen = combined ? combined : rgb ? rgb : &passes.first();
 
-  /* Read pixels. */
-  if (!IMB_alloc_float_pixels(ibuf, chosen->channels)) {
+  /* Read pixels, as 1, 3 or 4 channels. */
+  const int channels = ELEM(chosen->channels, 1, 3, 4) ? chosen->channels : 3;
+  if (!IMB_alloc_float_pixels(ibuf, channels)) {
     return false;
   }
-  ibuf->color_mode = IMB_color_mode_from_channels(chosen->channels);
+  ibuf->color_mode = IMB_color_mode_from_channels(channels);
   chosen->ibuf = ibuf;
 
   MutableSpan<ExrPassInfo> single(chosen, 1);
@@ -1580,48 +1589,43 @@ static int imb_exr_split_token(const char *str, const char *end, const char **to
   return int(end - *token);
 }
 
-static void imb_exr_pass_name_from_channel(char *passname,
+static void imb_exr_pass_name_from_channel(MutableCStr passname,
                                            const ExrChannel &echan,
                                            const char *channelname,
                                            const bool has_xyz_channels)
 {
-  const int passname_maxncpy = EXR_TOT_MAXNAME;
-
   if (echan.chan_id == 'Z' && (!has_xyz_channels || BLI_strcaseeq(channelname, "depth"))) {
-    BLI_strncpy(passname, "Depth", passname_maxncpy);
+    STRNCPY_UTF8(passname, "Depth");
   }
   else if (echan.chan_id == 'Y' && !has_xyz_channels) {
-    BLI_strncpy(passname, channelname, passname_maxncpy);
+    STRNCPY_UTF8(passname, channelname);
   }
   else if (ELEM(echan.chan_id, 'R', 'G', 'B', 'A', 'V', 'X', 'Y', 'Z')) {
-    BLI_strncpy(passname, "Combined", passname_maxncpy);
+    STRNCPY_UTF8(passname, "Combined");
   }
   else {
-    BLI_strncpy(passname, channelname, passname_maxncpy);
+    STRNCPY_UTF8(passname, channelname);
   }
 }
 
-static void imb_exr_pass_name_from_channel_name(char *passname,
+static void imb_exr_pass_name_from_channel_name(MutableCStr passname,
                                                 const ExrChannel & /*echan*/,
                                                 const char *channelname,
                                                 const bool /*has_xyz_channels*/)
 {
-  const int passname_maxncpy = EXR_TOT_MAXNAME;
-
   /* TODO: Are special tricks similar to imb_exr_pass_name_from_channel() needed here?
    * Note that unknown passes are default to chan_id='X'. The place where this function is called
    * is when the channel name is more than 1 character, so perhaps using just channel ID is not
    * fully correct here. */
 
-  BLI_strncpy(passname, channelname, passname_maxncpy);
+  STRNCPY_UTF8(passname, channelname);
 }
 
 static int imb_exr_split_channel_name(ExrChannel &echan,
-                                      char *layname,
-                                      char *passname,
+                                      MutableCStr layname,
+                                      MutableCStr passname,
                                       bool has_xyz_channels)
 {
-  const int layname_maxncpy = EXR_TOT_MAXNAME;
   const char *name = echan.name.c_str();
   const char *end = name + strlen(name);
   const char *token;
@@ -1648,7 +1652,7 @@ static int imb_exr_split_channel_name(ExrChannel &echan,
   }
 
   char channelname[EXR_TOT_MAXNAME];
-  BLI_strncpy(channelname, token, std::min(len + 1, sizeof(channelname)));
+  STRNCPY_UTF8(MutableCStr(channelname).take_front(len + 1), token);
 
   if (len == 1) {
     echan.chan_id = BLI_toupper_ascii(channelname[0]);
@@ -1700,7 +1704,7 @@ static int imb_exr_split_channel_name(ExrChannel &echan,
       CLOG_ERROR(&LOG, "Multilayer read: bad channel name: %s", name);
       return 0;
     }
-    BLI_strncpy(passname, token, len + 1);
+    STRNCPY_UTF8(passname.take_front(len + 1), token);
     end -= len + 1; /* +1 to skip '.' separator */
   }
   else {
@@ -1710,7 +1714,7 @@ static int imb_exr_split_channel_name(ExrChannel &echan,
 
   /* all preceding tokens combined as layer name */
   if (end > name) {
-    BLI_strncpy(layname, name, std::min(layname_maxncpy, int(end - name) + 1));
+    STRNCPY_UTF8(layname.take_front(int(end - name) + 1), name);
   }
   else {
     layname[0] = '\0';
@@ -1888,8 +1892,8 @@ static bool imb_exr_multilayer_ensure_channels_parsed(ExrReadHandle *handle)
 
       if (view[0] != '\0') {
         char tmp_pass[EXR_PASS_MAXNAME];
-        SNPRINTF(tmp_pass, "%s.%s", passname, view);
-        STRNCPY(passname, tmp_pass);
+        SNPRINTF_UTF8(tmp_pass, "%s.%s", passname, view);
+        STRNCPY_UTF8(passname, tmp_pass);
       }
 
       ExrLayer *lay = imb_exr_get_layer(handle, layname);

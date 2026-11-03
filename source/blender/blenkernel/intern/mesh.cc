@@ -159,6 +159,8 @@ static void mesh_copy_data(Main *bmain,
   mesh_dst->runtime->vert_to_face_map_cache = mesh_src->runtime->vert_to_face_map_cache;
   mesh_dst->runtime->vert_to_corner_map_cache = mesh_src->runtime->vert_to_corner_map_cache;
   mesh_dst->runtime->corner_to_face_map_cache = mesh_src->runtime->corner_to_face_map_cache;
+  mesh_dst->runtime->edge_to_corner_offset_cache = mesh_src->runtime->edge_to_corner_offset_cache;
+  mesh_dst->runtime->edge_to_corner_map_cache = mesh_src->runtime->edge_to_corner_map_cache;
   mesh_dst->runtime->bvh_cache_edges = mesh_src->runtime->bvh_cache_edges;
   mesh_dst->runtime->bvh_cache_faces = mesh_src->runtime->bvh_cache_faces;
   mesh_dst->runtime->bvh_cache_corner_tris = mesh_src->runtime->bvh_cache_corner_tris;
@@ -296,12 +298,13 @@ static void mesh_foreach_path(ID *id, BPathForeachPathData *bpath_data)
     /* CustomDataExternal should only be the case for CD_MDISPS, but check all layers regardless.
      */
     const Span<CustomDataLayer> layers(data.layers, data.totlayer);
-    if (std::any_of(layers.begin(), layers.end(), [&](const CustomDataLayer &layer) {
-          return CustomData_external_test(&data, eCustomDataType(layer.type));
-        }))
+    if (std::any_of(layers.begin(),
+                    layers.end(),
+                    [&](const CustomDataLayer &layer) {
+                      return CustomData_external_test(&data, eCustomDataType(layer.type));
+                    }))
     {
-      BKE_bpath_foreach_path_fixed_process(
-          bpath_data, data.external->filepath, sizeof(data.external->filepath));
+      BKE_bpath_foreach_path_fixed_process(bpath_data, data.external->filepath);
     }
   }
 }
@@ -393,7 +396,7 @@ static void mesh_blend_write(BlendWriter *writer, ID *id, const void *id_address
 
   writer->generated_pointer_tag(mesh->attribute_storage.dna_attributes);
 
-  writer->write_id_struct(id_address, mesh, [](BlendStructWriter &struct_writer) {
+  writer->write_id_struct(id_address, mesh, [](BlendStructWriter<Mesh> &struct_writer) {
     struct_writer.generated_ptr(offsetof(Mesh, attribute_storage.dna_attributes));
   });
   BKE_id_blend_write(writer, &mesh->id);
@@ -463,7 +466,6 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
   CustomData_blend_read(reader, &mesh->fdata_legacy, mesh->totface_legacy);
   CustomData_blend_read(reader, &mesh->corner_data, mesh->corners_num);
   CustomData_blend_read(reader, &mesh->face_data, mesh->faces_num);
-  mesh->attribute_storage.wrap().blend_read(*reader);
   if (mesh->deform_verts().is_empty()) {
     /* Vertex group data was also an owning pointer in old Blender versions.
      * Don't read them again if they were read as part of #CustomData. */
@@ -491,6 +493,10 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
                      nullptr;
         });
   }
+
+  mesh->attribute_storage.wrap().blend_read(*reader, [&](const bke::AttrDomain domain) {
+    return mesh->attributes().domain_size(domain);
+  });
 
   if (mesh->mselect == nullptr) {
     mesh->totselect = 0;
@@ -541,9 +547,7 @@ bool BKE_mesh_attribute_required(const StringRef name)
 void BKE_mesh_ensure_skin_customdata(Mesh *mesh)
 {
   using namespace bke;
-  BMesh *bm = mesh->runtime->edit_mesh ? mesh->runtime->edit_mesh->bm : nullptr;
-
-  if (bm) {
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
     if (!CustomData_has_layer_named(&bm->vdata, CD_PROP_FLOAT2, "skin_modifier_radius")) {
       BM_data_layer_add_named(bm, &bm->vdata, CD_PROP_FLOAT2, "skin_modifier_radius");
       const int offset = CustomData_get_offset_named(
@@ -585,9 +589,8 @@ void BKE_mesh_ensure_skin_customdata(Mesh *mesh)
 
 bool BKE_mesh_has_custom_loop_normals(Mesh *mesh)
 {
-  if (mesh->runtime->edit_mesh) {
-    return CustomData_has_layer_named(
-        &mesh->runtime->edit_mesh->bm->ldata, CD_PROP_INT16_2D, "custom_normal");
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+    return CustomData_has_layer_named(&bm->ldata, CD_PROP_INT16_2D, "custom_normal");
   }
 
   return mesh->attributes().contains("custom_normal");
@@ -1317,8 +1320,8 @@ VectorSet<StringRefNull> Mesh::uv_map_names() const
 
 StringRefNull Mesh::active_uv_map_name() const
 {
-  if (BMEditMesh *em = this->runtime->edit_mesh.get()) {
-    const char *name = CustomData_get_active_layer_name(&em->bm->ldata, CD_PROP_FLOAT2);
+  if (const BMesh *bm = BKE_editmesh_bmesh_get(this)) {
+    const char *name = CustomData_get_active_layer_name(&bm->ldata, CD_PROP_FLOAT2);
     return name ? name : "";
   }
   return this->active_uv_map_attribute ? this->active_uv_map_attribute : "";
@@ -1326,8 +1329,8 @@ StringRefNull Mesh::active_uv_map_name() const
 
 StringRefNull Mesh::default_uv_map_name() const
 {
-  if (BMEditMesh *em = this->runtime->edit_mesh.get()) {
-    const char *name = CustomData_get_render_layer_name(&em->bm->ldata, CD_PROP_FLOAT2);
+  if (const BMesh *bm = BKE_editmesh_bmesh_get(this)) {
+    const char *name = CustomData_get_render_layer_name(&bm->ldata, CD_PROP_FLOAT2);
     return name ? name : "";
   }
   return this->default_uv_map_attribute ? this->default_uv_map_attribute : "";
@@ -1348,12 +1351,12 @@ void Mesh::uv_maps_active_set(const StringRef name)
   if (!name.is_empty()) {
     this->active_uv_map_attribute = BLI_strdupn(name.data(), name.size());
   }
-  if (BMEditMesh *em = this->runtime->edit_mesh.get()) {
-    int index = CustomData_get_named_layer_index(&em->bm->ldata, CD_PROP_FLOAT2, name);
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(this)) {
+    int index = CustomData_get_named_layer_index(&bm->ldata, CD_PROP_FLOAT2, name);
     if (index == -1) {
-      index = CustomData_get_layer_index(&em->bm->ldata, CD_PROP_FLOAT2);
+      index = CustomData_get_layer_index(&bm->ldata, CD_PROP_FLOAT2);
     }
-    CustomData_set_layer_active_index(&em->bm->ldata, CD_PROP_FLOAT2, index);
+    CustomData_set_layer_active_index(&bm->ldata, CD_PROP_FLOAT2, index);
   }
 }
 
@@ -1363,12 +1366,12 @@ void Mesh::uv_maps_default_set(const StringRef name)
   if (!name.is_empty()) {
     this->default_uv_map_attribute = BLI_strdupn(name.data(), name.size());
   }
-  if (BMEditMesh *em = this->runtime->edit_mesh.get()) {
-    int index = CustomData_get_named_layer_index(&em->bm->ldata, CD_PROP_FLOAT2, name);
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(this)) {
+    int index = CustomData_get_named_layer_index(&bm->ldata, CD_PROP_FLOAT2, name);
     if (index == -1) {
-      index = CustomData_get_layer_index(&em->bm->ldata, CD_PROP_FLOAT2);
+      index = CustomData_get_layer_index(&bm->ldata, CD_PROP_FLOAT2);
     }
-    CustomData_set_layer_render_index(&em->bm->ldata, CD_PROP_FLOAT2, index);
+    CustomData_set_layer_render_index(&bm->ldata, CD_PROP_FLOAT2, index);
   }
 }
 
@@ -1869,21 +1872,18 @@ void BKE_mesh_material_remap(Mesh *mesh, const uint *remap, uint remap_len)
   } \
   ((void)0)
 
-  if (BMEditMesh *em = mesh->runtime->edit_mesh.get()) {
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
     BMIter iter;
     BMFace *efa;
 
-    BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
+    BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
       MAT_NR_REMAP(efa->mat_nr);
     }
   }
   else {
     MutableAttributeAccessor attributes = mesh->attributes_for_write();
-    SpanAttributeWriter<int> material_indices = attributes.lookup_or_add_for_write_span<int>(
+    SpanAttributeWriter<int> material_indices = attributes.ensure_for_write_span<int>(
         "material_index", AttrDomain::Face);
-    if (!material_indices) {
-      return;
-    }
     for (const int i : material_indices.span.index_range()) {
       MAT_NR_REMAP(material_indices.span[i]);
     }
@@ -1922,8 +1922,8 @@ void mesh_sharp_edges_set_from_angle(Mesh &mesh, const float angle, const bool k
   if (!keep_sharp_edges) {
     attributes.remove("sharp_edge");
   }
-  SpanAttributeWriter<bool> sharp_edges = attributes.lookup_or_add_for_write_span<bool>(
-      "sharp_edge", AttrDomain::Edge);
+  SpanAttributeWriter<bool> sharp_edges = attributes.ensure_for_write_span<bool>("sharp_edge",
+                                                                                 AttrDomain::Edge);
   const VArraySpan<bool> sharp_faces = *attributes.lookup<bool>("sharp_face", AttrDomain::Face);
   mesh::edges_sharp_from_angle_set(mesh.faces(),
                                    mesh.corner_verts(),
@@ -1947,8 +1947,8 @@ std::optional<Bounds<float3>> Mesh::bounds_min_max() const
   this->runtime->bounds_cache.ensure([&](Bounds<float3> &r_bounds) {
     switch (this->runtime->wrapper_type) {
       case ME_WRAPPER_TYPE_BMESH:
-        r_bounds = *BKE_editmesh_cache_calc_minmax(*this->runtime->edit_mesh,
-                                                   *this->runtime->edit_data);
+        r_bounds = *BKE_editmesh_cache_calc_minmax(
+            *const_cast<BMesh *>(BKE_editmesh_bmesh_get(this)), *this->runtime->edit_data);
         break;
       case ME_WRAPPER_TYPE_MDATA:
       case ME_WRAPPER_TYPE_SUBD:
@@ -1966,15 +1966,14 @@ void Mesh::bounds_set_eager(const Bounds<float3> &bounds)
 
 static bool use_bmesh_material_indices(const Mesh &mesh)
 {
-  return mesh.runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH && mesh.runtime->edit_mesh &&
-         mesh.runtime->edit_mesh->bm;
+  return mesh.runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH && BKE_editmesh_bmesh_get(&mesh);
 }
 
 std::optional<int> Mesh::material_index_max() const
 {
   this->runtime->max_material_index.ensure([&](std::optional<int> &value) {
     if (use_bmesh_material_indices(*this)) {
-      BMesh *bm = this->runtime->edit_mesh->bm;
+      const BMesh *bm = BKE_editmesh_bmesh_get(this);
       if (bm->totface == 0) {
         value = std::nullopt;
         return;
@@ -1982,7 +1981,7 @@ std::optional<int> Mesh::material_index_max() const
       int max_material_index = 0;
       BMFace *efa;
       BMIter iter;
-      BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
+      BM_ITER_MESH (efa, &iter, const_cast<BMesh *>(bm), BM_FACES_OF_MESH) {
         max_material_index = std::max<int>(max_material_index, efa->mat_nr);
       }
       value = max_material_index;
@@ -2017,10 +2016,10 @@ const VectorSet<int> &Mesh::material_indices_used() const
     /* Find used indices in parallel and then create the vector set in the end. */
     Array<bool> used_indices(max_material_index + 1, false);
     if (use_bmesh_material_indices(*this)) {
-      BMesh *bm = this->runtime->edit_mesh->bm;
+      const BMesh *bm = BKE_editmesh_bmesh_get(this);
       BMFace *efa;
       BMIter iter;
-      BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
+      BM_ITER_MESH (efa, &iter, const_cast<BMesh *>(bm), BM_FACES_OF_MESH) {
         used_indices[clamp_material_index(efa->mat_nr)] = true;
       }
     }
@@ -2051,15 +2050,6 @@ const VectorSet<int> &Mesh::material_indices_used() const
 
 namespace bke {
 
-static void translate_positions(MutableSpan<float3> positions, const float3 &translation)
-{
-  threading::parallel_for(positions.index_range(), 2048, [&](const IndexRange range) {
-    for (float3 &position : positions.slice(range)) {
-      position += translation;
-    }
-  });
-}
-
 void mesh_translate(Mesh &mesh, const float3 &translation, const bool do_shape_keys)
 {
   if (math::is_zero(translation)) {
@@ -2071,11 +2061,11 @@ void mesh_translate(Mesh &mesh, const float3 &translation, const bool do_shape_k
     bounds = mesh.runtime->bounds_cache.data();
   }
 
-  translate_positions(mesh.vert_positions_for_write(), translation);
+  math::translate_points(mesh.vert_positions_for_write(), translation);
 
   if (do_shape_keys && mesh.key) {
     for (KeyBlock &kb : mesh.key->block) {
-      translate_positions({static_cast<float3 *>(kb.data), kb.totelem}, translation);
+      math::translate_points({static_cast<float3 *>(kb.data), kb.totelem}, translation);
     }
   }
 
@@ -2236,8 +2226,7 @@ void BKE_mesh_mselect_active_set(Mesh *mesh, int index, eMSelect_Type type)
 void BKE_mesh_count_selected_items(const Mesh *mesh, int r_count[3])
 {
   r_count[0] = r_count[1] = r_count[2] = 0;
-  if (mesh->runtime->edit_mesh) {
-    BMesh *bm = mesh->runtime->edit_mesh->bm;
+  if (const BMesh *bm = BKE_editmesh_bmesh_get(mesh)) {
     r_count[0] = bm->totvertsel;
     r_count[1] = bm->totedgesel;
     r_count[2] = bm->totfacesel;

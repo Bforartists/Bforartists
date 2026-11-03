@@ -636,7 +636,7 @@ void wm_event_do_notifiers(bContext *C)
           wm->file_saved = 1;
           WM_window_title_refresh(wm, &win);
         }
-        else if (note->data == ND_DATACHANGED) {
+        else if (ELEM(note->data, ND_DATACHANGED, ND_PROJECT_CHANGED)) {
           WM_window_title_refresh(wm, &win);
         }
         else if (note->data == ND_UNDO) {
@@ -939,13 +939,23 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
   /* Check for navigation gizmos first in case other UI elements are present in the same region,
    * e.g. buttons on nodes in node editors. */
   ARegion *region_check = handler->context.region ? handler->context.region : region;
-  if (region_check && region_check->runtime && region_check->runtime->gizmo_map) {
+  /* BFA - only defer mouse button events of the region's own UI. The UI must keep getting mouse
+   * moves, timers and internal events (withholding them hangs the event loop) and popups/menus
+   * must always get everything, see #6832. */
+  const bool is_mouse_button = ISMOUSE_BUTTON(event->type);
+  if (is_mouse_button && (handler->context.region_popup == nullptr) && region_check &&
+      region_check->runtime && region_check->runtime->gizmo_map)
+  {
     wmGizmoMap *gzmap = region_check->runtime->gizmo_map;
     wmGizmo *gz = wm_gizmomap_highlight_get(gzmap);
     if (gz != nullptr && gz->parent_gzgroup != nullptr) {
-      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
-          gz->parent_gzgroup);
-      if (step == WM_GIZMOMAP_DRAWSTEP_2D_UI) {
+      /* BFA - check the group flag, not the draw-step: every 2D group maps to the tools
+       * draw-step, so view controls (e.g. the node minimap) were never detected (#6832). */
+      if (gz->parent_gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) {
+        /* BFA - put the screen context back, as after a normal UI handler call. */
+        CTX_wm_area_set(C, area);
+        CTX_wm_region_set(C, region);
+        CTX_wm_region_popup_set(C, region_popup);
         return WM_HANDLER_CONTINUE;
       }
     }
@@ -1156,12 +1166,12 @@ bool WM_operator_poll_or_report_error(bContext *C, wmOperatorType *ot, ReportLis
   }
   bool msg_free = false;
   const char *msg = CTX_wm_operator_poll_msg_get(C, &msg_free);
-  CTX_wm_operator_poll_msg_clear(C);
   BKE_reportf(reports,
               RPT_ERROR,
               RPT_("Invalid context: \"%s\", %s"),
               CTX_RPT_(ot->translation_context, ot->name),
               msg ? RPT_(msg) : RPT_("poll failed"));
+  CTX_wm_operator_poll_msg_clear(C);
   if (msg_free) {
     MEM_delete(msg);
   }
@@ -1332,7 +1342,7 @@ static void wm_operator_finished(bContext *C,
     }
     else if (has_undo_step) {
       /* An undo step was added but the operator wasn't registered (and won't register itself),
-       * therefor a redo panel wouldn't redo this action but the previous registered action,
+       * therefore a redo panel wouldn't redo this action but the previous registered action,
        * causing the "redo" to remove/loose this operator. See: #101743.
        * Register check is needed so nested operator calls don't clear the HUD. See: #103587. */
       if (!(has_register || do_register)) {
@@ -1959,15 +1969,26 @@ static wmOperatorStatus wm_operator_call_internal(bContext *C,
   return wmOperatorStatus(0);
 }
 
+wmOperatorStatus WM_operator_type_call_ptr_with_reports(bContext *C,
+                                                        wmOperatorType *ot,
+                                                        wm::OpCallContext context,
+                                                        PointerRNA *properties,
+                                                        ReportList *reports,
+                                                        const wmEvent *event)
+{
+  BLI_assert(ot == WM_operatortype_find(ot->idname, true));
+  return wm_operator_call_internal(C, ot, properties, reports, context, false, event);
+}
+
 wmOperatorStatus WM_operator_name_call_ptr(bContext *C,
                                            wmOperatorType *ot,
                                            wm::OpCallContext context,
                                            PointerRNA *properties,
                                            const wmEvent *event)
 {
-  BLI_assert(ot == WM_operatortype_find(ot->idname, true));
-  return wm_operator_call_internal(C, ot, properties, nullptr, context, false, event);
+  return WM_operator_type_call_ptr_with_reports(C, ot, context, properties, nullptr, event);
 }
+
 wmOperatorStatus WM_operator_name_call(bContext *C,
                                        const char *opstring,
                                        wm::OpCallContext context,
@@ -1976,7 +1997,7 @@ wmOperatorStatus WM_operator_name_call(bContext *C,
 {
   wmOperatorType *ot = WM_operatortype_find(opstring, false);
   if (ot) {
-    return WM_operator_name_call_ptr(C, ot, context, properties, event);
+    return WM_operator_type_call_ptr_with_reports(C, ot, context, properties, nullptr, event);
   }
 
   return wmOperatorStatus(0);
@@ -2001,7 +2022,7 @@ wmOperatorStatus WM_operator_name_call_with_properties(bContext *C,
   wmOperatorType *ot = WM_operatortype_find(opstring, false);
   PointerRNA props_ptr = RNA_pointer_create_discrete(
       &G_MAIN->wm.first()->id, ot->srna, properties);
-  return WM_operator_name_call_ptr(C, ot, context, &props_ptr, event);
+  return WM_operator_type_call_ptr_with_reports(C, ot, context, &props_ptr, nullptr, event);
 }
 
 void WM_menu_name_call(bContext *C, const char *menu_name, wm::OpCallContext context)
@@ -3396,9 +3417,8 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
     gz_test = wm_gizmomap_highlight_find(gzmap, C, event, &part_test);
 
     if (gz_test != nullptr) {
-      const eWM_GizmoFlagMapDrawStep step = WM_gizmomap_drawstep_from_gizmo_group(
-          gz_test->parent_gzgroup);
-      is_view_controls_gizmo = (step == WM_GIZMOMAP_DRAWSTEP_2D_UI);
+      /* BFA - group flag instead of draw-step, see the UI handler check above (#6832). */
+      is_view_controls_gizmo = (gz_test->parent_gzgroup->type->flag & WM_GIZMOGROUPTYPE_2D_UI) != 0;
     }
   }
 
@@ -4207,7 +4227,9 @@ static void wm_event_handle_xrevent(wmWindowManager *wm,
   }
 
   /* The undo operator may have re-allocated the XR context Scene and Main data pointers.
-   * Prevent dangling pointers in the main Blender context by re-assigning them as needed. */
+   * Prevent dangling pointers in the main Blender context by re-assigning them as needed.
+   *
+   * This is the inverse of the re-anchoring in #WM_xr_session_context_ensure(). */
   CTX_data_main_set(main_context, CTX_data_main(xr_context));
   if (ctx_xr_main_scene_match) {
     CTX_data_scene_set(main_context, CTX_data_scene(xr_context));
@@ -4435,6 +4457,11 @@ void wm_event_do_handlers(bContext *C)
            * Also used in `wm_draw.cc`, fails for modal handlers though. */
           ED_screen_set_active_region(C, &win, event->xy);
           /* For regions having custom cursors. */
+          wm_paintcursor_test(C, event);
+        }
+        else if (ISKEYMODIFIER(event->type)) {
+          /* Paint cursors may change appearance based on modifier keys,
+           * e.g. blade tool in the sequencer. */
           wm_paintcursor_test(C, event);
         }
 #ifdef WITH_INPUT_NDOF
@@ -6357,7 +6384,7 @@ void wm_event_add_ghostevent(wmWindowManager *wm,
          * Avoid regressions by adding this conversions, it should eventually be removed. */
         if ((event.utf8_buf[0] >= 0x80) && (event.utf8_buf[1] == '\0')) {
           const uint c = uint(event.utf8_buf[0]);
-          int utf8_buf_len = BLI_str_utf8_from_unicode(c, event.utf8_buf, sizeof(event.utf8_buf));
+          int utf8_buf_len = BLI_str_utf8_from_unicode(c, event.utf8_buf);
           CLOG_ERROR(WM_LOG_EVENTS,
                      "ghost detected non-ASCII single byte character '%u', converting to utf8 "
                      "('%.*s', length=%d)",

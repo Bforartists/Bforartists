@@ -110,6 +110,7 @@ if(DEFINED LIBDIR)
   set(Eigen3_ROOT ${LIBDIR}/eigen)
   set(meshoptimizer_ROOT ${LIBDIR}/meshoptimizer)
   set(draco_ROOT ${LIBDIR}/draco)
+  set(Ktx_ROOT ${LIBDIR}/ktx)
 endif()
 
 # Wrapper to prefer static libraries
@@ -454,7 +455,7 @@ if(DEFINED OpenImageIO_DIR)
 endif()
 add_bundled_libraries(openimageio/lib)
 
-find_package_wrapper(OpenColorIO 2.0.0 REQUIRED)
+find_package_wrapper(OpenColorIO 2.3.0 REQUIRED)
 if(DEFINED OpenColorIO_DIR)
   mark_as_advanced(OpenColorIO_DIR)
 endif()
@@ -581,12 +582,43 @@ if(WITH_CYCLES AND WITH_CYCLES_PATH_GUIDING)
 endif()
 
 if(WITH_TRACY)
-  if(DEFINED LIBDIR)
-    set(Tracy_ROOT_DIR ${LIBDIR}/tracy)
-  endif()
   find_package_wrapper(Tracy REQUIRED)
   mark_as_advanced(Tracy_DIR)
 endif()
+
+if(WITH_JOLT)
+  if(WITH_LIBS_PRECOMPILED OR WITH_STRICT_BUILD_OPTIONS)
+    find_package_wrapper(Jolt REQUIRED)
+  else()
+    # This isn't a common system library, so disable if it's not found.
+    find_package_wrapper(Jolt)
+    if(TARGET Jolt::Jolt)
+      set(JOLT_FOUND TRUE)
+    endif()
+    set_and_warn_library_found("Jolt" JOLT_FOUND WITH_JOLT)
+  endif()
+  if(DEFINED Jolt_DIR)
+    mark_as_advanced(Jolt_DIR)
+  endif()
+endif()
+add_bundled_libraries(jolt/lib)
+
+if(WITH_OPENTIMELINEIO)
+  if(WITH_LIBS_PRECOMPILED OR WITH_STRICT_BUILD_OPTIONS)
+    find_package_wrapper(OpenTimelineIO REQUIRED)
+  else()
+    # This isn't a common system library, so disable if it's not found.
+    find_package_wrapper(OpenTimelineIO)
+    if(TARGET OTIO::opentimelineio)
+      set(OPENTIMELINEIO_FOUND TRUE)
+    endif()
+    set_and_warn_library_found("OpenTimelineIO" OPENTIMELINEIO_FOUND WITH_OPENTIMELINEIO)
+  endif()
+  if(DEFINED OpenTimelineIO_DIR)
+    mark_as_advanced(OpenTimelineIO_DIR)
+  endif()
+endif()
+add_bundled_libraries(opentimelineio/lib)
 
 if(DEFINED LIBDIR)
   without_system_libs_end()
@@ -696,6 +728,23 @@ if(WITH_MESHOPTIMIZER)
   endif()
 endif()
 add_bundled_libraries(meshoptimizer/lib)
+
+if(WITH_KTX)
+  if(WITH_LIBS_PRECOMPILED OR WITH_STRICT_BUILD_OPTIONS)
+    find_package_wrapper(Ktx REQUIRED)
+  else()
+    # This isn't a common system library, so disable if it's not found.
+    find_package_wrapper(Ktx)
+    if(TARGET KTX::ktx)
+      set(KTX_FOUND TRUE)
+    endif()
+    set_and_warn_library_found("KTX" KTX_FOUND WITH_KTX)
+  endif()
+  if(DEFINED Ktx_DIR)
+    mark_as_advanced(Ktx_DIR)
+  endif()
+endif()
+add_bundled_libraries(ktx/lib)
 
 # Jack is intended to use the system library.
 if(WITH_JACK)
@@ -904,7 +953,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # explicitly turned off here as it will make floating point math give a bit
   # different results. This will lead to automated test failures. So disable
   # this until we support it.
-  set(PLATFORM_CFLAGS "-pipe -fPIC -funsigned-char -fno-strict-aliasing -ffp-contract=off")
+  set(PLATFORM_CFLAGS "-pipe -fPIC -funsigned-char -fno-strict-aliasing -ffp-contract=off -fno-semantic-interposition")
 
   # `maybe-uninitialized` is unreliable in release builds, but fine in debug builds.
   set(GCC_EXTRA_FLAGS_RELEASE "-Wno-maybe-uninitialized")
@@ -976,7 +1025,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
 
   # CLang is the same as GCC for now.
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
-  set(PLATFORM_CFLAGS "-pipe -fPIC -funsigned-char -fno-strict-aliasing -ffp-contract=off")
+  set(PLATFORM_CFLAGS "-pipe -fPIC -funsigned-char -fno-strict-aliasing -ffp-contract=off -fno-semantic-interposition")
 
   if(WITH_LINKER_MOLD AND _IS_LINKER_DEFAULT)
     find_program(MOLD_BIN "mold")

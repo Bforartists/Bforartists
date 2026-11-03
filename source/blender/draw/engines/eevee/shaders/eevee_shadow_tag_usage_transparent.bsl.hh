@@ -29,7 +29,7 @@ struct VertOut {
 };
 
 struct TagUsageTransparent {
-  [[resource_table]] srt_t<Uniform> uniforms;
+  [[resource_table]] Uniform uniforms;
 
   [[storage(4, read)]] const ObjectBounds (&bounds_buf)[];
 
@@ -64,9 +64,7 @@ struct TagUsageTransparent {
 
   float pixel_size_at(const ViewMatrices view, float linear_depth)
   {
-    [[resource_table]] const Uniform &uni = uniforms;
-
-    float pixel_size = uni.uniform_buf.shadow.film_pixel_radius;
+    float pixel_size = uniforms.uniform_buf.shadow.film_pixel_radius;
     bool is_persp = (view.winmat[3][3] == 0.0f);
     if (is_persp) {
       pixel_size *= max(0.01f, linear_depth);
@@ -110,11 +108,9 @@ struct TagUsageTransparent {
   void inflate_bounds(
       const ViewMatrices view, const ObjectMatrices obj, float3 ls_center, float3 &P, float3 &lP)
   {
-    [[resource_table]] const Uniform &uni = uniforms;
-
     float3 vP = view.point_world_to_view(P);
 
-    float inflate_scale = uni.uniform_buf.shadow.film_pixel_radius * exp2(float(fb_lod));
+    float inflate_scale = uniforms.uniform_buf.shadow.film_pixel_radius * exp2(float(fb_lod));
     if (view.is_perspective()) {
       inflate_scale *= -vP.z;
     }
@@ -122,7 +118,7 @@ struct TagUsageTransparent {
     inflate_scale *= 0.5f;
 
     float3 ws_inflate_vector = obj.normal_object_to_world(sign(lP - ls_center));
-    float3 vs_inflate_vector = view.normal_view_to_world(ws_inflate_vector);
+    float3 vs_inflate_vector = view.normal_world_to_view(ws_inflate_vector);
     vs_inflate_vector.z = 0;
     /* Scale the vector so the largest axis length is 1 */
     vs_inflate_vector /= reduce_max(abs(vs_inflate_vector.xy));
@@ -279,8 +275,6 @@ void tag_usage_frag([[resource_table]] TagUsageTransparent &srt,
 
     float2 pixel = frag_co.xy * exp2(float(srt.fb_lod));
 
-    [[resource_table]] LightRenderData &lrd = tag.light_data;
-
     TagPixelCtx ctx = {
         .P = P,
         .V = view.world_incident_vector(P),
@@ -288,7 +282,7 @@ void tag_usage_frag([[resource_table]] TagUsageTransparent &srt,
         .lod_bias = 0,
     };
 
-    light::foreach_visible(lrd, pixel, vP.z, ctx, tag);
+    light::foreach_visible(tag.light_data, pixel, vP.z, ctx, tag);
   }
 }
 

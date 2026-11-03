@@ -8,7 +8,6 @@
 #include "gpu_shader_math_euler.bsl.hh"
 #include "gpu_shader_math_matrix_construct.bsl.hh"
 #include "gpu_shader_math_quaternion.bsl.hh"
-#include "gpu_shader_utildefines.bsl.hh"
 
 /* -------------------------------------------------------------------- */
 /** \name Interpolate
@@ -45,7 +44,7 @@ Quaternion interpolate(Quaternion a, Quaternion b, float t)
   }
   float2 w = interpolate_dot_slerp(t, cosom);
   quat = w.x * quat + w.y * b.as_float4();
-  return Quaternion{UNPACK4(quat)};
+  return Quaternion::from_float4(quat);
 }
 
 /* Assumes a and b are unit vectors. */

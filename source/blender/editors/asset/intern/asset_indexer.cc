@@ -72,7 +72,6 @@ using namespace blender::bke::idprop;
  *     "author": "<author>",
  *     "copyright": "<copyright>",
  *     "license": "<license>",
- *     "webpage": "<webpage>",
  *     "tags": ["<tag>"],
  *     "preferred_import_method": eAssetImportMethod,
  *     "properties": [..]
@@ -97,7 +96,6 @@ constexpr StringRef ATTRIBUTE_ENTRIES_DESCRIPTION("description");
 constexpr StringRef ATTRIBUTE_ENTRIES_AUTHOR("author");
 constexpr StringRef ATTRIBUTE_ENTRIES_COPYRIGHT("copyright");
 constexpr StringRef ATTRIBUTE_ENTRIES_LICENSE("license");
-constexpr StringRef ATTRIBUTE_ENTRIES_WEBPAGE("webpage");
 constexpr StringRef ATTRIBUTE_ENTRIES_TAGS("tags");
 constexpr StringRef ATTRIBUTE_ENTRIES_PROPERTIES("properties");
 constexpr StringRef ATTRIBUTE_ENTRIES_PREFERRED_IMPORT_METHOD("preferred_import_method");
@@ -138,7 +136,7 @@ class BlendFile : public AbstractFile {
   std::string get_filename() const
   {
     char filename[FILE_MAX];
-    BLI_path_split_file_part(this->get_file_path(), filename, sizeof(filename));
+    BLI_path_split_file_part(this->get_file_path(), filename);
     return std::string(filename);
   }
 
@@ -185,9 +183,6 @@ static void init_value_from_file_indexer_entry(DictionaryValue &result,
   }
   if (const char *license = asset_data.license) {
     result.append_str(ATTRIBUTE_ENTRIES_LICENSE, license);
-  }
-  if (const char *webpage = asset_data.webpage) {
-    result.append_str(ATTRIBUTE_ENTRIES_WEBPAGE, webpage);
   }
 
   if (!asset_data.tags.is_empty()) {
@@ -252,9 +247,6 @@ AssetMetaData *asset_metadata_from_dictionary(const DictionaryValue &entry)
   }
   if (const std::optional<StringRef> value = entry.lookup_str(ATTRIBUTE_ENTRIES_LICENSE)) {
     asset_data->license = BLI_strdupn(value->data(), value->size());
-  }
-  if (const std::optional<StringRef> value = entry.lookup_str(ATTRIBUTE_ENTRIES_WEBPAGE)) {
-    asset_data->webpage = BLI_strdupn(value->data(), value->size());
   }
 
   if (const std::optional<StringRefNull> catalog_name = entry.lookup_str(
@@ -398,13 +390,13 @@ struct AssetLibraryIndex {
   void init_indices_base_path()
   {
     char index_path[FILE_MAX];
-    BKE_appdir_folder_caches(index_path, sizeof(index_path));
+    BKE_appdir_folder_caches(index_path);
 
-    BLI_path_append(index_path, sizeof(index_path), "asset-library-indices");
+    BLI_path_append(index_path, "asset-library-indices");
 
     std::stringstream ss;
     ss << std::setfill('0') << std::setw(16) << std::hex << hash() << SEP_STR;
-    BLI_path_append(index_path, sizeof(index_path), ss.str().c_str());
+    BLI_path_append(index_path, ss.str().c_str());
 
     this->indices_base_path = std::string(index_path);
   }

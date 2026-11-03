@@ -43,6 +43,7 @@
 
 #include "ED_object.hh"
 #include "ED_screen.hh"
+#include "ED_undo.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -456,14 +457,29 @@ void COLLECTION_OT_create(wmOperatorType *ot)
   RNA_def_string(ot->srna, "name", nullptr, MAX_ID_NAME - 2, "Name", "Name of the new collection");
 }
 
-static bool collection_importer_add_poll(bContext *C)
+static bool collection_importer_add_collection_validate(const Collection *collection,
+                                                        std::string &reason)
 {
-  const Collection *collection = CTX_data_collection(C);
-  if (!BKE_collection_is_content_editable(collection)) {
+  if (!collection) {
+    reason = N_("Could not find an active collection");
+    return false;
+  }
+  if (!BKE_collection_is_content_editable(collection, &reason)) {
     return false;
   }
   if (!BKE_collection_is_empty(collection)) {
-    CTX_wm_operator_poll_msg_set(C, "Collection needs to be empty");
+    reason = N_("Collection needs to be empty");
+    return false;
+  }
+  return true;
+}
+
+static bool collection_importer_add_poll(bContext *C)
+{
+  const Collection *collection = CTX_data_collection(C);
+  std::string reason;
+  if (!collection_importer_add_collection_validate(collection, reason)) {
+    CTX_wm_operator_poll_msg_set(C, reason);
     return false;
   }
   return true;
@@ -472,7 +488,13 @@ static bool collection_importer_add_poll(bContext *C)
 static bool collection_importer_remove_poll(bContext *C)
 {
   const Collection *collection = CTX_data_collection(C);
-  return collection->importer != nullptr;
+  if (!collection || !collection->importer || ID_IS_LINKED(&collection->id) ||
+      ID_IS_OVERRIDE_LIBRARY(&collection->id))
+  {
+    return false;
+  }
+
+  return true;
 }
 
 static bool collection_importer_import_poll(bContext *C)
@@ -497,55 +519,195 @@ static bool collection_importer_import_poll(bContext *C)
   return true;
 }
 
-static wmOperatorStatus collection_importer_add_exec(bContext *C, wmOperator *op)
+static void collection_importer_add_tag_update(bContext *C, Collection &collection)
 {
-  /* TODO - There should only be 1 importer in the hierarchy.
-   * This needs to be enforced either here or in the poll. */
+  BKE_view_layer_need_resync_tag(CTX_data_view_layer(C));
+  DEG_id_tag_update(&collection.id, ID_RECALC_SYNC_TO_EVAL);
 
-  using namespace blender;
-  Collection *collection = CTX_data_collection(C);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
+}
 
-  char name[MAX_ID_NAME - 2]; /* id name */
-  RNA_string_get(op->ptr, "name", name);
-
+static Collection *collection_importer_add_ensure(bContext *C,
+                                                  wmOperator *op,
+                                                  const bool do_undo_push,
+                                                  bke::FileHandlerType **r_fh)
+{
+  const std::string name = RNA_string_get(op->ptr, "name");
   bke::FileHandlerType *fh = bke::file_handler_find(name);
+  if (r_fh) {
+    *r_fh = fh;
+  }
   if (!fh) {
-    BKE_reportf(op->reports, RPT_ERROR, "File handler '%s' not found", name);
-    return OPERATOR_CANCELLED;
+    BKE_reportf(op->reports, RPT_ERROR, "File handler '%s' not found", name.c_str());
+    return nullptr;
+  }
+
+  Collection *collection = CTX_data_collection(C);
+  std::string reason;
+  if (collection && collection->importer) {
+    /* Note: In theory, this is weak, as another collection with an importer of the same type might
+     * have been made active between the invocation of the file-browser, and the call to this
+     * function from the 'exec' callback. Very unlikely in practice, so think that we can live with
+     * this for now. */
+    if (StringRef(collection->importer->fh_idname) == fh->idname) {
+      return collection;
+    }
+    BKE_report(op->reports, RPT_ERROR, "The active collection already has another importer");
+    return nullptr;
+  }
+  /* 'collection_importer_add_exec' called after invoking the file-browser might get different
+   * context data, and the poll function is not called again in this case (which is a good thing
+   * anyway, since the collection will already have its importer data created at that point). So
+   * the collection needs to be re-validated here - after the check for an existing compatible
+   * importer data has been performed. */
+  if (!collection_importer_add_collection_validate(collection, reason)) {
+    BKE_report(op->reports, RPT_ERROR, reason.c_str());
+    return nullptr;
   }
 
   if (!WM_operatortype_find(fh->import_operator, true)) {
     BKE_reportf(
         op->reports, RPT_ERROR, "File handler operator '%s' not found", fh->import_operator);
-    return OPERATOR_CANCELLED;
+    return nullptr;
   }
 
-  BKE_collection_importer_add(collection, fh->idname);
+  if (!BKE_collection_importer_add(collection, fh->idname)) {
+    BKE_reportf(op->reports,
+                RPT_ERROR,
+                "Could not add an importer to the active collection '%s'",
+                BKE_id_name(collection->id));
+    return nullptr;
+  }
 
-  BKE_view_layer_need_resync_tag(CTX_data_view_layer(C));
-  DEG_id_tag_update(&collection->id, ID_RECALC_SYNC_TO_EVAL);
+  collection_importer_add_tag_update(C, *collection);
+  /* Since the importer is added even if the operator is 'cancelled' (through file-browser
+   * cancellation), undo must be handled manually here.
+   *
+   * This does imply that selecting a file and validating the file-browser operation will create
+   * another undo push - not sure how to avoid that currently. */
+  if (do_undo_push) {
+    ED_undo_push(C, op->type->name);
+  }
 
-  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
-  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
+  return collection;
+}
+
+static wmOperatorStatus collection_importer_add_exec(bContext *C, wmOperator *op)
+{
+  Collection *collection = collection_importer_add_ensure(C, op, false, nullptr);
+  if (!collection) {
+    return OPERATOR_CANCELLED;
+  }
+  CollectionImport *collection_importer = collection->importer;
+  BLI_assert(collection_importer);
+
+  const std::string filepath = RNA_string_get(op->ptr, "filepath");
+  if (!filepath.empty()) {
+    if (!collection_importer->import_properties) {
+      collection_importer->import_properties =
+          bke::idprop::create_group("Collection Import System Properties").release();
+    }
+    IDProperty *import_properties = collection_importer->import_properties;
+    IDProperty *filepath_property = bke::idprop::create("filepath", filepath).release();
+    IDP_ReplaceInGroup(import_properties, filepath_property);
+  }
+
+  collection_importer_add_tag_update(C, *collection);
 
   return OPERATOR_FINISHED;
 }
 
+static wmOperatorStatus collection_importer_add_invoke(bContext *C,
+                                                       wmOperator *op,
+                                                       const wmEvent *event)
+{
+  if (!RNA_struct_property_is_set(op->ptr, "relative_path")) {
+    RNA_boolean_set(op->ptr, "relative_path", (U.flag & USER_RELPATHS) != 0);
+  }
+
+  if (RNA_struct_property_is_set(op->ptr, "filepath")) {
+    return WM_operator_call_notest(C, op); /* Call exec direct. */
+  }
+
+  bke::FileHandlerType *fh = nullptr;
+  Collection *collection = collection_importer_add_ensure(C, op, true, &fh);
+  if (!collection) {
+    return OPERATOR_CANCELLED;
+  }
+
+  BLI_assert(collection->importer);
+  BLI_assert(fh);
+
+  const std::optional<std::string> filter_glob = fh->filter_glob_from_extensions();
+  if (filter_glob) {
+    RNA_string_set(op->ptr, "filter_glob", filter_glob->c_str());
+  }
+
+  /* This will call again `collection_importer_add_exec` when user validate their choice, which
+   * will copy the value of the 'filepath' property of this operator, into the collection_importer
+   * 'filepath' property. */
+  return WM_operator_filesel(C, op, event);
+}
+
 static void COLLECTION_OT_importer_add(wmOperatorType *ot)
 {
+  PropertyRNA *prop;
+
   /* identifiers */
   ot->name = "Add Importer";
   ot->description = "Add Importer";
   ot->idname = "COLLECTION_OT_importer_add";
 
   /* api callbacks */
+  ot->invoke = collection_importer_add_invoke;
   ot->exec = collection_importer_add_exec;
   ot->poll = collection_importer_add_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  RNA_def_string(ot->srna, "name", nullptr, MAX_ID_NAME - 2, "Name", "FileHandler idname");
+  prop = RNA_def_string(ot->srna, "name", nullptr, MAX_ID_NAME - 2, "Name", "FileHandler idname");
+  RNA_def_property_flag(prop, PROP_HIDDEN);
+
+  prop = RNA_def_string(
+      ot->srna, "filepath", nullptr, FILE_MAX, "Filepath", "Filepath for the collection import");
+  RNA_def_property_subtype(prop, PROP_FILEPATH);
+  RNA_def_property_flag(prop, PROP_HIDDEN);
+  prop = RNA_def_string(ot->srna,
+                        "filter_glob",
+                        nullptr,
+                        FH_MAX_FILE_EXTENSIONS_STR,
+                        "File Extension",
+                        "'Glob' file type extension(s), as defined by the selected file handler");
+  RNA_def_property_flag(prop, PROP_HIDDEN);
+  RNA_def_boolean(ot->srna,
+                  "relative_path",
+                  true,
+                  "Relative Path",
+                  "Select the file relative to the blend file");
+}
+
+/* Removes all imported IDs from a collection including the external archive library and its parent
+ * library (when empty). */
+static void collection_importer_clear_ids(Main *bmain, Library *external_archive_lib)
+{
+  Library *external_library = external_archive_lib->archive_parent_library;
+
+  Set<ID *> ids_to_delete;
+  for (ID &id_iter : MainAllIDsIterator(*bmain)) {
+    if (id_iter.lib == external_archive_lib) {
+      ids_to_delete.add(&id_iter);
+    }
+  }
+
+  ids_to_delete.add(&external_archive_lib->id);
+  BKE_id_multi_delete(bmain, ids_to_delete);
+
+  /* Remove the parent archive library if that is now empty. */
+  if (external_library->runtime->archived_libraries.is_empty()) {
+    BKE_id_delete(bmain, &external_library->id);
+  }
 }
 
 static wmOperatorStatus collection_importer_remove_exec(bContext *C, wmOperator * /*op*/)
@@ -555,6 +717,13 @@ static wmOperatorStatus collection_importer_remove_exec(bContext *C, wmOperator 
 
   if (!data) {
     return OPERATOR_CANCELLED;
+  }
+
+  /* Clear all imported data, including the chain of libraries, if an import has occurred. */
+  Library *external_archive_lib = data->runtime->archive_library;
+  if (external_archive_lib) {
+    Main *bmain = CTX_data_main(C);
+    collection_importer_clear_ids(bmain, external_archive_lib);
   }
 
   BKE_collection_importer_free_data(data);
@@ -571,22 +740,14 @@ static wmOperatorStatus collection_importer_remove_exec(bContext *C, wmOperator 
   return OPERATOR_FINISHED;
 }
 
-static wmOperatorStatus collection_importer_remove_invoke(bContext *C,
-                                                          wmOperator *op,
-                                                          const wmEvent * /*event*/)
-{
-  return WM_operator_confirm_ex(
-      C, op, IFACE_("Remove importer?"), nullptr, IFACE_("Delete"), ui::AlertIcon::None, false);
-}
-
 static void COLLECTION_OT_importer_remove(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Remove Importer";
+  ot->description = "Remove Collection Importer and delete its imported data";
   ot->idname = "COLLECTION_OT_importer_remove";
 
   /* api callbacks */
-  ot->invoke = collection_importer_remove_invoke;
   ot->exec = collection_importer_remove_exec;
   ot->poll = collection_importer_remove_poll;
 
@@ -603,7 +764,6 @@ static wmOperatorStatus collection_importer_import_exec(bContext *C, wmOperator 
     return OPERATOR_CANCELLED;
   }
 
-  using namespace blender;
   bke::FileHandlerType *fh = bke::file_handler_find(data->fh_idname);
   if (!fh) {
     BKE_reportf(op->reports, RPT_ERROR, "File handler '%s' not found", data->fh_idname);
@@ -620,44 +780,41 @@ static wmOperatorStatus collection_importer_import_exec(bContext *C, wmOperator 
   /* Execute operator with our stored properties. */
   IDProperty *op_props = IDP_CopyProperty(data->import_properties);
   PointerRNA properties = RNA_pointer_create_discrete(nullptr, ot->srna, op_props);
-  const char *collection_name = collection->id.name + 2;
+  Main *bmain = CTX_data_main(C);
 
   /* Ensure we have a valid filepath set. Create one if the user has not specified anything yet. */
-  char filepath[FILE_MAX];
-  RNA_string_get(&properties, "filepath", filepath);
-  if (!filepath[0]) {
+  char filepath_abs[FILE_MAX];
+  RNA_string_get(&properties, "filepath", filepath_abs);
+  BLI_path_abs(filepath_abs, BKE_main_blendfile_path(bmain));
+
+  if (!filepath_abs[0]) {
     BKE_report(op->reports, RPT_ERROR, "No filepath set");
 
     IDP_FreeProperty(op_props);
     return OPERATOR_CANCELLED;
   }
   else {
-    const char *filename = BLI_path_basename(filepath);
+    const char *filename = BLI_path_basename(filepath_abs);
     if (!filename[0] || !BLI_path_extension(filename)) {
-      BKE_reportf(op->reports, RPT_ERROR, "File path '%s' is not a valid file", filepath);
+      BKE_reportf(op->reports, RPT_ERROR, "File path '%s' is not a valid file", filepath_abs);
 
       IDP_FreeProperty(op_props);
       return OPERATOR_CANCELLED;
     }
   }
 
-  Main *bmain = CTX_data_main(C);
-  BLI_path_abs(filepath, BKE_main_blendfile_path(bmain));
-  RNA_string_set(&properties, "filepath", filepath);
+  RNA_string_set(&properties, "filepath", filepath_abs);
 
-  /* TODO: If there is already a library for this collection, then an import has already occurred.
-   * Return early until "reload" is implemented in the future. */
-  for (Library *lib = bmain->libraries.first(); lib; lib = static_cast<Library *>(lib->id.next)) {
-    if (STREQ(lib->id.name + 2, collection_name)) {
-      BKE_reportf(op->reports,
-                  RPT_WARNING,
-                  "Collection '%s' has already been imported from '%s'",
-                  collection_name,
-                  filepath);
-
-      IDP_FreeProperty(op_props);
-      return OPERATOR_CANCELLED;
-    }
+  /* If there is already a library for this collection importer, then an import has already
+   * occurred. */
+  if (data->runtime->archive_library) {
+    BKE_reportf(op->reports,
+                RPT_WARNING,
+                "Collection '%s' has already been imported from '%s'",
+                collection->id.name + 2,
+                filepath_abs);
+    IDP_FreeProperty(op_props);
+    return OPERATOR_CANCELLED;
   }
 
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -681,20 +838,52 @@ static wmOperatorStatus collection_importer_import_exec(bContext *C, wmOperator 
    * push an undo step. */
   wm->op_undo_depth++;
 
-  wmOperatorStatus op_result = WM_operator_name_call_ptr(
-      temp_C, ot, wm::OpCallContext::ExecDefault, &properties, nullptr);
+  /* Use own report-list, which is then moved back into this operator's reports once import
+   * operation into the temp Main is done. */
+  ReportList reports;
+  BKE_reports_init(&reports, RPT_STORE | RPT_OP_HOLD | RPT_PRINT_HANDLED_BY_OWNER);
+  wmOperatorStatus op_result = WM_operator_type_call_ptr_with_reports(
+      temp_C, ot, wm::OpCallContext::ExecDefault, &properties, &reports, nullptr);
+  /* In case of modal operator, WM would take ownership of the given report-list. This should never
+   * happen here, and is not supported at all for now. In case this would be needed, we'd need some
+   * heap-allocated report-list instead, similar to what `bpy_op_fn_call_impl` is doing. */
+  BLI_assert(op_result != OPERATOR_RUNNING_MODAL);
+  BKE_reports_move_to_reports(op->reports, &reports);
+  BKE_reports_free(&reports);
 
   wm->op_undo_depth--;
 
-  if (op_result == OPERATOR_FINISHED) {
-    /* Create a real library to encapsulate our external archive library.
-     * TODO: Adjust after determining what to do about the missing library check above. */
-    Library *external_lib = BKE_id_new<Library>(bmain, collection_name);
-    external_lib->flag |= LIBRARY_FLAG_IS_EXTERNAL;
-    id_us_ensure_real(&external_lib->id);
-    BKE_library_filepath_set(bmain, external_lib, filepath);
+  /* Only complete the collection import if there's at least one real object that was imported. */
+  if (temp_main->objects.is_empty()) {
+    BKE_reportf(op->reports, RPT_WARNING, "No objects were imported from '%s'", filepath_abs);
+    op_result = OPERATOR_CANCELLED;
+  }
 
-    /* Create an external archive library to serve as the namespace for all IDs imported from the
+  if (op_result == OPERATOR_FINISHED) {
+    /* Create an external parent library to encapsulate the external archive library if one is
+     * not already present. */
+    Library *external_lib = nullptr;
+    for (Library &lib : bmain->libraries) {
+      if ((lib.flag & LIBRARY_FLAG_IS_EXTERNAL) && STREQ(lib.runtime->filepath_abs, filepath_abs))
+      {
+        external_lib = &lib;
+        break;
+      }
+    }
+
+    if (!external_lib) {
+      external_lib = BKE_id_new<Library>(bmain, BLI_path_basename(filepath_abs));
+      external_lib->flag |= LIBRARY_FLAG_IS_EXTERNAL;
+      id_us_ensure_real(&external_lib->id);
+      BKE_library_filepath_set(bmain, external_lib, filepath_abs);
+
+      /* Immediately make the filepath relative for UI display and other queries. */
+      if (U.flag & USER_RELPATHS) {
+        BLI_path_rel(external_lib->filepath, BKE_main_blendfile_path(bmain));
+      }
+    }
+
+    /* Create the external archive library to serve as the namespace for all IDs imported from the
      * external file. The library is marked as both an archive (it will never be written out as a
      * separate .blend) and external (it originates outside Blender). */
     Library *external_archive_lib = bke::library::create_external_archive_library(*bmain,
@@ -717,6 +906,7 @@ static wmOperatorStatus collection_importer_import_exec(bContext *C, wmOperator 
 
     BKE_main_id_tag_all(bmain, ID_TAG_PRE_EXISTING, false);
 
+    data->runtime->archive_library = external_archive_lib;
     collection->importer = data;
 
     DEG_id_tag_update(&collection->id, ID_RECALC_SYNC_TO_EVAL);
@@ -725,7 +915,7 @@ static wmOperatorStatus collection_importer_import_exec(bContext *C, wmOperator 
 
     BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
 
-    BKE_reportf(op->reports, RPT_INFO, "Imported '%s'", filepath);
+    BKE_reportf(op->reports, RPT_INFO, "Imported '%s'", filepath_abs);
   }
   else {
     BKE_main_free(temp_main);
@@ -756,6 +946,95 @@ static void COLLECTION_OT_importer_import(wmOperatorType *ot)
   ot->exec = collection_importer_import_exec;
   ot->poll = collection_importer_import_poll;
 
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+static wmOperatorStatus collection_importer_clear_exec(bContext *C, wmOperator * /*op*/)
+{
+  const Collection *collection = CTX_data_collection(C);
+  CollectionImport *data = collection->importer;
+  if (!data) {
+    return OPERATOR_CANCELLED;
+  }
+
+  Library *external_archive_lib = data->runtime->archive_library;
+  if (!external_archive_lib) {
+    /* It is ok to clear a collection which hasn't been imported yet (e.g. if executing the Reload
+     * operator on an empty collection). */
+    return OPERATOR_FINISHED;
+  }
+
+  /* Clear all imported data, including the chain of libraries. */
+  Main *bmain = CTX_data_main(C);
+  collection_importer_clear_ids(bmain, external_archive_lib);
+
+  data->runtime->archive_library = nullptr;
+
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static void COLLECTION_OT_importer_clear(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Clear Importer";
+  ot->description = "Clear the importer data";
+  ot->idname = "COLLECTION_OT_importer_clear";
+
+  /* api callbacks */
+  ot->exec = collection_importer_clear_exec;
+  ot->poll = collection_importer_remove_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+static wmOperatorStatus collection_importer_make_local_exec(bContext *C, wmOperator * /*op*/)
+{
+  Main *bmain = CTX_data_main(C);
+  Collection *collection = CTX_data_collection(C);
+  CollectionImport *data = collection->importer;
+  if (!data) {
+    return OPERATOR_CANCELLED;
+  }
+
+  Library *external_archive_lib = data->runtime->archive_library;
+  if (external_archive_lib) {
+    /* Make local every ID associated with the external archive library */
+    BKE_library_make_local(bmain, external_archive_lib, nullptr, false, false, false);
+
+    /* Remove external archive library and the main external library too if it's now empty. */
+    Library *external_library = external_archive_lib->archive_parent_library;
+    BKE_id_delete(bmain, &external_archive_lib->id);
+    if (external_library->runtime->archived_libraries.is_empty()) {
+      BKE_id_delete(bmain, &external_library->id);
+    }
+  }
+
+  BKE_collection_importer_free_data(data);
+  MEM_delete(data);
+
+  collection->importer = nullptr;
+
+  BKE_view_layer_need_resync_tag(CTX_data_view_layer(C));
+  DEG_id_tag_update(&collection->id, ID_RECALC_SYNC_TO_EVAL);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_PROPERTIES, nullptr);
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static void COLLECTION_OT_importer_make_local(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Make Importer Local";
+  ot->description = "Make the importer data local";
+  ot->idname = "COLLECTION_OT_importer_make_local";
+  /* api callbacks */
+  ot->exec = collection_importer_make_local_exec;
+  ot->poll = collection_importer_import_poll;
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
@@ -943,8 +1222,7 @@ static wmOperatorStatus collection_exporter_export(bContext *C,
   char filepath[FILE_MAX];
   RNA_string_get(&properties, "filepath", filepath);
   if (!filepath[0]) {
-    BLI_path_join(
-        filepath, sizeof(filepath), "//", fh->get_default_filename(collection_name).c_str());
+    BLI_path_join(filepath, "//", fh->get_default_filename(collection_name).c_str());
   }
   else {
     const char *filename = BLI_path_basename(filepath);
@@ -1166,6 +1444,15 @@ static void collection_importer_menu_draw(const bContext * /*C*/, Menu *menu)
   }
 }
 
+static void collection_importer_control_menu_draw(const bContext * /*C*/, Menu *menu)
+{
+  ui::Layout &layout = *menu->layout;
+  layout.op("COLLECTION_OT_importer_make_local", IFACE_("Apply and Make Local"), ICON_CHECKMARK);
+  layout.op("COLLECTION_OT_importer_clear", IFACE_("Delete Collection Content"), ICON_NONE);
+  layout.separator();
+  layout.op("COLLECTION_OT_importer_remove", IFACE_("Remove Importer"), ICON_TRASH);
+}
+
 /* BFA - set builtin save enum items icons */
 std::unordered_map<std::string, BIFIconID_Static> ks_icons_map = {
     {"IO_FH_alembic", ICON_SAVE_ABC},
@@ -1212,11 +1499,29 @@ void collection_importer_register()
   STRNCPY_UTF8(mt->idname, "COLLECTION_MT_importer_add");
   STRNCPY_UTF8(mt->label, N_("Add Importer"));
   mt->draw = collection_importer_menu_draw;
-
   WM_menutype_add(mt);
+
+  mt = MEM_new_zeroed<MenuType>(__func__);
+  STRNCPY_UTF8(mt->idname, "COLLECTION_MT_importer_control");
+  STRNCPY_UTF8(mt->label, N_("Importer Control"));
+  mt->draw = collection_importer_control_menu_draw;
+  WM_menutype_add(mt);
+
   WM_operatortype_append(COLLECTION_OT_importer_add);
   WM_operatortype_append(COLLECTION_OT_importer_remove);
   WM_operatortype_append(COLLECTION_OT_importer_import);
+  WM_operatortype_append(COLLECTION_OT_importer_clear);
+  WM_operatortype_append(COLLECTION_OT_importer_make_local);
+}
+
+void collection_importer_macros_register()
+{
+  wmOperatorType *ot = WM_operatortype_append_macro("COLLECTION_OT_importer_reload",
+                                                    "Reload Importer",
+                                                    "Clear and reload the importer data",
+                                                    OPTYPE_REGISTER | OPTYPE_UNDO);
+  WM_operatortype_macro_define(ot, "COLLECTION_OT_importer_clear");
+  WM_operatortype_macro_define(ot, "COLLECTION_OT_importer_import");
 }
 
 void collection_exporter_register()

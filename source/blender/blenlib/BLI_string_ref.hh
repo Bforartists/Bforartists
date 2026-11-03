@@ -35,6 +35,7 @@
 #include <string>
 #include <string_view>
 
+#include "BLI_compiler_attrs.hh"
 #include "BLI_span.hh"
 
 namespace blender {
@@ -47,6 +48,7 @@ class StringRef;
  */
 class StringRefBase {
  protected:
+  /* May be nullptr when used in StringRef. */
   const char *data_;
   int64_t size_;
 
@@ -77,8 +79,7 @@ class StringRefBase {
    * fit, it will be truncated while keeping it valid UTF8 (assuming the #StringRef itself is
    * valid UTF8).
    */
-  void copy_utf8_truncated(char *dst, int64_t dst_size) const;
-  template<size_t N> void copy_utf8_truncated(char (&dst)[N]) const;
+  void copy_utf8_truncated(MutableCStr dst) const;
 
   /**
    * Copy the string into a char array. The copied string will be null-terminated. If it does not
@@ -88,8 +89,7 @@ class StringRefBase {
    * this should be used for strings which are allowed to contain arbitrary
    * byte sequences without a known encoding such as file-paths.
    */
-  void copy_bytes_truncated(char *dst, int64_t dst_size) const;
-  template<size_t N> void copy_bytes_truncated(char (&dst)[N]) const;
+  void copy_bytes_truncated(MutableCStr dst) const;
 
   /**
    * Copy the string into a buffer. The buffer has to be one byte larger than the size of the
@@ -143,9 +143,9 @@ class StringRefNull : public StringRefBase {
 
  public:
   constexpr StringRefNull();
-  constexpr StringRefNull(const char *str, int64_t size);
+  constexpr StringRefNull(const char *str, int64_t size) ATTR_NONNULL(2);
   StringRefNull(std::nullptr_t) = delete;
-  constexpr StringRefNull(const char *str);
+  constexpr StringRefNull(const char *str) ATTR_NONNULL(2);
   StringRefNull(const std::string &str);
 
   constexpr char operator[](int64_t index) const;
@@ -156,6 +156,9 @@ class StringRefNull : public StringRefBase {
  * References a const char array. It might not be null terminated.
  *
  * StringRef can be compared with StringRef and StringRefNull.
+ *
+ * \note It is valid to pass `nullptr` to the constructor, as it can be used to indicate an empty
+ * string.
  */
 class StringRef : public StringRefBase {
  public:
@@ -246,16 +249,6 @@ inline void StringRefBase::copy_unsafe(char *dst) const
     memcpy(dst, data_, size_t(size_));
   }
   dst[size_] = '\0';
-}
-
-template<size_t N> inline void StringRefBase::copy_utf8_truncated(char (&dst)[N]) const
-{
-  this->copy_utf8_truncated(dst, N);
-}
-
-template<size_t N> inline void StringRefBase::copy_bytes_truncated(char (&dst)[N]) const
-{
-  this->copy_bytes_truncated(dst, N);
 }
 
 /**
@@ -507,7 +500,7 @@ constexpr StringRefNull::StringRefNull(const char *str, const int64_t size)
 constexpr StringRefNull::StringRefNull(const char *str)
     : StringRefBase(str, int64_t(std::char_traits<char>::length(str)))
 {
-  BLI_assert(str != nullptr);
+  BLI_assert(data_ != nullptr);
   BLI_assert(data_[size_] == '\0');
 }
 

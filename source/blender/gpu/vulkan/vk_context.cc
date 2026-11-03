@@ -59,6 +59,7 @@ VKContext::~VKContext()
   delete imm;
   imm = nullptr;
   VKDevice &device = VKBackend::get().device;
+  device.descriptor_pools.discard_active_pool(*this);
   device.context_unregister(*this);
 
   this->process_frame_timings();
@@ -120,8 +121,6 @@ void VKContext::activate()
   BLI_assert(ghost_context_ == GHOST_IContext::getActiveDrawingContext());
 
   VKDevice &device = VKBackend::get().device;
-  VKThreadData &thread_data = device.current_thread_data();
-  thread_data_ = std::reference_wrapper<VKThreadData>(thread_data);
 
   if (!render_graph_.has_value()) {
     render_graph_ = std::reference_wrapper<render_graph::VKRenderGraph>(
@@ -147,7 +146,6 @@ void VKContext::deactivate()
 {
   flush_render_graph(RenderGraphFlushFlags(0));
   immDeactivate();
-  thread_data_.reset();
 
   is_active_ = false;
 }
@@ -225,14 +223,9 @@ void VKContext::memory_statistics_get(int *r_total_mem_kb, int *r_free_mem_kb)
 /** \name State manager
  * \{ */
 
-VKDescriptorPools &VKContext::descriptor_pools_get()
-{
-  return thread_data_.value().get().descriptor_pools;
-}
-
 VKDescriptorSetTracker &VKContext::descriptor_set_get()
 {
-  return thread_data_.value().get().descriptor_set;
+  return descriptor_set_;
 }
 
 VKStateManager &VKContext::state_manager_get() const
@@ -454,12 +447,14 @@ void VKContext::swap_buffer_draw_handler(const GHOST_VulkanSwapChainData &swap_c
   VKFrameBuffer &framebuffer = *unwrap(active_fb);
   framebuffer.rendering_end(*this);
   VKTexture *color_attachment = unwrap(unwrap(framebuffer.color_tex(0)));
-  device.resources.add_swapchain_image(swap_chain_data.image, "SwapchainImage");
+  ResourceHandle resource_handle = device.resources.add_swapchain_image(swap_chain_data.image,
+                                                                        "SwapchainImage");
 
   GPU_debug_group_begin("BackBuffer.Blit");
   if (use_shader) {
     VKTexture swap_chain_texture("swap_chain_texture");
     swap_chain_texture.init_swapchain(swap_chain_data.image,
+                                      resource_handle,
                                       to_gpu_format(swap_chain_data.surface_format.format));
     Shader *shader = device.vk_backbuffer_blit_sh_get();
     GPU_shader_bind(shader);
@@ -516,10 +511,17 @@ void VKContext::swap_buffer_draw_handler(const GHOST_VulkanSwapChainData &swap_c
    * Placing these images in the discard pool results in incorrect state, best to remove them
    * directly. */
   if (wait_for_submission) {
-    device.resources.remove_image(swap_chain_data.image);
+    /* The image is removed directly, but its views are still referenced by the submitted
+     * commands; discard them timeline-safely. */
+    for (const std::variant<VkImageView, VkBufferView> &view :
+         device.resources.take_views(resource_handle))
+    {
+      discard_pool.discard_image_view(std::get<VkImageView>(view));
+    }
+    device.resources.remove_swapchain_image(resource_handle);
   }
   else {
-    discard_pool.discard_swapchain_image(swap_chain_data.image);
+    discard_pool.discard_swapchain_image(resource_handle);
   }
 #if 0
   device.debug_print();

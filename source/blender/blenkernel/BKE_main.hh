@@ -236,6 +236,8 @@ struct MainColorspace {
    * used to create this blend file is missing.
    */
   bool is_missing_opencolorio_config = false;
+  /** The OpenColorIO config failed to load. */
+  bool is_failed_opencolorio_config = false;
 };
 
 struct Main : NonCopyable, NonMovable {
@@ -343,6 +345,9 @@ struct Main : NonCopyable, NonMovable {
    * Set when reading a file from undo with incomplete preview, to trigger restart of preview jobs.
    */
   bool need_preview_render_restart = false;
+
+  /** Protect from recursive node tree updates, see #BKE_ntree_update. */
+  bool is_updating_node_trees = false;
 
   /**
    * The blend-file thumbnail. If set, it will show as image preview of the blend-file in the

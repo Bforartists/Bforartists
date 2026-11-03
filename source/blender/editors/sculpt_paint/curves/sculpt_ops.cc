@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#include "BLI_kdtree.hh"
+#include "BLI_kdtree_new.hh"
 #include "BLI_listbase.hh"
 #include "BLI_math_vector.hh"
 #include "BLI_rand.hh"
@@ -671,50 +671,28 @@ static void select_grow_invoke_per_curve(const Curves &curves_id,
   threading::parallel_invoke(
       1024 < curve_op_data.selected_points.size() + curve_op_data.unselected_points.size(),
       [&]() {
-        /* Build KD-tree for the selected points. */
-        KDTree<float3> *kdtree = kdtree_new<float3>(curve_op_data.selected_points.size());
-        BLI_SCOPED_DEFER([&]() { kdtree_free<float3>(kdtree); });
-        curve_op_data.selected_points.foreach_index([&](const int point_i) {
-          const float3 &position = positions[point_i];
-          kdtree_insert<float3>(kdtree, point_i, position);
-        });
-        kdtree_balance<float3>(kdtree);
-
         /* For each unselected point, compute the distance to the closest selected point. */
+        KDTree<float3> kdtree(positions, curve_op_data.selected_points);
         curve_op_data.distances_to_selected.reinitialize(curve_op_data.unselected_points.size());
-        threading::parallel_for(
-            curve_op_data.unselected_points.index_range(), 256, [&](const IndexRange range) {
-              for (const int i : range) {
-                const int point_i = curve_op_data.unselected_points[i];
-                const float3 &position = positions[point_i];
-                KDTreeNearest<float3> nearest;
-                kdtree_find_nearest<float3>(kdtree, position, &nearest);
-                curve_op_data.distances_to_selected[i] = nearest.dist;
-              }
-            });
+        curve_op_data.unselected_points.foreach_index(
+            [&](const int point, const int pos) {
+              float distance_sq = FLT_MAX;
+              kdtree.find_nearest(positions[point], &distance_sq);
+              curve_op_data.distances_to_selected[pos] = std::sqrt(distance_sq);
+            },
+            exec_mode::grain_size(256));
       },
       [&]() {
-        /* Build KD-tree for the unselected points. */
-        KDTree<float3> *kdtree = kdtree_new<float3>(curve_op_data.unselected_points.size());
-        BLI_SCOPED_DEFER([&]() { kdtree_free<float3>(kdtree); });
-        curve_op_data.unselected_points.foreach_index([&](const int point_i) {
-          const float3 &position = positions[point_i];
-          kdtree_insert<float3>(kdtree, point_i, position);
-        });
-        kdtree_balance<float3>(kdtree);
-
         /* For each selected point, compute the distance to the closest unselected point. */
+        KDTree<float3> kdtree(positions, curve_op_data.unselected_points);
         curve_op_data.distances_to_unselected.reinitialize(curve_op_data.selected_points.size());
-        threading::parallel_for(
-            curve_op_data.selected_points.index_range(), 256, [&](const IndexRange range) {
-              for (const int i : range) {
-                const int point_i = curve_op_data.selected_points[i];
-                const float3 &position = positions[point_i];
-                KDTreeNearest<float3> nearest;
-                kdtree_find_nearest<float3>(kdtree, position, &nearest);
-                curve_op_data.distances_to_unselected[i] = nearest.dist;
-              }
-            });
+        curve_op_data.selected_points.foreach_index(
+            [&](const int point, const int pos) {
+              float distance_sq = FLT_MAX;
+              kdtree.find_nearest(positions[point], &distance_sq);
+              curve_op_data.distances_to_unselected[pos] = std::sqrt(distance_sq);
+            },
+            exec_mode::grain_size(256));
       });
 
   const float4x4 &curves_to_world_mat = curves_ob.object_to_world();
@@ -969,7 +947,7 @@ static void min_distance_edit_draw(bContext *C,
   }
 
   float4 circle_col = float4(op_data.brush->add_col);
-  float circle_alpha = op_data.brush->cursor_overlay_alpha;
+  float circle_alpha = op_data.brush->cursor_overlay_alpha * 0.01f;
   float brush_radius_re = BKE_brush_radius_get(paint, op_data.brush);
 
   /* Draw the grid. */
@@ -1010,7 +988,8 @@ static void min_distance_edit_draw(bContext *C,
     ED_view3d_project_v2(region, pos_wo, pos_re);
 
     const float dist_to_point_re = math::distance(pos_re, brush_origin_re);
-    const float alpha = 1.0f - ((dist_to_point_re - dist_to_inner_border_re) / alpha_border_re);
+    const float alpha = clamp_f(
+        1.0f - ((dist_to_point_re - dist_to_inner_border_re) / alpha_border_re), 0.0f, 1.0f);
 
     immAttr1f(siz3d, 3.0f);
     immAttr4f(col3d, 0.9f, 0.9f, 0.9f, alpha);

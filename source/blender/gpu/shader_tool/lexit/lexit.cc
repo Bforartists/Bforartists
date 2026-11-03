@@ -510,7 +510,7 @@ void TokenBuffer::tokenize(const CharClass char_class_table[128])
    * emit:     1 0 0 0 1 1 1 1 1 1
    * offsets:  0       4   6 7 8 9
    *
-   * If whitespaces are merged with preceding tokens, one offset is emitted for the begining of
+   * If whitespaces are merged with preceding tokens, one offset is emitted for the beginning of
    * each token *and* at either the start of the next token or the start of the next whitespace.
    *
    * str:           i n t   a = 0 ;   EndOfFile
@@ -1005,9 +1005,19 @@ static void lex_angle(const std::string_view str,
   }
 }
 
+static void lex_mul_assign(const TokenType *types, uint32_t &cursor, TokenType &out_type)
+{
+  const TokenType type_next = types[cursor + 1];
+
+  if (type_next == Assign) {
+    out_type = AssignMul;
+    cursor++;
+  }
+}
+
 /* Ideally this should not be needed and the `tokenize` step should just parse them correctly.
  * But this would much harder to implement. */
-void TokenBuffer::merge_complex_literals(bool bsl_template_angle_bracket_lexing)
+void TokenBuffer::merge_complex_literals(bool do_bsl_literals)
 {
   const TokenType *in_types = types_.get();
   TokenType *out_type = types_.get();
@@ -1036,8 +1046,13 @@ void TokenBuffer::merge_complex_literals(bool bsl_template_angle_bracket_lexing)
         break;
       case GThan:
       case LThan:
-        if (bsl_template_angle_bracket_lexing) {
+        if (do_bsl_literals) {
           lex_angle(str_, in_types, in_offsets, in_offset_end, i, *out_type);
+        }
+        break;
+      case Star:
+        if (do_bsl_literals) {
+          lex_mul_assign(in_types, i, *out_type);
         }
         break;
       default:

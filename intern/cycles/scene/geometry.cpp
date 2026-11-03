@@ -420,6 +420,13 @@ void GeometryManager::geom_calc_offset(Scene *scene, BVHLayout bvh_layout)
 
       prim_offset_changed = (pointcloud->prim_offset != point_size);
 
+      /* Changing Render As on point cloud is likely to change its underlying BVH type (i.e. Render
+       * As Points uses hardware-accelerated point primitives, and Render As GSplats uses custom
+       * primitives). */
+      if (pointcloud->render_as_is_modified()) {
+        geom->need_update_rebuild = true;
+      }
+
       pointcloud->prim_offset = point_size;
       point_size += pointcloud->num_points();
     }
@@ -486,7 +493,7 @@ void GeometryManager::device_update_preprocess(Device *device, Scene *scene, Pro
         /* Attributes might need to be tessellated if added. */
         if (geom->is_mesh()) {
           Mesh *mesh = static_cast<Mesh *>(geom);
-          if (mesh->need_tesselation()) {
+          if (mesh->need_tessellation()) {
             mesh->tag_modified();
           }
         }
@@ -498,7 +505,7 @@ void GeometryManager::device_update_preprocess(Device *device, Scene *scene, Pro
         /* Attributes might need to be tessellated if added. */
         if (geom->is_mesh()) {
           Mesh *mesh = static_cast<Mesh *>(geom);
-          if (mesh->need_tesselation()) {
+          if (mesh->need_tessellation()) {
             mesh->tag_modified();
           }
         }
@@ -847,7 +854,7 @@ void GeometryManager::device_update(Device *device,
           Mesh *mesh = static_cast<Mesh *>(geom);
 
           /* Test if we need tessellation and setup normals if required. */
-          if (mesh->need_tesselation()) {
+          if (mesh->need_tessellation()) {
             num_tessellation++;
             /* OPENSUBDIV Catmull-Clark does not make use of input normals and will overwrite them.
              */
@@ -866,6 +873,11 @@ void GeometryManager::device_update(Device *device,
           if (mesh->has_true_displacement()) {
             true_displacement_used = true;
           }
+        }
+        else if (geom->is_pointcloud()) {
+          /* Precompute gsplat bounding sphere for faster access to its bounds. */
+          PointCloud *pointcloud = static_cast<PointCloud *>(geom);
+          pointcloud->update_gsplat_radii();
         }
       }
 
@@ -927,7 +939,7 @@ void GeometryManager::device_update(Device *device,
     /* Apply generated attribute if needed or remove if not needed */
     mesh->update_generated(scene);
 
-    if (num_tessellation && mesh->need_tesselation()) {
+    if (num_tessellation && mesh->need_tessellation()) {
       {
         const thread_scoped_lock status_lock(status_mutex);
         string msg = "Tessellating ";

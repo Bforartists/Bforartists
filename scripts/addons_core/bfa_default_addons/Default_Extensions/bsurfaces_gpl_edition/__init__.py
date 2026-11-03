@@ -2,19 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-
-bl_info = {
-    "name": "Bsurfaces GPL Edition",
-    "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
-    "version": (1, 8, 2),
-    "blender": (4, 0, 0),
-    "location": "View3D EditMode > Sidebar > Edit Tab",
-    "description": "Modeling and retopology tool",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/bsurfaces.html",
-    "category": "Mesh",
-}
-
-
 import bpy
 import bmesh
 from bpy_extras import object_utils
@@ -150,6 +137,19 @@ class VIEW3D_PT_tools_SURFSK_curve(Panel):
         col.operator("curve.switch_direction", text="Switch Direction")
         col.operator("curve.surfsk_reorder_splines", text="Reorder Splines")
 
+# ----------------------------
+# Returns the active annotation data.
+# Note: equivalent of `bpy.context.annotation_data.layers.active` before 4.3
+def get_active_annotation_data():
+    index = bpy.context.annotation_data.layers.active_index
+    return bpy.context.annotation_data.layers[index]
+
+# ----------------------------
+# Removes the active annotation data.
+# Note: equivalent of `bpy.context.annotation_data.layers.active.clear()` before 4.3
+def remove_active_annotation_data():
+    layer = get_active_annotation_data()
+    bpy.context.annotation_data.layers.remove(layer)
 
 # ----------------------------
 # Returns the type of strokes used
@@ -160,13 +160,14 @@ def get_strokes_type(context):
     # Check if they are annotation
     if context.scene.bsurfaces.SURFSK_guide == 'Annotation':
         try:
-            strokes = bpy.context.annotation_data.layers.active.active_frame.strokes
+            strokes = get_active_annotation_data().active_frame.strokes
 
             strokes_num = len(strokes)
 
             if strokes_num > 0:
                strokes_type = "GP_ANNOTATION"
-        except:
+        except Exception as e:
+            print(f"Exception: {e}")
             strokes_type = "NO_STROKES"
 
     # Check if they are grease pencil
@@ -3197,7 +3198,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
             # Delete annotations
             if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors:
                 try:
-                    bpy.context.annotation_data.layers.active.clear()
+                    remove_active_annotation_data()
                 except:
                     pass
 
@@ -3440,7 +3441,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
                 # Delete annotation strokes
                 elif self.strokes_type == "GP_ANNOTATION":
                     try:
-                        bpy.context.annotation_data.layers.active.clear()
+                        remove_active_annotation_data()
                     except:
                         pass
 
@@ -3729,7 +3730,7 @@ class GPENCIL_OT_SURFSK_edit_strokes(Operator):
         gpencil_object.select_set(True)
         bpy.context.view_layer.objects.active = gpencil_object
 
-        bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='EDIT_GREASE_PENCIL')
+        bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='EDIT_GPENCIL')
         try:
             bpy.ops.gpencil.select_all(action='SELECT')
         except:
@@ -3765,7 +3766,7 @@ class GPENCIL_OT_SURFSK_annotation_to_curves(Operator):
         if curve != None:
             # Delete annotation strokes
             try:
-                bpy.context.annotation_data.layers.active.clear()
+                remove_active_annotation_data()
             except:
                 pass
 
@@ -3779,7 +3780,7 @@ class GPENCIL_OT_SURFSK_annotation_to_curves(Operator):
 
     def invoke(self, context, event):
         try:
-            strokes = bpy.context.annotation_data.layers.active.active_frame.strokes
+            strokes = get_active_annotation_data().active_frame.strokes
 
             _strokes_num = len(strokes)
         except:
@@ -4275,7 +4276,7 @@ def conver_gpencil_to_curve(self, context, pencil, type):
         CurveObject.scale = pencil.scale
     elif type == 'Annotation':
         try:
-            strokes = bpy.context.annotation_data.layers.active.active_frame.strokes
+            strokes = get_active_annotation_data().active_frame.strokes
         except:
             error = True
         CurveObject.location = (0.0, 0.0, 0.0)

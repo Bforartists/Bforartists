@@ -291,12 +291,13 @@ template<typename T>
 void mix_groups(const Span<T> src,
                 const OffsetIndices<int> groups,
                 const Span<int> all_indices,
+                const IndexMask &dst_mask,
                 MutableSpan<T> dst)
 {
   PRF_scope_with_name("attribute_math::mix_groups", ProfileCategory::Default);
-  for (const int dst_i : dst.index_range()) {
-    dst[dst_i] = mix_indices(src, all_indices.slice(groups[dst_i]));
-  }
+  dst_mask.foreach_index([&](const int dst_i, const int group_i) {
+    dst[dst_i] = mix_indices(src, all_indices.slice(groups[group_i]));
+  });
 }
 
 float4x4 mix_indices(const Span<float4x4> src, const Span<int> indices, const Span<float> weights)
@@ -328,13 +329,14 @@ void mix_groups(const Span<T> src,
                 const OffsetIndices<int> groups,
                 const Span<int> all_indices,
                 const Span<float> all_weights,
+                const IndexMask &dst_mask,
                 MutableSpan<T> dst)
 {
   PRF_scope_with_name("attribute_math::mix_groups", ProfileCategory::Default);
-  for (const int dst_i : groups.index_range()) {
+  dst_mask.foreach_index([&](const int dst_i, const int group_i) {
     dst[dst_i] = mix_indices(
-        src, all_indices.slice(groups[dst_i]), all_weights.slice(groups[dst_i]));
-  }
+        src, all_indices.slice(groups[group_i]), all_weights.slice(groups[group_i]));
+  });
 }
 
 void mix_groups(const GSpan src,
@@ -344,6 +346,17 @@ void mix_groups(const GSpan src,
                 GMutableSpan dst)
 {
   BLI_assert(groups.size() == dst.size());
+  mix_groups(src, groups, all_indices, all_weights, IndexMask(dst.size()), dst);
+}
+
+void mix_groups(const GSpan src,
+                const OffsetIndices<int> groups,
+                const Span<int> all_indices,
+                const std::optional<Span<float>> all_weights,
+                const IndexMask &dst_mask,
+                GMutableSpan dst)
+{
+  BLI_assert(groups.size() == dst_mask.size());
   BLI_assert(groups.total_size() == all_indices.size());
   BLI_assert(!all_weights || groups.total_size() == all_weights->size());
 
@@ -353,113 +366,26 @@ void mix_groups(const GSpan src,
           groups.index_range(),
           2048,
           [&](const IndexRange range) {
+            const IndexMask dst_mask_slice = dst_mask.slice(range);
             if (all_weights) {
               mix_groups(src.typed<T>(),
                          groups.slice(range),
                          all_indices,
                          *all_weights,
-                         dst.typed<T>().slice(range));
+                         dst_mask_slice,
+                         dst.typed<T>());
             }
             else {
-              mix_groups(
-                  src.typed<T>(), groups.slice(range), all_indices, dst.typed<T>().slice(range));
+              mix_groups(src.typed<T>(),
+                         groups.slice(range),
+                         all_indices,
+                         dst_mask_slice,
+                         dst.typed<T>());
             }
           },
           threading::accumulated_task_sizes(
               [&](const IndexRange range) { return groups[range].size(); }));
     }
-  });
-}
-
-template<typename T>
-void shift_left(MutableSpan<T> data, int src_begin, int src_end, int dst_begin)
-{
-  if (ELEM(src_begin, dst_begin, src_end)) {
-    return;
-  }
-  std::move(data.data() + src_begin, data.data() + src_end, data.data() + dst_begin);
-}
-
-void shift_left(GMutableSpan data, int src_begin, int src_end, int dst_begin)
-{
-  to_static_type(data.type(), [&]<typename T>() {
-    shift_left(data.typed<T>(), src_begin, src_end, dst_begin);
-  });
-}
-
-template<typename T> void shift_right(MutableSpan<T> data, int src_begin, int src_end, int dst_end)
-{
-  if (ELEM(src_end, dst_end, src_begin)) {
-    return;
-  }
-  std::move_backward(data.data() + src_begin, data.data() + src_end, data.data() + dst_end);
-}
-
-void shift_right(GMutableSpan data, int src_begin, int src_end, int dst_begin)
-{
-  to_static_type(data.type(), [&]<typename T>() {
-    shift_right(data.typed<T>(), src_begin, src_end, dst_begin);
-  });
-}
-
-void gather(const GSpan src, const Span<int> map, GMutableSpan dst)
-{
-  gather(GVArray::from_span(src), map, IndexRange(dst.size()), dst);
-}
-
-void gather(const GVArray &src, const Span<int> map, GMutableSpan dst)
-{
-  gather(src, map, IndexRange(dst.size()), dst);
-}
-
-void gather(const GSpan src, const Span<int> map, const IndexMask &dst_mask, GMutableSpan dst)
-{
-  gather(GVArray::from_span(src), map, dst_mask, dst);
-}
-
-void gather(const GVArray &src, const Span<int> map, const IndexMask &dst_mask, GMutableSpan dst)
-{
-  to_static_type(src.type(), [&]<typename T>() {
-    array_utils::gather(src.typed<T>(), map, dst_mask, dst.typed<T>());
-  });
-}
-
-void gather_group_to_group(const OffsetIndices<int> src_offsets,
-                           const OffsetIndices<int> dst_offsets,
-                           const IndexMask &selection,
-                           const GSpan src,
-                           GMutableSpan dst)
-{
-  to_static_type(src.type(), [&]<typename T>() {
-    array_utils::gather_group_to_group(
-        src_offsets, dst_offsets, selection, src.typed<T>(), dst.typed<T>());
-  });
-}
-
-void gather_ranges_to_groups(const Span<IndexRange> src_ranges,
-                             const OffsetIndices<int> dst_offsets,
-                             const GSpan src,
-                             GMutableSpan dst)
-{
-  to_static_type(src.type(), [&]<typename T>() {
-    Span<T> src_span = src.typed<T>();
-    MutableSpan<T> dst_span = dst.typed<T>();
-
-    threading::parallel_for(src_ranges.index_range(), 512, [&](const IndexRange range) {
-      for (const int i : range) {
-        dst_span.slice(dst_offsets[i]).copy_from(src_span.slice(src_ranges[i]));
-      }
-    });
-  });
-}
-
-void gather_to_groups(const OffsetIndices<int> dst_offsets,
-                      const IndexMask &src_selection,
-                      const GSpan src,
-                      GMutableSpan dst)
-{
-  to_static_type(src.type(), [&]<typename T>() {
-    array_utils::gather_to_groups(dst_offsets, src_selection, src.typed<T>(), dst.typed<T>());
   });
 }
 

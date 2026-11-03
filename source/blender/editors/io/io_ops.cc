@@ -22,11 +22,16 @@
 #  include "io_fbx_ops.hh"
 #endif
 
+#ifdef WITH_OPENTIMELINEIO
+#  include "io_otio_ops.hh"
+#endif
+
 #include "io_cache.hh"
 #include "io_drop_import_file.hh"
 #include "io_grease_pencil.hh"
 #include "io_obj.hh"
 #include "io_ply_ops.hh"
+#include "io_spz_ops.hh"
 #include "io_stl_ops.hh"
 
 namespace blender {
@@ -79,15 +84,20 @@ void ED_operatortypes_io()
   ed::io::stl_file_handler_add();
 #endif
 
+#ifdef WITH_IO_SPZ
+  WM_operatortype_append(WM_OT_spz_import);
+  ed::io::spz_file_handler_add();
+#endif
+
 #ifdef WITH_IO_FBX
   WM_operatortype_append(WM_OT_fbx_import);
   ed::io::fbx_file_handler_add();
 #endif
 
-#ifdef WITH_COLLADA
-  WM_operatortype_append(WM_OT_collada_export);
-  WM_operatortype_append(WM_OT_collada_import);
-  ed::io::collada_file_handler_add();
+#ifdef WITH_OPENTIMELINEIO
+  WM_operatortype_append(WM_OT_otio_export);
+  WM_operatortype_append(WM_OT_otio_import);
+  ed::io::otio_file_handler_add();
 #endif
 
   WM_operatortype_append(WM_OT_drop_import_file);

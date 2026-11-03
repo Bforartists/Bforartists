@@ -31,7 +31,6 @@ struct Simple {
   [[push_constant, condition(use_dashed)]] const float2 viewport_size;
 
   [[push_constant, condition(use_uniform_color)]] const float4 color;
-  [[push_constant, condition(use_uniform_point_size &&use_point_size)]] const float size;
 };
 
 /* Vertex attributes. Unused ones will be optimized out. */
@@ -72,11 +71,13 @@ struct VertOutDashed {
 {
   out_pos = srt.ModelViewProjectionMatrix * float4(v_in.pos, 1.0f);
 
-  if (srt.use_uniform_color) [[static_branch]] {
-    flat_out.color = srt.color;
+  if (srt.use_smooth_color) [[static_branch]] {
+    if (!srt.use_uniform_color) [[static_branch]] {
+      smooth_out.color = v_in.color;
+    }
   }
-  else if (srt.use_smooth_color) [[static_branch]] {
-    smooth_out.color = v_in.color;
+  else if (srt.use_uniform_color) [[static_branch]] {
+    flat_out.color = srt.color;
   }
   else {
     flat_out.color = v_in.color;
@@ -119,8 +120,8 @@ struct SimplePoint {
 
   [[push_constant, condition(use_uniform_color)]] const float4 color;
   [[push_constant, condition(use_uniform_point_size)]] const float size;
-  [[push_constant, condition(point_style == 4)]] const float4 outlineColor;
-  [[push_constant, condition(point_style == 4)]] const float outlineWidth;
+  [[push_constant, condition(point_style == POINT_CIRCLE_AA_OUTLINE)]] const float4 outlineColor;
+  [[push_constant, condition(point_style == POINT_CIRCLE_AA_OUTLINE)]] const float outlineWidth;
 };
 
 struct VertInPoint {
@@ -140,7 +141,7 @@ struct VertOutPoint {
     [[in]] const VertInPoint &v_in,
     [[position]] float4 &out_pos,
     [[out]] VertOutPoint &v_out,
-    [[point_size]] [[condition(point_style != 0)]] float &out_point_size,
+    [[point_size]] float &out_point_size,
     [[clip_distance]] [[condition(use_clipping)]] float (&clip_distance)[6])
 {
   out_pos = srt.ModelViewProjectionMatrix * float4(v_in.pos, 1.0f);
@@ -163,7 +164,7 @@ struct VertOutPoint {
   float radius = 0.5f * out_point_size;
   /* Start at the outside and progress toward the center. */
   v_out.radii = float2(radius, radius - 1.0f).xyxy;
-  if (srt.point_style == 4 /* POINT_CIRCLE_AA_OUTLINE */) [[static_branch]] {
+  if (srt.point_style == POINT_CIRCLE_AA_OUTLINE) [[static_branch]] {
     v_out.radii.zw -= srt.outlineWidth;
   }
   /* Convert to PointCoord units. */
@@ -180,11 +181,11 @@ struct VertOutPoint {
   }
 }
 
-[[fragment]] void simple_point_frag(
-    [[resource_table]] const SimplePoint &srt,
-    [[point_coord]] const float2 pt_coord,
-    [[in]] [[condition(!use_smooth_color)]] const VertOutPoint &v_out,
-    [[out]] FragOut &frag_out)
+[[fragment]] void simple_point_frag([[resource_table]] const SimplePoint &srt,
+                                    [[resource_table]] const ColorSpace &colorspace,
+                                    [[point_coord]] const float2 pt_coord,
+                                    [[in]] const VertOutPoint &v_out,
+                                    [[out]] FragOut &frag_out)
 {
   /* transparent outside of point
    * --- 0 ---
@@ -199,7 +200,7 @@ struct VertOutPoint {
    * dist = 0 at center of point */
   float dist = length(pt_coord - float2(0.5f));
 
-  if (srt.point_style == 4 /* POINT_CIRCLE_AA_OUTLINE */) [[static_branch]] {
+  if (srt.point_style == POINT_CIRCLE_AA_OUTLINE) [[static_branch]] {
     float fac = smoothstep(v_out.radii[3], v_out.radii[2], dist);
     frag_out.color = mix(v_out.color, srt.outlineColor, fac);
   }
@@ -212,11 +213,19 @@ struct VertOutPoint {
       /* Soft transition to 0 alpha. */
       frag_out.color.a *= mix(1.0f, 0.0f, smoothstep(v_out.radii[1], v_out.radii[0], dist));
     }
+    else {
+      /* Round point with jagged edges. */
+      if (dist > v_out.radii[0]) {
+        gpu_discard_fragment();
+      }
+    }
 
     if (frag_out.color.a == 0.0f) {
       gpu_discard_fragment();
     }
   }
+
+  frag_out.color = colorspace.rec709_srgb_to_output_space(frag_out.color);
 }
 
 [[fragment]] void simple_frag(
@@ -237,21 +246,22 @@ struct VertOutPoint {
 }
 
 struct SimpleClip {
-  [[push_constant]] const float4x4 ModelViewProjectionMatrix;
   [[push_constant]] const float4x4 ModelMatrix;
   [[push_constant]] const float4 ClipPlane;
-  [[push_constant]] const float4 color;
 };
 
-[[vertex]] void simple_clip([[resource_table]] const SimpleClip &srt,
+[[vertex]] void simple_clip([[resource_table]] const Simple &srt,
+                            [[resource_table]] const SimpleClip &clip,
                             [[in]] const VertIn &v_in,
                             [[position]] float4 &out_pos,
                             [[out]] VertOutFlat &flat_out,
                             [[clip_distance]] float (&clip_distance)[1])
 {
   out_pos = srt.ModelViewProjectionMatrix * float4(v_in.pos, 1.0f);
-  clip_distance[0] = dot(srt.ModelMatrix * float4(v_in.pos, 1.0f), srt.ClipPlane);
-  flat_out.color = srt.color;
+  clip_distance[0] = dot(clip.ModelMatrix * float4(v_in.pos, 1.0f), clip.ClipPlane);
+  if (srt.use_uniform_color) [[static_branch]] {
+    flat_out.color = srt.color;
+  }
 }
 
 struct Checker {
@@ -388,10 +398,10 @@ PipelineGraphic gpu_shader_3D_line_dashed_uniform_color_clipped(builtin::simple_
   .use_lighting = false});
 
 /* Confusing naming convention. But this is a version with only one local clip plane. */
-PipelineGraphic gpu_shader_3D_clipped_uniform_color(builtin::simple_vert, builtin::simple_frag, builtin::Simple{
+PipelineGraphic gpu_shader_3D_clipped_uniform_color(builtin::simple_clip, builtin::simple_frag, builtin::Simple{
   .use_uniform_color = true,
   .use_smooth_color = false,
-  .use_clipping = false,
+  .use_clipping = true,
   .use_dashed = false,
   .use_lighting = false});
 
@@ -406,7 +416,7 @@ PipelineGraphic gpu_shader_3D_point_flat_color(builtin::simple_point_vert, built
   .use_uniform_point_size = true,
   .use_clipping = false});
 PipelineGraphic gpu_shader_3D_point_varying_size_varying_color(builtin::simple_point_vert, builtin::simple_point_frag, builtin::SimplePoint{
-  .point_style = 1 /* SQUARE */,
+  .point_style = 2 /* POINT_CIRCLE */,
   .use_uniform_color = false,
   .use_uniform_point_size = false,
   .use_clipping = false});

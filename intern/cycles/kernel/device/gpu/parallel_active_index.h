@@ -31,7 +31,7 @@ void gpu_parallel_active_index_array_impl(const uint num_states,
 
   sycl::multi_ptr<int[GPU_PARALLEL_ACTIVE_INDEX_DEFAULT_BLOCK_SIZE + 1],
                   sycl::access::address_space::local_space>
-      ptr = sycl::ext::oneapi::group_local_memory<
+      ptr = sycl::ext::oneapi::group_local_memory_for_overwrite<
           int[GPU_PARALLEL_ACTIVE_INDEX_DEFAULT_BLOCK_SIZE + 1]>(item_id.get_group());
   int *warp_offset = *ptr;
 
@@ -55,20 +55,19 @@ void gpu_parallel_active_index_array_impl(const uint num_states,
 template<typename IsActiveOp>
 __device__
 #  endif
-    void
-    gpu_parallel_active_index_array_impl(const uint num_states,
-                                         ccl_global int *indices,
-                                         ccl_global int *num_indices,
+    void gpu_parallel_active_index_array_impl(const uint num_states,
+                                              ccl_global int *indices,
+                                              ccl_global int *num_indices,
 #  ifdef __KERNEL_METAL__
-                                         const uint is_active,
-                                         const uint blocksize,
-                                         const int thread_index,
-                                         const uint state_index,
-                                         const int ccl_gpu_warp_size,
-                                         const int thread_warp,
-                                         const int warp_index,
-                                         const int num_warps,
-                                         threadgroup int *warp_offset)
+                                              const uint is_active,
+                                              const uint blocksize,
+                                              const int thread_index,
+                                              const uint state_index,
+                                              const int ccl_gpu_warp_size,
+                                              const int thread_warp,
+                                              const int warp_index,
+                                              const int num_warps,
+                                              threadgroup int *warp_offset)
 {
 #  else
                                           IsActiveOp is_active_op)
@@ -165,15 +164,9 @@ __device__
                                          simd_group_index, \
                                          num_simd_groups, \
                                          (threadgroup int *)threadgroup_array)
-#elif defined(__KERNEL_ONEAPI__)
-
-#  define gpu_parallel_active_index_array(num_states, indices, num_indices, is_active_op) \
-    gpu_parallel_active_index_array_impl(num_states, indices, num_indices, is_active_op)
-
 #else
 
-#  define gpu_parallel_active_index_array(num_states, indices, num_indices, is_active_op) \
-    gpu_parallel_active_index_array_impl(num_states, indices, num_indices, is_active_op)
+#  define gpu_parallel_active_index_array gpu_parallel_active_index_array_impl
 
 #endif
 

@@ -18,6 +18,7 @@
 #include "BKE_layer.hh"
 #include "BKE_mask.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 #include "BKE_workspace.hh"
 
 #include "GPU_state.hh"
@@ -30,6 +31,7 @@
 
 #include "ANIM_keyframing.hh"
 
+#include "SEQ_sequencer.hh"
 #include "SEQ_transform.hh"
 
 #include "WM_api.hh"
@@ -818,6 +820,17 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
         return false;
       }
       break;
+    case TFM_MODAL_STRIP_OVERLAP_SHUFFLE:
+    case TFM_MODAL_STRIP_OVERLAP_RIPPLE:
+    case TFM_MODAL_STRIP_OVERLAP_OVERWRITE:
+    case TFM_MODAL_STRIP_RIPPLE_INSERT: {
+      if (t->spacetype != SPACE_SEQ || t->mode != TFM_SEQ_SLIDE ||
+          t->data_type != &TransConvertType_Sequencer)
+      {
+        return false;
+      }
+      break;
+    }
   }
   return true;
 }
@@ -875,6 +888,10 @@ wmKeyMap *transform_modal_keymap(wmKeyConfig *keyconf)
       {TFM_MODAL_PASSTHROUGH_NAVIGATE, "PASSTHROUGH_NAVIGATE", 0, "Navigate", ""},
       {TFM_MODAL_NODE_FRAME, "NODE_FRAME", 0, "Attach/Detach Frame", ""},
       {TFM_MODAL_STRIP_CLAMP, "STRIP_CLAMP_TOGGLE", 0, "Clamp Strips", ""},
+      {TFM_MODAL_STRIP_OVERLAP_SHUFFLE, "STRIP_OVERLAP_SHUFFLE", 0, "Shuffle", ""},
+      {TFM_MODAL_STRIP_OVERLAP_RIPPLE, "STRIP_OVERLAP_RIPPLE", 0, "Ripple", ""},
+      {TFM_MODAL_STRIP_OVERLAP_OVERWRITE, "STRIP_OVERLAP_OVERWRITE", 0, "Overwrite", ""},
+      {TFM_MODAL_STRIP_RIPPLE_INSERT, "STRIP_RIPPLE_INSERT", 0, "Ripple Insert", ""},
       {0, nullptr, 0, nullptr, nullptr},
   };
 
@@ -1097,9 +1114,10 @@ static void tool_settings_update_snap_toggle(TransInfo *t)
 
 wmOperatorStatus transformEvent(TransInfo *t, wmOperator *op, const wmEvent *event)
 {
-  bool is_navigating = t->vod ? ((static_cast<RegionView3D *>(t->region->regiondata))->rflag &
-                                 RV3D_NAVIGATING) != 0 :
-                                false;
+  bool is_navigating = t->vod ?
+                           ((static_cast<RegionView3D *>(t->region->regiondata))->runtime->tags &
+                            bke::RV3D_TAG_NAVIGATING) != 0 :
+                           false;
 
   /* Handle modal numinput events first, if already activated. */
   if (!is_navigating && ((event->val == KM_PRESS) || (event->type == EVT_MODAL_MAP)) &&
@@ -1433,6 +1451,32 @@ wmOperatorStatus transformEvent(TransInfo *t, wmOperator *op, const wmEvent *eve
         t->modifiers ^= MOD_STRIP_CLAMP_HOLDS;
         t->redraw |= TREDRAW_HARD;
         break;
+      case TFM_MODAL_STRIP_OVERLAP_SHUFFLE:
+        seq::tool_settings_overlap_mode_set(CTX_data_sequencer_scene(t->context),
+                                            SEQ_OVERLAP_SHUFFLE);
+        t->redraw |= TREDRAW_HARD;
+        break;
+      case TFM_MODAL_STRIP_OVERLAP_RIPPLE:
+        seq::tool_settings_overlap_mode_set(CTX_data_sequencer_scene(t->context),
+                                            SEQ_OVERLAP_RIPPLE);
+        t->redraw |= TREDRAW_HARD;
+        break;
+      case TFM_MODAL_STRIP_OVERLAP_OVERWRITE:
+        seq::tool_settings_overlap_mode_set(CTX_data_sequencer_scene(t->context),
+                                            SEQ_OVERLAP_OVERWRITE);
+        t->redraw |= TREDRAW_HARD;
+        break;
+      case TFM_MODAL_STRIP_RIPPLE_INSERT: {
+        Scene *scene = CTX_data_sequencer_scene(t->context);
+        if (seq::tool_settings_overlap_mode_get(CTX_data_sequencer_scene(t->context)) !=
+            SEQ_OVERLAP_RIPPLE)
+        {
+          break;
+        }
+        seq::tool_settings_ensure(scene)->ripple_flag ^= SEQ_RIPPLE_INSERT;
+        t->redraw |= TREDRAW_HARD;
+        break;
+      }
       default:
         break;
     }
@@ -2011,6 +2055,20 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
     RNA_property_boolean_set(
         op->ptr, prop, (t->settings->uvcalc_flag & UVCALC_TRANSFORM_CORRECT_SLIDE) != 0);
   }
+
+  /* Save sequencer ripple settings. */
+  if ((prop = RNA_struct_find_property(op->ptr, "overlap_mode")) &&
+      !RNA_property_is_set(op->ptr, prop))
+  {
+    Scene *scene = CTX_data_sequencer_scene(C);
+    if (scene != nullptr) {
+      const eSeqRippleFlag ripple_flag = seq::tool_settings_ripple_flag_get(scene);
+      RNA_property_enum_set(op->ptr, prop, seq::tool_settings_overlap_mode_get(scene));
+      RNA_boolean_set(op->ptr, "all_channels", (ripple_flag & SEQ_RIPPLE_ALL_CHANNELS) != 0);
+      RNA_boolean_set(op->ptr, "markers", (ripple_flag & SEQ_RIPPLE_MARKERS) != 0);
+      RNA_boolean_set(op->ptr, "insert", (ripple_flag & SEQ_RIPPLE_INSERT) != 0);
+    }
+  }
 }
 
 bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *event, int mode)
@@ -2136,9 +2194,6 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
   }
 
   if (event) {
-    /* Keymap for shortcut header prints. */
-    t->keymap = WM_keymap_active(CTX_wm_manager(C), op->type->modalkeymap);
-
     /* Stupid code to have Ctrl-Click on gizmo work ok.
      *
      * Do this only for translation/rotation/resize because only these
@@ -2241,7 +2296,7 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
     if ((t->flag & T_EDIT) && t->obedit_type == OB_MESH) {
 
       FOREACH_TRANS_DATA_CONTAINER (t, tc) {
-        BMEditMesh *em = nullptr; /* BKE_editmesh_from_object(t->obedit); */
+        BMesh *bm = BKE_editmesh_bmesh_get_for_write(tc->obedit);
         bool do_skip = false;
 
         /* Currently only used for two of three most frequent transform ops,
@@ -2249,7 +2304,7 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
          * Note that scaling cannot be included here,
          * non-uniform scaling will affect normals. */
         if (ELEM(t->mode, TFM_TRANSLATION, TFM_ROTATION)) {
-          if (em->bm->totvertsel == em->bm->totvert) {
+          if (bm->totvertsel == bm->totvert) {
             /* No need to invalidate if whole mesh is selected. */
             do_skip = true;
           }
@@ -2261,10 +2316,10 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
         else if (!do_skip) {
           const bool preserve_clnor = RNA_property_boolean_get(op->ptr, prop);
           if (preserve_clnor) {
-            BKE_editmesh_lnorspace_update(em);
+            BKE_editmesh_lnorspace_update(bm);
             t->flag |= T_CLNOR_REBUILD;
           }
-          BM_lnorspace_invalidate(em->bm, true);
+          BM_lnorspace_invalidate(bm, true);
         }
       }
     }
@@ -2322,8 +2377,8 @@ wmOperatorStatus transformEnd(bContext *C, TransInfo *t)
     else {
       if (t->flag & T_CLNOR_REBUILD) {
         FOREACH_TRANS_DATA_CONTAINER (t, tc) {
-          BMEditMesh *em = BKE_editmesh_from_object(tc->obedit);
-          BM_lnorspace_rebuild(em->bm, true);
+          BMesh *bm = BKE_editmesh_bmesh_get_for_write(tc->obedit);
+          BM_lnorspace_rebuild(bm, true);
         }
       }
       exit_code = OPERATOR_FINISHED;

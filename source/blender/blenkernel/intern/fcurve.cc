@@ -207,7 +207,7 @@ void BKE_fmodifier_name_set(FModifier *fcm, const char *name)
   /* Set default modifier name when name parameter is an empty string.
    * Ensure the name is unique. */
   const FModifierTypeInfo *fmi = get_fmodifier_typeinfo(fcm->type);
-  ListBaseT<FModifier> list = {fcm, fcm};
+  ListBaseT<FModifier> list = BLI_listbase_from_link(fcm);
   BLI_uniquename(&list,
                  fcm,
                  CTX_DATA_(BLT_I18NCONTEXT_ID_ACTION, fmi->name),
@@ -1276,19 +1276,37 @@ void BKE_fcurve_update_handle_flag_from_opposite(BezTriple &key, const HandleSid
     }
   }
 
+  /*
+   * Allowed combinations:
+   * - both handles are the same of any type.
+   * - Vector <> Align, Blender handles that correctly during transforms.
+   * - Vector <> Free, simply no conflicts.
+   *
+   * Explicitly not allowed:
+   * - Align <> Free, is not really meaningful, just use Free or Aligned on both.
+   */
+
   switch (source) {
-    /* Need to ensure that both sides are the same. */
     case HD_AUTO:
-    case HD_ALIGN:
     case HD_AUTO_ANIM:
     case HD_ALIGN_DOUBLESIDE:
       *target = source;
       break;
 
-    case HD_FREE:
+    case HD_ALIGN:
+      if (!ELEM(*target, HD_VECT)) {
+        *target = source;
+      }
+      break;
+
     case HD_VECT:
-      /* If the source was set to either of those, the handle has to be either free or vector. */
-      if (!ELEM(*target, HD_FREE, HD_VECT)) {
+      if (!ELEM(*target, HD_VECT, HD_ALIGN)) {
+        *target = HD_FREE;
+      }
+      break;
+
+    case HD_FREE:
+      if (!ELEM(*target, HD_VECT)) {
         *target = HD_FREE;
       }
       break;
@@ -2648,8 +2666,8 @@ void BKE_fcurve_blend_write_data(BlendWriter *writer, FCurve *fcu)
 
 void BKE_fcurve_blend_write_listbase(BlendWriter *writer, ListBaseT<FCurve> *fcurves)
 {
-  writer->write_struct_list(fcurves, [](BlendStructWriter &struct_writer) {
-    struct_writer.runtime_ptr(offsetof(FCurve, runtime));
+  writer->write_struct_list(fcurves, [](BlendStructWriter<FCurve> &struct_writer) {
+    struct_writer.shallow_data.runtime = nullptr;
   });
   for (FCurve &fcu : *fcurves) {
     BKE_fcurve_blend_write_data(writer, &fcu);

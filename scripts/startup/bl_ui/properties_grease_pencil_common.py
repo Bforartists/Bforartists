@@ -622,9 +622,9 @@ class GreasePencilMaterialsPanel:
 
                 if ob.mode == "EDIT":
                     row = layout.row(align=True)
-                    row.operator("grease_pencil.stroke_material_set", text="Assign")
-                    row.operator("grease_pencil.material_select", text="Select").deselect = False
-                    row.operator("grease_pencil.material_select", text="Deselect").deselect = True
+                    row.operator("grease_pencil.stroke_material_set", text="Assign", icon="CHECKMARK")  # BFA - icon, as for meshes
+                    row.operator("grease_pencil.material_select", text="Select", icon="RESTRICT_SELECT_OFF").deselect = False  # BFA - icon
+                    row.operator("grease_pencil.material_select", text="Deselect", icon="RESTRICT_SELECT_ON").deselect = True  # BFA - icon
             # stroke color
             ma = None
             if is_view3d and brush is not None:

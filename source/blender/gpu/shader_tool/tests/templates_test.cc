@@ -37,6 +37,26 @@ template void f<A>(A);
     EXPECT_EQ(error, "");
   }
   {
+    /* Templated array size. */
+    string input = R"(
+template<int DIM> void mov(float r[DIM])
+{
+  float a[DIM][DIM];
+}
+template void mov<5>(float[]);
+)";
+    string expect = R"(
+                  void movT5(float r[5])
+{
+  float a[5][5];
+}
+
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
     string input = R"(
 template<typename T>
 void func() { T a; }
@@ -49,6 +69,7 @@ void funcTfloat() {
               float a;
 #line 3
                    }
+
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
@@ -65,6 +86,7 @@ template void func<1 + 3>();
 int funcT4() {
 #line 3
              return 4; }
+
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
@@ -94,10 +116,10 @@ struct U {
 U U_ctor_() {U r;r._pad=0;return r;}
 
 #ifndef GPU_METAL
-void _f(_ref(U ,this_));
+void _f(U this_);
 #endif
 #line 10
-  void _f(_ref(U ,this_)) {
+  void _f(U this_) {
 #line 10
             }
 #line 2
@@ -109,13 +131,14 @@ void _f(_ref(U ,this_));
 ATU ATU_ctor_() {ATU r;r._pad=0;return r;}
 
 #ifndef GPU_METAL
-void _f(_ref(ATU ,this_), U _0);
+void _f(ATU this_, U t);
 #endif
 #line 3
-  void _f(_ref(ATU ,this_), U t)
+  void _f(ATU this_, U t)
   {
     _f(t);
   }
+#line 15
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
@@ -232,11 +255,12 @@ int bar()
 }
 )";
     string expect = R"(
+
 #define E char
 #line 2
-static constexpr char E_A = 0;
+static constexpr char A = 0;
 #line 2
-static constexpr char E_B  = 1;
+static constexpr char B  = 1;
                                int fooT17T2T_3() {
 #line 3
                                            return int(17 + 2 + -3);
@@ -608,7 +632,7 @@ template struct A<float>;
 ATfloat ATfloat_ctor_() {ATfloat r;r.a=0.0f;return r;}
 
 #ifndef GPU_METAL
-ATfloat _method(ATfloat this_, float _0);
+ATfloat _method(ATfloat this_, float b);
 #endif
 #line 4
   ATfloat _method(ATfloat this_, float b)
@@ -619,6 +643,7 @@ ATfloat _method(ATfloat this_, float _0);
     c.a = b;
     return a;
   }
+#line 15
 )";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);

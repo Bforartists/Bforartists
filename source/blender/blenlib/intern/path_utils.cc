@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "BLI_assert.hh"
 #include "BLI_fileops.hh"
 #include "BLI_fnmatch.hh"
 #include "BLI_path_utils.hh"
@@ -58,17 +59,15 @@ static int BLI_path_win32_prefix_len(const char *path);
 #define FILENAME_FRAME_CHARS_MAX FILE_MAX
 
 int BLI_path_sequence_decode(const char *path,
-                             char *head,
-                             const size_t head_maxncpy,
-                             char *tail,
-                             const size_t tail_maxncpy,
+                             std::optional<MutableCStr> head,
+                             std::optional<MutableCStr> tail,
                              ushort *r_digits_len)
 {
   if (head) {
-    BLI_string_debug_size(head, head_maxncpy);
+    BLI_string_debug_size(*head);
   }
   if (tail) {
-    BLI_string_debug_size(tail, tail_maxncpy);
+    BLI_string_debug_size(*tail);
   }
 
   uint nums = 0, nume = 0;
@@ -101,10 +100,10 @@ int BLI_path_sequence_decode(const char *path,
     const long long int ret = strtoll(&(path[nums]), nullptr, 10);
     if (ret >= INT_MIN && ret <= INT_MAX) {
       if (tail) {
-        BLI_strncpy(tail, &path[nume + 1], tail_maxncpy);
+        STRNCPY(*tail, &path[nume + 1]);
       }
       if (head) {
-        BLI_strncpy(head, path, std::min<size_t>(head_maxncpy, nums + 1));
+        STRNCPY(head->take_front(nums + 1), path);
       }
       if (r_digits_len) {
         *r_digits_len = nume - nums + 1;
@@ -114,12 +113,12 @@ int BLI_path_sequence_decode(const char *path,
   }
 
   if (tail) {
-    BLI_strncpy(tail, path + name_end, tail_maxncpy);
+    STRNCPY(*tail, path + name_end);
   }
   if (head) {
     /* Name_end points to last character of head,
      * make it +1 so null-terminator is nicely placed. */
-    BLI_strncpy(head, path, std::min<size_t>(head_maxncpy, name_end + 1));
+    STRNCPY(head->take_front(name_end + 1), path);
   }
   if (r_digits_len) {
     *r_digits_len = 0;
@@ -127,14 +126,10 @@ int BLI_path_sequence_decode(const char *path,
   return 0;
 }
 
-void BLI_path_sequence_encode(char *path,
-                              const size_t path_maxncpy,
-                              const char *head,
-                              const char *tail,
-                              ushort numlen,
-                              int pic)
+void BLI_path_sequence_encode(
+    MutableCStr path, const char *head, const char *tail, ushort numlen, int pic)
 {
-  BLI_string_debug_size(path, path_maxncpy);
+  BLI_string_debug_size(path);
 
   /* FIXME: MAX_ID_NAME & FILE_MAXFILE
    *
@@ -142,7 +137,7 @@ void BLI_path_sequence_encode(char *path,
    * and does not perform any check on the filename part of the path, it can easily generate final
    * paths containing a filename longer than the max supported length (FILE_MAXFILE).
    */
-  BLI_snprintf(path, path_maxncpy, "%s%.*d%s", head, numlen, std::max(0, pic), tail);
+  SNPRINTF(path, "%s%.*d%s", head, numlen, std::max(0, pic), tail);
 }
 
 /**
@@ -383,31 +378,31 @@ int BLI_path_normalize_native(char *path)
   return path_normalize_impl(path, false);
 }
 
-int BLI_path_normalize_dir(char *dir, size_t dir_maxncpy)
+int BLI_path_normalize_dir(MutableCStr dir)
 {
   /* Would just create an unexpected "/" path, just early exit entirely. */
   if (dir[0] == '\0') {
     return 0;
   }
 
-  int dir_len = BLI_path_normalize(dir);
-  return BLI_path_slash_ensure_ex(dir, dir_maxncpy, dir_len);
+  int dir_len = BLI_path_normalize(dir.data());
+  return BLI_path_slash_ensure_ex(dir, dir_len);
 }
 
-int BLI_path_canonicalize_native(char *path, int path_maxncpy)
+int BLI_path_canonicalize_native(MutableCStr path)
 {
-  BLI_path_abs_from_cwd(path, path_maxncpy);
+  BLI_path_abs_from_cwd(path);
   /* As these are system level paths, only convert slashes
    * if the alternate direction is accepted as a slash. */
   if (BLI_path_slash_is_native_compat(ALTSEP)) {
-    BLI_path_slash_native(path);
+    BLI_path_slash_native(path.data());
   }
-  int path_len = BLI_path_normalize_native(path);
+  int path_len = BLI_path_normalize_native(path.data());
   /* Strip trailing slash but don't strip `/` away to nothing. */
   if (path_len > 1 && path[path_len - 1] == SEP) {
 #ifdef WIN32
     /* Don't strip `C:\` -> `C:` as this is no longer a valid directory. */
-    if (BLI_path_win32_prefix_len(path) + 1 < path_len)
+    if (BLI_path_win32_prefix_len(path.data()) + 1 < path_len)
 #endif
     {
       path_len -= 1;
@@ -628,8 +623,6 @@ static void BLI_path_add_slash_to_share(wchar_t *uncpath)
 
 static void BLI_path_unc_to_short(wchar_t *unc)
 {
-  wchar_t tmp[PATH_MAX];
-
   int len = wcslen(unc);
   /* Convert:
    * - `\\?\UNC\server\share\folder\...` to `\\server\share\folder\...`
@@ -639,26 +632,23 @@ static void BLI_path_unc_to_short(wchar_t *unc)
   if ((len > 3) && (unc[0] == L'\\') && (unc[1] == L'\\') && (unc[2] == L'?') &&
       ELEM(unc[3], L'\\', L'/'))
   {
+    /* The result is always shorter, shift the text in place (+1 for the terminator). */
     if ((len > 5) && (unc[5] == L':')) {
-      wcsncpy(tmp, unc + 4, len - 4);
-      tmp[len - 4] = L'\0';
-      wcscpy(unc, tmp);
+      memmove(unc, unc + 4, (len - 4 + 1) * sizeof(*unc));
     }
     else if ((len > 7) && (wcsncmp(&unc[4], L"UNC", 3) == 0) && ELEM(unc[7], L'\\', L'/')) {
-      tmp[0] = L'\\';
-      tmp[1] = L'\\';
-      wcsncpy(tmp + 2, unc + 8, len - 8);
-      tmp[len - 6] = L'\0';
-      wcscpy(unc, tmp);
+      /* Keep the leading `\\`. */
+      memmove(unc + 2, unc + 8, (len - 8 + 1) * sizeof(*unc));
     }
   }
 }
 
-void BLI_path_normalize_unc(char *path, int path_maxncpy)
+void BLI_path_normalize_unc(MutableCStr path)
 {
-  wchar_t *tmp_16 = alloc_utf16_from_8(path, 1);
+  wchar_t *tmp_16 = alloc_utf16_from_8(path.data(), 1);
   BLI_path_normalize_unc_16(tmp_16);
-  conv_utf_16_to_8(tmp_16, path, path_maxncpy);
+  conv_utf_16_to_8(tmp_16, path.data(), path.size());
+  free(tmp_16);
 }
 
 void BLI_path_normalize_unc_16(wchar_t *path_16)
@@ -668,163 +658,196 @@ void BLI_path_normalize_unc_16(wchar_t *path_16)
 }
 #endif
 
-void BLI_path_rel(char path[FILE_MAX], const char *basepath)
+/**
+ * Shared logic of #BLI_path_rel and #BLI_path_relative_to.
+ *
+ * \param path: Absolute path to make relative.
+ * \param basepath: Absolute file path, only the directory part is used.
+ * \param walk_up: Allow `../` when #path is not inside the base directory.
+ * \param blend_relative: Prefix the result with the `//`.
+ * \return True when #path was made relative.
+ */
+static bool path_relative_to_impl(MutableCStr path,
+                                  const char *basepath,
+                                  const bool walk_up,
+                                  const bool blend_relative)
 {
-  BLI_string_debug_size_after_nil(path, FILE_MAX);
+  BLI_string_debug_size_after_nil(path);
   /* A `basepath` starting with `//` will be made relative multiple times. */
   BLI_assert_msg(!BLI_path_is_rel(basepath), "The 'basepath' cannot start with '//'!");
 
-  const char *lslash;
-  char temp[FILE_MAX];
+  const char *base_dir_end;
+  char base_path[FILE_MAX];
 
   /* If path is already relative, bail out. */
-  if (BLI_path_is_rel(path)) {
-    return;
+  if (BLI_path_is_rel(path.data())) {
+    return false;
   }
 
   /* Also bail out if relative path is not set. */
   if (basepath[0] == '\0') {
-    return;
+    return false;
   }
+
+  STRNCPY(base_path, basepath);
+
+#ifdef WIN32
+  if (BLI_strnlen(path.data(), 3) > 2) {
+    bool is_unc = BLI_path_is_unc(path.data());
+
+    /* Ensure paths are both UNC paths or are both drives. */
+    if (BLI_path_is_unc(base_path) != is_unc) {
+      return false;
+    }
+
+    /* Ensure both UNC paths are on the same share. Windows server and share names
+     * are case-insensitive, and either slash may be used. */
+    if (is_unc) {
+      int num_slashes = 0;
+      for (int offset = 0; base_path[offset] && num_slashes < 4; offset++) {
+        const char base_ch = base_path[offset];
+        const char path_ch = path[offset];
+
+        if (ELEM(base_ch, '\\', '/')) {
+          num_slashes++;
+          /* The path is the share itself. */
+          if (path_ch == '\0' && num_slashes == 4) {
+            break;
+          }
+          if (!ELEM(path_ch, '\\', '/')) {
+            return false;
+          }
+        }
+        else if (tolower(base_ch) != tolower(path_ch)) {
+          return false;
+        }
+      }
+    }
+    else if ((base_path[1] == ':' && path[1] == ':') &&
+             (tolower(base_path[0]) != tolower(path[0])))
+    {
+      return false;
+    }
+  }
+#endif
+
+  /* #BLI_path_normalize requires native slashes. */
+  BLI_string_replace_char(base_path + BLI_path_unc_prefix_len(base_path), ALTSEP, SEP);
+  BLI_string_replace_char(path.data() + BLI_path_unc_prefix_len(path.data()), ALTSEP, SEP);
+
+  /* Removes `/./` and `/../` which confuse the following slash counting. */
+  BLI_path_normalize(path.data());
+  BLI_path_normalize(base_path);
+
+  /* Use forward slashes as assumed by the comparison below. */
+  BLI_path_slash_forward_from_native(base_path);
+  BLI_path_slash_forward_from_native(path.data());
+
+  /* The last slash in the path indicates where the path part ends. */
+  base_dir_end = BLI_path_slash_rfind(base_path);
+
+  if (base_dir_end) {
+    /* Only use the directory part of the base path, including the trailing slash. */
+    base_path[base_dir_end - base_path + 1] = '\0';
+
+    /* Find the prefix of the filename that is equal for both filenames.
+     * Only entire components between slashes match. */
+    int base_offset = 0;
+    int path_offset = 0;
+    int i = 0;
+#ifdef WIN32
+    while ((base_path[i] != '\0') && tolower(base_path[i]) == tolower(path[i])) {
+#else
+    while ((base_path[i] != '\0') && base_path[i] == path[i]) {
+#endif
+      i++;
+      if (base_path[i - 1] == '/') {
+        base_offset = path_offset = i;
+      }
+    }
+
+    if ((path[i] == '\0') && (base_path[i] == '/')) {
+      /* The path is the base directory itself, or one of its parents. */
+      base_offset = i + 1;
+      path_offset = i;
+    }
+
+    if (base_offset == 0) {
+      /* No common root. */
+      return false;
+    }
+
+    char result[FILE_MAX] = "//";
+    char *result_iter = result + (blend_relative ? 2 : 0);
+
+    /* Walk up one directory for every component left in the base directory. */
+    for (const char *base_iter = base_path + base_offset; *base_iter; base_iter++) {
+      if (*base_iter == '/') {
+        if (!walk_up) {
+          return false;
+        }
+        result_iter += BLI_strncpy_rlen(
+            result_iter, "../", sizeof(result) - (result_iter - result));
+      }
+    }
+
+    result_iter += BLI_strncpy_rlen(
+        result_iter, path.data() + path_offset, sizeof(result) - (result_iter - result));
+    UNUSED_VARS(result_iter);
+
+#ifdef WIN32
+    BLI_string_replace_char(result + (blend_relative ? 2 : 0), '/', '\\');
+#endif
+    STRNCPY(path, result);
+    return true;
+  }
+
+  return false;
+}
+
+void BLI_path_rel(char path[FILE_MAX], const char *basepath)
+{
+  const bool walk_up = true;
+  const bool blend_relative = true;
 
 #ifdef WIN32
   if (BLI_strnlen(basepath, 3) > 2 && !BLI_path_is_abs_win32(basepath)) {
-    char *ptemp;
     /* Fix missing volume name in relative base,
      * can happen with old `recent-files.txt` files. */
-    BLI_windows_get_default_root_dir(temp);
-    ptemp = &temp[2];
+    char base_path[FILE_MAX];
+    BLI_windows_get_default_root_dir(base_path);
+    char *base_path_after_root = &base_path[2];
     if (!ELEM(basepath[0], '\\', '/')) {
-      ptemp++;
+      base_path_after_root++;
     }
-    BLI_strncpy(ptemp, basepath, FILE_MAX - 3);
+    BLI_strncpy(
+        base_path_after_root, basepath, sizeof(base_path) - (base_path_after_root - base_path));
+    path_relative_to_impl(MutableCStr(path, FILE_MAX), base_path, walk_up, blend_relative);
+    return;
   }
-  else {
-    BLI_strncpy(temp, basepath, FILE_MAX);
-  }
-
-  if (BLI_strnlen(path, 3) > 2) {
-    bool is_unc = BLI_path_is_unc(path);
-
-    /* Ensure paths are both UNC paths or are both drives. */
-    if (BLI_path_is_unc(temp) != is_unc) {
-      return;
-    }
-
-    /* Ensure both UNC paths are on the same share. */
-    if (is_unc) {
-      int off;
-      int slash = 0;
-      for (off = 0; temp[off] && slash < 4; off++) {
-        if (temp[off] != path[off]) {
-          return;
-        }
-
-        if (temp[off] == '\\') {
-          slash++;
-        }
-      }
-    }
-    else if ((temp[1] == ':' && path[1] == ':') && (tolower(temp[0]) != tolower(path[0]))) {
-      return;
-    }
-  }
-#else
-  STRNCPY(temp, basepath);
 #endif
 
-  BLI_string_replace_char(temp + BLI_path_unc_prefix_len(temp), '\\', '/');
-  BLI_string_replace_char(path + BLI_path_unc_prefix_len(path), '\\', '/');
-
-  /* Remove `/./` which confuse the following slash counting. */
-  BLI_path_normalize(path);
-  BLI_path_normalize(temp);
-
-  /* The last slash in the path indicates where the path part ends. */
-  lslash = BLI_path_slash_rfind(temp);
-
-  if (lslash) {
-    /* Find the prefix of the filename that is equal for both filenames.
-     * This is replaced by the two slashes at the beginning. */
-    const char *p = temp;
-    const char *q = path;
-
-#ifdef WIN32
-    while (tolower(*p) == tolower(*q))
-#else
-    while (*p == *q)
-#endif
-    {
-      p++;
-      q++;
-
-      /* Don't search beyond the end of the string in the rare case they match. */
-      if ((*p == '\0') || (*q == '\0')) {
-        break;
-      }
-    }
-
-    /* We might have passed the slash when the beginning of a dir matches
-     * so we rewind. Only check on the actual filename. */
-    if (*q != '/') {
-      while ((q >= path) && (*q != '/')) {
-        q--;
-        p--;
-      }
-    }
-    else if (*p != '/') {
-      while ((p >= temp) && (*p != '/')) {
-        p--;
-        q--;
-      }
-    }
-
-    char res[FILE_MAX] = "//";
-    char *r = res + 2;
-
-    /* `p` now points to the slash that is at the beginning of the part
-     * where the path is different from the relative path.
-     * We count the number of directories we need to go up in the
-     * hierarchy to arrive at the common prefix of the path. */
-    if (p < temp) {
-      p = temp;
-    }
-    while (p && p < lslash) {
-      if (*p == '/') {
-        r += BLI_strncpy_rlen(r, "../", sizeof(res) - (r - res));
-      }
-      p++;
-    }
-
-    /* Don't copy the slash at the beginning. */
-    r += BLI_strncpy_rlen(r, q + 1, sizeof(res) - (r - res));
-    UNUSED_VARS(r);
-
-#ifdef WIN32
-    BLI_string_replace_char(res + 2, '/', '\\');
-#endif
-    BLI_strncpy(path, res, FILE_MAX);
-  }
+  path_relative_to_impl(MutableCStr(path, FILE_MAX), basepath, walk_up, blend_relative);
 }
 
-bool BLI_path_suffix(char *path, size_t path_maxncpy, const char *suffix, const char *sep)
+bool BLI_path_suffix(MutableCStr path, const char *suffix, const char *sep)
 {
-  BLI_string_debug_size_after_nil(path, path_maxncpy);
+  BLI_string_debug_size_after_nil(path);
 
   const size_t suffix_len = strlen(suffix);
   const size_t sep_len = strlen(sep);
-  char *extension = const_cast<char *>(BLI_path_extension_or_end(path));
+  char *extension = const_cast<char *>(BLI_path_extension_or_end(path.data()));
   const size_t extension_len = strlen(extension);
-  const size_t path_end = extension - path;
+  const size_t path_end = extension - path.data();
   const size_t path_len = path_end + extension_len;
-  if (path_len + sep_len + suffix_len >= path_maxncpy) {
+  if (path_len + sep_len + suffix_len >= path.size()) {
     return false;
   }
 
   if (extension_len) {
     memmove(extension + (sep_len + suffix_len), extension, extension_len);
   }
-  char *c = path + path_end;
+  char *c = path.data() + path_end;
   if (sep_len) {
     memcpy(c, sep, sep_len);
     c += sep_len;
@@ -852,7 +875,7 @@ const char *BLI_path_parent_dir_end(const char *path, size_t path_len)
     if (BLI_path_slash_is_native_compat(*(p - 1))) {
       p -= 1; /* Skip `/`. */
     }
-    else if ((p + 1 > path) && (*(p - 1) == '.') && BLI_path_slash_is_native_compat(*p - 2)) {
+    else if ((p - 1 > path) && (*(p - 1) == '.') && BLI_path_slash_is_native_compat(*(p - 2))) {
       p -= 2; /* Skip `/.` (actually `/./` but the last slash was already skipped) */
     }
     else {
@@ -947,55 +970,61 @@ static bool path_frame_chars_find_range(const char *path, int *r_char_start, int
 /**
  * Ensure `path` contains at least one "#" character in its last slash-separated
  * component, appending one digits long if not.
+ *
+ * \return false when there isn't room to append the digits.
  */
-static void ensure_digits(char *path, int digits)
+static bool ensure_digits(MutableCStr path, int digits)
 {
-  char *file = const_cast<char *>(BLI_path_basename(path));
+  char *file = const_cast<char *>(BLI_path_basename(path.data()));
   if (strrchr(file, '#') == nullptr) {
     int len = strlen(file);
+    if ((file - path.data()) + len + digits >= path.size()) {
+      return false;
+    }
 
     while (digits--) {
       file[len++] = '#';
     }
     file[len] = '\0';
   }
+  return true;
 }
 
-bool BLI_path_frame(char *path, size_t path_maxncpy, int frame, int digits)
+bool BLI_path_frame(MutableCStr path, int frame, int digits)
 {
-  BLI_string_debug_size_after_nil(path, path_maxncpy);
+  BLI_string_debug_size_after_nil(path);
 
   int ch_sta, ch_end;
 
-  if (digits) {
-    ensure_digits(path, digits);
+  if (digits && !ensure_digits(path, digits)) {
+    return false;
   }
 
-  if (path_frame_chars_find_range(path, &ch_sta, &ch_end)) {
+  if (path_frame_chars_find_range(path.data(), &ch_sta, &ch_end)) {
     char frame_str[FILENAME_FRAME_CHARS_MAX + 1]; /* One for null. */
     const int ch_span = std::min(ch_end - ch_sta, FILENAME_FRAME_CHARS_MAX);
     SNPRINTF(frame_str, "%.*d", ch_span, frame);
-    BLI_string_replace_range(path, path_maxncpy, ch_sta, ch_end, frame_str);
+    BLI_string_replace_range(path, ch_sta, ch_end, frame_str);
     return true;
   }
   return false;
 }
 
-bool BLI_path_frame_range(char *path, size_t path_maxncpy, int sta, int end, int digits)
+bool BLI_path_frame_range(MutableCStr path, int sta, int end, int digits)
 {
-  BLI_string_debug_size_after_nil(path, path_maxncpy);
+  BLI_string_debug_size_after_nil(path);
 
   int ch_sta, ch_end;
 
-  if (digits) {
-    ensure_digits(path, digits);
+  if (digits && !ensure_digits(path, digits)) {
+    return false;
   }
 
-  if (path_frame_chars_find_range(path, &ch_sta, &ch_end)) {
+  if (path_frame_chars_find_range(path.data(), &ch_sta, &ch_end)) {
     char frame_str[(FILENAME_FRAME_CHARS_MAX * 2) + 1 + 1]; /* One for null, one for the '-' */
     const int ch_span = std::min(ch_end - ch_sta, FILENAME_FRAME_CHARS_MAX);
     SNPRINTF(frame_str, "%.*d-%.*d", ch_span, sta, ch_span, end);
-    BLI_string_replace_range(path, path_maxncpy, ch_sta, ch_end, frame_str);
+    BLI_string_replace_range(path, ch_sta, ch_end, frame_str);
     return true;
   }
   return false;
@@ -1037,17 +1066,17 @@ bool BLI_path_frame_get(const char *path, int *r_frame, int *r_digits_len)
   return true;
 }
 
-void BLI_path_frame_strip(char *path, char *r_ext, const size_t ext_maxncpy)
+void BLI_path_frame_strip(char *path, MutableCStr r_ext)
 {
-  BLI_string_debug_size(r_ext, ext_maxncpy);
-  *r_ext = '\0';
+  BLI_string_debug_size(r_ext);
+  r_ext[0] = '\0';
   if (*path == '\0') {
     return;
   }
 
   char *file = const_cast<char *>(BLI_path_basename(path));
   char *file_ext = const_cast<char *>(BLI_path_extension_or_end(file));
-  BLI_strncpy(r_ext, file_ext, ext_maxncpy);
+  STRNCPY(r_ext, file_ext);
 
   char *c = file_ext;
 
@@ -1082,9 +1111,9 @@ bool BLI_path_frame_check_chars(const char *path)
   return path_frame_chars_find_range(path, &ch_sta_dummy, &ch_end_dummy);
 }
 
-void BLI_path_to_display_name(char *display_name, int display_name_maxncpy, const char *name)
+void BLI_path_to_display_name(MutableCStr display_name, const char *name)
 {
-  BLI_string_debug_size(display_name, display_name_maxncpy);
+  BLI_string_debug_size(display_name);
 
   /* Strip leading underscores and spaces. */
   int strip_offset = 0;
@@ -1092,17 +1121,17 @@ void BLI_path_to_display_name(char *display_name, int display_name_maxncpy, cons
     strip_offset++;
   }
 
-  int display_name_len = BLI_strncpy_rlen(display_name, name + strip_offset, display_name_maxncpy);
+  int display_name_len = STRNCPY_RLEN(display_name, name + strip_offset);
 
   /* Replace underscores with spaces. */
-  BLI_string_replace_char(display_name, '_', ' ');
+  BLI_string_replace_char(display_name.data(), '_', ' ');
 
   /* In rare cases file paths may not contain valid UTF8 sequences.
    * In this case show *something*, since it's possible stripping would remove all text.
    * Use a dummy character as a hint the character could not be shown. */
-  BLI_str_utf8_invalid_substitute(display_name, display_name_len, '_');
+  BLI_str_utf8_invalid_substitute(display_name.data(), display_name_len, '_');
 
-  BLI_path_extension_strip(display_name);
+  BLI_path_extension_strip(display_name.data());
 
   /* Test if string has any upper case characters. */
   bool all_lower = true;
@@ -1152,7 +1181,7 @@ bool BLI_path_abs(char path[FILE_MAX], const char *basepath)
 
     /* Step over the slashes at the beginning of the path. */
     p = (char *)BLI_path_slash_skip(p);
-    BLI_strncpy(tmp + root_dir_len, p, sizeof(tmp) - root_dir_len);
+    STRNCPY(MutableCStr(tmp).drop_front(root_dir_len), p);
   }
   else {
     STRNCPY(tmp, path);
@@ -1203,13 +1232,14 @@ bool BLI_path_abs(char path[FILE_MAX], const char *basepath)
       /* Use path for temp storage here, we copy back over it right away. */
       BLI_strncpy(path, tmp + 2, FILE_MAX); /* Strip `//` prefix. */
 
-      memcpy(tmp, base, baselen); /* Prefix with base up to last `/`. */
-      BLI_strncpy(tmp + baselen, path, sizeof(tmp) - baselen); /* Append path after `//`. */
-      BLI_strncpy(path, tmp, FILE_MAX);                        /* Return as result. */
+      memcpy(tmp, base, baselen);                          /* Prefix with base up to last `/`. */
+      STRNCPY(MutableCStr(tmp).drop_front(baselen), path); /* Append path after `//`. */
+      BLI_strncpy(path, tmp, FILE_MAX);                    /* Return as result. */
     }
     else {
-      /* Base doesn't seem to be a directory, ignore it and just strip `//` prefix on path. */
-      BLI_strncpy(path, tmp + 2, FILE_MAX);
+      /* Base doesn't seem to be a directory, ignore it and just strip `//` prefix on path.
+       * Skip any extra slashes too, otherwise `///` would become an absolute path. */
+      BLI_strncpy(path, BLI_path_slash_skip(tmp + 2), FILE_MAX);
     }
   }
   else {
@@ -1246,17 +1276,17 @@ bool BLI_path_is_abs_from_cwd(const char *path)
   return is_abs;
 }
 
-bool BLI_path_abs_from_cwd(char *path, const size_t path_maxncpy)
+bool BLI_path_abs_from_cwd(MutableCStr path)
 {
-  BLI_string_debug_size_after_nil(path, path_maxncpy);
+  BLI_string_debug_size_after_nil(path);
 
-  if (!BLI_path_is_abs_from_cwd(path)) {
+  if (!BLI_path_is_abs_from_cwd(path.data())) {
     char cwd[PATH_MAX];
     /* In case the full path to the blend isn't used. */
-    if (BLI_current_working_dir(cwd, sizeof(cwd))) {
+    if (BLI_current_working_dir(cwd)) {
       char origpath[PATH_MAX];
-      STRNCPY(origpath, path);
-      BLI_path_join(path, path_maxncpy, cwd, origpath);
+      STRNCPY(origpath, path.data());
+      BLI_path_join(path, cwd, origpath);
     }
     else {
       printf("Could not get the current working directory - $PWD for an unknown reason.\n");
@@ -1273,24 +1303,24 @@ bool BLI_path_abs_from_cwd(char *path, const size_t path_maxncpy)
  * environment variable (Windows-only) onto `program_name` in turn until such a file is found.
  * Returns success/failure.
  */
-bool BLI_path_program_extensions_add_win32(char *program_name, const size_t program_name_maxncpy)
+bool BLI_path_program_extensions_add_win32(MutableCStr program_name)
 {
   bool retval = false;
   int type;
 
-  type = BLI_file_stat_mode(program_name);
+  type = BLI_file_stat_mode(program_name.data());
   if ((type == 0) || S_ISDIR(type)) {
     /* Typically 3-5, ".EXE", ".BAT"... etc. */
     const int ext_max = 12;
     const char *ext = BLI_getenv("PATHEXT");
     if (ext) {
-      const int program_name_len = strlen(program_name);
+      const int program_name_len = strlen(program_name.data());
       char *filename = static_cast<char *>(alloca(program_name_len + ext_max));
       char *filename_ext;
       const char *ext_next;
 
       /* Null terminated in the loop. */
-      memcpy(filename, program_name, program_name_len);
+      memcpy(filename, program_name.data(), program_name_len);
       filename_ext = filename + program_name_len;
 
       do {
@@ -1305,7 +1335,7 @@ bool BLI_path_program_extensions_add_win32(char *program_name, const size_t prog
           type = BLI_file_stat_mode(filename);
           if (type && (!S_ISDIR(type))) {
             retval = true;
-            BLI_strncpy(program_name, filename, program_name_maxncpy);
+            STRNCPY(program_name, filename);
             break;
           }
         }
@@ -1320,11 +1350,9 @@ bool BLI_path_program_extensions_add_win32(char *program_name, const size_t prog
 }
 #endif /* WIN32 */
 
-bool BLI_path_program_search(char *program_filepath,
-                             const size_t program_filepath_maxncpy,
-                             const char *program_name)
+bool BLI_path_program_search(MutableCStr program_filepath, const char *program_name)
 {
-  BLI_string_debug_size(program_filepath, program_filepath_maxncpy);
+  BLI_string_debug_size(program_filepath);
 
   const char *path;
   bool retval = false;
@@ -1351,16 +1379,16 @@ bool BLI_path_program_search(char *program_filepath,
         STRNCPY(filepath_test, path);
       }
 
-      BLI_path_append(filepath_test, program_filepath_maxncpy, program_name);
+      BLI_path_append(filepath_test, program_name);
       if (
 #ifdef _WIN32
-          BLI_path_program_extensions_add_win32(filepath_test, sizeof(filepath_test))
+          BLI_path_program_extensions_add_win32(filepath_test)
 #else
           BLI_exists(filepath_test)
 #endif
       )
       {
-        BLI_strncpy(program_filepath, filepath_test, program_filepath_maxncpy);
+        STRNCPY(program_filepath, filepath_test);
         retval = true;
         break;
       }
@@ -1368,7 +1396,7 @@ bool BLI_path_program_search(char *program_filepath,
   }
 
   if (retval == false) {
-    *program_filepath = '\0';
+    program_filepath[0] = '\0';
   }
 
   return retval;
@@ -1493,7 +1521,7 @@ bool BLI_path_extension_check_glob(const char *path, const char *ext_fnmatch)
 
     if ((ext_next = strchr(ext_step, ';'))) {
       len_ext = ext_next - ext_step + 1;
-      BLI_strncpy(pattern, ext_step, (len_ext > sizeof(pattern)) ? sizeof(pattern) : len_ext);
+      STRNCPY(MutableCStr(pattern).take_front(len_ext), ext_step);
     }
     else {
       len_ext = STRNCPY_RLEN(pattern, ext_step);
@@ -1534,13 +1562,13 @@ bool BLI_path_extension_glob_validate(char *ext_fnmatch)
   return false;
 }
 
-bool BLI_path_extension_replace(char *path, size_t path_maxncpy, const char *ext)
+bool BLI_path_extension_replace(MutableCStr path, const char *ext)
 {
-  BLI_string_debug_size_after_nil(path, path_maxncpy);
+  BLI_string_debug_size_after_nil(path);
 
-  char *path_ext = const_cast<char *>(BLI_path_extension_or_end(path));
+  char *path_ext = const_cast<char *>(BLI_path_extension_or_end(path.data()));
   const size_t ext_len = strlen(ext);
-  if ((path_ext - path) + ext_len >= path_maxncpy) {
+  if ((path_ext - path.data()) + ext_len >= path.size()) {
     return false;
   }
 
@@ -1558,18 +1586,19 @@ bool BLI_path_extension_strip(char *path)
   return true;
 }
 
-bool BLI_path_extension_ensure(char *path, size_t path_maxncpy, const char *ext)
+bool BLI_path_extension_ensure(MutableCStr path, const char *ext)
 {
-  BLI_string_debug_size_after_nil(path, path_maxncpy);
+  BLI_string_debug_size_after_nil(path);
 
   /* First check the extension is already there.
    * If `path_ext` is the end of the string this is simply checking if `ext` is also empty. */
-  const char *path_ext = BLI_path_extension_or_end(path);
+  const char *path_ext = BLI_path_extension_or_end(path.data());
   if (STREQ(path_ext, ext)) {
     return true;
   }
 
-  const size_t path_len = strlen(path);
+  /* Bound by the span, the size may be less than the string length. */
+  const size_t path_len = STRNLEN(path);
   const size_t ext_len = strlen(ext);
   int64_t a;
 
@@ -1583,64 +1612,60 @@ bool BLI_path_extension_ensure(char *path, size_t path_maxncpy, const char *ext)
   }
   a++;
 
-  if (a + ext_len >= path_maxncpy) {
+  if (a + ext_len >= path.size()) {
     return false;
   }
 
-  memcpy(path + a, ext, ext_len + 1);
+  memcpy(path.data() + a, ext, ext_len + 1);
   return true;
 }
 
-bool BLI_path_filename_ensure(char *filepath, size_t filepath_maxncpy, const char *filename)
+bool BLI_path_filename_ensure(MutableCStr filepath, const char *filename)
 {
-  BLI_string_debug_size_after_nil(filepath, filepath_maxncpy);
-  char *c = const_cast<char *>(BLI_path_basename(filepath));
+  BLI_string_debug_size_after_nil(filepath);
+  char *c = const_cast<char *>(BLI_path_basename(filepath.data()));
   const size_t filename_size = strlen(filename) + 1;
-  if (filename_size <= filepath_maxncpy - (c - filepath)) {
+  if (filename_size <= filepath.size() - (c - filepath.data())) {
     memcpy(c, filename, filename_size);
     return true;
   }
   return false;
 }
 
-void BLI_path_split_dir_file(const char *filepath,
-                             char *dir,
-                             const size_t dir_maxncpy,
-                             char *file,
-                             const size_t file_maxncpy)
+void BLI_path_split_dir_file(const char *filepath, MutableCStr dir, MutableCStr file)
 {
-  BLI_string_debug_size(dir, dir_maxncpy);
-  BLI_string_debug_size(file, file_maxncpy);
+  BLI_string_debug_size(dir);
+  BLI_string_debug_size(file);
 
   const char *basename = BLI_path_basename(filepath);
   if (basename != filepath) {
     const size_t dir_size = (basename - filepath) + 1;
-    BLI_strncpy(dir, filepath, std::min(dir_maxncpy, dir_size));
+    STRNCPY(dir.take_front(dir_size), filepath);
   }
   else {
     dir[0] = '\0';
   }
-  BLI_strncpy(file, basename, file_maxncpy);
+  STRNCPY(file, basename);
 }
 
-void BLI_path_split_dir_part(const char *filepath, char *dir, const size_t dir_maxncpy)
+void BLI_path_split_dir_part(const char *filepath, MutableCStr dir)
 {
-  BLI_string_debug_size(dir, dir_maxncpy);
+  BLI_string_debug_size(dir);
   const char *basename = BLI_path_basename(filepath);
   if (basename != filepath) {
     const size_t dir_size = (basename - filepath) + 1;
-    BLI_strncpy(dir, filepath, std::min(dir_maxncpy, dir_size));
+    STRNCPY(dir.take_front(dir_size), filepath);
   }
   else {
     dir[0] = '\0';
   }
 }
 
-void BLI_path_split_file_part(const char *filepath, char *file, const size_t file_maxncpy)
+void BLI_path_split_file_part(const char *filepath, MutableCStr file)
 {
-  BLI_string_debug_size(file, file_maxncpy);
+  BLI_string_debug_size(file);
   const char *basename = BLI_path_basename(filepath);
-  BLI_strncpy(file, basename, file_maxncpy);
+  STRNCPY(file, basename);
 }
 
 const char *BLI_path_extension_or_end(const char *filepath)
@@ -1686,39 +1711,34 @@ const char *BLI_path_extension(const char *filepath)
   return *ext ? ext : nullptr;
 }
 
-size_t BLI_path_append(char *__restrict dst, const size_t dst_maxncpy, const char *__restrict file)
+size_t BLI_path_append(MutableCStr dst, const char *file)
 {
   /* Slash ensure uses #BLI_string_debug_size */
-  int dst_len = BLI_path_slash_ensure(dst, dst_maxncpy);
-  if (dst_len + 1 < dst_maxncpy) {
-    dst_len += BLI_strncpy_rlen(dst + dst_len, file, dst_maxncpy - dst_len);
+  int dst_len = BLI_path_slash_ensure(dst);
+  if (dst_len + 1 < dst.size()) {
+    dst_len += STRNCPY_RLEN(dst.drop_front(dst_len), file);
   }
   return dst_len;
 }
 
-size_t BLI_path_append_dir(char *__restrict dst,
-                           const size_t dst_maxncpy,
-                           const char *__restrict dir)
+size_t BLI_path_append_dir(MutableCStr dst, const char *dir)
 {
-  size_t dst_len = BLI_path_append(dst, dst_maxncpy, dir);
-  return BLI_path_slash_ensure_ex(dst, dst_maxncpy, dst_len);
+  const size_t dst_len = BLI_path_append(dst, dir);
+  return BLI_path_slash_ensure_ex(dst, dst_len);
 }
 
-size_t BLI_path_join_array(char *__restrict dst,
-                           const size_t dst_maxncpy,
-                           const char *path_array[],
-                           const int path_array_num)
+size_t BLI_path_join_array(MutableCStr dst, const char *path_array[], const int path_array_num)
 {
   BLI_assert(path_array_num > 0);
-  BLI_string_debug_size(dst, dst_maxncpy);
+  BLI_string_debug_size(dst);
 
-  if (dst_maxncpy == 0) [[unlikely]] {
+  if (dst.is_empty()) [[unlikely]] {
     return 0;
   }
   const char *path = path_array[0];
 
-  const size_t dst_last = dst_maxncpy - 1;
-  size_t ofs = BLI_strncpy_rlen(dst, path, dst_maxncpy);
+  const size_t dst_last = dst.size() - 1;
+  size_t ofs = STRNCPY_RLEN(dst, path);
 
   if (ofs == dst_last) {
     return ofs;
@@ -1738,8 +1758,7 @@ size_t BLI_path_join_array(char *__restrict dst,
     if (i == ofs) {
       /* All slashes, keep them as-is, and join the remaining path array. */
       return path_array_num > 1 ?
-                 BLI_path_join_array(
-                     dst + ofs, dst_maxncpy - ofs, &path_array[1], path_array_num - 1) :
+                 BLI_path_join_array(dst.drop_front(ofs), &path_array[1], path_array_num - 1) :
                  ofs;
     }
   }
@@ -1785,7 +1804,7 @@ size_t BLI_path_join_array(char *__restrict dst,
         if (ofs + len >= dst_last) {
           len = dst_last - ofs;
         }
-        memcpy(&dst[ofs], path, len);
+        memcpy(dst.data() + ofs, path, len);
         ofs += len;
         if (ofs == dst_last) {
           break;
@@ -1895,35 +1914,45 @@ bool BLI_path_name_at_index(const char *__restrict path,
 
 bool BLI_path_contains(const char *container_path, const char *containee_path)
 {
-  char container_native[PATH_MAX];
-  char containee_native[PATH_MAX];
-
-  /* Keep space for a trailing slash. If the path is truncated by this, the containee path is
-   * longer than #PATH_MAX and the result is ill-defined. */
-  BLI_strncpy(container_native, container_path, PATH_MAX - 1);
-  STRNCPY(containee_native, containee_path);
-
-  BLI_path_slash_native(container_native);
-  BLI_path_slash_native(containee_native);
-
-  BLI_path_normalize(container_native);
-  BLI_path_normalize(containee_native);
-
-#ifdef WIN32
-  BLI_str_tolower_ascii(container_native, PATH_MAX);
-  BLI_str_tolower_ascii(containee_native, PATH_MAX);
-#endif
-
-  if (STREQ(container_native, containee_native)) {
-    /* The paths are equal, they contain each other. */
-    return true;
+  if (container_path[0] == '\0') {
+    return false;
   }
 
-  /* Add a trailing slash to prevent same-prefix directories from matching.
-   * e.g. `/some/path` doesn't contain `/some/path_lib`. */
-  BLI_path_slash_ensure(container_native, sizeof(container_native));
+  const bool walk_up = false;
+  return BLI_path_relative_to(containee_path, container_path, walk_up, std::nullopt);
+}
 
-  return BLI_str_startswith(containee_native, container_native);
+bool BLI_path_relative_to(const char *path,
+                          const char *base_dir,
+                          const bool walk_up,
+                          std::optional<MutableCStr> r_path_relative)
+{
+  if (r_path_relative) {
+    (*r_path_relative)[0] = '\0';
+  }
+
+  if (base_dir[0] == '\0') {
+    BLI_assert_msg(0, "BLI_path_relative_to should not be called with an empty base directory");
+    return false;
+  }
+
+  /* Add a trailing slash, otherwise path_relative_to_impl assumes it's a file. */
+  char base_dir_slash[FILE_MAX];
+  STRNCPY(base_dir_slash, base_dir);
+  BLI_path_slash_ensure(base_dir_slash);
+
+  char path_rel[FILE_MAX];
+  STRNCPY(path_rel, path);
+
+  const bool blend_relative = false;
+  if (!path_relative_to_impl(path_rel, base_dir_slash, walk_up, blend_relative)) {
+    return false;
+  }
+
+  if (r_path_relative) {
+    STRNCPY(*r_path_relative, path_rel);
+  }
+  return true;
 }
 
 const char *BLI_path_slash_find(const char *path)
@@ -1956,14 +1985,14 @@ const char *BLI_path_slash_rfind(const char *path)
   return (lfslash > lbslash) ? lfslash : lbslash;
 }
 
-int BLI_path_slash_ensure_ex(char *path, size_t path_maxncpy, size_t path_len)
+int BLI_path_slash_ensure_ex(MutableCStr path, size_t path_len)
 {
-  BLI_string_debug_size_after_nil(path, path_maxncpy);
-  BLI_assert(strlen(path) == path_len);
-  BLI_assert(path_len < path_maxncpy);
+  BLI_string_debug_size_after_nil(path);
+  BLI_assert(strlen(path.data()) == path_len);
+  BLI_assert(path_len < path.size());
   if (path_len == 0 || !BLI_path_slash_is_native_compat(path[path_len - 1])) {
     /* Avoid unlikely buffer overflow. */
-    if (path_len + 1 < path_maxncpy) {
+    if (path_len + 1 < path.size()) {
       path[path_len++] = SEP;
       path[path_len] = '\0';
     }
@@ -1971,9 +2000,9 @@ int BLI_path_slash_ensure_ex(char *path, size_t path_maxncpy, size_t path_len)
   return path_len;
 }
 
-int BLI_path_slash_ensure(char *path, size_t path_maxncpy)
+int BLI_path_slash_ensure(MutableCStr path)
 {
-  return BLI_path_slash_ensure_ex(path, path_maxncpy, strlen(path));
+  return BLI_path_slash_ensure_ex(path, strlen(path.data()));
 }
 
 void BLI_path_slash_rstrip(char *path)
@@ -2008,6 +2037,13 @@ void BLI_path_slash_native(char *path)
 #else
   BLI_string_replace_char(path + BLI_path_unc_prefix_len(path), ALTSEP, SEP);
 #endif
+}
+
+void BLI_path_slash_forward_from_native(char *path)
+{
+  if (SEP != '/') {
+    BLI_string_replace_char(path, SEP, '/');
+  }
 }
 
 int BLI_path_cmp_normalized(const char *p1, const char *p2)

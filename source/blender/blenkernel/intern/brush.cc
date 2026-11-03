@@ -1217,13 +1217,8 @@ float BKE_brush_sample_masktex(
 /** \name Unified Settings
  * \{ */
 
-bool BKE_brush_use_unified_size(const Paint *paint, const Brush *brush)
+bool BKE_brush_use_unified_size(const Paint * /*paint*/, const Brush *brush)
 {
-  /* For now, Grease Pencil Draw mode doesn't use the unified paint settings. */
-  if (paint->runtime->ob_mode == OB_MODE_PAINT_GREASE_PENCIL) {
-    return false;
-  }
-
   /* In the case of having no active brush (e.g. for non-brush tools), default to the scene level
    * settings */
   if (!brush) {
@@ -1233,13 +1228,8 @@ bool BKE_brush_use_unified_size(const Paint *paint, const Brush *brush)
   return brush->unified_paint_flags & BRUSH_USE_UNIFIED_PAINT_SIZE;
 }
 
-bool BKE_brush_use_unified_strength(const Paint *paint, const Brush *brush)
+bool BKE_brush_use_unified_strength(const Paint * /*paint*/, const Brush *brush)
 {
-  /* For now, Grease Pencil Draw mode doesn't use the unified paint settings. */
-  if (paint->runtime->ob_mode == OB_MODE_PAINT_GREASE_PENCIL) {
-    return false;
-  }
-
   /* In the case of having no active brush (e.g. for non-brush tools), default to the scene level
    * settings */
   if (!brush) {
@@ -1249,13 +1239,8 @@ bool BKE_brush_use_unified_strength(const Paint *paint, const Brush *brush)
   return brush->unified_paint_flags & BRUSH_USE_UNIFIED_PAINT_ALPHA;
 }
 
-bool BKE_brush_use_unified_color(const Paint *paint, const Brush *brush)
+bool BKE_brush_use_unified_color(const Paint * /*paint*/, const Brush *brush)
 {
-  /* For now, Grease Pencil Draw mode doesn't use the unified paint settings. */
-  if (paint->runtime->ob_mode == OB_MODE_PAINT_GREASE_PENCIL) {
-    return false;
-  }
-
   /* In the case of having no active brush (e.g. for non-brush tools), default to the scene level
    * settings */
   if (!brush) {
@@ -1390,6 +1375,31 @@ bool BKE_brush_use_locked_size(const Paint *paint, const Brush *brush)
   return (brush->unified_paint_flags & BRUSH_USE_UNIFIED_PAINT_SIZE) ?
              (us_flag & UNIFIED_PAINT_BRUSH_LOCK_SIZE) != 0 :
              (brush->flag & BRUSH_LOCK_SIZE) != 0;
+}
+
+/* BFA - Grease Pencil radius/surface offset sync, see declaration for details. */
+bool BKE_brush_gpencil_surface_offset_sync(Scene *scene)
+{
+  ToolSettings *ts = (scene != nullptr) ? scene->toolsettings : nullptr;
+  if (ts == nullptr || !ts->gpencil_sync_radius_surface || ts->gp_paint == nullptr) {
+    return false;
+  }
+  Paint *paint = &ts->gp_paint->paint;
+  Brush *brush = BKE_paint_brush(paint);
+  /* Only Grease Pencil brushes, and only when the size is in scene units: in view units the
+   * unprojected size isn't what the user sees, the stroke code handles the offset itself then. */
+  if (brush == nullptr || brush->gpencil_settings == nullptr ||
+      !BKE_brush_use_locked_size(paint, brush))
+  {
+    return false;
+  }
+  /* Unified-aware: the shared size when "Unified Size" is enabled, else the brush's own. */
+  const float size = BKE_brush_unprojected_size_get(paint, brush);
+  if (ts->gpencil_surface_offset == size) {
+    return false;
+  }
+  ts->gpencil_surface_offset = size;
+  return true;
 }
 
 bool BKE_brush_use_size_pressure(const Brush *brush)
@@ -1866,6 +1876,7 @@ bool implements_3d_texture_paint(const Brush &brush)
 {
   switch (brush.image_brush_type) {
     case IMAGE_PAINT_BRUSH_TYPE_DRAW:
+    case IMAGE_PAINT_BRUSH_TYPE_MASK:
       return true;
     default:
       return false;
@@ -1968,7 +1979,23 @@ bool supports_normal_radius(const Brush &brush)
 }
 bool supports_tip_roundness(const Brush &brush)
 {
-  return ELEM(brush.sculpt_brush_type, SCULPT_BRUSH_TYPE_CLAY_STRIPS, SCULPT_BRUSH_TYPE_PAINT);
+  return ELEM(brush.sculpt_brush_type,
+              SCULPT_BRUSH_TYPE_BLOB,
+              SCULPT_BRUSH_TYPE_CLAY,
+              SCULPT_BRUSH_TYPE_CLAY_STRIPS,
+              SCULPT_BRUSH_TYPE_CREASE,
+              SCULPT_BRUSH_TYPE_DRAW,
+              SCULPT_BRUSH_TYPE_DRAW_SHARP,
+              SCULPT_BRUSH_TYPE_GRAB,
+              SCULPT_BRUSH_TYPE_INFLATE,
+              SCULPT_BRUSH_TYPE_LAYER,
+              SCULPT_BRUSH_TYPE_NUDGE,
+              SCULPT_BRUSH_TYPE_PAINT,
+              SCULPT_BRUSH_TYPE_PINCH,
+              SCULPT_BRUSH_TYPE_PLANE,
+              SCULPT_BRUSH_TYPE_SCENE_PROJECT,
+              SCULPT_BRUSH_TYPE_SLIDE_RELAX) ||
+         ELEM(brush.sculpt_brush_type, SCULPT_BRUSH_TYPE_SMOOTH, SCULPT_BRUSH_TYPE_THUMB);
 }
 bool supports_hardness(const Brush &brush)
 {
@@ -1997,6 +2024,10 @@ bool supports_normal_weight(const Brush &brush)
               SCULPT_BRUSH_TYPE_GRAB,
               SCULPT_BRUSH_TYPE_SNAKE_HOOK,
               SCULPT_BRUSH_TYPE_ELASTIC_DEFORM);
+}
+bool supports_rake(const Brush &brush)
+{
+  return !is_grab_tool(brush);
 }
 bool supports_rake_factor(const Brush &brush)
 {
@@ -2121,6 +2152,10 @@ bool supports_tilt(const Brush &brush)
               SCULPT_BRUSH_TYPE_DRAW_SHARP,
               SCULPT_BRUSH_TYPE_PLANE,
               SCULPT_BRUSH_TYPE_CLAY_STRIPS);
+}
+float tip_rotation_get(const Paint &paint, const Brush &brush)
+{
+  return supports_rake(brush) ? paint.runtime->brush_rotation : 0.0f;
 }
 }  // namespace bke::brush
 

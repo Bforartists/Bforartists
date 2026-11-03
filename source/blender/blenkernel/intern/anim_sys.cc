@@ -1099,10 +1099,13 @@ static void nlaeval_snapshot_free_data(NlaEvalSnapshot *snapshot)
 /* ---------------------- */
 
 /* Free memory owned by this evaluation channel. */
-static void nlaevalchan_free_data(NlaEvalChannel *nec)
+static void nlaevalchan_free(NlaEvalChannel *nec)
 {
   nlavalidmask_free(&nec->domain);
   nec->key.~NlaEvalChannelKey();
+  /* The channel is allocated as raw memory with extra space for the values of its base snapshot,
+   * see #nlaevalchan_verify_key. */
+  MEM_delete_void(static_cast<void *>(nec));
 }
 
 /* Initialize a full NLA evaluation state structure. */
@@ -1123,11 +1126,10 @@ static void nlaeval_free(NlaEvalData *nlaeval)
   nlaeval_snapshot_free_data(&nlaeval->eval_snapshot);
 
   /* Delete channels. */
-  for (NlaEvalChannel &nec : nlaeval->channels) {
-    nlaevalchan_free_data(&nec);
+  for (NlaEvalChannel &nec : nlaeval->channels.items_mutable()) {
+    nlaevalchan_free(&nec);
   }
-
-  nlaeval->channels.free_no_destruct();
+  nlaeval->channels.clear_no_delete();
   BLI_ghash_free(nlaeval->path_hash, nullptr, nullptr);
   MEM_delete(nlaeval->key_hash);
 }
@@ -3948,9 +3950,18 @@ void BKE_time_markers_blend_read(BlendDataReader *reader, ListBaseT<TimeMarker> 
   }
 }
 
+TimeMarker *BKE_copy_time_marker(const TimeMarker &marker_src, const int flag)
+{
+  TimeMarker *marker_dst = MEM_dupalloc(&marker_src);
+  if (marker_dst->prop != nullptr) {
+    marker_dst->prop = IDP_CopyProperty_ex(marker_dst->prop, flag);
+  }
+  return marker_dst;
+}
+
 void BKE_copy_time_markers(ListBaseT<TimeMarker> &markers_dst,
                            const ListBaseT<TimeMarker> &markers_src,
-                           int flag)
+                           const int flag)
 {
   BLI_duplicatelist(&markers_dst, &markers_src);
   for (TimeMarker &marker : markers_dst) {
@@ -3958,6 +3969,22 @@ void BKE_copy_time_markers(ListBaseT<TimeMarker> &markers_dst,
       marker.prop = IDP_CopyProperty_ex(marker.prop, flag);
     }
   }
+}
+
+void BKE_free_time_marker(TimeMarker &marker, const bool do_id_user)
+{
+  if (marker.prop != nullptr) {
+    IDP_FreeProperty_ex(marker.prop, do_id_user);
+  }
+  MEM_delete(&marker);
+}
+
+void BKE_free_time_markers(ListBaseT<TimeMarker> &markers, const bool do_id_user)
+{
+  for (TimeMarker &marker : markers.items_mutable()) {
+    BKE_free_time_marker(marker, do_id_user);
+  }
+  markers.clear_no_delete();
 }
 
 }  // namespace blender

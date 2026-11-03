@@ -15,6 +15,7 @@ What is it about? Anything, whatever I think it can speedup workflow,
 I'll try to add it. Enjoy <3
 """
 
+
 # import amaranth's modules
 
 # NOTE: avoid local imports whenever possible!
@@ -23,64 +24,27 @@ I'll try to add it. Enjoy <3
 
 from . import prefs
 
-from .modeling import symmetry_tools
-
-from .scene import (
-    refresh,
-    save_reload,
-    current_blend,
-    stats,
-    goto_library,
-    debug,
-    material_remove_unassigned,
-    )
-
-from .node_editor import (
-    id_panel,
-    display_image,
-    templates,
-    simplify_nodes,
-    node_stats,
-    normal_node,
-    )
-
-from .render import (
-    border_camera,
-    meshlight_add,
-    meshlight_select,
-    passepartout,
-    final_resolution,
-    samples_scene,
-    )
-
-from .animation import (
-    time_extra_info,
-    frame_current,
-    motion_paths,
-    jump_frames,
-    )
-
-from .misc import (
-    color_management,
-    dupli_group_id,
-    toggle_wire,
-    sequencer_extra_info,
-    )
-
-
-def _call_globals(attr_name):
-    for m in globals().values():
-        if hasattr(m, attr_name):
-            getattr(m, attr_name)()
-
+from . import modeling
+from . import scene
+from . import node_editor
+from . import render
+from . import animation
+from . import misc
 
 def register():
-    _call_globals("register")
-
+    prefs.register()
+    modeling.register()
+    scene.register()
+    node_editor.register()
+    render.register()
+    animation.register()
+    misc.register()
 
 def unregister():
-    _call_globals("unregister")
-
-
-if __name__ == "__main__":
-    register()
+    prefs.unregister()
+    misc.unregister()
+    animation.unregister()
+    render.unregister()
+    node_editor.unregister()
+    scene.unregister()
+    modeling.unregister()

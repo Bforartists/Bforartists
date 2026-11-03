@@ -201,17 +201,8 @@ static void set_bsdf_socket_values(bNode *bsdf, Material *mat, const ufbx_materi
 
 static Image *create_placeholder_image(Main *bmain, const std::string &path)
 {
-  const float color[4] = {0, 0, 0, 1};
-  const char *name = BLI_path_basename(path.c_str());
-  Image *image = BKE_image_add_generated(
-      bmain, 1, 1, name, 24, false, IMA_GENTYPE_BLANK, color, false, false, false);
-  STRNCPY(image->filepath, path.c_str());
-
-  /* Ensure that we are not marked as a generated image and clear any buffers created so far. */
-  image->source = IMA_SRC_FILE;
-  image->type = IMA_TYPE_IMAGE;
-  BKE_image_free_buffers(image);
-  return image;
+  /* Create image without checking if it can be opened. */
+  return BKE_image_load_exists(bmain, path.c_str(), false);
 }
 
 static Image *load_texture_image(Main *bmain, const std::string &file_dir, const ufbx_texture &tex)
@@ -238,7 +229,7 @@ static Image *load_texture_image(Main *bmain, const std::string &file_dir, const
         break;
       }
       char path[FILE_MAX];
-      BLI_path_join(path, sizeof(path), file_dir.c_str(), parent_path);
+      BLI_path_join(path, file_dir.c_str(), parent_path);
       BLI_path_normalize(path);
       image = BKE_image_load_exists(bmain, path);
       pos = parent_path - tex.absolute_filename.data;
@@ -328,8 +319,9 @@ static void add_image_texture(Main *bmain,
   if (!STR_ELEM(
           socket_name, "Base Color", "Specular Tint", "Sheen Tint", "Coat Tint", "Emission Color"))
   {
-    STRNCPY_UTF8(image->colorspace_settings.name,
-                 IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DATA));
+    IMB_colormanagement_colorspace_settings_set(
+        &image->colorspace_settings,
+        IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DATA));
   }
 
   /* Add texture node and any UV transformations if needed. */

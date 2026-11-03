@@ -70,8 +70,14 @@ class TCLineOnBisection(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        obj = context.active_object
-        return all([obj is not None, obj.type == 'MESH', obj.mode == 'EDIT'])
+        if context.active_object:
+            obj = context.active_object
+            if obj.type == 'MESH' and obj.mode == 'EDIT':
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def execute(self, context):
         add_line_to_bisection(self)

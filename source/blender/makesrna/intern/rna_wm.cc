@@ -2355,9 +2355,6 @@ static void rna_def_operator(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "OperatorProperties", nullptr);
   RNA_def_struct_ui_text(srna, "Operator Properties", "Input properties of an operator");
   RNA_def_struct_refine_func(srna, "rna_OperatorProperties_refine");
-  /* NOTE: `RNA_def_struct_idprops_func` should be removed once #132129 is implemented.
-   * Similar to the issue with the nodes modifiers, see #rna_def_modifier_nodes. */
-  RNA_def_struct_idprops_func(srna, "rna_OperatorProperties_idprops");
   RNA_def_struct_system_idprops_func(srna, "rna_OperatorProperties_idprops");
   RNA_def_struct_property_tags(srna, rna_enum_operator_property_tag_items);
   RNA_def_struct_flag(srna, STRUCT_NO_DATABLOCK_IDPROPERTIES | STRUCT_NO_CONTEXT_WITHOUT_OWNER_ID);
@@ -3292,6 +3289,7 @@ static void rna_def_keyconfig(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_event_value_items);
   RNA_def_property_ui_text(prop, "Value", "");
   RNA_def_property_update(prop, 0, "rna_KeyMapItem_update");
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_UI_EVENTS);
 
   prop = RNA_def_property(srna, "direction", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "direction");

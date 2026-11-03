@@ -54,7 +54,7 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
   const VArray<float3> positions = evaluator.get_evaluated<float3>(0);
   const VArray<float> radii = evaluator.get_evaluated<float>(1);
 
-  PointCloud *pointcloud = BKE_pointcloud_new_nomain(selection.size());
+  PointCloud *pointcloud = BKE_pointcloud_new_nomain(PointCloudType::Points, selection.size());
   geometry_set.replace_pointcloud(pointcloud);
   array_utils::gather(positions, selection, pointcloud->positions_for_write());
 
@@ -64,7 +64,7 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
         "radius", bke::AttrDomain::Point, bke::AttributeInitValue{*radius_single});
   }
   else {
-    bke::SpanAttributeWriter point_radii = dst_attributes.lookup_or_add_for_write_only_span<float>(
+    bke::SpanAttributeWriter point_radii = dst_attributes.ensure_for_write_only_span<float>(
         "radius", AttrDomain::Point);
     array_utils::gather(radii, selection, point_radii.span);
     point_radii.finish();
@@ -101,10 +101,12 @@ static void convert_instances_to_points(GeometrySet &geometry_set,
       dst_attributes.add(name, AttrDomain::Point, type, init);
     }
     else {
-      GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
-          name, AttrDomain::Point, type);
-      array_utils::gather(src.varray, selection, dst.span);
-      dst.finish();
+      if (GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+              name, AttrDomain::Point, type))
+      {
+        array_utils::gather(src.varray, selection, dst.span);
+        dst.finish();
+      }
     }
   });
 }

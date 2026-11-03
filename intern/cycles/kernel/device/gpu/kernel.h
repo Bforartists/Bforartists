@@ -530,7 +530,6 @@ ccl_gpu_kernel_threads(GPU_PARALLEL_SORT_BLOCK_SIZE)
                              const int kernel_index)
 #endif
 {
-#if defined(__KERNEL_LOCAL_ATOMIC_SORT__)
   ccl_global ushort *d_queued_kernel = (ccl_global ushort *)
                                            kernel_integrator_state.path.queued_kernel;
   ccl_global uint *d_shader_sort_key = (ccl_global uint *)
@@ -538,35 +537,20 @@ ccl_gpu_kernel_threads(GPU_PARALLEL_SORT_BLOCK_SIZE)
   ccl_global int *key_offsets = (ccl_global int *)
                                     kernel_integrator_state.sort_partition_key_offsets;
 
-#  ifdef __KERNEL_METAL__
-  int max_shaders = context.launch_params_metal.data.max_shaders;
-#  endif
-
-#  ifdef __KERNEL_ONEAPI__
-  /* Metal backend doesn't have these particular ccl_gpu_* defines and current kernel code
-   * uses metal_*, we need the below to be compatible with these kernels. */
-  int max_shaders = ((ONEAPIKernelContext *)kg)->__data->max_shaders;
-  int metal_local_id = ccl_gpu_thread_idx_x;
-  int metal_local_size = ccl_gpu_block_dim_x;
-  int metal_grid_id = ccl_gpu_block_idx_x;
+#ifdef __KERNEL_ONEAPI__
   /* There is no difference here between different access decorations, as we are requesting
    * a raw pointer immediately, so the simplest decoration option is used (no decoration). */
   ccl_gpu_shared int *threadgroup_array =
       local_mem.get_multi_ptr<sycl::access::decorated::no>().get();
-#  endif
+#endif
 
   gpu_parallel_sort_bucket_pass(num_states,
                                 partition_size,
-                                max_shaders,
+                                kernel_data.max_shaders,
                                 kernel_index,
                                 d_queued_kernel,
                                 d_shader_sort_key,
-                                key_offsets,
-                                (ccl_gpu_shared int *)threadgroup_array,
-                                metal_local_id,
-                                metal_local_size,
-                                metal_grid_id);
-#endif
+                                key_offsets);
 }
 ccl_gpu_kernel_postfix
 
@@ -591,7 +575,6 @@ ccl_gpu_kernel_threads(GPU_PARALLEL_SORT_BLOCK_SIZE)
 #endif
 
 {
-#if defined(__KERNEL_LOCAL_ATOMIC_SORT__)
   ccl_global ushort *d_queued_kernel = (ccl_global ushort *)
                                            kernel_integrator_state.path.queued_kernel;
   ccl_global uint *d_shader_sort_key = (ccl_global uint *)
@@ -599,37 +582,22 @@ ccl_gpu_kernel_threads(GPU_PARALLEL_SORT_BLOCK_SIZE)
   ccl_global int *key_offsets = (ccl_global int *)
                                     kernel_integrator_state.sort_partition_key_offsets;
 
-#  ifdef __KERNEL_METAL__
-  int max_shaders = context.launch_params_metal.data.max_shaders;
-#  endif
-
-#  ifdef __KERNEL_ONEAPI__
-  /* Metal backend doesn't have these particular ccl_gpu_* defines and current kernel code
-   * uses metal_*, we need the below to be compatible with these kernels. */
-  int max_shaders = ((ONEAPIKernelContext *)kg)->__data->max_shaders;
-  int metal_local_id = ccl_gpu_thread_idx_x;
-  int metal_local_size = ccl_gpu_block_dim_x;
-  int metal_grid_id = ccl_gpu_block_idx_x;
+#ifdef __KERNEL_ONEAPI__
   /* There is no difference here between different access decorations, as we are requesting
    * a raw pointer immediately, so the simplest decoration option is used (no decoration). */
   ccl_gpu_shared int *threadgroup_array =
       local_mem.get_multi_ptr<sycl::access::decorated::no>().get();
-#  endif
+#endif
 
   gpu_parallel_sort_write_pass(num_states,
                                partition_size,
-                               max_shaders,
-                               kernel_index,
                                num_states_limit,
                                indices,
+                               kernel_data.max_shaders,
+                               kernel_index,
                                d_queued_kernel,
                                d_shader_sort_key,
-                               key_offsets,
-                               (ccl_gpu_shared int *)threadgroup_array,
-                               metal_local_id,
-                               metal_local_size,
-                               metal_grid_id);
-#endif
+                               key_offsets);
 }
 ccl_gpu_kernel_postfix
 
@@ -1077,7 +1045,8 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
                              const int offset,
                              const int stride,
                              const int pass_stride,
-                             const int pass_denoised)
+                             const int pass_denoised,
+                             const int num_components)
 {
 #ifdef __KERNEL_CUDA__
   const int work_index = ccl_gpu_global_id_x();
@@ -1089,14 +1058,15 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
   }
 
   const uint64_t render_pixel_index = offset + (x + full_x) + (y + full_y) * stride;
-  ccl_global float *denoised_pixel = render_buffer + render_pixel_index * pass_stride +
-                                     pass_denoised;
+  ccl_global float *buffer = render_buffer + render_pixel_index * pass_stride;
+
+  ccl_global float *denoised_pixel = buffer + pass_denoised;
 
   float4 color_value;
   color_value.x = denoised_pixel[0];
   color_value.y = denoised_pixel[1];
   color_value.z = denoised_pixel[2];
-  color_value.w = 1.0;
+  color_value.w = num_components > 3 ? denoised_pixel[3] : 1.0f;
 
   surf2Dwrite(color_value, color_surface, x * sizeof(float4), y);
 #endif
@@ -1132,11 +1102,11 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
     return;
   }
 
-  const uint64_t guiding_pixel_index = x + y * width;
-  ccl_global float *guiding_pixel = guiding_buffer + guiding_pixel_index * guiding_pass_stride;
-
   const uint64_t render_pixel_index = render_offset + (x + full_x) + (y + full_y) * render_stride;
   const ccl_global float *buffer = render_buffer + render_pixel_index * render_pass_stride;
+
+  const uint64_t guiding_pixel_index = x + y * width;
+  ccl_global float *guiding_pixel = guiding_buffer + guiding_pixel_index * guiding_pass_stride;
 
   float pixel_scale;
   if (render_pass_sample_count == PASS_UNUSED) {
@@ -1330,7 +1300,6 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
   ccl_global float *guiding_pixel = guiding_buffer + guiding_pixel_index * guiding_pass_stride;
 
   ccl_global float *albedo_out = guiding_pixel + guiding_pass_albedo;
-
   albedo_out[0] = 0.5f;
   albedo_out[1] = 0.5f;
   albedo_out[2] = 0.5f;
@@ -1346,17 +1315,12 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
                              const int height,
                              const int offset,
                              const int stride,
-                             const int render_full_x,
-                             const int render_full_y,
-                             const int render_offset,
-                             const int render_stride,
                              const int pass_stride,
                              const int num_samples,
                              const int pass_noisy,
                              const int pass_denoised,
                              const int pass_sample_count,
                              const int num_components,
-                             const int use_compositing,
                              const float upscale_factor)
 {
   const int work_index = ccl_gpu_global_id_x();
@@ -1367,46 +1331,28 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
     return;
   }
 
-  const uint64_t render_pixel_index = render_offset + (int(x / upscale_factor) + render_full_x) +
-                                      (int(y / upscale_factor) + render_full_y) * render_stride;
+  const uint64_t render_pixel_index = offset + (x + full_x) + (y + full_y) * stride;
   ccl_global float *buffer = render_buffer + render_pixel_index * pass_stride;
 
   float pixel_scale;
   if (pass_sample_count == PASS_UNUSED) {
     pixel_scale = num_samples;
   }
-  else {
+  else if (upscale_factor == 1.0f) {
     pixel_scale = __float_as_uint(buffer[pass_sample_count]);
   }
 
-  const uint64_t denoised_pixel_index = offset + (x + full_x) + (y + full_y) * stride;
-  ccl_global float *denoised_pixel = render_buffer + denoised_pixel_index * pass_stride +
-                                     pass_denoised;
+  ccl_global float *denoised_pixel = buffer + pass_denoised;
+
+  if (num_components > 3) {
+    /* Convert alpha back to transparency. */
+    denoised_pixel[3] = 1.0f - denoised_pixel[3];
+  }
 
   if (pass_sample_count == PASS_UNUSED || upscale_factor == 1.0f) {
-    denoised_pixel[0] *= pixel_scale;
-    denoised_pixel[1] *= pixel_scale;
-    denoised_pixel[2] *= pixel_scale;
-  }
-
-  if (num_components == 3) {
-    /* Pass without alpha channel. */
-  }
-  else if (!use_compositing) {
-    /* Currently compositing passes are either 3-component (derived by dividing light passes)
-     * or do not have transparency (shadow catcher). Implicitly rely on this logic, as it
-     * simplifies logic and avoids extra memory allocation. */
-    const ccl_global float *noisy_pixel = buffer + pass_noisy;
-    denoised_pixel[3] = noisy_pixel[3];
-
-    if (pass_sample_count != PASS_UNUSED && upscale_factor != 1.0f) {
-      denoised_pixel[3] /= pixel_scale;
+    for (int c = 0; c < 4 && c < num_components; c++) {
+      denoised_pixel[c] *= pixel_scale;
     }
-  }
-  else {
-    /* Assigning to zero since this is a default alpha value for 3-component passes, and it
-     * is an opaque pixel for 4 component passes. */
-    denoised_pixel[3] = 0;
   }
 }
 ccl_gpu_kernel_postfix
@@ -1421,17 +1367,12 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
                              const int height,
                              const int offset,
                              const int stride,
-                             const int render_full_x,
-                             const int render_full_y,
-                             const int render_offset,
-                             const int render_stride,
                              const int pass_stride,
                              const int num_samples,
                              const int pass_noisy,
                              const int pass_denoised,
                              const int pass_sample_count,
                              const int num_components,
-                             const int use_compositing,
                              const float upscale_factor)
 {
 #ifdef __KERNEL_CUDA__
@@ -1443,21 +1384,18 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
     return;
   }
 
-  const uint64_t render_pixel_index = render_offset + (int(x / upscale_factor) + render_full_x) +
-                                      (int(y / upscale_factor) + render_full_y) * render_stride;
+  const uint64_t render_pixel_index = offset + (x + full_x) + (y + full_y) * stride;
   ccl_global float *buffer = render_buffer + render_pixel_index * pass_stride;
 
   float pixel_scale;
   if (pass_sample_count == PASS_UNUSED) {
     pixel_scale = num_samples;
   }
-  else {
+  else if (upscale_factor == 1.0f) {
     pixel_scale = __float_as_uint(buffer[pass_sample_count]);
   }
 
-  const uint64_t denoised_pixel_index = offset + (x + full_x) + (y + full_y) * stride;
-  ccl_global float *denoised_pixel = render_buffer + denoised_pixel_index * pass_stride +
-                                     pass_denoised;
+  ccl_global float *denoised_pixel = buffer + pass_denoised;
 
   float4 color_value;
   surf2Dread(&color_value, color_surface, x * sizeof(float4), y);
@@ -1465,31 +1403,15 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
   denoised_pixel[0] = color_value.x;
   denoised_pixel[1] = color_value.y;
   denoised_pixel[2] = color_value.z;
+  if (num_components > 3) {
+    /* Convert alpha back to transparency. */
+    denoised_pixel[3] = 1.0f - color_value.w;
+  }
 
   if (pass_sample_count == PASS_UNUSED || upscale_factor == 1.0f) {
-    denoised_pixel[0] *= pixel_scale;
-    denoised_pixel[1] *= pixel_scale;
-    denoised_pixel[2] *= pixel_scale;
-  }
-
-  if (num_components == 3) {
-    /* Pass without alpha channel. */
-  }
-  else if (!use_compositing) {
-    /* Currently compositing passes are either 3-component (derived by dividing light passes)
-     * or do not have transparency (shadow catcher). Implicitly rely on this logic, as it
-     * simplifies logic and avoids extra memory allocation. */
-    const ccl_global float *noisy_pixel = buffer + pass_noisy;
-    denoised_pixel[3] = noisy_pixel[3];
-
-    if (pass_sample_count != PASS_UNUSED && upscale_factor != 1.0f) {
-      denoised_pixel[3] /= pixel_scale;
+    for (int c = 0; c < 4 && c < num_components; c++) {
+      denoised_pixel[c] *= pixel_scale;
     }
-  }
-  else {
-    /* Assigning to zero since this is a default alpha value for 3-component passes, and it
-     * is an opaque pixel for 4 component passes. */
-    denoised_pixel[3] = 0;
   }
 #endif
 }
@@ -1505,7 +1427,8 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
                              const int offset,
                              const int stride,
                              const int pass_stride,
-                             const int pass_denoised)
+                             const int pass_denoised,
+                             const int num_components)
 {
   const int work_index = ccl_gpu_global_id_x();
   const int y = work_index / width;
@@ -1519,16 +1442,12 @@ ccl_gpu_kernel(GPU_KERNEL_BLOCK_NUM_THREADS, GPU_KERNEL_MAX_REGISTERS)
   ccl_global float *buffer = render_buffer + render_pixel_index * pass_stride + pass_denoised;
   ccl_global float *buffer_flipped = buffer + (height - 1 - y * 2) * stride * pass_stride;
 
-  float3 temp;
-  temp.x = buffer[0];
-  temp.y = buffer[1];
-  temp.z = buffer[2];
-  buffer[0] = buffer_flipped[0];
-  buffer[1] = buffer_flipped[1];
-  buffer[2] = buffer_flipped[2];
-  buffer_flipped[0] = temp.x;
-  buffer_flipped[1] = temp.y;
-  buffer_flipped[2] = temp.z;
+  float temp[4];
+  for (int c = 0; c < 4 && c < num_components; c++) {
+    temp[c] = buffer[c];
+    buffer[c] = buffer_flipped[c];
+    buffer_flipped[c] = temp[c];
+  }
 }
 ccl_gpu_kernel_postfix
 

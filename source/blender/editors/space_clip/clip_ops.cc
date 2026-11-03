@@ -207,7 +207,7 @@ static wmOperatorStatus open_exec(bContext *C, wmOperator *op)
     RNA_property_collection_lookup_int(op->ptr, prop, 0, &fileptr);
     RNA_string_get(&fileptr, "name", file_only);
 
-    BLI_path_join(filepath, sizeof(filepath), dir_only, file_only);
+    BLI_path_join(filepath, dir_only, file_only);
   }
   else {
     BKE_report(op->reports, RPT_ERROR, "No files selected to be opened");
@@ -1380,7 +1380,7 @@ static void proxy_task_func(TaskPool *__restrict pool, void *task_data)
                                       ImBufFlags::ByteData | ImBufFlags::AlphaDetect,
                                       "proxy frame",
                                       nullptr,
-                                      data->clip->colorspace_settings.name);
+                                      &data->clip->colorspace_settings);
 
     BKE_movieclip_build_proxy_frame_for_ibuf(
         data->clip, ibuf, nullptr, cfra, data->build_sizes, data->build_count, false);

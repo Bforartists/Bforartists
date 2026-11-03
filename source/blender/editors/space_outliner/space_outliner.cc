@@ -265,8 +265,19 @@ static void outliner_main_region_listener(const wmRegionListenerParams *params)
     case NC_ANIMATION:
       switch (wmn->data) {
         case ND_NLA_ACTCHANGE:
-        case ND_KEYFRAME:
           ED_region_tag_redraw(region);
+          break;
+        case ND_KEYFRAME:
+          if (space_outliner->outlinevis != SO_ID_ORPHANS) {
+            if ((space_outliner->outlinevis == SO_DATA_API) ||
+                ELEM(wmn->action, NA_ADDED, NA_REMOVED))
+            {
+              ED_region_tag_redraw(region);
+            }
+            else if (space_outliner->outlinevis != SO_LIBRARIES) {
+              ED_region_tag_redraw_no_rebuild(region);
+            }
+          }
           break;
         case ND_ANIMCHAN:
           if (ELEM(wmn->action, NA_SELECTED, NA_RENAME)) {
@@ -399,8 +410,7 @@ static SpaceLink *outliner_create(const ScrArea * /*area*/, const Scene * /*scen
   space_outliner->show_restrict_flags = SO_RESTRICT_ENABLE | SO_RESTRICT_HIDE | SO_RESTRICT_RENDER;
   space_outliner->outlinevis = SO_VIEW_LAYER;
   space_outliner->sync_select_dirty |= WM_OUTLINER_SYNC_SELECT_FROM_ALL;
-  space_outliner->flag = SO_SYNC_SELECT | SO_MODE_COLUMN | SO_SCROLL_TO_ACTIVE |
-                         SO_EXPAND_ON_FOCUS;
+  space_outliner->flag = SO_SYNC_SELECT | SO_MODE_COLUMN | SO_SCROLL_TO_ACTIVE;
   space_outliner->filter = SO_FILTER_NO_VIEW_LAYERS;
 
   /* header */
@@ -591,6 +601,8 @@ static void outliner_space_blend_read_after_liblink(BlendLibReader * /*reader*/,
 static void write_space_outliner(BlendWriter *writer, const SpaceOutliner *space_outliner)
 {
   BLI_mempool *ts = space_outliner->treestore;
+  constexpr eSpaceOutliner_StoreFlag runtime_store_flags = SO_TREESTORE_CLEANUP |
+                                                           SO_TREESTORE_REBUILD;
 
   if (ts) {
     const int elems = BLI_mempool_len(ts);
@@ -600,7 +612,11 @@ static void write_space_outliner(BlendWriter *writer, const SpaceOutliner *space
                                   nullptr;
 
     if (data) {
-      writer->write_struct_cast<SpaceOutliner>(space_outliner);
+      writer->write_struct_cast<SpaceOutliner>(
+          space_outliner, [](BlendStructWriter<SpaceOutliner> &struct_writer) {
+            struct_writer.shallow_data.runtime = nullptr;
+            struct_writer.shallow_data.storeflag &= ~runtime_store_flags;
+          });
 
       /* To store #TreeStore (instead of the mempool), two unique memory addresses are needed,
        * which can be used to identify the data on read:
@@ -633,13 +649,20 @@ static void write_space_outliner(BlendWriter *writer, const SpaceOutliner *space
       MEM_delete(data);
     }
     else {
-      SpaceOutliner space_outliner_flat = *space_outliner;
-      space_outliner_flat.treestore = nullptr;
-      writer->write_struct_at_address(space_outliner, &space_outliner_flat);
+      writer->write_struct_cast<SpaceOutliner>(
+          space_outliner, [](BlendStructWriter<SpaceOutliner> &struct_writer) {
+            struct_writer.shallow_data.treestore = nullptr;
+            struct_writer.shallow_data.runtime = nullptr;
+            struct_writer.shallow_data.storeflag &= ~runtime_store_flags;
+          });
     }
   }
   else {
-    writer->write_struct_cast<SpaceOutliner>(space_outliner);
+    writer->write_struct_cast<SpaceOutliner>(
+        space_outliner, [](BlendStructWriter<SpaceOutliner> &struct_writer) {
+          struct_writer.shallow_data.runtime = nullptr;
+          struct_writer.shallow_data.storeflag &= ~runtime_store_flags;
+        });
   }
 }
 
@@ -660,6 +683,7 @@ void ED_spacetype_outliner()
 
   st->spaceid = SPACE_OUTLINER;
   STRNCPY_UTF8(st->name, "Outliner");
+  st->struct_size = sizeof(SpaceOutliner);
 
   st->create = outliner_create;
   st->free = outliner_free;

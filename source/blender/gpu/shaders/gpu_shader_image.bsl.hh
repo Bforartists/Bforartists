@@ -6,7 +6,6 @@
 
 #include "gpu_shader_colorspace.bsl.hh"
 #include "gpu_shader_math_vector_reduce.bsl.hh"
-#include "gpu_shader_utildefines.bsl.hh"
 
 namespace builtin::image {
 
@@ -92,8 +91,8 @@ struct FragOut {
   }
 
   if (srt.use_shuffle) [[static_branch]] {
-    col *= float4(col.r * srt.shuffle.r + col.g * srt.shuffle.g + col.b * srt.shuffle.b +
-                  col.a * srt.shuffle.a);
+    col = float4(col.r * srt.shuffle.r + col.g * srt.shuffle.g + col.b * srt.shuffle.b +
+                 col.a * srt.shuffle.a);
   }
 
   if (srt.use_color) [[static_branch]] {
@@ -226,8 +225,8 @@ struct FragOutStereo {
     gpu_discard_fragment();
   }
 
-  frag_out.color_overlay = texelFetch(srt.imageTexture, texel, 0);
-  frag_out.color_image = texelFetch(srt.overlayTexture, texel, 0);
+  frag_out.color_overlay = texelFetch(srt.overlayTexture, texel, 0);
+  frag_out.color_image = texelFetch(srt.imageTexture, texel, 0);
 }
 
 }  // namespace builtin::image

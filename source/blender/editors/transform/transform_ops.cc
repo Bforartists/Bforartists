@@ -13,6 +13,7 @@
 #include "DNA_scene_types.h"
 
 #include "BLI_math_vector_c.hh"
+#include "BLI_string.hh"
 #include "BLI_utildefines.hh"
 
 #include "BLT_translation.hh"
@@ -22,6 +23,7 @@
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "RNA_access.hh"
 #include "RNA_define.hh"
@@ -39,6 +41,7 @@
 #include "ED_screen.hh"
 /** For #USE_LOOPSLIDE_HACK only. */
 #include "ED_mesh.hh"
+#include "ED_sequencer.hh"
 
 #include "transform.hh"
 #include "transform_convert.hh"
@@ -151,7 +154,6 @@ const EnumPropertyItem rna_enum_transform_mode_type_items[] = {
     {ed::transform::TFM_TIME_SLIDE, "TIME_SLIDE", 0, "Time Slide", ""},
     {ed::transform::TFM_TIME_SCALE, "TIME_SCALE", 0, "Time Scale", ""},
     {ed::transform::TFM_TIME_EXTEND, "TIME_EXTEND", 0, "Time Extend", ""},
-    {ed::transform::TFM_BAKE_TIME, "BAKE_TIME", 0, "Bake Time", ""},
     {ed::transform::TFM_BWEIGHT, "BWEIGHT", 0, "Bevel Weight", ""},
     {ed::transform::TFM_ALIGN, "ALIGN", 0, "Align", ""},
     {ed::transform::TFM_EDGE_SLIDE, "EDGESLIDE", 0, "Edge Slide", ""},
@@ -435,7 +437,7 @@ static wmOperatorStatus transform_modal(bContext *C, wmOperator *op, const wmEve
   /* Allow navigation while transforming. */
   if (t->vod && (exit_code & OPERATOR_PASS_THROUGH)) {
     RegionView3D *rv3d = static_cast<RegionView3D *>(t->region->regiondata);
-    const bool is_navigating = (rv3d->rflag & RV3D_NAVIGATING) != 0;
+    const bool is_navigating = (rv3d->runtime->tags & bke::RV3D_TAG_NAVIGATING) != 0;
     if (ED_view3d_navigation_do(C, t->vod, event, t->center_global)) {
       if (!is_navigating) {
         /* Navigation has started. */
@@ -448,7 +450,7 @@ static wmOperatorStatus transform_modal(bContext *C, wmOperator *op, const wmEve
         }
       }
 
-      if (rv3d->rflag & RV3D_NAVIGATING) {
+      if (rv3d->runtime->tags & bke::RV3D_TAG_NAVIGATING) {
         /* Navigation is running. */
 
         /* Do not update transform while navigating. This can be distracting. */
@@ -495,6 +497,7 @@ static wmOperatorStatus transform_modal(bContext *C, wmOperator *op, const wmEve
       BLI_assert(ot_new != nullptr);
       if (ot_new) {
         WM_operator_type_set(op, ot_new);
+        t->keymap = WM_keymap_active(CTX_wm_manager(C), op->type->modalkeymap);
       }
       /* End suspicious code. */
     }
@@ -1390,6 +1393,17 @@ static void TRANSFORM_OT_edge_bevelweight(wmOperatorType *ot)
   properties_register(ot, P_SNAP);
 }
 
+static bool seq_slide_poll_property(const bContext * /*C*/,
+                                    wmOperator *op,
+                                    const PropertyRNA *prop)
+{
+  const char *prop_id = RNA_property_identifier(prop);
+  if (STR_ELEM(prop_id, "all_channels", "markers", "insert")) {
+    return RNA_enum_get(op->ptr, "overlap_mode") == SEQ_OVERLAP_RIPPLE;
+  }
+  return true;
+}
+
 static void TRANSFORM_OT_seq_slide(wmOperatorType *ot)
 {
   /* Identifiers. */
@@ -1404,6 +1418,7 @@ static void TRANSFORM_OT_seq_slide(wmOperatorType *ot)
   ot->modal = transform_modal;
   ot->cancel = transform_cancel;
   ot->poll = ED_operator_sequencer_active;
+  ot->poll_property = seq_slide_poll_property;
 
   /* Properties. */
   PropertyRNA *prop;
@@ -1418,6 +1433,17 @@ static void TRANSFORM_OT_seq_slide(wmOperatorType *ot)
                          "Restore Handle Selection",
                          "Restore handle selection after tweaking");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+
+  prop = RNA_def_enum(ot->srna,
+                      "overlap_mode",
+                      rna_enum_strip_overlap_mode_items,
+                      SEQ_OVERLAP_SHUFFLE,
+                      "Overlap Mode",
+                      "How to resolve overlap after transformation");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+  vse::operator_properties_ripple(
+      ot, SEQ_RIPPLE_ALL_CHANNELS | SEQ_RIPPLE_MARKERS | SEQ_RIPPLE_INSERT);
 
   WM_operatortype_props_advanced_begin(ot);
 

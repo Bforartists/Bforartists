@@ -191,7 +191,7 @@ void update_sculpt_normal(const Depsgraph &depsgraph,
   if (brush.falloff_shape == PAINT_FALLOFF_SHAPE_SPHERE) {
     /* TODO: This is inefficient for symmetry */
     ss.cache->sculpt_normal_symm =
-        calc_area_normal(depsgraph, brush, ob, node_mask).value_or(float3(0));
+        sample_plane_normal(depsgraph, brush, ob, node_mask).value_or(float3(0));
     return;
   }
 
@@ -261,7 +261,7 @@ void update_cache_invariants(VPaint &vp, SculptSession &ss, wmOperator *op, cons
   cache->accum = true;
 
   if (BKE_brush_color_jitter_get_settings(&vp.paint, stroke->brush)) {
-    cache->initial_hsv_jitter = seed_hsv_jitter();
+    cache->initial_hsv_jitter = BKE_paint_seed_hsv_jitter();
   }
 }
 
@@ -423,9 +423,9 @@ static ColorPaint4f vpaint_get_current_col(VPaint &vp, bool secondary)
 /* Weight-paint has `wpaint_blend`. */
 template<typename Color, typename Traits>
 static Color vpaint_blend(const VPaint &vp,
-                          Color color_curr,
-                          Color color_orig,
-                          Color color_paint,
+                          const Color color_curr,
+                          const Color color_orig,
+                          const Color color_paint,
                           const typename Traits::ValueType alpha,
                           const typename Traits::BlendType brush_alpha_value)
 {
@@ -434,35 +434,32 @@ static Color vpaint_blend(const VPaint &vp,
   const Brush &brush = *BKE_paint_brush_for_read(&vp.paint);
   const IMB_BlendMode blend = IMB_BlendMode(brush.blend);
 
-  const Color color_blend = BLI_mix_colors<Color, Traits>(blend, color_curr, color_paint, alpha);
+  Color color_blend = BLI_mix_colors<Color, Traits>(blend, color_curr, color_paint, alpha);
 
   /* If no accumulate, clip color adding with `color_orig` & `color_test`. */
   if (!vwpaint::brush_use_accumulate(vp)) {
-    uint a;
-    Color color_test;
-    Value *cp, *ct, *co;
+    const Color color_test = BLI_mix_colors<Color, Traits>(
+        blend, color_orig, color_paint, brush_alpha_value);
 
-    color_test = BLI_mix_colors<Color, Traits>(blend, color_orig, color_paint, brush_alpha_value);
+    Value *cp = (Value *)&color_blend;
+    const Value *ct = (const Value *)&color_test;
+    const Value *co = (const Value *)&color_orig;
 
-    cp = (Value *)&color_blend;
-    ct = (Value *)&color_test;
-    co = (Value *)&color_orig;
-
-    for (a = 0; a < 4; a++) {
-      if (ct[a] < co[a]) {
-        if (cp[a] < ct[a]) {
-          cp[a] = ct[a];
+    for (int i = 0; i < 4; i++) {
+      if (ct[i] < co[i]) {
+        if (cp[i] < ct[i]) {
+          cp[i] = ct[i];
         }
-        else if (cp[a] > co[a]) {
-          cp[a] = co[a];
+        else if (cp[i] > co[i]) {
+          cp[i] = co[i];
         }
       }
       else {
-        if (cp[a] < co[a]) {
-          cp[a] = co[a];
+        if (cp[i] < co[i]) {
+          cp[i] = co[i];
         }
-        else if (cp[a] > ct[a]) {
-          cp[a] = ct[a];
+        else if (cp[i] > ct[i]) {
+          cp[i] = ct[i];
         }
       }
     }
@@ -470,9 +467,8 @@ static Color vpaint_blend(const VPaint &vp,
 
   if ((brush.flag & BRUSH_LOCK_ALPHA) && !ELEM(blend, IMB_BLEND_ERASE_ALPHA, IMB_BLEND_ADD_ALPHA))
   {
-    Value *cp, *cc;
-    cp = (Value *)&color_blend;
-    cc = (Value *)&color_curr;
+    Value *cp = (Value *)&color_blend;
+    const Value *cc = (const Value *)&color_curr;
     cp[3] = cc[3];
   }
 
@@ -1891,7 +1887,7 @@ static void fill_bm_face_or_corner_attribute(BMesh &bm,
   BMFace *f;
   BMIter iter;
   BM_ITER_MESH (f, &iter, &bm, BM_FACES_OF_MESH) {
-    if (only_visible && paint_is_bmesh_face_hidden(f)) {
+    if (only_visible && BKE_paint_is_bmesh_face_hidden(f)) {
       continue;
     }
     BMLoop *l = f->l_first;
@@ -1965,9 +1961,8 @@ static void fill_mesh_color(Mesh &mesh,
                             const bool affect_alpha,
                             const bool only_visible = false)
 {
-  if (BMEditMesh *em = mesh.runtime->edit_mesh.get()) {
-    BMesh *bm = em->bm;
-    const BMDataLayerLookup attr = BM_data_layer_lookup(*mesh.runtime->edit_mesh->bm, name);
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(&mesh)) {
+    const BMDataLayerLookup attr = BM_data_layer_lookup(*bm, name);
     if (attr.type == bke::AttrType::ColorFloat) {
       fill_bm_face_or_corner_attribute<ColorPaint4f>(
           *bm, color, attr.domain, attr.offset, use_vert_sel, only_visible);

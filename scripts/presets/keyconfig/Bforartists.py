@@ -11,6 +11,8 @@ keyconfig_data = \
     ("view3d.move", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True}, None),
     ("view3d.zoom", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("view3d.dolly", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("view3d.view_roll", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
+     {"properties": [("type", 'ANGLE')]}),  # BFA - drag to roll the view, also in camera view
     ("view3d.view_selected",
      {"type": 'F', "value": 'PRESS', "ctrl": True, "repeat": True},
      {"properties":
@@ -7468,6 +7470,10 @@ keyconfig_data = \
     ("sequencer.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
     ("sequencer.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True}, None),
     ("sequencer.select_grouped", {"type": 'G', "value": 'PRESS', "shift": True}, None),
+    ("sequencer.select_lasso", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "ctrl": True},
+     {"properties": [("mode", 'ADD')]}),  # BFA - lasso like Dopesheet/Graph Editor
+    ("sequencer.select_lasso", {"type": 'RIGHTMOUSE', "value": 'CLICK_DRAG', "shift": True, "ctrl": True},
+     {"properties": [("mode", 'SUB')]}),
     ("wm.call_menu",
      {"type": 'A', "value": 'PRESS', "shift": True},
      {"properties":

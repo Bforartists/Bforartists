@@ -377,7 +377,7 @@ static bool set_attribute_type(const GPUMaterial *gpu_material,
   if (index == -1) {
     return false;
   }
-  curves_infos.is_point_attribute[index][0] = is_point_domain;
+  SET_FLAG_FROM_TEST(curves_infos.is_point_attribute, is_point_domain, 1 << index);
   return true;
 }
 
@@ -415,7 +415,7 @@ void curves_bind_resources_implementation(PassT &sub_ps,
     const int index = attribute_index_in_material(gpu_material, "", true, false);
     if (index != -1) {
       sub_ps.bind_texture("l", cache.curves_length_buf);
-      curves_infos.is_point_attribute[index][0] = false;
+      SET_FLAG_FROM_TEST(curves_infos.is_point_attribute, false, 1 << index);
     }
   }
   {
@@ -423,7 +423,7 @@ void curves_bind_resources_implementation(PassT &sub_ps,
     const int index = attribute_index_in_material(gpu_material, "", false, true);
     if (index != -1) {
       sub_ps.bind_texture("i", cache.evaluated_time_buf);
-      curves_infos.is_point_attribute[index][0] = true;
+      SET_FLAG_FROM_TEST(curves_infos.is_point_attribute, true, 1 << index);
     }
   }
 
@@ -497,11 +497,11 @@ void curves_bind_resources(PassSimple::Sub &sub_ps,
 }
 
 template<typename PassT>
-gpu::Batch *curves_sub_pass_setup_implementation(PassT &sub_ps,
-                                                 const Scene *scene,
-                                                 Object *ob,
-                                                 const char *&r_error,
-                                                 GPUMaterial *gpu_material = nullptr)
+Batch *curves_sub_pass_setup_implementation(PassT &sub_ps,
+                                            const Scene *scene,
+                                            Object *ob,
+                                            const char *&r_error,
+                                            GPUMaterial *gpu_material = nullptr)
 {
   BLI_assert(ob->type == OB_CURVES);
   Curves &curves_id = DRW_object_get_data_for_drawing<Curves>(*ob);
@@ -534,11 +534,11 @@ gpu::Batch *curves_sub_pass_setup_implementation(PassT &sub_ps,
       sub_ps, module, curves_cache, face_per_segment, gpu_material, indirection_buf, uv_name);
 
   bool error = false;
-  gpu::Batch *batch = curves_cache.batch_get(curves.evaluated_points_num(),
-                                             curves.curves_num(),
-                                             face_per_segment,
-                                             curves.has_cyclic_curve(),
-                                             error);
+  Batch *batch = curves_cache.batch_get(curves.evaluated_points_num(),
+                                        curves.curves_num(),
+                                        face_per_segment,
+                                        curves.has_cyclic_curve(),
+                                        error);
   if (error) {
     r_error = RPT_(
         "Error: Curves object contains too many points. "
@@ -547,20 +547,20 @@ gpu::Batch *curves_sub_pass_setup_implementation(PassT &sub_ps,
   return batch;
 }
 
-gpu::Batch *curves_sub_pass_setup(PassMain::Sub &ps,
-                                  const Scene *scene,
-                                  Object *ob,
-                                  const char *&r_error,
-                                  GPUMaterial *gpu_material)
+Batch *curves_sub_pass_setup(PassMain::Sub &ps,
+                             const Scene *scene,
+                             Object *ob,
+                             const char *&r_error,
+                             GPUMaterial *gpu_material)
 {
   return curves_sub_pass_setup_implementation(ps, scene, ob, r_error, gpu_material);
 }
 
-gpu::Batch *curves_sub_pass_setup(PassSimple::Sub &ps,
-                                  const Scene *scene,
-                                  Object *ob,
-                                  const char *&r_error,
-                                  GPUMaterial *gpu_material)
+Batch *curves_sub_pass_setup(PassSimple::Sub &ps,
+                             const Scene *scene,
+                             Object *ob,
+                             const char *&r_error,
+                             GPUMaterial *gpu_material)
 {
   return curves_sub_pass_setup_implementation(ps, scene, ob, r_error, gpu_material);
 }

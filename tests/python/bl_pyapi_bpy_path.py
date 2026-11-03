@@ -35,6 +35,50 @@ class TestBpyPath(unittest.TestCase):
         self.assertEqual(ensure_ext('demoBlend', 'blend', case_sensitive=True), 'demoBlendblend')
         self.assertEqual(ensure_ext('demo', '', case_sensitive=True), 'demo')
 
+    def test_abspath(self):
+        import os
+        from bpy.path import abspath
+
+        def assert_equal_abspath(path, start, expect):
+            # Test both strings and bytes.
+            self.assertEqual(abspath(path, start=start), expect)
+            self.assertEqual(abspath(path.encode(), start=start.encode()), expect.encode())
+
+        start = os.path.join(os.sep, "foo", "bar")
+
+        assert_equal_abspath("//a.png", start, os.path.join(start, "a.png"))
+
+        # Non-relative paths are left unchanged.
+        assert_equal_abspath("a.png", start, "a.png")
+
+        # Without a start directory the result stays relative.
+        assert_equal_abspath("//a.png", "", "a.png")
+
+        # Extra slashes after the `//` prefix must not make the path absolute.
+        assert_equal_abspath("///a.png", start, os.path.join(start, "a.png"))
+        assert_equal_abspath("////a.png", start, os.path.join(start, "a.png"))
+        assert_equal_abspath("///a.png", "", "a.png")
+        assert_equal_abspath("////a.png", "", "a.png")
+        assert_equal_abspath("///", "", "")
+
+    def test_template_escape(self):
+        from bpy.path import template_escape
+
+        self.assertEqual(template_escape(''), '')
+        self.assertEqual(template_escape('/a/b.blend'), '/a/b.blend')
+        self.assertEqual(template_escape('/a/{b}/c'), '/a/{{b}}/c')
+        self.assertEqual(template_escape('{{}}'), '{{{{}}}}')
+        self.assertEqual(template_escape(path='{b}'), '{{b}}')
+
+        # Non UTF8 paths (as returned by `os.fsdecode`) must round-trip.
+        self.assertEqual(template_escape('/a/\udcff{b}'), '/a/\udcff{{b}}')
+
+        # Should work with both strings and bytes.
+        self.assertEqual(template_escape(b''), b'')
+        self.assertEqual(template_escape(b'/a/{b}/c'), b'/a/{{b}}/c')
+        self.assertEqual(template_escape(b'/a/\xff{b}'), b'/a/\xff{{b}}')
+        self.assertEqual(template_escape(b'/a/\xff/b'), b'/a/\xff/b')
+
     def test_is_autoexec(self):
         import bpy
         from bpy.path import is_autoexec
@@ -45,17 +89,35 @@ class TestBpyPath(unittest.TestCase):
         self.addCleanup(prefs.autoexec_paths.remove, path_cmp)
         path_cmp.path = "/untrusted/"
 
-        self.assertFalse(is_autoexec("/untrusted/"))
-        self.assertFalse(is_autoexec(b"/untrusted/"))
-        self.assertTrue(is_autoexec("/trusted/"))
+        self.assertFalse(is_autoexec("/untrusted/", skip_overrides=True))
+        self.assertFalse(is_autoexec(b"/untrusted/", skip_overrides=True))
+        self.assertTrue(is_autoexec("/trusted/", skip_overrides=True))
 
-        self.assertFalse(is_autoexec("/untrusted/demo.blend", strip_filename=True))
-        self.assertTrue(is_autoexec("/trusted/demo.blend", strip_filename=True))
+        self.assertFalse(is_autoexec("/untrusted/demo.blend", strip_filename=True, skip_overrides=True))
+        self.assertTrue(is_autoexec("/trusted/demo.blend", strip_filename=True, skip_overrides=True))
 
         path_cmp.use_glob = True
         path_cmp.path = "*/download*"
-        self.assertFalse(is_autoexec("/home/user/downloads/"))
-        self.assertTrue(is_autoexec("/home/user/projects/"))
+        self.assertFalse(is_autoexec("/home/user/downloads/", skip_overrides=True))
+        self.assertTrue(is_autoexec("/home/user/projects/", skip_overrides=True))
+
+        # The default for "Trusted Source" also checks the preference.
+        path_cmp.use_glob = False
+        path_cmp.path = "/untrusted/"
+        prefs_filepaths = prefs.filepaths
+        self.addCleanup(
+            setattr, prefs_filepaths, "use_scripts_auto_execute", prefs_filepaths.use_scripts_auto_execute)
+
+        prefs_filepaths.use_scripts_auto_execute = True
+        self.assertTrue(is_autoexec("/trusted/", skip_overrides=False))
+        self.assertFalse(is_autoexec("/untrusted/", skip_overrides=False))
+
+        # Nothing is trusted by default, only the excluded paths are still checked.
+        prefs_filepaths.use_scripts_auto_execute = False
+        self.assertFalse(is_autoexec("/trusted/", skip_overrides=False))
+        self.assertFalse(is_autoexec("/untrusted/", skip_overrides=False))
+        self.assertTrue(is_autoexec("/trusted/", skip_overrides=True))
+        self.assertFalse(is_autoexec("/untrusted/", skip_overrides=True))
 
 
 if __name__ == '__main__':

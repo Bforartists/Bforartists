@@ -7,6 +7,8 @@
  */
 
 #include "BLI_array_utils.hh"
+#include "BLI_generic_array.hh"
+#include "BLI_implicit_sharing.hh"
 #include "BLI_listbase.hh"
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_matrix.hh"
@@ -803,19 +805,15 @@ static wmOperatorStatus curves_set_selection_domain_exec(bContext *C, wmOperator
     const std::string active_attribute = BKE_attributes_active_name_get(owner).value_or("");
     for (const StringRef selection_name : get_curves_selection_attribute_names(curves)) {
       if (const GVArray src = *attributes.lookup(selection_name, domain)) {
-        const CPPType &type = src.type();
-        void *dst = MEM_new_array_uninitialized(
-            attributes.domain_size(domain), type.size, __func__);
-        src.materialize(dst);
+        auto *dst = new ImplicitSharedValue<GArray<>>(src.type(), src.size(), NoInitialization());
+        src.materialize_to_uninitialized(dst->data.data());
 
         attributes.remove(selection_name);
-        if (!attributes.add(selection_name,
-                            domain,
-                            bke::cpp_type_to_attribute_type(type),
-                            bke::AttributeInitMoveArray(dst)))
-        {
-          MEM_delete_void(dst);
-        }
+        attributes.add(selection_name,
+                       domain,
+                       bke::cpp_type_to_attribute_type(dst->data.type()),
+                       bke::AttributeInitShared(dst->data.data(), *dst));
+        dst->remove_user_and_delete_if_last();
       }
     }
     if (!active_attribute.empty()) {
@@ -1403,7 +1401,7 @@ static wmOperatorStatus exec(bContext *C, wmOperator * /*op*/)
 
     bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
 
-    bke::SpanAttributeWriter<bool> cyclic = attributes.lookup_or_add_for_write_span<bool>(
+    bke::SpanAttributeWriter<bool> cyclic = attributes.ensure_for_write_span<bool>(
         "cyclic", bke::AttrDomain::Curve);
     array_utils::invert_booleans(cyclic.span, selection);
     cyclic.finish();

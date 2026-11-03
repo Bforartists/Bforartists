@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2020-2023 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from .prefs import get_addon_prefs
 

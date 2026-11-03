@@ -252,10 +252,7 @@ static void node_gather_link_searches(GatherLinkSearchOpParams &params)
           "Angle"_ustr, SOCK_VECTOR, NODE_COMPARE_GREATER_THAN, NODE_COMPARE_MODE_DIRECTION});
 }
 
-static void node_label(const bNodeTree * /*tree*/,
-                       const bNode *node,
-                       char *label,
-                       int label_maxncpy)
+static void node_label(const bNodeTree * /*tree*/, const bNode *node, MutableCStr label)
 {
   const NodeFunctionCompare *data = (NodeFunctionCompare *)node->storage;
   const char *name;
@@ -263,7 +260,7 @@ static void node_label(const bNodeTree * /*tree*/,
   if (!enum_label) {
     name = N_("Unknown");
   }
-  BLI_strncpy_utf8(label, IFACE_(name), label_maxncpy);
+  STRNCPY_UTF8(label, IFACE_(name));
 }
 
 static float component_average(float3 a)
@@ -1002,14 +999,14 @@ static void node_rna(StructRNA *srna)
 
   PropertyRNA *prop;
 
-  prop = RNA_def_node_enum(
+  RNA_def_node_enum(
       srna,
       "operation",
       "Operation",
       "",
       rna_enum_node_compare_operation_items,
       NOD_storage_enum_accessors(operation),
-      NODE_COMPARE_EQUAL,
+      NODE_COMPARE_GREATER_THAN,
       [](bContext * /*C*/, PointerRNA *ptr, PropertyRNA * /*prop*/, bool *r_free) {
         *r_free = true;
         bNode *node = static_cast<bNode *>(ptr->data);
@@ -1067,13 +1064,13 @@ static void node_rna(StructRNA *srna)
       });
   RNA_def_property_update_runtime(prop, data_type_update);
 
-  prop = RNA_def_node_enum(srna,
-                           "mode",
-                           "Mode",
-                           "",
-                           mode_items,
-                           NOD_storage_enum_accessors(mode),
-                           NODE_COMPARE_MODE_ELEMENT);
+  RNA_def_node_enum(srna,
+                    "mode",
+                    "Mode",
+                    "",
+                    mode_items,
+                    NOD_storage_enum_accessors(mode),
+                    NODE_COMPARE_MODE_ELEMENT);
 }
 
 static void node_register()

@@ -5204,6 +5204,7 @@ PyObject *BPyInit_bmesh_types()
   PyModule_AddType(submodule, &BPy_BMLayerItem_Type);
   /* `bmesh_py_types_meshdata.cc` */
   PyModule_AddType(submodule, &BPy_BMLoopUV_Type);
+  PyModule_AddType(submodule, &BPy_BMVertSkin_Type);
   PyModule_AddType(submodule, &BPy_BMDeformVert_Type);
 
   return submodule;
@@ -5769,7 +5770,7 @@ char *BPy_BMElem_StringFromHType_ex(const char htype, char ret[32])
     ret_array[i++] = BPy_BMLoop_Type.tp_name;
   }
   ret[0] = '(';
-  int ret_ofs = BLI_string_join_array_by_sep_char(ret + 1, 30, '/', ret_array, i) + 1;
+  int ret_ofs = BLI_string_join_array_by_sep_char(MutableCStr(ret + 1, 30), '/', ret_array, i) + 1;
   ret[ret_ofs] = ')';
   ret[ret_ofs + 1] = '\0';
   return ret;

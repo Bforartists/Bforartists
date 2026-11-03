@@ -10,6 +10,7 @@
 #include <string>
 
 #include "BLI_listbase.hh"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_memory_utils.hh"
 #include "BLI_threads.hh"
@@ -20,6 +21,7 @@
 #include "DNA_node_types.h"
 
 #include "BKE_compositor.hh"
+#include "BKE_compute_context_cache.hh"
 #include "BKE_cryptomatte.hh"
 #include "BKE_global.hh"
 #include "BKE_image.hh"
@@ -68,8 +70,8 @@ class Context : public compositor::Context {
  private:
   /* Input data. */
   CompositorInputData input_data_;
-  /* The hash of the active compute context. */
-  const ComputeContextHash active_compute_context_hash_;
+  /* The compute context of the active viewer if one exists. */
+  const ComputeContext *viewer_compute_context_;
 
   /* Cached GPU and CPU passes that the compositor took ownership of. Those had their reference
    * count incremented when accessed and need to be freed/have their reference count decremented
@@ -81,11 +83,13 @@ class Context : public compositor::Context {
   bool gpu_supported_ = true;
 
  public:
-  Context(compositor::StaticCacheManager &cache_manager, const CompositorInputData &input_data)
-      : compositor::Context(cache_manager),
+  Context(compositor::StaticCacheManager &cache_manager,
+          bke::ComputeContextCache &compute_context_cache,
+          const CompositorInputData &input_data)
+      : compositor::Context(cache_manager, compute_context_cache),
         input_data_(input_data),
-        active_compute_context_hash_(
-            bke::compositor::compute_active_compute_context_hash(input_data_.scene))
+        viewer_compute_context_(bke::compositor::compute_viewer_compute_context(
+            input_data_.scene, compute_context_cache))
   {
   }
 
@@ -125,9 +129,9 @@ class Context : public compositor::Context {
     return input_data_.needed_side_effects_outputs;
   }
 
-  const ComputeContextHash &get_active_compute_context_hash() const override
+  const ComputeContext *viewer_compute_context() const override
   {
-    return active_compute_context_hash_;
+    return viewer_compute_context_;
   }
 
   const RenderData &get_render_data() const override
@@ -155,9 +159,33 @@ class Context : public compositor::Context {
     return size;
   }
 
+  float get_proxy_scale() const
+  {
+    /* Proxy is only for interactive preview, not final render. */
+    if (this->render_context()) {
+      return 1.0f;
+    }
+
+    /* Proxy disabled. */
+    if (!flag_is_set(this->get_render_data().compositor_proxy_flags,
+                     CompositorProxyFlags::UsePreviewScale))
+    {
+      return 1.0f;
+    }
+
+    return this->get_render_data().compositor_proxy_preview_scale / 100.0f;
+  }
+
   compositor::Domain get_compositing_domain() const override
   {
-    return compositor::Domain(this->get_render_size());
+    compositor::Domain domain = compositor::Domain(this->get_render_size());
+    domain.pixel_size *= this->get_proxy_scale();
+    if (flag_is_set(this->get_render_data().compositor_proxy_flags,
+                    CompositorProxyFlags::AdaptToRenderScale))
+    {
+      domain.pixel_size *= float2(this->get_render_data().size / 100.0f);
+    }
+    return domain;
   }
 
   void write_output_image(const compositor::Result &result)
@@ -198,6 +226,9 @@ class Context : public compositor::Context {
                       render_result->rectx * render_result->recty * 4 * sizeof(float));
         }
       }
+
+      /* Compositor output is scene linear, previous pixels were replaced. */
+      image_buffer->float_buffer.colorspace = nullptr;
 
       /* Free outdated GPU texture. */
       IMB_free_gpu_textures(image_buffer);
@@ -551,6 +582,10 @@ class Context : public compositor::Context {
       pass_data.release();
     }
 
+    pass.domain().pixel_size = this->get_compositing_domain().pixel_size;
+    pass.domain().transformation *= math::from_scale<float3x3>(float2(this->get_proxy_scale())) *
+                                    pass.domain().transformation;
+
     /* We assume the given pass is a Cryptomatte pass and retrieve its layer name. If it wasn't a
      * Cryptomatte pass, the checks below will fail anyway. */
     const std::string combined_pass_name = std::string(view_layer->name) + "." + pass_name;
@@ -567,25 +602,25 @@ class Context : public compositor::Context {
     BKE_stamp_info_callback(
         &callback_data,
         render_result->stamp_data,
-        [](void *user_data, const char *key, char *value, int /*value_maxncpy*/) {
+        [](void *user_data, const char *key, MutableCStr value) {
           StampCallbackData *data = static_cast<StampCallbackData *>(user_data);
 
           const std::string manifest_key = bke::cryptomatte::BKE_cryptomatte_meta_data_key(
               data->cryptomatte_layer_name, "manifest");
           if (key == manifest_key) {
-            data->meta_data->cryptomatte.manifest = value;
+            data->meta_data->cryptomatte.manifest = value.data();
           }
 
           const std::string hash_key = bke::cryptomatte::BKE_cryptomatte_meta_data_key(
               data->cryptomatte_layer_name, "hash");
           if (key == hash_key) {
-            data->meta_data->cryptomatte.hash = value;
+            data->meta_data->cryptomatte.hash = value.data();
           }
 
           const std::string conversion_key = bke::cryptomatte::BKE_cryptomatte_meta_data_key(
               data->cryptomatte_layer_name, "conversion");
           if (key == conversion_key) {
-            data->meta_data->cryptomatte.conversion = value;
+            data->meta_data->cryptomatte.conversion = value.data();
           }
         },
         false);
@@ -627,18 +662,9 @@ class Context : public compositor::Context {
     return this->get_scene().runtime->compositor.nodes_evaluation_log.get();
   }
 
-  void evaluate_operation_post() const override
+  bool supports_canceling() const override
   {
-    /* If the compositor is executing due to a user edit the node tree, we wait until the operation
-     * finishes executing on the GPU before we continue to improve interactivity. The improvement
-     * comes from the fact that the user might be rapidly changing values, so we need to cancel
-     * previous evaluations to make editing faster, but we can't do that if all operations are
-     * submitted to the GPU all at once, and we can't cancel work that was already submitted to the
-     * GPU. This does have a performance penalty, but in practice, the improved interactivity is
-     * worth it according to user feedback. */
-    if (this->use_gpu() && input_data_.triggered_by_user) {
-      GPU_finish();
-    }
+    return input_data_.triggered_by_user;
   }
 
   bool is_canceled() const override
@@ -743,7 +769,7 @@ class Context : public compositor::Context {
      * viewer. */
     const bool needs_viewer_output = flag_is_set(this->needed_side_effect_output_types(),
                                                  compositor::SideEffectOutputTypes::ViewerNode);
-    if (!operation.has_viewer_output() && needs_viewer_output) {
+    if (!this->viewer_compute_context() && needs_viewer_output) {
       this->write_viewer(output_result);
     }
 
@@ -804,7 +830,8 @@ class Compositor {
 
   void execute(const CompositorInputData &input_data)
   {
-    Context context(cache_manager_, input_data);
+    bke::ComputeContextCache compute_context_cache;
+    Context context(cache_manager_, compute_context_cache, input_data);
 
     if (context.use_gpu()) {
       /* For main thread rendering in background mode, blocking rendering, or when we do not have a
@@ -866,7 +893,8 @@ class Compositor {
    * compositor, since it is much easier and safer. */
   bool needs_to_be_recreated(const CompositorInputData &input_data)
   {
-    Context context(cache_manager_, input_data);
+    bke::ComputeContextCache compute_context_cache;
+    Context context(cache_manager_, compute_context_cache, input_data);
     /* See last_evaluation_used_gpu_ and last_evaluation_precision_ for more information what how
      * they are different from the ones returned from the context. */
     return context.use_gpu() != last_evaluation_used_gpu_ ||

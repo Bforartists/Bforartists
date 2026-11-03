@@ -4,8 +4,11 @@
  *
  * Author: Sergey Sharybin. */
 
+#include <algorithm>
+#include <utility>
+#include <vector>
+
 #include "internal/base/type_convert.h"
-#include "internal/topology/mesh_topology.h"
 
 #include "opensubdiv_converter_capi.hh"
 #include "opensubdiv_topology_refiner.hh"
@@ -31,7 +34,7 @@ static bool checkSchemeTypeMatches(const TopologyRefinerImpl *topology_refiner_i
                                    const OpenSubdiv_Converter *converter)
 {
   const OpenSubdiv::Sdc::SchemeType converter_scheme_type =
-      blender::opensubdiv::getSchemeTypeFromCAPI(converter->getSchemeType(converter));
+      blender::opensubdiv::getSchemeTypeFromCAPI(converter->scheme_type);
   return (converter_scheme_type == getOSDTopologyRefiner(topology_refiner_impl)->GetSchemeType());
 }
 
@@ -43,7 +46,7 @@ static bool checkOptionsMatches(const TopologyRefinerImpl *topology_refiner_impl
   const Options::FVarLinearInterpolation fvar_interpolation = options.GetFVarLinearInterpolation();
   const Options::FVarLinearInterpolation converter_fvar_interpolation =
       blender::opensubdiv::getFVarLinearInterpolationFromCAPI(
-          converter->getFVarLinearInterpolation(converter));
+          converter->fvar_linear_interpolation);
   if (fvar_interpolation != converter_fvar_interpolation) {
     return false;
   }
@@ -58,48 +61,79 @@ static bool checkPreliminaryMatches(const TopologyRefinerImpl *topology_refiner_
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Base mesh topology.
+
+static bool checkBaseMeshTopologyMatches(const TopologyRefinerImpl *topology_refiner_impl,
+                                         const OpenSubdiv_Converter *converter)
+{
+  if (topology_refiner_impl->base_verts_num != converter->verts_num) {
+    return false;
+  }
+  if (!std::ranges::equal(converter->face_offsets, topology_refiner_impl->base_face_offsets)) {
+    return false;
+  }
+  if (!std::ranges::equal(converter->corner_verts, topology_refiner_impl->base_corner_verts)) {
+    return false;
+  }
+  if (!std::ranges::equal(converter->edge_sharpness, topology_refiner_impl->base_edge_sharpness)) {
+    return false;
+  }
+  if (!std::ranges::equal(converter->vert_sharpness, topology_refiner_impl->base_vert_sharpness)) {
+    return false;
+  }
+
+  // NOTE: Ignoring the sharpness we don't really care about the content of the edges, they should
+  // be in the consistent state with the faces and face-vertices compared above. If that's not the
+  // case the mesh is invalid and comparison can not happen reliably. For sharpness it is
+  // important to know that the edges still connect the same pair of vertices though.
+  const std::vector<std::pair<int, int>> &base_edges = topology_refiner_impl->base_edges_sparse;
+  for (size_t edge_index = 0; edge_index < base_edges.size(); edge_index++) {
+    if (topology_refiner_impl->base_edge_sharpness[edge_index] < 1e-6f) {
+      continue;
+    }
+    if (base_edges[edge_index] != converter->edges[edge_index]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Compare attributes which affects on topology.
 //
 // TODO(sergey): Need to look into how auto-winding affects on face-varying
 // indexing and, possibly, move to mesh topology as well if winding affects
 // face-varyign as well.
 
-static bool checkSingleUVLayerMatch(const OpenSubdiv::Far::TopologyLevel &base_level,
-                                    const OpenSubdiv_Converter *converter,
-                                    const int layer_index)
-{
-  converter->precalcUVLayer(converter, layer_index);
-  const int num_faces = base_level.GetNumFaces();
-  // TODO(sergey): Need to check whether converter changed the winding of
-  // face to match OpenSubdiv's expectations.
-  for (int face_index = 0; face_index < num_faces; ++face_index) {
-    OpenSubdiv::Far::ConstIndexArray base_level_face_uvs = base_level.GetFaceFVarValues(
-        face_index, layer_index);
-    for (int corner = 0; corner < base_level_face_uvs.size(); ++corner) {
-      const int uv_index = converter->getFaceCornerUVIndex(converter, face_index, corner);
-      if (base_level_face_uvs[corner] != uv_index) {
-        converter->finishUVLayer(converter);
-        return false;
-      }
-    }
-  }
-  converter->finishUVLayer(converter);
-  return true;
-}
-
 static bool checkUVLayersMatch(const TopologyRefinerImpl *topology_refiner_impl,
                                const OpenSubdiv_Converter *converter)
 {
+  using OpenSubdiv::Far::ConstIndexArray;
   using OpenSubdiv::Far::TopologyLevel;
-  const int num_layers = converter->getNumUVLayers(converter);
+  const std::span<const OpenSubdiv_Converter::UVLayer> uv_layers = converter->uv_layers;
   const TopologyLevel &base_level = getOSDTopologyBaseLevel(topology_refiner_impl);
   // Number of UV layers should match.
-  if (base_level.GetNumFVarChannels() != num_layers) {
+  if (base_level.GetNumFVarChannels() != int(uv_layers.size())) {
     return false;
   }
-  for (int layer_index = 0; layer_index < num_layers; ++layer_index) {
-    if (!checkSingleUVLayerMatch(base_level, converter, layer_index)) {
+  const std::span<const int> face_offsets = converter->face_offsets;
+  const int num_faces = base_level.GetNumFaces();
+  for (int channel = 0; channel < int(uv_layers.size()); ++channel) {
+    const OpenSubdiv_Converter::UVLayer &uv_layer = uv_layers[channel];
+    if (base_level.GetNumFVarValues(channel) != uv_layer.uvs_num) {
       return false;
+    }
+    // TODO(sergey): Need to check whether converter changed the winding of
+    // face to match OpenSubdiv's expectations.
+    for (int face_index = 0; face_index < num_faces; ++face_index) {
+      const ConstIndexArray base_level_face_uvs = base_level.GetFaceFVarValues(face_index,
+                                                                               channel);
+      const std::span<const int> face_uvs = uv_layer.corner_uv_indices.subspan(
+          face_offsets[face_index], base_level_face_uvs.size());
+      if (!std::ranges::equal(base_level_face_uvs, face_uvs)) {
+        return false;
+      }
     }
   }
   return true;
@@ -117,7 +151,7 @@ bool TopologyRefinerImpl::isEqualToConverter(const OpenSubdiv_Converter *convert
     return false;
   }
 
-  if (!base_mesh_topology.isEqualToConverter(converter)) {
+  if (!checkBaseMeshTopologyMatches(this, converter)) {
     return false;
   }
 

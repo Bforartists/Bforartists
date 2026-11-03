@@ -12,6 +12,7 @@
 #include "BLI_compiler_attrs.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_mutex.hh"
+#include "BLI_span.hh"
 #include "BLI_string_ref.hh"
 
 #include "IMB_imbuf_enums.h"
@@ -31,6 +32,7 @@ class ColorSpace;
 using ColorSpace = ocio::ColorSpace;
 
 struct rcti;
+struct ColorManagedColorspaceSettings;
 struct Depsgraph;
 struct ID;
 struct ImBuf;
@@ -95,10 +97,7 @@ void BKE_image_free_buffers_ex(Image *image, bool do_lock);
  */
 void BKE_image_free_data(Image *image);
 
-typedef void(StampCallback)(void *data,
-                            const char *propname,
-                            char *propvalue,
-                            int propvalue_maxncpy);
+typedef void(StampCallback)(void *data, const char *propname, MutableCStr propvalue);
 
 void BKE_render_result_stamp_info(Scene *scene,
                                   Object *camera,
@@ -156,12 +155,12 @@ MovieReader *openanim(const char *filepath,
                       ImBufFlags ibuf_flags,
                       int streamindex,
                       bool keep_original_colorspace,
-                      char colorspace[IMA_MAX_SPACE]);
+                      ColorManagedColorspaceSettings *colorspace_settings);
 MovieReader *openanim_noload(const char *filepath,
                              ImBufFlags flags,
                              int streamindex,
                              bool keep_original_colorspace,
-                             char colorspace[IMA_MAX_SPACE]);
+                             ColorManagedColorspaceSettings *colorspace_settings);
 
 /* ********************************** NEW IMAGE API *********************** */
 
@@ -203,11 +202,14 @@ ImBuf *BKE_image_acquire_ibuf(Image *ima, ImageUser *iuser, void **r_lock);
  *
  * If #r_load_failed is provided, it is set to true when the image is known to have failed
  * loading when the #ImBuf is null, as opposed to not having been loaded yet.
+ *
+ * If #cached_only is true, image buffers are not loaded from files.
  */
 ImBuf *BKE_image_acquire_ibuf_gpu(Image *ima,
                                   ImageUser *iuser,
                                   void **r_lock,
-                                  bool *r_load_failed = nullptr);
+                                  bool *r_load_failed = nullptr,
+                                  bool cached_only = false);
 
 /**
  * Return image buffer for given image, user, pass, and view.
@@ -474,10 +476,7 @@ bool BKE_image_has_alpha(Image *image);
  * Get tile index for tiled images.
  * \return The string length.
  */
-int BKE_image_get_tile_label(const Image *ima,
-                             const ImageTile *tile,
-                             char *label,
-                             int label_maxncpy);
+int BKE_image_get_tile_label(const Image *ima, const ImageTile *tile, MutableCStr label);
 
 /**
  * Checks whether the given filepath refers to a UDIM tiled texture.
@@ -513,8 +512,8 @@ bool BKE_image_is_filename_tokenized(char *filepath);
  * Ensures that `filename` contains a UDIM token if we find a supported format pattern.
  * \note This must only be the name component (without slashes).
  */
-void BKE_image_ensure_tile_token(char *filepath, size_t filepath_maxncpy);
-void BKE_image_ensure_tile_token_filename_only(char *filename, size_t filename_maxncpy);
+void BKE_image_ensure_tile_token(MutableCStr filepath);
+void BKE_image_ensure_tile_token_filename_only(MutableCStr filename);
 
 /**
  * When provided with an absolute virtual `filepath`, check to see if at least

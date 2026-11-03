@@ -33,6 +33,16 @@ enum MemoryType {
   MEM_IMAGE_TEXTURE,
 };
 
+enum MemoryFlag {
+  /* Never map to host memory when the device runs out of memory, where using
+   * GPU memory is essential for performance. Scene data will then be moved to
+   * the host instead. */
+  MEM_FLAG_NO_HOST_FALLBACK = (1 << 0),
+  /* Allocate a copy on every device instead of distributing across peer devices,
+   * for memory that devices write to during rendering. */
+  MEM_FLAG_PER_DEVICE = (1 << 1),
+};
+
 /* Supported Data Types */
 
 enum DataType {
@@ -203,6 +213,12 @@ template<> struct device_type_traits<uint16_t> {
   static_assert(sizeof(uint16_t) == num_elements * datatype_size(data_type));
 };
 
+template<> struct device_type_traits<packed_half3> {
+  static const DataType data_type = TYPE_HALF;
+  static const size_t num_elements = 3;
+  static_assert(sizeof(packed_half3) == num_elements * datatype_size(data_type));
+};
+
 template<> struct device_type_traits<half4> {
   static const DataType data_type = TYPE_HALF;
   static const size_t num_elements = 4;
@@ -263,6 +279,9 @@ class device_memory {
   int shared_counter;
   bool move_to_host = false;
 
+  /* MemoryFlag. */
+  uint32_t flags;
+
   virtual ~device_memory();
 
   void swap_device(Device *new_device, const size_t new_device_size, device_ptr new_device_ptr);
@@ -292,7 +311,7 @@ class device_memory {
   friend class OneapiDevice;
 
   /* Only create through subclasses. */
-  device_memory(Device *device, const char *name, MemoryType type);
+  device_memory(Device *device, const char *name, MemoryType type, uint32_t flags = 0);
 
   /* Host allocation on the device. All host_pointer memory should be
    * allocated with these functions, for devices that support using
@@ -387,8 +406,8 @@ template<typename T> class device_only_memory : public device_memory {
 
 template<typename T> class device_vector : public device_memory {
  public:
-  device_vector(Device *device, const char *name, MemoryType type)
-      : device_memory(device, name, type)
+  device_vector(Device *device, const char *name, MemoryType type, const uint32_t flags = 0)
+      : device_memory(device, name, type, flags)
   {
     data_type = device_type_traits<T>::data_type;
     data_elements = device_type_traits<T>::num_elements;

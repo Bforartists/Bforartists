@@ -21,12 +21,14 @@
 
 #include "BLT_translation.hh"
 
+#include "BKE_animsys.hh"
 #include "BKE_context.hh"
 #include "BKE_idprop.hh"
 #include "BKE_layer.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
+#include "BKE_scene_context.hh"
 #include "BKE_screen.hh"
 #include "BKE_unit.hh"
 
@@ -866,8 +868,8 @@ static bool ed_markers_poll_no_locked_markers(bContext *C)
 /* add TimeMarker at current frame */
 static wmOperatorStatus ed_marker_add_exec(bContext *C, wmOperator * /*op*/)
 {
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
   ListBaseT<TimeMarker> *markers = is_sequencer ? ED_sequencer_context_get_markers(C) :
                                                   ED_context_get_markers(C);
 
@@ -969,8 +971,7 @@ static bool ed_marker_move_use_time(MarkerMove *mm)
 
 static void ed_marker_move_update_header(bContext *C, wmOperator *op)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   MarkerMove *mm = static_cast<MarkerMove *>(op->customdata);
   TimeMarker *marker, *selmarker = nullptr;
   const int ofs = RNA_int_get(op->ptr, "frames");
@@ -1016,8 +1017,8 @@ static void ed_marker_move_update_header(bContext *C, wmOperator *op)
 /* return 0 if not OK */
 static bool ed_marker_move_init(bContext *C, wmOperator *op)
 {
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
   ListBaseT<TimeMarker> *markers = is_sequencer ? ED_sequencer_context_get_markers(C) :
                                                   ED_context_get_markers(C);
   MarkerMove *mm;
@@ -1116,8 +1117,7 @@ static wmOperatorStatus ed_marker_move_invoke(bContext *C, wmOperator *op, const
 static void ed_marker_move_apply(bContext *C, wmOperator *op)
 {
   bScreen *screen = CTX_wm_screen(C);
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   Object *camera = scene->camera;
   MarkerMove *mm = static_cast<MarkerMove *>(op->customdata);
   TimeMarker *marker;
@@ -1153,8 +1153,7 @@ static void ed_marker_move_cancel(bContext *C, wmOperator *op)
 
 static wmOperatorStatus ed_marker_move_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   MarkerMove *mm = static_cast<MarkerMove *>(op->customdata);
   View2D *v2d = ui::view2d_fromcontext(C);
   const bool has_numinput = hasNumInput(&mm->num);
@@ -1528,13 +1527,15 @@ static wmOperatorStatus ed_marker_select_exec(bContext *C, wmOperator *op)
   const View2D *v2d = ui::view2d_fromcontext(C);
 
   const float marker_frame = ui::view2d_region_to_view_x(v2d, mval[0]);
-  ListBaseT<TimeMarker> *markers = ED_context_get_markers(C);
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+  ListBaseT<TimeMarker> *markers = is_sequencer ? ED_sequencer_context_get_markers(C) :
+                                                  ED_context_get_markers(C);
   const TimeMarker *marker = ED_markers_find_nearest_marker(markers, marker_frame);
   const bool is_over_marker = region_position_is_over_marker(v2d, markers, mval[0]);
 
   const bool camera = RNA_boolean_get(op->ptr, "camera");
 
-  if (camera && marker->camera && CTX_data_mode_enum(C) != CTX_MODE_OBJECT) {
+  if (camera && marker && marker->camera && CTX_data_mode_enum(C) != CTX_MODE_OBJECT) {
     /* Supporting mode switching from this operator doesn't seem so useful.
      * So only select the camera in object-mode. */
     BKE_report(op->reports,
@@ -2016,9 +2017,7 @@ static wmOperatorStatus ed_marker_make_links_scene_exec(bContext *C, wmOperator 
   /* copy markers */
   for (TimeMarker &marker : *markers) {
     if (marker.flag & SELECT) {
-      marker_new = MEM_dupalloc(&marker);
-      marker_new->prev = marker_new->next = nullptr;
-
+      marker_new = BKE_copy_time_marker(marker, 0);
       BLI_addtail(&scene_to->markers, marker_new);
     }
   }
@@ -2059,11 +2058,11 @@ static void MARKER_OT_make_links_scene(wmOperatorType *ot)
 static wmOperatorStatus ed_marker_camera_bind_exec(bContext *C, wmOperator *op)
 {
   bScreen *screen = CTX_wm_screen(C);
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return OPERATOR_CANCELLED;
   }
+  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
   ListBaseT<TimeMarker> *markers = is_sequencer ? ED_sequencer_context_get_markers(C) :
                                                   ED_context_get_markers(C);
   Object *ob = CTX_data_active_object(C);

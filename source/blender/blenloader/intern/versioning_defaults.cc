@@ -10,7 +10,7 @@
  * Unlike regular versioning this makes changes that ensure the startup file
  * has brushes and other presets setup to take advantage of newer features.
  *
- * To update preference defaults see `userdef_default.c`.
+ * To update preference defaults see `versioning_userdef.cc`.
  */
 
 #define DNA_DEPRECATED_ALLOW
@@ -48,7 +48,7 @@
 #include "BKE_colortools.hh"
 #include "BKE_curveprofile.h"
 #include "BKE_customdata.hh"
-#include "BKE_gpencil_legacy.h"
+#include "BKE_grease_pencil.hh"
 #include "BKE_idprop.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
@@ -157,6 +157,15 @@ static void blo_update_defaults_screen(bScreen *screen,
       /* Show markers region, hide channels and collapse summary in timelines. */
       SpaceAction *saction = area.spacedata.first_as<SpaceAction>();
       saction->flag |= SACTION_SHOW_MARKERS;
+      /* BFA (#6780): scene strip gizmo defaults - overlays on with the
+       * interactive gizmos, the layered "Show All Strips" indicators and both
+       * strip and scene name labels enabled, indicator opacity at 0.5. "Set
+       * Preview Range" (ADS_SHOW_USE_PREVIEW_RANGE) is deliberately NOT
+       * force-enabled so new files start with the toggle off. */
+      saction->overlays.flag |= (ADS_SHOW_SCENE_STRIP_GIZMOS |
+                                 ADS_SHOW_SCENE_STRIP_ALL |
+                                 ADS_SHOW_SCENE_STRIP_STRIP_NAME | ADS_SHOW_SCENE_STRIP_SCENE_NAME);
+      saction->overlays.all_strips_opacity = 0.5f;
       if (saction->mode == SACTCONT_TIMELINE) {
         saction->ads.flag |= ADS_FLAG_SUMMARY_COLLAPSED;
 
@@ -202,7 +211,7 @@ static void blo_update_defaults_screen(bScreen *screen,
                                     SEQ_TIMELINE_STRIP_END_THUMBNAILS;
       seq->preview_overlay.flag |= SEQ_PREVIEW_SHOW_OUTLINE_SELECTED;
       seq->cache_overlay.flag = SEQ_CACHE_SHOW | SEQ_CACHE_SHOW_FINAL_OUT;
-      seq->draw_flag |= SEQ_DRAW_TRANSFORM_PREVIEW;
+      seq->draw_flag |= SEQ_DRAW_EDIT_POINT_PREVIEW;
     }
     else if (area.spacetype == SPACE_TEXT) {
       /* Show syntax and line numbers in Script workspace text editor. */
@@ -240,7 +249,6 @@ static void blo_update_defaults_screen(bScreen *screen,
       v3d->overlay.gpencil_vertex_paint_opacity = 1.0f;
       /* Always use theme color for wireframe by default. */
       v3d->shading.wire_color_type = V3D_SHADING_SINGLE_COLOR;
-      v3d->shading.use_compositor = V3D_SHADING_USE_COMPOSITOR_ALWAYS;
 
       /* Level out the 3D Viewport camera rotation, see: #113751. */
       constexpr float viewports_to_level[][4] = {
@@ -404,6 +412,21 @@ void BLO_update_defaults_workspace(WorkSpace *workspace, const char *app_templat
       }
     }
   }
+
+  /* For General template. */
+  if (STRPREFIX(workspace->id.name + 2, "Layout")) {
+    for (WorkSpaceLayout &layout : workspace->layouts) {
+      bScreen *screen = layout.screen;
+      if (screen) {
+        for (ScrArea &area : screen->areabase) {
+          if (area.spacetype == SPACE_VIEW3D) {
+            View3D *v3d = area.spacedata.first_as<View3D>();
+            v3d->shading.use_compositor = V3D_SHADING_USE_COMPOSITOR_ALWAYS;
+          }
+        }
+      }
+    }
+  }
 }
 
 static void blo_update_defaults_paint(Paint *paint)
@@ -455,6 +478,8 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
   scene->r.bake.im_format.exr_flag |= R_IMF_EXR_FLAG_MULTIPART;
 
   scene->r.compositor_device = SCE_COMPOSITOR_DEVICE_GPU;
+  scene->r.compositor_cache_flags = SCE_COMPOSITOR_CACHE_FRAMES;
+  scene->r.compositor_proxy_flags = CompositorProxyFlags::AdaptToRenderScale;
 
   /* BFA - Turn on the compositor nodes by default, or else they an unnecessary step for compositing.*/
   /* Don't enable compositing nodes. */
@@ -636,7 +661,6 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       ma = static_cast<Material *>(
           BLI_findstring(&bmain->materials, "Solid Stroke", offsetof(ID, name) + 2));
       if (ma != nullptr) {
-        ma->gp_style->mix_rgba[3] = 1.0f;
         ma->gp_style->texture_offset[0] = -0.5f;
         ma->gp_style->mix_factor = 0.5f;
       }
@@ -646,7 +670,6 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
           BLI_findstring(&bmain->materials, "Solid Fill", offsetof(ID, name) + 2));
       if (ma != nullptr) {
         ma->gp_style->flag &= ~GP_MATERIAL_STROKE_SHOW;
-        ma->gp_style->mix_rgba[3] = 1.0f;
         ma->gp_style->texture_offset[0] = -0.5f;
         ma->gp_style->mix_factor = 0.5f;
       }
@@ -685,7 +708,7 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
 
       /* Ensure Palette by default. */
       if (ts->gp_paint) {
-        BKE_gpencil_palette_ensure(bmain, &scene);
+        BKE_grease_pencil_palette_ensure(bmain, &scene);
       }
     }
 

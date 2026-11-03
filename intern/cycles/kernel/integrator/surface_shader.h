@@ -213,7 +213,7 @@ ccl_device_inline void surface_shader_prepare_closures(KernelGlobals kg,
 
       /* NOTE: this is a sufficient condition. If `blur_roughness < THRESH < original_roughness`
        * then the flag was already set. */
-      if (!roughness_is_almost_specular(blur_roughness, blur_roughness)) {
+      if (!alpha_is_almost_specular(blur_roughness, blur_roughness)) {
         sd->runtime_flag |= SR_BSDF_HAS_EVAL;
       }
     }
@@ -386,14 +386,13 @@ ccl_device
 #else
 ccl_device_inline
 #endif
-    float
-    surface_shader_bsdf_eval(KernelGlobals kg,
-                             ccl_attr_maybe_unused IntegratorState state,
-                             ccl_private ShaderData *sd,
-                             const float3 wo,
-                             ccl_private BsdfEval *bsdf_eval,
-                             const uint light_shader_flags,
-                             ccl_private float &r_avg_roughness_squared)
+    float surface_shader_bsdf_eval(KernelGlobals kg,
+                                   ccl_attr_maybe_unused IntegratorState state,
+                                   ccl_private ShaderData *sd,
+                                   const float3 wo,
+                                   ccl_private BsdfEval *bsdf_eval,
+                                   const uint light_shader_flags,
+                                   ccl_private float &r_avg_roughness_squared)
 {
   bsdf_eval_init(bsdf_eval, zero_spectrum());
 

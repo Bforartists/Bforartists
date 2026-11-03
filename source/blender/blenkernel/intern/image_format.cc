@@ -74,7 +74,8 @@ void BKE_image_format_update_color_space_for_type(ImageFormatData *format)
   if (format->linear_colorspace_settings.name[0] == '\0' || image_requires_linear != is_linear) {
     const int role = image_requires_linear ? COLOR_ROLE_SCENE_LINEAR : COLOR_ROLE_DEFAULT_BYTE;
     const char *default_color_space = IMB_colormanagement_role_colorspace_name_get(role);
-    STRNCPY_UTF8(format->linear_colorspace_settings.name, default_color_space);
+    IMB_colormanagement_colorspace_settings_set(&format->linear_colorspace_settings,
+                                                default_color_space);
   }
 }
 
@@ -613,38 +614,33 @@ int BKE_image_path_ext_from_imtype(const char imtype, const char *r_ext[BKE_IMAG
   return image_path_ext_from_imformat_impl(imtype, nullptr, r_ext);
 }
 
-static bool do_ensure_image_extension(char *filepath,
-                                      const size_t filepath_maxncpy,
+static bool do_ensure_image_extension(MutableCStr filepath,
                                       const char imtype,
                                       const ImageFormatData *im_format)
 {
   const char *ext_array[BKE_IMAGE_PATH_EXT_MAX];
   int ext_array_num = image_path_ext_from_imformat_impl(imtype, im_format, ext_array);
-  if (ext_array_num && !BLI_path_extension_check_array(filepath, ext_array)) {
+  if (ext_array_num && !BLI_path_extension_check_array(filepath.data(), ext_array)) {
     /* Removing *any* extension may remove part of the user defined name (if they include '.')
      * however in the case there is already a known image extension,
      * remove it to avoid`.png.tga`, for example. */
-    if (BLI_path_extension_check_array(filepath, imb_ext_image)) {
-      return BLI_path_extension_replace(filepath, filepath_maxncpy, ext_array[0]);
+    if (BLI_path_extension_check_array(filepath.data(), imb_ext_image)) {
+      return BLI_path_extension_replace(filepath, ext_array[0]);
     }
-    return BLI_path_extension_ensure(filepath, filepath_maxncpy, ext_array[0]);
+    return BLI_path_extension_ensure(filepath, ext_array[0]);
   }
 
   return false;
 }
 
-int BKE_image_path_ext_from_imformat_ensure(char *filepath,
-                                            const size_t filepath_maxncpy,
-                                            const ImageFormatData *im_format)
+int BKE_image_path_ext_from_imformat_ensure(MutableCStr filepath, const ImageFormatData *im_format)
 {
-  return do_ensure_image_extension(filepath, filepath_maxncpy, im_format->imtype, im_format);
+  return do_ensure_image_extension(filepath, im_format->imtype, im_format);
 }
 
-int BKE_image_path_ext_from_imtype_ensure(char *filepath,
-                                          const size_t filepath_maxncpy,
-                                          const char imtype)
+int BKE_image_path_ext_from_imtype_ensure(MutableCStr filepath, const char imtype)
 {
-  return do_ensure_image_extension(filepath, filepath_maxncpy, imtype, nullptr);
+  return do_ensure_image_extension(filepath, imtype, nullptr);
 }
 
 static Vector<path_templates::Error> do_makepicstring(
@@ -666,7 +662,7 @@ static Vector<path_templates::Error> do_makepicstring(
 
   if (template_variables) {
     const Vector<path_templates::Error> variable_errors = BKE_path_apply_template(
-        filepath, FILE_MAX, *template_variables);
+        MutableCStr(filepath, FILE_MAX), *template_variables);
     if (!variable_errors.is_empty()) {
       return variable_errors;
     }
@@ -675,22 +671,22 @@ static Vector<path_templates::Error> do_makepicstring(
   BLI_path_abs(filepath, relbase);
 
   if (use_frames) {
-    BLI_path_frame(filepath, FILE_MAX, frame, 4);
+    BLI_path_frame(MutableCStr(filepath, FILE_MAX), frame, 4);
   }
   else {
     /* Avoid empty filename if there is no frame and only a directory was specified. */
     const size_t len = strlen(filepath);
     if (len && BLI_path_slash_is_native_compat(filepath[len - 1])) {
-      BLI_path_suffix(filepath, FILE_MAX, DATA_("Untitled"), "");
+      BLI_path_suffix(MutableCStr(filepath, FILE_MAX), DATA_("Untitled"), "");
     }
   }
 
   if (suffix) {
-    BLI_path_suffix(filepath, FILE_MAX, suffix, "");
+    BLI_path_suffix(MutableCStr(filepath, FILE_MAX), suffix, "");
   }
 
   if (use_ext) {
-    do_ensure_image_extension(filepath, FILE_MAX, imtype, im_format);
+    do_ensure_image_extension(MutableCStr(filepath, FILE_MAX), imtype, im_format);
   }
 
   return {};
@@ -1124,8 +1120,9 @@ void BKE_image_format_color_management_copy_from_scene(ImageFormatData *imf, con
 
   BKE_color_managed_display_settings_copy(&imf->display_settings, &scene->display_settings);
   BKE_color_managed_view_settings_copy(&imf->view_settings, &scene->view_settings);
-  STRNCPY_UTF8(imf->linear_colorspace_settings.name,
-               IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR));
+  IMB_colormanagement_colorspace_settings_set(
+      &imf->linear_colorspace_settings,
+      IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR));
 }
 
 /* Output */
@@ -1164,8 +1161,9 @@ void BKE_image_format_init_for_write(ImageFormatData *imf,
     /* Use general scene settings also used for display. */
     BKE_color_managed_display_settings_copy(&imf->display_settings, &scene_src->display_settings);
     BKE_color_managed_view_settings_copy(&imf->view_settings, &scene_src->view_settings);
-    STRNCPY_UTF8(imf->linear_colorspace_settings.name,
-                 IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR));
+    IMB_colormanagement_colorspace_settings_set(
+        &imf->linear_colorspace_settings,
+        IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR));
   }
 }
 

@@ -31,6 +31,7 @@
 #include "BKE_node.hh"
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
+#include "BKE_scene_context.hh"
 
 #include "BLT_translation.hh"
 
@@ -85,6 +86,8 @@ class FrameChangeModalData {
   AnimKeylist *keylist;
   /** Playback state to restore when scrubbing ends. */
   std::optional<PreScrubbingState> pre_scrubbing;
+  /** Frame to restore when scrubbing is cancelled. */
+  float initial_frame = 0.0f;
 
   FrameChangeModalData()
   {
@@ -498,8 +501,7 @@ static float apply_frame_snap(bContext *C, FrameChangeModalData &op_data, const 
   ScrArea *area = CTX_wm_area(C);
 
   Vector<SnapTarget> targets;
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return frame;
   }
@@ -557,8 +559,7 @@ static float apply_frame_snap(bContext *C, FrameChangeModalData &op_data, const 
 /* Set the new frame number */
 static void change_frame_apply(bContext *C, wmOperator *op, const bool always_update)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return;
   }
@@ -620,8 +621,7 @@ static wmOperatorStatus change_frame_exec(bContext *C, wmOperator *op)
 static float frame_from_event(bContext *C, const wmEvent *event)
 {
   ARegion *region = CTX_wm_region(C);
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   float frame;
 
   /* convert from region coordinates to View2D 'tot' space */
@@ -656,8 +656,7 @@ static void change_frame_seq_preview_end(SpaceSeq *sseq)
 
 static bool use_playhead_snapping(bContext *C)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return false;
   }
@@ -700,6 +699,15 @@ static wmOperatorStatus change_frame_invoke(bContext *C, wmOperator *op, const w
   FrameChangeModalData *op_data = MEM_new<FrameChangeModalData>(__func__);
   op->customdata = op_data;
 
+  {
+    const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
+    const Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+
+    if (scene) {
+      op_data->initial_frame = BKE_scene_frame_get(scene);
+    }
+  }
+
   /* This check is done in case scrubbing and strip tweaking in the sequencer are bound to the same
    * event (e.g. RCS keymap where both are activated on left mouse press). Tweaking should take
    * precedence. */
@@ -720,6 +728,14 @@ static wmOperatorStatus change_frame_invoke(bContext *C, wmOperator *op, const w
   }
 
   op_data->pre_scrubbing = ED_screen_scrubbing_enable(*C, *screen);
+
+  /* BFA (#6780): in the dopesheet, timeline switches triggered by the playhead
+   * crossing into another scene strip (or the master fallback) are deferred
+   * until mouse release - the ghost highlight previews the target and the
+   * sequencer keeps live switching. */
+  if (CTX_wm_area(C) && CTX_wm_area(C)->spacetype == SPACE_ACTION) {
+    blender::ed::vse::sync_scene_strip_scrub_begin(*C, event);
+  }
 
   if (RNA_boolean_get(op->ptr, "seq_solo_preview")) {
     SpaceSeq *sseq = CTX_wm_space_seq(C);
@@ -765,10 +781,20 @@ static void change_frame_cancel(bContext *C, wmOperator *op)
     }
   }
 
+  /* BFA (#6780): a cancelled scrub drops the deferred timeline switch. */
+  blender::ed::vse::sync_scene_strip_scrub_cancel();
+
   if (need_extra_redraw_after_scrubbing_ends(C)) {
     Scene *scene = CTX_data_scene(C);
     WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
   }
+}
+
+static void change_frame_restore_initial(bContext *C, wmOperator *op)
+{
+  FrameChangeModalData *op_data = static_cast<FrameChangeModalData *>(op->customdata);
+  RNA_float_set(op->ptr, "frame", op_data->initial_frame);
+  change_frame_apply(C, op, true);
 }
 
 /* Modal event handling of frame changing */
@@ -778,7 +804,8 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
   /* execute the events */
   switch (event->type) {
     case EVT_ESCKEY:
-      ret = OPERATOR_FINISHED;
+      change_frame_restore_initial(C, op);
+      ret = OPERATOR_CANCELLED;
       break;
 
     case MOUSEMOVE:
@@ -787,10 +814,19 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
       break;
 
     case LEFTMOUSE:
-    case RIGHTMOUSE:
     case MIDDLEMOUSE:
       /* We check for either mouse-button to end, to work with all user keymaps. */
       if (event->val == KM_RELEASE) {
+        ret = OPERATOR_FINISHED;
+      }
+      break;
+
+    case RIGHTMOUSE:
+      if (event->val == KM_PRESS) {
+        change_frame_restore_initial(C, op);
+        ret = OPERATOR_CANCELLED;
+      }
+      else if (event->val == KM_RELEASE) {
         ret = OPERATOR_FINISHED;
       }
       break;
@@ -828,10 +864,23 @@ static wmOperatorStatus change_frame_modal(bContext *C, wmOperator *op, const wm
     bScreen *screen = CTX_wm_screen(C);
     FrameChangeModalData *op_data = static_cast<FrameChangeModalData *>(op->customdata);
     if (screen) {
-      ED_screen_scrubbing_disable(*C, *screen, op_data->pre_scrubbing);
+      const std::optional<PreScrubbingState> resume = (ret == OPERATOR_CANCELLED) ?
+                                                          std::nullopt :
+                                                          op_data->pre_scrubbing;
+      ED_screen_scrubbing_disable(*C, *screen, resume);
     }
     MEM_delete(op_data);
     op->customdata = nullptr;
+
+    /* BFA (#6780): mouse release in the dopesheet applies the deferred
+     * timeline switch (a no-op when no target was recorded). Esc and right-click
+     * cancel the scrub and restore the frame (Blender #161063), so they drop it. */
+    if (ret == OPERATOR_CANCELLED) {
+      blender::ed::vse::sync_scene_strip_scrub_cancel();
+    }
+    else if (CTX_wm_area(C) && CTX_wm_area(C)->spacetype == SPACE_ACTION) {
+      blender::ed::vse::sync_scene_strip_scrub_end(*C);
+    }
 
     if (RNA_boolean_get(op->ptr, "seq_solo_preview")) {
       SpaceSeq *sseq = CTX_wm_space_seq(C);
@@ -922,8 +971,7 @@ static bool anim_set_end_frames_poll(bContext *C)
 
 static wmOperatorStatus anim_set_sfra_exec(bContext *C, wmOperator *op)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   int frame;
 
   if (scene == nullptr) {
@@ -978,8 +1026,7 @@ static void ANIM_OT_start_frame_set(wmOperatorType *ot)
 
 static wmOperatorStatus anim_set_efra_exec(bContext *C, wmOperator *op)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   int frame;
 
   if (scene == nullptr) {
@@ -1040,8 +1087,7 @@ static void ANIM_OT_end_frame_set(wmOperatorType *ot)
 
 static wmOperatorStatus previewrange_define_exec(bContext *C, wmOperator *op)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return OPERATOR_CANCELLED;
   }
@@ -1108,8 +1154,7 @@ static void ANIM_OT_previewrange_set(wmOperatorType *ot)
 
 static wmOperatorStatus previewrange_clear_exec(bContext *C, wmOperator * /*op*/)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   ScrArea *curarea = CTX_wm_area(C);
 
   /* sanity checks */
@@ -1204,8 +1249,7 @@ static void ANIM_OT_debug_channel_list(wmOperatorType *ot)
 
 static wmOperatorStatus scene_range_frame_exec(bContext *C, wmOperator * /*op*/)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  const Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  const Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (!scene) {
     return OPERATOR_CANCELLED;
   }
@@ -1430,12 +1474,19 @@ static wmOperatorStatus replace_action_exec(bContext *C, wmOperator *op)
   bAction *new_action = reinterpret_cast<bAction *>(
       BKE_libblock_find_session_uid(bmain, ID_AC, new_session_uid));
 
-  if (!old_action || !new_action || old_action == new_action) {
+  if (!old_action || !new_action) {
     BKE_reportf(op->reports,
                 RPT_ERROR_INVALID_INPUT,
                 "Invalid old/new Action pair ('%s' / '%s')",
-                old_action ? old_action->id.name : "Invalid UID",
-                new_action ? new_action->id.name : "Invalid UID");
+                old_action ? old_action->id.name + 2 : "Invalid UID",
+                new_action ? new_action->id.name + 2 : "Invalid UID");
+    return OPERATOR_CANCELLED;
+  }
+  if (old_action == new_action) {
+    BKE_reportf(op->reports,
+                RPT_ERROR_INVALID_INPUT,
+                "Cannot replace Action with itself ('%s')",
+                old_action->id.name + 2);
     return OPERATOR_CANCELLED;
   }
 
@@ -1650,33 +1701,6 @@ static void ANIM_OT_replace_action_new(wmOperatorType *ot)
 /** \name Convert
  * \{ */
 
-static Vector<ed::AnimTransformable> selected_transformables_from_context(bContext *C)
-{
-  Vector<ed::AnimTransformable> transformables;
-  Vector<PointerRNA> pointers;
-  switch (CTX_data_mode_enum(C)) {
-    case CTX_MODE_OBJECT: {
-      CTX_data_selected_objects(C, &pointers);
-      for (PointerRNA &ptr : pointers) {
-        transformables.append(ed::AnimTransformable(*id_cast<Object *>(ptr.owner_id)));
-      }
-      break;
-    }
-    case CTX_MODE_POSE: {
-      CTX_data_selected_pose_bones(C, &pointers);
-      for (PointerRNA &ptr : pointers) {
-        transformables.append(
-            {*id_cast<Object *>(ptr.owner_id), *static_cast<bPoseChannel *>(ptr.data)});
-      }
-      break;
-    }
-
-    default:
-      break;
-  }
-  return transformables;
-}
-
 /* Uniquely identifies an AnimTransformable for a Slot. The StringRefNull is the `rna_path()` of
  * the AnimTransformable.  */
 using SlotTransformableID = std::pair<const animrig::Slot *, StringRefNull>;
@@ -1732,7 +1756,8 @@ static wmOperatorStatus rotation_mode_convert_exec(bContext *C, wmOperator *op)
 
   Main *bmain = CTX_data_main(C);
 
-  Vector<ed::AnimTransformable> selected_transformables = selected_transformables_from_context(C);
+  Vector<ed::AnimTransformable> selected_transformables = ed::selected_transformables_from_context(
+      *C);
   for (ed::AnimTransformable &transformable : selected_transformables) {
     /* We cannot skip transformables based on their current rotation mode since that may be
      * animated. So `transformable.get_rotation_mode() == mode -> continue` won't work.*/
@@ -1910,6 +1935,9 @@ void ED_operatortypes_anim()
   WM_operatortype_append(ed::animrig::POSELIB_OT_create_pose_asset);
   WM_operatortype_append(ed::animrig::POSELIB_OT_asset_modify);
   WM_operatortype_append(ed::animrig::POSELIB_OT_asset_delete);
+
+  WM_operatortype_append(ed::animrig::ANIM_OT_world_space_copy);
+  WM_operatortype_append(ed::animrig::ANIM_OT_world_space_paste);
 }
 
 void ED_keymap_anim(wmKeyConfig *keyconf)

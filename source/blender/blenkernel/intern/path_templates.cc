@@ -205,8 +205,8 @@ std::optional<VariableMap> BKE_build_template_variables_for_prop(const bContext 
    * should produce variables consistent with that for the same render path
    * properties here.
    *
-   * This function is organized into three sections: one for "general"
-   * variables, one for "purpose-specific" variables, and one for
+   * This function is organized into two sections: a `switch` giving each
+   * purpose its "general" and "purpose-specific" variables, and one for
    * "type-specific" variables. (See the top-level documentation in
    * BKE_path_templates.hh for details on what that means).
    *
@@ -237,21 +237,23 @@ std::optional<VariableMap> BKE_build_template_variables_for_prop(const bContext 
   }
 
   VariableMap variables;
+  const Main *bmain = CTX_data_main(C);
 
-  /* General variables. */
-  BKE_blender_project_read_callback(CTX_data_main(C), [&](const bke::BlenderProject *project) {
-    BKE_add_template_variables_general(variables, ptr->owner_id, project);
-  });
-
-  /* Purpose-specific variables. */
+  /* General and purpose-specific variables. */
   switch (RNA_property_path_template_type(prop)) {
     case PROP_VARIABLES_NONE: {
-      /* Do nothing: no purpose-specific variables. */
+      BKE_blender_project_read_callback(bmain, [&](const bke::BlenderProject *project) {
+        BKE_add_template_variables_general(variables, ptr->owner_id, project);
+      });
       break;
     }
 
     /* Scene render output path, the compositor's File Output node's paths, etc. */
     case PROP_VARIABLES_RENDER_OUTPUT: {
+      BKE_blender_project_read_callback(bmain, [&](const bke::BlenderProject *project) {
+        BKE_add_template_variables_general(variables, ptr->owner_id, project);
+      });
+
       const Scene *scene;
       if (GS(ptr->owner_id->name) == ID_SCE) {
         scene = reinterpret_cast<const Scene *>(ptr->owner_id);
@@ -261,6 +263,16 @@ std::optional<VariableMap> BKE_build_template_variables_for_prop(const bContext 
       }
 
       BKE_add_template_variables_for_render_path(variables, *scene);
+      break;
+    }
+
+    /* Project settings. */
+    case PROP_VARIABLES_PROJECT: {
+      BKE_blender_project_read_callback(bmain, [&](const bke::BlenderProject *project) {
+        if (project) {
+          BKE_add_template_variables_for_project(variables, *project);
+        }
+      });
       break;
     }
   }
@@ -278,36 +290,43 @@ std::optional<VariableMap> BKE_build_template_variables_for_prop(const bContext 
   return variables;
 }
 
+void BKE_add_template_variables_for_project(VariableMap &variables,
+                                            const bke::BlenderProject &project)
+{
+  variables.add_string("project_name", project.get_name());
+
+  variables.add_filepath("project_root", project.get_root_path());
+
+  for (const std::unique_ptr<bke::ProjectVariable> &var : project.variables) {
+    switch (var->type_get()) {
+      case bke::ProjectVariableType::STRING: {
+        if (var->string_subtype_get() == bke::ProjectVariableStringSubtype::FILEPATH) {
+          variables.add_filepath(var->name_get(), var->value_string_get());
+        }
+        else {
+          variables.add_string(var->name_get(), var->value_string_get());
+        }
+        break;
+      }
+
+      case bke::ProjectVariableType::INT:
+        variables.add_integer(var->name_get(), var->value_int_get());
+        break;
+
+      case bke::ProjectVariableType::FLOAT:
+        variables.add_float(var->name_get(), var->value_float_get());
+        break;
+    }
+  }
+}
+
 void BKE_add_template_variables_general(bke::path_templates::VariableMap &variables,
                                         const ID *path_owner_id,
                                         const bke::BlenderProject *project)
 {
   /* Project variables. */
   if (project) {
-    variables.add_string("project_name", project->get_name());
-    variables.add_filepath("project_root", project->get_root_path());
-
-    for (const std::unique_ptr<bke::ProjectVariable> &var : project->variables) {
-      switch (var->type_get()) {
-        case bke::ProjectVariableType::STRING: {
-          if (var->string_subtype_get() == bke::ProjectVariableStringSubtype::FILEPATH) {
-            variables.add_filepath(var->name_get(), var->value_string_get());
-          }
-          else {
-            variables.add_string(var->name_get(), var->value_string_get());
-          }
-          break;
-        }
-
-        case bke::ProjectVariableType::INT:
-          variables.add_integer(var->name_get(), var->value_int_get());
-          break;
-
-        case bke::ProjectVariableType::FLOAT:
-          variables.add_float(var->name_get(), var->value_float_get());
-          break;
-      }
-    }
+    BKE_add_template_variables_for_project(variables, *project);
   }
 
   /* Global blend filepath (a.k.a. path to the blend file that's currently
@@ -877,6 +896,21 @@ bool BKE_path_contains_template_syntax(StringRef path)
   return path.find_first_of("{}") != std::string_view::npos;
 }
 
+std::string BKE_path_template_escape(const StringRef text)
+{
+  std::string escaped;
+  escaped.reserve(text.size());
+
+  for (const char c : text) {
+    escaped.push_back(c);
+    if (c == '{' || c == '}') {
+      escaped.push_back(c);
+    }
+  }
+
+  return escaped;
+}
+
 /**
  * Evaluates the path template in `in_path` and writes the result to `r_out_path`
  * if provided.
@@ -1018,18 +1052,16 @@ Vector<Error> BKE_path_validate_template(
   return eval_template(nullptr, path, template_variables);
 }
 
-Vector<Error> BKE_path_apply_template(char *path,
-                                      int path_maxncpy,
-                                      const VariableMap &template_variables)
+Vector<Error> BKE_path_apply_template(MutableCStr path, const VariableMap &template_variables)
 {
-  BLI_assert(path != nullptr);
+  BLI_assert(path.data() != nullptr);
 
   std::string evaluated_path;
-  const Vector<Error> errors = eval_template(&evaluated_path, path, template_variables);
+  const Vector<Error> errors = eval_template(&evaluated_path, path.data(), template_variables);
 
   if (errors.is_empty()) {
     /* No errors, so copy the modified path back to the original. */
-    BLI_strncpy(path, evaluated_path.c_str(), path_maxncpy);
+    STRNCPY(path, evaluated_path.c_str());
   }
   return errors;
 }

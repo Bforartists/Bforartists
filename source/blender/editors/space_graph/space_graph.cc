@@ -958,18 +958,12 @@ static void graph_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 static void graph_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   SpaceGraph *sipo = reinterpret_cast<SpaceGraph *>(sl);
-  ListBaseT<FCurve> tmpGhosts = sipo->runtime.ghost_curves;
-
-  /* temporarily disable ghost curves when saving */
-  sipo->runtime.ghost_curves.clear_no_delete();
-
-  writer->write_struct_cast<SpaceGraph>(sl);
+  writer->write_struct_cast<SpaceGraph>(sl, [](BlendStructWriter<SpaceGraph> &struct_writer) {
+    struct_writer.shallow_data.runtime = {};
+  });
   if (sipo->ads) {
     writer->write_struct(sipo->ads);
   }
-
-  /* Re-enable ghost curves. */
-  sipo->runtime.ghost_curves = tmpGhosts;
 }
 
 static bool action_region_poll_hide_in_driver_mode(const RegionPollParams *params)
@@ -986,6 +980,7 @@ void ED_spacetype_ipo()
 
   st->spaceid = SPACE_GRAPH;
   STRNCPY_UTF8(st->name, "Graph");
+  st->struct_size = sizeof(SpaceGraph);
 
   st->create = graph_create;
   st->free = graph_free;

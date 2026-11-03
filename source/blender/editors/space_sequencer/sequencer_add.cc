@@ -176,7 +176,7 @@ static bool sequencer_add_draw_check_fn(PointerRNA *ptr, PropertyRNA *prop, void
                    "frame_start",
                    "channel",
                    "length",
-                   "move_strips",
+                   "move_strips_after_add",
                    "replace_sel",
                    "skip_locked_or_muted_channels",
                    "use_sequence_detection");
@@ -186,14 +186,13 @@ static void sequencer_add_ui(bContext * /*C*/, wmOperator *op)
 {
   ui::Layout &layout = *op->layout;
   SequencerAddData *sad = static_cast<SequencerAddData *>(op->customdata);
-  ImageFormatData *imf = &sad->im_format;
 
   bool is_redo_panel = sad == nullptr;
 
   if (!is_redo_panel) {
-    layout.prop(op->ptr, "move_strips", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    layout.prop(op->ptr, "move_strips_after_add", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
-  if (!RNA_boolean_get(op->ptr, "move_strips") || is_redo_panel) {
+  if (!RNA_boolean_get(op->ptr, "move_strips_after_add") || is_redo_panel) {
     ui::Layout &col = layout.column(true);
     col.prop(op->ptr, "frame_start", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     layout.prop(op->ptr, "channel", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -217,11 +216,12 @@ static void sequencer_add_ui(bContext * /*C*/, wmOperator *op)
     layout.prop(op->ptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 
-  if (RNA_struct_find_property(op->ptr, "show_multiview")) {
+  if (!is_redo_panel && RNA_struct_find_property(op->ptr, "show_multiview")) {
     layout.separator();
 
     /* Image template. */
-    PointerRNA imf_ptr = RNA_pointer_create_discrete(nullptr, RNA_ImageFormatSettings, imf);
+    PointerRNA imf_ptr = RNA_pointer_create_discrete(
+        nullptr, RNA_ImageFormatSettings, &sad->im_format);
 
     /* Multiview template. */
     if (RNA_boolean_get(op->ptr, "show_multiview")) {
@@ -237,9 +237,9 @@ static void sequencer_generic_props__internal(wmOperatorType *ot, int flag)
   if (flag & SEQPROP_MOVE) {
     prop = RNA_def_boolean(
         ot->srna,
-        "move_strips",
+        "move_strips_after_add",
         true,
-        "Move Strips",
+        "Move Strips After Add",
         "Automatically begin translating strips with the mouse after adding them to the timeline");
     RNA_def_property_flag(prop, PROP_HIDDEN);
   }
@@ -290,12 +290,14 @@ static void sequencer_generic_props__internal(wmOperatorType *ot, int flag)
       ot->srna, "overlap", false, "Allow Overlap", "Don't correct overlap on new strips");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 
-  prop = RNA_def_boolean(
+  prop = RNA_def_enum(
       ot->srna,
-      "overlap_shuffle_override",
-      false,
-      "Override Overlap Shuffle Behavior",
-      "Use the overlap_mode tool settings to determine how to shuffle overlapping strips");
+      "overlap_mode",
+      rna_enum_strip_overlap_mode_items,
+      SEQ_OVERLAP_SHUFFLE,
+      "Overlap Mode",
+      "How to resolve overlap with existing strips. If unset, fallback to the overlap mode "
+      "from the tool settings, but shuffle vertically instead of horizontally");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 
   prop = RNA_def_boolean(ot->srna,
@@ -466,9 +468,9 @@ static bool op_invoked_by_drop_event(const wmOperator *op)
   return sad->is_drop_event;
 }
 
-static bool can_move_strips(const wmOperator *op)
+static bool should_move_strips_after_add(const wmOperator *op)
 {
-  PropertyRNA *prop = RNA_struct_find_property(op->ptr, "move_strips");
+  PropertyRNA *prop = RNA_struct_find_property(op->ptr, "move_strips_after_add");
 
   return prop != nullptr && RNA_property_boolean_get(op->ptr, prop) &&
          (op->flag & OP_IS_REPEAT) == 0 && !op_invoked_by_drop_event(op);
@@ -512,7 +514,7 @@ static void sequencer_generic_invoke_xy__internal(
 
 static void move_strips(bContext *C, wmOperator *op)
 {
-  if (!can_move_strips(op)) {
+  if (!should_move_strips_after_add(op)) {
     return;
   }
 
@@ -570,8 +572,7 @@ static bool load_data_init_from_operator(seq::LoadData *load_data, bContext *C, 
       RNA_PROP_BEGIN (op->ptr, itemptr, prop) {
         std::string filename = RNA_string_get(&itemptr, "name");
         STRNCPY(load_data->name, filename.c_str());
-        BLI_path_join(
-            load_data->path, sizeof(load_data->path), directory.c_str(), filename.c_str());
+        BLI_path_join(load_data->path, directory.c_str(), filename.c_str());
         break;
       }
       RNA_PROP_END;
@@ -627,11 +628,11 @@ static bool load_data_init_from_operator(seq::LoadData *load_data, bContext *C, 
   }
 
   if (region == nullptr) {
-    RNA_boolean_set(op->ptr, "move_strips", false);
+    RNA_boolean_set(op->ptr, "move_strips_after_add", false);
   }
 
   /* Override strip position by current mouse position. */
-  if (can_move_strips(op) && region != nullptr) {
+  if (should_move_strips_after_add(op) && region != nullptr) {
     const wmWindow *win = CTX_wm_window(C);
     int2 mouse_region(win->runtime->eventstate->xy[0] - region->winrct.xmin,
                       win->runtime->eventstate->xy[1] - region->winrct.ymin);
@@ -670,8 +671,9 @@ static bool sequencer_add_generic_exec(
   }
 
   /* Keeping the old selection when moving newly imported strips is unexpected and feels buggy,
-   * so we deselect when `move_strips` is set too. */
-  if (RNA_boolean_get(op->ptr, "move_strips") || RNA_boolean_get(op->ptr, "replace_sel")) {
+   * so we deselect when `move_strips_after_add` is set too. */
+  if (RNA_boolean_get(op->ptr, "move_strips_after_add") || RNA_boolean_get(op->ptr, "replace_sel"))
+  {
     deselect_all_strips(scene);
     seq::retiming_selection_clear(ed);
   }
@@ -681,6 +683,42 @@ static bool sequencer_add_generic_exec(
   }
 
   return true;
+}
+
+static bool should_handle_overlap(const wmOperator *op)
+{
+  return RNA_boolean_get(op->ptr, "overlap") == false;
+}
+
+static void seq_load_handle_overlap(bContext *C, wmOperator *op, Span<Strip *> strips)
+{
+  Scene *scene = CTX_data_sequencer_scene(C);
+  Editing *ed = seq::editing_get(scene);
+
+  const bool overlap_mode_is_set = RNA_struct_property_is_set(op->ptr, "overlap_mode");
+  const eSeqOverlapMode overlap_mode = overlap_mode_is_set ?
+                                           eSeqOverlapMode(RNA_enum_get(op->ptr, "overlap_mode")) :
+                                           seq::tool_settings_overlap_mode_get(scene);
+
+  /* Do some minimal shuffling now (on add) if there will be a move afterwards; this parks the
+   * strip in a free channel so that there will be no overlap on undo of the add. Otherwise, this
+   * is the final placement, so resolve overlap more properly instead of hard-coding to shuffle. */
+  if (should_move_strips_after_add(op) ||
+      (!overlap_mode_is_set && overlap_mode == SEQ_OVERLAP_SHUFFLE))
+  {
+    seq::transform_shuffle_vertical(ed->current_strips(), strips, scene);
+    return;
+  }
+
+  ScrArea *area = CTX_wm_area(C);
+  const bool use_sync_markers = ((area->spacedata.first_as<SpaceSeq>())->flag &
+                                 SEQ_MARKER_TRANS) != 0;
+  seq::transform_handle_overlap(scene,
+                                ed->current_strips(),
+                                strips,
+                                use_sync_markers,
+                                overlap_mode,
+                                seq::tool_settings_ripple_flag_get(scene));
 }
 
 static void seq_load_apply_generic_options(bContext *C, wmOperator *op, Strip *strip)
@@ -697,26 +735,12 @@ static void seq_load_apply_generic_options(bContext *C, wmOperator *op, Strip *s
     seq::select_active_set(scene, strip);
   }
 
-  if (RNA_boolean_get(op->ptr, "overlap") == true ||
-      !seq::transform_test_overlap(scene, ed->current_strips(), strip))
+  /* Use set overlap_mode to fix overlaps. */
+  if (should_handle_overlap(op) && seq::transform_test_overlap(scene, ed->current_strips(), strip))
   {
-    /* No overlap should be handled or the strip is not overlapping, exit early. */
-    return;
-  }
-
-  if (RNA_boolean_get(op->ptr, "overlap_shuffle_override")) {
-    /* Use set overlap_mode to fix overlaps. */
     VectorSet<Strip *> strip_col;
     strip_col.add(strip);
-
-    ScrArea *area = CTX_wm_area(C);
-    const bool use_sync_markers = ((area->spacedata.first_as<SpaceSeq>())->flag &
-                                   SEQ_MARKER_TRANS) != 0;
-    seq::transform_handle_overlap(scene, ed->current_strips(), strip_col, use_sync_markers);
-  }
-  else {
-    /* Shuffle strip channel to fix overlaps. */
-    seq::transform_seqbase_shuffle(ed->current_strips(), strip, scene);
+    seq_load_handle_overlap(C, op, strip_col);
   }
 }
 
@@ -1282,15 +1306,15 @@ static void sequencer_add_movie_strips_single_file(bContext *C,
   const Editing *ed = seq::editing_ensure(scene);
 
   const bool load_sound = RNA_boolean_get(op->ptr, "sound");
-  const bool overlap_shuffle_override = RNA_boolean_get(op->ptr, "overlap") == false &&
-                                        RNA_boolean_get(op->ptr, "overlap_shuffle_override");
+  const bool handle_overlap = should_handle_overlap(op);
 
   char filepath_abs[FILE_MAX];
   STRNCPY(filepath_abs, load_data->path);
   BLI_path_abs(filepath_abs, BKE_main_blendfile_path(bmain));
 
-  char colorspace[/*MAX_COLORSPACE_NAME*/ 64] = "\0";
-  MovieReader *probe_anim = openanim_noload(filepath_abs, ImBufFlags::Zero, 0, true, colorspace);
+  ColorManagedColorspaceSettings colorspace_settings;
+  MovieReader *probe_anim = openanim_noload(
+      filepath_abs, ImBufFlags::Zero, 0, true, &colorspace_settings);
   const int video_count = MOV_get_video_stream_count(probe_anim);
   const int sound_count = load_sound ? BKE_sound_stream_count(bmain, filepath_abs) : 0;
 
@@ -1360,7 +1384,7 @@ static void sequencer_add_movie_strips_single_file(bContext *C,
 
   /* Apply per-strip generic options. */
   for (const StripEntry &entry : entries) {
-    if (overlap_shuffle_override) {
+    if (handle_overlap) {
       r_has_overlap |= seq_load_apply_generic_options_only_test_overlap(C, op, entry.strip);
     }
     else {
@@ -1384,10 +1408,9 @@ static VectorSet<Strip *> sequencer_add_movie_strips(bContext *C,
                                                      seq::LoadData *load_data)
 {
   Scene *scene = CTX_data_sequencer_scene(C);
-  const Editing *ed = seq::editing_ensure(scene);
+  seq::editing_ensure(scene);
 
-  const bool overlap_shuffle_override = RNA_boolean_get(op->ptr, "overlap") == false &&
-                                        RNA_boolean_get(op->ptr, "overlap_shuffle_override");
+  const bool handle_overlap = should_handle_overlap(op);
 
   /* All strips eventually added by all files. */
   VectorSet<Strip *> strips_added;
@@ -1400,7 +1423,7 @@ static VectorSet<Strip *> sequencer_add_movie_strips(bContext *C,
       char file_only[FILE_MAX];
       RNA_string_get(op->ptr, "directory", dir_only);
       RNA_string_get(&itemptr, "name", file_only);
-      BLI_path_join(load_data->path, sizeof(load_data->path), dir_only, file_only);
+      BLI_path_join(load_data->path, dir_only, file_only);
       STRNCPY(load_data->name, file_only);
       sequencer_add_movie_strips_single_file(C, op, load_data, strips_added, has_overlap);
     }
@@ -1410,10 +1433,8 @@ static VectorSet<Strip *> sequencer_add_movie_strips(bContext *C,
     sequencer_add_movie_strips_single_file(C, op, load_data, strips_added, has_overlap);
   }
 
-  if (overlap_shuffle_override && has_overlap) {
-    SpaceSeq *sseq = CTX_wm_space_seq(C);
-    const bool use_sync_markers = (sseq->flag & SEQ_MARKER_TRANS) != 0;
-    seq::transform_handle_overlap(scene, ed->current_strips(), strips_added, use_sync_markers);
+  if (handle_overlap && has_overlap) {
+    seq_load_handle_overlap(C, op, strips_added);
   }
 
   return strips_added;
@@ -1558,23 +1579,32 @@ static void sequencer_add_sound_multiple_strips(bContext *C,
   Scene *scene = CTX_data_sequencer_scene(C);
   Editing *ed = seq::editing_ensure(scene);
 
+  const bool handle_overlap = should_handle_overlap(op);
+  VectorSet<Strip *> strips_added;
+  bool has_overlap = false;
+
   RNA_BEGIN (op->ptr, itemptr, "files") {
     char dir_only[FILE_MAX];
     char file_only[FILE_MAX];
     RNA_string_get(op->ptr, "directory", dir_only);
     RNA_string_get(&itemptr, "name", file_only);
-    BLI_path_join(load_data->path, sizeof(load_data->path), dir_only, file_only);
+    BLI_path_join(load_data->path, dir_only, file_only);
     STRNCPY(load_data->name, file_only);
     Strip *strip = seq::add_sound_strip(bmain, scene, ed->current_strips(), load_data);
     if (strip == nullptr) {
       BKE_reportf(op->reports, RPT_ERROR, "File '%s' could not be loaded", load_data->path);
     }
     else {
-      seq_load_apply_generic_options(C, op, strip);
+      has_overlap |= seq_load_apply_generic_options_only_test_overlap(C, op, strip);
+      strips_added.add(strip);
       load_data->start_frame += strip->right_handle(scene) - strip->left_handle();
     }
   }
   RNA_END;
+
+  if (handle_overlap && has_overlap) {
+    seq_load_handle_overlap(C, op, strips_added);
+  }
 }
 
 static bool sequencer_add_sound_single_strip(bContext *C, wmOperator *op, seq::LoadData *load_data)
@@ -1690,16 +1720,15 @@ void SEQUENCER_OT_sound_strip_add(wmOperatorType *ot)
 /** \name Add Image Strip
  * \{ */
 
-void frame_filename_set(char *dst,
-                        size_t dst_maxncpy,
+void frame_filename_set(MutableCStr dst,
                         const char *filename_stripped,
                         const int frame,
                         const int numdigits,
                         const char *ext)
 {
-  BLI_strncpy(dst, filename_stripped, dst_maxncpy);
-  BLI_path_frame(dst, dst_maxncpy, frame, numdigits);
-  BLI_path_extension_ensure(dst, dst_maxncpy, ext);
+  STRNCPY(dst, filename_stripped);
+  BLI_path_frame(dst, frame, numdigits);
+  BLI_path_extension_ensure(dst, ext);
 }
 
 static void sequencer_add_image_strip_load_files(wmOperator *op,
@@ -1715,22 +1744,21 @@ static void sequencer_add_image_strip_load_files(wmOperator *op,
 
   char ext[FILE_MAX];
   char filename_stripped[FILE_MAX];
-  BLI_path_split_file_part(load_data->path, filename_stripped, sizeof(filename_stripped));
-  BLI_path_frame_strip(filename_stripped, ext, sizeof(ext));
+  BLI_path_split_file_part(load_data->path, filename_stripped);
+  BLI_path_frame_strip(filename_stripped, ext);
 
   StripElem *se = strip->data->stripdata;
   const bool use_placeholders = RNA_boolean_get(op->ptr, "use_placeholders");
   if (use_placeholders) {
     for (int i = range->offset; i < range->max_framenr + 1; i++, se++) {
-      frame_filename_set(se->filename, sizeof(se->filename), filename_stripped, i, numdigits, ext);
+      frame_filename_set(se->filename, filename_stripped, i, numdigits, ext);
     }
   }
   else {
     size_t strip_frame = 0;
     for (ImageFrame &frame : range->frames) {
       char filename[FILE_MAX];
-      frame_filename_set(
-          filename, sizeof(filename), filename_stripped, frame.framenr, numdigits, ext);
+      frame_filename_set(filename, filename_stripped, frame.framenr, numdigits, ext);
       seq::add_image_load_file(scene, strip, strip_frame, filename);
       strip_frame++;
     }
@@ -1761,7 +1789,7 @@ static bool sequencer_add_image_sequence_force(bContext *C,
 
   Strip *strip = seq::add_image_strip(bmain, scene, ed->current_strips(), &load_data);
   char dirpath[sizeof(strip->data->dirpath)];
-  BLI_path_split_dir_part(load_data.path, dirpath, sizeof(dirpath));
+  BLI_path_split_dir_part(load_data.path, dirpath);
   seq::add_image_set_directory(strip, dirpath);
 
   int i = 0;
@@ -1792,17 +1820,21 @@ static bool sequencer_add_images(bContext *C, wmOperator *op, seq::LoadData &loa
   }
 
   const bool use_placeholders = RNA_boolean_get(op->ptr, "use_placeholders");
+  const bool handle_overlap = should_handle_overlap(op);
+  VectorSet<Strip *> strips_added;
+  bool has_overlap = false;
+
   for (ImageFrameRange &range : ranges) {
     /* Populate `load_data` with data from `range`. */
     load_data.image.count = use_placeholders ? range.max_framenr - range.offset + 1 :
                                                range.frames.count();
     STRNCPY(load_data.path, range.filepath);
-    BLI_path_split_file_part(load_data.path, load_data.name, sizeof(load_data.name));
+    BLI_path_split_file_part(load_data.path, load_data.name);
 
     Strip *strip = seq::add_image_strip(bmain, scene, ed->current_strips(), &load_data);
 
     char dirpath[sizeof(strip->data->dirpath)];
-    BLI_path_split_dir_part(load_data.path, dirpath, sizeof(dirpath));
+    BLI_path_split_dir_part(load_data.path, dirpath);
     seq::add_image_set_directory(strip, dirpath);
 
     /* Set `StripElem` filenames, one for each `ImageFrame` in this range, or if `use_placeholders`
@@ -1811,12 +1843,18 @@ static bool sequencer_add_images(bContext *C, wmOperator *op, seq::LoadData &loa
 
     seq::add_image_init_alpha_mode(bmain, scene, strip);
 
-    seq_load_apply_generic_options(C, op, strip);
+    has_overlap |= seq_load_apply_generic_options_only_test_overlap(C, op, strip);
+    strips_added.add(strip);
     load_data.start_frame += seq::transform_single_image_check(strip) ? load_data.image.length :
                                                                         load_data.image.count;
     range.frames.free_no_destruct();
   }
   ranges.free_no_destruct();
+
+  if (handle_overlap && has_overlap) {
+    seq_load_handle_overlap(C, op, strips_added);
+  }
+
   return true;
 }
 
@@ -2027,7 +2065,7 @@ static wmOperatorStatus sequencer_add_text_strip_exec(bContext *C, wmOperator *o
     RNA_BEGIN (op->ptr, itemptr, "files") {
       char filename[FILE_MAX];
       RNA_string_get(&itemptr, "name", filename);
-      BLI_path_join(load_data.path, sizeof(load_data.path), directory, filename);
+      BLI_path_join(load_data.path, directory, filename);
       STRNCPY(load_data.name, filename);
 
       const Strip *strip = sequencer_add_text_strip_from_file(C, op, &load_data);

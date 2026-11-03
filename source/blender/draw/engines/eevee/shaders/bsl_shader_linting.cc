@@ -40,6 +40,7 @@
 #include "eevee_gbuffer_types.bsl.hh"                /* IWYU pragma: export */
 #include "eevee_gbuffer_write.bsl.hh"                /* IWYU pragma: export */
 #include "eevee_geom_curves.bsl.hh"                  /* IWYU pragma: export */
+#include "eevee_geom_gsplat.bsl.hh"                  /* IWYU pragma: export */
 #include "eevee_geom_mesh.bsl.hh"                    /* IWYU pragma: export */
 #include "eevee_geom_pointcloud.bsl.hh"              /* IWYU pragma: export */
 #include "eevee_geom_types_lib.bsl.hh"               /* IWYU pragma: export */
@@ -69,11 +70,11 @@
 #include "eevee_ltc_lut_lib.bsl.hh"                  /* IWYU pragma: export */
 #include "eevee_material_variants.bsl.hh"            /* IWYU pragma: export */
 #include "eevee_motion_blur.bsl.hh"                  /* IWYU pragma: export */
-#include "eevee_nodetree_closures_lib.glsl"          /* IWYU pragma: export */
-#include "eevee_nodetree_frag_lib.glsl"              /* IWYU pragma: export */
+#include "eevee_nodetree_closures_lib.bsl.hh"        /* IWYU pragma: export */
+#include "eevee_nodetree_frag_lib.bsl.hh"            /* IWYU pragma: export */
 #include "eevee_nodetree_lib.bsl.hh"                 /* IWYU pragma: export */
-#include "eevee_nodetree_type_lib.glsl"              /* IWYU pragma: export */
-#include "eevee_nodetree_vert_lib.glsl"              /* IWYU pragma: export */
+#include "eevee_nodetree_type.bsl.hh"                /* IWYU pragma: export */
+#include "eevee_nodetree_vert_lib.bsl.hh"            /* IWYU pragma: export */
 #include "eevee_occupancy_convert.bsl.hh"            /* IWYU pragma: export */
 #include "eevee_occupancy_lib.bsl.hh"                /* IWYU pragma: export */
 #include "eevee_octahedron_lib.bsl.hh"               /* IWYU pragma: export */
@@ -105,7 +106,6 @@
 #include "eevee_shadow_tilemap_lib.bsl.hh"           /* IWYU pragma: export */
 #include "eevee_shadow_tracing.bsl.hh"               /* IWYU pragma: export */
 #include "eevee_shadow_visibility.bsl.hh"            /* IWYU pragma: export */
-#include "eevee_spherical_harmonics.bsl.hh"          /* IWYU pragma: export */
 #include "eevee_subsurface.bsl.hh"                   /* IWYU pragma: export */
 #include "eevee_subsurface_lib.bsl.hh"               /* IWYU pragma: export */
 #include "eevee_surf_capture.bsl.hh"                 /* IWYU pragma: export */

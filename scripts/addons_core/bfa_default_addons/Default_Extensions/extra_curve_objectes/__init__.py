@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2012-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2012-2025 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 if "bpy" in locals():
     import importlib
@@ -14,6 +14,7 @@ if "bpy" in locals():
     importlib.reload(add_curve_braid)
     importlib.reload(add_curve_simple)
     importlib.reload(add_curve_spirofit_bouncespline)
+    importlib.reload(preferences)
 
 else:
     from . import add_curve_aceous_galore
@@ -26,69 +27,21 @@ else:
     from . import add_curve_braid
     from . import add_curve_simple
     from . import add_curve_spirofit_bouncespline
+    from . import preferences
 
 import bpy
-from bpy.types import (
-        Menu,
-        AddonPreferences,
-        )
-from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        )
+from bpy.types import Menu
 
 
-# Addons Preferences
-
-class CurveExtraObjectsAddonPreferences(AddonPreferences):
-    bl_idname = __name__
-
-    show_menu_list : BoolProperty(
-            name="Menu List",
-            description="Show/Hide the Add Menu items",
-            default=False
-            )
+class INFO_MT_curve_simple_add(Menu):
+    bl_idname = "INFO_MT_curve_simple_add"
+    bl_label = "Simple"
 
     def draw(self, context):
         layout = self.layout
-        box = layout.box()
+        layout.operator_context = 'INVOKE_REGION_WIN'
 
-        icon_1 = "TRIA_RIGHT" if not self.show_menu_list else "TRIA_DOWN"
-        box = layout.box()
-        box.prop(self, "show_menu_list", emboss=False, icon=icon_1)
-
-        if self.show_menu_list:
-            box.label(text="Items located in the Add Menu > Curve (default shortcut Ctrl + A):",
-                      icon="LAYER_USED")
-            box.label(text="2D Objects:", icon="LAYER_ACTIVE")
-            box.label(text="Angle, Arc, Circle, Distance, Ellipse, Line, Point, Polygon,",
-                      icon="LAYER_USED")
-            box.label(text="Polygon ab, Rectangle, Rhomb, Sector, Segment, Trapezoid",
-                      icon="LAYER_USED")
-            box.label(text="Curve Profiles:", icon="LAYER_ACTIVE")
-            box.label(text="Arc, Arrow, Cogwheel, Cycloid, Flower, Helix (3D),",
-                      icon="LAYER_USED")
-            box.label(text="Noise (3D), Nsided, Profile, Rectangle, Splat, Star",
-                      icon="LAYER_USED")
-            box.label(text="Curve Spirals:", icon="LAYER_ACTIVE")
-            box.label(text="Archemedian, Logarithmic, Spheric, Torus",
-                      icon="LAYER_USED")
-            box.label(text="Knots:", icon="LAYER_ACTIVE")
-            box.label(text="Torus Knots Plus, Celtic Links, Braid Knot",
-                      icon="LAYER_USED")
-            box.label(text="SpiroFit, Bounce Spline, Catenary", icon="LAYER_USED")
-            box.label(text="Curly Curve", icon="LAYER_ACTIVE")
-            box.label(text="Bevel/Taper:", icon="LAYER_ACTIVE")
-            box.label(text="Add Curve as Bevel, Add Curve as Taper",
-                      icon="LAYER_USED")
-            box.label(text="Simple Curve:", icon="LAYER_ACTIVE")
-            box.label(text="Available if the Active Object is a Curve was created with 2D Objects",
-                     icon="LAYER_USED")
-
-            box.label(text="Items located in the Add Menu > Surface (default shortcut Ctrl + A):",
-                      icon="LAYER_USED")
-            box.label(text="Wedge, Cone, Star, Plane",
-                      icon="LAYER_ACTIVE")
+        add_curve_simple.menu(self, context)
 
 
 class INFO_MT_curve_knots_add(Menu):
@@ -101,8 +54,8 @@ class INFO_MT_curve_knots_add(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("curve.torus_knot_plus", text="Torus Knot Plus")
-        layout.operator("curve.celtic_links", text="Celtic Links")
         layout.operator("curve.add_braid", text="Braid Knot")
+        layout.operator("curve.celtic_links", text="Celtic Links")
         layout.operator("object.add_spirofit_spline", icon="FORCE_MAGNETIC")
         layout.operator("object.add_bounce_spline", icon="FORCE_HARMONIC")
         layout.operator("object.add_catenary_curve", icon="FORCE_CURVE")
@@ -110,36 +63,53 @@ class INFO_MT_curve_knots_add(Menu):
 
 # Define "Extras" menus
 def menu_func(self, context):
+    prefs = bpy.context.preferences.addons[__package__].preferences
     layout = self.layout
 
-    layout.operator_menu_enum("curve.curveaceous_galore", "ProfileType", icon='CURVE_DATA')
-    layout.operator_menu_enum("curve.spirals", "spiral_type", icon='FORCE_VORTEX')
     layout.separator()
-    layout.operator("curve.curlycurve", text="Curly Curve", icon='GP_ONLY_SELECTED')
+    if prefs.show_curly:
+        layout.operator("curve.curlycurve", text="Curly", icon='GP_ONLY_SELECTED')
+    if prefs.show_simple:
+        layout.menu(INFO_MT_curve_simple_add.bl_idname, text='Simple', icon='CURVE_NCIRCLE')
+    if prefs.show_profiles:
+        layout.operator_menu_enum("curve.curveaceous_galore", "ProfileType", text='Profiles', icon='SURFACE_NCURVE')
+    if prefs.show_spirals:
+        layout.operator_menu_enum("curve.spirals", "spiral_type", text='Spirals', icon='FORCE_VORTEX')
     if context.mode != 'OBJECT':
         # fix in D2142 will allow to work in EDIT_CURVE
         return None
-    layout.separator()
-    layout.menu(INFO_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
-    layout.separator()
-    layout.operator("curve.bevelcurve")
-    layout.operator("curve.tapercurve")
-    layout.operator("curve.simple")
+    if prefs.show_knots:
+        layout.menu(INFO_MT_curve_knots_add.bl_idname, text="Knots", icon='FORCE_MAGNETIC')
+    if prefs.show_bevel or prefs.show_taper:
+        layout.separator()
+    if prefs.show_bevel:
+        layout.operator("curve.bevelcurve", icon='MOD_CURVE')
+    if prefs.show_taper:
+        layout.operator("curve.tapercurve", icon='MOD_CURVE')
 
 def menu_surface(self, context):
-    self.layout.separator()
+    prefs = bpy.context.preferences.addons[__package__].preferences
+    layout = self.layout
+
+    if prefs.show_wedge or prefs.show_cone or prefs.show_star or prefs.show_plane:
+        layout.separator()
     if context.mode == 'EDIT_SURFACE':
-        self.layout.operator("curve.smooth_x_times", text="Special Smooth", icon="MOD_CURVE")
+        layout.operator("curve.smooth_x_times", text="Special Smooth", icon="MOD_CURVE")
     elif context.mode == 'OBJECT':
-        self.layout.operator("object.add_surface_wedge", text="Wedge", icon="SURFACE_DATA")
-        self.layout.operator("object.add_surface_cone", text="Cone", icon="SURFACE_DATA")
-        self.layout.operator("object.add_surface_star", text="Star", icon="SURFACE_DATA")
-        self.layout.operator("object.add_surface_plane", text="Plane", icon="SURFACE_DATA")
+        if prefs.show_wedge:
+            layout.operator("object.add_surface_wedge", text="Wedge", icon="SURFACE_DATA")
+        if prefs.show_cone:
+            layout.operator("object.add_surface_cone", text="Cone", icon="SURFACE_DATA")
+        if prefs.show_star:
+            layout.operator("object.add_surface_star", text="Star", icon="SURFACE_DATA")
+        if prefs.show_plane:
+            layout.operator("object.add_surface_plane", text="Plane", icon="SURFACE_DATA")
 
 # Register
 classes = [
-    CurveExtraObjectsAddonPreferences,
-    INFO_MT_curve_knots_add
+    preferences.CurveExtraObjectsAddonPreferences,
+    INFO_MT_curve_knots_add,
+    INFO_MT_curve_simple_add
 ]
 
 def register():

@@ -74,6 +74,14 @@ endfunction()
 
 if(WITH_UI_TESTS)
   set(_blender_headless_env_vars "BLENDER_BIN=${TEST_BLENDER_EXE}")
+  if(UNIX AND NOT APPLE)
+    if(WITH_GHOST_DBUS)
+      # Don't use the desktop session bus, system preferences shouldn't influence test behavior.
+      list(APPEND _blender_headless_env_vars
+        "DBUS_SESSION_BUS_ADDRESS=/dev/null"
+      )
+    endif()
+  endif()
   if(WITH_UI_TESTS_HEADLESS)
 
     # Currently only WAYLAND is supported, support for others may be added later.
@@ -259,6 +267,12 @@ add_python_test(
   --blender "${TEST_BLENDER_EXE}"
 )
 
+# OpenColorIO config of projects found when opening blend files.
+add_blender_test(
+  script_ocio_config
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_ocio_config_tests.py
+)
+
 # test running operators doesn't segfault under various conditions
 if(WITH_TESTS_EXPERIMENTAL)
   add_blender_test(
@@ -382,34 +396,39 @@ add_blender_test(
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_annotations.py
 )
 
-add_blender_test(
-  script_pyapi_blf_buffer
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
-  --
-  --mode=BUFFER
-)
-
-# TODO: investigate if this can be supported, as the GPU can be used for rendering.
-# Requires `gpu.init()`, not available for the build-bots for the default environment.
-if(FALSE)
+if(TEST_OPENIMAGEIO_TOOL_EXISTS)
   add_blender_test(
-    script_pyapi_blf_gpu
+    script_pyapi_blf_buffer
     --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
     --
-    --mode=GPU
+    --mode=BUFFER
+    --oiiotool "${OPENIMAGEIO_TOOL}"
+  )
+
+  # TODO: investigate if this can be supported, as the GPU can be used for rendering.
+  # Requires `gpu.init()`, not available for the build-bots for the default environment.
+  if(FALSE)
+    add_blender_test(
+      script_pyapi_blf_gpu
+      --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
+      --
+      --mode=GPU
+      --oiiotool "${OPENIMAGEIO_TOOL}"
+    )
+  endif()
+
+  add_blender_test(
+    script_pyapi_blf_vfont
+    --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
+    --
+    --mode=VFONT
+    --oiiotool "${OPENIMAGEIO_TOOL}"
+    # Use Workbench render instead of simple GPU rasterization.
+    # Most build-bots systems fail with `gpu.init()` otherwise this could be avoided.
+    # Ideally it could be removed eventually as it's slower.
+    --use-vfont-render
   )
 endif()
-
-add_blender_test(
-  script_pyapi_blf_vfont
-  --python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_blf.py
-  --
-  --mode=VFONT
-  # Use Workbench render instead of simple GPU rasterization.
-  # Most build-bots systems fail with `gpu.init()` otherwise this could be avoided.
-  # Ideally it could be removed eventually as it's slower.
-  --use-vfont-render
-)
 
 
 # Build RST documentation & PYI stubs (without building the full HTML docs).
@@ -754,6 +773,13 @@ add_blender_test(
 )
 
 add_blender_test(
+  bl_animation_copy_paste
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_copy_paste.py
+  --
+  --testdir "${TEST_SRC_DIR}/animation"
+)
+
+add_blender_test(
   bl_animation_rename
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_animation_rename.py
 )
@@ -925,6 +951,7 @@ if((WITH_CYCLES OR WITH_GPU_RENDER_TESTS) AND TEST_SRC_DIR_EXISTS)
     camera
     colorspace
     bsdf
+    gsplat
     hair
     image_colorspace
     image_data_types
@@ -1482,6 +1509,16 @@ if(WITH_IO_STL AND TEST_SRC_DIR_EXISTS)
   )
 endif()
 
+if(WITH_IO_GREASE_PENCIL AND TEST_SRC_DIR_EXISTS)
+  add_blender_test(
+    io_grease_pencil_svg_import
+    --python ${CMAKE_CURRENT_LIST_DIR}/io_grease_pencil_svg_import_test.py
+    --
+    --testdir "${TEST_SRC_DIR}/io_tests/svg"
+    --outdir "${TEST_OUT_DIR}/io_grease_pencil_svg"
+  )
+endif()
+
 if(WITH_CODEC_FFMPEG AND TEST_SRC_DIR_EXISTS)
   add_python_test(
     ffmpeg
@@ -1700,6 +1737,18 @@ if(TEST_SRC_DIR_EXISTS)
   )
 
   add_blender_test(
+    bl_texture_paint_undo
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/texture_paint_undo_test.py
+  )
+
+  add_blender_test(
+    bl_grease_pencil_paint_tests
+    --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/grease_pencil_paint_tests.py
+    --
+    --testdir "${TEST_SRC_DIR}/grease_pencil"
+  )
+
+  add_blender_test(
     bl_sculpt_brush_curve_presets
     --python ${CMAKE_CURRENT_LIST_DIR}/sculpt_paint/brush_strength_curves_test.py
     --
@@ -1749,6 +1798,8 @@ if(WITH_UI_TESTS)
     test_sculpt.trim_gestures
     test_sculpt.primitive_tool_add
     test_tools.sculpt_mode_toolbar
+    test_transform.view3d_mesh_edit_snap_to_self
+    test_transform.view3d_mesh_edit_snap_to_self_shape_key
     test_undo.compositor_make_group
     test_undo.text_editor_edit_mode_mix
     test_undo.text_editor_simple
@@ -1759,6 +1810,7 @@ if(WITH_UI_TESTS)
     test_undo.view3d_mesh_edit_shape_key
     test_undo.view3d_mesh_edit_separate
     test_undo.view3d_mesh_particle_edit_mode_simple
+    test_undo.view3d_multi_mode_undo_history
     test_undo.view3d_multi_mode_multi_window
     test_undo.view3d_multi_mode_select
     test_undo.view3d_particle_edit_undo_from_texture_paint
@@ -1769,7 +1821,6 @@ if(WITH_UI_TESTS)
     test_undo.view3d_sculpt_with_empty_memfile_step
     test_undo.view3d_sculpt_trim
     test_undo.view3d_simple
-    test_undo.view3d_texture_paint_complex
     test_undo.view3d_texture_paint_simple
     test_workspace.sanity_check_general
     test_workspace.sanity_check_2d_animation
@@ -1845,7 +1896,18 @@ if(WITH_UI_TESTS)
     test_tool_activation.image_editor
     test_tool_activation.node_editor
     test_tool_activation.sequencer
+    test_modifiers_constraints_draw.modifiers_constraints_draw
     test_preferences_draw_all.test_preferences_draw_all
+    test_info_reports.test_info_report_selection_modes
+    test_info_reports.test_info_report_delete
+    test_info_reports.test_info_report_operator_poll
+    test_object_type_visibility.visibility_by_own_type
+    test_object_type_visibility.selectability_by_instancer_type
+    test_object_type_visibility.pose_bone_select_with_armature_unselectable
+    test_object_type_visibility.edit_mode_element_select_with_type_unselectable
+    test_object_type_visibility.generated_geometry_by_object_type
+    test_object_type_visibility.instanced_light_by_own_type
+    test_object_type_visibility.nested_instances_by_own_type
     test_blend_autoexec.pref_enabled_drop_blend_file_untrusted
     test_blend_autoexec.pref_enabled_drop_blend_file_trusted
     test_blend_autoexec.pref_enabled_open_file_selector_trusted
@@ -1864,6 +1926,46 @@ if(WITH_UI_TESTS)
     )
   endforeach()
   unset(_ui_tests)
+
+  # The command line overriding the preference can't be set from within a test.
+  set(_ui_tests_enable_autoexec
+    test_blend_autoexec.pref_disabled_drop_blend_file_enable_autoexec
+    test_blend_autoexec.pref_enabled_drop_blend_file_untrusted_enable_autoexec
+    test_blend_autoexec.pref_disabled_drop_blend_file_trusted_source_enable_autoexec
+    test_blend_autoexec.pref_disabled_open_file_selector_enable_autoexec
+    test_blend_autoexec.pref_enabled_open_file_selector_untrusted_enable_autoexec
+    test_blend_autoexec.pref_disabled_drop_blend_file_trusted_source_next_enable_autoexec
+  )
+  foreach(ui_test ${_ui_tests_enable_autoexec})
+    add_blender_test_ui(
+      "${ui_test}"
+      --enable-autoexec
+      --enable-event-simulate
+      --python "${CMAKE_CURRENT_LIST_DIR}/ui_simulate/run_blender_setup.py"
+      --
+      --tests "${ui_test}"
+    )
+  endforeach()
+  unset(_ui_tests_enable_autoexec)
+
+  set(_ui_tests_disable_autoexec
+    test_blend_autoexec.pref_enabled_drop_blend_file_disable_autoexec
+    test_blend_autoexec.pref_enabled_drop_blend_file_trusted_source_disable_autoexec
+    test_blend_autoexec.pref_enabled_drop_blend_file_untrusted_trusted_source_disable_autoexec
+    test_blend_autoexec.pref_enabled_open_file_selector_disable_autoexec
+    test_blend_autoexec.pref_enabled_drop_blend_file_trusted_source_next_disable_autoexec
+  )
+  foreach(ui_test ${_ui_tests_disable_autoexec})
+    add_blender_test_ui(
+      "${ui_test}"
+      --disable-autoexec
+      --enable-event-simulate
+      --python "${CMAKE_CURRENT_LIST_DIR}/ui_simulate/run_blender_setup.py"
+      --
+      --tests "${ui_test}"
+    )
+  endforeach()
+  unset(_ui_tests_disable_autoexec)
 
   # test_open_editor_types opens many areas, each needing its own GLContext.
   # The number of available context is limit by driver and not queryable.

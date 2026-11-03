@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "draw_math_geom_lib.glsl"
+#include "draw_math_geom.bsl.hh"
 #include "eevee_motion_blur_shared.hh"
 #include "eevee_reverse_z_lib.bsl.hh"
 #include "eevee_sampling_lib.bsl.hh"
@@ -68,10 +68,21 @@ struct TileBuf {
 
 /** \} */
 
+/** Clamp \a motion's length to \a max_offset. Returns the length. */
+float clamp_motion_and_get_length(float max_offset, float2 &motion)
+{
+  float len_sqr = length_squared(motion);
+  if (len_sqr > square(max_offset)) {
+    motion *= max_offset * inversesqrt(len_sqr);
+    return max_offset;
+  }
+  return sqrt(len_sqr);
+}
+
 namespace flatten {
 
 template<enum TextureWriteFormat velocity_format> struct Resources {
-  [[resource_table]] srt_t<CameraVelocity> camera;
+  [[resource_table]] CameraVelocity camera;
 
   [[uniform(0)]] const MotionBlurData &motion_blur_buf;
   [[sampler(0)]] sampler2DDepth depth_tx;
@@ -120,7 +131,7 @@ void flatten_comp([[resource_table]] Resources<velocity_format> &srt,
                   [[local_invocation_id]] const uint3 local_id,
                   [[local_invocation_index]] const uint local_index)
 {
-  [[resource_table]] const CameraVelocity &cam_vel = srt.camera;
+  const ViewMatrices view = views.get(0);
 
   if (local_index == 0u) {
     srt.payload_prev = 0u;
@@ -138,11 +149,11 @@ void flatten_comp([[resource_table]] Resources<velocity_format> &srt,
   float2 render_size = float2(imageSize(srt.velocity_img).xy);
   float2 uv = (float2(texel) + 0.5f) / render_size;
   float depth = reverse_z::read(texelFetch(srt.depth_tx, texel, 0).r);
-  float4 motion = cam_vel.resolve(views, imageLoad(srt.velocity_img, texel), uv, depth);
-#ifdef FLATTEN_RG
-  /* imageLoad does not perform the swizzling like sampler does. Do it manually. */
-  motion = motion.xyxy;
-#endif
+  float4 motion = srt.camera.resolve_local(view, imageLoad(srt.velocity_img, texel), uv, depth);
+  if constexpr (velocity_format == SFLOAT_16_16) {
+    /* imageLoad does not perform the swizzling like sampler does. Do it manually. */
+    motion = motion.xyxy;
+  }
 
   /* Store resolved velocity to speedup the gather pass. Out of bounds writes are ignored.
    * Unfortunately, we cannot convert to pixel space here since it is also used by TAA and the
@@ -157,6 +168,15 @@ void flatten_comp([[resource_table]] Resources<velocity_format> &srt,
   motion *= render_size.xyxy;
   /* Rescale to shutter relative motion for viewport. */
   motion *= srt.motion_blur_buf.motion_scale.xxyy;
+
+  /* Clamp to the same radius as gather_blur()'s clamp because pack_payload()'s uint conversion
+   * runs first and need this bounded. */
+  float max_offset = srt.motion_blur_buf.motion_max_offset_px;
+  float2 motion_prev = motion.xy;
+  float2 motion_next = motion.zw;
+  clamp_motion_and_get_length(max_offset, motion_prev);
+  clamp_motion_and_get_length(max_offset, motion_next);
+  motion = float4(motion_prev, motion_next);
 
   uint sample_payload_prev = pack_payload(motion.xy, local_id.xy);
   if (local_payload_prev < sample_payload_prev) {
@@ -398,7 +418,9 @@ struct Resources {
     float2 sample_uv = screen_uv - offset * motion_blur_buf.target_size_inv;
     float4 sample_vectors = motion_blur_sample_velocity(sample_uv);
     float2 sample_motion = (next) ? sample_vectors.zw : sample_vectors.xy;
-    float sample_motion_len = length(sample_motion);
+    /* Clamp to the same radius as the sampling offset (see gather_blur()). */
+    float max_offset = motion_blur_buf.motion_max_offset_px;
+    float sample_motion_len = clamp_motion_and_get_length(max_offset, sample_motion);
     float sample_depth = reverse_z::read(textureLod(depth_tx, sample_uv, 0.0f).r);
     float4 sample_color = textureLod(in_color_tx, sample_uv, 0.0f);
 
@@ -424,8 +446,11 @@ struct Resources {
                    const bool next,
                    Accumulator &accum)
   {
-    float center_motion_len = length(center_motion);
-    float max_motion_len = length(max_motion);
+    /* Cap `center_motion`/`max_motion` so `gather_sample()`'s `sample_uv` offset doesn't reach
+     * past this cubeface's overscan margin into the neighboring face. */
+    float max_offset = motion_blur_buf.motion_max_offset_px;
+    float center_motion_len = clamp_motion_and_get_length(max_offset, center_motion);
+    float max_motion_len = clamp_motion_and_get_length(max_offset, max_motion);
 
     /* Tile boundaries randomization can fetch a tile where there is less motion than this pixel.
      * Fix this by overriding the max_motion. */
@@ -506,8 +531,8 @@ void gather_comp([[resource_table]] Resources &srt,
 
   float noise_offset = sampling.rng_1D_get(SAMPLING_TIME);
   /** TODO(fclem) Blue noise. */
-  float2 rand = float2(interleaved_gradient_noise(float2(global_id.xy), 0, noise_offset),
-                       interleaved_gradient_noise(float2(global_id.xy), 1, noise_offset));
+  float2 rand = float2(random::interleaved_gradient(float2(global_id.xy), 0, noise_offset),
+                       random::interleaved_gradient(float2(global_id.xy), 1, noise_offset));
 
   /* Randomize tile boundary to avoid ugly discontinuities. Randomize 1/4th of the tile.
    * Note this randomize only in one direction but in practice it's enough. */

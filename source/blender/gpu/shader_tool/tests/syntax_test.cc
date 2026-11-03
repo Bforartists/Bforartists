@@ -229,7 +229,7 @@ TEST(shader_tool, Reference)
     string input = R"(
 int b[1]; const int i = 0; auto &a = b[i]; a = 0;)";
     string expect = R"(
-int b[1]; const int i = 0;                 b[i] = 0;)";
+int b[1]; const int i = 0;                 b[i]= 0;)";
     auto [output, _, error] = process_test_local(input, Language::BSL);
     EXPECT_EQ(output, expect);
     EXPECT_EQ(error, "");
@@ -295,6 +295,170 @@ int b; int &a = ++b;)";
   }
 }
 
+TEST(shader_tool, Pointer)
+{
+  {
+    string input = R"(
+struct A { [[storage(0, read)]] const float3 *(&nor)[]; };
+
+void f(const A &srt)
+{
+  const float3 *&buf_ref = srt.nor[0];
+  const float3 *(&buf_ref2) = srt.nor[0];
+  const float3 *(&buf_ref3)[] = srt.nor;
+  const float3 *buf = srt.nor[0];
+  const float3 *b = buf, *c = buf;
+  const float3 &test = *buf;
+  float3 A = buf_ref[0];
+  float3 B = buf_ref2[1] + 1;
+  float3 C = buf_ref3[1][0] + 3;
+  float3 D = buf[1] + 4;
+  float3 E = test;
+  const float3 *F = srt.nor[0];
+  float3 G = srt.nor[0][0];
+  float H = srt.nor[0][0][0];
+  const float3 *I = *srt.nor;
+  float3 J = **srt.nor;
+  float K = (**srt.nor)[0];
+}
+)";
+    string expect = R"(
+
+#define access_A_nor() nor
+
+
+#ifdef CREATE_INFO_RES_PASS_A
+CREATE_INFO_RES_PASS_A
+#endif
+#ifdef CREATE_INFO_RES_BATCH_A
+CREATE_INFO_RES_BATCH_A
+#endif
+#ifdef CREATE_INFO_RES_GEOMETRY_A
+CREATE_INFO_RES_GEOMETRY_A
+#endif
+#ifdef CREATE_INFO_RES_SHARED_VARS_A
+CREATE_INFO_RES_SHARED_VARS_A
+#endif
+#line 2
+struct A {                                              int _pad;
+#line 2
+                                                        };
+#line 2
+A A_ctor_() {A r;r._pad=0;return r;}
+#if defined(CREATE_INFO_A)
+void f(const A  srt)
+{
+#line 9
+  const float3_ptr_ buf =     nor[0];
+  const float3_ptr_ b = buf, c = buf;
+
+  float3 A =     nor[0][0];
+  float3 B =     nor[0][1] + 1;
+  float3 C =     nor[1][0] + 3;
+  float3 D = buf[1] + 4;
+  float3 E = buf[0];
+  const float3_ptr_ F =     nor[0];
+  float3 G =     nor[0][0];
+  float H =     nor[0][0][0];
+  const float3_ptr_ I =     nor[0];
+  float3 J =     nor[0][0];
+  float K = (    nor[0][0])[0];
+}
+
+#endif
+#line 25
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+struct A { [[storage(0, read)]] const float3 *(&nor)[]; };
+
+void f(const A &srt)
+{
+  int i = 0;
+  const float3 *&r = srt.nor[i];
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Reference cannot bind to expression of non-const subscript index");
+  }
+  {
+    string input = R"(
+struct A { [[storage(0, read)]] const float3 *(&nor)[]; };
+
+void f(const A &srt)
+{
+  const float3 *&r = *srt.nor;
+  const float3 &v = **srt.nor;
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+float a;
+float *b = &a;
+)";
+    auto [output, _, error] = process_test_local(input, Language::BSL);
+    EXPECT_EQ(error, "Unary operator address-of '&' is not supported");
+  }
+  {
+    string input = R"(
+struct A { [[storage(0, read)]] const float3 **(&nor)[]; };
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Syntax Error: Expected token \"Word\" but got \"const\"");
+  }
+  {
+    string input = R"(
+struct A { [[storage(0, read)]] const float3 *(&nor)[]; };
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(struct S { float3 *nor; };)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error,
+              "Pointer types are only allowed on 'storage', 'uniform' and 'push_constant' "
+              "resource declaration");
+  }
+  {
+    string input = R"(float *e, d = 0;)";
+    auto [output, _, error] = process_test_local(input, Language::BSL);
+    EXPECT_EQ(error, "Variable declaration must declare either no pointer or only pointer");
+  }
+  {
+    string input = R"(
+struct A { [[storage(0, read)]] const float3 *(&nor)[]; };
+
+void f(const A &srt)
+{
+  srt.nor + 1;
+}
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Pointer arithmetic is not supported");
+  }
+  {
+    string input = R"(
+void f(const float *srt) {}
+)";
+    string expect = R"(
+void f(const float_ptr_ srt) {
+#line 2
+                          }
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+}
+
 TEST(shader_tool, Constexpr)
 {
   {
@@ -321,6 +485,192 @@ int func() { return 4; })";
     auto [output, _, error] = process_test_string(input, Language::BSL);
     EXPECT_EQ(output, expect);
     EXPECT_EQ(error, "");
+  }
+}
+
+TEST(shader_tool, ConstexprVector)
+{
+  {
+    string input = R"(
+static constexpr float3 i = float3(0, 1.5f, 2u);
+static constexpr int3 j = int3(i + int3(0, 1, 2)) + 1;
+static constexpr float3 k = i + int3(0, 1, 2);
+)";
+    string expect = R"(
+static constexpr float3 i = float3(0.0f, 1.5f, 2.0f);
+static constexpr int3 j = int3(1, 3, 5);
+static constexpr float3 k = float3(0.0f, 2.5f, 4.0f);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+static constexpr int3 j = int3(0, 1, 2) + int2(1);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Invalid operands to binary expression ('int3' + 'int2')");
+  }
+  {
+    string input = R"(
+static constexpr int3 j = int3(int2(0), 2);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Constexpr variable 'j' must be initialized by a constant expression");
+  }
+  {
+    string input = R"(
+static constexpr int3 j = int3(0, 1, 2) + false;
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Invalid operands to binary expression ('int3' + 'bool')");
+  }
+  {
+    string input = R"(
+static constexpr int3 j = int2(0);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error,
+              "Constexpr variable 'j' must be initialized by a constant expression of type 'int3' "
+              "but got 'int2'");
+  }
+
+  {
+    string input = R"(
+static constexpr float3 a = float3(2.5f);
+static constexpr int4 b = int4(-1);
+)";
+    string expect = R"(
+static constexpr float3 a = float3(2.5f, 2.5f, 2.5f);
+static constexpr int4 b = int4(-1, -1, -1, -1);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+
+  {
+    string input = R"(
+static constexpr float3 v = float3(1.0f, 2.0f, 3.0f);
+static constexpr float3 mul_right = v * 2.0f;
+static constexpr float3 mul_left = 2.0f * v;
+static constexpr float3 sub_scalar = 10.0f - v;
+static constexpr float3 div_scalar = v / 2.0f;
+)";
+    string expect = R"(
+static constexpr float3 v = float3(1.0f, 2.0f, 3.0f);
+static constexpr float3 mul_right = float3(2.0f, 4.0f, 6.0f);
+static constexpr float3 mul_left = float3(2.0f, 4.0f, 6.0f);
+static constexpr float3 sub_scalar = float3(9.0f, 8.0f, 7.0f);
+static constexpr float3 div_scalar = float3(0.5f, 1.0f, 1.5f);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+
+  {
+    string input = R"(
+static constexpr int3 a = int3(1, -2, 3);
+static constexpr int3 neg = -a;
+static constexpr int3 bit_and = int3(7, 3, 1) & int3(3, 2, 1);
+static constexpr int3 bit_or = int3(4, 2, 0) | int3(1, 1, 0);
+static constexpr int3 shift = int3(1, 2, 4) << int3(1, 2, 0);
+)";
+    string expect = R"(
+static constexpr int3 a = int3(1, -2, 3);
+static constexpr int3 neg = int3(-1, 2, -3);
+static constexpr int3 bit_and = int3(3, 2, 1);
+static constexpr int3 bit_or = int3(5, 3, 0);
+static constexpr int3 shift = int3(2, 8, 4);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+
+  {
+    string input = R"(
+static constexpr float3 v1 = float3(1.0f, 2.0f, 3.0f);
+static constexpr float3 v2 = float3(2.0f, 2.0f, 1.0f);
+static constexpr bool3 eq = equal(v1, v2);
+static constexpr bool3 lt = lessThan(v1, v2);
+static constexpr bool3 gte = greaterThanEqual(v1, v2);
+)";
+    string expect = R"(
+static constexpr float3 v1 = float3(1.0f, 2.0f, 3.0f);
+static constexpr float3 v2 = float3(2.0f, 2.0f, 1.0f);
+static constexpr bool3 eq = bool3(false, true, false);
+static constexpr bool3 lt = bool3(true, false, false);
+static constexpr bool3 gte = bool3(false, true, true);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+
+#if 0 /* Would be nice to support at some points. */
+  {
+      string input = R"(
+static constexpr float3 a = float3(-1.0f, 2.0f, -5.0f);
+static constexpr float3 b_abs = abs(a);
+static constexpr float3 b_min = min(a, float3(0.0f));
+static constexpr float3 b_clamp = clamp(a, float3(-2.0f), float3(1.0f));
+static constexpr float d = dot(float3(1.0f, 2.0f, 3.0f), float3(4.0f, 5.0f, 6.0f));
+static constexpr float3 c = cross(float3(1, 0, 0), float3(0, 1, 0));
+static constexpr bool is_all = all(bool3(true, true, true));
+static constexpr bool is_any = any(bool3(false, true, false));
+)";
+      string expect = R"(
+static constexpr float3 a = float3(-1.0f, 2.0f, -5.0f);
+static constexpr float3 b_abs = float3(1.0f, 2.0f, 5.0f);
+static constexpr float3 b_min = float3(-1.0f, 0.0f, -5.0f);
+static constexpr float3 b_clamp = float3(-1.0f, 1.0f, -2.0f);
+static constexpr float d = 32.0f;
+static constexpr float3 c = float3(0.0f, 0.0f, 1.0f);
+static constexpr bool is_all = true;
+static constexpr bool is_any = true;
+)";
+      auto [output, _, error] = process_test_string(input, Language::BSL);
+      EXPECT_EQ(output, expect);
+      EXPECT_EQ(error, "");
+    }
+  {
+    string input = R"(
+static constexpr float4 v = float4(1.0f, 2.0f, 3.0f, 4.0f);
+static constexpr float2 s1 = v.xz;
+static constexpr float3 s2 = v.wzy + 1.0f;
+static constexpr float s3 = v.x + v.w;
+)";
+    string expect = R"(
+static constexpr float4 v = float4(1.0f, 2.0f, 3.0f, 4.0f);
+static constexpr float2 s1 = float2(1.0f, 3.0f);
+static constexpr float3 s2 = float3(5.0f, 4.0f, 3.0f);
+static constexpr float s3 = 5.0f;
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+#endif
+
+  {
+    string input = R"(
+static constexpr int3 v = int3(1, 2, 3) / int3(1, 0, 1);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Division by zero during constexpr evaluation");
+  }
+
+  {
+    string input = R"(
+static constexpr int3 j = float3(1.0f, 2.0f, 3.0f);
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error,
+              "Constexpr variable 'j' must be initialized by a constant expression of type 'int3' "
+              "but got 'float3'");
   }
 }
 
@@ -374,6 +724,95 @@ TEST(shader_tool, ArrayAggregate)
     auto [output, _, error] = process_test_string(input, shader::Language::BSL);
     EXPECT_EQ(output, expect);
     EXPECT_EQ(error, "");
+  }
+}
+
+TEST(shader_tool, AttributeCapacity)
+{
+  {
+    string input = "[[capacity(my_const)]] int a[4];\n";
+    string expect = "                       int a[SRT_CONSTANT_my_const];\n";
+    auto [output, _, error] = process_test_string(input, shader::Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = "struct A { [[capacity(my_const)]] int a[4]; };\n";
+    string expect =
+        "struct A {                        int a[SRT_CONSTANT_my_const];\n"
+        "#line 1\n"
+        "                                            };\n"
+        "#line 1\n"
+        "A A_ctor_() {A r;for(int a =0;a < SRT_CONSTANT_my_const;++a) {r.a[a]=0;}return r;}\n";
+    auto [output, _, error] = process_test_string(input, shader::Language::BSL);
+    EXPECT_EQ(output, expect);
+    EXPECT_EQ(error, "");
+  }
+}
+
+TEST(shader_tool, PointerDereference)
+{
+  {
+    string input = R"(
+struct A {
+  int a;
+  int f(A a){
+    this->a;
+  }
+};
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+struct A {
+  int a;
+  int f(A a){
+    return *this;
+  }
+};
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "");
+  }
+  {
+    string input = R"(
+struct A {
+  int a;
+  int f(A a){
+    return *(this);
+  }
+};
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "");
+    /* Dereferencing `this` is a noop, not a buffer device address access. */
+    EXPECT_EQ(output.find(")[0]"), string::npos);
+  }
+  {
+    string input = R"(
+struct A {
+  int a;
+  int f(A a){
+    return (*this)->a;
+  }
+};
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Member reference type 'A' is not a pointer; did you mean to use '.'?");
+  }
+  {
+    string input = R"(
+struct A {
+  int a;
+  int f(A a){
+    return *(*this);
+  }
+};
+)";
+    auto [output, _, error] = process_test_string(input, Language::BSL);
+    EXPECT_EQ(error, "Indirection requires pointer operand ('A' invalid)");
   }
 }
 

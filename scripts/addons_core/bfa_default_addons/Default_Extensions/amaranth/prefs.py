@@ -113,8 +113,14 @@ def get_preferences():
 
 
 def register():
-    bpy.utils.register_class(AmaranthPreferences)
+    try:
+        bpy.utils.register_class(AmaranthPreferences)
+    except ValueError:
+        pass
 
 
 def unregister():
-    bpy.utils.unregister_class(AmaranthPreferences)
+    try:
+        bpy.utils.unregister_class(AmaranthPreferences)
+    except (RuntimeError, ValueError):
+        pass

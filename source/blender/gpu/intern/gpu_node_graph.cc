@@ -179,7 +179,7 @@ static void gpu_node_input_link(GPUNode *node, GPUNodeLink *link, const GPUType 
     name = outnode->name;
     input = outnode->inputs.first();
 
-    if (STR_ELEM(name, "set_value", "set_rgb", "set_rgba") && (input->type == type)) {
+    if (STR_ELEM(name, "set_value", "set_vec2", "set_rgb", "set_rgba") && (input->type == type)) {
       input = MEM_dupalloc(outnode->inputs.first());
 
       switch (input->source) {
@@ -251,6 +251,12 @@ static void gpu_node_input_link(GPUNode *node, GPUNodeLink *link, const GPUType 
       input->source = GPU_SOURCE_LAYER_ATTR;
       input->layer_attr = link->layer_attr;
       break;
+    case GPU_NODE_LINK_KERNEL_GLOBALS:
+      input->source = GPU_SOURCE_KERNEL_GLOBALS;
+      break;
+    case GPU_NODE_LINK_SHADING_DATA:
+      input->source = GPU_SOURCE_SHADING_DATA;
+      break;
     case GPU_NODE_LINK_CONSTANT:
       input->source = (type == GPU_CLOSURE) ? GPU_SOURCE_STRUCT : GPU_SOURCE_CONSTANT;
       break;
@@ -261,7 +267,7 @@ static void gpu_node_input_link(GPUNode *node, GPUNodeLink *link, const GPUType 
       input->source = GPU_SOURCE_FUNCTION_CALL;
       /* NOTE(@fclem): End of function call is the return variable set during codegen. */
       SNPRINTF(input->function_call,
-               "dF_branch_incomplete(%s(), %g, ",
+               "dF_branch_incomplete(%s(kg, sd), %g, ",
                link->differentiate_float.function_name,
                link->differentiate_float.filter_width);
       break;
@@ -277,6 +283,20 @@ static void gpu_node_input_link(GPUNode *node, GPUNodeLink *link, const GPUType 
     MEM_delete(link);
   }
   BLI_addtail(&node->inputs, input);
+}
+
+GPUNodeLink *GPU_shading_data()
+{
+  GPUNodeLink *link = gpu_node_link_create();
+  link->link_type = GPU_NODE_LINK_SHADING_DATA;
+  return link;
+}
+
+GPUNodeLink *GPU_kernel_globals()
+{
+  GPUNodeLink *link = gpu_node_link_create();
+  link->link_type = GPU_NODE_LINK_KERNEL_GLOBALS;
+  return link;
 }
 
 GPUNodeLink *GPU_constant(const float *num)
@@ -373,23 +393,27 @@ GPUNodeLink *GPU_uniform(const GPUNodeStack &stack)
       stack.value);
 }
 
-static const char *gpu_uniform_set_function_from_type(eNodeSocketDatatype type)
+static const char *gpu_uniform_set_function_from_type(GPUType type)
 {
   switch (type) {
-    case SOCK_FLOAT:
+    case GPU_FLOAT:
       return "set_value";
-    case SOCK_INT:
+    case GPU_INT:
       return "set_int";
-    case SOCK_BOOLEAN:
+    case GPU_BOOL:
       return "set_bool";
-    case SOCK_VECTOR:
+    case GPU_VEC2:
+      return "set_vec2";
+    case GPU_VEC3:
       return "set_rgb";
-    case SOCK_RGBA:
+    case GPU_VEC4:
       return "set_rgba";
     default:
-      BLI_assert_msg(0, "No gpu function for non-supported eNodeSocketDatatype");
-      return nullptr;
+      break;
   }
+
+  BLI_assert_msg(0, "No gpu function for non-supported GPUType");
+  return nullptr;
 }
 
 /**
@@ -425,7 +449,7 @@ static GPUNodeLink *gpu_uniformbuffer_link(GPUMaterial *mat,
   GPUNodeLink *link = GPU_uniform(*stack);
 
   if (in_out == SOCK_IN) {
-    GPU_link(mat, gpu_uniform_set_function_from_type(socket->type), link, &stack->link);
+    GPU_link(mat, gpu_uniform_set_function_from_type(stack->type), link, &stack->link);
   }
 
   return link;
@@ -581,7 +605,8 @@ static void attr_input_name(GPUMaterialAttribute *attr)
     attr->input_name[1] = '\0';
     if (attr->name[0] != '\0') {
       /* XXX FIXME: see notes in mesh_render_data_create() */
-      GPU_vertformat_safe_attr_name(attr->name, &attr->input_name[1], GPU_MAX_SAFE_ATTR_NAME);
+      GPU_vertformat_safe_attr_name(attr->name,
+                                    MutableCStr(&attr->input_name[1], GPU_MAX_SAFE_ATTR_NAME));
     }
   }
 }

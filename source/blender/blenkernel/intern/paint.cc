@@ -69,6 +69,7 @@
 #include "BKE_paint_types.hh"
 #include "BKE_scene.hh"
 #include "BKE_subdiv_ccg.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_query.hh"
@@ -998,7 +999,7 @@ static void paint_brush_default_essentials_name_get(const bke::paint::AssetCateg
       }
       break;
     case bke::paint::AssetCategory::GPencilSculpt:
-      name = "Smooth";
+      name = "Pull";
       if (brush_type) {
         switch (eBrushGPSculptType(*brush_type)) {
           case GPSCULPT_BRUSH_TYPE_CLONE:
@@ -1877,10 +1878,10 @@ void BKE_paint_blend_read_data(BlendDataReader *reader, const Scene *scene, Pain
   paint_runtime_init(scene->toolsettings, paint);
 }
 
-bool paint_is_grid_face_hidden(const BoundedBitSpan grid_hidden,
-                               const int gridsize,
-                               const int x,
-                               const int y)
+bool BKE_paint_is_grid_face_hidden(const BoundedBitSpan grid_hidden,
+                                   const int gridsize,
+                                   const int x,
+                                   const int y)
 {
   return grid_hidden[CCG_grid_xy_to_index(gridsize, x, y)] ||
          grid_hidden[CCG_grid_xy_to_index(gridsize, x + 1, y)] ||
@@ -1888,7 +1889,7 @@ bool paint_is_grid_face_hidden(const BoundedBitSpan grid_hidden,
          grid_hidden[CCG_grid_xy_to_index(gridsize, x, y + 1)];
 }
 
-bool paint_is_bmesh_face_hidden(const BMFace *f)
+bool BKE_paint_is_bmesh_face_hidden(const BMFace *f)
 {
   BMLoop *l_iter;
   BMLoop *l_first;
@@ -1964,7 +1965,7 @@ bool supports_symmetry_tiling(const PaintMode paint_mode, const Brush &brush)
 }
 }  // namespace bke::paint
 
-float paint_grid_paint_mask(const GridPaintMask *gpm, uint level, uint x, uint y)
+float BKE_paint_grid_paint_mask(const GridPaintMask *gpm, uint level, uint x, uint y)
 {
   int factor = CCG_grid_factor(level, gpm->level);
   int gridsize = CCG_grid_size(gpm->level);
@@ -1993,7 +1994,7 @@ static float paint_rake_rotation_spacing(const Paint & /*paint*/,
   }
 }
 
-void paint_update_brush_rake_rotation(Paint &paint, const Brush &brush, float rotation)
+void BKE_paint_update_brush_rake_rotation(Paint &paint, const Brush &brush, float rotation)
 {
   bke::PaintRuntime &paint_runtime = *paint.runtime;
   paint_runtime.brush_rotation = rotation;
@@ -2017,12 +2018,12 @@ static bool paint_rake_rotation_active(const Brush &brush, PaintMode paint_mode)
          BKE_brush_has_cube_tip(&brush, paint_mode);
 }
 
-bool paint_calculate_rake_rotation(Paint &paint,
-                                   const Brush &brush,
-                                   const float mouse_pos[2],
-                                   const PaintMode paint_mode,
-                                   bool in_stroke,
-                                   bool is_first_dab)
+bool BKE_paint_calculate_rake_rotation(Paint &paint,
+                                       const Brush &brush,
+                                       const float mouse_pos[2],
+                                       const PaintMode paint_mode,
+                                       bool in_stroke,
+                                       bool is_first_dab)
 {
   bke::PaintRuntime &paint_runtime = *paint.runtime;
 
@@ -2042,13 +2043,13 @@ bool paint_calculate_rake_rotation(Paint &paint,
 
       paint_runtime.last_rake_angle = rotation;
 
-      paint_update_brush_rake_rotation(paint, brush, rotation);
+      BKE_paint_update_brush_rake_rotation(paint, brush, rotation);
       ok = true;
     }
     /* Make sure we reset here to the last rotation to avoid accumulating
      * values in case a random rotation is also added. */
     else {
-      paint_update_brush_rake_rotation(paint, brush, paint_runtime.last_rake_angle);
+      BKE_paint_update_brush_rake_rotation(paint, brush, paint_runtime.last_rake_angle);
       ok = false;
     }
   }
@@ -2761,7 +2762,7 @@ bool BKE_sculptsession_use_pbvh_draw(const Object *ob, const RegionView3D *rv3d)
 
   /* External render engines like Cycles do not have access to the pbvh::Tree
    * like Eevee does, and need evaluated mesh geometry to render from. */
-  const bool external_engine = rv3d && rv3d->view_render != nullptr;
+  const bool external_engine = rv3d && rv3d->runtime->view_render != nullptr;
 
   if (pbvh->type() == bke::pbvh::Type::Mesh) {
     /* Regular mesh only draws from pbvh::Tree without modifiers and shape keys,

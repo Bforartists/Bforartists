@@ -14,7 +14,10 @@
 #include "gpu_shader_math_vector_reduce.bsl.hh"
 #include "gpu_shader_math_vector_safe.bsl.hh"
 
-#define linearstep(p0, p1, v) (clamp(((v) - (p0)) / abs((p1) - (p0)), 0.0f, 1.0f))
+float4 linearstep(float p0, float p1, float4 v)
+{
+  return saturate((v - p0) / abs(p1 - p0));
+}
 
 namespace eevee::dof::scatter {
 
@@ -46,7 +49,7 @@ struct Resources {
 
 [[vertex]]
 void vert_main([[resource_table]] Resources &srt,
-               [[instance_id]] const int inst_id,
+               [[instance_index]] const int inst_id,
                [[vertex_id]] const int vert_id,
                [[out]] VertOut &v_out,
                [[position]] float4 &out_position)

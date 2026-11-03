@@ -371,7 +371,7 @@ class AMTH_SCENE_OT_list_missing_node_links(Operator):
                                     not no.outputs["Alpha"].is_linked
 
                     if no.image:
-                        image_path_exists = os.path.exists(
+                        image_path_exists = no.image.packed_file or os.path.exists(
                                 bpy.path.abspath(
                                 no.image.filepath,
                                 library=no.image.library)
@@ -550,14 +550,20 @@ class AMTH_SCENE_OT_list_users_for_x_type(Operator):
 
         return where
 
-    def avail(self, context):
+    # Cache strings to prevent string garbage collection. See #10
+    # https://projects.blender.org/extensions/amaranth/issues/10
+    _AVAIL_ENUM_CACHE = []
+    def avail(self, _context):
+        global _AVAIL_ENUM_CACHE
         datablock_type = bpy.context.scene.amth_datablock_types
         where = AMTH_SCENE_OT_list_users_for_x_type.fill_where()
         items = [(str(i), x.name, x.name, datablock_type, i) for i, x in enumerate(where)]
         items = sorted(list(set(items)))
         if not items:
-            items = [('0', USER_X_NAME_EMPTY, USER_X_NAME_EMPTY, "INFO", 0)]
-        return items
+            items = [("0", USER_X_NAME_EMPTY, USER_X_NAME_EMPTY, "INFO", 0)]
+
+        _AVAIL_ENUM_CACHE = items
+        return _AVAIL_ENUM_CACHE
 
     list_type_select: EnumProperty(
             items=avail,
@@ -601,41 +607,39 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
         if dtype == 'IMAGE_DATA':
             # Check Materials
             for ma in d.materials:
-                # Cycles
-                if utils.cycles_exists():
-                    if ma and ma.node_tree and ma.node_tree.nodes:
-                        materials = []
+                if ma and ma.node_tree and ma.node_tree.nodes:
+                    materials = []
 
-                        for nd in ma.node_tree.nodes:
-                            if nd and nd.type in {'TEX_IMAGE', 'TEX_ENVIRONMENT'}:
-                                materials.append(nd)
+                    for nd in ma.node_tree.nodes:
+                        if nd and nd.type in {'TEX_IMAGE', 'TEX_ENVIRONMENT'}:
+                            materials.append(nd)
 
-                            if nd and nd.type == 'GROUP':
-                                if nd.node_tree and nd.node_tree.nodes:
-                                    for ng in nd.node_tree.nodes:
-                                        if ng.type in {'TEX_IMAGE', 'TEX_ENVIRONMENT'}:
-                                            materials.append(ng)
+                        if nd and nd.type == 'GROUP':
+                            if nd.node_tree and nd.node_tree.nodes:
+                                for ng in nd.node_tree.nodes:
+                                    if ng.type in {'TEX_IMAGE', 'TEX_ENVIRONMENT'}:
+                                        materials.append(ng)
 
-                            for no in materials:
-                                if no.image and no.image.name == x:
-                                    objects = []
+                        for no in materials:
+                            if no.image and no.image.name == x:
+                                objects = []
 
-                                    for ob in d.objects:
-                                        if ma.name in ob.material_slots:
-                                            objects.append(ob.name)
-                                    links = False
+                                for ob in d.objects:
+                                    if ma.name in ob.material_slots:
+                                        objects.append(ob.name)
+                                links = False
 
-                                    for o in no.outputs:
-                                        if o.links:
-                                            links = True
+                                for o in no.outputs:
+                                    if o.links:
+                                        links = True
 
-                                    name = '"{0}" {1}{2}'.format(
-                                            ma.name,
-                                            'in object: {0}'.format(objects) if objects else ' (unassigned)',
-                                            '' if links else ' (unconnected)')
+                                name = '"{0}" {1}{2}'.format(
+                                        ma.name,
+                                        'in object: {0}'.format(objects) if objects else ' (unassigned)',
+                                        '' if links else ' (unconnected)')
 
-                                    if name not in AMTH_store_data.users['MATERIAL']:
-                                        AMTH_store_data.users['MATERIAL'].append(name)
+                                if name not in AMTH_store_data.users['MATERIAL']:
+                                    AMTH_store_data.users['MATERIAL'].append(name)
 
             # Check Lights
             for la in d.lights:
@@ -707,9 +711,10 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
 
             # Check the Compositor
             for sce in d.scenes:
-                if sce.node_tree and sce.node_tree.nodes:
+                node_tree = sce.node_tree if utils.is_blender_version_4() else sce.compositing_node_group
+                if node_tree and node_tree.nodes:
                     nodes = []
-                    for nd in sce.node_tree.nodes:
+                    for nd in node_tree.nodes:
                         if nd.type == 'IMAGE':
                             nodes.append(nd)
                         elif nd.type == 'GROUP':
@@ -1032,7 +1037,7 @@ class AMTH_SCENE_PT_scene_debug(Panel):
 
         if AMTH_store_data.obj_mat_slots_lib:
             col.separator()
-            col.label("Check {}:".format(
+            col.label(text="Check {}:".format(
                 "this library" if
                 len(AMTH_store_data.obj_mat_slots_lib) == 1 else
                 "these libraries")
@@ -1098,7 +1103,7 @@ class AMTH_SCENE_PT_scene_debug(Panel):
             count_lib = 0
 
             col.separator()
-            col.label("Check {}:".format(
+            col.label(text="Check {}:".format(
                 "this library" if
                 len(AMTH_store_data.libraries) == 1 else
                 "these libraries")

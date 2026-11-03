@@ -1,6 +1,7 @@
-# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
+# SPDX-FileCopyrightText: 2011-2012 Michael Martin
+# SPDX-FileCopyrightText: 2019-2025 Damien Picard
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import bpy
 import math
@@ -12,11 +13,9 @@ from .sun_calc import calc_surface, calc_analemma
 
 
 if bpy.app.background:  # ignore drawing in background mode
-    def north_update(self, context):
+    def north_update(scene):
         pass
-    def surface_update(self, context):
-        pass
-    def analemmas_update(self, context):
+    def analemmas_surface_update(scene):
         pass
 else:
     # North line
@@ -82,8 +81,7 @@ else:
 
         matrix = bpy.context.region_data.perspective_matrix
         shader.uniform_float("u_ViewProjectionMatrix", matrix)
-        shader.uniform_float("u_Resolution", (bpy.context.region.width,
-                                              bpy.context.region.height))
+        shader.uniform_float("u_Resolution", (bpy.context.region.width, bpy.context.region.height))
         shader.uniform_float("u_Color", color)
         width = gpu.state.line_width_get()
         gpu.state.line_width_set(2.0)
@@ -92,80 +90,82 @@ else:
 
     _north_handle = None
 
-    def north_update(self, context):
+    def north_update(scene):
         global _north_handle
-        sun_props = context.scene.sun_pos_properties
-        addon_prefs = context.preferences.addons[__package__].preferences
+        sun_props = scene.sun_pos_properties
+        addon_prefs = bpy.context.preferences.addons[__package__].preferences
 
-        if addon_prefs.show_overlays and sun_props.show_north:
+        if addon_prefs.show_overlays and sun_props.usage_mode == 'NORMAL' and sun_props.show_north:
             if _north_handle is None:
-                _north_handle = bpy.types.SpaceView3D.draw_handler_add(north_draw, (), 'WINDOW', 'POST_VIEW')
+                _north_handle = bpy.types.SpaceView3D.draw_handler_add(
+                    north_draw, (), 'WINDOW', 'POST_VIEW'
+                )
         elif _north_handle is not None:
             bpy.types.SpaceView3D.draw_handler_remove(_north_handle, 'WINDOW')
             _north_handle = None
 
-    # Analemmas
+    # Analemmas and surface
 
     def analemmas_draw(batch, shader):
+        blend = gpu.state.blend_get()
+        depth_test = gpu.state.depth_test_get()
+        gpu.state.blend_set("ALPHA")
+        gpu.state.depth_test_set("LESS")
+
         shader.uniform_float("color", (1, 0, 0, 1))
+        _, _, width, height = gpu.state.viewport_get()
+        shader.uniform_float("viewportSize", (width, height))
+        shader.uniform_float("lineWidth", 1.0)
         batch.draw(shader)
 
-    _analemmas_handle = None
-
-    def analemmas_update(self, context):
-        global _analemmas_handle
-        sun_props = context.scene.sun_pos_properties
-        addon_prefs = context.preferences.addons[__package__].preferences
-
-        if addon_prefs.show_overlays and sun_props.show_analemmas:
-            coords = []
-            indices = []
-            coord_offset = 0
-            for h in range(24):
-                analemma_verts = calc_analemma(context, h)
-                coords.extend(analemma_verts)
-                for i in range(len(analemma_verts) - 1):
-                    indices.append((coord_offset + i,
-                                    coord_offset + i+1))
-                coord_offset += len(analemma_verts)
-
-            shader = gpu.shader.from_builtin('UNIFORM_COLOR')
-            batch = batch_for_shader(shader, 'LINES',
-                                    {"pos": coords}, indices=indices)
-
-            if _analemmas_handle is not None:
-                bpy.types.SpaceView3D.draw_handler_remove(_analemmas_handle, 'WINDOW')
-            _analemmas_handle = bpy.types.SpaceView3D.draw_handler_add(
-                analemmas_draw, (batch, shader), 'WINDOW', 'POST_VIEW')
-        elif _analemmas_handle is not None:
-            bpy.types.SpaceView3D.draw_handler_remove(_analemmas_handle, 'WINDOW')
-            _analemmas_handle = None
-
-    # Surface
+        gpu.state.blend_set(blend)
+        gpu.state.depth_test_set(depth_test)
 
     def surface_draw(batch, shader):
         blend = gpu.state.blend_get()
         gpu.state.blend_set("ALPHA")
-        shader.uniform_float("color", (.8, .6, 0, 0.2))
+
+        shader.uniform_float("color", (0.8, 0.6, 0, 0.2))
         batch.draw(shader)
+
         gpu.state.blend_set(blend)
 
+    _analemmas_handle = None
     _surface_handle = None
 
-    def surface_update(self, context):
+    def analemmas_surface_update(scene):
+        global _analemmas_handle
         global _surface_handle
-        sun_props = context.scene.sun_pos_properties
-        addon_prefs = context.preferences.addons[__package__].preferences
+        sun_props = scene.sun_pos_properties
+        addon_prefs = bpy.context.preferences.addons[__package__].preferences
+
+        # Remove existing handles, so they can be recreated in the correct order.
+        if _analemmas_handle is not None:
+            bpy.types.SpaceView3D.draw_handler_remove(_analemmas_handle, 'WINDOW')
+            _analemmas_handle = None
+        if _surface_handle is not None:
+            bpy.types.SpaceView3D.draw_handler_remove(_surface_handle, 'WINDOW')
+            _surface_handle = None
+
+        if sun_props.usage_mode != 'NORMAL':
+            return
+
+        # The analemmas and surface are drawn separately, but always start with
+        # the analemmas so they won't conflict with the surface's depth.
+        if addon_prefs.show_overlays and sun_props.show_analemmas:
+            coords, edges = calc_analemma(scene)
+            shader = gpu.shader.from_builtin('POLYLINE_UNIFORM_COLOR')
+            batch = batch_for_shader(shader, 'LINES', {"pos": coords}, indices=edges)
+
+            _analemmas_handle = bpy.types.SpaceView3D.draw_handler_add(
+                analemmas_draw, (batch, shader), 'WINDOW', 'POST_VIEW'
+            )
 
         if addon_prefs.show_overlays and sun_props.show_surface:
-            coords = calc_surface(context)
+            coords, _faces = calc_surface(scene)
             shader = gpu.shader.from_builtin('UNIFORM_COLOR')
             batch = batch_for_shader(shader, 'TRIS', {"pos": coords})
 
-            if _surface_handle is not None:
-                bpy.types.SpaceView3D.draw_handler_remove(_surface_handle, 'WINDOW')
             _surface_handle = bpy.types.SpaceView3D.draw_handler_add(
-                surface_draw, (batch, shader), 'WINDOW', 'POST_VIEW')
-        elif _surface_handle is not None:
-            bpy.types.SpaceView3D.draw_handler_remove(_surface_handle, 'WINDOW')
-            _surface_handle = None
+                surface_draw, (batch, shader), 'WINDOW', 'POST_VIEW'
+            )

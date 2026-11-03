@@ -432,6 +432,9 @@ def km_user_interface(params):
         ("anim.keyingset_button_add", {"type": 'K', "value": 'PRESS'}, None),
         ("anim.keyingset_button_remove", {"type": 'K', "value": 'PRESS', "alt": True}, None),
         ("ui.view_item_select", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+        ("ui.view_scroll", {"type": 'WHEELUPMOUSE', "value": 'ANY'}, None),
+        ("ui.view_scroll", {"type": 'WHEELDOWNMOUSE', "value": 'ANY'}, None),
+        ("ui.view_scroll", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
     ])
 
     return keymap
@@ -1197,6 +1200,7 @@ def km_node_editor(params):
          {"properties": [("prev", False)]}),
         ("node.select_same_type_step", {"type": 'LEFT_BRACKET', "value": 'PRESS', "shift": True},
          {"properties": [("prev", True)]}),
+        ("node.comment_edit", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
         ("node.find_node", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
         ("node.group_make", {"type": 'G', "value": 'PRESS', "ctrl": True}, None),
         ("node.group_ungroup", {"type": 'G', "value": 'PRESS', "ctrl": True, "alt": True}, None),
@@ -1866,7 +1870,7 @@ def km_sequencer(params):
          "shift": True}, {"properties": [("action", 'DESELECT')]}),
         ("sequencer.select_all", {"type": 'I', "value": 'PRESS', "ctrl": True}, {"properties": [("action", 'INVERT')]}),
         ("sequencer.split", {"type": 'B', "value": 'PRESS', "ctrl": True},
-         {"properties": [("type", 'SOFT')]}),
+         {"properties": [("type", 'SOFT'), ("only_selected", True)]}),
         ("sequencer.mute", {"type": 'M', "value": 'PRESS'},
          {"properties": [("unselected", False)]}),
         ("sequencer.mute", {"type": 'M', "value": 'PRESS', "shift": True},
@@ -1929,7 +1933,7 @@ def km_sequencer(params):
         ),
         ("sequencer.slip", {"type": 'R', "value": 'PRESS'}, None),
         ("wm.context_set_int", {"type": 'O', "value": 'PRESS'},
-         {"properties": [("data_path", "scene.sequence_editor.overlay_frame"), ("value", 0)]}),
+         {"properties": [("data_path", "sequencer_scene.sequence_editor.overlay_frame"), ("value", 0)]}),
         ("transform.seq_slide", {"type": 'W', "value": 'PRESS'},
          {"properties": [("view2d_edge_pan", True)]}),
         ("transform.seq_slide", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'},
@@ -3685,6 +3689,9 @@ def km_transform_modal_map(_params):
         ("PRECISION", {"type": 'LEFT_SHIFT', "value": 'ANY', "any": True}, None),
         ("PRECISION", {"type": 'RIGHT_SHIFT', "value": 'ANY', "any": True}, None),
         ("STRIP_CLAMP_TOGGLE", {"type": 'C', "value": 'PRESS', "any": True}, None),
+        ("STRIP_OVERLAP_SHUFFLE", {"type": 'S', "value": 'PRESS'}, None),
+        ("STRIP_OVERLAP_RIPPLE", {"type": 'R', "value": 'PRESS'}, None),
+        ("STRIP_OVERLAP_OVERWRITE", {"type": 'V', "value": 'PRESS'}, None),
     ])
 
     return keymap

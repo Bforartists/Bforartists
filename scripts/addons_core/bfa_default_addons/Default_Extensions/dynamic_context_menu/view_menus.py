@@ -36,7 +36,7 @@ class VIEW3D_MT_View_Menu(Menu):
         else:
             layout.operator("view3d.view_selected", text="Frame Selected", icon="VIEW_SELECTED").use_all_regions = False
         if view.region_quadviews:
-            layout.operator("view3d.view_selected", text="Frame Selected (Quad View)"icon="ALIGNCAMERA_ACTIVE").use_all_regions = True
+            layout.operator("view3d.view_selected", text="Frame Selected (Quad View)", icon="ALIGNCAMERA_ACTIVE").use_all_regions = True
         layout.operator("view3d.view_all").center = False
         layout.separator()
 

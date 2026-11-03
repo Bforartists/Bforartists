@@ -7,7 +7,7 @@
 # dreampainter, cotejrp1, liero, Kayo Phoenix, sugiany, dommetysk, Jambay   #
 # Phymec, Anthony D'Agostino, Pablo Vazquez, Richard Wilks, lijenstina,     #
 # Sjaak-de-Draak, Phil Cote, cotejrp1, xyz presets by elfnor, revolt_randy, #
-# Vladimir Spivak (cwolf3d), #
+# Vladimir Spivak (cwolf3d), Jonathan Lampel #
 
 # Note: Blocks has to be loaded before the WallFactory or the script
 #       will not work properly after (F8) reload
@@ -31,10 +31,12 @@ if "bpy" in locals():
     importlib.reload(add_mesh_menger_sponge)
     importlib.reload(add_mesh_vertex)
     importlib.reload(add_empty_as_parent)
+    importlib.reload(add_mesh_equilateral_grid)
     importlib.reload(add_mesh_beam_builder)
     importlib.reload(Blocks)
     importlib.reload(Wallfactory)
     importlib.reload(add_mesh_triangles)
+    importlib.reload(preferences)
 else:
     from . import add_mesh_star
     from . import add_mesh_twisted_torus
@@ -57,6 +59,8 @@ else:
     from . import Blocks
     from . import Wallfactory
     from . import add_mesh_triangles
+    from . import preferences
+    from . import add_mesh_equilateral_grid
 
     from .add_mesh_rocks import __init__
     from .add_mesh_rocks import rockgen
@@ -98,15 +102,15 @@ class VIEW3D_MT_mesh_gears_add(Menu):
         oper.change = False
 
 
-class VIEW3D_MT_mesh_diamonds_add(Menu):
-    # Define the "Diamonds" menu
-    bl_idname = "VIEW3D_MT_mesh_diamonds_add"
-    bl_label = "Diamonds"
+class VIEW3D_MT_mesh_gemstones_add(Menu):
+    # Define the "Gemstones" menu
+    bl_idname = "VIEW3D_MT_mesh_gemstones_add"
+    bl_label = "Gemstones"
 
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        oper = layout.operator("mesh.primitive_brilliant_add", text="Brilliant Diamond")
+        oper = layout.operator("mesh.primitive_brilliant_add", text="Brilliant")
         oper.change = False
         oper = layout.operator("mesh.primitive_diamond_add", text="Diamond")
         oper.change = False
@@ -127,7 +131,7 @@ class VIEW3D_MT_mesh_math_add(Menu):
         layout.operator("mesh.primitive_xyz_function_surface",
                         text="XYZ Math Surface")
         self.layout.operator("mesh.primitive_solid_add", text="Regular Solid")
-        self.layout.operator("mesh.make_triangle")
+        self.layout.operator("mesh.make_triangle", text="Triangle")
 
 
 class VIEW3D_MT_mesh_extras_add(Menu):
@@ -138,6 +142,7 @@ class VIEW3D_MT_mesh_extras_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
+        oper = layout.operator("mesh.add_mesh_rock", text="Rock Generator")
         oper = layout.operator("mesh.add_beam", text="Beam Builder")
         oper.change = False
         oper = layout.operator("mesh.wall_add", text="Wall Factory")
@@ -151,6 +156,7 @@ class VIEW3D_MT_mesh_extras_add(Menu):
         oper.change = False
         oper = layout.operator("mesh.primitive_teapot_add", text="Teapot+")
         oper = layout.operator("mesh.menger_sponge_add", text="Menger Sponge")
+        oper = layout.operator("mesh.add_equilateral_grid", text="Equilateral Grid")
 
 
 class VIEW3D_MT_mesh_torus_add(Menu):
@@ -177,15 +183,15 @@ class VIEW3D_MT_mesh_pipe_joints_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        oper = layout.operator("mesh.primitive_elbow_joint_add", text="Pipe Elbow")
+        oper = layout.operator("mesh.primitive_elbow_joint_add", text="Elbow")
         oper.change = False
-        oper = layout.operator("mesh.primitive_tee_joint_add", text="Pipe T-Joint")
+        oper = layout.operator("mesh.primitive_tee_joint_add", text="T-Joint")
         oper.change = False
-        oper = layout.operator("mesh.primitive_wye_joint_add", text="Pipe Y-Joint")
+        oper = layout.operator("mesh.primitive_wye_joint_add", text="Y-Joint")
         oper.change = False
-        oper = layout.operator("mesh.primitive_cross_joint_add", text="Pipe Cross-Joint")
+        oper = layout.operator("mesh.primitive_cross_joint_add", text="Cross-Joint")
         oper.change = False
-        oper = layout.operator("mesh.primitive_n_joint_add", text="Pipe N-Joint")
+        oper = layout.operator("mesh.primitive_n_joint_add", text="N-Joint")
         oper.change = False
 
 # Register all operators and panels
@@ -196,22 +202,38 @@ def menu_func(self, context):
     layout = self.layout
     layout.operator_context = 'INVOKE_REGION_WIN'
 
+    prefs = bpy.context.preferences.addons[__package__].preferences
+
+    if prefs.show_round_cube:
+        oper = layout.operator("mesh.primitive_round_cube_add", text="Round Cube", icon='SPHERE')
+        oper.change = False
+
     layout.separator()
-    layout.menu("VIEW3D_MT_mesh_vert_add", text="Single Vert", icon='DECORATE')
-    oper = layout.operator("mesh.primitive_round_cube_add", text="Round Cube", icon='SPHERE')
-    oper.change = False
-    layout.menu("VIEW3D_MT_mesh_torus_add", text="Torus Objects", icon='MESH_TORUS')
-    layout.separator()
-    layout.menu("VIEW3D_MT_mesh_math_add", text="Math Function", icon='PACKAGE')
-    layout.menu("VIEW3D_MT_mesh_gears_add", text="Gears", icon='PREFERENCES')
-    layout.menu("VIEW3D_MT_mesh_pipe_joints_add", text="Pipe Joints", icon='EMPTY_DATA')
-    layout.separator()
-    layout.menu("VIEW3D_MT_mesh_diamonds_add", text="Diamonds")
-    layout.menu("VIEW3D_MT_mesh_extras_add",
-                text="Extras")
-    layout.separator()
-    layout.operator("object.parent_to_empty",
-                    text="Parent To Empty")
+
+    if prefs.show_single_vert:
+        layout.menu("VIEW3D_MT_mesh_vert_add", text="Single Vert", icon='DECORATE')
+
+    if prefs.show_torus_objects:
+        layout.menu("VIEW3D_MT_mesh_torus_add", text="Torus Objects", icon='MESH_TORUS')
+
+    if prefs.show_math_functions:
+        layout.menu("VIEW3D_MT_mesh_math_add", text="Math Functions", icon='GRAPH')
+
+    if prefs.show_gears:
+        layout.menu("VIEW3D_MT_mesh_gears_add", text="Gears", icon='PREFERENCES')
+
+    if prefs.show_pipe_joints:
+        layout.menu("VIEW3D_MT_mesh_pipe_joints_add", text="Pipe Joints", icon='IPO_CONSTANT')
+
+    if prefs.show_gemstones:
+        layout.menu("VIEW3D_MT_mesh_gemstones_add", text="Gemstones", icon="MESH_ICOSPHERE")
+
+    if prefs.show_extras:
+        layout.menu("VIEW3D_MT_mesh_extras_add", text="Extras", icon="PACKAGE")
+
+    if prefs.show_parent_to_empty:
+        layout.separator()
+        layout.operator("object.parent_to_empty", text="Parent to Empty", icon="OUTLINER_OB_EMPTY")
 
 
 def Extras_contex_menu(self, context):
@@ -361,7 +383,7 @@ def Extras_contex_menu(self, context):
 classes = [
     VIEW3D_MT_mesh_vert_add,
     VIEW3D_MT_mesh_gears_add,
-    VIEW3D_MT_mesh_diamonds_add,
+    VIEW3D_MT_mesh_gemstones_add,
     VIEW3D_MT_mesh_math_add,
     VIEW3D_MT_mesh_extras_add,
     VIEW3D_MT_mesh_torus_add,
@@ -390,6 +412,7 @@ classes = [
     add_mesh_menger_sponge.AddMengerSponge,
     add_mesh_vertex.AddVert,
     add_mesh_vertex.AddEmptyVert,
+    add_mesh_equilateral_grid.MESH_OT_add_equilateral_grid,
     add_mesh_vertex.AddSymmetricalEmpty,
     add_mesh_vertex.AddSymmetricalVert,
     add_empty_as_parent.P2E,
@@ -397,6 +420,7 @@ classes = [
     add_mesh_beam_builder.addBeam,
     Wallfactory.add_mesh_wallb,
     add_mesh_triangles.MakeTriangle,
+    preferences.AddMeshExtraObjectsPreferences,
 ]
 
 

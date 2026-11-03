@@ -45,11 +45,10 @@ ccl_device_noinline
 #else
 ccl_device_inline
 #endif
-    void
-    shader_setup_from_ray(KernelGlobals kg,
-                          ccl_private ShaderData *ccl_restrict sd,
-                          const ccl_private Ray *ccl_restrict ray,
-                          const ccl_private Intersection *ccl_restrict isect)
+    void shader_setup_from_ray(KernelGlobals kg,
+                               ccl_private ShaderData *ccl_restrict sd,
+                               const ccl_private Ray *ccl_restrict ray,
+                               const ccl_private Intersection *ccl_restrict isect)
 {
   /* Read intersection data into shader globals.
    *
@@ -84,7 +83,7 @@ ccl_device_inline
   else
 #endif
 #ifdef __POINTCLOUD__
-      if (sd->type & PRIMITIVE_POINT)
+      if (sd->type & PRIMITIVE_ANY_POINT)
   {
     /* point */
     point_shader_setup(kg, sd, isect, ray);

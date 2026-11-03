@@ -50,6 +50,7 @@ static PyStructSequence_Field app_builtopts_info_fields[] = {
     {"mod_remesh", nullptr},
     {"io_wavefront_obj", nullptr},
     {"io_ply", nullptr},
+    {"io_spz", nullptr},
     {"io_stl", nullptr},
     {"io_fbx", nullptr},
     {"io_gpencil", nullptr},
@@ -60,6 +61,7 @@ static PyStructSequence_Field app_builtopts_info_fields[] = {
     {"usd", nullptr},
     {"fluid", nullptr},
     {"xr_openxr", nullptr},
+    {"opentimelineio", nullptr},
     {"potrace", nullptr},
     {"pugixml", nullptr},
     {"haru", nullptr},
@@ -250,6 +252,12 @@ static PyObject *make_builtopts_info()
   SetObjIncref(Py_False);
 #endif
 
+#ifdef WITH_IO_SPZ
+  SetObjIncref(Py_True);
+#else
+  SetObjIncref(Py_False);
+#endif
+
 #ifdef WITH_IO_STL
   SetObjIncref(Py_True);
 #else
@@ -302,6 +310,12 @@ static PyObject *make_builtopts_info()
 #endif
 
 #ifdef WITH_XR_OPENXR
+  SetObjIncref(Py_True);
+#else
+  SetObjIncref(Py_False);
+#endif
+
+#ifdef WITH_OPENTIMELINEIO
   SetObjIncref(Py_True);
 #else
   SetObjIncref(Py_False);

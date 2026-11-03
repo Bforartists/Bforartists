@@ -9,6 +9,7 @@
 #pragma once
 
 #include "draw_curves_private.hh"
+#include "draw_gsplat_private.hh"
 #include "draw_hair_private.hh"
 
 namespace blender {
@@ -22,11 +23,19 @@ class Shader;
 gpu::Shader *DRW_shader_curves_topology_get();
 gpu::Shader *DRW_shader_curves_refine_get(draw::CurvesEvalShader type);
 
+gpu::Shader *DRW_shader_gsplat_compute_get(draw::GSplatEvalShader type);
+
 gpu::Shader *DRW_shader_debug_draw_display_get();
 gpu::Shader *DRW_shader_draw_visibility_compute_get();
 gpu::Shader *DRW_shader_draw_view_finalize_get();
 gpu::Shader *DRW_shader_draw_resource_finalize_get();
 gpu::Shader *DRW_shader_draw_command_generate_get();
+
+/** \param element_size: The size of each copied element in bytes: 4, 8, 12, or 16. */
+gpu::Shader *DRW_shader_mesh_gather_get(int element_size);
+gpu::Shader *DRW_shader_mesh_scatter_faces_get(int element_size);
+
+gpu::Shader *DRW_shader_mesh_compress_normals_get(bool use_hq);
 
 /* Subdivision */
 enum class SubdivShaderType {
@@ -52,7 +61,7 @@ constexpr int SUBDIVISION_MAX_SHADERS = 17;
 
 gpu::Shader *DRW_shader_subdiv_get(SubdivShaderType shader_type);
 gpu::Shader *DRW_shader_subdiv_custom_data_get(GPUVertCompType comp_type, int dimensions);
-gpu::Shader *DRW_shader_subdiv_interp_corner_normals_get();
+gpu::Shader *DRW_shader_subdiv_interp_corner_normals_get(bool use_hq);
 
 void DRW_shaders_free();
 

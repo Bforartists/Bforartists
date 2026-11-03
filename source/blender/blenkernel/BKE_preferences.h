@@ -11,6 +11,7 @@
 #include <optional>
 
 #include "BLI_compiler_attrs.hh"
+#include "BLI_span.hh"
 #include "BLI_sys_types.hh"
 #include "BLI_uuid.hh"
 
@@ -56,12 +57,34 @@ struct bUserAssetLibrary *BKE_preferences_project_asset_library_add(
     struct UserDef *userdef,
     const char *name,
     const char *dirpath,
-    std::optional<UUID> uuid = std::nullopt);
+    std::optional<UUID> uuid = std::nullopt) ATTR_NONNULL(1);
 struct bUserAssetLibrary *BKE_preferences_remote_asset_library_add(struct UserDef *userdef,
                                                                    const char *name,
                                                                    const char *remote_url,
                                                                    const char *auth_token)
     ATTR_NONNULL(1, 3);
+bUserAssetLibrary *BKE_preferences_project_remote_asset_library_add(UserDef *userdef,
+                                                                    const char *name,
+                                                                    const char *remote_url,
+                                                                    const char *auth_token)
+    ATTR_NONNULL(1, 3);
+
+/** Who defines the library. */
+enum class bUserAssetLibraryOwner {
+  User = 0,
+  Project = 1,
+  Extension = 2,
+};
+
+bUserAssetLibraryOwner BKE_preferences_asset_library_owner_get(
+    const struct bUserAssetLibrary *library) ATTR_NONNULL();
+
+/**
+ * The repository an extension defined asset library was installed from,
+ * null when the library isn't extension defined or the repository no longer exists.
+ */
+struct bUserExtensionRepo *BKE_preferences_extension_asset_library_repo_get(
+    const struct UserDef *userdef, const struct bUserAssetLibrary *library) ATTR_NONNULL();
 
 /**
  * \brief Update the remote URL and the cache directory derived from the URL.
@@ -130,6 +153,17 @@ int BKE_preferences_asset_library_get_index(const struct UserDef *userdef,
     ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
 
 /**
+ * Check if \a library can be used, this matches the "enabled" setting except libraries defined
+ * by extensions also require their repository to be enabled.
+ *
+ * \note #ASSET_LIBRARY_DISABLED is only the setting the user controls, disabling a repository
+ * never changes it so the setting is kept for when the repository is enabled again.
+ */
+bool BKE_preferences_asset_library_is_available(const struct UserDef *userdef,
+                                                const struct bUserAssetLibrary *library)
+    ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
+
+/**
  * Check if the asset library defined in \a library has enough data to be loadable.
  * \param check_directory_exists: When true, a library is required to point to a valid path on disk
  * as its root, otherwise the library is considered invalid.
@@ -172,16 +206,14 @@ void BKE_preferences_extension_repo_module_set(UserDef *userdef,
 
 void BKE_preferences_extension_repo_custom_dirpath_set(bUserExtensionRepo *repo, const char *path);
 size_t BKE_preferences_extension_repo_dirpath_get(const bUserExtensionRepo *repo,
-                                                  char *dirpath,
-                                                  int dirpath_maxncpy);
+                                                  MutableCStr dirpath);
 
 /**
  * Returns a user editable directory associated with this repository.
  * Needed so extensions may have local data.
  */
 size_t BKE_preferences_extension_repo_user_dirpath_get(const bUserExtensionRepo *repo,
-                                                       char *dirpath,
-                                                       const int dirpath_maxncpy);
+                                                       MutableCStr dirpath);
 
 /**
  * Check the module name is valid, while this should always be the case,

@@ -16,7 +16,9 @@ from ..prefs import get_preferences
 
 
 def stats_scene(self, context):
-    get_addon = __package__ in context.preferences.addons.keys()
+    addon_name = __package__.rsplit('.', 1)[0]
+    get_addon = addon_name in context.preferences.addons.keys()
+
     if not get_addon:
         return
 

@@ -564,10 +564,10 @@ static bool but_menu_add_path_operators(Layout &layout, PointerRNA *ptr, Propert
   }
   else {
     /* This is a directory, so ensure it ends in a slash. */
-    BLI_path_slash_ensure(filepath, ARRAY_SIZE(filepath));
+    BLI_path_slash_ensure(filepath);
   }
 
-  BLI_path_split_dir_file(filepath, dir, sizeof(dir), file, sizeof(file));
+  BLI_path_split_dir_file(filepath, dir, file);
 
   props_ptr = layout.op(ot,
                         CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open Location Externally"),
@@ -1042,7 +1042,7 @@ bool popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *even
         wmOperatorType *ot = WM_operatortype_find("WM_OT_path_open", true);
         PointerRNA props_ptr;
         char dir[FILE_MAXDIR];
-        BLI_path_split_dir_part(filepath, dir, sizeof(dir));
+        BLI_path_split_dir_part(filepath, dir);
         props_ptr = layout.op(ot,
                               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open File Location"),
                               ICON_FILE_FOLDER, /*BFA*/
@@ -1059,10 +1059,6 @@ bool popup_context_menu_for_button(bContext *C, Button *but, const wmEvent *even
     const asset_system::AssetRepresentation *asset = CTX_wm_asset(C);
     if (asset && asset->is_online_only()) {
       layout.op("ASSET_OT_assets_download", {}, ICON_DOWNLOAD);
-    }
-    if (asset && asset->get_metadata().webpage) {
-      PointerRNA op_ptr = layout.op("WM_OT_url_open", "Visit Webpage", ICON_URL);
-      RNA_string_set(&op_ptr, "url", asset->get_metadata().webpage);
     }
   }
 
@@ -1427,7 +1423,7 @@ int popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
 
   if (BKE_regiontype_uses_panel_categories_search(region->runtime->type)) {
     layout.op("UI_OT_region_start_filter",
-              IFACE_("Search..."),
+              CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Search..."),
               ICON_VIEWZOOM,
               wm::OpCallContext::ExecDefault,
               UI_ITEM_NONE);

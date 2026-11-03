@@ -16,6 +16,7 @@
 
 #include "BKE_camera.h"
 #include "BKE_compositor.hh"
+#include "BKE_compute_context_cache.hh"
 #include "BKE_node.hh"
 
 #include "DEG_depsgraph_query.hh"
@@ -47,15 +48,19 @@ class Context : public compositor::Context {
  private:
   const Main *main_;
   const Scene *scene_;
-  /* The hash of the active compute context. */
-  const ComputeContextHash active_compute_context_hash_;
+  /* The compute context of the active viewer if one exists. */
+  const ComputeContext *active_compute_context_;
 
  public:
-  Context(compositor::StaticCacheManager &cache_manager, const Main *main, const Scene *scene)
-      : compositor::Context(cache_manager),
+  Context(compositor::StaticCacheManager &cache_manager,
+          bke::ComputeContextCache &compute_context_cache,
+          const Main *main,
+          const Scene *scene)
+      : compositor::Context(cache_manager, compute_context_cache),
         main_(main),
         scene_(scene),
-        active_compute_context_hash_(bke::compositor::compute_active_compute_context_hash(*scene))
+        active_compute_context_(
+            bke::compositor::compute_viewer_compute_context(*scene, compute_context_cache))
   {
   }
 
@@ -84,9 +89,9 @@ class Context : public compositor::Context {
     return compositor::SideEffectOutputTypes::ViewerNode;
   }
 
-  const ComputeContextHash &get_active_compute_context_hash() const override
+  const ComputeContext *viewer_compute_context() const override
   {
-    return active_compute_context_hash_;
+    return active_compute_context_;
   }
 
   /* In case the viewport has no camera region or is an image render, the domain covers the entire
@@ -97,8 +102,20 @@ class Context : public compositor::Context {
   {
     const DRWContext *draw_ctx = DRW_context_get();
 
-    /* No camera region or is a viewport render, the domain is the entire viewport. */
-    if (draw_ctx->rv3d->persp != RV3D_CAMOB || draw_ctx->is_viewport_image_render()) {
+    /* A viewport render, the domain is the entire viewport, but we adapt the pixel size to the
+     * render size. */
+    if (draw_ctx->is_viewport_image_render()) {
+      compositor::Domain domain = compositor::Domain(int2(draw_ctx->viewport_size_get()));
+      if (flag_is_set(this->get_render_data().compositor_proxy_flags,
+                      CompositorProxyFlags::AdaptToRenderScale))
+      {
+        domain.pixel_size = float2(this->get_render_data().size / 100.0f);
+      }
+      return domain;
+    }
+
+    /* No camera region, the domain is the entire viewport. */
+    if (draw_ctx->rv3d->persp != RV3D_CAMOB) {
       return compositor::Domain(int2(draw_ctx->viewport_size_get()));
     }
 
@@ -121,6 +138,15 @@ class Context : public compositor::Context {
     compositor::Domain domain = compositor::Domain(camera_region.size());
     domain.data_size = border_region.size();
     domain.data_offset = border_region.min - camera_region.min;
+
+    if (flag_is_set(this->get_render_data().compositor_proxy_flags,
+                    CompositorProxyFlags::AdaptToRenderScale))
+    {
+      const int2 full_render_size = int2(this->get_render_data().xsch,
+                                         this->get_render_data().ysch);
+      domain.pixel_size = float2(domain.display_size) / float2(full_render_size);
+    }
+
     return domain;
   }
 
@@ -341,7 +367,7 @@ class Context : public compositor::Context {
 
     /* If the no viewer output exist, write the output as a viewer. */
     compositor::Result &output_result = operation.get_result();
-    if (!operation.has_viewer_output()) {
+    if (!this->viewer_compute_context()) {
       this->write_viewer(output_result);
     }
 
@@ -366,8 +392,11 @@ class Instance : public DrawEngine {
 
   void draw(Manager & /*manager*/) final
   {
-    Context context(
-        cache_manager_, DEG_get_bmain(DRW_context_get()->depsgraph), DRW_context_get()->scene);
+    bke::ComputeContextCache compute_context_cache;
+    Context context(cache_manager_,
+                    compute_context_cache,
+                    DEG_get_bmain(DRW_context_get()->depsgraph),
+                    DRW_context_get()->scene);
     if (context.get_camera_region().is_empty()) {
       return;
     }

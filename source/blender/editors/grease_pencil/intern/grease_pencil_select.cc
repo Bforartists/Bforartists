@@ -15,6 +15,8 @@
 #include "BKE_object.hh"
 
 #include "BLI_enumerable_thread_specific.hh"
+#include "BLI_generic_array.hh"
+#include "BLI_implicit_sharing.hh"
 #include "BLI_index_mask.hh"
 #include "BLI_offset_indices.hh"
 #include "BLI_task.hh"
@@ -304,7 +306,7 @@ bool selection_update(const ViewContext *vc,
     /* Use #ID_RECALC_GEOMETRY instead of #ID_RECALC_SELECT because it is handled as a
      * generic attribute for now. */
     DEG_id_tag_update(object->data, ID_RECALC_GEOMETRY);
-    WM_event_add_notifier(vc->C, NC_GEOM | ND_DATA, object->data);
+    WM_main_add_notifier(NC_GEOM | ND_DATA, object->data);
   }
 
   return changed;
@@ -1047,25 +1049,26 @@ bool ensure_selection_domain(ToolSettings *ts, Object *object)
       changed |= true;
     }
 
-    /* Convert selection domain. */
-    const GVArray src = *attributes.lookup(".selection", domain);
-    if (src) {
-      const CPPType &type = src.type();
-      void *dst = MEM_new_array_uninitialized(attributes.domain_size(domain), type.size, __func__);
-      src.materialize(dst);
+    for (const StringRef selection_attribute_name :
+         ed::curves::get_curves_selection_attribute_names(curves))
+    {
+      /* Convert selection domain. */
+      const GVArray src = *attributes.lookup(selection_attribute_name, domain);
+      if (src) {
+        auto *dst = new ImplicitSharedValue<GArray<>>(src.type(), src.size(), NoInitialization());
+        src.materialize_to_uninitialized(dst->data.data());
 
-      attributes.remove(".selection");
-      if (!attributes.add(".selection",
-                          domain,
-                          bke::cpp_type_to_attribute_type(type),
-                          bke::AttributeInitMoveArray(dst)))
-      {
-        MEM_delete_void(dst);
+        attributes.remove(selection_attribute_name);
+        attributes.add(selection_attribute_name,
+                       domain,
+                       bke::cpp_type_to_attribute_type(dst->data.type()),
+                       bke::AttributeInitShared(dst->data.data(), *dst));
+        dst->remove_user_and_delete_if_last();
+
+        changed = true;
+
+        /* TODO: expand point selection to segments when in 'segment' mode. */
       }
-
-      changed = true;
-
-      /* TODO: expand point selection to segments when in 'segment' mode. */
     }
   }
 

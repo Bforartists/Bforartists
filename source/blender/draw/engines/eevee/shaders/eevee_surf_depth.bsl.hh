@@ -7,34 +7,26 @@
  */
 #pragma once
 
-#include "infos/eevee_geom_infos.hh"
-#include "infos/eevee_nodetree_infos.hh"
-
-#include "draw_curves_lib.glsl" /* IWYU pragma: export. For nodetree functions. */
-#include "eevee_nodetree_frag_lib.glsl"
+#include "eevee_nodetree_frag_lib.bsl.hh"
 #include "eevee_sampling_lib.bsl.hh"
 #include "eevee_surf_common.bsl.hh"
 #include "eevee_transparency.bsl.hh"
 #include "eevee_utility_tx.bsl.hh"
 #include "eevee_velocity.bsl.hh"
 
-float4 closure_to_rgba_depth(Closure /*cl*/)
+float4 closure_to_rgba_depth(KernelGlobals &kg, ShadingData &sd, Closure /*cl*/)
 {
   float4 out_color;
-  out_color.rgb = g_emission;
-  out_color.a = saturate(1.0f - average(g_transmittance));
+  out_color.rgb = sd.emission;
+  out_color.a = saturate(1.0f - average(sd.transmittance));
 
   /* Reset for the next closure tree. */
-  closure_weights_reset(0.0f);
+  closure_weights_reset(kg, sd, 0.0f);
 
   return out_color;
 }
 
 namespace eevee {
-
-struct SurfaceDepth {
-  [[legacy_info]] ShaderCreateInfo eevee_geom_iface_info;
-};
 
 /* WORKAROUND(fclem): This is not supposed to be needed.
  * But Metal still writes to the velocity buffer if the frag output is defined. And conditions are
@@ -54,32 +46,55 @@ template<> struct SurfaceDepthFragOut<true> {
 
 template<bool with_velocity>
 [[fragment]]
-void surf_depth([[resource_table]] PipelineConstants &pipe,
-                [[resource_table]] SurfaceDepth & /*srt*/,
+void surf_depth([[resource_table]] KernelGlobals &kg,
+                [[resource_table]] PipelineConstants &pipe,
                 [[resource_table]] const Uniform &uni,
                 [[resource_table]] const Sampling &sampling,
                 [[resource_table]] const UtilityTexture & /*util_tx*/,
                 [[resource_table]] const draw::View &views,
-                [[frag_coord]] const float4 /*frag_co*/,
+                [[resource_table]] [[condition(use_velocity)]] const GeometryVelocity &geo_vel,
+                [[frag_coord]] const float4 frag_co,
+                [[in]] const VertOutCommon &interp,
+                [[in]] [[condition(is_curves)]] const VertOutCurves &curves_interp,
+                [[in]] [[condition(is_pointcloud)]] const VertOutPointcloud &ptcloud_interp,
+                [[in]] [[condition(is_gsplat)]] const VertOutGSplat &gsplat_interp,
+                [[in]] [[condition(use_velocity)]] const VertOutVelocity &motion,
+                [[in]] [[condition(use_clip_plane)]] const VertOutClipPlane &clip_interp,
                 [[out]] SurfaceDepthFragOut<with_velocity> &frag_out,
+                [[bary_coord]] [[condition(use_barycentric)]] const float3 bary_co,
                 [[front_facing]] const bool front_face)
 {
-  FRAGMENT_SHADER_CREATE_INFO(eevee_nodetree);
-  FRAGMENT_SHADER_CREATE_INFO(eevee_clip_plane);
-  FRAGMENT_SHADER_CREATE_INFO(eevee_geom_iface_info);
-
   if (pipe.use_transparency) [[static_branch]] {
     const ViewMatrices view = views.get(0);
 
-    init_globals(uni, view, front_face);
+    float3 barycentric_co = float3(0.0f);
+    if (pipe.use_barycentric) [[static_branch]] {
+      barycentric_co = bary_co;
+    }
 
-    nodetree_surface(0.0f);
+    ShadingData sd = init_globals(pipe, uni, interp, view, front_face, frag_co);
+    if (pipe.is_mesh) [[static_branch]] {
+      init_globals_mesh(interp, sd, barycentric_co);
+    }
+    else if (pipe.is_curves) [[static_branch]] {
+      init_globals_curves(interp, curves_interp, sd, view);
+    }
+    else if (pipe.is_pointcloud) [[static_branch]] {
+      init_globals_pointcloud(ptcloud_interp, sd);
+    }
+
+    nodetree_surface(kg, sd, 0.0f);
+
+    if (pipe.is_gsplat) [[static_branch]] {
+      sd.transmittance = gsplat_amend_transmittance(gsplat_interp, sd.transmittance);
+    }
 
     float noise_offset = sampling.rng_1D_get(SAMPLING_TRANSPARENCY);
-    float threshold = hashed_transparency::alpha_threshold(
-        uni.pipeline_buf.alpha_hash_scale, noise_offset, g_data.P);
 
-    float transparency = average(g_transmittance);
+    float threshold = hashed_transparency::alpha_threshold(
+        uni.pipeline_buf.alpha_hash_scale, noise_offset, sd.P);
+
+    float transparency = average(sd.transmittance);
     if (transparency > threshold) {
       gpu_discard_fragment();
       return;
@@ -87,7 +102,6 @@ void surf_depth([[resource_table]] PipelineConstants &pipe,
   }
 
   if (pipe.use_clip_plane) [[static_branch]] {
-    auto &clip_interp = interface_get(eevee_clip_plane, clip_interp);
     /* Do not use hardware clip planes as they modify the rasterization (some GPUs add vertices).
      * This would in turn create a discrepancy between the pre-pass depth and the G-buffer depth
      * which exhibits missing pixels data. */
@@ -99,39 +113,52 @@ void surf_depth([[resource_table]] PipelineConstants &pipe,
 
   if constexpr (with_velocity) {
     if (pipe.use_velocity) [[static_branch]] {
-      /* clang-format off */ /* Multi-line define messes up line index. */
-      [[resource_table]] const GeometryVelocity &geo_vel = resource_table_get(eevee::GeometryVelocity);
-      /* clang-format on */
-      [[resource_table]] const CameraVelocity &cam_vel = geo_vel.camera;
-      const auto &motion = interface_get(eevee_velocity_iface_info, motion);
-      frag_out.velocity = cam_vel.surface_velocity(
-          interp.P + motion.prev, interp.P, interp.P + motion.next);
-      frag_out.velocity = velocity::pack(frag_out.velocity);
+      float3 P_prv = interp.P + motion.prev;
+      float3 P_nxt = interp.P + motion.next;
+      const ViewMatrices view = views.get(0);
+      frag_out.velocity = velocity::pack(
+          geo_vel.camera.surface_velocity_local(view, P_prv, interp.P, P_nxt));
     }
   }
 
   /* Always written, but may be optimized out by frame-buffer/subpass setup. */
   frag_out.normal.rgb = normalize(interp.N) * 0.5f + 0.5f;
-  frag_out.object_id = interp_flat.resource_id_raw & uint(0xFFFF);
+  frag_out.object_id = interp.resource_id_raw & uint(0xFFFF);
 }
 
-template void surf_depth<true>(PipelineConstants &,
-                               SurfaceDepth &,
+template void surf_depth<true>(KernelGlobals &,
+                               PipelineConstants &,
                                const Uniform &,
                                const Sampling &,
                                const UtilityTexture &,
                                const draw::View &,
+                               const GeometryVelocity &,
                                const float4,
+                               const VertOutCommon &,
+                               const VertOutCurves &,
+                               const VertOutPointcloud &,
+                               const VertOutGSplat &,
+                               const VertOutVelocity &,
+                               const VertOutClipPlane &,
                                SurfaceDepthFragOut<true> &,
+                               const float3,
                                const bool);
-template void surf_depth<false>(PipelineConstants &,
-                                SurfaceDepth &,
+template void surf_depth<false>(KernelGlobals &,
+                                PipelineConstants &,
                                 const Uniform &,
                                 const Sampling &,
                                 const UtilityTexture &,
                                 const draw::View &,
+                                const GeometryVelocity &,
                                 const float4,
+                                const VertOutCommon &,
+                                const VertOutCurves &,
+                                const VertOutPointcloud &,
+                                const VertOutGSplat &,
+                                const VertOutVelocity &,
+                                const VertOutClipPlane &,
                                 SurfaceDepthFragOut<false> &,
+                                const float3,
                                 const bool);
 
 }  // namespace eevee

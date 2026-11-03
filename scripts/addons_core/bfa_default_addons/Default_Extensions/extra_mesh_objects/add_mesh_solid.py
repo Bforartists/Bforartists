@@ -311,7 +311,7 @@ def createSolid(plato, vtrunc, etrunc, dual, snub):
 class Solids(bpy.types.Operator):
     """Add one of the (regular) solids (mesh)"""
     bl_idname = "mesh.primitive_solid_add"
-    bl_label = "(Regular) solids"
+    bl_label = "Add Regular Solid"
     bl_description = "Add one of the Platonic, Archimedean or Catalan solids"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
@@ -372,98 +372,8 @@ class Solids(bpy.types.Operator):
                     description="Keep the whole solid at a constant size",
                     default=False
                     )
-    preset: EnumProperty(
-                    items=(("0", "Custom", ""),
-                           ("t4", "Truncated Tetrahedron", ""),
-                           ("r4", "Cuboctahedron", ""),
-                           ("t6", "Truncated Cube", ""),
-                           ("t8", "Truncated Octahedron", ""),
-                           ("b6", "Rhombicuboctahedron", ""),
-                           ("c6", "Truncated Cuboctahedron", ""),
-                           ("s6", "Snub Cube", ""),
-                           ("r12", "Icosidodecahedron", ""),
-                           ("t12", "Truncated Dodecahedron", ""),
-                           ("t20", "Truncated Icosahedron", ""),
-                           ("b12", "Rhombicosidodecahedron", ""),
-                           ("c12", "Truncated Icosidodecahedron", ""),
-                           ("s12", "Snub Dodecahedron", ""),
-                           ("dt4", "Triakis Tetrahedron", ""),
-                           ("dr4", "Rhombic Dodecahedron", ""),
-                           ("dt6", "Triakis Octahedron", ""),
-                           ("dt8", "Tetrakis Hexahedron", ""),
-                           ("db6", "Deltoidal Icositetrahedron", ""),
-                           ("dc6", "Disdyakis Dodecahedron", ""),
-                           ("ds6", "Pentagonal Icositetrahedron", ""),
-                           ("dr12", "Rhombic Triacontahedron", ""),
-                           ("dt12", "Triakis Icosahedron", ""),
-                           ("dt20", "Pentakis Dodecahedron", ""),
-                           ("db12", "Deltoidal Hexecontahedron", ""),
-                           ("dc12", "Disdyakis Triacontahedron", ""),
-                           ("ds12", "Pentagonal Hexecontahedron", "")),
-                    name="Presets",
-                    description="Parameters for some hard names"
-                    )
-
-    # actual preset values
-    p = {"t4": ["4", 2 / 3, 0, 0, "None"],
-         "r4": ["4", 1, 1, 0, "None"],
-         "t6": ["6", 2 / 3, 0, 0, "None"],
-         "t8": ["8", 2 / 3, 0, 0, "None"],
-         "b6": ["6", 1.0938, 1, 0, "None"],
-         "c6": ["6", 1.0572, 0.585786, 0, "None"],
-         "s6": ["6", 1.0875, 0.704, 0, "Left"],
-         "r12": ["12", 1, 0, 0, "None"],
-         "t12": ["12", 2 / 3, 0, 0, "None"],
-         "t20": ["20", 2 / 3, 0, 0, "None"],
-         "b12": ["12", 1.1338, 1, 0, "None"],
-         "c12": ["20", 0.921, 0.553, 0, "None"],
-         "s12": ["12", 1.1235, 0.68, 0, "Left"],
-         "dt4": ["4", 2 / 3, 0, 1, "None"],
-         "dr4": ["4", 1, 1, 1, "None"],
-         "dt6": ["6", 2 / 3, 0, 1, "None"],
-         "dt8": ["8", 2 / 3, 0, 1, "None"],
-         "db6": ["6", 1.0938, 1, 1, "None"],
-         "dc6": ["6", 1.0572, 0.585786, 1, "None"],
-         "ds6": ["6", 1.0875, 0.704, 1, "Left"],
-         "dr12": ["12", 1, 0, 1, "None"],
-         "dt12": ["12", 2 / 3, 0, 1, "None"],
-         "dt20": ["20", 2 / 3, 0, 1, "None"],
-         "db12": ["12", 1.1338, 1, 1, "None"],
-         "dc12": ["20", 0.921, 0.553, 1, "None"],
-         "ds12": ["12", 1.1235, 0.68, 1, "Left"]}
-
-    # previous preset, for User-friendly reasons
-    previousSetting = ""
 
     def execute(self, context):
-        # piece of code to make presets remain until parameters are changed
-        if self.preset != "0":
-            # if preset, set preset
-            if self.previousSetting != self.preset:
-                using = self.p[self.preset]
-                self.source = using[0]
-                self.vTrunc = using[1]
-                self.eTrunc = using[2]
-                self.dual = using[3]
-                self.snub = using[4]
-            else:
-                using = self.p[self.preset]
-                result0 = self.source == using[0]
-                result1 = abs(self.vTrunc - using[1]) < 0.004
-                result2 = abs(self.eTrunc - using[2]) < 0.0015
-                result4 = using[4] == self.snub or ((using[4] == "Left") and
-                                                self.snub in ["Left", "Right"])
-                if (result0 and result1 and result2 and result4):
-                    if self.p[self.previousSetting][3] != self.dual:
-                        if self.preset[0] == "d":
-                            self.preset = self.preset[1:]
-                        else:
-                            self.preset = "d" + self.preset
-                else:
-                    self.preset = "0"
-
-        self.previousSetting = self.preset
-
         # generate mesh
         verts, faces = createSolid(self.source,
                                    self.vTrunc,

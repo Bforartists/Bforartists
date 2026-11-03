@@ -62,8 +62,8 @@
 #include "BKE_constraint.h"
 #include "BKE_effect.h"
 #include "BKE_fcurve_driver.h"
-#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_grease_pencil.hh"
+#include "BKE_grease_pencil_modifiers.h"
 #include "BKE_idprop.hh"
 #include "BKE_image.hh"
 #include "BKE_key.hh"
@@ -787,7 +787,7 @@ void DepsgraphRelationBuilder::build_object(Object *object)
   if (object->greasepencil_modifiers.first() != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
-    BKE_gpencil_modifiers_foreach_ID_link(object, modifier_walk, &data);
+    BKE_grease_pencil_modifiers_foreach_ID_link(object, modifier_walk, &data);
   }
 
   /* Shader FX. */
@@ -1863,6 +1863,10 @@ void DepsgraphRelationBuilder::build_action(bAction *dna_action)
   build_parameters(&dna_action->id);
   build_idproperties(dna_action->id.properties);
   build_idproperties(dna_action->id.system_properties);
+
+  for (TimeMarker &marker : dna_action->markers) {
+    build_idproperties(marker.prop);
+  }
 
   animrig::Action &action = dna_action->wrap();
   if (!action.is_empty()) {

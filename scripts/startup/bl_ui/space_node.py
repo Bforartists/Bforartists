@@ -1197,7 +1197,7 @@ class NODE_PT_active_node_generic(Panel):
         col.prop(node, "width", text="Width")
         col.prop(node, "location_absolute", text="Location")
 
-        if tree.type in ('GEOMETRY', 'COMPOSITING'):
+        if tree.type in ('GEOMETRY', 'COMPOSITING', 'SHADER'):
             layout.prop(node, "warning_propagation", text="Propagate")
 
 
@@ -1336,6 +1336,14 @@ class NODE_PT_quality(Panel):
             row = col.row()
             row.separator()
             row.prop(rd, "use_compositor_frames_cache", text="Frames")
+
+            heading = layout.column(heading="Proxy", align=True)
+            row = heading.row(align=True)
+            row.prop(rd, "compositor_proxy_use_preview_scale", text="")
+            sub = row.row()
+            sub.active = rd.compositor_proxy_use_preview_scale
+            sub.prop(rd, "compositor_proxy_preview_scale", text="")
+            heading.prop(rd, "compositor_proxy_adapt_to_render_scale", text="Adapt To Render Scale")
 
 
 class NODE_PT_overlay(Panel):
@@ -1490,10 +1498,8 @@ class NODE_PT_node_tree_properties(Panel):
         col = layout.column()
         col.prop(group, "name", text="Name", placeholder="Name")
 
-        if group.asset_data:
-            col.prop(group.asset_data, "description", text="Description", placeholder="Description")
-        else:
-            col.prop(group, "description", text="Description", placeholder="Description")
+        data = group.asset_data if group.asset_data else group
+        col.textbox(data, "description", placeholder="Description")
 
         if not group.bl_use_group_interface:
             return

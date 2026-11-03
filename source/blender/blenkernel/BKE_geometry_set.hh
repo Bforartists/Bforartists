@@ -9,16 +9,16 @@
  */
 
 #include <iosfwd>
+#include <optional>
 
 #include "BLI_bounds_types.hh"
 #include "BLI_function_ref.hh"
 #include "BLI_implicit_sharing_ptr.hh"
-#include "BLI_map.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_memory_counter_fwd.hh"
 #include "BLI_mutex.hh"
+#include "BLI_vector_set.hh"
 
-/* For #Map. */
 #include "BKE_attribute.hh"
 
 namespace blender {
@@ -104,7 +104,7 @@ class GeometryComponent : public ImplicitSharingMixin {
   virtual void count_memory(MemoryCounter &memory) const;
 
   /**
-   * Copies the component. The returned component only has a single user and is therefor mutable.
+   * Copies the component. The returned component only has a single user and is therefore mutable.
    */
   virtual GeometryComponentPtr copy() const = 0;
 

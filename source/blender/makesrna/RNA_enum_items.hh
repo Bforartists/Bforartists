@@ -23,6 +23,7 @@ DEF_ENUM(rna_enum_object_gpencil_type_items)
 DEF_ENUM(rna_enum_metaelem_type_items)
 
 DEF_ENUM(rna_enum_color_space_convert_default_items)
+DEF_ENUM(rna_enum_color_space_interop_id_default_items)
 DEF_ENUM(rna_enum_proportional_falloff_items)
 DEF_ENUM(rna_enum_proportional_falloff_curve_only_items)
 DEF_ENUM(rna_enum_snap_source_items)
@@ -53,6 +54,7 @@ DEF_ENUM(rna_enum_strip_modifier_type_items)
 DEF_ENUM(rna_enum_strip_video_modifier_type_items)
 DEF_ENUM(rna_enum_strip_sound_modifier_type_items)
 DEF_ENUM(rna_enum_strip_scale_method_items)
+DEF_ENUM(rna_enum_strip_overlap_mode_items)
 DEF_ENUM(rna_enum_object_shaderfx_type_items)
 
 DEF_ENUM(rna_enum_modifier_triangulate_quad_method_items)
@@ -270,6 +272,11 @@ DEF_ENUM(rna_enum_geometry_nodes_gizmo_color_items)
 DEF_ENUM(rna_enum_geometry_nodes_linear_gizmo_draw_style_items)
 
 DEF_ENUM(rna_enum_asset_import_method_items)
+
+DEF_ENUM(rna_enum_pointcloud_type_items)
+
+DEF_ENUM(rna_enum_project_variable_type_items)
+DEF_ENUM(rna_enum_project_variable_string_subtype_items)
 
 /* Not available to RNA pre-processing (`makesrna`).
  * Defined in editors for example. */

@@ -396,7 +396,9 @@ static void console_space_blend_write(BlendWriter *writer, SpaceLink *sl)
     writer->write_struct(&cl);
     writer->write_char_array(size_t(cl.len) + 1, cl.line);
   }
-  writer->write_struct_cast<SpaceConsole>(sl);
+  writer->write_struct_cast<SpaceConsole>(sl, [](BlendStructWriter<SpaceConsole> &struct_writer) {
+    struct_writer.shallow_data.runtime = nullptr;
+  });
 }
 
 void ED_spacetype_console()
@@ -406,6 +408,7 @@ void ED_spacetype_console()
 
   st->spaceid = SPACE_CONSOLE;
   STRNCPY_UTF8(st->name, "Console");
+  st->struct_size = sizeof(SpaceConsole);
 
   st->create = console_create;
   st->free = console_free;

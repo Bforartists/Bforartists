@@ -1553,7 +1553,7 @@ int count_grid_quads(const BitGroupVector<> &grid_hidden,
     /* grid hidden are present, have to check each element */
     for (int y = 0; y < gridsize - skip; y += skip) {
       for (int x = 0; x < gridsize - skip; x += skip) {
-        if (!paint_is_grid_face_hidden(gh, gridsize, x, y)) {
+        if (!BKE_paint_is_grid_face_hidden(gh, gridsize, x, y)) {
           totquad++;
         }
       }
@@ -2015,7 +2015,7 @@ bool node_raycast_grids(const SubdivCCG &subdiv_ccg,
       for (const short y : IndexRange(grid_size - 1)) {
         for (const short x : IndexRange(grid_size - 1)) {
           if (!grid_hidden.is_empty()) {
-            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+            if (BKE_paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
               continue;
             }
           }
@@ -2050,7 +2050,7 @@ bool node_raycast_grids(const SubdivCCG &subdiv_ccg,
       for (const short y : IndexRange(grid_size - 1)) {
         for (const short x : IndexRange(grid_size - 1)) {
           if (!grid_hidden.is_empty()) {
-            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+            if (BKE_paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
               continue;
             }
           }
@@ -2281,7 +2281,7 @@ static bool pbvh_grids_node_nearest_to_ray(const SubdivCCG &subdiv_ccg,
       for (const short y : IndexRange(grid_size - 1)) {
         for (const short x : IndexRange(grid_size - 1)) {
           if (!grid_hidden.is_empty()) {
-            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+            if (BKE_paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
               continue;
             }
           }
@@ -2305,7 +2305,7 @@ static bool pbvh_grids_node_nearest_to_ray(const SubdivCCG &subdiv_ccg,
       for (const short y : IndexRange(grid_size - 1)) {
         for (const short x : IndexRange(grid_size - 1)) {
           if (!grid_hidden.is_empty()) {
-            if (paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
+            if (BKE_paint_is_grid_face_hidden(grid_hidden[grid], grid_size, x, y)) {
               continue;
             }
           }
@@ -2504,7 +2504,7 @@ void BKE_pbvh_sync_visibility_from_verts(Object &object)
         attributes.remove(".hide_poly");
       }
       else {
-        SpanAttributeWriter<bool> hide_poly = attributes.lookup_or_add_for_write_span<bool>(
+        SpanAttributeWriter<bool> hide_poly = attributes.ensure_for_write_span<bool>(
             ".hide_poly", AttrDomain::Face, AttributeInitConstruct());
         hide_poly.span.fill(false);
         index_mask::masked_fill(hide_poly.span, true, hidden_faces);

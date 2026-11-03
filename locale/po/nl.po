@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 07:47+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
 "PO-Revision-Date: 2026-07-08 11:12+0000\n"
 "Last-Translator: Timo Hoetmer <timo@timohoetmer.nl>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -1540,6 +1540,10 @@ msgid "Show assets from the asset libraries configured in the Preferences"
 msgstr "Toon assets van de asset-bibliotheek ingesteld in Voorkeuren"
 
 
+msgid "User Library"
+msgstr "Gebruikersbibliotheek"
+
+
 msgid "User Asset Libraries"
 msgstr "Gebruiker Asset Bibliotheken"
 
@@ -2617,6 +2621,10 @@ msgid "A color space, view or display was not found, which likely means the Open
 msgstr "Er was geen kleurruimte, beeld of weergave gevonden, wat waarschijnlijk betekent dat de OpenColorIO config gebruikt om dit blend bestand te creëren mist"
 
 
+msgid "Blender"
+msgstr "Blender"
+
+
 msgid "Only link data, instead of appending it"
 msgstr "Alleen data linken, in plaats van het bij te voegen"
 
@@ -2756,6 +2764,10 @@ msgstr "Blendbestand Importeer Context Bibliotheken"
 
 msgid "Collection of source libraries, i.e. blendfile paths"
 msgstr "Collectie van bron bibliotheken, d.w.z. blendbestand paden"
+
+
+msgid "Path"
+msgstr "Pad"
 
 
 msgid "Blender RNA"
@@ -5080,10 +5092,6 @@ msgid "Fill Caps"
 msgstr "Vul Kap"
 
 
-msgid "Path"
-msgstr "Pad"
-
-
 msgid "Follow"
 msgstr "Volg"
 
@@ -5760,14 +5768,6 @@ msgid "Dots"
 msgstr "Stippen"
 
 
-msgid "Show/Hide"
-msgstr "Toon/Verberg"
-
-
-msgid "Import"
-msgstr "Importeren"
-
-
 msgid "Mirror"
 msgstr "Spiegel"
 
@@ -5792,14 +5792,6 @@ msgid "Light"
 msgstr "Licht"
 
 
-msgid "Linked"
-msgstr "Gekoppeld"
-
-
-msgid "Layout"
-msgstr "Indeling"
-
-
 msgid "Add Image"
 msgstr "Voeg Afbeelding Toe"
 
@@ -5808,12 +5800,20 @@ msgid "Relations"
 msgstr "Relaties"
 
 
+msgid "Import"
+msgstr "Importeren"
+
+
 msgid "Rigid Body"
 msgstr "Star Lichaam"
 
 
 msgid "Quick Effects"
 msgstr "Snelle Effecten"
+
+
+msgid "Show/Hide"
+msgstr "Toon/Verberg"
 
 
 msgid "Convert"
@@ -5830,6 +5830,14 @@ msgstr "Maak Transformatie Leeg"
 
 msgid "Names"
 msgstr "Namen"
+
+
+msgid "Linked"
+msgstr "Gekoppeld"
+
+
+msgid "Layout"
+msgstr "Indeling"
 
 
 msgctxt "MovieClip"
@@ -5894,10 +5902,6 @@ msgstr "Tekst naar 3D Object"
 
 msgid "Python"
 msgstr "Python"
-
-
-msgid "Blender"
-msgstr "Blender"
 
 
 msgid "System"
@@ -6918,6 +6922,10 @@ msgstr "Zoom Uit"
 msgctxt "Operator"
 msgid "Export"
 msgstr "Exporteren"
+
+
+msgid "Filepath"
+msgstr "Bestandspad"
 
 
 msgctxt "Operator"
@@ -8948,10 +8956,6 @@ msgid "Jump"
 msgstr "Spring"
 
 
-msgid "Filepath"
-msgstr "Bestandspad"
-
-
 msgctxt "Operator"
 msgid "Line Number"
 msgstr "Lijnnummer"
@@ -10094,10 +10098,6 @@ msgid "Show collections"
 msgstr "Keer collecties"
 
 
-msgid "Sort Alphabetically"
-msgstr "Sorteer Alfabetisch"
-
-
 msgid "Scene Properties"
 msgstr "Scene-eigenschappen"
 
@@ -10437,11 +10437,6 @@ msgid ":"
 msgstr ":"
 
 
-msgctxt "Operator"
-msgid "Report a Bug"
-msgstr "Een Bug Melden"
-
-
 msgid "Noise Threshold"
 msgstr "Ruisdrempel"
 
@@ -10513,6 +10508,11 @@ msgid "Documentation"
 msgstr "Documentatie"
 
 
+msgctxt "Operator"
+msgid "Report a Bug"
+msgstr "Een Bug Melden"
+
+
 msgid "File:"
 msgstr "Bestand:"
 
@@ -10555,6 +10555,11 @@ msgstr "Geen andere objecten geselecteerd"
 msgctxt "Operator"
 msgid "Open..."
 msgstr "Open..."
+
+
+msgctxt "Operator"
+msgid "Close"
+msgstr "Sluiten"
 
 
 msgctxt "Operator"
@@ -11667,11 +11672,6 @@ msgid "Hide Inactive Layers"
 msgstr "Verberg Inactieve Lagen"
 
 
-msgctxt "Operator"
-msgid "Close"
-msgstr "Sluiten"
-
-
 msgid "To 3D Cursor"
 msgstr "Naar 3D Cursor"
 
@@ -11723,17 +11723,8 @@ msgstr "Locaties"
 
 
 msgctxt "Operator"
-msgid "Quick Edit"
-msgstr "Snel Bewerken"
-
-
-msgctxt "Operator"
 msgid "Apply"
 msgstr "Toevoegen"
-
-
-msgid "User Library"
-msgstr "Gebruikersbibliotheek"
 
 
 msgid "Documents"
@@ -12064,10 +12055,6 @@ msgid "New"
 msgstr "Nieuw"
 
 
-msgid "File Not Found"
-msgstr "Bestand Niet Gevonden"
-
-
 msgid "Today"
 msgstr "Vandaag"
 
@@ -12352,12 +12339,12 @@ msgid "Mask not found"
 msgstr "Masker niet gevonden"
 
 
-msgid "Mean Crease:"
-msgstr "Gemiddelde Vouw:"
-
-
 msgid "Dimensions:"
 msgstr "Dimensies:"
+
+
+msgid "Mean Crease:"
+msgstr "Gemiddelde Vouw:"
 
 
 msgid "User Perspective"
@@ -12471,12 +12458,12 @@ msgid "Don't Save"
 msgstr "Niet Opslaan"
 
 
+msgid "File Not Found"
+msgstr "Bestand Niet Gevonden"
+
+
 msgid "unable to open the file"
 msgstr "kan het bestand niet openen"
-
-
-msgid "This may lead to unexpected behavior"
-msgstr "Dit kan leiden tot onverwacht gedrag"
 
 
 msgid "Save changes before closing?"

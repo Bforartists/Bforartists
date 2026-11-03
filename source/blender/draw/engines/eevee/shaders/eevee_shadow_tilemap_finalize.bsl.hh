@@ -4,12 +4,14 @@
 
 #pragma once
 
+#include "draw_command_shared.hh"
 #include "draw_shader_shared.hh"
 #include "eevee_defines.hh"
 #include "eevee_shadow_shared.hh"
 
 #include "eevee_shadow_tilemap_lib.bsl.hh"
 #include "gpu_shader_math_matrix_projection.bsl.hh"
+#include "gpu_shader_utildefines.bsl.hh"
 
 namespace eevee::shadow {
 
@@ -38,6 +40,8 @@ struct TilemapFinalize {
   [[storage(5, write)]] ShadowRenderView (&render_view_buf)[SHADOW_VIEW_MAX];
   [[storage(6, read)]] const ShadowTileMapClip (&tilemaps_clip_buf)[];
   [[image(0, write, UINT_32)]] uimage2D tilemaps_img;
+
+  [[push_constant]] bool use_multi_viewport;
 
   [[shared]] int rect_min_x;
   [[shared]] int rect_min_y;
@@ -98,6 +102,7 @@ void tilemap_finalize_main([[resource_table]] TilemapFinalize &srt,
     int2 rect_max = int2(srt.rect_max_x, srt.rect_max_y);
 
     int viewport_index = viewport_select(rect_max - rect_min);
+    viewport_index = srt.use_multi_viewport ? viewport_index : SHADOW_TILEMAP_LOD;
     int2 viewport_size = shadow_viewport_size_get(uint(viewport_index));
 
     /* Issue one view if there is an update in the LOD. */

@@ -298,8 +298,7 @@ class OBJExportRegressionTest : public OBJExportTest {
     STRNCPY(params.filepath, out_file_path.c_str());
     params.blen_filepath = bfile->main->filepath;
     std::string golden_file_path = tests::flags_test_asset_dir() + SEP_STR + golden_obj;
-    BLI_path_split_dir_part(
-        golden_file_path.c_str(), params.file_base_for_tests, sizeof(params.file_base_for_tests));
+    BLI_path_split_dir_part(golden_file_path.c_str(), params.file_base_for_tests);
     export_frame(depsgraph, params, out_file_path.c_str());
     std::string output_str = read_temp_file_in_string(out_file_path);
 
@@ -517,6 +516,16 @@ TEST_F(OBJExportRegressionTest, cubes_vertex_colors)
                                "cubes_vertex_colors.blend",
                                "io_tests" SEP_STR "obj" SEP_STR "cubes_vertex_colors.obj",
                                "",
+                               params);
+}
+
+TEST_F(OBJExportRegressionTest, material_shaders)
+{
+  OBJExportParams params;
+  params.path_mode = PATH_REFERENCE_STRIP;
+  compare_obj_export_to_golden("io_tests" SEP_STR "blend_scene" SEP_STR "material_shaders.blend",
+                               "io_tests" SEP_STR "obj" SEP_STR "material_shaders.obj",
+                               "io_tests" SEP_STR "obj" SEP_STR "material_shaders.mtl",
                                params);
 }
 

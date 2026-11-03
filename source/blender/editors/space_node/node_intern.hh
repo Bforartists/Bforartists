@@ -575,6 +575,7 @@ void NODE_OT_delete_reconnect(wmOperatorType *ot);
 void NODE_OT_resize(wmOperatorType *ot);
 
 void NODE_OT_mute_toggle(wmOperatorType *ot);
+void NODE_OT_comment_edit(wmOperatorType *ot);
 void NODE_OT_collapse_toggle(wmOperatorType *ot);
 void NODE_OT_hide_socket_toggle(wmOperatorType *ot);
 void NODE_OT_preview_toggle(wmOperatorType *ot);
@@ -612,6 +613,9 @@ void NODE_GGT_backdrop_box_mask(wmGizmoGroupType *gzgt);
 void NODE_GGT_backdrop_ellipse_mask(wmGizmoGroupType *gzgt);
 void NODE_GGT_backdrop_split(wmGizmoGroupType *gzgt);
 void NODE_GGT_compositor_translate(wmGizmoGroupType *gzgt);
+void NODE_GGT_compositor_transform(wmGizmoGroupType *gzgt);
+void NODE_GGT_compositor_scale(wmGizmoGroupType *gzgt);
+
 // bfa node minimap
 void NODE_GGT_minimap(wmGizmoGroupType *gzgt);
 void NODE_GT_minimap(wmGizmoType *gzt);

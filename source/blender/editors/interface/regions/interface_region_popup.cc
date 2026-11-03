@@ -1311,6 +1311,12 @@ PopupBlockHandle *popup_block_create(bContext *C,
                                      const bool can_refresh)
 {
   wmWindow *window = CTX_wm_window(C);
+
+  /* Needed for the splash popup which may be called before the DPI is set, see #161001. */
+  if (window->runtime && window->runtime->ghostwin) {
+    WM_window_dpi_set_userdef(window);
+  }
+
   Button *activebut = context_active_but_get(C);
 
   /* disable tooltips from buttons below */
@@ -1326,6 +1332,7 @@ PopupBlockHandle *popup_block_create(bContext *C,
   /* store context for operator */
   handle->ctx_area = CTX_wm_area(C);
   handle->ctx_region = CTX_wm_region(C);
+  handle->ctx_region_popup = CTX_wm_region_popup(C);
   handle->can_refresh = can_refresh;
 
   /* store vars to refresh popup (RGN_REFRESH_UI) */

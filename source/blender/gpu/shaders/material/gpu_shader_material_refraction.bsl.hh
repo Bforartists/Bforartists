@@ -6,11 +6,16 @@
 
 #include "gpu_shader_material_interface.bsl.hh"
 #include "gpu_shader_math_vector_safe.bsl.hh"
-#include "gpu_shader_utildefines.bsl.hh"
 
 [[node]]
-void node_bsdf_refraction(
-    float4 color, float roughness, float ior, float3 N, float weight, Closure &result)
+void node_bsdf_refraction(float4 color,
+                          float roughness,
+                          float ior,
+                          float3 N,
+                          float weight,
+                          KernelGlobals &kg,
+                          ShadingData &sd,
+                          Closure &result)
 {
   color = max(color, float4(0.0f));
   roughness = saturate(roughness);
@@ -23,5 +28,5 @@ void node_bsdf_refraction(
   refraction_data.roughness = roughness;
   refraction_data.ior = ior;
 
-  result = closure_eval(refraction_data);
+  result = closure_eval(kg, sd, refraction_data);
 }

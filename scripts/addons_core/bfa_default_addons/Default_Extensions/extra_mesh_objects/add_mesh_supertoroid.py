@@ -9,11 +9,12 @@ from bpy.props import (
         FloatProperty,
         BoolProperty,
         IntProperty,
-        StringProperty,
+        EnumProperty,
         )
 from math import pi, cos, sin
 from mathutils import Vector
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 
 # A very simple "bridge" tool
@@ -135,18 +136,41 @@ class add_supertoroid(bpy.types.Operator, object_utils.AddObjectHelper):
                 default = False,
                 description = "change SuperToroid")
 
+    method: EnumProperty(
+        name='Method',
+        description='Method for determining the size and thickness of the torus',
+        items=(
+            ('MAJOR-MINOR', 'Major / Minor', 'Uses the major radius for the overall size and the minor for the thickness'),
+            ('INT-EXT', 'Interior / Exterior', 'Uses the absolute size of the inner and outer circles to determine the size and thickness'),
+        ),
+        default='MAJOR-MINOR',
+        )
     R: FloatProperty(
-            name="Big radius",
-            description="The radius inside the tube",
-            default=1.0,
-            min=0.01, max=100.0
-            )
+        name="Big radius",
+        description="The radius inside the tube",
+        default=1.0,
+        min=0.01, max=100.0
+        )
     r: FloatProperty(
-            name="Small radius",
-            description="The radius of the tube",
-            default=0.3,
-            min=0.01, max=100.0
-            )
+        name="Small radius",
+        description="The radius of the tube",
+        default=0.3,
+        min=0.01, max=100.0
+        )
+    outer_r: FloatProperty(
+        name="Exterior Radius",
+        description="Total Exterior Radius of the torus",
+        min=0.01,
+        max=100.0,
+        default=1.3
+        )
+    inner_r: FloatProperty(
+        name="Inside Radius",
+        description="Total Interior Radius of the torus",
+        min=0.01,
+        max=100.0,
+        default=0.7
+        )
     u: IntProperty(
             name="U-segments",
             description="Radial segmentation",
@@ -171,11 +195,6 @@ class add_supertoroid(bpy.types.Operator, object_utils.AddObjectHelper):
             default=1.0,
             min=0.01, max=100.0
             )
-    ie: BoolProperty(
-            name="Use Int. and Ext. radii",
-            description="Use internal and external radii",
-            default=False
-            )
     edit: BoolProperty(
             name="",
             description="",
@@ -185,22 +204,26 @@ class add_supertoroid(bpy.types.Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        layout.prop(self, 'R', expand=True)
-        layout.prop(self, 'r', expand=True)
-        layout.prop(self, 'u', expand=True)
-        layout.prop(self, 'v', expand=True)
-        layout.prop(self, 'n1', expand=True)
-        layout.prop(self, 'n2', expand=True)
-        layout.prop(self, 'ie', expand=True)
+        layout.separator()
+        layout.prop(self, 'method', text='Dimensions Mode')
+        col = layout.column(align=True)
+        if self.method == 'MAJOR-MINOR':
+            col.prop(self, 'R', text='Radius Major')
+            col.prop(self, 'r', text='Minor')
+        else:
+            col.prop(self, 'outer_r', text='Radius Exterior')
+            col.prop(self, 'inner_r', text='Interior')
+        col = layout.column(align=True)
+        col.prop(self, 'u', text='Segments Major')
+        col.prop(self, 'v', text='Minor')
+        layout.prop(self, 'n1', text='Ring')
+        layout.prop(self, 'n2', text='Cross')
 
         if self.change == False:
-            col = layout.column(align=True)
-            col.prop(self, 'align', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'location', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'rotation', expand=True)
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -210,9 +233,9 @@ class add_supertoroid(bpy.types.Operator, object_utils.AddObjectHelper):
         props = self.properties
 
         # check how the radii properties must be used
-        if props.ie:
-            rad1 = (props.R + props.r) / 2
-            rad2 = (props.R - props.r) / 2
+        if props.method == 'INT-EXT':
+            rad1 = (props.outer_r + props.inner_r) / 2
+            rad2 = (props.outer_r - props.inner_r) / 2
             # for consistency in the mesh, ie no crossing faces, make the largest of the two
             # the outer radius
             if rad2 > rad1:
@@ -300,7 +323,9 @@ def SuperToroidParameters():
         "v",
         "n1",
         "n2",
-        "ie",
+        "method",
         "edit",
+        "inner_r",
+        "outer_r",
         ]
     return SuperToroidParameters

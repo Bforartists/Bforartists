@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BLI_array.hh"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_vector_types.hh"
 
 #include "IMB_imbuf.hh"
@@ -75,14 +76,15 @@ class MovieClipOperation : public NodeOperation {
   {
     ImBuf *movie_clip_buffer = get_movie_clip_buffer();
 
-    compute_image(movie_clip_buffer);
-    compute_alpha(movie_clip_buffer);
+    const float2 pixel_size = this->context().get_compositing_domain().pixel_size;
+    compute_image(movie_clip_buffer, pixel_size);
+    compute_alpha(movie_clip_buffer, pixel_size);
     compute_stabilization_data(movie_clip_buffer);
 
     IMB_freeImBuf(movie_clip_buffer);
   }
 
-  void compute_image(ImBuf *movie_clip_buffer)
+  void compute_image(ImBuf *movie_clip_buffer, const float2 &pixel_size)
   {
     Result &result = this->get_result("Image");
     if (!result.should_compute()) {
@@ -107,9 +109,13 @@ class MovieClipOperation : public NodeOperation {
         result.store_pixel(texel, Color(src + pixel_index));
       });
     }
+
+    result.domain().transformation = math::from_scale<float3x3>(pixel_size) *
+                                     result.domain().transformation;
+    result.domain().pixel_size = pixel_size;
   }
 
-  void compute_alpha(ImBuf *movie_clip_buffer)
+  void compute_alpha(ImBuf *movie_clip_buffer, const float2 &pixel_size)
   {
     Result &result = get_result("Alpha");
     if (!result.should_compute()) {
@@ -142,6 +148,10 @@ class MovieClipOperation : public NodeOperation {
         result.store_pixel(texel, src[pixel_index + 3]);
       });
     }
+
+    result.domain().transformation = math::from_scale<float3x3>(pixel_size) *
+                                     result.domain().transformation;
+    result.domain().pixel_size = pixel_size;
   }
 
   void compute_stabilization_data(ImBuf *movie_clip_buffer)

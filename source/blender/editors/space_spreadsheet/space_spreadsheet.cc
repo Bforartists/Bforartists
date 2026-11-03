@@ -540,6 +540,12 @@ static void spreadsheet_main_region_listener(const wmRegionListenerParams *param
       }
       break;
     }
+    case NC_ID: {
+      if (wmn->action == NA_RENAME) {
+        ED_region_tag_redraw(region);
+      }
+      break;
+    }
     case NC_OBJECT: {
       ED_region_tag_redraw(region);
       break;
@@ -738,7 +744,10 @@ static void spreadsheet_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 
 static void spreadsheet_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  writer->write_struct_cast<SpaceSpreadsheet>(sl);
+  writer->write_struct_cast<SpaceSpreadsheet>(
+      sl, [](BlendStructWriter<SpaceSpreadsheet> &struct_writer) {
+        struct_writer.shallow_data.runtime = nullptr;
+      });
   SpaceSpreadsheet *sspreadsheet = reinterpret_cast<SpaceSpreadsheet *>(sl);
 
   for (SpreadsheetRowFilter &row_filter : sspreadsheet->row_filters) {
@@ -778,6 +787,7 @@ void register_spacetype()
 
   st->spaceid = SPACE_SPREADSHEET;
   STRNCPY_UTF8(st->name, "Spreadsheet");
+  st->struct_size = sizeof(SpaceSpreadsheet);
 
   st->create = spreadsheet_create;
   st->free = spreadsheet_free;

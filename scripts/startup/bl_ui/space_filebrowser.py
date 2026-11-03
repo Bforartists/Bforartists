@@ -806,6 +806,7 @@ class ASSETBROWSER_MT_view(AssetBrowserMenu, Menu):
         layout.separator()
 
         layout.prop_menu_enum(params, "display_size_discrete")
+        layout.prop_menu_enum(params, "sort_method")  # BFA - exposed from the context menu
 
         layout.separator()
 
@@ -902,8 +903,22 @@ class ASSETBROWSER_MT_asset(Menu):
 
         layout.separator()
 
+        col = layout.column()
+        col.operator_context = 'INVOKE_REGION_WIN'
+        col.operator("asset.external_asset_rename", text="Rename Asset...")
+
+        layout.separator()
+
         layout.operator("asset.open_containing_blend_file", icon='FILE_BLEND')
         layout.operator("asset.browse_containing_blend_file", icon='FILE_FOLDER')
+
+
+class ASSETBROWSER_MT_asset_rename(Menu):
+    bl_label = "Rename Asset"
+
+    def draw(self, _context) -> None:
+        layout = self.layout
+        layout.operator("asset.external_asset_rename", text="Rename Asset...")
 
 
 class ASSETBROWSER_PT_import_settings(asset_utils.AssetBrowserPanel, Panel):
@@ -940,40 +955,17 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
         asset is in the current file). Empty, non-editable fields are not really useful.
         """
         if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(propname):
-            split = layout.split(factor=layout.property_split_factor)
             ui_name = asset_metadata.rna_type.properties[propname].name
-            sub = split.row()
-            sub.alignment = 'RIGHT'
-            sub.label(text=ui_name)
             if asset_metadata.is_property_readonly(propname):
-                split.label_multiline(text=getattr(asset_metadata, propname))
-            else:
-                split.textbox(
-                    asset_metadata,
-                    propname,
-                    placeholder=ui_name,
-                    initial_visible_lines=initial_visible_lines,
-                )
-
-    @staticmethod
-    def _webpage_prop(layout, asset_metadata):
-        """
-        Only display the webpage property when is either set or can be modified (i.e. the
-        asset is in the current file).
-        """
-        if getattr(asset_metadata, "webpage") or not asset_metadata.is_property_readonly("webpage"):
-            ui_name = asset_metadata.rna_type.properties["webpage"].name
-            if asset_metadata.is_property_readonly("webpage"):
                 split = layout.split(factor=layout.property_split_factor)
                 sub = split.row()
-                sub.alignment = 'RIGHT'
+                sub.alignment = 'LEFT'  # BFA - labels float left
                 sub.label(text=ui_name)
-                url = getattr(asset_metadata, "webpage")
-                sub = split.row()
-                sub.alignment = 'LEFT'
-                sub.link(url=url, text=url)
+                split.label_multiline(text=getattr(asset_metadata, propname))
             else:
-                layout.prop(asset_metadata, "webpage", placeholder=ui_name)
+                # BFA - textbox draws its own left-aligned label like a string prop (as upstream)
+                layout.textbox(asset_metadata, propname, placeholder=ui_name,
+                               initial_visible_lines=initial_visible_lines)
 
     def draw(self, context):
         layout = self.layout
@@ -1005,7 +997,13 @@ class ASSETBROWSER_PT_metadata(asset_utils.AssetBrowserPanel, Panel):
                     asset.local_id.asset_data, "catalog_simple_name", text="Simple Name"
                 )
         else:
-            layout.prop(asset, "name")
+            if asset.is_online:
+                # Online assets cannot be renamed, so just show the read-only name field.
+                layout.prop(asset, "name")
+            else:
+                row = layout.row(align=True)
+                row.prop(asset, "name")
+                row.menu("ASSETBROWSER_MT_asset_rename", text="", icon='DOWNARROW_HLT')
 
             if show_asset_debug_info:
                 col = layout.column(align=True)
@@ -1030,20 +1028,17 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
         if getattr(asset_metadata, propname) or not asset_metadata.is_property_readonly(
             propname
         ):
-            split = layout.split(factor=0.4)
             ui_name = asset_metadata.rna_type.properties[propname].name
-            sub = split.row()
-            sub.alignment = 'RIGHT'
-            sub.label(text=ui_name)
             if asset_metadata.is_property_readonly(propname):
+                split = layout.split(factor=0.4)
+                sub = split.row()
+                sub.alignment = 'LEFT'  # BFA - labels float left
+                sub.label(text=ui_name)
                 split.label_multiline(text=getattr(asset_metadata, propname))
             else:
-                split.textbox(
-                    asset_metadata,
-                    propname,
-                    placeholder=ui_name,
-                    initial_visible_lines=initial_visible_lines,
-                )
+                # BFA - textbox draws its own left-aligned label like a string prop (as upstream)
+                layout.textbox(asset_metadata, propname, placeholder=ui_name,
+                               initial_visible_lines=initial_visible_lines)
 
     def draw(self, context):
         layout = self.layout
@@ -1094,7 +1089,6 @@ class ASSETBROWSER_PT_metadata_info(asset_utils.AssetMetaDataPanel, Panel):
         self.metadata_prop(layout, metadata, "license")
         self.metadata_prop(layout, metadata, "copyright")
         self.metadata_prop(layout, metadata, "author")
-        self._webpage_prop(layout, metadata)
 
 
 class ASSETBROWSER_PT_import(asset_utils.AssetMetaDataPanel, Panel):
@@ -1232,14 +1226,8 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
         st = context.space_data
         params = st.params
 
-        add_separator = False
         if bpy.ops.asset.assets_download.poll():
             layout.operator("asset.assets_download", icon='DOWNLOAD')
-            add_separator = True
-        if context.asset and context.asset.metadata.webpage:
-            layout.operator("wm.url_open", text="Visit Webpage", icon='URL').url = context.asset.metadata.webpage
-            add_separator = True
-        if add_separator:
             layout.separator()
 
         layout.operator("asset.library_refresh", icon='FILE_REFRESH')
@@ -1263,7 +1251,20 @@ class ASSETBROWSER_MT_context_menu(AssetBrowserMenu, Menu):
 
         layout.separator()
 
-        if params.display_type == "THUMBNAIL":
+        active_asset = context.asset
+        user_library = active_asset.owner_asset_library.user_library if active_asset else None
+        extension_id = user_library.extension_id if user_library else ""
+        row = layout.row()
+        row.enabled = bool(extension_id)
+        row.operator(
+            "extensions.userpref_show_package",
+            text="View Extension",
+            icon='EXTENSION',
+        ).extension_id = extension_id
+
+        layout.separator()
+
+        if params.display_type == 'THUMBNAIL':
             layout.prop_menu_enum(params, "display_size_discrete")
         layout.prop_menu_enum(params, "sort_method")
 
@@ -1296,6 +1297,7 @@ classes = (
     ASSETBROWSER_MT_library,
     ASSETBROWSER_MT_catalog,
     ASSETBROWSER_MT_asset,
+    ASSETBROWSER_MT_asset_rename,
     ASSETBROWSER_PT_import_settings,
     ASSETBROWSER_MT_metadata_preview_menu,
     ASSETBROWSER_PT_metadata,

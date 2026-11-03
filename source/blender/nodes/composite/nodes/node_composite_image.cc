@@ -4,6 +4,8 @@
 
 #include "BLI_assert.hh"
 #include "BLI_listbase.hh"
+#include "BLI_math_matrix.hh"
+#include "BLI_math_matrix_types.hh"
 #include "BLI_memory_utils.hh"
 #include "BLI_set.hh"
 #include "BLI_string.hh"
@@ -281,6 +283,7 @@ class ImageOperation : public NodeOperation {
 
     if (identifier == "Alpha") {
       this->compute_alpha();
+      this->set_output_pixel_size(result);
       return;
     }
 
@@ -294,6 +297,7 @@ class ImageOperation : public NodeOperation {
     result.set_type(cached_image.type());
     result.set_precision(cached_image.precision());
     result.share_data(cached_image);
+    this->set_output_pixel_size(result);
   }
 
   void compute_alpha()
@@ -333,6 +337,18 @@ class ImageOperation : public NodeOperation {
     extract_alpha(this->context(), cached_combined_image, result);
   }
 
+  void set_output_pixel_size(Result &output)
+  {
+    if (!output.is_allocated() || output.is_single_value()) {
+      return;
+    }
+
+    const float2 pixel_size = this->context().get_compositing_domain().pixel_size;
+    output.domain().transformation = math::from_scale<float3x3>(pixel_size) *
+                                     output.domain().transformation;
+    output.domain().pixel_size = pixel_size;
+  }
+
   Image *get_image()
   {
     return reinterpret_cast<Image *>(node().id);
@@ -341,6 +357,16 @@ class ImageOperation : public NodeOperation {
   ImageUser *get_image_user()
   {
     return static_cast<ImageUser *>(node().storage);
+  }
+
+  bool uses_asynchronous_execution() const override
+  {
+    const bNodeSocket *alpha_output = this->node().output_by_identifier("Alpha"_ustr);
+    if (!alpha_output || !is_socket_available(alpha_output)) {
+      return false;
+    }
+    const Result &result = this->get_result(alpha_output->identifier);
+    return result.should_compute();
   }
 };
 

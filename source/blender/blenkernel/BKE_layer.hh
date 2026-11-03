@@ -34,6 +34,7 @@ struct View3D;
 struct ViewLayer;
 
 enum eObject_Flag : short;
+enum ObjectType : short;
 
 enum eViewLayerCopyMethod {
   VIEWLAYER_ADD_NEW = 0,
@@ -268,6 +269,12 @@ void BKE_base_set_visible(
     const Main &bmain, Scene *scene, ViewLayer *view_layer, Base *base, bool extend);
 bool BKE_base_is_visible(const View3D *v3d, const Base *base);
 bool BKE_object_is_visible_in_viewport(const View3D *v3d, const Object *ob);
+/**
+ * A version of #BKE_object_is_visible_in_viewport which checks the object type visibility
+ * against `ob_type` instead of `ob->type`, for the temporary object of a dupli
+ * whose type comes from its data rather than the object it instances.
+ */
+bool BKE_object_is_visible_in_viewport_ex(const View3D *v3d, const Object *ob, ObjectType ob_type);
 /**
  * Isolate the collection - hide all other collections but this one.
  * Make sure to show all the direct parents and all children of the layer collection as well.
@@ -519,7 +526,8 @@ void _BKE_view_layer_synced_ensure_or_assert(const Main *bmain,
     Base *_base; \
     _BKE_view_layer_synced_ensure_or_assert(_bmain, _scene, _view_layer); \
     for (_base = BKE_view_layer_object_bases_get(_view_layer)->first(); _base; \
-         _base = _base->next) { \
+         _base = _base->next) \
+    { \
       _instance = _base->object;
 
 #define FOREACH_OBJECT_END \

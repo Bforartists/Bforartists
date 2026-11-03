@@ -48,10 +48,6 @@ struct LayerSearchData {
   char socket_identifier[MAX_NAME];
 };
 
-/* This class must not have a destructor, since it is used by buttons and freed with
- * #MEM_delete_void. */
-BLI_STATIC_ASSERT(std::is_trivially_destructible_v<LayerSearchData>, "");
-
 static Vector<const std::string *> get_layer_names_from_context(const bContext &C,
                                                                 LayerSearchData &data)
 {
@@ -76,7 +72,7 @@ static Vector<const std::string *> get_layer_names_from_context(const bContext &
   if (!tree_zones) {
     return {};
   }
-  const ContextualNodeTreeLogs tree_logs = NodesEvalLog::get_contextual_tree_logs(*snode);
+  const ContextualNodeTreeLogs tree_logs = NodesEvalLog::get_contextual_tree_logs(C);
 
   Set<StringRef> names;
 
@@ -211,14 +207,8 @@ void node_geometry_add_layer_search_button(const bContext & /*C*/,
 
   button_func_search_set_results_are_suggestions(but, true);
   button_func_search_set_sep_string(but, UI_MENU_ARROW_SEP);
-  button_func_search_set(but,
-                         nullptr,
-                         layer_search_update_fn,
-                         static_cast<void *>(data),
-                         true,
-                         nullptr,
-                         layer_search_exec_fn,
-                         nullptr);
+  button_func_search_set(
+      but, nullptr, layer_search_update_fn, data, layer_search_exec_fn, nullptr);
 }
 
 }  // namespace ed::space_node

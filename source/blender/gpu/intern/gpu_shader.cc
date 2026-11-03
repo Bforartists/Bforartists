@@ -264,7 +264,7 @@ gpu::Shader *GPU_shader_create_from_info_python(const GPUShaderCreateInfo *_info
   const bool is_compute = !info.compute_source_generated.empty();
 
   std::array<StringRefNull, 2> includes = {
-      "draw_colormanagement_lib.glsl",
+      "gpu_shader_python_base.glsl",
       "gpu_shader_python_typedef_lib.glsl",
   };
 
@@ -338,12 +338,18 @@ gpu::Shader *GPU_shader_async_compilation_finalize(AsyncCompilationHandle &handl
 
 void GPU_shader_async_compilation_cancel(AsyncCompilationHandle &handle)
 {
-  GPUBackend::get()->get_compiler()->asyc_compilation_cancel(handle);
+  GPUBackend::get()->get_compiler()->async_compilation_cancel(handle);
 }
 
 bool GPU_shader_compiler_has_pending_work()
 {
-  return GPUBackend::get()->get_compiler()->is_compiling();
+  return GPUBackend::get()->get_compiler()->is_compiling() ||
+         GPUBackend::get()->pipelines_compiled_since_last_reset();
+}
+
+void GPU_shader_compiler_reset_frame_pipeline_tracking()
+{
+  GPUBackend::get()->reset_pipeline_compilation_tracking();
 }
 
 void GPU_shader_compiler_wait_for_all()
@@ -506,7 +512,7 @@ bool GPU_shader_async_specialization_is_ready(AsyncSpecializationHandle &handle)
 
 void GPU_shader_async_specialization_cancel(AsyncSpecializationHandle &handle)
 {
-  GPUBackend::get()->get_compiler()->asyc_compilation_cancel(handle);
+  GPUBackend::get()->get_compiler()->async_compilation_cancel(handle);
 }
 
 /** \} */
@@ -848,6 +854,27 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
     specialized_info.push_constants_.remove_if(predicate);
   }
 
+  if (!specialized_info.fragment_outputs_.is_empty()) {
+    auto predicate = [&](const ShaderCreateInfo::FragOut &res) {
+      return !res.conditions.evaluate(specialized_info.compilation_constants_);
+    };
+    specialized_info.fragment_outputs_.remove_if(predicate);
+  }
+
+  if (!specialized_info.subpass_inputs_.is_empty()) {
+    auto predicate = [&](const ShaderCreateInfo::SubpassIn &res) {
+      return !res.conditions.evaluate(specialized_info.compilation_constants_);
+    };
+    specialized_info.subpass_inputs_.remove_if(predicate);
+  }
+
+  if (!specialized_info.geometry_out_interfaces_.is_empty()) {
+    auto predicate = [&](const ShaderCreateInfo::StageInterfaceInfoHandle &res) {
+      return !res.conditions.evaluate(specialized_info.compilation_constants_);
+    };
+    specialized_info.geometry_out_interfaces_.remove_if(predicate);
+  }
+
   if (!specialized_info.builtins_.is_empty()) {
     auto predicate = [&](const ShaderCreateInfo::BuiltinBit &res) {
       return !res.conditions.evaluate(specialized_info.compilation_constants_);
@@ -873,6 +900,9 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
   cleanup_duplicates(specialized_info.batch_resources_);
   cleanup_duplicates(specialized_info.geometry_resources_);
   cleanup_duplicates(specialized_info.push_constants_);
+  cleanup_duplicates(specialized_info.fragment_outputs_);
+  cleanup_duplicates(specialized_info.subpass_inputs_);
+  cleanup_duplicates(specialized_info.geometry_out_interfaces_);
 
   const std::string error = specialized_info.check_error();
   if (!error.empty()) {
@@ -899,6 +929,7 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
   std::string resources = shader->resources_declare(info);
 
   defines += info.resource_guard_defines(info.compilation_constants_);
+  defines += info.iface_guard_defines();
 
   if (!info.compute_entry_fn_.is_empty()) {
     defines += "#define ENTRY_POINT_" + info.compute_entry_fn_ + "\n";
@@ -1100,7 +1131,7 @@ AsyncCompilationHandle ShaderCompiler::async_compilation(const shader::ShaderCre
   return handle;
 }
 
-void ShaderCompiler::asyc_compilation_cancel(AsyncCompilationHandle &handle)
+void ShaderCompiler::async_compilation_cancel(AsyncCompilationHandle &handle)
 {
   {
     std::unique_lock lock(mutex_);

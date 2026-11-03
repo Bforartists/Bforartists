@@ -5,20 +5,14 @@ import bpy
 from bpy.types import (
     Panel,
 )
-from bpy.app.translations import (
-    contexts as i18n_contexts,
-    pgettext_iface as iface_,
-)
-from bl_ui.properties_grease_pencil_common import (
-    AnnotationDataPanel,
-    AnnotationOnionSkin,
-)
+
 from bl_ui.space_toolsystem_common import (
-    ToolActivePanelHelper,
-    toolsystem_column_count, # BFA - Helper function
+    Separator,
+    OperatorEntry,
+    draw_entries,
+    toolsystem_column_count,
 )
 from bl_ui.space_sequencer import are_selected_strips_connected # BFA - Helper function
-from rna_prop_ui import PropertyPanel
 
 
 class SEQUENCER_PT_imagetab_clear(Panel):
@@ -37,55 +31,14 @@ class SEQUENCER_PT_imagetab_clear(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("sequencer.strip_transform_clear", text="Position", icon="CLEARMOVE", props={'property' : 'POSITION'}),
+            OperatorEntry("sequencer.strip_transform_clear", text="Scale", icon="CLEARSCALE", props={'property' : 'SCALE'}),
+            OperatorEntry("sequencer.strip_transform_clear", text="Rotation", icon="CLEARROTATE", props={'property' : 'ROTATION'}),
+            OperatorEntry("sequencer.strip_transform_clear", text="All Transforms", icon="CLEAR", props={'property' : 'ALL'}),
+        )
 
-        obj = context.object
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sequencer.strip_transform_clear", text="Position", icon = "CLEARMOVE").property = 'POSITION'
-            col.operator("sequencer.strip_transform_clear", text="Scale", icon = "CLEARSCALE").property = 'SCALE'
-            col.operator("sequencer.strip_transform_clear", text="Rotation", icon = "CLEARROTATE").property = 'ROTATION'
-            col.operator("sequencer.strip_transform_clear", text="All Transforms", icon = "CLEAR").property = 'ALL'
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-            col.operator_context = 'INVOKE_REGION_PREVIEW'
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEARMOVE").property = 'POSITION'
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEARSCALE").property = 'SCALE'
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEARROTATE").property = 'ROTATION'
-
-                row = col.row(align=True)
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEAR").property = 'ALL'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEARMOVE").property = 'POSITION'
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEARSCALE").property = 'SCALE'
-
-                row = col.row(align=True)
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEARROTATE").property = 'ROTATION'
-                row.operator("sequencer.strip_transform_clear", text="", icon = "CLEAR").property = 'ALL'
-
-            elif column_count == 1:
-
-                col.operator("sequencer.strip_transform_clear", text="", icon = "CLEARMOVE").property = 'POSITION'
-                col.operator("sequencer.strip_transform_clear", text="", icon = "CLEARSCALE").property = 'SCALE'
-                col.operator("sequencer.strip_transform_clear", text="", icon = "CLEARROTATE").property = 'ROTATION'
-                col.operator("sequencer.strip_transform_clear", text="", icon = "CLEAR").property = 'ALL'
+        draw_entries(layout, context, entries)
 
 
 class SEQUENCER_PT_imagetab_image(Panel):
@@ -104,48 +57,13 @@ class SEQUENCER_PT_imagetab_image(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("sequencer.strip_transform_fit", text="Scale To Fit", icon="VIEW_FIT", props={"fit_method" : 'FIT'}),
+            OperatorEntry("sequencer.strip_transform_fit", text="Scale to Fill", icon="VIEW_FILL", props={"fit_method" : 'FILL'}),
+            OperatorEntry("sequencer.strip_transform_fit", text="Stretch To Fill", icon="VIEW_STRETCH", props={"fit_method" : 'STRETCH'}),
+        )
 
-        obj = context.object
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sequencer.strip_transform_fit", text="Scale To Fit", icon = "VIEW_FIT").fit_method = 'FIT'
-            col.operator("sequencer.strip_transform_fit", text="Scale to Fill", icon = "VIEW_FILL").fit_method = 'FILL'
-            col.operator("sequencer.strip_transform_fit", text="Stretch To Fill", icon = "VIEW_STRETCH").fit_method = 'STRETCH'
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_FIT").fit_method = 'FIT'
-                row.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_FILL").fit_method = 'FILL'
-                row.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_STRETCH").fit_method = 'STRETCH'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_FIT").fit_method = 'FIT'
-                row.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_FILL").fit_method = 'FILL'
-
-                row = col.row(align=True)
-                row.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_STRETCH").fit_method = 'STRETCH'
-
-            elif column_count == 1:
-
-                col.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_FIT").fit_method = 'FIT'
-                col.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_FILL").fit_method = 'FILL'
-                col.operator("sequencer.strip_transform_fit", text="", icon = "VIEW_STRETCH").fit_method = 'STRETCH'
+        draw_entries(layout, context, entries)
 
 # ------------------------------------- Just sequencer ---------------------------------------------#
 
@@ -166,108 +84,23 @@ class SEQUENCER_PT_sequencer_striptab_transform(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("transform.seq_slide", text="Move", icon="TRANSFORM_MOVE"),
+            OperatorEntry("transform.transform", text="Move/Extend from Current Frame", icon="SEQ_MOVE_EXTEND", props={'mode' : 'TIME_EXTEND'}),
+            OperatorEntry("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS"),
+            Separator,
+            OperatorEntry("sequencer.snap", icon="SEQ_SNAP_STRIP"),
+            OperatorEntry("sequencer.offset_clear", icon="SEQ_CLEAR_OFFSET"),
+            Separator,
+            OperatorEntry("sequencer.swap", text="Swap Strip Left", icon="SEQ_SWAP_LEFT", props={'side' : 'LEFT'}),
+            OperatorEntry("sequencer.swap", text="Swap Strip Right", icon="SEQ_SWAP_RIGHT", props={'side' : 'RIGHT'}),
+            Separator,
+            OperatorEntry("sequencer.gap_remove", text="Remove Gap", icon="SEQ_REMOVE_GAPS", props={'all' : False}),
+            OperatorEntry("sequencer.gap_remove", text="Remove Gap (All)", icon="SEQ_REMOVE_GAPS_ALL", props={'all' : True}),
+            OperatorEntry("sequencer.gap_insert", text="Inset Gap", icon="SEQ_INSERT_GAPS"),
+        )
 
-        obj = context.object
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("transform.seq_slide", text="Move", icon = "TRANSFORM_MOVE")
-            col.operator("transform.transform", text="Move/Extend from Current Frame", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
-            col.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
-
-            col.separator()
-
-            col.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
-            col.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
-
-            col.separator()
-
-            col.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
-            col.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
-
-            col.separator()
-
-            col.operator("sequencer.gap_remove", text="Remove Gap", icon = "SEQ_REMOVE_GAPS").all = False
-            col.operator("sequencer.gap_remove", text="Remove Gap (All)", icon = "SEQ_REMOVE_GAPS_ALL").all = True
-            col.operator("sequencer.gap_insert", text="Inset Gap", icon = "SEQ_INSERT_GAPS")
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("transform.seq_slide", text="", icon = "TRANSFORM_MOVE")
-                row.operator("transform.transform", text="", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
-                row.operator("sequencer.slip", text="", icon = "SEQ_SLIP_CONTENTS")
-
-                row = col.row(align=True)
-                row.operator("sequencer.snap", text="", icon = "SEQ_SNAP_STRIP")
-                row.operator("sequencer.offset_clear", text="", icon = "SEQ_CLEAR_OFFSET")
-                row.operator("sequencer.swap", text="", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
-
-                row = col.row(align=True)
-                row.operator("sequencer.swap", text="", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
-                row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS").all = False
-                row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS_ALL").all = True
-
-                row = col.row(align=True)
-                row.operator("sequencer.gap_insert", text="", icon = "SEQ_INSERT_GAPS")
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("transform.seq_slide", text="", icon = "TRANSFORM_MOVE")
-                row.operator("transform.transform", text="", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
-
-                row = col.row(align=True)
-                row.operator("sequencer.slip", text="", icon = "SEQ_SLIP_CONTENTS")
-                row.operator("sequencer.snap", text="", icon = "SEQ_SNAP_STRIP")
-
-                row = col.row(align=True)
-                row.operator("sequencer.offset_clear", text="", icon = "SEQ_CLEAR_OFFSET")
-                row.operator("sequencer.swap", text="", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
-
-                row = col.row(align=True)
-                row.operator("sequencer.swap", text="", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
-                row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS").all = False
-
-                row = col.row(align=True)
-                row.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS_ALL").all = True
-                row.operator("sequencer.gap_insert", text="", icon = "SEQ_INSERT_GAPS")
-
-            elif column_count == 1:
-
-                col.operator("transform.seq_slide", text="", icon = "TRANSFORM_MOVE")
-                col.operator("transform.transform", text="", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
-                col.operator("sequencer.slip", text="", icon = "SEQ_SLIP_CONTENTS")
-
-                col.separator()
-
-                col.operator("sequencer.snap", text="", icon = "SEQ_SNAP_STRIP")
-                col.operator("sequencer.offset_clear", text="", icon = "SEQ_CLEAR_OFFSET")
-
-                col.separator()
-
-                col.operator("sequencer.swap", text="", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
-                col.operator("sequencer.swap", text="", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
-
-                col.separator()
-
-                col.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS").all = False
-                col.operator("sequencer.gap_remove", text="", icon = "SEQ_REMOVE_GAPS_ALL").all = True
-                col.operator("sequencer.gap_insert", text="", icon = "SEQ_INSERT_GAPS")
+        draw_entries(layout, context, entries)
 
 
 class SEQUENCER_PT_sequencer_striptab_split(Panel):
@@ -286,44 +119,12 @@ class SEQUENCER_PT_sequencer_striptab_split(Panel):
     def draw(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("sequencer.split", text="Split", icon='CUT', props={'type' : 'SOFT'}),
+            OperatorEntry("sequencer.split", text="Hold Split", icon='HOLD_SPLIT', props={'type' : 'HARD'}),
+        )
 
-        obj = context.object
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sequencer.split", text="Split", icon='CUT').type = 'SOFT'
-            col.operator("sequencer.split", text="Hold Split", icon='HOLD_SPLIT').type = 'HARD'
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-
-                row = col.row(align=True)
-                row.operator("sequencer.split", text="", icon='CUT').type = 'SOFT'
-                row.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
-
-            elif column_count == 2:
-
-                row = col.row(align=True)
-                row.operator("sequencer.split", text="", icon='CUT').type = 'SOFT'
-                row.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
-
-            elif column_count == 1:
-
-                col.operator("sequencer.split", text="", icon='CUT').type = 'SOFT'
-                col.operator("sequencer.split", text="", icon='HOLD_SPLIT').type = 'HARD'
+        draw_entries(layout, context, entries)
 
 
 class SEQUENCER_PT_sequencer_striptab_retiming(Panel):
@@ -340,218 +141,57 @@ class SEQUENCER_PT_sequencer_striptab_retiming(Panel):
         return space.show_toolshelf_tabs and space.view_type in {'SEQUENCER'}
 
     def draw_strip_context(self, context):
+        layout = self.layout
+
         try:
-            layout = self.layout
-
-            column_count = toolsystem_column_count(context.region)
-
-            obj = context.object
-
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
             # Determine the active strip from the pinned sequencer scene (respect workspace pin)
             seq_scene = context.sequencer_scene or context.scene
             ed_local = getattr(seq_scene, "sequence_editor", None)
-            active_strip = getattr(ed_local, "active_strip", None) or context.active_strip
 
-            strip = active_strip
+            strip = getattr(ed_local, "active_strip", None) or context.active_strip
             strip_type = getattr(strip, "type", None)
-            strip_valid = strip and strip_type in {'MOVIE', 'IMAGE', 'SOUND'}
 
-            # text buttons
-            if column_count == 4:
+            if not strip_type in {'MOVIE', 'IMAGE', 'SOUND'}:
+                raise Exception
+            
+            retiming_show_icon = 'MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME'
+            retiming_show_label = "Disable Retiming" if getattr(strip, "show_retiming_keys", False) else "Enable Retiming"
 
-                col = layout.column(align=True)
-                col.scale_y = 2
+            entries = (
+                OperatorEntry("sequencer.retiming_show", icon=retiming_show_icon, text=retiming_show_label),
+                Separator,
+                OperatorEntry("sequencer.retiming_segment_speed_set", icon="SET_TIME"),
+                Separator,
+                OperatorEntry("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE"),
+            )
 
-                if strip_valid:
-                    col.operator(
-                        "sequencer.retiming_show",
-                        icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME',
-                        text="Disable Retiming" if getattr(strip, "show_retiming_keys", False) else "Enable Retiming"
-                    )
-                    col.separator()
-
-                    col.operator("sequencer.retiming_segment_speed_set", icon="SET_TIME")
-
-                    col.separator()
-                    col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
-                else:
-                    layout.label(text="Select a movie strip", icon="QUESTION")
-
-            else:
-                # icon buttons
-                col = layout.column(align=True)
-                col.scale_x = 2
-                col.scale_y = 2
-
-                if column_count == 3:
-                    if strip_valid:
-                        row = col.row(align=True)
-                        row.operator(
-                            "sequencer.retiming_show",
-                            icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME', text=""
-                        )
-                        col.separator(factor = 0.5)
-
-                        row = col.row(align=True)
-                        row.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
-
-                        col.separator(factor = 0.5)
-
-                        row = col.row(align=True)
-                        row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
-                    else:
-                        layout.label(text="Select a movie", icon="QUESTION")
-                        layout.label(text="or sound strip")
-
-                elif column_count == 2:
-                    if strip_valid:
-                        row = col.row(align=True)
-                        col.operator(
-                            "sequencer.retiming_show",
-                            icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME', text=""
-                        )
-
-                        col.separator(factor = 0.5)
-
-                        row = col.row(align=True)
-                        col.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
-
-                        col.separator(factor = 0.5)
-
-                        row = col.row(align=True)
-                        row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
-                    else:
-                        layout.label(text="Select a movie", icon="QUESTION")
-                        layout.label(text="or sound strip")
-
-                elif column_count == 1:
-                    if strip_valid:
-                        col.operator(
-                            "sequencer.retiming_show",
-                            icon='MOD_TIME' if getattr(strip, "show_retiming_keys", False) else 'TIME', text=""
-                        )
-
-                        col.separator(factor = 0.5)
-
-                        col.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
-
-                        col.separator(factor = 0.5)
-
-                        col.separator(factor = 0.5)
-
-                        col.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
-                    else:
-                        layout.label(text="Select a movie", icon="QUESTION")
-                        layout.label(text="or sound strip")
+            draw_entries(layout, context, entries)
 
         except Exception:
-            layout.label(text="Select a movie strip")
+            if toolsystem_column_count(context.region) > 1:
+                func = layout.label_multiline
+            else:
+                func = layout.label
 
+            func(text="Select a movie or sound strip.", icon="QUESTION")
 
     def draw_retiming_context(self, context):
         layout = self.layout
 
-        column_count = toolsystem_column_count(context.region)
+        entries = (
+            OperatorEntry("sequencer.retiming_show", icon='MOD_TIME', text="Disable Retiming"),
+            Separator,
+            OperatorEntry("sequencer.retiming_segment_speed_set", icon="SET_TIME"),
+            Separator,
+            OperatorEntry("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT"),
+            OperatorEntry("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC"),
+            OperatorEntry("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME"),
+            OperatorEntry("sequencer.retiming_key_delete", text="Delete Retiming Key", icon="DELETE"),
+            Separator,
+            OperatorEntry("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE"),
+        )
 
-        obj = context.object
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            col.operator("sequencer.retiming_show", icon='MOD_TIME', text="Disable Retiming")
-
-            col.separator()
-
-            col.operator("sequencer.retiming_segment_speed_set", icon="SET_TIME")
-
-            col.separator()
-
-            col.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
-            col.operator("sequencer.retiming_freeze_frame_add", icon="KEYTYPE_MOVING_HOLD_VEC")
-            col.operator("sequencer.retiming_transition_add", icon="NODE_CURVE_TIME")
-            col.operator("sequencer.retiming_key_delete", text="Delete Retiming Key", icon="DELETE")
-
-            col.separator()
-
-            col.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
-
-
-        # icon buttons
-        else:
-
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
-
-            if column_count == 3:
-                row = col.row(align=True)
-                col.operator("sequencer.retiming_show", text="", icon='MOD_TIME')
-
-                col.separator(factor = 0.5)
-
-                row = col.row(align=True)
-                col.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
-
-                col.separator(factor = 0.5)
-                row = col.row(align=True)
-                row.operator("sequencer.retiming_key_add", text="", icon="KEYFRAMES_INSERT")
-                row.operator("sequencer.retiming_freeze_frame_add", text="", icon="KEYTYPE_MOVING_HOLD_VEC")
-                row.operator("sequencer.retiming_transition_add", text="", icon="NODE_CURVE_TIME")
-
-                row = col.row(align=True)
-                row.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
-
-                row = col.row(align=True)
-                row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
-
-            elif column_count == 2:
-                row = col.row(align=True)
-                col.operator("sequencer.retiming_show", text="", icon='MOD_TIME')
-
-                col.separator(factor = 0.5)
-
-                row = col.row(align=True)
-                col.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
-
-                col.separator(factor = 0.5)
-
-                row = col.row(align=True)
-                row.operator("sequencer.retiming_key_add", text="", icon="KEYFRAMES_INSERT")
-                row.operator("sequencer.retiming_freeze_frame_add", text="", icon="KEYTYPE_MOVING_HOLD_VEC")
-
-                row = col.row(align=True)
-                row.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
-                row.operator("sequencer.retiming_transition_add", text="", icon="NODE_CURVE_TIME")
-
-                row = col.row(align=True)
-
-                row.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
-
-            elif column_count == 1:
-                col.operator("sequencer.retiming_show", text="", icon='MOD_TIME')
-
-                col.separator(factor = 0.5)
-
-                col.operator("sequencer.retiming_segment_speed_set", text="", icon="SET_TIME")
-
-                col.separator(factor = 0.5)
-
-                col.operator("sequencer.retiming_key_add", text="", icon="KEYFRAMES_INSERT")
-                col.operator("sequencer.retiming_freeze_frame_add", text="", icon="KEYTYPE_MOVING_HOLD_VEC")
-                col.operator("sequencer.retiming_key_delete", text="", icon="DELETE")
-                col.operator("sequencer.retiming_transition_add", text="", icon="NODE_CURVE_TIME")
-
-                col.separator(factor = 0.5)
-
-                col.operator("sequencer.retiming_reset", text="", icon="KEYFRAMES_REMOVE")
-
+        draw_entries(layout, context, entries)
 
     def draw(self, context):
         seq_scene = context.sequencer_scene or context.scene
@@ -562,6 +202,7 @@ class SEQUENCER_PT_sequencer_striptab_retiming(Panel):
             self.draw_retiming_context(context)
         else:
             self.draw_strip_context(context)
+
 
 class SEQUENCER_PT_sequencer_striptab_connect(Panel):
     bl_label = "Connect"
@@ -578,52 +219,14 @@ class SEQUENCER_PT_sequencer_striptab_connect(Panel):
     
     def draw(self, context):
         layout = self.layout
-        strip = context.active_strip
 
-        column_count = toolsystem_column_count(context.region)
-
-        obj = context.object
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        #text buttons
-        if column_count == 4:
-
-            col = layout.column(align=True)
-            col.scale_y = 2
-
-            # Show connect or disconnect based on connection state
-            if are_selected_strips_connected(context):
-                col.operator("sequencer.disconnect", icon="UNLINKED")
-            else:
-                col.operator("sequencer.connect", icon="LINKED").toggle = False
-        
-        # icon buttons
+        if are_selected_strips_connected(context):
+            entries = (OperatorEntry("sequencer.disconnect", icon="UNLINKED"),)
         else:
-            col = layout.column(align=True)
-            col.scale_x = 2
-            col.scale_y = 2
+            entries = (OperatorEntry("sequencer.connect", icon="LINKED", props={'toggle' : False}),)
 
-            if column_count == 3:
-                # Show connect or disconnect based on connection state
-                if are_selected_strips_connected(context):
-                    col.operator("sequencer.disconnect", icon="UNLINKED")
-                else:
-                    col.operator("sequencer.connect", icon="LINKED").toggle = False
+        draw_entries(layout, context, entries)
 
-            elif column_count == 2:
-                # Show connect or disconnect based on connection state
-                if are_selected_strips_connected(context):
-                    col.operator("sequencer.disconnect", text="", icon='UNLINKED')
-                else:
-                    col.operator("sequencer.connect", text="", icon='LINKED').toggle = False
-
-            elif column_count == 1:
-                # Show connect or disconnect based on connection state
-                if are_selected_strips_connected(context):
-                    col.operator("sequencer.disconnect", text="", icon='UNLINKED')
-                else:
-                    col.operator("sequencer.connect", text="", icon='LINKED').toggle = False
 
 classes = (
     SEQUENCER_PT_imagetab_clear,
@@ -633,6 +236,7 @@ classes = (
     SEQUENCER_PT_sequencer_striptab_retiming,
     SEQUENCER_PT_sequencer_striptab_connect,
 )
+
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class

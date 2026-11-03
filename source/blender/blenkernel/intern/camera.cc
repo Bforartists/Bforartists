@@ -127,8 +127,7 @@ static void camera_foreach_path(ID *id, BPathForeachPathData *bpath_data)
   Camera *camera = reinterpret_cast<Camera *>(id);
 
   if (camera->custom_filepath[0]) {
-    BKE_bpath_foreach_path_fixed_process(
-        bpath_data, camera->custom_filepath, sizeof(camera->custom_filepath));
+    BKE_bpath_foreach_path_fixed_process(bpath_data, camera->custom_filepath);
   }
 }
 
@@ -217,7 +216,9 @@ static void camera_blend_write(BlendWriter *writer, ID *id, const void *id_addre
   }
 
   /* write LibData */
-  writer->write_id_struct(id_address, cam);
+  writer->write_id_struct(id_address, cam, [](BlendStructWriter<Camera> &struct_writer) {
+    struct_writer.shallow_data.runtime = {};
+  });
   BKE_id_blend_write(writer, &cam->id);
 
   for (CameraBGImage &bgpic : cam->bg_images) {

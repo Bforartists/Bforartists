@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2017-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2017-2025 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # DevBo Task https://developer.blender.org/T37299
 
@@ -500,34 +500,33 @@ class add_curlycurve(Operator, AddObjectHelper):
             )
 
     edit_mode : BoolProperty(
-            name="Show in edit mode",
+            name="Show in Edit Mode",
             default=True,
-            description="Show in edit mode"
+            description="Show in Edit Mode"
             )
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
+        layout.prop(self, "types", text='Curve Type')
 
         col = layout.column(align=True)
-        col.label(text = "Curve:")
-        col.prop(self, "types")
-
-        col = layout.column(align=True)
-        col.label(text = "Resize:")
         col.prop(self, "scale_x")
-        col.prop(self, "scale_y")
+        col.prop(self, "scale_y", text='Y')
 
         row = layout.row()
-        row.prop(self, "shape", expand=True)
+        row.prop(self, "shape", expand=True, text='Shape')
 
-        col = layout.column(align=True)
-        col.row().prop(self, "edit_mode", expand=True)
+        layout.prop(self, "edit_mode")
 
-        col = layout.column(align=True)
+        layout.separator()
         # AddObjectHelper props
-        col.prop(self, "align")
-        col.prop(self, "location")
-        col.prop(self, "rotation")
+        layout.prop(self, "align")
+        layout.prop(self, "location")
+        layout.prop(self, "rotation")
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

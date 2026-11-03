@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 07:47+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
 "PO-Revision-Date: 2026-08-25 20:13+0000\n"
 "Last-Translator: \"Mattis V.\" <mattis@users.noreply.translate.blender.org>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -1443,6 +1443,10 @@ msgstr "Aktuelle Datei"
 
 msgid "Custom"
 msgstr "Benutzerdefiniert"
+
+
+msgid "User Library"
+msgstr "Benutzer-Bibliothek"
 
 
 msgid "Asset Data"
@@ -3053,6 +3057,14 @@ msgid "Collection of worlds"
 msgstr "Sammlung von Welten"
 
 
+msgid "Project"
+msgstr "Projekt"
+
+
+msgid "Blender"
+msgstr "Blender"
+
+
 msgid "Options for this blendfile import operation"
 msgstr "Optionen für diese blendfile Import-Operation"
 
@@ -3220,6 +3232,10 @@ msgstr "Ob das Projekt ungespeicherte Änderungen hat"
 
 msgid "The project's name"
 msgstr "Der Projektname"
+
+
+msgid "Path"
+msgstr "Pfad"
 
 
 msgid "The path to the root folder of the project"
@@ -4691,6 +4707,10 @@ msgstr "Faktor der Vereinfachung mit adaptivem Algorithmus"
 
 msgid "Active Layer"
 msgstr "Aktive Ebene"
+
+
+msgid "Cyclic"
+msgstr "Zylindrisch"
 
 
 msgid "Affect Position"
@@ -6846,10 +6866,6 @@ msgid "Target Object (Curves only)"
 msgstr "Zielobjekte"
 
 
-msgid "Cyclic"
-msgstr "Zylindrisch"
-
-
 msgid "Copy Location Constraint"
 msgstr "Positionsbeschränkung kopieren"
 
@@ -7593,10 +7609,6 @@ msgstr "Nächster Oberflächenpunkt"
 
 msgid "Shrink the location to the nearest target surface"
 msgstr "Zwischen ausgewählten Markierungen"
-
-
-msgid "Project"
-msgstr "Projekt"
 
 
 msgid "Nearest Vertex"
@@ -13103,10 +13115,6 @@ msgid "Map Taper"
 msgstr "Map-Typ"
 
 
-msgid "Path"
-msgstr "Pfad"
-
-
 msgid "Enable the curve to become a translation path"
 msgstr "Der Kurve ermöglichen, ein Translationspfad zu werden"
 
@@ -13989,10 +13997,6 @@ msgstr "V"
 
 msgid "W"
 msgstr "W"
-
-
-msgid "Path to the library .blend file"
-msgstr "In .blend-Datei verpacken"
 
 
 msgid "Version of Blender the library .blend was saved with"
@@ -16730,6 +16734,10 @@ msgid "Add-ons"
 msgstr "Add-Ons"
 
 
+msgid "Asset Libraries"
+msgstr "Asset-Bibliotheken"
+
+
 msgid "Themes"
 msgstr "Themen"
 
@@ -18403,22 +18411,6 @@ msgid "Type of event"
 msgstr "Ereignistyp"
 
 
-msgid "Press"
-msgstr "Drücken"
-
-
-msgid "Release"
-msgstr "Loslassen"
-
-
-msgid "Click"
-msgstr "Klick"
-
-
-msgid "Double Click"
-msgstr "Doppelklick"
-
-
 msgctxt "Action"
 msgid "Back"
 msgstr "Zurück"
@@ -18693,6 +18685,10 @@ msgstr "Aktives Objekt von dieser Ebene"
 
 msgid "Selected Objects"
 msgstr "Ausgewählte Objekts"
+
+
+msgid "Path to the library .blend file"
+msgstr "In .blend-Datei verpacken"
 
 
 msgid "ID name"
@@ -19296,40 +19292,12 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
-msgid "Read"
-msgstr "Lesen"
-
-
-msgid "Sample"
-msgstr "Beispiel"
-
-
-msgid "Show/Hide"
-msgstr "Zeigen/Verbergen"
-
-
-msgid "Write"
-msgstr "Schreiben"
-
-
-msgid "Clean Up"
-msgstr "Aufräumen"
-
-
-msgid "Primitives"
-msgstr "Grundkörper"
-
-
 msgid "Pivot Point"
 msgstr "Drehpunkt"
 
 
 msgid "Snap"
 msgstr "Einrasten"
-
-
-msgid "Instances"
-msgstr "Instanzen"
 
 
 msgid "Proportional Editing Falloff"
@@ -19342,18 +19310,6 @@ msgstr "Maskenbearbeitung"
 
 msgid "Vertex Group Locks"
 msgstr "Punktgruppen sperren"
-
-
-msgid "Import"
-msgstr "Importieren"
-
-
-msgid "Math"
-msgstr "Mathe"
-
-
-msgid "UV"
-msgstr "UV"
 
 
 msgid "Mirror"
@@ -19384,6 +19340,10 @@ msgid "View Regions"
 msgstr "Vierfenster Ansicht"
 
 
+msgid "Math"
+msgstr "Mathe"
+
+
 msgid "Select More/Less"
 msgstr "Mehr/weniger anzeigen"
 
@@ -19404,8 +19364,24 @@ msgid "Select Loops"
 msgstr "Schleifen auswählen"
 
 
+msgid "Read"
+msgstr "Lesen"
+
+
+msgid "Sample"
+msgstr "Beispiel"
+
+
 msgid "Assign Material"
 msgstr "Material zuweisen"
+
+
+msgid "Write"
+msgstr "Schreiben"
+
+
+msgid "Primitives"
+msgstr "Grundkörper"
 
 
 msgid "Metaball"
@@ -19420,12 +19396,8 @@ msgid "Light Probe"
 msgstr "Lichtsonde"
 
 
-msgid "Linked"
-msgstr "Verknüpft"
-
-
-msgid "Layout"
-msgstr "Layout"
+msgid "Instances"
+msgstr "Instanzen"
 
 
 msgid "Add Image"
@@ -19434,6 +19406,10 @@ msgstr "Bild hinzufügen"
 
 msgid "Relations"
 msgstr "Beziehungen"
+
+
+msgid "Import"
+msgstr "Importieren"
 
 
 msgid "Rigid Body"
@@ -19452,8 +19428,12 @@ msgid "Quick Effects"
 msgstr "Schnelle Effekte"
 
 
-msgid "Keying"
-msgstr "Schlüsselbilder"
+msgid "Show/Hide"
+msgstr "Zeigen/Verbergen"
+
+
+msgid "Clean Up"
+msgstr "Aufräumen"
 
 
 msgid "Asset"
@@ -19464,12 +19444,12 @@ msgid "Make Single User"
 msgstr "Einfachen Benutzer erzeugen"
 
 
-msgid "Tracking"
-msgstr "Verfolgen"
-
-
 msgid "Convert"
 msgstr "Konvertieren"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Hooks"
@@ -19516,12 +19496,28 @@ msgid "Merge"
 msgstr "Zusammenführen"
 
 
+msgid "Linked"
+msgstr "Verknüpft"
+
+
+msgid "Layout"
+msgstr "Layout"
+
+
 msgid "Special Characters"
 msgstr "Sonderzeichen"
 
 
 msgid "Kerning"
 msgstr "Kerning"
+
+
+msgid "Keying"
+msgstr "Schlüsselbilder"
+
+
+msgid "Tracking"
+msgstr "Verfolgen"
 
 
 msgid "Assets"
@@ -19721,10 +19717,6 @@ msgstr "Open Shading Language (OSL)"
 
 msgid "Python"
 msgstr "Python"
-
-
-msgid "Blender"
-msgstr "Blender"
 
 
 msgid "System"
@@ -23126,14 +23118,6 @@ msgid "Limit speed of tracking to make visual feedback easier (this does not aff
 msgstr "Beschränken Sie die Geschwindigkeit der Nachverfolgung, um visuelles Feedback zu vereinfachen (dies hat keinen Einfluss auf die Tracking-Qualität)"
 
 
-msgid "Fastest"
-msgstr "Schnellstes"
-
-
-msgid "Double"
-msgstr "Verdoppeln"
-
-
 msgid "Track with double speed"
 msgstr "Verfolge mit doppelter Geschwindigkeit"
 
@@ -23144,10 +23128,6 @@ msgstr "Verfolge mit Echtzeit-Geschwindigkeit"
 
 msgid "Track with half of realtime speed"
 msgstr "Verfolge mit halber Echtzeit-Geschwindigkeit"
-
-
-msgid "Quarter"
-msgstr "Viertel"
 
 
 msgid "Track with quarter of realtime speed"
@@ -24196,10 +24176,6 @@ msgid "3D integer vector"
 msgstr "3D Ganzzahl Vektor"
 
 
-msgid "Unknown"
-msgstr "Unbekannt"
-
-
 msgid "Unsupported data type"
 msgstr "Nicht unterstützter Datentyp"
 
@@ -24238,6 +24214,10 @@ msgstr "UV Auspacken"
 
 msgid "Warning"
 msgstr "Warnung"
+
+
+msgid "Comment"
+msgstr "Kommentieren"
 
 
 msgctxt "NodeTree"
@@ -28425,10 +28405,6 @@ msgid "Time Extend"
 msgstr "Zeit erweitern"
 
 
-msgid "Bake Time"
-msgstr "Backzeit"
-
-
 msgid "Edge Slide"
 msgstr "Kante schieben"
 
@@ -28968,6 +28944,10 @@ msgstr "Nur ausgewählte und sichtbare Objekte exportieren"
 
 msgid "Visible Objects"
 msgstr "Sichtbare Objekte"
+
+
+msgid "Center of Mass"
+msgstr "Zentrum der Masse"
 
 
 msgid "Export cameras"
@@ -32534,6 +32514,10 @@ msgid "Clear Viewer Region"
 msgstr "Ansichtsregion löschen"
 
 
+msgid "Use Active"
+msgstr "Verwende aktives"
+
+
 msgctxt "Operator"
 msgid "Delete with Reconnect"
 msgstr "Löschen und Verbinden"
@@ -34531,10 +34515,6 @@ msgid "Rename"
 msgstr "Umbenennen"
 
 
-msgid "Use Active"
-msgstr "Verwende aktives"
-
-
 msgctxt "Operator"
 msgid "Outliner Library Operation"
 msgstr "Outliner-Bibliotheksvorgang"
@@ -35999,10 +35979,6 @@ msgid "Editing"
 msgstr "Bearbeitung"
 
 
-msgid "Asset Libraries"
-msgstr "Asset-Bibliotheken"
-
-
 msgid "Keymap"
 msgstr "Tastenbelegung"
 
@@ -36701,6 +36677,11 @@ msgid "Copy to Selected Strips"
 msgstr "Kopieren zu ausgewählte Streifen"
 
 
+msgctxt "Sequence"
+msgid "Double"
+msgstr "Doppelt"
+
+
 msgctxt "Operator"
 msgid "Move Strip Modifier"
 msgstr "Modifikator entfernen"
@@ -37007,10 +36988,6 @@ msgstr "Texturslot Einstellungen einfügen"
 msgctxt "Operator"
 msgid "Text Auto Complete"
 msgstr "Auto. Vervollständigen"
-
-
-msgid "Comment"
-msgstr "Kommentieren"
 
 
 msgid "Un-Comment"
@@ -39906,6 +39883,10 @@ msgid "Helpers"
 msgstr "Helfer"
 
 
+msgid "Splash Screen"
+msgstr "Begrüßungsbildschirm"
+
+
 msgid "Denoising"
 msgstr "Rauschreduzierung"
 
@@ -40047,10 +40028,6 @@ msgid "Save Preferences"
 msgstr "Einstellungen speichern"
 
 
-msgid "Auto Run Python Scripts"
-msgstr "Python-Skripte automatisch ausführen"
-
-
 msgid "Blend Files"
 msgstr "Blend Dateien"
 
@@ -40133,10 +40110,6 @@ msgstr "Benutzeroberfläche"
 
 msgid "Gradient Colors"
 msgstr "Malfarbe"
-
-
-msgid "Global Transform"
-msgstr "Globales transformieren"
 
 
 msgid "Brush Presets"
@@ -41462,6 +41435,10 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "Benutzeroberfläche-Einstellungen laden, wenn eine .blend-Datei geladen wird"
 
 
+msgid "Auto Run Python Scripts"
+msgstr "Python-Skripte automatisch ausführen"
+
+
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Jeder .blend Datei erlauben, automatisch Scripte auszuführen (unsicher bei Blend-Dateien von nicht vertrauenswürdigen Quellen)"
 
@@ -41988,6 +41965,10 @@ msgstr "Betrachte das Resultat des Studiolicht-Editors im Ansichtsfenster"
 
 msgid "VBO Collection Rate"
 msgstr "VBO Sammelrate"
+
+
+msgid "CUDA"
+msgstr "CUDA"
 
 
 msgid "Viewport Anti-Aliasing"
@@ -42548,10 +42529,6 @@ msgstr "3D Kurven"
 
 msgid "CPU"
 msgstr "CPU"
-
-
-msgid "CUDA"
-msgstr "CUDA"
 
 
 msgid "OptiX"
@@ -44686,10 +44663,6 @@ msgid "Error Limit"
 msgstr "Fehlergrenze"
 
 
-msgid "Center of Mass"
-msgstr "Zentrum der Masse"
-
-
 msgid "Permanent deform"
 msgstr "Dauerhafte Deformation"
 
@@ -45440,10 +45413,6 @@ msgid "Show All View Layers"
 msgstr "Alle Anzeige Ebenen anzeigen"
 
 
-msgid "Sort Alphabetically"
-msgstr "Alphabetisch sortieren"
-
-
 msgid "Sync Outliner Selection"
 msgstr "Outliner-Auswahl Synchronisieren"
 
@@ -46071,11 +46040,6 @@ msgstr "Übergangstyp"
 msgctxt "Sequence"
 msgid "Single"
 msgstr "Einzeln"
-
-
-msgctxt "Sequence"
-msgid "Double"
-msgstr "Doppelt"
 
 
 msgctxt "Sequence"
@@ -48228,6 +48192,14 @@ msgid "Haptic Duration"
 msgstr "Haptische Dauer"
 
 
+msgid "Press"
+msgstr "Drücken"
+
+
+msgid "Release"
+msgstr "Loslassen"
+
+
 msgid "Operator Mode"
 msgstr "Operator-Modus"
 
@@ -48885,11 +48857,6 @@ msgid ":"
 msgstr ":"
 
 
-msgctxt "Operator"
-msgid "Report a Bug"
-msgstr "Fehler melden"
-
-
 msgid "Object Index"
 msgstr "Objekt-Index"
 
@@ -48999,6 +48966,10 @@ msgid "AO Factor"
 msgstr "AO Faktor"
 
 
+msgid "Motion"
+msgstr "Bewegung"
+
+
 msgid "Portal"
 msgstr "Portal"
 
@@ -49069,6 +49040,11 @@ msgstr "Warnung:"
 msgctxt "Operator"
 msgid "Documentation"
 msgstr "Dokumentation"
+
+
+msgctxt "Operator"
+msgid "Report a Bug"
+msgstr "Fehler melden"
 
 
 msgid "File:"
@@ -49379,6 +49355,11 @@ msgid "Cannot remove properties from override data"
 msgstr "Eigenschaften können nicht von überschriebenen Daten entfernt werden"
 
 
+msgctxt "Operator"
+msgid "Close"
+msgstr "Schließen"
+
+
 msgid "Getting Started"
 msgstr "Leg los"
 
@@ -49468,6 +49449,10 @@ msgstr "Position"
 msgctxt "Operator"
 msgid "Rotation"
 msgstr "Rotation"
+
+
+msgid "Unknown"
+msgstr "Unbekannt"
 
 
 msgid "Frame Range Start"
@@ -50004,10 +49989,6 @@ msgstr "Sperre unbenutztes"
 msgctxt "Operator"
 msgid "Copy All Materials to Selected"
 msgstr "Alle Materialien nach Ausgewählt kopieren"
-
-
-msgid "Flip Colors"
-msgstr "Farben umdrehen"
 
 
 msgid "Clip Image"
@@ -52132,16 +52113,6 @@ msgstr "Mehr..."
 
 
 msgctxt "Operator"
-msgid "Alembic (.abc)"
-msgstr "Alembic (.abc)"
-
-
-msgctxt "Operator"
-msgid "SVG as Grease Pencil"
-msgstr "SVG als Wachsstift"
-
-
-msgctxt "Operator"
 msgid "Render Image"
 msgstr "Bild rendern"
 
@@ -52196,10 +52167,6 @@ msgstr "Einstellungen automatisch speichern"
 msgctxt "Operator"
 msgid "Revert to Saved Preferences"
 msgstr "Zurückkehren zu gespeicherten Einstellungen"
-
-
-msgid "Splash Screen"
-msgstr "Begrüßungsbildschirm"
 
 
 msgid "User Tooltips"
@@ -52584,6 +52551,10 @@ msgstr "Scharfe Kanten"
 msgctxt "Operator"
 msgid "Side of Active"
 msgstr "Seite des Aktiven"
+
+
+msgid "Scale Thickness"
+msgstr "Dicke skalieren"
 
 
 msgctxt "Operator"
@@ -53143,10 +53114,6 @@ msgid "Arrange"
 msgstr "Anordnen"
 
 
-msgid "Scale Thickness"
-msgstr "Dicke skalieren"
-
-
 msgctxt "Operator"
 msgid "View Selected"
 msgstr "Ausgewählte zeigen"
@@ -53469,11 +53436,6 @@ msgid "Hide Inactive Layers"
 msgstr "Inaktive Ebenen verbergen"
 
 
-msgctxt "Operator"
-msgid "Close"
-msgstr "Schließen"
-
-
 msgid "To 3D Cursor"
 msgstr "Zum 3D-Cursor"
 
@@ -53690,11 +53652,6 @@ msgstr "Mehrfach malen"
 
 
 msgctxt "Operator"
-msgid "Quick Edit"
-msgstr "Schnell bearbeiten"
-
-
-msgctxt "Operator"
 msgid "Apply"
 msgstr "Anwenden"
 
@@ -53737,8 +53694,8 @@ msgid "Add UVs"
 msgstr "UVs hinzufügen"
 
 
-msgid "User Library"
-msgstr "Benutzer-Bibliothek"
+msgid "GP_Layer"
+msgstr "WS-Ebene"
 
 
 msgid "Documents"
@@ -53888,10 +53845,6 @@ msgstr "ID / Index"
 
 msgid "True Normal"
 msgstr "Echte Normale"
-
-
-msgid "GP_Layer"
-msgstr "WS-Ebene"
 
 
 msgid "Could not write image: %s"
@@ -54778,14 +54731,6 @@ msgid "Reset Curve"
 msgstr "Kurve zurücksetzen"
 
 
-msgid "H"
-msgstr "H"
-
-
-msgid "S"
-msgstr "S"
-
-
 msgid "Zoom in"
 msgstr "Hereinzoomen"
 
@@ -55066,10 +55011,6 @@ msgstr "Neu"
 
 msgid "No Properties"
 msgstr "Keine Eigenschaften"
-
-
-msgid "File Not Found"
-msgstr "Datei nicht gefunden"
 
 
 msgid "Today"
@@ -56654,6 +56595,10 @@ msgid "W:"
 msgstr "W:"
 
 
+msgid "Dimensions:"
+msgstr "Dimensionen:"
+
+
 msgid "Vertex Data:"
 msgstr "Knoten-Daten:"
 
@@ -56716,10 +56661,6 @@ msgstr "Wichtung:"
 
 msgid "Mean Weight:"
 msgstr "Durchschnitts-Gewichtungen:"
-
-
-msgid "Dimensions:"
-msgstr "Dimensionen:"
 
 
 msgid "4L"
@@ -57008,22 +56949,6 @@ msgstr "Skalieren X: %s   Y: %s%s %s"
 
 msgid "Scale X: %s   Y: %s  Z: %s%s %s"
 msgstr "Skalieren X: %s   Y: %s  Z: %s%s %s"
-
-
-msgid "Time: +%s %s"
-msgstr "Zeil: +%s %s"
-
-
-msgid "Time: %s %s"
-msgstr "Zeit: %s %s"
-
-
-msgid "Time: +%.3f %s"
-msgstr "Zeit: +%.3f %s"
-
-
-msgid "Time: %.3f %s"
-msgstr "Zeit: %.3f %s"
 
 
 msgid "Edge Slide: "
@@ -57537,10 +57462,6 @@ msgid "Axis U"
 msgstr "Achse U"
 
 
-msgid "Motion"
-msgstr "Bewegung"
-
-
 msgid "Along Normals"
 msgstr "Entlang der Normalen"
 
@@ -57667,6 +57588,10 @@ msgstr "Wert"
 
 msgid "Line Break"
 msgstr "Zeilenumbruch"
+
+
+msgid "S"
+msgstr "S"
 
 
 msgid "Rotate By"
@@ -58197,6 +58122,10 @@ msgid "iScale"
 msgstr "iSkalieren"
 
 
+msgid "H"
+msgstr "H"
+
+
 msgid ""
 "%s: %.*s\n"
 "Location: %s:%d"
@@ -58281,16 +58210,16 @@ msgid "Don't Save"
 msgstr "Nicht speichern"
 
 
+msgid "File Not Found"
+msgstr "Datei nicht gefunden"
+
+
 msgid "Modified"
 msgstr "Modifizieren"
 
 
 msgid "Reload file with execution of Python scripts enabled"
 msgstr "Datei neu laden mit aktiver Ausführung von Python Skripten"
-
-
-msgid "Enable scripts"
-msgstr "Skripte aktivieren"
 
 
 msgid "Continue using file without Python scripts"
@@ -58303,14 +58232,6 @@ msgstr "Datei kann nicht geöffnet werden"
 
 msgid "For security reasons, automatic execution of Python scripts in this file was disabled:"
 msgstr "Zur Sicherheit wird die automatische Ausführung der Python Skripte in dieser Datei deaktiviert:"
-
-
-msgid "This may lead to unexpected behavior"
-msgstr "Dies kann zu unerwartetem Verhalten führen"
-
-
-msgid "Permanently allow execution of scripts"
-msgstr "Skripte ausführen immer erlauben"
 
 
 msgid "Save changes before closing?"

@@ -137,9 +137,9 @@ static void sequencer_copy_animation(Scene *scene_src,
   }
 }
 
-static void sequencer_copybuffer_filepath_get(char filepath[FILE_MAX], size_t filepath_maxncpy)
+static void sequencer_copybuffer_filepath_get(MutableCStr filepath)
 {
-  BLI_path_join(filepath, filepath_maxncpy, BKE_tempdir_base(), "copybuffer_vse.blend");
+  BLI_path_join(filepath, BKE_tempdir_base(), "copybuffer_vse.blend");
 }
 
 static bool sequencer_write_copy_paste_file(Main *bmain_src,
@@ -320,7 +320,7 @@ wmOperatorStatus sequencer_clipboard_copy_exec(bContext *C, wmOperator *op)
   }
 
   char filepath[FILE_MAX];
-  sequencer_copybuffer_filepath_get(filepath, sizeof(filepath));
+  sequencer_copybuffer_filepath_get(filepath);
   bool success = sequencer_write_copy_paste_file(bmain, scene, filepath, *op->reports);
   if (!success) {
     BKE_report(op->reports, RPT_ERROR, "Could not create the copy paste file!");
@@ -392,7 +392,7 @@ wmOperatorStatus sequencer_clipboard_paste_exec(bContext *C, wmOperator *op)
   Main *bmain_dst = CTX_data_main(C);
 
   char filepath[FILE_MAX];
-  sequencer_copybuffer_filepath_get(filepath, sizeof(filepath));
+  sequencer_copybuffer_filepath_get(filepath);
   Main *bmain_src = BKE_copybuffer_read(*bmain_dst, filepath, op->reports, FILTER_ID_SCE);
   if (!bmain_src) {
     BKE_report(op->reports, RPT_ERROR, "No data to paste");
@@ -521,6 +521,7 @@ wmOperatorStatus sequencer_clipboard_paste_exec(bContext *C, wmOperator *op)
     strip_mean_pos /= image_strip_count;
   }
 
+  VectorSet<Strip *> pasted_strips;
   for (Strip &istrip : nseqbase) {
     /* Place strips that generate an image at the mouse cursor. */
     if (region->regiontype == RGN_TYPE_PREVIEW && !RNA_boolean_get(op->ptr, "keep_offset") &&
@@ -537,10 +538,19 @@ wmOperatorStatus sequencer_clipboard_paste_exec(bContext *C, wmOperator *op)
     /* Translate after name has been changed, otherwise this will affect animdata of original
      * strip. */
     seq::transform_translate_strip(scene_dst, &istrip, ofs);
-    /* Ensure, that pasted strips don't overlap. */
-    if (seq::transform_test_overlap(scene_dst, ed_dst->current_strips(), &istrip)) {
-      seq::transform_seqbase_shuffle(ed_dst->current_strips(), &istrip, scene_dst);
-    }
+    pasted_strips.add(&istrip);
+  }
+
+  /* Ensure that pasted strips don't overlap. */
+  ScrArea *area = CTX_wm_area(C);
+  const bool use_sync_markers = ((area->spacedata.first_as<SpaceSeq>())->flag &
+                                 SEQ_MARKER_TRANS) != 0;
+  if (seq::tool_settings_overlap_mode_get(scene_dst) == SEQ_OVERLAP_SHUFFLE) {
+    seq::transform_shuffle_vertical(ed_dst->current_strips(), pasted_strips, scene_dst);
+  }
+  else {
+    seq::transform_handle_overlap(
+        scene_dst, ed_dst->current_strips(), pasted_strips, use_sync_markers);
   }
 
   seq::animation_restore_original(scene_dst, &animation_backup);

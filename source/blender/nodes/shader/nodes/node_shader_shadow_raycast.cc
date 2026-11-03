@@ -34,14 +34,21 @@ static int node_shader_gpu_shadow_raycast(GPUMaterial *mat,
                                           GPUNodeStack *in,
                                           GPUNodeStack *out)
 {
+  if (!in[0].link) {
+    /* Error: not linked to a light accumulation zone. */
+    BLI_assert_unreachable();
+    return false;
+  }
+
   if (!in[1].link) {
-    GPU_link(mat, "world_position_get", &in[1].link);
+    GPU_link(mat, "world_position_get", GPU_shading_data(), &in[1].link);
   }
   else {
     GPU_material_flag_set(mat, GPU_MATFLAG_SHADOW_OFFSET);
   }
 
-  return GPU_stack_link(mat, node, "node_shadow_raycast", in, out);
+  return GPU_stack_link(
+      mat, node, "node_shadow_raycast", in, out, GPU_kernel_globals(), GPU_shading_data());
 }
 
 }  // namespace nodes::node_shader_shadow_raycast_cc
@@ -56,7 +63,7 @@ void register_node_type_sh_shadow_raycast()
   sh_node_type_base(&ntype, "ShaderNodeShadowRaycast"_ustr, SH_NODE_SHADOW_RAYCAST);
   ntype.ui_name = "Shadow Raycast";
   ntype.ui_description = "Shadow Raycast";
-  ntype.enum_name_legacy = "SHADOW RAYCAST";
+  ntype.enum_name_legacy = "SHADOW_RAYCAST";
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = file_ns::node_declare;
   ntype.gather_link_search_ops = search_link_ops_for_shader_material_lighting_node;

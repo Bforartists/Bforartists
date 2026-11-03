@@ -25,7 +25,7 @@
 namespace blender {
 
 struct bDeformGroup;
-struct BMEditMesh;
+struct BMesh;
 struct Bone;
 struct Depsgraph;
 struct IDProperty;
@@ -721,7 +721,7 @@ void BKE_armature_deform_coords_with_editmesh(
     std::optional<MutableSpan<float3x3>> vert_deform_mats,
     int deformflag,
     StringRefNull defgrp_name,
-    const BMEditMesh &em_target);
+    const BMesh &bm_target);
 
 /** \} */
 

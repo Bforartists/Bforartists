@@ -45,6 +45,7 @@ struct GPUCapabilities {
   bool mem_stats_support = false;
   bool geometry_shader_support = false;
   bool hdr_viewport_support = false;
+  bool multi_viewport_support = false;
   bool stencil_export_support = false;
   bool ray_query_support = false;
   bool vertex_pipeline_stores_and_atomics_support = false;
@@ -60,8 +61,10 @@ struct GPUCapabilities {
   bool depth_blitting_workaround = false;
   bool use_main_context_workaround = false;
   bool use_hq_normals_workaround = false;
-  bool stencil_clasify_buffer_workaround = false;
+  bool stencil_classify_buffer_workaround = false;
   bool texture_pool_workaround = false;
+  /** Reading the front-buffer is unreliable, see #GPU_frontbuffer_read_workaround. */
+  bool frontbuffer_read_workaround = false;
 
   bool use_subprocess_shader_compilations = false;
 

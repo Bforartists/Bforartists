@@ -67,9 +67,14 @@ namespace gpu {
 class Texture;
 }
 
-/** For mesh drawing callbacks, for viewport selection, etc. */
+/**
+ * For mesh drawing callbacks, for viewport selection, etc.
+ *
+ * \note #bContext is intentionally excluded from this struct to ensure the context's state doesn't
+ * leak into the functions intended to use these struct members. If the context is needed, it must
+ * be passed in separately.
+ */
 struct ViewContext {
-  bContext *C;
   Main *bmain;
   /* Dependency graph is uses for depth drawing, viewport camera matrix access, and also some areas
    * are re-using this to access evaluated entities.
@@ -83,6 +88,7 @@ struct ViewContext {
   ARegion *region;
   View3D *v3d;
   wmWindow *win;
+  wmWindowManager *wm;
   RegionView3D *rv3d;
   BMEditMesh *em;
   int mval[2];
@@ -1177,6 +1183,11 @@ bool ED_view3d_quat_to_axis_view_and_reset_quat(float quat[4],
                                                 float epsilon,
                                                 eRegionView3D_View *r_view,
                                                 eRegionView3D_ViewAxisRoll *r_view_axis_roll);
+
+/** BFA - roll of the view relative to the horizon (world Z up), zero when level (#6839). */
+float ED_view3d_view_roll_get(const float viewquat[4]);
+/** BFA - roll the view about its view axis so its roll relative to the horizon is `angle`. */
+void ED_view3d_view_roll_set(float viewquat[4], float angle);
 
 eRegionView3D_View ED_view3d_lock_view_from_index(int index);
 eRegionView3D_View ED_view3d_axis_view_opposite(eRegionView3D_View view);

@@ -18,6 +18,8 @@
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
 
+#include "BKE_view3d_runtime.hh"
+
 #include "GPU_matrix.hh"
 
 #include "ED_view3d.hh" /* own include */
@@ -110,7 +112,7 @@ static eV3DProjStatus ed_view3d_project__internal(const ARegion *region,
 
   if (flag & V3D_PROJ_TEST_CLIP_BB) {
     const RegionView3D *rv3d = static_cast<const RegionView3D *>(region->regiondata);
-    if (rv3d->rflag & RV3D_CLIPPING) {
+    if ((rv3d->rflag & RV3D_CLIPPING) && (rv3d->clipbb != nullptr)) {
       if (ED_view3d_clipping_test(rv3d, co, is_local)) {
         return V3D_PROJ_RET_CLIP_BB;
       }
@@ -230,7 +232,7 @@ eV3DProjStatus ED_view3d_project_short_object(const ARegion *region,
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
   ED_view3d_check_mats_rv3d(rv3d);
-  return ED_view3d_project_short_ex(region, rv3d->persmatob, true, co, r_co, flag);
+  return ED_view3d_project_short_ex(region, rv3d->runtime->persmatob, true, co, r_co, flag);
 }
 
 eV3DProjStatus ED_view3d_project_int_global(const ARegion *region,
@@ -248,7 +250,7 @@ eV3DProjStatus ED_view3d_project_int_object(const ARegion *region,
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
   ED_view3d_check_mats_rv3d(rv3d);
-  return ED_view3d_project_int_ex(region, rv3d->persmatob, true, co, r_co, flag);
+  return ED_view3d_project_int_ex(region, rv3d->runtime->persmatob, true, co, r_co, flag);
 }
 
 eV3DProjStatus ED_view3d_project_float_global(const ARegion *region,
@@ -266,7 +268,7 @@ eV3DProjStatus ED_view3d_project_float_object(const ARegion *region,
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
   ED_view3d_check_mats_rv3d(rv3d);
-  return ED_view3d_project_float_ex(region, rv3d->persmatob, true, co, r_co, flag);
+  return ED_view3d_project_float_ex(region, rv3d->runtime->persmatob, true, co, r_co, flag);
 }
 
 /* More Generic Window/Ray/Vector projection functions
@@ -358,7 +360,7 @@ static void view3d_win_to_ray_segment(const Depsgraph *depsgraph,
 
 bool ED_view3d_clip_segment(const RegionView3D *rv3d, float ray_start[3], float ray_end[3])
 {
-  if ((rv3d->rflag & RV3D_CLIPPING) &&
+  if ((rv3d->rflag & RV3D_CLIPPING) && (rv3d->clipbb != nullptr) &&
       (clip_segment_v3_plane_n(ray_start, ray_end, rv3d->clip, 6, ray_start, ray_end) == false))
   {
     return false;

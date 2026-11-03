@@ -1363,10 +1363,6 @@ static void do_render_compositor(Render *re)
 
         compositor::SideEffectOutputTypes needed_side_effects_outputs =
             compositor::SideEffectOutputTypes::FileOutputNode;
-        if (!G.background) {
-          needed_side_effects_outputs |= compositor::SideEffectOutputTypes::ViewerNode |
-                                         compositor::SideEffectOutputTypes::NodePreviews;
-        }
 
         CLOG_STR_INFO(&LOG, "Executing compositor");
 
@@ -1431,6 +1427,7 @@ static void renderresult_stampinfo(Render *re)
                           ob_camera_eval,
                           (re->scene->r.stamp & R_STAMP_STRIPMETA) ? rres.stamp_data : nullptr,
                           rres.ibuf);
+      IMB_partial_update_mark_full(rres.ibuf);
     }
 
     RE_ReleaseResultImage(re);
@@ -2340,12 +2337,11 @@ static bool do_write_image_or_movie(Render *re,
   render_time = re->i.lastframetime;
   re->i.lastframetime = BLI_time_now_seconds() - re->i.starttime;
 
-  BLI_timecode_string_from_time_simple(filepath, sizeof(filepath), re->i.lastframetime);
+  BLI_timecode_string_from_time_simple(filepath, re->i.lastframetime);
   std::string message = fmt::format("Time: {}", filepath);
 
   if (do_write_file && ok) {
-    BLI_timecode_string_from_time_simple(
-        filepath, sizeof(filepath), re->i.lastframetime - render_time);
+    BLI_timecode_string_from_time_simple(filepath, re->i.lastframetime - render_time);
     message = fmt::format("{} (Saving: {})", message, filepath);
   }
 

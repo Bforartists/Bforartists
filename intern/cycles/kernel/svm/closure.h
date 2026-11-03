@@ -79,6 +79,7 @@ ccl_device_inline int svm_node_closure_bsdf_skip(int offset, const uint type)
       break;
     case CLOSURE_BSSRDF_BURLEY_ID:
     case CLOSURE_BSSRDF_RANDOM_WALK_ID:
+    case CLOSURE_BSSRDF_RANDOM_WALK_LEGACY_ID:
     case CLOSURE_BSSRDF_RANDOM_WALK_SKIN_ID:
       offset += sizeof(SVMNodeBssrdfData) / sizeof(uint);
       break;
@@ -161,15 +162,14 @@ ccl_device_noinline
 #else
 ccl_device
 #endif
-    int
-    svm_node_closure_bsdf(KernelGlobals kg,
-                          ccl_private ShaderData *sd,
-                          ccl_private float *ccl_restrict stack,
-                          Spectrum closure_weight,
-                          const ccl_global SVMNodeClosureBsdf &ccl_restrict node,
-                          const PathRayVisibility ray_visibility,
-                          const uint32_t path_flag,
-                          int offset)
+    int svm_node_closure_bsdf(KernelGlobals kg,
+                              ccl_private ShaderData *sd,
+                              ccl_private float *ccl_restrict stack,
+                              Spectrum closure_weight,
+                              const ccl_global SVMNodeClosureBsdf &ccl_restrict node,
+                              const PathRayVisibility ray_visibility,
+                              const uint32_t path_flag,
+                              int offset)
 {
   ClosureType type = node.closure_type;
 
@@ -179,13 +179,12 @@ ccl_device
   if constexpr (shader_type != SHADER_TYPE_SURFACE) {
     return svm_node_closure_bsdf_skip(offset, type);
   }
-  IF_KERNEL_NODES_FEATURE(BSDF)
-  {
+  IF_KERNEL_NODES_FEATURE (BSDF) {
     if (mix_weight == 0.0f) {
       return svm_node_closure_bsdf_skip(offset, type);
     }
   }
-  else IF_KERNEL_NODES_FEATURE(EMISSION) {
+  else IF_KERNEL_NODES_FEATURE (EMISSION) {
     if (mix_weight == 0.0f || type != CLOSURE_BSDF_PRINCIPLED_ID) {
       /* Only principled BSDF can have emission. */
       return svm_node_closure_bsdf_skip(offset, type);
@@ -855,13 +854,12 @@ ccl_device
       }
       break;
     }
-#ifdef __HAIR__
-#  ifdef __PRINCIPLED_HAIR__
     case CLOSURE_BSDF_HAIR_CHIANG_ID:
     case CLOSURE_BSDF_HAIR_HUANG_ID: {
       const ccl_global SVMNodePrincipledHairBsdfData &hdata =
           svm_node_get<SVMNodePrincipledHairBsdfData>(kg, &offset);
 
+#if defined(__HAIR__) && defined(__PRINCIPLED_HAIR__)
       const Spectrum weight = closure_weight * mix_weight;
 
       const float alpha = stack_load(stack, hdata.offset);
@@ -1008,14 +1006,17 @@ ccl_device
           sd->runtime_flag |= bsdf_hair_huang_setup(sd, bsdf, path_flag);
         }
       }
+#else
+      (void)hdata;
+#endif
       break;
     }
-#  endif /* __PRINCIPLED_HAIR__ */
     case CLOSURE_BSDF_HAIR_REFLECTION_ID:
     case CLOSURE_BSDF_HAIR_TRANSMISSION_ID: {
       const ccl_global SVMNodeHairBsdfData &bsdf_data = svm_node_get<SVMNodeHairBsdfData>(kg,
                                                                                           &offset);
 
+#ifdef __HAIR__
       const Spectrum weight = closure_weight * mix_weight;
 
       ccl_private HairBsdf *bsdf = (ccl_private HairBsdf *)bsdf_alloc(
@@ -1045,17 +1046,19 @@ ccl_device
           sd->runtime_flag |= bsdf_hair_transmission_setup(bsdf);
         }
       }
+#else
+      (void)bsdf_data;
+#endif /* __HAIR__ */
 
       break;
     }
-#endif /* __HAIR__ */
 
-#ifdef __SUBSURFACE__
     case CLOSURE_BSSRDF_BURLEY_ID:
     case CLOSURE_BSSRDF_RANDOM_WALK_ID:
     case CLOSURE_BSSRDF_RANDOM_WALK_LEGACY_ID:
     case CLOSURE_BSSRDF_RANDOM_WALK_SKIN_ID: {
       const ccl_global SVMNodeBssrdfData &bsdf_data = svm_node_get<SVMNodeBssrdfData>(kg, &offset);
+#ifdef __SUBSURFACE__
       float3 N = stack_load_float3_default(stack, bsdf_data.normal_offset, sd->N);
       N = safe_normalize_fallback(N, sd->N);
 
@@ -1073,10 +1076,12 @@ ccl_device
 
         sd->runtime_flag |= bssrdf_setup(sd, bssrdf, path_flag, type);
       }
+#else
+      (void)bsdf_data;
+#endif
 
       break;
     }
-#endif
     default:
       /* Unknown closure type, skip the minimum data payload. */
       svm_node_get<SVMNodeSimpleBsdfData>(kg, &offset);

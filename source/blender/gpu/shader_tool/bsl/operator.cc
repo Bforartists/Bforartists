@@ -99,6 +99,49 @@ static OperatorType to_operator_type(TokenType tok_type)
 
 namespace builtin {
 
+/* Matrices only support a subset of the operators, with their own dimension rules.
+ * A `floatCxR` has C columns of R rows, encoded as `CLASS_MAT | (C << MATRIX_SHIFT) | R`. */
+static ClassId matrix_binary_operator_return_type(const uint16_t l,
+                                                  const TokenType op,
+                                                  const uint16_t r)
+{
+  const bool l_is_matrix = (l & MATRIX_MASK) != 0;
+  const bool r_is_matrix = (r & MATRIX_MASK) != 0;
+  const uint16_t l_col = (l & MATRIX_MASK) >> MATRIX_SHIFT;
+  const uint16_t l_row = l & LEN_MASK;
+  const uint16_t r_col = (r & MATRIX_MASK) >> MATRIX_SHIFT;
+  const uint16_t r_row = r & LEN_MASK;
+  const uint16_t scalar = uint16_t(ClassId::float_t);
+
+  /* No division or comparison, Metal matrix types don't have these operators. */
+  switch (op) {
+    case Plus:
+    case Minus:
+      /* Component wise, so both operands must have the exact same type. */
+      return (l == r) ? ClassId(l) : ClassId::Invalid;
+
+    case Multiply:
+      if (l_is_matrix && r_is_matrix) {
+        /* The columns of the left operand must match the rows of the right one. */
+        return (l_col == r_row) ? ClassId(CLASS_MAT | (r_col << MATRIX_SHIFT) | l_row) :
+                                  ClassId::Invalid;
+      }
+      if (l_is_matrix) {
+        if (r == uint16_t(CLASS_FLOAT | l_col)) {
+          return ClassId(CLASS_FLOAT | l_row);
+        }
+        return (r == scalar) ? ClassId(l) : ClassId::Invalid;
+      }
+      if (l == uint16_t(CLASS_FLOAT | r_row)) {
+        return ClassId(CLASS_FLOAT | r_col);
+      }
+      return (l == scalar) ? ClassId(r) : ClassId::Invalid;
+
+    default:
+      return ClassId::Invalid;
+  }
+}
+
 ClassId binary_operator_return_type(SymbolClass *lhs, TokenType op, SymbolClass *rhs)
 {
   using namespace builtin;
@@ -115,15 +158,8 @@ ClassId binary_operator_return_type(SymbolClass *lhs, TokenType op, SymbolClass 
     return lhs->builtin_class;
   }
 
-  if (l & MATRIX_MASK) {
-    uint16_t col = (l & MATRIX_MASK) >> MATRIX_SHIFT;
-    uint16_t row = l & LEN_MASK;
-    return (r == (CLASS_FLOAT | col)) ? ClassId(CLASS_FLOAT | row) : ClassId::Invalid;
-  }
-  if (r & MATRIX_MASK) {
-    uint16_t col = (r & MATRIX_MASK) >> MATRIX_SHIFT;
-    uint16_t row = r & LEN_MASK;
-    return (l == (CLASS_FLOAT | row)) ? ClassId(CLASS_FLOAT | col) : ClassId::Invalid;
+  if ((l | r) & MATRIX_MASK) {
+    return matrix_binary_operator_return_type(l, op, r);
   }
 
   /* Logical operators (&&, ||): scalar bool only. */
@@ -200,6 +236,9 @@ ClassId unary_prefix_operator_return_type(TokenType op, SymbolClass *rhs)
     return ClassId::Invalid;
   }
 
+  if (r & CLASS_MAT && op == lexit::Minus) {
+    return rhs->builtin_class;
+  }
   if (o & OP_BOOL) {
     return (r == ClassId::bool_t) ? ClassId::bool_t : ClassId::Invalid;
   }
@@ -330,7 +369,7 @@ SymbolClass *SymbolTable::to_class(builtin::ClassId id) const
   }
 }
 
-SymbolClass *SymbolTable::make_type(SymbolClass *base, int size)
+SymbolClass *SymbolTable::make_type(SymbolClass *base, int size) const
 {
   /* Size 1 corresponds to the scalar base type itself. */
   if (size == 1) {
@@ -488,21 +527,21 @@ SymbolClass *SymbolTable::make_type(SymbolClass *base, int size)
 vector<SymbolTable::BuiltinType> SymbolTable::generate_builtin_types()
 {
   vector<BuiltinType> types{
-      {char_cls, char_cls},    {short_cls, short_cls},    {int_cls, int_cls},
-      {uchar_cls, uchar_cls},  {ushort_cls, ushort_cls},  {uint_cls, uint_cls},
-      {half_cls, half_cls},    {float_cls, float_cls},
+      {bool_cls, bool_cls},  {char_cls, char_cls},    {short_cls, short_cls},
+      {int_cls, int_cls},    {uchar_cls, uchar_cls},  {ushort_cls, ushort_cls},
+      {uint_cls, uint_cls},  {half_cls, half_cls},    {float_cls, float_cls},
 
-      {char2_cls, char_cls},   {short2_cls, short_cls},   {int2_cls, int_cls},
-      {uchar2_cls, uchar_cls}, {ushort2_cls, ushort_cls}, {uint2_cls, uint_cls},
-      {half2_cls, half_cls},   {float2_cls, float_cls},
+      {bool2_cls, bool_cls}, {char2_cls, char_cls},   {short2_cls, short_cls},
+      {int2_cls, int_cls},   {uchar2_cls, uchar_cls}, {ushort2_cls, ushort_cls},
+      {uint2_cls, uint_cls}, {half2_cls, half_cls},   {float2_cls, float_cls},
 
-      {char3_cls, char_cls},   {short3_cls, short_cls},   {int3_cls, int_cls},
-      {uchar3_cls, uchar_cls}, {ushort3_cls, ushort_cls}, {uint3_cls, uint_cls},
-      {half3_cls, half_cls},   {float3_cls, float_cls},
+      {bool3_cls, bool_cls}, {char3_cls, char_cls},   {short3_cls, short_cls},
+      {int3_cls, int_cls},   {uchar3_cls, uchar_cls}, {ushort3_cls, ushort_cls},
+      {uint3_cls, uint_cls}, {half3_cls, half_cls},   {float3_cls, float_cls},
 
-      {char4_cls, char_cls},   {short4_cls, short_cls},   {int4_cls, int_cls},
-      {uchar4_cls, uchar_cls}, {ushort4_cls, ushort_cls}, {uint4_cls, uint_cls},
-      {half4_cls, half_cls},   {float4_cls, float_cls},
+      {bool4_cls, bool_cls}, {char4_cls, char_cls},   {short4_cls, short_cls},
+      {int4_cls, int_cls},   {uchar4_cls, uchar_cls}, {ushort4_cls, ushort_cls},
+      {uint4_cls, uint_cls}, {half4_cls, half_cls},   {float4_cls, float_cls},
   };
   return types;
 }

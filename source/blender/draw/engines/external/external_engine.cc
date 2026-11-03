@@ -21,6 +21,8 @@
 #include "DNA_screen_types.h"
 #include "DNA_view3d_types.h"
 
+#include "BKE_view3d_runtime.hh"
+
 #include "ED_image.hh"
 #include "ED_render.hh"
 #include "ED_screen.hh"
@@ -61,11 +63,13 @@ class Prepass {
   PassMain::Sub *mesh_ps_ = nullptr;
   PassMain::Sub *curves_ps_ = nullptr;
   PassMain::Sub *pointcloud_ps_ = nullptr;
+  PassMain::Sub *gsplat_ps_ = nullptr;
 
   /* Reuse overlay shaders. */
   gpu::StaticShader depth_mesh = {"overlay_depth_mesh"};
   gpu::StaticShader depth_curves = {"overlay_depth_curves"};
   gpu::StaticShader depth_pointcloud = {"overlay_depth_pointcloud"};
+  gpu::StaticShader depth_gsplat = {"overlay_depth_gsplat"};
 
   draw::UniformBuffer<float4> dummy_buf;
 
@@ -95,6 +99,11 @@ class Prepass {
       sub.shader_set(depth_pointcloud.get());
       pointcloud_ps_ = &sub;
     }
+    {
+      auto &sub = ps_.sub("GSplat");
+      sub.shader_set(depth_gsplat.get());
+      gsplat_ps_ = &sub;
+    }
   }
 
   void particle_sync(Manager &manager, const ObjectRef &ob_ref)
@@ -117,7 +126,7 @@ class Prepass {
           handle = manager.resource_handle_for_psys(ob_ref, ob_ref.particles_matrix());
         }
 
-        gpu::Batch *geom = DRW_cache_particles_get_hair(ob, &psys, nullptr);
+        Batch *geom = DRW_cache_particles_get_hair(ob, &psys, nullptr);
         mesh_ps_->draw(geom, handle);
         break;
       }
@@ -151,8 +160,10 @@ class Prepass {
       return;
     }
 
-    gpu::Batch *geom_single = nullptr;
-    Span<gpu::Batch *> geom_list(&geom_single, 1);
+    Batch *geom_single = nullptr;
+    Span<Batch *> geom_list(&geom_single, 1);
+
+    ResourceHandleRange res_handle = manager.unique_handle(ob_ref);
 
     PassMain::Sub *pass = nullptr;
     switch (ob_ref.object->type) {
@@ -161,8 +172,8 @@ class Prepass {
         pass = mesh_ps_;
         break;
       case OB_POINTCLOUD:
-        geom_single = pointcloud_sub_pass_setup(*pointcloud_ps_, ob_ref.object);
-        pass = pointcloud_ps_;
+        pass = pointcloud_is_gsplat(ob_ref.object) ? gsplat_ps_ : pointcloud_ps_;
+        geom_single = pointcloud_sub_pass_setup(*pass, ob_ref, res_handle);
         break;
       case OB_CURVES: {
         const char *error = nullptr;
@@ -179,8 +190,6 @@ class Prepass {
     if (pass == nullptr) {
       return;
     }
-
-    ResourceHandleRange res_handle = manager.unique_handle(ob_ref);
 
     for (int material_id : geom_list.index_range()) {
       pass->draw(geom_list[material_id], res_handle);
@@ -214,7 +223,12 @@ class Instance : public DrawEngine {
   void init() final
   {
     draw_ctx = DRW_context_get();
-    do_prepass = DRW_render_check_grease_pencil(draw_ctx->depsgraph, draw_ctx->v3d);
+    const bool engine_provides_depth =
+        draw_ctx->v3d != nullptr &&
+        (ED_view3d_engine_type(draw_ctx->scene, draw_ctx->v3d->shading.type)->flag &
+         RE_WRITE_VIEWPORT_DEPTH);
+    do_prepass = !engine_provides_depth &&
+                 DRW_render_check_grease_pencil(draw_ctx->depsgraph, draw_ctx->v3d);
   }
 
   void begin_sync() final
@@ -237,25 +251,32 @@ class Instance : public DrawEngine {
   {
     RegionView3D *rv3d = draw_ctx->rv3d;
     ARegion *region = draw_ctx->region;
+    RenderEngineType *engine_type = ED_view3d_engine_type(draw_ctx->scene,
+                                                          draw_ctx->v3d->shading.type);
 
-    draw::command::StateSet::set(DRW_STATE_WRITE_COLOR);
+    if (engine_type->flag & RE_WRITE_VIEWPORT_DEPTH) {
+      draw::command::StateSet::set(DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
+                                   DRW_STATE_DEPTH_LESS_EQUAL);
+    }
+    else {
+      draw::command::StateSet::set(DRW_STATE_WRITE_COLOR);
+    }
 
     /* The external engine can use the OpenGL rendering API directly, so make sure the state is
-     * already applied. */
+     * already applied.
+     * We should only need this before view_draw, but we do it here for compatibility
+     * (matching previous Blender versions) */
     GPU_apply_state();
 
     /* Create render engine. */
     RenderEngine *render_engine = nullptr;
-    if (!rv3d->view_render) {
-      RenderEngineType *engine_type = ED_view3d_engine_type(draw_ctx->scene,
-                                                            draw_ctx->v3d->shading.type);
-
+    if (!rv3d->runtime->view_render) {
       if (!(engine_type->view_update && engine_type->view_draw)) {
         return;
       }
 
-      rv3d->view_render = RE_NewViewRender(engine_type);
-      render_engine = RE_view_engine_get(rv3d->view_render);
+      rv3d->runtime->view_render = RE_NewViewRender(engine_type);
+      render_engine = RE_view_engine_get(rv3d->runtime->view_render);
 
       if (ScrArea *area = CTX_wm_area(draw_ctx->evil_C)) {
         ED_area_tag_redraw_regiontype(area, RGN_TYPE_HEADER);
@@ -264,7 +285,7 @@ class Instance : public DrawEngine {
       engine_type->view_update(render_engine, draw_ctx->evil_C, draw_ctx->depsgraph);
     }
     else {
-      render_engine = RE_view_engine_get(rv3d->view_render);
+      render_engine = RE_view_engine_get(rv3d->runtime->view_render);
     }
 
     /* Rendered draw. */
@@ -273,8 +294,7 @@ class Instance : public DrawEngine {
     ED_region_pixelspace(region);
 
     /* Render result draw. */
-    const RenderEngineType *type = render_engine->type;
-    type->view_draw(render_engine, draw_ctx->evil_C, draw_ctx->depsgraph);
+    engine_type->view_draw(render_engine, draw_ctx->evil_C, draw_ctx->depsgraph);
 
     GPU_matrix_pop();
     GPU_matrix_pop_projection();
@@ -458,7 +478,6 @@ RenderEngineType DRW_engine_viewport_external_type = {
     /*update_script_node*/ nullptr,
     /*update_render_passes*/ nullptr,
     /*update_custom_camera*/ nullptr,
-    /*draw_engine*/ nullptr,
     /*rna_ext*/
     {
         /*data*/ nullptr,
@@ -508,15 +527,15 @@ bool DRW_engine_external_acquire_for_image_editor(const DRWContext *draw_ctx)
 
 void DRW_engine_external_free(RegionView3D *rv3d)
 {
-  if (rv3d->view_render) {
+  if (rv3d->runtime->view_render) {
     /* Free engine with DRW context enabled, as this may clean up per-context
      * resources like VAOs. */
     bool swap_context = !DRW_gpu_context_is_enabled();
     if (swap_context) {
       DRW_gpu_context_enable_ex(true);
     }
-    RE_FreeViewRender(rv3d->view_render);
-    rv3d->view_render = nullptr;
+    RE_FreeViewRender(rv3d->runtime->view_render);
+    rv3d->runtime->view_render = nullptr;
     if (swap_context) {
       DRW_gpu_context_disable_ex(true);
     }

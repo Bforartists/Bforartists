@@ -6,6 +6,7 @@
 
 import bpy
 from bpy.types import Operator
+from bpy_extras import object_utils
 
 
 def object_origin(width, height, depth):
@@ -33,7 +34,6 @@ class AddVert(Operator):
         mesh = bpy.data.meshes.new("Vert")
         mesh.vertices.add(1)
 
-        from bpy_extras import object_utils
         object_utils.object_data_add(context, mesh, operator=None)
         bpy.ops.object.mode_set(mode='EDIT')
 
@@ -50,7 +50,6 @@ class AddEmptyVert(Operator):
         mesh = bpy.data.meshes.new("Vert")
         mesh.vertices.add(1)
 
-        from bpy_extras import object_utils
         object_utils.object_data_add(context, mesh, operator=None)
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.delete(type='VERT')
@@ -96,20 +95,23 @@ class AddSymmetricalEmpty(Operator):
     bl_idname = "mesh.primitive_symmetrical_empty_add"
     bl_label = "Add Symmetrical Object Origin"
     bl_description = "Object Origin with a Mirror Modifier for symmetrical modeling"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO'}
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
         mirror = next(mod for mod in bpy.context.object.modifiers
                       if mod.type == 'MIRROR')
 
         layout.prop(mirror, "use_clip", text="Use Clipping")
 
         layout.label(text="Mirror Axis")
-        row = layout.row(align=True)
-        row.prop(mirror, "use_axis")
-        row.prop(mirror, "use_axis")
-        row.prop(mirror, "use_axis")
+        col = layout.column(align=True)
+        col.prop(mirror, "use_axis")
+        col.prop(mirror, "use_axis")
+        col.prop(mirror, "use_axis")
 
     def execute(self, context):
         Add_Symmetrical_Empty()
@@ -121,7 +123,7 @@ class AddSymmetricalVert(Operator):
     bl_idname = "mesh.primitive_symmetrical_vert_add"
     bl_label = "Add Symmetrical Origin & Vert"
     bl_description = "Object Origin with a Mirror Modifier for symmetrical modeling"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO'}
 
     def draw(self, context):
         layout = self.layout
@@ -131,10 +133,10 @@ class AddSymmetricalVert(Operator):
         layout.prop(mirror, "use_clip", text="Use Clipping")
 
         layout.label(text="Mirror Axis")
-        row = layout.row(align=True)
-        row.prop(mirror, "use_axis")
-        row.prop(mirror, "use_axis")
-        row.prop(mirror, "use_axis")
+        col = layout.column(align=True)
+        col.prop(mirror, "use_axis")
+        col.prop(mirror, "use_axis")
+        col.prop(mirror, "use_axis")
 
     def execute(self, context):
         Add_Symmetrical_Vert()

@@ -141,6 +141,8 @@ enum eMeshSymmetryType : char {
   ME_SYMMETRY_X = 1 << 0,
   ME_SYMMETRY_Y = 1 << 1,
   ME_SYMMETRY_Z = 1 << 2,
+  ME_SYMMETRY_XYZ = ME_SYMMETRY_X | ME_SYMMETRY_Y | ME_SYMMETRY_Z,
+  ME_SYMMETRY_RADIAL = 1 << 3,
 };
 ENUM_OPERATORS(eMeshSymmetryType)
 
@@ -465,6 +467,10 @@ struct Mesh {
    * Cached map from each vertex to the faces using it.
    */
   GroupedSpan<int> vert_to_face_map() const;
+  /**
+   * Cached map from each edge to the face corners using it.
+   */
+  GroupedSpan<int> edge_to_corner_map() const;
 
   /**
    * Cached information about loose edges, calculated lazily when necessary.

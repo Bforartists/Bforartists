@@ -508,7 +508,7 @@ class ToolSelectPanelHelper:
             keymap_fn[0](km)
         keymap_fn[0] = km.name
 
-        # Ensure we have a default key map, so the add-ons keymap is properly overlayed.
+        # Ensure we have a default key map, so the add-ons keymap is properly overlaid.
         if kc_default is not kc:
             kc_default.keymaps.new(km_idname, **km_kwargs)
 
@@ -776,8 +776,9 @@ class ToolSelectPanelHelper:
             return None, None
 
     @staticmethod
-    def tool_active_from_context(context):
-        space_type = context.space_data.type
+    def tool_active_from_context(context, space_type=None):
+        if space_type is None:
+            space_type = context.space_data.type
         return ToolSelectPanelHelper._tool_active_from_context(context, space_type)
 
     @staticmethod
@@ -843,8 +844,15 @@ class ToolSelectPanelHelper:
                 tool_fallback_id = cls.tool_fallback_id
                 item, _select_index = cls._tool_get_by_id_active(context, tool_fallback_id)
                 label = item.label
+                # BFA - use the active fallback tool's own icon (Tweak, Select Box, Select Circle, Select Lasso)
+                # instead of the generic TOOL_SETTINGS icon.
+                popover_icon_kw = {
+                    "icon_value": ToolSelectPanelHelper._icon_value_from_icon_handle(item.icon),
+                }
             else:
                 label = "Active Tool"
+                # BFA - use the generic TOOL_SETTINGS icon for the active tool.
+                popover_icon_kw = {"icon": 'TOOL_SETTINGS'}
 
             row = layout.row(heading="Drag", heading_ctxt=i18n_contexts.editor_view3d)
             row.context_pointer_set("tool", tool)
@@ -852,7 +860,7 @@ class ToolSelectPanelHelper:
                 panel="TOPBAR_PT_tool_fallback",
                 text=iface_(label, i18n_contexts.operator_default),
                 translate=False,
-                icon='TOOL_SETTINGS', # bfa - added icon
+                **popover_icon_kw,
             )
 
         return tool

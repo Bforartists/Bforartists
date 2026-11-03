@@ -1,0 +1,254 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 3D Print Toolbox 1.4.0\n"
+"POT-Creation-Date: 2026-07-23\n"
+"PO-Revision-Date: 2026-07-23\n"
+"Last-Translator: Mikhail Rachinskiy\n"
+"Language-Team: Mikhail Rachinskiy\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Analyze"
+msgstr "Анализ"
+
+msgid "Checks"
+msgstr "Проверки"
+
+msgid "Scale To"
+msgstr "Масштабировать"
+
+msgid "Copy Textures"
+msgstr "Копировать текстуры"
+
+msgid "Volume"
+msgstr "Объём"
+
+msgid "Area"
+msgstr "Область"
+
+msgid "Non-manifold Edges"
+msgstr "Неразвёртываемые рёбра"
+
+msgid "Bad Contiguous Edges"
+msgstr "Прерывистые рёбра"
+
+msgid "Intersect Faces"
+msgstr "Пересекающиеся грани"
+
+msgid "Zero Faces"
+msgstr "Нулевые грани"
+
+msgid "Zero Edges"
+msgstr "Нулевые рёбра"
+
+msgid "Non-flat Faces"
+msgstr "Неплоские грани"
+
+msgid "Thin Faces"
+msgstr "Тонкие грани"
+
+msgid "Sharp Edges"
+msgstr "Острые рёбра"
+
+msgid "Overhang Faces"
+msgstr "Нависающие грани"
+
+msgid "Report the volume of the active mesh"
+msgstr "Показать объём активного мэша"
+
+msgid "Report the surface area of the active mesh"
+msgstr "Показать площадь поверхности активного мэша"
+
+msgid "Check for geometry is solid (has valid inside/outside) and correct normals"
+msgstr "Проверить, является ли геометрия сплошной (имеет допустимые внутренние и внешние границы) и корректные нормали"
+
+msgid "Check for self intersections"
+msgstr "Проверить на самопересечение"
+
+msgid "Count mesh islands"
+msgstr "Подсчитать меш острова"
+
+msgid "Check for zero area faces and zero length edges"
+msgstr "Проверить наличие граней нулевой площади и рёбер нулевой длины"
+
+msgid "Check for non-flat faces"
+msgstr "Проверить наличие неплоских граней"
+
+msgid "Check for wall thickness below specified value"
+msgstr "Проверить наличие стенок тоньше указанного значения"
+
+msgid "Check for edges sharper than a specified angle"
+msgstr "Проверить наличие рёбер острее заданного угла"
+
+msgid "Check for faces that overhang past a specified angle"
+msgstr "Проверить наличие нависающих граней за пределами заданного угла"
+
+msgid "Run all checks"
+msgstr "Выполнить все проверки"
+
+msgid "Select the data associated with this report"
+msgstr "Выделить данные связанные с отчетом"
+
+msgid "Clear report"
+msgstr "Очистить отчет"
+
+msgid "Cleanup loose geometry, interior faces, non-manifold vertices and inverted normals"
+msgstr "Исправить несвязанную геометрию, внутренние грани, неразвёртываемые вершины и инвертированные нормали"
+
+msgid "Minimum Thickness"
+msgstr "Минимальная Толщина"
+
+msgid "Export Directory"
+msgstr "Каталог экспорта"
+
+msgid "Export at specified unit scale (most slicers assume millimeters)"
+msgstr "Экспорт в заданном масштабе единиц измерения (большинство слайсеров используют миллиметры)"
+
+msgid "Export file in ASCII format"
+msgstr "Экспортировать файл в формате ASCII"
+
+msgid "Copy textures on export to the output path"
+msgstr "Копировать текстуры при экспорте в экспортный каталог"
+
+msgid "Export selected objects using settings below"
+msgstr "Экспортировать выделенные объекты, используя настройки ниже"
+
+msgid "Create offset surface"
+msgstr "Создать поверхность с отступом"
+
+msgid "Offset direction relative to the object surface"
+msgstr "Направление отступа относительно поверхности объекта"
+
+msgid "Surface offset in relation to original mesh"
+msgstr "Отступ поверхности по отношению к исходному мэшу"
+
+msgid "Size of the voxel used for volume evaluation. Lower values preserve finer details"
+msgstr "Размер вокселя, используемого для расчёта объема. Меньшие значения лучше сохраняют детализацию"
+
+msgid "Hollow Duplicate"
+msgstr "Дубликат с поднутрением"
+
+msgid "Create hollowed out copy of the object"
+msgstr "Создать копию объекта с поднутрением"
+
+msgid "Offset Surface Only"
+msgstr "Только смещённая поверхность"
+
+msgid "Remove original and keep offset surface"
+msgstr "Удалить оригинал и сохранить смещённую поверхность"
+
+msgid "Cut geometry along a plane"
+msgstr "Разрезать геометрию плоскостью"
+
+msgid "Slice on axis"
+msgstr "Разрезать по оси"
+
+msgid "Cutting plane position"
+msgstr "Положение плоскости среза"
+
+msgid "Rotate object so the selected faces lie, on average, parallel to the XY plane"
+msgstr "Повернуть объект так, чтобы выделенные грани лежали в среднем параллельно плоскости XY"
+
+msgid "Weight by Face Area"
+msgstr "Учитывать площадь грани"
+
+msgid "Take face area into account when calculating rotation"
+msgstr "Учитывать площадь грани при расчёте вращения"
+
+msgid "Multiple selected objects. Only the active one will be evaluated"
+msgstr "Несколько выделенных объектов. Только активный объект будет проверен"
+
+msgid "Report is out of date, re-run check"
+msgstr "Отчет устарел, проведите повторную проверку"
+
+msgid "Modified: {:+} vertices, {:+} edges, {:+} faces"
+msgstr "Изменено: {:+} вершин, {:+} рёбер, {:+} граней"
+
+msgid "Make sure target mesh has closed surface and offset value is less than half of target thickness"
+msgstr "Убедитесь, что целевой мэш имеет закрытую поверхность, а значение смещения меньше половины толщины целевой модели"
+
+msgid "Target must have closed surface and offset value less than half of target thickness"
+msgstr "Цель должна иметь закрытую поверхность, а значение смещения меньше половины её толщины"
+
+msgid "Scaled by {}"
+msgstr "Масштабирован на {}"
+
+msgid ", Clamping {}-Axis"
+msgstr ", ограничение по оси {}"
+
+msgid "At least one mesh object must be selected"
+msgstr "Должен быть выделен хотя бы один мэш объект"
+
+msgid "Object has zero volume"
+msgstr "Объект имеет нулевой объём"
+
+msgid "Object has zero bounds"
+msgstr "Объект имеет нулевые габариты"
+
+msgid "Exported: {!r}"
+msgstr "Экспортировано: {!r}"
+
+msgid "Export failed"
+msgstr "Экспорт не удался"
+
+msgctxt "Operator"
+msgid "Volume"
+msgstr "Объём"
+
+msgctxt "Operator"
+msgid "Area"
+msgstr "Область"
+
+msgctxt "Operator"
+msgid "Solid"
+msgstr "Сплошная"
+
+msgctxt "Operator"
+msgid "Intersections"
+msgstr "Пересечения"
+
+msgctxt "Operator"
+msgid "Shells"
+msgstr "Оболочки"
+
+msgctxt "Operator"
+msgid "Degenerate"
+msgstr "Дегенеративная"
+
+msgctxt "Operator"
+msgid "Non-Planar"
+msgstr "Непланарная"
+
+msgctxt "Operator"
+msgid "Thickness"
+msgstr "Толщина"
+
+msgctxt "Operator"
+msgid "Sharp"
+msgstr "Острота"
+
+msgctxt "Operator"
+msgid "Overhang"
+msgstr "Нависание"
+
+msgctxt "Operator"
+msgid "Check All"
+msgstr "Проверить всё"
+
+msgctxt "Operator"
+msgid "Make Manifold"
+msgstr "Сделать развёртываемой"
+
+msgctxt "Operator"
+msgid "Hollow"
+msgstr "Поднутрение"
+
+msgctxt "Operator"
+msgid "Align XY"
+msgstr "Выровнить XY"
+
+msgctxt "Operator"
+msgid "Bounds"
+msgstr "Габариты"

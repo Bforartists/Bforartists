@@ -333,9 +333,9 @@ void draw_but_IMAGE(ARegion * /*region*/,
   (void)rect;
   (void)but;
 #else
-  ImBuf *ibuf = reinterpret_cast<ImBuf *>(but->poin);
+  const ImBuf *ibuf = reinterpret_cast<const ImBuf *>(but->poin);
 
-  if (!ibuf) {
+  if (!ibuf || ibuf->x <= 0 || ibuf->y <= 0) {
     return;
   }
 
@@ -353,10 +353,9 @@ void draw_but_IMAGE(ARegion * /*region*/,
   /* Combine with premultiplied alpha. */
   GPU_blend(GPU_BLEND_ALPHA_PREMULT);
 
-  if (w != ibuf->x || h != ibuf->y) {
-    /* We scale the bitmap, rather than have OGL do a worse job. */
-    IMB_scale(ibuf, w, h, IMBScaleFilter::Box, false);
-  }
+  /* Scale while drawing, using filtering and mipmaps. Without scaling,
+   * draw unfiltered for exact pixels. */
+  const bool use_filter = (w != ibuf->x || h != ibuf->y);
 
   float col[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   if (but->col[3] != 0) {
@@ -370,10 +369,10 @@ void draw_but_IMAGE(ARegion * /*region*/,
               ibuf->x,
               ibuf->y,
               gpu::TextureFormat::UNORM_8_8_8_8,
-              false,
+              use_filter,
               ibuf->byte_data(),
-              1.0f,
-              1.0f,
+              float(w) / ibuf->x,
+              float(h) / ibuf->y,
               col);
 
   GPU_blend(GPU_BLEND_NONE);
@@ -1643,6 +1642,17 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
     return;
   }
 
+  /* Outline. */
+  GPUVertFormat *format = immVertexFormat();
+  uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+
+  GPU_line_width(1.8f);
+  immUniformColor3ubv(wcol->outline);
+  imm_draw_box_wire_2d(pos, rect->xmin, rect->ymin, rect->xmax, rect->ymax);
+  GPU_line_width(1.0f);
+  immUnbindProgram();
+
   CurveMap *cuma = &cumap->cm[cumap->cur];
 
   /* need scissor test, curve can draw outside of boundary */
@@ -1678,8 +1688,8 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
 
   GPU_line_width(1.0f);
 
-  GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+  format = immVertexFormat();
+  pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
   /* backdrop */
@@ -1883,6 +1893,23 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
     }
   }
 
+  /* Draw curve points over outline. Don't change scissor if view is zoomed and not near edges.
+   * Draw clipped points in that case. */
+  rcti scissor_for_points;
+  scissor_for_points.xmin = std::max(
+      0, scissor_new.xmin - int(point_size * ((cumap->clipr.xmin == cumap->curr.xmin) ? 1 : 0)));
+  scissor_for_points.ymin = std::max(
+      0, scissor_new.ymin - int(point_size * ((cumap->clipr.ymin == cumap->curr.ymin) ? 1 : 0)));
+  scissor_for_points.xmax = std::max(
+      0, scissor_new.xmax + int(point_size * ((cumap->clipr.xmax == cumap->curr.xmax) ? 1 : 0)));
+  scissor_for_points.ymax = std::max(
+      0, scissor_new.ymax + int(point_size * ((cumap->clipr.ymax == cumap->curr.ymax) ? 1 : 0)));
+
+  GPU_scissor(scissor_for_points.xmin,
+              scissor_for_points.ymin,
+              BLI_rcti_size_x(&scissor_for_points),
+              BLI_rcti_size_y(&scissor_for_points));
+
   /* Curve widgets using a gradient background (such as Hue Correct), draw
    * an additional point in the back, forming an outline so they stand out. */
   if (but_cumap->gradient_type == GRAD_H) {
@@ -1960,22 +1987,17 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
     immEnd();
   }
 
+  GPU_scissor(scissor_new.xmin,
+              scissor_new.ymin,
+              BLI_rcti_size_x(&scissor_new),
+              BLI_rcti_size_y(&scissor_new));
+
   immUnbindProgram();
   GPU_blend(GPU_BLEND_NONE);
 
   /* Restore scissor-test. */
   GPU_scissor_test(false);
   GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
-
-  /* outline */
-  format = immVertexFormat();
-  pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
-  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
-
-  immUniformColor3ubv(wcol->outline);
-  imm_draw_box_wire_2d(pos, rect->xmin, rect->ymin, rect->xmax, rect->ymax);
-
-  immUnbindProgram();
 }
 
 /**
@@ -2011,6 +2033,15 @@ void draw_but_CURVEPROFILE(ARegion *region,
     return;
   }
 
+  /* Outline */
+  GPUVertFormat *format = immVertexFormat();
+  uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+
+  immUniformColor3ubv(static_cast<const uchar *>(wcol->outline));
+  imm_draw_box_wire_2d(pos, rect->xmin, rect->ymin, rect->xmax, rect->ymax);
+  immUnbindProgram();
+
   /* Test needed because path can draw outside of boundary. */
   int scissor[4];
   GPU_scissor_get(scissor);
@@ -2030,8 +2061,8 @@ void draw_but_CURVEPROFILE(ARegion *region,
   GPU_line_width(1.0f);
   GPU_scissor_test(true);
 
-  GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
+  format = immVertexFormat();
+  pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
   /* Draw the backdrop. */
@@ -2213,11 +2244,36 @@ void draw_but_CURVEPROFILE(ARegion *region,
     }
   }
 
-  /* Draw the control points. */
-  GPU_line_smooth(false);
-  GPU_blend(GPU_BLEND_ALPHA);
   const float point_size = max_ff(U.pixelsize * 2.0f,
                                   min_ff(UI_SCALE_FAC / but->block->aspect * 6.0f, 20.0f));
+
+  /* Draw curve points over outline. Don't change scissor if view is zoomed and not near edges.
+   * Draw clipped points in that case. */
+  rcti scissor_for_points;
+  scissor_for_points.xmin = std::max(
+      0,
+      scissor_new.xmin -
+          int(point_size * ((profile->clip_rect.xmin == profile->view_rect.xmin) ? 1 : 0)));
+  scissor_for_points.ymin = std::max(
+      0,
+      scissor_new.ymin -
+          int(point_size * ((profile->clip_rect.ymin == profile->view_rect.ymin) ? 1 : 0)));
+  scissor_for_points.xmax = std::max(
+      0,
+      scissor_new.xmax +
+          int(point_size * ((profile->clip_rect.xmax == profile->view_rect.xmax) ? 1 : 0)));
+  scissor_for_points.ymax = std::max(
+      0,
+      scissor_new.ymax +
+          int(point_size * ((profile->clip_rect.ymax == profile->view_rect.ymax) ? 1 : 0)));
+
+  GPU_scissor(scissor_for_points.xmin,
+              scissor_for_points.ymin,
+              BLI_rcti_size_x(&scissor_for_points),
+              BLI_rcti_size_y(&scissor_for_points));
+
+  GPU_line_smooth(false);
+  GPU_blend(GPU_BLEND_ALPHA);
 
   if ((path_len - selected) > 0) {
     /* Unselected control points. */
@@ -2345,18 +2401,15 @@ void draw_but_CURVEPROFILE(ARegion *region,
   }
   immUnbindProgram();
 
+  GPU_scissor(scissor_new.xmin,
+              scissor_new.ymin,
+              BLI_rcti_size_x(&scissor_new),
+              BLI_rcti_size_y(&scissor_new));
+
   /* Restore scissor-test. */
   GPU_scissor_test(false);
   GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
 
-  /* Outline */
-  format = immVertexFormat();
-  pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
-  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
-
-  immUniformColor3ubv(static_cast<const uchar *>(wcol->outline));
-  imm_draw_box_wire_2d(pos, rect->xmin, rect->ymin, rect->xmax, rect->ymax);
-  immUnbindProgram();
   GPU_blend(GPU_BLEND_NONE);
 }
 

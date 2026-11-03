@@ -36,6 +36,7 @@
 #include "BKE_image.hh"
 #include "BKE_paint.hh"
 #include "BKE_paint_types.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -376,7 +377,9 @@ bool PaintStroke::update(bContext *C,
   else {
     /* curve strokes do their own rake calculation */
     if (brush.stroke_method != BRUSH_STROKE_CURVE) {
-      if (!paint_calculate_rake_rotation(*paint, brush, mouse_init, mode, true, !rake_started_)) {
+      if (!BKE_paint_calculate_rake_rotation(
+              *paint, brush, mouse_init, mode, true, !rake_started_))
+      {
         /* Not enough motion to define an angle. */
         if (!rake_started_) {
           is_dry_run = true;
@@ -650,7 +653,12 @@ static float paint_space_stroke_spacing(const ViewContext &vc,
   if (paint_stroke_use_scene_spacing(*brush, paint_mode)) {
     /* Low pressure on size (with tablets) can cause infinite recursion in paint_space_stroke(),
      * see #129853. */
-    return max_ff(FLT_EPSILON, size_clamp * spacing / 50.0f);
+
+    /* Calculates the 3D distance that one pixel of movement would cover in object space. Using
+     * FLT_MIN can cause long lag, see #160057. */
+    const float min_spacing = paint_calc_object_space_radius(
+        vc, math::transform_point(vc.obact->world_to_object(), last_world_space_position), 1.0f);
+    return max_ff(min_spacing, size_clamp * spacing / 50.0f);
   }
   return max_ff(zoom_2d, size_clamp * spacing / 50.0f);
 }
@@ -938,7 +946,7 @@ PaintStroke::PaintStroke(bContext *C,
   paint_runtime->stroke_active = true;
 
   if (rv3d) {
-    rv3d->rflag |= RV3D_PAINTING;
+    rv3d->runtime->tags |= bke::RV3D_TAG_PAINTING;
   }
 
   /* Preserve location from last stroke while applying and resetting
@@ -988,7 +996,7 @@ void PaintStroke::done(bContext *C, const bool is_cancel)
   this->done(is_cancel, stroke_started_);
 
   if (RegionView3D *rv3d = CTX_wm_region_view3d(C)) {
-    rv3d->rflag &= ~RV3D_PAINTING;
+    rv3d->runtime->tags &= ~bke::RV3D_TAG_PAINTING;
   }
 
   bke::paint::set_overlay_brush_override(*this->paint, eOverlayFlags(0));
@@ -1335,7 +1343,7 @@ bool PaintStroke::curve_end(bContext *C, wmOperator *op)
     for (int j = 0; j < PAINT_CURVE_NUM_SEGMENTS; j++) {
       if (do_rake) {
         const float rotation = atan2f(tangents[2 * j + 1], tangents[2 * j]) + float(0.5f * M_PI);
-        paint_update_brush_rake_rotation(*paint, br, rotation);
+        BKE_paint_update_brush_rake_rotation(*paint, br, rotation);
       }
 
       if (!stroke_started_) {
@@ -1576,7 +1584,7 @@ wmOperatorStatus PaintStroke::modal(bContext *C, wmOperator *op, const wmEvent *
       {
         copy_v2_v2(paint_runtime.last_rake, this->last_mouse_position);
       }
-      paint_calculate_rake_rotation(*paint, *br, mouse, mode, true, true);
+      BKE_paint_calculate_rake_rotation(*paint, *br, mouse, mode, true, true);
     }
   }
   else if (first_modal ||

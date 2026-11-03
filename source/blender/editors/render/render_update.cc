@@ -40,6 +40,7 @@
 #include "BKE_paint.hh"
 #include "BKE_scene.hh"
 #include "BKE_scene_runtime.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "RE_engine.h"
 #include "RE_pipeline.h"
@@ -95,7 +96,9 @@ void ED_render_view3d_update(Depsgraph *depsgraph,
     }
 
     RegionView3D *rv3d = static_cast<RegionView3D *>(region.regiondata);
-    RenderEngine *engine = rv3d->view_render ? RE_view_engine_get(rv3d->view_render) : nullptr;
+    RenderEngine *engine = rv3d->runtime->view_render ?
+                               RE_view_engine_get(rv3d->runtime->view_render) :
+                               nullptr;
 
     if (engine && (updated || (engine->flag & RE_ENGINE_DO_UPDATE))) {
       bContext *C = render_view3d_context_create(
@@ -128,8 +131,8 @@ static void render_view3d_engines_foreach(
         }
 
         const RegionView3D *rv3d = static_cast<RegionView3D *>(region.regiondata);
-        RenderEngine *engine = (rv3d && rv3d->view_render) ?
-                                   RE_view_engine_get(rv3d->view_render) :
+        RenderEngine *engine = (rv3d && rv3d->runtime->view_render) ?
+                                   RE_view_engine_get(rv3d->runtime->view_render) :
                                    nullptr;
         if (!engine) {
           continue;
@@ -260,7 +263,7 @@ void ED_render_engine_changed(Main *bmain, const bool update_scene_data)
   for (Scene *scene = bmain->scenes.first(); scene; scene = static_cast<Scene *>(scene->id.next)) {
     update_ctx.scene = scene;
     for (ViewLayer &view_layer : scene->view_layers) {
-      /* TDODO(sergey): Iterate over depsgraphs instead? */
+      /* TODO(sergey): Iterate over depsgraphs instead? */
       update_ctx.depsgraph = BKE_scene_ensure_depsgraph(bmain, scene, &view_layer);
       update_ctx.view_layer = &view_layer;
       ED_render_id_flush_update(&update_ctx, &scene->id);
@@ -387,6 +390,7 @@ static void update_sequencer(const DEGEditorUpdateContext *update_ctx, Main *bma
     {
       seq::prefetch_stop(changed_scene);
       seq::cache_cleanup(changed_scene, seq::CacheCleanup::FinalAndIntra);
+      seq::relations_invalidate_generator_strips(changed_scene);
     }
   }
 

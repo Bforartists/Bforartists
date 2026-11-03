@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Modifier Tools",
-    "author": "Meta Androcto, saidenka",
-    "version": (0, 2, 6),
-    "blender": (2, 80, 0),
-    "location": "Properties > Modifiers",
-    "description": "Modifiers Specials Show/Hide/Apply Selected",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/modifier_tools.html",
-    "category": "Interface"
-    }
-
 import bpy
 from bpy.types import Operator
 
@@ -37,17 +25,14 @@ class ApplyAllModifiers(Operator):
             # copying context for the operator's override
             context_override = {'object': obj}
 
-            modifiers = modifier_type(obj)
+            modifiers = obj.modifiers
 
             for mod in modifiers[:]:
                 context_override['modifier'] = mod
                 is_mod = True
                 try:
                     with bpy.context.temp_override(**context_override):
-                        if obj.type != 'GPENCIL':
-                            bpy.ops.object.modifier_apply(modifier=mod.name)
-                        else:
-                            bpy.ops.object.gpencil_modifier_apply(modifier=mod.name)
+                        bpy.ops.object.modifier_apply(modifier=mod.name)
                 except:
                     obj_name = getattr(obj, "name", "NO NAME")
                     collect_names.append(obj_name)
@@ -93,7 +78,7 @@ class DeleteAllModifiers(Operator):
 
         for obj in context.selected_objects:
             is_select = True
-            modifiers = modifier_type(obj)
+            modifiers = obj.modifiers
 
             for modi in modifiers[:]:
                 is_mod = True
@@ -131,14 +116,14 @@ class ToggleApplyModifiersView(Operator):
         skipped = set()             # collect names
         count_modifiers = 0         # check for message_a (all skipped)
 
-        modifiers = modifier_type(context.active_object)
+        modifiers = context.active_object.modifiers
 
         # check if the active object has only one non exposed modifier as the logic will fail
         if len(modifiers) == 1 and \
                 modifiers[0].type in skip_type:
 
             for obj in context.selected_objects:
-                mod_sel = modifier_type(obj)
+                mod_sel = obj.modifiers
 
                 for mod in mod_sel:
                     if mod.type in skip_type:
@@ -170,7 +155,7 @@ class ToggleApplyModifiersView(Operator):
 
         for obj in context.selected_objects:
 
-            modifiers = modifier_type(obj)
+            modifiers = obj.modifiers
 
             count_modifiers += len(modifiers)
 
@@ -205,7 +190,7 @@ class ToggleAllShowExpanded(Operator):
 
     def execute(self, context):
         obj = context.active_object
-        modifiers = modifier_type(obj)
+        modifiers = obj.modifiers
 
         if (len(modifiers)):
             vs = 0
@@ -231,7 +216,7 @@ class ToggleAllShowExpanded(Operator):
 # Menus #
 def menu(self, context):
     if (context.active_object):
-        if (len(context.active_object.modifiers) or len(context.active_object.grease_pencil_modifiers)):
+        if len(context.active_object.modifiers) > 0:
             col = self.layout.column(align=True)
 
             row = col.row(align=True)
@@ -251,17 +236,14 @@ def menu(self, context):
 
 def menu_func(self, context):
     if (context.active_object):
-        if (len(context.active_object.modifiers) or len(context.active_object.grease_pencil_modifiers)):
+        if len(context.active_object.modifiers) > 0:
             layout = self.layout
             layout.separator()
             layout.operator(ApplyAllModifiers.bl_idname,
                             icon='IMPORT',
                             text="Apply All Modifiers")
 
-def modifier_type(object):
-        if object.type == 'GPENCIL':
-            return object.grease_pencil_modifiers
-        return object.modifiers
+
 
 # Register
 classes = [
@@ -279,8 +261,6 @@ def register():
     # Add "Specials" menu to the "Modifiers" menu
     bpy.types.DATA_PT_modifiers.prepend(menu)
 
-    bpy.types.DATA_PT_gpencil_modifiers.prepend(menu)
-
     # Add apply operator to the Apply 3D View Menu
     bpy.types.VIEW3D_MT_object_apply.append(menu_func)
 
@@ -288,8 +268,6 @@ def register():
 def unregister():
     # Remove "Specials" menu from the "Modifiers" menu.
     bpy.types.DATA_PT_modifiers.remove(menu)
-
-    bpy.types.DATA_PT_gpencil_modifiers.remove(menu)
 
     # Remove apply operator to the Apply 3D View Menu
     bpy.types.VIEW3D_MT_object_apply.remove(menu_func)

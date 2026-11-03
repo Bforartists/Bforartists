@@ -1,0 +1,9 @@
+import bpy
+# BFA - renamed from SQUARED_3K.py to match the Bforartists preset naming
+bpy.context.scene.render.resolution_x = 3072
+bpy.context.scene.render.resolution_y = 3072
+bpy.context.scene.render.resolution_percentage = 100
+bpy.context.scene.render.pixel_aspect_x = 1
+bpy.context.scene.render.pixel_aspect_y = 1
+bpy.context.scene.render.fps = 30
+bpy.context.scene.render.fps_base = 1

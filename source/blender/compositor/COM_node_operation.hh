@@ -47,10 +47,8 @@ class NodeOperation : public Operation {
    * in the context's profile data. */
   void evaluate() override;
 
-  /* Compute and set the initial reference counts of all the results of the operation. The
-   * reference counts of the results are the number of operations that use those results, which is
-   * computed as the number of inputs whose node is part of the schedule and is linked to the
-   * output corresponding to each result. The node execution schedule is given as an input. */
+  /* Compute and set the initial reference counts of all the results of the operation. The node
+   * execution schedule is given as an input. */
   void compute_results_reference_counts(const Schedule &schedule);
 
   /* Setter and getter for compute_context_. */
@@ -63,6 +61,13 @@ class NodeOperation : public Operation {
 
   /* Log the values for the inputs and outputs of the node as well as its image preview. */
   void log_data() override;
+
+  /* Returns true if the node operation executes asynchronously, this is typically the case for GPU
+   * execution, since dispatched shaders are only submitted to the GPU for later execution and are
+   * typically not yet done by the time the execute function returns. So in general, any node that
+   * dispatches a shader should set this to true. This is only meant as a heuristic, so identity
+   * cases and implicit operations can be ignored. */
+  virtual bool uses_asynchronous_execution() const;
 
   /* Returns a reference to the node that this operation represents. */
   const bNode &node() const;

@@ -85,7 +85,11 @@ CurveProfile *BKE_curveprofile_copy(const CurveProfile *profile)
 
 void BKE_curveprofile_blend_write(BlendWriter *writer, const CurveProfile *profile)
 {
-  writer->write_struct(profile);
+  writer->write_struct(profile, [&](BlendStructWriter<CurveProfile> &struct_writer) {
+    if (!writer->is_undo()) {
+      struct_writer.shallow_data.changed_timestamp = 0;
+    }
+  });
   writer->write_struct_array(profile->path_len, profile->path);
 }
 
@@ -203,8 +207,8 @@ void BKE_curveprofile_translate_selection(CurveProfile *profile, const blender::
     float delta[2] = {offset.x, offset.y};
 
     /* The main point is selected or all handles are aligned and selected. */
-    if ((pt->flag & PROF_SELECT) || ((pt->flag & PROF_H1_SELECT && pt->h1 & HD_ALIGN) &&
-                                     (pt->flag & PROF_H2_SELECT && pt->h2 & HD_ALIGN)))
+    if ((pt->flag & PROF_SELECT) || ((pt->flag & PROF_H1_SELECT && pt->h1 == HD_ALIGN) &&
+                                     (pt->flag & PROF_H2_SELECT && pt->h2 == HD_ALIGN)))
     {
       BKE_curveprofile_move_point(profile, pt, false, delta);
     }
@@ -349,13 +353,23 @@ CurveProfilePoint *BKE_curveprofile_insert(CurveProfile *profile, float x, float
 void BKE_curveprofile_selected_handle_set(CurveProfile *profile, int type_1, int type_2)
 {
   for (int i = 0; i < profile->path_len; i++) {
-    if (profile->path[i].flag & (PROF_SELECT | PROF_H1_SELECT | PROF_H2_SELECT)) {
-      profile->path[i].h1 = type_1;
-      profile->path[i].h2 = type_2;
+    CurveProfilePoint *point = &profile->path[i];
+    if (point->flag & (PROF_SELECT | PROF_H1_SELECT | PROF_H2_SELECT)) {
+      point->h1 = type_1;
+      point->h2 = type_2;
 
       if (type_1 == HD_ALIGN && type_2 == HD_ALIGN) {
         /* Align the handles. */
-        BKE_curveprofile_move_handle(&profile->path[i], true, false, nullptr);
+        BKE_curveprofile_move_handle(point, true, false, nullptr);
+      }
+
+      if (ELEM(type_1, HD_AUTO, HD_VECT)) {
+        /* Auto and Vector handles can't be selected, so pass their selection on to the point. */
+        if (point->flag & (PROF_H1_ACTIVE | PROF_H2_ACTIVE)) {
+          point->flag |= PROF_ACTIVE;
+        }
+        point->flag |= PROF_SELECT;
+        point->flag &= ~(PROF_H1_SELECT | PROF_H2_SELECT | PROF_H1_ACTIVE | PROF_H2_ACTIVE);
       }
     }
   }
@@ -1054,9 +1068,11 @@ void BKE_curveprofile_update(CurveProfile *profile, const int update_flags)
     for (int i = 0; i < profile->path_len - 1; i++) {
       if (len_squared_v2v2(&points[i].x, &points[i + 1].x) < thresh) {
         if (i == 0) {
+          points[0].flag |= (points[1].flag & (PROF_SELECT | PROF_ACTIVE));
           BKE_curveprofile_remove_point(profile, &points[1]);
         }
         else {
+          points[i + 1].flag |= (points[i].flag & (PROF_SELECT | PROF_ACTIVE));
           BKE_curveprofile_remove_point(profile, &points[i]);
         }
         break; /* Assumes 1 deletion per update call is ok. */

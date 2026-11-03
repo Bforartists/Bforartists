@@ -57,6 +57,12 @@ def _toggle_xray_operator(layout, context, text=None):
     )
 
 
+def _has_selected_object_type(context, types):
+    # WARNING: this loops over all selected objects, *never* call from a poll function
+    # as it's too slow, only use when drawing menus.
+    return any(ob.type in types for ob in context.selected_objects)
+
+
 class VIEW3D_HT_tool_header(Header):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOL_HEADER"
@@ -738,7 +744,9 @@ class _draw_tool_settings_context_mode:
 
         if grease_pencil_tool == 'TINT':
             row.separator(factor=layout.property_split_factor)
-            row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
+            ups = paint.unified_paint_settings
+            prop_owner = ups if brush.use_unified_color else brush
+            row.prop_with_popover(prop_owner, "color", text="", panel="TOPBAR_PT_grease_pencil_vertex_color")
 
         from bl_ui.properties_paint_common import (
             brush_basic_grease_pencil_paint_settings,
@@ -1454,7 +1462,9 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
             layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon="SHRINK_FATTEN")
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
-            layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops")
+            layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops", icon="RELAX_EDGE_LOOPS")
+            layout.operator("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected", icon="CURVE_EDGE_LOOPS")
+            layout.operator("mesh.fit_edge_loops_to_annotation", text="Fit Edge Loops To Annotation")  # BFA - TODO: needs icon, new in Blender 5.3
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
         elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES', 'EDIT_POINTCLOUD'}:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
@@ -1521,9 +1531,9 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base, Menu):
             if obj.mode == 'EDIT':
                 layout.separator()
 
-                layout.operator("transform.vertex_warp", text="Warp") # BFA - WIP
+                layout.operator("transform.vertex_warp", text="Warp", icon="MOD_WARP")  # BFA - icon, as for meshes
                 layout.operator_context = 'EXEC_REGION_WIN'
-                layout.operator("transform.vertex_random", text="Randomize").offset = 0.1 # BFA - WIP
+                layout.operator("transform.vertex_random", text="Randomize", icon="RANDOMIZE").offset = 0.1  # BFA - icon, as for meshes
                 layout.operator_context = 'INVOKE_REGION_WIN'
             elif obj.mode == 'POSE':
                 layout.separator()
@@ -1993,8 +2003,8 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.operator("view3d.view_roll", text="Roll Left", icon="ROLL_LEFT").type = 'LEFT'
         layout.operator("view3d.view_roll", text="Roll Right", icon="ROLL_RIGHT").type = 'RIGHT'
-        layout.operator("view3d.view_roll_set", text="Reset Roll") # BFA - WIP  - needs icon
-        layout.operator("view3d.view_flip")  # BFA - WIP - needs icon
+        layout.operator("view3d.view_roll_set", text="Reset Roll", icon="VIEW_ROLL_RESET")  # BFA - Icon Added
+        layout.operator("view3d.view_flip", icon="VIEW_FLIP")  # BFA - Icon Added
 
         layout.separator()
 
@@ -2995,7 +3005,7 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
         layout.operator("grease_pencil.select_fill", text="Fill", icon="GP_FILL_SELECT")
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
-        layout.operator("grease_pencil.select_linked", text="Deselect Linked").deselect = True
+        layout.operator("grease_pencil.select_linked", text="Deselect Linked", icon="LINKED_DESELECT").deselect = True
 
         layout.separator()
 
@@ -3173,12 +3183,6 @@ class VIEW3D_MT_select_paint_mask_face_more_less(Menu):
         layout.operator("paint.face_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.face_select_less", text="Less", icon="SELECTLESS")
 
-        layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
-        layout.operator("paint.face_select_hide", text="Hide Selected") # BFA - WIP
-        props = layout.operator("paint.face_select_hide", text="Hide Unselected") # BFA - WIP
-        props.unselected = True
-
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
     bl_label = "Select"
@@ -3214,12 +3218,6 @@ class VIEW3D_MT_select_paint_mask_vertex_more_less(Menu):
 
         layout.operator("paint.vert_select_more", text="More", icon="SELECTMORE")
         layout.operator("paint.vert_select_less", text="Less", icon="SELECTLESS")
-
-        layout.separator()
-        layout.operator("paint.face_vert_reveal", text="Reveal Hidden") # BFA - WIP
-        layout.operator("paint.vert_select_hide", text="Hide Selected") # BFA - WIP
-        props = layout.operator("paint.vert_select_hide", text="Hide Unselected") # BFA - WIP
-        props.unselected = True
 
 
 class VIEW3D_MT_select_edit_pointcloud(Menu):
@@ -3359,7 +3357,11 @@ class VIEW3D_MT_curve_add(Menu):
         layout.separator()
 
         layout.operator("object.curves_empty_hair_add", text="Empty Hair", icon="OUTLINER_OB_CURVES")
-        layout.operator("object.quick_fur", text="Fur", icon="OUTLINER_OB_CURVES")
+        # Greyed out here instead of the operator's poll function, see: #163934.
+        col = layout.column()
+        col.enabled = _has_selected_object_type(context, {'MESH'})
+        col.operator("object.quick_fur", text="Fur", icon="OUTLINER_OB_CURVES")
+        del col
 
         experimental = context.preferences.experimental
         if experimental.use_new_curves_tools:
@@ -4053,7 +4055,7 @@ class VIEW3D_MT_object_animation(Menu):
 
         layout.separator()
 
-        layout.operator("anim.rotation_mode_convert") # BFA - WIP
+        layout.operator("anim.rotation_mode_convert", icon="CONVERT_ROTATION_MODE")  # BFA - Icon Added
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -4801,10 +4803,16 @@ class VIEW3D_MT_object_modifiers(Menu):
 class VIEW3D_MT_object_quick_effects(Menu):
     bl_label = "Quick Effects"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.quick_fur", icon="CURVES")
+        # NOTE: greying out the menu item would be better handled by the operator's poll function,
+        # however `execute` changes the active object & selection (adding curves objects),
+        # so a poll that checks for mesh objects fails on redo, see: #163934.
+        col = layout.column()
+        col.enabled = _has_selected_object_type(context, {'MESH'})
+        col.operator("object.quick_fur", icon="CURVES")
+        del col
         layout.operator("object.quick_explode", icon="MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon="MOD_SMOKE")
         layout.operator("object.quick_liquid", icon="MOD_FLUIDSIM")
@@ -5053,6 +5061,10 @@ class VIEW3D_MT_brush(Menu):
             layout.separator()
 
             layout.menu("VIEW3D_MT_facemask_showhide")  # bfa - show hide for face mask tool
+        elif mesh.use_paint_mask_vertex:
+            layout.separator()
+
+            layout.menu("VIEW3D_MT_vertexmask_showhide")  # BFA - show hide for vertex mask tool
 
         # Color picker just in vertex and texture paint
         if obj.mode in {"VERTEX_PAINT", "TEXTURE_PAINT"}:
@@ -5071,6 +5083,18 @@ class VIEW3D_MT_facemask_showhide(Menu):
         layout.operator("paint.face_select_reveal", text="Show Hidden", icon="HIDE_OFF")
         layout.operator("paint.face_select_hide", text="Hide Selected", icon="HIDE_ON").unselected = False
         layout.operator("paint.face_select_hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
+
+
+# BFA - show hide menu for vertex selection masking
+class VIEW3D_MT_vertexmask_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("paint.face_vert_reveal", text="Show Hidden", icon="HIDE_OFF")
+        layout.operator("paint.vert_select_hide", text="Hide Selected", icon="HIDE_ON").unselected = False
+        layout.operator("paint.vert_select_hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_paint_vertex(Menu):
@@ -5295,6 +5319,14 @@ class VIEW3D_MT_paint_weight(Menu):
         if obj.type == "MESH":
             self.draw_generic(self.layout, is_editmode=False)
 
+            # BFA - Show/Hide for selection masking, like the Brush menu in vertex and texture paint
+            if obj.data.use_paint_mask:
+                self.layout.separator()
+                self.layout.menu("VIEW3D_MT_facemask_showhide")
+            elif obj.data.use_paint_mask_vertex:
+                self.layout.separator()
+                self.layout.menu("VIEW3D_MT_vertexmask_showhide")
+
 
 # BFA menu
 class VIEW3D_MT_paint_weight_legacy(Menu):
@@ -5375,6 +5407,9 @@ class VIEW3D_MT_sculpt(Menu):
         props.trim_mode = "JOIN"
 
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
+        props.trim_mode = "JOIN"
+
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add", icon="LASSO_ADD")  # BFA - stand-in icon
         props.trim_mode = "JOIN"
 
         layout.separator()
@@ -5485,10 +5520,7 @@ class VIEW3D_MT_sculpt_legacy(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add") # BFA - WIP
-        props.trim_mode = "JOIN"
-
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")  # BFA - WIP
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
 
@@ -5595,7 +5627,7 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_line_gesture", text="Line Trim", icon="LINE_TRIM")
         props.trim_mode = "DIFFERENCE"
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim")
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Trim", icon="POLYLINE_TRIM")  # BFA - Icon Added
         props.trim_mode = "DIFFERENCE"
 
         layout.separator()
@@ -5606,7 +5638,7 @@ class VIEW3D_MT_sculpt_trim(Menu):
         props = layout.operator("sculpt.trim_lasso_gesture", text="Lasso Add", icon="LASSO_ADD")
         props.trim_mode = "JOIN"
 
-        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add")
+        props = layout.operator("sculpt.trim_polyline_gesture", text="Polyline Add", icon="LASSO_ADD")  # BFA - stand-in icon
         props.trim_mode = "JOIN"
 
 # BFA - Disabled as it doesn't make sense to have modal tools run from the header
@@ -6335,10 +6367,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("pose.reveal", text="Show Hidden", icon="HIDE_OFF")
-        layout.operator("pose.hide", text="Hide Selected", icon="HIDE_ON").unselected = False
-        # BFA - added for consistentcy with header
-        layout.operator("pose.hide", text="Hide Unselected", icon="HIDE_UNSELECTED").unselected = True
+        layout.menu("VIEW3D_MT_pose_showhide")  # BFA - Show/Hide submenu, consistent with other context menus
 
         layout.separator()
 
@@ -8799,6 +8828,9 @@ class VIEW3D_PT_view3d_properties(Panel):
         else:
             split.label(icon="DISCLOSURE_TRI_RIGHT")
 
+        # BFA - keep the disclosure-triangle Local Camera group (this panel is
+        # heavily customized; upstream's simplified render-border block would
+        # drop the camera/passepartout grouping).
         if view.use_local_camera:
             row = subcol.row()
             row.use_property_split = True
@@ -8808,6 +8840,15 @@ class VIEW3D_PT_view3d_properties(Panel):
         if view.region_3d.view_perspective == "CAMERA":
             row = subcol.row()
             subcol.prop(view.overlay, "show_camera_passepartout", text="Passepartout")
+            # BFA - make camera view roll discoverable (also View > Navigation > Roll, and Ctrl Alt MMB drag)
+            row = subcol.row(align=True)
+            row.use_property_split = True
+            row.prop(view.region_3d, "view_camera_roll", text="Camera Roll")  # BFA - reset with Backspace / right-click > Reset to Default Value
+        else:
+            # BFA - the user view's roll, same as Camera Roll above: drag to roll, Backspace to level (#6839)
+            row = subcol.row(align=True)
+            row.use_property_split = True
+            row.prop(view.region_3d, "view_roll", text="View Roll")
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
@@ -11491,28 +11532,60 @@ class VIEW3D_PT_greasepencil_draw_context_menu(Panel):
 
         layout.prop(gp_settings, "stroke_type", expand=True)
 
-        if brush.gpencil_brush_type not in {'ERASE', 'CUTTER', 'EYEDROPPER'} and is_vertex:
+        if brush.gpencil_brush_type not in {'ERASE', 'TRIM', 'CARVER', 'EYEDROPPER'} and is_vertex:
             split = layout.split(factor=0.1)
-            split.prop(brush, "color", text="")
-            split.template_color_picker(brush, "color", value_slider=True)
+            ups = settings.unified_paint_settings
+            prop_owner = ups if brush.use_unified_color else brush
+            split.prop(prop_owner, "color", text="")
+            split.template_color_picker(prop_owner, "color", value_slider=True)
 
-        if brush.gpencil_brush_type not in {'FILL', 'CUTTER', 'ERASE'}:
-            if brush.use_locked_size == 'VIEW':
+        if brush.gpencil_brush_type not in {'FILL', 'TRIM', 'CARVER', 'ERASE'}:
+            size = "size"
+            if brush.use_locked_size != 'VIEW':
+                size = "unprojected_size"
+
+            if UnifiedPaintPanel.paint_settings_from_active_tool(context) is None:
                 row = layout.row(align=True)
                 row.prop(brush, "size", slider=True)
                 row.prop(brush, "use_pressure_size", text="", icon="STYLUS_PRESSURE")
             else:
-                row = layout.row(align=True)
-                row.prop(brush, "unprojected_size", text="Size", slider=True)
-                row.prop(brush, "use_pressure_size", text="", icon="STYLUS_PRESSURE")
-        if brush.gpencil_brush_type == "ERASE":
-            row = layout.row(align=True)
-            row.prop(brush, "size", slider=True)
-            row.prop(brush, "use_pressure_size", text="", icon="STYLUS_PRESSURE")
-        if brush.gpencil_brush_type not in {"ERASE", "FILL", "CUTTER"}:
-            row = layout.row(align=True)
-            row.prop(brush, "strength", slider=True)
-            row.prop(brush, "use_pressure_strength", text="", icon="STYLUS_PRESSURE")
+                # blender/main: prop_unified adds unified size/strength support.
+                UnifiedPaintPanel.prop_unified(
+                    layout,
+                    context,
+                    brush,
+                    size,
+                    unified_name="use_unified_size",
+                    pressure_name="use_pressure_size",
+                    text="Size",
+                    slider=True,
+                )
+        if brush.gpencil_brush_type == 'ERASE':
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                "size",
+                unified_name="use_unified_size",
+                pressure_name="use_pressure_size",
+                text="Size",
+                slider=True,
+            )
+        if brush.gpencil_brush_type not in {
+            'ERASE',
+            'FILL',
+            'TRIM',
+                'CARVER'} and UnifiedPaintPanel.paint_settings_from_active_tool(context) is not None:
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                "strength",
+                unified_name="use_unified_strength",
+                pressure_name="use_pressure_strength",
+                text="",
+                slider=True,
+            )
 
         layer = context.object.data.layers.active
 
@@ -11594,17 +11667,30 @@ class VIEW3D_PT_greasepencil_vertex_paint_context_menu(Panel):
             col.prop(gp_settings, "vertex_mode", text="")
             col.separator()
 
-        row = col.row(align=True)
-        row.prop(settings.unified_paint_settings, "size", text="Radius")
-        row.prop(brush, "use_pressure_size", text="", icon="STYLUS_PRESSURE")
+        # blender/main: prop_unified adds unified size support.
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "size",
+            unified_name="use_unified_size",
+            pressure_name="use_pressure_size",
+            text="Size",
+            slider=True,
+        )
 
         if brush.gpencil_vertex_brush_type in {"DRAW", "BLUR", "SMEAR"}:
             ups = settings.unified_paint_settings
             strength_owner = ups if brush.use_unified_strength else brush
-            row = layout.row(align=True)
-            row.prop(strength_owner, "strength", text="")
-            row.prop(brush, "use_pressure_strength", text="", icon='STYLUS_PRESSURE')
-            row.prop(brush, "use_unified_strength", text="", icon='BRUSHES_ALL')
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                "strength",
+                unified_name="use_unified_strength",
+                pressure_name="use_pressure_strength",
+                slider=True,
+            )
 
         layer = context.object.data.layers.active
 
@@ -12083,24 +12169,20 @@ class TOPBAR_PT_grease_pencil_vertex_color(Panel):
             paint = context.scene.tool_settings.gpencil_paint
         elif ob.mode == "VERTEX_GREASE_PENCIL":
             paint = context.scene.tool_settings.gpencil_vertex_paint
-        use_unified_paint = ob.mode != "PAINT_GREASE_PENCIL"
 
         ups = paint.unified_paint_settings
         brush = paint.brush
-        prop_owner = ups if use_unified_paint and brush.use_unified_color else brush
+        prop_owner = ups if brush.use_unified_color else brush
 
         col = layout.column()
         col.template_color_picker(prop_owner, "color", value_slider=True)
 
         sub_row = layout.row(align=True)
-        if use_unified_paint:
-            UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "color", text="")
-            UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "secondary_color", text="")
-        else:
-            sub_row.prop(brush, "color", text="")
-            sub_row.prop(brush, "secondary_color", text="")
+        UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "color", text="")
+        UnifiedPaintPanel.prop_unified_color(sub_row, context, brush, "secondary_color", text="")
 
-        sub_row.operator("paint.brush_colors_flip", icon="FILE_REFRESH", text="")
+        sub_row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
+        sub_row.prop(ups, "use_unified_color", text="", icon='BRUSHES_ALL')
 
         row = layout.row(align=True)
         row.template_ID(paint, "palette", new="palette.new")
@@ -12424,6 +12506,7 @@ classes = (
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush,  # BFA - menu
     VIEW3D_MT_facemask_showhide,  # BFA - menu
+    VIEW3D_MT_vertexmask_showhide,  # BFA - menu
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,

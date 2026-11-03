@@ -347,6 +347,11 @@ enum {
   TFM_MODAL_NODE_FRAME = 37,
 
   TFM_MODAL_STRIP_CLAMP = 38,
+
+  TFM_MODAL_STRIP_OVERLAP_SHUFFLE = 39,
+  TFM_MODAL_STRIP_OVERLAP_RIPPLE = 40,
+  TFM_MODAL_STRIP_OVERLAP_OVERWRITE = 41,
+  TFM_MODAL_STRIP_RIPPLE_INSERT = 42,
 };
 
 /** \} */
@@ -646,7 +651,9 @@ struct MouseInput {
 
 struct TransCustomData {
   void *data;
+  /** Callback to override automatic freeing done by #use_free. Must null #data.  */
   void (*free_cb)(TransInfo *, TransDataContainer *tc, TransCustomData *custom_data);
+  /** Whether to automatically attempt to `MEM_delete_void` #data if not already null. */
   unsigned int use_free : 1;
 };
 
@@ -751,7 +758,7 @@ struct TransDataContainer {
    * unselected items are then sorted by their "distance" for proportional editing.
    *
    * At the moment of writing, this map is only used in cases where `tc->data` has a mixture of
-   * selected and unselected items (as far as I, Sybren, know, just for proportial editing).
+   * selected and unselected items (as far as I, Sybren, know, just for proportional editing).
    * Without `tc->sorted_index_map`, all items in `tc->data` are expected to be selected.
    *
    * NOTE: this is set to `nullptr` by default; use one of the sorting functions below to
@@ -974,7 +981,7 @@ struct TransInfo {
   ToolSettings *settings;
   wmTimer *animtimer;
   /** Needed so we can perform a look up for header text. */
-  wmKeyMap *keymap;
+  const wmKeyMap *keymap;
   /** Assign from the operator, or can be NULL. */
   ReportList *reports;
   /** Current mouse position. */

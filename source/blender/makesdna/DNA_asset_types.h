@@ -58,6 +58,10 @@ enum eAssetImportMethod : int {
 
 enum eAssetLibrary_Flag : int {
   ASSET_LIBRARY_RELATIVE_PATH = (1 << 0),
+  /**
+   * The setting the user controls. Use #BKE_preferences_asset_library_is_available to check if the
+   * library is used, it also accounts for the repository of extension defined libraries.
+   */
   ASSET_LIBRARY_DISABLED = (1 << 1),
   ASSET_LIBRARY_USE_REMOTE_URL = (1 << 2),
   ASSET_LIBRARY_USE_AUTH_TOKEN = (1 << 3),
@@ -130,9 +134,6 @@ struct AssetMetaData {
 
   /** Optional license of this asset for display in the UI. Dynamic length. */
   char *license = nullptr;
-
-  /** Optional webpage of this asset for display in UI. Dynamic length. */
-  char *webpage = nullptr;
 
   /** User defined tags for this asset. The asset manager uses these for filtering, but how they
    * function exactly (e.g. how they are registered to provide a list of searchable available tags)

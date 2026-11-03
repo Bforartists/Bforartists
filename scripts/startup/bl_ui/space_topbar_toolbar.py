@@ -199,7 +199,6 @@ class TOPBAR_PT_main(Panel):
                 row = layout.grid_flow(columns=2, align=True)
                 row.prop(addon_prefs, "topbar_tools_parent",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_objectdata",toggle=addon_prefs.bfa_button_style)
-                row.prop(addon_prefs, "topbar_tools_link_to_scn",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_linked_objects",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_join",toggle=addon_prefs.bfa_button_style)
                 row.prop(addon_prefs, "topbar_tools_origin",toggle=addon_prefs.bfa_button_style)
@@ -414,7 +413,7 @@ class TOPBAR_MT_file(Menu):
 
                 if bpy.app.build_options.io_fbx:
                     row.operator("wm.fbx_import", text="", icon='LOAD_FBX')
-                if "io_scene_fbx" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
+                elif "io_scene_fbx" in context.preferences.addons.keys(): # bfa - legacy add-on importer, only when the C++ importer is not built
                     row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
                 if bpy.app.build_options.io_wavefront_obj: # bfa - only show if built option is true
                     row.operator("wm.obj_import", text="", icon='LOAD_OBJ')
@@ -437,10 +436,14 @@ class TOPBAR_MT_file(Menu):
                     row.operator("import_mesh.stl", text="", icon='LOAD_STL')
                 if bpy.app.build_options.io_ply: # bfa - only show if built option is true
                     row.operator("wm.ply_import", text="", icon='LOAD_PLY')
+                if bpy.app.build_options.io_spz: # BFA - SPZ import, only show if built option is true (#6861)
+                    row.operator("wm.spz_import", text="", icon='LOAD_SPZ')
                 if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_scene.x3d", text="", icon='LOAD_X3D')
                 if "io_curve_svg" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("import_curve.svg", text="", icon='LOAD_SVG')
+                if bpy.app.build_options.opentimelineio: # BFA - OpenTimelineIO import, only show if built option is true (#6861)
+                    row.operator("wm.otio_import", text="", icon='LOAD_OTIO')
 
             ## ------------------ Export common
             if addon_prefs.topbar_file_export_common:
@@ -473,6 +476,8 @@ class TOPBAR_MT_file(Menu):
                     row.operator("wm.ply_export", text="", icon='SAVE_PLY')
                 if "io_scene_x3d" in context.preferences.addons.keys(): # bfa - only show if addon is enabled
                     row.operator("export_scene.x3d", text="", icon='SAVE_X3D')
+                if bpy.app.build_options.opentimelineio: # BFA - OpenTimelineIO export, only show if built option is true (#6861)
+                    row.operator("wm.otio_export", text="", icon='SAVE_OTIO')
 
             ## ------------------ Render
             if addon_prefs.topbar_file_render:
@@ -1222,14 +1227,6 @@ class TOPBAR_MT_tools(Menu):
                         row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
                         row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
 
-                    if addon_prefs.topbar_tools_link_to_scn:
-                        if len(bpy.data.scenes) > 10:
-                            layout.operator_context = 'INVOKE_REGION_WIN'
-                            layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
-                        else:
-                            layout.operator_context = 'EXEC_REGION_WIN'
-                            layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
-
                     if addon_prefs.topbar_tools_linked_objects:
                         row = layout.row(align=True)
                         row.operator("object.make_local", icon='MAKE_LOCAL', text="")
@@ -1300,7 +1297,6 @@ class TOPBAR_PT_tools(Panel):
 
         col.prop(addon_prefs, "topbar_tools_parent", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_objectdata", toggle=addon_prefs.bfa_button_style)
-        col.prop(addon_prefs, "topbar_tools_link_to_scn", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_linked_objects", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_join", toggle=addon_prefs.bfa_button_style)
         col.prop(addon_prefs, "topbar_tools_origin", toggle=addon_prefs.bfa_button_style)

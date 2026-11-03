@@ -34,6 +34,7 @@ enum class NodeType : char {
   IdQualified,
   IdType,
   Const,
+  Pointer,
   Reference,
   AssignStmt,
   PipelineDecl,
@@ -146,8 +147,8 @@ struct Node {
   NodeID id = -1;
 
 #ifdef LEXIT_DEBUG
-  NodeType debug_type;
-  const NodeData *debug_data;
+  NodeType debug_type = NodeType::Invalid;
+  const NodeData *debug_data = nullptr;
   std::string_view debug_str;
 #endif
 
@@ -415,7 +416,11 @@ template<typename NodeT> struct Node::RecursiveTypedRange {
   Node end_node;
   RecursiveTypedIterator<NodeT> begin() const
   {
-    return {Node::first_node_of_type(start.child_first(), NodeT::NodeEnumVal, end_node), end_node};
+    const Node first = start.child_first();
+    if (!first.is_valid()) {
+      return {end_node, end_node};
+    }
+    return {Node::first_node_of_type(first, NodeT::NodeEnumVal, end_node), end_node};
   }
   RecursiveTypedIterator<NodeT> end() const
   {
@@ -616,6 +621,10 @@ struct Const : Node {
 
 struct Reference : Node {
   NODE_COMMON(Reference);
+};
+
+struct Pointer : Node {
+  NODE_COMMON(Pointer);
 };
 
 struct Expr : Node {
@@ -837,6 +846,11 @@ struct BitField : Node {
 struct Declarator : Node {
   NODE_COMMON(Declarator);
 
+  bool is_pointer() const
+  {
+    return pointer().is_valid();
+  }
+
   bool is_reference() const
   {
     return reference().is_valid();
@@ -852,9 +866,14 @@ struct Declarator : Node {
     return prev(NodeType::IdType);
   }
 
+  Pointer pointer() const
+  {
+    return child_first(NodeType::Pointer);
+  }
+
   Reference reference() const
   {
-    return child_first();
+    return child_first(NodeType::Reference);
   }
 
   IdQualified identifier() const
@@ -864,7 +883,7 @@ struct Declarator : Node {
 
   ArrayDecl array() const
   {
-    return identifier().next();
+    return child_last(NodeType::ArrayDecl);
   }
 
   BitField bitfield() const
@@ -905,6 +924,12 @@ struct VarDecl : Node {
   bool is_reference() const
   {
     return Declarator(child_first(NodeType::Declarator)).is_reference();
+  }
+
+  /* Return true if the first declarator is a reference. */
+  bool is_pointer() const
+  {
+    return Declarator(child_first(NodeType::Declarator)).is_pointer();
   }
 
   bool has_single_declarator() const
@@ -948,7 +973,7 @@ struct FuncArg : Node {
     return declarator().identifier();
   }
 
-  Subscript array() const
+  ArrayDecl array() const
   {
     return declarator().array();
   }
@@ -982,6 +1007,9 @@ struct FuncParamList : Node {
   struct Splat3 {
     Expr arg1, arg2, arg3;
   };
+  struct Splat4 {
+    Expr arg1, arg2, arg3, arg4;
+  };
 
   Splat1 splat_1() const
   {
@@ -996,8 +1024,19 @@ struct FuncParamList : Node {
 
   Splat3 splat_3() const
   {
-    Node node = child_first();
-    return {node, node.next(), node.next().next()};
+    Node node1 = child_first();
+    Node node2 = node1.next();
+    Node node3 = node2.next();
+    return {node1, node2, node3};
+  }
+
+  Splat4 splat_4() const
+  {
+    Node node1 = child_first();
+    Node node2 = node1.next();
+    Node node3 = node2.next();
+    Node node4 = node3.next();
+    return {node1, node2, node3, node4};
   }
 };
 
@@ -1295,6 +1334,7 @@ struct ClassDecl : Node {
     return child_first();
   }
 
+  /* In case of multiple inheritance, returns the first parent class. */
   IdQualified parent_class() const;
 
   LocalScope body() const

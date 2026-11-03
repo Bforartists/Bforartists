@@ -1,0 +1,11 @@
+schema_version = "1.0.0"
+id = "theme_print_friendly"
+name = "Print Friendly"
+version = "2.0.0"
+tagline = "Community-made theme optimized for printing"
+maintainer = "Community"
+type = "theme"
+tags = ["Light", "High Contrast"]
+blender_version_min = "5.0.0"
+license = ["SPDX:GPL-3.0-or-later"]
+website = "https://projects.blender.org/extensions/theme_print_friendly"

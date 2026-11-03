@@ -13,6 +13,7 @@ from bpy.props import (
         StringProperty,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 
 def create_mesh_object(context, verts, edges, faces, name):
@@ -129,17 +130,14 @@ class AddTorusKnot(bpy.types.Operator, object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         layout.prop(self, 'resolution', expand=True)
         layout.prop(self, 'objecttype', expand=True)
 
         if self.change == False:
-            col = layout.column(align=True)
-            col.prop(self, 'align', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'location', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'rotation', expand=True)
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

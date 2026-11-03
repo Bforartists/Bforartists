@@ -2,18 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-bl_info = {
-    "name": "Simplify Curves+",
-    "author": "testscreenings, Michael Soluyanov",
-    "version": (1, 1, 2),
-    "blender": (2, 80, 0),
-    "location": "3D View, Dopesheet & Graph Editors",
-    "description": "Simplify Curves: 3dview, Dopesheet, Graph. Distance Merge: 3d view curve edit",
-    "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/simplify_curves.html",
-    "category": "Add Curve",
-}
-
 """
 This script simplifies Curve objects and animation F-Curves
 This script will also Merge by Distance 3d view curves in edit mode
@@ -123,9 +111,9 @@ def getDerivative(verts, t, nth):
         QVerts = verts
 
     if len(verts[0]) == 3:
-        point = Vector((0, 0, 0))
+        point = mathutils.Vector((0, 0, 0))
     if len(verts[0]) == 2:
-        point = Vector((0, 0))
+        point = mathutils.Vector((0, 0))
 
     for i, vert in enumerate(QVerts):
         point += binom(order, i) * pow(t, i) * pow(1 - t, order - i) * vert
@@ -698,7 +686,7 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    #bpy.types.GRAPH_MT_channel.append(menu_func)
+    bpy.types.GRAPH_MT_channel.append(menu_func)
     #bpy.types.DOPESHEET_MT_channel.append(menu_func)
     bpy.types.VIEW3D_MT_curve_add.append(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(menu)
@@ -710,7 +698,7 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
-    #bpy.types.GRAPH_MT_channel.remove(menu_func)
+    bpy.types.GRAPH_MT_channel.remove(menu_func)
     #bpy.types.DOPESHEET_MT_channel.remove(menu_func)
     bpy.types.VIEW3D_MT_curve_add.remove(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(menu)

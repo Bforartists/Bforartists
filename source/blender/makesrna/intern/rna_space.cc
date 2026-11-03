@@ -22,6 +22,7 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_movieclip.hh"
 #include "BKE_object_types.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "ED_asset.hh"
 #include "ED_buttons.hh"
@@ -201,7 +202,7 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
     {SPACE_PROJECT,
      "PROJECT",
      ICON_PROJECT,
-     "Project Setup",
+     "Project Settings",
      "Manage the current Blender project"},
     {0, nullptr, 0, nullptr, nullptr},
 };
@@ -781,6 +782,7 @@ static const EnumPropertyItem spreadsheet_table_id_type_items[] = {
 #  include "BKE_paint.hh"
 #  include "BKE_preferences.h"
 #  include "BKE_scene.hh"
+#  include "BKE_scene_context.hh"
 #  include "BKE_screen.hh"
 #  include "BKE_studiolight.h"
 #  include "BKE_workspace.hh"
@@ -1490,7 +1492,7 @@ static void rna_RegionView3D_quadview_clip_update(Main * /*main*/,
 static RenderEngine *rna_RegionView3D_engine_get(const PointerRNA *ptr)
 {
   const RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
-  return rv3d->view_render ? RE_view_engine_get(rv3d->view_render) : nullptr;
+  return rv3d->runtime->view_render ? RE_view_engine_get(rv3d->runtime->view_render) : nullptr;
 }
 
 static bool rna_RegionView3D_pause_render_get(PointerRNA *ptr)
@@ -1512,8 +1514,8 @@ static void rna_RegionView3D_pause_render_set(PointerRNA *ptr, const bool value)
         continue;
       }
       const RegionView3D *rv3d = static_cast<RegionView3D *>(region_iter.regiondata);
-      if (rv3d && rv3d->view_render) {
-        if (RenderEngine *engine = RE_view_engine_get(rv3d->view_render)) {
+      if (rv3d && rv3d->runtime->view_render) {
+        if (RenderEngine *engine = RE_view_engine_get(rv3d->runtime->view_render)) {
           RE_engine_view_pause_set(engine, value);
         }
       }
@@ -1581,6 +1583,25 @@ static void rna_RegionView3D_view_rotation_set(PointerRNA *ptr, const float *val
   RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
   invert_qt_qt(rv3d->viewquat, values);
   rna_RegionView3D_view_rotation_set_validate_view_axis(rv3d);
+}
+
+/* BFA - View Roll in the sidebar, the user view's counterpart of Camera Roll (#6839). */
+static float rna_RegionView3D_view_roll_get(PointerRNA *ptr)
+{
+  RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
+  return ED_view3d_view_roll_get(rv3d->viewquat);
+}
+
+static void rna_RegionView3D_view_roll_set(PointerRNA *ptr, float value)
+{
+  RegionView3D *rv3d = static_cast<RegionView3D *>(ptr->data);
+  if ((rv3d->persp == RV3D_CAMOB) ||
+      (blender::bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_ROTATION))
+  {
+    return;
+  }
+  ED_view3d_view_roll_set(rv3d->viewquat, value);
+  rv3d->view = RV3D_VIEW_USER;
 }
 
 static void rna_RegionView3D_view_matrix_set(PointerRNA *ptr, const float *values)
@@ -2352,7 +2373,7 @@ static void rna_SpaceImageEditor_cursor_location_set(PointerRNA *ptr, const floa
   }
 }
 
-static void rna_SpaceImageEditor_image_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
+static void rna_SpaceImageEditor_image_update(Main * /*bmain*/, Scene *scene, PointerRNA *ptr)
 {
   SpaceImage *sima = static_cast<SpaceImage *>(ptr->data);
   Image *ima = sima->image;
@@ -2367,6 +2388,12 @@ static void rna_SpaceImageEditor_image_update(Main * /*bmain*/, Scene * /*scene*
     else {
       BKE_image_multiview_index(ima, &sima->iuser);
     }
+  }
+
+  /* If the new image is the viewer image, we tag the compositor to execute to update the viewer
+   * image. */
+  if (ima && ima->source == IMA_SRC_VIEWER && ima->type == IMA_TYPE_COMPOSITE) {
+    DEG_id_tag_update(&scene->id, ID_RECALC_COMPOSITOR);
   }
 }
 
@@ -2716,8 +2743,8 @@ static void rna_ConsoleLine_body_set(PointerRNA *ptr, const char *value)
   ConsoleLine *ci = static_cast<ConsoleLine *>(ptr->data);
   size_t len = strlen(value);
 
-  if ((len >= size_t(ci->len_alloc)) || (len * 2 < size_t(ci->len_alloc)))
-  { /* allocate a new string */
+  if ((len >= size_t(ci->len_alloc)) ||
+      (len * 2 < size_t(ci->len_alloc))) { /* allocate a new string */
     MEM_delete(ci->line);
     ci->line = MEM_new_array_uninitialized<char>(len + 1, "rna_consoleline");
     ci->len_alloc = int(len + 1);
@@ -2825,8 +2852,13 @@ static void rna_SpaceConsole_rect_update(Main * /*bmain*/, Scene * /*scene*/, Po
   WM_main_add_notifier(NC_SPACE | ND_SPACE_CONSOLE | NA_EDITED, sc);
 }
 
-static void rna_SequenceEditor_update_cache(Main * /*bmain*/, Scene *scene, PointerRNA * /*ptr*/)
+static void rna_SequenceEditor_update_cache(bContext *C, PointerRNA * /*ptr*/)
 {
+  Scene *scene = CTX_data_sequencer_scene(C);
+  if (scene == nullptr) {
+    return;
+  }
+
   seq::cache_cleanup(scene, seq::CacheCleanup::FinalAndIntra);
 }
 
@@ -2867,8 +2899,7 @@ static void seq_build_proxy(bContext *C, PointerRNA *ptr)
 
 static void rna_SequenceEditor_render_size_update(bContext *C, PointerRNA *ptr)
 {
-  const bool is_sequencer = CTX_wm_space_seq(C) != nullptr;
-  Scene *scene = is_sequencer ? CTX_data_sequencer_scene(C) : CTX_data_scene(C);
+  Scene *scene = bke::scene_or_sequencer_scene_from_context(*C);
   if (scene == nullptr) {
     return;
   }
@@ -4690,6 +4721,19 @@ static void rna_def_space_outliner(BlenderRNA *brna)
       {0, nullptr, 0, nullptr, nullptr},
   };
 
+  static const EnumPropertyItem rna_enum_space_outliner_sort_method_items[] = {
+      {SO_SORT_ALPHA, "ALPHA", 0, "Alphabetical", "Order items alphabetically"},
+      {SO_SORT_CUSTOM, "CUSTOM", 0, "Custom", "Order items manually"},
+      {SO_SORT_NONE,
+       "NONE",
+       0,
+       "No Sorting",
+       "Order items according to the actual internal data (matches the order in which "
+       "operators will typically process them when working on collections/objects "
+       "hierarchies)"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   static const EnumPropertyItem lib_override_view_mode[] = {
       {SO_LIB_OVERRIDE_VIEW_PROPERTIES,
        "PROPERTIES",
@@ -4753,9 +4797,9 @@ static void rna_def_space_outliner(BlenderRNA *brna)
       prop, "Complete Matches Only", "Only use complete matches of search string");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
-  prop = RNA_def_property(srna, "use_sort_alpha", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_negative_sdna(prop, nullptr, "flag", SO_SKIP_SORT_ALPHA);
-  RNA_def_property_ui_text(prop, "Sort Alphabetically", "");
+  prop = RNA_def_property(srna, "sort_method", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_space_outliner_sort_method_items);
+  RNA_def_property_ui_text(prop, "Sort Method", "Sorting method for Outliner elements");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
   prop = RNA_def_property(srna, "use_sync_select", PROP_BOOLEAN, PROP_NONE);
@@ -4775,15 +4819,20 @@ static void rna_def_space_outliner(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Scroll to Active",
-      "Scroll the active item into view when it changes outside of the Outliner");
+      "Scroll the active item into view when it changes outside of the outliner");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
   prop = RNA_def_property(srna, "expand_on_focus", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SO_EXPAND_ON_FOCUS);
   RNA_def_property_ui_text(
-      prop,
-      "Expand on Focus",
-      "Uncollapse the active item and scroll it into view when it changes outside the Outliner");
+      prop, "Expand on Focus", "Uncollapse the active item when scrolling it into view");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
+
+  prop = RNA_def_property(srna, "show_users_column", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SO_USERS_COLUMN);
+  RNA_def_property_ui_text(prop,
+                           "Show Users Column",
+                           "Display a column showing the number of users for each data-block");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, nullptr);
 
   /* Granular restriction column option. */
@@ -6499,6 +6548,18 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   RNA_def_property_range(prop, -M_PI, M_PI);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
+  /* BFA - user view roll relative to the horizon, editable and resettable in the sidebar (#6839).
+   * Not stored: read from and written to the view rotation. */
+  prop = RNA_def_property(srna, "view_roll", PROP_FLOAT, PROP_ANGLE);
+  RNA_def_property_float_funcs(
+      prop, "rna_RegionView3D_view_roll_get", "rna_RegionView3D_view_roll_set", nullptr);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_range(prop, -M_PI, M_PI);
+  RNA_def_property_float_default(prop, 0.0f);
+  RNA_def_property_ui_text(
+      prop, "View Roll", "Roll of the view relative to the horizon, zero is level");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+
   prop = RNA_def_property(srna, "pause_render", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(
       prop, "rna_RegionView3D_pause_render_get", "rna_RegionView3D_pause_render_set");
@@ -7278,12 +7339,14 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
       "Preview all channels less than or equal to this value. 0 shows every channel, and negative "
       "values climb that many meta-strip levels if applicable, showing every channel there.");
   RNA_def_property_range(prop, -5, seq::MAX_CHANNELS);
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SequenceEditor_update_cache");
 
   prop = RNA_def_property(srna, "preview_channels", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "flag");
   RNA_def_property_enum_items(prop, preview_channels_items);
   RNA_def_property_ui_text(prop, "Display Channels", "Channels of the preview to display");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SequenceEditor_update_cache");
 
   prop = RNA_def_property(srna, "use_zoom_to_fit", PROP_BOOLEAN, PROP_NONE);
@@ -7312,6 +7375,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_USE_PROXIES);
   RNA_def_property_ui_text(
       prop, "Use Proxies", "Use optimized files for faster scrubbing when available");
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SequenceEditor_update_cache");
 
   prop = RNA_def_property(srna, "use_clamp_view", PROP_BOOLEAN, PROP_NONE);
@@ -7346,11 +7410,12 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   prop = RNA_def_property(srna, "show_transform_preview", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "draw_flag", SEQ_DRAW_TRANSFORM_PREVIEW);
-  RNA_def_property_ui_text(prop,
-                           "Transform Preview",
-                           "Show a preview of the start or end frame of a strip while "
-                           "transforming its respective handle");
+  RNA_def_property_boolean_sdna(prop, nullptr, "draw_flag", SEQ_DRAW_EDIT_POINT_PREVIEW);
+  RNA_def_property_ui_text(
+      prop,
+      "Preview Edit Point",
+      "While editing in the timeline, show the affected frame instead of "
+      "the current frame, such as in the blade tool, or when tweaking handles");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
   /* Gizmo toggles. */
@@ -7613,6 +7678,113 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
                            "Show Scene Strip Range",
                            "When using scene time synchronization in the sequence editor, display "
                            "the range of the current scene strip");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* bfa 3d sequencer interactive scene strip gizmos */
+  prop = RNA_def_property(srna, "show_scene_strip_gizmos", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_GIZMOS);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop,
+                           "Scene Strip Gizmo",
+                           "Show interactive gizmos to retime, "
+                           "move or slip the current scene strip and to scrub the master sequence. "
+                           "Works with or without scene time synchronization - the gizmos act on "
+                           "the workspace sequencer scene (or the 3D Sequencer addon's master "
+                           "scene). The built-in and addon overlays both bind this single toggle; "
+                           "turning it off fully hides the scene strip gizmo system");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* bfa 3d sequencer scene strip adjustments (no addon needed, defaults on) */
+  prop = RNA_def_property(srna, "use_preview_range", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_USE_PREVIEW_RANGE);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop,
+                           "Set Preview Range",
+                           "Update the strip scene's preview start/end frames (preview "
+                           "range) to match the strip when retiming, moving or slipping it. "
+                           "Only applies while preview mode is enabled on the strip scene "
+                           "(timeline Preview Range toggle). Off: the gizmo only changes the "
+                           "strip itself");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* bfa 3d sequencer scene strip gizmo display options (no addon needed) */
+  prop = RNA_def_property(srna, "show_scene_strip_all", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_ALL);
+  RNA_def_property_boolean_default(prop, false);
+  RNA_def_property_ui_text(prop,
+                           "Show All Strips",
+                           "Show every scene strip on the master timeline in the dope-sheet "
+                           "(layered indicators), so overlapping, pushed or frame-aligned "
+                           "strips are visible from the dope-sheet. Off: only strips "
+                           "referencing the same scene are shown");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* BFA - 3D Sequencer: strip name on the scene strip labels/indicators. */
+  prop = RNA_def_property(srna, "show_scene_strip_names", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_STRIP_NAME);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop,
+                           "Show Strip Names",
+                           "Show the strip name on the scene strip bar and the layered strip "
+                           "indicators in the dope-sheet");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  prop = RNA_def_property(srna, "show_scene_strip_scene_name", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_SCENE_NAME);
+  RNA_def_property_boolean_default(prop, true);
+  RNA_def_property_ui_text(prop,
+                           "Show Scene Names",
+                           "Append the referenced scene name to the scene strip bar label "
+                           "and the layered strip indicators in the dope-sheet");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* BFA - 3D Sequencer: opacity multiplier for the layered/stacked strip indicators. */
+  prop = RNA_def_property(srna, "all_strips_opacity", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, nullptr, "overlays.all_strips_opacity");
+  RNA_def_property_range(prop, 0.0, 1.0);
+  /* Default comes from the DNA struct (SpaceActionOverlays.all_strips_opacity = 1.0f);
+   * RNA_def_property_float_default would error here because the value is already set. */
+  RNA_def_property_ui_text(
+      prop,
+      "All Strips Opacity",
+      "Opacity of the layered strip indicators drawn behind/above the scene strip bar");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* BFA - 3D Sequencer: clamp the strip scene's frame range to the strip's visible
+   * extent when the gizmo edits it (retime/move/slip). Only the scene frame range
+   * (sfra/efra, the render range) is affected - the preview range, the strip's
+   * position in the master timeline and the strip's internal time range all stay
+   * untouched. */
+  prop = RNA_def_property(srna, "clamp_to_scene_strip", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_CLAMP_TO_SCENE_STRIP);
+  RNA_def_property_boolean_default(prop, false);
+  RNA_def_property_ui_text(prop,
+                           "Clamp to Scene Strip",
+                           "Clamp the strip scene's frame range (start/end frame) to the "
+                           "strip's visible extent when retiming, moving or slipping it, "
+                           "with optional lead-in/out padding. Only the scene frame range "
+                           "is affected - the preview range, the strip's position in the "
+                           "master timeline and the strip's internal time range stay "
+                           "untouched");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  /* BFA - 3D Sequencer: lead-in/out padding for the "Clamp to Scene Strip" gizmo. */
+  prop = RNA_def_property(srna, "clamp_lead_in", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "overlays.clamp_lead_in");
+  RNA_def_property_range(prop, 0, INT_MAX);
+  RNA_def_property_ui_text(prop,
+                           "Lead In",
+                           "Frames of padding added before the strip's visible extent "
+                           "when the gizmo sets the scene start frame");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
+
+  prop = RNA_def_property(srna, "clamp_lead_out", PROP_INT, PROP_NONE);
+  RNA_def_property_int_sdna(prop, nullptr, "overlays.clamp_lead_out");
+  RNA_def_property_range(prop, 0, INT_MAX);
+  RNA_def_property_ui_text(prop,
+                           "Lead Out",
+                           "Frames of padding added after the strip's visible extent "
+                           "when the gizmo sets the scene end frame");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 }
 

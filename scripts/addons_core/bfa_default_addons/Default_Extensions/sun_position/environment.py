@@ -1,6 +1,7 @@
-# SPDX-FileCopyrightText: 2019-2023 Blender Foundation
+# SPDX-FileCopyrightText: 2011-2012 Michael Martin
+# SPDX-FileCopyrightText: 2019-2025 Damien Picard
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # -*- coding: utf-8 -*-
 
@@ -36,8 +37,7 @@ def draw_callback_px(self, context):
 
     coords = ((-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (-0.5, 0.5))
     uv_coords = ((0, 0), (1, 0), (1, 1), (0, 1))
-    batch = batch_for_shader(image_shader, 'TRI_FAN',
-                             {"pos": coords, "texCoord": uv_coords})
+    batch = batch_for_shader(image_shader, 'TRI_FAN', {"pos": coords, "texCoord": uv_coords})
 
     with gpu.matrix.push_pop():
         gpu.matrix.translate(position)
@@ -52,16 +52,14 @@ def draw_callback_px(self, context):
     # vertical
     coords = ((self.mouse_position[0], bottom), (self.mouse_position[0], top))
     colors = ((1,) * 4,) * 2
-    batch = batch_for_shader(line_shader, 'LINES',
-                             {"pos": coords, "color": colors})
+    batch = batch_for_shader(line_shader, 'LINES', {"pos": coords, "color": colors})
     line_shader.bind()
     batch.draw(line_shader)
 
     # horizontal
     if bottom <= self.mouse_position[1] <= top:
         coords = ((0, self.mouse_position[1]), (context.area.width, self.mouse_position[1]))
-        batch = batch_for_shader(line_shader, 'LINES',
-                                 {"pos": coords, "color": colors})
+        batch = batch_for_shader(line_shader, 'LINES', {"pos": coords, "color": colors})
         line_shader.bind()
         batch.draw(line_shader)
 
@@ -107,6 +105,14 @@ class SUNPOS_OT_ShowEnvironment(bpy.types.Operator):
             if (area.x < mouse_position_abs.x < area.x + area.width
                     and area.y < mouse_position_abs.y < area.y + area.height):
                 self.area = area
+                area.header_text_set(
+                    iface_(
+                        "Enter/LMB: Confirm, Esc/RMB: Cancel, MMB: Pan, Mouse Wheel:"
+                        "Zoom, Ctrl + Mouse Wheel: Set Exposure"
+                    )
+                )
+            else:
+                area.header_text_set(None)
             if area.type == 'VIEW_3D':
                 # Redraw all areas
                 area.tag_redraw()
@@ -119,8 +125,9 @@ class SUNPOS_OT_ShowEnvironment(bpy.types.Operator):
             env_tex = nt.get(sun_props.env_texture)
 
             # Mouse position relative to window
-            self.mouse_position = Vector((mouse_position_abs.x - self.area.x,
-                                          mouse_position_abs.y - self.area.y))
+            self.mouse_position = Vector(
+                (mouse_position_abs.x - self.area.x, mouse_position_abs.y - self.area.y)
+            )
 
             self.selected_point = (self.mouse_position
                                    - self.offset
@@ -149,7 +156,7 @@ class SUNPOS_OT_ShowEnvironment(bpy.types.Operator):
                 dir.z = 2.0 * v - 1.0
 
                 # Outside bounds
-                if (dir.x * dir.x + dir.z * dir.z > 1.0):
+                if dir.x * dir.x + dir.z * dir.z > 1.0:
                     dir = Vector()
 
                 else:
@@ -187,9 +194,9 @@ class SUNPOS_OT_ShowEnvironment(bpy.types.Operator):
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             for area in context.screen.areas:
                 area.tag_redraw()
+                area.header_text_set(None)
             # Bind the environment texture to the sun
             context.scene.sun_pos_properties.bind_to_sun = True
-            context.workspace.status_text_set(None)
             return {'FINISHED'}
 
         # Cancel
@@ -200,7 +207,7 @@ class SUNPOS_OT_ShowEnvironment(bpy.types.Operator):
             # Reset previous values
             context.scene.sun_pos_properties.env_elevation = self.initial_elevation
             context.scene.sun_pos_properties.env_azimuth = self.initial_azimuth
-            context.workspace.status_text_set(None)
+            context.area.header_text_set(None)
             return {'CANCELLED'}
 
         # Set exposure or zoom
@@ -257,6 +264,8 @@ class SUNPOS_OT_ShowEnvironment(bpy.types.Operator):
         if env_tex_node is None or env_tex_node.type != "TEX_ENVIRONMENT":
             self.report({'ERROR'}, 'Please select an Environment Texture node')
             return {'CANCELLED'}
+        image = env_tex_node.image
+        self.exposure = min(1.0, 100.0 / max(image.pixels))
 
         self.area = context.area
 
@@ -264,10 +273,6 @@ class SUNPOS_OT_ShowEnvironment(bpy.types.Operator):
 
         self.initial_elevation = context.scene.sun_pos_properties.env_elevation
         self.initial_azimuth = context.scene.sun_pos_properties.env_azimuth
-
-        context.workspace.status_text_set(
-            iface_("Enter/LMB: confirm, Esc/RMB: cancel, MMB: pan, "
-                   "mouse wheel: zoom, Ctrl + mouse wheel: set exposure"))
 
         self._handle = bpy.types.SpaceView3D.draw_handler_add(
             draw_callback_px, (self, context), 'WINDOW', 'POST_PIXEL'

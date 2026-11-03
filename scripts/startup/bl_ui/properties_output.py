@@ -344,7 +344,7 @@ class RENDER_PT_stamp_note(RenderOutputButtonsPanel, Panel):
         rd = context.scene.render
 
         layout.active = rd.use_stamp_note
-        layout.textbox(rd, "stamp_note_text")
+        layout.textbox(rd, "stamp_note_text", text="")
 
 
 class RENDER_PT_stamp_burn(RenderOutputButtonsPanel, Panel):
@@ -714,7 +714,7 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         if needs_codec and ffmpeg.codec == 'PRORES':
             layout.use_property_split = False
             layout.prop(ffmpeg, "ffmpeg_prores_profile")
-            layout.use_property_split = Tru
+            layout.use_property_split = True
 
         # Output quality
         use_crf = needs_codec and ffmpeg.codec in {

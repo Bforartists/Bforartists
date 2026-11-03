@@ -24,13 +24,12 @@ ccl_device
 #else
 ccl_device_inline
 #endif
-    bool
-    BVH_FUNCTION_FULL_NAME(BVH)(KernelGlobals kg,
-                                const ccl_private Ray *ray,
-                                ccl_private LocalIntersection *local_isect,
-                                const int local_object,
-                                ccl_private uint *lcg_state,
-                                const int max_hits)
+    bool BVH_FUNCTION_FULL_NAME(BVH)(KernelGlobals kg,
+                                     const ccl_private Ray *ray,
+                                     ccl_private LocalIntersection *local_isect,
+                                     const int local_object,
+                                     ccl_private uint *lcg_state,
+                                     const int max_hits)
 {
   /* todo:
    * - test if pushing distance on the stack helps (for non shadow rays)
@@ -88,7 +87,7 @@ ccl_device_inline
                                        tmin,
                                        isect_t,
                                        node_addr,
-                                       PATH_RAY_VISIBILITY_ALL,
+                                       PATH_RAY_VISIBILITY_OBJECT_ALL,
                                        dist);
 
         node_addr = __float_as_int(cnodes.z);

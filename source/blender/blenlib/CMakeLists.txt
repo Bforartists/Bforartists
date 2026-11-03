@@ -80,6 +80,7 @@ set(SRC
   intern/index_mask_expression.cc
   intern/index_range.cc
   intern/jitter_2d.cc
+  intern/kdtree.cc
   intern/lasso_2d.cc
   intern/lazy_threading.cc
   intern/length_parameterize.cc
@@ -194,6 +195,8 @@ set(SRC
   BLI_bounds_types.hh
   BLI_boxpack_2d.hh
   BLI_build_config.hh
+  BLI_bytes_type.hh
+  BLI_bytes_type_common.hh
   BLI_cache_mutex.hh
   BLI_color.hh
   BLI_color_mix.hh
@@ -205,6 +208,7 @@ set(SRC
   BLI_compression.hh
   BLI_compute_context.hh
   BLI_concurrent_map.hh
+  BLI_concurrent_set.hh
   BLI_console.hh
   BLI_convexhull_2d.hh
   BLI_cpp_type.hh
@@ -268,8 +272,7 @@ set(SRC
   BLI_iterator.hh
   BLI_jitter_2d.hh
   BLI_kdopbvh.hh
-  BLI_kdtree.hh
-  BLI_kdtree_types.hh
+  BLI_kdtree_new.hh
   BLI_lasso_2d.hh
   BLI_lazy_threading.hh
   BLI_length_parameterize.hh
@@ -335,6 +338,7 @@ set(SRC
   BLI_mesh_boolean.hh
   BLI_mesh_intersect.hh
   BLI_mmap.hh
+  BLI_multi_eval_varray.hh
   BLI_multi_value_map.hh
   BLI_mutex.hh
   BLI_noise.hh
@@ -543,6 +547,7 @@ if(WITH_GTESTS)
     tests/BLI_index_ranges_builder_test.cc
     tests/BLI_inplace_priority_queue_test.cc
     tests/BLI_kdopbvh_test.cc
+    tests/BLI_kdtree_test.cc
     tests/BLI_length_parameterize_test.cc
     tests/BLI_linear_allocator_chunked_list_test.cc
     tests/BLI_linear_allocator_test.cc
@@ -570,6 +575,7 @@ if(WITH_GTESTS)
     tests/BLI_memory_utils_test.cc
     tests/BLI_mesh_boolean_test.cc
     tests/BLI_mesh_intersect_test.cc
+    tests/BLI_multi_eval_varray_test.cc
     tests/BLI_multi_value_map_test.cc
     tests/BLI_normalized_int_test.cc
     tests/BLI_offset_indices_test.cc

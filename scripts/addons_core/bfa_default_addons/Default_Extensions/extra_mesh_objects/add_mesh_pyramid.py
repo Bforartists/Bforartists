@@ -18,6 +18,7 @@ from mathutils import (
         Vector,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 
 def create_step(width, base_level, step_height, num_sides):
@@ -118,19 +119,19 @@ class AddPyramid(bpy.types.Operator,  object_utils.AddObjectHelper):
                 description = "change Pyramid")
 
     num_sides: IntProperty(
-            name="Number Sides",
+            name="Sides",
             description="How many sides each step will have",
             min=3,
             default=4
             )
     num_steps: IntProperty(
-            name="Number of Steps",
+            name="Steps",
             description="How many steps for the overall pyramid",
             min=1,
             default=10
             )
     width: FloatProperty(
-            name="Initial Width",
+            name="Width",
             description="Initial base step width",
             min=0.01,
             default=2
@@ -142,7 +143,7 @@ class AddPyramid(bpy.types.Operator,  object_utils.AddObjectHelper):
             default=0.1
             )
     reduce_by: FloatProperty(
-            name="Reduce Step By",
+            name="Taper",
             description="How much to reduce each succeeding step by",
             min=.01,
             default=.20
@@ -150,20 +151,19 @@ class AddPyramid(bpy.types.Operator,  object_utils.AddObjectHelper):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        layout.prop(self, 'num_sides', expand=True)
-        layout.prop(self, 'num_steps', expand=True)
-        layout.prop(self, 'width', expand=True)
-        layout.prop(self, 'height', expand=True)
-        layout.prop(self, 'reduce_by', expand=True)
+        layout.separator()
+        layout.prop(self, 'num_sides')
+        layout.prop(self, 'num_steps')
+        layout.prop(self, 'width')
+        layout.prop(self, 'height')
+        layout.prop(self, 'reduce_by')
 
         if self.change == False:
-            col = layout.column(align=True)
-            col.prop(self, 'align', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'location', expand=True)
-            col = layout.column(align=True)
-            col.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'

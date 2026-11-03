@@ -285,7 +285,16 @@ class VIEW3D_OT_materialutilities_remove_all_material_slots(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.active_object is not None) and (context.active_object.mode != 'EDIT')
+        if (obj := context.active_object) is None:
+            cls.poll_message_set("No active object selected.")
+            return False
+        elif not hasattr(obj.data, "materials"):
+            cls.poll_message_set("Active object doesn't support materials.")
+            return False
+        elif obj.mode == "EDIT":
+            cls.poll_message_set("Active object is in EDIT mode.")
+            return False
+        return True
 
     def draw(self, context):
         layout = self.layout

@@ -45,7 +45,7 @@ bool device_hip_init(bool *r_meets_driver_requirement)
   if (hipew_result == HIPEW_SUCCESS) {
     LOG_INFO << "HIPEW initialization succeeded";
     if (!hipSupportsDriver()) {
-      LOG_WARNING << "Driver version is too old";
+      LOG_WARNING << "HIP driver version is too old";
       if (r_meets_driver_requirement) {
         *r_meets_driver_requirement = false;
       }
@@ -55,7 +55,7 @@ bool device_hip_init(bool *r_meets_driver_requirement)
       result = true;
     }
     else if (HIPDevice::have_precompiled_kernels()) {
-      LOG_INFO << "Found precompiled kernels";
+      LOG_INFO << "HIP: Found precompiled kernels";
       result = true;
     }
     else if (hipewCompilerPath() != nullptr) {
@@ -117,12 +117,10 @@ unique_ptr<Device> device_hip_create(const DeviceInfo &info,
 static hipError_t device_hip_safe_init()
 {
 #  ifdef _WIN32
-  __try
-  {
+  __try {
     return hipInit(0);
   }
-  __except (EXCEPTION_EXECUTE_HANDLER)
-  {
+  __except (EXCEPTION_EXECUTE_HANDLER) {
     /* Ignore crashes inside the HIP driver and hope we can
      * survive even with corrupted HIP installs. */
     fprintf(stderr, "Cycles HIP: driver crashed, continuing without HIP.\n");

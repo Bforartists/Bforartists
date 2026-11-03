@@ -17,6 +17,7 @@
 #include "CLG_log.h"
 
 #include "GPU_capabilities.hh"
+#include "GPU_framebuffer.hh"
 #include "gpu_capabilities_private.hh"
 #include "gpu_platform_private.hh"
 
@@ -168,6 +169,12 @@ static Vector<StringRefNull> missing_capabilities_get(VkPhysicalDevice vk_physic
   if (!extensions.contains(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME)) {
     missing_capabilities.append(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);
   }
+  if (!extensions.contains(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME)) {
+    missing_capabilities.append(VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME);
+  }
+  if (!extensions.contains(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME)) {
+    missing_capabilities.append(VK_KHR_CREATE_RENDERPASS_2_EXTENSION_NAME);
+  }
   if (!extensions.contains(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME)) {
     missing_capabilities.append(VK_KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME);
   }
@@ -182,9 +189,6 @@ static Vector<StringRefNull> missing_capabilities_get(VkPhysicalDevice vk_physic
     missing_capabilities.append("geometry shaders");
   }
 #endif
-  if (features.features.multiViewport == VK_FALSE) {
-    missing_capabilities.append("multi viewport");
-  }
   if (features.features.fragmentStoresAndAtomics == VK_FALSE) {
     missing_capabilities.append("fragment stores and atomics");
   }
@@ -247,8 +251,14 @@ static bool vk_instance_create_for_platform_checks(VkInstance *r_instance)
   vk_application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   vk_application_info.apiVersion = VK_API_VERSION_1_1;
 
+  const char *vk_instance_extensions[] = {
+      VK_KHR_SURFACE_EXTENSION_NAME, /* Required dependency for VK_KHR_swapchain. */
+  };
+
   VkInstanceCreateInfo vk_instance_info = {VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
   vk_instance_info.pApplicationInfo = &vk_application_info;
+  vk_instance_info.ppEnabledExtensionNames = vk_instance_extensions;
+  vk_instance_info.enabledExtensionCount = 1;
 
   *r_instance = VK_NULL_HANDLE;
   vkCreateInstance(&vk_instance_info, nullptr, r_instance);
@@ -480,7 +490,7 @@ void VKBackend::platform_init(const VKDevice &device)
   GPG.device_uuid = Array<uint8_t, 16>(Span<uint8_t>(id_properties.deviceUUID, VK_UUID_SIZE));
 
   if (id_properties.deviceLUIDValid) {
-    GPG.device_luid = Array<uint8_t, 8>(Span<uint8_t>(id_properties.deviceUUID, VK_LUID_SIZE));
+    GPG.device_luid = Array<uint8_t, 8>(Span<uint8_t>(id_properties.deviceLUID, VK_LUID_SIZE));
     GPG.device_luid_node_mask = id_properties.deviceNodeMask;
   }
   else {
@@ -505,6 +515,7 @@ void VKBackend::detect_workarounds(VKDevice &device)
 
     /* Force workarounds and disable extensions. */
     workarounds.not_aligned_pixel_formats = true;
+    workarounds.static_viewport_scissor = true;
     extensions.shader_viewport_index_layer = false;
     extensions.fragment_shader_barycentric = false;
     extensions.dynamic_rendering_local_read = false;
@@ -520,6 +531,7 @@ void VKBackend::detect_workarounds(VKDevice &device)
     GCaps.stencil_export_support = false;
     GCaps.texture_pool_workaround = true;
     GCaps.vertex_pipeline_stores_and_atomics_support = false;
+    GCaps.multi_viewport_support = false;
 
     device.workarounds_ = workarounds;
     device.extensions_ = extensions;
@@ -528,6 +540,12 @@ void VKBackend::detect_workarounds(VKDevice &device)
 
   if (G.debug & G_DEBUG_GPU_NO_TEXTURE_POOL) {
     GCaps.texture_pool_workaround = true;
+  }
+
+  /* Some Qualcomm drivers keep command-buffer-local state written by `vkCmdSetViewport` across
+   * command buffer resets. */
+  if (GPU_type_matches(GPU_DEVICE_QUALCOMM, GPU_OS_ANY, GPU_DRIVER_ANY)) {
+    workarounds.static_viewport_scissor = true;
   }
 
   extensions.shader_viewport_index_layer = device.supports_extension(
@@ -673,6 +691,16 @@ void VKBackend::delete_resources()
   MEM_delete(compiler_);
 }
 
+bool VKBackend::pipelines_compiled_since_last_reset()
+{
+  return device.pipelines.compiled_since_last_reset();
+}
+
+void VKBackend::reset_pipeline_compilation_tracking()
+{
+  device.pipelines.reset_compilation_tracking();
+}
+
 void VKBackend::compute_dispatch(int groups_x_len, int groups_y_len, int groups_z_len)
 {
   VKContext &context = *VKContext::get();
@@ -797,20 +825,27 @@ BottomLevelAS *VKBackend::blas_alloc(const char *name)
   return new VKBottomLevelAS(name);
 }
 
+/**
+ * The current rendering depth of this thread.
+ *
+ * GPU_rendering_begin can be called multiple times forming a hierarchy. rendering_depth is
+ * increased for every GPU_rendering_begin and decreased when GPU_rendering_end is called.
+ * Discarded resources are released when rendering_depth is set to 0.
+ */
+static thread_local int32_t rendering_depth = 0;
+
 void VKBackend::render_begin()
 {
-  VKThreadData &thread_data = device.current_thread_data();
-  BLI_assert_msg(thread_data.rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
-  thread_data.rendering_depth += 1;
+  BLI_assert_msg(rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
+  rendering_depth += 1;
 }
 
 void VKBackend::render_end()
 {
-  VKThreadData &thread_data = device.current_thread_data();
-  thread_data.rendering_depth -= 1;
-  BLI_assert_msg(thread_data.rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
+  rendering_depth -= 1;
+  BLI_assert_msg(rendering_depth >= 0, "Unbalanced `GPU_render_begin/end`");
   if (G.background) {
-    if (thread_data.rendering_depth == 0) {
+    if (rendering_depth == 0) {
       VKContext *context = VKContext::get();
       if (context != nullptr) {
         context->flush();
@@ -824,7 +859,7 @@ void VKBackend::render_end()
   /* When performing animation render we want to release any discarded resources during rendering
    * after each frame.
    */
-  if (G.is_rendering && thread_data.rendering_depth == 0 && !BLI_thread_is_main()) {
+  if (G.is_rendering && rendering_depth == 0 && !BLI_thread_is_main()) {
     std::scoped_lock lock(device.orphaned_data.mutex_get());
     device.orphaned_data.move_data(device.orphaned_data_render,
                                    device.orphaned_data.timeline_ + 1);
@@ -857,6 +892,12 @@ void VKBackend::capabilities_init(VKDevice &device)
       device.physical_device_acceleration_structure_properties_get().maxGeometryCount > 0 &&
       device.physical_device_acceleration_structure_properties_get().maxPrimitiveCount > 0 &&
       device.physical_device_acceleration_structure_properties_get().maxInstanceCount > 0;
+  if (G.debug & G_DEBUG_GPU_NO_HW_RAYTRACING) {
+    GCaps.ray_query_support = false;
+  }
+
+  GCaps.multi_viewport_support = device.physical_device_features_get().multiViewport &&
+                                 limits.maxViewports >= GPU_MAX_VIEWPORTS;
 
   GCaps.srgb_write_view_support = true;
 
@@ -872,7 +913,8 @@ void VKBackend::capabilities_init(VKDevice &device)
   }
   GCaps.max_uniforms_vert = GCaps.max_uniforms_frag = min_uu(
       limits.maxPerStageDescriptorUniformBuffers, INT_MAX);
-  GCaps.max_batch_indices = min_uu(limits.maxDrawIndirectCount, INT_MAX);
+  /* Vulkan has no limit on the number of indices in a single draw call. */
+  GCaps.max_batch_indices = INT_MAX;
   GCaps.max_batch_vertices = min_uu(limits.maxDrawIndexedIndexValue, INT_MAX);
   GCaps.max_vertex_attribs = min_uu(limits.maxVertexInputAttributes, INT_MAX);
   GCaps.max_varying_floats = min_uu(limits.maxVertexOutputComponents, INT_MAX);

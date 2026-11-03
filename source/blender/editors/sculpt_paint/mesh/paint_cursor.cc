@@ -421,18 +421,22 @@ static void point_with_symmetry_draw(const PaintMode paint_mode,
       }
 
       /* Radial Symmetry. */
-      for (char raxis = 0; raxis < 3; raxis++) {
-        for (int r = 1; r < mesh->radial_symmetry[raxis]; r++) {
-          float angle = 2 * M_PI * r / mesh->radial_symmetry[int(raxis)];
-          location = symmetry_flip(true_location, ePaintSymmetryFlags(i));
-          unit_m4(symm_rot_mat);
-          rotate_m4(symm_rot_mat, raxis + 'X', angle);
-          mul_m4_v3(symm_rot_mat, location);
+      if ((mesh->symmetry & ME_SYMMETRY_RADIAL) &&
+          !(paint_mode == PaintMode::Weight && (mesh->editflag & ME_EDIT_MIRROR_VERTEX_GROUPS)))
+      {
+        for (char raxis = 0; raxis < 3; raxis++) {
+          for (int r = 1; r < mesh->radial_symmetry[raxis]; r++) {
+            float angle = 2 * M_PI * r / mesh->radial_symmetry[int(raxis)];
+            location = symmetry_flip(true_location, ePaintSymmetryFlags(i));
+            unit_m4(symm_rot_mat);
+            rotate_m4(symm_rot_mat, raxis + 'X', angle);
+            mul_m4_v3(symm_rot_mat, location);
 
-          if (bke::paint::supports_symmetry_tiling(paint_mode, brush)) {
-            tiling_preview_draw(gpuattr, region, location, paint, ob, radius);
+            if (bke::paint::supports_symmetry_tiling(paint_mode, brush)) {
+              tiling_preview_draw(gpuattr, region, location, paint, ob, radius);
+            }
+            screen_space_point_draw(gpuattr, region, location, ob.object_to_world().ptr(), 3);
           }
-          screen_space_point_draw(gpuattr, region, location, ob.object_to_world().ptr(), 3);
         }
       }
     }
@@ -680,7 +684,8 @@ static void object_space_overlays_draw(const PaintCursorContext &pcontext)
 
 static void cursor_space_drawing_setup(const PaintCursorContext &pcontext)
 {
-  const float3 normal = bke::brush::supports_tilt(*pcontext.brush) ?
+  const Brush *brush = pcontext.brush;
+  const float3 normal = bke::brush::supports_tilt(*brush) ?
                             tilt_apply_to_normal(*pcontext.vc.obact,
                                                  float4x4(pcontext.vc.rv3d->viewinv),
                                                  pcontext.normal,
@@ -688,19 +693,17 @@ static void cursor_space_drawing_setup(const PaintCursorContext &pcontext)
                                                  pcontext.brush->tilt_strength_factor) :
                             pcontext.normal;
 
-  if (BKE_brush_has_cube_tip(pcontext.brush, pcontext.mode)) {
+  if (BKE_brush_has_cube_tip(brush, pcontext.mode)) {
     float local_mat[4][4];
     float local_mat_inv[4][4];
 
-    calc_brush_local_mat(0,
-                         pcontext.paint->runtime->brush_rotation,
-                         pcontext.vc,
-                         *pcontext.vc.obact,
-                         normal,
-                         pcontext.location,
-                         1.0f,
-                         local_mat,
-                         local_mat_inv);
+    /* TODO: For brushes that does not support rake, we should allow users to set a starting
+     * rotation. Should be implemented after moving Rake and Rotation settings from the texture
+     * datablock. */
+    const float tip_rotation = bke::brush::tip_rotation_get(*pcontext.paint, *pcontext.brush);
+    const float3 motion_normal = calc_motion_normal_from_angle(
+        pcontext.vc, pcontext.location, tip_rotation);
+    calc_brush_local_mat(normal, motion_normal, pcontext.location, 1.0f, local_mat, local_mat_inv);
 
     GPU_matrix_mul(pcontext.vc.obact->object_to_world().ptr());
     GPU_matrix_mul(local_mat_inv);

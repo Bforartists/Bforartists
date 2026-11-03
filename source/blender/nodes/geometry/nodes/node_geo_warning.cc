@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "node_geometry_util.hh"
+#include "shader/node_shader_util.hh"
 
 #include "UI_interface_layout.hh"
 #include "UI_resources.hh"
@@ -90,6 +91,11 @@ class WarningOperation : public NodeOperation {
     const std::string message = this->get_input("Message").get_single_value_default<std::string>();
     this->add_warning(NodeWarningType(this->node().custom1), message);
   }
+
+  bool uses_asynchronous_execution() const override
+  {
+    return false;
+  }
 };
 
 static NodeOperation *get_compositor_operation(Context &context, const bNode &node)
@@ -114,24 +120,21 @@ static void node_rna(StructRNA *srna)
                     NOD_inline_enum_accessors(custom1));
 }
 
-static void node_label(const bNodeTree * /*ntree*/,
-                       const bNode *node,
-                       char *label,
-                       int label_maxncpy)
+static void node_label(const bNodeTree * /*ntree*/, const bNode *node, MutableCStr label)
 {
   const char *name;
   bool enum_label = RNA_enum_name(rna_enum_node_warning_type_items, node->custom1, &name);
   if (!enum_label) {
     name = N_("Unknown");
   }
-  BLI_strncpy_utf8(label, IFACE_(name), label_maxncpy);
+  STRNCPY_UTF8(label, IFACE_(name));
 }
 
 static void node_register()
 {
   static bke::bNodeType ntype;
 
-  geo_cmp_node_type_base(&ntype, "GeometryNodeWarning"_ustr, GEO_NODE_WARNING);
+  common_node_type_base(&ntype, "GeometryNodeWarning"_ustr, GEO_NODE_WARNING);
   ntype.ui_name = "Warning";
   ntype.ui_description = "Create custom warnings in node groups";
   ntype.enum_name_legacy = "WARNING";

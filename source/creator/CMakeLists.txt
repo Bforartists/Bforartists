@@ -3,6 +3,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(INC
+  ../blender/compositor
+  ../blender/compositor/algorithms
+  ../blender/compositor/cached_resources
+  ../blender/compositor/derived_resources
+  ../blender/compositor/utilities
   ../blender/editors/include
   ../blender/io/usd
   ../blender/makesrna
@@ -12,6 +17,7 @@ set(LIB
   PRIVATE bf::blenkernel
   PRIVATE bf::blenlib
   PRIVATE bf::bmesh
+  bf_compositor
   PRIVATE bf::depsgraph
   PRIVATE bf::dna
   PRIVATE bf::functions
@@ -544,6 +550,19 @@ if(WITH_PYTHON)
     )
   endif()
 
+  if(WITH_KTX)
+    if(GLTF_BRIDGE_RPATH)
+      set_target_properties(bf_intern_ktx_bridge PROPERTIES
+        BUILD_WITH_INSTALL_RPATH TRUE
+        INSTALL_RPATH "${GLTF_BRIDGE_RPATH}"
+      )
+    endif()
+    install(
+      PROGRAMS $<TARGET_FILE:bf_intern_ktx_bridge>
+      DESTINATION ${GLTF_BRIDGE_INSTALL_DIR}
+    )
+  endif()
+
   unset(GLTF_BRIDGE_INSTALL_DIR)
   unset(GLTF_BRIDGE_RPATH)
 
@@ -613,6 +632,34 @@ if(WIN32)
       DIRECTORY ${LIBDIR}/osl/lib/python${PYTHON_VERSION}_debug/site-packages/oslquery
       DESTINATION ${TARGETDIR_SITE_PACKAGES}
       CONFIGURATIONS Debug
+    )
+  endif()
+  if(EXISTS ${LIBDIR}/jolt/bin/jolt.dll) # 5.3+
+    windows_install_shared_manifest(
+      FILES
+        ${LIBDIR}/jolt/bin/jolt.dll
+      RELEASE
+    )
+    windows_install_shared_manifest(
+      FILES
+        ${LIBDIR}/jolt/bin/jolt_d.dll
+      DEBUG
+    )
+  endif()
+  if(EXISTS ${LIBDIR}/opentimelineio/lib/opentime.dll) # 5.3+
+    windows_install_shared_manifest(
+      FILES
+        ${LIBDIR}/opentimelineio/lib/opentime.dll
+        ${LIBDIR}/opentimelineio/lib/opentimelineio.dll
+      RELEASE
+    )
+  endif()
+  if(EXISTS ${LIBDIR}/opentimelineio/lib/opentime_d.dll) # 5.3+
+    windows_install_shared_manifest(
+      FILES
+        ${LIBDIR}/opentimelineio/lib/opentime_d.dll
+        ${LIBDIR}/opentimelineio/lib/opentimelineio_d.dll
+      DEBUG
     )
   endif()
   if(EXISTS ${LIBDIR}/ceres/bin/ceres.dll) # 5.1+
@@ -1395,29 +1442,59 @@ elseif(WIN32)
           PATTERN "*.pyo" EXCLUDE                 # * any cache *
         )
       endif()
+      if(CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64")
+        set(_openexr_arch arm64)
+      else()
+        set(_openexr_arch amd64)
+      endif()
+      install(
+        FILES
+          ${LIBDIR}/openexr/python/openEXR/OpenEXR.cp${_PYTHON_VERSION_NO_DOTS}-win_${_openexr_arch}.pyd
+          ${LIBDIR}/openexr/python/openEXR/Imath.py
+        DESTINATION ${TARGETDIR_SITE_PACKAGES}
+        CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+      )
+      install(
+        FILES
+          ${LIBDIR}/openexr/python/openEXR/OpenEXR_d.cp${_PYTHON_VERSION_NO_DOTS}-win_${_openexr_arch}.pyd
+          ${LIBDIR}/openexr/python/openEXR/Imath.py
+        DESTINATION ${TARGETDIR_SITE_PACKAGES}
+        CONFIGURATIONS Debug
+      )
+      install(
+        DIRECTORY ${LIBDIR}/opentimelineio/python/opentimelineio/
+        DESTINATION ${TARGETDIR_SITE_PACKAGES}/opentimelineio/
+        CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+        PATTERN "__pycache__" EXCLUDE           # * any cache *
+        PATTERN "*.pyc" EXCLUDE                 # * any cache *
+        PATTERN "*.pyo" EXCLUDE                 # * any cache *
+        PATTERN "*_d.cp*" EXCLUDE                # * do not install debug libs *
+      )
+      install(
+        DIRECTORY ${LIBDIR}/opentimelineio/python/opentimelineio/
+        DESTINATION ${TARGETDIR_SITE_PACKAGES}/opentimelineio/
+        CONFIGURATIONS Debug
+        PATTERN "__pycache__" EXCLUDE           # * any cache *
+        PATTERN "*.pyc" EXCLUDE                 # * any cache *
+        PATTERN "*.pyo" EXCLUDE                 # * any cache *
+      )
+      install(
+        DIRECTORY ${LIBDIR}/usd/lib/site-packages/
+        DESTINATION ${TARGETDIR_SITE_PACKAGES}/
+        CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+        PATTERN "__pycache__" EXCLUDE           # * any cache *
+        PATTERN "*.pyc" EXCLUDE                 # * any cache *
+        PATTERN "*.pyo" EXCLUDE                 # * any cache *
+      )
 
-      # This will not exist for 3.4 and earlier `./lib` directory
-      # to ease the transition, support both 3.4 and 3.5 `./lib` directories.
-      if(EXISTS ${USD_LIBRARY_DIR}/python/)
-        install(
-          DIRECTORY ${USD_LIBRARY_DIR}/python/
-          DESTINATION ${TARGETDIR_SITE_PACKAGES}
-          CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
-          PATTERN "__pycache__" EXCLUDE           # * any cache *
-          PATTERN "*.pyc" EXCLUDE                 # * any cache *
-          PATTERN "*.pyo" EXCLUDE                 # * any cache *
-        )
-      endif()
-      if(EXISTS ${USD_LIBRARY_DIR}/debug/python/)
-        install(
-          DIRECTORY ${USD_LIBRARY_DIR}/debug/python/
-          DESTINATION ${TARGETDIR_SITE_PACKAGES}
-          CONFIGURATIONS Debug
-          PATTERN "__pycache__" EXCLUDE           # * any cache *
-          PATTERN "*.pyc" EXCLUDE                 # * any cache *
-          PATTERN "*.pyo" EXCLUDE                 # * any cache *
-        )
-      endif()
+      install(
+        DIRECTORY ${LIBDIR}/usd/lib/debug/site-packages/
+        DESTINATION ${TARGETDIR_SITE_PACKAGES}/
+        CONFIGURATIONS Debug
+        PATTERN "__pycache__" EXCLUDE           # * any cache *
+        PATTERN "*.pyc" EXCLUDE                 # * any cache *
+        PATTERN "*.pyo" EXCLUDE                 # * any cache *
+      )
 
       # This will not exist for 3.4 and earlier `./lib` directories
       # to ease the transition, support both 3.4 and 3.5 `./lib` directories.
@@ -1489,6 +1566,28 @@ elseif(WIN32)
           PATTERN "*.pyo" EXCLUDE                 # * any cache *
         )
       endif()
+      # OpenEXR python bindings.
+      # Check they exist so building against non `LIBDIR` Python works as expected.
+      if(EXISTS ${LIBDIR}/openexr/python/Release/OpenEXR)
+        install(
+          DIRECTORY ${LIBDIR}/openexr/python/Release/OpenEXR
+          DESTINATION ${TARGETDIR_SITE_PACKAGES}/
+          CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+          PATTERN "__pycache__" EXCLUDE           # * any cache *
+          PATTERN "*.pyc" EXCLUDE                 # * any cache *
+          PATTERN "*.pyo" EXCLUDE                 # * any cache *
+        )
+      endif()
+      if(EXISTS ${LIBDIR}/openexr/python/Debug/OpenEXR)
+        install(
+          DIRECTORY ${LIBDIR}/openexr/python/Debug/OpenEXR
+          DESTINATION ${TARGETDIR_SITE_PACKAGES}/
+          CONFIGURATIONS Debug
+          PATTERN "__pycache__" EXCLUDE           # * any cache *
+          PATTERN "*.pyc" EXCLUDE                 # * any cache *
+          PATTERN "*.pyo" EXCLUDE                 # * any cache *
+        )
+      endif()
     endif()
 
     if(WITH_PYTHON_INSTALL)
@@ -1511,8 +1610,7 @@ elseif(WIN32)
 
   endif()
 
-  # Filenames change slightly between FFMPEG versions check both 6.0 and fallback to 5.0
-  # to ease the transition between versions.
+  # Install the DLLs matching the bundled FFmpeg 7.1 or 8.x libraries.
   if(EXISTS "${LIBDIR}/ffmpeg/lib/avfilter-10.dll")
     windows_install_shared_manifest(
       FILES
@@ -1541,28 +1639,6 @@ elseif(WIN32)
         ${LIBDIR}/ffmpeg/lib/avutil-59.dll
         ${LIBDIR}/ffmpeg/lib/swscale-8.dll
         ${LIBDIR}/ffmpeg/lib/swresample-5.dll
-      ALL
-    )
-  elseif(EXISTS "${LIBDIR}/ffmpeg/lib/avcodec-60.dll")
-    windows_install_shared_manifest(
-      FILES
-        ${LIBDIR}/ffmpeg/lib/avcodec-60.dll
-        ${LIBDIR}/ffmpeg/lib/avformat-60.dll
-        ${LIBDIR}/ffmpeg/lib/avdevice-60.dll
-        ${LIBDIR}/ffmpeg/lib/avutil-58.dll
-        ${LIBDIR}/ffmpeg/lib/swscale-7.dll
-        ${LIBDIR}/ffmpeg/lib/swresample-4.dll
-      ALL
-    )
-  else()
-    windows_install_shared_manifest(
-      FILES
-        ${LIBDIR}/ffmpeg/lib/avcodec-59.dll
-        ${LIBDIR}/ffmpeg/lib/avformat-59.dll
-        ${LIBDIR}/ffmpeg/lib/avdevice-59.dll
-        ${LIBDIR}/ffmpeg/lib/avutil-57.dll
-        ${LIBDIR}/ffmpeg/lib/swscale-6.dll
-        ${LIBDIR}/ffmpeg/lib/swresample-4.dll
       ALL
     )
   endif()
@@ -1638,6 +1714,11 @@ elseif(WIN32)
   windows_install_shared_manifest(
     FILES ${LIBDIR}/draco/bin/draco_d.dll
     DEBUG
+  )
+
+  windows_install_shared_manifest(
+    FILES ${LIBDIR}/ktx/bin/ktx.dll
+    ALL
   )
 
   windows_install_shared_manifest(

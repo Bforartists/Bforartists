@@ -25,28 +25,55 @@ OneapiDeviceQueue::OneapiDeviceQueue(OneapiDevice *device)
 {
 }
 
-int OneapiDeviceQueue::num_concurrent_states(const size_t state_size) const
+ConcurrentStatesParams OneapiDeviceQueue::concurrent_states_params() const
 {
-  int num_states = 4 * num_concurrent_busy_states(state_size);
-
-  LOG_TRACE << "GPU queue concurrent states: " << num_states << ", using up to "
-            << string_human_readable_size(num_states * state_size);
-
-  return num_states;
-}
-
-int OneapiDeviceQueue::num_concurrent_busy_states(const size_t /*state_size*/) const
-{
+#  if 1
+  /* Keep the same number of concurrent states as Blender 5.2 and earlier.
+   * For other GPU backends there have been reports about TDR timeouts,
+   * excessive memory usage with multiple Blender instances, etc. Assume
+   * oneAPI is likely affected too and don't use more memory. */
   const int max_num_threads = oneapi_device_->get_num_multiprocessors() *
                               oneapi_device_->get_max_num_threads_per_multiprocessor();
 
-  return 4 * max(8 * max_num_threads, 65536);
+  ConcurrentStatesParams params;
+  params.baseline = 16 * max(8 * max_num_threads, 65536);
+#  else
+  /* NOTE(@xavierh-intel): At the time of writing this, 32768 * the number of
+   * Execution Units is the best baseline across at least Intel Arc B390 and
+   * Arc Pro B70.  */
+  ConcurrentStatesParams params;
+  params.baseline = 32768 * oneapi_device_->get_num_multiprocessors();
+#    ifdef __linux__
+  /* Intel Arc A770 and older on Linux use i915 drivers that don't accurately
+   * report free memory in default configuration, we need to be more careful
+   * with the number of states on these platforms, so we use the original lower
+   * baseline. */
+  if (oneapi_device_->get_max_num_threads_per_multiprocessor() < 128) {
+    const int max_num_threads = oneapi_device_->get_num_multiprocessors() *
+                                oneapi_device_->get_max_num_threads_per_multiprocessor();
+    params.baseline = 16 * max(8 * max_num_threads, 65536);
+  }
+#    endif
+#  endif
+
+  /* Only shrink to fit within available memory, growing did not show clear
+   * benefit compared to the baseline. */
+  params.min = params.baseline / 8;
+  params.max = params.baseline;
+  params.reserve_percent = 5;
+
+  return params;
+}
+
+void OneapiDeviceQueue::get_memory_info(size_t &total, size_t &free) const
+{
+  oneapi_device_->get_device_memory_info(total, free);
 }
 
 int OneapiDeviceQueue::num_sort_partitions(int max_num_paths, uint /*max_scene_shaders*/) const
 {
   int sort_partition_elements = (oneapi_device_->get_max_num_threads_per_multiprocessor() >= 128) ?
-                                    65536 :
+                                    32768 :
                                     8192;
   /* Sort partitioning with local sorting on Intel GPUs is currently the most effective solution no
    * matter the number of shaders. */

@@ -118,9 +118,9 @@ static bool object_materials_supported_poll_ex(bContext *C, const Object *ob);
 /** \name Local Utilities
  * \{ */
 
-static void material_copybuffer_filepath_get(char filepath[FILE_MAX], size_t filepath_maxncpy)
+static void material_copybuffer_filepath_get(MutableCStr filepath)
 {
-  BLI_path_join(filepath, filepath_maxncpy, BKE_tempdir_base(), "copybuffer_material.blend");
+  BLI_path_join(filepath, BKE_tempdir_base(), "copybuffer_material.blend");
 }
 
 static bool object_array_for_shading_edit_mode_enabled_filter(const Object *ob, void *user_data)
@@ -173,7 +173,7 @@ static bool object_materials_supported_poll_ex(bContext *C, const Object *ob)
   }
 
   /* Material linked to object. */
-  if (ob->matbits && ob->actcol && ob->matbits[ob->actcol - 1]) {
+  if (ob->matbits && ob->actcol >= 1 && ob->actcol <= ob->totcol && ob->matbits[ob->actcol - 1]) {
     return true;
   }
 
@@ -327,7 +327,9 @@ static wmOperatorStatus material_slot_assign_exec(bContext *C, wmOperator * /*op
     if (ob->totcol == 0) {
       continue;
     }
-    if (obact && (mat_active == BKE_object_material_get(ob, obact->actcol))) {
+    if (obact && (obact->actcol >= 1 && obact->actcol <= ob->totcol) &&
+        (mat_active == BKE_object_material_get(ob, obact->actcol)))
+    {
       /* Avoid searching since there may be multiple slots with the same material.
        * For the active object or duplicates: match the material slot index first. */
       mat_nr_active = obact->actcol - 1;
@@ -349,12 +351,11 @@ static wmOperatorStatus material_slot_assign_exec(bContext *C, wmOperator * /*op
 
     bool changed = false;
     if (ob->type == OB_MESH) {
-      BMEditMesh *em = BKE_editmesh_from_object(ob);
       BMFace *efa;
       BMIter iter;
 
-      if (em) {
-        BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
+      if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(ob)) {
+        BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
           if (BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
             changed = true;
             efa->mat_nr = mat_nr_active;
@@ -443,7 +444,8 @@ static wmOperatorStatus material_slot_de_select(bContext *C, bool select)
       BMEditMesh *em = BKE_editmesh_from_object(ob);
 
       if (em) {
-        changed = EDBM_deselect_by_material(em, mat_nr_active, select);
+        BMesh *bm = BKE_editmesh_bmesh_get_for_write(ob);
+        changed = EDBM_deselect_by_material(bm, mat_nr_active, select);
       }
     }
     else if (ELEM(ob->type, OB_CURVES_LEGACY, OB_SURF)) {
@@ -635,6 +637,8 @@ static wmOperatorStatus material_slot_move_exec(bContext *C, wmOperator *op)
   if (!ob || ob->totcol < 2) {
     return OPERATOR_CANCELLED;
   }
+
+  BKE_object_material_active_index_sanitize(ob);
 
   /* up */
   if (dir == 1 && ob->actcol > 1) {
@@ -2744,9 +2748,24 @@ static wmOperatorStatus copy_material_exec(bContext *C, wmOperator *op)
   if (ma == nullptr) {
     return OPERATOR_CANCELLED;
   }
+  if (ID_IS_LINKED(&ma->id)) {
+    /* Direct link/append of linked IDs is not supported currently, so neither is their
+     * copy/pasting. */
+    BKE_reportf(op->reports,
+                RPT_INFO,
+                "Cannot copy the linked material '%s' to the internal clipboard",
+                BKE_id_name(ma->id));
+    return OPERATOR_CANCELLED;
+  }
   if (ID_IS_PACKED(&ma->id)) {
     /* Direct link/append of packed IDs is not supported currently, so neither is their
      * copy/pasting. */
+    /* NOTE: In practice, always shadowed currently by the more general check on linked status
+     * above. */
+    BKE_reportf(op->reports,
+                RPT_INFO,
+                "Cannot copy the linked packed material '%s' to the internal clipboard",
+                BKE_id_name(ma->id));
     return OPERATOR_CANCELLED;
   }
 
@@ -2762,7 +2781,7 @@ static wmOperatorStatus copy_material_exec(bContext *C, wmOperator *op)
       nullptr);
 
   char filepath[FILE_MAX];
-  material_copybuffer_filepath_get(filepath, sizeof(filepath));
+  material_copybuffer_filepath_get(filepath);
   copybuffer.write_as_copypaste_buffer(filepath, *op->reports);
 
   /* We are all done! */
@@ -2844,7 +2863,7 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
 
   /* Read copy buffer .blend file. */
   char filepath[FILE_MAX];
-  material_copybuffer_filepath_get(filepath, sizeof(filepath));
+  material_copybuffer_filepath_get(filepath);
 
   /* NOTE(@ideasman42) The node tree might reference different kinds of ID types.
    * It's not clear-cut which ID types should be included, although it's unlikely

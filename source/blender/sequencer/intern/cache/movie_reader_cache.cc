@@ -20,7 +20,6 @@
 
 #include "BLI_mutex.hh"
 #include "BLI_path_utils.hh"
-#include "BLI_string.hh"
 #include "BLI_vector.hh"
 
 #include "BKE_main.hh"
@@ -29,6 +28,7 @@
 
 #include "SEQ_sequencer.hh"
 
+#include "IMB_colormanagement.hh"
 #include "IMB_imbuf.hh"
 
 #include "MOV_read.hh"
@@ -142,7 +142,8 @@ static void movie_reader_source_filepath_get(const Scene &scene,
                                              const Strip &strip,
                                              char r_filepath[FILE_MAX])
 {
-  BLI_path_join(r_filepath, FILE_MAX, strip.data->dirpath, strip.data->stripdata->filename);
+  BLI_path_join(
+      MutableCStr(r_filepath, FILE_MAX), strip.data->dirpath, strip.data->stripdata->filename);
   BLI_path_abs(r_filepath, ID_BLEND_PATH_FROM_GLOBAL(&scene.id));
 }
 
@@ -161,9 +162,7 @@ static MovieReaderKey movie_reader_key_get(const Scene &scene,
   if (use_multiview && strip.views_format == R_IMF_VIEWS_INDIVIDUAL) {
     char filepath_view[FILE_MAX];
     const char *suffix = nullptr;
-    if (seq_multiview_view_filepath_get(
-            scene, filepath, *view_id, filepath_view, sizeof(filepath_view), &suffix))
-    {
+    if (seq_multiview_view_filepath_get(scene, filepath, *view_id, filepath_view, &suffix)) {
       key.multiview_filepath = filepath_view;
       key.multiview_suffix = suffix;
     }
@@ -282,11 +281,12 @@ void MovieReaderCache::reader_open(MovieReaderCacheEntry &entry)
   }
 
   const MovieReaderKey &key = entry.key;
-  char colorspace[IM_MAX_SPACE];
-  STRNCPY(colorspace, key.colorspace.c_str());
+  ColorManagedColorspaceSettings colorspace_settings;
+  IMB_colormanagement_colorspace_settings_set(&colorspace_settings, key.colorspace.c_str());
   const std::string &filepath = key.multiview_filepath.empty() ? key.source_filepath :
                                                                  key.multiview_filepath;
-  entry.reader = MOV_open_file(filepath.c_str(), key.flags, key.stream_index, true, colorspace);
+  entry.reader = MOV_open_file(
+      filepath.c_str(), key.flags, key.stream_index, true, &colorspace_settings);
   if (entry.reader == nullptr) {
     return;
   }

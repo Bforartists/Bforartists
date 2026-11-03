@@ -60,6 +60,7 @@ static void node_declare(NodeDeclarationBuilder &b)
 
   b.add_input<decl::Int>("Uniformity"_ustr)
       .default_value(4)
+      .subtype(PROP_PIXEL)
       .min(0)
       .usage_by_single_menu(CMP_NODE_KUWAHARA_ANISOTROPIC)
       .description(
@@ -154,6 +155,9 @@ class ConvertKuwaharaOperation : public NodeOperation {
     const Result &input_image = get_input("Image");
     input_image.bind_as_texture(shader, "input_tx");
 
+    const float pixel_size = math::average(input_image.domain().pixel_size);
+    GPU_shader_uniform_1f(shader, "pixel_size", pixel_size);
+
     Result &size_input = get_input("Size");
     if (size_input.is_single_value()) {
       GPU_shader_uniform_1i(shader, "size", int(size_input.get_single_value<float>()));
@@ -223,6 +227,9 @@ class ConvertKuwaharaOperation : public NodeOperation {
     gpu::Shader *shader = context().get_shader(get_classic_summed_area_table_shader_name());
     GPU_shader_bind(shader);
 
+    const float pixel_size = math::average(this->get_input("Image").domain().pixel_size);
+    GPU_shader_uniform_1f(shader, "pixel_size", pixel_size);
+
     Result &size_input = get_input("Size");
     if (size_input.is_single_value()) {
       GPU_shader_uniform_1i(shader, "size", int(size_input.get_single_value<float>()));
@@ -276,8 +283,9 @@ class ConvertKuwaharaOperation : public NodeOperation {
                        Result &output,
                        const int2 size)
   {
+    const float pixel_size = math::average(this->get_input("Image").domain().pixel_size);
     parallel_for(size, [&](const int2 texel) {
-      int radius = math::max(0, int(size_input.load_pixel<float, true>(texel)));
+      const int radius = math::max(0, int(size_input.load_pixel<float, true>(texel) * pixel_size));
 
       float4 mean_of_squared_color_of_quadrants[4] = {
           float4(0.0f), float4(0.0f), float4(0.0f), float4(0.0f)};
@@ -365,10 +373,13 @@ class ConvertKuwaharaOperation : public NodeOperation {
     gpu::Shader *shader = context().get_shader(get_anisotropic_shader_name());
     GPU_shader_bind(shader);
 
+    Result &input = this->get_input("Image");
+    const float pixel_size = math::average(input.domain().pixel_size);
+    GPU_shader_uniform_1f(shader, "pixel_size", pixel_size);
+
     GPU_shader_uniform_1f(shader, "eccentricity", this->compute_eccentricity());
     GPU_shader_uniform_1f(shader, "sharpness", this->compute_sharpness());
 
-    Result &input = get_input("Image");
     input.bind_as_texture(shader, "input_tx");
 
     Result &size_input = get_input("Size");
@@ -402,12 +413,23 @@ class ConvertKuwaharaOperation : public NodeOperation {
     return "compositor_kuwahara_anisotropic_variable_size";
   }
 
+  static float radial_falloff(float x)
+  {
+    /* We know x is in [0..1] range, and the Gaussian falloff
+     * function we want is `exp(-PI * x)`. This approximates
+     * it with a polynomial. */
+    return 0.99963078f +
+           x * (-3.12538948f +
+                x * (4.76244166f + x * (-4.41057815f + x * (2.39937989f + x * (-0.58256130f)))));
+  }
+
   void execute_anisotropic_cpu(const Result &structure_tensor)
   {
+    Result &input = this->get_input("Image");
+    const float pixel_size = math::average(input.domain().pixel_size);
     const float eccentricity = this->compute_eccentricity();
     const float sharpness = this->compute_sharpness();
 
-    Result &input = this->get_input("Image");
     Result &size = this->get_input("Size");
 
     const Domain domain = this->compute_domain();
@@ -462,7 +484,7 @@ class ConvertKuwaharaOperation : public NodeOperation {
       float eigenvalue_difference = first_eigenvalue - second_eigenvalue;
       float anisotropy = eigenvalue_sum > 0.0f ? eigenvalue_difference / eigenvalue_sum : 0.0f;
 
-      float radius = math::max(0.0f, size.load_pixel<float, true>(texel));
+      float radius = math::max(0.0f, size.load_pixel<float, true>(texel) * pixel_size);
       if (radius == 0.0f) {
         output.store_pixel(texel, input.load_pixel<Color>(texel));
         return;
@@ -522,10 +544,12 @@ class ConvertKuwaharaOperation : public NodeOperation {
        * next code section. */
       float4 weighted_mean_of_squared_color_of_sectors[8];
       float4 weighted_mean_of_color_of_sectors[8];
-      float sum_of_weights_of_sectors[8];
+      /* Opposite sectors have equal total weights because each sample is paired.
+       * Share the weight sum between sectors [i] and [i+4]. */
+      float sum_of_weights_of_sectors[4];
 
       /* The center pixel (0, 0) is exempt from the main loop below for reasons that are explained
-       * in the first if statement in the loop, so we need to accumulate its color, squared color,
+       * in the first row's lower bound, so we need to accumulate its color, squared color,
        * and weight separately first. Luckily, the zero coordinates of the center pixel zeros out
        * most of the complex computations below, and it can easily be shown that the weight for the
        * center pixel in all sectors is simply (1 / number_of_sectors). */
@@ -537,6 +561,8 @@ class ConvertKuwaharaOperation : public NodeOperation {
       for (int i = 0; i < number_of_sectors; i++) {
         weighted_mean_of_squared_color_of_sectors[i] = weighted_center_color_squared;
         weighted_mean_of_color_of_sectors[i] = weighted_center_color;
+      }
+      for (int i = 0; i < number_of_sectors / 2; i++) {
         sum_of_weights_of_sectors[i] = center_weight;
       }
 
@@ -545,19 +571,10 @@ class ConvertKuwaharaOperation : public NodeOperation {
        * window to only the upper two quadrants, and compute each two mirrored pixels at the same
        * time using the same weight as an optimization. */
       for (int j = 0; j <= ellipse_bounds.y; j++) {
-        for (int i = -ellipse_bounds.x; i <= ellipse_bounds.x; i++) {
-          /* Since we compute each two mirrored pixels at the same time, we need to also exempt the
-           * pixels whose x coordinates are negative and their y coordinates are zero, that's
-           * because those are mirrored versions of the pixels whose x coordinates are positive and
-           * their y coordinates are zero, and we don't want to compute and accumulate them twice.
-           * Moreover, we also need to exempt the center pixel with zero coordinates for the same
-           * reason, however, since the mirror of the center pixel is itself, it need to be
-           * accumulated separately, hence why we did that in the code section just before this
-           * loop. */
-          if (j == 0 && i <= 0) {
-            continue;
-          }
-
+        /* On the first row, negative offsets are covered by the mirrored samples, and the center
+         * pixel was accumulated separately above. */
+        int lower_bound = j == 0 ? 1 : -ellipse_bounds.x;
+        for (int i = lower_bound; i <= ellipse_bounds.x; i++) {
           /* Map the pixels of the ellipse into a unit disk, exempting any points that are not part
            * of the ellipse or disk. */
           float2 disk_point = inverse_ellipse_matrix * float2(i, j);
@@ -614,7 +631,7 @@ class ConvertKuwaharaOperation : public NodeOperation {
           float sector_weights_sum = sector_weights[0] + sector_weights[1] + sector_weights[2] +
                                      sector_weights[3] + sector_weights[4] + sector_weights[5] +
                                      sector_weights[6] + sector_weights[7];
-          float radial_gaussian_weight = math::exp(-std::numbers::pi * disk_point_length_squared) /
+          float radial_gaussian_weight = radial_falloff(disk_point_length_squared) /
                                          sector_weights_sum;
 
           /* Load the color of the pixel and its mirrored pixel and compute their square. */
@@ -625,17 +642,20 @@ class ConvertKuwaharaOperation : public NodeOperation {
 
           for (int k = 0; k < number_of_sectors; k++) {
             float weight = sector_weights[k] * radial_gaussian_weight;
+            /* Skip zero weight sectors. */
+            if (weight == 0.0f) {
+              continue;
+            }
+            sum_of_weights_of_sectors[k % (number_of_sectors / 2)] += weight;
 
             /* Accumulate the pixel to each of the sectors multiplied by the sector weight. */
             int upper_index = k;
-            sum_of_weights_of_sectors[upper_index] += weight;
             weighted_mean_of_color_of_sectors[upper_index] += upper_color * weight;
             weighted_mean_of_squared_color_of_sectors[upper_index] += upper_color_squared * weight;
 
             /* Accumulate the mirrored pixel to each of the sectors multiplied by the sector
              * weight. */
             int lower_index = (k + number_of_sectors / 2) % number_of_sectors;
-            sum_of_weights_of_sectors[lower_index] += weight;
             weighted_mean_of_color_of_sectors[lower_index] += lower_color * weight;
             weighted_mean_of_squared_color_of_sectors[lower_index] += lower_color_squared * weight;
           }
@@ -647,8 +667,9 @@ class ConvertKuwaharaOperation : public NodeOperation {
       float sum_of_weights = 0.0f;
       float4 weighted_sum = float4(0.0f);
       for (int i = 0; i < number_of_sectors; i++) {
-        weighted_mean_of_color_of_sectors[i] /= sum_of_weights_of_sectors[i];
-        weighted_mean_of_squared_color_of_sectors[i] /= sum_of_weights_of_sectors[i];
+        float sector_weight_sum = sum_of_weights_of_sectors[i % (number_of_sectors / 2)];
+        weighted_mean_of_color_of_sectors[i] /= sector_weight_sum;
+        weighted_mean_of_squared_color_of_sectors[i] /= sector_weight_sum;
 
         float4 color_mean = weighted_mean_of_color_of_sectors[i];
         float4 squared_color_mean = weighted_mean_of_squared_color_of_sectors[i];
@@ -805,7 +826,9 @@ class ConvertKuwaharaOperation : public NodeOperation {
 
   int get_uniformity()
   {
-    return math::max(0, this->get_input("Uniformity").get_single_value_default<int>());
+    const float pixel_size = math::average(this->get_input("Image").domain().pixel_size);
+    const int size = this->get_input("Uniformity").get_single_value_default<int>();
+    return math::max(0, int(size * pixel_size));
   }
 
   float get_sharpness()

@@ -417,15 +417,13 @@ static struct {
 
   /* TODO: remove. */
   GPUVertFormat format;
-  uint vflag_id;
 } g_ui_batch_cache = {nullptr};
 
 static const GPUVertFormat &vflag_format()
 {
   if (g_ui_batch_cache.format.attr_len == 0) {
     GPUVertFormat *format = &g_ui_batch_cache.format;
-    g_ui_batch_cache.vflag_id = GPU_vertformat_attr_add(
-        format, "vflag", gpu::VertAttrType::UINT_32);
+    GPU_vertformat_attr_add(format, "vflag", gpu::VertAttrType::UINT_32);
   }
   return g_ui_batch_cache.format;
 }
@@ -435,28 +433,16 @@ static const GPUVertFormat &vflag_format()
 #define EMBOSS 2
 #define NO_AA 0
 
-static void set_roundbox_vertex_data(GPUVertBufRaw *vflag_step, uint32_t d)
+static uint32_t roundbox_vertex_data(
+    int corner_id, int corner_v, int jit_v, bool inner, bool emboss, int color)
 {
-  uint32_t *data = static_cast<uint32_t *>(GPU_vertbuf_raw_step(vflag_step));
-  *data = d;
-}
-
-static uint32_t set_roundbox_vertex(GPUVertBufRaw *vflag_step,
-                                    int corner_id,
-                                    int corner_v,
-                                    int jit_v,
-                                    bool inner,
-                                    bool emboss,
-                                    int color)
-{
-  uint32_t *data = static_cast<uint32_t *>(GPU_vertbuf_raw_step(vflag_step));
-  *data = corner_id;
-  *data |= corner_v << 2;
-  *data |= jit_v << 6;
-  *data |= color << 12;
-  *data |= (inner) ? (1 << 10) : 0;  /* is inner vert */
-  *data |= (emboss) ? (1 << 11) : 0; /* is emboss vert */
-  return *data;
+  uint32_t data = corner_id;
+  data |= corner_v << 2;
+  data |= jit_v << 6;
+  data |= color << 12;
+  data |= (inner) ? (1 << 10) : 0;  /* is inner vert */
+  data |= (emboss) ? (1 << 11) : 0; /* is emboss vert */
+  return data;
 }
 
 gpu::Batch *batch_roundbox_widget_get()
@@ -488,32 +474,33 @@ gpu::Batch *batch_roundbox_widget_get()
 gpu::Batch *batch_roundbox_shadow_get()
 {
   if (g_ui_batch_cache.roundbox_shadow == nullptr) {
-    uint32_t last_data;
-    GPUVertBufRaw vflag_step;
     gpu::VertBuf *vbo = GPU_vertbuf_create_with_format(vflag_format());
     const int vcount = (WIDGET_SIZE_MAX + 1) * 2 + 2 + WIDGET_SIZE_MAX;
     GPU_vertbuf_data_alloc(*vbo, vcount);
-    GPU_vertbuf_attr_get_raw_data(vbo, g_ui_batch_cache.vflag_id, &vflag_step);
+    MutableSpan<uint32_t> data = vbo->data<uint32_t>();
+    int i = 0;
 
     for (int c = 0; c < 4; c++) {
       for (int a = 0; a < WIDGET_CURVE_RESOLU; a++) {
-        set_roundbox_vertex(&vflag_step, c, a, NO_AA, true, false, INNER);
-        set_roundbox_vertex(&vflag_step, c, a, NO_AA, false, false, INNER);
+        data[i++] = roundbox_vertex_data(c, a, NO_AA, true, false, INNER);
+        data[i++] = roundbox_vertex_data(c, a, NO_AA, false, false, INNER);
       }
     }
     /* close loop */
-    last_data = set_roundbox_vertex(&vflag_step, 0, 0, NO_AA, true, false, INNER);
-    last_data = set_roundbox_vertex(&vflag_step, 0, 0, NO_AA, false, false, INNER);
+    data[i++] = roundbox_vertex_data(0, 0, NO_AA, true, false, INNER);
+    const uint32_t last_data = roundbox_vertex_data(0, 0, NO_AA, false, false, INNER);
+    data[i++] = last_data;
     /* restart */
-    set_roundbox_vertex_data(&vflag_step, last_data);
-    set_roundbox_vertex(&vflag_step, 0, 0, NO_AA, true, false, INNER);
+    data[i++] = last_data;
+    data[i++] = roundbox_vertex_data(0, 0, NO_AA, true, false, INNER);
     /* filled */
     for (int c1 = 0, c2 = 3; c1 < 2; c1++, c2--) {
       for (int a1 = 0, a2 = WIDGET_CURVE_RESOLU - 1; a2 >= 0; a1++, a2--) {
-        set_roundbox_vertex(&vflag_step, c1, a1, NO_AA, true, false, INNER);
-        set_roundbox_vertex(&vflag_step, c2, a2, NO_AA, true, false, INNER);
+        data[i++] = roundbox_vertex_data(c1, a1, NO_AA, true, false, INNER);
+        data[i++] = roundbox_vertex_data(c2, a2, NO_AA, true, false, INNER);
       }
     }
+    BLI_assert(i == vcount);
     g_ui_batch_cache.roundbox_shadow = GPU_batch_create_ex(
         GPU_PRIM_TRI_STRIP, vbo, nullptr, GPU_BATCH_OWNS_VBO);
     gpu_batch_presets_register(g_ui_batch_cache.roundbox_shadow);
@@ -1641,8 +1628,7 @@ static size_t avoid_non_split_patterns(StringRef str,
  * Return the length of modified (right-clipped + ellipsis) string.
  */
 static void text_clip_right_ex(const uiFontStyle *fstyle,
-                               char *str,
-                               const size_t str_maxncpy,
+                               MutableCStr str,
                                const float okwidth,
                                const char *sep,
                                const int sep_len,
@@ -1653,20 +1639,20 @@ static void text_clip_right_ex(const uiFontStyle *fstyle,
 
   /* How many BYTES (not characters) of this UTF8 string can fit, along with appended ellipsis. */
   int l_end = BLF_width_to_strlen(
-      fstyle->uifont_id, str, str_maxncpy, okwidth - sep_strwidth, nullptr);
-  l_end = avoid_non_split_patterns(str, l_end, true);
+      fstyle->uifont_id, str.data(), str.size(), okwidth - sep_strwidth, nullptr);
+  l_end = avoid_non_split_patterns(str.data(), l_end, true);
 
   if (l_end > 0) {
-    StringRef trimmed_str = StringRef(str, l_end).trim_right();
+    StringRef trimmed_str = StringRef(str.data(), l_end).trim_right();
     /* At least one character, so clip and add the ellipsis. */
-    memcpy(str + trimmed_str.size(), sep, sep_len + 1); /* +1 for trailing '\0'. */
+    memcpy(str.data() + trimmed_str.size(), sep, sep_len + 1); /* +1 for trailing '\0'. */
     if (r_final_len) {
       *r_final_len = trimmed_str.size() + sep_len;
     }
   }
   else {
     /* Otherwise fit as much as we can without adding an ellipsis. */
-    l_end = BLF_width_to_strlen(fstyle->uifont_id, str, str_maxncpy, okwidth, nullptr);
+    l_end = BLF_width_to_strlen(fstyle->uifont_id, str.data(), str.size(), okwidth, nullptr);
     str[l_end] = '\0';
     if (r_final_len) {
       *r_final_len = size_t(l_end);
@@ -1675,10 +1661,9 @@ static void text_clip_right_ex(const uiFontStyle *fstyle,
 }
 
 float text_clip_middle_ex(const uiFontStyle *fstyle,
-                          char *str,
+                          MutableCStr str,
                           float okwidth,
                           const float minwidth,
-                          const size_t str_maxncpy,
                           const char rpart_sep,
                           const bool clip_right_if_tight,
                           const bool shorten_template_variables)
@@ -1688,14 +1673,14 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
   /* need to set this first */
   fontstyle_set(fstyle);
 
-  float strwidth = BLF_width(fstyle->uifont_id, str, str_maxncpy);
+  float strwidth = BLF_width(fstyle->uifont_id, str.data(), str.size());
 
   /* Shorten template variables. */
   if (shorten_template_variables) {
     size_t byte_position = 0;
     while ((okwidth > 0.0f) && (strwidth > okwidth)) {
-      byte_position = text_shorten_next_template_var(str, byte_position);
-      strwidth = BLF_width(fstyle->uifont_id, str, str_maxncpy);
+      byte_position = text_shorten_next_template_var(str.data(), byte_position);
+      strwidth = BLF_width(fstyle->uifont_id, str.data(), str.size());
       if (byte_position == -1) {
         break;
       }
@@ -1713,10 +1698,11 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
     size_t final_lpart_len;
 
     if (rpart_sep) {
-      rpart = strrchr(str, rpart_sep);
+      rpart = strrchr(str.data(), rpart_sep);
 
       if (rpart) {
-        rpart = str + avoid_non_split_patterns(str, size_t(rpart - str), false);
+        rpart = str.data() +
+                avoid_non_split_patterns(str.data(), size_t(rpart - str.data()), false);
         rpart_len = strlen(rpart);
         rpart_width = BLF_width(fstyle->uifont_id, rpart, rpart_len);
         okwidth -= rpart_width;
@@ -1725,7 +1711,7 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
         if (okwidth < 0.0f) {
           /* Not enough place for actual label, just display protected right part.
            * Here just for safety, should never happen in real life! */
-          memmove(str, rpart, rpart_len + 1);
+          memmove(str.data(), rpart, rpart_len + 1);
           rpart = nullptr;
           okwidth += rpart_width;
           strwidth = rpart_width;
@@ -1742,39 +1728,37 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
     }
 
     size_t l_end = BLF_width_to_strlen(
-        fstyle->uifont_id, str, str_maxncpy, parts_strwidth, nullptr);
-    l_end = avoid_non_split_patterns(str, l_end, true);
+        fstyle->uifont_id, str.data(), str.size(), parts_strwidth, nullptr);
+    l_end = avoid_non_split_patterns(str.data(), l_end, true);
     if (clip_right_if_tight &&
         (l_end < 10 || min_ff(parts_strwidth, strwidth - okwidth) < minwidth))
     {
       /* If we really have no place, or we would clip a very small piece of string in the middle,
        * only show start of string.
        */
-      text_clip_right_ex(
-          fstyle, str, str_maxncpy, okwidth, sep, sep_len, sep_strwidth, &final_lpart_len);
+      text_clip_right_ex(fstyle, str, okwidth, sep, sep_len, sep_strwidth, &final_lpart_len);
     }
     else {
-      l_end = StringRef(str, l_end).trim_right().size();
+      l_end = StringRef(str.data(), l_end).trim_right().size();
       size_t r_offset, r_len;
       r_offset = BLF_width_to_rstrlen(
-          fstyle->uifont_id, str, str_maxncpy, parts_strwidth, nullptr);
-      r_offset = avoid_non_split_patterns(str, r_offset, false);
-      const StringRef r_trimmed = StringRef(str + r_offset).trim_left();
+          fstyle->uifont_id, str.data(), str.size(), parts_strwidth, nullptr);
+      r_offset = avoid_non_split_patterns(str.data(), r_offset, false);
+      const StringRef r_trimmed = StringRef(str.data() + r_offset).trim_left();
       r_len = r_trimmed.size();
 
-      if (l_end + sep_len + r_len + 1 + rpart_len > str_maxncpy) {
+      if (l_end + sep_len + r_len + 1 + rpart_len > str.size()) {
         /* Corner case, the str already takes all available mem,
          * and the ellipsis chars would actually add more chars.
          * Better to just trim one or two letters to the right in this case...
          * NOTE: with a single-char ellipsis, this should never happen! But better be safe
          * here...
          */
-        text_clip_right_ex(
-            fstyle, str, str_maxncpy, okwidth, sep, sep_len, sep_strwidth, &final_lpart_len);
+        text_clip_right_ex(fstyle, str, okwidth, sep, sep_len, sep_strwidth, &final_lpart_len);
       }
       else {
-        memmove(str + l_end + sep_len, r_trimmed.begin(), r_len);
-        memcpy(str + l_end, sep, sep_len);
+        memmove(str.data() + l_end + sep_len, r_trimmed.begin(), r_len);
+        memcpy(str.data() + l_end, sep, sep_len);
         final_lpart_len = size_t(l_end + sep_len + r_len);
         /* Set string null terminator. */
         str[final_lpart_len] = '\0';
@@ -1782,13 +1766,13 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
 /* Seems like this was only needed because of an error in #BLF_width_to_rstrlen(), not because of
  * integer imprecision. See PR #135239. */
 #if 0
-        while (BLF_width(fstyle->uifont_id, str, str_maxncpy) > okwidth) {
+        while (BLF_width(fstyle->uifont_id, str.data(), str.size()) > okwidth) {
           /* This will happen because a lot of string width processing is done in integer pixels,
            * which can introduce a rather high error in the end (about 2 pixels or so).
            * Only one char removal shall ever be needed in real-life situation... */
           r_len--;
           final_lpart_len--;
-          char *c = str + l_end + sep_len;
+          char *c = str.data() + l_end + sep_len;
           memmove(c, c + 1, r_len);
         }
 #endif
@@ -1797,11 +1781,11 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
 
     if (rpart) {
       /* Add back preserved right part to our shorten str. */
-      memcpy(str + final_lpart_len, rpart, rpart_len + 1); /* +1 for trailing '\0'. */
+      memcpy(str.data() + final_lpart_len, rpart, rpart_len + 1); /* +1 for trailing '\0'. */
       okwidth += rpart_width;
     }
 
-    strwidth = BLF_width(fstyle->uifont_id, str, str_maxncpy);
+    strwidth = BLF_width(fstyle->uifont_id, str.data(), str.size());
   }
 
   /* The following assert is meant to catch code changes that break this function's result, but
@@ -1812,7 +1796,7 @@ float text_clip_middle_ex(const uiFontStyle *fstyle,
    * can be longer by that amount and still fit visibly in the required space. */
   BLI_assert((strwidth <= (okwidth + 2)) || (okwidth <= 0.0f) ||
              /* TODO: proper handling of non UTF8 strings. */
-             (BLI_str_utf8_invalid_byte(str, strlen(str)) != -1));
+             (BLI_str_utf8_invalid_byte(str.data(), strlen(str.data())) != -1));
   UNUSED_VARS_NDEBUG(okwidth);
 
   return strwidth;
@@ -1843,12 +1827,10 @@ static void text_clip_middle(const uiFontStyle *fstyle, Button *but, const rcti 
   but->ofs = 0;
   char new_drawstr[UI_MAX_DRAW_STR];
   STRNCPY(new_drawstr, but->drawstr.c_str());
-  const size_t new_drawstr_maxncpy = sizeof(new_drawstr);
   but->strwidth = text_clip_middle_ex(fstyle,
                                       new_drawstr,
                                       okwidth,
                                       minwidth,
-                                      new_drawstr_maxncpy,
                                       '\0',
                                       clip_right_if_tight,
                                       shorten_template_variables);
@@ -1877,16 +1859,13 @@ static void text_clip_middle_protect_right(const uiFontStyle *fstyle,
   but->ofs = 0;
   char new_drawstr[UI_MAX_DRAW_STR];
   STRNCPY(new_drawstr, but->drawstr.c_str());
-  const size_t new_drawstr_maxncpy = sizeof(new_drawstr);
-  but->strwidth = text_clip_middle_ex(
-      fstyle, new_drawstr, okwidth, minwidth, new_drawstr_maxncpy, rsep);
+  but->strwidth = text_clip_middle_ex(fstyle, new_drawstr, okwidth, minwidth, rsep);
   but->drawstr = new_drawstr;
 }
 
 Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
                                              const char *str,
-                                             char *clipped_str_buf,
-                                             const size_t clipped_str_buf_maxncpy,
+                                             MutableCStr clipped_str_buf,
                                              const float max_line_width,
                                              const int max_lines)
 {
@@ -1903,24 +1882,17 @@ Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
   clipped_lines.reserve(max_lines);
 
   if (max_lines == 1) {
-    BLI_strncpy(clipped_str_buf, str, clipped_str_buf_maxncpy);
+    STRNCPY(clipped_str_buf, str);
 
-    text_clip_middle_ex(
-        fstyle, clipped_str_buf, max_line_width, UI_ICON_SIZE, clipped_str_buf_maxncpy, '\0');
-    clipped_lines.append(clipped_str_buf);
+    text_clip_middle_ex(fstyle, clipped_str_buf, max_line_width, UI_ICON_SIZE, '\0');
+    clipped_lines.append(clipped_str_buf.data());
     return clipped_lines;
   }
   if (max_lines == 2) {
     clipped_lines.append(lines[0]);
-    BLI_strncpy(clipped_str_buf, str + lines[0].size(), clipped_str_buf_maxncpy);
-    text_clip_middle_ex(fstyle,
-                        clipped_str_buf,
-                        max_line_width,
-                        UI_ICON_SIZE,
-                        clipped_str_buf_maxncpy,
-                        '\0',
-                        false);
-    clipped_lines.append(clipped_str_buf);
+    STRNCPY(clipped_str_buf, str + lines[0].size());
+    text_clip_middle_ex(fstyle, clipped_str_buf, max_line_width, UI_ICON_SIZE, '\0', false);
+    clipped_lines.append(clipped_str_buf.data());
     return clipped_lines;
   }
 
@@ -1935,15 +1907,9 @@ Vector<StringRef> text_clip_multiline_middle(const uiFontStyle *fstyle,
 
   /* Clip the middle of the middle line. */
   {
-    BLI_strncpy(clipped_str_buf, lines[middle_index].data(), clipped_str_buf_maxncpy);
-    text_clip_middle_ex(fstyle,
-                        clipped_str_buf,
-                        max_line_width,
-                        UI_ICON_SIZE,
-                        clipped_str_buf_maxncpy,
-                        '\0',
-                        false);
-    clipped_lines.append(clipped_str_buf);
+    STRNCPY(clipped_str_buf, lines[middle_index].data());
+    text_clip_middle_ex(fstyle, clipped_str_buf, max_line_width, UI_ICON_SIZE, '\0', false);
+    clipped_lines.append(clipped_str_buf.data());
   }
 
   /* All remaining lines should be completely filled, including the last one. So fill lines
@@ -2564,6 +2530,7 @@ static void widget_draw_text(const uiFontStyle *fstyle,
 
 #ifdef WITH_INPUT_IME
   const wmIMEData *ime_data;
+  std::string ime_drawstr;
 #endif
 
   fontstyle_set(fstyle);
@@ -2596,7 +2563,6 @@ static void widget_draw_text(const uiFontStyle *fstyle,
       drawstr_left_len = INT_MAX;
 
 #ifdef WITH_INPUT_IME
-      /* FIXME: IME is modifying `const char *drawstr`! */
       ime_data = button_ime_data_get(but);
 
       if (ime_data && !ime_data->composite.empty()) {
@@ -2610,8 +2576,8 @@ static void widget_draw_text(const uiFontStyle *fstyle,
                      but->editstr,
                      ime_data->composite.c_str(),
                      but->editstr + but->pos);
-        but->drawstr = tmp_drawstr;
-        drawstr = but->drawstr.c_str();
+        ime_drawstr = tmp_drawstr;
+        drawstr = ime_drawstr.c_str();
       }
       else
 #endif
@@ -2935,10 +2901,10 @@ static void widget_draw_multiline_text(const uiFontStyle *fstyle,
 
   float ymax = rect->ymax - padding;
   rcti line_rect = *rect;
-  int sccissors[4];
-  GPU_scissor_get(sccissors);
-  int sccisors_ymin = sccissors[1];
-  int sccisors_ymax = sccisors_ymin + sccissors[3];
+  int scissors[4];
+  GPU_scissor_get(scissors);
+  int scissors_ymin = scissors[1];
+  int scissors_ymax = scissors_ymin + scissors[3];
 
   for (const int i : multiline_label->wrap_cache->wrapped_lines.index_range().take_front(lines)) {
     StringRef line = multiline_label->wrap_cache->wrapped_lines[i];
@@ -2946,11 +2912,11 @@ static void widget_draw_multiline_text(const uiFontStyle *fstyle,
     ymax -= line_height;
     line_rect.ymin = ymax;
     /* Break when there is not more space to draw. */
-    if (line_rect.ymax < sccisors_ymin) {
+    if (line_rect.ymax < scissors_ymin) {
       break;
     }
     /* Skip the line if the line is not in visible bounds. */
-    if (line_rect.ymin > sccisors_ymax) {
+    if (line_rect.ymin > scissors_ymax) {
       continue;
     }
     if (i < (lines - 1) || total_lines == lines) {
@@ -3295,22 +3261,26 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
  * Adjust widget display based on animated, driven, overridden ... etc.
  * \{ */
 
-/* put all widget colors on half alpha, use local storage */
-static void widget_color_disabled(WidgetType *wt, const WidgetStateInfo *state)
+/* Put all widget colors on reduced alpha. */
+static void widget_color_disabled(uiWidgetColors &wcol, const WidgetStateInfo *state)
+{
+  const float factor = widget_alpha_factor(state);
+  wcol.outline[3] *= factor;
+  wcol.outline_sel[3] *= factor;
+  wcol.inner[3] *= factor;
+  wcol.inner_sel[3] *= factor;
+  wcol.item[3] *= factor;
+  wcol.text[3] *= factor;
+  wcol.text_sel[3] *= factor;
+}
+
+/* Put all widget colors on reduced alpha, to avoid overriding theme colors use local storage. */
+static void widget_type_color_disabled(WidgetType *wt, const WidgetStateInfo *state)
 {
   static uiWidgetColors wcol_theme_s;
 
   wcol_theme_s = *wt->wcol_theme;
-
-  const float factor = widget_alpha_factor(state);
-
-  wcol_theme_s.outline[3] *= factor;
-  wcol_theme_s.outline_sel[3] *= factor;
-  wcol_theme_s.inner[3] *= factor;
-  wcol_theme_s.inner_sel[3] *= factor;
-  wcol_theme_s.item[3] *= factor;
-  wcol_theme_s.text[3] *= factor;
-  wcol_theme_s.text_sel[3] *= factor;
+  widget_color_disabled(wcol_theme_s, state);
 
   wt->wcol_theme = &wcol_theme_s;
 }
@@ -3363,7 +3333,7 @@ static void widget_state(WidgetType *wt, const WidgetStateInfo *state, EmbossTyp
     wt->wcol_theme = &btheme->tui.wcol_list_item;
 
     if (state->but_flag & (BUT_DISABLED | BUT_INACTIVE | UI_SEARCH_FILTER_NO_MATCH)) {
-      widget_color_disabled(wt, state);
+      widget_type_color_disabled(wt, state);
     }
   }
 
@@ -3371,6 +3341,9 @@ static void widget_state(WidgetType *wt, const WidgetStateInfo *state, EmbossTyp
   if (state->draw_as_link) {
     theme::get_color_4ubv(TH_LINK, wt->wcol.text);
     theme::get_color_4ubv(TH_LINK, wt->wcol.text_sel);
+    if (state->but_flag & (BUT_DISABLED | BUT_INACTIVE | UI_SEARCH_FILTER_NO_MATCH)) {
+      widget_color_disabled(wt->wcol, state);
+    }
   }
   const uchar *color_blend = widget_color_blend_from_flags(wcol_state, state, emboss);
 
@@ -3405,14 +3378,19 @@ static void widget_state(WidgetType *wt, const WidgetStateInfo *state, EmbossTyp
   }
 
   if (state->but_flag & BUT_REDALERT) {
+    uchar red[4];
+    theme::get_color_4ubv(TH_REDALERT, red);
+    /* Alpha is used to blend between the original color (text, background) and alert theme. */
+    const float red_alpha = float(red[3]) / 255.0f;
+
+    /* In regular widgets, tint the background and outline. */
     if (wt->draw && emboss != EmbossType::None) {
-      theme::get_color_3ubv(TH_REDALERT, wt->wcol.inner);
+      color_blend_v3_v3(wt->wcol.outline, red, red_alpha);
+      color_blend_v3_v3(wt->wcol.inner, red, red_alpha);
     }
+    /* Text such as labels or widgets without emboss. Tint the text only. */
     else {
-      uchar red[4];
-      theme::get_color_3ubv(TH_REDALERT, red);
-      color_mul_hsl_v3(red, 1.0f, 1.5f, 1.5f);
-      color_blend_v3_v3(wt->wcol.text, red, 0.5f);
+      color_blend_v3_v3(wt->wcol.text, red, red_alpha);
     }
   }
 
@@ -4828,6 +4806,7 @@ static void widget_numslider(Button *but,
 
     round_box_edges(&wtb1, roundboxalign_slider, &rect1, rad);
     wtb1.draw_outline = false;
+    wtb1.draw_emboss = false;
     widgetbase_set_uniform_discard_factor(&wtb1, factor_discard);
     widgetbase_draw(&wtb1, wcol);
 
@@ -4841,6 +4820,7 @@ static void widget_numslider(Button *but,
   /* Outline. */
   wtb.draw_outline = true;
   wtb.draw_inner = false;
+  wtb.draw_emboss = false;
   widgetbase_draw(&wtb, wcol);
 
   /* Add space at either side of the button so text aligns with number-buttons
@@ -4913,11 +4893,11 @@ static void widget_swatch(Button *but,
   /* Now we reduce alpha of the inner color (i.e. the color shown)
    * so that this setting can look grayed out, while retaining
    * the checkerboard (for transparent values). This is needed
-   * here as the effects of widget_color_disabled() are overwritten. */
+   * here as the effects of widget_type_color_disabled() are overwritten. */
   col[3] *= widget_alpha_factor(state);
 
   widgetbase_draw_color(&wtb, wcol, col, show_alpha_checkers);
-  if (color_but->is_pallete_color &&
+  if (color_but->is_palette_color &&
       (id_cast<Palette *>(but->rnapoin.owner_id))->active_color == color_but->palette_color_index)
   {
     const float width = rect->xmax - rect->xmin;
@@ -5270,9 +5250,12 @@ static void widget_state_label(WidgetType *wt, const WidgetStateInfo *state, Emb
 
   if (state->but_flag & BUT_REDALERT) {
     uchar red[4];
-    theme::get_color_3ubv(TH_REDALERT, red);
-    color_mul_hsl_v3(red, 1.0f, 1.5f, 1.5f);
-    color_blend_v3_v3(wt->wcol.text, red, 0.5f);
+    theme::get_color_4ubv(TH_REDALERT, red);
+
+    /* Alert color's alpha is used to blend between the text and alert tint.
+     * This ensures the text be always readable, lighter or darker depending on the theme. */
+    float red_alpha = float(red[3]) / 255.0f;
+    color_blend_v3_v3(wt->wcol.text, red, red_alpha);
   }
 }
 
@@ -6094,7 +6077,7 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
   if (but->emboss != EmbossType::Pulldown) {
     if (but->flag & (BUT_DISABLED | BUT_INACTIVE | UI_SEARCH_FILTER_NO_MATCH)) {
       use_alpha_blend = true;
-      widget_color_disabled(wt, &state);
+      widget_type_color_disabled(wt, &state);
     }
   }
 
@@ -6600,12 +6583,11 @@ void draw_menu_item(const uiFontStyle *fstyle,
   {
     char drawstr[UI_MAX_DRAW_STR];
     const float okwidth = float(BLI_rcti_size_x(rect));
-    const size_t drawstr_maxncpy = sizeof(drawstr);
     const float minwidth = UI_ICON_SIZE;
 
     STRNCPY_UTF8(drawstr, name);
     if (drawstr[0]) {
-      text_clip_middle_ex(fstyle, drawstr, okwidth, minwidth, drawstr_maxncpy, '\0');
+      text_clip_middle_ex(fstyle, drawstr, okwidth, minwidth, '\0');
     }
 
     int xofs = 0, yofs = 0;
@@ -6646,13 +6628,11 @@ void draw_menu_item(const uiFontStyle *fstyle,
 
       char hint_drawstr[UI_MAX_DRAW_STR];
       {
-        const size_t hint_drawstr_maxncpy = sizeof(hint_drawstr);
         const float minwidth = UI_ICON_SIZE;
 
         STRNCPY_UTF8(hint_drawstr, cpoin + 1);
         if (hint_drawstr[0] && (max_hint_width < INT_MAX)) {
-          text_clip_middle_ex(
-              fstyle, hint_drawstr, max_hint_width, minwidth, hint_drawstr_maxncpy, '\0');
+          text_clip_middle_ex(fstyle, hint_drawstr, max_hint_width, minwidth, '\0');
         }
       }
 
@@ -6702,12 +6682,11 @@ void draw_preview_item_stateless(const uiFontStyle *fstyle,
   {
     char drawstr[UI_MAX_DRAW_STR];
     const float okwidth = float(BLI_rcti_size_x(&trect));
-    const size_t drawstr_maxncpy = sizeof(drawstr);
     const float minwidth = UI_ICON_SIZE;
 
     memcpy(drawstr, name.data(), name.size());
     drawstr[name.size()] = '\0';
-    text_clip_middle_ex(fstyle, drawstr, okwidth, minwidth, drawstr_maxncpy, '\0');
+    text_clip_middle_ex(fstyle, drawstr, okwidth, minwidth, '\0');
 
     FontStyleDrawParams params{};
     params.align = text_align;

@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 07:47+0000\n"
-"PO-Revision-Date: 2026-06-29 10:51+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"PO-Revision-Date: 2026-10-24 11:12+0000\n"
 "Last-Translator: Dominic Iastrebschi <domjotebit@gmail.com>\n"
 "Language-Team: Romanian <https://translate.blender.org/projects/blender-ui/ui/ro/>\n"
 "Language: ro\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
-"X-Generator: Weblate 5.16.2"
+"X-Generator: Weblate 2026.6.1"
 
 
 msgid "Shader AOV"
@@ -311,14 +311,36 @@ msgid "Index of active pose marker"
 msgstr "Indexul marcatorului de poziție activ"
 
 
+msgid "Action slot"
+msgstr "Acțiuni"
+
+
+msgid "Identifier for a set of channels in this Action, that can be used by a data-block to specify what it gets animated by"
+msgstr "Identificator pentru un set de canale din această acțiune, care poate fi utilizat de un bloc de date pentru a specifica elementul care îi generează animația"
+
+
+msgid "Active"
+msgstr "Activ"
+
+
 msgctxt "ID"
 msgid "Action"
 msgstr "Acțiune"
 
 
 msgctxt "ID"
+msgid "Camera"
+msgstr "Cameră"
+
+
+msgctxt "ID"
 msgid "Grease Pencil"
-msgstr "Creion de Grăsime"
+msgstr "Creion cerat"
+
+
+msgctxt "ID"
+msgid "Grease Pencil v3"
+msgstr "Creion cerat v3"
 
 
 msgctxt "ID"
@@ -329,6 +351,11 @@ msgstr "Imagine"
 msgctxt "ID"
 msgid "Light"
 msgstr "Lumină"
+
+
+msgctxt "ID"
+msgid "Line Style"
+msgstr "Stilul liniei"
 
 
 msgctxt "ID"
@@ -347,13 +374,28 @@ msgstr "Scenă"
 
 
 msgctxt "ID"
+msgid "Speaker"
+msgstr "Difuzor"
+
+
+msgctxt "ID"
+msgid "Text"
+msgstr "Text"
+
+
+msgctxt "ID"
 msgid "Texture"
 msgstr "Textură"
 
 
 msgctxt "ID"
+msgid "Volume"
+msgstr "Volum"
+
+
+msgctxt "ID"
 msgid "Window Manager"
-msgstr "Manager Ferestre"
+msgstr "Manager de ferestre"
 
 
 msgctxt "ID"
@@ -364,6 +406,15 @@ msgstr "Spațiu de lucru"
 msgctxt "ID"
 msgid "World"
 msgstr "Lume"
+
+
+msgctxt "ID"
+msgid "Unspecified"
+msgstr "Nespecificat"
+
+
+msgid "Keyframe"
+msgstr "Cadru-cheie"
 
 
 msgid "Add-on"
@@ -1766,6 +1817,14 @@ msgid "Shape Key data-blocks"
 msgstr "Blocurile de date ale Cheilor de Formă"
 
 
+msgid "Blender"
+msgstr "Blender"
+
+
+msgid "Path"
+msgstr "Cale"
+
+
 msgid "Deflectors"
 msgstr "Deflectoare"
 
@@ -2037,10 +2096,6 @@ msgid "Up"
 msgstr "Sus"
 
 
-msgid "Path"
-msgstr "Cale"
-
-
 msgid "Min"
 msgstr "Min"
 
@@ -2160,16 +2215,8 @@ msgid "Sampling"
 msgstr "Eșantionare"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Light"
 msgstr "Lumină"
-
-
-msgid "Layout"
-msgstr "Aspect"
 
 
 msgid "Add Image"
@@ -2180,12 +2227,20 @@ msgid "Apply"
 msgstr "Aplicare"
 
 
-msgid "Tracking"
-msgstr "Urmărire"
-
-
 msgid "Convert"
 msgstr "Convertire"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Layout"
+msgstr "Aspect"
+
+
+msgid "Tracking"
+msgstr "Urmărire"
 
 
 msgid "Marker"
@@ -2206,10 +2261,6 @@ msgstr "Generare"
 
 msgid "Physics"
 msgstr "Fizică"
-
-
-msgid "Blender"
-msgstr "Blender"
 
 
 msgid "System"
@@ -3077,11 +3128,6 @@ msgstr "Multi-Pictură"
 
 
 msgctxt "Operator"
-msgid "Quick Edit"
-msgstr "Editare Rapidă"
-
-
-msgctxt "Operator"
 msgid "Apply"
 msgstr "Aplicare"
 
@@ -3817,4 +3863,28 @@ msgstr "Comutați Consola de sistem"
 msgctxt "Operator"
 msgid "Toggle System Console"
 msgstr "Comutați Consola de sistem"
+
+
+msgid "Trims or scales hair curves to a certain length"
+msgstr "Tunde sau uniformizează lungimea părului până la o anumită lungime"
+
+
+msgid "Target length for the operation"
+msgstr "Lungimea țintă pentru operație"
+
+
+msgid "Multiply the original length by a factor"
+msgstr "Înmulțiți lungimea inițială cu un factor"
+
+
+msgid "Mask to blend overall effect"
+msgstr "Mască pentru umestecarea efectului general"
+
+
+msgid "Trim hair curves randomly up to a certain amount"
+msgstr "Tunde curbele de păr în mod aleatoriu până la o anumită lungime"
+
+
+msgid "Replace Length"
+msgstr "Înlocuiește lungimea"
 

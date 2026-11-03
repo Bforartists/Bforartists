@@ -1,36 +1,35 @@
-# SPDX-FileCopyrightText: 2011-2022 Blender Foundation
+# SPDX-FileCopyrightText: 2011-2024 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
-# Contributors: bart:neeneenee*de, http://www.neeneenee.de/vrml, Campbell Barton
+# Known issues:
+# - Doesn't handle multiple materials (don't use material indices).
+# - Doesn't handle multiple UV textures on a single mesh (create a mesh for each texture).
+# - Can't get the texture array associated with material * not the UV ones.
 
-"""
-This script exports to X3D format.
+import logging
 
-Usage:
-Run this script from "File->Export" menu.  A pop-up will ask whether you
-want to export only selected or all relevant objects.
-
-Known issues:
-    Doesn't handle multiple materials (don't use material indices);<br>
-    Doesn't handle multiple UV textures on a single mesh (create a mesh for each texture);<br>
-    Can't get the texture array associated with material * not the UV ones;
-"""
+logger = logging.getLogger("export_x3d")
 
 import math
-import os
+
 
 import bpy
 import mathutils
 
 from bpy_extras.io_utils import create_derived_objects
 
+from .material_node_search import (imageTexture_in_material, get_diffuse_color, get_emissive_color,
+                                   get_vector_mapping_properties, get_movie_texture_properties)
+from . import bl_info_copy
 
 # h3d defines
 H3D_TOP_LEVEL = 'TOP_LEVEL_TI'
 H3D_CAMERA_FOLLOW = 'CAMERA_FOLLOW_TRANSFORM'
 H3D_VIEW_MATRIX = 'view_matrix'
 
+# local blender export caches
+media_cache = {}
 
 def clamp_color(col):
     return tuple([max(min(c, 1.0), 0.0) for c in col])
@@ -107,7 +106,7 @@ def clean_def(txt):
         0x5c: "_",  # \
         0x7b: "_",  # {
         0x7d: "_",  # }
-        })
+    })
 
 
 def build_hierarchy(objects):
@@ -172,7 +171,7 @@ def h3d_shader_glsl_frag_patch(filepath, scene, global_vars, frag_uniform_var_ma
                 w[0] = '(mat3(normalize(view_matrix[0].xyz), normalize(view_matrix[1].xyz), normalize(view_matrix[2].xyz)) * -%s)' % w[0]
             else:
                 w[0] = ('(mat3(normalize((view_matrix*%s)[0].xyz), normalize((view_matrix*%s)[1].xyz), normalize((view_matrix*%s)[2].xyz)) * %s)' %
-                    (last_transform, last_transform, last_transform, w[0]))
+                        (last_transform, last_transform, last_transform, w[0]))
 
             l = "\tlight_visibility_spot_circle(" + ", ".join(w)
 
@@ -195,6 +194,8 @@ def h3d_is_object_view(scene, obj):
     return False
 
 
+
+
 # -----------------------------------------------------------------------------
 # Functions for writing output file
 # -----------------------------------------------------------------------------
@@ -206,14 +207,27 @@ def export(file,
            view_layer,
            use_mesh_modifiers=False,
            use_selection=True,
+           use_active_collection=False,
+           use_visible=False,
            use_triangulate=False,
            use_normals=False,
            use_hierarchy=True,
            use_h3d=False,
-           path_mode='AUTO',
+           path_mode='COPY',
            name_decorations=True,
+           meta_creator=None,
+           meta_title=None,
+           meta_description=None,
+           meta_keywords=None,
+           meta_reference=None,
+           meta_license=None,
            ):
 
+    if path_mode not in ("COPY", "RELATIVE", "STRIP"):
+        logger.error("Path Mode %s is invalid, raising ValueError" % path_mode)
+        raise ValueError("Invalid Path Mode. Valid values are RELATIVE, STRIP, COPY")
+    else:
+        logger.debug("export with path_mode: %r" % path_mode)
     # -------------------------------------------------------------------------
     # Global Setup
     # -------------------------------------------------------------------------
@@ -232,11 +246,13 @@ def export(file,
         uuid_cache_mesh = {}      # mesh
         uuid_cache_material = {}  # material
         uuid_cache_image = {}     # image
+        uuid_cache_sound = {}      # sound
         uuid_cache_world = {}     # world
         CA_ = 'CA_'
         OB_ = 'OB_'
         ME_ = 'ME_'
         IM_ = 'IM_'
+        SO_ = 'SO_'
         WO_ = 'WO_'
         MA_ = 'MA_'
         LA_ = 'LA_'
@@ -252,12 +268,14 @@ def export(file,
         uuid_cache_mesh = uuid_cache             # mesh
         uuid_cache_material = uuid_cache         # material
         uuid_cache_image = uuid_cache            # image
+        uuid_cache_sound = uuid_cache            # sound
         uuid_cache_world = uuid_cache            # world
         del uuid_cache
         CA_ = ''
         OB_ = ''
         ME_ = ''
         IM_ = ''
+        SO_ = ''
         WO_ = ''
         MA_ = ''
         LA_ = ''
@@ -267,6 +285,19 @@ def export(file,
 
     # store files to copy
     copy_set = set()
+    import os, os.path
+    if path_mode == 'COPY':
+        # create a per-export temporary folder. image data which does not
+        # exist on disk yet will be saved here from which it can be copied by
+        # the bpy_extras.io_utils.path_reference_copy utility
+        blender_tempfolder = bpy.app.tempdir
+        import uuid
+        temp_media_directory = os.path.join(blender_tempfolder,uuid.uuid4().hex)
+        os.mkdir(temp_media_directory)
+        logger.info("temp_media_directory: %s" % temp_media_directory )
+    else:
+        temp_media_directory = None
+
 
     # store names of newly created meshes, so we dont overlap
     mesh_name_set = set()
@@ -288,6 +319,8 @@ def export(file,
     # -------------------------------------------------------------------------
 
     def writeHeader(ident):
+        from datetime import datetime
+
         filepath_quoted = quoteattr(os.path.basename(file.name))
         blender_ver_quoted = quoteattr('Blender %s' % bpy.app.version_string)
 
@@ -302,9 +335,38 @@ def export(file,
         fw('%s<head>\n' % ident)
         ident += '\t'
         fw('%s<meta name="filename" content=%s />\n' % (ident, filepath_quoted))
+        if meta_title:
+            fw('%s<meta name="title" content="%s" />\n' % (ident, meta_title))
+        if meta_creator:
+            fw('%s<meta name="creator" content="%s" />\n' % (ident, meta_creator))
+            if not meta_license or meta_license == 'NONE':
+                fw('%s<meta name="copyright" content="(c) %s %s" />\n' % (ident, datetime.now().year, meta_creator))
+        if meta_description:
+            fw('%s<meta name="description" content="%s" />\n' % (ident, meta_description))
+        if meta_keywords:
+            fw('%s<meta name="keywords" content="%s" />\n' % (ident, meta_keywords))
+        if meta_reference:
+            fw('%s<meta name="reference" content="%s" />\n' % (ident, meta_reference))
+        if meta_license and meta_license != 'NONE':
+            from .translations import get_language, translate
+            lang = get_language()
+            license_name = translate(lang, "meta_license_%s" % meta_license).replace("meta_license_", "")
+            fw('%s<meta name="license" content="%s" />\n' % (ident, license_name))
+            if meta_creator:
+                content = "(c) %s %s. " % (datetime.now().year, meta_creator)
+                if meta_license in ['Standard_Royalty-Free', 'Extended_Commercial', 'CUSTOM']:
+                    content += "All rights reserved. Licensed under %s." % license_name
+                elif meta_license in ['Public_Domain']:
+                    content = "No rights reserved. This work is in the public domain."
+                elif meta_license in ['Unlicense']:
+                    content = "This work is released under The Unlicense. No rights reserved."
+                else:
+                    content += "Licensed under %s." % license_name
+                fw('%s<meta name="copyright" content="%s" />\n' % (ident, content))
+        fw('%s<meta name="created" content="%s" />\n' % (ident, datetime.now().isoformat(sep=" ", timespec="seconds")))
         fw('%s<meta name="generator" content=%s />\n' % (ident, blender_ver_quoted))
-        # this info was never updated, so blender version should be enough
-        # fw('%s<meta name="translator" content="X3D exporter v1.55 (2006/01/17)" />\n' % ident)
+        fw('%s<meta name="translator" content="%s v%s" />\n' %
+           (ident, bl_info_copy["name"], '.'.join(map(str,bl_info_copy["version"]))))
         ident = ident[:-1]
         fw('%s</head>\n' % ident)
         fw('%s<Scene>\n' % ident)
@@ -336,8 +398,8 @@ def export(file,
         rot = rot.to_axis_angle()
         rot = (*rot[0].normalized(), rot[1])
 
-        ident_step = ident + (' ' * (-len(ident) + \
-        fw('%s<Viewpoint ' % ident)))
+        ident_step = ident + (' ' * (-len(ident) +
+                                     fw('%s<Viewpoint ' % ident)))
         fw('DEF=%s\n' % view_id)
         fw(ident_step + 'centerOfRotation="0 0 0"\n')
         fw(ident_step + 'position="%3.2f %3.2f %3.2f"\n' % loc[:])
@@ -353,8 +415,8 @@ def export(file,
             return
 
         if mparam.use_mist:
-            ident_step = ident + (' ' * (-len(ident) + \
-            fw('%s<Fog ' % ident)))
+            ident_step = ident + (' ' * (-len(ident) +
+                                         fw('%s<Fog ' % ident)))
             fw('fogType="%s"\n' % ('LINEAR' if (mtype == 'LINEAR') else 'EXPONENTIAL'))
             fw(ident_step + 'color="%.3f %.3f %.3f"\n' % clamp_color(world.horizon_color))
             fw(ident_step + 'visibilityRange="%.3f"\n' % mparam.depth)
@@ -363,8 +425,8 @@ def export(file,
             return
 
     def writeNavigationInfo(ident, scene, has_light):
-        ident_step = ident + (' ' * (-len(ident) + \
-        fw('%s<NavigationInfo ' % ident)))
+        ident_step = ident + (' ' * (-len(ident) +
+                                     fw('%s<NavigationInfo ' % ident)))
         fw('headlight="%s"\n' % bool_as_str(not has_light))
         fw(ident_step + 'visibilityLimit="0.0"\n')
         fw(ident_step + 'type=\'"EXAMINE", "ANY"\'\n')
@@ -372,8 +434,8 @@ def export(file,
         fw(ident_step + '/>\n')
 
     def writeTransform_begin(ident, matrix, def_id):
-        ident_step = ident + (' ' * (-len(ident) + \
-        fw('%s<Transform ' % ident)))
+        ident_step = ident + (' ' * (-len(ident) +
+                                     fw('%s<Transform ' % ident)))
         if def_id is not None:
             fw('DEF=%s\n' % def_id)
         else:
@@ -408,19 +470,19 @@ def export(file,
             amb_intensity = 0.0
 
         # compute cutoff and beamwidth
-        intensity = min(lamp.energy / 1.75, 1.0)
-        beamWidth = lamp.spot_size * 0.37
-        # beamWidth=((lamp.spotSize*math.pi)/180.0)*.37
+        intensity = min(light.energy / 1.75, 1.0)
+        beamWidth = light.spot_size * 0.37
+        # beamWidth=((light.spotSize*math.pi)/180.0)*.37
         cutOffAngle = beamWidth * 1.3
 
         orientation = matrix_direction_neg_z(matrix)
 
         location = matrix.to_translation()[:]
 
-        radius = lamp.cutoff_distance * math.cos(beamWidth)
-        # radius = lamp.dist*math.cos(beamWidth)
-        ident_step = ident + (' ' * (-len(ident) + \
-        fw('%s<SpotLight ' % ident)))
+        radius = light.cutoff_distance * math.cos(beamWidth)
+        # radius = light.dist*math.cos(beamWidth)
+        ident_step = ident + (' ' * (-len(ident) +
+                                     fw('%s<SpotLight ' % ident)))
         fw('DEF=%s\n' % light_id)
         fw(ident_step + 'radius="%.4f"\n' % radius)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
@@ -448,8 +510,8 @@ def export(file,
 
         orientation = matrix_direction_neg_z(matrix)
 
-        ident_step = ident + (' ' * (-len(ident) + \
-        fw('%s<DirectionalLight ' % ident)))
+        ident_step = ident + (' ' * (-len(ident) +
+                                     fw('%s<DirectionalLight ' % ident)))
         fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
         fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(light.color))
@@ -472,8 +534,8 @@ def export(file,
         intensity = min(light.energy / 1.75, 1.0)
         location = matrix.to_translation()[:]
 
-        ident_step = ident + (' ' * (-len(ident) + \
-        fw('%s<PointLight ' % ident)))
+        ident_step = ident + (' ' * (-len(ident) +
+                                     fw('%s<PointLight ' % ident)))
         fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
         fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(light.color))
@@ -482,6 +544,104 @@ def export(file,
         fw(ident_step + 'radius="%.4f" \n' % light.cutoff_distance)
         fw(ident_step + 'location="%.4f %.4f %.4f"\n' % location)
         fw(ident_step + '/>\n')
+
+    def writeSpeaker(ident, obj, matrix, data, world):
+        """ Write speaker object as Sound node and the loaded sound as AudioClip or MovieTexture node """
+        from . import blender_version_higher_44  # hate this part...
+
+        speaker_id = quoteattr(unique_name(obj, SO_ + obj.name, uuid_cache_sound, clean_func=clean_def, sep="_"))
+
+        # get position, rotation
+        position = obj.location
+        rotation = obj.rotation_euler
+        # Create a rotation matrix from the Euler angles and normalize for X3D compatibility
+        rotation_matrix = rotation.to_matrix()
+        local_forward = mathutils.Vector((0.0, 0.0, 0.0))
+        global_direction = rotation_matrix @ local_forward
+        global_direction.normalize()
+
+        # get pitch, volume, max_distance, ref_distance
+        pitch = data.pitch
+        volume = data.volume
+        max_distance = data.distance_max
+        ref_distance = data.distance_reference
+
+        # if the volume is animated and currently 0 (likely not intended), we want to get the max volume
+        if volume == 0.0:
+            volume_max = float('-inf')
+            action = data.animation_data.action if data.animation_data else None
+            if action:
+                # blender 4.4 has new api, so support both 4.4. and 4.2 api
+                for fcurve in action.layers[0].strips[0].channelbag(action.slots[0]).fcurves \
+                    if blender_version_higher_44 else action.fcurves:
+                    if fcurve.data_path == 'volume':
+                        for keyframe in fcurve.keyframe_points:
+                            volume_max = max(volume_max, keyframe.co[1])
+            if volume_max > 0.0:
+                volume = volume_max
+
+        # get audio filepath
+        sound_file = getSoundFilepath(data.sound) if data.sound else ""
+
+        # write Sound node as parent
+        ident_step = ident + (' ' * (-len(ident) + fw('%s<Sound ' % ident)))
+        fw('DEF=%s\n' % speaker_id) # DEF doesn't really make sense as at least location is different...
+        fw('%sdirection="%.3f %.3f %.3f\n"' % (ident_step, global_direction.x, global_direction.y, global_direction.z))
+        fw('%sintensity="%.3f"\n' % (ident_step, volume))
+        fw('%slocation="%.3f %.3f %.3f"\n' % (ident_step, position.x, position.y, position.z))
+        fw('%smaxBack="%.3f"\n' % (ident_step, max_distance))
+        fw('%smaxFront="%.3f"\n' % (ident_step, max_distance))
+        fw('%sminBack="%.3f"\n' % (ident_step, ref_distance))
+        fw('%sminFront="%.3f">\n' % (ident_step, ref_distance))
+        # write source as child node
+        if sound_file:
+            sound_id = quoteattr(unique_name(data.sound, SO_ + sound_file, uuid_cache_sound, clean_func=clean_def, sep="_"))
+            file_extension = os.path.splitext(sound_file)[1].lower()
+
+            start_time_seconds = 0.0
+            stop_time_seconds = 0.0
+            fps = bpy.context.scene.render.fps
+            # Retrieve startTime from NLA strip Frame Start
+            nla_tracks = obj.animation_data.nla_tracks if obj.animation_data else None
+            if nla_tracks:
+                for track in nla_tracks:
+                    for strip in track.strips:
+                        frame_start = strip.frame_start_ui
+                        if frame_start:
+                            start_time_seconds = frame_start / fps
+                            break
+            # Retrieve stopTime from volume f-curve: last occurrence of volume 0 is likely the stop
+            action = data.animation_data.action if data.animation_data else None
+            if action:
+                # blender 4.4 has new api, so support both 4.4. and 4.2 api
+                for fcurve in action.layers[0].strips[0].channelbag(action.slots[0]).fcurves \
+                    if blender_version_higher_44 else action.fcurves:
+                    if fcurve.data_path == 'volume':
+                        for keyframe in fcurve.keyframe_points:
+                            if keyframe.co[1] <= 0.0:
+                                stop_time_seconds = keyframe.co[0] / fps
+
+            # unlike shader nodes we have to manually check the file extension
+            if file_extension in ['.mp4', '.mpg', '.avi', '.mov', '.mkv', '.webm', '.wmv']: # MovieTexture
+                ident_step_sec = ident_step + (' ' * (-len(ident_step) + fw('%s<MovieTexture ' % ident_step)))
+                if data.sound.tag:
+                    fw('USE=%s/>\n' % sound_id)
+                    return
+                fw('DEF=%s\n' % sound_id)
+            else: # AudioClip
+                ident_step_sec = ident_step + (' ' * (-len(ident_step) + fw('%s<AudioClip ' % ident_step)))
+                if data.sound.tag:
+                    fw('USE=%s/>\n' % sound_id)
+                    return
+                fw('DEF=%s\n' % sound_id)
+                fw('%spitch="%.3f"\n' % (ident_step_sec, pitch))
+            fw(ident_step_sec + "url='%s'\n" % ' '.join(['"%s"' % escape(f) for f in [sound_file]]))
+            fw('%sloop="true"\n' % ident_step_sec)
+            fw('%sstartTime="%.3f"\n' % (ident_step_sec, start_time_seconds))
+            fw('%sstopTime="%.3f"\n' % (ident_step_sec, stop_time_seconds))
+            fw(ident_step_sec + '/>\n')
+            data.sound.tag = True # set tag for def/use
+        fw(ident_step + '</Sound>\n')
 
     def writeIndexedFaceSet(ident, obj, mesh, mesh_name, matrix, world):
         obj_id = quoteattr(unique_name(obj, OB_ + obj.name, uuid_cache_object, clean_func=clean_def, sep="_"))
@@ -520,27 +680,6 @@ def export(file,
 
             is_coords_written = False
 
-            mesh_materials = mesh.materials[:]
-            if not mesh_materials:
-                mesh_materials = [None]
-
-            mesh_material_tex = [None] * len(mesh_materials)
-            mesh_material_mtex = [None] * len(mesh_materials)
-            mesh_material_images = [None] * len(mesh_materials)
-
-            for i, material in enumerate(mesh_materials):
-                if 0 and material:
-                    for mtex in material.texture_slots:
-                        if mtex:
-                            tex = mtex.texture
-                            if tex and tex.type == 'IMAGE':
-                                image = tex.image
-                                if image:
-                                    mesh_material_tex[i] = tex
-                                    mesh_material_mtex[i] = mtex
-                                    mesh_material_images[i] = image
-                                    break
-
             # fast access!
             mesh_vertices = mesh.vertices[:]
             mesh_loops = mesh.loops[:]
@@ -548,21 +687,19 @@ def export(file,
             mesh_polygons_materials = [p.material_index for p in mesh_polygons]
             mesh_polygons_vertices = [p.vertices[:] for p in mesh_polygons]
 
-            if len(set(mesh_material_images)) > 0:  # make sure there is at least one image
-                mesh_polygons_image = [mesh_material_images[material_index] for material_index in mesh_polygons_materials]
-            else:
-                mesh_polygons_image = [None] * len(mesh_polygons)
-            mesh_polygons_image_unique = set(mesh_polygons_image)
-
             # group faces
             polygons_groups = {}
-            for material_index in range(len(mesh_materials)):
-                for image in mesh_polygons_image_unique:
-                    polygons_groups[material_index, image] = []
-            del mesh_polygons_image_unique
 
-            for i, (material_index, image) in enumerate(zip(mesh_polygons_materials, mesh_polygons_image)):
-                polygons_groups[material_index, image].append(i)
+            if mesh.materials:
+                # Group faces by material
+                for material_index in range(len(mesh.materials)):
+                    polygons_groups[material_index] = []
+
+                if polygons_groups:
+                    for i, material_index in enumerate(mesh_polygons_materials):
+                        polygons_groups[material_index].append(i)
+            else: # object has no material, unusual but may happen.
+                polygons_groups[0] = list(range(len(mesh_polygons)))
 
             # Py dict are sorted now, so we can use directly polygons_groups.items()
             # and still get consistent reproducible outputs.
@@ -591,13 +728,15 @@ def export(file,
 
             # If using looptris, we need a mapping poly_index -> loop_tris_indices...
             if use_triangulate:
-                polygons_to_loop_triangles_indices = [[] for  i in range(len(mesh_polygons))]
+                polygons_to_loop_triangles_indices = [[] for i in range(len(mesh_polygons))]
                 for ltri in mesh.loop_triangles:
                     polygons_to_loop_triangles_indices[ltri.polygon_index].append(ltri)
 
-            for (material_index, image), polygons_group in polygons_groups.items():
+            for material_index, polygons_group in polygons_groups.items():
                 if polygons_group:
-                    material = mesh_materials[material_index]
+                    material = None
+                    if mesh.materials:
+                        material = mesh.materials[material_index]
 
                     fw('%s<Shape>\n' % ident)
                     ident += '\t'
@@ -629,39 +768,15 @@ def export(file,
                                 del gpu_shader_tmp['fragment']
                                 del gpu_shader_tmp['vertex']
                                 pprint.pprint(gpu_shader_tmp, width=120)
-                                #pprint.pprint(val['vertex'])
+                                # pprint.pprint(val['vertex'])
                                 del gpu_shader_tmp
 
                     fw('%s<Appearance>\n' % ident)
                     ident += '\t'
 
-                    if image and not use_h3d:
-                        writeImageTexture(ident, image)
-
-                        # transform by mtex
-                        loc = mesh_material_mtex[material_index].offset[:2]
-
-                        # mtex_scale * tex_repeat
-                        sca_x, sca_y = mesh_material_mtex[material_index].scale[:2]
-
-                        sca_x *= mesh_material_tex[material_index].repeat_x
-                        sca_y *= mesh_material_tex[material_index].repeat_y
-
-                        # flip x/y is a sampling feature, convert to transform
-                        if mesh_material_tex[material_index].use_flip_axis:
-                            rot = math.pi / -2.0
-                            sca_x, sca_y = sca_y, -sca_x
-                        else:
-                            rot = 0.0
-
-                        ident_step = ident + (' ' * (-len(ident) + \
-                        fw('%s<TextureTransform ' % ident)))
-                        fw('\n')
-                        # fw('center="%.6f %.6f" ' % (0.0, 0.0))
-                        fw(ident_step + 'translation="%.6f %.6f"\n' % loc)
-                        fw(ident_step + 'scale="%.6f %.6f"\n' % (sca_x, sca_y))
-                        fw(ident_step + 'rotation="%.6f"\n' % rot)
-                        fw(ident_step + '/>\n')
+                    imageTextureNode = imageTexture_in_material(material)
+                    if imageTextureNode:
+                        writeImageTexture(ident, imageTextureNode)
 
                     if use_h3d:
                         mat_tmp = material if material else gpu_shader_dummy_mat
@@ -677,10 +792,10 @@ def export(file,
 
                     mesh_loops_uv = mesh.uv_layers.active.data if is_uv else None
 
-                    #-- IndexedFaceSet or IndexedLineSet
+                    # -- IndexedFaceSet or IndexedLineSet
                     if use_triangulate:
-                        ident_step = ident + (' ' * (-len(ident) + \
-                        fw('%s<IndexedTriangleSet ' % ident)))
+                        ident_step = ident + (' ' * (-len(ident) +
+                                                     fw('%s<IndexedTriangleSet ' % ident)))
 
                         # --- Write IndexedTriangleSet Attributes (same as IndexedFaceSet)
                         fw('solid="%s"\n' % bool_as_str(material and material.use_backface_culling))
@@ -693,6 +808,7 @@ def export(file,
 
                         slot_uv = None
                         slot_col = None
+
                         def _tuple_from_rounded_iter(it):
                             return tuple(round(v, 5) for v in it)
 
@@ -750,7 +866,7 @@ def export(file,
 
                         del vertex_key
                         del _tuple_from_rounded_iter
-                        assert(len(face_tri_list) == len(mesh.loop_triangles))
+                        assert (len(face_tri_list) == len(mesh.loop_triangles))
 
                         fw(ident_step + 'index="')
                         for x3d_f in face_tri_list:
@@ -801,21 +917,21 @@ def export(file,
                                             fw('%.4f %.4f ' % x3d_v[0][slot_uv])
                                         fw('" />\n')
                                     else:
-                                        assert(0)
+                                        assert (0)
 
                                 elif gpu_attr['type'] == gpu.CD_MCOL:
                                     if gpu_attr['datatype'] == gpu.GPU_DATA_4UB:
                                         pass  # XXX, H3D can't do
                                     else:
-                                        assert(0)
+                                        assert (0)
 
                         ident = ident[:-1]
 
                         fw('%s</IndexedTriangleSet>\n' % ident)
 
                     else:
-                        ident_step = ident + (' ' * (-len(ident) + \
-                        fw('%s<IndexedFaceSet ' % ident)))
+                        ident_step = ident + (' ' * (-len(ident) +
+                                                     fw('%s<IndexedFaceSet ' % ident)))
 
                         # --- Write IndexedFaceSet Attributes (same as IndexedTriangleSet)
                         fw('solid="%s"\n' % bool_as_str(material and material.use_backface_culling))
@@ -860,8 +976,8 @@ def export(file,
                                 if use_normals:
                                     fw('%s<Normal USE=%s />\n' % (ident, mesh_id_normals))
                             else:
-                                ident_step = ident + (' ' * (-len(ident) + \
-                                fw('%s<Coordinate ' % ident)))
+                                ident_step = ident + (' ' * (-len(ident) +
+                                                             fw('%s<Coordinate ' % ident)))
                                 fw('DEF=%s\n' % mesh_id_coords)
                                 fw(ident_step + 'point="')
                                 for v in mesh.vertices:
@@ -872,8 +988,8 @@ def export(file,
                                 is_coords_written = True
 
                                 if use_normals:
-                                    ident_step = ident + (' ' * (-len(ident) + \
-                                    fw('%s<Normal ' % ident)))
+                                    ident_step = ident + (' ' * (-len(ident) +
+                                                                 fw('%s<Normal ' % ident)))
                                     fw('DEF=%s\n' % mesh_id_normals)
                                     fw(ident_step + 'vector="')
                                     for v in mesh.vertices:
@@ -897,15 +1013,15 @@ def export(file,
                                 for i in range(len(mesh.vertices)):
                                     # may be None,
                                     fw('%.3f %.3f %.3f %.3f ' % (vert_color[i] or (0.0, 0.0, 0.0, 0.0)))
-                            else: # Export as colors per face.
+                            else:  # Export as colors per face.
                                 # TODO: average them rather than using the first one!
                                 for i in polygons_group:
                                     fw('%.3f %.3f %.3f %.3f ' % mesh_loops_col[mesh_polygons[i].loop_start].color[:])
                             fw('" />\n')
 
-                        #--- output vertexColors
+                        # --- output vertexColors
 
-                        #--- output closing braces
+                        # --- output closing braces
                         ident = ident[:-1]
 
                         fw('%s</IndexedFaceSet>\n' % ident)
@@ -915,9 +1031,9 @@ def export(file,
 
                     # XXX
 
-            #fw('%s<PythonScript DEF="PS" url="object.py" >\n' % ident)
-            #fw('%s    <ShaderProgram USE="MA_Material.005" containerField="references"/>\n' % ident)
-            #fw('%s</PythonScript>\n' % ident)
+            # fw('%s<PythonScript DEF="PS" url="object.py" >\n' % ident)
+            # fw('%s    <ShaderProgram USE="MA_Material.005" containerField="references"/>\n' % ident)
+            # fw('%s</PythonScript>\n' % ident)
 
             ident = ident[:-1]
             fw('%s</Group>\n' % ident)
@@ -929,41 +1045,55 @@ def export(file,
             fw('%s</Collision>\n' % ident)
 
     def writeMaterial(ident, material, world):
-        material_id = quoteattr(unique_name(material, MA_ + material.name, uuid_cache_material, clean_func=clean_def, sep="_"))
+        """
+        Writes the material properties to the output, using material node tree information.
 
-        # look up material name, use it if available
+        Args:
+            ident (str): Indentation for the output.
+            material: The material instance.
+            world: The world settings for ambient color.
+
+        Returns:
+            None
+        """
+        material_id = quoteattr(
+            unique_name(material, MA_ + material.name, uuid_cache_material, clean_func=clean_def, sep="_"))
+
+        # Look up material name, use it if available
         if material.tag:
             fw('%s<Material USE=%s />\n' % (ident, material_id))
         else:
             material.tag = True
 
-            emit = 0.0 #material.emit
-            ambient = 0.0 #material.ambient / 3.0
-            diffuseColor = material.diffuse_color[:3]
+            ambient = 0.0  # material.ambient / 3.0
+            diffuse_color = get_diffuse_color(material) or (0.8, 0.8, 0.8, 1.0)  # Default diffuse color
+            emissive_color = get_emissive_color(material) or (0.0, 0.0, 0.0, 1.0)  # Default emissive color
+
             if world and 0:
                 ambiColor = ((material.ambient * 2.0) * world.ambient_color)[:]
             else:
                 ambiColor = 0.0, 0.0, 0.0
 
-            emitColor = tuple(((c * emit) + ambiColor[i]) / 2.0 for i, c in enumerate(diffuseColor))
+            emitColor = tuple(((c * ambient) + ambiColor[i]) / 2.0 for i, c in enumerate(emissive_color[:3]))
             shininess = material.specular_intensity
-            specColor = tuple((c + 0.001) / (1.25 / (material.specular_intensity + 0.001)) for c in material.specular_color)
-            transp = 1.0 - material.diffuse_color[3]
+            specColor = tuple(
+                (c + 0.001) / (1.25 / (material.specular_intensity + 0.001)) for c in material.specular_color)
+            transp = 1.0 - diffuse_color[3] # alpha only works from principled bsdf, so checking diffuse return is enough
 
             # ~ if material.use_shadeless:
-                # ~ ambient = 1.0
-                # ~ shininess = 0.0
-                # ~ specColor = emitColor = diffuseColor
+            # ~ ambient = 1.0
+            # ~ shininess = 0.0
+            # ~ specColor = emitColor = diffuseColor
 
-            ident_step = ident + (' ' * (-len(ident) + \
-            fw('%s<Material ' % ident)))
+            ident_step = ident + (' ' * (-len(ident) +
+                                         fw('%s<Material ' % ident)))
             fw('DEF=%s\n' % material_id)
-            fw(ident_step + 'diffuseColor="%.3f %.3f %.3f"\n' % clamp_color(diffuseColor))
+            fw(ident_step + 'diffuseColor="%.3f %.3f %.3f"\n' % clamp_color(diffuse_color[:3]))
             fw(ident_step + 'specularColor="%.3f %.3f %.3f"\n' % clamp_color(specColor))
-            fw(ident_step + 'emissiveColor="%.3f %.3f %.3f"\n' % clamp_color(emitColor))
+            fw(ident_step + 'emissiveColor="%.3f %.3f %.3f"\n' % clamp_color(emitColor[:3]))
             fw(ident_step + 'ambientIntensity="%.3f"\n' % ambient)
             fw(ident_step + 'shininess="%.3f"\n' % shininess)
-            fw(ident_step + 'transparency="%s"\n' % transp)
+            fw(ident_step + 'transparency="%.3f"\n' % transp)
             fw(ident_step + '/>\n')
 
     def writeMaterialH3D(ident, material, world,
@@ -979,32 +1109,32 @@ def export(file,
             # GPU_material_bind_uniforms
             # GPU_begin_object_materials
 
-            #~ CD_MCOL 6
-            #~ CD_MTFACE 5
-            #~ CD_ORCO 14
-            #~ CD_TANGENT 18
-            #~ GPU_DATA_16F 7
-            #~ GPU_DATA_1F 2
-            #~ GPU_DATA_1I 1
-            #~ GPU_DATA_2F 3
-            #~ GPU_DATA_3F 4
-            #~ GPU_DATA_4F 5
-            #~ GPU_DATA_4UB 8
-            #~ GPU_DATA_9F 6
-            #~ GPU_DYNAMIC_LIGHT_DYNCO 7
-            #~ GPU_DYNAMIC_LIGHT_DYNCOL 11
-            #~ GPU_DYNAMIC_LIGHT_DYNENERGY 10
-            #~ GPU_DYNAMIC_LIGHT_DYNIMAT 8
-            #~ GPU_DYNAMIC_LIGHT_DYNPERSMAT 9
-            #~ GPU_DYNAMIC_LIGHT_DYNVEC 6
-            #~ GPU_DYNAMIC_OBJECT_COLOR 5
-            #~ GPU_DYNAMIC_OBJECT_IMAT 4
-            #~ GPU_DYNAMIC_OBJECT_MAT 2
-            #~ GPU_DYNAMIC_OBJECT_VIEWIMAT 3
-            #~ GPU_DYNAMIC_OBJECT_VIEWMAT 1
-            #~ GPU_DYNAMIC_SAMPLER_2DBUFFER 12
-            #~ GPU_DYNAMIC_SAMPLER_2DIMAGE 13
-            #~ GPU_DYNAMIC_SAMPLER_2DSHADOW 14
+            # ~ CD_MCOL 6
+            # ~ CD_MTFACE 5
+            # ~ CD_ORCO 14
+            # ~ CD_TANGENT 18
+            # ~ GPU_DATA_16F 7
+            # ~ GPU_DATA_1F 2
+            # ~ GPU_DATA_1I 1
+            # ~ GPU_DATA_2F 3
+            # ~ GPU_DATA_3F 4
+            # ~ GPU_DATA_4F 5
+            # ~ GPU_DATA_4UB 8
+            # ~ GPU_DATA_9F 6
+            # ~ GPU_DYNAMIC_LIGHT_DYNCO 7
+            # ~ GPU_DYNAMIC_LIGHT_DYNCOL 11
+            # ~ GPU_DYNAMIC_LIGHT_DYNENERGY 10
+            # ~ GPU_DYNAMIC_LIGHT_DYNIMAT 8
+            # ~ GPU_DYNAMIC_LIGHT_DYNPERSMAT 9
+            # ~ GPU_DYNAMIC_LIGHT_DYNVEC 6
+            # ~ GPU_DYNAMIC_OBJECT_COLOR 5
+            # ~ GPU_DYNAMIC_OBJECT_IMAT 4
+            # ~ GPU_DYNAMIC_OBJECT_MAT 2
+            # ~ GPU_DYNAMIC_OBJECT_VIEWIMAT 3
+            # ~ GPU_DYNAMIC_OBJECT_VIEWMAT 1
+            # ~ GPU_DYNAMIC_SAMPLER_2DBUFFER 12
+            # ~ GPU_DYNAMIC_SAMPLER_2DIMAGE 13
+            # ~ GPU_DYNAMIC_SAMPLER_2DSHADOW 14
 
             '''
             inline const char* typeToString( X3DType t ) {
@@ -1079,8 +1209,8 @@ def export(file,
             frag_uniform_var_map = {}
 
             h3d_material_route.append(
-                    '<ROUTE fromNode="%s" fromField="glModelViewMatrix" toNode=%s toField="%s" />%s' %
-                    (H3D_TOP_LEVEL, material_id, H3D_VIEW_MATRIX, field_descr))
+                '<ROUTE fromNode="%s" fromField="glModelViewMatrix" toNode=%s toField="%s" />%s' %
+                (H3D_TOP_LEVEL, material_id, H3D_VIEW_MATRIX, field_descr))
             # ------------------------------------------------------
 
             for uniform in gpu_shader['uniforms']:
@@ -1110,16 +1240,16 @@ def export(file,
                         # transform
                         frag_vars.append("uniform mat4 %s_transform;" % uniform['varname'])
                         h3d_material_route.append(
-                                '<ROUTE fromNode=%s fromField="accumulatedForward" toNode=%s toField="%s_transform" />%s' %
-                                (suffix_quoted_str(light_obj_transform_id, _TRANSFORM), material_id, uniform['varname'], field_descr))
+                            '<ROUTE fromNode=%s fromField="accumulatedForward" toNode=%s toField="%s_transform" />%s' %
+                            (suffix_quoted_str(light_obj_transform_id, _TRANSFORM), material_id, uniform['varname'], field_descr))
 
                         h3d_material_route.append(
-                                '<ROUTE fromNode=%s fromField="location" toNode=%s toField="%s" /> %s' %
-                                (light_obj_id, material_id, uniform['varname'], field_descr))
+                            '<ROUTE fromNode=%s fromField="location" toNode=%s toField="%s" /> %s' %
+                            (light_obj_id, material_id, uniform['varname'], field_descr))
                         # ------------------------------------------------------
 
                     else:
-                        assert(0)
+                        assert (0)
 
                 elif uniform['type'] == gpu.GPU_DYNAMIC_LIGHT_DYNCOL:
                     # odd  we have both 3, 4 types.
@@ -1134,11 +1264,11 @@ def export(file,
                     elif uniform['datatype'] == gpu.GPU_DATA_4F:
                         fw('%s<field name="%s" type="SFVec4f" accessType="inputOutput" value="%s 1.0" />%s\n' % (ident, uniform['varname'], value, field_descr))
                     else:
-                        assert(0)
+                        assert (0)
 
                 elif uniform['type'] == gpu.GPU_DYNAMIC_LIGHT_DYNENERGY:
                     # not used ?
-                    assert(0)
+                    assert (0)
 
                 elif uniform['type'] == gpu.GPU_DYNAMIC_LIGHT_DYNVEC:
                     light_obj = uniform['lamp']
@@ -1155,10 +1285,10 @@ def export(file,
                             light_id = quoteattr(unique_name(light_obj, LA_ + light_obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
                             h3d_material_route.append(
                                 '<ROUTE fromNode=%s fromField="direction" toNode=%s toField="%s" />%s' %
-                                        (light_id, material_id, uniform['varname'], field_descr))
+                                (light_id, material_id, uniform['varname'], field_descr))
 
                     else:
-                        assert(0)
+                        assert (0)
 
                 elif uniform['type'] == gpu.GPU_DYNAMIC_OBJECT_VIEWIMAT:
                     frag_uniform_var_map[uniform['varname']] = None
@@ -1168,9 +1298,9 @@ def export(file,
 
                         h3d_material_route.append(
                             '<ROUTE fromNode="%s" fromField="glModelViewMatrixInverse" toNode=%s toField="%s" />%s' %
-                                    (H3D_TOP_LEVEL, material_id, uniform['varname'], field_descr))
+                            (H3D_TOP_LEVEL, material_id, uniform['varname'], field_descr))
                     else:
-                        assert(0)
+                        assert (0)
 
                 elif uniform['type'] == gpu.GPU_DYNAMIC_OBJECT_IMAT:
                     frag_uniform_var_map[uniform['varname']] = None
@@ -1179,7 +1309,7 @@ def export(file,
                         field_descr = " <!--- Object Invertex Matrix '%s' -->" % obj.name
                         fw('%s<field name="%s" type="SFMatrix4f" accessType="inputOutput" value="%s" />%s\n' % (ident, uniform['varname'], value, field_descr))
                     else:
-                        assert(0)
+                        assert (0)
 
                 elif uniform['type'] == gpu.GPU_DYNAMIC_SAMPLER_2DSHADOW:
                     pass  # XXX, shadow buffers not supported.
@@ -1200,8 +1330,8 @@ def export(file,
 
                             ident += '\t'
 
-                            ident_step = ident + (' ' * (-len(ident) + \
-                            fw('%s<PixelTexture \n' % ident)))
+                            ident_step = ident + (' ' * (-len(ident) +
+                                                         fw('%s<PixelTexture \n' % ident)))
                             fw(ident_step + 'repeatS="false"\n')
                             fw(ident_step + 'repeatT="false"\n')
 
@@ -1213,14 +1343,14 @@ def export(file,
 
                             fw('%s</field>\n' % ident)
 
-                            #for i in range(0, 10, 4)
-                            #value = ' '.join(['%d' % f for f in uniform['texpixels']])
+                            # for i in range(0, 10, 4)
+                            # value = ' '.join(['%d' % f for f in uniform['texpixels']])
                             # value = ' '.join(['%.6f' % (f / 256) for f in uniform['texpixels']])
 
-                            #fw('%s<field name="%s" type="SFInt32" accessType="inputOutput" value="%s" />%s\n' % (ident, uniform['varname'], value, field_descr))
-                            #print('test', len(uniform['texpixels']))
+                            # fw('%s<field name="%s" type="SFInt32" accessType="inputOutput" value="%s" />%s\n' % (ident, uniform['varname'], value, field_descr))
+                            # print('test', len(uniform['texpixels']))
                     else:
-                        assert(0)
+                        assert (0)
                 else:
                     print("SKIPPING", uniform['type'])
 
@@ -1244,37 +1374,154 @@ def export(file,
 
             fw('%s</ComposedShader>\n' % ident)
 
-    def writeImageTexture(ident, image):
+    def writeImageTexture(ident, imageTextureNode):
+        """ Write image or movie texture with texture transform to x3d, path mode is user dependant """
+
+        image=imageTextureNode.image
         image_id = quoteattr(unique_name(image, IM_ + image.name, uuid_cache_image, clean_func=clean_def, sep="_"))
+        logger.info("write ImageTexture X3D node for %r format %r filepath %r" % (image.name, image.file_format, image.filepath ))
 
         if image.tag:
             fw('%s<ImageTexture USE=%s />\n' % (ident, image_id))
+            writeTextureTransform(ident, imageTextureNode)
         else:
             image.tag = True
 
-            ident_step = ident + (' ' * (-len(ident) + \
-            fw('%s<ImageTexture ' % ident)))
-            fw('DEF=%s\n' % image_id)
+            filepath_ref = getImageFilepath(image)
+            image_urls =  [ filepath_ref ]
+            logger.info("node urls: %s" % (image_urls,))
 
-            # collect image paths, can load multiple
-            # [relative, name-only, absolute]
-            filepath = image.filepath
-            filepath_full = bpy.path.abspath(filepath, library=image.library)
-            filepath_ref = bpy_extras.io_utils.path_reference(filepath_full, base_src, base_dst, path_mode, "textures", copy_set, image.library)
-            filepath_base = os.path.basename(filepath_full)
+            # default value of repeatS, repeatT fields is true, so only need to
+            # specify if extension value is CLIP
+            x3d_supported_extension = ["CLIP", "REPEAT"]
+            if imageTextureNode.extension not in x3d_supported_extension:
+                logger.warning("imageTextureNode.extension value %s unsupported in X3D" % imageTextureNode.extension)
 
-            images = [
-                filepath_ref,
-                filepath_base,
-            ]
-            if path_mode != 'RELATIVE':
-                images.append(filepath_full)
+            if image_urls:
+                ident_step = ident + (' ' * (-len(ident) +
+                                             fw(
+                                                 ('%s<MovieTexture ' if image.source == 'MOVIE' else '%s<ImageTexture ')
+                                                 % ident)
+                                             ))
+                fw('DEF=%s\n' % image_id)
+                fw(ident_step + "url='%s'\n" % ' '.join(['"%s"' % escape(f) for f in image_urls]))
 
-            images = [f.replace('\\', '/') for f in images]
-            images = [f for i, f in enumerate(images) if f not in images[:i]]
+                if imageTextureNode.extension == "CLIP":
+                    fw(ident_step + "repeatS='false' repeatT='false'")
 
-            fw(ident_step + "url='%s'\n" % ' '.join(['"%s"' % escape(f) for f in images]))
-            fw(ident_step + '/>\n')
+                if image.source == 'MOVIE':
+                    writeMovieTextureProperties(ident_step, imageTextureNode)
+
+                fw(ident_step + '/>\n')
+
+                writeTextureTransform(ident, imageTextureNode)
+
+    def getImageFilepath(image):
+        """ Get image filepath, wrapper for getMediaFilepath() """
+        return getMediaFilepath(image, {'JPEG': '.jpg', 'PNG': '.png'}, 'PNG')
+
+    def getSoundFilepath(sound):
+        """ Get sound filepath, wrapper for getMediaFilepath() """
+        return getMediaFilepath(
+            sound,
+            {'MP3': '.mp3', 'WAV': '.wav', 'MIDI': '.midi', 'OGG': '.ogg', 'AAC': '.aac'},
+            'WAV'
+        )
+
+    def getMediaFilepath(media_file, allowed_ext: dict, default_ext: str):
+        """
+        Get media (e.g. image/sound/movie file) filepath based on users path mode choice,
+        checks also if filetype is supported.
+        """
+        if media_file in media_cache:
+            return media_cache[media_file]
+
+        filepath_ref = ""
+        filepath = ""
+
+        if (path_mode != 'COPY') and not media_file.filepath:
+            # return when file is not packed and has no filepath to lookup
+            logger.warning("no filepath available for Path Mode %s" % path_mode)
+            return filepath_ref
+
+        # setting COPY_SUBDIR to None in calls to bpy_extras.io_utils.path_reference
+        # will place the file in the same directory as the exported X3D file.
+        COPY_SUBDIR = None
+
+        has_packed_file = media_file.packed_file and media_file.packed_file.size > 0
+        if path_mode == 'COPY' and (has_packed_file or not media_file.filepath):
+            # write to temporary folder so that bpy_extras.io_utils.path_reference_copy can
+            # copy it to the final location at end of export
+            use_file_format = media_file.file_format or default_ext
+            try:
+                # check if media type is allowed
+                file_ext = allowed_ext[use_file_format]
+            except KeyError:
+                # we land here if the media type is not supported by the x3d standard
+                # movie files will pass for later processing as all mov files can get used as texture or sound
+                if media_file.source == 'MOVIE':
+                    logger.debug("movie texture detected instead of image")
+                    file_ext = use_file_format
+                    pass
+                else:
+                    logger.warning("file format %r not supported" % use_file_format)
+                    return filepath_ref
+            else: # COPY: copy to new location and provide that as filepath
+                file_base = os.path.splitext(os.path.basename(media_file.name))[0]
+                filepath = os.path.join(temp_media_directory, file_base + file_ext)
+                filepath_ref = temp_media_directory
+
+                logger.info("writing media to %s" % filepath)
+                media_file.save(filepath=filepath)
+        else: # RELATIVE: provide relative filepath
+            filepath = bpy.path.abspath(media_file.filepath, library=media_file.library)
+            filepath_ref = base_src
+
+        filepath_ref = bpy_extras.io_utils.path_reference(
+            filepath,
+            filepath_ref,
+            base_dst,
+            path_mode,
+            COPY_SUBDIR,
+            copy_set,
+            media_file.library)
+
+        # following replaces Windows filepath separator with slash separator for relative urls
+        filepath_ref = filepath_ref.replace("\\", "/")
+
+        media_cache[media_file] = filepath_ref
+        return filepath_ref
+
+    def writeMovieTextureProperties(ident, textureNode):
+        movie_properties = get_movie_texture_properties(textureNode)
+        if not movie_properties:
+            return
+        loop = movie_properties.get("use_cyclic", False) or movie_properties.get("use_auto_refresh", False)
+        fps = bpy.context.scene.render.fps
+        start = movie_properties.get("frame_start", 0) / fps
+        end = movie_properties.get("frame_duration", 0) / fps
+
+        fw('%sloop="%s" \n' % (ident, str(loop).lower()))
+        fw('%sstartTime="%.3f" \n' % (ident, start))
+        # with stop time set the movie won't play for whatever reason, leaving it disabled for now...
+        # fw('%sstopTime="%.3f" \n' % (ident, end))
+
+    def writeTextureTransform(ident, textureNode):
+        """ Search for a vector mapping node attached to the image texture and write it's values to the x3d file """
+        mapping_properties = get_vector_mapping_properties(textureNode) if textureNode else {}
+        if not mapping_properties:
+            return
+        rotation = mapping_properties.get("rotation", None)
+        scale = mapping_properties.get("scale", None)
+        translation = mapping_properties.get("translation", None)
+        ident_step = ident + (' ' * (-len(ident) + fw('%s<TextureTransform \n' % ident)))
+        if rotation:
+            fw('%srotation="%s" \n' % (ident_step, rotation[2]))
+        if scale:
+            fw('%sscale="%.3f %.3f" \n' % (ident_step, scale[0], scale[1]))
+        if translation:
+            fw('%stranslation="%.3f %.3f" \n' % (ident_step, translation[0], translation[1]))
+        fw('%s/>\n' % ident_step)
 
     def writeBackground(ident, world):
 
@@ -1297,8 +1544,8 @@ def export(file,
         sky_triple = clamp_color(world.color)
         mix_triple = clamp_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
 
-        ident_step = ident + (' ' * (-len(ident) + \
-        fw('%s<Background ' % ident)))
+        ident_step = ident + (' ' * (-len(ident) +
+                                     fw('%s<Background ' % ident)))
         fw('DEF=%s\n' % world_id)
         # No Skytype - just Hor color
         if blending == (False, False, False):
@@ -1397,7 +1644,7 @@ def export(file,
                     h3d_material_route.extend([
                         '<ROUTE fromNode="%s" fromField="totalPosition" toNode="%s" toField="translation" />' % (view_id, H3D_CAMERA_FOLLOW),
                         '<ROUTE fromNode="%s" fromField="totalOrientation" toNode="%s" toField="rotation" />' % (view_id, H3D_CAMERA_FOLLOW),
-                        ])
+                    ])
                     is_dummy_tx = True
                     ident += '\t'
 
@@ -1446,8 +1693,13 @@ def export(file,
                     writeDirectionalLight(ident, obj, obj_matrix, data, world)
                 else:
                     writeDirectionalLight(ident, obj, obj_matrix, data, world)
+
+            elif obj_type == 'SPEAKER':
+                data = obj.data
+                writeSpeaker(ident, obj, obj_matrix, data, world)
+
             else:
-                #print "Info: Ignoring [%s], object type [%s] not handle yet" % (object.name,object.getType)
+                # print "Info: Ignoring [%s], object type [%s] not handle yet" % (object.name,object.getType)
                 pass
 
         # ---------------------------------------------------------------------
@@ -1474,12 +1726,24 @@ def export(file,
         bpy.data.meshes.tag(False)
         bpy.data.materials.tag(False)
         bpy.data.images.tag(False)
+        bpy.data.textures.tag(False)
+        bpy.data.sounds.tag(False)
+        bpy.data.speakers.tag(False)
 
         if use_selection:
-            objects = [obj for obj in view_layer.objects if obj.visible_get(view_layer=view_layer)
-                       and obj.select_get(view_layer=view_layer)]
+            if use_active_collection:
+                objects = [obj for obj in view_layer.active_layer_collection.collection.all_objects if obj.select_get()]
+            else:
+                objects = [obj for obj in view_layer.objects if obj.visible_get(view_layer=view_layer)
+                            and obj.select_get(view_layer=view_layer)]
         else:
-            objects = [obj for obj in view_layer.objects if obj.visible_get(view_layer=view_layer)]
+            if use_active_collection:
+                objects = view_layer.active_layer_collection.collection.all_objects
+            else:
+                objects = [obj for obj in view_layer.objects]
+
+        if use_visible:
+            objects = tuple(obj for obj in objects if obj.visible_get())
 
         print('Info: starting X3D export to %r...' % file.name)
         ident = ''
@@ -1511,9 +1775,12 @@ def export(file,
     if use_h3d:
         bpy.data.materials.remove(gpu_shader_dummy_mat)
 
-    # copy all collected files.
-    # print(copy_set)
-    bpy_extras.io_utils.path_reference_copy(copy_set)
+    if copy_set:
+        for c in copy_set:
+            logger.info("copy_set item %r" % copy_set)
+        bpy_extras.io_utils.path_reference_copy(copy_set)
+    else:
+        logger.info("no items in copy_set")
 
     print('Info: finished X3D export to %r' % file.name)
 
@@ -1544,6 +1811,8 @@ def save(context,
          filepath,
          *,
          use_selection=True,
+         use_active_collection=False,
+         use_visible=False,
          use_mesh_modifiers=False,
          use_triangulate=False,
          use_normals=False,
@@ -1551,36 +1820,149 @@ def save(context,
          use_hierarchy=True,
          use_h3d=False,
          global_matrix=None,
-         path_mode='AUTO',
-         name_decorations=True
+         path_mode='COPY',
+         name_decorations=True,
+         batch_mode='OFF',  # Options: 'OFF', 'COLLECTION', 'SCENE', 'OBJECT'
+         use_batch_own_dir=False,  # Create separate directories for batch export
+         meta_creator=None,
+         meta_title=None,
+         meta_description=None,
+         meta_keywords=None,
+         meta_reference=None,
+         meta_license=None,
          ):
+    import os
 
-    bpy.path.ensure_ext(filepath, '.x3dz' if use_compress else '.x3d')
+    logger.info("save: context %r to filepath %r" % (context, filepath))
 
+    filepath = bpy.path.ensure_ext(filepath, '.x3dz' if use_compress else '.x3d')
+
+    # Set to Object mode if necessary
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='OBJECT')
 
-    if use_compress:
-        file = gzip_open_utf8(filepath, 'w')
-    else:
-        file = open(filepath, 'w', encoding='utf-8')
+    def get_export_path(local_base_dir, name):
+        """Helper function for directory creation: Generate and return the export path for a batch."""
+        export_dir = os.path.join(local_base_dir, bpy.path.clean_name(name)) if use_batch_own_dir else local_base_dir
+        if use_batch_own_dir and not os.path.exists(export_dir):
+            os.makedirs(export_dir)
+        return os.path.join(export_dir, f"{bpy.path.clean_name(name)}.x3dz" if use_compress else f"{bpy.path.clean_name(name)}.x3d")
 
-    if global_matrix is None:
-        global_matrix = mathutils.Matrix()
+    def _export(export_file, depsgraph, local_scene, view_layer):
+        """Export Wrapper: Write the exported data to the given file."""
+        with (gzip_open_utf8(export_file, 'w') if use_compress else open(export_file, 'w', encoding='utf-8')) as file:
+            export(
+                file,
+                global_matrix or mathutils.Matrix(),
+                depsgraph,
+                local_scene,
+                view_layer,
+                use_mesh_modifiers=use_mesh_modifiers,
+                use_selection=use_selection,
+                use_active_collection=use_active_collection,
+                use_visible=use_visible,
+                use_triangulate=use_triangulate,
+                use_normals=use_normals,
+                use_hierarchy=use_hierarchy,
+                use_h3d=use_h3d,
+                path_mode=path_mode,
+                name_decorations=name_decorations,
+                meta_creator=meta_creator,
+                meta_title=meta_title,
+                meta_description=meta_description,
+                meta_keywords=meta_keywords,
+                meta_reference=meta_reference,
+                meta_license=meta_license,
+            )
 
-    export(file,
-           global_matrix,
-           context.evaluated_depsgraph_get(),
-           context.scene,
-           context.view_layer,
-           use_mesh_modifiers=use_mesh_modifiers,
-           use_selection=use_selection,
-           use_triangulate=use_triangulate,
-           use_normals=use_normals,
-           use_hierarchy=use_hierarchy,
-           use_h3d=use_h3d,
-           path_mode=path_mode,
-           name_decorations=name_decorations,
-           )
+    base_dir = os.path.dirname(filepath)
+    prefix = os.path.basename(filepath).replace('.x3d', '').replace('.x3dz', '')
 
+    if batch_mode == 'OFF': # regular export with single file logic; upper case as it's most probable
+        logger.info(f"Exporting to single file '{filepath}'")
+        _export(filepath, context.evaluated_depsgraph_get(), context.scene, context.view_layer)
+
+    elif batch_mode == 'COLLECTION': # loop over each collection and change it to the active one
+        use_active_collection = True
+        use_selection = False
+        use_visible = False
+
+        original_collection = context.view_layer.active_layer_collection
+
+        for collection in bpy.data.collections:
+            if not collection.objects:
+                continue  # Skip empty collections
+
+            context.view_layer.active_layer_collection = context.view_layer.layer_collection.children[collection.name]
+            export_path = get_export_path(base_dir, f"{prefix}_{collection.name}")
+            logger.info(f"Exporting collection '{collection.name}' to '{export_path}'")
+
+            _export(export_path, context.evaluated_depsgraph_get(), context.scene, context.view_layer)
+
+        context.view_layer.active_layer_collection = original_collection
+
+    elif batch_mode == 'SCENE': # loop over each scene and provide it to the export func
+        use_active_collection = False
+        use_selection = False
+        use_visible = False
+
+        for scene in bpy.data.scenes:
+            export_path = get_export_path(base_dir, f"{prefix}_{scene.name}")
+            logger.info(f"Exporting scene '{scene.name}' to '{export_path}'")
+
+            _export(export_path, scene.view_layers[0].depsgraph, scene, scene.view_layers[0])
+
+    elif batch_mode == 'OBJECT': # use a temporary scene for exporting individual objects
+        for obj in bpy.data.objects:
+            if (use_visible and not obj.visible_get()) or (use_selection and not obj.select_get()):
+                continue  # Skip objects based on visibility or selection
+
+            export_path = get_export_path(base_dir, f"{prefix}_{obj.name}")
+            logger.info(f"Exporting object '{obj.name}' to '{export_path}'")
+
+            temp_scene = bpy.data.scenes.new(name="X3D_TempExportScene")
+            try:
+                temp_scene.collection.objects.link(obj)
+                temp_scene.view_layers[0].update()
+
+                _export(export_path, temp_scene.view_layers[0].depsgraph, temp_scene, temp_scene.view_layers[0])
+            finally:
+                bpy.data.scenes.remove(temp_scene)
+
+    elif batch_mode == 'OBJECT_HIERARCHY':  # use a temporary scene for exporting individual objects keeping relations
+        exported_objects = set()
+
+        for obj in bpy.data.objects:
+            if (use_visible and not obj.visible_get()) or (use_selection and not obj.select_get()):
+                continue # Skip objects based on visibility or selection
+
+            if obj in exported_objects:
+                continue # Skip if the object has already been exported as part of another hierarchy
+
+            # Find the top-level parent and build hierarchy
+            top_level_parent = obj
+            while top_level_parent.parent:
+                top_level_parent = top_level_parent.parent
+            hierarchy_objects = {top_level_parent} | set(top_level_parent.children_recursive)
+            exported_objects.update(hierarchy_objects)
+
+            export_path = get_export_path(base_dir, f"{prefix}_{top_level_parent.name}")
+            logger.info(f"Exporting object hierarchy '{top_level_parent.name}' to '{export_path}'")
+
+            temp_scene = bpy.data.scenes.new(name="X3D_TempExportScene")
+            try:
+                for hierarchy_obj in hierarchy_objects:
+                    temp_scene.collection.objects.link(hierarchy_obj)
+
+                temp_scene.view_layers[0].update()
+
+                _export(export_path, temp_scene.view_layers[0].depsgraph, temp_scene, temp_scene.view_layers[0])
+            finally:
+                bpy.data.scenes.remove(temp_scene)
+
+    else: # regular export with single file logic as fallback
+        logger.info(f"Exporting to single file '{filepath}'")
+        _export(filepath, context.evaluated_depsgraph_get(), context.scene, context.view_layer)
+
+    logger.info("Export completed")
     return {'FINISHED'}

@@ -23,7 +23,8 @@ namespace blender::ed::pointcloud {
 
 static void duplicate_points(PointCloud &pointcloud, const IndexMask &mask)
 {
-  PointCloud *new_pointcloud = BKE_pointcloud_new_nomain(pointcloud.totpoint + mask.size());
+  PointCloud *new_pointcloud = BKE_pointcloud_new_nomain(pointcloud.type,
+                                                         pointcloud.totpoint + mask.size());
   bke::MutableAttributeAccessor dst_attributes = new_pointcloud->attributes_for_write();
   pointcloud.attributes().foreach_attribute([&](const bke::AttributeIter &iter) {
     const GVArray src = *iter.get();
@@ -34,11 +35,13 @@ static void duplicate_points(PointCloud &pointcloud, const IndexMask &mask)
         return;
       }
     }
-    bke::GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
-        iter.name, iter.domain, iter.data_type);
-    array_utils::copy(src, dst.span.take_front(pointcloud.totpoint));
-    array_utils::gather(src, mask, dst.span.take_back(mask.size()));
-    dst.finish();
+    if (bke::GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+            iter.name, iter.domain, iter.data_type))
+    {
+      array_utils::copy(src, dst.span.take_front(pointcloud.totpoint));
+      array_utils::gather(src, mask, dst.span.take_back(mask.size()));
+      dst.finish();
+    }
   });
   BKE_pointcloud_nomain_to_pointcloud(new_pointcloud, &pointcloud);
 }
@@ -57,8 +60,8 @@ static wmOperatorStatus duplicate_exec(bContext *C, wmOperator * /*op*/)
     duplicate_points(*pointcloud, selection);
 
     bke::SpanAttributeWriter selection_attr =
-        pointcloud->attributes_for_write().lookup_or_add_for_write_span<bool>(
-            ".selection", bke::AttrDomain::Point);
+        pointcloud->attributes_for_write().ensure_for_write_span<bool>(".selection",
+                                                                       bke::AttrDomain::Point);
     selection_attr.span.take_back(selection.size()).fill(true);
     selection_attr.finish();
 

@@ -258,7 +258,7 @@ OSL::TextureSystem::TextureHandle *OSLRenderServices::get_texture_handle(
   /* Note the mutex lock in find_or_insert() is not so bad for performance because
    * this function only gets called once per texture handle to create it, not for
    * every texture access. */
-  auto [it, inserted] = textures.find_or_insert(filename,
+  auto [it, inserted] = textures.find_or_insert({filename, image_manager},
                                                 OSLTextureHandle(OSLTextureHandleType::IMAGE));
 
   if (inserted) {
@@ -319,7 +319,7 @@ bool OSLRenderServices::texture(OSLUStringHash filename,
   return osl_shared_texture(globals->kg,
                             globals,
                             texture_handle,
-                            static_cast<void *>(&options),
+                            reinterpret_cast<OSLTextureOptions *>(&options),
                             s,
                             t,
                             dsdx,
@@ -370,7 +370,7 @@ bool OSLRenderServices::texture3d(OSLUStringHash filename,
 bool OSLRenderServices::environment(OSLUStringHash filename,
                                     TextureHandle *texture_handle,
                                     TexturePerthread * /*thread_info*/,
-                                    OSL::TextureOpt & /*options*/,
+                                    OSL::TextureOpt &options,
                                     OSL::ShaderGlobals *sg,
                                     const OSL::Vec3 &R,
                                     const OSL::Vec3 &dRdx,
@@ -394,6 +394,7 @@ bool OSLRenderServices::environment(OSLUStringHash filename,
   return osl_shared_environment(globals->kg,
                                 globals,
                                 texture_handle,
+                                reinterpret_cast<OSLTextureOptions *>(&options),
                                 make_float3(R.x, R.y, R.z),
                                 make_float3(dRdx.x, dRdx.y, dRdx.z),
                                 make_float3(dRdy.x, dRdy.y, dRdy.z),

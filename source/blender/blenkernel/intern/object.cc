@@ -28,7 +28,7 @@
 #include "DNA_effect_types.h"
 #include "DNA_fluid_types.h"
 #include "DNA_gpencil_legacy_types.h"
-#include "DNA_gpencil_modifier_types.h"
+#include "DNA_grease_pencil_modifier_types.h"
 #include "DNA_grease_pencil_types.h"
 #include "DNA_key_types.h"
 #include "DNA_lattice_types.h"
@@ -48,7 +48,6 @@
 #include "DNA_view3d_types.h"
 
 #include "BLI_bounds.hh"
-#include "BLI_kdtree.hh"
 #include "BLI_linklist.hh"
 #include "BLI_listbase.hh"
 #include "BLI_math_matrix_c.hh"
@@ -67,6 +66,7 @@
 #include "BKE_anim_path.h"
 #include "BKE_anim_visualization.h"
 #include "BKE_animsys.hh"
+#include "BKE_annotations.h"
 #include "BKE_armature.hh"
 #include "BKE_asset.hh"
 #include "BKE_bpath.hh"
@@ -86,10 +86,8 @@
 #include "BKE_geometry_set.hh"
 #include "BKE_geometry_set_instances.hh"
 #include "BKE_global.hh"
-#include "BKE_gpencil_geom_legacy.h"
-#include "BKE_gpencil_legacy.h"
-#include "BKE_gpencil_modifier_legacy.h"
 #include "BKE_grease_pencil.hh"
+#include "BKE_grease_pencil_modifiers.h"
 #include "BKE_idprop.hh"
 #include "BKE_idtype.hh"
 #include "BKE_image.hh"
@@ -181,8 +179,6 @@ static void object_init_data(ID *id)
 
   ob->type = OB_EMPTY;
 
-  ob->trackflag = OB_POSY;
-  ob->upflag = OB_POSZ;
   ob->runtime = MEM_new<bke::ObjectRuntime>(__func__);
 
   /* Animation Visualization defaults */
@@ -456,7 +452,7 @@ static void object_foreach_id(ID *id, LibraryForeachIDData *data)
       data, BKE_modifiers_foreach_ID_link(object, library_foreach_modifiersForeachIDLink, data));
   BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(
       data,
-      BKE_gpencil_modifiers_foreach_ID_link(
+      BKE_grease_pencil_modifiers_foreach_ID_link(
           object, library_foreach_gpencil_modifiersForeachIDLink, data));
   BKE_LIB_FOREACHID_PROCESS_FUNCTION_CALL(
       data,
@@ -518,7 +514,7 @@ static void object_foreach_path_pointcache(ListBaseT<PointCache> *ptcache_list,
 {
   for (PointCache *cache = ptcache_list->first(); cache != nullptr; cache = cache->next) {
     if (cache->flag & PTCACHE_DISK_CACHE) {
-      BKE_bpath_foreach_path_fixed_process(bpath_data, cache->path, sizeof(cache->path));
+      BKE_bpath_foreach_path_fixed_process(bpath_data, cache->path);
     }
   }
 }
@@ -546,7 +542,7 @@ static void object_foreach_path_particles(Object *ob, BPathForeachPathData *bpat
     for (PointCache &cache : psys.ptcaches) {
       /* When the 'External' checkbox is checked, the regular pointcache path is used. */
       if (cache.flag & PTCACHE_EXTERNAL) {
-        BKE_bpath_foreach_path_fixed_process(bpath_data, cache.path, sizeof(cache.path));
+        BKE_bpath_foreach_path_fixed_process(bpath_data, cache.path);
       }
       else {
         all_caches_external = false;
@@ -575,7 +571,7 @@ static void object_foreach_path_particles(Object *ob, BPathForeachPathData *bpat
      * And because it's always in the same directory, it makes sense to convert the path to a
      * blendfile-relative path. */
     BLI_path_rel(ptcache_path, blendfile_path);
-    BKE_bpath_foreach_path_fixed_process(bpath_data, ptcache_path, sizeof(ptcache_path));
+    BKE_bpath_foreach_path_fixed_process(bpath_data, ptcache_path);
   }
 }
 
@@ -589,16 +585,14 @@ static void object_foreach_path(ID *id, BPathForeachPathData *bpath_data)
       case eModifierType_Fluidsim: {
         FluidsimModifierData *fluidmd = reinterpret_cast<FluidsimModifierData *>(&md);
         if (fluidmd->fss) {
-          BKE_bpath_foreach_path_fixed_process(
-              bpath_data, fluidmd->fss->surfdataPath, sizeof(fluidmd->fss->surfdataPath));
+          BKE_bpath_foreach_path_fixed_process(bpath_data, fluidmd->fss->surfdataPath);
         }
         break;
       }
       case eModifierType_Fluid: {
         FluidModifierData *fmd = reinterpret_cast<FluidModifierData *>(&md);
         if (fmd->type & MOD_FLUID_TYPE_DOMAIN && fmd->domain) {
-          BKE_bpath_foreach_path_fixed_process(
-              bpath_data, fmd->domain->cache_directory, sizeof(fmd->domain->cache_directory));
+          BKE_bpath_foreach_path_fixed_process(bpath_data, fmd->domain->cache_directory);
         }
         break;
       }
@@ -609,12 +603,12 @@ static void object_foreach_path(ID *id, BPathForeachPathData *bpath_data)
       }
       case eModifierType_Ocean: {
         OceanModifierData *omd = reinterpret_cast<OceanModifierData *>(&md);
-        BKE_bpath_foreach_path_fixed_process(bpath_data, omd->cachepath, sizeof(omd->cachepath));
+        BKE_bpath_foreach_path_fixed_process(bpath_data, omd->cachepath);
         break;
       }
       case eModifierType_MeshCache: {
         MeshCacheModifierData *mcmd = reinterpret_cast<MeshCacheModifierData *>(&md);
-        BKE_bpath_foreach_path_fixed_process(bpath_data, mcmd->filepath, sizeof(mcmd->filepath));
+        BKE_bpath_foreach_path_fixed_process(bpath_data, mcmd->filepath);
         break;
       }
       case eModifierType_Nodes: {
@@ -861,7 +855,9 @@ static void object_blend_write(BlendWriter *writer, ID *id, const void *id_addre
     writer->write_struct(ob->lightgroup);
   }
   if (ob->light_linking) {
-    writer->write_struct(ob->light_linking);
+    writer->write_struct(ob->light_linking, [](BlendStructWriter<LightLinking> &struct_writer) {
+      struct_writer.shallow_data.runtime = {};
+    });
   }
 
   if (ob->lightprobe_cache) {
@@ -917,7 +913,7 @@ static void object_blend_read_data(BlendDataReader *reader, ID *id)
 
   /* do it here, below old data gets converted */
   BKE_modifier_blend_read_data(reader, &ob->modifiers, ob);
-  BKE_gpencil_modifier_blend_read_data(reader, &ob->greasepencil_modifiers, ob);
+  BKE_grease_pencil_modifier_blend_read_data(reader, &ob->greasepencil_modifiers, ob);
   BKE_shaderfx_blend_read_data(reader, &ob->shader_fx, ob);
 
   BLO_read_struct_list(reader, PartEff, &ob->effect);
@@ -1344,7 +1340,7 @@ void BKE_object_free_modifiers(Object *ob, const int flag)
   while (GpencilModifierData *gp_md = static_cast<GpencilModifierData *>(
              BLI_pophead(&ob->greasepencil_modifiers)))
   {
-    BKE_gpencil_modifier_free_ex(gp_md, flag);
+    BKE_grease_pencil_modifier_free_ex(gp_md, flag);
   }
   /* Particle modifiers were freed, so free the particle-systems as well. */
   BKE_object_free_particlesystems(ob);
@@ -3148,6 +3144,35 @@ void BKE_object_matrix_local_get(Object *ob, float r_mat[4][4])
   }
 }
 
+float4x4 BKE_object_delta_matrix_get(const Object &obj)
+{
+  float delta_matrix[4][4];
+  float scale_mat[3][3];
+  float rotation_mat[3][3];
+  size_to_mat3(scale_mat, obj.dscale);
+  switch (obj.rotmode) {
+    case ROT_MODE_AXISANGLE:
+      axis_angle_to_mat3(rotation_mat, obj.drotAxis, obj.drotAngle);
+      break;
+    case ROT_MODE_QUAT: {
+      float normalized_dquat[4];
+      normalize_qt_qt(normalized_dquat, obj.dquat);
+      quat_to_mat3(rotation_mat, normalized_dquat);
+      break;
+    }
+    default:
+      BLI_assert(obj.rotmode >= ROT_MODE_EUL);
+      eulO_to_mat3(rotation_mat, obj.drot, obj.rotmode);
+      break;
+  }
+
+  float mat[3][3];
+  mul_m3_m3m3(mat, rotation_mat, scale_mat);
+  copy_m4_m3(delta_matrix, mat);
+  copy_v3_v3(delta_matrix[3], obj.dloc);
+  return float4x4(delta_matrix);
+}
+
 /**
  * \return success if \a mat is set.
  */
@@ -3249,9 +3274,8 @@ static void give_parvert(const Object *par, int nr, float vec[3], const bool use
   zero_v3(vec);
 
   if (par->type == OB_MESH) {
-    const Mesh *mesh = id_cast<const Mesh *>(par->data);
-    const BMEditMesh *em = mesh->runtime->edit_mesh.get();
-    const Mesh *mesh_eval = (em) ? BKE_object_get_editmesh_eval_final(par) :
+    const BMesh *bm = BKE_editmesh_bmesh_get(par);
+    const Mesh *mesh_eval = (bm) ? BKE_object_get_editmesh_eval_final(par) :
                                    BKE_object_get_evaluated_mesh(par);
 
     if (mesh_eval) {
@@ -3259,17 +3283,17 @@ static void give_parvert(const Object *par, int nr, float vec[3], const bool use
       int count = 0;
       int numVerts = mesh_eval->verts_num;
 
-      if (em && mesh_eval->runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH) {
-        numVerts = em->bm->totvert;
-        if (em->bm->elem_table_dirty & BM_VERT) {
+      if (bm && mesh_eval->runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH) {
+        numVerts = bm->totvert;
+        if (bm->elem_table_dirty & BM_VERT) {
 #ifdef VPARENT_THREADING_HACK
           std::scoped_lock lock(vparent_lock);
-          if (em->bm->elem_table_dirty & BM_VERT) {
-            BM_mesh_elem_table_ensure(em->bm, BM_VERT);
+          if (bm->elem_table_dirty & BM_VERT) {
+            BM_mesh_elem_table_ensure(const_cast<BMesh *>(bm), BM_VERT);
           }
 #else
           BLI_assert_msg(0, "Not safe for threading");
-          BM_mesh_elem_table_ensure(em->bm, BM_VERT);
+          BM_mesh_elem_table_ensure(const_cast<BMesh *>(bm), BM_VERT);
 #endif
         }
         if (nr < numVerts) {
@@ -3279,7 +3303,7 @@ static void give_parvert(const Object *par, int nr, float vec[3], const bool use
             add_v3_v3(vec, mesh_eval->runtime->edit_data->vert_positions[nr]);
           }
           else {
-            const BMVert *v = BM_vert_at_index(em->bm, nr);
+            const BMVert *v = BM_vert_at_index(const_cast<BMesh *>(bm), nr);
             add_v3_v3(vec, v->co);
           }
           count++;
@@ -3719,6 +3743,9 @@ std::optional<Bounds<float3>> BKE_object_boundbox_get(const Object *ob)
       return BKE_volume_min_max(id_cast<const Volume *>(ob->data));
     case OB_GREASE_PENCIL:
       return id_cast<const GreasePencil *>(ob->data)->bounds_min_max_eval();
+    case OB_LIGHTPROBE:
+      /* Set to enable additional functionality (e.g. the Scale Cage tool in object mode). */
+      return blender::Bounds(float3(-1.0f), float3(1.0f));
     default:
       break;
   }
@@ -5344,10 +5371,10 @@ void BKE_object_groups_clear(Main *bmain, Scene *scene, Object *ob)
 /** \name Object KD-Tree
  * \{ */
 
-KDTree<float3> *BKE_object_as_kdtree(Object *ob, int *r_tot)
+Vector<float3> BKE_object_positions_for_kdtree(Object *ob, Vector<int> &r_orig_indices)
 {
-  KDTree<float3> *tree = nullptr;
-  uint tot = 0;
+  Vector<float3> tree_positions;
+  r_orig_indices.clear();
 
   switch (ob->type) {
     case OB_MESH: {
@@ -5364,47 +5391,28 @@ KDTree<float3> *BKE_object_as_kdtree(Object *ob, int *r_tot)
       {
         const Span<float3> positions = mesh->vert_positions();
 
-        /* Tree over-allocates in case where some verts have #ORIGINDEX_NONE. */
-        tot = 0;
-        tree = kdtree_new<float3>(positions.size());
-
         /* We don't how many verts from the DM we can use. */
         for (i = 0; i < positions.size(); i++) {
           if (index[i] != ORIGINDEX_NONE) {
-            float co[3];
-            mul_v3_m4v3(co, ob->object_to_world().ptr(), positions[i]);
-            kdtree_insert<float3>(tree, index[i], co);
-            tot++;
+            tree_positions.append(positions[i]);
+            r_orig_indices.append(index[i]);
           }
         }
       }
       else {
-        const Span<float3> positions = mesh->vert_positions();
-
-        tot = positions.size();
-        tree = kdtree_new<float3>(tot);
-
-        for (i = 0; i < tot; i++) {
-          float co[3];
-          mul_v3_m4v3(co, ob->object_to_world().ptr(), positions[i]);
-          kdtree_insert<float3>(tree, i, co);
-        }
+        tree_positions.extend(mesh->vert_positions());
       }
-
-      kdtree_balance<float3>(tree);
       break;
     }
     case OB_CURVES_LEGACY:
     case OB_SURF: {
       /* TODO: take deformation into account */
       Curve *cu = id_cast<Curve *>(ob->data);
-      uint i, a;
+      uint a;
 
       Nurb *nu;
 
-      tot = BKE_nurbList_verts_count_without_handles(&cu->nurb);
-      tree = kdtree_new<float3>(tot);
-      i = 0;
+      tree_positions.reserve(BKE_nurbList_verts_count_without_handles(&cu->nurb));
 
       nu = cu->nurb.first();
       while (nu) {
@@ -5414,9 +5422,7 @@ KDTree<float3> *BKE_object_as_kdtree(Object *ob, int *r_tot)
           bezt = nu->bezt;
           a = nu->pntsu;
           while (a--) {
-            float co[3];
-            mul_v3_m4v3(co, ob->object_to_world().ptr(), bezt->vec[1]);
-            kdtree_insert<float3>(tree, i++, co);
+            tree_positions.append(bezt->vec[1]);
             bezt++;
           }
         }
@@ -5426,43 +5432,30 @@ KDTree<float3> *BKE_object_as_kdtree(Object *ob, int *r_tot)
           bp = nu->bp;
           a = nu->pntsu * nu->pntsv;
           while (a--) {
-            float co[3];
-            mul_v3_m4v3(co, ob->object_to_world().ptr(), bp->vec);
-            kdtree_insert<float3>(tree, i++, co);
+            tree_positions.append(bp->vec);
             bp++;
           }
         }
         nu = nu->next;
       }
-
-      kdtree_balance<float3>(tree);
       break;
     }
     case OB_LATTICE: {
       /* TODO: take deformation into account */
       Lattice *lt = id_cast<Lattice *>(ob->data);
-      BPoint *bp;
-      uint i;
-
-      tot = lt->pntsu * lt->pntsv * lt->pntsw;
-      tree = kdtree_new<float3>(tot);
-      i = 0;
-
-      for (bp = lt->def; i < tot; bp++) {
-        float co[3];
-        mul_v3_m4v3(co, ob->object_to_world().ptr(), bp->vec);
-        kdtree_insert<float3>(tree, i++, co);
+      const int tot = lt->pntsu * lt->pntsv * lt->pntsw;
+      tree_positions.reserve(tot);
+      for (const BPoint &bp : Span(lt->def, tot)) {
+        tree_positions.append(bp.vec);
       }
-
-      kdtree_balance<float3>(tree);
       break;
     }
     default:
       break;
   }
 
-  *r_tot = tot;
-  return tree;
+  math::transform_points(ob->object_to_world(), tree_positions);
+  return tree_positions;
 }
 
 /** \} */

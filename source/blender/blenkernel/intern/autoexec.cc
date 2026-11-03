@@ -29,42 +29,43 @@ namespace blender {
 static const char *autoexec_dirpath_resolve(const char *path,
                                             const bool canonicalize,
                                             const bool strip_filename,
-                                            char *dirpath,
-                                            const size_t dirpath_maxncpy)
+                                            MutableCStr dirpath)
 {
   if (!(canonicalize || strip_filename)) {
     return path;
   }
 
-  const size_t path_len = BLI_strncpy_rlen(dirpath, path, dirpath_maxncpy);
+  const size_t path_len = STRNCPY_RLEN(dirpath, path);
   /* A path ending with a slash is already a directory & has no file name to strip,
    * canonicalizing removes the slash so this must be checked first. */
   const bool is_dirpath = path_len && BLI_path_slash_is_native_compat(dirpath[path_len - 1]);
   const bool do_strip_filename = strip_filename && !is_dirpath;
 
   if (canonicalize) {
-    BLI_path_canonicalize_native(dirpath, dirpath_maxncpy);
+    BLI_path_canonicalize_native(dirpath);
     if (!do_strip_filename) {
       /* Canonicalizing removed the trailing slash. */
-      BLI_path_slash_ensure(dirpath, dirpath_maxncpy);
+      BLI_path_slash_ensure(dirpath);
     }
   }
   if (do_strip_filename) {
     /* Truncating at the file name leaves the trailing slash. */
-    *const_cast<char *>(BLI_path_basename(dirpath)) = '\0';
+    *const_cast<char *>(BLI_path_basename(dirpath.data())) = '\0';
   }
-  return dirpath;
+  return dirpath.data();
 }
 
 bool BKE_autoexec_match_unchecked(const char *path,
                                   const bool canonicalize,
                                   const bool strip_filename)
 {
+  /* The caller must never pass in an empty path. */
+  BLI_assert(path[0] != '\0');
+
   bPathCompare *path_cmp;
 
   char dirpath_buf[FILE_MAX];
-  const char *dirpath = autoexec_dirpath_resolve(
-      path, canonicalize, strip_filename, dirpath_buf, sizeof(dirpath_buf));
+  const char *dirpath = autoexec_dirpath_resolve(path, canonicalize, strip_filename, dirpath_buf);
 
 #ifdef WIN32
   const int fnmatch_flags = FNM_CASEFOLD;
@@ -95,6 +96,22 @@ bool BKE_autoexec_match(const char *path, const bool canonicalize, const bool st
   BLI_assert((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0 || (G.f & G_FLAG_SCRIPT_AUTOEXEC));
 
   return BKE_autoexec_match_unchecked(path, canonicalize, strip_filename);
+}
+
+bool BKE_autoexec_default_trust_source(const char *path, const AutoExec_Params &params)
+{
+  if (!params.skip_overrides) {
+    if (G.autoexec_override.has_value()) {
+      /* The command line forced auto-execution on or off, excluded paths don't apply. */
+      return *G.autoexec_override;
+    }
+    if (U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) {
+      /* Nothing is trusted by default, the user may still opt-in. */
+      return false;
+    }
+  }
+
+  return !BKE_autoexec_match_unchecked(path, params.canonicalize, params.strip_filename);
 }
 
 }  // namespace blender

@@ -59,7 +59,7 @@ static void rna_Nurb_valid_message(Nurb *nu, int direction, const char **r_resul
   }
 
   char buf[64];
-  if (BKE_nurb_valid_message(pnts, order, flag, type, is_surf, direction, buf, sizeof(buf))) {
+  if (BKE_nurb_valid_message(pnts, order, flag, type, is_surf, direction, buf)) {
     const int buf_len = strlen(buf);
     *r_result = BLI_strdupn(buf, buf_len);
     *result_len = buf_len;
@@ -120,7 +120,7 @@ void RNA_api_curve_nurb(StructRNA *srna)
                                 0.0f,
                                 FLT_MAX,
                                 "Length",
-                                "Length of the polygonaly approximated spline",
+                                "Length of the polygonally approximated spline",
                                 0.0f,
                                 FLT_MAX);
   RNA_def_function_return(func, parm);

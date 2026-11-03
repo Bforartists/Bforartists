@@ -9,28 +9,35 @@
 #define DNA_DEPRECATED_ALLOW
 
 #include "DNA_ID.h"
+#include "DNA_action_types.h"
 #include "DNA_brush_types.h"
 #include "DNA_camera_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_curves_types.h"
 #include "DNA_grease_pencil_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_modifier_types.h"
+#include "DNA_node_tree_interface_types.h"
 #include "DNA_object_types.h"
 #include "DNA_pointcloud_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
+#include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_windowmanager_types.h"
 
 #include "BLI_listbase_iterator.hh"
-#include "BLI_math_base.hh"
+#include "BLI_math_vector_c.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_sys_types.hh"
 
 #include "BKE_attribute.h"
 #include "BKE_attribute.hh"
 #include "BKE_camera.h"
+#include "BKE_colorband.hh"
 #include "BKE_compositor.hh"
+#include "BKE_idprop.hh"
 #include "BKE_main.hh"
 #include "BKE_mesh_legacy_convert.hh"
 #include "BKE_node.hh"
@@ -39,6 +46,8 @@
 #include "BKE_paint_types.hh"
 #include "BKE_screen.hh"
 
+#include "NOD_geometry_nodes_srna.hh"
+
 #include "SEQ_iterator.hh"
 #include "SEQ_sequencer.hh"
 
@@ -46,9 +55,9 @@
 
 #include "versioning_common.hh"
 
-// #include "CLG_log.h"
+    // #include "CLG_log.h"
 
-namespace blender {
+    namespace blender {
 
 // static CLG_LogRef LOG = {"blend.doversion"};
 
@@ -84,23 +93,6 @@ static void do_version_merge_layers_options_to_inputs(bNodeTree &ntree, bNode &n
   }
   bNodeSocket &socket = version_node_add_socket(ntree, node, SOCK_IN, "NodeSocketMenu", "Mode");
   socket.default_value_typed<bNodeSocketValueMenu>()->value = storage.mode;
-}
-
-static void compositing_node_group_to_effect(Main &main, Scene &scene)
-{
-  bNodeTree *node_group = version_get_scene_compositor_node_tree(&main, &scene);
-  if (!node_group) {
-    return;
-  }
-
-  SceneCompositorEffect &effect = bke::compositor::new_effect(scene, "Scene Effect");
-  effect.node_group = node_group;
-  if (!node_group->compositor_node_asset_traits) {
-    node_group->compositor_node_asset_traits = MEM_new<CompositorNodeAssetTraits>(__func__);
-  }
-  node_group->compositor_node_asset_traits->flag |= COMPOSIT_NODE_ASSET_SCENE_EFFECT;
-  bke::node_update_asset_metadata(*node_group);
-  scene.compositing_node_group = nullptr;
 }
 
 static float version_503_camera_view_viewfac(const int sensor_fit,
@@ -201,6 +193,50 @@ static void do_versioning_camera_view_zoom(Main *bmain)
   }
 }
 
+static void clear_deprecated_brush_flags(Brush &brush)
+{
+  if (brush.gpencil_settings) {
+    brush.gpencil_settings->flag &= ~GP_BRUSH_UNUSED_1;
+    brush.gpencil_settings->flag2 &= ~(GP_BRUSH_UNUSED_2 | GP_BRUSH_UNUSED_3 | GP_BRUSH_UNUSED_4 |
+                                       GP_BRUSH_UNUSED_5 | GP_BRUSH_UNUSED_6 | GP_BRUSH_UNUSED_7);
+  }
+  brush.paint_flags &= ~BRUSH_PAINT_UNUSED_2;
+  brush.flag &= ~(BRUSH_UNUSED_7 | BRUSH_UNUSED_8);
+}
+
+/**
+ * Modifier inputs created for Layer Selection sockets used to get the Value type, even though the
+ * modifier only displayed the layer name.
+ */
+static void version_layer_selection_modifier_inputs(NodesModifierData &nmd)
+{
+  if (!nmd.node_group || !nmd.modifier.system_properties) {
+    return;
+  }
+  IDProperty *inputs = IDP_GetPropertyTypeFromGroup(
+      nmd.modifier.system_properties, "inputs", IDP_GROUP);
+  if (!inputs) {
+    return;
+  }
+  const bNodeTree &ntree = *nmd.node_group;
+  ntree.ensure_interface_cache();
+  for (const bNodeTreeInterfaceSocket *input : ntree.interface_inputs()) {
+    if (!(input->flag & NODE_INTERFACE_SOCKET_LAYER_SELECTION) ||
+        !STREQ(input->socket_type, "NodeSocketBool"))
+    {
+      continue;
+    }
+    IDProperty *group = IDP_GetPropertyTypeFromGroup(inputs, input->identifier, IDP_GROUP);
+    if (!group) {
+      continue;
+    }
+    IDProperty *type = IDP_GetPropertyTypeFromGroup(group, "type", IDP_INT);
+    if (type && IDP_int_get(type) == int(nodes::GeometryNodesInputType::Value)) {
+      IDP_int_set(type, int(nodes::GeometryNodesInputType::Layer));
+    }
+  }
+}
+
 void do_versions_after_linking_503(FileData * /*fd*/, Main *bmain)
 {
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 8)) {
@@ -210,7 +246,10 @@ void do_versions_after_linking_503(FileData * /*fd*/, Main *bmain)
 
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 15)) {
     for (Scene &scene : bmain->scenes) {
-      compositing_node_group_to_effect(*bmain, scene);
+      if (scene.compositing_node_group) {
+        version_compositing_node_group_to_effect(scene, *scene.compositing_node_group);
+        scene.compositing_node_group = nullptr;
+      }
     }
   }
   else {
@@ -239,6 +278,73 @@ void do_versions_after_linking_503(FileData * /*fd*/, Main *bmain)
     /* Shift animation data to accommodate the new anisotropic inputs. */
     version_node_socket_index_animdata(bmain, NTREE_SHADER, "ShaderNodeBsdfGlass", 5, 3, 7);
     version_node_socket_index_animdata(bmain, NTREE_SHADER, "ShaderNodeBsdfGlass", 2, 2, 4);
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 23)) {
+    bool has_skip_alphabet_sort_method = false;
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype == SPACE_OUTLINER) {
+            SpaceOutliner *space_outliner = reinterpret_cast<SpaceOutliner *>(&space);
+            if (space_outliner->flag & SO_FLAG_UNUSED_4) {
+              has_skip_alphabet_sort_method = true;
+            }
+          }
+        }
+      }
+    }
+    auto version_collection_fn = [&](Collection &collection) {
+      Map<Object *, int> parent_child_indices;
+      int index = 0;
+      for (CollectionChild &child : collection.children) {
+        child.sort_index = index++;
+      }
+      for (CollectionObject &cob : collection.gobject) {
+        cob.sort_index = (has_skip_alphabet_sort_method) ? index++ : -1;
+        if (has_skip_alphabet_sort_method && cob.ob != nullptr && cob.ob->parent != nullptr) {
+          int &child_index = parent_child_indices.lookup_or_add(cob.ob->parent, 0);
+          cob.parented_sort_index = child_index++;
+        }
+        else {
+          cob.parented_sort_index = -1;
+        }
+      }
+    };
+    for (Collection &collection : bmain->collections) {
+      version_collection_fn(collection);
+    }
+    for (Scene &scene : bmain->scenes) {
+      if (scene.master_collection != nullptr) {
+        version_collection_fn(*scene.master_collection);
+      }
+    }
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype == SPACE_OUTLINER) {
+            SpaceOutliner *space_outliner = reinterpret_cast<SpaceOutliner *>(&space);
+            if (has_skip_alphabet_sort_method && !(space_outliner->flag & SO_FLAG_UNUSED_4)) {
+              space_outliner->sort_method = SO_SORT_ALPHA;
+            }
+            else {
+              space_outliner->sort_method = SO_SORT_CUSTOM;
+            }
+            space_outliner->flag &= ~SO_FLAG_UNUSED_4;
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 30)) {
+    for (Object &object : bmain->objects) {
+      for (ModifierData &md : object.modifiers) {
+        if (md.type == eModifierType_Nodes) {
+          version_layer_selection_modifier_inputs(reinterpret_cast<NodesModifierData &>(md));
+        }
+      }
+    }
   }
 
   /**
@@ -360,7 +466,7 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 9)) {
     for (Brush &brush : bmain->brushes) {
       if (brush.curve_hardness == nullptr) {
-        brush.curve_hardness = brush.paint_flags & BRUSH_PAINT_HARDNESS_PRESSURE_INVERT ?
+        brush.curve_hardness = brush.paint_flags & BRUSH_PAINT_UNUSED_2 ?
                                    BKE_paint_default_curve_inverted() :
                                    BKE_paint_default_curve();
       }
@@ -410,8 +516,7 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
   if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 12)) {
     for (Brush &brush : bmain->brushes) {
       if (brush.ob_mode & OB_MODE_WEIGHT_PAINT || brush.ob_mode & OB_MODE_VERTEX_PAINT) {
-        if (brush.flag & BRUSH_FRONTFACE_FALLOFF_DEPRECATED && brush.falloff_angle_legacy != 0.0f)
-        {
+        if (brush.flag & BRUSH_UNUSED_7 && brush.falloff_angle_legacy != 0.0f) {
           switch (brush.falloff_shape) {
             case PAINT_FALLOFF_SHAPE_SPHERE:
               brush.mesh_automasking_settings->flags |= BRUSH_AUTOMASKING_BRUSH_NORMAL;
@@ -538,6 +643,126 @@ void blo_do_versions_503(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
                 (timeline_overlay.flag & SEQ_TIMELINE_CONTINUOUS_THUMBNAILS);
             SET_FLAG_FROM_TEST(
                 timeline_overlay.flag, show_thumbnails, SEQ_TIMELINE_SHOW_THUMBNAILS);
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 22)) {
+    /* BFA (#6780): Dope Sheet scene strip gizmo defaults - enable the interactive
+     * gizmos, the layered "Show All Strips" indicators and both strip and scene
+     * name labels; set the indicator opacity to 0.5 for files that still carry
+     * the old default (1.0), so user-tuned opacities are left alone. "Set
+     * Preview Range" (ADS_SHOW_USE_PREVIEW_RANGE) is deliberately NOT
+     * force-enabled so the gizmo only edits the strip range until the user
+     * opts into preview-range writes.
+     *
+     * BFA: kept on its own subversion (22) rather than upstream's 19 so that
+     * files saved by upstream 5.3.19-5.3.21 still receive these defaults. */
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype == SPACE_ACTION) {
+            SpaceAction *space_action = reinterpret_cast<SpaceAction *>(&space);
+            space_action->overlays.flag |= (ADS_SHOW_SCENE_STRIP_GIZMOS |
+                                            ADS_SHOW_SCENE_STRIP_ALL |
+                                            ADS_SHOW_SCENE_STRIP_STRIP_NAME |
+                                            ADS_SHOW_SCENE_STRIP_SCENE_NAME);
+            /* Files predating the field read it as 0 (DNA fills missing fields
+             * with zero), files from intermediate builds of this branch carry
+             * the old 1.0 default - both count as "unset" here. */
+            if (space_action->overlays.all_strips_opacity <= 0.0f ||
+                space_action->overlays.all_strips_opacity >= 1.0f)
+            {
+              space_action->overlays.all_strips_opacity = 0.5f;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* BFA: bumped from upstream's 22 to 23 to avoid collision with BFA's Dope Sheet
+   * scene strip gizmo defaults above. */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 23)) {
+    for (Brush &brush : bmain->brushes) {
+      if (brush.paint_flags & BRUSH_PAINT_UNUSED_1) {
+        brush.paint_flags &= ~BRUSH_PAINT_UNUSED_1;
+        brush.flag |= BRUSH_HARDNESS_PRESSURE;
+      }
+    }
+  }
+
+  /* BFA: bumped from upstream's 23 to 24 to avoid collision (see above). */
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 24)) {
+    for (Brush &brush : bmain->brushes) {
+      clear_deprecated_brush_flags(brush);
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 24)) {
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype == SPACE_OUTLINER) {
+            SpaceOutliner *space_outliner = reinterpret_cast<SpaceOutliner *>(&space);
+            space_outliner->flag &= ~SO_EXPAND_ON_FOCUS;
+          }
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 25)) {
+    for (Material &materials : bmain->materials) {
+      if (materials.gp_style == nullptr) {
+        continue;
+      }
+
+      if (materials.gp_style->fill_style != GP_MATERIAL_FILL_STYLE_GRADIENT) {
+        continue;
+      }
+
+      materials.gp_style->gradient = BKE_colorband_add(true);
+
+      if (materials.gp_style->flag & GP_MATERIAL_FLIP_FILL) {
+        copy_v4_v4(&materials.gp_style->gradient->data[0].r, materials.gp_style->mix_rgba);
+        copy_v4_v4(&materials.gp_style->gradient->data[1].r, materials.gp_style->fill_rgba);
+      }
+      else {
+        copy_v4_v4(&materials.gp_style->gradient->data[0].r, materials.gp_style->fill_rgba);
+        copy_v4_v4(&materials.gp_style->gradient->data[1].r, materials.gp_style->mix_rgba);
+      }
+
+      /* This flag is now deprecated. */
+      materials.gp_style->flag &= ~GP_MATERIAL_FLIP_FILL;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 26)) {
+    for (Scene &scene : bmain->scenes) {
+      SequencerToolSettings *sequencer_tool_settings = seq::tool_settings_ensure(&scene);
+      sequencer_tool_settings->ripple_flag = SEQ_RIPPLE_ALL_CHANNELS | SEQ_RIPPLE_MARKERS |
+                                             SEQ_RIPPLE_CLEAR_RANGES;
+    }
+  }
+
+  if (!MAIN_VERSION_FILE_ATLEAST(bmain, 503, 28)) {
+    /* Some old files have node editors without a sidebar region. */
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &space : area.spacedata) {
+          if (space.spacetype != SPACE_NODE) {
+            continue;
+          }
+          ListBaseT<ARegion> *regionbase = (&space == area.spacedata.first_) ? &area.regionbase :
+                                                                               &space.regionbase;
+          if (ARegion *new_sidebar = do_versions_add_region_if_not_found(
+                  regionbase, RGN_TYPE_UI, "node editor sidebar", RGN_TYPE_HEADER))
+          {
+            new_sidebar->alignment = RGN_ALIGN_RIGHT;
+            new_sidebar->flag |= RGN_FLAG_HIDDEN;
           }
         }
       }

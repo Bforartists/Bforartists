@@ -437,6 +437,7 @@ struct HandleButtonData {
   std::string text_edit_unit_hint;
 
   wmTimer *text_select_auto_scroll = nullptr;
+  double text_select_auto_scroll_last_time = std::numeric_limits<double>::lowest();
 
   double value = 0.0f;
   double origvalue = 0.0f;
@@ -556,6 +557,8 @@ struct AfterFunc {
   BlockInteraction_Handle *custom_interaction_handle;
 
   std::optional<bContextStore> context;
+  /** See #PopupBlockHandle::ctx_region_popup. */
+  ARegion *region_popup;
 
   char undostr[BKE_UNDO_STR_MAX];
   std::string drawstr;
@@ -905,6 +908,9 @@ static void handle_afterfunc_add_operator_ex(wmOperatorType *ot,
   if (context_but && context_but->context) {
     after->context = *context_but->context;
   }
+  if (context_but && context_but->block->handle) {
+    after->region_popup = context_but->block->handle->ctx_region_popup;
+  }
 
   if (context_but) {
     after->drawstr = button_drawstr_without_sep_char(context_but);
@@ -1029,6 +1035,9 @@ static void apply_but_func(bContext *C, Button *but)
   if (but->context) {
     after->context = *but->context;
   }
+  if (but->block->handle) {
+    after->region_popup = but->block->handle->ctx_region_popup;
+  }
 
   after->drawstr = button_drawstr_without_sep_char(but);
 }
@@ -1104,7 +1113,8 @@ static void apply_but_undo(Button *but, bool use_undo_grouped = false)
 
   /* Delayed, after all other functions run, popups are closed, etc. */
   AfterFunc *after = afterfunc_new();
-  str->copy_utf8_truncated(after->undostr, min_zz(str_len_clip + 1, sizeof(after->undostr)));
+  str->copy_utf8_truncated(
+      MutableCStr(after->undostr, min_zz(str_len_clip + 1, sizeof(after->undostr))));
   after->use_undo_grouped = use_undo_grouped;
   after->undo_hints = undo_hints_or_none.value_or(UndoEncodeHints::None);
 }
@@ -1149,6 +1159,20 @@ static void apply_but_funcs_after(bContext *C)
       CTX_store_set(C, &after.context.value());
     }
 
+    /* Set the popup this button's popup was opened from (a context menu in a popover)
+     * so operators can access the popup's active button, see: #151170.
+     * That popup may have been closed along with the menu, so check it still exists. */
+    ARegion *region_popup_prev = nullptr;
+    if (after.region_popup) {
+      if (BLI_findindex(&CTX_wm_screen(C)->regionbase, after.region_popup) != -1) {
+        region_popup_prev = CTX_wm_region_popup(C);
+        CTX_wm_region_popup_set(C, after.region_popup);
+      }
+      else {
+        after.region_popup = nullptr;
+      }
+    }
+
     if (after.popup_op) {
       popup_check(C, after.popup_op);
     }
@@ -1179,6 +1203,17 @@ static void apply_but_funcs_after(bContext *C)
 
     if (after.context) {
       CTX_store_set(C, nullptr);
+    }
+
+    if (after.region_popup) {
+      /* The operator may have freed the popup, for example by loading a file. */
+      bScreen *screen = CTX_wm_screen(C);
+      if (region_popup_prev &&
+          !(screen && BLI_findindex(&screen->regionbase, region_popup_prev) != -1))
+      {
+        region_popup_prev = nullptr;
+      }
+      CTX_wm_region_popup_set(C, region_popup_prev);
     }
 
     if (after.rename_full_func) {
@@ -1328,7 +1363,7 @@ static void apply_but_TEX(bContext *C, Button *but, HandleButtonData *data)
 
   ButtonText *text_button = but->type == ButtonType::Text ? static_cast<ButtonText *>(but) :
                                                             nullptr;
-  /* only if there are afterfuncs, otherwise 'renam_orig' isn't freed */
+  /* only if there are afterfuncs, otherwise 'rename_orig' isn't freed */
   if (text_button && afterfunc_check(but->block, but)) {
     /* give butfunc a copy of the original text too.
      * feature used for bone renaming, channels, etc.
@@ -2604,26 +2639,23 @@ static void but_set_float_array(
   button_activate_state(C, but, BUTTON_STATE_EXIT);
 }
 
-static void float_array_to_string(const float *values,
-                                  const int values_len,
-                                  char *output,
-                                  int output_maxncpy)
+static void float_array_to_string(const float *values, const int values_len, MutableCStr output)
 {
   const int values_end = values_len - 1;
   int ofs = 0;
   output[ofs++] = '[';
   for (int i = 0; i < values_len; i++) {
-    ofs += BLI_snprintf_utf8_rlen(
-        output + ofs, output_maxncpy - ofs, (i != values_end) ? "%f, " : "%f]", values[i]);
+    ofs += SNPRINTF_UTF8_RLEN(
+        output.drop_front(ofs), (i != values_end) ? "%f, " : "%f]", values[i]);
   }
 }
 
-static void but_copy_numeric_array(Button *but, char *output, int output_maxncpy)
+static void but_copy_numeric_array(Button *but, MutableCStr output)
 {
   const int values_len = get_but_property_array_length(but);
   Array<float, 16> values(values_len);
   RNA_property_float_get_array(&but->rnapoin, but->rnaprop, values.data());
-  float_array_to_string(values.data(), values_len, output, output_maxncpy);
+  float_array_to_string(values.data(), values_len, output);
 }
 
 static bool parse_float_array(char *text, float *values, int values_len_expected)
@@ -2663,12 +2695,12 @@ static void but_paste_numeric_array(bContext *C,
   }
 }
 
-static void but_copy_numeric_value(Button *but, char *output, int output_maxncpy)
+static void but_copy_numeric_value(Button *but, MutableCStr output)
 {
   /* Get many decimal places, then strip trailing zeros.
    * NOTE: too high values start to give strange results. */
-  button_string_get_ex(but, output, output_maxncpy, UI_PRECISION_FLOAT_MAX, false, nullptr);
-  BLI_str_rstrip_float_zero(output, '\0');
+  button_string_get_ex(but, output, UI_PRECISION_FLOAT_MAX, false, nullptr);
+  BLI_str_rstrip_float_zero(output.data(), '\0');
 }
 
 static void but_paste_numeric_value(bContext *C,
@@ -2706,7 +2738,7 @@ static void but_paste_normalized_vector(bContext *C,
   }
 }
 
-static void but_copy_color(Button *but, char *output, int output_maxncpy)
+static void but_copy_color(Button *but, MutableCStr output)
 {
   float rgba[4];
 
@@ -2724,7 +2756,7 @@ static void but_copy_color(Button *but, char *output, int output_maxncpy)
     srgb_to_linearrgb_v3_v3(rgba, rgba);
   }
 
-  float_array_to_string(rgba, 4, output, output_maxncpy);
+  float_array_to_string(rgba, 4, output);
 }
 
 static void but_paste_color(bContext *C, Button *but, char *buf_paste)
@@ -2757,9 +2789,9 @@ static void but_paste_color(bContext *C, Button *but, char *buf_paste)
   }
 }
 
-static void but_copy_text(Button *but, char *output, int output_maxncpy)
+static void but_copy_text(Button *but, MutableCStr output)
 {
-  button_string_get(but, output, output_maxncpy);
+  button_string_get(but, output);
 }
 
 static void but_paste_text(bContext *C, Button *but, HandleButtonData *data, char *buf_paste)
@@ -2839,19 +2871,19 @@ static void but_paste_CurveProfile(bContext *C, Button *but)
   }
 }
 
-static void but_copy_operator(bContext *C, Button *but, char *output, int output_maxncpy)
+static void but_copy_operator(bContext *C, Button *but, MutableCStr output)
 {
   PointerRNA *opptr = button_operator_ptr_ensure(but);
 
   std::string str = WM_operator_pystring_ex(C, nullptr, false, true, but->optype, opptr);
-  BLI_strncpy_utf8(output, str.c_str(), output_maxncpy);
+  STRNCPY_UTF8(output, str.c_str());
 }
 
-static bool but_copy_menu(bContext *C, Button *but, char *output, int output_maxncpy)
+static bool but_copy_menu(bContext *C, Button *but, MutableCStr output)
 {
   MenuType *mt = button_menutype_get(but);
   if (mt) {
-    BLI_snprintf_utf8(output, output_maxncpy, "bpy.ops.wm.call_menu(name=\"%s\")", mt->idname);
+    SNPRINTF_UTF8(output, "bpy.ops.wm.call_menu(name=\"%s\")", mt->idname);
     return true;
   }
 
@@ -2880,7 +2912,7 @@ static bool but_copy_menu(bContext *C, Button *but, char *output, int output_max
     return false;
   }
 
-  BLI_strncpy_utf8(output, item.identifier, output_maxncpy);
+  STRNCPY_UTF8(output, item.identifier);
   return true;
 }
 
@@ -2916,11 +2948,11 @@ static void but_paste_menu(bContext *C, Button *but, const StringRef value)
   RNA_property_update(C, &but->rnapoin, prop);
 }
 
-static bool but_copy_popover(Button *but, char *output, int output_maxncpy)
+static bool but_copy_popover(Button *but, MutableCStr output)
 {
   PanelType *pt = button_paneltype_get(but);
   if (pt) {
-    BLI_snprintf_utf8(output, output_maxncpy, "bpy.ops.wm.call_panel(name=\"%s\")", pt->idname);
+    SNPRINTF_UTF8(output, "bpy.ops.wm.call_panel(name=\"%s\")", pt->idname);
     return true;
   }
   return false;
@@ -2935,7 +2967,6 @@ static bool but_copy(bContext *C, Button *but, const bool copy_array)
 
   /* Arbitrary large value (allow for paths: 'PATH_MAX') */
   char buf[4096] = {0};
-  const int buf_maxncpy = sizeof(buf);
 
   /* Left false for copying internal data (color-band for eg). */
   bool is_buf_set = false;
@@ -2949,10 +2980,10 @@ static bool but_copy(bContext *C, Button *but, const bool copy_array)
         break;
       }
       if (copy_array && button_has_array_value(but)) {
-        but_copy_numeric_array(but, buf, buf_maxncpy);
+        but_copy_numeric_array(but, buf);
       }
       else {
-        but_copy_numeric_value(but, buf, buf_maxncpy);
+        but_copy_numeric_value(but, buf);
       }
       is_buf_set = true;
       break;
@@ -2961,7 +2992,7 @@ static bool but_copy(bContext *C, Button *but, const bool copy_array)
       if (!has_required_data) {
         break;
       }
-      but_copy_numeric_array(but, buf, buf_maxncpy);
+      but_copy_numeric_array(but, buf);
       is_buf_set = true;
       break;
 
@@ -2969,7 +3000,7 @@ static bool but_copy(bContext *C, Button *but, const bool copy_array)
       if (!has_required_data) {
         break;
       }
-      but_copy_color(but, buf, buf_maxncpy);
+      but_copy_color(but, buf);
       is_buf_set = true;
       break;
 
@@ -2979,7 +3010,7 @@ static bool but_copy(bContext *C, Button *but, const bool copy_array)
       if (!has_required_data) {
         break;
       }
-      but_copy_text(but, buf, buf_maxncpy);
+      but_copy_text(but, buf);
       is_buf_set = true;
       break;
 
@@ -2999,19 +3030,19 @@ static bool but_copy(bContext *C, Button *but, const bool copy_array)
       if (!but->optype) {
         break;
       }
-      but_copy_operator(C, but, buf, buf_maxncpy);
+      but_copy_operator(C, but, buf);
       is_buf_set = true;
       break;
 
     case ButtonType::Row:
     case ButtonType::Menu:
     case ButtonType::Pulldown:
-      if (but_copy_menu(C, but, buf, buf_maxncpy)) {
+      if (but_copy_menu(C, but, buf)) {
         is_buf_set = true;
       }
       break;
     case ButtonType::Popover:
-      if (but_copy_popover(but, buf, buf_maxncpy)) {
+      if (but_copy_popover(but, buf)) {
         is_buf_set = true;
       }
       break;
@@ -3837,8 +3868,7 @@ static void textedit_begin(bContext *C, Button *but, HandleButtonData *data)
     /* We do not want to truncate precision to default here, it's nice to show value,
      * not to edit it - way too much precision is lost then. */
     button_string_get_ex(but,
-                         text_edit.edit_string,
-                         text_edit.max_string_size,
+                         MutableCStr(text_edit.edit_string, text_edit.max_string_size),
                          UI_PRECISION_FLOAT_MAX,
                          true,
                          &no_zero_strip);
@@ -3849,14 +3879,15 @@ static void textedit_begin(bContext *C, Button *but, HandleButtonData *data)
   }
 
   if (button_is_float(but) && !button_is_unit(but) &&
-      !button_anim_expression_get(but, nullptr, 0) && !no_zero_strip)
+      !button_anim_expression_get(but, std::nullopt) && !no_zero_strip)
   {
     BLI_str_rstrip_float_zero(text_edit.edit_string, '\0');
   }
 
   if (is_num_but) {
     BLI_assert(text_edit.is_str_dynamic == false);
-    button_convert_to_unit_alt_name(but, text_edit.edit_string, text_edit.max_string_size);
+    button_convert_to_unit_alt_name(but,
+                                    MutableCStr(text_edit.edit_string, text_edit.max_string_size));
 
     numedit_begin_set_values(but, data);
   }
@@ -4289,23 +4320,6 @@ static int do_but_textedit(
         retval = WM_UI_HANDLER_BREAK;
         break;
       }
-      case MOUSEPAN: {
-        if (textbox) {
-          int type = event->type;
-          int value = event->val;
-
-          pan_to_scroll(event, &type, &value);
-          int scroll_dir = 1;
-          if (event->flag & WM_EVENT_SCROLL_INVERT) {
-            scroll_dir = -1;
-          }
-          if (type != MOUSEPAN) {
-            textbox_add_scroll(textbox, (type == WHEELUPMOUSE ? -1 : 1) * scroll_dir);
-          }
-          retval = WM_UI_HANDLER_BREAK;
-        }
-        break;
-      }
       case WHEELDOWNMOUSE:
       case EVT_DOWNARROWKEY:
         if (data->searchbox) {
@@ -4406,6 +4420,13 @@ static int do_but_textedit(
           changed = autocomplete != AUTOCOMPLETE_NO_MATCH;
 
           if (autocomplete == AUTOCOMPLETE_FULL_MATCH) {
+            if (but->flag & BUT_TEXTEDIT_AUTOCOMPLETE_KEEP_ACTIVE) {
+              /* Exit to apply, then re-activate (as with Tab cycling between text fields),
+               * so this only runs when Tab is pressed, see: #150689. */
+              but->flag |= BUT_ACTIVATE_ON_INIT_NO_SELECT;
+              data->postbut = but;
+              data->posttype = BUTTON_ACTIVATE_TEXT_EDITING;
+            }
             button_activate_state(C, but, BUTTON_STATE_EXIT);
           }
         }
@@ -4564,6 +4585,14 @@ static int do_but_textedit_select(
       if (!textbox || event->customdata != data->text_select_auto_scroll) {
         break;
       }
+
+      const wmTimer *timer = static_cast<const wmTimer *>(event->customdata);
+      if (timer->time_duration == data->text_select_auto_scroll_last_time) {
+        retval = WM_UI_HANDLER_BREAK;
+        break;
+      }
+      data->text_select_auto_scroll_last_time = timer->time_duration;
+
       rctf rect;
       block_to_window_rctf(data->region, block, &rect, &but->rect);
 
@@ -4852,7 +4881,7 @@ static void block_open_begin(bContext *C, Button *but, HandleButtonData *data)
     case ButtonType::Menu:
       BLI_assert(but->menu_create_func);
       if (button_menu_draw_as_popover(but)) {
-        const char *idname = static_cast<const char *>(but->func_argN);
+        const std::string &idname = *static_cast<const std::string *>(but->func_argN);
         popover_panel_type = WM_paneltype_find(idname, false);
       }
 
@@ -4875,7 +4904,7 @@ static void block_open_begin(bContext *C, Button *but, HandleButtonData *data)
       but->editvec = data->vec;
 
       if (button_menu_draw_as_popover(but)) {
-        const char *idname = static_cast<const char *>(but->func_argN);
+        const std::string &idname = *static_cast<const std::string *>(but->func_argN);
         popover_panel_type = WM_paneltype_find(idname, false);
       }
 
@@ -5129,8 +5158,10 @@ static int do_but_BUT(bContext *C, Button *but, HandleButtonData *data, const wm
     }
   }
 #endif
-  if (button_draw_as_link(but) && !data->changed_cursor) {
-    WM_cursor_set(data->window, WM_CURSOR_HAND_POINT);
+  if (button_draw_as_link(but)) {
+    if (data->window->cursor != WM_CURSOR_HAND_POINT) {
+      WM_cursor_modal_set(data->window, WM_CURSOR_HAND_POINT);
+    }
     data->changed_cursor = true;
   }
   if (button_opens_link(but) && !data->changed_wokspace_status) {
@@ -5336,7 +5367,7 @@ static int do_but_text_value_cycle(bContext *C,
   if (str_maxncpy != 0) {
     but_string = MEM_new_array_zeroed<char>(str_maxncpy, __func__);
     button_string_get_ex(
-        but, but_string, str_maxncpy, UI_PRECISION_FLOAT_MAX, true, &no_zero_strip);
+        but, MutableCStr(but_string, str_maxncpy), UI_PRECISION_FLOAT_MAX, true, &no_zero_strip);
   }
   else {
     but_string = button_string_get_dynamic(but, &str_maxncpy);
@@ -5355,7 +5386,8 @@ static int do_but_text_value_cycle(bContext *C,
   ushort digits;
 
   /* Decode the string, parsing head, digits, tail. */
-  int num = BLI_path_sequence_decode(but_string, head, str_maxncpy, tail, str_maxncpy, &digits);
+  int num = BLI_path_sequence_decode(
+      but_string, MutableCStr(head, str_maxncpy), MutableCStr(tail, str_maxncpy), &digits);
   MEM_delete(but_string);
   if (num == 0 && digits == 0) {
     BLI_str_rstrip_digits(head);
@@ -5366,7 +5398,7 @@ static int do_but_text_value_cycle(bContext *C,
 
   /* Encode the new string with the changed value. */
   char *string = MEM_new_array_zeroed<char>(str_maxncpy, __func__);
-  BLI_path_sequence_encode(string, str_maxncpy, head, tail, digits, num);
+  BLI_path_sequence_encode(MutableCStr(string, str_maxncpy), head, tail, digits, num);
 
   /* Save this new string to the button. */
   button_set_string_interactive(C, but, string);
@@ -5444,6 +5476,21 @@ static int do_but_TEXTBOX(bContext *C,
   switch (data->state) {
     case BUTTON_STATE_TEXT_EDITING:
     case BUTTON_STATE_HIGHLIGHT: {
+      if (event->type == MOUSEPAN && textbox->last_total_lines > textbox->visible_lines()) {
+        int type = event->type;
+        int value = event->val;
+
+        pan_to_scroll(event, &type, &value);
+        int scroll_dir = 1;
+        if (event->flag & WM_EVENT_SCROLL_INVERT) {
+          scroll_dir = -1;
+        }
+        if (type != MOUSEPAN) {
+          textbox_add_scroll(textbox, (type == WHEELUPMOUSE ? -1 : 1) * scroll_dir);
+          ED_region_tag_redraw(data->region);
+        }
+        return WM_UI_HANDLER_BREAK;
+      }
       if (ELEM(event->type, WHEELUPMOUSE, WHEELDOWNMOUSE)) {
         if (textbox->last_total_lines > textbox->visible_lines()) {
           textbox_add_scroll(textbox, (event->type == WHEELUPMOUSE ? -1 : 1));
@@ -7173,7 +7220,7 @@ static bool numedit_but_UNITVEC(
 
 static void palette_set_active(ButtonColor *color_but)
 {
-  if (color_but->is_pallete_color) {
+  if (color_but->is_palette_color) {
     Palette *palette = id_cast<Palette *>(color_but->rnapoin.owner_id);
     const PaletteColor *color = static_cast<const PaletteColor *>(color_but->rnapoin.data);
     palette->active_color = BLI_findindex(&palette->colors, color);
@@ -7238,7 +7285,7 @@ static int do_but_COLOR(bContext *C, Button *but, HandleButtonData *data, const 
       apply_but(C, but->block, but, data, true);
       return WM_UI_HANDLER_BREAK;
     }
-    if (color_but->is_pallete_color && (event->type == EVT_DELKEY) && (event->val == KM_PRESS)) {
+    if (color_but->is_palette_color && (event->type == EVT_DELKEY) && (event->val == KM_PRESS)) {
       Palette *palette = id_cast<Palette *>(but->rnapoin.owner_id);
       PaletteColor *color = static_cast<PaletteColor *>(but->rnapoin.data);
 
@@ -7269,7 +7316,7 @@ static int do_but_COLOR(bContext *C, Button *but, HandleButtonData *data, const 
     }
 
     if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
-      if (color_but->is_pallete_color) {
+      if (color_but->is_palette_color) {
         if ((event->modifier & KM_CTRL) == 0) {
           float color[3];
           Paint *paint = BKE_paint_get_active_from_context(C);
@@ -8031,7 +8078,7 @@ static int do_but_HSVCIRCLE(
   return WM_UI_HANDLER_CONTINUE;
 }
 
-static bool numedit_but_COLORBAND(Button *but, HandleButtonData *data, int mx)
+static bool numedit_but_COLORBAND(Button *but, HandleButtonData *data, int mx, bool shift)
 {
   bool changed = false;
 
@@ -8044,11 +8091,19 @@ static bool numedit_but_COLORBAND(Button *but, HandleButtonData *data, int mx)
   }
 
   const float dx = float(mx - data->draglastx) / BLI_rctf_size_x(&but->rect);
-  data->dragcbd->pos += dx;
+  data->dragcbd->pos += dx * mouse_scale_warp_factor(shift);
   CLAMP(data->dragcbd->pos, 0.0f, 1.0f);
 
   BKE_colorband_update_sort(data->coba);
   data->dragcbd = data->coba->data + data->coba->cur; /* because qsort */
+
+#ifdef USE_CONT_MOUSE_CORRECT
+  if (button_is_cursor_warp(but)) {
+    data->ungrab_mval[0] = but->rect.xmin + data->dragcbd->pos * BLI_rctf_size_x(&but->rect);
+    data->ungrab_mval[1] = data->dragstarty;
+    BLI_rctf_clamp_pt_v(&but->rect, data->ungrab_mval);
+  }
+#endif
 
   data->draglastx = mx;
   changed = true;
@@ -8109,7 +8164,7 @@ static int do_but_COLORBAND(
   else if (data->state == BUTTON_STATE_NUM_EDITING) {
     if (event->type == MOUSEMOVE) {
       if (mx != data->draglastx || my != data->draglasty) {
-        if (numedit_but_COLORBAND(but, data, mx)) {
+        if (numedit_but_COLORBAND(but, data, mx, (event->modifier & KM_SHIFT))) {
           numedit_apply(C, block, but, data);
         }
       }
@@ -9343,7 +9398,7 @@ static ARegion *but_tooltip_init(
   if (*pass == 1) {
     is_quick_tip = true;
     (*pass)--;
-    (*r_pass_delay) = UI_TOOLTIP_DELAY - UI_TOOLTIP_DELAY_QUICK;
+    (*r_pass_delay) = UI_TOOLTIP_DELAY + UI_TOOLTIP_DELAY_QUICK;
   }
 
   Button *but = region_active_but_get(region);
@@ -9501,12 +9556,14 @@ static void button_activate_state(bContext *C, Button *but, HandleButtonState st
       }
       WorkspaceStatus status(C);
       status.item(IFACE_("Cancel"), ICON_EVENT_ESC);
+      if (but->type != ButtonType::ColorBand) {
 #if defined(__APPLE__)
-      status.item(IFACE_("Snap"), ICON_KEY_COMMAND);
+        status.item(IFACE_("Snap"), ICON_KEY_COMMAND);
 #else
-      status.item(IFACE_("Snap"), ICON_EVENT_CTRL);
+        status.item(IFACE_("Snap"), ICON_EVENT_CTRL);
 #endif
-      if (button_is_float(but)) {
+      }
+      if (button_is_float(but) || but->type == ButtonType::ColorBand) {
         status.item(IFACE_("Precision"), ICON_EVENT_SHIFT);
       }
     }
@@ -9848,7 +9905,7 @@ static void button_activate_exit(
 #endif
 
   if (data->changed_cursor) {
-    if (but->type == ButtonType::TextBox) {
+    if (but->type == ButtonType::TextBox || button_draw_as_link(but)) {
       WM_cursor_modal_restore(win);
     }
     WM_cursor_set(win, WM_CURSOR_DEFAULT);
@@ -10114,7 +10171,8 @@ ARegion *region_searchbox_region_get(const ARegion *button_region)
 void context_update_anim_flag(const bContext *C)
 {
   Scene *scene = CTX_data_scene(C);
-  ARegion *region = CTX_wm_region(C);
+  ARegion *region_popup = CTX_wm_region_popup(C);
+  ARegion *region = region_popup ? region_popup : CTX_wm_region(C);
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       depsgraph, (scene) ? BKE_scene_frame_get(scene) : 0.0f);
@@ -10960,6 +11018,11 @@ static int handle_view_item_event(bContext *C,
 
         if (view_but) {
           if (view_item_supports_drag(*view_but->view_item)) {
+            if (event->val != KM_CLICK) {
+              break;
+            }
+          }
+          else if (view_but->view_item->is_select_on_click()) {
             if (event->val != KM_CLICK) {
               break;
             }
@@ -12192,14 +12255,23 @@ static int handle_menu_event(bContext *C,
         if (but_active && menu->keynav_state.is_keynav) {
           /* Key-navigation activates the button navigated onto, not the default. */
         }
+        else if ((but_default != nullptr) &&
+                 ((but_default->type == ButtonType::But) &&
+                  ((but_default->active == nullptr) ||
+                   (but_default->active->state == BUTTON_STATE_HIGHLIGHT))))
+        {
+          /* Regarding the #BUTTON_STATE_HIGHLIGHT check above.
+           * It's important to run immediately in this case. Letting the button flash first
+           * (see #BUTTON_STATE_WAIT_FLASH) delays running it until a timer fires,
+           * so events after "Return" reach the popup while it's still open and are lost.
+           * This can happen while typing quickly or a slow redraw.
+           * It also happens during tests that use simulated events. */
+
+          button_execute(C, region, but_default);
+          retval = WM_UI_HANDLER_BREAK;
+        }
         else if ((but_default != nullptr) && (but_default->active == nullptr)) {
-          if (but_default->type == ButtonType::But) {
-            button_execute(C, region, but_default);
-            retval = WM_UI_HANDLER_BREAK;
-          }
-          else {
-            handle_button_activate_by_type(C, region, but_default);
-          }
+          handle_button_activate_by_type(C, region, but_default);
         }
         /* enter will always close this block, we let the event
          * get handled by the button if it is activated, otherwise we cancel */
@@ -12806,8 +12878,13 @@ static int handle_menus_recursive(bContext *C,
       }
       else if (event->type == LEFTMOUSE || event->val != KM_DBL_CLICK) {
         bool handled = false;
-
-        if (Button *listbox = listbox_find_mouse_over(menu->region, event)) {
+        const Button *active_but = region_find_active_but(menu->region);
+        const bool is_actbut_in_modal_state = active_but &&
+                                              button_modal_state(active_but->active->state);
+        /* Handle uilist events if there not an active button in modal state. */
+        if (Button *listbox = listbox_find_mouse_over(menu->region, event);
+            listbox && !is_actbut_in_modal_state)
+        {
           const int retval_test = handle_uilist_event(C, event, menu->region, listbox);
           if (retval_test != WM_UI_HANDLER_CONTINUE) {
             retval = retval_test;
@@ -13751,7 +13828,7 @@ static Button *block_find_rna_text_button(Block &block,
                                           const char *rna_prop_id)
 {
   for (Button &but : block.buttons()) {
-    if (but.type == ButtonType::Text) {
+    if (ELEM(but.type, ButtonType::Text, ButtonType::TextBox)) {
       if (but.rnaprop && but.rnapoin.data == rna_poin_data) {
         if (STREQ(RNA_property_identifier(but.rnaprop), rna_prop_id)) {
           return &but;

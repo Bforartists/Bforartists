@@ -10,6 +10,7 @@
 
 #include "BLI_math_matrix.hh"
 #include "GPU_batch_utils.hh"
+#include "GPU_capabilities.hh"
 #include "GPU_compute.hh"
 
 #include "GPU_context.hh"
@@ -253,7 +254,7 @@ void ShadowPunctual::end_sync(Light &light)
         light.type, object_to_world, near, far, face, light.shadow_set_membership);
   }
 
-  light.local().tilemaps_count = tilemaps_needed;
+  light.local.tilemaps_count = tilemaps_needed;
   light.tilemap_index = tilemap_pool.tilemaps_data.size();
   for (ShadowTileMap *tilemap : tilemaps_) {
     /* Add shadow tile-maps grouped by lights to the GPU buffer. */
@@ -376,9 +377,9 @@ void ShadowDirectional::cascade_tilemaps_distribution(Light &light, const Camera
   /* Offset in tiles between the first and the last tile-maps. */
   int2 offset_vector = int2(round(farthest_tilemap_center / tile_size));
 
-  light.sun().clipmap_base_offset_neg = int2(0); /* Unused. */
-  light.sun().clipmap_base_offset_pos = (offset_vector * (1 << 16)) /
-                                        max_ii(levels_range.size() - 1, 1);
+  light.sun.clipmap_base_offset_neg = int2(0); /* Unused. */
+  light.sun.clipmap_base_offset_pos = (offset_vector * (1 << 16)) /
+                                      max_ii(levels_range.size() - 1, 1);
 
   /* \note cascade_level_range starts the range at the unique LOD to apply to all tile-maps. */
   int level = levels_range.first();
@@ -387,7 +388,7 @@ void ShadowDirectional::cascade_tilemaps_distribution(Light &light, const Camera
 
     /* Equal spacing between cascades layers since we want uniform shadow density. */
     int2 level_offset = origin_offset +
-                        shadow_cascade_grid_offset(light.sun().clipmap_base_offset_pos, i);
+                        shadow_cascade_grid_offset(light.sun.clipmap_base_offset_pos, i);
     tilemap->sync_orthographic(
         object_mat, level_offset, level, SHADOW_PROJECTION_CASCADE, light.shadow_set_membership);
 
@@ -396,14 +397,14 @@ void ShadowDirectional::cascade_tilemaps_distribution(Light &light, const Camera
     tilemap->set_updated();
   }
 
-  light.sun().clipmap_origin = float2(origin_offset) * tile_size;
+  light.sun.clipmap_origin = float2(origin_offset) * tile_size;
 
   light.type = LIGHT_SUN_ORTHO;
 
   /* Not really clip-maps, but this is in order to make #light_tilemap_max_get() work and determine
    * the scaling. */
-  light.sun().clipmap_lod_min = levels_range.first();
-  light.sun().clipmap_lod_max = levels_range.last();
+  light.sun.clipmap_lod_min = levels_range.first();
+  light.sun.clipmap_lod_max = levels_range.last();
 }
 
 /************************************************************************
@@ -471,8 +472,8 @@ void ShadowDirectional::clipmap_tilemaps_distribution(Light &light, const Camera
   }
 
   /* Number of levels is limited to 32 by `clipmap_level_range()` for this reason. */
-  light.sun().clipmap_base_offset_pos = pos_offset;
-  light.sun().clipmap_base_offset_neg = neg_offset;
+  light.sun.clipmap_base_offset_pos = pos_offset;
+  light.sun.clipmap_base_offset_neg = neg_offset;
 
   float tile_size_max = ShadowDirectional::tile_size_get(levels_range.last());
   int2 level_offset_max = tilemaps_[levels_range.size() - 1]->grid_offset;
@@ -486,10 +487,10 @@ void ShadowDirectional::clipmap_tilemaps_distribution(Light &light, const Camera
   light.object_to_world.y.w = location.y;
   light.object_to_world.z.w = location.z;
   /* Used as origin for the clipmap_base_offset trick. */
-  light.sun().clipmap_origin = float2(level_offset_max * tile_size_max);
+  light.sun.clipmap_origin = float2(level_offset_max * tile_size_max);
 
-  light.sun().clipmap_lod_min = levels_range.first();
-  light.sun().clipmap_lod_max = levels_range.last();
+  light.sun.clipmap_lod_min = levels_range.first();
+  light.sun.clipmap_lod_max = levels_range.last();
 }
 
 void ShadowDirectional::release_excess_tilemaps(const Light &light, const Camera &camera)
@@ -675,7 +676,7 @@ void ShadowModule::begin_sync()
   update_casters_ = true;
 
   if (box_batch_ == nullptr) {
-    box_batch_ = GPU_batch_unit_cube();
+    box_batch_ = make_batch(GPU_batch_unit_cube());
   }
 
   {
@@ -751,7 +752,7 @@ void ShadowModule::sync_object(const ObjectHandle &ob_handle,
                                bool has_offset_shadows)
 {
   if ((is_alpha_blend && !inst_.is_baking()) || has_offset_shadows) {
-    tilemap_usage_transparent_ps_->draw(box_batch_, ob_handle.res_handle);
+    tilemap_usage_transparent_ps_->draw(box_batch_.get(), ob_handle.res_handle);
   }
 
   bool is_shadow_caster = !(ob_handle.object->visibility_flag & OB_HIDE_SHADOW);
@@ -943,13 +944,15 @@ void ShadowModule::end_sync()
       if (past_casters_updated_.size() > 0) {
         pass.bind_ssbo("bounds_buf", &manager.bounds_buf.previous());
         pass.bind_ssbo("resource_ids_buf", past_casters_updated_);
-        pass.draw(box_batch_, past_casters_updated_.size() * tilemap_pool.tilemaps_data.size());
+        pass.draw(box_batch_.get(),
+                  past_casters_updated_.size() * tilemap_pool.tilemaps_data.size());
       }
       /* Current caster transforms. */
       if (curr_casters_updated_.size() > 0) {
         pass.bind_ssbo("bounds_buf", &manager.bounds_buf.current());
         pass.bind_ssbo("resource_ids_buf", curr_casters_updated_);
-        pass.draw(box_batch_, curr_casters_updated_.size() * tilemap_pool.tilemaps_data.size());
+        pass.draw(box_batch_.get(),
+                  curr_casters_updated_.size() * tilemap_pool.tilemaps_data.size());
       }
       pass.barrier(GPU_BARRIER_SHADER_STORAGE);
     }
@@ -967,7 +970,7 @@ void ShadowModule::end_sync()
         pass.bind_ssbo("tiles_buf", tilemap_pool.tiles_data);
         pass.bind_ssbo("bounds_buf", &manager.bounds_buf.current());
         pass.bind_ssbo("resource_ids_buf", jittered_transparent_casters_);
-        pass.draw(box_batch_,
+        pass.draw(box_batch_.get(),
                   jittered_transparent_casters_.size() * tilemap_pool.tilemaps_data.size());
         pass.barrier(GPU_BARRIER_SHADER_STORAGE);
       }
@@ -1074,6 +1077,7 @@ void ShadowModule::end_sync()
         sub.bind_ssbo("render_view_buf", &render_view_buf_);
         sub.bind_ssbo("tilemaps_clip_buf", &tilemap_pool.tilemaps_clip);
         sub.bind_image("tilemaps_img", &tilemap_pool.tilemap_tx);
+        sub.push_constant("use_multi_viewport", GPU_multi_viewport_support());
         sub.dispatch(int3(1, 1, tilemap_pool.tilemaps_data.size()));
         sub.barrier(GPU_BARRIER_SHADER_STORAGE | GPU_BARRIER_UNIFORM | GPU_BARRIER_TEXTURE_FETCH |
                     GPU_BARRIER_SHADER_IMAGE_ACCESS);
@@ -1139,7 +1143,7 @@ void ShadowModule::debug_end_sync()
   /* Init but not filled if no active object. */
   debug_draw_ps_.init();
 
-  int tilemap_index = 0;
+  int tilemap_index = -1;
   Object *object_active = inst_.draw_ctx->obact;
   if (object_active != nullptr) {
     ObjectKey object_key(ObjectRef(DEG_get_original(object_active)));
@@ -1151,7 +1155,7 @@ void ShadowModule::debug_end_sync()
     }
   }
 
-  if (tilemap_index == 0 && inst_.debug_mode != eDebugMode::DEBUG_SHADOW_ATOMIC_COST) {
+  if (tilemap_index == -1 && inst_.debug_mode != eDebugMode::DEBUG_SHADOW_ATOMIC_COST) {
     return;
   }
 
@@ -1355,8 +1359,21 @@ void ShadowModule::render(View &view, int2 extent)
       }
 
       GPU_framebuffer_bind(render_fb_);
-      GPU_framebuffer_multi_viewports_set(render_fb_,
-                                          reinterpret_cast<int (*)[4]>(multi_viewports_.data()));
+      const int4 &largest_viewport = multi_viewports_[SHADOW_TILEMAP_LOD];
+      if (GPU_multi_viewport_support()) {
+        GPU_framebuffer_multi_viewports_set(render_fb_,
+                                            reinterpret_cast<int (*)[4]>(multi_viewports_.data()));
+      }
+      else {
+        /* Fallback for GPU's that do not support multiViewport. Always render to the largest
+         * viewport. This spawns a lot more fragment shaders, but at least we can draw the
+         * correct shadows on these systems. See #163697. */
+        GPU_framebuffer_viewport_set(render_fb_,
+                                     largest_viewport.x,
+                                     largest_viewport.y,
+                                     largest_viewport.z,
+                                     largest_viewport.w);
+      }
 
       inst_.pipelines.shadow.render(shadow_multi_view_);
 

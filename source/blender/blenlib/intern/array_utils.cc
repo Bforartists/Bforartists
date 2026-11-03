@@ -7,19 +7,119 @@
  */
 
 #include <algorithm>
+#include <atomic>
 #include <cmath>
+#include <cstring>
 #include <functional>
 
 #include "BLI_array.hh"
 #include "BLI_array_utils.hh"
+#include "BLI_bounds.hh"
+#include "BLI_bytes_type_common.hh"
 #include "BLI_enumerable_thread_specific.hh"
 #include "BLI_threads.hh"
+#include "BLI_vector_set.hh"
 
 #include "PRF_profile.hh"
 
 #include "atomic_ops.h"
 
 namespace blender::array_utils {
+
+namespace detail {
+
+/** Copy \a num values of \a type_size bytes, which must not overlap. */
+static void copy_values(const void *src, void *dst, const int64_t num, const int64_t type_size)
+{
+  if (num == 0) {
+    return;
+  }
+  const int64_t num_bytes = num * type_size;
+  BLI_assert(POINTER_OFFSET(src, num_bytes) <= dst || POINTER_OFFSET(dst, num_bytes) <= src);
+  std::memcpy(dst, src, size_t(num_bytes));
+}
+
+void copy_bytes(const void *src,
+                void *dst,
+                const int64_t size,
+                const int64_t type_size,
+                const exec_mode::Mode mode)
+{
+  if (!mode.is_parallel) {
+    copy_values(src, dst, size, type_size);
+    return;
+  }
+  const int64_t grain_size = calc_copy_grain_size(mode, type_size);
+  threading::parallel_for(IndexRange(size), grain_size, [&](const IndexRange range) {
+    copy_values(POINTER_OFFSET(src, range.start() * type_size),
+                POINTER_OFFSET(dst, range.start() * type_size),
+                range.size(),
+                type_size);
+  });
+}
+
+void gather_group_to_group_bytes(const OffsetIndices<int> src_offsets,
+                                 const OffsetIndices<int> dst_offsets,
+                                 const IndexMask &selection,
+                                 const void *src,
+                                 void *dst,
+                                 const int64_t type_size)
+{
+  selection.foreach_index(
+      [&](const int64_t src_i, const int64_t dst_i) {
+        const IndexRange src_range = src_offsets[src_i];
+        const IndexRange dst_range = dst_offsets[dst_i];
+        BLI_assert(src_range.size() == dst_range.size());
+        copy_values(POINTER_OFFSET(src, src_range.start() * type_size),
+                    POINTER_OFFSET(dst, dst_range.start() * type_size),
+                    dst_range.size(),
+                    type_size);
+      },
+      exec_mode::grain_size(512));
+}
+
+void gather_group_to_group_bytes(const OffsetIndices<int> src_offsets,
+                                 const OffsetIndices<int> dst_offsets,
+                                 const Span<int> selection,
+                                 const void *src,
+                                 void *dst,
+                                 const int64_t type_size)
+{
+  threading::parallel_for(selection.index_range(), 512, [&](const IndexRange range) {
+    for (const int dst_i : range) {
+      const IndexRange src_range = src_offsets[selection[dst_i]];
+      const IndexRange dst_range = dst_offsets[dst_i];
+      BLI_assert(src_range.size() == dst_range.size());
+      copy_values(POINTER_OFFSET(src, src_range.start() * type_size),
+                  POINTER_OFFSET(dst, dst_range.start() * type_size),
+                  dst_range.size(),
+                  type_size);
+    }
+  });
+}
+
+void copy_group_to_group_bytes(const OffsetIndices<int> src_offsets,
+                               const OffsetIndices<int> dst_offsets,
+                               const IndexMask &selection,
+                               const void *src,
+                               void *dst,
+                               const int64_t type_size)
+{
+  /* Each group might be large, so a threaded copy might make sense here too. */
+  selection.foreach_index(
+      [&](const int i) {
+        const IndexRange src_range = src_offsets[i];
+        const IndexRange dst_range = dst_offsets[i];
+        BLI_assert(src_range.size() == dst_range.size());
+        copy_values(POINTER_OFFSET(src, src_range.start() * type_size),
+                    POINTER_OFFSET(dst, dst_range.start() * type_size),
+                    dst_range.size(),
+                    type_size);
+      },
+      exec_mode::grain_size(512));
+}
+
+}  // namespace detail
 
 void copy(const GVArray &src, GMutableSpan dst, const exec_mode::Mode mode)
 {
@@ -84,12 +184,184 @@ void gather(const GSpan src,
   gather(GVArray::from_span(src), indices, dst, mode);
 }
 
+void gather(const GSpan src, const Span<int> indices, const IndexMask &dst_mask, GMutableSpan dst)
+{
+  BLI_assert(src.type() == dst.type());
+  BLI_assert(indices.size() >= dst_mask.min_array_size());
+  const CPPType &type = src.type();
+  const bool handled = bytes_type::to_common_bytes_type_try(type, [&]<typename T>() {
+    detail::gather_impl(bytes_type::typed<T>(src),
+                        indices,
+                        dst_mask,
+                        bytes_type::typed<T>(dst),
+                        exec_mode::parallel);
+  });
+  if (handled) {
+    return;
+  }
+  dst_mask.foreach_index([&](const int64_t i) { type.copy_assign(src[indices[i]], dst[i]); },
+                         exec_mode::grain_size(1024));
+}
+
+void gather(const GSpan src, const Span<int> indices, GMutableSpan dst)
+{
+  gather(src, indices, IndexRange(dst.size()), dst);
+}
+
+void gather(const GVArray &src,
+            const Span<int> indices,
+            const IndexMask &dst_mask,
+            GMutableSpan dst)
+{
+  BLI_assert(src.type() == dst.type());
+  BLI_assert(indices.size() >= dst_mask.min_array_size());
+  if (src.is_span()) {
+    gather(src.get_internal_span(), indices, dst_mask, dst);
+    return;
+  }
+  const CPPType &type = src.type();
+  if (src.is_single()) {
+    BUFFER_FOR_CPP_TYPE_VALUE(type, value);
+    src.get_internal_single_to_uninitialized(value);
+    type.fill_assign_indices(value, dst.data(), dst_mask);
+    type.destruct(value);
+    return;
+  }
+  dst_mask.foreach_index([&](const int64_t i) { src.get(indices[i], dst[i]); },
+                         exec_mode::grain_size(1024));
+}
+
+void gather(const GVArray &src, const Span<int> indices, GMutableSpan dst)
+{
+  gather(src, indices, IndexRange(dst.size()), dst);
+}
+
+void gather_group_to_group(const OffsetIndices<int> src_offsets,
+                           const OffsetIndices<int> dst_offsets,
+                           const IndexMask &selection,
+                           const GSpan src,
+                           GMutableSpan dst)
+{
+  BLI_assert(src.type() == dst.type());
+  const CPPType &type = src.type();
+  if (type.is_trivial) {
+    detail::gather_group_to_group_bytes(
+        src_offsets, dst_offsets, selection, src.data(), dst.data(), type.size);
+    return;
+  }
+  selection.foreach_index(
+      [&](const int64_t src_i, const int64_t dst_i) {
+        dst.slice(dst_offsets[dst_i]).copy_from(src.slice(src_offsets[src_i]));
+      },
+      exec_mode::grain_size(512));
+}
+
+void gather_to_groups(const OffsetIndices<int> dst_offsets,
+                      const IndexMask &src_selection,
+                      const GSpan src,
+                      GMutableSpan dst)
+{
+  BLI_assert(src.type() == dst.type());
+  const CPPType &type = src.type();
+  const bool handled = bytes_type::to_common_bytes_type_try(type, [&]<typename T>() {
+    detail::gather_to_groups_impl(
+        dst_offsets, src_selection, bytes_type::typed<T>(src), bytes_type::typed<T>(dst));
+  });
+  if (handled) {
+    return;
+  }
+  src_selection.foreach_index(
+      [&](const int src_i, const int dst_i) {
+        const IndexRange dst_range = dst_offsets[dst_i];
+        type.fill_assign_n(src[src_i], dst.slice(dst_range).data(), dst_range.size());
+      },
+      exec_mode::grain_size(1024));
+}
+
+void gather_ranges_to_groups(const Span<IndexRange> src_ranges,
+                             const OffsetIndices<int> dst_offsets,
+                             const GSpan src,
+                             GMutableSpan dst)
+{
+  BLI_assert(src.type() == dst.type());
+  const CPPType &type = src.type();
+  if (type.is_trivial) {
+    threading::parallel_for(src_ranges.index_range(), 512, [&](const IndexRange range) {
+      for (const int i : range) {
+        const IndexRange src_range = src_ranges[i];
+        const IndexRange dst_range = dst_offsets[i];
+        BLI_assert(src_range.size() == dst_range.size());
+        detail::copy_values(POINTER_OFFSET(src.data(), src_range.start() * type.size),
+                            POINTER_OFFSET(dst.data(), dst_range.start() * type.size),
+                            dst_range.size(),
+                            type.size);
+      }
+    });
+    return;
+  }
+  threading::parallel_for(src_ranges.index_range(), 512, [&](const IndexRange range) {
+    for (const int i : range) {
+      dst.slice(dst_offsets[i]).copy_from(src.slice(src_ranges[i]));
+    }
+  });
+}
+
+void shift_left(GMutableSpan data, int src_begin, int src_end, int dst_begin)
+{
+  BLI_assert(dst_begin <= src_begin);
+  if (ELEM(src_begin, dst_begin, src_end)) {
+    return;
+  }
+  const CPPType &type = data.type();
+  const int64_t num = src_end - src_begin;
+  if (type.is_trivial) {
+    std::memmove(data[dst_begin], data[src_begin], num * type.size);
+    return;
+  }
+  /* Move in chunks that are small enough that the source and destination don't overlap. Chunks at
+   * the start are moved first, so that their values are moved before they are overwritten. */
+  const int64_t offset = src_begin - dst_begin;
+  for (int64_t start = 0; start < num; start += offset) {
+    const int64_t chunk_size = std::min(offset, num - start);
+    type.move_assign_n(data[src_begin + start], data[dst_begin + start], chunk_size);
+  }
+}
+
+void shift_right(GMutableSpan data, int src_begin, int src_end, int dst_end)
+{
+  BLI_assert(dst_end >= src_end);
+  if (ELEM(src_end, dst_end, src_begin)) {
+    return;
+  }
+  const CPPType &type = data.type();
+  const int64_t num = src_end - src_begin;
+  const int64_t dst_begin = dst_end - num;
+  if (type.is_trivial) {
+    std::memmove(data[dst_begin], data[src_begin], num * type.size);
+    return;
+  }
+  /* Same as #shift_left, but the chunks at the end are moved first. */
+  const int64_t offset = dst_end - src_end;
+  for (int64_t end = num; end > 0; end -= offset) {
+    const int64_t chunk_size = std::min(offset, end);
+    const int64_t start = end - chunk_size;
+    type.move_assign_n(data[src_begin + start], data[dst_begin + start], chunk_size);
+  }
+}
+
 void copy_group_to_group(const OffsetIndices<int> src_offsets,
                          const OffsetIndices<int> dst_offsets,
                          const IndexMask &selection,
                          const GSpan src,
                          GMutableSpan dst)
 {
+  BLI_assert(src.type() == dst.type());
+  const CPPType &type = src.type();
+  if (type.is_trivial) {
+    detail::copy_group_to_group_bytes(
+        src_offsets, dst_offsets, selection, src.data(), dst.data(), type.size);
+    return;
+  }
   /* Each group might be large, so a threaded copy might make sense here too. */
   selection.foreach_index(
       [&](const int i) { dst.slice(dst_offsets[i]).copy_from(src.slice(src_offsets[i])); },
@@ -184,12 +456,95 @@ void count_indices(const Span<int> indices, MutableSpan<int> counts)
   }
 }
 
+/**
+ * A lookup table indexed by the IDs avoids hashing and can be filled in parallel, which makes
+ * it much faster than a hash table, but the size of the table depends on the range of the IDs,
+ * so still use a VectorSet instead of the lookup table would need to be too large.
+ */
+static int group_ids_to_indices_with_table(const Span<int> ids,
+                                           const IndexMask &mask,
+                                           const Bounds<int> &id_bounds,
+                                           MutableSpan<int> r_group_indices,
+                                           Vector<int> *r_first_indices)
+{
+  const int64_t id_min = id_bounds.min;
+  const int64_t ids_range = int64_t(id_bounds.max) - int64_t(id_bounds.min) + 1;
+
+  /* Find the first element with each ID. */
+  Array<int, 64> first_elem(ids_range, std::numeric_limits<int>::max());
+  mask.foreach_index_optimized<int>(
+      [&](const int i) {
+        std::atomic_ref<int> first(first_elem[ids[i] - id_min]);
+        int prev = first.load(std::memory_order_relaxed);
+        while (i < prev && !first.compare_exchange_weak(prev, i, std::memory_order_relaxed)) {
+        }
+      },
+      exec_mode::grain_size(4096));
+
+  /* Number the groups in the order of their first elements, replacing the first element index in
+   * the table with the group index. */
+  IndexMaskMemory memory;
+  const IndexMask first_indices = IndexMask::from_predicate(
+      mask, memory, [&](const int i) { return first_elem[ids[i] - id_min] == i; });
+  first_indices.foreach_index_optimized<int>(
+      [&](const int i, const int group) { first_elem[ids[i] - id_min] = group; },
+      exec_mode::grain_size(4096));
+
+  /* Look up the group index of every element's ID. */
+  mask.foreach_index_optimized<int>(
+      [&](const int i, const int pos) { r_group_indices[pos] = first_elem[ids[i] - id_min]; },
+      exec_mode::grain_size(4096));
+
+  if (r_first_indices) {
+    r_first_indices->resize(first_indices.size());
+    first_indices.to_indices(r_first_indices->as_mutable_span());
+  }
+  return first_indices.size();
+}
+
+int group_ids_to_indices(const Span<int> ids,
+                         const IndexMask &mask,
+                         MutableSpan<int> r_group_indices,
+                         Vector<int> *r_first_indices)
+{
+  PRF_scope(ProfileCategory::Default);
+  BLI_assert(r_group_indices.size() == mask.size());
+  const std::optional<Bounds<int>> id_bounds = bounds::min_max(mask, ids);
+  if (!id_bounds) {
+    return 0;
+  }
+
+  const int64_t ids_range = int64_t(id_bounds->max) - int64_t(id_bounds->min) + 1;
+  if (ids_range < mask.size() * 4) {
+    return group_ids_to_indices_with_table(
+        ids, mask, *id_bounds, r_group_indices, r_first_indices);
+  }
+
+  using IdSet = VectorSet<int,
+                          4,
+                          DefaultProbingStrategy,
+                          DefaultHash<int>,
+                          DefaultEquality<int>,
+                          SimpleVectorSetSlot<int, int>>;
+  IdSet unique_ids;
+  mask.foreach_index_optimized<int>([&](const int i, const int pos) {
+    const int group = unique_ids.index_of_or_add(ids[i]);
+    if (r_first_indices && group == r_first_indices->size()) {
+      r_first_indices->append(i);
+    }
+    r_group_indices[pos] = group;
+  });
+  return unique_ids.size();
+}
+
 void invert_booleans(MutableSpan<bool> span)
 {
   PRF_scope_with_name("array_utils::invert_booleans", ProfileCategory::Default);
-  threading::parallel_for(span.index_range(), 4096, [&](IndexRange range) {
-    for (const int i : range) {
-      span[i] = !span[i];
+  threading::parallel_for(span.index_range(), 4096, [&](const IndexRange range) {
+    /* Use a local char pointer to allow auto-vectorization. */
+    char *data = span.cast<char>().data();
+    for (const int64_t i : range) {
+      data[i] = !data[i];
     }
   });
 }
@@ -197,7 +552,12 @@ void invert_booleans(MutableSpan<bool> span)
 void invert_booleans(MutableSpan<bool> span, const IndexMask &mask)
 {
   PRF_scope_with_name("array_utils::invert_booleans", ProfileCategory::Default);
-  mask.foreach_index_optimized<int64_t>([&](const int64_t i) { span[i] = !span[i]; });
+  mask.foreach_segment_optimized([&](const auto segment) {
+    char *data = span.cast<char>().data();
+    for (const int64_t i : segment) {
+      data[i] = !data[i];
+    }
+  });
 }
 
 static bool all_equal(const Span<bool> span, const bool test)
@@ -414,6 +774,23 @@ bool indices_are_range(Span<int> indices, IndexRange range)
                std::equal(local_indices.begin(), local_indices.end(), local_range.begin());
       },
       std::logical_and<>());
+}
+
+void copy_ints_with_offset(const Span<int> src,
+                           const int offset,
+                           MutableSpan<int> dst,
+                           const int64_t grain_size)
+{
+  BLI_assert(src.size() == dst.size());
+  threading::parallel_for_aligned(src.index_range(), grain_size, 16, [&](const IndexRange range) {
+    /* Create local copies of the data for better auto-vectorization in the loop. */
+    const int *src_ = src.data();
+    int *dst_ = dst.data();
+    const int offset_ = offset;
+    for (const int64_t i : range) {
+      dst_[i] = src_[i] + offset_;
+    }
+  });
 }
 
 }  // namespace blender::array_utils

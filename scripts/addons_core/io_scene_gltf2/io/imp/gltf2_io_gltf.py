@@ -30,7 +30,7 @@ class glTFImporter():
         self.accessor_cache = {}
         self.decode_accessor_cache = {}
         self.import_user_extensions = import_settings['import_user_extensions']
-        self.variant_mapping = {}  # Used to map between mgltf material idx and blender material, for Variants
+        self.variant_mapping = {}  # Used to map between glTF material idx and Blender material, for variants
 
         if 'loglevel' not in self.import_settings.keys():
             self.import_settings['loglevel'] = logging.CRITICAL
@@ -58,9 +58,11 @@ class glTFImporter():
             'KHR_animation_pointer',
             'KHR_materials_volume',
             'EXT_texture_webp',
+            "KHR_texture_basisu",
             'KHR_materials_anisotropy',
             'KHR_materials_dispersion',
             'KHR_materials_iridescence',
+            'KHR_gaussian_splatting',
         ]
 
         # Add extensions required supported by custom import extensions

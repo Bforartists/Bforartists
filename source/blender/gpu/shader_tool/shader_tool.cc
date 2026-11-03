@@ -49,8 +49,9 @@ static metadata::Source scan_external_symbols(const std::vector<std::string> &fi
   for (const auto &dep : include_data.dependencies) {
     std::string file;
     for (const auto &filename : file_list) {
-      if (filename.find(dep) != std::string::npos) {
+      if (std::filesystem::path(filename).filename() == dep) {
         file = filename;
+        break;
       }
     }
 
@@ -183,7 +184,19 @@ int main(int argc, char **argv)
 
   if (language == Language::BSL) {
     /* Until the new BSL compiler is fully working, use the legacy one. */
-    if (/* Add ported files here. */ true) {
+    if (/* Add non-ported files here. */
+        filename.ends_with("gpu_shader_material_radial_tiling.bsl.hh") ||
+        filename.ends_with("gpu_shader_material_tex_voronoi.bsl.hh") ||
+        /* Need new compiler. */
+        (filename.find("gpu/shaders/") == std::string::npos &&
+         filename.find("draw/intern/shaders/") == std::string::npos &&
+         filename.find("workbench/shaders/") == std::string::npos &&
+         filename.find("overlay/shaders/") == std::string::npos &&
+         filename.find("select/shaders/") == std::string::npos &&
+         filename.find("eevee/shaders/") == std::string::npos &&
+         filename.find("gpencil/shaders/") == std::string::npos &&
+         filename.find("compositor/shaders/") == std::string::npos))
+    {
       language = Language::BLENDER_GLSL;
     }
   }
@@ -192,6 +205,26 @@ int main(int argc, char **argv)
   std::vector<std::string> visited_files{input_file_name};
   if (language == Language::BLENDER_GLSL) {
     external_symbols = scan_external_symbols(file_list, visited_files, buffer.str(), filename);
+  }
+
+  SourceProcessor processor(buffer.str(), input_file_name, language, file_list);
+
+  auto [result, metadata, error] = processor.convert(external_symbols);
+
+  output_file << result;
+
+  size_t last_slash = filename.find_last_of('/');
+  std::string name = (last_slash == std::string::npos) ? filename :
+                                                         filename.substr(last_slash + 1);
+  std::string metadata_function_name = "metadata_" + name + "_tmp";
+  std::ranges::replace(metadata_function_name, '.', '_');
+
+  metadata_file << metadata.serialize(metadata_function_name);
+  if (is_info) {
+    infos_file << metadata.serialize_infos();
+  }
+  if (!metadata.visited_files.empty()) {
+    visited_files = metadata.visited_files;
   }
 
   /* Escape path according to the depfile syntax. */
@@ -209,24 +242,6 @@ int main(int argc, char **argv)
     dep_file << escape_path(file) << " ";
   }
   dep_file << "\n";
-
-  SourceProcessor processor(buffer.str(), input_file_name, language, file_list);
-
-  auto [result, metadata, error] = processor.convert(external_symbols);
-
-  output_file << result;
-
-  /* TODO(fclem): Don't use regex for that. */
-  size_t last_slash = filename.find_last_of('/');
-  std::string name = (last_slash == std::string::npos) ? filename :
-                                                         filename.substr(last_slash + 1);
-  std::string metadata_function_name = "metadata_" + name + "_tmp";
-  std::ranges::replace(metadata_function_name, '.', '_');
-
-  metadata_file << metadata.serialize(metadata_function_name);
-  if (is_info) {
-    infos_file << metadata.serialize_infos();
-  }
 
   input_file.close();
   output_file.close();

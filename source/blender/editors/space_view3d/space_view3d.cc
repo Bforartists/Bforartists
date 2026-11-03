@@ -29,11 +29,11 @@
 #include "BLI_string_utf8.hh"
 #include "BLI_utildefines.hh"
 
+#include "BKE_annotations.h"
 #include "BKE_asset.hh"
 #include "BKE_compositor.hh"
 #include "BKE_context.hh"
 #include "BKE_global.hh"
-#include "BKE_gpencil_legacy.h"
 #include "BKE_idprop.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
@@ -45,6 +45,7 @@
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_vfont.hh"
+#include "BKE_view3d_runtime.hh"
 #include "BKE_viewer_path.hh"
 
 #include "ED_asset_shelf.hh"
@@ -128,8 +129,8 @@ bool ED_view3d_area_user_region(const ScrArea *area, const View3D *v3d, ARegion 
 void ED_view3d_init_mats_rv3d(const Object *ob, RegionView3D *rv3d)
 {
   /* local viewmat and persmat, to calculate projections */
-  mul_m4_m4m4(rv3d->viewmatob, rv3d->viewmat, ob->object_to_world().ptr());
-  mul_m4_m4m4(rv3d->persmatob, rv3d->persmat, ob->object_to_world().ptr());
+  mul_m4_m4m4(rv3d->runtime->viewmatob, rv3d->viewmat, ob->object_to_world().ptr());
+  mul_m4_m4m4(rv3d->runtime->persmatob, rv3d->persmat, ob->object_to_world().ptr());
 
   /* initializes object space clipping, speeds up clip tests */
   ED_view3d_clipping_local(rv3d, ob->object_to_world().ptr());
@@ -148,14 +149,14 @@ void ED_view3d_init_mats_rv3d_gl(const Object *ob, RegionView3D *rv3d)
 #ifndef NDEBUG
 void ED_view3d_clear_mats_rv3d(RegionView3D *rv3d)
 {
-  zero_m4(rv3d->viewmatob);
-  zero_m4(rv3d->persmatob);
+  zero_m4(rv3d->runtime->viewmatob);
+  zero_m4(rv3d->runtime->persmatob);
 }
 
 void ED_view3d_check_mats_rv3d(RegionView3D *rv3d)
 {
-  BLI_ASSERT_ZERO_M4(rv3d->viewmatob);
-  BLI_ASSERT_ZERO_M4(rv3d->persmatob);
+  BLI_ASSERT_ZERO_M4(rv3d->runtime->viewmatob);
+  BLI_ASSERT_ZERO_M4(rv3d->runtime->persmatob);
 }
 #endif
 
@@ -163,7 +164,7 @@ void ED_view3d_stop_render_preview(wmWindowManager *wm, ARegion *region)
 {
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
 
-  if (rv3d->view_render) {
+  if (rv3d->runtime->view_render) {
 #ifdef WITH_PYTHON
     BPy_BEGIN_ALLOW_THREADS;
 #endif
@@ -260,6 +261,7 @@ static SpaceLink *view3d_create(const ScrArea * /*area*/, const Scene *scene)
   rv3d->persp = RV3D_PERSP;
   rv3d->view = RV3D_VIEW_USER;
   rv3d->dist = 10.0;
+  rv3d->runtime = MEM_new<bke::RegionView3DRuntime>(__func__);
   region->regiondata = rv3d;
 
   return reinterpret_cast<SpaceLink *>(v3d);
@@ -507,6 +509,7 @@ static void view3d_widgets()
 
   WM_gizmogrouptype_append_and_link(gzmap_type, VIEW3D_GGT_navigate);
   WM_gizmotype_append(VIEW3D_GT_navigate_rotate);
+  WM_gizmotype_append(VIEW3D_GT_navigate_roll); /* BFA - roll gizmo #6839 */
 }
 
 /* type callback, not region itself */
@@ -522,14 +525,15 @@ static void view3d_main_region_free(ARegion *region)
       MEM_delete(rv3d->clipbb);
     }
 
-    if (rv3d->view_render) {
+    if (rv3d->runtime->view_render) {
       DRW_engine_external_free(rv3d);
     }
 
-    if (rv3d->sms) {
+    if (rv3d->runtime->sms) {
       view3d_smooth_free(rv3d);
     }
 
+    MEM_delete(rv3d->runtime);
     MEM_delete(rv3d);
     region->regiondata = nullptr;
   }
@@ -550,9 +554,7 @@ static void *view3d_main_region_duplicate(void *poin)
       new_rv3d->clipbb = MEM_dupalloc(rv3d->clipbb);
     }
 
-    new_rv3d->view_render = nullptr;
-    new_rv3d->sms = nullptr;
-    new_rv3d->smooth_timer = nullptr;
+    new_rv3d->runtime = MEM_new<bke::RegionView3DRuntime>(__func__);
 
     return new_rv3d;
   }
@@ -565,7 +567,7 @@ static std::optional<ARegionIMECursorState> view3d_main_region_cursor_ime(
 {
   /* The position is pending during viewport navigation (orbit, pan, zoom, fly, walk). */
   const RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-  if (rv3d->rflag & RV3D_NAVIGATING) {
+  if (rv3d->runtime->tags & bke::RV3D_TAG_NAVIGATING) {
     return ARegionIMECursorState::PositionPending;
   }
 
@@ -685,6 +687,8 @@ static void view3d_main_region_listener(const wmRegionListenerParams *params)
           ED_region_tag_redraw(region);
           WM_gizmomap_tag_refresh(gzmap);
           break;
+        case ND_KEYINGSET:
+          ED_region_tag_redraw(region);
         case ND_WORLD:
           /* handled by space_view3d_listener() for v3d access */
           break;
@@ -853,7 +857,7 @@ static void view3d_main_region_listener(const wmRegionListenerParams *params)
     case NC_SPACE:
       if (wmn->data == ND_SPACE_VIEW3D) {
         if (wmn->subtype == NS_VIEW3D_GPU) {
-          rv3d->rflag |= RV3D_GPULIGHT_UPDATE;
+          rv3d->runtime->tags |= bke::RV3D_TAG_GPULIGHT_UPDATE;
         }
         else if (wmn->subtype == NS_VIEW3D_SHADING) {
 #ifdef WITH_XR_OPENXR
@@ -1238,7 +1242,7 @@ std::array<const char *, 4> ED_view3d_buttons_contexts(const bContext *C)
       ARRAY_SET_ITEMS(contexts, ".grease_pencil_paint");
       break;
     case CTX_MODE_SCULPT_GREASE_PENCIL:
-      ARRAY_SET_ITEMS(contexts, ".paint_common", ".grease_pencil_sculpt");
+      ARRAY_SET_ITEMS(contexts, ".grease_pencil_sculpt");
       break;
     case CTX_MODE_WEIGHT_GREASE_PENCIL:
       ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
@@ -1631,7 +1635,7 @@ static void view3d_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
   v3d->runtime = View3D_Runtime{};
 
   if (BLO_read_struct_nonnull(reader, bGPdata, &v3d->gpd)) {
-    BKE_gpencil_blend_read_data(reader, v3d->gpd);
+    BKE_annotations_blend_read_data(reader, v3d->gpd);
   }
   BLO_read_struct(reader, RegionView3D, &v3d->localvd);
 
@@ -1651,10 +1655,15 @@ static void view3d_space_blend_read_data(BlendDataReader *reader, SpaceLink *sl)
 static void view3d_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   View3D *v3d = reinterpret_cast<View3D *>(sl);
-  writer->write_struct(v3d);
+  writer->write_struct(v3d, [](BlendStructWriter<View3D> &struct_writer) {
+    struct_writer.shallow_data.runtime = {};
+  });
 
   if (v3d->localvd) {
-    writer->write_struct(v3d->localvd);
+    writer->write_struct(v3d->localvd, [](BlendStructWriter<View3D> &struct_writer) {
+      View3D &shallow_v3d = struct_writer.shallow_data;
+      memset((void *)&shallow_v3d.runtime, 0, sizeof(shallow_v3d.runtime));
+    });
   }
 
   BKE_screen_view3d_shading_blend_write(writer, &v3d->shading);
@@ -1670,6 +1679,7 @@ void ED_spacetype_view3d()
 
   st->spaceid = SPACE_VIEW3D;
   STRNCPY_UTF8(st->name, "View3D");
+  st->struct_size = sizeof(View3D);
 
   st->create = view3d_create;
   st->free = view3d_free;

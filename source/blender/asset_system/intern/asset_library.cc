@@ -94,7 +94,7 @@ std::string AS_asset_library_find_suitable_root_path_from_path(const StringRefNu
   }
 
   char buffer[FILE_MAXDIR];
-  BLI_path_split_dir_part(input_path.c_str(), buffer, FILE_MAXDIR);
+  BLI_path_split_dir_part(input_path.c_str(), buffer);
   return buffer;
 }
 
@@ -251,6 +251,11 @@ void AssetLibrary::foreach_loaded(FunctionRef<void(AssetLibrary &)> fn,
 void AssetLibrary::force_remote_listing_download() const
 {
   /* Default implementation is a no-op. */
+}
+
+const bUserAssetLibrary *AssetLibrary::user_asset_library() const
+{
+  return nullptr;
 }
 
 bool AssetLibrary::use_relative_paths() const

@@ -83,21 +83,10 @@ bool BlenderSync::object_is_geometry(BObjectInfo &b_ob_info)
 
 bool BlenderSync::object_can_have_geometry(blender::Object &b_ob)
 {
-  const blender::ObjectType type = b_ob.type;
-  switch (type) {
-    case blender::OB_MESH:
-    case blender::OB_CURVES_LEGACY:
-    case blender::OB_SURF:
-    case blender::OB_MBALL:
-    case blender::OB_FONT:
-    case blender::OB_CURVES:
-    case blender::OB_POINTCLOUD:
-    case blender::OB_VOLUME:
-      /* TODO(weizhen): OB_LAMP */
-      return true;
-    default:
-      return false;
-  }
+  using namespace blender;
+
+  /* Empties can generate geometry with geometry nodes modifiers. */
+  return OB_TYPE_IS_GEOMETRY(b_ob.type) || b_ob.type == OB_EMPTY;
 }
 
 bool BlenderSync::object_is_light(blender::Object &b_ob)
@@ -220,7 +209,7 @@ Object *BlenderSync::sync_object(blender::ViewLayer &b_view_layer,
   /* TODO: make holdout objects on excluded layer invisible for non-camera rays. */
 #if 0
   if (use_holdout && (layer_flag & view_layer.exclude_layer)) {
-    visibility &= ~(PATH_RAY_VISIBILITY_ALL & ~PATH_RAY_VISIBILITY_CAMERA);
+    visibility &= ~(PATH_RAY_VISIBILITY_OBJECT_ALL & ~PATH_RAY_VISIBILITY_CAMERA);
   }
 #endif
 

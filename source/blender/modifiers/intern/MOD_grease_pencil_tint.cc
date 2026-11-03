@@ -288,10 +288,7 @@ static void modify_fill_color(Object &ob,
     if (!gp_style) {
       return ColorGeometry4f(0.0f, 0.0f, 0.0f, 0.0f);
     }
-    const bool is_gradient = gp_style->fill_style == GP_MATERIAL_FILL_STYLE_GRADIENT;
-    const float4 average_color = math::interpolate(
-        float4(gp_style->fill_rgba), float4(gp_style->mix_rgba), is_gradient ? 0.5f : 0.0f);
-    return ColorGeometry4f(average_color);
+    return ColorGeometry4f(gp_style->fill_rgba);
   };
 
   auto get_curve_factor = [&](const int64_t curve_i) {
@@ -359,11 +356,8 @@ static void modify_opacity(const GreasePencilTintModifierData &tmd,
 
   const OffsetIndices<int> points_by_curve = curves.points_by_curve();
   bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-  bke::SpanAttributeWriter<float> opacities = attributes.lookup_or_add_for_write_span<float>(
+  bke::SpanAttributeWriter<float> opacities = attributes.ensure_for_write_span<float>(
       "opacity", bke::AttrDomain::Point);
-  if (!opacities) {
-    return;
-  }
 
   curves_mask.foreach_index(
       [&](const int64_t curve_i) {

@@ -44,6 +44,23 @@
 
 namespace blender {
 
+/** Enums for asset library GUI panels. Shared between preferences and project setup UI. */
+const EnumPropertyItem custom_library_type_items[] = {
+    {int(bUserAssetLibraryAddType::Remote),
+     "REMOTE",
+     ICON_INTERNET,
+     "Add Remote Asset Library",
+     "Add an asset library referencing a remote repository "
+     "with support for listing and updating asset libraries"},
+    {int(bUserAssetLibraryAddType::Local),
+     "LOCAL",
+     ICON_DISK_DRIVE,
+     "Add Local Asset Library",
+     "Add an asset library managed via the file system without referencing an external "
+     "repository"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
 /* -------------------------------------------------------------------- */
 /** \name Default Callbacks for User Preferences Space
  * \{ */
@@ -197,8 +214,10 @@ bUserAssetLibrary *ED_userpref_asset_library_new(const bContext *C,
       char final_dirpath[FILE_MAX];
       STRNCPY(final_dirpath, dirpath);
       BLI_path_slash_rstrip(final_dirpath);
-      if (!final_name[0]) {
-        BLI_path_split_file_part(final_dirpath, final_name, sizeof(final_name));
+      /* Default to directory name, except when directory is a project root template
+       * without any subdirectory. */
+      if (!final_name[0] && !STREQ(final_dirpath, "{project_root}")) {
+        BLI_path_split_file_part(final_dirpath, final_name);
       }
       if (!final_name[0]) {
         STRNCPY(final_name, DATA_("Local Asset Library"));
@@ -222,8 +241,8 @@ bUserAssetLibrary *ED_userpref_asset_library_new(const bContext *C,
       }
 
       if (is_project_defined) {
-        /* Not implemented yet for project asset libraries. */
-        BLI_assert_unreachable();
+        new_library = BKE_preferences_project_remote_asset_library_add(
+            &U, final_name, dirpath, auth_token.value_or(nullptr));
       }
       else {
         new_library = BKE_preferences_remote_asset_library_add(
@@ -252,11 +271,7 @@ bUserAssetLibrary *ED_userpref_asset_library_new(const bContext *C,
   }
 
   /* Activate new library in the UI for further setup. */
-  if (const std::optional<int> new_active_idx =
-          userpref_ui_asset_libraries_index_from_user_library(*new_library))
-  {
-    U.active_asset_library = *new_active_idx;
-  }
+  ED_userpref_asset_library_active_set(*new_library);
 
   if (new_library->flag & ASSET_LIBRARY_USE_REMOTE_URL) {
     blender::asset_system::remote_library_request_download(*new_library);
@@ -517,7 +532,10 @@ static void userpref_blend_read_data(BlendDataReader * /*reader*/, SpaceLink *sl
 
 static void userpref_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
-  writer->write_struct_cast<SpaceUserPref>(sl);
+  writer->write_struct_cast<SpaceUserPref>(sl,
+                                           [](BlendStructWriter<SpaceUserPref> &struct_writer) {
+                                             struct_writer.shallow_data.runtime = nullptr;
+                                           });
 }
 
 void ED_spacetype_userpref()
@@ -527,6 +545,7 @@ void ED_spacetype_userpref()
 
   st->spaceid = SPACE_USERPREF;
   STRNCPY_UTF8(st->name, "Userpref");
+  st->struct_size = sizeof(SpaceUserPref);
 
   st->create = userpref_create;
   st->free = userpref_free;

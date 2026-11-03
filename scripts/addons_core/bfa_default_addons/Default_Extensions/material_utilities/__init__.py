@@ -17,18 +17,6 @@
 #  Link to base names: Sybren, Texture renamer: Yadoob
 # ###
 
-bl_info = {
-    "name": "Material Utilities",
-    "author": "MichaleW, ChrisHinde",
-    "version": (2, 2, 2),
-    "blender": (3, 0, 0),
-    "location": "View3D > Shift + Q key",
-    "description": "Menu of material tools (assign, select..) in the 3D View",
-    "warning": "Beta",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/materials/material_utils.html",
-   "category": "Material"
-}
-
 """
 This script has several functions and operators, grouped for convenience:
 

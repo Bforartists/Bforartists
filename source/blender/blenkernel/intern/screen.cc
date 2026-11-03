@@ -28,6 +28,7 @@
 #include "DNA_view3d_types.h"
 
 #include "BLI_listbase.hh"
+#include "BLI_math_matrix_c.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
@@ -43,6 +44,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_preview_image.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "BLO_read_write.hh"
 
@@ -211,8 +213,21 @@ static void screen_blend_write(BlendWriter *writer, ID *id, const void *id_addre
 
   /* write LibData */
   /* in 2.50+ files, the file identifier for screens is patched, forward compatibility */
-  writer->write_struct_at_address_by_id_with_filecode(
-      ID_SCRN, dna::sdna_struct_id_get<bScreen>(), id_address, screen);
+  writer->write_id_struct(
+      ID_SCRN, id_address, screen, [](BlendStructWriter<bScreen> &struct_writer) {
+        bScreen &shallow_screen = struct_writer.shallow_data;
+        shallow_screen.do_draw = 0;
+        shallow_screen.do_refresh = 0;
+        shallow_screen.do_draw_gesture = 0;
+        shallow_screen.do_draw_paintcursor = 0;
+        shallow_screen.do_draw_drag = 0;
+        shallow_screen.skip_handling = 0;
+        shallow_screen.scrubbing = 0;
+        shallow_screen.active_region = nullptr;
+        shallow_screen.animtimer = nullptr;
+        shallow_screen.context = nullptr;
+        shallow_screen.tool_tip = nullptr;
+      });
   BKE_id_blend_write(writer, &screen->id);
 
   BKE_previewimg_blend_write(writer, screen->preview);
@@ -364,6 +379,8 @@ Span<std::unique_ptr<SpaceType>> BKE_spacetypes_list()
 
 void BKE_spacetype_register(std::unique_ptr<SpaceType> st)
 {
+  BLI_assert(st->struct_size >= int(sizeof(SpaceLink)));
+
   /* sanity check */
   SpaceType *stype = BKE_spacetype_from_id(st->spaceid);
   if (stype) {
@@ -1345,9 +1362,29 @@ void BKE_screen_view3d_shading_blend_read_data(BlendDataReader *reader, View3DSh
 
 static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
 {
-  ARegion region_copy = *region;
-  region_copy.runtime = nullptr;
-  writer->write_struct_at_address(region, &region_copy);
+  writer->write_struct(region, [](BlendStructWriter<ARegion> &struct_writer) {
+    ARegion &shallow_region = struct_writer.shallow_data;
+    shallow_region.runtime = nullptr;
+    shallow_region.flag &= ~(RGN_FLAG_TOO_SMALL | RGN_FLAG_POLL_FAILED | RGN_FLAG_SIZE_CLAMP_X |
+                             RGN_FLAG_SIZE_CLAMP_Y | RGN_FLAG_SEARCH_FILTER_ACTIVE |
+                             RGN_FLAG_SEARCH_FILTER_UPDATE);
+    shallow_region.v2d.sms = nullptr;
+    shallow_region.v2d.smooth_timer = nullptr;
+    shallow_region.v2d.scroll_ui = {};
+    shallow_region.v2d.flag &= ~V2D_IS_NAVIGATING;
+    /* Matches #direct_link_region. */
+    shallow_region.v2d.alpha_hor = 255;
+    shallow_region.v2d.alpha_vert = 255;
+    /* For some region types, #View2D.tot is pure runtime data. */
+    if (ELEM(shallow_region.regiontype,
+             RGN_TYPE_HEADER,
+             RGN_TYPE_TOOL_HEADER,
+             RGN_TYPE_FOOTER,
+             RGN_TYPE_ASSET_SHELF_HEADER))
+    {
+      shallow_region.v2d.tot = shallow_region.v2d.cur;
+    }
+  });
 
   if (region->regiondata) {
     if (region->flag & RGN_FLAG_TEMP_REGIONDATA) {
@@ -1363,10 +1400,15 @@ static void write_region(BlendWriter *writer, ARegion *region, int spacetype)
       case SPACE_VIEW3D:
         if (region->regiontype == RGN_TYPE_WINDOW) {
           RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-          writer->write_struct(rv3d);
+          writer->write_struct(rv3d, [](BlendStructWriter<RegionView3D> &struct_writer) {
+            struct_writer.shallow_data.runtime = nullptr;
+          });
 
           if (rv3d->localvd) {
-            writer->write_struct(rv3d->localvd);
+            writer->write_struct(rv3d->localvd,
+                                 [](BlendStructWriter<RegionView3D> &struct_writer) {
+                                   struct_writer.shallow_data.runtime = nullptr;
+                                 });
           }
           if (rv3d->clipbb) {
             writer->write_struct(rv3d->clipbb);
@@ -1402,10 +1444,10 @@ static void write_uilist(BlendWriter *writer, uiList *ui_list)
 static void write_panel_list(BlendWriter *writer, ListBaseT<Panel> *lb)
 {
   for (Panel &panel : *lb) {
-    Panel panel_copy = panel;
-    panel_copy.runtime_flag = 0;
-    panel_copy.runtime = nullptr;
-    writer->write_struct_at_address(&panel, &panel_copy);
+    writer->write_struct(&panel, [](BlendStructWriter<Panel> &struct_writer) {
+      struct_writer.shallow_data.runtime_flag = 0;
+      struct_writer.shallow_data.runtime = nullptr;
+    });
     writer->write_struct_list(&panel.layout_panel_states);
     for (LayoutPanelState &state : panel.layout_panel_states) {
       writer->write_string(state.idname);
@@ -1429,7 +1471,10 @@ static void write_area(BlendWriter *writer, ScrArea *area)
     }
 
     for (uiPreview &ui_preview : region.ui_previews) {
-      writer->write_struct(&ui_preview);
+      writer->write_struct(&ui_preview, [](BlendStructWriter<uiPreview> &struct_writer) {
+        struct_writer.shallow_data.tag = {};
+        struct_writer.shallow_data.id_session_uid = 0;
+      });
     }
 
     for (uiViewStateLink &view_state : region.view_states) {
@@ -1460,7 +1505,17 @@ void BKE_screen_area_map_blend_write(BlendWriter *writer, ScrAreaMap *area_map)
   for (ScrArea &area : area_map->areabase) {
     area.butspacetype = area.spacetype; /* Just for compatibility, will be reset below. */
 
-    writer->write_struct(&area);
+    writer->write_struct(&area, [](BlendStructWriter<ScrArea> &struct_writer) {
+      ScrArea &shallow_area = struct_writer.shallow_data;
+      shallow_area.type = nullptr;
+      shallow_area.do_refresh = 0;
+      shallow_area.region_active_win = -1;
+      shallow_area.flag &= ~(AREA_FLAG_REGION_SIZE_UPDATE | AREA_FLAG_ACTIVE_TOOL_UPDATE |
+                             AREA_FLAG_ACTIONZONES_UPDATE);
+      shallow_area.handlers.clear_no_delete();
+      shallow_area.actionzones.clear_no_delete();
+      shallow_area.runtime = {};
+    });
 
     writer->write_struct(area.global);
 
@@ -1561,16 +1616,10 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
         }
 
         RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
+        rv3d->runtime = MEM_new<bke::RegionView3DRuntime>(__func__);
 
         BLO_read_struct(reader, RegionView3D, &rv3d->localvd);
         BLO_read_struct(reader, BoundBox, &rv3d->clipbb);
-
-        rv3d->view_render = nullptr;
-        rv3d->sms = nullptr;
-        rv3d->smooth_timer = nullptr;
-
-        rv3d->rflag &= ~(RV3D_NAVIGATING | RV3D_PAINTING);
-        rv3d->runtime_viewlock = eRegionView3D_ViewLock{};
       }
     }
     if (region->regiontype == RGN_TYPE_ASSET_SHELF) {
@@ -1595,6 +1644,7 @@ void BKE_screen_view3d_do_versions_250(View3D *v3d, ListBaseT<ARegion> *regions)
       rv3d->dist = v3d->dist;
       copy_v3_v3(rv3d->ofs, v3d->ofs);
       copy_qt_qt(rv3d->viewquat, v3d->viewquat);
+      rv3d->runtime = MEM_new<bke::RegionView3DRuntime>(__func__);
       region.regiondata = rv3d;
     }
   }
@@ -1607,8 +1657,28 @@ void BKE_screen_view3d_do_versions_250(View3D *v3d, ListBaseT<ARegion> *regions)
 
 static void direct_link_area(BlendDataReader *reader, ScrArea *area)
 {
-  BLO_read_struct_list(reader, SpaceLink, &(area->spacedata));
+  const bool has_spacedata = area->spacedata.first() != nullptr;
+  BLO_read_struct_list_with_type_size<SpaceLink>(
+      reader, &area->spacedata, [](const SpaceLink &sl) {
+        const SpaceType *space_type = BKE_spacetype_from_id(sl.spacetype);
+        return space_type ? size_t(space_type->struct_size) : sizeof(SpaceLink);
+      });
   BLO_read_struct_list(reader, ARegion, &(area->regionbase));
+
+  /* The first space data is the active one, its type must match the area space type. If it
+   * failed to read, leave the area empty. Files before 2.50 can have areas without space data
+   * of their own type (e.g. the info header), which versioning handles. */
+  const SpaceLink *sl_active = area->spacedata.first();
+  if (sl_active == nullptr) {
+    /* Space types removed from DNA (e.g. timeline and logic editors) are handled below. */
+    if (has_spacedata && BKE_spacetype_exists(area->spacetype)) {
+      area->spacetype = SPACE_EMPTY;
+    }
+  }
+  else if (sl_active->spacetype != area->spacetype && BLO_read_fileversion_get(reader) >= 250) {
+    BLO_read_data_invalidate(reader, "Corrupt .blend file, mismatched area space type.");
+    area->spacetype = SPACE_EMPTY;
+  }
 
   area->handlers.clear_no_delete();
   area->type = nullptr; /* spacetype callbacks */
@@ -1690,8 +1760,8 @@ bool BKE_screen_area_map_blend_read_data(BlendDataReader *reader, ScrAreaMap *ar
     BLO_read_struct(reader, ScrVert, &se.v1);
     BLO_read_struct(reader, ScrVert, &se.v2);
 
-    if (se.v1 == nullptr) {
-      BLI_remlink(&area_map->edgebase, &se);
+    if (se.v1 == nullptr || se.v2 == nullptr) {
+      BLI_freelinkN(&area_map->edgebase, &se);
 
       return false;
     }

@@ -59,7 +59,9 @@ class AMTH_WM_OT_save_reload(bpy.types.Operator):
 
 
 def button_save_reload(self, context):
-    get_addon = __package__ in context.preferences.addons.keys()
+    addon_name = __package__.rsplit('.', 1)[0]
+    get_addon = addon_name in context.preferences.addons.keys()
+
     if not get_addon:
         return
 

@@ -113,7 +113,8 @@ static void version_geometry_nodes_properties(FileData &fd,
   IDProperty *inputs = bke::idprop::create_group("inputs").release();
   IDP_AddToGroup(system_props, inputs);
 
-  const std::string inputs_path_prefix = fmt::format("modifiers[\"{}\"]", nmd.modifier.name);
+  const std::string inputs_path_prefix = fmt::format("modifiers[\"{}\"]",
+                                                     BLI_str_escape(nmd.modifier.name));
   const DriverMap driver_map = BKE_animdata_build_driver_target_map(bmain);
   for (const bNodeTreeInterfaceSocket *input : ntree.interface_inputs()) {
     const StringRefNull identifier = input->identifier;
@@ -664,7 +665,7 @@ void blo_do_versions_502(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       if (scene.toolsettings->sculpt) {
         Sculpt &sculpt = *scene.toolsettings->sculpt;
         MeshAutomaskingSettings *settings = MEM_new<MeshAutomaskingSettings>(__func__);
-        settings->flags = sculpt.automasking_flags;
+        settings->flags = eAutomasking_flag(sculpt.automasking_flags);
         settings->boundary_edges_propagation_steps =
             sculpt.automasking_boundary_edges_propagation_steps;
         settings->cavity_blur_steps = sculpt.automasking_cavity_blur_steps;
@@ -694,7 +695,7 @@ void blo_do_versions_502(FileData * /*fd*/, Library * /*lib*/, Main *bmain)
       }
 
       brush.mesh_automasking_settings = MEM_new<MeshAutomaskingSettings>(__func__);
-      brush.mesh_automasking_settings->flags = brush.automasking_flags;
+      brush.mesh_automasking_settings->flags = eAutomasking_flag(brush.automasking_flags);
       brush.mesh_automasking_settings->boundary_edges_propagation_steps =
           brush.automasking_boundary_edges_propagation_steps;
       brush.mesh_automasking_settings->cavity_blur_steps = brush.automasking_cavity_blur_steps;

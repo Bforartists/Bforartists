@@ -19,6 +19,7 @@ from bpy.props import (
         StringProperty,
         )
 from bpy_extras import object_utils
+from .interface import draw_transform_props
 
 # mesh generating function, returns mesh
 def add_mesh_Brilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
@@ -308,7 +309,7 @@ def addBrilliant(context, self, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
 # add new operator for object
 class MESH_OT_primitive_brilliant_add(Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_brilliant_add"
-    bl_label = "Custom Brilliant"
+    bl_label = "Brilliant"
     bl_description = "Construct a custom brilliant mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
@@ -325,102 +326,103 @@ class MESH_OT_primitive_brilliant_add(Operator, object_utils.AddObjectHelper):
             step=1,
             min=6,
             max=128,
-            default=16,
-            subtype='FACTOR'
+            default=16
             )
     table_w: FloatProperty(
-            name="Table width",
+            name="Table Width",
             description="Width of table",
             min=0.001,
             max=1.0,
             default=0.53,
-            subtype='PERCENTAGE'
+            subtype='FACTOR'
             )
     crown_h: FloatProperty(
-            name="Crown height",
+            name="Crown Height",
             description="Height of crown",
             min=0.0,
             max=1.0,
             default=0.162,
-            subtype='PERCENTAGE'
+            subtype='FACTOR'
             )
     girdle_t: FloatProperty(
-            name="Girdle height",
+            name="Girdle Height",
             description="Height of girdle",
             min=0.0,
             max=0.5,
             default=0.017,
-            subtype='PERCENTAGE'
+            subtype='FACTOR'
             )
     girdle_real: BoolProperty(
-            name="Real girdle",
+            name="Real Girdle",
             description="More beautiful girdle; has more polygons",
             default=True
             )
     g_real_smooth: BoolProperty(
-            name="Smooth girdle",
+            name="Smooth Girdle",
             description="smooth shading for girdle, only available for real girdle",
             default=False
             )
     pavi_d: FloatProperty(
-            name="Pavilion depth",
+            name="Pavilion Depth",
             description="Height of pavilion",
             min=0.0,
             max=1.0,
             default=0.431,
-            subtype='PERCENTAGE'
+            subtype='FACTOR'
             )
     bezel_f: FloatProperty(
-            name="Upper facet factor",
+            name="Upper Facet Factor",
             description="Determines the form of bezel and upper girdle facets",
             min=0.0,
             max=1.0,
             default=0.250,
-            subtype='PERCENTAGE'
+            subtype='FACTOR'
             )
     pavi_f: FloatProperty(
-            name="Lower facet factor",
+            name="Lower Facet Factor",
             description="Determines the form of pavilion and lower girdle facets",
             min=0.001,
             max=1.0,
             default=0.400,
-            subtype='PERCENTAGE'
+            subtype='FACTOR'
             )
     culet: FloatProperty(
-            name="Culet size",
+            name="Culet Size",
             description="0: no culet (default)",
             min=0.0,
             max=0.999,
             default=0.0,
-            subtype='PERCENTAGE'
+            subtype='FACTOR'
             )
     keep_lga: BoolProperty(
-            name="Retain lower angle",
+            name="Retain Lower Angle",
             description="If culet > 0, retains angle of pavilion facets",
             default=False
             )
 
     def draw(self, context):
         layout = self.layout
-        box = layout.box()
-        box.prop(self, "s")
-        box.prop(self, "table_w")
-        box.prop(self, "crown_h")
-        box.prop(self, "girdle_t")
-        box.prop(self, "girdle_real")
-        box.prop(self, "g_real_smooth")
-        box.prop(self, "pavi_d")
-        box.prop(self, "bezel_f")
-        box.prop(self, "pavi_f")
-        box.prop(self, "culet")
-        box.prop(self, "keep_lga")
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        layout.separator()
+        layout.prop(self, "s")
+        layout.prop(self, "table_w")
+        col = layout.column(align=True)
+        col.prop(self, "crown_h", text='Height Crown')
+        col.prop(self, "girdle_t", text='Girdle')
+        col.prop(self, "pavi_d", text='Pavilion')
+        layout.prop(self, "girdle_real")
+        layout.prop(self, "g_real_smooth")
+        col = layout.column(align=True)
+        col.prop(self, "bezel_f", text='Facet Upper')
+        col.prop(self, "pavi_f", text='Lower')
+        layout.prop(self, "culet")
+        layout.prop(self, "keep_lga")
 
         if self.change == False:
-            # generic transform props
-            box = layout.box()
-            box.prop(self, 'align', expand=True)
-            box.prop(self, 'location', expand=True)
-            box.prop(self, 'rotation', expand=True)
+            layout.separator()
+            draw_transform_props(self, layout)
 
     # call mesh/object generator function with user inputs
     def execute(self, context):

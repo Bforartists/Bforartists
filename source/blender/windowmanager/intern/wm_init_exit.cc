@@ -21,6 +21,7 @@
 #include "DNA_userdef_types.h"
 #include "DNA_windowmanager_types.h"
 
+#include "BLI_fileops.hh"
 #include "BLI_listbase.hh"
 #include "BLI_memory_cache.hh"
 #include "BLI_path_utils.hh"
@@ -34,6 +35,7 @@
 #include "BLO_writefile.hh"
 
 #include "BKE_blender.hh"
+#include "BKE_blender_project.hh"
 #include "BKE_blendfile.hh"
 #include "BKE_callbacks.hh"
 #include "BKE_context.hh"
@@ -48,6 +50,7 @@
 #include "BKE_preferences.h"
 #include "BKE_preview_image.hh"
 #include "BKE_recents.hh"
+#include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_sound.hh"
@@ -208,6 +211,28 @@ static void sound_jack_sync_callback(Main *bmain, int mode, double time)
   }
 }
 
+/* Reset the per-frame tracking of on-demand GPU pipeline compilation. Registered after Python is
+ * started so it runs after the `frame_change_post` Python handlers, letting a poll of
+ * `bpy.app.is_job_running("SHADER_COMPILATION")` reflect the pipelines compiled during a frame. */
+static void wm_frame_change_post_gpu_callback(Main * /*bmain*/,
+                                              PointerRNA ** /*pointers*/,
+                                              const int /*pointers_num*/,
+                                              void * /*arg*/)
+{
+  if (GPU_is_init()) {
+    GPU_shader_compiler_reset_frame_pipeline_tracking();
+  }
+}
+
+static bCallbackFuncStore wm_frame_change_post_gpu_callback_funcstore = {
+    /*next*/ nullptr,
+    /*prev*/ nullptr,
+    /*func*/ wm_frame_change_post_gpu_callback,
+    /*arg*/ nullptr,
+    /*alloc*/ 0,
+};
+static bool wm_frame_change_post_gpu_callback_registered = false;
+
 void WM_init(bContext *C, int argc, const char **argv)
 {
 
@@ -348,6 +373,10 @@ void WM_init(bContext *C, int argc, const char **argv)
   UNUSED_VARS(argc, argv);
 #endif
 
+  /* Registered after Python so it runs after the `frame_change_post` Python handlers. */
+  BKE_callback_add(&wm_frame_change_post_gpu_callback_funcstore, BKE_CB_EVT_FRAME_CHANGE_POST);
+  wm_frame_change_post_gpu_callback_registered = true;
+
   if (!G.background) {
     GHOST_ISystem *ghost_system = GHOST_ISystem::getSystem();
     if (wm_start_with_console) {
@@ -415,6 +444,31 @@ void WM_init_splash_on_startup(bContext *C)
   }
 
   WM_init_splash(C);
+}
+
+bool wm_init_last_project_on_startup(Main *bmain)
+{
+  if (G.background || !(U.pref_flag & USER_PREF_FLAG_PROJECT_REMEMBER)) {
+    return false;
+  }
+
+  const std::string root_path = recents::Section("project").get<std::string>("last");
+  if (root_path.empty() || !BLI_is_dir(root_path.c_str())) {
+    return false;
+  }
+
+  return BKE_blender_project_init_from_root_path(bmain, root_path);
+}
+
+static void wm_exit_project_data_store(Main *bmain)
+{
+  BKE_blender_project_config_autosave(bmain);
+
+  const std::string root_path = BKE_blender_project_read_callback(
+      bmain, [](const bke::BlenderProject *project) {
+        return project ? std::string(project->get_root_path()) : std::string();
+      });
+  recents::Section("project").set("last", root_path);
 }
 
 void WM_init_splash(bContext *C)
@@ -503,17 +557,25 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
     BKE_callback_exec_boolean(CTX_data_main(C), do_user_exit_actions, BKE_CB_EVT_EXIT_PRE);
   }
 
+  if (wm_frame_change_post_gpu_callback_registered) {
+    BKE_callback_remove(&wm_frame_change_post_gpu_callback_funcstore,
+                        BKE_CB_EVT_FRAME_CHANGE_POST);
+    wm_frame_change_post_gpu_callback_registered = false;
+  }
+
   /* First wrap up running stuff, we assume only the active WM is running. */
   /* Modal handlers are on window level freed, others too? */
   /* NOTE: same code copied in `wm_files.cc`. */
   if (C && wm) {
     if (do_user_exit_actions) {
+      wm_exit_project_data_store(CTX_data_main(C));
+
       /* Save quit.blend. */
       Main *bmain = CTX_data_main(C);
       char filepath[FILE_MAX];
       const int fileflags = G.fileflags | G_FILE_COMPRESS | G_FILE_RECOVER_WRITE;
 
-      BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_base(), BLENDER_QUIT_FILE);
+      BLI_path_join(filepath, BKE_tempdir_base(), BLENDER_QUIT_FILE);
 
       ED_editors_flush_edits(bmain);
       ED_image_internal_autosave_flush(bmain);

@@ -69,7 +69,7 @@ id<MTLCommandBuffer> MTLCommandBufferManager::ensure_begin()
       BLI_assert(context_.queue != nil);
       active_command_buffer_ = [context_.queue commandBufferWithDescriptor:desc];
 
-      std::string group_name = "CmdBuf: " + GPU_debug_get_groups_names({0, 1});
+      std::string group_name = "CmdBuf: " + GPU_debug_get_groups_names(IndexRange(0, 1));
       [active_command_buffer_ setLabel:@(group_name.c_str())];
       [desc release];
     }
@@ -79,6 +79,7 @@ id<MTLCommandBuffer> MTLCommandBufferManager::ensure_begin()
 
     [active_command_buffer_ retain];
     context_.main_command_buffer.inc_active_command_buffer_count();
+    active_safe_free_list_ = MTLContext::get_global_memory_manager()->acquire_current_safe_list();
 
     /* Ensure we begin new Scratch Buffer if we are on a new frame. */
     MTLScratchBufferManager &mem = context_.memory_manager;
@@ -120,14 +121,14 @@ bool MTLCommandBufferManager::submit(bool wait)
 
   /*** Submit Command Buffer. ***/
   /* Command buffer lifetime tracking. */
-  /* Increment current MTLSafeFreeList reference counter to flag MTLBuffers freed within
-   * the current command buffer lifetime as used.
+  /* The MTLSafeFreeList referenced since the command buffer was created flags MTLBuffers freed
+   * within the command buffer lifetime as used. Lists are released in order, so this also covers
+   * buffers freed into later lists.
    * This ensures that in-use resources are not prematurely de-referenced and returned to the
    * available buffer pool while they are in-use by the GPU. */
-  MTLSafeFreeList *cmd_free_buffer_list =
-      MTLContext::get_global_memory_manager()->get_current_safe_list();
+  MTLSafeFreeList *cmd_free_buffer_list = active_safe_free_list_;
   BLI_assert(cmd_free_buffer_list);
-  cmd_free_buffer_list->increment_reference();
+  active_safe_free_list_ = nullptr;
 
   id<MTLCommandBuffer> cmd_buffer_ref = active_command_buffer_;
   [cmd_buffer_ref retain];

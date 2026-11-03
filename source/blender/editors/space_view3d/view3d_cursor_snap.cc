@@ -24,6 +24,7 @@
 #include "BKE_object.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "GPU_immediate.hh"
 #include "GPU_matrix.hh"
@@ -412,6 +413,8 @@ static void cursor_point_draw(
       break;
     case SCE_SNAP_TO_FACE_MIDPOINT:
       imm_draw_circle_wire_3d(attr_pos, 0.0f, 0.0f, 1.0f, 24);
+      immUnbindProgram();
+      immBindBuiltinProgram(GPU_SHADER_3D_POINT_UNIFORM_COLOR);
       immBegin(GPU_PRIM_POINTS, 1);
       immVertex3f(attr_pos, 0.0f, 0.0f, 0.0f);
       immEnd();
@@ -851,7 +854,7 @@ static bool v3d_cursor_snap_poll_fn(bContext *C)
   }
 
   RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-  if (rv3d->rflag & RV3D_NAVIGATING) {
+  if (rv3d->runtime->tags & bke::RV3D_TAG_NAVIGATING) {
     /* Don't draw the cursor while navigating. It can be distracting. */
     return false;
   };

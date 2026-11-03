@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include "infos/eevee_common_infos.hh"
-
+#include "eevee_defines.hh"
 #include "eevee_occupancy_lib.bsl.hh"
 #include "eevee_uniform.bsl.hh"
 #include "gpu_shader_fullscreen.bsl.hh"
@@ -70,7 +69,7 @@ void convert_frag([[resource_table]] Convert &srt,
 
 #if 0 /* Debug. Need to adjust the qualifier of the texture adjusted. */
   for (int i = 0; i < hit_count; i++) {
-    imageStore(hit_depth_img, int3(texel, i), float4(hit_ordered[i]));
+    imageStore(srt.hit_depth_img, int3(texel, i), float4(hit_ordered[i]));
   }
 #endif
 

@@ -40,6 +40,7 @@ class ImagePrepass : Overlay {
     ps_.state_set(DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_ALWAYS);
     ps_.shader_set(res.shaders->mesh_edit_depth.get());
     ps_.push_constant("retopology_offset", 0.0f);
+    ps_.bind_ubo(OVERLAY_GLOBALS_SLOT, &res.globals_buf);
     ps_.draw(res.shapes.image_quad.get());
   }
 
@@ -66,6 +67,7 @@ class Prepass : Overlay {
   PassMain::Sub *hair_ps_ = nullptr;
   PassMain::Sub *curves_ps_ = nullptr;
   PassMain::Sub *pointcloud_ps_ = nullptr;
+  PassMain::Sub *gsplat_ps_ = nullptr;
   PassMain::Sub *grease_pencil_ps_ = nullptr;
 
   bool use_material_slot_selection_ = false;
@@ -81,6 +83,7 @@ class Prepass : Overlay {
       mesh_ps_ = nullptr;
       curves_ps_ = nullptr;
       pointcloud_ps_ = nullptr;
+      gsplat_ps_ = nullptr;
       return;
     }
 
@@ -122,6 +125,11 @@ class Prepass : Overlay {
       pointcloud_ps_ = &sub;
     }
     {
+      auto &sub = ps_.sub("GSplat");
+      sub.shader_set(res.shaders->depth_gsplat.get());
+      gsplat_ps_ = &sub;
+    }
+    {
       auto &sub = ps_.sub(RE_PASSNAME_GREASE_PENCIL);
       sub.shader_set(res.shaders->depth_grease_pencil.get());
       grease_pencil_ps_ = &sub;
@@ -158,7 +166,7 @@ class Prepass : Overlay {
                                        res.select_id(ob_ref, part->omat << 16) :
                                        res.select_id(ob_ref);
 
-            gpu::Batch *geom = DRW_cache_particles_get_hair(ob, &psys, nullptr);
+            Batch *geom = DRW_cache_particles_get_hair(ob, &psys, nullptr);
             if (res.is_selection()) {
               /* Conservative shader needs expanded draw-call. */
               mesh_ps_->draw_expand(geom, GPU_PRIM_TRIS, 1, 1, handle, select_id.get());
@@ -218,8 +226,11 @@ class Prepass : Overlay {
       return;
     }
 
-    gpu::Batch *geom_single = nullptr;
-    Span<gpu::Batch *> geom_list(&geom_single, 1);
+    /* At most one of these is set. geom_list is only filled for material slot selection. */
+    Batch *geom_single = nullptr;
+    Span<Batch *> geom_list;
+
+    ResourceHandleRange res_handle = manager.unique_handle(ob_ref);
 
     PassMain::Sub *pass = nullptr;
     switch (ob_ref.object->type) {
@@ -258,8 +269,8 @@ class Prepass : Overlay {
         }
         break;
       case OB_POINTCLOUD:
-        geom_single = pointcloud_sub_pass_setup(*pointcloud_ps_, ob_ref.object);
-        pass = pointcloud_ps_;
+        pass = pointcloud_is_gsplat(ob_ref.object) ? gsplat_ps_ : pointcloud_ps_;
+        geom_single = pointcloud_sub_pass_setup(*pass, ob_ref, res_handle);
         break;
       case OB_CURVES: {
         const char *error = nullptr;
@@ -290,26 +301,34 @@ class Prepass : Overlay {
       return;
     }
 
-    ResourceHandleRange res_handle = manager.unique_handle(ob_ref);
+    if (!geom_list.is_empty()) {
+      for (int material_id : geom_list.index_range()) {
+        /* Meshes with more than 16 materials can have nullptr in the geometry list as materials
+         * are not filled for unused materials indices. We should actually use
+         * `material_indices_used` but these are only available for meshes. */
+        if (geom_list[material_id] == nullptr) {
+          continue;
+        }
 
-    for (int material_id : geom_list.index_range()) {
-      /* Meshes with more than 16 materials can have nullptr in the geometry list as materials are
-       * not filled for unused materials indices. We should actually use `material_indices_used`
-       * but these are only available for meshes. */
-      if (geom_list[material_id] == nullptr) {
-        continue;
+        select::ID select_id = res.select_id(ob_ref, (material_id + 1) << 16);
+        if (res.is_selection() && (pass == mesh_ps_)) {
+          /* Conservative shader needs expanded draw-call. */
+          pass->draw_expand(
+              geom_list[material_id], GPU_PRIM_TRIS, 1, 1, res_handle, select_id.get());
+        }
+        else {
+          pass->draw(geom_list[material_id], res_handle, select_id.get());
+        }
       }
-
-      select::ID select_id = use_material_slot_selection_ ?
-                                 res.select_id(ob_ref, (material_id + 1) << 16) :
-                                 res.select_id(ob_ref);
+    }
+    else if (geom_single != nullptr) {
+      select::ID select_id = res.select_id(ob_ref);
       if (res.is_selection() && (pass == mesh_ps_)) {
         /* Conservative shader needs expanded draw-call. */
-        pass->draw_expand(
-            geom_list[material_id], GPU_PRIM_TRIS, 1, 1, res_handle, select_id.get());
+        pass->draw_expand(geom_single, GPU_PRIM_TRIS, 1, 1, res_handle, select_id.get());
       }
       else {
-        pass->draw(geom_list[material_id], res_handle, select_id.get());
+        pass->draw(geom_single, res_handle, select_id.get());
       }
     }
   }

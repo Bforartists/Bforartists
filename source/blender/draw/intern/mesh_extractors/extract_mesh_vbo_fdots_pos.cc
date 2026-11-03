@@ -21,13 +21,6 @@ static const GPUVertFormat &get_fdots_pos_format()
   return format;
 }
 
-static const GPUVertFormat &get_fdots_nor_format_subdiv()
-{
-  static const GPUVertFormat format = GPU_vertformat_from_attribute(
-      "norAndFlag", gpu::VertAttrType::SFLOAT_32_32_32_32);
-  return format;
-}
-
 static void extract_face_dot_positions_mesh(const MeshRenderData &mr, MutableSpan<float3> vbo_data)
 {
   const Span<float3> positions = mr.vert_positions;
@@ -59,18 +52,22 @@ static void extract_face_dot_positions_mesh(const MeshRenderData &mr, MutableSpa
   }
 }
 
-static void extract_face_dot_positions_bm(const MeshRenderData &mr, MutableSpan<float3> vbo_data)
+static void extract_face_dot_positions_bmesh(const MeshRenderData &mr,
+                                             MutableSpan<float3> vbo_data)
 {
   const BMesh &bm = *mr.bm;
   threading::parallel_for(IndexRange(bm.totface), 2048, [&](const IndexRange range) {
     for (const int face_index : range) {
       const BMFace &face = *BM_face_at_index(&const_cast<BMesh &>(bm), face_index);
+      /* Accumulate in a local variable, the VBO data is only written to. */
+      float3 center;
       if (mr.bm_vert_coords.is_empty()) {
-        BM_face_calc_center_median(&face, vbo_data[face_index]);
+        BM_face_calc_center_median(&face, center);
       }
       else {
-        BM_face_calc_center_median_vcos(&bm, &face, vbo_data[face_index], mr.bm_vert_coords);
+        BM_face_calc_center_median_vcos(&bm, &face, center, mr.bm_vert_coords);
       }
+      vbo_data[face_index] = center;
     }
   });
 }
@@ -84,7 +81,7 @@ gpu::VertBufPtr extract_face_dots_position(const MeshRenderData &mr)
     extract_face_dot_positions_mesh(mr, vbo_data);
   }
   else {
-    extract_face_dot_positions_bm(mr, vbo_data);
+    extract_face_dot_positions_bmesh(mr, vbo_data);
   }
   return vbo;
 }
@@ -92,13 +89,14 @@ gpu::VertBufPtr extract_face_dots_position(const MeshRenderData &mr)
 void extract_face_dots_subdiv(const DRWSubdivCache &subdiv_cache,
                               gpu::VertBufPtr &fdots_pos,
                               gpu::VertBufPtr *fdots_nor,
-                              gpu::IndexBufPtr &fdots)
+                              gpu::IndexBufPtr &fdots,
+                              bool use_hq)
 {
   /* We "extract" positions, normals, and indices at once. */
   /* The normals may not be requested. */
   if (fdots_nor) {
-    *fdots_nor = gpu::VertBufPtr(GPU_vertbuf_create_on_device(get_fdots_nor_format_subdiv(),
-                                                              subdiv_cache.num_coarse_faces));
+    *fdots_nor = gpu::VertBufPtr(
+        GPU_vertbuf_create_on_device(get_fdots_nor_format(use_hq), subdiv_cache.num_coarse_faces));
   }
   fdots_pos = gpu::VertBufPtr(
       GPU_vertbuf_create_on_device(get_fdots_pos_format(), subdiv_cache.num_coarse_faces));

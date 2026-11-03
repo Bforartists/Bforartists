@@ -57,9 +57,12 @@ Result<SymbolFunction *> SymbolScope::lookup_function(const SymbolTable &table,
     /* Try to resolve type constructors (only for builtins for now). */
     if (auto [cls, err_cls] = lookup_class(table, id); !cls->is_error && cls && cls->is_builtin())
     {
-      return {root_scope()->lookup_function(cls->identifier), {}};
+      /* Some builtin types have no constructor (e.g. `bool32_t`). */
+      if (SymbolFunction *ctor = table.root->lookup_function(cls->identifier)) {
+        return {ctor, {}};
+      }
     }
-    return {func, err ? err : AstNodeException{id, Diag::UnknownFunction}};
+    return {func, err ? err : AstNodeException{id, Diag::UnknownFunction, string(id.str())}};
   }
 
   if (func->template_data) {
@@ -109,6 +112,9 @@ Result<SymbolClass *> SymbolScope::lookup_class(const SymbolTable &table,
 {
   LOOKUP_LOG("\n")
   SymbolClass *cls = lookup_generic_nested<SymbolClass>(table, id, last, loc.value_or(id.front()));
+  if (cls == nullptr) {
+    return {table.err_cls, std::nullopt};
+  }
   return resolve_template_instantiation(table, cls, last, *this);
 }
 
@@ -130,21 +136,22 @@ SymbolVariable *SymbolScope::lookup_variable(const SymbolTable &table, IdQualifi
   return lookup_generic<SymbolVariable>(table, id, id.front());
 }
 
-ast::FuncForwardDecl SymbolScope::lookup_function_forward_decl(ast::FuncDecl decl) const
+std::pair<ast::FuncForwardDecl, SymbolFunction *> SymbolScope::lookup_function_forward_decl(
+    ast::FuncDecl decl) const
 {
   /* Note: while this linear search might seem very slow, it is only concerning a handful of
    * functions. */
-  for (ast::FuncForwardDecl fwd : function_prototypes) {
+  for (const auto &fwd : function_prototypes) {
     /* Check identifier. */
-    if (fwd.identifier().str() != decl.identifier().str()) {
+    if (fwd.first.identifier().name().str() != decl.identifier().name().str()) {
       continue;
     }
     /* Check return type. */
-    if (fwd.return_type().str() != decl.return_type().str()) {
+    if (fwd.first.return_type().str() != decl.return_type().str()) {
       continue;
     }
     /* Check arg type. */
-    FuncArg fwd_arg = fwd.arguments().child_first();
+    FuncArg fwd_arg = fwd.first.arguments().child_first();
     FuncArg decl_par = decl.arguments().child_first();
     while (fwd_arg.is_valid() &&
            /* Check type. */
@@ -158,7 +165,7 @@ ast::FuncForwardDecl SymbolScope::lookup_function_forward_decl(ast::FuncDecl dec
       decl_par = decl_par.next();
     }
     /* Arg count or value doesn't match. */
-    if (decl_par.is_valid() != fwd_arg.is_valid()) {
+    if (decl_par.is_valid() || fwd_arg.is_valid()) {
       continue;
     }
     /* Match! */
@@ -227,6 +234,19 @@ T *SymbolScope::lookup_generic(const SymbolTable &table,
     return v;
   }
 
+  /* Try to resolve in class scope if this is a member function scope (contains 'this_'). */
+  if (auto it = variables.find("this_"); it != variables.end()) {
+    LOOKUP_LOG("[Lookup] Member function scope ('this_' found). Checking class scope...\n")
+    const SymbolVariable *this_var = it->second.second;
+    /* Resolve class pointer/type from `this_` symbol */
+    const SymbolClass *cls = this_var->type;
+    const SymbolScope *this_scope = static_cast<const SymbolScope *>(cls);
+    if (auto v = this_scope->lookup_generic<T>(table, id, loc); v && !v->is_error) {
+      LOOKUP_LOG("[Lookup] Symbol found in class scope '" << cls->identifier << "'.\n")
+      return v;
+    }
+  }
+
   /* Delegate to parent scope if not found locally. */
   if (parent) {
     LOOKUP_LOG("[Lookup] Not found locally. Delegating to parent scope\n")
@@ -237,19 +257,13 @@ T *SymbolScope::lookup_generic(const SymbolTable &table,
   LOOKUP_LOG("[Lookup] FAILED at root scope.\n")
 
   if constexpr (is_same_v<T, SymbolFunction>) {
-    if (auto it = functions.find(SymbolTable::err_symbol); it != functions.end()) {
-      return it->second.second;
-    }
+    return table.err_func;
   }
   else if constexpr (is_same_v<T, SymbolClass>) {
-    if (auto it = classes.find(SymbolTable::err_symbol); it != classes.end()) {
-      return it->second.second;
-    }
+    return table.err_cls;
   }
   else if constexpr (is_same_v<T, SymbolVariable>) {
-    if (auto it = variables.find(SymbolTable::err_symbol); it != variables.end()) {
-      return it->second.second;
-    }
+    return table.err_var;
   }
   else {
     static_assert(false);
@@ -352,22 +366,29 @@ T *SymbolScope::lookup_generic_nested(const SymbolTable &table,
 
 SymbolClass *SymbolScope::lookup_class(string id) const
 {
-  return classes.find(id)->second.second;
+  auto it = classes.find(id);
+  return it != classes.end() ? it->second.second : nullptr;
 }
 
 SymbolFunction *SymbolScope::lookup_function(string id) const
 {
-  return functions.find(id)->second.second;
+  auto it = functions.find(id);
+  return it != functions.end() ? it->second.second : nullptr;
 }
 
 SymbolVariable *SymbolScope::lookup_variable(string id) const
 {
-  return variables.find(id)->second.second;
+  auto it = variables.find(id);
+  return it != variables.end() ? it->second.second : nullptr;
 }
 
 SymbolClass *SymbolScope::as_class()
 {
   return type == CLASS ? static_cast<SymbolClass *>(this) : nullptr;
+}
+const SymbolClass *SymbolScope::as_class() const
+{
+  return type == CLASS ? static_cast<const SymbolClass *>(this) : nullptr;
 }
 
 SymbolFunction *SymbolScope::as_function()
@@ -400,18 +421,30 @@ bool SymbolScope::function_emplace(SymbolFunction *fn, bool builtin)
 {
   bool result = false;
   if (auto it = functions.emplace(fn); !it.second) {
-    /* If function already exists, insert overload in the linked list. */
-    it.first->add_overload(fn);
-    if (!builtin) {
-      /* Add suffix to the function identifier to reduce chance of hitting an overload at runtime.
-       * This way, the dead code eliminator can discard more functions.
-       * This suffix needs to be the same whatever the file include order is, as it can differ from
-       * shader to shader. We use the line index for that. It is short enough to not clutter the
-       * resulting source file. */
-      /* TODO(fclem): This is left out for compatibility with previous BSL versions. */
-      // fn->identifier += to_string(fn->loc.tok.line_number());
+    /* If the function is a builtin and the new overload by not a builtin, we have to discard
+     * all builtin overloads of this function. This is to emulate the GLSL and MSL overload
+     * behavior. */
+    if (it.first->is_builtin && !builtin) {
+      functions.erase(functions.find(fn->identifier));
+      functions.emplace(fn);
     }
-    result = true;
+    /* Check if redefinition is simply hiding a base class method. */
+    else if (it.first->is_method() && this->as_class() != it.first->parent_class()) {
+      functions.insert_override(fn);
+    }
+    else {
+      it.first->add_overload(fn);
+      if (!builtin) {
+        /* Add suffix to the function identifier to reduce chance of hitting an overload at
+         * runtime. This way, the dead code eliminator can discard more functions. This suffix
+         * needs to be the same whatever the file include order is, as it can differ from shader to
+         * shader. We use the line index for that. It is short enough to not clutter the resulting
+         * source file. */
+        /* TODO(fclem): This is left out for compatibility with previous BSL versions. */
+        // fn->identifier += to_string(fn->loc.tok.line_number());
+      }
+      result = true;
+    }
   }
   /* Builtins functions aren't parsed and don't need access to the scope.
    * Avoid bloating global namespace. */
@@ -431,17 +464,58 @@ bool SymbolScope::variable_emplace(SymbolVariable *var)
   return !variables.emplace(var->identifier, var).second;
 }
 
+bool SymbolScope::variable_override(string id, SymbolVariable *var)
+{
+  return !variables.insert_override(id, var).second;
+}
+
+bool SymbolScope::variable_override(SymbolVariable *var)
+{
+  return !variables.insert_override(var->identifier, var).second;
+}
+
 vector<SymbolVariable *> SymbolScope::non_static_variables_in_declaration_order() const
 {
   assert(this->type == CLASS);
   vector<SymbolVariable *> members;
   for (const auto &[k, v] : variables) {
+    /* Skip static members and template value parameters. Non-static constexpr members are not
+     * allowed, so constexpr variables are only template parameters. */
+    if (v.second->is_static || v.second->is_constexpr) {
+      continue;
+    }
+    /* Skip members of anonymous structs and unions, aliased in the enclosing class. These are
+     * already part of the anonymous member variable. Unions still list them, to emit their
+     * accessors. */
+    const SymbolClass *owner = v.second->parent ? v.second->parent->as_class() : nullptr;
+    if (owner && owner != this && owner->is_anonymous && !this->as_class()->is_union) {
+      continue;
+    }
     members.emplace_back(v.second);
   }
 
   /* Sort elements to guarantee deterministic order. */
   sort(members.begin(), members.end(), [](const SymbolVariable *a, const SymbolVariable *b) {
     return a->loc < b->loc;
+  });
+
+  return members;
+}
+
+vector<SymbolFunction *> SymbolScope::functions_in_declaration_order() const
+{
+  assert(this->type == CLASS);
+  vector<SymbolFunction *> members;
+  for (const auto &[k, v] : functions) {
+    members.emplace_back(v.second);
+  }
+
+  /* Sort elements to guarantee deterministic order. */
+  sort(members.begin(), members.end(), [](const SymbolFunction *a, const SymbolFunction *b) {
+    SourceLocation loc_a(a->decl_loc());
+    SourceLocation loc_b(b->decl_loc());
+    assert(loc_a != loc_b);
+    return loc_a < loc_b;
   });
 
   return members;

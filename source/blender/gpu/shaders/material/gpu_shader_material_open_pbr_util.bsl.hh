@@ -8,8 +8,9 @@
 
 #include "gpu_shader_common_math.bsl.hh"
 #include "gpu_shader_material_interface.bsl.hh"
+#include "gpu_shader_math_base.bsl.hh"
 #include "gpu_shader_math_fast.bsl.hh"
-#include "gpu_shader_utildefines.bsl.hh"
+#include "gpu_shader_math_vector_safe.bsl.hh"
 
 float ior_from_F0(const float F0)
 {
@@ -28,7 +29,7 @@ float3 slab_transmittance_at_angle(const float3 color, const float cos_theta_i, 
 float thin_glass_transmission_roughness(const float roughness, const float ior)
 {
   return saturate(roughness *
-                  sqrt(sqrt(3.4f * (ior - 1.0f) * square(ior - 0.5f) / (square(ior) * ior))));
+                  sqrt(3.4f * (ior - 1.0f) * square(ior - 0.5f) / (square(ior) * ior)));
 }
 
 float openpbr_fuzz(const float NV, const float rough)
@@ -74,18 +75,23 @@ struct Subsurface {
   float weight;
 };
 
-float3 openpbr_eval_transparency(const float3 weight, const float opacity)
+float3 openpbr_eval_transparency(KernelGlobals &kg,
+                                 ShadingData &sd,
+                                 const float3 weight,
+                                 const float opacity)
 {
   ClosureTransparency transparency_data;
   transparency_data.transmittance = (1.0f - opacity) * weight;
   transparency_data.holdout = 0.0f;
-  closure_eval(transparency_data);
+  closure_eval(kg, sd, transparency_data);
 
   return weight * opacity;
 }
 
-float3 openpbr_eval_fuzz(const float3 weight,
-                         [[maybe_unused]] const Coat coat,
+float3 openpbr_eval_fuzz(KernelGlobals & /*kg*/,
+                         ShadingData & /*sd*/,
+                         const float3 weight,
+                         const Coat coat,
                          const Fuzz fuzz,
                          const float3 N,
                          const float3 V,
@@ -97,12 +103,10 @@ float3 openpbr_eval_fuzz(const float3 weight,
   }
 
   float fuzz_NV = dot(N, V);
-#ifdef MAT_CLEARCOAT
   if (coat.weight > 0.0f) {
     const float3 fuzz_N = safe_normalize(mix(N, coat.N, coat.weight));
     fuzz_NV = dot(fuzz_N, V);
   }
-#endif
   fuzz_NV = saturate(fuzz_NV);
 
   const float3 fuzz_color = fuzz.weight * fuzz.tint * openpbr_fuzz(fuzz_NV, fuzz.roughness);
@@ -113,23 +117,21 @@ float3 openpbr_eval_fuzz(const float3 weight,
   return weight * max((1.0f - math_reduce_max(fuzz_color)), 0.0f);
 }
 
-float3 openpbr_eval_coat(float3 weight,
-                         [[maybe_unused]] Coat coat,
-                         [[maybe_unused]] const float3 V)
+float3 openpbr_eval_coat(
+    KernelGlobals &kg, ShadingData &sd, float3 weight, Coat coat, const float3 V)
 {
-#ifdef MAT_CLEARCOAT
   if (coat.weight == 0.0f) {
     return weight;
   }
 
   const float coat_NV = dot(coat.N, V);
-  const float reflectance = bsdf_lut(coat_NV, coat.roughness, coat.ior, false).x;
+  const float reflectance = bsdf_lut(kg, coat_NV, coat.roughness, coat.ior, false).x;
 
   ClosureReflection coat_data;
   coat_data.N = coat.N;
   coat_data.roughness = coat.roughness;
   coat_data.color = weight * coat.weight * reflectance;
-  closure_eval(coat_data);
+  closure_eval(kg, sd, coat_data);
 
   if (!all(equal(coat.tint, float3(1.0f)))) {
     coat.tint = slab_transmittance_at_angle(coat.tint, coat_NV, coat.ior);
@@ -137,20 +139,24 @@ float3 openpbr_eval_coat(float3 weight,
 
   /* Attenuate lower layers */
   weight *= saturate(1.0f - (1.0f - coat.tint * (1.0f - reflectance)) * coat.weight);
-#endif
 
   return weight;
 }
 
-float3 openpbr_eval_emission(const float3 weight, const float3 color, const float luminance)
+float3 openpbr_eval_emission(KernelGlobals &kg,
+                             ShadingData &sd,
+                             const float3 weight,
+                             const float3 color,
+                             const float luminance)
 {
   ClosureEmission emission_data;
   emission_data.emission = color * luminance * weight;
-  closure_eval(emission_data);
+  closure_eval(kg, sd, emission_data);
   return weight;
 }
 
-float3 openpbr_eval_metal(const float3 weight,
+float3 openpbr_eval_metal(KernelGlobals &kg,
+                          const float3 weight,
                           const float3 F0,
                           const Specular specular,
                           const float metalness,
@@ -165,7 +171,7 @@ float3 openpbr_eval_metal(const float3 weight,
 
   float3 reflectance;
   brdf_f82_tint_lut(
-      saturate(F0), saturate(specular.tint), NV, specular.roughness, multiggx, reflectance);
+      kg, saturate(F0), saturate(specular.tint), NV, specular.roughness, multiggx, reflectance);
   reflection_data.color = weight * metalness * reflectance;
 
   /* Attenuate lower layers */
@@ -182,7 +188,9 @@ float openpbr_modulate_ior(const float specular_weight, const float specular_ior
   return (specular_ior < 1.0f) ? 1.0f / modulated_ior : modulated_ior;
 }
 
-float3 openpbr_eval_translucent(const float3 weight,
+float3 openpbr_eval_translucent(KernelGlobals &kg,
+                                ShadingData &sd,
+                                const float3 weight,
                                 const float transmission,
                                 const float3 reflectance,
                                 const float3 transmittance,
@@ -200,7 +208,7 @@ float3 openpbr_eval_translucent(const float3 weight,
     refraction_data.N = N;
     refraction_data.roughness = thin_glass_transmission_roughness(specular.roughness,
                                                                   specular.ior);
-    closure_eval(refraction_data);
+    closure_eval(kg, sd, refraction_data);
   }
   else {
     ClosureRefraction refraction_data;
@@ -208,14 +216,16 @@ float3 openpbr_eval_translucent(const float3 weight,
     refraction_data.roughness = specular.roughness;
     refraction_data.ior = specular.ior;
     refraction_data.color = transmittance * transmission_weight;
-    closure_eval(refraction_data);
+    closure_eval(kg, sd, refraction_data);
   }
 
   /* Attenuate lower layers */
   return weight * max((1.0f - transmission), 0.0f);
 }
 
-float3 openpbr_eval_subsurface(const float3 weight,
+float3 openpbr_eval_subsurface(KernelGlobals &kg,
+                               ShadingData &sd,
+                               const float3 weight,
                                const Subsurface subsurface,
                                const bool thin_walled,
                                const float3 N,
@@ -236,31 +246,29 @@ float3 openpbr_eval_subsurface(const float3 weight,
     ClosureTranslucent translucent_data;
     translucent_data.color = subsurface.tint * transmit_weight * weight;
     translucent_data.N = N;
-    closure_eval(translucent_data);
+    closure_eval(kg, sd, translucent_data);
   }
-#ifdef MAT_SUBSURFACE
   else {
     ClosureSubsurface sss_data;
     sss_data.N = N;
     sss_data.sss_radius = subsurface.radius;
     sss_data.color = subsurface.weight * weight * subsurface.tint;
-    closure_eval(sss_data);
+    closure_eval(kg, sd, sss_data);
   }
-#endif
 
   /* Attenuate lower layers */
   return weight * max((1.0f - subsurface.weight), 0.0f);
 }
 
-void openpbr_eval_diffuse([[maybe_unused]] const float3 weight,
-                          [[maybe_unused]] const float3 color,
-                          [[maybe_unused]] const float3 N,
-                          [[maybe_unused]] ClosureDiffuse &diffuse_data)
+void openpbr_eval_diffuse(KernelGlobals &kg,
+                          ShadingData &sd,
+                          const float3 weight,
+                          const float3 color,
+                          const float3 N,
+                          ClosureDiffuse &diffuse_data)
 {
-#ifdef MAT_DIFFUSE
   diffuse_data.N = N;
   diffuse_data.color += weight * color;
 
-  closure_eval(diffuse_data);
-#endif
+  closure_eval(kg, sd, diffuse_data);
 }

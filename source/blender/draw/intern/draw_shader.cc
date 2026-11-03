@@ -107,16 +107,36 @@ class ShaderCache {
   gpu::StaticShader curves_evaluate_float2 = {"draw_curves_interpolate_float2_attribute"};
   gpu::StaticShader curves_evaluate_float = {"draw_curves_interpolate_float_attribute"};
   gpu::StaticShader curves_evaluate_length_intercept = {"draw_curves_evaluate_length_intercept"};
+
+  gpu::StaticShader gsplat_compute_ellipses = {"draw_gsplat_compute_ellipses"};
+  gpu::StaticShader gsplat_compute_radiance = {"draw_gsplat_compute_radiance"};
+  gpu::StaticShader gsplat_compute_ellipses_radiance = {"draw_gsplat_compute_ellipses_radiance"};
+
   gpu::StaticShader debug_draw_display = {"draw_debug_draw_display"};
   gpu::StaticShader draw_visibility_compute = {"draw_visibility_compute"};
   gpu::StaticShader draw_view_finalize = {"draw_view_finalize"};
   gpu::StaticShader draw_resource_finalize = {"draw_resource_finalize"};
   gpu::StaticShader draw_command_generate = {"draw_command_generate"};
 
+  /* Indexed by the element size in 32-bit words, minus one. */
+  gpu::StaticShader mesh_gather[4] = {{"draw_mesh_gather_4"},
+                                      {"draw_mesh_gather_8"},
+                                      {"draw_mesh_gather_12"},
+                                      {"draw_mesh_gather_16"}};
+  gpu::StaticShader mesh_scatter_faces[4] = {{"draw_mesh_scatter_faces_4"},
+                                             {"draw_mesh_scatter_faces_8"},
+                                             {"draw_mesh_scatter_faces_12"},
+                                             {"draw_mesh_scatter_faces_16"}};
+
+  gpu::StaticShader mesh_compress_normals_lq_sh = {"draw_mesh_compress_normal_lq"};
+  gpu::StaticShader mesh_compress_normals_hq_sh = {"draw_mesh_compress_normal_hq"};
+
   gpu::StaticShader subdiv_sh[SUBDIVISION_MAX_SHADERS];
   gpu::StaticShader subdiv_custom_data_sh[SHADER_CUSTOM_DATA_INTERP_MAX_DIMENSIONS][GPU_COMP_MAX];
-  gpu::StaticShader subdiv_interp_corner_normals_sh = {
-      "subdiv_custom_data_interp_3d_f32_normalize"};
+  gpu::StaticShader subdiv_interp_corner_normals_lq_sh = {
+      "subdiv_custom_data_interp_4d_i10_normalize"};
+  gpu::StaticShader subdiv_interp_corner_normals_hq_sh = {
+      "subdiv_custom_data_interp_4d_i16_normalize"};
 
   ShaderCache()
   {
@@ -182,6 +202,20 @@ gpu::Shader *DRW_shader_curves_refine_get(draw::CurvesEvalShader type)
   return nullptr;
 }
 
+gpu::Shader *DRW_shader_gsplat_compute_get(draw::GSplatEvalShader type)
+{
+  switch (type) {
+    case draw::GSplatEvalShader::Ellipses:
+      return ShaderCache::get().gsplat_compute_ellipses.get();
+    case draw::GSplatEvalShader::Radiance:
+      return ShaderCache::get().gsplat_compute_radiance.get();
+    case draw::GSplatEvalShader::EllipsesRadiance:
+      return ShaderCache::get().gsplat_compute_ellipses_radiance.get();
+  }
+  BLI_assert_unreachable();
+  return nullptr;
+}
+
 gpu::Shader *DRW_shader_debug_draw_display_get()
 {
   return ShaderCache::get().debug_draw_display.get();
@@ -207,6 +241,24 @@ gpu::Shader *DRW_shader_draw_command_generate_get()
   return ShaderCache::get().draw_command_generate.get();
 }
 
+gpu::Shader *DRW_shader_mesh_gather_get(const int element_size)
+{
+  BLI_assert(ELEM(element_size, 4, 8, 12, 16));
+  return ShaderCache::get().mesh_gather[element_size / 4 - 1].get();
+}
+
+gpu::Shader *DRW_shader_mesh_scatter_faces_get(const int element_size)
+{
+  BLI_assert(ELEM(element_size, 4, 8, 12, 16));
+  return ShaderCache::get().mesh_scatter_faces[element_size / 4 - 1].get();
+}
+
+gpu::Shader *DRW_shader_mesh_compress_normals_get(const bool use_hq)
+{
+  return use_hq ? ShaderCache::get().mesh_compress_normals_hq_sh.get() :
+                  ShaderCache::get().mesh_compress_normals_lq_sh.get();
+}
+
 gpu::Shader *DRW_shader_subdiv_get(SubdivShaderType shader_type)
 {
   BLI_assert(!ELEM(shader_type, SubdivShaderType::COMP_CUSTOM_DATA_INTERP));
@@ -224,9 +276,10 @@ gpu::Shader *DRW_shader_subdiv_custom_data_get(GPUVertCompType comp_type, int di
   return ShaderCache::get().subdiv_custom_data_sh[dimensions - 1][comp_type].get();
 }
 
-gpu::Shader *DRW_shader_subdiv_interp_corner_normals_get()
+gpu::Shader *DRW_shader_subdiv_interp_corner_normals_get(bool use_hq)
 {
-  return ShaderCache::get().subdiv_interp_corner_normals_sh.get();
+  return use_hq ? ShaderCache::get().subdiv_interp_corner_normals_hq_sh.get() :
+                  ShaderCache::get().subdiv_interp_corner_normals_lq_sh.get();
 }
 
 void DRW_shaders_free()

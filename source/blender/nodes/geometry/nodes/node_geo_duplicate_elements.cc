@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 
 #include "BLI_array_utils.hh"
+#include "BLI_bytes_type_common.hh"
 #include "BLI_noise.hh"
 #include "BLI_offset_indices.hh"
 #include "BLI_span.hh"
@@ -127,12 +128,15 @@ static void create_duplicate_index_attribute(bke::MutableAttributeAccessor attri
                                              const IndexAttributes &attribute_outputs,
                                              const OffsetIndices<int> offsets)
 {
-  SpanAttributeWriter<int> duplicate_indices = attributes.lookup_or_add_for_write_only_span<int>(
-      *attribute_outputs.duplicate_index, output_domain);
-  for (const int i : selection.index_range()) {
-    array_utils::fill_index_range(duplicate_indices.span.slice(offsets[i]));
+  if (SpanAttributeWriter<int> duplicate_indices =
+          attributes.lookup_or_add_for_write_only_span<int>(*attribute_outputs.duplicate_index,
+                                                            output_domain))
+  {
+    for (const int i : selection.index_range()) {
+      array_utils::fill_index_range(duplicate_indices.span.slice(offsets[i]));
+    }
+    duplicate_indices.finish();
   }
-  duplicate_indices.finish();
 }
 
 /**
@@ -153,11 +157,8 @@ static void copy_stable_id_point(const OffsetIndices<int> offsets,
   if (!src_attribute.varray.type().is<int>()) {
     return;
   }
-  SpanAttributeWriter dst_attribute = dst_attributes.lookup_or_add_for_write_only_span<int>(
+  SpanAttributeWriter dst_attribute = dst_attributes.ensure_for_write_only_span<int>(
       "id", AttrDomain::Point);
-  if (!dst_attribute) {
-    return;
-  }
 
   VArraySpan<int> src{src_attribute.varray.typed<int>()};
   MutableSpan<int> dst = dst_attribute.span;
@@ -192,13 +193,12 @@ static void copy_curve_attributes_without_id(const bke::CurvesGeometry &src_curv
   {
     switch (attribute.meta_data.domain) {
       case AttrDomain::Curve:
-        bke::attribute_math::gather_to_groups(
-            curve_offsets, selection, attribute.src, attribute.dst.span);
+        array_utils::gather_to_groups(curve_offsets, selection, attribute.src, attribute.dst.span);
         break;
       case AttrDomain::Point:
-        bke::attribute_math::to_static_type(attribute.src.type(), [&]<typename T>() {
-          const Span<T> src = attribute.src.typed<T>();
-          MutableSpan<T> dst = attribute.dst.span.typed<T>();
+        bke::attribute_math::to_static_bytes_type(attribute.src.type(), [&]<typename T>() {
+          const Span<T> src = bytes_type::typed<T>(attribute.src);
+          MutableSpan<T> dst = bytes_type::typed<T>(attribute.dst.span);
           selection.foreach_index(
               [&](const int64_t index, const int64_t i_selection) {
                 const Span<T> curve_src = src.slice(src_points_by_curve[index]);
@@ -416,17 +416,16 @@ static void copy_face_attributes_without_id(const Span<int> edge_mapping,
   {
     switch (attribute.meta_data.domain) {
       case AttrDomain::Point:
-        bke::attribute_math::gather(attribute.src, vert_mapping, attribute.dst.span);
+        array_utils::gather(attribute.src, vert_mapping, attribute.dst.span);
         break;
       case AttrDomain::Edge:
-        bke::attribute_math::gather(attribute.src, edge_mapping, attribute.dst.span);
+        array_utils::gather(attribute.src, edge_mapping, attribute.dst.span);
         break;
       case AttrDomain::Face:
-        bke::attribute_math::gather_to_groups(
-            offsets, selection, attribute.src, attribute.dst.span);
+        array_utils::gather_to_groups(offsets, selection, attribute.src, attribute.dst.span);
         break;
       case AttrDomain::Corner:
-        bke::attribute_math::gather(attribute.src, loop_mapping, attribute.dst.span);
+        array_utils::gather(attribute.src, loop_mapping, attribute.dst.span);
         break;
       default:
         BLI_assert_unreachable();
@@ -460,11 +459,8 @@ static void copy_stable_id_faces(const Mesh &mesh,
   if (!src_attribute.varray.type().is<int>()) {
     return;
   }
-  SpanAttributeWriter dst_attribute = dst_attributes.lookup_or_add_for_write_only_span<int>(
+  SpanAttributeWriter dst_attribute = dst_attributes.ensure_for_write_only_span<int>(
       "id", AttrDomain::Point);
-  if (!dst_attribute) {
-    return;
-  }
 
   VArraySpan<int> src{src_attribute.varray.typed<int>()};
   MutableSpan<int> dst = dst_attribute.span;
@@ -605,7 +601,7 @@ static void duplicate_faces(GeometrySet &geometry_set,
     MutableSpan dst(static_cast<int *>(CustomData_add_layer(
                         &new_mesh->face_data, CD_ORIGINDEX, CD_CONSTRUCT, new_mesh->faces_num)),
                     new_mesh->faces_num);
-    bke::attribute_math::gather_to_groups(duplicates, selection, src, dst);
+    array_utils::gather_to_groups(duplicates, selection, src, dst);
   }
 
   copy_stable_id_faces(mesh,
@@ -651,11 +647,10 @@ static void copy_edge_attributes_without_id(const Span<int> point_mapping,
   {
     switch (attribute.meta_data.domain) {
       case AttrDomain::Edge:
-        bke::attribute_math::gather_to_groups(
-            offsets, selection, attribute.src, attribute.dst.span);
+        array_utils::gather_to_groups(offsets, selection, attribute.src, attribute.dst.span);
         break;
       case AttrDomain::Point:
-        bke::attribute_math::gather(attribute.src, point_mapping, attribute.dst.span);
+        array_utils::gather(attribute.src, point_mapping, attribute.dst.span);
         break;
       default:
         BLI_assert_unreachable();
@@ -663,6 +658,69 @@ static void copy_edge_attributes_without_id(const Span<int> point_mapping,
     }
     attribute.dst.finish();
   }
+}
+
+/**
+ * Copy attributes from domains that are not represented by the output topology to the domain of
+ * the duplicated elements. The source attributes are adapted before gathering, so their values
+ * are interpolated in the same way as for field evaluation.
+ */
+static void copy_attributes_from_other_domains(const bke::AttributeAccessor src_attributes,
+                                               const AttrDomain domain,
+                                               const Span<AttrDomain> copied_domains,
+                                               const OffsetIndices<int> offsets,
+                                               const IndexMask &selection,
+                                               const AttributeFilter &attribute_filter,
+                                               bke::MutableAttributeAccessor dst_attributes)
+{
+  src_attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
+    if (copied_domains.contains(iter.domain)) {
+      return;
+    }
+    if (dst_attributes.contains(iter.name)) {
+      return;
+    }
+    if (iter.is_builtin || bke::mesh::is_uv_map({iter.domain, iter.data_type}) ||
+        iter.name == "id" || iter.data_type == bke::AttrType::String ||
+        attribute_filter.allow_skip(iter.name))
+    {
+      return;
+    }
+    if (ELEM(iter.name,
+             ".corner_vert",
+             ".corner_edge",
+             ".edge_verts",
+             ".select_edge",
+             ".select_poly",
+             ".hide_edge",
+             ".hide_poly",
+             ".sculpt_face_set",
+             "custom_normal"))
+    {
+      return;
+    }
+
+    const bke::GAttributeReader src = iter.get(domain);
+    if (!src) {
+      return;
+    }
+    const CommonVArrayInfo info = src.varray.common_info();
+    if (info.type == CommonVArrayInfo::Type::Single) {
+      const CPPType &type = src.varray.type();
+      const bke::AttributeInitValue init(GPointer(type, info.data));
+      dst_attributes.add(iter.name, domain, iter.data_type, init);
+      return;
+    }
+
+    GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
+        iter.name, domain, iter.data_type);
+    if (!dst) {
+      return;
+    }
+    const GVArraySpan src_span = src.varray;
+    array_utils::gather_to_groups(offsets, selection, src_span, dst.span);
+    dst.finish();
+  });
 }
 
 /**
@@ -685,11 +743,8 @@ static void copy_stable_id_edges(const Mesh &mesh,
   if (!src_attribute.varray.type().is<int>()) {
     return;
   }
-  SpanAttributeWriter dst_attribute = dst_attributes.lookup_or_add_for_write_only_span<int>(
+  SpanAttributeWriter dst_attribute = dst_attributes.ensure_for_write_only_span<int>(
       "id", AttrDomain::Point);
-  if (!dst_attribute) {
-    return;
-  }
 
   const Span<int2> edges = mesh.edges();
 
@@ -778,6 +833,14 @@ static void duplicate_edges(GeometrySet &geometry_set,
                                   mesh.attributes(),
                                   new_mesh->attributes_for_write());
 
+  copy_attributes_from_other_domains(mesh.attributes(),
+                                     AttrDomain::Edge,
+                                     {AttrDomain::Point, AttrDomain::Edge},
+                                     duplicates,
+                                     selection,
+                                     attribute_filter,
+                                     new_mesh->attributes_for_write());
+
   if (CustomData_has_layer(&mesh.vert_data, CD_ORIGINDEX)) {
     const Span src(static_cast<const int *>(CustomData_get_layer(&mesh.vert_data, CD_ORIGINDEX)),
                    mesh.verts_num);
@@ -793,7 +856,7 @@ static void duplicate_edges(GeometrySet &geometry_set,
     MutableSpan dst(static_cast<int *>(CustomData_add_layer(
                         &new_mesh->edge_data, CD_ORIGINDEX, CD_CONSTRUCT, new_mesh->edges_num)),
                     new_mesh->edges_num);
-    bke::attribute_math::gather_to_groups(duplicates, selection, src, dst);
+    array_utils::gather_to_groups(duplicates, selection, src, dst);
   }
 
   copy_stable_id_edges(
@@ -861,9 +924,9 @@ static bke::CurvesGeometry duplicate_points_CurvesGeometry(
            {bke::AttrDomain::Curve},
            bke::attribute_filter_with_skip_ref(attribute_filter, {"id"})))
   {
-    bke::attribute_math::to_static_type(attribute.src.type(), [&]<typename T>() {
-      const Span<T> src = attribute.src.typed<T>();
-      MutableSpan<T> dst = attribute.dst.span.typed<T>();
+    bke::attribute_math::to_static_bytes_type(attribute.src.type(), [&]<typename T>() {
+      const Span<T> src = bytes_type::typed<T>(attribute.src);
+      MutableSpan<T> dst = bytes_type::typed<T>(attribute.dst.span);
       selection.foreach_index(
           [&](const int64_t index, const int64_t i_selection) {
             const T &src_value = src[point_to_curve_map[index]];
@@ -982,6 +1045,14 @@ static void duplicate_points_mesh(GeometrySet &geometry_set,
                                    selection,
                                    new_mesh->attributes_for_write());
 
+  copy_attributes_from_other_domains(mesh.attributes(),
+                                     AttrDomain::Point,
+                                     {AttrDomain::Point},
+                                     duplicates,
+                                     selection,
+                                     attribute_filter,
+                                     new_mesh->attributes_for_write());
+
   copy_stable_id_point(duplicates, mesh.attributes(), new_mesh->attributes_for_write());
 
   if (attribute_outputs.duplicate_index) {
@@ -1032,7 +1103,7 @@ static void duplicate_points_pointcloud(GeometrySet &geometry_set,
   const OffsetIndices<int> duplicates = accumulate_counts_to_offsets(
       selection, counts, offset_data);
 
-  PointCloud *pointcloud = BKE_pointcloud_new_nomain(duplicates.total_size());
+  PointCloud *pointcloud = BKE_pointcloud_new_nomain(src_points.type, duplicates.total_size());
 
   bke::gather_attributes_to_groups(src_points.attributes(),
                                    AttrDomain::Point,

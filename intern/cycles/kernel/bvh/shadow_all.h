@@ -26,10 +26,9 @@ ccl_device
 #else
 ccl_device_inline
 #endif
-    void
-    BVH_FUNCTION_FULL_NAME(BVH)(KernelGlobals kg,
-                                const ccl_private Ray *ccl_restrict ray,
-                                ccl_private BVHShadowAllPayload &ccl_restrict payload)
+    void BVH_FUNCTION_FULL_NAME(BVH)(KernelGlobals kg,
+                                     const ccl_private Ray *ccl_restrict ray,
+                                     ccl_private BVHShadowAllPayload &ccl_restrict payload)
 {
   /* todo:
    * - likely and unlikely for if() statements
@@ -189,7 +188,8 @@ ccl_device_inline
                 break;
               }
 #endif
-#if BVH_FEATURE(BVH_POINTCLOUD) && defined(__POINTCLOUD__)
+#if BVH_FEATURE(BVH_POINTCLOUD)
+#  if defined(__POINTCLOUD__)
               case PRIMITIVE_POINT:
               case PRIMITIVE_MOTION_POINT: {
                 if ((type & PRIMITIVE_MOTION) && kernel_data.bvh.use_bvh_steps) {
@@ -205,6 +205,25 @@ ccl_device_inline
                     kg, &isect, P, dir, tmin, tmax, prim_object, prim, ray->time, point_type);
                 break;
               }
+#  endif
+#  if defined(__GSPLATS__)
+              case PRIMITIVE_GSPLAT:
+              case PRIMITIVE_MOTION_GSPLAT: {
+                if ((type & PRIMITIVE_MOTION) && kernel_data.bvh.use_bvh_steps) {
+                  const float2 prim_time = kernel_data_fetch(prim_time, prim_addr);
+                  if (ray->time < prim_time.x || ray->time > prim_time.y) {
+                    hit = false;
+                    break;
+                  }
+                }
+
+                /* TODO(sergey): Accumulate throughput instead of recording intersection. */
+                const int point_type = kernel_data_fetch(prim_type, prim_addr);
+                hit = gsplat_intersect(
+                    kg, &isect, P, dir, tmin, tmax, prim_object, prim, ray->time, point_type);
+                break;
+              }
+#  endif
 #endif /* BVH_FEATURE(BVH_POINTCLOUD) */
               default: {
                 hit = false;

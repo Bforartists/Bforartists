@@ -5,14 +5,14 @@ import bpy
 import blf
 import mathutils
 
-from bfa_3Dsequencer.sync.core import (
+from ..sync.core import (
     get_sync_master_strip,
     get_sync_settings,
     remap_frame_value,
 )
 
-from bfa_3Dsequencer.gpu_utils import Vec4f, OverlayDrawer
-from bfa_3Dsequencer.utils import register_classes, unregister_classes
+from ..gpu_utils import Vec4f, OverlayDrawer
+from ..utils import register_classes, unregister_classes
 
 
 # - Overlay UI global settings
@@ -45,7 +45,9 @@ def ui_scaled(val):
 
 
 def ui_baseline_y_pos(context):
-    return ui_scaled(45 if context.scene.timeline_markers else 14)
+    # The marker row is `UI_MARKER_MARGIN_Y` (34 * ui_scale) tall at the bottom of the
+    # dopesheet region. Sit the strip snug on top of it when timeline markers exist.
+    return ui_scaled(34 if context.scene.timeline_markers else 14)
 
 
 def shot_baseline_y_pos(context):
@@ -69,8 +71,8 @@ def draw_shot_strip(
     strip_height = ui_scaled(STRIP_HEIGHT)
     base_y_pos = shot_baseline_y_pos(bpy.context)
 
-    frame_in = remap_frame_value(strip.frame_final_start, strip)
-    frame_out = remap_frame_value(strip.frame_final_end, strip)
+    frame_in = remap_frame_value(strip.left_handle, strip)
+    frame_out = remap_frame_value(strip.right_handle, strip)
     frame_in = region.view2d.view_to_region(frame_in, 0, clip=False)[0]
     frame_out = region.view2d.view_to_region(frame_out, 0, clip=False)[0]
     duration = frame_out - frame_in
@@ -111,13 +113,12 @@ def draw_sequence_overlay_cb(drawer: OverlayDrawer):
 
     :param drawer: PolyDrawer instance.
     """
-    context = bpy.context
-    sync_settings = get_sync_settings()
-    sequence_settings = context.window_manager.sequence_settings
-
-    # Early return if sync or overlay options are disabled.
-    if not sync_settings.is_sync() or not sequence_settings.overlay_dopesheet:
-        return
+    # BFA (#6780): this addon overlay is superseded by the built-in C scene-strip gizmos
+    # (action_gizmo_scene_strip.cc). The single "Scene Strip Gizmo" toggle
+    # (space_data.overlays.show_scene_strip_gizmos) controls the whole system, so the
+    # legacy fallback is retired and must never draw - whether the toggle is on or off.
+    # The rest of this function is kept (unreachable) for reference when rebasing.
+    return
 
     # Only draw overlay if current scene matches master strip's scene.
     master_strip = get_sync_master_strip(use_cache=True)[0]
@@ -195,12 +196,10 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
 
     @classmethod
     def poll(cls, context: bpy.types.Context):
-        master_strip = get_sync_master_strip(use_cache=True)[0]
-        return (
-            context.window_manager.sequence_settings.overlay_dopesheet
-            and master_strip
-            and master_strip.scene == context.scene
-        )
+        # BFA (#6780): superseded by the built-in C scene-strip gizmos - the single
+        # "Scene Strip Gizmo" toggle owns this feature, so this legacy Python gizmo
+        # group is retired and never registers (kept for reference when rebasing).
+        return False
 
     @staticmethod
     def set_gizmo_geom(gizmo: bpy.types.Gizmo, x, y, width, height):
@@ -237,14 +236,14 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
         strip, _ = get_sync_master_strip(use_cache=True)
 
         # Toggle strip handles based on whether there is an active master strip
-        for gizmo in (self.right_handle, self.left_handle, self.shot_handle):
+        for gizmo in (self.right_handle, self.left_handle, self.shot_handle, self.slip_handle):
             gizmo.hide = not strip
         # Early return if not active strip
         if not strip:
             return
 
-        frame_in = remap_frame_value(strip.frame_final_start, strip)
-        frame_out = remap_frame_value(strip.frame_final_end, strip)
+        frame_in = remap_frame_value(strip.left_handle, strip)
+        frame_out = remap_frame_value(strip.right_handle, strip)
         frame_in = region.view2d.view_to_region(frame_in, 0, clip=False)[0]
         frame_out = region.view2d.view_to_region(frame_out, 0, clip=False)[0]
 
@@ -270,14 +269,23 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
             height=strip_height,
         )
 
-        strip_handle_height = strip_height * 0.5
-        # Scene handle
+        # Move bar (larger, top): displace the strip in the master timeline.
+        move_bar_height = strip_height * 0.7
         self.set_gizmo_geom(
             self.shot_handle,
             x=frame_in,
-            y=strip_y + strip_height - strip_handle_height * 0.5,
+            y=strip_y + strip_height - move_bar_height,
             width=frame_out - frame_in,
-            height=strip_handle_height,
+            height=move_bar_height,
+        )
+        # Slip bar (smaller, bottom): slip the strip's content.
+        slip_bar_height = strip_height * 0.3
+        self.set_gizmo_geom(
+            self.slip_handle,
+            x=frame_in,
+            y=strip_y,
+            width=frame_out - frame_in,
+            height=slip_bar_height,
         )
 
     def add_gizmo(self, operator: str):
@@ -300,10 +308,15 @@ class DOPESHEET_GGT_SequenceGizmos(bpy.types.GizmoGroup):
         # - Right handle
         self.right_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
         props.strip_handle = "RIGHT"
-        # - Scene handle (slip content)
+        # - Move bar (larger, top): displace the strip in the master timeline
         self.shot_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
         self.shot_handle.alpha = 0.2
         self.shot_handle.alpha_highlight = 0.7
+        props.mode = "MOVE"
+        # - Slip bar (smaller, bottom): slip the strip's content
+        self.slip_handle, props = self.add_gizmo("sequencer.shot_timing_adjust")
+        self.slip_handle.alpha = 0.15
+        self.slip_handle.alpha_highlight = 0.7
         props.mode = "SLIP"
 
         # Sequence timeline scrub gizmo

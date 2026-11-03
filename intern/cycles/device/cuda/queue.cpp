@@ -10,6 +10,9 @@
 #  include "device/cuda/graphics_interop.h"
 #  include "device/cuda/kernel.h"
 
+#  include "kernel/device/gpu/block_sizes.h"
+#  include "util/debug.h"
+
 CCL_NAMESPACE_BEGIN
 
 /* CUDADeviceQueue */
@@ -27,39 +30,41 @@ CUDADeviceQueue::~CUDADeviceQueue()
   cuStreamDestroy(cuda_stream_);
 }
 
-int CUDADeviceQueue::num_concurrent_states(const size_t state_size) const
+ConcurrentStatesParams CUDADeviceQueue::concurrent_states_params() const
 {
   const int max_num_threads = cuda_device_->get_num_multiprocessors() *
                               cuda_device_->get_max_num_threads_per_multiprocessor();
-  int num_states = max(max_num_threads, 65536) * 16;
 
-  const char *factor_str = getenv("CYCLES_CONCURRENT_STATES_FACTOR");
-  if (factor_str) {
-    const float factor = (float)atof(factor_str);
-    if (factor != 0.0f) {
-      num_states = max((int)(num_states * factor), 1024);
-    }
-    else {
-      LOG_TRACE << "CYCLES_CONCURRENT_STATES_FACTOR evaluated to 0";
-    }
-  }
-
-  LOG_TRACE << "GPU queue concurrent states: " << num_states << ", using up to "
-            << string_human_readable_size(num_states * state_size);
-
-  return num_states;
+  /* Only shrink to fit within available memory. Growing up to 10x does show
+   * performance improvements, however it causes TDR timeouts, too much memory
+   * usage when there are multiple Blender instances, etc. */
+  ConcurrentStatesParams params;
+  params.baseline = max(max_num_threads, 65536) * 16;
+  params.min = params.baseline / 2;
+  params.max = params.baseline;
+  return params;
 }
 
-int CUDADeviceQueue::num_concurrent_busy_states(const size_t /*state_size*/) const
+void CUDADeviceQueue::get_memory_info(size_t &total, size_t &free) const
 {
-  const int max_num_threads = cuda_device_->get_num_multiprocessors() *
-                              cuda_device_->get_max_num_threads_per_multiprocessor();
+  cuda_device_->get_device_memory_info(total, free);
+}
 
-  if (max_num_threads == 0) {
-    return 65536;
+int CUDADeviceQueue::num_sort_partitions(int max_num_paths, uint max_scene_shaders) const
+{
+  /* Sort partitioning becomes less effective when more shaders are in the wavefront. Also need to
+   * ensure the amount of shared memory required is within the limit. */
+  if (max_scene_shaders < min(300, cuda_device_->max_shared_mem_bytes / (int)sizeof(int))) {
+    return max(max_num_paths / 65536, 1);
   }
+  else {
+    return 1;
+  }
+}
 
-  return 4 * max_num_threads;
+bool CUDADeviceQueue::supports_local_atomic_sort() const
+{
+  return DebugFlags().cuda.use_local_atomic_sort;
 }
 
 void CUDADeviceQueue::init_execution()
@@ -102,9 +107,8 @@ bool CUDADeviceQueue::enqueue(DeviceKernel kernel,
 
   /* Compute kernel launch parameters. */
   const CUDADeviceKernel &cuda_kernel = cuda_device_->kernels.get(kernel);
-  const int num_threads_per_block = cuda_kernel.num_threads_per_block;
-  const int num_blocks = divide_up(work_size, num_threads_per_block);
 
+  int num_threads_per_block = cuda_kernel.num_threads_per_block;
   int shared_mem_bytes = 0;
 
   switch (kernel) {
@@ -120,9 +124,17 @@ bool CUDADeviceQueue::enqueue(DeviceKernel kernel,
       shared_mem_bytes = (num_threads_per_block + 1) * sizeof(int);
       break;
 
+    case DEVICE_KERNEL_INTEGRATOR_SORT_BUCKET_PASS:
+    case DEVICE_KERNEL_INTEGRATOR_SORT_WRITE_PASS:
+      num_threads_per_block = GPU_PARALLEL_SORT_BLOCK_SIZE;
+      shared_mem_bytes = cuda_device_->scene_max_shaders_ * sizeof(int);
+      break;
+
     default:
       break;
   }
+
+  const int num_blocks = divide_up(work_size, num_threads_per_block);
 
   /* Launch kernel. */
   assert_success(cuLaunchKernel(cuda_kernel.function,
@@ -206,6 +218,10 @@ void CUDADeviceQueue::copy_to_device(device_memory &mem)
   assert(d_ptr != 0);
   assert(mem.host_pointer != nullptr);
 
+  if (mem.is_shared(cuda_device_) && mem.host_pointer == mem.shared_pointer) {
+    return;
+  }
+
   /* Copy memory to device. */
   const CUDAContextScope scope(cuda_device_);
   assert_success(
@@ -223,6 +239,10 @@ void CUDADeviceQueue::copy_from_device(device_memory &mem)
 
   assert(mem.device_pointer != 0);
   assert(mem.host_pointer != nullptr);
+
+  if (mem.is_shared(cuda_device_) && mem.host_pointer == mem.shared_pointer) {
+    return;
+  }
 
   /* Copy memory from device. */
   const CUDAContextScope scope(cuda_device_);

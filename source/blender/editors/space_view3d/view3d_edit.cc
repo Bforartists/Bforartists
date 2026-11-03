@@ -32,6 +32,7 @@
 #include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "DEG_depsgraph_query.hh"
 
@@ -59,7 +60,9 @@ static bool view3d_camera_user_poll(bContext *C)
 
   if (ED_view3d_context_user_region(C, &v3d, &region)) {
     RegionView3D *rv3d = static_cast<RegionView3D *>(region->regiondata);
-    if ((rv3d->persp == RV3D_CAMOB) && !(RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ANY_TRANSFORM)) {
+    if ((rv3d->persp == RV3D_CAMOB) &&
+        !(bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_ANY_TRANSFORM))
+    {
       return true;
     }
   }
@@ -550,6 +553,25 @@ static wmOperatorStatus view3d_set_roll_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/* BFA - in a camera view locked to the view (Lock Camera to View) the roll can't be reset this way,
+ * the camera sets the view back, so grey out Reset Roll there (#6839). */
+static bool view3d_set_roll_poll(bContext *C)
+{
+  if (!ED_operator_rv3d_user_region_poll(C)) {
+    return false;
+  }
+  View3D *v3d;
+  ARegion *region;
+  if (ED_view3d_context_user_region(C, &v3d, &region)) {
+    const RegionView3D *rv3d = static_cast<const RegionView3D *>(region->regiondata);
+    if ((rv3d->persp == RV3D_CAMOB) && ED_view3d_camera_lock_check(v3d, rv3d)) {
+      CTX_wm_operator_poll_msg_set(C, "Unlock the camera from the view to reset its roll");
+      return false;
+    }
+  }
+  return true;
+}
+
 void VIEW3D_OT_view_roll_set(wmOperatorType *ot)
 {
   /* identifiers */
@@ -559,7 +581,7 @@ void VIEW3D_OT_view_roll_set(wmOperatorType *ot)
 
   /* API callbacks. */
   ot->exec = view3d_set_roll_exec;
-  ot->poll = ED_operator_rv3d_user_region_poll;
+  ot->poll = view3d_set_roll_poll; /* BFA - was ED_operator_rv3d_user_region_poll */
 
   /* properties */
   ot->prop = RNA_def_float(ot->srna, "angle", 0, -FLT_MAX, FLT_MAX, "Roll", "", -FLT_MAX, FLT_MAX);
@@ -645,7 +667,7 @@ static wmOperatorStatus viewpersportho_exec(bContext *C, wmOperator * /*op*/)
   rv3d = static_cast<RegionView3D *>(region->regiondata);
 
   /* Could add a separate lock flag for locking persp. */
-  if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ANY_TRANSFORM) == 0) {
+  if ((bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_ANY_TRANSFORM) == 0) {
     if (rv3d->persp != RV3D_ORTHO) {
       rv3d->persp = RV3D_ORTHO;
     }
@@ -923,8 +945,8 @@ static void calc_local_clipping(float clip_local[6][4],
 
 void ED_view3d_clipping_local(RegionView3D *rv3d, const float mat[4][4])
 {
-  if (rv3d->rflag & RV3D_CLIPPING) {
-    calc_local_clipping(rv3d->clip_local, rv3d->clipbb, mat);
+  if ((rv3d->rflag & RV3D_CLIPPING) && (rv3d->clipbb != nullptr)) {
+    calc_local_clipping(rv3d->runtime->clip_local, rv3d->clipbb, mat);
   }
 }
 

@@ -14,11 +14,13 @@
 
 #include "BLI_function_ref.hh"
 #include "BLI_set.hh"
+#include "BLI_span.hh"
 
 #include <string>
 
 namespace blender {
 
+struct ColorManagedColorspaceSettings;
 struct IDProperty;
 struct ImBuf;
 struct MovieReader;
@@ -40,7 +42,7 @@ MovieReader *MOV_open_file(const char *filepath,
                            ImBufFlags ib_flags,
                            int streamindex,
                            bool keep_original_colorspace,
-                           char colorspace[IM_MAX_SPACE]);
+                           ColorManagedColorspaceSettings *colorspace_settings);
 
 /**
  * Release memory and other resources associated with movie playback.
@@ -67,7 +69,7 @@ void MOV_close(MovieReader *anim);
  * or failed decoding.
  */
 ImBuf *MOV_decode_frame(MovieReader *anim,
-                        int position,
+                        int frame_index,
                         IMB_Proxy_Size preview_size /* = 0 = IMB_PROXY_NONE */);
 
 /**
@@ -128,7 +130,7 @@ bool MOV_is_initialized_and_valid(const MovieReader *anim);
 /**
  * Gets filename (without the folder) part of the movie.
  */
-void MOV_get_filename(const MovieReader *anim, char *filename, int filename_maxncpy);
+void MOV_get_filename(const MovieReader *anim, MutableCStr filename);
 
 /**
  * Loads metadata of the movie.

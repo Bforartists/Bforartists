@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'2cef5b8c951a')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 07:47+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
 "PO-Revision-Date: 2025-11-19 06:24+0000\n"
 "Last-Translator: \"M. Amin Taheri\" <amintaheri2001@gmail.com>\n"
 "Language-Team: Persian <https://translate.blender.org/projects/blender-ui/ui/fa/>\n"
@@ -1246,6 +1246,10 @@ msgstr "ﮓﻧﺭ ﯼﺎﻀﻓ"
 
 msgid "Particles"
 msgstr "ﺕﺍﺭﺫ"
+
+
+msgid "Path"
+msgstr "ﺮﯿﺴﻣ"
 
 
 msgid "Blender RNA"
@@ -2642,10 +2646,6 @@ msgid "Path Duration"
 msgstr "ﺮﯿﺴﻣ ﻝﻮﻃ"
 
 
-msgid "Path"
-msgstr "ﺮﯿﺴﻣ"
-
-
 msgid "Text on Curve"
 msgstr "ﯽﻨﺤﻨﻣ ﯼﻭﺭ ﺮﺑ ﻦﺘﻣ"
 
@@ -3098,28 +3098,12 @@ msgid "Pivot Point"
 msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
 
 
-msgid "Import"
-msgstr "ﻥﺩﺮﮐ ﺩﺭﺍﻭ"
-
-
-msgid "Math"
-msgstr "ﯽﺿﺎﯾﺭ"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Mirror"
 msgstr "ﻪﻨﯾﺁ"
 
 
-msgid "Linked"
-msgstr "ﻂﺒﺗﺮﻣ"
-
-
-msgid "Layout"
-msgstr "ﺡﺮﻃ"
+msgid "Math"
+msgstr "ﯽﺿﺎﯾﺭ"
 
 
 msgid "Add Image"
@@ -3130,16 +3114,32 @@ msgid "Relations"
 msgstr "ﻂﺑﺍﻭﺭ"
 
 
+msgid "Import"
+msgstr "ﻥﺩﺮﮐ ﺩﺭﺍﻭ"
+
+
 msgid "Apply"
 msgstr "ﻝﺎﻤﻋﺍ"
 
 
-msgid "Tracking"
-msgstr "ﯽﺑﺎﯾﺩﺭ"
-
-
 msgid "Convert"
 msgstr "ﻞﯾﺪﺒﺗ"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Linked"
+msgstr "ﻂﺒﺗﺮﻣ"
+
+
+msgid "Layout"
+msgstr "ﺡﺮﻃ"
+
+
+msgid "Tracking"
+msgstr "ﯽﺑﺎﯾﺩﺭ"
 
 
 msgid "Key"
@@ -3378,10 +3378,6 @@ msgid "Previous frame"
 msgstr "ﯽﻠﺒﻗ ﻢﯾﺮﻓ"
 
 
-msgid "Double"
-msgstr "ﯽﯾﺎﺗﻭﺩ"
-
-
 msgid "Use Red Channel"
 msgstr "ﺰﻣﺮﻗ ﻝﺎﻧﺎﮐ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
@@ -3513,6 +3509,11 @@ msgstr "ﯽﺷ ﺕﺎﻋﻼ﻿ﻃﺍ"
 
 msgid "Points to Curves"
 msgstr "ﺎﻫ‌ﯽﻨﺤﻨﻣ ﻪﺑ ﻁﺎﻘﻧ"
+
+
+msgctxt "Volume"
+msgid "Float"
+msgstr "ﺭﻭﺎﻨﺷ"
 
 
 msgid "Add Shader"
@@ -4665,11 +4666,6 @@ msgid "Face Angles"
 msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
 
 
-msgctxt "Volume"
-msgid "Float"
-msgstr "ﺭﻭﺎﻨﺷ"
-
-
 msgid "Error Message"
 msgstr "ﺎﻄﺧ ﻡﺎﻐﯿﭘ"
 
@@ -4685,6 +4681,10 @@ msgstr "ﻑﺍﺮﺼﻧﺍ"
 msgctxt "WindowManager"
 msgid "Rotate"
 msgstr "ﺶﺧﺮﭼ"
+
+
+msgid "Motion"
+msgstr "ﺖﮐﺮﺣ"
 
 
 msgid "Description:"
@@ -4995,14 +4995,6 @@ msgstr "ﻪﺘﺨﯾﺭ ﻥﻭﺮﯿﺑ ﺵﺮﺘﺴﮔ"
 
 msgid "Reset Curve"
 msgstr "ﯽﻨﺤﻨﻣ ﯽﻧﺎﺸﻧﺯﺎﺑ"
-
-
-msgid "H"
-msgstr "H"
-
-
-msgid "S"
-msgstr "S"
 
 
 msgid "Zoom in"
@@ -5348,10 +5340,6 @@ msgid "Size:"
 msgstr ":ﻩﺯﺍﺪﻧﺍ"
 
 
-msgid "Motion"
-msgstr "ﺖﮐﺮﺣ"
-
-
 msgid "Simple Star"
 msgstr "ﻩﺩﺎﺳ ﻩﺭﺎﺘﺳ"
 
@@ -5360,8 +5348,16 @@ msgid "Uniformity"
 msgstr "ﻥﺎﺴﮑﯾ"
 
 
+msgid "S"
+msgstr "S"
+
+
 msgid "Old"
 msgstr "ﯽﻤﯾﺪﻗ"
+
+
+msgid "H"
+msgstr "H"
 
 
 msgid "Blender File View"

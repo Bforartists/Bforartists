@@ -219,7 +219,6 @@ class GHOST_DeviceVK {
       VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES,
   };
   VkPhysicalDeviceFeatures2 features = {};
-  VkPhysicalDeviceVulkan11Features features_11 = {};
   VkPhysicalDeviceTimelineSemaphoreFeatures features_timeline_semaphore = {
       VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES};
   VkPhysicalDeviceBufferDeviceAddressFeatures features_buffer_device_address = {
@@ -246,9 +245,7 @@ class GHOST_DeviceVK {
     volk::vkGetPhysicalDeviceProperties2(vk_physical_device, &properties);
 
     features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-    features_11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-    features.pNext = &features_11;
-    features_11.pNext = &features_timeline_semaphore;
+    features.pNext = &features_timeline_semaphore;
     features_timeline_semaphore.pNext = &features_buffer_device_address;
     features_buffer_device_address.pNext = &features_robustness2;
     features_robustness2.pNext = &features_acceleration_structure;
@@ -450,7 +447,6 @@ struct GHOST_InstanceVK {
 #ifndef __APPLE__
           !device_vk.features.features.geometryShader ||
 #endif
-          !device_vk.features.features.multiViewport ||
           !device_vk.features.features.fragmentStoresAndAtomics ||
           !device_vk.features.features.imageCubeArray ||
           !device_vk.features.features.dualSrcBlend || !device_vk.features.features.imageCubeArray)
@@ -558,6 +554,7 @@ struct GHOST_InstanceVK {
 
   bool create_device(const bool use_vk_ext_swapchain_maintenance1,
                      const bool is_debug,
+                     const bool no_hw_rt,
                      blender::Span<const char *> required_device_extensions,
                      blender::Span<const char *> optional_device_extensions)
   {
@@ -585,6 +582,14 @@ struct GHOST_InstanceVK {
       device.extensions.disable(VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME);
       device.extensions.disable(VK_EXT_GRAPHICS_PIPELINE_LIBRARY_EXTENSION_NAME);
       device.extensions.disable(VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME);
+    }
+
+    /* Disable ray query & acceleration structure extensions.
+     * Some driver have issue with capture replay in renderdoc with these specific extensions.
+     */
+    if (no_hw_rt) {
+      device.extensions.disable(VK_KHR_RAY_QUERY_EXTENSION_NAME);
+      device.extensions.disable(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
     }
 
 #ifdef _WIN32
@@ -625,7 +630,7 @@ struct GHOST_InstanceVK {
 #endif
     device_features.vertexPipelineStoresAndAtomics =
         device.features.features.vertexPipelineStoresAndAtomics;
-    device_features.multiViewport = VK_TRUE;
+    device_features.multiViewport = device.features.features.multiViewport;
     device_features.shaderClipDistance = device.features.features.shaderClipDistance;
     device_features.fragmentStoresAndAtomics = VK_TRUE;
 
@@ -659,6 +664,14 @@ struct GHOST_InstanceVK {
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
     buffer_device_address_features.bufferDeviceAddress = VK_TRUE;
     feature_struct_ptr.push_back(&buffer_device_address_features);
+
+    /* Enable separate depth stencil layouts. */
+    VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures separate_depth_stencil_layouts_features =
+        {};
+    separate_depth_stencil_layouts_features.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
+    separate_depth_stencil_layouts_features.separateDepthStencilLayouts = VK_TRUE;
+    feature_struct_ptr.push_back(&separate_depth_stencil_layouts_features);
 
     /* Enable provoking vertex if available. */
     VkPhysicalDeviceProvokingVertexFeaturesEXT provoking_vertex_features = {};
@@ -927,7 +940,7 @@ GHOST_ContextVK::GHOST_ContextVK(const GHOST_ContextParams &context_params,
       render_frame_(0),
       use_hdr_swapchain_(false)
 {
-  frame_data_.reserve(5);
+  frame_data_.reserve(6);
 }
 
 GHOST_ContextVK::~GHOST_ContextVK()
@@ -1997,6 +2010,7 @@ GHOST_TSuccess GHOST_ContextVK::initializeDrawingContext()
 
     if (!instance_vk.create_device(use_vk_ext_swapchain_colorspace,
                                    context_params_.is_debug,
+                                   context_params_.no_hw_rt,
                                    required_device_extensions,
                                    optional_device_extensions))
     {

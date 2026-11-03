@@ -1,0 +1,34 @@
+2.1.2
+- Muted driver colors a bit
+
+3.0.0
+- Fully overhauled to be darker and more minimal! 
+- Text everywhere has more contrast
+- Interactive elements now use opacity instead of a set color, so they appear consistent everywhere
+- Nested sub-panels are now supported
+- Elements in the 3D View now have higher contrast with the background
+- Keyframes and animation curves are now more readable
+- Updated for Blender 4.4
+
+3.0.2 
+- Darkened wires for better contrast with selection and bone themes
+
+3.0.3
+- Adjusted values for improved contrast on Retina displays
+- Improved selected text contrast in Outliner
+
+3.0.4
+- Darkened boxes so they show up better if add-ons use them in the 3D View
+- Reduced pie menu rounding to match other buttons for add-ons using custom pies
+- Darkened 3D view grid
+- Fixed node editor sidebar panels in Blender 4.4
+- Added colors for keyframe types
+
+3.1.0
+- Overhauled the theme for Blender 5.0
+
+3.1.1
+- Updated Preferences background to match panel headers
+
+3.1.2
+- Updated Curve inputs to match more types of panels

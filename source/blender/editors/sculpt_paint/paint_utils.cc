@@ -225,7 +225,8 @@ void paint_stroke_operator_properties(wmOperatorType *ot)
 /* face-select ops */
 static wmOperatorStatus paint_select_linked_exec(bContext *C, wmOperator * /*op*/)
 {
-  paintface_select_linked(C, CTX_data_active_object(C), nullptr, true);
+  paintface_select_linked(
+      C, *CTX_data_ensure_evaluated_depsgraph(C), CTX_data_active_object(C), nullptr, true);
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -248,7 +249,8 @@ static wmOperatorStatus paint_select_linked_pick_invoke(bContext *C,
 {
   const bool select = !RNA_boolean_get(op->ptr, "deselect");
   view3d_operator_needs_gpu(C);
-  paintface_select_linked(C, CTX_data_active_object(C), event->mval, select);
+  paintface_select_linked(
+      C, *CTX_data_ensure_evaluated_depsgraph(C), CTX_data_active_object(C), event->mval, select);
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -270,7 +272,9 @@ void PAINT_OT_face_select_linked_pick(wmOperatorType *ot)
 static wmOperatorStatus face_select_all_exec(bContext *C, wmOperator *op)
 {
   Object *ob = CTX_data_active_object(C);
-  if (paintface_deselect_all_visible(C, ob, RNA_enum_get(op->ptr, "action"), true)) {
+  if (paintface_deselect_all_visible(
+          *CTX_data_ensure_evaluated_depsgraph(C), ob, RNA_enum_get(op->ptr, "action"), true))
+  {
     ED_region_tag_redraw(CTX_wm_region(C));
     return OPERATOR_FINISHED;
   }
@@ -322,7 +326,7 @@ static wmOperatorStatus paint_select_more_exec(bContext *C, wmOperator *op)
 
   const bool face_step = RNA_boolean_get(op->ptr, "face_step");
   paintface_select_more(mesh, face_step);
-  paintface_flush_flags(C, ob, true, false);
+  paintface_flush_flags(*CTX_data_ensure_evaluated_depsgraph(C), ob, true, false);
 
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
@@ -353,7 +357,7 @@ static wmOperatorStatus paint_select_less_exec(bContext *C, wmOperator *op)
 
   const bool face_step = RNA_boolean_get(op->ptr, "face_step");
   paintface_select_less(mesh, face_step);
-  paintface_flush_flags(C, ob, true, false);
+  paintface_flush_flags(*CTX_data_ensure_evaluated_depsgraph(C), ob, true, false);
 
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
@@ -380,11 +384,12 @@ static wmOperatorStatus paintface_select_loop_invoke(bContext *C,
 {
   const bool select = RNA_boolean_get(op->ptr, "select");
   const bool extend = RNA_boolean_get(op->ptr, "extend");
+  Depsgraph &depsgraph = *CTX_data_ensure_evaluated_depsgraph(C);
   if (!extend) {
-    paintface_deselect_all_visible(C, CTX_data_active_object(C), SEL_DESELECT, false);
+    paintface_deselect_all_visible(depsgraph, CTX_data_active_object(C), SEL_DESELECT, false);
   }
   view3d_operator_needs_gpu(C);
-  paintface_select_loop(C, CTX_data_active_object(C), event->mval, select);
+  paintface_select_loop(C, depsgraph, CTX_data_active_object(C), event->mval, select);
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -461,7 +466,7 @@ static wmOperatorStatus vert_select_all_exec(bContext *C, wmOperator *op)
 {
   Object *ob = CTX_data_active_object(C);
   paintvert_deselect_all_visible(ob, RNA_enum_get(op->ptr, "action"), true);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -512,7 +517,7 @@ static wmOperatorStatus vert_select_ungrouped_exec(bContext *C, wmOperator *op)
   }
 
   paintvert_select_ungrouped(ob, RNA_boolean_get(op->ptr, "extend"), true);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -536,7 +541,7 @@ void PAINT_OT_vert_select_ungrouped(wmOperatorType *ot)
 
 static wmOperatorStatus paintvert_select_linked_exec(bContext *C, wmOperator * /*op*/)
 {
-  paintvert_select_linked(C, CTX_data_active_object(C));
+  paintvert_select_linked(CTX_data_active_object(C));
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -595,7 +600,7 @@ static wmOperatorStatus paintvert_select_more_exec(bContext *C, wmOperator *op)
   paintvert_select_more(mesh, face_step);
 
   paintvert_flush_flags(ob);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
   ED_region_tag_redraw(CTX_wm_region(C));
 
   return OPERATOR_FINISHED;
@@ -628,7 +633,7 @@ static wmOperatorStatus paintvert_select_less_exec(bContext *C, wmOperator *op)
   paintvert_select_less(mesh, face_step);
 
   paintvert_flush_flags(ob);
-  paintvert_tag_select_update(C, ob);
+  paintvert_tag_select_update(ob);
   ED_region_tag_redraw(CTX_wm_region(C));
 
   return OPERATOR_FINISHED;
@@ -653,7 +658,7 @@ static wmOperatorStatus face_select_hide_exec(bContext *C, wmOperator *op)
 {
   const bool unselected = RNA_boolean_get(op->ptr, "unselected");
   Object *ob = CTX_data_active_object(C);
-  paintface_hide(C, ob, unselected);
+  paintface_hide(*CTX_data_ensure_evaluated_depsgraph(C), ob, unselected);
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -677,7 +682,7 @@ static wmOperatorStatus vert_select_hide_exec(bContext *C, wmOperator *op)
 {
   const bool unselected = RNA_boolean_get(op->ptr, "unselected");
   Object *ob = CTX_data_active_object(C);
-  paintvert_hide(C, ob, unselected);
+  paintvert_hide(ob, unselected);
   ED_region_tag_redraw(CTX_wm_region(C));
   return OPERATOR_FINISHED;
 }
@@ -706,10 +711,10 @@ static wmOperatorStatus face_vert_reveal_exec(bContext *C, wmOperator *op)
   Object *ob = CTX_data_active_object(C);
 
   if (BKE_paint_select_vert_test(ob)) {
-    paintvert_reveal(C, ob, select);
+    paintvert_reveal(ob, select);
   }
   else {
-    paintface_reveal(C, ob, select);
+    paintface_reveal(*CTX_data_ensure_evaluated_depsgraph(C), ob, select);
   }
 
   ED_region_tag_redraw(CTX_wm_region(C));

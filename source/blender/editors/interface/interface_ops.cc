@@ -292,33 +292,13 @@ static void UI_OT_copy_as_driver_button(wmOperatorType *ot)
  // BFA - Tear-Off Menu/Panel
 static Button *button_under_cursor_or_active(bContext *C)
 {
-  /* BFA - Tear-Off Menu/Panel: when a popup is open, buttons in the main UI
-   * don't get activated. Find the button under the mouse cursor first. */
-  wmWindow *win = CTX_wm_window(C);
-  if (win) {
-    int xy[2];
-    if (wm_cursor_position_get(win, &xy[0], &xy[1])) {
-      ARegion *region_main = CTX_wm_region(C);
-      if (region_main) {
-        Button *but = button_find_mouse_over_ex(region_main, xy, false, false, nullptr, nullptr);
-        if (but) {
-          return but;
-        }
-      }
-      ARegion *region_popup = CTX_wm_region_popup(C);
-      if (region_popup) {
-        Button *but = button_find_mouse_over_ex(region_popup, xy, false, false, nullptr, nullptr);
-        if (but) {
-          return but;
-        }
-      }
-    }
-  }
-
-  /* BFA - Tear-Off Menu/Panel Fallback to active button search */
-  Button *but = context_active_but_get(C);
+  /* BFA - Tear-Off Menu/Panel: the active button always wins, including the popup a context
+   * menu was opened from (see #151170). The cursor must not be checked first: when this runs
+   * from a context menu item, the cursor is over whatever sits beneath that item, which would
+   * resolve to the wrong button. */
+  Button *but = context_active_but_get_respect_popup(C);
   if (!but) {
-    but = context_active_but_get_respect_popup(C);
+    but = context_active_but_get(C);
   }
 
   /* BFA - Tear-Off Menu/Panel Fallback: use context store to find the button by RNA pointer/property.
@@ -345,6 +325,22 @@ static Button *button_under_cursor_or_active(bContext *C)
             }
           }
         }
+      }
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: last resort. While a tear-off holds the modal handler, buttons
+   * in the main UI don't get activated, so nothing above finds a button hovered there. */
+  if (!but) {
+    wmWindow *win = CTX_wm_window(C);
+    int xy[2];
+    if (win && wm_cursor_position_get(win, &xy[0], &xy[1])) {
+      if (ARegion *region_main = CTX_wm_region(C)) {
+        but = button_find_mouse_over_ex(region_main, xy, false, false, nullptr, nullptr);
+      }
+      ARegion *region_popup = CTX_wm_region_popup(C);
+      if (!but && region_popup) {
+        but = button_find_mouse_over_ex(region_popup, xy, false, false, nullptr, nullptr);
       }
     }
   }
@@ -388,8 +384,6 @@ static wmOperatorStatus copy_python_command_button_exec(bContext *C, wmOperator 
           CTX_wm_region_set(C, handle->ctx_region);
         }
         context_restored = true;
-        printf("COPY_PYTHON_CMD: restored context - area=%p region=%p\n",
-               (void *)handle->ctx_area, (void *)handle->ctx_region);
       }
     }
   }
@@ -2150,8 +2144,7 @@ static bool jump_to_target_button(bContext *C, bool poll)
         auto *coll_search = static_cast<RNACollectionSearch *>(search_but->arg.get());
 
         char str_buf[MAXBONENAME];
-        char *str_ptr = RNA_property_string_get_alloc(
-            &ptr, prop, str_buf, sizeof(str_buf), nullptr);
+        char *str_ptr = RNA_property_string_get_alloc(&ptr, prop, str_buf, nullptr);
 
         bool found = false;
         /* Jump to target only works with search properties currently, not search callbacks yet.
@@ -3039,7 +3032,8 @@ static AbstractView *get_view_focused(bContext *C)
     return nullptr;
   }
 
-  const ARegion *region = CTX_wm_region(C);
+  const ARegion *region_popup = CTX_wm_region_popup(C);
+  const ARegion *region = region_popup ? region_popup : CTX_wm_region(C);
   if (!region) {
     return nullptr;
   }
@@ -3697,13 +3691,7 @@ static wmOperatorStatus region_start_filter_exec(bContext *C, wmOperator * /*op*
     region->flag |= RGN_FLAG_SEARCH_FILTER_SHOW;
     region_panels_sort_for_search_filter_visibility_change(C, region);
   }
-  if (region_panels_fits_only_categories(region)) {
-    /* Enlarge region to show content to filter. */
-    const float aspect = BLI_rctf_size_y(&region->v2d.cur) /
-                         (BLI_rcti_size_y(&region->v2d.mask) + 1);
-    const int new_width = region->runtime->type->prefsizex ? region->runtime->type->prefsizex :
-                                                             250;
-    panel_region_width_set(region, aspect, new_width);
+  if (ui::panel_region_visible_width_ensure(region)) {
     WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
   }
   ED_region_activate_rna_prop(C, region, region, "search_filter");
@@ -3737,7 +3725,7 @@ static wmOperatorStatus region_clear_filter_exec(bContext *C, wmOperator * /*op*
   return OPERATOR_FINISHED;
 }
 
-static bool reion_clear_filter_poll(blender::bContext *C)
+static bool region_clear_filter_poll(blender::bContext *C)
 {
   ARegion *region = CTX_wm_region(C);
   return region && BKE_region_panel_categories_search_filter_visible(region);
@@ -3749,7 +3737,7 @@ static void UI_OT_region_clear_filter(wmOperatorType *ot)
   ot->description = "Clear and hide the region search filter";
   ot->idname = "UI_OT_region_clear_filter";
   ot->exec = region_clear_filter_exec;
-  ot->poll = reion_clear_filter_poll;
+  ot->poll = region_clear_filter_poll;
 }
 
 /** \} */

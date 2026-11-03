@@ -8,11 +8,17 @@
 #include "gpu_shader_math_vector_safe.bsl.hh"
 
 [[node]]
-void node_bsdf_diffuse(float4 color, float /*roughness*/, float3 N, float weight, Closure &result)
+void node_bsdf_diffuse(float4 color,
+                       float /*roughness*/,
+                       float3 N,
+                       float weight,
+                       KernelGlobals &kg,
+                       ShadingData &sd,
+                       Closure &result)
 {
   ClosureDiffuse diffuse_data;
   diffuse_data.color = color.rgb * weight;
   diffuse_data.N = safe_normalize(N);
 
-  result = closure_eval(diffuse_data);
+  result = closure_eval(kg, sd, diffuse_data);
 }

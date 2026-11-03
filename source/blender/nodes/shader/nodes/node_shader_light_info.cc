@@ -33,7 +33,13 @@ static int node_shader_gpu_light_info(GPUMaterial *mat,
                                       GPUNodeStack *in,
                                       GPUNodeStack *out)
 {
-  return GPU_stack_link(mat, node, "node_light_info", in, out);
+  if (!in[0].link) {
+    /* Error: not linked to a light accumulation zone. */
+    BLI_assert_unreachable();
+    return false;
+  }
+
+  return GPU_stack_link(mat, node, "node_light_info", in, out, GPU_kernel_globals());
 }
 
 }  // namespace nodes::node_shader_light_info_cc
@@ -50,6 +56,7 @@ void register_node_type_sh_light_info()
   ntype.ui_description =
       "Exposes physical properties of the light being evaluated and computes basic information "
       "relative to the evaluation position";
+  ntype.enum_name_legacy = "LIGHT_INFO";
   ntype.nclass = NODE_CLASS_INPUT;
   ntype.declare = file_ns::node_declare;
   ntype.gather_link_search_ops = search_link_ops_for_shader_material_lighting_node;

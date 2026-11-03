@@ -94,6 +94,7 @@
 
 import bpy
 import time
+from .. import __package__ as base_package
 from . import (
     settings,
     utils
@@ -967,7 +968,7 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
         description="Preset values for some rock types")
 
     num_of_rocks: IntProperty(
-        name="Number of rocks",
+        name="Number of Rocks",
         description="Number of rocks to generate. WARNING: Slow at high values!",
         min=1, max=1048576,
         soft_max=20,
@@ -1001,7 +1002,7 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
         description="Z Skew ratio. 0.5 is no skew",
         min=-1.0, max=1.0, default=defaults[6])
     use_scale_dis: BoolProperty(
-        name="Scale displace textures",
+        name="Scale Textures",
         description="Scale displacement textures with dimensions.  May cause stretched textures",
         default=defaults[7])
     scale_fac: FloatVectorProperty(
@@ -1020,7 +1021,7 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
         description="Rock roughness",
         min=0.0, soft_max=50, max=1024.0, default=defaults[10])
     detail: IntProperty(
-        name="Detail level",
+        name="Detail Level",
         description="Detail level.  WARNING: Slow at high values!",
         min=1, soft_max=4, max=10, default=defaults[11])
     display_detail: IntProperty(
@@ -1051,34 +1052,47 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        box = layout.box()
-        box.prop(self, 'num_of_rocks')
-        box = layout.box()
-        box.prop(self, 'scale_X')
-        box.prop(self, 'skew_X')
-        box.prop(self, 'scale_Y')
-        box.prop(self, 'skew_Y')
-        box.prop(self, 'scale_Z')
-        box.prop(self, 'skew_Z')
-        box.prop(self, 'use_scale_dis')
-        if self.use_scale_dis:
-            box.prop(self, 'scale_fac')
-        else:
-            self.scale_fac = utils.toFloats(self.defaults[8])
-        box = layout.box()
-        box.prop(self, 'deform')
-        box.prop(self, 'rough')
-        box.prop(self, 'detail')
-        box.prop(self, 'display_detail')
-        box.prop(self, 'smooth_fac')
-        box.prop(self, 'smooth_it')
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        box = layout.box()
-        box.prop(self, 'use_generate')
-        box.prop(self, 'use_random_seed')
-        if not self.use_random_seed:
-            box.prop(self, 'user_seed')
-        box.prop(self, 'preset_values')
+        layout.prop(self, 'preset_values')
+        layout.separator()
+        layout.prop(self, 'num_of_rocks')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'scale_X', text='Scale X')
+        col.prop(self, 'scale_Y', text='Y')
+        col.prop(self, 'scale_Z', text='Z')
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'skew_X', text='Skew X')
+        col.prop(self, 'skew_Y', text='Y')
+        col.prop(self, 'skew_Z', text='Z')
+        layout.separator()
+        row = layout.row(heading='Textures')
+        row.prop(self, 'use_scale_dis', text='Scale')
+        if self.use_scale_dis:
+            layout.prop(self, 'scale_fac')
+        else:
+            row = layout.row()
+            row.enabled = False
+            row.prop(self, 'scale_fac')
+            self.scale_fac = utils.toFloats(self.defaults[8])
+        layout.separator()
+        layout.prop(self, 'deform')
+        layout.prop(self, 'rough')
+        layout.prop(self, 'smooth_fac')
+        layout.prop(self, 'smooth_it')      
+        layout.separator()
+        col = layout.column(align=True)
+        col.prop(self, 'display_detail', text='Detail Viewport')
+        col.prop(self, 'detail', text='Render')
+        layout.separator()
+        # layout.prop(self, 'use_generate') Errors out when disabled 
+        layout.prop(self, 'use_random_seed', text='Random Seed')
+        row = layout.row()
+        row.enabled = not self.use_random_seed
+        row.prop(self, 'user_seed', text='Seed')
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -1142,15 +1156,6 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
 
         return {'FINISHED'}
 
-# Register:
-def menu_func_rocks(self, context):
-    layout = self.layout
-    layout.separator()
-    layout.operator(
-        OBJECT_OT_add_mesh_rock.bl_idname,
-        text="Rock Generator",
-        icon="MESH_ICOSPHERE")
-
 
 classes = (
     OBJECT_OT_add_mesh_rock,
@@ -1161,14 +1166,12 @@ def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
-    bpy.types.VIEW3D_MT_mesh_add.append(menu_func_rocks)
 
 
 def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
-    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func_rocks)
 
 
 if __name__ == "__main__":

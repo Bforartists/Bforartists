@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2016-2022 Blender Foundation
 #
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 """
 Info:
@@ -50,11 +50,13 @@ class MakeSurfaceHelpers:
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        layout.separator()
         layout.prop(self, "size")
-
         col = layout.column(align=True)
         col.prop(self, "res_u")
-        col.prop(self, "res_v")
+        col.prop(self, "res_v", text='V')
 
 
 class MakeSurfaceWedge(Operator, MakeSurfaceHelpers):
@@ -191,7 +193,7 @@ class MakeSurfaceStar(Operator, MakeSurfaceHelpers):
     bl_idname = "object.add_surface_star"
     bl_label = "Add Surface Star"
     bl_description = "Construct a Surface Star"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     def execute(self, context):
         size = self.size

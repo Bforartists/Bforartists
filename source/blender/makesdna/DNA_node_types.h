@@ -183,15 +183,15 @@ enum eViewerNodeShortcut {
   NODE_VIEWER_SHORTCUT_NONE = 0,
   /* Users can set custom keys to shortcuts,
    * but shortcuts should always be referred to as enums. */
-  NODE_VIEWER_SHORCTUT_SLOT_1 = 1,
-  NODE_VIEWER_SHORCTUT_SLOT_2 = 2,
-  NODE_VIEWER_SHORCTUT_SLOT_3 = 3,
-  NODE_VIEWER_SHORCTUT_SLOT_4 = 4,
-  NODE_VIEWER_SHORCTUT_SLOT_5 = 5,
-  NODE_VIEWER_SHORCTUT_SLOT_6 = 6,
-  NODE_VIEWER_SHORCTUT_SLOT_7 = 7,
-  NODE_VIEWER_SHORCTUT_SLOT_8 = 8,
-  NODE_VIEWER_SHORCTUT_SLOT_9 = 9
+  NODE_VIEWER_SHORTCUT_SLOT_1 = 1,
+  NODE_VIEWER_SHORTCUT_SLOT_2 = 2,
+  NODE_VIEWER_SHORTCUT_SLOT_3 = 3,
+  NODE_VIEWER_SHORTCUT_SLOT_4 = 4,
+  NODE_VIEWER_SHORTCUT_SLOT_5 = 5,
+  NODE_VIEWER_SHORTCUT_SLOT_6 = 6,
+  NODE_VIEWER_SHORTCUT_SLOT_7 = 7,
+  NODE_VIEWER_SHORTCUT_SLOT_8 = 8,
+  NODE_VIEWER_SHORTCUT_SLOT_9 = 9
 };
 
 enum NodeWarningPropagation : int8_t {
@@ -466,7 +466,7 @@ enum eNodeProxy_Flag : char {
 };
 
 /* Conductive fresnel types */
-enum eNodeConducetiveFresnel_Type : short {
+enum eNodeConductiveFresnel_Type : short {
   SHD_PHYSICAL_CONDUCTOR = 0,
   SHD_CONDUCTOR_F82 = 1,
 };
@@ -501,6 +501,7 @@ enum eNodeVectorTransform_Space : short {
   SHD_VECT_TRANSFORM_SPACE_WORLD = 0,
   SHD_VECT_TRANSFORM_SPACE_OBJECT = 1,
   SHD_VECT_TRANSFORM_SPACE_CAMERA = 2,
+  SHD_VECT_TRANSFORM_SPACE_LIGHT = 3,
 };
 
 /** #NodeShaderAttribute.type */
@@ -1421,6 +1422,7 @@ enum NodeGeometryMergeLayersMode {
 enum NodeGeometryGreasePencilStrokeType : int8_t {
   GEO_NODE_GREASE_PENCIL_STROKE = 0,
   GEO_NODE_GREASE_PENCIL_FILL = 1,
+  GEO_NODE_GREASE_PENCIL_BOTH = 2,
 };
 
 struct bNodeStack {
@@ -2055,7 +2057,8 @@ struct bNodeTree {
   Span<bNode *> group_input_nodes();
   Span<const bNode *> group_input_nodes() const;
 
-  /** Zones in the node tree. Currently there are only simulation zones in geometry nodes. */
+  /** Zones in the node tree. This is a valid but empty structure if no zones exist in the node
+   * tree. It is nullptr if the zones in the node tree are malformed. */
   const bke::bNodeTreeZones *zones() const;
 
   /**
@@ -2495,7 +2498,7 @@ struct NodeDefocus {
 
   char bktype = 0;
   DNA_DEPRECATED char gamco = 0;
-  char no_zbuf = 0;
+  char no_zbuf = 1;
   char _pad0 = {};
   float fstop = 0;
   float maxblur = 0;
@@ -2594,7 +2597,10 @@ struct NodeConvertColorSpace {
   DNA_DEFINE_CXX_METHODS(NodeConvertColorSpace)
 
   char from_color_space[64] = "";
+  char from_interop_id[64] = "";
+
   char to_color_space[64] = "";
+  char to_interop_id[64] = "";
 };
 
 struct NodeConvertToDisplay {
@@ -3086,7 +3092,7 @@ struct NodeInputIntVector {
 struct NodeInputColor {
   DNA_DEFINE_CXX_METHODS(NodeInputColor)
 
-  float color[4] = {};
+  float color[4] = {0.5f, 0.5f, 0.5f, 1.0f};
 };
 
 struct NodeInputString {
@@ -4023,6 +4029,20 @@ struct NodeStoreBundleItem {
   eNodeSocketDatatype socket_type = {};
   NodeSocketInterfaceStructureType structure_type = NodeSocketInterfaceStructureType::Auto;
   char _pad = {};
+};
+
+enum class NodeCommentFlag : uint8_t {
+  /** Whether the text is being edited inside of the node. */
+  Edit = (1 << 0),
+};
+ENUM_OPERATORS(NodeCommentFlag)
+
+struct NodeComment {
+  char *text = nullptr;
+  TextboxState textbox_state_node;
+  TextboxState textbox_state_panel;
+  NodeCommentFlag flag = {};
+  char _pad[7] = {};
 };
 
 }  // namespace blender
