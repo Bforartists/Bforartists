@@ -13690,6 +13690,20 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     }
   }
 
+  /* BFA - Tear-Off Menu/Panel: delayed callbacks run operators, and they must see the area the
+   * buttons were polled against. The handler's own area can be cleared by a screen change or an
+   * area exit, and then the area under the cursor is used, so an enabled-looking item could fail
+   * its poll. #wm_handler_ui_call overwrites the context afterwards. */
+  if (!popup_closed && menu->is_tear_off && !UIAfterFuncs.is_empty()) {
+    tear_off_context_ensure(C, menu);
+    if (menu->ctx_area) {
+      CTX_wm_area_set(C, menu->ctx_area);
+    }
+    if (menu->ctx_region) {
+      CTX_wm_region_set(C, menu->ctx_region);
+    }
+  }
+
   /* delayed apply callbacks */
   apply_but_funcs_after(C);
 
