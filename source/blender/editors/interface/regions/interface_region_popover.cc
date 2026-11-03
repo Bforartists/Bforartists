@@ -26,6 +26,7 @@
  */
 
 #include <algorithm> /* BFA - Tear-Off Menu/Panel: std::max. */
+#include <cmath>     /* BFA - Tear-Off Menu/Panel: fabsf. */
 #include <cstring>   /* BFA - Tear-Off Menu/Panel: strcmp in STREQ. */
 #include <memory>    /* BFA - Tear-Off Menu/Panel: the space type list holds unique_ptr. */
 
@@ -172,6 +173,26 @@ static float tear_off_panel_width_designed(const PopupBlockHandle *handle)
   return (std::max<float>(block_px, UI_MENU_WIDTH_MIN) - U.widget_unit) / UI_SCALE_FAC;
 }
 
+/* BFA - Tear-Off Menu/Panel: the points of #ED_region_generic_tools_region_snap_size. They fall in
+ * the bands of #toolsystem_column_count in space_toolsystem_common.py, so keep those in sync. The
+ * width counts the tab strip whether or not it shows, see #tear_off_shelf_width_measure. */
+static float tear_off_shelf_width_snap(const float width, const float max_width)
+{
+  const float tabs = (U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 28.0f : 20.0f;
+  const auto step = [&](const int n) { return tabs + n * UI_TOOLBAR_COLUMN + UI_TOOLBAR_MARGIN; };
+  /* Free above the last step, as on the real shelf: the text list reflows. */
+  if (width > step(4) && max_width > step(4)) {
+    return std::min(width, max_width);
+  }
+  float best = step(1);
+  for (int n = 2; n <= 4 && step(n) <= max_width; n++) {
+    if (fabsf(step(n) - width) < fabsf(best - width)) {
+      best = step(n);
+    }
+  }
+  return best;
+}
+
 /* BFA - Tear-Off Menu/Panel: see the declaration. */
 bool tear_off_panel_width_drag(PopupBlockHandle *handle,
                                const float start_field,
@@ -183,8 +204,7 @@ bool tear_off_panel_width_drag(PopupBlockHandle *handle,
   const float wanted = base + delta_px / UI_SCALE_FAC;
   float width;
   if (handle->tear_off_width_default > 0.0f) {
-    /* Above 0, because 0 would mean the designed width. */
-    width = std::max(std::min(wanted, max_width), 1.0f);
+    width = tear_off_shelf_width_snap(wanted, max_width);
   }
   else {
     const float min_width = tear_off_panel_width_designed(handle);

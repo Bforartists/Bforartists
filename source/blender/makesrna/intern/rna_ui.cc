@@ -1867,8 +1867,8 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(prop,
                            "Tear-Off Width",
-                           "Width of the tool shelf this panel was torn off from, without zoom or "
-                           "UI scale. 0 when the layout isn't in a tear-off from a tool shelf");
+                           "Width of this panel torn off a tool shelf, without zoom or UI scale. "
+                           "0 when the layout isn't in a tear-off from a tool shelf");
 
   prop = RNA_def_property(srna, "scale_x", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_float_funcs(
