@@ -2439,20 +2439,30 @@ def s_p6_look():
     check("and not the popup style, green", count_color("shelf", inner, 1, 0) == 0,
           count_color("shelf", inner, 1, 0))
     yield from close_all()
-    # A panel from elsewhere, the baseline that shows these checks can fail.
+    # A panel from elsewhere looks the same.
     yield from tear_center("SIM_PT_tear")
     yield from grab("other")
     v = torn_box("base", "other"); log("other tear-off", v)
     check("the other tear-off appears", real(v), v)
     inner = (v[0] + 8, v[1] + 8, v[2] - 8, v[3] - 8)
     col = median_color("other", inner); log("other tear-off color", col)
-    check("the other tear-off keeps the popup color",
+    check("the other panel has the shelf's color too",
+          near(col, th.regions.sidebars.back[:3], 0.05), col)
+    check("its labels have the regular style, red", count_color("other", inner, 0, 1) > 10,
+          count_color("other", inner, 0, 1))
+    yield from close_all()
+    # A menu, the baseline that shows these checks can fail.
+    tear_menu("SIM_MT_short"); yield 0.8
+    yield from grab("menu")
+    v = torn_box("base", "menu"); log("menu tear-off", v)
+    check("the menu appears", real(v), v)
+    inner = (v[0] + 8, v[1] + 8, v[2] - 8, v[3] - 8)
+    col = median_color("menu", inner); log("menu tear-off color", col)
+    check("a torn-off menu keeps the popup color",
           near(col, th.user_interface.wcol_menu_back.inner[:3], 0.1)
           and not near(col, th.regions.sidebars.back[:3], 0.1), col)
-    check("its labels have the popup style, green", count_color("other", inner, 1, 0) > 10,
-          count_color("other", inner, 1, 0))
-    check("and not the regular style, red", count_color("other", inner, 0, 1) == 0,
-          count_color("other", inner, 0, 1))
+    check("its text has the popup style, green", count_color("menu", inner, 1, 0) > 10,
+          count_color("menu", inner, 1, 0))
 
 
 SC["p6_look"] = s_p6_look
@@ -2839,9 +2849,10 @@ def s_p7_menu_cols():
     yield from expand(c, "exp")
     check("the pin expands it in place", rdiff("m", "exp", b) < 100, rdiff("m", "exp", b))
     yield from closes(b, TITLE_MENU, "closed")
-    # The columns are wider than the title. Measured at 259 wide before these phases.
+    # The columns are wider than the title. Measured at 259 wide before these phases, and the room
+    # for the scrollbar is 15.
     b = yield from opened(open_menu("SIM_MT_cols"), "s", "the shorter title opens")
-    check("no wider than it used to be", width(b) <= 259, b)
+    check("no wider than it used to be", width(b) <= 259 + 15, b)
     st = SIM_OT_area_probe.state
     yield from click(b[2] - 60, b[3] - TEAR_ROW0); yield 0.3
     check("its last column clicks", st["runs"] == 1, st)
@@ -2944,8 +2955,8 @@ def s_p7_width_reflow():
     left = (b[0] + 2, b[1] + 2, b[0] + 60, b[3] - 2)
     check("the left of the rows doesn't stretch", rdiff("m", "wide", left) < 30,
           rdiff("m", "wide", left))
-    # Back to the designed width.
-    yield from drag(v[2] + 2, y, -400, 0)
+    # Back to the designed width, and it's exact: the drag lands where it started.
+    yield from drag(v[2] + 2, y, b[2] - v[2], 0)
     yield from park()
     yield from grab("back")
     w = need_box("base", "back", "after the drag back")
@@ -2973,18 +2984,21 @@ def s_p7_width_limits():
     check("the right edge stays in the window", v[2] <= 1590, v)
     check("the left edge stays", abs(v[0] - b[0]) <= 1, (b, v))
     check("it did grow", width(v) > width(b) + 300, (b, v))
-    # The minimum: the designed width.
+    # The minimum for wrapped text: its rows are full, so about the designed width. p9_width_min
+    # has the panel that goes below it.
     yield from drag(v[2] + 2, y, 10 - (v[2] + 2), 0)
     yield from park()
     yield from grab("min")
     w = need_box("base", "min", "dragged far left")
-    check("the minimum is the designed width", same_box(b, w, 1), (b, w))
+    log("at the minimum", w, "designed", b)
+    check("the minimum is no wider than the designed width", width(w) <= width(b) + 1, (b, w))
+    check("and the left edge stays", abs(w[0] - b[0]) <= 1, (b, w))
     yield from close_all()
     yield from park()
 
     # The block is wider than this panel's layout, and one pixel must not narrow it to the layout.
     s = yield from opened(open_tpanel("SIM_PT_small"), "s", "the small panel opens")
-    check("the block has the minimum width", width(s) >= FLOOR, s)
+    check("the block hugs its layout, with no popup minimum", width(s) < FLOOR, s)
     yield from drag(s[2] + 2, mid_y(s), 1, 0)
     yield from park()
     yield from grab("s1")
@@ -4043,14 +4057,13 @@ def s_p8_scrollbar():
     yield from begin()
     P = SIM_OT_row_probe.state
     b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
-    check("no gutter while it fits", width(b) < FLOOR, b)
+    check("fitted while it fits", width(b) < FLOOR, b)
     yield from crop(b, 200)
     yield from grab("c")
     v = need_box("base", "c", "cropped")
     log("cropped", v, "from", b)
-    gutter = width(v) - width(b)
-    check("a gutter while it overflows", 10 <= gutter <= 18, gutter)
-    bar = (b[2] + 1, v[1] + 6, v[2] - 1, v[3] - STRIP_MENU - 4)
+    check("the same width when it overflows", v[0] == b[0] and v[2] == b[2], (b, v))
+    bar = (b[2] - 13, v[1] + 6, b[2] - 1, v[3] - STRIP_MENU - 4)
     n = color_count("c", bar, (v[0] + 4, mid_y(v)))
     check("the bar shows at rest", n > 20, n)
     line = line_extent("c", v, 28); log("line", line)
@@ -4119,18 +4132,20 @@ SC["p8_scrollbar"] = s_p8_scrollbar
 
 
 def s_p8_bar_gutter():
-    """The bar sits beside a menu's rows. Without the gutter it would cover their arrows."""
+    """The bar sits beside a menu's rows, inside the menu. It must not cover their arrows."""
     yield from begin()
     b = yield from opened(open_menu("SIM_MT_arrows"), "m", "the menu opens")
     yield from crop(b, 150)
     yield from grab("c")
     v = need_box("base", "c", "cropped")
     log("cropped", v, "from", b)
-    check("a gutter while it overflows", width(v) > width(b) + 8, (b, v))
-    rows = (b[0] + 2, v[3] - TEAR_ROW0 - ROW * 4, b[2], v[3] - STRIP_MENU)
-    n = rdiff("m", "c", rows)
-    check("the rows and their arrows are the same pixels", n < 10, n)
-    n = color_count("c", (b[2] + 1, v[1] + 6, v[2] - 1, v[3] - STRIP_MENU - 4),
+    check("the same width when it overflows", v[0] == b[0] and v[2] == b[2], (b, v))
+    # Their arrows are the one thing that moves, into the room the bar gave up.
+    rows = (b[0] + 2, v[3] - TEAR_ROW0 - ROW * 4, b[2] - 15, v[3] - STRIP_MENU)
+    text = (b[0] + 2, rows[1], b[2] - 40, rows[3])
+    n = rdiff("m", "c", text)
+    check("the rows' text doesn't move", n < 10, n)
+    n = color_count("c", (b[2] - 13, v[1] + 6, b[2] - 1, v[3] - STRIP_MENU - 4),
                     (v[0] + 4, v[1] + 12))
     check("the bar shows at rest", n > 20, n)
     # Hovered it's at its widest, and must still stay out of them. On the bar and not beside it,
@@ -4139,9 +4154,9 @@ def s_p8_bar_gutter():
     move(x, y); yield 0.3
     move(x, y); yield 0.3
     yield from grab("wide")
-    n = rdiff("m", "wide", rows)
-    check("the widest bar stays out of the rows", n < 10, n)
-    gutter = (b[2] + 1, v[1] + 6, v[2], v[3] - STRIP_MENU - 4)
+    n = rdiff("c", "wide", rows)
+    check("the widest bar stays out of the rows and their arrows", n < 10, n)
+    gutter = (b[2] - 14, v[1] + 6, v[2], v[3] - STRIP_MENU - 4)
     log("the bar widened by", rdiff("c", "wide", gutter))
     yield from park()
     yield from closes(v, TITLE_MENU, "closed")
@@ -4571,3 +4586,629 @@ def s_regress_final():
 
 
 SC["regress_final"] = s_regress_final
+
+
+# ---------------------------------------------------------------- feedback round after phase 8
+def row_y_menu(a):
+    """The Tear Off row of a menu with a title and box a. Pressing the title would drag the menu."""
+    return a[3] - TEAR_ROW0
+
+
+def row_y_popover(a):
+    """The Tear Off row of an attached popover with box a, which has no title above it."""
+    return a[3] - 17
+
+
+def carried(start, end, frame, what):
+    """Press a Tear Off row, move in steps and hold. Returns the frame's box."""
+    x, y = start
+    move(x, y); yield W
+    move(x, y); yield W
+    press(x, y); yield 0.1
+    tx, ty = end
+    for i in range(1, 9):
+        move(x + (tx - x) * i // 8, y + (ty - y) * i // 8); yield 0.08
+    yield from grab(frame)
+    return need(popup_box("base", frame), what)
+
+
+def row_carry_round(tag, open_popup, opened_what, row_y):
+    yield from open_popup()
+    yield from grab(tag + "att")
+    a = need(popup_box("base", tag + "att"), opened_what)
+    log(tag, "attached", a)
+    row = (a[0] + 60, row_y(a))
+    # Away from the attached popup, so the frames can't overlap.
+    end = (1000, 300)
+    v = yield from carried(row, end, tag + "held", "held: " + tag)
+    log(tag, "held", v)
+    check(tag + ": the source closed and it follows the cursor",
+          v[0] > a[2] - 40 or v[1] > a[3] or v[3] < a[1], (a, v))
+    check(tag + ": it's near the cursor",
+          v[0] - 40 <= end[0] <= v[2] + 40 and v[1] - 40 <= end[1] <= v[3] + 40, (end, v))
+    # Still attached to the cursor while the button is held.
+    move(end[0] + 60, end[1] + 40); yield 0.15
+    move(end[0] + 60, end[1] + 40); yield 0.15
+    yield from grab(tag + "held2")
+    w = need(popup_box("base", tag + "held2"), "held further: " + tag)
+    check(tag + ": a further move carries it",
+          abs(w[0] - v[0] - 60) <= 2 and abs(w[3] - v[3] - 40) <= 2, (v, w))
+    release(end[0] + 60, end[1] + 40); yield 0.4
+    yield from park()
+    yield from grab(tag + "landed")
+    x = need(popup_box("base", tag + "landed"), "landed: " + tag)
+    check(tag + ": it stays where it was released", same_box(w, x, 2), (w, x))
+    move(end[0] + 200, end[1]); yield 0.2
+    yield from park()
+    yield from grab(tag + "after")
+    n = rdiff(tag + "landed", tag + "after", VIEW)
+    check(tag + ": the release ended the carry", n < 30, n)
+    return x
+
+
+def s_p9_row_drag():
+    """A drag on the Tear Off row carries the new tear-off, in a menu and a popover."""
+    SIM_PT_small.state["show"] = True
+    yield from begin()
+
+    def menu():
+        move(*center()); yield 0.3
+        call_menu("SIM_MT_short"); yield 0.8
+    v = yield from row_carry_round("menu_", menu, "the menu opens", row_y_menu)
+    check("menu_: it is a tear-off, with no row to tear off from", height(v) < 123, v)
+    yield from close_all()
+    yield from park()
+
+    def panel():
+        move(*center()); yield 0.3
+        call_panel("SIM_PT_small"); yield 0.8
+    v = yield from row_carry_round("panel_", panel, "the popover opens", row_y_popover)
+    yield from close_all()
+    yield from park()
+
+    # A plain click still tears off.
+    move(*center()); yield 0.3
+    call_menu("SIM_MT_short"); yield 0.8
+    yield from grab("click_att")
+    a = need(popup_box("base", "click_att"), "the menu opens for a click")
+    yield from click(a[0] + 60, row_y_menu(a)); yield 0.4
+    yield from park()
+    yield from grab("click_torn")
+    v = need(popup_box("base", "click_torn"), "a click tears off")
+    check("a click makes a tear-off", height(v) > 40, v)
+    yield from park()
+    yield from grab("click_after")
+    n = rdiff("click_torn", "click_after", VIEW)
+    check("a click carries nothing", n < 30, n)
+    yield from close_all()
+
+
+SC["p9_row_drag"] = s_p9_row_drag
+
+
+def s_p9_row_drag_small():
+    """A move below the threshold is still a click."""
+    yield from begin()
+    move(*center()); yield 0.3
+    call_menu("SIM_MT_short"); yield 0.8
+    yield from grab("att")
+    a = need(popup_box("base", "att"), "the menu opens")
+    x, y = a[0] + 60, row_y_menu(a)
+    move(x, y); yield W
+    move(x, y); yield W
+    press(x, y); yield 0.1
+    move(x + 1, y); yield 0.1
+    release(x + 1, y); yield 0.4
+    yield from park()
+    yield from grab("torn")
+    v = need(popup_box("base", "torn"), "a small move is a click")
+    log("torn", v)
+    yield from park()
+    yield from grab("torn2")
+    n = rdiff("torn", "torn2", VIEW)
+    check("it isn't carried", n < 30, n)
+    yield from close_all()
+
+
+SC["p9_row_drag_small"] = s_p9_row_drag_small
+
+
+def s_p9_shelf_selector():
+    """The asset shelf's Catalog Selector, torn off from its real popover row, keeps its content."""
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.mode_set(mode="SCULPT")
+    yield 1.5
+    area().spaces.active.overlay.show_text = False
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("base")
+    h = region_of(area(), "ASSET_SHELF_HEADER")
+    yield from click(33, h.y + h.height // 2); yield 0.8
+    yield from park()
+    yield from grab("att")
+    a = need(box_bbox("base", "att", (5, 140, 1100, 850)), "the popover opens")
+    check("the attached one has its content", height(a) > 150, a)
+    yield from click(a[0] + 90, row_y_popover(a)); yield 0.8
+    yield from park()
+    yield from grab("torn")
+    v = need(box_bbox("base", "torn", (5, 140, 1100, 850)), "it tears off")
+    log("torn", v, "from", a)
+    check("the torn-off one keeps its content", height(v) > 150, v)
+    # A redraw from a toggle in its tree, and another from the shelf.
+    yield from click(v[2] - 33, v[1] + 22); yield 0.6
+    yield from park()
+    yield from grab("toggled")
+    w = need(box_bbox("base", "toggled", (5, 140, 1100, 850)), "still there after a toggle")
+    check("the content stays after a toggle", height(w) > 150, w)
+    move(300, 60); yield 0.5
+    yield from park()
+    yield from grab("hovered")
+    w = need(box_bbox("base", "hovered", (5, 140, 1100, 850)), "still there after the shelf redraws")
+    check("the content stays after the shelf redraws", height(w) > 150, w)
+    yield from close_all()
+
+
+SC["p9_shelf_selector"] = s_p9_shelf_selector
+
+
+def s_p9_panel_color():
+    """A torn-off panel has the region grey. A menu keeps the near black."""
+    SIM_PT_mid.state["show"] = True
+    yield from begin()
+    p = yield from opened(open_tpanel("SIM_PT_mid"), "p", "the panel opens")
+    bg = FRAME["p"][p[1] + 8, p[0] + 6]
+    yield from close_all()
+    yield from park()
+    m = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    mb = FRAME["m"][m[1] + 3, m[0] + 3]
+    yield from close_all()
+    log("panel bg", bg, "menu bg", mb)
+    check("the panel isn't the menu's color", abs(float(bg[0]) - float(mb[0])) > 0.02, (bg, mb))
+    # The text follows the theme's regular text, not the menu's.
+    th = bpy.context.preferences.themes[0]
+    th.user_interface.wcol_menu_back.text = (0.0, 1.0, 0.0)
+    yield from park()
+    p = yield from opened(open_tpanel("SIM_PT_mid"), "p2", "the panel opens again")
+    area_px = FRAME["p2"][p[1]:p[3], p[0]:p[2]]
+    n = int(((area_px[:, :, 1] > 0.6) & (area_px[:, :, 0] < 0.3) & (area_px[:, :, 2] < 0.3)).sum())
+    check("no text in the menu's color", n < 5, n)
+    yield from close_all()
+
+
+SC["p9_panel_color"] = s_p9_panel_color
+
+
+def s_p9_width_min():
+    """The grip goes down to what the content needs, and no further. No dead space beside it."""
+    SIM_PT_small.state["show"] = True
+    SIM_PT_mid.state["show"] = True
+    yield from begin()
+    b = yield from opened(open_tpanel("SIM_PT_small"), "s", "the panel opens")
+    log("small panel", b)
+    check("it hugs its layout, narrower than the popup minimum", width(b) < FLOOR, b)
+    yield from close_all()
+    yield from park()
+    b = yield from opened(open_tpanel("SIM_PT_mid"), "m", "the mid panel opens")
+    log("mid panel", b)
+    y = mid_y(b)
+    yield from drag(b[2] + 2, y, -400, 0)
+    yield from park()
+    yield from grab("min")
+    v = need_box("base", "min", "dragged left")
+    log("at the minimum", v)
+    check("it can go narrower than designed", width(v) < width(b) - 20, (b, v))
+    check("the left edge stays", abs(v[0] - b[0]) <= 1, (b, v))
+    check("it stops before nothing is left", width(v) > 60, v)
+    yield from drag(v[2] + 2, y, -100, 0)
+    yield from park()
+    yield from grab("min2")
+    w = need_box("base", "min2", "dragged again")
+    check("a second drag stops at the same place", same_box(v, w, 1), (v, w))
+    # The way back to the designed width lands exactly on it.
+    yield from drag(w[2] + 2, y, b[2] - w[2], 0)
+    yield from park()
+    yield from grab("reset")
+    x = need_box("base", "reset", "reset")
+    check("dragging back returns to the designed width", same_box(b, x, 2), (b, x))
+    yield from drag(x[2] + 2, y, 60, 0)
+    yield from park()
+    yield from grab("wide")
+    x2 = need_box("base", "wide", "widened")
+    check("it can still go wider", abs(width(x2) - width(b) - 60) <= 3, (b, x2))
+    yield from close_all()
+
+
+SC["p9_width_min"] = s_p9_width_min
+
+
+def s_p9_gutter_solid():
+    """A menu's width never changes with the crop. The bar appears inside."""
+    yield from begin()
+    b = yield from opened(open_menu("SIM_MT_mid"), "m", "the menu opens")
+    log("full", b)
+    for by in (5, 40, 150):
+        yield from crop(b, by)
+        yield from grab(f"c{by}")
+        v = need_box("base", f"c{by}", "cropped")
+        check(f"by {by}: the same width", v[0] == b[0] and v[2] == b[2], (b, v))
+        title = (b[0] + 2, v[3] - STRIP_MENU, b[2] - 2, v[3] - 2)
+        n = rdiff("m", f"c{by}", title)
+        check(f"by {by}: the header doesn't move", n < 5, n)
+        yield from uncrop(v, by)
+        yield from grab(f"r{by}")
+        w = need(popup_box("base", f"r{by}"), "reset")
+        check(f"by {by}: and back to the same box", same_box(b, w, 1), (b, w))
+    yield from close_all()
+
+
+SC["p9_gutter_solid"] = s_p9_gutter_solid
+
+
+class SIM_PT_root_items(bpy.types.Panel):
+    """Items placed straight on a panel's layout, whose result depends on the layout's direction."""
+    bl_idname = "SIM_PT_root_items"; bl_label = "Sim Root Items"
+    bl_space_type = "VIEW_3D"; bl_region_type = "HEADER"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(context.scene.render.image_settings, "color_mode", expand=True)
+        layout.prop(context.object, "location", index=-1, icon_only=True)
+        layout.prop(context.scene, "frame_current")
+
+
+bpy.utils.register_class(SIM_PT_root_items)
+
+
+def attached_vs_torn(name, tag, rt="HEADER", t="VIEW_3D"):
+    """Open a panel attached and torn off. Returns their boxes, or None if it can't open here. Both
+    at the viewport's center, so a tall one isn't trimmed by the bottom of the window."""
+    cx, cy = center()
+    at = (cx, cy + 250)
+    move(*at); yield 0.3
+    move(*at); yield 0.3
+    try:
+        with bpy.context.temp_override(**override(t, rt)):
+            bpy.ops.wm.call_panel(name=name, keep_open=True)
+    except Exception as ex:
+        log(tag, "can't open", str(ex)[:80])
+        return None
+    yield 0.8
+    yield from grab(tag + "a")
+    a = popup_box("base", tag + "a")
+    yield from dismiss()
+    move(*at); yield 0.3
+    move(*at); yield 0.3
+    with bpy.context.temp_override(**override(t, rt)):
+        bpy.ops.wm.panel_tear_off(panel_idname=name)
+    yield 0.8
+    yield from park()
+    yield from grab(tag + "t")
+    t = popup_box("base", tag + "t")
+    yield from close_all()
+    yield from park()
+    return a, t
+
+
+def s_p9_root_items():
+    """The panel's items keep their arrangement when torn off."""
+    yield from begin()
+    r = yield from attached_vs_torn("SIM_PT_root_items", "root_")
+    a, t = need(r, "it opens")
+    log("attached", a, "torn", t)
+    # The row of the attached popover and the header of the tear-off are within a few pixels.
+    check("the same arrangement", abs(height(a) - height(t)) <= 14, (a, t))
+
+
+SC["p9_root_items"] = s_p9_root_items
+
+
+def s_p9_popover_sweep():
+    """Every real popover of the 3D View header stays the same height when torn off. One that
+    stacks a row or loses its content would be off by more than the header's difference."""
+    yield from begin()
+    names = ("VIEW3D_PT_overlay", "VIEW3D_PT_shading", "VIEW3D_PT_object_type_visibility",
+             "VIEW3D_PT_gizmo_display", "VIEW3D_PT_snapping", "VIEW3D_PT_proportional_edit",
+             "VIEW3D_PT_transform_orientations", "VIEW3D_PT_pivot_point", "VIEW3D_PT_collections",
+             "VIEW3D_PT_grease_pencil_origin", "VIEW3D_PT_sculpt_dyntopo")
+    seen = 0
+    for name in names:
+        r = yield from attached_vs_torn(name, name + "_")
+        if r is None or r[0] is None or r[1] is None:
+            log(name, "skipped", r)
+            continue
+        a, t = r
+        seen += 1
+        log(name, "attached", a, "torn", t)
+        check(name + ": the same height when torn off", abs(height(a) - height(t)) <= 14, (a, t))
+    check("most of them could open", seen >= 5, seen)
+
+
+SC["p9_popover_sweep"] = s_p9_popover_sweep
+
+
+def s_p9_asset_display():
+    """The report: the Asset Browser's Display Settings, with Tiny to Large in one row."""
+    props = area("PROPERTIES")
+    props.ui_type = "ASSETS"
+    yield 1.5
+    yield from begin()
+    r = yield from attached_vs_torn("ASSETBROWSER_PT_display", "disp_", t="FILE_BROWSER")
+    a, t = need(r, "it opens")
+    log("attached", a, "torn", t)
+    check("the row stays a row when torn off", abs(height(a) - height(t)) <= 14, (a, t))
+
+
+SC["p9_asset_display"] = s_p9_asset_display
+
+
+class SIM_PT_left_row(bpy.types.Panel):
+    """Short rows, and one row sized to its text: that row doesn't narrow with the panel."""
+    bl_idname = "SIM_PT_left_row"; bl_label = "Sim Left Row"
+    bl_space_type = "VIEW_3D"; bl_region_type = "HEADER"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.alignment = 'LEFT'
+        row.prop(context.scene.render, "use_border", text="Border")
+        layout.label(text="Short")
+        layout.operator("wm.redraw_timer", text="Run")
+
+
+class SIM_PT_hdr_plain(bpy.types.Panel):
+    bl_idname = "SIM_PT_hdr_plain"; bl_label = "Sim Long Header Title"
+    bl_space_type = "VIEW_3D"; bl_region_type = "HEADER"
+    bl_ui_units_x = 4
+
+    def draw(self, context):
+        self.layout.label(text="a")
+
+
+class SIM_PT_hdr_check(bpy.types.Panel):
+    bl_idname = "SIM_PT_hdr_check"; bl_label = "Sim Long Header Title"
+    bl_space_type = "VIEW_3D"; bl_region_type = "HEADER"
+    bl_ui_units_x = 4
+
+    def draw_header(self, context):
+        self.layout.prop(context.scene.render, "use_border", text="")
+
+    def draw(self, context):
+        self.layout.label(text="a")
+
+
+for sim_cls in (SIM_PT_left_row, SIM_PT_hdr_plain, SIM_PT_hdr_check):
+    bpy.utils.register_class(sim_cls)
+
+
+def s_p9_flick():
+    """A fast drag from a popover's row, onto the neighbouring header dropdown. The neighbour must
+    not open, and the carry must end at the release."""
+    yield from begin()
+    # The Shading dropdown, then the Overlays dropdown beside it.
+    shading, overlays = (1156, 933), (1028, 933)
+    yield from click(*shading); yield 0.8
+    yield from park_over_nothing()
+    yield from grab("att")
+    a = need(popup_box("base", "att"), "the popover opens")
+    log("attached", a)
+    # The box reaches up to the lit header button. The row is under the popover's arrow.
+    x, y = a[0] + 90, 895
+    move(x, y); yield W
+    move(x, y); yield W
+    press(x, y); yield 0.1
+    # Both moves reach the queue before the tear-off's synthetic move, as in a real flick.
+    move(x, y + 6)
+    move(*overlays)
+    yield 0.5
+    move(*overlays); yield 0.3
+    yield from grab("flicked")
+    release(*overlays); yield 0.5
+    yield from park()
+    yield from grab("released")
+    t = popup_box("base", "released")
+    log("released", t)
+    yield from park()
+    move(PARK[0] + 200, PARK[1] + 100); yield 0.2
+    yield from park()
+    yield from grab("after")
+    n = rdiff("released", "after", VIEW)
+    check("the release ended the carry", n < 30, n)
+    move(*center()); yield 0.3
+    yield from close_all()
+    yield from esc(); yield 0.3
+    yield from park()
+    yield from grab("end")
+    n = rdiff("base", "end", (30, 140, 1100, 850))
+    check("nothing is left open", n < 300, n)
+
+
+SC["p9_flick"] = s_p9_flick
+
+
+def park_over_nothing():
+    """Beside the popover, with no hover switch: over the viewport."""
+    yield from park()
+
+
+def s_p9_row_memory():
+    """Tearing off doesn't become what a popup menu remembers. It would reopen on the Tear Off row."""
+    yield from begin()
+
+    def opened_at(name):
+        move(*center()); yield 0.3
+        move(*center()); yield 0.3
+        call_menu("SIM_MT_short"); yield 0.8
+        yield from grab(name)
+        return need(popup_box("base", name), "the menu opens: " + name)
+    a = yield from opened_at("first")
+    # Remember the last row, which is what makes the menu open somewhere else.
+    yield from click(a[0] + 60, a[1] + 16); yield 0.5
+    yield from park()
+    b = yield from opened_at("again")
+    check("the baseline: it reopens on the remembered row", abs(b[3] - a[3]) > 10, (a, b))
+    yield from click(b[0] + 60, b[3] - TEAR_ROW0); yield 0.6
+    yield from park()
+    yield from close_all()
+    yield from park()
+    c = yield from opened_at("after")
+    check("it still reopens on that row, not the Tear Off row", same_box(b, c, 1), (b, c))
+    yield from dismiss()
+
+
+SC["p9_row_memory"] = s_p9_row_memory
+
+
+def grip_to_min(name, tag):
+    """Tear off a panel, drag its grip far left. Returns the box before and after."""
+    move(*center()); yield 0.3
+    with bpy.context.temp_override(**override("VIEW_3D", "HEADER")):
+        bpy.ops.wm.panel_tear_off(panel_idname=name)
+    yield 0.8
+    yield from park()
+    yield from grab(tag + "o")
+    b = need(popup_box("base", tag + "o"), "it opens: " + name)
+    yield from drag(b[2] + 2, mid_y(b), -500, 0)
+    yield from park()
+    yield from grab(tag + "m")
+    v = need(popup_box("base", tag + "m"), "after the drag: " + name)
+    log(name, "opens", b, "minimum", v)
+    return b, v
+
+
+def s_p9_width_text_sized():
+    """A row sized to its text doesn't scale with the panel, and must not stop the grip."""
+    yield from begin()
+    b, v = yield from grip_to_min("SIM_PT_left_row", "left_")
+    check("a text-sized row doesn't stop the grip", width(v) < width(b) - 20, (b, v))
+    # It's still a limit, at its own width: a checkbox and "Border" are about 70 wide.
+    check("and its text still fits", width(v) >= 70, v)
+    yield from close_all()
+    yield from park()
+    b1, v1 = yield from grip_to_min("SIM_PT_hdr_plain", "plain_")
+    yield from close_all()
+    yield from park()
+    b2, v2 = yield from grip_to_min("SIM_PT_hdr_check", "check_")
+    yield from close_all()
+    check("the header's checkbox gets its room at the opening width",
+          width(b2) >= width(b1) + 18, (b1, b2))
+    check("and at the minimum", width(v2) >= width(v1) + 18, (v1, v2))
+
+
+SC["p9_width_text_sized"] = s_p9_width_text_sized
+
+
+class SIM_PT_long_row(bpy.types.Panel):
+    """A text-sized row longer than the panel, as with a long collection name. It clips anyway."""
+    bl_idname = "SIM_PT_long_row"; bl_label = "Sim Long Row"
+    bl_space_type = "VIEW_3D"; bl_region_type = "HEADER"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.alignment = 'LEFT'
+        row.operator("wm.redraw_timer", text="A very long name in a row sized to its own text, past the panel")
+        layout.operator("wm.redraw_timer", text="Run")
+
+
+bpy.utils.register_class(SIM_PT_long_row)
+
+
+def s_p9_width_clipped():
+    """Clipped text doesn't stop the grip. Pressing again at the stop doesn't move the edge."""
+    yield from begin()
+    b, v = yield from grip_to_min("SIM_PT_long_row", "long_")
+    check("a clipped text-sized row doesn't stop the grip", width(v) < width(b) - 20, (b, v))
+    # Again at the stop, one pixel in and the edge stays. Measured from a held frame, as a jump
+    # shows on the first move and a release wouldn't bring it back anyway.
+    x, y = v[2] + 2, mid_y(v)
+    move(x, y); yield W
+    move(x, y); yield W
+    press(x, y); yield 0.1
+    move(x - 3, y); yield 0.2
+    move(x - 3, y); yield 0.2
+    yield from grab("regrab")
+    release(x - 3, y); yield 0.4
+    w = need(popup_box("base", "regrab"), "pressed again")
+    check("pressing at the stop doesn't push the edge out", w[2] <= v[2], (v, w))
+    yield from close_all()
+
+
+SC["p9_width_clipped"] = s_p9_width_clipped
+
+
+def s_p9_prefs_margins():
+    """A torn-off Preferences panel has no centering margins, and doesn't follow the window."""
+    props = area("PROPERTIES")
+    props.ui_type = "PREFERENCES"
+    yield 1.5
+    bpy.context.preferences.active_section = "INTERFACE"
+    area_redraw(); yield 1.0
+    yield from begin()
+    move(*center()); yield 0.3
+    with bpy.context.temp_override(**override("PREFERENCES", "WINDOW")):
+        bpy.ops.wm.panel_tear_off(panel_idname="USERPREF_PT_interface_display", from_region_panel=True)
+    yield 1.0
+    yield from park()
+    yield from grab("torn")
+    v = need(popup_box("base", "torn"), "it tears off")
+    log("torn", v)
+    # Fields reach the right margin: something other than the panel color near the right edge.
+    px = FRAME["torn"][v[1] + 10:v[3] - 40, v[2] - 16]
+    bg = FRAME["torn"][v[1] + 6, v[0] + 6]
+    n = int((np.abs(px - bg).max(axis=1) > 0.04).sum())
+    check("its fields reach the right edge", n > 15, n)
+    yield from close_all()
+
+
+SC["p9_prefs_margins"] = s_p9_prefs_margins
+
+
+def s_p9_child_preset():
+    """A child panel's preset button shows in a torn-off parent."""
+    props = area("PROPERTIES")
+    props.spaces.active.context = "RENDER"
+    bpy.context.scene.view_settings.use_white_balance = True
+    yield 1.0
+    yield from begin()
+    move(*center()); yield 0.3
+    with bpy.context.temp_override(**override("PROPERTIES", "WINDOW")):
+        bpy.ops.wm.panel_tear_off(panel_idname="RENDER_PT_color_management", from_region_panel=True)
+    yield 1.0
+    yield from park()
+    yield from grab("torn")
+    v = need(popup_box("base", "torn"), "it tears off")
+    log("torn", v)
+    check("it opens", height(v) > 60, v)
+    yield from close_all()
+
+
+SC["p9_child_preset"] = s_p9_child_preset
+
+
+def s_p9_shortcut_popover():
+    """The asset shelf popover opened by shortcut has no Tear Off row: it couldn't redraw."""
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.mode_set(mode="SCULPT")
+    yield 1.5
+    area().spaces.active.overlay.show_text = False
+    area_redraw(); yield 0.6
+    # The same cursor position in both frames, or the brush circle is in the difference.
+    at = center()
+    move(*at); yield 0.3
+    move(*at); yield 0.3
+    yield from grab("base")
+    with bpy.context.temp_override(**override()):
+        bpy.ops.wm.call_asset_shelf_popover("INVOKE_DEFAULT", name="VIEW3D_AST_brush_sculpt")
+    yield 1.5
+    yield from grab("open")
+    a = popup_box("base", "open")
+    log("open", a)
+    check("it opens", a is not None and height(a) > 100, a)
+    yield from dismiss()
+
+
+SC["p9_shortcut_popover"] = s_p9_shortcut_popover
