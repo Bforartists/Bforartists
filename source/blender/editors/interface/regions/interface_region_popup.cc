@@ -1141,7 +1141,7 @@ static float tear_off_height_min(const Block *block, float *r_natural)
 /* BFA - Tear-Off Menu/Panel: a pin can park 30 px above the window bottom, and the clip only
  * trims, so expanding there would leave a block shorter than its header. Grow upward instead. The
  * pin sync after this records the new position. */
-static void tear_off_height_apply(wmWindow *window, Block *block)
+static void tear_off_height_apply(wmWindow *window, const PopupBlockHandle *handle, Block *block)
 {
   float natural;
   const float min_h = tear_off_height_min(block, &natural);
@@ -1151,6 +1151,12 @@ static void tear_off_height_apply(wmWindow *window, Block *block)
     const float lift = std::min(lack, std::max(top_limit - block->rect.ymax, 0.0f));
     block_translate(block, 0.0f, lift);
     block->rect.ymin -= lift;
+  }
+  /* This only ever raises the bottom, so the top stays at the pin. Content shorter than the crop
+   * doesn't reach it. */
+  if (handle->tear_off_user_height > 0.0f) {
+    const float crop = std::max(handle->tear_off_user_height * UI_SCALE_FAC, min_h);
+    block->rect.ymin = std::max(block->rect.ymin, block->rect.ymax - crop);
   }
 }
 
@@ -1364,7 +1370,11 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
 
     /* Avoid menu moving down and losing cursor focus by keeping it at the same height when the
      * popup is displaced down by at least one window unit. */
-    if (handle->refresh && (handle->prev_block_rect.ymax - block->rect.ymax) > 1.0f) {
+    /* BFA - Tear-Off Menu/Panel: the pin anchor below places a tear-off, and restoring the old
+     * ymin would stop a crop ever growing again. */
+    if (handle->refresh && !handle->is_tear_off &&
+        (handle->prev_block_rect.ymax - block->rect.ymax) > 1.0f)
+    {
       if (block->bounds_type != BLOCK_BOUNDS_POPUP_CENTER) {
         const float offset = handle->prev_block_rect.ymax - block->rect.ymax;
         block_translate(block, 0, offset);
@@ -1387,7 +1397,7 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
          * and would extend past the right window edge — `popup_block_clip` nudges it left. */
         popup_block_clip(window, block);
       }
-      tear_off_height_apply(window, block);
+      tear_off_height_apply(window, handle, block);
       /* Sync pin position to the clipped block position so subsequent window resize
        * refreshes use the corrected position rather than the stale pre-clip pin. */
       handle->tear_off_pin_xy[0] = int(block->rect.xmin);
@@ -1437,7 +1447,12 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
 
     handle->scrollmin = std::round(std::min(block->rect.ymax - (ymax + bounds), 0.0f));
     handle->scrollmax = std::round(std::max(block->rect.ymin - (ymin - bounds), 0.0f));
-    handle->scrolloffset = std::clamp(handle->scrolloffset, handle->scrollmin, handle->scrollmax);
+    /* BFA - Tear-Off Menu/Panel: a collapsed block has no crop or pin position yet, so its range
+     * says nothing about the scroll position it will return to. */
+    if (!(handle->is_tear_off && handle->tear_off_collapsed)) {
+      handle->scrolloffset = std::clamp(
+          handle->scrolloffset, handle->scrollmin, handle->scrollmax);
+    }
 
     /* apply scroll offset */
     if (handle->scrolloffset != 0.0f) {

@@ -6327,7 +6327,7 @@ void draw_tear_off_edges(const ARegion *region, const Block *block)
   const PopupBlockHandle *handle = block->handle;
   const uint8_t zone = handle->tear_off_drag_zone ? handle->tear_off_drag_zone :
                                                     handle->tear_off_hover_zone;
-  if (!(zone & TEAR_OFF_ZONE_WIDTH)) {
+  if (!(zone & (TEAR_OFF_ZONE_WIDTH | TEAR_OFF_ZONE_HEIGHT))) {
     return;
   }
   /* The rect of the block, not of its last button. */
@@ -6341,13 +6341,23 @@ void draw_tear_off_edges(const ARegion *region, const Block *block)
   float color[4];
   rgba_uchar_to_float(color, btheme->tui.wcol_scroll.item);
 
-  rctf line;
-  line.xmin = float(rect.xmax) - thickness;
-  line.xmax = float(rect.xmax);
-  line.ymin = float(rect.ymin) + corner;
-  line.ymax = float(rect.ymax) - corner;
   draw_roundbox_corner_set(CNR_ALL);
-  draw_roundbox_4fv(&line, true, thickness / 2.0f, color);
+  if (zone & TEAR_OFF_ZONE_WIDTH) {
+    rctf line;
+    line.xmin = float(rect.xmax) - thickness;
+    line.xmax = float(rect.xmax);
+    line.ymin = float(rect.ymin) + corner;
+    line.ymax = float(rect.ymax) - corner;
+    draw_roundbox_4fv(&line, true, thickness / 2.0f, color);
+  }
+  if (zone & TEAR_OFF_ZONE_HEIGHT) {
+    rctf line;
+    line.xmin = float(rect.xmin) + corner;
+    line.xmax = float(rect.xmax) - corner;
+    line.ymin = float(rect.ymin);
+    line.ymax = float(rect.ymin) + thickness;
+    draw_roundbox_4fv(&line, true, thickness / 2.0f, color);
+  }
 }
 
 static void draw_disk_shaded(float start,

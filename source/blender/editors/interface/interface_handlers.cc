@@ -13488,13 +13488,18 @@ static uint8_t tear_off_zone_at(const PopupBlockHandle *menu, const Block *block
   if (is_panel && mx >= r.xmax - in && mx <= r.xmax + out && my >= r.ymin - out && my <= r.ymax) {
     zone |= TEAR_OFF_ZONE_WIDTH;
   }
+  if (mx >= r.xmin && mx <= r.xmax + (is_panel ? out : 0.0f) && my >= r.ymin - out &&
+      my <= r.ymin + in)
+  {
+    zone |= TEAR_OFF_ZONE_HEIGHT;
+  }
   return zone;
 }
 
 static void tear_off_drag_begin(bContext *C,
                                 wmWindow *win,
                                 PopupBlockHandle *menu,
-                                Block * /*block*/,
+                                Block *block,
                                 const uint8_t zone,
                                 const int xy[2])
 {
@@ -13503,6 +13508,10 @@ static void tear_off_drag_begin(bContext *C,
   menu->tear_off_drag_zone = zone;
   copy_v2_v2_int(menu->tear_off_drag_xy, xy);
   menu->tear_off_drag_field[0] = menu->tear_off_width;
+  menu->tear_off_drag_field[1] = menu->tear_off_user_height;
+  if (zone & TEAR_OFF_ZONE_HEIGHT) {
+    menu->tear_off_drag_ref = BLI_rctf_size_y(&block->rect);
+  }
 }
 
 static void tear_off_drag_apply(wmWindow *win,
@@ -13516,6 +13525,18 @@ static void tear_off_drag_apply(wmWindow *win,
     if (tear_off_panel_width_drag(
             menu, menu->tear_off_drag_field[0], xy[0] - menu->tear_off_drag_xy[0], room))
     {
+      ED_region_tag_refresh_ui(menu->region);
+    }
+  }
+  if (menu->tear_off_drag_zone & TEAR_OFF_ZONE_HEIGHT) {
+    /* The minimum of #tear_off_height_min, from what the laid out block can still tell. */
+    const float natural = BLI_rctf_size_y(&block->rect) + menu->scrollmax - menu->scrollmin;
+    const float header_h = block->rect.ymax - block_scroll_top(block);
+    const float min_h = std::min(natural, header_h + UI_UNIT_Y + 2.0f * UI_MENU_SCROLL_MOUSE);
+    const float h = std::max(menu->tear_off_drag_ref + menu->tear_off_drag_xy[1] - xy[1], min_h);
+    const float field = h >= natural ? 0.0f : h / UI_SCALE_FAC;
+    if (field != menu->tear_off_user_height) {
+      menu->tear_off_user_height = field;
       ED_region_tag_refresh_ui(menu->region);
     }
   }
@@ -13540,6 +13561,7 @@ static void tear_off_drag_end(wmWindow *win, PopupBlockHandle *menu)
 static void tear_off_drag_cancel(PopupBlockHandle *menu, Block * /*block*/)
 {
   menu->tear_off_width = menu->tear_off_drag_field[0];
+  menu->tear_off_user_height = menu->tear_off_drag_field[1];
   ED_region_tag_refresh_ui(menu->region);
 }
 
@@ -13628,6 +13650,9 @@ static bool tear_off_edges_handle(bContext *C,
   if (event->val == KM_DBL_CLICK) {
     if (zone & TEAR_OFF_ZONE_WIDTH) {
       menu->tear_off_width = menu->tear_off_width_default;
+    }
+    if (zone & TEAR_OFF_ZONE_HEIGHT) {
+      menu->tear_off_user_height = 0.0f;
     }
     ED_region_tag_refresh_ui(menu->region);
     /* The block grows back under the cursor, and the release must not run a row. */
