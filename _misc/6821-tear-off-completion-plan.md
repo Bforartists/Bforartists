@@ -20,7 +20,7 @@ Line numbers are from the mid-merge tree and will drift.
 | 2. Shared cleanup and related fixes | Committed | `a14f3d0e234`, `440b786824e`, `35b9d9bf6fc`, `ab1209481c2`, `63438649de9`, `40348728360` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
 | 3. Preference toggle | Committed | `99c93ab4370`, `d800b242ae2` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
 | 2 and 3. Review findings | Committed, not built yet | `9851fa1a14b`, `babd3140507`, `7846ed92b8e` | Code review only so far |
-| 4. Enum tear-offs | Committed, not built yet | `e0b8b93c0da`..`b224b56b657` (7 commits), scenarios in `25d3ab2d03d` | Code review only so far. The scenarios are written but not run |
+| 4. Enum tear-offs | Done | `e0b8b93c0da`..`a255c080db4` | Built with no errors. Full GUI suite passes: 33 scenarios, no crashes. Needs a hand test: Transform Pivot, Set Keyframe Type, toolbar Keyframe Type |
 | 5 to 8 | Not started | | Phase 5 is next |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.

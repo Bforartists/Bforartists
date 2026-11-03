@@ -827,15 +827,16 @@ def s_row_value():
     cx, cy = center(); move(cx, cy + 250); yield 0.3
     yield from open_panel("b2", "SIM_PT_enum")
     d = yield from open_dropdown(1, "dd3")
-    # This menu has no title, and its length depends on the color config, so measure from its top.
-    mx, my = panel_row(1)
-    y = my - 12 - (TEAR_ROW0 - ROW - LINE); log("menu row click", (mx, y))
-    yield from click(mx, y); yield 0.6
+    # A menu bound to its button has no row, and still lists its items inside a torn-off panel.
+    check("the color space menu lists items in a torn-off panel", is_popup(d) and (d[3] - d[1]) > 100, d)
+    # The top rows open submenus and depend on the color config, so pick the bottom one: Working Space.
+    mx = panel_row(1)[0]
+    yield from click(mx, d[1] + 14); yield 0.6
     yield from to_rest()
     yield from grab("after3")
-    check("the menu's row leaves the value alone", settings.name == "Non-Color", settings.name)
+    check("picking an item applies it", settings.name != "Non-Color", settings.name)
     nb = view_bbox("b2_po", "after3", skip=PANEL["box"]); log("new popup from the menu", nb)
-    check("the menu's row opens a tear-off", nb is not None, nb)
+    check("no new popup", not is_popup(nb), nb)
 
 
 SC["row_value"] = s_row_value
