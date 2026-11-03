@@ -6339,18 +6339,9 @@ void draw_tear_off_panel_header_back(const ARegion *region, const Block *block)
   if (!block_has_tear_off_panel_colors(block)) {
     return;
   }
-  float header_ymin = FLT_MAX;
-  for (const Button &but : block->buttons()) {
-    if (but.tear_off_header && !ELEM(but.type, ButtonType::Sepr, ButtonType::SeprLine)) {
-      header_ymin = std::min(header_ymin, but.rect.ymin);
-    }
-  }
-  if (header_ymin == FLT_MAX) {
-    return;
-  }
-  /* A little below the row, as a region's header has around its row. */
+  /* As tall as a region's header. */
   rctf strip = block->rect;
-  strip.ymin = std::max(header_ymin - 3.0f * UI_SCALE_FAC, block->rect.ymin);
+  strip.ymin = std::max(block->rect.ymax - float(PNL_HEADER) / block->aspect, block->rect.ymin);
   const rcti strip_px = rect_to_pixelrect(region, block, &strip);
   rctf strip_pxf;
   BLI_rctf_rcti_copy(&strip_pxf, &strip_px);

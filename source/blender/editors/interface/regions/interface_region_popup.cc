@@ -1186,6 +1186,43 @@ static void tear_off_height_apply(wmWindow *window, const PopupBlockHandle *hand
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: a panel torn off a region has the header of a region's panel: the row
+ * centered in #PNL_HEADER, and the close icon as far from the edge as a panel's grip, see
+ * #panel_draw_aligned_widgets. The block's margin would otherwise push the row in on all sides.
+ * Only these buttons move, so the scroll range, which doesn't count them, stays the same. */
+static void tear_off_panel_header_align(Block *block, const float bounds)
+{
+  if (!block_has_tear_off_panel_colors(block)) {
+    return;
+  }
+  const float up = std::round(bounds - (PNL_HEADER - UI_UNIT_Y) * 0.5f / block->aspect);
+  const float right = std::round(bounds - 0.2f * UI_UNIT_X / block->aspect);
+  /* The title is the last label. What's before it goes left with it, and the rest goes right. */
+  int title_index = -1;
+  int index = 0;
+  for (const Button &bt : block->buttons()) {
+    if (bt.tear_off_header && bt.type == ButtonType::Label) {
+      title_index = index;
+    }
+    index++;
+  }
+  index = 0;
+  for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header) {
+      bt.rect.ymin += up;
+      bt.rect.ymax += up;
+      if (index == title_index) {
+        /* Only its start, as the room freed on its right belongs to it. */
+        bt.rect.xmin -= bounds;
+      }
+      else {
+        BLI_rctf_translate(&bt.rect, index < title_index ? -bounds : right, 0.0f);
+      }
+    }
+    index++;
+  }
+}
+
 /* BFA - Tear-Off Menu/Panel: the header stays, so the content scrolls below it. If the window
  * trimmed the top of the block, move everything down, or the header would stay cut off. */
 static void tear_off_header_scroll_prepare(Block *block, const float bounds)
@@ -1207,6 +1244,7 @@ static void tear_off_header_scroll_prepare(Block *block, const float bounds)
   }
   /* Above 0 even in a window too small for the header, because 0 means there is none. */
   block->tear_off_header_ymin = std::max(ymin - excess, 1.0f);
+  tear_off_panel_header_align(block, bounds);
 }
 
 Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butregion, Button *but)
