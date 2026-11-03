@@ -375,7 +375,15 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
     /* Store the button location for positioning the popover arrow hint. */
     if (!handle->refresh) {
       float center[2] = {BLI_rctf_cent_x(&pup->but->rect), BLI_rctf_cent_y(&pup->but->rect)};
-      block_to_window_fl(handle->ctx_region, pup->but->block, &center[0], &center[1]);
+      /* BFA - Tear-Off Menu/Panel: a button in a tear-off is in the popup's region, not the region
+       * the tear-off takes its context from, so the arrow pointed somewhere else. */
+      const PopupBlockHandle *but_handle = pup->but->block->handle;
+      block_to_window_fl((but_handle && but_handle->is_tear_off) ?
+                             handle->popup_create_vars.butregion :
+                             handle->ctx_region,
+                         pup->but->block,
+                         &center[0],
+                         &center[1]);
       /* These variables aren't used for popovers,
        * we could add new variables if there is a conflict. */
       block->bounds_offset[0] = int(center[0]);
