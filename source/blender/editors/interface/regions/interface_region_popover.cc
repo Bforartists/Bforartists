@@ -166,14 +166,18 @@ static int tear_off_panel_designed_ui_size(const Popover *pup)
              (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS));
 }
 
-/* BFA - Tear-Off Menu/Panel: the designed width, or what the title and its icons need if that's
- * more. There's no other floor, so the block is exactly as wide as its layout. */
-static int tear_off_panel_default_ui_size(const Popover *pup)
+/* BFA - Tear-Off Menu/Panel: what the title, the grip, the two icons and a margin need. */
+static int tear_off_panel_header_ui_size(const Popover *pup)
 {
   const char *title = CTX_IFACE_(pup->panel_type->translation_context, pup->panel_type->label);
-  /* The grip, the two icons and a margin. */
-  const int header = 4 * UI_UNIT_X + fontstyle_string_width(&style_get_dpi()->widget, title);
-  return std::max(tear_off_panel_designed_ui_size(pup), header);
+  return 4 * UI_UNIT_X + fontstyle_string_width(&style_get_dpi()->widget, title);
+}
+
+/* BFA - Tear-Off Menu/Panel: the designed width, or what the header needs if that's more. There's
+ * no other floor, so the block is exactly as wide as its layout. */
+static int tear_off_panel_default_ui_size(const Popover *pup)
+{
+  return std::max(tear_off_panel_designed_ui_size(pup), tear_off_panel_header_ui_size(pup));
 }
 
 /* BFA - Tear-Off Menu/Panel: in the units of #tear_off_width. */
@@ -203,6 +207,33 @@ static float tear_off_shelf_width_snap(const float width, const float max_width)
   return best;
 }
 
+/* BFA - Tear-Off Menu/Panel: see the declaration. The layout can't say, because it estimates text
+ * in a panel at a fixed 10 units. So take how much of its width each button's text uses: buttons
+ * narrow about in proportion to the layout, and the tightest one ends the drag. */
+float tear_off_panel_width_min(const PopupBlockHandle *handle, const Block *block)
+{
+  const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
+  const uiFontStyle *fstyle = &style_get_dpi()->widget;
+  float used = 0.0f;
+  for (const Button &but : block->buttons()) {
+    const float but_width = BLI_rctf_size_x(&but.rect);
+    if (but.tear_off_header || (but.flag & UI_HIDDEN) || but.drawstr.empty() || but_width < 1.0f) {
+      continue;
+    }
+    /* The text's padding, and the room of an icon, a checkbox or a dropdown's arrow. */
+    int needed = fontstyle_string_width(fstyle, but.drawstr.c_str()) + int(0.8f * UI_UNIT_X);
+    if (but.flag & UI_HAS_ICON) {
+      needed += UI_UNIT_X;
+    }
+    if (ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN, ButtonType::Menu)) {
+      needed += UI_UNIT_X;
+    }
+    used = std::max(used, needed / but_width);
+  }
+  const float layout_width = float(pup->ui_size_x) * std::min(used, 1.0f);
+  return std::max<float>(layout_width, tear_off_panel_header_ui_size(pup)) / UI_SCALE_FAC;
+}
+
 /* BFA - Tear-Off Menu/Panel: see the declaration. */
 bool tear_off_panel_width_drag(PopupBlockHandle *handle,
                                const float start_field,
@@ -218,11 +249,8 @@ bool tear_off_panel_width_drag(PopupBlockHandle *handle,
   }
   else {
     const float designed = tear_off_panel_width_designed(handle);
-    /* Down to what the content needs, as read at the press. Never above the designed width: a
-     * panel with long rows can already clip them there. */
-    const float min_width = handle->tear_off_drag_min_width > 0.0f ?
-                                std::min(handle->tear_off_drag_min_width, designed) :
-                                designed;
+    /* Never above the designed width: a panel with long rows can already clip them there. */
+    const float min_width = std::min(handle->tear_off_drag_min_width, designed);
     width = std::min(std::max(wanted, min_width), std::max(max_width, min_width));
     /* The designed width itself is stored as 0, which follows the scale formula. */
     if (fabsf(width - designed) < 0.5f) {
@@ -294,8 +322,6 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
   }
 
   block_layout_resolve(block);
-  /* BFA - Tear-Off Menu/Panel: where the width grip stops. */
-  handle->tear_off_content_width = float(block->tear_off_content_width) / UI_SCALE_FAC;
   const ButtonMenu *popover_button = pup->but && pup->but->type == ButtonType::Popover ?
                                          static_cast<ButtonMenu *>(pup->but) :
                                          nullptr;

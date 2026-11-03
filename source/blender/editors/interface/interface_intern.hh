@@ -812,8 +812,6 @@ struct Block {
   /** BFA - Tear-Off Menu/Panel: bottom of the sticky header in region space, 0 if there is none.
    * Set in #popup_block_refresh. Read it through #block_scroll_top. */
   float tear_off_header_ymin = 0.0f;
-  /** BFA - Tear-Off Menu/Panel: the widest thing in the layout at its natural size, in pixels. */
-  int tear_off_content_width = 0;
 
   /** use so presets can find the operator,
    * across menus and from nested popups which fail for operator context. */
@@ -1229,9 +1227,8 @@ struct PopupBlockHandle {
   int tear_off_drag_xy[2] = {0, 0};
   /** BFA - Tear-Off Menu/Panel: width and height fields at the press, for cancel. */
   float tear_off_drag_field[2] = {0.0f, 0.0f};
-  /** BFA - Tear-Off Menu/Panel: what the latest layout of a panel needs, in the units of
-   * #tear_off_width, and that value at the press, so reflowing can't move the limit in a drag. */
-  float tear_off_content_width = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: where the width grip stops, in the units of #tear_off_width. Read
+   * at the press, so reflowing can't move the limit during the drag. */
   float tear_off_drag_min_width = 0.0f;
   /** BFA - Tear-Off Menu/Panel: the height the user cropped the block to, without UI scale, so
    * scale changes recompute it. 0 for no crop. For this session only, and kept through collapse
@@ -1396,6 +1393,9 @@ PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);
 TearOffInit tear_off_init_from_region(const bContext *C, const PanelType *pt);
 /* BFA - Tear-Off Menu/Panel: pixel width of the layout for a non-zero #tear_off_width. */
 int tear_off_layout_width(const wmWindow *win, const PopupBlockHandle *handle);
+/* BFA - Tear-Off Menu/Panel: the narrowest a panel can get before its text clips, in the units of
+ * #tear_off_width. Never less than its header needs. */
+float tear_off_panel_width_min(const PopupBlockHandle *handle, const Block *block);
 /* BFA - Tear-Off Menu/Panel: applies a right-edge drag of `delta_px` from `start_field`, the
  * #tear_off_width at the press. `room_px` is how wide the block may get. Returns true on a change,
  * which needs a refresh. */
