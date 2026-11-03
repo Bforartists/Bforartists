@@ -2730,12 +2730,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
   /* BFA - Tear-Off Menu/Panel: close the original popover/menu
    * so it behaves like tear-off menus (original closes when torn off). */
   if (region_popup_orig) {
-    for (ui::Block &block : region_popup_orig->runtime->uiblocks) {
-      if (block.handle) {
-        block.handle->menuretval = ui::RETURN_CANCEL;
-        break;
-      }
-    }
+    ui::tear_off_source_popup_close_tag(region_popup_orig);
     /* BFA - Tear-Off Menu/Panel: the source closes on the next event, which has to get past the
      * new tear-off under the cursor. */
     WM_event_add_mousemove(CTX_wm_window(C));

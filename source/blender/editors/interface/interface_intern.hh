@@ -1352,6 +1352,13 @@ bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle);
 void tear_off_context_ensure(bContext *C, PopupBlockHandle *handle);
 
 /**
+ * BFA - Tear-Off Menu/Panel: tag the popup a panel was torn off from for closing. Starts at the
+ * context popup and walks down open sub-popups, because a nested popover's context popup is its
+ * parent. Never tags a tear-off.
+ */
+void tear_off_source_popup_close_tag(ARegion *region_popup);
+
+/**
  * BFA - Tear-Off Menu/Panel: geometry of the collapsed pin widget in region-local
  * coordinates. Shared by drawing and event handling.
  */

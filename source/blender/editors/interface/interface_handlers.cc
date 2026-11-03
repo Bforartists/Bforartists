@@ -13692,6 +13692,22 @@ void tear_off_handlers_remove_for_workspace(bContext *C,
   }
 }
 
+/* BFA - Tear-Off Menu/Panel */
+void tear_off_source_popup_close_tag(ARegion *region_popup)
+{
+  ARegion *region = region_popup;
+  while (Button *but = region_find_active_but(region)) {
+    if (but->active->menu == nullptr) {
+      break;
+    }
+    region = but->active->menu->region;
+  }
+  Block *block = region->runtime->uiblocks.first();
+  if (block && block->handle && !block->handle->is_tear_off) {
+    block->handle->menuretval = RETURN_CANCEL;
+  }
+}
+
 /**
  * Returns true if the button is referencing \a srna.
  * \note This would fail to properly determine if the Button is referencing \a srna if the
