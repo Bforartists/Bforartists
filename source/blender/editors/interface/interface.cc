@@ -1443,6 +1443,13 @@ static void menu_block_set_keyaccels(Block *block)
         continue;
       }
 
+      /* BFA - Tear-Off Menu/Panel: the row is an addition, so regular items keep their keys. */
+      if (but.optype && (STREQ(but.optype->idname, "WM_OT_menu_tear_off") ||
+                         STREQ(but.optype->idname, "WM_OT_panel_tear_off")))
+      {
+        continue;
+      }
+
       if (pass == 0 && ELEM(but.type, ButtonType::IconToggle, ButtonType::IconToggleN)) {
         /* Until 4.4, toggles did not get accelerator keys. Ignore them on the first pass to keep
          * the most-used accelerator keys (those on the first letter) the same. In general it seems

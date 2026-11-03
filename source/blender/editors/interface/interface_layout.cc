@@ -3004,9 +3004,13 @@ void Layout::prop_search(PointerRNA *ptr,
   this->prop_search(ptr, prop, searchptr, searchprop, nullptr, name, icon, false);
 }
 
+/* BFA - Tear-Off Menu/Panel */
+static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt);
+
 void item_menutype_func(bContext *C, Layout *layout, void *arg_mt)
 {
   MenuType *mt = static_cast<MenuType *>(arg_mt);
+  menutype_tear_off_affordance_draw(layout, mt); /* BFA - Tear-Off Menu/Panel */
   menutype_draw(C, mt, layout);
 }
 
@@ -6442,17 +6446,11 @@ static void tear_off_header_draw(Layout *layout,
   layout->separator(1.0f, LayoutSeparatorType::Line);
 }
 
-void menutype_draw(bContext *C, MenuType *mt, Layout *layout)
+/* BFA - Tear-Off Menu/Panel: called only from #item_menutype_func, the root and submenu entry.
+ * #Layout::menu_contents also goes through #menutype_draw on the same block, and it must not
+ * add a row or a second header in the middle of its parent menu. */
+static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt)
 {
-  Menu menu{};
-  menu.layout = layout;
-  menu.type = mt;
-
-  if (G.debug & G_DEBUG_WM) {
-    printf("%s: opening menu \"%s\"\n", __func__, mt->idname);
-  }
-
-  /* BFA - Tear-Off Menu/Panel AFFORDANCE */
   Block *block = layout->block();
   const bool is_context_menu = BLI_strcasestr(mt->idname, "_context_menu") != nullptr;
   const bool is_tear_off = block->handle && block->handle->is_tear_off;
@@ -6473,7 +6471,19 @@ void menutype_draw(bContext *C, MenuType *mt, Layout *layout)
       layout->separator(1.0f, LayoutSeparatorType::Line);
     }
   }
+}
 
+void menutype_draw(bContext *C, MenuType *mt, Layout *layout)
+{
+  Menu menu{};
+  menu.layout = layout;
+  menu.type = mt;
+
+  if (G.debug & G_DEBUG_WM) {
+    printf("%s: opening menu \"%s\"\n", __func__, mt->idname);
+  }
+
+  Block *block = layout->block();
   // bfa - disable_search_on_keypress
   if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) &&
       !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS))
