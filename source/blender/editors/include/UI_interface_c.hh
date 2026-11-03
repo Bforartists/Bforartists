@@ -2484,6 +2484,11 @@ void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *han
  * space data. Other popups are left untouched.
  */
 void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area);
+/**
+ * BFA - Tear-Off Menu/Panel: a single region can be freed without its area exiting (leaving Quad
+ * View), so tear-off handlers must drop their reference to it on region exit as well.
+ */
+void tear_off_handlers_region_exit(wmWindow *win, const ARegion *region);
 /** BFA - Tear-Off Menu/Panel: close tear-offs scoped to a workspace that is being deleted. */
 void tear_off_handlers_remove_for_workspace(bContext *C,
                                             wmWindow *win,

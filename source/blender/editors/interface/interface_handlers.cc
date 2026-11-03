@@ -13782,6 +13782,29 @@ void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area)
 }
 
 /* BFA - Tear-Off Menu/Panel */
+void tear_off_handlers_region_exit(wmWindow *win, const ARegion *region)
+{
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (handler_base.type != WM_HANDLER_TYPE_UI || bool(handler_base.flag & WM_HANDLER_DO_FREE)) {
+      continue;
+    }
+    wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+    if (handler->handle_fn != popup_handler || handler->context.region != region) {
+      continue;
+    }
+    PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
+    if (menu->is_tear_off) {
+      /* Clear the area too, or the handler would restore the area with the event's region, which
+       * may belong to another area. Operators and refreshes use `ctx_area` and `ctx_region`. */
+      handler->context.area = nullptr;
+      handler->context.region = nullptr;
+      /* Buttons may point at this region's data, such as the View3D region of a quad view. */
+      ED_region_tag_refresh_ui(menu->region);
+    }
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel */
 void tear_off_handlers_remove_for_workspace(bContext *C,
                                             wmWindow *win,
                                             const WorkSpace *workspace)

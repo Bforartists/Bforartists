@@ -945,6 +945,8 @@ void ED_region_exit(bContext *C, ARegion *region)
 
   WM_event_remove_handlers(C, &region->runtime->handlers);
   WM_event_modal_handler_region_replace(win, region, nullptr);
+  /* BFA - Tear-Off Menu/Panel: a tear-off outlives this region, don't restore a freed one. */
+  ui::tear_off_handlers_region_exit(win, region);
 
   /* Stop panel animation in this region if there are any. */
   for (Panel &panel : region->panels) {
