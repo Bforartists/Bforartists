@@ -6019,6 +6019,12 @@ void Layout::resolve_dynamic_height()
 static int2 layout_end(Layout *layout)
 {
   LayoutInternal::layout_estimate(layout);
+  /* BFA - Tear-Off Menu/Panel: a root doesn't estimate itself and resolving stretches the rest,
+   * so this is the only moment the natural width of the content can be read. */
+  Block *block = layout->block();
+  for (const Item *item : layout->items()) {
+    block->tear_off_content_width = std::max(block->tear_off_content_width, item->size().x);
+  }
   LayoutInternal::layout_resolve(layout);
   return layout->offset();
 }

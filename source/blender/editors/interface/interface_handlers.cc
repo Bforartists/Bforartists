@@ -13552,6 +13552,7 @@ static void tear_off_drag_begin(bContext *C,
   copy_v2_v2_int(menu->tear_off_drag_xy, xy);
   menu->tear_off_drag_field[0] = menu->tear_off_width;
   menu->tear_off_drag_field[1] = menu->tear_off_user_height;
+  menu->tear_off_drag_min_width = menu->tear_off_content_width;
   if (zone & TEAR_OFF_ZONE_HEIGHT) {
     menu->tear_off_drag_ref = BLI_rctf_size_y(&block->rect);
   }

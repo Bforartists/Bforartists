@@ -812,6 +812,8 @@ struct Block {
   /** BFA - Tear-Off Menu/Panel: bottom of the sticky header in region space, 0 if there is none.
    * Set in #popup_block_refresh. Read it through #block_scroll_top. */
   float tear_off_header_ymin = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: the widest thing in the layout at its natural size, in pixels. */
+  int tear_off_content_width = 0;
 
   /** use so presets can find the operator,
    * across menus and from nested popups which fail for operator context. */
@@ -1227,6 +1229,10 @@ struct PopupBlockHandle {
   int tear_off_drag_xy[2] = {0, 0};
   /** BFA - Tear-Off Menu/Panel: width and height fields at the press, for cancel. */
   float tear_off_drag_field[2] = {0.0f, 0.0f};
+  /** BFA - Tear-Off Menu/Panel: what the latest layout of a panel needs, in the units of
+   * #tear_off_width, and that value at the press, so reflowing can't move the limit in a drag. */
+  float tear_off_content_width = 0.0f;
+  float tear_off_drag_min_width = 0.0f;
   /** BFA - Tear-Off Menu/Panel: the height the user cropped the block to, without UI scale, so
    * scale changes recompute it. 0 for no crop. For this session only, and kept through collapse
    * and expand. */

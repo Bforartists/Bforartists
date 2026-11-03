@@ -41,6 +41,8 @@
 #include "BLI_rect.hh"
 #include "BLI_utildefines.hh" /* BFA - Tear-Off Menu/Panel: STREQ. */
 
+#include "BLT_translation.hh" /* BFA - Tear-Off Menu/Panel: the width of the title. */
+
 #include "BKE_context.hh"
 #include "BKE_report.hh"
 #include "BKE_screen.hh"
@@ -164,13 +166,21 @@ static int tear_off_panel_designed_ui_size(const Popover *pup)
              (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS));
 }
 
-/* BFA - Tear-Off Menu/Panel: in the units of #tear_off_width. The minimum can make the block wider
- * than its layout, and the grip must start from what shows or the first move does nothing. */
+/* BFA - Tear-Off Menu/Panel: the designed width, or what the title and its icons need if that's
+ * more. There's no other floor, so the block is exactly as wide as its layout. */
+static int tear_off_panel_default_ui_size(const Popover *pup)
+{
+  const char *title = CTX_IFACE_(pup->panel_type->translation_context, pup->panel_type->label);
+  /* The grip, the two icons and a margin. */
+  const int header = 4 * UI_UNIT_X + fontstyle_string_width(&style_get_dpi()->widget, title);
+  return std::max(tear_off_panel_designed_ui_size(pup), header);
+}
+
+/* BFA - Tear-Off Menu/Panel: in the units of #tear_off_width. */
 static float tear_off_panel_width_designed(const PopupBlockHandle *handle)
 {
   const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
-  const float block_px = tear_off_panel_designed_ui_size(pup) + U.widget_unit;
-  return (std::max<float>(block_px, UI_MENU_WIDTH_MIN) - U.widget_unit) / UI_SCALE_FAC;
+  return float(tear_off_panel_default_ui_size(pup)) / UI_SCALE_FAC;
 }
 
 /* BFA - Tear-Off Menu/Panel: the points of #ED_region_generic_tools_region_snap_size. They fall in
@@ -207,9 +217,17 @@ bool tear_off_panel_width_drag(PopupBlockHandle *handle,
     width = tear_off_shelf_width_snap(wanted, max_width);
   }
   else {
-    const float min_width = tear_off_panel_width_designed(handle);
-    /* At the minimum it's the designed width again, which follows the scale formula. */
-    width = wanted <= min_width ? 0.0f : std::min(wanted, std::max(max_width, min_width));
+    const float designed = tear_off_panel_width_designed(handle);
+    /* Down to what the content needs, as read at the press. Never above the designed width: a
+     * panel with long rows can already clip them there. */
+    const float min_width = handle->tear_off_drag_min_width > 0.0f ?
+                                std::min(handle->tear_off_drag_min_width, designed) :
+                                designed;
+    width = std::min(std::max(wanted, min_width), std::max(max_width, min_width));
+    /* The designed width itself is stored as 0, which follows the scale formula. */
+    if (fabsf(width - designed) < 0.5f) {
+      width = 0.0f;
+    }
   }
   if (width == handle->tear_off_width) {
     return false;
@@ -248,7 +266,7 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
         pup->ui_size_x = tear_off_layout_width(CTX_wm_window(C), handle);
       }
       else {
-        pup->ui_size_x = tear_off_panel_designed_ui_size(pup);
+        pup->ui_size_x = tear_off_panel_default_ui_size(pup);
       }
     }
     popover_create_block(C, handle->region, pup, wm::OpCallContext::InvokeRegionWin);
@@ -276,6 +294,8 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
   }
 
   block_layout_resolve(block);
+  /* BFA - Tear-Off Menu/Panel: where the width grip stops. */
+  handle->tear_off_content_width = float(block->tear_off_content_width) / UI_SCALE_FAC;
   const ButtonMenu *popover_button = pup->but && pup->but->type == ButtonType::Popover ?
                                          static_cast<ButtonMenu *>(pup->but) :
                                          nullptr;
@@ -354,8 +374,9 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
     block_flag_enable(block, BLOCK_LOOP);
     block_theme_style_set(block, BLOCK_THEME_STYLE_POPUP);
     block_direction_set(block, block->direction);
-    /* BFA - Tear-Off Menu/Panel: the shelf width is exact, the minimum would widen it. */
-    block->minbounds = (handle->tear_off_width_default > 0.0f) ? 0 : UI_MENU_WIDTH_MIN;
+    /* BFA - Tear-Off Menu/Panel: the width of a tear-off is exact, the minimum would widen the
+     * block and leave dead space beside its layout. */
+    block->minbounds = handle->is_tear_off ? 0 : UI_MENU_WIDTH_MIN;
 
     if (!handle->refresh) {
       const Button *but = nullptr;
