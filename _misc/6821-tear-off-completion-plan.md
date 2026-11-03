@@ -263,11 +263,10 @@ Keep the bottom-edge grip, top-anchored crop, `draw_widget_scroll()` with theme 
 **As written, where it differs from the above:**
 - The fade is the real View2D model: alpha comes from the cursor's distance on each mouse move, with no timer. The doc's redraw ramp isn't how View2D works.
 - Minimum height is the header, one row and both arrow zones. A pin parked at the window bottom lifts the block to that height when expanded, and the pin stays at the lifted spot.
-- The content has its own scissor and the header draws in a separate pass, so a row half under the header is cut by the pixel. Curve and scope widgets replace the scissor, so six sites in `interface_draw.cc` now limit it through `but_scissor_limit`, and the curve points are limited too.
+- The content has its own scissor and the header draws in a separate pass, so a row half under the header is cut by the pixel. Curve and scope widgets replace the scissor, so six sites in `interface_draw.cc` now limit it through `but_scissor_limit`, and the curve points are limited too. `draw_but_TRACKPREVIEW`'s two later scissors go through `but_scissor_set`, and the scope outlines, drawn with the test off, through `but_scope_end`.
 - Menus gain a gutter for the bar only while overflowing. Panels get none, and their bar is capped to fit their margin.
 - Esc or right-click during a grip drag restores the previous size, and input is swallowed until the left button's release.
 - The scroll arrows stay alongside the bar. Tab between fields scrolls to the field. Arrow keys stay with the editor.
-- Not done: `draw_but_TRACKPREVIEW` sets two more scissors of its own, which a track preview scrolled under the header can still paint past.
 
 ## Files
 

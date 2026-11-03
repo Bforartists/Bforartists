@@ -3485,6 +3485,32 @@ def s_p8_curve():
 SC["p8_curve"] = s_p8_curve
 
 
+def s_p8_scope():
+    """A scope's outline comes after its scissor test is off. Without image data, because the
+    outline is what this is about. The track preview takes a real clip, so it's a hand test."""
+    st = SIM_PT_tall.state
+    st.update(rows=30, scope=True)
+    area("OUTLINER").type = "IMAGE_EDITOR"; yield 0.8
+    yield from begin(st)
+    b = yield from opened(open_tpanel("SIM_PT_tall"), "m", "the panel with a scope opens")
+    s = strip_box(b, STRIP_PANEL)
+    x, y = mid_x(b), mid_y(b)
+    last = "m"
+    for i in range(1, 9):
+        yield from wheel(x, y, True, 1, 0.05)
+        yield from park()
+        name = f"w{i}"
+        yield from grab(name)
+        n = box_bbox("m", name, s)
+        check(f"the header is untouched, {i * 20} px scrolled", n is None, n)
+        check(f"the content moved, {i * 20} px scrolled",
+              box_bbox(last, name, rows_box(b, STRIP_PANEL)) is not None, name)
+        last = name
+
+
+SC["p8_scope"] = s_p8_scope
+
+
 def s_p8_header_look():
     """The header is drawn in its own pass once clipped, and must look the same as it did."""
     th = bpy.context.preferences.themes[0]

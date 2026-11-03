@@ -504,6 +504,10 @@ class SimRowsPanel(SimTearPanel):
         if st["curve"]:
             layout.operator("sim.row_probe", text="Above the Curve").index = 1000
             layout.template_curve_mapping(context.scene.view_settings, "curve_mapping")
+        if st.get("scope"):
+            layout.operator("sim.row_probe", text="Above the Scope").index = 1000
+            image_editor = next(a for a in context.window.screen.areas if a.type == "IMAGE_EDITOR")
+            layout.template_histogram(image_editor.spaces.active.scopes, "histogram")
         for i in range(st["rows"]):
             row = layout.row()
             row.scale_y = 3.0 if st["big"] else 1.0
