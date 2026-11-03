@@ -16,6 +16,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_userdef_types.h"
+#include "DNA_workspace_types.h" /* BFA - Tear-Off Menu/Panel: WorkSpace::id. */
 
 #include "BLF_api.hh"
 
@@ -28,7 +29,12 @@
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
 
+/* BFA - Tear-Off Menu/Panel: the active tool's message bus subscription. */
+#include "RNA_access.hh"
+#include "RNA_prototypes.hh"
+
 #include "WM_api.hh"
+#include "WM_message.hh" /* BFA - Tear-Off Menu/Panel */
 #include "WM_types.hh"
 
 #include "ED_screen.hh"
@@ -847,6 +853,31 @@ static void tear_off_region_window_listener(const wmRegionListenerParams *params
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: a tool change only publishes on the message bus. Regions redraw from
+ * that, but a tear-off bakes the active tool's highlight into its buttons, so it needs a rebuild.
+ */
+static void tear_off_msg_notify_refresh(bContext * /*C*/,
+                                        wmMsgSubscribeKey * /*msg_key*/,
+                                        wmMsgSubscribeValue *msg_val)
+{
+  ED_region_tag_refresh_ui(static_cast<ARegion *>(msg_val->owner));
+}
+
+/* BFA - Tear-Off Menu/Panel: see #tear_off_msg_notify_refresh. */
+static void tear_off_region_message_subscribe(const wmRegionMessageSubscribeParams *params)
+{
+  wmMsgSubscribeValue msg_val{};
+  msg_val.owner = params->region;
+  msg_val.user_data = params->region;
+  msg_val.notify = tear_off_msg_notify_refresh;
+  WM_msg_subscribe_rna_prop(params->message_bus,
+                            &params->workspace->id,
+                            params->workspace,
+                            WorkSpace,
+                            tools,
+                            &msg_val);
+}
+
 /* BFA - Tear-Off Menu/Panel: tear-offs need their own region type. The type in
  * popup_block_create is shared and reset by every new popup, which would drop this listener,
  * and it could also give tear-offs the centered-popup listener by accident. */
@@ -859,6 +890,7 @@ static ARegionType *tear_off_region_type_get()
     type.layout = block_region_refresh;
     type.regionid = RGN_TYPE_TEMPORARY;
     type.listener = tear_off_region_window_listener;
+    type.message_subscribe = tear_off_region_message_subscribe;
   }
   return &type;
 }

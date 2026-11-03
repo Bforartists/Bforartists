@@ -1518,6 +1518,11 @@ static void item_menu_hold(bContext *C, ARegion *butregion, Button *but)
         direction = UI_DIR_DOWN;
         break;
     }
+    /* BFA - Tear-Off Menu/Panel: a temporary region has no alignment, so sub-tools would open
+     * downward over the tools below, instead of beside the column as in the shelf. */
+    if (block_is_tear_off_shelf(but->block)) {
+      direction = UI_DIR_RIGHT;
+    }
   }
   block_direction_set(block, direction);
 

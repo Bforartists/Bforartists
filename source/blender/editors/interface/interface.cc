@@ -5422,7 +5422,10 @@ static Button *def_but_operator_ptr(Block *block,
   button_operator_set(but, ot, opcontext);
 
   /* Enable quick tooltip label if this is a tool button without a label. */
-  if (str.is_empty() && !block_is_popover(block) && but_is_tool(but)) {
+  /* BFA - Tear-Off Menu/Panel: a shelf tear-off shows tools as the shelf does. */
+  if (str.is_empty() && (!block_is_popover(block) || block_is_tear_off_shelf(block)) &&
+      but_is_tool(but))
+  {
     button_drawflag_enable(but, BUT_HAS_QUICK_TOOLTIP);
   }
 

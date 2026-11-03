@@ -686,6 +686,12 @@ bool block_is_popover(const Block *block)
   return (block->flag & BLOCK_POPOVER) != 0;
 }
 
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+bool block_is_tear_off_shelf(const Block *block)
+{
+  return block->handle && block->handle->is_tear_off && block->handle->tear_off_width > 0.0f;
+}
+
 bool block_is_pie_menu(const Block *block)
 {
   return ((block->flag & BLOCK_PIE_MENU) != 0);

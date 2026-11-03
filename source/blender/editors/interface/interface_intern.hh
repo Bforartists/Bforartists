@@ -1948,6 +1948,8 @@ bool button_draw_as_link(const Button *button);
 Button *block_active_but_get(const Block *block);
 bool block_is_menu(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_popover(const Block *block) ATTR_WARN_UNUSED_RESULT;
+/* BFA - Tear-Off Menu/Panel: a panel torn off the tool shelf, which draws like the shelf. */
+bool block_is_tear_off_shelf(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_pie_menu(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_is_popup_any(const Block *block) ATTR_WARN_UNUSED_RESULT;
 

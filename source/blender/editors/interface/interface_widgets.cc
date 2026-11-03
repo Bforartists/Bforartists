@@ -1415,7 +1415,10 @@ static void widget_draw_icon(
       }
       /* BFA: For menus (not pie menus), use consistent icon alignment.
        * This ensures all menu icons align vertically regardless of emboss type or tool status. */
-      else if (block_is_menu(but->block) || block_is_popover(but->block)) {
+      /* BFA - Tear-Off Menu/Panel: a shelf tear-off aligns its icons like the shelf. */
+      else if (block_is_menu(but->block) ||
+               (block_is_popover(but->block) && !block_is_tear_off_shelf(but->block)))
+      {
         xs = rect->xmin + 2.5f * ofs;
       }
       else if (but->emboss == EmbossType::None || but->type == ButtonType::Label) {
@@ -3101,7 +3104,8 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
      * Use small icons for popup. */
 #ifdef USE_UI_TOOLBAR_HACK
     const float aspect_orig = but->block->aspect;
-    if (is_tool && (but->block->flag & BLOCK_POPOVER)) {
+    /* BFA - Tear-Off Menu/Panel: this makes small icons for popups, the shelf has large ones. */
+    if (is_tool && (but->block->flag & BLOCK_POPOVER) && !block_is_tear_off_shelf(but->block)) {
       but->block->aspect *= 2.0f;
     }
 #endif
@@ -3136,7 +3140,11 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
       }
     }
     /* Menu items (including tools in menus), but only if they are not icon-only (rare). */
-    else if ((block_is_menu(but->block) || block_is_popover(but->block)) && but->drawstr[0]) {
+    /* BFA - Tear-Off Menu/Panel: a shelf tear-off has the shelf's text padding. */
+    else if ((block_is_menu(but->block) ||
+              (block_is_popover(but->block) && !block_is_tear_off_shelf(but->block))) &&
+             but->drawstr[0])
+    {
       rect->xmin += 0.2f * U.widget_unit;
     }
 
