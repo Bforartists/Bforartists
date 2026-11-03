@@ -3822,6 +3822,10 @@ static void menu_item_enum_opname_menu(bContext *C, Layout *layout, void *arg)
    * menu item name, set in #Layout::op_menu_enum. */
   const int active = menu_item_enum_opname_menu_active(C, but, lvl);
 
+  /* BFA - Tear-Off Menu/Panel: before the context is set, so the row keeps the region-win context
+   * in menus that call their items with INVOKE_DEFAULT, and the tear-off gets the main region. */
+  enum_tear_off_row_draw_operator(layout, but, lvl->opname, lvl->propname, lvl->opcontext);
+
   layout->operator_context_set(lvl->opcontext);
   layout->op_enum(lvl->opname, lvl->propname, op_props, lvl->opcontext, UI_ITEM_NONE, active);
 
