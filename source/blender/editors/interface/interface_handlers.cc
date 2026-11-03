@@ -11701,7 +11701,6 @@ static int handle_menu_mmb_event(bContext *C,
 }
 
 /* BFA - Tear-Off Menu/Panel: with the other tear-off helpers, below. */
-static bool tear_off_covered_at(const bContext *C, const PopupBlockHandle *menu, const int xy[2]);
 static bool popup_contains_point(const PopupBlockHandle *menu, const int xy[2]);
 
 static int handle_menu_event(bContext *C,
@@ -11800,11 +11799,7 @@ static int handle_menu_event(bContext *C,
     }
   }
   else if (event->type == TIMER && event->customdata == menu->scrolltimer) {
-    /* BFA - Tear-Off Menu/Panel: a newer popup keeps the mouse moves, so a covered tear-off never
-     * sees the cursor leave its arrow zone. The next move that reaches it adds the timer again. */
-    if (!menu_scroll_test(block, {mx, my}) ||
-        (menu->is_tear_off && tear_off_covered_at(C, menu, event->xy)))
-    {
+    if (!menu_scroll_test(block, {mx, my})) {
       WM_event_timer_remove(CTX_wm_manager(C), win, menu->scrolltimer);
       menu->scrolltimer = nullptr;
     }
@@ -11824,7 +11819,10 @@ static int handle_menu_event(bContext *C,
       }
 
       /* add menu scroll timer, if needed */
-      if (menu_scroll_test(block, {mx, my})) {
+      /* BFA - Tear-Off Menu/Panel: a regular menu scrolls on hover because a click could close it.
+       * A pinned one stays where the user scrolled it, so its arrows act on a click only, see
+       * #tear_off_arrow_y_at. That makes it safe to cross them on the way to a row. */
+      if (!menu->is_tear_off && menu_scroll_test(block, {mx, my})) {
         if (menu->scrolltimer == nullptr) {
           menu->scrolltimer = WM_event_timer_add(
               CTX_wm_manager(C), CTX_wm_window(C), TIMER, MENU_SCROLL_INTERVAL);
@@ -13510,10 +13508,6 @@ static void tear_off_edges_take_over(bContext *C, PopupBlockHandle *menu)
     but->active->cancel = true;
     button_activate_exit(C, but, but->active, false, false);
   }
-  if (menu->scrolltimer) {
-    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), menu->scrolltimer);
-    menu->scrolltimer = nullptr;
-  }
 }
 
 /* BFA - Tear-Off Menu/Panel: zone != 0 needs a real C, zone == 0 touches no button, so it's safe
@@ -13578,11 +13572,6 @@ static void tear_off_edges_reset(bContext *C, PopupBlockHandle *menu)
     WM_cursor_set(win, WM_CURSOR_DEFAULT);
     WM_cursor_grab_disable(win, nullptr);
     win->tag_cursor_refresh = true;
-  }
-  /* Only the menu handling stops this timer, and it doesn't run here. */
-  if (menu->scrolltimer) {
-    WM_event_timer_remove(CTX_wm_manager(C), win, menu->scrolltimer);
-    menu->scrolltimer = nullptr;
   }
 }
 
@@ -13706,6 +13695,20 @@ static void tear_off_drag_apply(wmWindow *win,
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: true if the cursor is on one of this tear-off's scroll arrows, with
+ * its height in block space. Unless a newer popup is over it, which keeps the events. */
+static bool tear_off_arrow_y_at(const bContext *C,
+                                const PopupBlockHandle *menu,
+                                Block *block,
+                                const int xy[2],
+                                int *r_y)
+{
+  int mx = xy[0], my = xy[1];
+  window_to_block(menu->region, block, &mx, &my);
+  *r_y = my;
+  return menu_scroll_test(block, {mx, my}) && !tear_off_covered_at(C, menu, xy);
+}
+
 static void tear_off_drag_wait_release(wmWindow *win, PopupBlockHandle *menu)
 {
   menu->tear_off_drag_zone = TEAR_OFF_ZONE_WAIT_RELEASE;
@@ -13818,6 +13821,12 @@ static bool tear_off_edges_handle(bContext *C,
       /* A regular popup that opened and closed here forced the default cursor. */
       tear_off_zone_cursor_set(win, zone);
     }
+    /* A row cut by an arrow must not light up or open its submenu from under it. */
+    int arrow_y;
+    if (zone == 0 && tear_off_arrow_y_at(C, menu, block, event->xy, &arrow_y)) {
+      tear_off_edges_take_over(C, menu);
+      return true;
+    }
     /* BREAK keeps the cursor: #ED_screen_set_active_region only runs if no modal handler broke. */
     return zone != 0;
   }
@@ -13827,6 +13836,14 @@ static bool tear_off_edges_handle(bContext *C,
   }
   const uint8_t zone = tear_off_zone_at(menu, block, event->xy);
   if (zone == 0) {
+    /* One row for each click. The release must not run the row that moves under the cursor. */
+    int arrow_y;
+    if (tear_off_arrow_y_at(C, menu, block, event->xy, &arrow_y)) {
+      tear_off_edges_take_over(C, menu);
+      menu_scroll_to_y(menu->region, block, arrow_y);
+      tear_off_drag_wait_release(win, menu);
+      return true;
+    }
     return false;
   }
   /* A fast second press on the bar is just another press. */
