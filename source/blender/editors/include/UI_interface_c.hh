@@ -2480,7 +2480,8 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
 void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *handlers);
 /**
  * BFA - Tear-Off Menu/Panel: tear-off handlers outlive the area they were created in, so drop
- * their reference when that area exits. Other popups are left untouched.
+ * their reference when that area exits, and rebuild their buttons, which may point into its
+ * space data. Other popups are left untouched.
  */
 void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area);
 /** BFA - Tear-Off Menu/Panel: close tear-offs scoped to a workspace that is being deleted. */

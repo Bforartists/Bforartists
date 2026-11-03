@@ -13762,10 +13762,19 @@ void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area)
       continue;
     }
     wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
-    if (handler->handle_fn != popup_handler || handler->context.area != area) {
+    if (handler->handle_fn != popup_handler) {
       continue;
     }
-    if (static_cast<PopupBlockHandle *>(handler->user_data)->is_tear_off) {
+    PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
+    if (!menu->is_tear_off) {
+      continue;
+    }
+    /* BFA - Tear-Off Menu/Panel: buttons may point into this area's space data, which is about to
+     * be freed, and no notifier that follows an area close refreshes a tear-off. Tag them all,
+     * because they bind through `ctx_area`, not the handler's area, which may be cleared already.
+     * A hidden tear-off keeps the tag as `tear_off_refresh_pending`. */
+    ED_region_tag_refresh_ui(menu->region);
+    if (handler->context.area == area) {
       handler->context.area = nullptr;
       handler->context.region = nullptr;
     }
