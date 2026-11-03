@@ -13289,6 +13289,21 @@ static bool tear_off_covered_at(const bContext *C, const PopupBlockHandle *menu,
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: true if a key press should go to the highlighted button under the
+ * cursor first, so Ctrl+C, Ctrl+V and Enter work there as they do over a button in a region. A
+ * collapsed, hidden or covered tear-off can still hold a stale highlight, which must not react. */
+static bool tear_off_key_for_hovered_button(const bContext *C,
+                                            const wmEvent *event,
+                                            const PopupBlockHandle *menu)
+{
+  if (event->val != KM_PRESS || menu->tear_off_collapsed) {
+    return false;
+  }
+  const Button *but = region_find_active_but(menu->region);
+  return but && but->active->state == BUTTON_STATE_HIGHLIGHT && tear_off_is_visible(C, menu) &&
+         popup_contains_point(menu, event->xy) && !tear_off_covered_at(C, menu, event->xy);
+}
+
 /* two types of popups, one with operator + enum, other with regular callbacks */
 static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
 {
@@ -13325,6 +13340,7 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
    * their own because `handle->popup` is set (see button_activate_state), so without this
    * typed keys would go to the editor under the cursor instead of the field. */
   bool tear_off_was_modal = false;
+  bool tear_off_hover_key = false;
   if (Block *block = menu->region->runtime->uiblocks.first();
       block && (block->flag & BLOCK_TEAR_OFF))
   {
@@ -13338,8 +13354,11 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       return WM_UI_HANDLER_CONTINUE;
     }
     if (ISKEYBOARD(event->type) && !tear_off_was_modal) {
-      CTX_wm_region_popup_set(C, region_popup);
-      return WM_UI_HANDLER_CONTINUE;
+      tear_off_hover_key = tear_off_key_for_hovered_button(C, event, menu);
+      if (!tear_off_hover_key) {
+        CTX_wm_region_popup_set(C, region_popup);
+        return WM_UI_HANDLER_CONTINUE;
+      }
     }
   }
 
@@ -13525,7 +13544,15 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     }
   }
 
-  handle_menus_recursive(C, event, menu, 0, false, false, true);
+  /* BFA - Tear-Off Menu/Panel: a hover key only goes to the button. The menu handling would close
+   * the tear-off on hotkeys, as described above. A key the button doesn't use returns CONTINUE
+   * and still reaches the editor. Delayed callbacks run at the end of this function. */
+  if (tear_off_hover_key) {
+    retval = handle_menu_button(C, event, menu);
+  }
+  else {
+    handle_menus_recursive(C, event, menu, 0, false, false, true);
+  }
 
   /* BFA - Tear-Off Menu/Panel */
   /* free if done, does not free handle itself */
