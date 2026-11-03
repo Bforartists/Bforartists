@@ -1196,6 +1196,16 @@ struct PopupBlockHandle {
    * because the first layout reads it. */
   bool tear_off_from_region = false;
 
+  /** BFA - Tear-Off Menu/Panel: the shelf width this panel came from, without View2D zoom or UI
+   * scale, as #toolsystem_column_count measures it, and as if the tabs were shown (see
+   * #tear_off_shelf_width_measure). 0 for anything else. Kept for the life of the tear-off,
+   * through collapse and expand, and scale changes recompute from it. The only width to change
+   * later: the Phase 7 grip writes here. */
+  float tear_off_width = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: how much of #tear_off_width wasn't layout in the shelf (tab strip,
+   * panel margins), in the same units. Set once. */
+  float tear_off_width_chrome = 0.0f;
+
   char menu_idname[64] = "";
 
   bool mmb_panning = false;
@@ -1284,6 +1294,9 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
 /* BFA - Tear-Off Menu/Panel: known before the first layout, like is_tear_off. */
 struct TearOffInit {
   bool from_region = false;
+  /** See #PopupBlockHandle::tear_off_width. */
+  float width = 0.0f;
+  float width_chrome = 0.0f;
 };
 
 PopupBlockHandle *popup_block_create(bContext *C,
@@ -1340,6 +1353,8 @@ wmOperatorStatus popover_paneltype_invoke(bContext *C,
 /* BFA - Tear-Off Menu/Panel: most C panels are only on a region type, not in
  * #WM_paneltype_find. */
 PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);
+/* BFA - Tear-Off Menu/Panel: creation data for a panel torn off the current region. */
+TearOffInit tear_off_init_from_region(const bContext *C, const PanelType *pt);
 
 /* `interface_region_menu_pie.cc` */
 

@@ -1411,6 +1411,10 @@ PopupBlockHandle *popup_block_create(bContext *C,
     handle->tear_off_ctx_region_type = handle->ctx_region ? handle->ctx_region->regiontype : -1;
     handle->tear_off_scale_fac = UI_SCALE_FAC;
     handle->tear_off_from_region = tear_off_init.from_region;
+    /* Known before the first layout, so the popup is placed with its real width and Python never
+     * measures the source region. */
+    handle->tear_off_width = tear_off_init.width;
+    handle->tear_off_width_chrome = tear_off_init.width_chrome;
   }
 
   /* store vars to refresh popup (RGN_REFRESH_UI) */

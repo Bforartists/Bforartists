@@ -2736,8 +2736,10 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  ui::TearOffInit tear_off_init;
-  tear_off_init.from_region = from_region_panel;
+  /* BFA - Tear-Off Menu/Panel: a row in a popover isn't the shelf, even inside one. */
+  const ui::TearOffInit tear_off_init = from_region_panel ?
+                                            ui::tear_off_init_from_region(C, pt) :
+                                            ui::TearOffInit{};
 
   ui::PopupBlockHandle *handle = nullptr;
   wmOperatorStatus status = ui::popover_paneltype_invoke(
