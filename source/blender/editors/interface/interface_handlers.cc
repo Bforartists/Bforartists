@@ -11696,6 +11696,7 @@ static int handle_menu_mmb_event(bContext *C,
 
 /* BFA - Tear-Off Menu/Panel: with the other tear-off helpers, below. */
 static bool tear_off_covered_at(const bContext *C, const PopupBlockHandle *menu, const int xy[2]);
+static bool popup_contains_point(const PopupBlockHandle *menu, const int xy[2]);
 
 static int handle_menu_event(bContext *C,
                              const wmEvent *event,
@@ -13205,6 +13206,28 @@ static bool can_activate_other_menu(Button *but, Button *but_other, const wmEven
 
 /* handle buttons at the window level, modal, for example while
  * number sliding, text editing, or when a menu block is open */
+/* BFA - Tear-Off Menu/Panel: #screen_region_find_mouse_over, except that a hidden tear-off draws
+ * nothing and a collapsed one only its pin, so neither may stop a switch between regular menus. */
+static bool mouse_over_shown_popup(const bContext *C, bScreen *screen, const wmEvent *event)
+{
+  for (ARegion &region : screen->regionbase) {
+    const Block *block = region.runtime->uiblocks.first();
+    const PopupBlockHandle *handle = block ? block->handle : nullptr;
+    if (handle && handle->is_tear_off) {
+      if (tear_off_is_visible(C, handle) && popup_contains_point(handle, event->xy)) {
+        return true;
+      }
+      continue;
+    }
+    rcti winrct;
+    region_winrct_get_no_margin(&region, &winrct);
+    if (BLI_rcti_isect_pt_v(&winrct, event->xy)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 static int handler_region_menu(bContext *C, const wmEvent *event, void * /*userdata*/)
 {
   ARegion *region_popup = CTX_wm_region_popup(C);
@@ -13229,7 +13252,8 @@ static int handler_region_menu(bContext *C, const wmEvent *event, void * /*userd
          * can happen with popovers (see #67882). */
         (region_find_active_but(data->menu->region) == nullptr) &&
         /* make sure mouse isn't inside another menu (see #43247) */
-        (screen_region_find_mouse_over(screen, event) == nullptr) &&
+        /* BFA - Tear-Off Menu/Panel: see #mouse_over_shown_popup. */
+        !mouse_over_shown_popup(C, screen, event) &&
         (but_other = but_find_mouse_over(region, event)) &&
         can_activate_other_menu(but, but_other, event) &&
         /* Hover-opening menu's doesn't work well for buttons over one another
