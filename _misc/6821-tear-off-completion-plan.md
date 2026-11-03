@@ -1,14 +1,25 @@
 # Tear-Off Menus and Panels: Completion Plan (#6821)
 
-**Delivery:** on approval, save this as `_misc/6821-tear-off-completion-plan.md`. Don't stage it during the merge. Implementation starts only after a separate go-ahead.
-
-**Branch:** `tear_off`, currently merging `master` (week 43).
+**Branch:** `tear_off`. Every phase or step is its own commit, tagged `#6821`.
 
 **Detail docs, still valid except where corrected below:**
 - `_misc/tear_off_menu_dynamic_width.md`
 - `_misc/tear_off_panel_vertical_resize.md`
 
 Line numbers are from the mid-merge tree and will drift.
+
+## Progress log
+
+| Phase | Status | Commits | Checked by |
+|---|---|---|---|
+| 0. Merge conflict | Done | `b61865f64fa` | Built with no errors. Copy Python Command and Edit Source still need a hand test |
+| 1. Bug fixes, first series | Done | `c9eb2d90783`..`1848c80ea57` (20 fixes) | Built with no errors, scripted GUI suite |
+| 1. Reload Scripts crash | Done | `91f52f1a813` | Crash reproduced in the app, gone after the fix |
+| 1. Review findings | Committed, not built yet | `f40393e8038`..`4b55dee679f` (6 commits) | Code review only so far |
+| 1. Hand test | Waiting on the maintainer | | |
+| 2 to 8 | Not started | | Phase 2 starts after the hand test |
+
+**Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
 
 ## Context
 
@@ -53,6 +64,36 @@ Also remove the `COPY_PYTHON_CMD` `printf` at line 396.
 
 ## Phase 1: Fix existing bugs
 
+**Status: implemented.** A read-only review tested the table below and found more bugs, so the table is the original audit and "What changed after review" is what actually shipped. Each commit message says what it fixed and how to test it.
+
+**What changed after review:**
+- **b:** a modal check alone leaks when the cursor is outside, so a click that ends a modal state also stays with the tear-off.
+- **c:** a title test alone isn't enough, so double-click also checks for modal state and for a button under the cursor.
+- **d:** the dedicated region type is the real fix. Passing state at creation (d1) is separate, and useful for the pin position. It does not remove a wrong frame, because refresh runs before draw.
+- **e:** `tear_off_context_ensure()` alone isn't enough, because the event handler stores its own area and region. Those are now cleared on area and region exit, and hidden tear-offs defer their refresh.
+- **f:** the plan's force-close was wrong. `wm_window.cc:2117` only runs on macOS. Tear-offs now re-lay out whenever the UI scale changes, on any platform.
+- **File load is safe:** `wm_files.cc` removes all handlers first.
+
+**New bugs found and fixed:**
+- Reading freed popups after delayed callbacks, which also affected regular dialogs and File > New.
+- Reload Scripts leaving the context window unset. Removing that force-close exposed a crash on freed types, fixed in `91f52f1a813`.
+- X on a collapsed pin not closing it.
+- An open tear-off blocking the mouse wheel, ending IME sessions, and clearing tooltips elsewhere.
+- Top bar tear-offs vanishing, and tear-offs of a deleted workspace being stranded.
+- Tear Off Panel from a nested popover closing the parent.
+- The Tear Off row taking the `T` key and appearing mid-menu. It now only draws at the menu entry point, so pie menus, tab and appended context menus, tree-view context menus, the search menu, the splash and hold menus have no row.
+- Tear-offs treated as modal popups for the paint cursor and IME, and stacking order flipping on a screen change.
+- A modal state in an older tear-off being stolen by a newer one, and a double-click reaching a covered tear-off.
+- Closing an area leaving a tear-off's buttons pointing at freed space data, and leaving Quad View leaving a freed region in the handler.
+
+**Known gaps, none blocking:**
+- Hover shortcuts in tear-offs (Ctrl+C and Ctrl+V over a button) don't work yet. Phase 2.
+- A dropdown left open under a tear-off on a screen change. Phase 2.
+- Grab offset lost at the window edge, an arrow cursor left behind, and a stale hit rectangle. Polish.
+- Possible playback stall while hovering a tear-off, refresh cost during playback, and the paint cursor while hovering one. These need the hand test.
+
+**Original audit:**
+
 | # | Bug, confirmed by reading the code | Where | Fix |
 |---|---|---|---|
 | a | Dragging a **regular** popup no longer updates `popup_create_vars.event_xy`, so regular dialogs can jump back when they refresh | `interface_handlers.cc:11688`, `interface_region_popup.cc:68-72` | Update it for every popup in `popup_translate()` |
@@ -63,11 +104,11 @@ Also remove the `COPY_PYTHON_CMD` `printf` at line 396.
 | f | DPI changes used to close popups because their layout bakes in the pixel size, but tear-offs now survive with wrong geometry | `wm_window.cc:2117` | Force-close them, or refresh with rescaled positions |
 | g | Debug output: active `EDITSOURCE_*` `printf`s, commented `MENUDBG` lines, and a stray `}        if (` | `interface_ops.cc:2433-2655`, `interface_handlers.cc` | Remove. Apply the Phase 0 lookup order to the edit-source path too |
 
-**d1. Set the state before the first layout.** Add an `is_tear_off` argument through `popup_block_create()`, `popup_menu_invoke()` and `popover_panel_invoke()`. This also removes the one-frame wrong layout, which Phase 7 depends on.
+**d1. Set the state before the first layout.** Add an `is_tear_off` argument through `popup_block_create()`, `popup_menu_invoke()` and `popover_panel_invoke()`.
 
 **e1. `tear_off_context_ensure()`.** If the stored area isn't in the active screen, re-resolve it to an area with the same `spacetype` and a region of the same type. If none exists, keep the tear-off hidden (`tear_off_is_visible` already covers this case).
 
-**To test:** whether tear-offs survive File > New/Open safely, since `tear_off_workspace` is a raw pointer; and whether `BLOCK_POPOVER_ONCE` affects tear-offs.
+**Recheck in Phase 5:** `BLOCK_POPOVER_ONCE` applies to panels created on a press, which is what Shift+drag will do.
 
 ## Phase 2: Shared cleanup
 
@@ -155,7 +196,7 @@ Test in the 3D View, Image/UV, Node and Sequencer editors.
 Follow `_misc/tear_off_panel_vertical_resize.md`, with these corrections:
 
 1. **Scope includes torn-off menus**, not just panels, since you specifically want to trim large menus. The doc only covers panels.
-2. **The branch currently blocks wheel scrolling.** The `BLOCK_TEAR_OFF` breaks in the wheel cases of `handle_menu_event` must only apply when the block isn't clipped, or the doc's "little to no handler changes" won't hold.
+2. **Wheel scrolling mostly works already.** The clipped branch runs before the `BLOCK_TEAR_OFF` breaks in `handle_menu_event`. The actual problem is the reverse: wheel *outside* a clipped tear-off also scrolls it, so add `(block->flag & BLOCK_TEAR_OFF) && !inside` to break out.
 3. **No state copying across refreshes.** The handle persists through refresh, as `tear_off_collapsed` already shows, so §3.6's copy step isn't needed.
 4. **Use `WM_CURSOR_Y_MOVE`** throughout. The doc mixes it with `WM_CURSOR_EDIT`.
 5. **Collapse:** `tear_off_expanded_size` must remain consistent with the cropped height, so clamping stays correct on expand.
