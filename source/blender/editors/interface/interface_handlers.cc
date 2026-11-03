@@ -13766,6 +13766,19 @@ static bool popup_needs_update_for_unreg_srna_recursive(bContext *C,
     have_reference = true;
     valid_for_refresh = false;
   }
+
+  /* BFA - Tear-Off Menu/Panel: a tear-off already waiting for a rebuild has been matched against
+   * an earlier type, and that type may be freed by now, so its buttons can't be read here. This
+   * happens when several types unregister before the next draw (Reload Scripts, disabling an
+   * add-on). It stays tagged, so skipping is safe. The owner check above must still run, because
+   * a rebuild would draw a freed menu or panel. Regular popups are left as upstream. */
+  if (popup_block_handle->is_tear_off && !have_reference &&
+      ((popup_block_handle->region->runtime->do_draw & RGN_REFRESH_UI) ||
+       popup_block_handle->tear_off_refresh_pending))
+  {
+    return false;
+  }
+
   [&]() {
     for (Block &block : popup_block_handle->region->runtime->uiblocks) {
       for (Button &button : block.buttons()) {
