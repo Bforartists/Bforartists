@@ -6035,6 +6035,9 @@ static void layout_free(Layout *layout)
     if (item->type() == ItemType::Button) {
       ButtonItem *bitem = static_cast<ButtonItem *>(item);
 
+      /* BFA - Tear-Off Menu/Panel: see #Button::tear_off_text_sized. */
+      bitem->but->tear_off_text_sized = layout->type() == ItemType::LayoutRow &&
+                                        layout->alignment() != LayoutAlign::Expand;
       bitem->but->layout = nullptr;
       MEM_delete(item);
     }

@@ -368,6 +368,9 @@ struct Button : NonMovable {
    * scrolls and is sized apart from the rows. Tagged at draw time, because afterwards nothing
    * reliably tells its label from a row's. */
   bool tear_off_header = false;
+  /** BFA - Tear-Off Menu/Panel: in a row that doesn't expand, so as wide as its text at any panel
+   * width. The layout is gone by the time the width grip wants to know. */
+  bool tear_off_text_sized = false;
 
   /* pointer back */
   Block *block = nullptr;

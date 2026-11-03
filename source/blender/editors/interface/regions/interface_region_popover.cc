@@ -166,11 +166,16 @@ static int tear_off_panel_designed_ui_size(const Popover *pup)
              (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS));
 }
 
-/* BFA - Tear-Off Menu/Panel: what the title, the grip, the two icons and a margin need. */
+/* BFA - Tear-Off Menu/Panel: what the title, the grip, the two icons and a margin need, plus the
+ * panel's own header buttons. A draw_header with several buttons isn't measured. */
 static int tear_off_panel_header_ui_size(const Popover *pup)
 {
-  const char *title = CTX_IFACE_(pup->panel_type->translation_context, pup->panel_type->label);
-  return 4 * UI_UNIT_X + fontstyle_string_width(&style_get_dpi()->widget, title);
+  const PanelType *pt = pup->panel_type;
+  const char *title = CTX_IFACE_(pt->translation_context, pt->label);
+  const bool has_header = !(pt->flag & PANEL_TYPE_NO_HEADER);
+  const int units = 4 + ((has_header && pt->draw_header) ? 1 : 0) +
+                    ((has_header && pt->draw_header_preset) ? 1 : 0);
+  return units * UI_UNIT_X + fontstyle_string_width(&style_get_dpi()->widget, title);
 }
 
 /* BFA - Tear-Off Menu/Panel: the designed width, or what the header needs if that's more. There's
@@ -208,29 +213,48 @@ static float tear_off_shelf_width_snap(const float width, const float max_width)
 }
 
 /* BFA - Tear-Off Menu/Panel: see the declaration. The layout can't say, because it estimates text
- * in a panel at a fixed 10 units. So take how much of its width each button's text uses: buttons
- * narrow about in proportion to the layout, and the tightest one ends the drag. */
+ * in a panel at a fixed 10 units. So take how much of its width each button's text would use at
+ * the designed width: buttons narrow about in proportion to the layout, and the tightest one ends
+ * the drag. A button sized to its text doesn't narrow, so it's a limit of its own. */
 float tear_off_panel_width_min(const PopupBlockHandle *handle, const Block *block)
 {
   const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
   const uiFontStyle *fstyle = &style_get_dpi()->widget;
+  const float to_designed = float(tear_off_panel_default_ui_size(pup)) / float(pup->ui_size_x);
   float used = 0.0f;
+  float text_sized = 0.0f;
   for (const Button &but : block->buttons()) {
     const float but_width = BLI_rctf_size_x(&but.rect);
     if (but.tear_off_header || (but.flag & UI_HIDDEN) || but.drawstr.empty() || but_width < 1.0f) {
       continue;
     }
-    /* The text's padding, and the room of an icon, a checkbox or a dropdown's arrow. */
-    int needed = fontstyle_string_width(fstyle, but.drawstr.c_str()) + int(0.8f * UI_UNIT_X);
+    /* These clip and scroll their value already, so long data doesn't get to set a limit. */
+    if (ELEM(but.type, ButtonType::Text, ButtonType::SearchMenu)) {
+      continue;
+    }
+    int needed = fontstyle_string_width(fstyle, but.drawstr.c_str());
+    /* The text's padding, which a plain label doesn't draw. */
+    if (but.type != ButtonType::Label || (but.flag & UI_HAS_ICON)) {
+      needed += int(0.8f * UI_UNIT_X);
+    }
+    /* The room of an icon, a checkbox or a dropdown's arrow. */
     if (but.flag & UI_HAS_ICON) {
       needed += UI_UNIT_X;
     }
     if (ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN, ButtonType::Menu)) {
       needed += UI_UNIT_X;
     }
-    used = std::max(used, needed / but_width);
+    if (but.tear_off_text_sized) {
+      text_sized = std::max<float>(text_sized, needed);
+      continue;
+    }
+    /* Text that already clips at the designed width can't be what stops the panel. */
+    const float share = needed / (but_width * to_designed);
+    if (share < 1.0f) {
+      used = std::max(used, share);
+    }
   }
-  const float layout_width = float(pup->ui_size_x) * std::min(used, 1.0f);
+  const float layout_width = std::max(float(tear_off_panel_default_ui_size(pup)) * used, text_sized);
   return std::max<float>(layout_width, tear_off_panel_header_ui_size(pup)) / UI_SCALE_FAC;
 }
 
