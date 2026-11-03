@@ -21,7 +21,9 @@ Line numbers are from the mid-merge tree and will drift.
 | 3. Preference toggle | Committed | `99c93ab4370`, `d800b242ae2` | Built with no errors at `5f6a82d0ff4`. Not hand tested |
 | 2 and 3. Review findings | Committed, not built yet | `9851fa1a14b`, `babd3140507`, `7846ed92b8e` | Code review only so far |
 | 4. Enum tear-offs | Done | `e0b8b93c0da`..`a255c080db4` | Built with no errors. Full GUI suite passes: 33 scenarios, no crashes. Needs a hand test: Transform Pivot, Set Keyframe Type, toolbar Keyframe Type |
-| 5 to 8 | Not started | | Phase 5 is next |
+| 5. Tear off any panel | Committed, not built yet | `769cde7b580`..`f0f014951d6` (6 commits) | Code review only. Scenarios not written, no hand test |
+| 6. Tool shelf | Committed, not built yet | `ff3c405326d`, `062c8f43a0a`, `85166c8e111`, `23c3c3ac026` | Code review only. Scenarios not written, no hand test |
+| 7 and 8 | Not started | | Build and test Phases 5 and 6 first |
 
 **Scripted GUI suite:** `_misc/6821-sim/` drives the real app with `--enable-event-simulate`, using `--factory-startup` and a temporary config. It runs each scenario in its own process with `--debug-memory`, and finds popups by diffing screenshots. Click positions assume a 1600x1000 window at 100% scale. Simulated events can't be double-clicks, so those stay hand tests.
 
@@ -161,12 +163,12 @@ This comes before the new entry points, so each one is gated from the start.
 
 ## Phase 5: Tear off any panel (item 3)
 
-**Gesture**, in `handler_panel_region` (`interface_panel.cc:2355-2375`):
+**Gesture**, in `handler_panel_region` (`interface_panel.cc:2963`):
 - Shift+press on a header no longer acts immediately. It waits.
 - Release without moving does today's Shift+click: pin in tabbed regions, plain click elsewhere.
 - Moving past `WM_event_drag_threshold` calls the operator, then sets `menu->is_grab` so the new float stays attached to the cursor until release.
 
-**Other entry point:** add "Tear Off Panel" to `popup_context_menu_for_panel`. That function currently returns early for regions without tabs and for subpanels (`interface_context_menu.cc:1405-1417`). It needs to continue when the panel is eligible, and show only the tear-off entry.
+**Other entry point:** add "Tear Off Panel" to `popup_context_menu_for_panel`. That function used to return early for regions without tabs and for subpanels. It now continues when the panel is eligible, and shows only the tear-off entry (`interface_context_menu.cc:1409-1411`).
 
 The source panel stays where it is. The tear-off is a second live view of it, which also leaves panel order and `.blend` data untouched.
 
@@ -175,25 +177,39 @@ The source panel stays where it is. The tear-off is a second live view of it, wh
 | Problem | Fix |
 |---|---|
 | Most C panels aren't in `WM_paneltype_find` (they're only on `art->paneltypes`) | Resolve from the source region type first; add a `popover_panel_invoke` variant that takes a `PanelType *` |
-| Refresh doesn't re-poll the root panel, so `draw` can run with a poll-guarded `None` (`interface_layout.cc:6610` only polls children) | Poll before drawing a tear-off; on failure show a grayed "Not available" row |
+| Refresh doesn't re-poll the root panel, so `draw` can run with a poll-guarded `None` (`interface_layout.cc:6756` only polls children) | Poll before drawing a tear-off; on failure show a grayed "Not available" row |
 | The header's `draw_header` is skipped, so **enable checkboxes in panel headers disappear** | Call it inside `tear_off_header_draw()` for panels. Do the same for `draw_header_preset` if it fits |
-| `pt->draw` is called unguarded (`interface_layout.cc:6598`) | Add a null check |
+| `pt->draw` is called unguarded (`interface_layout.cc:6730`) | Add a null check |
 
 **Excluded:** `PANEL_TYPE_INSTANCED` panels (modifiers, constraints, and similar), since they need `custom_data_ptr` per instance. Their entries won't appear.
+
+**As written, where it differs from the above:**
+- The gesture has its own threshold, the mouse value from the Preferences. `WM_event_drag_threshold` reads the Shift key press and picks the keyboard value.
+- `draw_header` and `draw_header_preset` go in a new `tear_off_panel_header_draw()`, not in `tear_off_header_draw()`, which menus also use.
+- A panel torn off a region has `is_popover == False` and shows full region content. Row tear-offs keep `True`.
+- A torn-off Properties panel shows "Not available" on other tabs and comes back with its tab.
 
 ## Phase 6: Tool shelf (item 4)
 
 Uses Phase 5. Shelf panels poll and draw against the origin region through the restored context, so `region.type` checks keep working and the content matches. What's missing is width:
 
-- `toolsystem_column_count()` (`space_toolsystem_common.py:1264-1289`) measures the **origin region**, so a torn-off shelf panel would change columns when the real shelf is resized, and the popup itself defaults to 10 units wide.
+- `toolsystem_column_count()` (`space_toolsystem_common.py:1266-1298`) measures the **origin region**, so a torn-off shelf panel would change columns when the real shelf is resized, and the popup itself defaults to 10 units wide.
 - **Capture:** at tear-off, store the source width with View2D zoom removed (`tear_off_source_width`), and size the popup from it through `pup->ui_size_x`, less the tab strip when tabs are shown.
-- **Expose:** add a read-only `UILayout.tear_off_width` (0 when not torn off). `toolsystem_column_count(region, layout=None)` uses it instead of the region width. Pass the layout from `draw_cls` (`:694`) and `draw_entries` (`:1360`).
+- **Expose:** add a read-only `UILayout.tear_off_width` (0 when not torn off). `toolsystem_column_count(region, layout=None)` uses it instead of the region width. Pass the layout from `_layout_generator_detect_from_region` (`:657`), `draw_entries` (`:1369`), `space_sequencer_tabs.py:171` and the `bfa_brush_panel`, `bfa_power_user_tools` and `edit_dimensions` add-ons.
 - **Thresholds stay the same**, so 1, 2, 3 columns and the text list look the same as they did in the shelf.
 - **Width is remembered** for the life of the tear-off, including through collapse and expand. The Phase 7 width grip changes it, and snaps to the shelf's column steps.
 - **Headerless panels:** a shelf panel with no visible header needs the context-menu entry, because there's no header to Shift+drag. Confirm this in `VIEW3D_PT_tools_active` and each tabs file.
 - **Background:** popups use the menu theme color, not the shelf's. Compare side by side and match if it's noticeably different.
 
 Test in the 3D View, Image/UV, Node and Sequencer editors.
+
+**As written, where it differs from the above:**
+- The handle keeps `tear_off_width` and `tear_off_width_chrome`, not `tear_off_source_width`. The width includes the 20 units Python takes off the thresholds when tabs are hidden, so toggling the source shelf's tabs can't change the column count.
+- Only panels torn off a `TOOLS` region of the four shelf editors get a width, through `tear_off_init_from_region` (`interface_region_popover.cc`). Clip and File Browser `TOOLS` panels keep their normal width and color.
+- A one-column panel has a floor of 3 units so the header fits, so it can be slightly wider than the shelf's layout.
+- `block_is_tear_off_shelf` turns off the popover treatment of tool buttons: small icons, text padding, icon alignment, and no quick tooltip. Sub-tool menus open to the right.
+- A tool change only publishes on the message bus, so tear-offs subscribe to `WorkSpace.tools` and rebuild.
+- Background: shelf color, forced opaque, with the regular widget style. This is its own commit, so it can be dropped if the side by side disagrees.
 
 ## Phase 7: Dynamic width (item 5)
 
