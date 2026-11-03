@@ -2573,11 +2573,40 @@ static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle, cons
   ED_region_tag_refresh_ui(handle->region);
 }
 
+/* BFA - Tear-Off Menu/Panel: the row runs in the window region because of the popup's operator
+ * context, while the popup drew in the region of the button that opened it. Some data only
+ * resolves from that region (the asset shelf's, through #ARegionType::context), so a tear-off
+ * created from the window region would redraw without it. Restored by the destructor. */
+struct TearOffSourceContext {
+  bContext *C;
+  ScrArea *area;
+  ARegion *region;
+
+  explicit TearOffSourceContext(bContext *C)
+      : C(C), area(CTX_wm_area(C)), region(CTX_wm_region(C))
+  {
+    const ARegion *popup = CTX_wm_region_popup(C);
+    const ui::Block *block = popup ? popup->runtime->uiblocks.first() : nullptr;
+    const ui::PopupBlockHandle *source = block ? block->handle : nullptr;
+    if (source && source->ctx_area && source->ctx_region) {
+      CTX_wm_area_set(C, source->ctx_area);
+      CTX_wm_region_set(C, source->ctx_region);
+    }
+  }
+  ~TearOffSourceContext()
+  {
+    CTX_wm_area_set(C, area);
+    CTX_wm_region_set(C, region);
+  }
+};
+
 /* BFA - Tear-Off Menu/Panel */
 static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
 {
   char idname[MAX_NAME];
   RNA_string_get(op->ptr, "menu_idname", idname);
+
+  const TearOffSourceContext source_context(C);
 
   /* Open the popup menu in the current window */
   ui::PopupBlockHandle *handle = nullptr;
@@ -2666,6 +2695,7 @@ static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
  * can be freed on redraw and pointers don't survive undo. */
 static wmOperatorStatus wm_enum_tear_off_exec(bContext *C, wmOperator *op)
 {
+  const TearOffSourceContext source_context(C);
   std::string label;
   ui::PopupBlockHandle *handle = ui::enum_tear_off_popup_create(C, op->ptr, label);
   if (handle == nullptr) {
@@ -2728,6 +2758,9 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
   /* BFA - Tear-Off Menu/Panel: save the original popup region before creating
    * the tear-off, since popover_panel_invoke changes CTX_wm_region_popup. */
   ARegion *region_popup_orig = CTX_wm_region_popup(C);
+
+  /* BFA - Tear-Off Menu/Panel: changes nothing for a region panel, which isn't in a popup. */
+  const TearOffSourceContext source_context(C);
 
   /* BFA - Tear-Off Menu/Panel: resolved once, so the panel and its label can't disagree. */
   PanelType *pt = ui::tear_off_paneltype_find(C, idname);
