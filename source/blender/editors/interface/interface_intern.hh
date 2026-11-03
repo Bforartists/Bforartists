@@ -1172,6 +1172,18 @@ struct PopupBlockHandle {
    * the window. Zero when no expanded size has been recorded yet. */
   int tear_off_expanded_size[2] = {0, 0};
 
+  /** BFA - Tear-Off Menu/Panel: region type of `ctx_region` at creation, so
+   * #tear_off_context_ensure can find an equivalent once the original is gone. */
+  int tear_off_ctx_region_type = -1;
+
+  /** BFA - Tear-Off Menu/Panel: a refresh was requested while hidden. Can't stay in
+   * `ARegion::runtime::do_draw`, which is cleared after every draw. */
+  bool tear_off_refresh_pending = false;
+
+  /** BFA - Tear-Off Menu/Panel: #UI_SCALE_FAC at the last layout. A surviving tear-off
+   * must re-layout when it changes, because layout bakes pixel sizes. */
+  float tear_off_scale_fac = 0.0f;
+
   /** BFA - Tear-Off Menu/Panel: let the next mouse move pass through this new tear-off, so it
    * reaches the popup this one was torn off from and closes it. */
   bool tear_off_pass_next_mousemove = false;
@@ -1268,7 +1280,8 @@ PopupBlockHandle *popup_block_create(bContext *C,
                                      BlockHandleCreateFunc handle_create_func,
                                      void *arg,
                                      FreeArgFunc arg_free,
-                                     bool can_refresh);
+                                     bool can_refresh,
+                                     bool is_tear_off = false); // BFA - Tear-Off Menu/Panel
 /**
  * \param can_refresh: Allow menus to re-run their layout definitions using
  *    `ED_region_tag_refresh_ui()`. This can be used to update the grayed out state of items or the
@@ -1297,7 +1310,8 @@ PopupBlockHandle *popover_panel_create(bContext *C,
                                        ARegion *butregion,
                                        Button *but,
                                        PopoverCreateFunc popover_func,
-                                       const PanelType *panel_type);
+                                       const PanelType *panel_type,
+                                       bool is_tear_off = false); // BFA - Tear-Off Menu/Panel
 
 /* `interface_region_menu_pie.cc` */
 

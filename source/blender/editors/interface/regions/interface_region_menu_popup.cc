@@ -348,7 +348,8 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
     /* in rare cases this is needed since moving the popup
      * to be within the window bounds may move it away from the mouse,
      * This ensures we set an item to be active. */
-    if (but_activate) {
+    /* BFA - Tear-Off Menu/Panel: don't highlight the header's pin icon on creation. */
+    if (but_activate && !handle->is_tear_off) {
       ARegion *region = CTX_wm_region(C);
       if (region && region->regiontype == RGN_TYPE_TOOLS && but_activate->block &&
           (but_activate->block->flag & BLOCK_POPUP_HOLD))
@@ -399,7 +400,8 @@ static PopupBlockHandle *popup_menu_create_impl(
     Button *but,
     const char *title,
     std::function<void(bContext *, Layout *)> menu_func,
-    const bool can_refresh)
+    const bool can_refresh,
+    const bool is_tear_off = false) // BFA - Tear-Off Menu/Panel
 {
   wmWindow *window = CTX_wm_window(C);
 
@@ -424,7 +426,7 @@ static PopupBlockHandle *popup_menu_create_impl(
     pup->popup = true;
   }
   PopupBlockHandle *handle = popup_block_create(
-      C, butregion, but, nullptr, block_func_POPUP, pup, block_free_func_POPUP, can_refresh);
+      C, butregion, but, nullptr, block_func_POPUP, pup, block_free_func_POPUP, can_refresh, is_tear_off); // BFA - Tear-Off Menu/Panel
 
   if (!but) {
     handle->popup = true;
@@ -610,7 +612,8 @@ void popup_menu_reports(bContext *C, ReportList *reports)
 static PopupBlockHandle *popup_menu_create_from_menutype(bContext *C, // BFA - Tear-Off Menu/Panel
                                                          MenuType *mt,
                                                          const char *title,
-                                                         const int icon)
+                                                         const int icon,
+                                                         const bool is_tear_off) // BFA - Tear-Off Menu/Panel
 {
   PopupBlockHandle *handle = popup_menu_create_impl(
       C,
@@ -624,23 +627,28 @@ static PopupBlockHandle *popup_menu_create_from_menutype(bContext *C, // BFA - T
         }
         item_menutype_func(C, layout, mt);
       },
-      true);
+      true,
+      is_tear_off); // BFA - Tear-Off Menu/Panel
   handle->srna_owner = mt->rna_ext.srna;
   STRNCPY_UTF8(handle->menu_idname, mt->idname);
 
-  WorkspaceStatus status(C);
-  // bfa - gooengine disable_search_on_keypress
-  if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
-    status.range(IFACE_("Search"), ICON_EVENT_A, ICON_EVENT_Z);
-  }
-  else if (mt->idname[0]) {
-    status.item(IFACE_("Search"), ICON_EVENT_SPACEKEY);
+  /* BFA - Tear-Off Menu/Panel: letter and space keys pass through a tear-off, so the hint
+   * would be false, and nothing would clear it until another popup closes. */
+  if (!is_tear_off) {
+    WorkspaceStatus status(C);
+    // bfa - gooengine disable_search_on_keypress
+    if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
+      status.range(IFACE_("Search"), ICON_EVENT_A, ICON_EVENT_Z);
+    }
+    else if (mt->idname[0]) {
+      status.item(IFACE_("Search"), ICON_EVENT_SPACEKEY);
+    }
   }
   // BFA - Tear-Off Menu/Panel
   return handle; // BFA - Tear-Off Menu/Panel
 }
 
-wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports, PopupBlockHandle **r_handle) // BFA - Tear-Off Menu/Panel
+wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports, PopupBlockHandle **r_handle, const bool is_tear_off) // BFA - Tear-Off Menu/Panel
 {
   MenuType *mt = WM_menutype_find(idname, true);
 
@@ -660,7 +668,7 @@ wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *
   const char *title = CTX_IFACE_(mt->translation_context, mt->label);
   PopupBlockHandle *handle = nullptr; // BFA - Tear-Off Menu/Panel
   if (allow_refresh) {
-    handle = popup_menu_create_from_menutype(C, mt, title, ICON_NONE); // BFA - Tear-Off Menu/Panel
+    handle = popup_menu_create_from_menutype(C, mt, title, ICON_NONE, is_tear_off); // BFA - Tear-Off Menu/Panel
   }
   else {
     /* If no refresh is needed, create the block directly. */

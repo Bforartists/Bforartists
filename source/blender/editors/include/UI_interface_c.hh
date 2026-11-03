@@ -961,7 +961,8 @@ void popup_menu_reports(bContext *C, ReportList *reports) ATTR_NONNULL();
 wmOperatorStatus popup_menu_invoke(bContext *C,
                                      const char *idname,
                                      ReportList *reports, // BFA - Tear-Off Menu/Panel
-                                     struct PopupBlockHandle **r_handle = nullptr) // BFA - Tear-Off Menu/Panel
+                                     struct PopupBlockHandle **r_handle = nullptr, // BFA - Tear-Off Menu/Panel
+                                     bool is_tear_off = false) // BFA - Tear-Off Menu/Panel
     ATTR_NONNULL(1, 2);
 
 /**
@@ -1007,7 +1008,8 @@ wmOperatorStatus popover_panel_invoke(
     bool keep_open,
     bool use_numselect,
     ReportList *reports,                            // BFA - Tear-Off Menu/Panel
-    struct PopupBlockHandle **r_handle = nullptr);  // BFA - Tear-Off Menu/Panel
+    struct PopupBlockHandle **r_handle = nullptr,   // BFA - Tear-Off Menu/Panel
+    bool is_tear_off = false);                      // BFA - Tear-Off Menu/Panel
 
 /**
  * Only return handler, and set optional title.

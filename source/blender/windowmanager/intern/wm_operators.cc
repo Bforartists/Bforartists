@@ -2539,11 +2539,7 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
 
   /* Open the popup menu in the current window */
   ui::PopupBlockHandle *handle = nullptr;
-  wmOperatorStatus status = ui::popup_menu_invoke(C, idname, op->reports, &handle);
-
-  if (handle) {
-    handle->is_tear_off = true;
-  }
+  wmOperatorStatus status = ui::popup_menu_invoke(C, idname, op->reports, &handle, true);
 
   /* BFA - Tear-Off Menu/Panel */
   /* Make the popup persistent and pass-through for outside events */
@@ -2693,11 +2689,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
   ARegion *region_popup_orig = CTX_wm_region_popup(C);
 
   ui::PopupBlockHandle *handle = nullptr;
-  wmOperatorStatus status = ui::popover_panel_invoke(C, idname, true, false, op->reports, &handle);
-
-  if (handle) {
-    handle->is_tear_off = true;
-  }
+  wmOperatorStatus status = ui::popover_panel_invoke(C, idname, true, false, op->reports, &handle, true);
 
   /* BFA - Tear-Off Menu/Panel */
   if (handle && handle->region && handle->region->runtime->uiblocks.first()) {

@@ -269,7 +269,8 @@ PopupBlockHandle *popover_panel_create(bContext *C,
                                        ARegion *butregion,
                                        Button *but,
                                        PopoverCreateFunc popover_func,
-                                       const PanelType *panel_type)
+                                       const PanelType *panel_type,
+                                       const bool is_tear_off) // BFA - Tear-Off Menu/Panel
 {
   wmWindow *window = CTX_wm_window(C);
   const uiStyle *style = style_get_dpi();
@@ -299,7 +300,7 @@ PopupBlockHandle *popover_panel_create(bContext *C,
 
   /* Create popup block. */
   PopupBlockHandle *handle = popup_block_create(
-      C, butregion, but, nullptr, block_func_POPOVER, pup, block_free_func_POPOVER, true);
+      C, butregion, but, nullptr, block_func_POPOVER, pup, block_free_func_POPOVER, true, is_tear_off); // BFA - Tear-Off Menu/Panel
 
   /* Add handlers. If attached to a button, the button will already
    * add a modal handler and pass on events. */
@@ -324,7 +325,8 @@ wmOperatorStatus popover_panel_invoke(
     bool keep_open,
     bool use_numselect,
     ReportList *reports,  // BFA - Tear-Off Menu/Panel
-    PopupBlockHandle **r_handle) // BFA - Tear-Off Menu/Panel
+    PopupBlockHandle **r_handle, // BFA - Tear-Off Menu/Panel
+    const bool is_tear_off) // BFA - Tear-Off Menu/Panel
 
 {
   Layout *layout;
@@ -342,7 +344,7 @@ wmOperatorStatus popover_panel_invoke(
   Block *block = nullptr;
   PopupBlockHandle *handle = nullptr; // BFA - Tear-Off Menu/Panel
   if (keep_open) {
-    handle = popover_panel_create(C, nullptr, nullptr, item_paneltype_func, pt); // BFA - Tear-Off Menu/Panel
+    handle = popover_panel_create(C, nullptr, nullptr, item_paneltype_func, pt, is_tear_off); // BFA - Tear-Off Menu/Panel
     Popover *pup = static_cast<Popover *>(handle->popup_create_vars.arg);
     pup->use_numselect = use_numselect;
     block = pup->block;

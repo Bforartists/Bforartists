@@ -1304,7 +1304,8 @@ PopupBlockHandle *popup_block_create(bContext *C,
                                      BlockHandleCreateFunc handle_create_func,
                                      void *arg,
                                      FreeArgFunc arg_free,
-                                     const bool can_refresh)
+                                     const bool can_refresh,
+                                     const bool is_tear_off) // BFA - Tear-Off Menu/Panel
 {
   wmWindow *window = CTX_wm_window(C);
 
@@ -1330,6 +1331,16 @@ PopupBlockHandle *popup_block_create(bContext *C,
   handle->ctx_region = CTX_wm_region(C);
   handle->ctx_region_popup = CTX_wm_region_popup(C);
   handle->can_refresh = can_refresh;
+  /* BFA - Tear-Off Menu/Panel: known before the first layout, so it never draws the regular
+   * row and the pin position comes from the real block. A tear-off outlives the popup it
+   * came from, so it must not keep that popup as its context (#151170 is about short-lived
+   * context menus): its X and pin would act on the parent. */
+  handle->is_tear_off = is_tear_off;
+  if (is_tear_off) {
+    handle->ctx_region_popup = nullptr;
+    handle->tear_off_ctx_region_type = handle->ctx_region ? handle->ctx_region->regiontype : -1;
+    handle->tear_off_scale_fac = UI_SCALE_FAC;
+  }
 
   /* store vars to refresh popup (RGN_REFRESH_UI) */
   handle->popup_create_vars.create_func = create_func;
