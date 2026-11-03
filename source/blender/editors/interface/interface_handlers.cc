@@ -13206,6 +13206,10 @@ static int handler_region_menu(bContext *C, const wmEvent *event, void * /*userd
     HandleButtonData *data = but->active;
 
     if ((data->state == BUTTON_STATE_MENU_OPEN) &&
+        /* BFA - Tear-Off Menu/Panel: a popup tagged to close by its Tear Off row must close, not
+         * hand over to a neighbor. A fast drag can leave it and reach a neighbor's button with the
+         * first move. That popup's handler would then take the release from the carried panel. */
+        (data->menu->menuretval == 0) &&
         /* Make sure this popup isn't dragging a button.
          * can happen with popovers (see #67882). */
         (region_find_active_but(data->menu->region) == nullptr) &&
