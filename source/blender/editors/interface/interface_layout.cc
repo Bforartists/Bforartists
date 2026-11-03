@@ -6649,7 +6649,8 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
   Panel *panel = BKE_panel_new(pt);
   /* BFA - Tear-Off Menu/Panel: a panel from a region shows what the region shows. Panels hide
    * content under is_popover because the tool header already has it, and a tear-off has none. */
-  panel->flag = (block->handle && block->handle->tear_off_from_region) ? 0 : PNL_POPOVER;
+  panel->flag = (block->handle && block->handle->tear_off_from_region) ? ePanel_Flag(0) :
+                                                                         PNL_POPOVER;
 
   if (pt->listener) {
     block_add_dynamic_listener(block, pt->listener);
