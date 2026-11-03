@@ -1426,17 +1426,16 @@ void screen_change_prepare(
      * See: #144958. */
     ui::popup_handlers_remove_all(C, &win->runtime->modalhandlers);
 
-    /* BFA - Tear-Off Menu/Panel: transfer persistent tear-off popups to the new screen. */
-    for (ARegion *region = screen_old->regionbase.last(); region; ) {
-      ARegion *region_prev = region->prev;
-      if (region->regiontype == RGN_TYPE_TEMPORARY && region->runtime->uiblocks.first()) {
-        ui::Block *block = region->runtime->uiblocks.first();
+    /* BFA - Tear-Off Menu/Panel: transfer persistent tear-off popups to the new screen. Forward
+     * iteration keeps their stacking order, matching the unchanged handler order. */
+    for (ARegion &region : screen_old->regionbase.items_mutable()) {
+      if (region.regiontype == RGN_TYPE_TEMPORARY && region.runtime->uiblocks.first()) {
+        ui::Block *block = region.runtime->uiblocks.first();
         if (block->flag & ui::BLOCK_TEAR_OFF) {
-          BLI_remlink(&screen_old->regionbase, region);
-          BLI_addtail(&screen_new->regionbase, region);
+          BLI_remlink(&screen_old->regionbase, &region);
+          BLI_addtail(&screen_new->regionbase, &region);
         }
       }
-      region = region_prev;
     }
 
     /* remove handlers referencing areas in old screen */
