@@ -796,10 +796,17 @@ static bool tear_off_notifier_invalidates_buttons(const wmNotifier *wmn)
       return false;
     case NC_SPACE:
       /* BFA - Tear-Off Menu/Panel: these change what a panel's poll answers: the Properties tab,
-       * the Image editor mode, the node tree type, the sequencer view. Other space notifiers
-       * stay out, because ND_SPACE_VIEW3D fires on every view change. */
-      return ELEM(
-          wmn->data, ND_SPACE_PROPERTIES, ND_SPACE_IMAGE, ND_SPACE_NODE, ND_SPACE_SEQUENCER);
+       * the Image editor mode, the node tree type, the sequencer view, the Clip editor mode and
+       * view, the Dope Sheet mode and the Graph editor mode. An allow-list, because
+       * ND_SPACE_VIEW3D fires on every view change and ND_SPACE_INFO_REPORT on every report. */
+      return ELEM(wmn->data,
+                  ND_SPACE_PROPERTIES,
+                  ND_SPACE_IMAGE,
+                  ND_SPACE_NODE,
+                  ND_SPACE_SEQUENCER,
+                  ND_SPACE_CLIP,
+                  ND_SPACE_DOPESHEET,
+                  ND_SPACE_GRAPH);
     case NC_WM:
       return ELEM(wmn->data, ND_UNDO, ND_DATACHANGED);
     default:

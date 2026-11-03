@@ -1538,6 +1538,18 @@ def s_p5_seq_view():
 SC["p5_seq_view"] = s_p5_seq_view
 
 
+def s_p5_space_modes():
+    yield from setup()
+    yield from space_poll_round(SIM_PT_clip_poll, "CLIP_EDITOR", "mode", "TRACKING", "MASK")
+    yield from space_poll_round(SIM_PT_clip_poll, "CLIP_EDITOR", "view", "CLIP", "GRAPH")
+    yield from space_poll_round(SIM_PT_dope_poll, "DOPESHEET_EDITOR", "ui_mode",
+                                "DOPESHEET_EDITOR", "ACTION")
+    yield from space_poll_round(SIM_PT_graph_poll, "GRAPH_EDITOR", "mode", "FCURVES", "DRIVERS")
+
+
+SC["p5_space_modes"] = s_p5_space_modes
+
+
 def s_p5_root_flags():
     yield from setup()
     st = SIM_PT_hdr.state

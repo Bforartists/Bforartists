@@ -368,6 +368,24 @@ class SIM_PT_seq_poll(SimSpacePollPanel, bpy.types.Panel):
     state = sim_state(prop="", value="")
 
 
+class SIM_PT_clip_poll(SimSpacePollPanel, bpy.types.Panel):
+    bl_idname = "SIM_PT_clip_poll"; bl_label = "Sim Clip Poll"
+    bl_space_type = "CLIP_EDITOR"
+    state = sim_state(prop="", value="")
+
+
+class SIM_PT_dope_poll(SimSpacePollPanel, bpy.types.Panel):
+    bl_idname = "SIM_PT_dope_poll"; bl_label = "Sim Dope Sheet Poll"
+    bl_space_type = "DOPESHEET_EDITOR"
+    state = sim_state(prop="", value="")
+
+
+class SIM_PT_graph_poll(SimSpacePollPanel, bpy.types.Panel):
+    bl_idname = "SIM_PT_graph_poll"; bl_label = "Sim Graph Poll"
+    bl_space_type = "GRAPH_EDITOR"
+    state = sim_state(prop="", value="")
+
+
 bpy.utils.register_class(SIM_PT_field)
 bpy.utils.register_class(SIM_OT_dialog)
 bpy.utils.register_class(SIM_PT_enum)
@@ -378,7 +396,7 @@ bpy.utils.register_class(SIM_MT_cols)
 for sim_cls in (SIM_PT_tear_anchor, SIM_PT_tear, SIM_PT_tear_sub, SIM_PT_tear_sub2, SIM_PT_hdr,
                 SIM_PT_once, SIM_PT_place, SIM_PT_props, SIM_PT_none, SIM_PT_tool_tab,
                 SIM_PT_cols_anchor, SIM_PT_cols, SIM_PT_clip_cols, SIM_PT_ui_cols,
-                SIM_PT_seq_poll):
+                SIM_PT_seq_poll, SIM_PT_clip_poll, SIM_PT_dope_poll, SIM_PT_graph_poll):
     bpy.utils.register_class(sim_cls)
 
 # ---------------------------------------------------------------- scenarios
