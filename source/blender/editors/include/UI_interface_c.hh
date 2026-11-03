@@ -2487,6 +2487,11 @@ void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area);
 void tear_off_handlers_remove_for_workspace(bContext *C,
                                             wmWindow *win,
                                             const WorkSpace *workspace);
+/**
+ * BFA - Tear-Off Menu/Panel: true if the screen has a temporary region that takes input over the
+ * regions below it. Tear-offs aren't modal, so they don't count. Tooltips do, as upstream.
+ */
+bool screen_has_blocking_popup(const bScreen *screen);
 
 /**
  * Tags for refresh popup/menu handlers referencing a #StructRNA that is being unregistered,

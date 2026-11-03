@@ -1555,6 +1555,25 @@ bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)
   return true;
 }
 
+/* BFA - Tear-Off Menu/Panel */
+bool screen_has_blocking_popup(const bScreen *screen)
+{
+  for (const ARegion &region : screen->regionbase) {
+    if (region.regiontype != RGN_TYPE_TEMPORARY) {
+      continue;
+    }
+    bool is_tear_off = false;
+    for (const Block &block : region.runtime->uiblocks) {
+      is_tear_off = (block.flag & BLOCK_TEAR_OFF) != 0;
+      break;
+    }
+    if (!is_tear_off) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void popup_block_free(bContext *C, PopupBlockHandle *handle)
 {
   bool is_submenu = false;
