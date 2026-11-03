@@ -13278,7 +13278,13 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       int mx = event->xy[0];
       int my = event->xy[1];
       window_to_block(menu->region, block, &mx, &my);
-      if (BLI_rctf_isect_pt(&block->rect, mx, my)) {
+      /* BFA - Tear-Off Menu/Panel: only the title collapses. Double-clicks elsewhere must
+       * reach buttons, for fast clicking (#47532), word selection and list rename. */
+      const bool inside_title = BLI_rctf_isect_pt(&block->rect, mx, my) &&
+                                ((my + (UI_UNIT_Y * 1.4f)) > block->rect.ymax);
+      const Button *but = region_find_active_but(menu->region);
+      const bool over_but = but && button_contains_point_px(but, menu->region, event->xy);
+      if (inside_title && !tear_off_was_modal && !over_but) {
         tear_off_set_collapsed(block->handle, true, CTX_wm_window(C));
         CTX_wm_region_popup_set(C, region_popup);
         return WM_UI_HANDLER_BREAK;
