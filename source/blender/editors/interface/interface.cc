@@ -379,6 +379,14 @@ static void update_flexible_spacing(const ARegion *region, Block *block)
   block_bounds_calc(block);
 }
 
+/* BFA - Tear-Off Menu/Panel: the tear-off header icons identify themselves by their operator
+ * idnames. */
+static bool but_is_tear_off_header_icon(const Button &but)
+{
+  return but.optype && (strstr(but.optype->idname, "tear_off_collapse") != nullptr ||
+                        strstr(but.optype->idname, "tear_off_close") != nullptr);
+}
+
 /* BFA - Tear-Off Menu/Panel: right-align the pin/close buttons of the tear-off header
  * row to the block's content width. This runs after layout because a layout-level
  * spacer would rely on #update_flexible_spacing, which targets the region width
@@ -386,12 +394,7 @@ static void update_flexible_spacing(const ARegion *region, Block *block)
  * the whole block content to the right. */
 static void block_tear_off_align_header(Block *block)
 {
-  /* The tear-off header buttons are self-identifying by their operator idnames. */
-  auto is_header_but = [](const Button &but) {
-    return but.optype &&
-           (strstr(but.optype->idname, "tear_off_collapse") != nullptr ||
-            strstr(but.optype->idname, "tear_off_close") != nullptr);
-  };
+  auto is_header_but = but_is_tear_off_header_icon;
 
   if (!std::any_of(block->buttons().begin(), block->buttons().end(), is_header_but)) {
     return;
@@ -508,16 +511,19 @@ static std::unique_ptr<Button> *block_tear_off_multi_column_start(Block *block, 
 {
   std::unique_ptr<Button> *begin = block->buttons_ptrs.begin();
   std::unique_ptr<Button> *end = block->buttons_ptrs.end();
-  if (!(block->flag & BLOCK_TEAR_OFF) || (end - begin) < 2 ||
-      !but_is_row_alignment_group(begin->get(), begin[1].get()))
-  {
+  if (!(block->flag & BLOCK_TEAR_OFF)) {
     return begin;
   }
-  const int alignnr = (*begin)->alignnr;
+  /* The header is everything up to its line, which #tear_off_header_draw always adds. Align groups
+   * can't find it, because the label that starts the row isn't in one. */
   std::unique_ptr<Button> *content = begin;
-  while (content < end && (*content)->alignnr == alignnr) {
+  while (content < end && (*content)->type != ButtonType::SeprLine) {
     content++;
   }
+  if (content == begin || content == end || !but_is_tear_off_header_icon(*content[-1])) {
+    return begin;
+  }
+  content++;
   bool is_multi_column = false;
   for (std::unique_ptr<Button> *bt = content; bt + 1 < end; bt++) {
     if ((*bt)->rect.xmin < bt[1]->rect.xmin && !but_is_row_alignment_group(bt->get(), bt[1].get()))
