@@ -11740,7 +11740,9 @@ static int handle_menu_event(bContext *C,
   }
 
   if (menu->is_grab) {
-    if (event->type == LEFTMOUSE) {
+    /* BFA - Tear-Off Menu/Panel: with the focus gone no release is coming. A tear-off counts as
+     * modal while it's held, so it would follow the cursor and take keys until the next click. */
+    if (event->type == LEFTMOUSE || (event->type == WINDEACTIVATE && menu->is_tear_off)) {
       menu->is_grab = false;
       WM_cursor_set(win, WM_CURSOR_DEFAULT);
       retval = WM_UI_HANDLER_BREAK;
