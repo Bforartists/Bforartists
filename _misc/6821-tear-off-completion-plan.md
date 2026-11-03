@@ -200,6 +200,13 @@ Follow `_misc/tear_off_panel_vertical_resize.md`, with these corrections:
 3. **No state copying across refreshes.** The handle persists through refresh, as `tear_off_collapsed` already shows, so §3.6's copy step isn't needed.
 4. **Use `WM_CURSOR_Y_MOVE`** throughout. The doc mixes it with `WM_CURSOR_EDIT`.
 5. **Collapse:** `tear_off_expanded_size` must remain consistent with the cropped height, so clamping stays correct on expand.
+6. **Sticky header (maintainer request, 2026-11-03).** The tear-off header (label, pin, close and its separator) stays visible and usable at any scroll position, so the panel can always be moved, collapsed or closed. `menu_scroll_apply_offset_y()` moves every button in the block and `popup_block_scrolltest()` hides what's out of bounds, so:
+   - Tag the header's buttons when `tear_off_header_draw()` creates them. Identifying them by operator idname, as `block_tear_off_align_header()` does, misses the label and separator.
+   - Don't move tagged buttons when scrolling, and never hide them.
+   - Treat the bottom of the header as the top edge of the scrolling content, for hiding buttons, the scroll arrows, the scroll range, the scrollbar track and `layout_panel_popup_scroll_apply()`.
+   - Applies whenever a tear-off scrolls, including one clipped by the window with no user crop.
+   - Buttons are hidden whole rather than clipped by pixel, so check that smooth trackpad scrolling doesn't look jumpy under the header. If it does, scissor the content instead.
+   - Gate all of this on `is_tear_off`. Regular popups stay as upstream.
 
 Keep the bottom-edge grip, top-anchored crop, `draw_widget_scroll()` with theme colors and View2D-style fade. Grip hit areas (right and bottom) must stay out of button hit-testing. Height stays session-only.
 
