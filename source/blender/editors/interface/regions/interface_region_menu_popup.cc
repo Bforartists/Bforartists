@@ -410,7 +410,10 @@ static PopupBlockHandle *popup_menu_create_impl(
   /* menu is created from a callback */
   pup->menu_func = menu_func;
   if (but) {
-    pup->slideout = block_is_menu(but->block) || (but->block->flag & BLOCK_TEAR_OFF); // BFA - Tear-Off Menu/Panel
+    /* BFA - Tear-Off Menu/Panel: submenus of a torn-off menu slide out like any menu's. A dropdown
+     * in a torn-off panel opens under its button, as it does in a regular popover. */
+    pup->slideout = block_is_menu(but->block) ||
+                    ((but->block->flag & BLOCK_TEAR_OFF) && !(but->block->flag & BLOCK_POPOVER));
     pup->but = but;
 
     if (but->type == ButtonType::Pulldown) {
