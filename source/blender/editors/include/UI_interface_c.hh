@@ -55,6 +55,7 @@ struct PropertyRNA;
 struct ReportList;
 struct ResultBLF;
 struct ScrArea; /* BFA - Tear-Off Menu/Panel: for #tear_off_handlers_area_exit. */
+struct WorkSpace; /* BFA - Tear-Off Menu/Panel: for #tear_off_handlers_remove_for_workspace. */
 struct bContext;
 struct bContextStore;
 struct bNode;
@@ -2482,6 +2483,10 @@ void popup_handlers_remove_all_force(bContext *C, ListBaseT<wmEventHandler> *han
  * their reference when that area exits. Other popups are left untouched.
  */
 void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area);
+/** BFA - Tear-Off Menu/Panel: close tear-offs scoped to a workspace that is being deleted. */
+void tear_off_handlers_remove_for_workspace(bContext *C,
+                                            wmWindow *win,
+                                            const WorkSpace *workspace);
 
 /**
  * Tags for refresh popup/menu handlers referencing a #StructRNA that is being unregistered,

@@ -283,6 +283,11 @@ bool ED_workspace_delete(WorkSpace *workspace, Main *bmain, bContext *C, wmWindo
     }
   }
 
+  /* BFA - Tear-Off Menu/Panel: their workspace is going away, so they could never show again. */
+  for (wmWindow &win : wm->windows) {
+    ui::tear_off_handlers_remove_for_workspace(C, &win, workspace);
+  }
+
   /* Also delete managed screens if they have no other users. */
   for (WorkSpaceLayout &layout : workspace->layouts) {
     BKE_id_free_us(bmain, layout.screen);

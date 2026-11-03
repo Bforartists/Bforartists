@@ -13669,6 +13669,29 @@ void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area)
   }
 }
 
+/* BFA - Tear-Off Menu/Panel */
+void tear_off_handlers_remove_for_workspace(bContext *C,
+                                            wmWindow *win,
+                                            const WorkSpace *workspace)
+{
+  ListBaseT<wmEventHandler> *handlers = &win->runtime->modalhandlers;
+  for (wmEventHandler &handler_base : handlers->items_mutable()) {
+    if (handler_base.type != WM_HANDLER_TYPE_UI || bool(handler_base.flag & WM_HANDLER_DO_FREE)) {
+      continue;
+    }
+    wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+    if (handler->handle_fn != popup_handler || handler->remove_fn != popup_handler_remove) {
+      continue;
+    }
+    PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
+    if (menu->is_tear_off && menu->tear_off_workspace == workspace) {
+      popup_handler_remove(C, menu);
+      BLI_remlink(handlers, handler);
+      wm_event_free_handler(&handler->head);
+    }
+  }
+}
+
 /**
  * Returns true if the button is referencing \a srna.
  * \note This would fail to properly determine if the Button is referencing \a srna if the
