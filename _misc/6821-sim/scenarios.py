@@ -2039,6 +2039,38 @@ def s_p5_preview_close():
 SC["p5_preview_close"] = s_p5_preview_close
 
 
+def s_p5_workspace_gone():
+    """As p5_region_gone, but a screen change drops handlers by area before any region exits, and
+    that path has to free the gesture too. run.sh must print no panel_tear_off_gesture_begin line.
+    """
+    yield from setup()
+    b = yield from sidebar_panel(T)
+    hx, hy = header_xy(b)
+    yield from shift_press(hx, hy)
+    main = win().workspace
+    win().workspace = bpy.data.workspaces["Shading"]; yield 1.2
+    move(hx - 60, hy - 40); yield 0.3
+    move(hx - 90, hy - 40); yield 0.3
+    check("no tear-off after the screen changed", T["draw_popup"] == 0, T)
+    yield from shift_release(hx - 90, hy - 40)
+    win().workspace = main; yield 1.0
+    # The handler is gone and nothing else broke: the gesture works from scratch.
+    b = yield from sidebar_panel(T)
+    hx, hy = header_xy(b)
+    yield from to_rest()
+    yield from grab("before")
+    tx, ty = yield from shift_drag_to_free(hx, hy)
+    yield from shift_release(tx, ty); yield 0.4
+    yield from grab("again")
+    v = torn_box("before", "again"); log("after the round trip", v)
+    check("the gesture works again", real(v) and T["draw_popup"] > 0, (v, T))
+    yield from close_all()
+    yield from finish_with_memory_report()
+
+
+SC["p5_workspace_gone"] = s_p5_workspace_gone
+
+
 def s_p5_pref_off():
     yield from setup()
     prefs = bpy.context.preferences

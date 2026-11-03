@@ -2576,6 +2576,14 @@ void panel_tear_off_gesture_region_exit(wmWindow *win, const ARegion *region)
   }
 }
 
+void panel_tear_off_gesture_cancel_all(bContext *C, wmWindow *win)
+{
+  WM_event_free_ui_handler_all(C,
+                               &win->runtime->modalhandlers,
+                               panel_tear_off_gesture_handler,
+                               panel_tear_off_gesture_remove);
+}
+
 static void panel_tear_off_gesture_begin(bContext *C,
                                          const wmEvent *event,
                                          ARegion *region,

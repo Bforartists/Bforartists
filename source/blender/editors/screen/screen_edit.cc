@@ -1440,6 +1440,11 @@ void screen_change_prepare(
       }
     }
 
+    /* BFA - Tear-Off Menu/Panel: the region exit that detaches this handler from its area runs
+     * later, in #ED_screen_exit, so the loop below would drop the handler and leak its state. A
+     * script or timer can switch screens during the wait, since the handler lets timers pass. */
+    ui::panel_tear_off_gesture_cancel_all(C, win);
+
     /* remove handlers referencing areas in old screen */
     for (ScrArea &area : screen_old->areabase) {
       WM_event_remove_handlers_by_area(&win->runtime->modalhandlers, &area);

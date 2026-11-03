@@ -2495,6 +2495,11 @@ void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area);
  * View), so tear-off handlers must drop their reference to it on region exit as well.
  */
 void tear_off_handlers_region_exit(wmWindow *win, const ARegion *region);
+/**
+ * BFA - Tear-Off Menu/Panel: end a Shift+press on a panel header that hasn't become a click or a
+ * drag yet. #WM_event_remove_handlers_by_area would free its handler without freeing its state.
+ */
+void panel_tear_off_gesture_cancel_all(bContext *C, wmWindow *win);
 /** BFA - Tear-Off Menu/Panel: close tear-offs scoped to a workspace that is being deleted. */
 void tear_off_handlers_remove_for_workspace(bContext *C,
                                             wmWindow *win,
