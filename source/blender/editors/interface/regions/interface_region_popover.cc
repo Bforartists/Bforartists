@@ -244,11 +244,13 @@ float tear_off_panel_width_min(const PopupBlockHandle *handle, const Block *bloc
     if (ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN, ButtonType::Menu)) {
       needed += UI_UNIT_X;
     }
+    /* Text that already clips at the designed width can't be what stops the panel. */
     if (but.tear_off_text_sized) {
-      text_sized = std::max<float>(text_sized, needed);
+      if (needed < tear_off_panel_default_ui_size(pup)) {
+        text_sized = std::max<float>(text_sized, needed);
+      }
       continue;
     }
-    /* Text that already clips at the designed width can't be what stops the panel. */
     const float share = needed / (but_width * to_designed);
     if (share < 1.0f) {
       used = std::max(used, share);
@@ -273,8 +275,10 @@ bool tear_off_panel_width_drag(PopupBlockHandle *handle,
   }
   else {
     const float designed = tear_off_panel_width_designed(handle);
-    /* Never above the designed width: a panel with long rows can already clip them there. */
-    const float min_width = std::min(handle->tear_off_drag_min_width, designed);
+    /* Never above the designed width: a panel with long rows can already clip them there. Nor
+     * above the width at the press: the measure is an estimate that can differ a little at each
+     * width, and a drag that pulls in must not push the edge out. */
+    const float min_width = std::min({handle->tear_off_drag_min_width, designed, base});
     width = std::min(std::max(wanted, min_width), std::max(max_width, min_width));
     /* The designed width itself is stored as 0, which follows the scale formula. */
     if (fabsf(width - designed) < 0.5f) {
