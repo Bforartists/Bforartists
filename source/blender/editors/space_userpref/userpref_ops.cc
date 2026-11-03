@@ -390,15 +390,11 @@ static void PREFERENCES_OT_asset_library_remove(wmOperatorType *ot)
 /** \name BFA Asset libraries move
  * \{ */
 
-
-static int asset_library_ui_offset()
-{
-  return 2;
-}
+#define BFA_ASSET_LIBARIES_UI_OFFSET 2
 
 static bUserAssetLibrary *asset_library_active_get()
 {
-  const int list_index = U.active_asset_library - asset_library_ui_offset();
+  const int list_index = U.active_asset_library - BFA_ASSET_LIBARIES_UI_OFFSET;
   if (list_index < 0) {
     return nullptr;
   }
@@ -444,7 +440,7 @@ static wmOperatorStatus asset_library_move_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
   U.active_asset_library = BLI_findindex(&U.asset_libraries, library) +
-                           asset_library_ui_offset();
+                           BFA_ASSET_LIBARIES_UI_OFFSET;
 
   blender::ed::asset::list::clear_all_library(C);
   WM_main_add_notifier(NC_SPACE | ND_SPACE_ASSET_PARAMS, nullptr);
