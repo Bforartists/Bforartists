@@ -29,6 +29,7 @@ Line numbers are from the mid-merge tree and will drift.
 | Review findings, 3 rounds | Done | `801bfad6b8c`..`de214e83f9f` (4 commits), `129bf5a6afa`..`4d3a87ba8e8` (8 commits), `74d78ef57bc` | Rounds found 5, 11 and 1 issues. Those the simulator can't reach need a hand test: focus loss, language change, leaving a maximized area |
 | Consistency: each tear-off keeps its source's look, preset arrow, narrow shelf, hold in place | Done | `c136cc5fc64`, `e794fc3f01d`, `a09dace7020`, `26c6909e657`, `2cbc0c35468`, review fixes `c86bd2a4f70`, `467c4c6d395` | Scenarios `p10_*` and a smoke set, all passing at `467c4c6d395`. Not the full suite, by the maintainer's request to run only what a task touches |
 | Click-only scroll arrows | Done | `a0f39a1855c` | Scenarios `p11_arrows`, `p11_arrow_submenu`, the scrolling `p8_*` and `regress_final`. Regular menus keep hover scrolling. Not the full suite |
+| Pinned panel header metrics | Done | `69b66121158` | Scenario `p12_header_metrics` and the 28 others that use region panels. Linked as a side copy, because the Release exe was open |
 
 **The look rule:** a menu or enum keeps the menu color, a popover torn off through its row keeps the popup color, a panel torn off a region has the panel header, background and subpanel colors, and a tool shelf panel keeps the plain region color. See `block_is_tear_off_panel` and `block_has_tear_off_panel_colors`.
 

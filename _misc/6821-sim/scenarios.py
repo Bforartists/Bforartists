@@ -5212,8 +5212,8 @@ def s_p10_preset_arrow():
     yield from grab("torn")
     v = need(popup_box("base", "torn"), "it tears off")
     log("torn", v)
-    # The preset button sits left of the pin and X.
-    x, y = v[2] - 68, v[3] - 19
+    # The preset button sits left of the pin and X, in the header's centered row.
+    x, y = v[2] - 54, v[3] - 12
     yield from click(x, y); yield 0.8
     yield from grab("open")
     t = popup_box("torn", "open")
@@ -5440,3 +5440,50 @@ def s_p11_arrow_submenu():
 
 
 SC["p11_arrow_submenu"] = s_p11_arrow_submenu
+
+
+def strip_height(frame, v, x):
+    """Rows from the block's top with the header's color at column x, from just inside the outline."""
+    col = FRAME[frame][v[3] - 2, x]
+    n = 0
+    for y in range(v[3] - 2, v[1], -1):
+        if np.abs(FRAME[frame][y, x] - col).max() > 0.02:
+            break
+        n += 1
+    return n
+
+
+def s_p12_header_metrics():
+    """A pinned panel's header matches the source panel's."""
+    yield from begin()
+    with bpy.context.temp_override(**override("VIEW_3D", "UI")):
+        move(*center()); yield 0.3
+        bpy.ops.wm.panel_tear_off(panel_idname="VIEW3D_PT_tools_active", from_region_panel=True)
+    yield 0.8
+    yield from park()
+    yield from grab("torn")
+    v = need(popup_box("base", "torn"), "it opens")
+    log("torn", v)
+    # A free column near the middle of the header, away from its title and icons.
+    h = strip_height("torn", v, v[0] + width(v) * 3 // 5)
+    log("strip height", h)
+    check("the header is as tall as a region's", 22 <= h <= 25, h)
+    # The X icon's ink is centered about 14 from the edge, as the source's grip.
+    bg = FRAME["torn"][v[3] - 2, v[0] + width(v) * 3 // 5]
+    row = np.abs(FRAME["torn"][v[3] - h:v[3] - 1, v[2] - 26:v[2] - 3] - bg).max(axis=2) > 0.25
+    ys, xs = np.where(row)
+    log("x icon ink", None if len(xs) == 0 else (int(xs.min()), int(xs.max()), int(ys.min()), int(ys.max())))
+    check("the X has ink", len(xs) > 5, len(xs))
+    x_center = (v[2] - 26) + (int(xs.min()) + int(xs.max())) / 2
+    y_center = (v[3] - h) + (int(ys.min()) + int(ys.max())) / 2
+    check("the X is about 14 from the edge", 11 <= v[2] - x_center <= 17, v[2] - x_center)
+    check("and centered in the header", abs((v[3] - h / 2) - y_center) <= 2, (v[3] - h / 2, y_center))
+    # The X closes it, and the pin collapses it.
+    yield from click(v[2] - 14, v[3] - h // 2)
+    yield from park()
+    yield from grab("closed")
+    n = rdiff("base", "closed", (30, 140, 1100, 850))
+    check("the X closes it", n < 300, n)
+
+
+SC["p12_header_metrics"] = s_p12_header_metrics
