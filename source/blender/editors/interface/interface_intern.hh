@@ -1404,6 +1404,20 @@ bool tear_off_clamp_to_window(const wmWindow *win,
 /** BFA - Tear-Off Menu/Panel: the row an entry point adds above its regular items. */
 bool button_is_tear_off_row(const Button *but);
 
+/* BFA - Tear-Off Menu/Panel: attached dropdowns and enum tear-offs share one body, so items,
+ * icons, headings, columns and order can't drift apart. */
+struct EnumMenuDrawParams {
+  PointerRNA *ptr = nullptr;
+  PropertyRNA *prop = nullptr;
+  float aspect = 1.0f;
+  bool show_title = false;
+  /** A tear-off outlives the item function's strings. */
+  bool copy_descriptions = false;
+  /** Called for each item button. */
+  std::function<void(Button &, const EnumPropertyItem &)> item_fn;
+};
+void enum_menu_draw(bContext *C, Layout *layout, const EnumMenuDrawParams &params);
+
 /** \} */
 
 /* `interface_panel.cc` */

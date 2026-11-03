@@ -4822,12 +4822,13 @@ void def_but_icon_clear(Button *but)
   but->drawflag &= ~BUT_ICON_LEFT;
 }
 
-static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
+/* BFA - Tear-Off Menu/Panel: this is the body of #def_but_rna__menu, with the source button's
+ * values passed in `params`, because an enum tear-off has no source button to read them from. */
+void enum_menu_draw(bContext *C, Layout *layout, const EnumMenuDrawParams &params)
 {
   Block *block = layout->block();
   PopupBlockHandle *handle = block->handle;
-  Button *but = static_cast<Button *>(but_p);
-  const int current_value = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
+  const int current_value = RNA_property_enum_get(params.ptr, params.prop);
 
   /* see comment in ui_item_enum_expand, re: `uiname`. */
   const EnumPropertyItem *item_array;
@@ -4836,8 +4837,8 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
 
   bool free;
   RNA_property_enum_items_gettexted(static_cast<bContext *>(block->evil_C),
-                                    &but->rnapoin,
-                                    but->rnaprop,
+                                    params.ptr,
+                                    params.prop,
                                     &item_array,
                                     nullptr,
                                     &free);
@@ -4854,7 +4855,7 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
   const wmWindow *win = CTX_wm_window(C);
 
   /* Calculate the maximum number of rows that can fit in half the height of this window. */
-  const float row_height = float(UI_UNIT_Y) / but->block->aspect;
+  const float row_height = float(UI_UNIT_Y) / params.aspect;
   const float vertical_space = (float(WM_window_native_pixel_y(win)) / 2.0f) - (UI_UNIT_Y * 3.0f);
   const int max_rows = std::max(int(vertical_space / row_height) - 1, 1);
 
@@ -4886,7 +4887,7 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
     rows = std::max(rows, col_rows);
   }
   text_width += col_width;
-  text_width /= but->block->aspect;
+  text_width /= params.aspect;
 
   if (categories == 0) {
     /* Long lists without categories (section titles) can be wrapped
@@ -4914,12 +4915,7 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
     rows = totitems;
   }
 
-  const char *title = RNA_property_ui_name(but->rnaprop, but->rnapoin ? &but->rnapoin : nullptr);
-
-  /* Is there a non-blank label before this button on the same row? */
-  Button *but_prev = but->block->prev_but(but);
-  const bool prior_label = but_prev && but_prev->type == ButtonType::Label && but_prev->str[0] &&
-                           but_prev->alignnr == but->alignnr;
+  const char *title = RNA_property_ui_name(params.prop, *params.ptr ? params.ptr : nullptr);
 
   /* When true, store a copy of the description and use the tool-tip callback to return that copy.
    * This way, further calls to #EnumPropertyRNA::item_fn which occur when evaluating shortcuts
@@ -4932,11 +4928,14 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
    *   Make an exception for menus as they aren't typically refreshed during animation
    *   playback or other situations where the overhead would be noticeable.
    */
-  const bool use_enum_copy_description = free &&
-                                         ((RNA_property_is_idprop(but->rnaprop) == false) &&
-                                          (RNA_property_py_data_get(but->rnaprop) != nullptr));
+  const bool is_py_enum = (RNA_property_is_idprop(params.prop) == false) &&
+                          (RNA_property_py_data_get(params.prop) != nullptr);
+  /* BFA - Tear-Off Menu/Panel: a tear-off keeps its buttons long after this call, so it can't
+   * point at strings the item function or Python may free. Static C strings need no copy. */
+  const bool use_enum_copy_description = params.copy_descriptions ? (free || is_py_enum) :
+                                                                    (free && is_py_enum);
 
-  if (title && title[0] && (categories == 0) && (!but->str[0] || !prior_label)) {
+  if (title && title[0] && (categories == 0) && params.show_title) {
     /* Show title when no categories and calling button has no text or prior label. */
     uiDefBut(
         block, ButtonType::Label, title, 0, 0, UI_UNIT_X * 5, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
@@ -5047,6 +5046,11 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
 
       button_enum_prop_value_set(item_but, item->value);
 
+      /* BFA - Tear-Off Menu/Panel */
+      if (params.item_fn) {
+        params.item_fn(*item_but, *item);
+      }
+
       if (use_enum_copy_description) {
         if (item->description && item->description[0]) {
           button_func_tooltip_set(
@@ -5065,6 +5069,23 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
   if (free) {
     MEM_delete(item_array);
   }
+}
+
+/* BFA - Tear-Off Menu/Panel: reads what #enum_menu_draw needs from the source button. */
+static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
+{
+  Button *but = static_cast<Button *>(but_p);
+  /* Is there a non-blank label before this button on the same row? */
+  Button *but_prev = but->block->prev_but(but);
+  const bool prior_label = but_prev && but_prev->type == ButtonType::Label && but_prev->str[0] &&
+                           but_prev->alignnr == but->alignnr;
+  EnumMenuDrawParams params;
+  params.ptr = &but->rnapoin;
+  params.prop = but->rnaprop;
+  params.aspect = but->block->aspect;
+  /* Show title when no categories and calling button has no text or prior label. */
+  params.show_title = !but->str[0] || !prior_label;
+  enum_menu_draw(C, layout, params);
 }
 
 static void def_but_rna__panel_type(bContext *C, Layout *layout, void *arg)
