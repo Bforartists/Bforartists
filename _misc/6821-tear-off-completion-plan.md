@@ -249,7 +249,7 @@ Follow `_misc/tear_off_panel_vertical_resize.md`, with these corrections:
 2. **Wheel scrolling mostly works already.** The clipped branch runs before the `BLOCK_TEAR_OFF` breaks in `handle_menu_event`. The actual problem is the reverse: wheel *outside* a clipped tear-off also scrolls it, so add `(block->flag & BLOCK_TEAR_OFF) && !inside` to break out.
 3. **No state copying across refreshes.** The handle persists through refresh, as `tear_off_collapsed` already shows, so §3.6's copy step isn't needed.
 4. **Use `WM_CURSOR_Y_MOVE`** throughout. The doc mixes it with `WM_CURSOR_EDIT`.
-5. **Collapse:** `tear_off_expanded_size` must remain consistent with the cropped height, so clamping stays correct on expand.
+5. **Collapse:** `tear_off_expanded_size` must remain consistent with the cropped height, so clamping stays correct on expand. Nothing ever read that field, so it was removed. Expand gets its height from `tear_off_user_height` through `tear_off_height_apply`, and clamps through `popup_block_clip`, using the live `block->rect`.
 6. **Sticky header (maintainer request, 2026-11-03).** The tear-off header (label, pin, close and its separator) stays visible and usable at any scroll position, so the panel can always be moved, collapsed or closed. `menu_scroll_apply_offset_y()` moves every button in the block and `popup_block_scrolltest()` hides what's out of bounds, so:
    - Tag the header's buttons when `tear_off_header_draw()` creates them. Identifying them by operator idname, as `block_tear_off_align_header()` does, misses the label and separator.
    - Don't move tagged buttons when scrolling, and never hide them.

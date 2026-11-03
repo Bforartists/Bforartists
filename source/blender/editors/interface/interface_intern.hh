@@ -1184,12 +1184,6 @@ struct PopupBlockHandle {
    * user returns. nullptr means unpinned. */
   WorkSpace *tear_off_workspace = nullptr;
 
-  /** BFA - Tear-Off Menu/Panel: size (width, height) of the expanded panel's block rect
-   * in region-local pixels, captured at collapse time. Used by the collapsed pin widget
-   * clamping to ensure that expanding the panel at the pin position would still fit within
-   * the window. Zero when no expanded size has been recorded yet. */
-  int tear_off_expanded_size[2] = {0, 0};
-
   /** BFA - Tear-Off Menu/Panel: region type of `ctx_region` at creation, so
    * #tear_off_context_ensure can find an equivalent once the original is gone. */
   int tear_off_ctx_region_type = -1;

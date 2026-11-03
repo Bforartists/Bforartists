@@ -626,11 +626,6 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
   if (collapsed) {
     Block *block = region->runtime->uiblocks.first();
     if (block) {
-      /* BFA - Tear-Off Menu/Panel: remember the expanded panel's block rect size so the
-       * collapsed pin widget can be clamped with edge-awareness. */
-      handle->tear_off_expanded_size[0] = int(BLI_rctf_size_x(&block->rect));
-      handle->tear_off_expanded_size[1] = int(BLI_rctf_size_y(&block->rect));
-
       /* BFA - Tear-Off Menu/Panel: capture the current header position so the collapsed pin
        * widget appears exactly where the panel header was (top-left corner in window coords).
        * The block is in region-space; add region origin for window-space coords. */
