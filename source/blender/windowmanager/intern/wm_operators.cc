@@ -2837,6 +2837,8 @@ static void WM_OT_panel_tear_off_close(wmOperatorType *ot)
   ot->poll = WM_operator_winactive;
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Console Toggle Operator (WIN32 only)
  * \{ */
