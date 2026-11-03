@@ -91,6 +91,9 @@ def tear_menu(name="VIEW3D_MT_object", t="VIEW_3D", rt="HEADER", idx=0):
 def tear_panel(name, t="VIEW_3D", rt="HEADER", idx=0):
     with bpy.context.temp_override(**override(t, rt, idx)):
         bpy.ops.wm.panel_tear_off(panel_idname=name)
+def tear_enum(t="VIEW_3D", rt="HEADER", idx=0, **kw):
+    with bpy.context.temp_override(**override(t, rt, idx)):
+        return bpy.ops.wm.enum_tear_off(**kw)
 
 class SIM_PT_field(bpy.types.Panel):
     bl_idname = "SIM_PT_field"; bl_label = "Sim Field"
@@ -111,8 +114,56 @@ class SIM_OT_dialog(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
+class SIM_PT_enum(bpy.types.Panel):
+    bl_idname = "SIM_PT_enum"; bl_label = "Sim Enum"
+    bl_space_type = "VIEW_3D"; bl_region_type = "UI"; bl_category = "Sim"
+    def draw(self, context):
+        sc = context.scene
+        self.layout.prop(context.tool_settings, "transform_pivot_point", text="")
+        self.layout.prop_with_menu(sc.sequencer_colorspace_settings, "name", text="Sequencer",
+                                   menu="UI_MT_color_space_select")
+        if hasattr(sc, "sim_enum"):
+            self.layout.prop(sc, "sim_enum")
+
+class SIM_OT_area_probe(bpy.types.Operator):
+    bl_idname = "sim.area_probe"; bl_label = "Sim Area Probe"
+    state = {"area": None, "runs": 0}
+    def execute(self, context):
+        st = SIM_OT_area_probe.state
+        st["area"] = context.area.type if context.area else None
+        st["runs"] += 1
+        return {"FINISHED"}
+
+class SIM_MT_ctx(bpy.types.Menu):
+    bl_idname = "SIM_MT_ctx"; bl_label = "Sim Context"
+    def draw(self, context):
+        self.layout.operator("sim.area_probe", text="Probe")
+
+class SIM_MT_cols(bpy.types.Menu):
+    bl_idname = "SIM_MT_cols"; bl_label = "Sim Columns"
+    def draw(self, context):
+        split = self.layout.split()
+        for side in ("Left", "Right"):
+            col = split.column()
+            for i in range(4):
+                col.operator("sim.area_probe", text=f"{side} Column {i}")
+
+# enum_op registers this one itself, because it tests what happens when it goes away.
+class SIM_OT_enum(bpy.types.Operator):
+    bl_idname = "sim.enum"; bl_label = "Sim Enum Operator"
+    type: bpy.props.EnumProperty(name="Type", items=[
+        ("FIRST", "First Item", ""), ("SECOND", "Second Item", ""), ("THIRD", "Third Item", "")])
+    state = {"type": None}
+    def execute(self, context):
+        SIM_OT_enum.state["type"] = self.type
+        return {"FINISHED"}
+
 bpy.utils.register_class(SIM_PT_field)
 bpy.utils.register_class(SIM_OT_dialog)
+bpy.utils.register_class(SIM_PT_enum)
+bpy.utils.register_class(SIM_OT_area_probe)
+bpy.utils.register_class(SIM_MT_ctx)
+bpy.utils.register_class(SIM_MT_cols)
 
 # ---------------------------------------------------------------- scenarios
 def s_calibrate():

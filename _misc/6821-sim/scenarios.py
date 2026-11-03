@@ -26,10 +26,10 @@ def esc():
 PANEL = {}
 
 
-def open_panel(base="base"):
-    """Tear off the test panel, and record geometry from the screenshot diff."""
+def open_panel(base="base", name="SIM_PT_field"):
+    """Tear off a test panel, and record geometry from the screenshot diff."""
     yield from grab(base + "_p")
-    tear_panel("SIM_PT_field"); yield 0.8
+    tear_panel(name); yield 0.8
     yield from grab(base + "_po")
     d = np.abs(FRAME[base + "_p"] - FRAME[base + "_po"]).max(axis=2) > 0.04
     d[:VIEW[1], :] = False; d[VIEW[3]:, :] = False; d[:, :VIEW[0]] = False; d[:, VIEW[2]:] = False
@@ -38,7 +38,8 @@ def open_panel(base="base"):
     log("panel bbox", b)
     xmin, ymin, xmax, ymax = b
     PANEL.update(xmin=xmin, ymax=ymax, name=(xmin + 110, ymax - 55), frame=(xmin + 110, ymax - 80),
-                 arrow=(xmin + 201, ymax - 80), x=(xmin + 200, ymax - 19), title=(xmin + 80, ymax - 19))
+                 arrow=(xmin + 201, ymax - 80), x=(xmin + 200, ymax - 19), title=(xmin + 80, ymax - 19),
+                 box=b, shot=base + "_po")
 
 
 def s_x_expanded():
@@ -643,3 +644,548 @@ def s_hover_keys():
 
 
 SC["hover_keys"] = s_hover_keys
+
+
+# ---------------------------------------------------------------- Phase 4: enum tear-offs
+# Not run yet. Every click below is relative to a logged bbox, and each scenario saves a shot
+# before it clicks, so the first run can calibrate these offsets (100% scale):
+# - TEAR_ROW0 and ROW are measured on pin-m.png, a torn-off menu with items right under its header.
+# - MENU_BOTTOM is measured on the same shot. LINE is the gap between its rows around a separator.
+# - Rows inside attached dropdowns are worked out from those, no shot of one exists yet.
+ROW = 20
+TEAR_ROW0 = 41
+MENU_BOTTOM = 15
+LINE = 7
+ID_OB = 16975  # MAKE_ID2('O', 'B') in DNA_ID_enums.h.
+PIVOTS = ("BOUNDING_BOX_CENTER", "CURSOR", "INDIVIDUAL_ORIGINS", "MEDIAN_POINT", "ACTIVE_ELEMENT")
+SIM_ENUM_ITEMS = [("", "Head A", ""), ("A1", "Item A1", ""), ("A2", "Item A2", ""),
+                  ("", "Head B", ""), ("B1", "Item B1", ""), ("B2", "Item B2", "")]
+
+
+def tear_row(b, i=0):
+    """Item i of a single column tear-off with bbox b, counted from the top."""
+    return (b[0] + b[2]) // 2, b[3] - TEAR_ROW0 - ROW * i
+
+
+def to_rest():
+    """Park the cursor on the viewport, below tear-offs opened at the center, so nothing hovers."""
+    cx, cy = center()
+    move(cx, cy - 250); yield 0.3
+    move(cx, cy - 250); yield 0.3
+
+
+def view_bbox(n1, n2, below=None, skip=None, thresh=0.04):
+    """bbox() inside VIEW only, for frames where headers changed. `below` keeps the rows under y,
+    `skip` drops a box such as the panel."""
+    d = np.abs(FRAME[n1] - FRAME[n2]).max(axis=2) > thresh
+    d[:VIEW[1], :] = False; d[VIEW[3]:, :] = False; d[:, :VIEW[0]] = False; d[:, VIEW[2]:] = False
+    if below is not None:
+        d[below:, :] = False
+    if skip is not None:
+        d[skip[1]:skip[3] + 1, skip[0]:skip[2] + 1] = False
+    if not d.any():
+        return None
+    ys, xs = np.where(d)
+    return int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())
+
+
+def is_popup(b):
+    return b is not None and (b[2] - b[0]) > 100 and (b[3] - b[1]) > 40
+
+
+def brightest(name, box):
+    x0, y0, x1, y1 = box
+    return float(FRAME[name][y0:y1, x0:x1].max())
+
+
+def items_box(b):
+    """The tear-off's rows below its first item."""
+    return b[0] + 6, b[1] + 2, b[2] - 6, b[3] - 52
+
+
+def first_item_box(b):
+    return b[0] + 6, b[3] - 50, b[0] + 150, b[3] - 32
+
+
+def label_box(b):
+    """The left of the header row. The icons can move, because the width follows the content."""
+    return b[0], b[3] - 24, b[0] + 100, b[3]
+
+
+def panel_row(i=0):
+    """Row i of the torn-off SIM_PT_enum."""
+    return PANEL["xmin"] + 110, PANEL["ymax"] - 55 - 25 * i
+
+
+def open_dropdown(i, name):
+    """Click row i of the torn-off panel and return the bbox of what opened under the button.
+    The button itself highlights, so the rows from its bottom edge upward are left out."""
+    x, y = panel_row(i)
+    yield from click(x, y); yield 0.4
+    yield from grab(name)
+    d = view_bbox(PANEL["shot"], name, below=y - 12)
+    log("dropdown", name, "button", (x, y), "bbox", d)
+    return d
+
+
+def pivot_item_y(d, i):
+    """Item i in the attached pivot dropdown, measured up from its bottom edge."""
+    return d[1] + MENU_BOTTOM + ROW * (len(PIVOTS) - 1 - i)
+
+
+def pivot_row_y(d):
+    """The Tear Off row in the attached pivot dropdown: above the items and their line."""
+    return d[1] + MENU_BOTTOM + ROW * len(PIVOTS) + LINE
+
+
+def open_pivot_panel():
+    """Open SIM_PT_enum high in the viewport, so a dropdown has room to open downward."""
+    cx, cy = center()
+    move(cx, cy + 250); yield 0.3
+    yield from open_panel(name="SIM_PT_enum")
+
+
+def dopesheet_area():
+    """Turn the largest area other than the 3D View into a Dope Sheet, and return its index among
+    the Dope Sheets, because the short timeline at the bottom may already count as one."""
+    a = max((a for a in scr().areas if a.type != "VIEW_3D"), key=lambda a: a.width * a.height)
+    a.type = "DOPESHEET_EDITOR"; yield 0.8
+    ptrs = [x.as_pointer() for x in scr().areas if x.type == "DOPESHEET_EDITOR"]
+    idx = ptrs.index(a.as_pointer())
+    log("dope sheet index", idx, "of", len(ptrs), "size", (a.width, a.height),
+        "mode", a.spaces.active.mode)
+    return idx
+
+
+def first_key():
+    from bpy_extras import anim_utils
+    ad = bpy.data.objects["Cube"].animation_data
+    bag = anim_utils.action_get_channelbag_for_slot(ad.action, ad.action_slot)
+    return bag.fcurves[0].keyframe_points[0]
+
+
+def s_after_ctx():
+    yield from setup()
+    idx = yield from dopesheet_area()
+    move(*center()); yield 0.3
+    yield from grab("base")
+    tear_menu("SIM_MT_ctx", t="DOPESHEET_EDITOR", rt="WINDOW", idx=idx); yield 0.8
+    yield from grab("m")
+    b = bbox("base", "m"); log("tear-off bbox", b)
+    check("menu appears over the 3D View", b is not None, b)
+    st = SIM_OT_area_probe.state
+    x, y = tear_row(b)
+    yield from click(x, y); yield 0.4
+    check("probe runs in the tear-off's own area", st["area"] == "DOPESHEET_EDITOR", st)
+    # The cursor stays over the tear-off through the switch, with the 3D View under it.
+    st["area"] = None
+    main = win().workspace
+    win().workspace = bpy.data.workspaces["Shading"]; yield 1.2
+    yield from grab("other")
+    win().workspace = main; yield 1.0
+    yield from grab("back")
+    yield from click(x, y); yield 0.4
+    check("probe keeps its area after a workspace round trip",
+          st["area"] == "DOPESHEET_EDITOR",
+          st)
+
+
+SC["after_ctx"] = s_after_ctx
+
+
+def s_row_value():
+    yield from setup()
+    ts = bpy.context.tool_settings
+    ts.transform_pivot_point = "CURSOR"; yield 0.3
+    yield from open_pivot_panel()
+    x = panel_row(0)[0]
+    # A regular item still applies.
+    d = yield from open_dropdown(0, "dd1")
+    yield from click(x, pivot_item_y(d, 2)); yield 0.4
+    check("a regular item still applies",
+          ts.transform_pivot_point == "INDIVIDUAL_ORIGINS",
+          ts.transform_pivot_point)
+    ts.transform_pivot_point = "CURSOR"; yield 0.3
+    # The row picks no value.
+    d = yield from open_dropdown(0, "dd2")
+    y = pivot_row_y(d); log("row click", (x, y))
+    yield from click(x, y); yield 0.6
+    yield from to_rest()
+    yield from grab("after")
+    check("the row leaves the value alone",
+          ts.transform_pivot_point == "CURSOR",
+          ts.transform_pivot_point)
+    nb = view_bbox("base_po", "after", skip=PANEL["box"]); log("new popup", nb)
+    check("the row opens a tear-off", is_popup(nb), nb)
+    # Same for a menu attached to a property, the live bug at properties_render.py:131.
+    prefs = bpy.context.preferences
+    settings = bpy.context.scene.sequencer_colorspace_settings
+    settings.name = "Non-Color"; yield 0.3
+    prefs.use_tear_off = False; yield 0.6
+    move(*center()); yield 0.5
+    prefs.use_tear_off = True; yield 0.4
+    cx, cy = center(); move(cx, cy + 250); yield 0.3
+    yield from open_panel("b2", "SIM_PT_enum")
+    d = yield from open_dropdown(1, "dd3")
+    # This menu has no title, and its length depends on the color config, so measure from its top.
+    mx, my = panel_row(1)
+    y = my - 12 - (TEAR_ROW0 - ROW - LINE); log("menu row click", (mx, y))
+    yield from click(mx, y); yield 0.6
+    yield from to_rest()
+    yield from grab("after3")
+    check("the menu's row leaves the value alone", settings.name == "Non-Color", settings.name)
+    nb = view_bbox("b2_po", "after3", skip=PANEL["box"]); log("new popup from the menu", nb)
+    check("the menu's row opens a tear-off", nb is not None, nb)
+
+
+SC["row_value"] = s_row_value
+
+
+def s_num_keys():
+    yield from setup()
+    ts = bpy.context.tool_settings
+    ts.transform_pivot_point = "CURSOR"; yield 0.3
+    yield from open_pivot_panel()
+    x = panel_row(0)[0]
+    d = yield from open_dropdown(0, "dd1")
+    y = pivot_item_y(d, 3)
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    yield from type_key("ONE", x, y, "1"); yield 0.6
+    yield from to_rest()
+    yield from grab("after1")
+    check("key 1 picks the first item",
+          ts.transform_pivot_point == "BOUNDING_BOX_CENTER",
+          ts.transform_pivot_point)
+    nb = view_bbox("base_po", "after1", skip=PANEL["box"]); log("after key 1", nb)
+    check("key 1 does not tear off", not is_popup(nb), nb)
+    d = yield from open_dropdown(0, "dd2")
+    y = pivot_item_y(d, 3)
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    yield from type_key("TWO", x, y, "2"); yield 0.6
+    check("key 2 picks the second item",
+          ts.transform_pivot_point == "CURSOR",
+          ts.transform_pivot_point)
+
+
+SC["num_keys"] = s_num_keys
+
+
+def s_multicol_header():
+    yield from setup(); yield from grab("base")
+    tear_menu("SIM_MT_cols"); yield 0.8
+    yield from to_rest()
+    yield from grab("m")
+    b = bbox("base", "m"); log("multi-column tear-off", b)
+    check("menu appears", b is not None, b)
+    st = SIM_OT_area_probe.state
+    yield from click(b[2] - 60, b[3] - TEAR_ROW0); yield 0.4
+    check("an item in the last column clicks", st["runs"] == 1, st)
+    yield from click(b[2] - 34, b[3] - 14)
+    yield from to_rest()
+    yield from grab("col")
+    c = bbox("base", "col"); log("collapsed", c)
+    check("pin icon collapses", c is not None and (c[3] - c[1]) < 60, c)
+    yield from click(c[2] - 40, (c[1] + c[3]) // 2)
+    yield from to_rest()
+    yield from grab("exp")
+    check("pin icon expands in place", rdiff("m", "exp") < 400, rdiff("m", "exp"))
+    yield from click(b[2] - 14, b[3] - 14)
+    yield from to_rest()
+    yield from grab("after")
+    check("X closes it", rdiff("base", "after") < 200, rdiff("base", "after"))
+
+
+SC["multicol_header"] = s_multicol_header
+
+
+def s_enum_prop():
+    yield from setup()
+    ts = bpy.context.tool_settings
+    ts.transform_pivot_point = "ACTIVE_ELEMENT"; yield 0.3
+    yield from grab("base")
+    r = tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    check("operator runs", r == {"INTERFACE"}, r)
+    check("tearing off leaves the value",
+          ts.transform_pivot_point == "ACTIVE_ELEMENT",
+          ts.transform_pivot_point)
+    yield from to_rest()
+    yield from grab("m")
+    b = bbox("base", "m"); log("pivot tear-off", b)
+    check("tear-off appears", is_popup(b), b)
+    # In this order each click changes the value, and the last one differs from frame "m".
+    for i in (0, 1, 2, 4, 3):
+        x, y = tear_row(b, i); log("click item", i, (x, y))
+        yield from click(x, y); yield 0.3
+        check("item applies: " + PIVOTS[i],
+              ts.transform_pivot_point == PIVOTS[i],
+              ts.transform_pivot_point)
+    yield from to_rest()
+    yield from grab("after")
+    check("stays open in place",
+          rdiff("m", "after", label_box(b)) < 100,
+          rdiff("m", "after", label_box(b)))
+    check("the highlight follows", rdiff("m", "after", b) > 100, rdiff("m", "after", b))
+    ts.transform_pivot_point = "CURSOR"; yield 0.6
+    yield from grab("py")
+    check("follows a change from elsewhere",
+          rdiff("after", "py", b) > 100,
+          rdiff("after", "py", b))
+
+
+SC["enum_prop"] = s_enum_prop
+
+
+def s_enum_gone():
+    yield from setup(); yield from grab("base")
+    ob = bpy.context.view_layer.objects.active
+    ob.rotation_mode = "XYZ"
+    bpy.ops.ed.undo_push(message="before")
+    r = tear_enum(id_type=ID_OB, session_uid=ob.session_uid, data_path="rotation_mode"); yield 0.8
+    check("operator runs", r == {"INTERFACE"}, r)
+    yield from to_rest()
+    yield from grab("m")
+    b = bbox("base", "m"); log("rotation mode tear-off", b)
+    yield from click(*tear_row(b, 3)); yield 0.4
+    check("an item applies", ob.rotation_mode == "YXZ", ob.rotation_mode)
+    yield from to_rest()
+    yield from grab("clicked")
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.delete(use_global=False, confirm=False)
+    yield 0.6
+    yield from to_rest()
+    yield from grab("gone")
+    check("object gone", "Cube" not in bpy.data.objects)
+    check("the items are gone",
+          rdiff("clicked", "gone", items_box(b)) > 500,
+          rdiff("clicked", "gone", items_box(b)))
+    check("the header stays",
+          rdiff("clicked", "gone", label_box(b)) < 100,
+          rdiff("clicked", "gone", label_box(b)))
+    lit, gray = brightest("clicked", first_item_box(b)), brightest("gone", first_item_box(b))
+    check("the row is gray", gray < lit, (lit, gray))
+    # Nothing to run here, it only must not crash.
+    yield from click(*tear_row(b, 0)); yield 0.4
+    bpy.ops.ed.undo_push(message="deleted")
+    with bpy.context.temp_override(window=win(), screen=scr()):
+        bpy.ops.ed.undo()
+    yield 0.8
+    yield from to_rest()
+    yield from grab("undone")
+    check("object back after undo", "Cube" in bpy.data.objects)
+    check("the items return", rdiff("clicked", "undone", b) < 400, rdiff("clicked", "undone", b))
+    yield from click(*tear_row(b, 1)); yield 0.4
+    mode = bpy.data.objects["Cube"].rotation_mode
+    check("an item applies after undo", mode == "XYZ", mode)
+
+
+SC["enum_gone"] = s_enum_gone
+
+
+def s_enum_bad():
+    yield from setup(); yield from grab("base")
+    cases = (
+        dict(id_type=1, session_uid=1, data_path="x"),
+        dict(),
+        dict(id_type=ID_OB, session_uid=2147480000, data_path="rotation_mode"),
+        dict(use_context=True, data_path="no.such.path"),
+        dict(use_context=True, data_path="scene.frame_current"),
+        dict(op_idname="SIM_OT_no_such_operator", op_propname="type"),
+    )
+    for kw in cases:
+        r = tear_enum(**kw); yield 0.3
+        check("refused: " + str(kw), r == {"CANCELLED"}, r)
+    move(*center()); yield 0.3
+    yield from grab("after")
+    check("nothing opened", rdiff("base", "after") < 200, rdiff("base", "after"))
+
+
+SC["enum_bad"] = s_enum_bad
+
+
+def s_enum_py():
+    yield from setup()
+    sc = bpy.context.scene
+    bpy.types.Scene.sim_enum = bpy.props.EnumProperty(
+        name="Sim Enum", items=SIM_ENUM_ITEMS, default="A1")
+    yield 0.3
+    yield from open_pivot_panel()
+    # Attached, for the author to compare with the tear-off below.
+    px, py = panel_row(2)
+    a = yield from open_dropdown(2, "attached")
+    yield from type_key("ESC", px, py); yield 0.4
+    cx, cy = center()
+    move(cx, cy - 50); yield 0.3
+    move(cx, cy - 50); yield 0.3
+    yield from grab("before")
+    r = tear_enum(use_context=True, data_path="scene.sim_enum"); yield 0.8
+    check("operator runs", r == {"INTERFACE"}, r)
+    yield from to_rest()
+    yield from grab("m")
+    limit = cy + 60  # Below the panel, which keeps its place at the top.
+    b = view_bbox("before", "m", below=limit); log("attached", a, "torn off", b)
+    check("tear-off appears", is_popup(b), b)
+    # The bottom row holds the last item of each column.
+    y = b[1] + MENU_BOTTOM
+    yield from click(b[0] + (b[2] - b[0]) // 4, y); yield 0.4
+    check("left column applies", sc.sim_enum == "A2", sc.sim_enum)
+    yield from click(b[2] - (b[2] - b[0]) // 4, y); yield 0.4
+    check("right column applies", sc.sim_enum == "B2", sc.sim_enum)
+    yield from to_rest()
+    yield from grab("clicked")
+    yield from click(b[2] - 34, b[3] - 14)
+    yield from to_rest()
+    yield from grab("col")
+    c = view_bbox("before", "col", below=limit); log("collapsed", c)
+    check("pin icon collapses", c is not None and (c[3] - c[1]) < 60, c)
+    yield from click(c[2] - 40, (c[1] + c[3]) // 2)
+    yield from to_rest()
+    yield from grab("exp")
+    check("pin icon expands in place",
+          rdiff("clicked", "exp", b) < 400,
+          rdiff("clicked", "exp", b))
+    del bpy.types.Scene.sim_enum
+    sc.frame_current += 1; yield 0.6  # Any notifier not for the screen or space refreshes it.
+    yield from to_rest()
+    yield from grab("gone")
+    g = view_bbox("before", "gone", below=limit); log("after the property went away", g)
+    check("the items are gone",
+          rdiff("clicked", "gone", items_box(b)) > 500,
+          rdiff("clicked", "gone", items_box(b)))
+    check("the header stays",
+          rdiff("clicked", "gone", label_box(b)) < 100,
+          rdiff("clicked", "gone", label_box(b)))
+    yield from click(g[2] - 14, g[3] - 14)
+    yield from to_rest()
+    yield from grab("closed")
+    check("X closes it", rdiff("before", "closed", g) < 50, rdiff("before", "closed", g))
+
+
+SC["enum_py"] = s_enum_py
+
+
+def s_enum_pref():
+    yield from setup(); yield from grab("base")
+    prefs = bpy.context.preferences
+    check("operator polls while on", bpy.ops.wm.enum_tear_off.poll())
+    tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    yield from to_rest()
+    yield from grab("m")
+    check("tear-off appears", is_popup(bbox("base", "m")), bbox("base", "m"))
+    prefs.use_tear_off = False
+    yield 0.6
+    move(*center()); yield 0.5
+    yield from grab("off")
+    check("turning it off closes it", rdiff("base", "off") < 300, rdiff("base", "off"))
+    check("operator fails poll while off", not bpy.ops.wm.enum_tear_off.poll())
+    prefs.use_tear_off = True
+    yield 0.4
+    move(*center()); yield 0.3
+    tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    yield from grab("again")
+    check("works again after turning it back on", bbox("base", "again") is not None)
+
+
+SC["enum_pref"] = s_enum_pref
+
+
+def s_enum_new():
+    yield from setup(cube=False); yield from grab("base")
+    ob = bpy.data.objects["Camera"]
+    tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    yield from to_rest()
+    yield from grab("m1")
+    b1 = bbox("base", "m1")
+    cx, cy = center()
+    move(cx - 400, cy); yield 0.3
+    tear_enum(id_type=ID_OB, session_uid=ob.session_uid, data_path="rotation_mode"); yield 0.8
+    yield from to_rest()
+    yield from grab("m2")
+    b2 = bbox("m1", "m2"); log("tear-offs", b1, b2)
+    yield from click(20, 987); yield 0.4
+    yield from click(52, 937); yield 1.5
+    yield from to_rest()
+    yield from grab("after")
+    check("file load closes the context tear-off",
+          rdiff("base", "after", b1) < 300,
+          rdiff("base", "after", b1))
+    check("file load closes the ID tear-off",
+          rdiff("base", "after", b2) < 300,
+          rdiff("base", "after", b2))
+    move(600, 600); yield 0.3
+    press(600, 600); yield 0.05
+    release(600, 600); yield 0.4
+    yield from grab("after2")
+
+
+SC["enum_new"] = s_enum_new
+
+
+def s_enum_op():
+    yield from setup()
+    ob = bpy.data.objects["Cube"]
+    ob.keyframe_insert("location", frame=1)
+    first_key().select_control_point = True
+    yield 0.3
+    idx = yield from dopesheet_area()
+    move(*center()); yield 0.3
+    yield from grab("base")
+    r = tear_enum(t="DOPESHEET_EDITOR", rt="WINDOW", idx=idx, op_idname="ACTION_OT_keyframe_type",
+                  op_propname="type", op_context=1)  # 1 is OpCallContext::InvokeRegionWin.
+    yield 0.8
+    check("operator runs", r == {"INTERFACE"}, r)
+    yield from to_rest()
+    yield from grab("m")
+    b = bbox("base", "m"); log("keyframe type tear-off", b)
+    check("tear-off appears", is_popup(b), b)
+    for i in (1, 3):
+        was = first_key().type
+        yield from click(*tear_row(b, i)); yield 0.4
+        check(f"clicking row {i} sets the keyframe type",
+              first_key().type != was,
+              (was, first_key().type))
+    main = win().workspace
+    win().workspace = bpy.data.workspaces["Shading"]; yield 1.2
+    win().workspace = main; yield 1.0
+    was = first_key().type
+    yield from click(*tear_row(b, 0)); yield 0.4
+    check("clicks still apply after a workspace round trip",
+          first_key().type != was,
+          (was, first_key().type))
+    # A Python operator goes away and comes back.
+    bpy.utils.register_class(SIM_OT_enum); yield 0.3
+    cx, cy = center()
+    move(cx - 400, cy); yield 0.3
+    yield from grab("before2")
+    r = tear_enum(op_idname="SIM_OT_enum", op_propname="type", op_context=1); yield 0.8
+    check("Python operator tears off", r == {"INTERFACE"}, r)
+    yield from to_rest()
+    yield from grab("m2")
+    b2 = bbox("before2", "m2"); log("Python operator tear-off", b2)
+    st = SIM_OT_enum.state
+    yield from click(*tear_row(b2, 0)); yield 0.4
+    check("its item runs", st["type"] == "FIRST", st)
+    yield from to_rest()
+    yield from grab("clicked2")
+    bpy.utils.unregister_class(SIM_OT_enum); yield 0.6
+    yield from to_rest()
+    yield from grab("gone")
+    check("gray row once unregistered",
+          rdiff("clicked2", "gone", items_box(b2)) > 500,
+          rdiff("clicked2", "gone", items_box(b2)))
+    lit, gray = brightest("clicked2", first_item_box(b2)), brightest("gone", first_item_box(b2))
+    check("the row is gray", gray < lit, (lit, gray))
+    yield from click(*tear_row(b2, 0)); yield 0.4
+    bpy.utils.register_class(SIM_OT_enum); yield 0.3
+    bpy.context.scene.frame_current += 1; yield 0.6  # Registering sends nothing that refreshes it.
+    yield from to_rest()
+    yield from grab("back")
+    check("items return once registered",
+          rdiff("clicked2", "back", b2) < 400,
+          rdiff("clicked2", "back", b2))
+    yield from click(*tear_row(b2, 1)); yield 0.4
+    check("its item runs again", st["type"] == "SECOND", st)
+
+
+SC["enum_op"] = s_enum_op
