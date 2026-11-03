@@ -6544,6 +6544,48 @@ static bool layout_has_panel_label(const Layout *layout, const PanelType *pt)
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: #tear_off_header_draw for a panel, with its own header buttons. The
+ * root of a popover skips draw_header, so enable checkboxes vanished. The preset goes before the
+ * icons, because #block_tear_off_multi_column_start needs the close icon right before the line. */
+static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel, Layout *layout)
+{
+  const char *label = CTX_IFACE_(pt->translation_context, pt->label);
+  const bool has_header = !(pt->flag & PANEL_TYPE_NO_HEADER);
+  const EmbossType prev_emboss = layout->emboss_or_undefined();
+  layout->emboss_set(EmbossType::Pulldown);
+  Layout *row = &layout->row(true);
+  if (pt->draw_header && has_header) {
+    Layout *left = &row->row(true);
+    left->fixed_size_set(true);
+    left->label("", ICON_GRIP);
+    /* Region headers are embossed. Pulldown would make a checkbox look like a menu item. */
+    left->emboss_set(EmbossType::Emboss);
+    panel->layout = left;
+    pt->draw_header(C, panel);
+    panel->layout = nullptr;
+    /* draw_header can add the label itself in a row tear-off, through
+     * `text=self.bl_label if self.is_popover`. The empty label keeps the icons on the right. */
+    row->label(layout_has_panel_label(left, pt) ? "" : label, ICON_NONE);
+  }
+  else {
+    row->label(label, ICON_GRIP);
+  }
+  if (pt->draw_header_preset && has_header) {
+    Layout *preset = &row->row(true);
+    preset->fixed_size_set(true);
+    preset->emboss_set(EmbossType::Emboss);
+    panel->layout = preset;
+    pt->draw_header_preset(C, panel);
+    panel->layout = nullptr;
+  }
+  Layout *icons = &row->row(true);
+  icons->fixed_size_set(true);
+  icons->op("WM_OT_panel_tear_off_collapse", "", ICON_UNPINNED);
+  icons->op("WM_OT_panel_tear_off_close", "", ICON_PANEL_CLOSE);
+  layout->emboss_set(prev_emboss);
+  layout->separator(1.0f, LayoutSeparatorType::Line);
+}
+
 /* BFA - Tear-Off Menu/Panel: a region only polls top level panels, and it filters Properties
  * panels by tab, so panels rely on both. A tear-off has neither check, so a refresh would draw
  * with the None its poll guards against, and raise a Python error. Subpanels need the parent's
@@ -6645,13 +6687,17 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
       const bool is_tear_off = block->handle && block->handle->is_tear_off;
       if (is_tear_off) {
         tear_off_unavailable = !tear_off_panel_available(C, block->handle, pt);
-        tear_off_header_draw(body,
-                             pt->translation_context,
-                             pt->label,
-                             "WM_OT_panel_tear_off_collapse",
-                             "WM_OT_panel_tear_off_close");
+        /* BFA - Tear-Off Menu/Panel: draw_header can't read poll-guarded data this way. */
         if (tear_off_unavailable) {
+          tear_off_header_draw(body,
+                               pt->translation_context,
+                               pt->label,
+                               "WM_OT_panel_tear_off_collapse",
+                               "WM_OT_panel_tear_off_close");
           enum_tear_off_unavailable_draw(body);
+        }
+        else {
+          tear_off_panel_header_draw(C, pt, panel, body);
         }
       }
       else if (tear_off_enabled()) { /* BFA - Tear-Off Menu/Panel: no row when turned off. */
