@@ -1407,7 +1407,13 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
       /* block->rect is in window coordinates. Translate so the panel's top-left corner
        * (block->rect.xmin, block->rect.ymax) aligns with the stored pin position. */
       const float dx = handle->tear_off_pin_xy[0] - block->rect.xmin;
-      const float dy = handle->tear_off_pin_xy[1] - block->rect.ymax;
+      /* BFA - Tear-Off Menu/Panel: a pin can be above where #popup_block_clip stops the top, at
+       * any UI scale above 1 or after the window shrinks. Moved there, the clip would trim a block
+       * that fits, and the lost pixels would become a scroll range, arrows and a menu's gutter. */
+      const float pin_y = std::min<float>(handle->tear_off_pin_xy[1],
+                                          WM_window_native_pixel_size(window)[1] -
+                                              UI_POPUP_MENU_TOP);
+      const float dy = pin_y - block->rect.ymax;
       if (dx != 0.0f || dy != 0.0f) {
         block_translate(block, dx, dy);
         /* Re-clip after repositioning so the panel stays within window bounds.

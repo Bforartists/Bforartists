@@ -4321,3 +4321,44 @@ def s_p8_scale():
 
 
 SC["p8_scale"] = s_p8_scale
+
+
+def s_p8_top_band():
+    """At 200% a title drag stops 10 px higher than the popup clip allows. The next refresh has to
+    move the block down, because trimming it would invent a scroll range and a menu's gutter."""
+    S = 2.0
+    yield from setup()
+    prefs = bpy.context.preferences
+    prefs.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    prefs.view.ui_scale = S; yield 1.5
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("base")
+    n_draws = lambda: SIM_MT_short.state["draws"]
+    b = yield from opened(open_menu("SIM_MT_short"), "m", "the menu opens")
+    title_y = int(TITLE_MENU * S)
+    yield from title_drag(b, title_y, 0, 999 - (b[3] - title_y))
+    yield from grab("dragged")
+    around = (max(b[0] - 60, 0), 400, min(b[2] + 60, 1599), 999)
+    d = need(box_bbox("base", "dragged", around), "the menu moved up")
+    log("dragged", d, "from", b)
+    n0 = n_draws()
+    bpy.context.scene.frame_current += 1; yield 1.0
+    yield from park()
+    yield from grab("refreshed")
+    check("the frame change did refresh it", n_draws() > n0, (n0, n_draws()))
+    r = need(box_bbox("base", "refreshed", around), "the menu after the refresh")
+    log("refreshed", r)
+    check("it keeps its height", abs(height(r) - height(b)) <= 1, (b, r))
+    check("no gutter", abs(width(r) - width(b)) <= 1, (b, r))
+    # It fits, so there is nothing to scroll.
+    yield from wheel(mid_x(r), mid_y(r), True, 3)
+    yield from park()
+    yield from grab("wheeled")
+    n = rdiff("refreshed", "wheeled", r)
+    check("the wheel has nothing to scroll", n < 30, n)
+    prefs.view.ui_scale = 1.0; yield 1.0
+
+
+SC["p8_top_band"] = s_p8_top_band
