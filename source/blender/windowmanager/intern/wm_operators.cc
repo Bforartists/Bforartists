@@ -2531,6 +2531,41 @@ static void WM_OT_quit_blender(wmOperatorType *ot)
 /** \name Tear-Off Menu Operator
  * \{ */
 
+/* BFA - Tear-Off Menu/Panel: finish a popup just created as a tear-off. `label` names the
+ * collapsed pin widget, null leaves it empty. Does nothing if the popup wasn't created. */
+static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle, const char *label)
+{
+  if (handle == nullptr || handle->region == nullptr) {
+    return;
+  }
+
+  if (ui::Block *block = handle->region->runtime->uiblocks.first()) {
+    /* Make the popup persistent and pass-through for outside events. */
+    ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
+    ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
+    ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
+    ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
+
+    /* Remember the top-left corner so the collapsed pin widget appears where the header was.
+     * Stored in window coordinates because the collapsed region covers the whole window
+     * (region-local == window). */
+    handle->tear_off_pin_xy[0] = int(block->rect.xmin) + handle->region->winrct.xmin;
+    handle->tear_off_pin_xy[1] = int(block->rect.ymax) + handle->region->winrct.ymin;
+  }
+
+  /* Record the context this popup was torn off from so it can be hidden/restored when the editor
+   * domain or its mode changes. */
+  handle->tear_off_mode = CTX_data_mode_enum(C);
+  handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
+  handle->tear_off_workspace = CTX_wm_workspace(C);
+
+  if (label) {
+    BLI_strncpy(handle->tear_off_label, label, sizeof(handle->tear_off_label));
+  }
+
+  ED_region_tag_refresh_ui(handle->region);
+}
+
 /* BFA - Tear-Off Menu/Panel */
 static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
 {
@@ -2542,41 +2577,8 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
   wmOperatorStatus status = ui::popup_menu_invoke(C, idname, op->reports, &handle, true);
 
   /* BFA - Tear-Off Menu/Panel */
-  /* Make the popup persistent and pass-through for outside events */
-  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
-    ui::Block *block = handle->region->runtime->uiblocks.first();
-    ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
-    ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
-    ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
-    ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
-  }
-
-  /* BFA - Tear-Off Menu/Panel: record the context this menu was torn off from so it can be
-   * hidden/restored when the editor domain or its mode changes. */
-  if (handle) {
-    handle->tear_off_mode = CTX_data_mode_enum(C);
-    handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
-    handle->tear_off_workspace = CTX_wm_workspace(C);
-    /* BFA - Tear-Off Menu/Panel: remember the label for the collapsed pin widget. */
-    if (MenuType *mt = WM_menutype_find(idname, true)) {
-      BLI_strncpy(handle->tear_off_label,
-                  CTX_IFACE_(mt->translation_context, mt->label),
-                  sizeof(handle->tear_off_label));
-    }
-  }
-
-  /* BFA - Tear-Off Menu/Panel: remember the menu's top-left corner so the collapsed pin
-   * widget appears where the menu header was. Stored in window coordinates because the
-   * collapsed region covers the whole window (region-local == window). */
-  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
-    ui::Block *block = handle->region->runtime->uiblocks.first();
-    handle->tear_off_pin_xy[0] = int(block->rect.xmin) + handle->region->winrct.xmin;
-    handle->tear_off_pin_xy[1] = int(block->rect.ymax) + handle->region->winrct.ymin;
-  }
-
-  if (handle) {
-    ED_region_tag_refresh_ui(handle->region);
-  }
+  const MenuType *mt = WM_menutype_find(idname, true);
+  tear_off_handle_init(C, handle, mt ? CTX_IFACE_(mt->translation_context, mt->label) : nullptr);
 
   return status;
 }
@@ -2672,40 +2674,8 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
   wmOperatorStatus status = ui::popover_panel_invoke(C, idname, true, false, op->reports, &handle, true);
 
   /* BFA - Tear-Off Menu/Panel */
-  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
-    ui::Block *block = handle->region->runtime->uiblocks.first();
-    ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
-    ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
-    ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
-    ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
-  }
-
-  /* BFA - Tear-Off Menu/Panel: record the context this panel was torn off from so it can be
-   * hidden/restored when the editor domain or its mode changes. */
-  if (handle) {
-    handle->tear_off_mode = CTX_data_mode_enum(C);
-    handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
-    handle->tear_off_workspace = CTX_wm_workspace(C);
-    /* BFA - Tear-Off Menu/Panel: remember the label for the collapsed pin widget. */
-    if (PanelType *pt = WM_paneltype_find(idname, true)) {
-      BLI_strncpy(handle->tear_off_label,
-                  CTX_IFACE_(pt->translation_context, pt->label),
-                  sizeof(handle->tear_off_label));
-    }
-  }
-
-  /* BFA - Tear-Off Menu/Panel: remember the panel's top-left corner so the collapsed pin
-   * widget appears where the panel header was. Stored in window coordinates because the
-   * collapsed region covers the whole window (region-local == window). */
-  if (handle && handle->region && handle->region->runtime->uiblocks.first()) {
-    ui::Block *block = handle->region->runtime->uiblocks.first();
-    handle->tear_off_pin_xy[0] = int(block->rect.xmin) + handle->region->winrct.xmin;
-    handle->tear_off_pin_xy[1] = int(block->rect.ymax) + handle->region->winrct.ymin;
-  }
-
-  if (handle) {
-    ED_region_tag_refresh_ui(handle->region);
-  }
+  const PanelType *pt = WM_paneltype_find(idname, true);
+  tear_off_handle_init(C, handle, pt ? CTX_IFACE_(pt->translation_context, pt->label) : nullptr);
 
   /* BFA - Tear-Off Menu/Panel: close the original popover/menu
    * so it behaves like tear-off menus (original closes when torn off). */
