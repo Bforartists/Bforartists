@@ -13907,6 +13907,7 @@ void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area)
 /* BFA - Tear-Off Menu/Panel */
 void tear_off_handlers_region_exit(wmWindow *win, const ARegion *region)
 {
+  panel_tear_off_gesture_region_exit(win, region);
   for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
     if (handler_base.type != WM_HANDLER_TYPE_UI || bool(handler_base.flag & WM_HANDLER_DO_FREE)) {
       continue;

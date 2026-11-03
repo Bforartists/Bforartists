@@ -1481,6 +1481,8 @@ int handler_panel_region(bContext *C,
                          const Button *active_but);
 /* BFA - Tear-Off Menu/Panel: whether the panel header offers tearing off. */
 bool panel_can_be_torn_off(const ARegion *region, const Panel *panel);
+/* BFA - Tear-Off Menu/Panel: the gesture's handler must not keep a region that's being freed. */
+void panel_tear_off_gesture_region_exit(wmWindow *win, const ARegion *region);
 /**
  * Draw a panel integrated in buttons-window, tool/property lists etc.
  */
