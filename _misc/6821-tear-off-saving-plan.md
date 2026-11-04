@@ -4,6 +4,8 @@
 
 **Bforartists' factory default is Load UI off.** With default settings a file's own pins don't load: you keep the workspaces you have, and their pins. Pins in the startup file load at the start of a session either way. Recover Last Session follows Load UI too.
 
+**Picking the template already in use, with Load UI off, keeps the current workspaces and their pins.** Upstream's rule, unchanged: a template forces its UI only when it differs from the current one. Measured as the same on this build, a build without tear-offs, and 5.2.3. A different template always resets.
+
 **The request:**
 - With **Load UI on**, opening a file brings back the panels pinned in that file.
 - With **Load UI off**, you keep the workspaces you have, and their pinned panels.

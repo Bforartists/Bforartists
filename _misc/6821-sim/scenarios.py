@@ -7558,6 +7558,90 @@ def s_review2_hidden_grab():
 SC["review2_hidden_grab"] = s_review2_hidden_grab
 
 
+def hover_size(rest, name, x, y, reach):
+    """The size of what lights up with the cursor on an icon."""
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    yield from grab(name)
+    b = box_bbox(rest, name, (int(x - reach), int(y - reach), int(x + reach), int(y + reach)))
+    return b
+
+
+def glyph_centered(frame, box):
+    """How far the brightest part of an icon is from the center of its highlight."""
+    x0, y0, x1, y1 = box
+    px = FRAME[frame][y0:y1 + 1, x0:x1 + 1].mean(axis=2) > 0.8
+    ys, xs = np.where(px)
+    if len(xs) == 0:
+        return None
+    return (abs((int(xs.min()) + int(xs.max())) / 2 - (x1 - x0) / 2),
+            abs((int(ys.min()) + int(ys.max())) / 2 - (y1 - y0) / 2))
+
+
+def icons_are_square(name, title_y, scale, base="base"):
+    """Open and collapsed, for the pin and the X, with the cursor away and then on each."""
+    yield from park()
+    open_name = name + "_open"
+    yield from grab(open_name)
+    v = need(box_bbox(base, open_name, (30, 25, 1340, 999)), "it opens: " + name)
+    y = v[3] - int(title_y * scale)
+    pin_x, x_x = v[2] - int(PIN_ICON * scale), v[2] - int(X_ICON * scale)
+    # Well past the highlight, which only the icon under the cursor has.
+    reach = int(26 * scale)
+    # An icon's ink is in the frame at rest too, so this is what the highlight adds around it.
+    for label, x in (("pin", pin_x), ("x", x_x)):
+        b = yield from hover_size(open_name, name + "_open_" + label, x, y, reach)
+        size = None if b is None else (width(b) + 1, height(b) + 1)
+        log(name, "open", label, size, b)
+        check(f"{name}: open {label} is square", size is not None and size[0] == size[1], size)
+        if label == "x" and b:
+            off = glyph_centered(name + "_open_" + label, b)
+            log(name, "x glyph off center", off)
+            check(f"{name}: and its X is centered", off is not None and max(off) <= 1, off)
+    yield from click(pin_x, y)
+    yield from park()
+    col_name = name + "_col"
+    yield from grab(col_name)
+    # Lit, then at rest it fades, so compare against the strip with the cursor on it.
+    move(v[0] + int(8 * scale), y); yield 0.3
+    move(v[0] + int(8 * scale), y); yield 0.3
+    yield from grab(name + "_hot")
+    for label, x in (("pin", pin_x), ("x", x_x)):
+        b = yield from hover_size(name + "_hot", name + "_col_" + label, x, y, reach)
+        size = None if b is None else (width(b) + 1, height(b) + 1)
+        log(name, "collapsed", label, size)
+        check(f"{name}: collapsed {label} is square", size is not None and size[0] == size[1], size)
+    yield from click(x_x, y)
+    yield from park()
+
+
+def s_p13_icons_square():
+    """The close button and pin at 100%, and at a scale where layout lands on fractions."""
+    yield from begin()
+    for scale in (1.0, 1.25):
+        bpy.context.preferences.view.ui_scale = scale
+        yield 0.8
+        yield from park()
+        base = f"base_{scale}"
+        yield from grab(base)
+        move(*center()); yield 0.3
+        tear_menu("VIEW3D_MT_object"); yield 0.8
+        yield from icons_are_square(f"menu_{scale}", TITLE_MENU, scale, base)
+        move(*center()); yield 0.3
+        tear_panel("SIM_PT_field"); yield 0.8
+        yield from icons_are_square(f"popover_{scale}", TITLE_Y, scale, base)
+        move(*center()); yield 0.3
+        with bpy.context.temp_override(**override("VIEW_3D", "UI")):
+            bpy.ops.wm.panel_tear_off(panel_idname="VIEW3D_PT_tools_active", from_region_panel=True)
+        yield 0.8
+        yield from icons_are_square(f"panel_{scale}", 12, scale, base)
+    bpy.context.preferences.view.ui_scale = 1.0
+    yield 0.3
+
+
+SC["p13_icons_square"] = s_p13_icons_square
+
+
 def s_review2_narrow_shelf():
     """From a very narrow shelf, what isn't layout can be more than the width. That's still valid."""
     yield from setup()
