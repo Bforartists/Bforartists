@@ -1,6 +1,6 @@
 # Saving Pinned Panels in the File and Startup: Plan (#6821)
 
-**Status:** plan only, nothing built. A test user asked for it, so this replaces the "not built" note in `_misc/6821-tear-off-completion-plan.md`.
+**Status:** in progress, see the build order. A test user asked for this. The first draft was checked against the code by independent reviews, which found one blocker and twelve major problems. This version has the corrections. It comes from reading the code until each phase's tests say otherwise.
 
 **The request:**
 - With **Load UI on**, opening a file brings back the panels pinned in that file.
@@ -8,158 +8,165 @@
 - Save Startup File keeps pins too.
 - Files must keep working in Blender.
 
-Line numbers are from `tear_off` at `c1a16d7a8bf` and will drift.
-
 ## The idea
 
-**Store the pins on the workspace, as a custom property.**
+**Store the pins on the workspace, as a system property.**
 
 Blender already decides where workspaces come from, and this rule matches the request, so nothing has to check Load UI:
 
-| Action | Workspaces come from (`setup_app_data`, `blendfile.cc:923`) | Pins you get |
+| Action | Workspaces come from (`setup_app_data`) | Pins you get |
 |---|---|---|
 | Open, Load UI on | The file | The file's |
 | Open, Load UI off | Kept from the session | The ones you have now |
-| Start the app, File > New | The startup file | The startup file's |
+| Start the app | The startup file | The startup file's |
+| File > New | Follows Load UI, as above | The startup file's, or the ones you have now |
 | Load Factory Settings | Factory startup | None |
 | Open an old file, or one saved in Blender | The file | None, as today |
 | Library or asset file | Kept from the session (treated as Load UI off) | The ones you have now |
 
 ## Blender compatibility
 
-- **No DNA change, no versioning and no version bump.** A custom property is ordinary data that `BKE_id_blend_write` writes for every ID (`workspace.cc:136`).
-- **Opened in Blender:** the pins don't appear, and the file works normally. Blender keeps the property and writes it back when it saves, so the pins are still there when the file returns to Bforartists.
-- **One visible trace:** in Blender, the property shows in the Workspace tab's Custom Properties panel. Bforartists hides it there.
-
-This comes from reading the code. I didn't find a stock Blender on this machine to confirm the round trip, so it's a hand test below.
+- **No DNA change, no versioning and no version bump.** `ID.system_properties` is ordinary data, written, read, copied and freed for every ID like custom properties, and every 5.x version has it.
+- **It isn't visible.** System properties aren't listed in the Custom Properties panel or in `keys()`, so Bforartists and Blender both show nothing, with no change to `rna_prop_ui.py`.
+- **Opened in Blender with Load UI on:** the pins don't appear and the file works normally. Blender keeps the property and writes it back when it saves, so the pins are still there when the file returns to Bforartists. This comes from reading the code, so it's a hand test below.
+- **A save with Load UI off** writes the session's pins, because those are the workspaces in that file.
 
 ### Alternatives ruled out
 
 | Option | Why not |
 |---|---|
-| New DNA list on `WorkSpace` | Blender would drop it on save, it needs versioning code, and it adds merge conflicts every week. `CLAUDE.md` says to avoid BFA-only DNA where it can be avoided |
-| On `wmWindow` | Load UI off discards the file's windows, so pins couldn't follow the workspace, and there is no idprop slot anyway |
+| Custom properties (`id.properties`) | They show in the Custom Properties panel, in the sidebar's and Properties editor's Tool tabs, and need a change there |
+| New DNA list on `WorkSpace` | Blender would drop it on save, it needs versioning code, and it adds merge conflicts every week |
+| On `wmWindow` | Load UI off discards the file's windows, so pins couldn't follow the workspace |
 | In Preferences | Not per file, and it can't differ between Load UI on and off |
-| In a Text data-block or from Python | Visible clutter for users, and the panel state lives in C++ |
 
 ## How it works
 
 ### Storage
 
-`workspace["bfa_tear_offs"]`: a list with one group per pin, oldest first, so they stack as they did.
+`workspace.id.system_properties["bfa_tear_offs"]`: a group of groups named by a decimal counter, oldest first, so they stack as they did. Not an `IDP_IDPARRAY`, which can't remove from the middle. A file with no pins has no property.
 
-| Field | Meaning |
-|---|---|
-| `version` | Format number. An unknown version is left alone, not read |
-| `kind` | Menu, panel or enum |
-| `idname` | Menu or panel type |
-| `from_region` | Torn off a region, not a popover's row |
-| `space`, `region`, `mode` | `tear_off_spacetype`, `tear_off_ctx_region_type`, `tear_off_mode` |
-| `x`, `y` | Top left, without UI scale. `y` counts from the window's top, so a shorter window keeps pins near the top |
-| `collapsed` | `tear_off_collapsed` |
-| `width`, `width_default`, `width_chrome` | The width fields, already without UI scale |
-| `height` | `tear_off_user_height` |
-| `scroll` | `scrolloffset`, without UI scale |
-| `enum_*` | ID type and name, data path and property (enums only) |
+| Field | Type | Kinds | Meaning and validation |
+|---|---|---|---|
+| `version` | int | all | 1. An unknown version is kept unread and saved again, for a later Bforartists |
+| `kind` | string | all | `MENU`, `PANEL` or `ENUM` |
+| `winid` | int | all | Preferred window |
+| `space` | int | all | `tear_off_spacetype`. 0 means none: no area and no mode check |
+| `region` | int | all | `tear_off_ctx_region_type`. -1 means none. A stored type that isn't found counts as no matching editor |
+| `area_index` | int | all | Which editor when there are two of a type. -1 means the first match |
+| `mode` | string | all | `CTX_data_mode_string`, because the enum's numbers aren't stable. Empty means none |
+| `x` | float | all | `pin_x / UI_SCALE_FAC`. Finite, within ±100000 |
+| `y` | float | all | `(win_h - pin_y) / UI_SCALE_FAC`, using the owner window's height, so a shorter window keeps pins near the top |
+| `collapsed` | bool | all | |
+| `height` | float | all | `tear_off_user_height`, ≥ 0 |
+| `scroll` | float | all | `scrolloffset / tear_off_scale_fac`, restored as `stored * UI_SCALE_FAC` |
+| `idname` | string | menu, panel | Within `MAX_NAME` |
+| `from_region` | bool | panel | |
+| `width`, `width_default`, `width_chrome` | float | panel | ≥ 0. `width_chrome` is at most `width` |
+| `use_context` | bool | enum | |
+| `id_type`, `id_name`, `lib_name` | int, string, string | enum | A valid type, not `ID_SCR` or `ID_WM`. The library's ID name, because a file path is machine-specific. Empty means local |
+| `data_path` | string | enum | Up to 1024 |
+| `op_idname`, `op_propname`, `op_context` | string, string, int | enum | `op_context` clamped to its range |
 
-An enum can't keep `id_session_uid`, since it changes every session, so it stores the ID's name and looks it up on restore. If the ID is gone, the pin is dropped.
+**Not stored:** `tear_off_hidden`, `tear_off_scale_fac`, `tear_off_workspace` (it owns the list), hover and drag state, enum labels and session IDs, and which inner layout sections are open.
 
-### Saving: three moments
+**Reading is treated as untrusted**, as a file can hold anything:
+- Root, list and entry are checked as sound groups before any lookup, on the save path too. Duplicate names could hang a removal.
+- Strings go through a local reader that checks the pointer, length and terminator.
+- Every number is checked with `std::isfinite` and its bounds.
+- A known version with invalid fields is dropped.
 
-`ui::tear_off_store_all(C)` writes each workspace's list from the open pins, plus any not yet restored (below). It runs at the first two moments, and the third stores one pin at a time.
+### Saving
 
-1. **Before a save:** in `wm_file_write` and `wm_homefile_write_exec`, right after `BKE_CB_EVT_SAVE_PRE` (`wm_files.cc:2228`, `:2683`).
-2. **Before a load:** in the first loop of `wm_file_read_setup_wm_init` (`wm_files.cc:246`), before `WM_event_remove_handlers` closes every popup. This is what keeps your pins through a Load UI off open, because every load closes them today.
-3. **When the preference turns off:** in the branch of `popup_handler` that closes each pin (`interface_handlers.cc:13900`), the pin goes on the list first. Otherwise a pin restored from the file, which has already left the list, would be lost on the next save. Closing a pin with its X doesn't store it, because that's the user removing it.
+`ui::TearOffSaveScope scope(bmain, wm)` sits directly around each `BLO_write_file`: `wm_file_write`, `wm_homefile_write_exec`, `WM_autosave_write` and the `quit.blend` write. Not `write_crash_blend`.
+
+It detaches the workspace's list, attaches a temporary one (the list's entries, then the open pins), and puts the original back afterwards. **The file gets the open pins, but the session's list stays only what's still to restore.** Otherwise a save would leave open pins on the list, and they'd come back duplicated, or after you closed them.
 
 Moving or pinning a panel doesn't mark the file as changed, the same as resizing an area.
 
-### Restoring: when a workspace is shown
+### When pins close without being removed
 
-The stored list is a to-do list. When a workspace becomes active in a window, its entries become real pins and leave the list. The open pins are the truth after that.
+Each of these puts the pin on the list first. The list then holds what would otherwise be lost:
 
-This keeps restoring simple and avoids the riskiest case. A workspace that isn't showing has a screen with no laid-out regions, which is no base for creating a popup. It's also why the source's context is always real here.
+1. **A file load**, once, before `WM_event_remove_handlers` closes every popup in `wm_file_read_setup_wm_init`. This is what keeps your pins through a Load UI off open. It runs only after the file was read, so a failed open loses nothing.
+2. **The preference turning off**, in the branch of `popup_handler` that closes each pin. It goes at the front of the list, which keeps their order.
+3. **A panel or menu type being unregistered**, in `refresh_or_remove_handler`: Reload Scripts, disabling an add-on, Load Preferences.
 
-- **After a load:** `wm_file_read_post` sets a flag, and the event loop handles it once the windows are ready. At startup there is no window yet when the file loads, so this can't run directly.
-- **On a workspace change:** a call at the end of `ED_workspace_change`.
-- **When the preference turns on:** `rna_userdef_tear_off_update` (`rna_userdef.cc:386`) sets the same flag as a load, so the pins return right away, with no need to reopen the file.
-- **Creating a pin:** through the existing `WM_OT_menu_tear_off`, `WM_OT_panel_tear_off` and `WM_OT_enum_tear_off`, called with the source's area and region. They already take `source_xy`, so this adds no second way to create one. The other fields are set on the handle afterwards, then it refreshes.
+**These remove a pin for good**, as they aren't stored: closing it with the X, deleting its workspace, and closing a secondary window. A pin made in a temporary window, such as Preferences, is never stored, or it would come back as junk forever.
+
+### Restoring
+
+The list is a to-do list. When a workspace is showing in a window, its entries become real pins and leave the list. The open pins are the truth after that.
+
+**One route:** `ui::tear_off_restore_tag(wm)` sets `WindowManagerRuntime::tear_off_restore_pending`, and `tear_off_restore_pending_run(C, wm)` runs from `wm_event_do_notifiers`, after the depsgraph update and before drawing, so no frame shows without them. At startup there's no window yet when the file loads, so this can't run directly. Creating them inside `ED_workspace_change` would also fire inside `context.temp_override(screen=...)`.
+
+**Tagged by:** `wm_file_read_post` (including Load Preferences), the preference turning on, `ED_workspace_change`, the `ND_MODE` listener, and an unregister.
+
+**For each window:**
+1. Skip it with no ghost window, or a temporary screen.
+2. If the workspace has entries and a blocking popup such as the splash is up, or the interface is locked, keep the flag and try again next pass.
+3. Set the window, and bring the screen up to date.
+4. For each entry, up to 64:
+   - Read it into plain values, as the list can change during the operator.
+   - Resolve the area, by `area_index` if it still matches, otherwise the first match.
+   - If it has a `space` and the mode differs, keep it for later.
+   - Look the type up strictly in that region type, then globally. A crafted entry naming a panel from another editor could crash a C poll.
+   - Call the operator with the area and region set, using `ExecDefault`, because the region variants force the window region.
+   - Find the handle by comparing the newest popup before and after.
+   - Set widths, height and scroll, then `tear_off_collapsed` directly, then the pin position, then clamp if collapsed. The existing refresh tag moves it into place before anything draws.
+   - Look the entry up again by name and free it.
 
 ### Staying on the list
 
 Each of these stays on the list and is saved again, so nothing is lost:
 
-- **The panel doesn't exist right now:** for example, its add-on is off.
-- **The workspace has no matching editor:** it tries again on the next workspace change.
-- **The preference is off:** nothing is restored and nothing is erased, including pins that were open when it was turned off. Saving writes the same list back.
-
-## Size of the change
-
-| Where | What | About |
-|---|---|---|
-| `regions/interface_region_tear_off_store.cc` (new) | Store and restore | 300 lines |
-| `wm_files.cc` | Two save hooks, one load hook, one flag | 10 lines |
-| `wm_event_system.cc` | Run the flag | 5 lines |
-| `workspace_edit.cc` | Restore on a workspace change | 3 lines |
-| `interface_handlers.cc` | Store a pin before the preference closes it | 1 line |
-| `rna_userdef.cc` | Restore when the preference turns on | 3 lines |
-| `wm_operators.cc` | Enums accept an ID by name | 15 lines |
-| `scripts/modules/rna_prop_ui.py` | Hide the property in the Custom Properties panel | 3 lines |
-| `_misc/6821-sim/` | New scenarios | 200 lines |
-
-No changes to layout or drawing, and that one line in event handling. Almost all of it sits in one new file, so it's cheap to merge each week and easy to remove.
+- **The panel or menu doesn't exist right now:** for example, its add-on is off. It returns at the next restore moment, and no error is reported.
+- **The workspace has no matching editor.**
+- **It was pinned in another mode:** it returns on entering that mode.
+- **A menu whose poll fails in this mode.** A panel in the same situation is created and shows "Not available", as a live pin does, so its X still works.
+- **An enum whose ID isn't in this file,** as with Load UI off. It returns when the ID does.
+- **The preference is off:** nothing is restored and nothing is erased.
 
 ## Build order
 
-Each step compiles alone and gets its own commit.
+Each phase compiles alone, has its own tests and gets its own commits.
 
-1. **Store:** write and read the list, with its validation. Nothing calls it yet.
-2. **Save hooks:** check the property's contents from Python.
-3. **Restore:** the flag and workspace change, for menus and row popovers.
-4. **Region and shelf panels:** their width fields.
-5. **Enums:** lookup by ID name.
-6. **Hide the property.** Docs and manual.
+| Phase | What | Status |
+|---|---|---|
+| 0 | Collapsed fade | Done, `993d02c194a`. Scenarios `p13_pin_fade_stale`, `p13_pin_fade_bright` and the collapse set pass |
+| 1 | Store and save scope. Writes only, nothing restores yet | |
+| 2 | Entries that survive closing | |
+| 3 | Restore menus and row popovers | |
+| 4 | Region and shelf panels, crop, scroll, collapse | |
+| 5 | Enums | |
+| 6 | Docs and hand tests | |
 
-## Risks
+**The harness gains, in Phase 1:** `SIM_CONFIG`, `SIM_FACTORY=0` and `SIM_ARGS` in `run.sh`, and a new `run_chain.sh name` for what spans a restart: it runs `name_a`, then `name_b` on the same temporary config. Tests read a file's list by opening it with the preference off.
+
+## Risks and accepted limits
 
 | Risk | Answer |
 |---|---|
-| A file asks for a panel or path it shouldn't | It only names registered types and resolves RNA paths, with no evaluation, so it runs nothing that isn't already loaded. Every field is type-checked and clamped, and a bad entry is skipped |
+| A file names a panel, menu or path it shouldn't | It only names registered types and resolves RNA paths with no evaluation, so it runs nothing that isn't already loaded. Strict type lookup, `ID_SCR` and `ID_WM` rejected, and operator enums need their poll to pass. C menus guarded only by their own draw code are read in Phase 3 |
 | Window smaller, or another monitor | `tear_off_clamp_to_window` already handles it |
-| UI scale differs | Values are stored without scale, as the handle already keeps them |
-| Splash at startup | `tear_off_under_regular_popup` already handles a pin under a regular popup |
-| Slow startup | Only the active workspace's pins are created, which is usually a few |
-| Undo | Nothing is stored during undo steps, and the code that closes popups on load isn't part of undo. To be confirmed by the test below |
-| Duplicating a workspace | The copy gets entries not yet restored, but not open pins, as those are only written on save. Acceptable for a first version |
-| Autosave and Recover | Autosave can write from the undo memory without running the save hook, so a recovered file can have older pins. Acceptable |
+| UI scale differs | Stored scale-free and rounded on restore. A same-scale round trip stays exact |
+| Splash at startup | Pins wait until it closes |
+| Slow startup | Only the showing workspaces' pins are created, up to 64 per pass |
+| Undo | Workspaces aren't part of memfile undo, and undo doesn't close popups. Tested in Phase 2 |
+| Two windows on one workspace | Their pins merge on save, and return to the preferred window |
+| Duplicating a workspace | The copy gets entries not yet restored, but not open pins. Acceptable for a first version |
+| A live enum whose ID is already gone | It has no name to store, so a save drops it |
+| Inner layout sections | They reset to their defaults |
+| Autosave from undo memory | Can't be bracketed, so it may hold older pins |
+| Blender_Light's menu strip at rest | Stays under 3:1 over a dark viewport. Accepted |
 
-## Testing
+## Decisions
 
-**Scripted, in `_misc/6821-sim/`:**
+Accepted by the maintainer:
+1. Load UI off keeps the current session's pins, not a reset to what the startup file holds.
+2. Everything is saved, not only panels: menus and enums too.
+3. No new preference. Load UI is already the switch.
 
-| Scenario | Check |
-|---|---|
-| Round trip | Pin a menu, popover, region panel, shelf panel and enum. Save and open with `load_ui=True`: same place, size, crop, scroll and collapsed state |
-| Load UI off | Pins from file A, open file B with `load_ui=False`: A's pins stay, B's don't appear |
-| Load UI on | Same files with `load_ui=True`: B's pins appear, A's are gone |
-| Workspaces | Pins on an inactive workspace appear on first switch, and only once |
-| Startup | Save Startup File with a temporary config, restart: pins are back. Load Factory: none |
-| Missing add-on | Pin an add-on's panel, save, disable it, open, save, enable it, open: the pin is back |
-| Preference off | Open with it off, save, turn it on: the pin is back right away, and after reopening too |
-| Preference off, pins restored | Open with it on so the pins restore, turn it off, save, turn it on: they're back, and after reopening too |
-| Bad data | Wrong types and an unknown version in the property: no crash, and skipped |
-| Undo | Pin, undo, redo: nothing moves or closes |
-| Memory | No leaks under `--debug-memory` |
-
-**By hand:**
-- Save a file with pins, open it in stock Blender, save it there, and open it in Bforartists: the pins return.
-- Two windows on different workspaces.
-- A file from a larger monitor on a smaller one.
-
-## Decisions for the maintainer
-
-These have recommended defaults, and the plan assumes them unless you say otherwise.
-
-1. **Load UI off keeps the current session's pins.** This is how I read "the workspace pinned panels". They first came from the startup file, and any you've added since stay too. The alternative is resetting to what the startup file holds, which would throw away pins you just made.
-2. **Everything is saved, not only panels:** menus and enums too, because they look the same to a user.
-3. **No new preference.** Load UI is already the switch. It's easy to add one later if someone asks.
+For the maintainer to overrule:
+4. The collapsed strip rests at 60% color and 80% title, not a flat 50%. At 50%, a title over a white viewport drops to about 2.2:1 contrast. At 60% it's about 3:1. It's one constant.
+5. Closing a secondary window counts as removing its pins, as the X does, because that's what it does today.

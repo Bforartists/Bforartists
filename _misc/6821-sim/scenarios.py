@@ -5524,9 +5524,17 @@ def collapses_in_place(name, title_y, has_plain_title=True, title_end=48, base="
     v = need(box_bbox(base, open_name, box), "it opens: " + name)
     log(name, "open", v)
     pin_x, x_x, y = v[2] - PIN_ICON, v[2] - X_ICON, v[3] - title_y
+    # A column free of text and icons, in the header's row.
+    free_x = v[0] + (width(v) * 3 // 5 if free_x is None else free_x)
 
     yield from click(pin_x, y)
-    yield from park()
+    # It collapsed under the cursor, so it hasn't faded yet.
+    yield from grab(name + "_just")
+    n = float(np.abs(FRAME[open_name][y, free_x] - FRAME[name + "_just"][y, free_x]).max())
+    check(name + ": still solid right after collapsing", n <= 0.03, n)
+    # On the strip, but on no icon.
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
     yield from grab(col_name)
     c = need(box_bbox(base, col_name, box), "it collapses: " + name)
     log(name, "collapsed", c)
@@ -5546,8 +5554,6 @@ def collapses_in_place(name, title_y, has_plain_title=True, title_end=48, base="
         t_col = ink(col_name, (v[0] + 3, row[0], v[2] - title_end, row[1]))
         log(name, "title ink", t_open, t_col)
         check(name + ": the title stays", near(t_open, t_col), (t_open, t_col))
-    # A column free of text and icons, in the header's row.
-    free_x = v[0] + (width(v) * 3 // 5 if free_x is None else free_x)
     n = float(np.abs(FRAME[open_name][y, free_x] - FRAME[col_name][y, free_x]).max())
     check(name + ": the same color", n <= 0.03, (n, FRAME[open_name][y, free_x], FRAME[col_name][y, free_x]))
     n = corner_mismatch(open_name, col_name, v, base)
@@ -5561,6 +5567,25 @@ def collapses_in_place(name, title_y, has_plain_title=True, title_end=48, base="
         yield from grab(name + "_hover_" + label)
         n = rdiff(col_name, name + "_hover_" + label, (hover_x - 10, y - 10, hover_x + 10, y + 10))
         check(name + ": hovering " + label + " shows", n > 20, n)
+
+    # At rest it recedes, as one layer, with the color and outline further down.
+    yield from park()
+    rest_name = name + "_rest"
+    yield from grab(rest_name)
+    hot, rest, under = (FRAME[f][y, free_x] for f in (col_name, rest_name, base))
+    want = PIN_REST_BACK * hot + (1.0 - PIN_REST_BACK) * under
+    n = float(np.abs(rest - want).max())
+    log(name, "rest", rest, "want", want, "hot", hot, "under", under)
+    check(name + ": the color recedes by the set amount", n <= 0.03, n)
+    # Against the background, because a theme's header can be close to the viewport's color.
+    if float(np.abs(hot - under).max()) > 0.1:
+        check(name + ": and it shows", float(np.abs(rest - hot).max()) > 0.03, (rest, hot))
+    # Hit areas and position don't change, and returning restores it exactly.
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    yield from grab(name + "_back")
+    n = rdiff(col_name, name + "_back", (v[0], v[3] - 40, v[2], v[3]))
+    check(name + ": back at full strength on hover", n < 30, n)
 
     # The same spot expands it, so clicking the pin twice is a no-op.
     yield from click(pin_x, y)
@@ -5641,7 +5666,9 @@ def s_p13_checkbox_title():
     band = (v[0] + 50, y - 8, v[2] - 48, y + 8)
     t_open = ink("open", band)
     yield from click(v[2] - PIN_ICON, y)
-    yield from park()
+    # On the title, so it's at full strength.
+    move(v[0] + 60, y); yield 0.3
+    move(v[0] + 60, y); yield 0.3
     yield from grab("col")
     c = need(popup_box("base", "col"), "it collapses")
     t_col = ink("col", band)
@@ -5661,3 +5688,264 @@ def s_p13_checkbox_title():
 
 
 SC["p13_checkbox_title"] = s_p13_checkbox_title
+
+
+# TEAR_OFF_PIN_REST_ALPHA and TEAR_OFF_PIN_REST_BACK_ALPHA.
+PIN_REST_LAYER = 0.8
+PIN_REST_BACK = 0.8 * 0.75
+
+
+def pin_state(frame, x, y, hot, base="base"):
+    """'hot' or 'rest' by the pin's color at this pixel, with what's behind it from `base`."""
+    now = FRAME[frame][y, x]
+    if float(np.abs(now - hot).max()) <= 0.03:
+        return "hot"
+    want = PIN_REST_BACK * hot + (1.0 - PIN_REST_BACK) * FRAME[base][y, x]
+    return "rest" if float(np.abs(now - want).max()) <= 0.03 else None
+
+
+def s_p13_pin_fade_stale():
+    """Each way a pin could stay bright with the cursor gone, or stay faded under the cursor."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    y = v[3] - TITLE_Y
+    # At the row's start, left of the grip.
+    free_x = v[0] + 8
+    x_x = v[2] - X_ICON
+    yield from click(v[2] - PIN_ICON, y)
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    yield from grab("hot")
+    hot = FRAME["hot"][y, free_x].copy()
+    yield from park()
+    yield from grab("rest")
+    check("parked: at rest", pin_state("rest", free_x, y, hot) == "rest", FRAME["rest"][y, free_x])
+
+    # Mid drag it stays solid, and released with the cursor away it fades.
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    press(free_x, y); yield 0.1
+    dx, dy = 40, -30
+    move(free_x + dx, y + dy); yield 0.3
+    move(free_x + dx, y + dy); yield 0.3
+    yield from grab("dragging")
+    check("while dragging: solid", pin_state("dragging", free_x + dx, y + dy, hot) == "hot",
+          FRAME["dragging"][y + dy, free_x + dx])
+    release(free_x + dx, y + dy); yield 0.3
+    yield from park()
+    yield from grab("dropped")
+    check("dropped, cursor away: at rest",
+          pin_state("dropped", free_x + dx, y + dy, hot) == "rest",
+          FRAME["dropped"][y + dy, free_x + dx])
+    # Back in place for the rest.
+    move(free_x + dx, y + dy); yield 0.3
+    move(free_x + dx, y + dy); yield 0.3
+    press(free_x + dx, y + dy); yield 0.1
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    release(free_x, y); yield 0.3
+
+    # Dropped past the window's edge, the clamped pin isn't under the cursor.
+    move(free_x, y); yield 0.3
+    press(free_x, y); yield 0.1
+    move(free_x, 5); yield 0.3
+    move(free_x, 5); yield 0.3
+    release(free_x, 5); yield 0.3
+    yield from grab("edge")
+    edge = popup_box("base", "edge")
+    log("edge drop", edge)
+    move(free_x, 5); yield 0.3
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    # Back in place, from wherever it stopped.
+    if edge:
+        ex, ey = free_x, (edge[1] + edge[3]) // 2
+        move(ex, ey); yield 0.3
+        move(ex, ey); yield 0.3
+        press(ex, ey); yield 0.1
+        move(free_x, y); yield 0.3
+        move(free_x, y); yield 0.3
+        release(free_x, y); yield 0.3
+
+    # The focus goes while it's lit. The X must not stay lit either.
+    yield from park()
+    yield from grab("x_rest")
+    move(x_x, y); yield 0.3
+    move(x_x, y); yield 0.3
+    yield from grab("x_lit")
+    win().event_simulate(type="WINDOW_DEACTIVATE", value="NOTHING", x=int(x_x), y=int(y)); yield 0.4
+    yield from grab("deactivated")
+    check("focus gone: at rest", pin_state("deactivated", free_x, y, hot) == "rest",
+          FRAME["deactivated"][y, free_x])
+    n = rdiff("x_rest", "deactivated", (x_x - 10, y - 10, x_x + 10, y + 10))
+    check("focus gone: the X isn't lit", n < 30, n)
+    n = rdiff("x_rest", "x_lit", (x_x - 10, y - 10, x_x + 10, y + 10))
+    check("and it was lit before", n > 20, n)
+    # The window's return sends a mouse move.
+    move(x_x, y); yield 0.3
+    move(x_x, y); yield 0.3
+    yield from grab("returned")
+    check("focus back, on the pin: solid", pin_state("returned", free_x, y, hot) == "hot",
+          FRAME["returned"][y, free_x])
+    yield from park()
+
+    # A regular popup above it takes the mouse, so the pin can't be used. It opens where the strip
+    # is, so the strip moves out from under it first.
+    away = (free_x + 320, y + 200)
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    press(free_x, y); yield 0.1
+    move(*away); yield 0.3
+    move(*away); yield 0.3
+    release(*away); yield 0.3
+    yield from park()
+    yield from grab("before_regular")
+    with bpy.context.temp_override(**override("VIEW_3D", "WINDOW")):
+        bpy.ops.wm.call_panel(name="SIM_PT_field", keep_open=True)
+    yield 0.8
+    yield from grab("regular")
+    r = need(bbox("before_regular", "regular"), "the regular popup opens")
+    log("regular popup", r)
+    check("it doesn't cover the strip", not (r[0] <= away[0] <= r[2] and r[1] <= away[1] <= r[3]), r)
+    move(*away); yield 0.3
+    move(*away); yield 0.3
+    yield from grab("under_regular")
+    check("under a regular popup: at rest",
+          pin_state("under_regular", away[0], away[1], hot) == "rest",
+          FRAME["under_regular"][away[1], away[0]])
+    yield from esc(); yield from esc()
+    move(*away); yield 0.3
+    move(*away); yield 0.3
+    press(*away); yield 0.1
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    release(free_x, y); yield 0.3
+    yield from park()
+
+    # A workspace change with the cursor on the pin, moved away while it's hidden.
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces if ws != home)
+    w.workspace = other; yield 0.6
+    move(*PARK); yield 0.3
+    move(*PARK); yield 0.3
+    w.workspace = home; yield 0.6
+    yield from grab("returned_workspace")
+    check("back from a workspace, cursor away: at rest",
+          pin_state("returned_workspace", free_x, y, hot) == "rest",
+          FRAME["returned_workspace"][y, free_x])
+
+    # Covered by a newer tear-off, it fades where it still shows.
+    yield from park()
+    yield from grab("before_covered")
+    move(center()[0] + 130, center()[1]); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("covered")
+    n_box = bbox("before_covered", "covered")
+    log("newer tear-off", n_box)
+    if n_box and n_box[0] < v[2] and n_box[0] > free_x and n_box[1] <= y <= n_box[3]:
+        over = (n_box[0] + v[2]) // 2
+        move(over, y); yield 0.3
+        move(over, y); yield 0.3
+        yield from grab("covered_hover")
+        check("cursor on what covers it: at rest",
+              pin_state("covered_hover", free_x, y, hot) == "rest",
+              FRAME["covered_hover"][y, free_x])
+    else:
+        check("the newer tear-off overlaps the pin", False, n_box)
+
+
+SC["p13_pin_fade_stale"] = s_p13_pin_fade_stale
+
+
+def rel_lum(c):
+    """WCAG relative luminance of a display color."""
+    lin = [(v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4) for v in c]
+    return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+
+
+def peak_contrast(frame, box):
+    """Contrast between the box's median color and the color furthest from it."""
+    x0, y0, x1, y1 = box
+    px = FRAME[frame][y0:y1 + 1, x0:x1 + 1].reshape(-1, 3)
+    med = np.median(px, axis=0)
+    far = px[int(np.abs(px - med).sum(axis=1).argmax())]
+    a, b = rel_lum(med), rel_lum(far)
+    return (max(a, b) + 0.05) / (min(a, b) + 0.05)
+
+
+def s_p13_pin_fade_bright():
+    """Readable over a white viewport at rest, and the shadow only shows at full strength."""
+    yield from setup()
+    bpy.context.preferences.view.show_tooltips = False
+    area().spaces.active.overlay.show_text = False
+    area().spaces.active.overlay.show_floor = False
+    area().spaces.active.overlay.show_axis_x = False
+    area().spaces.active.overlay.show_axis_y = False
+    area().spaces.active.overlay.show_cursor = False
+    shading = area().spaces.active.shading
+    shading.background_type = "VIEWPORT"
+    shading.background_color = (1.0, 1.0, 1.0)
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("base")
+
+    floors = (("menu", 2.4), ("panel", 2.6))
+    for name, floor in floors:
+        move(*center()); yield 0.3
+        if name == "menu":
+            tear_menu("VIEW3D_MT_object"); title_y = TITLE_MENU
+        else:
+            with bpy.context.temp_override(**override("VIEW_3D", "UI")):
+                bpy.ops.wm.panel_tear_off(panel_idname="VIEW3D_PT_tools_active",
+                                          from_region_panel=True)
+            title_y = 12
+        yield 0.8
+        yield from park()
+        yield from grab(name + "_open")
+        v = need(popup_box("base", name + "_open"), "it opens: " + name)
+        y = v[3] - title_y
+        yield from click(v[2] - PIN_ICON, y)
+        yield from park()
+        yield from grab(name + "_rest")
+        band = (v[0] + 10, y - 6, v[0] + 70, y + 6)
+        n = peak_contrast(name + "_rest", band)
+        log(name, "rest contrast", n, band)
+        check(name + ": readable at rest on white", n >= floor, n)
+        yield from click(v[2] - X_ICON, y)
+        yield from park()
+
+    # The strip is measured before a shadow can widen its box.
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("sh_open")
+    v = need(popup_box("base", "sh_open"), "it opens")
+    y = v[3] - TITLE_Y
+    yield from click(v[2] - PIN_ICON, y)
+    yield from park()
+    # The factory theme has no shadow to see, so this sets one.
+    ui = bpy.context.preferences.themes[0].user_interface
+    ui.menu_shadow_width = 12
+    ui.menu_shadow_fac = 0.5
+    area_redraw(); yield 0.6
+    yield from park()
+    yield from grab("sh_rest")
+    move(v[0] + 8, y); yield 0.3
+    move(v[0] + 8, y); yield 0.3
+    yield from grab("sh_hot")
+    rest_box = need(box_bbox("base", "sh_rest", (30, 25, 1340, 999), 0.015), "rest box")
+    hot_box = need(box_bbox("base", "sh_hot", (30, 25, 1340, 999), 0.015), "hot box")
+    log("shadow boxes", rest_box, hot_box)
+    check("a shadow only at full strength", height(hot_box) > height(rest_box) + 2,
+          (rest_box, hot_box))
+
+
+SC["p13_pin_fade_bright"] = s_p13_pin_fade_bright

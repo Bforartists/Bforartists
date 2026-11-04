@@ -3,6 +3,9 @@
 # SIM_EXE picks another build. SIM_RECORD_REF=1 records reference shots, see ref_check.
 S="$(cd "$(dirname "$0")" && pwd)"; EXE="${SIM_EXE:-/c/3D_Stuff/bfa_build_windows_Release_x64_vc17_Release/bin/bforartists.exe}"
 export BLENDER_USER_CONFIG="$S/config" BLENDER_USER_SCRIPTS="$S/config/scripts" BLENDER_USER_DATAFILES="$S/config/data"
+# A normal quit writes quit.blend to the temporary folder, which is the user's Recover Last Session.
+mkdir -p "$S/config/tmp"
+export TEMP="$(cygpath -w "$S/config/tmp")" TMP="$(cygpath -w "$S/config/tmp")"
 for s in "$@"; do
   rm -f "$S/$s.log"
   timeout 150 "$EXE" --factory-startup --enable-event-simulate --debug-memory --window-geometry 0 0 1600 1000 --python "$(cygpath -w "$S/harness.py")" -- "$s" "$(cygpath -w "$S")" > "$S/$s.out" 2>&1
