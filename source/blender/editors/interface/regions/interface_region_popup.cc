@@ -759,7 +759,7 @@ void tear_off_raise_fade_start(const bContext *C,
                                PopupBlockHandle *handle,
                                const ARegion *under_next)
 {
-  ARegionRuntime &runtime = *handle->region->runtime;
+  bke::ARegionRuntime &runtime = *handle->region->runtime;
   runtime.tear_off_raise_next = under_next;
   runtime.tear_off_raise_alpha = 0.0f;
   runtime.tear_off_raise_under_alpha = 1.0f;
@@ -783,7 +783,7 @@ bool tear_off_raise_fade_tick(const bContext *C, PopupBlockHandle *handle, const
   const auto ease = [](const float x) { return x * x * (3.0f - 2.0f * x); };
   const float under_start = TEAR_OFF_RAISE_UNDER_START;
 
-  ARegionRuntime &runtime = *handle->region->runtime;
+  bke::ARegionRuntime &runtime = *handle->region->runtime;
   runtime.tear_off_raise_alpha = ease(std::min(fade / under_start, 1.0f));
   runtime.tear_off_raise_under_alpha = 1.0f -
                                        ease(std::max((fade - under_start) / (1.0f - under_start),
