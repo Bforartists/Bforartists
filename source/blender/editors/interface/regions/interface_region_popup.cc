@@ -1148,6 +1148,39 @@ static float tear_off_height_min(const Block *block, float *r_natural)
                   ymax - header_ymin + bounds + UI_UNIT_Y + 2.0f * UI_MENU_SCROLL_MOUSE);
 }
 
+/* BFA - Tear-Off Menu/Panel: a menu's rows reach its edge, and the bar must not cover their arrows
+ * and shortcuts. Panels have their margin. The room is always there, so a menu keeps its width
+ * when it starts to overflow and the bar appears inside it: while it fits, the rows fill that
+ * room. */
+static void tear_off_menu_gutter_add(const wmWindow *window, Block *block, const bool overflows)
+{
+  if (block->flag & BLOCK_POPOVER) {
+    return;
+  }
+  const float gutter = V2D_SCROLL_WIDTH + 2.0f * UI_SCALE_FAC;
+  float rows_xmax = -FLT_MAX;
+  for (const Button &bt : block->buttons()) {
+    if (!bt.tear_off_header) {
+      rows_xmax = std::max(rows_xmax, bt.rect.xmax);
+    }
+  }
+  block->rect.xmax += gutter;
+  /* #block_tear_off_align_header already ran, so the icons and line must follow the edge. */
+  for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header && bt.optype) {
+      BLI_rctf_translate(&bt.rect, gutter, 0.0f);
+    }
+    else if (bt.tear_off_header && bt.type == ButtonType::SeprLine) {
+      bt.rect.xmax += gutter;
+    }
+    /* Only the last column, in a menu with several. */
+    else if (!bt.tear_off_header && !overflows && bt.rect.xmax >= rows_xmax - 1.0f) {
+      bt.rect.xmax += gutter;
+    }
+  }
+  popup_block_clip(window, block);
+}
+
 /* BFA - Tear-Off Menu/Panel: a pin can park 30 px above the window bottom, and the clip only
  * trims, so expanding there would leave a block shorter than its header. Grow upward instead. The
  * pin sync after this records the new position. */
@@ -1168,36 +1201,9 @@ static void tear_off_height_apply(wmWindow *window, const PopupBlockHandle *hand
     const float crop = std::max(handle->tear_off_user_height * UI_SCALE_FAC, min_h);
     block->rect.ymin = std::max(block->rect.ymin, block->rect.ymax - crop);
   }
-  /* A menu's rows reach its edge, and the bar must not cover their arrows and shortcuts. Panels
-   * have their margin. The room is always there, so a menu keeps its width when it starts to
-   * overflow and the bar appears inside it: while it fits, the rows fill that room. Comparing
-   * heights also catches a block trimmed at the top, whose buttons only move down later, in
-   * #tear_off_header_scroll_prepare. */
-  if (!(block->flag & BLOCK_POPOVER)) {
-    const bool overflows = natural > BLI_rctf_size_y(&block->rect) + 0.5f;
-    const float gutter = V2D_SCROLL_WIDTH + 2.0f * UI_SCALE_FAC;
-    float rows_xmax = -FLT_MAX;
-    for (const Button &bt : block->buttons()) {
-      if (!bt.tear_off_header) {
-        rows_xmax = std::max(rows_xmax, bt.rect.xmax);
-      }
-    }
-    block->rect.xmax += gutter;
-    /* #block_tear_off_align_header already ran, so the icons and line must follow the edge. */
-    for (Button &bt : block->buttons()) {
-      if (bt.tear_off_header && bt.optype) {
-        BLI_rctf_translate(&bt.rect, gutter, 0.0f);
-      }
-      else if (bt.tear_off_header && bt.type == ButtonType::SeprLine) {
-        bt.rect.xmax += gutter;
-      }
-      /* Only the last column, in a menu with several. */
-      else if (!bt.tear_off_header && !overflows && bt.rect.xmax >= rows_xmax - 1.0f) {
-        bt.rect.xmax += gutter;
-      }
-    }
-    popup_block_clip(window, block);
-  }
+  /* Comparing heights also catches a block trimmed at the top, whose buttons only move down later,
+   * in #tear_off_header_scroll_prepare. */
+  tear_off_menu_gutter_add(window, block, natural > BLI_rctf_size_y(&block->rect) + 0.5f);
 }
 
 /* BFA - Tear-Off Menu/Panel: a panel torn off a region has the header of a region's panel: the row
@@ -1488,6 +1494,12 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
       handle->tear_off_pin_xy[1] = int(block->rect.ymax);
       handle->popup_create_vars.event_xy[0] = handle->tear_off_pin_xy[0];
       handle->popup_create_vars.event_xy[1] = handle->tear_off_pin_xy[1];
+    }
+
+    /* BFA - Tear-Off Menu/Panel: a collapsed pin is as wide as the open block. Its rows aren't
+     * drawn, so whether they overflow doesn't matter. */
+    if (handle->is_tear_off && handle->tear_off_collapsed) {
+      tear_off_menu_gutter_add(window, block, false);
     }
 
     handle->prev_block_rect = block->rect;
