@@ -832,6 +832,10 @@ void wm_event_do_notifiers(bContext *C)
 
   wm_event_do_refresh_wm_and_depsgraph(C);
 
+  /* BFA - Tear-Off Menu/Panel: with the depsgraph current and before drawing, so no frame shows
+   * without them. The warnings below stack on top of them. */
+  ui::tear_off_restore_pending_run(C, wm);
+
   RE_FreeUnusedGPUResources();
 
   /* Status bar. */

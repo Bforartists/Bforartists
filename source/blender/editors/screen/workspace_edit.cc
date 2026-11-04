@@ -220,6 +220,9 @@ bool ED_workspace_change(WorkSpace *workspace_new, bContext *C, wmWindowManager 
 
   BLI_assert(CTX_wm_workspace(C) == workspace_new);
 
+  /* BFA - Tear-Off Menu/Panel: this workspace can have pins still to restore. */
+  ui::tear_off_restore_tag(wm);
+
   /* Automatic mode switching. */
   if (workspace_new->object_mode != workspace_old->object_mode) {
     const Object *object = nullptr;

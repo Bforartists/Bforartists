@@ -114,11 +114,15 @@ bool tear_off_clamp_to_window(const wmWindow *win,
     const float widget_w = BLI_rctf_size_x(&widget);
     const float widget_h = BLI_rctf_size_y(&widget);
 
-    const int clamped_x = std::clamp(
-        handle->tear_off_pin_xy[0], int(margin), int(win_size[0] - widget_w - margin));
-    const int clamped_y = std::clamp(handle->tear_off_pin_xy[1],
-                                     int(widget_h + margin),
-                                     int(win_size[1] - margin));
+    /* The upper limits can be below the lower ones in a window smaller than the pin, and
+     * #std::clamp is undefined then. A restored pin can be wider than a small window. */
+    const int min_x = int(margin);
+    const int min_y = int(widget_h + margin);
+    const int clamped_x = std::clamp(handle->tear_off_pin_xy[0],
+                                     min_x,
+                                     std::max(min_x, int(win_size[0] - widget_w - margin)));
+    const int clamped_y = std::clamp(
+        handle->tear_off_pin_xy[1], min_y, std::max(min_y, int(win_size[1] - margin)));
 
     if (clamped_x != handle->tear_off_pin_xy[0] || clamped_y != handle->tear_off_pin_xy[1]) {
       const int dx = clamped_x - handle->tear_off_pin_xy[0];

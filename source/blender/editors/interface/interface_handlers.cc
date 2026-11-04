@@ -13341,6 +13341,17 @@ static PopupBlockHandle *popup_from_handler(wmEventHandler *handler_base)
              nullptr;
 }
 
+/* BFA - Tear-Off Menu/Panel: handlers are added at the head. */
+PopupBlockHandle *tear_off_newest_popup(wmWindow *win)
+{
+  for (wmEventHandler &handler : win->runtime->modalhandlers) {
+    if (PopupBlockHandle *menu = popup_from_handler(&handler)) {
+      return menu;
+    }
+  }
+  return nullptr;
+}
+
 /* BFA - Tear-Off Menu/Panel */
 PopupBlockHandle *tear_off_from_handler(wmEventHandler *handler)
 {
@@ -14758,6 +14769,8 @@ void refresh_for_srna_unregister(Main *bmain, StructRNA *srna_to_unreg)
        * for now. It's still valid here, as it's freed after this. */
       if (popup_block_handle->is_tear_off) {
         tear_off_store_closing_one(bmain, CTX_wm_window(C), popup_block_handle);
+        /* Reload Scripts registers the type again before this is looked at. */
+        tear_off_restore_tag(CTX_wm_manager(C));
       }
       if (handler->remove_fn) {
         handler->remove_fn(C, handler->user_data);

@@ -391,6 +391,9 @@ static void rna_userdef_tear_off_update(Main *bmain, Scene *scene, PointerRNA *p
       WM_event_add_mousemove(&win);
     }
   }
+  else if (wm) {
+    ui::tear_off_restore_tag(wm);
+  }
   rna_userdef_update(bmain, scene, ptr);
 }
 

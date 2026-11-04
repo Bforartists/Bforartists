@@ -2507,6 +2507,15 @@ void tear_off_handlers_remove_for_workspace(bContext *C,
                                             wmWindow *win,
                                             const WorkSpace *workspace);
 /**
+ * BFA - Tear-Off Menu/Panel: stored pins may be ready to come back. Only a flag, because this can
+ * be too early for popups: at startup there's no window yet when the file loads, and a workspace
+ * change can be inside a script's `context.temp_override()`.
+ */
+void tear_off_restore_tag(wmWindowManager *wm);
+/** BFA - Tear-Off Menu/Panel: what #tear_off_restore_tag asked for, with no window in the context.
+ */
+void tear_off_restore_pending_run(bContext *C, wmWindowManager *wm);
+/**
  * BFA - Tear-Off Menu/Panel: a file load is about to close every pin. They go on their workspace's
  * list first, which is what keeps them through a Load UI off open. With Load UI on, those
  * workspaces go too.

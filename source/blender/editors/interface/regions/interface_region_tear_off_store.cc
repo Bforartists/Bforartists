@@ -14,14 +14,19 @@
  * truth, and they join the list only for the length of a file write, see #TearOffSaveScope.
  */
 
+#include <cmath>
+#include <cstring>
+#include <optional>
 #include <string>
 
 #include "DNA_ID.h"
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 
 #include "BLI_listbase.hh"
+#include "BLI_math_vector_c.hh"
 #include "BLI_string.hh"
 #include "BLI_threads.hh"
 #include "BLI_vector.hh"
@@ -30,7 +35,12 @@
 #include "BKE_idprop.hh"
 #include "BKE_main.hh"
 #include "BKE_screen.hh"
+#include "BKE_wm_runtime.hh"
 #include "BKE_workspace.hh"
+
+#include "ED_screen.hh"
+
+#include "RNA_access.hh"
 
 #include "WM_api.hh"
 
@@ -48,6 +58,10 @@ namespace idprop = bke::idprop;
 static constexpr const char *TEAR_OFF_LIST_KEY = "bfa_tear_offs";
 /** Raise this when a field changes meaning. An entry with another number is kept unread. */
 static constexpr int TEAR_OFF_ENTRY_VERSION = 1;
+/** Restored per window in one pass. What's left waits for the next one. */
+static constexpr int TEAR_OFF_RESTORE_MAX = 64;
+/** A position beyond this isn't a position. */
+static constexpr float TEAR_OFF_POSITION_MAX = 100000.0f;
 
 /* -------------------------------------------------------------------- */
 /** \name Reading File Data
@@ -64,6 +78,108 @@ static bool group_is_sound(const IDProperty *prop)
     return BLI_listbase_is_empty(&prop->data.group);
   }
   return prop->data.children_map && prop->data.children_map->children.size() == prop->len;
+}
+
+/* Never #IDP_group_lookup_string, which trusts the data: a file can hold a string with no end. */
+static std::optional<std::string> read_string(const IDProperty &entry,
+                                              const char *name,
+                                              const int max_len)
+{
+  const IDProperty *prop = IDP_GetPropertyFromGroup(&entry, name);
+  if (prop == nullptr || prop->type != IDP_STRING || prop->subtype == IDP_STRING_SUB_BYTE) {
+    return std::nullopt;
+  }
+  const char *str = static_cast<const char *>(prop->data.pointer);
+  if (str == nullptr || prop->len < 1 || prop->len > max_len ||
+      std::memchr(str, '\0', size_t(prop->len)) == nullptr)
+  {
+    return std::nullopt;
+  }
+  return std::string(str);
+}
+
+/* Python writes floats as doubles, and either is fine here. */
+static std::optional<float> read_float(const IDProperty &entry, const char *name)
+{
+  const IDProperty *prop = IDP_GetPropertyFromGroup(&entry, name);
+  if (prop == nullptr || !ELEM(prop->type, IDP_FLOAT, IDP_DOUBLE)) {
+    return std::nullopt;
+  }
+  const float value = (prop->type == IDP_FLOAT) ? IDP_float_get(prop) : float(IDP_double_get(prop));
+  if (!std::isfinite(value) || std::abs(value) > TEAR_OFF_POSITION_MAX) {
+    return std::nullopt;
+  }
+  return value;
+}
+
+/** What an entry holds, as plain values. The list can change while a pin is being created. */
+struct EntryData {
+  std::string kind;
+  std::string idname;
+  bool from_region = false;
+  int winid = 0;
+  int space = 0;
+  int region = -1;
+  int area_index = -1;
+  std::string mode;
+  float x = 0.0f;
+  float y = 0.0f;
+  bool collapsed = false;
+  float height = 0.0f;
+  float scroll = 0.0f;
+};
+
+/* False if this isn't what a known version writes. */
+static bool entry_read(const IDProperty &entry, EntryData &r_data)
+{
+  const std::optional<std::string> kind = read_string(entry, "kind", 16);
+  const std::optional<int> winid = IDP_group_lookup_int(entry, "winid");
+  const std::optional<int> space = IDP_group_lookup_int(entry, "space");
+  const std::optional<int> region = IDP_group_lookup_int(entry, "region");
+  const std::optional<int> area_index = IDP_group_lookup_int(entry, "area_index");
+  const std::optional<std::string> mode = read_string(entry, "mode", 64);
+  const std::optional<float> x = read_float(entry, "x");
+  const std::optional<float> y = read_float(entry, "y");
+  const std::optional<bool> collapsed = IDP_group_lookup_bool(entry, "collapsed");
+  const std::optional<float> height = read_float(entry, "height");
+  const std::optional<float> scroll = read_float(entry, "scroll");
+  if (!(kind && winid && space && region && area_index && mode && x && y && collapsed && height &&
+        scroll))
+  {
+    return false;
+  }
+  /* Zero and -1 are real values: no area, and no region. */
+  if (*space < 0 || *space >= SPACE_TYPE_NUM || *region < -1 || *region >= RGN_TYPE_NUM ||
+      *area_index < -1 || *height < 0.0f)
+  {
+    return false;
+  }
+  r_data.kind = *kind;
+  r_data.winid = *winid;
+  r_data.space = *space;
+  r_data.region = *region;
+  r_data.area_index = *area_index;
+  r_data.mode = *mode;
+  r_data.x = *x;
+  r_data.y = *y;
+  r_data.collapsed = *collapsed;
+  r_data.height = *height;
+  r_data.scroll = *scroll;
+  if (ELEM(r_data.kind, "MENU", "PANEL")) {
+    const std::optional<std::string> idname = read_string(entry, "idname", MAX_NAME);
+    if (!idname) {
+      return false;
+    }
+    r_data.idname = *idname;
+  }
+  if (r_data.kind == "PANEL") {
+    const std::optional<bool> from_region = IDP_group_lookup_bool(entry, "from_region");
+    if (!from_region) {
+      return false;
+    }
+    r_data.from_region = *from_region;
+  }
+  return true;
 }
 
 /** \} */
@@ -293,6 +409,258 @@ void tear_off_store_closing_one(Main *bmain, const wmWindow *win, const PopupBlo
     BLI_addhead(&list->data.group, entry);
   }
   list_free_if_empty(handle->tear_off_workspace, list);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Restoring
+ * \{ */
+
+void tear_off_restore_tag(wmWindowManager *wm)
+{
+  wm->runtime->tear_off_restore_pending = true;
+}
+
+/* The source editor in the window's current screen, as #tear_off_context_ensure finds it: the one
+ * it came from if that's still the same type, or else the first of the type. */
+static bool entry_area_resolve(const wmWindow &win,
+                               const bScreen &screen,
+                               const EntryData &data,
+                               ScrArea **r_area,
+                               ARegion **r_region)
+{
+  *r_area = nullptr;
+  *r_region = nullptr;
+  if (data.space == 0) {
+    return true;
+  }
+  ScrArea *found = nullptr;
+  if (data.area_index >= 0) {
+    ScrArea *area = static_cast<ScrArea *>(BLI_findlink(&screen.areabase, data.area_index));
+    if (area && area->spacetype == data.space) {
+      found = area;
+    }
+  }
+  if (found == nullptr) {
+    ED_screen_areas_iter (&win, &screen, area) {
+      if (area->spacetype == data.space) {
+        found = area;
+        break;
+      }
+    }
+  }
+  if (found == nullptr) {
+    return false;
+  }
+  *r_area = found;
+  if (data.region == -1) {
+    return true;
+  }
+  /* A pin with a space type and no region would count as having no source. */
+  *r_region = BKE_area_find_region_type(found, data.region);
+  return *r_region != nullptr;
+}
+
+/* The type must belong to this editor or be registered by name. The all-spaces fallback of
+ * #tear_off_paneltype_find is for pins made in the session: a file naming a panel of another
+ * editor could crash its C poll. */
+static bool entry_panel_type_exists(const ARegion *region, const std::string &idname)
+{
+  if (region && region->runtime->type) {
+    for (const PanelType &pt : region->runtime->type->paneltypes) {
+      if (idname == pt.idname) {
+        return true;
+      }
+    }
+  }
+  return WM_paneltype_find(idname.c_str(), true) != nullptr;
+}
+
+/* Sets the handle's fields. Direct, as the setter of the collapsed state would overwrite the
+ * position. The refresh that #tear_off_handle_init tagged moves it there before anything draws. */
+static void entry_apply(const EntryData &data,
+                        wmWindow *win,
+                        PopupBlockHandle *handle)
+{
+  handle->tear_off_user_height = data.height;
+  /* Scale free floats, rounded, which stay exact at the same scale. A live scale change works
+   * differently on purpose, as it starts from a position already on the screen. */
+  handle->scrolloffset = data.scroll * UI_SCALE_FAC;
+  handle->tear_off_collapsed = data.collapsed;
+  handle->tear_off_pin_xy[0] = int(std::round(data.x * UI_SCALE_FAC));
+  handle->tear_off_pin_xy[1] = WM_window_native_pixel_size(win)[1] -
+                               int(std::round(data.y * UI_SCALE_FAC));
+  copy_v2_v2_int(handle->popup_create_vars.event_xy, handle->tear_off_pin_xy);
+  if (data.collapsed) {
+    Block *block = handle->region->runtime->uiblocks.first();
+    if (block) {
+      tear_off_clamp_to_window(win, handle, block, handle->region);
+    }
+  }
+}
+
+/* With the window, area and region of the entry in the context. A failure stays on the list. */
+static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, ARegion *region)
+{
+  const char *ot_name = nullptr;
+  const char *idname_prop = nullptr;
+  if (data.kind == "MENU") {
+    /* No poll guard in a menu's first layout, unlike a panel's. */
+    MenuType *mt = WM_menutype_find(data.idname.c_str(), true);
+    if (mt == nullptr || !WM_menutype_poll(C, mt)) {
+      return false;
+    }
+    ot_name = "WM_OT_menu_tear_off";
+    idname_prop = "menu_idname";
+  }
+  else if (data.kind == "PANEL" && !data.from_region) {
+    if (!entry_panel_type_exists(region, data.idname)) {
+      return false;
+    }
+    ot_name = "WM_OT_panel_tear_off";
+    idname_prop = "panel_idname";
+  }
+  else {
+    return false;
+  }
+
+  wmOperatorType *ot = WM_operatortype_find(ot_name, true);
+  if (ot == nullptr) {
+    return false;
+  }
+  const PopupBlockHandle *newest = tear_off_newest_popup(win);
+  PointerRNA props = WM_operator_properties_create_ptr(ot);
+  RNA_string_set(&props, idname_prop, data.idname.c_str());
+  /* The region variants would force the window region. */
+  WM_operator_name_call_ptr(C, ot, wm::OpCallContext::ExecDefault, &props, nullptr);
+  WM_operator_properties_free(&props);
+
+  /* The operators don't return the handle. */
+  PopupBlockHandle *handle = tear_off_newest_popup(win);
+  if (handle == nullptr || handle == newest || !handle->is_tear_off) {
+    return false;
+  }
+  entry_apply(data, win, handle);
+  return true;
+}
+
+/* A pin returns to the window it was in, if that window is showing its workspace. */
+static bool entry_prefers_other_window(const wmWindowManager &wm,
+                                       const wmWindow &win,
+                                       const WorkSpace *workspace,
+                                       const EntryData &data)
+{
+  if (data.winid == win.winid) {
+    return false;
+  }
+  for (const wmWindow &other : wm.windows) {
+    if (other.winid == data.winid) {
+      return WM_window_get_active_workspace(&other) == workspace;
+    }
+  }
+  return false;
+}
+
+static void workspace_restore(bContext *C,
+                              wmWindowManager *wm,
+                              wmWindow *win,
+                              WorkSpace *workspace,
+                              const bScreen &screen)
+{
+  IDProperty *root = IDP_ID_system_properties_get(&workspace->id);
+  IDProperty *list = IDP_GetPropertyFromGroup(root, TEAR_OFF_LIST_KEY);
+
+  /* Names, because the list can change while a pin is being created. */
+  Vector<std::string> names;
+  for (const IDProperty &entry : list->data.group) {
+    if (names.size() == TEAR_OFF_RESTORE_MAX) {
+      break;
+    }
+    names.append(entry.name);
+  }
+
+  for (const std::string &name : names) {
+    IDProperty *entry = IDP_GetPropertyFromGroup(list, name);
+    if (entry == nullptr || !group_is_sound(entry)) {
+      continue;
+    }
+    const std::optional<int> version = IDP_group_lookup_int(*entry, "version");
+    if (version.value_or(0) != TEAR_OFF_ENTRY_VERSION) {
+      continue;
+    }
+    EntryData data;
+    if (!entry_read(*entry, data)) {
+      IDP_FreeFromGroup(list, entry);
+      continue;
+    }
+    if (entry_prefers_other_window(*wm, *win, workspace, data)) {
+      continue;
+    }
+    ScrArea *area;
+    ARegion *region;
+    if (!entry_area_resolve(*win, screen, data, &area, &region)) {
+      continue;
+    }
+    CTX_wm_area_set(C, area);
+    CTX_wm_region_set(C, region);
+    /* It waits for its mode. A pin with no source ignores the mode, as #tear_off_is_visible does. */
+    const bool mode_matches = data.space == 0 || data.mode.empty() ||
+                              data.mode == CTX_data_mode_string(C);
+    if (mode_matches && entry_pin_create(C, win, data, region)) {
+      list = IDP_GetPropertyFromGroup(root, TEAR_OFF_LIST_KEY);
+      if (IDProperty *entry_now = list ? IDP_GetPropertyFromGroup(list, name) : nullptr) {
+        IDP_FreeFromGroup(list, entry_now);
+      }
+    }
+    CTX_wm_area_set(C, nullptr);
+    CTX_wm_region_set(C, nullptr);
+    if (list == nullptr) {
+      return;
+    }
+  }
+  list_free_if_empty(workspace, list);
+}
+
+/* The workspace's list if it has one that can be read. */
+static bool workspace_has_entries(WorkSpace *workspace)
+{
+  const IDProperty *root = IDP_ID_system_properties_get(&workspace->id);
+  if (root == nullptr || !group_is_sound(root)) {
+    return false;
+  }
+  const IDProperty *list = IDP_GetPropertyFromGroup(root, TEAR_OFF_LIST_KEY);
+  return list && group_is_sound(list) && list->len > 0;
+}
+
+void tear_off_restore_pending_run(bContext *C, wmWindowManager *wm)
+{
+  if (!wm->runtime->tear_off_restore_pending) {
+    return;
+  }
+  wm->runtime->tear_off_restore_pending = false;
+  if (G.background || !tear_off_enabled()) {
+    return;
+  }
+  for (wmWindow &win : wm->windows) {
+    if (win.runtime->ghostwin == nullptr || WM_window_is_temp_screen(&win)) {
+      continue;
+    }
+    WorkSpace *workspace = WM_window_get_active_workspace(&win);
+    bScreen *screen = WM_window_get_active_screen(&win);
+    if (workspace == nullptr || screen == nullptr || !workspace_has_entries(workspace)) {
+      continue;
+    }
+    /* They wait for the splash and such, or they'd land on top of it. */
+    if (wm->runtime->is_interface_locked || screen_has_blocking_popup(screen)) {
+      wm->runtime->tear_off_restore_pending = true;
+      continue;
+    }
+    CTX_wm_window_set(C, &win);
+    ED_screen_ensure_updated(C, wm, &win);
+    workspace_restore(C, wm, &win, workspace, *screen);
+  }
+  CTX_wm_window_set(C, nullptr);
 }
 
 /** \} */

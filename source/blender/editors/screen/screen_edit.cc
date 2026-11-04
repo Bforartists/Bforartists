@@ -674,6 +674,8 @@ void ED_screen_do_listen(bContext *C, const wmNotifier *note)
             ED_region_tag_redraw(&region);
           }
         }
+        /* BFA - Tear-Off Menu/Panel: a stored pin waits for its mode. */
+        ui::tear_off_restore_tag(CTX_wm_manager(C));
       }
       break;
   }

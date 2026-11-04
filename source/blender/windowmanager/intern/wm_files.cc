@@ -868,6 +868,12 @@ static void wm_file_read_post(bContext *C,
       WM_toolsystem_init(C);
     }
   }
+
+  /* BFA - Tear-Off Menu/Panel: a load closed the pins, and loading preferences can have turned
+   * the preference on. */
+  if ((use_data || use_userdef) && !G.background) {
+    ui::tear_off_restore_tag(CTX_wm_manager(C));
+  }
 }
 
 static void wm_read_callback_pre_wrapper(bContext *C, const char *filepath)
