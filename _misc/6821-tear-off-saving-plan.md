@@ -64,12 +64,13 @@ This comes from reading the code. I didn't find a stock Blender on this machine 
 
 An enum can't keep `id_session_uid`, since it changes every session, so it stores the ID's name and looks it up on restore. If the ID is gone, the pin is dropped.
 
-### Saving: one function, two callers
+### Saving: three moments
 
-`ui::tear_off_store_all(C)` writes each workspace's list from the open pins, plus any not yet restored (below).
+`ui::tear_off_store_all(C)` writes each workspace's list from the open pins, plus any not yet restored (below). It runs at the first two moments, and the third stores one pin at a time.
 
 1. **Before a save:** in `wm_file_write` and `wm_homefile_write_exec`, right after `BKE_CB_EVT_SAVE_PRE` (`wm_files.cc:2228`, `:2683`).
 2. **Before a load:** in the first loop of `wm_file_read_setup_wm_init` (`wm_files.cc:246`), before `WM_event_remove_handlers` closes every popup. This is what keeps your pins through a Load UI off open, because every load closes them today.
+3. **When the preference turns off:** in the branch of `popup_handler` that closes each pin (`interface_handlers.cc:13900`), the pin goes on the list first. Otherwise a pin restored from the file, which has already left the list, would be lost on the next save. Closing a pin with its X doesn't store it, because that's the user removing it.
 
 Moving or pinning a panel doesn't mark the file as changed, the same as resizing an area.
 
@@ -81,6 +82,7 @@ This keeps restoring simple and avoids the riskiest case. A workspace that isn't
 
 - **After a load:** `wm_file_read_post` sets a flag, and the event loop handles it once the windows are ready. At startup there is no window yet when the file loads, so this can't run directly.
 - **On a workspace change:** a call at the end of `ED_workspace_change`.
+- **When the preference turns on:** `rna_userdef_tear_off_update` (`rna_userdef.cc:386`) sets the same flag as a load, so the pins return right away, with no need to reopen the file.
 - **Creating a pin:** through the existing `WM_OT_menu_tear_off`, `WM_OT_panel_tear_off` and `WM_OT_enum_tear_off`, called with the source's area and region. They already take `source_xy`, so this adds no second way to create one. The other fields are set on the handle afterwards, then it refreshes.
 
 ### Staying on the list
@@ -89,7 +91,7 @@ Each of these stays on the list and is saved again, so nothing is lost:
 
 - **The panel doesn't exist right now:** for example, its add-on is off.
 - **The workspace has no matching editor:** it tries again on the next workspace change.
-- **The preference is off:** nothing is restored and nothing is erased. Saving writes the same list back.
+- **The preference is off:** nothing is restored and nothing is erased, including pins that were open when it was turned off. Saving writes the same list back.
 
 ## Size of the change
 
@@ -99,11 +101,13 @@ Each of these stays on the list and is saved again, so nothing is lost:
 | `wm_files.cc` | Two save hooks, one load hook, one flag | 10 lines |
 | `wm_event_system.cc` | Run the flag | 5 lines |
 | `workspace_edit.cc` | Restore on a workspace change | 3 lines |
+| `interface_handlers.cc` | Store a pin before the preference closes it | 1 line |
+| `rna_userdef.cc` | Restore when the preference turns on | 3 lines |
 | `wm_operators.cc` | Enums accept an ID by name | 15 lines |
 | `scripts/modules/rna_prop_ui.py` | Hide the property in the Custom Properties panel | 3 lines |
 | `_misc/6821-sim/` | New scenarios | 200 lines |
 
-No changes to layout, drawing or event handling. Almost all of it sits in one new file, so it's cheap to merge each week and easy to remove.
+No changes to layout or drawing, and that one line in event handling. Almost all of it sits in one new file, so it's cheap to merge each week and easy to remove.
 
 ## Build order
 
@@ -141,7 +145,8 @@ Each step compiles alone and gets its own commit.
 | Workspaces | Pins on an inactive workspace appear on first switch, and only once |
 | Startup | Save Startup File with a temporary config, restart: pins are back. Load Factory: none |
 | Missing add-on | Pin an add-on's panel, save, disable it, open, save, enable it, open: the pin is back |
-| Preference off | Open, save, turn it on, open: the pin is back |
+| Preference off | Open with it off, save, turn it on: the pin is back right away, and after reopening too |
+| Preference off, pins restored | Open with it on so the pins restore, turn it off, save, turn it on: they're back, and after reopening too |
 | Bad data | Wrong types and an unknown version in the property: no crash, and skipped |
 | Undo | Pin, undo, redo: nothing moves or closes |
 | Memory | No leaks under `--debug-memory` |
