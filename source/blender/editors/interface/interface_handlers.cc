@@ -14049,13 +14049,13 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
       const int my = event->xy[1];
 
       const bool inside = BLI_rctf_isect_pt(&widget, mx, my);
-      const float icon_size = UI_UNIT_Y;
-      const float pad = 0.25f * UI_UNIT_X;
-      /* Icons are right-aligned: pin then X (close). */
-      const float x_x_min = widget.xmax - pad - icon_size;
-      const float x_pin_min = x_x_min - pad - icon_size;
-      const bool over_x = inside && (mx >= x_x_min);
-      const bool over_pin = inside && (mx >= x_pin_min) && (mx < x_x_min);
+      rctf icon_rect;
+      const bool over_x = inside &&
+                          tear_off_pin_icon_rect(handle, ICON_PANEL_CLOSE, &icon_rect) &&
+                          BLI_rctf_isect_x(&icon_rect, mx);
+      const bool over_pin = inside && !over_x &&
+                            tear_off_pin_icon_rect(handle, ICON_UNPINNED, &icon_rect) &&
+                            BLI_rctf_isect_x(&icon_rect, mx);
 
       if (handle->tear_off_pin_hover_x != over_x || handle->tear_off_pin_hover_pin != over_pin) {
         handle->tear_off_pin_hover_x = over_x;

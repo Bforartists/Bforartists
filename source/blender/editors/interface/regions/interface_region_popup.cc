@@ -20,6 +20,8 @@
 
 #include "BLF_api.hh"
 
+#include "GPU_matrix.hh" /* BFA - Tear-Off Menu/Panel: the collapsed pin. */
+
 #include "BLI_listbase.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
@@ -581,32 +583,52 @@ static void block_region_refresh(const bContext *C, ARegion *region)
   CTX_wm_region_set(const_cast<bContext *>(C), ctx_region);
 }
 
+/* BFA - Tear-Off Menu/Panel: where a button of the open header is when collapsed. A collapsed
+ * block keeps its layout but not its position, so this goes by its top left corner. */
+static rctf tear_off_pin_but_rect(const PopupBlockHandle *handle,
+                                  const Block *block,
+                                  const Button &but)
+{
+  rctf rect = but.rect;
+  BLI_rctf_translate(&rect,
+                     handle->tear_off_pin_xy[0] - block->rect.xmin,
+                     handle->tear_off_pin_xy[1] - block->rect.ymax);
+  return rect;
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+bool tear_off_pin_icon_rect(const PopupBlockHandle *handle, const int icon, rctf *r_rect)
+{
+  const Block *block = handle->region->runtime->uiblocks.first();
+  if (block) {
+    for (const Button &but : block->buttons()) {
+      if (but.tear_off_header && but.icon == icon) {
+        *r_rect = tear_off_pin_but_rect(handle, block, but);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 /* BFA - Tear-Off Menu/Panel: geometry of the collapsed pin widget, shared by draw and
- * event handling. `r_rect` is in region-local coordinates. */
+ * event handling. `r_rect` is in region-local coordinates. Collapsing only moves the bottom edge
+ * up, so the open header's buttons stay under the cursor: double-clicking the title can't end up
+ * on the close icon. As much is left below the row as there is above it. */
 void tear_off_pin_widget_rect(const PopupBlockHandle *handle, rctf *r_rect)
 {
-  const float icon_size = UI_UNIT_Y;
-  const float pad = 0.25f * UI_UNIT_X;
-  const float widget_h = (icon_size * 1.0f) + (pad * 2.0f);
-
-  /* Width: grip icon + label (if any) + two icons. */
-  float label_w = 0.0f;
-  if (handle->tear_off_label[0] != '\0') {
-    /* Use the helper so the font is set before measuring (otherwise the width depends on
-     * whatever font was last active, making the widget resize on hover). */
-    label_w = fontstyle_string_width(UI_FSTYLE_WIDGET, handle->tear_off_label) + (pad * 2.0f);
+  float width = 4.0f * UI_UNIT_X;
+  float height = UI_UNIT_Y;
+  rctf icon;
+  if (tear_off_pin_icon_rect(handle, ICON_PANEL_CLOSE, &icon)) {
+    const Block *block = handle->region->runtime->uiblocks.first();
+    width = BLI_rctf_size_x(&block->rect);
+    height = 2.0f * (handle->tear_off_pin_xy[1] - BLI_rctf_cent_y(&icon));
   }
-  const float widget_w = label_w + (icon_size * 3.0f) + (pad * 4.0f);
-
-  const float x = handle->tear_off_pin_xy[0];
-  /* `tear_off_pin_xy` stores the top-left corner (region-local). Move the widget down one
-   * row so it sits below the panel header line. */
-  const float y = handle->tear_off_pin_xy[1] - widget_h;
-
-  r_rect->xmin = x;
-  r_rect->xmax = x + widget_w;
-  r_rect->ymin = y;
-  r_rect->ymax = y + widget_h;
+  r_rect->xmin = handle->tear_off_pin_xy[0];
+  r_rect->xmax = handle->tear_off_pin_xy[0] + width;
+  r_rect->ymin = handle->tear_off_pin_xy[1] - height;
+  r_rect->ymax = handle->tear_off_pin_xy[1];
 }
 
 /* BFA - Tear-Off Menu/Panel: collapse or expand a pinned tear-off popup.
@@ -657,95 +679,87 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
   ED_region_tag_redraw(region);
 }
 
-/* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off.
- * Shows the panel label plus a small two-icon button (pin + X close). */
-static void tear_off_pin_widget_draw(PopupBlockHandle *handle)
+/* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off. The
+ * header's own buttons, so they look the same as when open, apart from the pin icon. Controls of
+ * the panel's header aren't drawn, because a collapsed pin can't use them. */
+static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *block)
 {
-  const float icon_size = UI_UNIT_Y;
-  const float pad = 0.25f * UI_UNIT_X;
+  PopupBlockHandle *handle = block->handle;
+  uiStyle style = *style_get_dpi();
 
   rctf rect;
   tear_off_pin_widget_rect(handle, &rect);
+  rcti rect_px;
+  BLI_rcti_rctf_copy_round(&rect_px, &rect);
 
-  /* Background. */
-  float back[4];
-  theme::get_color_4fv(TH_PANEL_HEADER, back);
-  back[3] = 0.9f;
-  /* BFA - Tear-Off Menu/Panel: the roundbox helpers read a module-global corner mask
-   * that other draw code leaves in arbitrary states; set the corners explicitly. */
-  draw_roundbox_corner_set(CNR_ALL);
-  draw_roundbox_4fv(&rect, true, 0.4f * UI_UNIT_Y, back);
+  GPU_matrix_push_projection();
+  GPU_matrix_push();
+  GPU_matrix_identity_set();
+  wmOrtho2_region_pixelspace(region);
 
-  /* Label on the left, with a subtle grip icon as a drag affordance. */
-  if (handle->tear_off_label[0] != '\0') {
-    const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
-    rcti title_rect;
-    title_rect.xmin = int(rect.xmin + pad + icon_size);
-    title_rect.xmax = int(rect.xmax - (icon_size * 2.0f) - (pad * 2.0f));
-    title_rect.ymin = int(rect.ymin);
-    title_rect.ymax = int(rect.ymax);
+  draw_tear_off_pin_back(block, &rect_px);
 
+  BLF_batch_draw_begin();
+  widgetbase_draw_cache_begin();
+  rctf title = rect;
+  title.xmax -= UI_UNIT_X;
+  bool has_title = false;
+  for (Button &but : block->buttons()) {
+    const bool is_close = but.icon == ICON_PANEL_CLOSE;
+    const bool is_pin = but.icon == ICON_UNPINNED;
+    if (!but.tear_off_header || (but.flag & UI_HIDDEN) ||
+        !(but.type == ButtonType::Label || is_close || is_pin))
+    {
+      continue;
+    }
+    const rctf but_rect = tear_off_pin_but_rect(handle, block, but);
+    rcti but_px;
+    BLI_rcti_rctf_copy_round(&but_px, &but_rect);
+
+    if (is_pin) {
+      title.xmax = but_rect.xmin;
+    }
+    else if (but.type == ButtonType::Label) {
+      title.xmin = but_rect.xmax;
+      has_title |= !but.drawstr.empty();
+    }
+
+    /* Only for this draw. The hover state is the pin's own, and the press that collapsed it can
+     * be left on the block. */
+    const int icon = but.icon;
+    const int flag = but.flag;
+    but.flag &= ~(UI_HOVER | UI_SELECT);
+    if ((is_pin && handle->tear_off_pin_hover_pin) || (is_close && handle->tear_off_pin_hover_x)) {
+      but.flag |= UI_HOVER;
+    }
+    if (is_pin) {
+      but.icon = ICON_PINNED;
+    }
+    draw_button(C, region, &style, &but, &but_px);
+    but.icon = icon;
+    but.flag = flag;
+  }
+  widgetbase_draw_cache_end();
+  BLF_batch_draw_end();
+
+  /* The panel's title can be part of a header checkbox, which isn't drawn. */
+  if (!has_title && BLI_rctf_size_x(&title) > UI_UNIT_X && handle->tear_off_label[0] != '\0') {
+    rcti title_px;
+    BLI_rcti_rctf_copy_round(&title_px, &title);
     uchar title_color[4];
     theme::get_color_4ubv(TH_TEXT, title_color);
-
     FontStyleDrawParams params{};
     params.align = UI_STYLE_TEXT_LEFT;
-    fontstyle_draw(fstyle,
-                   &title_rect,
+    fontstyle_draw(&style.widget,
+                   &title_px,
                    handle->tear_off_label,
                    strlen(handle->tear_off_label),
                    title_color,
                    &params);
   }
 
-  /* Grip icon on the far left: signals the whole label area is draggable. */
-  {
-    const float icon_draw_h = ICON_DEFAULT_HEIGHT;
-    const float icon_y = rect.ymin + ((BLI_rctf_size_y(&rect) - icon_draw_h) * 0.5f);
-    uchar mono[4] = {255, 255, 255, 255};
-    icon_draw_ex(rect.xmin + pad,
-                 icon_y,
-                 ICON_GRIP,
-                 UI_INV_SCALE_FAC,
-                 handle->tear_off_pin_hover_pin ? 1.0f : 0.6f,
-                 0.0f,
-                 mono,
-                 false,
-                 UI_NO_ICON_OVERLAY_TEXT,
-                 false,
-                 true);
-  }
-
-  /* Icons on the right: pin then X (close), vertically centered in the widget.
-   * Icons draw at #ICON_DEFAULT_HEIGHT, not #UI_UNIT_Y, so center on that. */
-  const float icon_draw_h = ICON_DEFAULT_HEIGHT;
-  const float icon_y = rect.ymin + ((BLI_rctf_size_y(&rect) - icon_draw_h) * 0.5f);
-  const float x_x = rect.xmax - pad - icon_size;
-  const float x_pin = x_x - pad - icon_size;
-
-  uchar mono[4] = {255, 255, 255, 255};
-  icon_draw_ex(x_pin,
-               icon_y,
-               ICON_PINNED,
-               UI_INV_SCALE_FAC,
-               handle->tear_off_pin_hover_pin ? 1.0f : 0.7f,
-               0.0f,
-               mono,
-               false,
-               UI_NO_ICON_OVERLAY_TEXT,
-               false,
-               true);
-  icon_draw_ex(x_x,
-               icon_y,
-               ICON_X,
-               UI_INV_SCALE_FAC,
-               handle->tear_off_pin_hover_x ? 1.0f : 0.7f,
-               0.0f,
-               mono,
-               false,
-               UI_NO_ICON_OVERLAY_TEXT,
-               false,
-               true);
+  GPU_matrix_pop_projection();
+  GPU_matrix_pop();
 }
 
 static void block_region_draw(const bContext *C, ARegion *region)
@@ -758,7 +772,7 @@ static void block_region_draw(const bContext *C, ARegion *region)
     }
     /* BFA - Tear-Off Menu/Panel: user-collapsed pinned panel draws as the pin widget. */
     if (block.handle && block.handle->is_tear_off && block.handle->tear_off_collapsed) {
-      tear_off_pin_widget_draw(block.handle);
+      tear_off_pin_widget_draw(C, region, &block);
       continue;
     }
     block_draw(C, &block);

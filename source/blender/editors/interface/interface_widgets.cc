@@ -6215,12 +6215,13 @@ void draw_menu_back(uiStyle * /*style*/, Block *block, const rcti *rect)
   wt->state(wt, &STATE_INFO_NULL, EmbossType::Undefined);
   if (block) {
     const float zoom = 1.0f / block->aspect;
-    wt->draw_block(&wt->wcol,
-                   rect,
-                   block->flag,
-                   block->alert_level == BlockAlertLevel::None ? block->direction :
-                                                                 char(UI_DIR_DOWN),
-                   zoom);
+    char direction = block->alert_level == BlockAlertLevel::None ? block->direction :
+                                                                   char(UI_DIR_DOWN);
+    /* BFA - Tear-Off Menu/Panel: no longer attached to a button, so all its corners are round. */
+    if (block->handle && block->handle->is_tear_off) {
+      direction = 0;
+    }
+    wt->draw_block(&wt->wcol, rect, block->flag, direction, zoom);
     if (block->alert_level != BlockAlertLevel::None) {
       draw_dialog_alert(block, rect);
     }
@@ -6356,6 +6357,21 @@ void draw_tear_off_panel_header_back(const ARegion *region, const Block *block)
   draw_roundbox_corner_set(CNR_TOP_LEFT | CNR_TOP_RIGHT);
   draw_roundbox_4fv(&strip_pxf, true, tear_off_panel_roundness() * U.widget_unit, header);
   GPU_blend(GPU_BLEND_NONE);
+}
+
+/* BFA - Tear-Off Menu/Panel: a collapsed tear-off has the corners, outline and shadow of the open
+ * one. */
+void draw_tear_off_pin_back(const Block *block, const rcti *rect)
+{
+  uiWidgetColors wcol = *widget_type(WidgetStyle::MenuBack)->wcol_theme;
+  if (block_has_tear_off_panel_colors(block)) {
+    wcol.roundness = tear_off_panel_roundness();
+  }
+  float back[4];
+  theme::get_color_4fv(TH_PANEL_HEADER, back);
+  back[3] = 0.9f;
+  rgba_float_to_uchar(wcol.inner, back);
+  draw_popover_back_impl(&wcol, rect, 0, U.widget_unit, nullptr);
 }
 
 void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const rcti *rect)

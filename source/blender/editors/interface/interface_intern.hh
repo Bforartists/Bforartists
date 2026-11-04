@@ -1471,6 +1471,12 @@ PopupBlockHandle *tear_off_handle_from_region(wmWindow *win, const ARegion *regi
 void tear_off_pin_widget_rect(const PopupBlockHandle *handle, rctf *r_rect);
 
 /**
+ * BFA - Tear-Off Menu/Panel: where the header button with this icon is on the collapsed pin
+ * widget, in the same coordinates. False if the header has no such button.
+ */
+bool tear_off_pin_icon_rect(const PopupBlockHandle *handle, int icon, rctf *r_rect);
+
+/**
  * BFA - Tear-Off Menu/Panel: collapse or expand a pinned tear-off popup.
  *
  * Collapsing switches the popup to the small draggable pin widget and expands the region to
@@ -2016,6 +2022,7 @@ bool block_is_tear_off_panel(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_has_tear_off_panel_colors(const Block *block) ATTR_WARN_UNUSED_RESULT;
 /* BFA - Tear-Off Menu/Panel: the header's color, under its buttons. */
 void draw_tear_off_panel_header_back(const ARegion *region, const Block *block);
+void draw_tear_off_pin_back(const Block *block, const rcti *rect);
 /* BFA - Tear-Off Menu/Panel: top edge of the scrolling content. Equal to `rect.ymax` exactly for
  * anything without a sticky header, so regular popups compare and clip as upstream. Never below
  * `rect.ymin`, so it's safe as a clamp limit in a window too small for the header. */
