@@ -13515,6 +13515,65 @@ static bool tear_off_under_regular_popup(const bContext *C, const PopupBlockHand
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: where it shows, in window coordinates. A collapsed one's region covers
+ * the whole window, see #popup_contains_point. */
+static void tear_off_shown_rect(const PopupBlockHandle *menu, rctf *r_rect)
+{
+  if (menu->tear_off_collapsed) {
+    tear_off_pin_widget_rect(menu, r_rect);
+  }
+  else {
+    BLI_rctf_rcti_copy(r_rect, &menu->region->winrct);
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: the last one clicked is on top, as with windows on a desktop. Its
+ * handler and its region move together, because events reach the newest handler first and regions
+ * draw in order, so what's on top is also what gets the click. Directly above the frontmost
+ * tear-off, so whatever is above that, like a tooltip, stays above. Only tear-offs of this screen
+ * count, as those of another workspace don't show here. It only fades if it was covered.
+ *
+ * Only the handler being called may move during dispatch, whose loop has its next one by then. */
+static void tear_off_raise(bContext *C, PopupBlockHandle *menu)
+{
+  wmWindow *win = CTX_wm_window(C);
+  bScreen *screen = CTX_wm_screen(C);
+  wmEventHandler *handler = popup_handler_find(win, menu);
+  if (handler == nullptr || BLI_findindex(&screen->regionbase, menu->region) == -1) {
+    return;
+  }
+  rctf rect;
+  tear_off_shown_rect(menu, &rect);
+  wmEventHandler *front = nullptr;
+  bool covered = false;
+  for (wmEventHandler *newer = handler->prev; newer; newer = newer->prev) {
+    const PopupBlockHandle *other = popup_from_handler(newer);
+    if (!other || !other->is_tear_off || BLI_findindex(&screen->regionbase, other->region) == -1) {
+      continue;
+    }
+    front = newer;
+    if (!covered && tear_off_is_visible(C, other)) {
+      rctf other_rect;
+      tear_off_shown_rect(other, &other_rect);
+      covered = BLI_rctf_isect(&rect, &other_rect, nullptr);
+    }
+  }
+  if (front == nullptr) {
+    return;
+  }
+  ARegion *under_next = menu->region->next;
+  BLI_remlink(&win->runtime->modalhandlers, handler);
+  BLI_insertlinkbefore(&win->runtime->modalhandlers, front, handler);
+  BLI_remlink(&screen->regionbase, menu->region);
+  BLI_insertlinkafter(&screen->regionbase, popup_from_handler(front)->region, menu->region);
+  if (covered) {
+    tear_off_raise_fade_start(C, menu, under_next);
+  }
+  else {
+    ED_region_tag_redraw(menu->region);
+  }
+}
+
 /* BFA - Tear-Off Menu/Panel: which collapsed pins the cursor can use, for the whole window. A pin
  * can't do this on its own, because newer popups keep the mouse moves over them. The move cursor
  * over a pin's label is decided here too, once. If each pin did it, one the cursor isn't on would
@@ -13979,7 +14038,9 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
     tear_off_pin_hover_sync(C, event);
   }
   /* BFA - Tear-Off Menu/Panel: only this pin's own timer, so timers always get past popups. */
-  if (event->type == TIMER && tear_off_pin_fade_tick(C, menu, event)) {
+  if (event->type == TIMER &&
+      (tear_off_pin_fade_tick(C, menu, event) || tear_off_raise_fade_tick(C, menu, event)))
+  {
     CTX_wm_region_popup_set(C, region_popup);
     return WM_UI_HANDLER_BREAK;
   }
@@ -14117,6 +14178,15 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   {
     CTX_wm_region_popup_set(C, region_popup);
     return WM_UI_HANDLER_CONTINUE;
+  }
+
+  /* BFA - Tear-Off Menu/Panel: any mouse button, on any part of it, before anything acts on the
+   * press. A double-click arrives before its press, and the second call changes nothing. */
+  if (menu->is_tear_off && ELEM(event->type, LEFTMOUSE, RIGHTMOUSE, MIDDLEMOUSE) &&
+      ELEM(event->val, KM_PRESS, KM_DBL_CLICK) && popup_contains_point(menu, event->xy) &&
+      !tear_off_under_regular_popup(C, menu) && !tear_off_covered_at(C, menu, event->xy))
+  {
+    tear_off_raise(C, menu);
   }
 
   /* BFA - Tear-Off Menu/Panel: before the title double-click, so a grip's double-click resets it

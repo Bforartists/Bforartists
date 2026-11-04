@@ -43,6 +43,16 @@ void region_temp_remove(bContext *C, bScreen *screen, ARegion *region)
 
   BLI_assert(region->regiontype == RGN_TYPE_TEMPORARY);
   BLI_assert(BLI_findindex(&screen->regionbase, region) != -1);
+
+  /* BFA - Tear-Off Menu/Panel: a tear-off coming to the front is drawn just below this region. */
+  for (ARegion &raised : screen->regionbase) {
+    if (raised.runtime->tear_off_raise_next == region) {
+      raised.runtime->tear_off_raise_next = region->next;
+      if (region->next == nullptr) {
+        raised.runtime->tear_off_raise_alpha = 1.0f;
+      }
+    }
+  }
   if (win) {
     wm_draw_region_clear(win, region);
   }

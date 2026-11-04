@@ -672,6 +672,13 @@ struct ARegionRuntime {
   /** BFA - Tear-Off Menu/Panel: opacity of the whole region when it's composited, so a collapsed
    * pin can recede as one layer. Not #regiontimer, whose value also slides a region. */
   float tear_off_alpha = 1.0f;
+  /** BFA - Tear-Off Menu/Panel: while a clicked tear-off comes to the front, the region that was
+   * above it, which it's also drawn just below. Only ever compared, see #region_temp_remove. */
+  const ARegion *tear_off_raise_next = nullptr;
+  /** BFA - Tear-Off Menu/Panel: opacity of the region at the front during that time. */
+  float tear_off_raise_alpha = 1.0f;
+  /** BFA - Tear-Off Menu/Panel: opacity of the copy drawn where it was. */
+  float tear_off_raise_under_alpha = 1.0f;
 
   /** For calling after building a blocks. */
   Vector<std::function<void(const bContext &C, ui::Block &Block)>> post_block_layout_fns;

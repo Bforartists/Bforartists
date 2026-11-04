@@ -1191,6 +1191,11 @@ struct PopupBlockHandle {
   float tear_off_pin_fade = 0.0f;
   /** BFA - Tear-Off Menu/Panel: only while #tear_off_pin_fade is on its way. */
   wmTimer *tear_off_pin_fade_timer = nullptr;
+  /** BFA - Tear-Off Menu/Panel: how far it has come to the front after a click, from 0 to 1, see
+   * #tear_off_raise_fade_tick. */
+  float tear_off_raise_fade = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: only while #tear_off_raise_fade is on its way. */
+  wmTimer *tear_off_raise_timer = nullptr;
 
   /** BFA - Tear-Off Menu/Panel: what an enum tear-off shows, for storing it. Owned by the popup's
    * create function, so it lives as long as this handle. Raw, because the handle is copied with
@@ -1507,6 +1512,13 @@ bool tear_off_pin_icon_rect(const PopupBlockHandle *handle, int icon, rctf *r_re
 void tear_off_pin_fade_start(const bContext *C, PopupBlockHandle *handle);
 /** BFA - Tear-Off Menu/Panel: true if this timer event was this pin's fade. */
 bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event);
+/** BFA - Tear-Off Menu/Panel: fades in a tear-off just moved to the front. `under_next` is the
+ * region that was above it. */
+void tear_off_raise_fade_start(const bContext *C,
+                               PopupBlockHandle *handle,
+                               const ARegion *under_next);
+/** BFA - Tear-Off Menu/Panel: true if the event was this tear-off's own timer. */
+bool tear_off_raise_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event);
 
 /**
  * BFA - Tear-Off Menu/Panel: collapse or expand a pinned tear-off popup.

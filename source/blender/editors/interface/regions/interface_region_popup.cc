@@ -747,6 +747,56 @@ bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const w
   return true;
 }
 
+/* BFA - Tear-Off Menu/Panel: seconds, for what covered a clicked tear-off to give way to it. Only a
+ * touch, because it follows a click and shouldn't feel like a wait. */
+static constexpr double TEAR_OFF_RAISE_TIME = 0.18;
+/* BFA - Tear-Off Menu/Panel: how far through it the copy where it was starts to go. Only once the
+ * one at the front is solid, or the tear-off would dip. Removing that copy at once instead would
+ * show as a step in its shadow, which is doubled until then. */
+static constexpr float TEAR_OFF_RAISE_UNDER_START = 0.7f;
+
+void tear_off_raise_fade_start(const bContext *C,
+                               PopupBlockHandle *handle,
+                               const ARegion *under_next)
+{
+  ARegionRuntime &runtime = *handle->region->runtime;
+  runtime.tear_off_raise_next = under_next;
+  runtime.tear_off_raise_alpha = 0.0f;
+  runtime.tear_off_raise_under_alpha = 1.0f;
+  handle->tear_off_raise_fade = 0.0f;
+  if (handle->tear_off_raise_timer == nullptr) {
+    handle->tear_off_raise_timer = WM_event_timer_add(
+        CTX_wm_manager(C), CTX_wm_window(C), TIMER, TEAR_OFF_PIN_FADE_STEP);
+  }
+  ED_region_tag_redraw(handle->region);
+}
+
+bool tear_off_raise_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event)
+{
+  wmTimer *timer = handle->tear_off_raise_timer;
+  if (timer == nullptr || event->customdata != timer) {
+    return false;
+  }
+  handle->tear_off_raise_fade = std::min(
+      handle->tear_off_raise_fade + float(timer->time_delta / TEAR_OFF_RAISE_TIME), 1.0f);
+  const float fade = handle->tear_off_raise_fade;
+  const auto ease = [](const float x) { return x * x * (3.0f - 2.0f * x); };
+  const float under_start = TEAR_OFF_RAISE_UNDER_START;
+
+  ARegionRuntime &runtime = *handle->region->runtime;
+  runtime.tear_off_raise_alpha = ease(std::min(fade / under_start, 1.0f));
+  runtime.tear_off_raise_under_alpha = 1.0f -
+                                       ease(std::max((fade - under_start) / (1.0f - under_start),
+                                                     0.0f));
+  if (fade == 1.0f) {
+    runtime.tear_off_raise_next = nullptr;
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer);
+    handle->tear_off_raise_timer = nullptr;
+  }
+  ED_region_tag_redraw(handle->region);
+  return true;
+}
+
 /* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off. The
  * header's own buttons, so they look the same as when open, apart from the pin icon. Controls of
  * the panel's header aren't drawn, because a collapsed pin can't use them, but the text of a
@@ -1097,6 +1147,10 @@ static void popup_block_remove(bContext *C, PopupBlockHandle *handle)
   if (handle->tear_off_pin_fade_timer) {
     WM_event_timer_remove(wm, win, handle->tear_off_pin_fade_timer);
     handle->tear_off_pin_fade_timer = nullptr;
+  }
+  if (handle->tear_off_raise_timer) {
+    WM_event_timer_remove(wm, win, handle->tear_off_raise_timer);
+    handle->tear_off_raise_timer = nullptr;
   }
   if (handle->keep_open_timer) {
     WM_event_timer_remove(wm, win, handle->keep_open_timer);
