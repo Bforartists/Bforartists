@@ -1261,7 +1261,8 @@ static void tear_off_header_icons_snap(Block *block)
 {
   for (Button &bt : block->buttons()) {
     if (bt.tear_off_header && ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE)) {
-      bt.drawflag &= ~BUT_ALIGN_ALL;
+      /* Centered too, as in a menu they'd line up with the icons of its rows, off center here. */
+      bt.drawflag &= ~(BUT_ALIGN_ALL | BUT_ICON_LEFT);
       const float size = std::round(BLI_rctf_size_y(&bt.rect));
       bt.rect.xmin = std::round(bt.rect.xmin);
       bt.rect.ymin = std::round(bt.rect.ymin);
