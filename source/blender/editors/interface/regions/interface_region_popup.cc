@@ -1252,6 +1252,22 @@ static void tear_off_panel_header_align(Block *block, const float bounds)
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: the pin and close icons on whole pixels, as square as their row is
+ * tall. Layout leaves them on fractions, and rounding each edge alone could make one a pixel wider,
+ * which shows when its highlight lights up. */
+static void tear_off_header_icons_snap(Block *block)
+{
+  for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header && ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE)) {
+      const float size = std::round(BLI_rctf_size_y(&bt.rect));
+      bt.rect.xmin = std::round(bt.rect.xmin);
+      bt.rect.ymin = std::round(bt.rect.ymin);
+      bt.rect.xmax = bt.rect.xmin + size;
+      bt.rect.ymax = bt.rect.ymin + size;
+    }
+  }
+}
+
 /* BFA - Tear-Off Menu/Panel: the header stays, so the content scrolls below it. If the window
  * trimmed the top of the block, move everything down, or the header would stay cut off. */
 static void tear_off_header_scroll_prepare(Block *block, const float bounds)
@@ -1274,6 +1290,7 @@ static void tear_off_header_scroll_prepare(Block *block, const float bounds)
   /* Above 0 even in a window too small for the header, because 0 means there is none. */
   block->tear_off_header_ymin = std::max(ymin - excess, 1.0f);
   tear_off_panel_header_align(block, bounds);
+  tear_off_header_icons_snap(block);
 }
 
 Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butregion, Button *but)
