@@ -965,6 +965,8 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
 
   GPU_shader_uniform_float_ex(shader, rect_tex_loc, 4, 1, rectt);
   GPU_shader_uniform_float_ex(shader, rect_geo_loc, 4, 1, rectg);
+  /* BFA - Tear-Off Menu/Panel: after rect_tex and rect_geo, which must not change with it. */
+  alpha *= region->runtime->tear_off_alpha;
   GPU_shader_uniform_float_ex(shader, color_loc, 4, 1, float4{alpha, alpha, alpha, alpha});
 
   gpu::Batch *quad = GPU_batch_preset_quad();

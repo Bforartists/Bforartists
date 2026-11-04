@@ -1177,6 +1177,9 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: hover state for the collapsed X (close) and pin icons. */
   bool tear_off_pin_hover_x = false;
   bool tear_off_pin_hover_pin = false;
+  /** BFA - Tear-Off Menu/Panel: the cursor is over this collapsed pin and can use it, so it shows
+   * at full strength. See #tear_off_pin_hover_sync. */
+  bool tear_off_pin_hover = false;
 
   /** BFA - Tear-Off Menu/Panel: workspace this panel was torn off in. Pinned panels are
    * scoped per workspace: they hide when another workspace is active and reappear when the
@@ -2016,7 +2019,7 @@ bool block_is_tear_off_panel(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_has_tear_off_panel_colors(const Block *block) ATTR_WARN_UNUSED_RESULT;
 /* BFA - Tear-Off Menu/Panel: the header's color, under its buttons. */
 void draw_tear_off_panel_header_back(const ARegion *region, const Block *block);
-void draw_tear_off_pin_back(const Block *block, const rcti *rect);
+void draw_tear_off_pin_back(const Block *block, const rcti *rect, float back_alpha);
 void draw_tear_off_pin_checkbox_title(uiStyle *style, Button *but, rcti *rect);
 /* BFA - Tear-Off Menu/Panel: top edge of the scrolling content. Equal to `rect.ymax` exactly for
  * anything without a sticky header, so regular popups compare and clip as upstream. Never below

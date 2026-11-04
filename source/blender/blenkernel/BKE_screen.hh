@@ -669,6 +669,10 @@ struct ARegionRuntime {
   /** Blend in/out. */
   wmTimer *regiontimer = nullptr;
 
+  /** BFA - Tear-Off Menu/Panel: opacity of the whole region when it's composited, so a collapsed
+   * pin can recede as one layer. Not #regiontimer, whose value also slides a region. */
+  float tear_off_alpha = 1.0f;
+
   /** For calling after building a blocks. */
   Vector<std::function<void(const bContext &C, ui::Block &Block)>> post_block_layout_fns;
 

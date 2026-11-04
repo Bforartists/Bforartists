@@ -13485,6 +13485,39 @@ static bool tear_off_under_regular_popup(const bContext *C, const PopupBlockHand
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: which collapsed pins the cursor can use, for the whole window. A pin
+ * can't do this on its own, because newer popups keep the mouse moves over them. */
+static void tear_off_pin_hover_sync(const bContext *C, const wmEvent *event)
+{
+  wmWindow *win = CTX_wm_window(C);
+  bool input_owned = false;
+  for (wmEventHandler &handler : win->runtime->modalhandlers) {
+    const PopupBlockHandle *other = popup_from_handler(&handler);
+    input_owned |= other && other->is_tear_off && tear_off_owns_input(other) &&
+                   tear_off_is_visible(C, other);
+  }
+  for (wmEventHandler &handler : win->runtime->modalhandlers) {
+    PopupBlockHandle *pin = popup_from_handler(&handler);
+    if (!pin || !pin->is_tear_off || !pin->tear_off_collapsed) {
+      continue;
+    }
+    /* A deactivate event's position is stale, and the window's return sends a mouse move. The
+     * point test comes first, as it's much cheaper than the visibility test. */
+    const bool hover = event->type != WINDEACTIVATE && !input_owned &&
+                       popup_contains_point(pin, event->xy) && tear_off_is_visible(C, pin) &&
+                       !tear_off_under_regular_popup(C, pin) &&
+                       !tear_off_covered_at(C, pin, event->xy);
+    if (hover != pin->tear_off_pin_hover) {
+      pin->tear_off_pin_hover = hover;
+      if (!hover) {
+        pin->tear_off_pin_hover_x = false;
+        pin->tear_off_pin_hover_pin = false;
+      }
+      ED_region_tag_redraw(pin->region);
+    }
+  }
+}
+
 /* BFA - Tear-Off Menu/Panel: which cursor shows the edge a grip acts on. A modal operator's cursor
  * stays. There is no diagonal cursor, so a corner uses the scroll one. */
 static void tear_off_zone_cursor_set(wmWindow *win, const uint8_t zone)
@@ -13878,6 +13911,12 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   ARegion *region_popup = CTX_wm_region_popup(C);
   CTX_wm_region_popup_set(C, menu->region);
 
+  /* BFA - Tear-Off Menu/Panel: before anything that can return, and for any popup, because the
+   * first handler called may not be the pin's. */
+  if (ELEM(event->type, MOUSEMOVE, WINDEACTIVATE)) {
+    tear_off_pin_hover_sync(C, event);
+  }
+
   if (event->type == EVT_DROP || event->val == KM_DBL_CLICK) {
     /* EVT_DROP:
      *   If we're handling drop event we'll want it to be handled by popup callee as well,
@@ -14057,9 +14096,13 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
                             tear_off_pin_icon_rect(handle, ICON_UNPINNED, &icon_rect) &&
                             BLI_rctf_isect_x(&icon_rect, mx);
 
-      if (handle->tear_off_pin_hover_x != over_x || handle->tear_off_pin_hover_pin != over_pin) {
-        handle->tear_off_pin_hover_x = over_x;
-        handle->tear_off_pin_hover_pin = over_pin;
+      /* The highlight only shows where the cursor can use it. A press still goes by the position,
+       * as it only arrives here when nothing above took it. */
+      const bool lit_x = over_x && handle->tear_off_pin_hover;
+      const bool lit_pin = over_pin && handle->tear_off_pin_hover;
+      if (handle->tear_off_pin_hover_x != lit_x || handle->tear_off_pin_hover_pin != lit_pin) {
+        handle->tear_off_pin_hover_x = lit_x;
+        handle->tear_off_pin_hover_pin = lit_pin;
         ED_region_tag_redraw(menu->region);
       }
 
@@ -14084,12 +14127,17 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
         /* BFA - Tear-Off Menu/Panel: with the focus gone no release is coming. */
         if (event->type == WINDEACTIVATE) {
           handle->tear_off_pin_dragging = false;
+          handle->tear_off_pin_hover = false;
           handle->tear_off_skip_release = true;
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
+          ED_region_tag_redraw(menu->region);
         }
         if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
           handle->tear_off_pin_dragging = false;
+          /* A drag can end with the cursor past the clamped pin. */
+          handle->tear_off_pin_hover = inside;
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
+          ED_region_tag_redraw(menu->region);
           CTX_wm_region_popup_set(C, region_popup);
           return WM_UI_HANDLER_BREAK;
         }

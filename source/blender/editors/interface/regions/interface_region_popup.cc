@@ -670,14 +670,32 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
     if (block) {
       tear_off_clamp_to_window(win, handle, block, region);
     }
+
+    /* It collapses under the cursor, and must not fade until the cursor leaves. */
+    rctf widget;
+    tear_off_pin_widget_rect(handle, &widget);
+    const int *xy = win->runtime->eventstate->xy;
+    handle->tear_off_pin_hover = BLI_rctf_isect_pt(&widget, xy[0], xy[1]);
   }
   else {
     /* Re-layout the full panel; `popup_block_refresh` resets `winrct` to the panel size. */
     ED_region_tag_refresh_ui(region);
+    handle->tear_off_pin_hover = false;
+    handle->tear_off_pin_hover_x = false;
+    handle->tear_off_pin_hover_pin = false;
   }
 
   ED_region_tag_redraw(region);
 }
+
+/* BFA - Tear-Off Menu/Panel: how far a collapsed pin recedes while the cursor is elsewhere, so it
+ * doesn't clutter the view. REST_ALPHA fades it as one layer, which keeps the title readable over a
+ * bright viewport, because the text blends toward the viewport and not toward its own color.
+ * REST_BACK_ALPHA lowers the color and outline further, to 0.6 overall. A title over a white
+ * viewport then has a contrast of about 3:1 (2.9 for a menu, 3.0 for a panel), and less would make
+ * it hard to read. */
+static constexpr float TEAR_OFF_PIN_REST_ALPHA = 0.8f;
+static constexpr float TEAR_OFF_PIN_REST_BACK_ALPHA = 0.75f;
 
 /* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off. The
  * header's own buttons, so they look the same as when open, apart from the pin icon. Controls of
@@ -698,7 +716,9 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
   GPU_matrix_identity_set();
   wmOrtho2_region_pixelspace(region);
 
-  draw_tear_off_pin_back(block, &rect_px);
+  const bool at_rest = !(handle->tear_off_pin_hover || handle->tear_off_pin_dragging);
+  region->runtime->tear_off_alpha = at_rest ? TEAR_OFF_PIN_REST_ALPHA : 1.0f;
+  draw_tear_off_pin_back(block, &rect_px, at_rest ? TEAR_OFF_PIN_REST_BACK_ALPHA : 1.0f);
 
   BLF_batch_draw_begin();
   widgetbase_draw_cache_begin();
@@ -745,6 +765,8 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
 
 static void block_region_draw(const bContext *C, ARegion *region)
 {
+  /* BFA - Tear-Off Menu/Panel: only a pin at rest fades, see #tear_off_pin_widget_draw. */
+  region->runtime->tear_off_alpha = 1.0f;
   for (Block &block : region->runtime->uiblocks) {
     /* BFA - Tear-Off Menu/Panel: hide pinned tear-offs whose editor domain, mode or workspace
      * no longer matches the current context. The handle stays alive so the panel can reappear. */

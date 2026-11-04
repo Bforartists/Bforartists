@@ -6360,8 +6360,9 @@ void draw_tear_off_panel_header_back(const ARegion *region, const Block *block)
 }
 
 /* BFA - Tear-Off Menu/Panel: a collapsed tear-off has the color, corners, outline and shadow of the
- * open one's header, see #draw_popover_back. */
-void draw_tear_off_pin_back(const Block *block, const rcti *rect)
+ * open one's header, see #draw_popover_back. `back_alpha` fades the color and outline, and below 1
+ * there's no shadow, which only adds clutter around a pin at rest. */
+void draw_tear_off_pin_back(const Block *block, const rcti *rect, const float back_alpha)
 {
   uiWidgetColors wcol = *widget_type(WidgetStyle::MenuBack)->wcol_theme;
   if (block_is_tear_off_shelf(block)) {
@@ -6374,7 +6375,21 @@ void draw_tear_off_pin_back(const Block *block, const rcti *rect)
     rgba_float_to_uchar(wcol.inner, header);
     wcol.roundness = tear_off_panel_roundness();
   }
-  draw_popover_back_impl(&wcol, rect, 0, U.widget_unit, nullptr);
+  wcol.inner[3] *= back_alpha;
+  wcol.outline[3] *= back_alpha;
+  const float radius = wcol.roundness * U.widget_unit;
+
+  /* As #draw_popover_back_impl with no arrow. */
+  GPU_blend(GPU_BLEND_ALPHA);
+  if (back_alpha == 1.0f) {
+    widget_softshadow(rect, CNR_ALL, radius);
+  }
+  WidgetBase wtb;
+  widget_init(&wtb);
+  round_box_edges(&wtb, CNR_ALL, rect, radius);
+  wtb.draw_emboss = false;
+  widgetbase_draw(&wtb, &wcol);
+  GPU_blend(GPU_BLEND_NONE);
 }
 
 /* BFA - Tear-Off Menu/Panel: a panel's title can be the text of its header checkbox. A collapsed
