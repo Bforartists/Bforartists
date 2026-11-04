@@ -189,6 +189,7 @@ def km_window(params):
         ("wm.batch_rename", {"type": 'RET', "value": 'PRESS', "alt": True}, None),
 
         # File operations
+        # BFA - A blank slate in the current workspaces, as File > New.
         ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True},
          {"properties": [("load_ui", False)]}),
         op_menu("TOPBAR_MT_file_open_recent", {"type": 'O', "value": 'PRESS', "shift": True, "ctrl": True}),
