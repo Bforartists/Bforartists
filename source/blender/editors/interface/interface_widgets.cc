@@ -6360,9 +6360,12 @@ void draw_tear_off_panel_header_back(const ARegion *region, const Block *block)
 }
 
 /* BFA - Tear-Off Menu/Panel: a collapsed tear-off has the color, corners, outline and shadow of the
- * open one's header, see #draw_popover_back. `back_alpha` fades the color and outline, and below 1
- * there's no shadow, which only adds clutter around a pin at rest. */
-void draw_tear_off_pin_back(const Block *block, const rcti *rect, const float back_alpha)
+ * open one's header, see #draw_popover_back. `back_alpha` fades the color and outline, and `shadow`
+ * the shadow, which only adds clutter around a pin at rest. */
+void draw_tear_off_pin_back(const Block *block,
+                            const rcti *rect,
+                            const float back_alpha,
+                            const float shadow)
 {
   uiWidgetColors wcol = *widget_type(WidgetStyle::MenuBack)->wcol_theme;
   if (block_is_tear_off_shelf(block)) {
@@ -6379,10 +6382,18 @@ void draw_tear_off_pin_back(const Block *block, const rcti *rect, const float ba
   wcol.outline[3] *= back_alpha;
   const float radius = wcol.roundness * U.widget_unit;
 
-  /* As #draw_popover_back_impl with no arrow. */
+  /* As #draw_popover_back_impl with no arrow, and #widget_softshadow with its own strength. */
   GPU_blend(GPU_BLEND_ALPHA);
-  if (back_alpha == 1.0f) {
-    widget_softshadow(rect, CNR_ALL, radius);
+  if (shadow > 0.0f) {
+    rctf shadow_rect;
+    BLI_rctf_rcti_copy(&shadow_rect, rect);
+    BLI_rctf_pad(&shadow_rect, -U.pixelsize, -U.pixelsize);
+    draw_roundbox_corner_set(CNR_ALL);
+    draw_dropshadow(&shadow_rect,
+                    radius,
+                    theme::get_menu_shadow_width(),
+                    1.0f,
+                    theme::theme_get()->tui.menu_shadow_fac * shadow);
   }
   WidgetBase wtb;
   widget_init(&wtb);

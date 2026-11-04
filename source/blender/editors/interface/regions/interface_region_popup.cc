@@ -23,6 +23,7 @@
 #include "GPU_matrix.hh" /* BFA - Tear-Off Menu/Panel: the collapsed pin. */
 
 #include "BLI_listbase.hh"
+#include "BLI_math_base_c.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
 #include "BLI_utildefines.hh"
@@ -675,7 +676,9 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
       tear_off_clamp_to_window(win, handle, block, region);
     }
 
-    /* It collapses under the cursor, and must not fade until the cursor leaves. */
+    /* It collapses under the cursor, and must not fade until the cursor leaves. If the cursor is
+     * elsewhere, the next mouse move starts it. */
+    handle->tear_off_pin_fade = 1.0f;
     rctf widget;
     tear_off_pin_widget_rect(handle, &widget);
     const int *xy = win->runtime->eventstate->xy;
@@ -687,6 +690,7 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
     handle->tear_off_pin_hover = false;
     handle->tear_off_pin_hover_x = false;
     handle->tear_off_pin_hover_pin = false;
+    handle->tear_off_pin_move_cursor = false;
   }
 
   ED_region_tag_redraw(region);
@@ -700,6 +704,48 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
  * it hard to read. */
 static constexpr float TEAR_OFF_PIN_REST_ALPHA = 0.8f;
 static constexpr float TEAR_OFF_PIN_REST_BACK_ALPHA = 0.75f;
+/* BFA - Tear-Off Menu/Panel: seconds. Coming back is quick, as the user is reaching for it. Going
+ * is slower, so passing over a pin doesn't read as a flash. */
+static constexpr double TEAR_OFF_PIN_FADE_IN_TIME = 0.08;
+static constexpr double TEAR_OFF_PIN_FADE_OUT_TIME = 0.3;
+static constexpr double TEAR_OFF_PIN_FADE_STEP = 1.0 / 60.0;
+
+static float tear_off_pin_fade_target(const PopupBlockHandle *handle)
+{
+  return (handle->tear_off_pin_hover || handle->tear_off_pin_dragging) ? 1.0f : 0.0f;
+}
+
+void tear_off_pin_fade_start(const bContext *C, PopupBlockHandle *handle)
+{
+  if (handle->tear_off_pin_fade_timer == nullptr && handle->tear_off_collapsed &&
+      handle->tear_off_pin_fade != tear_off_pin_fade_target(handle))
+  {
+    handle->tear_off_pin_fade_timer = WM_event_timer_add(
+        CTX_wm_manager(C), CTX_wm_window(C), TIMER, TEAR_OFF_PIN_FADE_STEP);
+  }
+}
+
+bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event)
+{
+  wmTimer *timer = handle->tear_off_pin_fade_timer;
+  if (timer == nullptr || event->customdata != timer) {
+    return false;
+  }
+  const float target = tear_off_pin_fade_target(handle);
+  const double time = (target > handle->tear_off_pin_fade) ? TEAR_OFF_PIN_FADE_IN_TIME :
+                                                             TEAR_OFF_PIN_FADE_OUT_TIME;
+  const float step = float(timer->time_delta / time);
+  handle->tear_off_pin_fade = (target > handle->tear_off_pin_fade) ?
+                                  std::min(handle->tear_off_pin_fade + step, target) :
+                                  std::max(handle->tear_off_pin_fade - step, target);
+  ED_region_tag_redraw(handle->region);
+  /* An expanded pin has nothing left to fade. */
+  if (handle->tear_off_pin_fade == target || !handle->tear_off_collapsed) {
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer);
+    handle->tear_off_pin_fade_timer = nullptr;
+  }
+  return true;
+}
 
 /* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off. The
  * header's own buttons, so they look the same as when open, apart from the pin icon. Controls of
@@ -720,9 +766,12 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
   GPU_matrix_identity_set();
   wmOrtho2_region_pixelspace(region);
 
-  const bool at_rest = !(handle->tear_off_pin_hover || handle->tear_off_pin_dragging);
-  region->runtime->tear_off_alpha = at_rest ? TEAR_OFF_PIN_REST_ALPHA : 1.0f;
-  draw_tear_off_pin_back(block, &rect_px, at_rest ? TEAR_OFF_PIN_REST_BACK_ALPHA : 1.0f);
+  /* Eased, as a straight line starts and stops with a visible step. */
+  const float fade = handle->tear_off_pin_fade;
+  const float eased = fade * fade * (3.0f - 2.0f * fade);
+  region->runtime->tear_off_alpha = interpf(1.0f, TEAR_OFF_PIN_REST_ALPHA, eased);
+  draw_tear_off_pin_back(
+      block, &rect_px, interpf(1.0f, TEAR_OFF_PIN_REST_BACK_ALPHA, eased), eased);
 
   BLF_batch_draw_begin();
   widgetbase_draw_cache_begin();
@@ -1043,6 +1092,11 @@ static void popup_block_remove(bContext *C, PopupBlockHandle *handle)
 
   if (handle->scrolltimer) {
     WM_event_timer_remove(wm, win, handle->scrolltimer);
+  }
+  /* BFA - Tear-Off Menu/Panel */
+  if (handle->tear_off_pin_fade_timer) {
+    WM_event_timer_remove(wm, win, handle->tear_off_pin_fade_timer);
+    handle->tear_off_pin_fade_timer = nullptr;
   }
   if (handle->keep_open_timer) {
     WM_event_timer_remove(wm, win, handle->keep_open_timer);

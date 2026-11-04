@@ -13504,11 +13504,15 @@ static bool tear_off_under_regular_popup(const bContext *C, const PopupBlockHand
 }
 
 /* BFA - Tear-Off Menu/Panel: which collapsed pins the cursor can use, for the whole window. A pin
- * can't do this on its own, because newer popups keep the mouse moves over them. */
-static void tear_off_pin_hover_sync(const bContext *C, const wmEvent *event)
+ * can't do this on its own, because newer popups keep the mouse moves over them. The move cursor
+ * over a pin's label is decided here too, once. If each pin did it, one the cursor isn't on would
+ * reset what the one under it had just set, so the real cursor would change twice on every move. */
+static void tear_off_pin_hover_sync(bContext *C, const wmEvent *event)
 {
   wmWindow *win = CTX_wm_window(C);
   bool input_owned = false;
+  bool had_move_cursor = false;
+  PopupBlockHandle *over_label = nullptr;
   for (wmEventHandler &handler : win->runtime->modalhandlers) {
     const PopupBlockHandle *other = popup_from_handler(&handler);
     input_owned |= other && other->is_tear_off && tear_off_owns_input(other) &&
@@ -13533,6 +13537,34 @@ static void tear_off_pin_hover_sync(const bContext *C, const wmEvent *event)
       }
       ED_region_tag_redraw(pin->region);
     }
+    tear_off_pin_fade_start(C, pin);
+
+    if (input_owned) {
+      continue;
+    }
+    had_move_cursor |= pin->tear_off_pin_move_cursor;
+    pin->tear_off_pin_move_cursor = false;
+    if (hover) {
+      rctf icon_rect;
+      const bool over_x = tear_off_pin_icon_rect(pin, ICON_PANEL_CLOSE, &icon_rect) &&
+                          BLI_rctf_isect_x(&icon_rect, event->xy[0]);
+      const bool over_pin = tear_off_pin_icon_rect(pin, ICON_UNPINNED, &icon_rect) &&
+                            BLI_rctf_isect_x(&icon_rect, event->xy[0]);
+      if (!over_x && !over_pin) {
+        over_label = pin;
+      }
+    }
+  }
+  if (over_label) {
+    over_label->tear_off_pin_move_cursor = true;
+    if (!win->modalcursor) {
+      WM_cursor_set(win, WM_CURSOR_MOVE);
+    }
+  }
+  else if (had_move_cursor && win->cursor == WM_CURSOR_MOVE) {
+    /* The default until the editor's own cursor comes back, through #region_cursor_set_ex. */
+    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    win->tag_cursor_refresh = true;
   }
 }
 
@@ -13934,6 +13966,11 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   if (ELEM(event->type, MOUSEMOVE, WINDEACTIVATE)) {
     tear_off_pin_hover_sync(C, event);
   }
+  /* BFA - Tear-Off Menu/Panel: only this pin's own timer, so timers always get past popups. */
+  if (event->type == TIMER && tear_off_pin_fade_tick(C, menu, event)) {
+    CTX_wm_region_popup_set(C, region_popup);
+    return WM_UI_HANDLER_BREAK;
+  }
 
   if (event->type == EVT_DROP || event->val == KM_DBL_CLICK) {
     /* EVT_DROP:
@@ -14134,29 +14171,15 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
         ED_region_tag_redraw(menu->region);
       }
 
-      /* BFA - Tear-Off Menu/Panel: show a move cursor over the draggable label area,
-       * restore the default cursor only if we previously set the move cursor (so other
-       * UI cursors underneath are not clobbered). */
-      {
-        wmWindow *win = CTX_wm_window(C);
-        const bool over_label = inside && !over_x && !over_pin;
-        if (event->type == MOUSEMOVE && !handle->tear_off_pin_dragging) {
-          if (over_label) {
-            WM_cursor_set(win, WM_CURSOR_MOVE);
-          }
-          else if (win->cursor == WM_CURSOR_MOVE) {
-            WM_cursor_set(win, WM_CURSOR_DEFAULT);
-          }
-        }
-      }
-
       /* BFA - Tear-Off Menu/Panel: dragging the widget moves it. */
       if (handle->tear_off_pin_dragging) {
         /* BFA - Tear-Off Menu/Panel: with the focus gone no release is coming. */
         if (event->type == WINDEACTIVATE) {
           handle->tear_off_pin_dragging = false;
           handle->tear_off_pin_hover = false;
+          handle->tear_off_pin_move_cursor = false;
           handle->tear_off_skip_release = true;
+          tear_off_pin_fade_start(C, handle);
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
           ED_region_tag_redraw(menu->region);
         }
@@ -14164,8 +14187,10 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
           handle->tear_off_pin_dragging = false;
           /* A drag can end with the cursor past the clamped pin. */
           handle->tear_off_pin_hover = inside;
+          handle->tear_off_pin_move_cursor = false;
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
           ED_region_tag_redraw(menu->region);
+          tear_off_pin_fade_start(C, handle);
           CTX_wm_region_popup_set(C, region_popup);
           return WM_UI_HANDLER_BREAK;
         }

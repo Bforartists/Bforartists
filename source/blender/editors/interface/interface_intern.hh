@@ -1183,6 +1183,13 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: the cursor is over this collapsed pin and can use it, so it shows
    * at full strength. See #tear_off_pin_hover_sync. */
   bool tear_off_pin_hover = false;
+  /** BFA - Tear-Off Menu/Panel: this pin set the move cursor, so it's the one to take it back. */
+  bool tear_off_pin_move_cursor = false;
+  /** BFA - Tear-Off Menu/Panel: how far this collapsed pin has come back, from 0 at rest to 1 at
+   * full strength, see #tear_off_pin_fade_tick. */
+  float tear_off_pin_fade = 0.0f;
+  /** BFA - Tear-Off Menu/Panel: only while #tear_off_pin_fade is on its way. */
+  wmTimer *tear_off_pin_fade_timer = nullptr;
 
   /** BFA - Tear-Off Menu/Panel: what an enum tear-off shows, for storing it. Owned by the popup's
    * create function, so it lives as long as this handle. Raw, because the handle is copied with
@@ -1491,6 +1498,14 @@ void tear_off_pin_widget_rect(const PopupBlockHandle *handle, rctf *r_rect);
  * widget, in the same coordinates. False if the header has no such button.
  */
 bool tear_off_pin_icon_rect(const PopupBlockHandle *handle, int icon, rctf *r_rect);
+
+/**
+ * BFA - Tear-Off Menu/Panel: starts this pin's fade if it isn't where it should be. Stops by itself,
+ * so nothing runs at rest.
+ */
+void tear_off_pin_fade_start(const bContext *C, PopupBlockHandle *handle);
+/** BFA - Tear-Off Menu/Panel: true if this timer event was this pin's fade. */
+bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event);
 
 /**
  * BFA - Tear-Off Menu/Panel: collapse or expand a pinned tear-off popup.
@@ -2051,7 +2066,7 @@ bool block_is_tear_off_panel(const Block *block) ATTR_WARN_UNUSED_RESULT;
 bool block_has_tear_off_panel_colors(const Block *block) ATTR_WARN_UNUSED_RESULT;
 /* BFA - Tear-Off Menu/Panel: the header's color, under its buttons. */
 void draw_tear_off_panel_header_back(const ARegion *region, const Block *block);
-void draw_tear_off_pin_back(const Block *block, const rcti *rect, float back_alpha);
+void draw_tear_off_pin_back(const Block *block, const rcti *rect, float back_alpha, float shadow);
 void draw_tear_off_pin_checkbox_title(uiStyle *style, Button *but, rcti *rect);
 /* BFA - Tear-Off Menu/Panel: top edge of the scrolling content. Equal to `rect.ymax` exactly for
  * anything without a sticky header, so regular popups compare and clip as upstream. Never below
