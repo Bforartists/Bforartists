@@ -30,6 +30,7 @@ Line numbers are from the mid-merge tree and will drift.
 | Consistency: each tear-off keeps its source's look, preset arrow, narrow shelf, hold in place | Done | `c136cc5fc64`, `e794fc3f01d`, `a09dace7020`, `26c6909e657`, `2cbc0c35468`, review fixes `c86bd2a4f70`, `467c4c6d395` | Scenarios `p10_*` and a smoke set, all passing at `467c4c6d395`. Not the full suite, by the maintainer's request to run only what a task touches |
 | Click-only scroll arrows | Done | `a0f39a1855c` | Scenarios `p11_arrows`, `p11_arrow_submenu`, the scrolling `p8_*` and `regress_final`. Regular menus keep hover scrolling. Not the full suite |
 | Pinned panel header metrics | Done | `69b66121158` | Scenario `p12_header_metrics` and the 28 others that use region panels. Linked as a side copy, because the Release exe was open |
+| Collapsing only moves the bottom edge up: same width, corners, row and buttons | Done | `b43a4bf8466`, `78ba4b2f807`, `85ee9f60a1b`, `cdf6fba6654`, `10a6b0a387e` | Scenarios `p13_collapse_in_place`, `p13_checkbox_title` and the 20 others that collapse |
 
 **The look rule:** a menu or enum keeps the menu color, a popover torn off through its row keeps the popup color, a panel torn off a region has the panel header, background and subpanel colors, and a tool shelf panel keeps the plain region color. See `block_is_tear_off_panel` and `block_has_tear_off_panel_colors`.
 

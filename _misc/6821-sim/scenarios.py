@@ -5487,3 +5487,167 @@ def s_p12_header_metrics():
 
 
 SC["p12_header_metrics"] = s_p12_header_metrics
+
+
+def ink(frame, box):
+    """The box of what's brighter than any header color: icons and text."""
+    x0, y0, x1, y1 = box
+    d = FRAME[frame][y0:y1 + 1, x0:x1 + 1].mean(axis=2) > 0.6
+    if not d.any():
+        return None
+    ys, xs = np.where(d)
+    return int(xs.min()) + x0, int(ys.min()) + y0, int(xs.max()) + x0, int(ys.max()) + y0
+
+
+def near(a, b, tolerance=1):
+    return a is not None and b is not None and all(abs(i - j) <= tolerance for i, j in zip(a, b))
+
+
+def corner_mismatch(open_name, col_name, v, base="base"):
+    """Pixels whose difference from the base isn't shared, in the block's top corners. The same
+    outline and shadow give the same mask, even with another fill."""
+    n = 0
+    for x0 in (v[0], v[2] - 11):
+        box = (slice(v[3] - 11, v[3] + 1), slice(x0, x0 + 12))
+        a = np.abs(FRAME[base][box] - FRAME[open_name][box]).max(axis=2) > 0.04
+        b = np.abs(FRAME[base][box] - FRAME[col_name][box]).max(axis=2) > 0.04
+        n += int((a != b).sum())
+    return n
+
+
+def collapses_in_place(name, title_y, has_plain_title=True, title_end=48, base="base",
+                       box=(30, 25, 1340, 999)):
+    """Collapsing only moves the bottom edge up, and the header stays under the cursor."""
+    yield from park()
+    open_name, col_name = name + "_open", name + "_col"
+    yield from grab(open_name)
+    v = need(box_bbox(base, open_name, box), "it opens: " + name)
+    log(name, "open", v)
+    pin_x, x_x, y = v[2] - PIN_ICON, v[2] - X_ICON, v[3] - title_y
+
+    yield from click(pin_x, y)
+    yield from park()
+    yield from grab(col_name)
+    c = need(box_bbox(base, col_name, box), "it collapses: " + name)
+    log(name, "collapsed", c)
+    check(name + ": collapsed", height(c) < min(45, height(v) + 1), c)
+    check(name + ": the left edge stays", abs(c[0] - v[0]) <= 1, (v, c))
+    check(name + ": the right edge stays", abs(c[2] - v[2]) <= 1, (v, c))
+    check(name + ": the top edge stays", abs(c[3] - v[3]) <= 1, (v, c))
+
+    # Around the row only, as the collapsed strip shows what's below it.
+    row = (y - 8, y + 8)
+    x_open = ink(open_name, (v[2] - 26, row[0], v[2] - 3, row[1]))
+    x_col = ink(col_name, (v[2] - 26, row[0], v[2] - 3, row[1]))
+    log(name, "x ink", x_open, x_col)
+    check(name + ": the X stays", near(x_open, x_col), (x_open, x_col))
+    if has_plain_title:
+        t_open = ink(open_name, (v[0] + 3, row[0], v[2] - title_end, row[1]))
+        t_col = ink(col_name, (v[0] + 3, row[0], v[2] - title_end, row[1]))
+        log(name, "title ink", t_open, t_col)
+        check(name + ": the title stays", near(t_open, t_col), (t_open, t_col))
+    n = corner_mismatch(open_name, col_name, v, base)
+    log(name, "corner mismatch", n)
+    check(name + ": the same top corners", n <= 12, n)
+
+    # Hovering lights the icon, as on the open header.
+    for hover_x, label in ((pin_x, "pin"), (x_x, "x")):
+        move(hover_x, y); yield 0.3
+        move(hover_x, y); yield 0.3
+        yield from grab(name + "_hover_" + label)
+        n = rdiff(col_name, name + "_hover_" + label, (hover_x - 10, y - 10, hover_x + 10, y + 10))
+        check(name + ": hovering " + label + " shows", n > 20, n)
+
+    # The same spot expands it, so clicking the pin twice is a no-op.
+    yield from click(pin_x, y)
+    yield from park()
+    yield from grab(name + "_exp")
+    n = rdiff(open_name, name + "_exp", v)
+    check(name + ": the same spot expands it", n < 100, n)
+
+    # And the same spot as the open X closes it.
+    yield from click(pin_x, y)
+    yield from park()
+    yield from click(x_x, y)
+    yield from park()
+    yield from grab(name + "_closed")
+    n = rdiff(base, name + "_closed", box)
+    check(name + ": the same spot closes it", n < 300, n)
+
+
+def s_p13_collapse_in_place():
+    """A menu, a popover and panels with and without header controls."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_menu("VIEW3D_MT_object"); yield 0.8
+    yield from collapses_in_place("menu", TITLE_MENU)
+
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from collapses_in_place("popover", TITLE_Y)
+
+    with bpy.context.temp_override(**override("VIEW_3D", "UI")):
+        move(*center()); yield 0.3
+        bpy.ops.wm.panel_tear_off(panel_idname="VIEW3D_PT_tools_active", from_region_panel=True)
+    yield 0.8
+    yield from collapses_in_place("panel", 12)
+
+    yield from tear_props("RENDER_PT_format", "OUTPUT")
+    # Past the preset's icon, which a collapsed pin doesn't draw.
+    yield from collapses_in_place("preset", 12, title_end=90)
+
+    # Its title comes after the checkbox. Another tab changes the Properties editor, which a box
+    # reaching it would count, so this is measured against the tab it needs.
+    area("PROPERTIES").spaces.active.context = "RENDER"
+    area_redraw(); yield 0.5
+    yield from park()
+    yield from grab("render_base")
+    yield from tear_props("RENDER_PT_eevee_motion_blur", "RENDER")
+    yield from collapses_in_place("checkbox", 12, base="render_base", box=(30, 25, 1590, 999))
+
+
+SC["p13_collapse_in_place"] = s_p13_collapse_in_place
+
+
+class SIM_PT_checkbox_title(bpy.types.Panel):
+    """As Stabilize Stroke and Cavity: the checkbox carries the title when in a popover."""
+    bl_idname = "SIM_PT_checkbox_title"; bl_label = "Checkbox Title"
+    bl_space_type = "VIEW_3D"; bl_region_type = "UI"; bl_category = "Sim"
+    def draw_header(self, context):
+        self.layout.prop(context.scene, "use_gravity", text=self.bl_label if self.is_popover else "")
+    def draw(self, context):
+        self.layout.label(text="Body")
+
+
+def s_p13_checkbox_title():
+    """The collapsed pin can't draw the checkbox, so it keeps the title on its own."""
+    bpy.utils.register_class(SIM_PT_checkbox_title)
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_checkbox_title"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    y = v[3] - TITLE_Y
+    band = (v[0] + 3, y - 8, v[2] - 48, y + 8)
+    t_open = ink("open", band)
+    yield from click(v[2] - PIN_ICON, y)
+    yield from park()
+    yield from grab("col")
+    c = need(popup_box("base", "col"), "it collapses")
+    t_col = ink("col", band)
+    log("title", t_open, t_col, "box", v, c)
+    check("the row stays", abs(c[2] - v[2]) <= 1 and abs(c[3] - v[3]) <= 1, (v, c))
+    check("the title shows", t_col is not None and t_col[2] - t_col[0] > 40, t_col)
+    check("and ends about where it did",
+          t_open is not None and t_col is not None and abs(t_col[2] - t_open[2]) <= 4,
+          (t_open, t_col))
+    yield from click(v[2] - X_ICON, y)
+    yield from park()
+    yield from grab("closed")
+    n = rdiff("base", "closed", (30, 25, 1340, 999))
+    check("the X closes it", n < 300, n)
+    bpy.utils.unregister_class(SIM_PT_checkbox_title)
+
+
+SC["p13_checkbox_title"] = s_p13_checkbox_title
