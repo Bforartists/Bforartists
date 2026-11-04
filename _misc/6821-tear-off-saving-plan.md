@@ -64,7 +64,7 @@ Blender already decides where workspaces come from, and this rule matches the re
 | `scroll` | float | all | `scrolloffset / tear_off_scale_fac`, restored as `stored * UI_SCALE_FAC` |
 | `idname` | string | menu, panel | Within `MAX_NAME` |
 | `from_region` | bool | panel | |
-| `width`, `width_default`, `width_chrome` | float | panel | ≥ 0. `width_chrome` is at most `width` |
+| `width`, `width_default`, `width_chrome` | float | panel | ≥ 0. From a very narrow shelf, `width_chrome` can be more than `width` |
 | `use_context` | bool | enum | |
 | `id_type`, `id_name`, `lib_name` | int, string, string | enum | A valid type, not `ID_SCR` or `ID_WM`. The library's ID name, because a file path is machine-specific. Empty means local |
 | `data_path` | string | enum | Up to 1024 |
@@ -102,7 +102,7 @@ The list is a to-do list. When a workspace is showing in a window, its entries b
 
 **One route:** `ui::tear_off_restore_tag(wm)` sets `WindowManagerRuntime::tear_off_restore_pending`, and `tear_off_restore_pending_run(C, wm)` runs from `wm_event_do_notifiers`, after the depsgraph update and before drawing, so no frame shows without them. At startup there's no window yet when the file loads, so this can't run directly. Creating them inside `ED_workspace_change` would also fire inside `context.temp_override(screen=...)`.
 
-**Tagged by:** `wm_file_read_post` (including Load Preferences), the preference turning on, `screen_change_update` (a workspace change, or leaving a maximized area), `ED_area_newspace`, the `ND_MODE` listener, a panel or menu type registering, and an unregister.
+**Tagged by:** `wm_file_read_post` (including Load Preferences), the preference turning on, `screen_change_update` (a workspace change, or leaving a maximized area), `ED_area_newspace`, the `ND_MODE` listener, a panel or menu type registering, an unregister, and any notifier except a frame change, because a poll could depend on anything. A pass costs nothing with no entries waiting.
 
 **For each window:**
 1. Skip it with no ghost window, or a temporary screen.
@@ -125,8 +125,8 @@ Each of these stays on the list and is saved again, so nothing is lost:
 - **The panel or menu doesn't exist right now:** for example, its add-on is off. It returns when the type registers, and no error is reported.
 - **The workspace has no matching editor:** it returns when one appears.
 - **It was pinned in another mode:** it returns on entering that mode.
-- **A menu whose poll fails in this mode.** A panel in the same situation is created and shows "Not available", as a live pin does, so its X still works.
-- **An enum whose ID isn't in this file,** as with Load UI off. It returns when the ID does.
+- **A menu whose poll fails.** It returns on the next change after it passes. A panel in the same situation is created and shows "Not available", as a live pin does, so its X still works.
+- **An enum whose ID isn't in this file,** as with Load UI off. It returns when the ID does, such as after an append.
 - **The preference is off:** nothing is restored and nothing is erased.
 
 ## Build order

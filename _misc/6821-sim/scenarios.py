@@ -7385,6 +7385,205 @@ def s_review_collapsed_edge():
 SC["review_collapsed_edge"] = s_review_collapsed_edge
 
 
+class SIM_OT_delete_workspace(bpy.types.Operator):
+    """Deletes a workspace from a timer, with the event loop in the modal handlers."""
+    bl_idname = "sim.delete_workspace"; bl_label = "Sim Delete Workspace"
+    target = None
+    done = False
+    _timer = None
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        SIM_OT_delete_workspace._timer = wm.event_timer_add(0.1, window=context.window)
+        wm.modal_handler_add(self)
+        return {"RUNNING_MODAL"}
+
+    def modal(self, context, event):
+        if event.type == "TIMER" and SIM_OT_delete_workspace.target:
+            bpy.data.batch_remove([SIM_OT_delete_workspace.target])
+            SIM_OT_delete_workspace.target = None
+            SIM_OT_delete_workspace.done = True
+            context.window_manager.event_timer_remove(SIM_OT_delete_workspace._timer)
+            return {"FINISHED", "PASS_THROUGH"}
+        return {"PASS_THROUGH"}
+
+
+def s_review2_modal_delete():
+    """The pin's handler is next in line when its workspace goes."""
+    yield from begin()
+    bpy.utils.register_class(SIM_OT_delete_workspace)
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces
+                 if ws != home and any(a.type == "VIEW_3D" for a in ws.screens[0].areas))
+    w.workspace = other; yield 0.8
+    move(*center()); yield 0.3
+    with bpy.context.temp_override(**override()):
+        bpy.ops.wm.menu_tear_off(menu_idname="VIEW3D_MT_object")
+    yield 0.8
+    w.workspace = home; yield 0.8
+    yield from park()
+    SIM_OT_delete_workspace.target = other
+    with bpy.context.temp_override(**override()):
+        bpy.ops.sim.delete_workspace("INVOKE_DEFAULT")
+    yield 1.5
+    yield from park()
+    check("it ran", SIM_OT_delete_workspace.done)
+    # What's tagged has to survive what walks over the handlers next.
+    path = store_path("modal_delete")
+    yield from save_file(path)
+    yield from open_file(path, load_ui=True)
+    yield from park()
+    entries = [e for ws in bpy.data.workspaces for e in stored(ws).values()]
+    check("nothing left of it", entries == [], entries)
+    bpy.utils.unregister_class(SIM_OT_delete_workspace)
+
+
+SC["review2_modal_delete"] = s_review2_modal_delete
+
+
+def s_review2_hidden_scale():
+    """A pin hidden while the scale changes keeps its place on the screen."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    w = win()
+    home = w.workspace
+    home_name = home.name
+    other = next(ws for ws in bpy.data.workspaces if ws != home)
+    w.workspace = other; yield 0.8
+    bpy.context.preferences.view.ui_scale = 1.5
+    yield 0.8
+    path = store_path("hidden_scale")
+    yield from read_store_hidden(path)
+    entry = next(iter(stored(bpy.data.workspaces[home_name]).values()), None)
+    log("stored", entry)
+    # 1.5 times this is where it was on the screen.
+    check("x counts for the scale now", entry is not None and abs(entry["x"] * 1.5 - v[0]) <= 2, entry)
+    check("y too", entry is not None and abs(entry["y"] * 1.5 - (1000 - v[3])) <= 2, entry)
+    bpy.context.preferences.view.ui_scale = 1.0
+    yield 0.3
+
+
+def read_store_hidden(path):
+    yield from save_file(path)
+    yield from read_file(path)
+
+
+SC["review2_hidden_scale"] = s_review2_hidden_scale
+
+
+class SIM_MT_waits(bpy.types.Menu):
+    bl_idname = "SIM_MT_waits"; bl_label = "Sim Waits"
+    ready = False
+    polls = 0
+
+    @classmethod
+    def poll(cls, context):
+        SIM_MT_waits.polls += 1
+        return SIM_MT_waits.ready
+
+    def draw(self, context):
+        self.layout.label(text="Ready")
+
+
+def s_review2_poll_retry():
+    """A menu waiting on its poll returns on the next change, and an idle window costs nothing."""
+    yield from begin()
+    bpy.utils.register_class(SIM_MT_waits)
+    group = win().workspace.bl_system_properties_get(do_create=True)
+    group["bfa_tear_offs"] = {"0": {
+        "version": 1, "kind": "MENU", "idname": "SIM_MT_waits", "winid": 1, "space": 1, "region": 1,
+        "area_index": -1, "mode": "objectmode", "x": 300.0, "y": 300.0, "collapsed": False,
+        "height": 0.0, "scroll": 0.0}}
+    # The list was written by hand, so this is the first chance.
+    bpy.context.view_layer.objects.active.select_set(True)
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.select_all(action="DESELECT")
+    yield 0.8
+    check("waiting", len(stored()) == 1, stored())
+    polls = SIM_MT_waits.polls
+    log("polls so far", polls)
+    check("its poll was tried", polls > 0, polls)
+    # Idle: nothing changes, so nothing runs it. A pass that made its own notifiers would.
+    yield 3.0
+    now = SIM_MT_waits.polls
+    log("after idling", now)
+    check("no polling while idle", now - polls <= 2, (polls, now))
+    SIM_MT_waits.ready = True
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.select_all(action="SELECT")
+    yield 0.8
+    check("back on the next change", stored() == {}, stored())
+    bpy.utils.unregister_class(SIM_MT_waits)
+
+
+SC["review2_poll_retry"] = s_review2_poll_retry
+
+
+def s_review2_hidden_grab():
+    """A title drag that ends while the pin is hidden doesn't stick to the cursor afterwards."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    x, y = v[0] + 40, v[3] - TITLE_Y
+    move(x, y); yield 0.3
+    move(x, y); yield 0.3
+    press(x, y); yield 0.1
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces if ws != home)
+    w.workspace = other; yield 0.6
+    move(x, y); yield 0.3
+    release(x, y); yield 0.3
+    w.workspace = home; yield 0.8
+    # Far from where it was pressed. A stuck drag would carry it along.
+    move(x + 200, y - 100); yield 0.3
+    move(x + 200, y - 100); yield 0.3
+    yield from park()
+    yield from grab("after")
+    n = rdiff("open", "after", v)
+    check("it stayed where it was", n < 100, n)
+
+
+SC["review2_hidden_grab"] = s_review2_hidden_grab
+
+
+def s_review2_narrow_shelf():
+    """From a very narrow shelf, what isn't layout can be more than the width. That's still valid."""
+    yield from setup()
+    area().spaces.active.overlay.show_text = False
+    C = SIM_PT_cols.state
+    yield from open_tab("TOOLS", "SimTear", SIM_PT_cols_anchor.state, C)
+    yield from park()
+    yield from grab("base")
+    group = win().workspace.bl_system_properties_get(do_create=True)
+    group["bfa_tear_offs"] = {"0": {
+        "version": 1, "kind": "PANEL", "idname": "SIM_PT_cols", "from_region": True, "width": 45.0,
+        "width_default": 45.0, "width_chrome": 52.0, "winid": 1, "space": 1, "region": 5,
+        "area_index": -1, "mode": "objectmode", "x": 500.0, "y": 300.0, "collapsed": False,
+        "height": 0.0, "scroll": 0.0}}
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces if ws != home)
+    w.workspace = other; yield 0.6
+    w.workspace = home; yield 1.0
+    yield from park()
+    check("it's restored, not thrown away", stored() == {}, stored())
+    yield from grab("after")
+    n = rdiff("base", "after", (30, 25, 1340, 999))
+    check("and it shows", n > 300, n)
+
+
+SC["review2_narrow_shelf"] = s_review2_narrow_shelf
+
+
 def s_restore_scale():
     """Another UI scale: a stored position means the same thing."""
     yield from begin()
