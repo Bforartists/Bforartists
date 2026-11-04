@@ -34,7 +34,7 @@ Line numbers are from the mid-merge tree and will drift.
 
 **The look rule:** a menu or enum keeps the menu color, a popover torn off through its row keeps the popup color, a panel torn off a region has the panel header, background and subpanel colors, and a tool shelf panel keeps the plain region color. See `block_is_tear_off_panel` and `block_has_tear_off_panel_colors`.
 
-**Not built, on the maintainer's call:** saving tear-offs in workspaces. It waits until a user asks for it. If it comes back: custom properties on the workspace, so no DNA change and files stay compatible.
+**Not built, planned:** saving tear-offs in files and the startup file. A test user asked for it. See `_misc/6821-tear-off-saving-plan.md`.
 
 **Full suite at `74d78ef57bc`:** 114 scenarios pass, all exit 0, no crashes under `--debug-memory`. Linked as a side copy, because the Release exe was open. New scenarios: `p9_row_drag`, `p9_row_drag_small`, `p9_shelf_selector`, `p9_panel_color`, `p9_width_min`, `p9_width_text_sized`, `p9_width_clipped`, `p9_gutter_solid`, `p9_root_items`, `p9_popover_sweep`, `p9_asset_display`, `p9_flick`, `p9_row_memory`, `p9_prefs_margins`, `p9_child_preset`, `p9_shortcut_popover`.
 
