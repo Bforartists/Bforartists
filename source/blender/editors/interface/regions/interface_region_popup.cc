@@ -1152,7 +1152,7 @@ static float tear_off_height_min(const Block *block, float *r_natural)
  * and shortcuts. Panels have their margin. The room is always there, so a menu keeps its width
  * when it starts to overflow and the bar appears inside it: while it fits, the rows fill that
  * room. */
-static void tear_off_menu_gutter_add(const wmWindow *window, Block *block, const bool overflows)
+static void tear_off_menu_gutter_add(wmWindow *window, Block *block, const bool overflows)
 {
   if (block->flag & BLOCK_POPOVER) {
     return;
