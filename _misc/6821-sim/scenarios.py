@@ -573,6 +573,7 @@ def s_pref_off():
     check("menu has the row while on", rdiff("base", "menu_on", strip) > 200, rdiff("base", "menu_on", strip))
     check("menu has no row while off", rdiff("base", "menu_off", strip) < 50, rdiff("base", "menu_off", strip))
     yield from esc(); yield from esc()
+    clear_stored()
     prefs.use_tear_off = True
     yield 0.4
     move(*center()); yield 0.3
@@ -796,6 +797,7 @@ def s_row_value():
     settings.name = "Non-Color"; yield 0.3
     prefs.use_tear_off = False; yield 0.6
     move(*center()); yield 0.5
+    clear_stored()
     prefs.use_tear_off = True; yield 0.4
     cx, cy = center(); move(cx, cy + 250); yield 0.3
     yield from open_panel("b2", "SIM_PT_enum")
@@ -1053,6 +1055,7 @@ def s_enum_pref():
     yield from grab("off")
     check("turning it off closes it", rdiff("base", "off") < 300, rdiff("base", "off"))
     check("operator fails poll while off", not bpy.ops.wm.enum_tear_off.poll())
+    clear_stored()
     prefs.use_tear_off = True
     yield 0.4
     move(*center()); yield 0.3
@@ -1081,12 +1084,14 @@ def s_enum_new():
     yield from click(52, 937); yield 1.5
     yield from to_rest()
     yield from grab("after")
-    check("file load closes the context tear-off",
-          rdiff("base", "after", b1) < 300,
-          rdiff("base", "after", b1))
-    check("file load closes the ID tear-off",
-          rdiff("base", "after", b2) < 300,
-          rdiff("base", "after", b2))
+    # Load UI is off in factory settings, so File > New keeps the workspaces, and their pins.
+    check("file new keeps the context tear-off",
+          rdiff("m2", "after", b1) < 300,
+          rdiff("m2", "after", b1))
+    # The new file has a Cube too, and an enum finds its ID by name.
+    check("file new keeps the ID tear-off, on the object of that name",
+          rdiff("m2", "after", b2) < 300,
+          rdiff("m2", "after", b2))
     move(600, 600); yield 0.3
     press(600, 600); yield 0.05
     release(600, 600); yield 0.4
@@ -1291,11 +1296,21 @@ def tear_center(name, t="VIEW_3D", rt="UI", idx=0, from_region=True):
     return r
 
 
+def clear_stored():
+    """Turning the preference off keeps pins on the list, to come back. For a scenario that uses
+    off and on to clear the screen."""
+    for ws in bpy.data.workspaces:
+        group = ws.bl_system_properties_get(do_create=False)
+        if group is not None and "bfa_tear_offs" in group:
+            del group["bfa_tear_offs"]
+
+
 def close_all():
     """Turning the preference off closes every tear-off, see s_pref_off."""
     prefs = bpy.context.preferences
     prefs.use_tear_off = False; yield 0.6
     move(*center()); yield 0.5
+    clear_stored()
     prefs.use_tear_off = True; yield 0.4
     yield from to_rest()
 
@@ -2099,6 +2114,7 @@ def s_p5_pref_off():
     move(hx - 60, hy - 40); yield 0.4
     check("while off, moving tears nothing off", T["draw_popup"] == 0, T)
     yield from shift_release(hx - 60, hy - 40)
+    clear_stored()
     prefs.use_tear_off = True; yield 0.4
     yield from shift_press(hx, hy)
     for i in range(1, 7):
@@ -7108,6 +7124,267 @@ def s_restore_enum_bad():
 SC["restore_enum_bad"] = s_restore_enum_bad
 
 
+def s_review_name_collision():
+    """A waiting entry named above what's free must not cost a closing pin its place."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_menu("VIEW3D_MT_object"); yield 0.8
+    move(center()[0] - 200, center()[1]); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    group = win().workspace.bl_system_properties_get(do_create=True)
+    # What's left of a list of three, with the last one waiting for its mode.
+    group["bfa_tear_offs"] = {"2": {
+        "version": 1, "kind": "MENU", "idname": "VIEW3D_MT_edit_mesh", "winid": 1, "space": 1,
+        "region": 1, "area_index": -1, "mode": "mesh_edit", "x": 300.0, "y": 300.0,
+        "collapsed": False, "height": 0.0, "scroll": 0.0}}
+    path = store_path("collision")
+    yield from save_file(path)
+    bpy.context.preferences.use_tear_off = True
+    yield from open_file(path, load_ui=False)
+    yield from park()
+    names = [e.get("idname") for e in stored().values()]
+    log("left", stored().keys())
+    check("the waiting one stays", names == ["VIEW3D_MT_edit_mesh"], names)
+    yield from grab("back")
+    n = rdiff("base", "back", (30, 25, 1340, 999))
+    check("and both pins are back", n > 300, n)
+    # Both are open again, so a save has all three.
+    yield from save_file(path)
+    yield from read_file(path)
+    names = sorted(e.get("idname") for e in stored().values())
+    log("in the file", names)
+    check("nothing was lost",
+          names == ["SIM_PT_field", "VIEW3D_MT_edit_mesh", "VIEW3D_MT_object"], names)
+
+
+SC["review_name_collision"] = s_review_name_collision
+
+
+def s_review_no_source():
+    """Entries with no real source wait, instead of drawing with nothing to draw for."""
+    yield from begin()
+    common = {"version": 1, "from_region": False, "width": 0.0, "width_default": 0.0,
+              "width_chrome": 0.0, "winid": 1, "area_index": -1, "mode": "", "x": 300.0, "y": 300.0,
+              "collapsed": False, "height": 0.0, "scroll": 0.0}
+    props_space = 4  # SPACE_PROPERTIES
+    group = win().workspace.bl_system_properties_get(do_create=True)
+    group["bfa_tear_offs"] = {
+        # Dereferences the area's space.
+        "0": dict(common, kind="MENU", idname="SCREEN_MT_user_menu", space=0, region=-1),
+        # Dereferences the region.
+        "1": dict(common, kind="PANEL", idname="DATA_PT_modifiers", space=0, region=-1),
+        "2": dict(common, kind="PANEL", idname="DATA_PT_modifiers", space=1, region=-1),
+        # An instanced panel needs custom data, in the editor that really has it.
+        "3": dict(common, kind="PANEL", idname="MOD_PT_Mirror", space=props_space, region=1),
+        # A context menu gets no header, so nothing could close it.
+        "4": dict(common, kind="MENU", idname="VIEW3D_MT_object_context_menu", space=1, region=1),
+    }
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces if ws != home)
+    w.workspace = other; yield 0.6
+    w.workspace = home; yield 1.0
+    yield from park()
+    yield from grab("after")
+    check("all still waiting", sorted(stored()) == ["0", "1", "2", "3", "4"], sorted(stored()))
+    n = rdiff("base", "after", (30, 25, 1340, 999))
+    check("no pin, and no crash", n < 300, n)
+
+
+SC["review_no_source"] = s_review_no_source
+
+
+def s_review_unmaximize():
+    """A pin waiting for its editor returns when leaving a maximized area brings it back."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    # Maximize another editor, so the 3D View isn't in the screen. A fixed point, as center() needs
+    # a 3D View.
+    other = next(a for a in win().screen.areas if a.type == "OUTLINER")
+    with bpy.context.temp_override(window=win(), area=other):
+        bpy.ops.screen.screen_full_area()
+    yield 0.8
+    bpy.context.preferences.use_tear_off = False; yield 0.6
+    move(800, 500); yield 0.5
+    bpy.context.preferences.use_tear_off = True; yield 0.8
+    check("waiting while its editor is away", len(stored()) == 1, stored())
+    area_now = next(a for a in win().screen.areas if a.type == "OUTLINER")
+    with bpy.context.temp_override(window=win(), area=area_now):
+        bpy.ops.screen.screen_full_area()
+    yield 0.8
+    yield from park()
+    check("back with its editor", stored() == {}, stored())
+
+
+SC["review_unmaximize"] = s_review_unmaximize
+
+
+def s_review_editor_change():
+    """The same when an area changes to the editor it waits for."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    bpy.context.preferences.use_tear_off = False; yield 0.6
+    move(*center()); yield 0.5
+    area().type = "OUTLINER"; yield 0.6
+    views = [a for a in win().screen.areas if a.type == "VIEW_3D"]
+    log("3D views left", len(views))
+    for a in views:
+        a.type = "OUTLINER"
+    yield 0.4
+    bpy.context.preferences.use_tear_off = True; yield 0.8
+    check("waiting while its editor is away", len(stored()) == 1, stored())
+    next(a for a in win().screen.areas if a.type == "OUTLINER").type = "VIEW_3D"; yield 0.8
+    yield from park()
+    check("back with its editor", stored() == {}, stored())
+
+
+SC["review_editor_change"] = s_review_editor_change
+
+
+def s_review_register_returns():
+    """Enabling an add-on again brings its pin back with no other action."""
+    yield from begin()
+    bpy.utils.register_class(SIM_PT_goes_away)
+    yield 0.3
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_goes_away"); yield 0.8
+    yield from park()
+    bpy.utils.unregister_class(SIM_PT_goes_away)
+    yield 0.8
+    check("on the list", len(stored()) == 1, stored())
+    bpy.utils.register_class(SIM_PT_goes_away)
+    yield 0.8
+    yield from park()
+    check("back as soon as the type is", stored() == {}, stored())
+    bpy.utils.unregister_class(SIM_PT_goes_away)
+    yield 0.3
+
+
+SC["review_register_returns"] = s_review_register_returns
+
+
+def s_review_many():
+    """More than a pass creates: the rest follow, and waiting ones don't starve them."""
+    yield from begin()
+    entries = {}
+    common = {"version": 1, "from_region": False, "width": 0.0, "width_default": 0.0,
+              "width_chrome": 0.0, "winid": 1, "space": 1, "region": 1, "area_index": -1,
+              "collapsed": False, "height": 0.0, "scroll": 0.0, "kind": "PANEL",
+              "idname": "SIM_PT_field"}
+    # Waiting for a mode, at the head of the list, more than a pass's worth.
+    for i in range(70):
+        entries[str(i)] = dict(common, mode="sculpt", x=300.0, y=300.0)
+    for i in range(70, 150):
+        entries[str(i)] = dict(common, mode="objectmode", x=100.0 + i, y=100.0 + i)
+    group = win().workspace.bl_system_properties_get(do_create=True)
+    group["bfa_tear_offs"] = entries
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces if ws != home)
+    w.workspace = other; yield 0.6
+    w.workspace = home; yield 2.5
+    yield from park()
+    modes = [e.get("mode") for e in stored().values()]
+    log("left", len(modes))
+    check("only the waiting ones are left", modes == ["sculpt"] * 70, len(modes))
+
+
+SC["review_many"] = s_review_many
+
+
+def s_review_deleted_workspace():
+    """A workspace deleted as an ID takes its hidden pins with it."""
+    yield from begin()
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces
+                 if ws != home and any(a.type == "VIEW_3D" for a in ws.screens[0].areas))
+    w.workspace = other; yield 0.8
+    move(*center()); yield 0.3
+    with bpy.context.temp_override(**override()):
+        bpy.ops.wm.menu_tear_off(menu_idname="VIEW3D_MT_object")
+    yield 0.8
+    w.workspace = home; yield 0.8
+    yield from park()
+    bpy.data.batch_remove([other]); yield 0.8
+    yield from park()
+    path = store_path("deleted")
+    yield from save_file(path)
+    yield from open_file(path, load_ui=True)
+    yield from park()
+    entries = [e for ws in bpy.data.workspaces for e in stored(ws).values()]
+    check("nothing left of it", entries == [], entries)
+
+
+SC["review_deleted_workspace"] = s_review_deleted_workspace
+
+
+def s_review_datatransfer():
+    """A pinned Data Transfer dropdown, with an object active that has no vertex groups."""
+    yield from begin()
+    ob = bpy.context.view_layer.objects.active
+    ob.vertex_groups.new(name="Group")
+    mod = ob.modifiers.new("DT", "DATA_TRANSFER")
+    mod.use_vert_data = True
+    mod.data_types_verts = {"VGROUP_WEIGHTS"}
+    with bpy.context.temp_override(**override()):
+        bpy.ops.object.empty_add(location=(2, 2, 2))
+    empty = bpy.context.view_layer.objects.active
+    bpy.context.view_layer.objects.active = ob
+    yield 0.3
+    r = tear_enum(id_type=ID_OB, session_uid=ob.session_uid,
+                  data_path='modifiers["DT"].layers_vgroup_select_dst')
+    log("tear", r)
+    yield 0.8
+    bpy.context.view_layer.objects.active = empty
+    area_redraw(); yield 0.5
+    bpy.context.scene.frame_current += 1; yield 1.0
+    yield from park()
+    check("it survives another object being active", True)
+
+
+SC["review_datatransfer"] = s_review_datatransfer
+
+
+def s_review_collapsed_edge():
+    """A collapsed pin at the right edge is clamped with its real width, so it stays there."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_menu("VIEW3D_MT_object"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    y = v[3] - TITLE_MENU
+    yield from click(v[2] - PIN_ICON, y)
+    x = v[0] + 8
+    move(x, y); yield 0.3
+    press(x, y); yield 0.1
+    move(1590, y); yield 0.3
+    move(1590, y); yield 0.3
+    release(1590, y); yield 0.3
+    yield from park()
+    yield from grab("at_edge")
+    edge = need(box_bbox("base", "at_edge", (30, y - 15, 1599, y + 15)), "the strip")
+    log("at the edge", edge)
+    path = store_path("collapsed_edge")
+    yield from save_file(path)
+    yield from open_file(path, load_ui=True)
+    yield from park()
+    yield from grab("restored")
+    now = need(box_bbox("base", "restored", (30, y - 15, 1599, y + 15)), "the restored strip")
+    log("restored", now)
+    check("the same right edge", abs(now[2] - edge[2]) <= 2, (edge, now))
+    check("the same left edge", abs(now[0] - edge[0]) <= 2, (edge, now))
+
+
+SC["review_collapsed_edge"] = s_review_collapsed_edge
+
+
 def s_restore_scale():
     """Another UI scale: a stored position means the same thing."""
     yield from begin()
@@ -7269,6 +7546,8 @@ def s_store_quit_b():
     entries = [e for ws in bpy.data.workspaces for e in stored(ws).values()]
     check("recovered with Load UI off: not in the kept workspaces", len(entries) == 0, entries)
     prefs.use_load_ui = True
+    # Off, so the list can be read before it restores.
+    bpy.context.preferences.use_tear_off = False
     with bpy.context.temp_override(window=win()):
         bpy.ops.wm.recover_last_session()
     yield 1.5

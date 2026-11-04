@@ -53,8 +53,8 @@ Blender already decides where workspaces come from, and this rule matches the re
 | `version` | int | all | 1. An unknown version is kept unread and saved again, for a later Bforartists |
 | `kind` | string | all | `MENU`, `PANEL` or `ENUM` |
 | `winid` | int | all | Preferred window |
-| `space` | int | all | `tear_off_spacetype`. 0 means none: no area and no mode check |
-| `region` | int | all | `tear_off_ctx_region_type`. -1 means none. A stored type that isn't found counts as no matching editor |
+| `space` | int | all | `tear_off_spacetype`. 0 means none |
+| `region` | int | all | `tear_off_ctx_region_type`. -1 means none. No space or no region means it waits, so C code never draws with no context. A stored type that isn't found counts as no matching editor |
 | `area_index` | int | all | Which editor when there are two of a type. -1 means the first match |
 | `mode` | string | all | `CTX_data_mode_string`, because the enum's numbers aren't stable. Empty means none |
 | `x` | float | all | `pin_x / UI_SCALE_FAC`. Finite, within ±100000 |
@@ -94,7 +94,7 @@ Each of these puts the pin on the list first. The list then holds what would oth
 2. **The preference turning off**, in the branch of `popup_handler` that closes each pin. It goes at the front of the list, which keeps their order.
 3. **A panel or menu type being unregistered**, in `refresh_or_remove_handler`: Reload Scripts, disabling an add-on, Load Preferences.
 
-**These remove a pin for good**, as they aren't stored: closing it with the X, deleting its workspace, and closing a secondary window. A pin made in a temporary window, such as Preferences, is never stored, or it would come back as junk forever.
+**These remove a pin for good**, as they aren't stored: closing it with the X, deleting its workspace by any route, and closing a secondary window. A pin made in a temporary window, such as Preferences, is never stored, or it would come back as junk forever.
 
 ### Restoring
 
@@ -102,7 +102,7 @@ The list is a to-do list. When a workspace is showing in a window, its entries b
 
 **One route:** `ui::tear_off_restore_tag(wm)` sets `WindowManagerRuntime::tear_off_restore_pending`, and `tear_off_restore_pending_run(C, wm)` runs from `wm_event_do_notifiers`, after the depsgraph update and before drawing, so no frame shows without them. At startup there's no window yet when the file loads, so this can't run directly. Creating them inside `ED_workspace_change` would also fire inside `context.temp_override(screen=...)`.
 
-**Tagged by:** `wm_file_read_post` (including Load Preferences), the preference turning on, `ED_workspace_change`, the `ND_MODE` listener, and an unregister.
+**Tagged by:** `wm_file_read_post` (including Load Preferences), the preference turning on, `screen_change_update` (a workspace change, or leaving a maximized area), `ED_area_newspace`, the `ND_MODE` listener, a panel or menu type registering, and an unregister.
 
 **For each window:**
 1. Skip it with no ghost window, or a temporary screen.
@@ -122,8 +122,8 @@ The list is a to-do list. When a workspace is showing in a window, its entries b
 
 Each of these stays on the list and is saved again, so nothing is lost:
 
-- **The panel or menu doesn't exist right now:** for example, its add-on is off. It returns at the next restore moment, and no error is reported.
-- **The workspace has no matching editor.**
+- **The panel or menu doesn't exist right now:** for example, its add-on is off. It returns when the type registers, and no error is reported.
+- **The workspace has no matching editor:** it returns when one appears.
 - **It was pinned in another mode:** it returns on entering that mode.
 - **A menu whose poll fails in this mode.** A panel in the same situation is created and shows "Not available", as a live pin does, so its X still works.
 - **An enum whose ID isn't in this file,** as with Load UI off. It returns when the ID does.
@@ -149,11 +149,11 @@ Each phase compiles alone, has its own tests and gets its own commits.
 
 | Risk | Answer |
 |---|---|
-| A file names a panel, menu or path it shouldn't | It only names registered types and resolves RNA paths with no evaluation, so it runs nothing that isn't already loaded. Strict type lookup, `ID_SCR` and `ID_WM` rejected, and operator enums need their poll to pass. C menus guarded only by their own draw code are read in Phase 3 |
+| A file names a panel, menu or path it shouldn't | It only names registered types and resolves RNA paths with no evaluation, so it runs nothing that isn't already loaded. A pin needs a real area and region, the type lookup is strict, instanced panels and context menus are refused, `ID_SCR` and `ID_WM` are rejected, and operator enums need their poll to pass. Item functions and draw code are upstream's, so one that trusts its context can still misbehave: Data Transfer's did, and was fixed |
 | Window smaller, or another monitor | `tear_off_clamp_to_window` already handles it |
 | UI scale differs | Stored scale-free and rounded on restore. A same-scale round trip stays exact |
 | Splash at startup | Pins wait until it closes |
-| Slow startup | Only the showing workspaces' pins are created, up to 64 per pass |
+| Slow startup | Only the showing workspaces' pins are created, up to 64 per pass, with the rest in the next pass |
 | Undo | Workspaces aren't part of memfile undo, and undo doesn't close popups. Tested in Phase 2 |
 | Two windows on one workspace | Their pins merge on save, and return to the preferred window |
 | Duplicating a workspace | The copy gets entries not yet restored, but not open pins. Acceptable for a first version |
