@@ -1,6 +1,6 @@
 # Saving Pinned Panels in the File and Startup: Plan (#6821)
 
-**Status:** built, on `tear_off`, waiting for its hand tests. A test user asked for this. The first draft was checked against the code by independent reviews, which found one blocker and twelve major problems. Two reviews of the finished code found twenty more, all fixed (`f47662b5f49`, `53d0841ff2d`).
+**Status:** built, on `tear_off`, waiting for its hand tests. A test user asked for this. The first draft was checked against the code by independent reviews, which found one blocker and twelve major problems. Two reviews of the finished code found nineteen more, all fixed (`f47662b5f49`, `53d0841ff2d`).
 
 **Bforartists' factory default is Load UI off.** With default settings a file's own pins don't load: you keep the workspaces you have, and their pins. Pins in the startup file load at the start of a session either way. Recover Last Session follows Load UI too.
 
