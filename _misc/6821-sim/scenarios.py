@@ -5949,3 +5949,316 @@ def s_p13_pin_fade_bright():
 
 
 SC["p13_pin_fade_bright"] = s_p13_pin_fade_bright
+
+
+# Saving pins, see _misc/6821-tear-off-saving-plan.md.
+ID_OB_NAME = "Cube"
+
+
+def store_path(name):
+    return os.path.join(os.environ["BLENDER_USER_CONFIG"], "store_" + name + ".blend")
+
+
+def stored(ws=None):
+    """The list on a workspace, as plain data. Empty if there is none."""
+    group = (ws or win().workspace).bl_system_properties_get(do_create=False)
+    value = group.get("bfa_tear_offs") if group is not None else None
+    return value.to_dict() if value is not None else {}
+
+
+def save_file(path):
+    with bpy.context.temp_override(window=win()):
+        bpy.ops.wm.save_as_mainfile(filepath=path, check_existing=False)
+    yield 0.5
+
+
+def open_file(path, load_ui=True):
+    """No override: a load can free the override's window."""
+    bpy.ops.wm.open_mainfile(filepath=path, load_ui=load_ui)
+    yield 1.5
+    move(*center()); yield 0.3
+
+
+def entry_of(entries, kind):
+    return next((e for e in entries.values() if e.get("kind") == kind), None)
+
+
+def s_store_smoke():
+    """Save and open work in the harness, and a file with no pins has no list."""
+    yield from begin()
+    path = store_path("smoke")
+    yield from save_file(path)
+    yield from open_file(path)
+    check("the file opens", os.path.basename(bpy.data.filepath) == os.path.basename(path),
+          bpy.data.filepath)
+    check("no pins, no list", stored() == {}, stored())
+    yield from save_file(path)
+    yield from open_file(path)
+    check("and after saving it again", stored() == {}, stored())
+
+
+SC["store_smoke"] = s_store_smoke
+
+
+def s_store_fields():
+    """Every kind and every field, and the session's list stays what's still to restore."""
+    yield from begin()
+    ob = bpy.context.view_layer.objects.active
+    move(*center()); yield 0.3
+    tear_menu("VIEW3D_MT_object"); yield 0.8
+    move(center()[0] - 200, center()[1]); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    move(center()[0] + 200, center()[1]); yield 0.3
+    with bpy.context.temp_override(**override("VIEW_3D", "UI")):
+        bpy.ops.wm.panel_tear_off(panel_idname="VIEW3D_PT_tools_active", from_region_panel=True)
+    yield 0.8
+    move(center()[0] + 200, center()[1] - 150); yield 0.3
+    with bpy.context.temp_override(**override("VIEW_3D", "TOOLS")):
+        bpy.ops.wm.panel_tear_off(panel_idname="VIEW3D_PT_tools_active", from_region_panel=True)
+    yield 0.8
+    tear_enum(id_type=ID_OB, session_uid=ob.session_uid, data_path="rotation_mode"); yield 0.8
+    tear_enum(use_context=True, data_path="tool_settings.transform_pivot_point"); yield 0.8
+    yield from park()
+
+    path = store_path("fields")
+    yield from save_file(path)
+    check("the session's list stays empty", stored() == {}, stored())
+    yield from open_file(path)
+    entries = stored()
+    log("entries", len(entries))
+    for key, entry in entries.items():
+        log(key, {k: v for k, v in entry.items()})
+    check("every pin is stored", len(entries) == 6, len(entries))
+    check("named by a counter, oldest first", list(entries) == [str(i) for i in range(6)],
+          list(entries))
+    kinds = [e.get("kind") for e in entries.values()]
+    check("in the order they were made", kinds[:4] == ["MENU", "PANEL", "PANEL", "PANEL"], kinds)
+    check("enums last", kinds[4:] == ["ENUM", "ENUM"], kinds)
+
+    menu = entries["0"]
+    check("a menu's name", menu["idname"] == "VIEW3D_MT_object", menu)
+    check("a version", all(e["version"] == 1 for e in entries.values()))
+    check("a mode", menu["mode"] == "objectmode", menu["mode"])
+    check("its editor", menu["space"] > 0 and menu["area_index"] >= 0, menu)
+    check("not collapsed", not menu["collapsed"], menu["collapsed"])
+    check("no crop", menu["height"] == 0.0, menu["height"])
+
+    popover, region, shelf = entries["1"], entries["2"], entries["3"]
+    check("a row popover", popover["idname"] == "SIM_PT_field" and not popover["from_region"], popover)
+    check("a region panel", region["from_region"] and region["width_default"] == 0.0, region)
+    check("a shelf panel", shelf["from_region"] and shelf["width_default"] > 0.0, shelf)
+    check("its width and what's not layout",
+          shelf["width"] > 0.0 and 0.0 <= shelf["width_chrome"] <= shelf["width"], shelf)
+    check("a position in the window",
+          all(0 <= e["x"] < 1600 and 0 <= e["y"] < 1000 for e in entries.values()),
+          [(e["x"], e["y"]) for e in entries.values()])
+
+    by_id, by_context = entries["4"], entries["5"]
+    check("an enum on an ID, by name",
+          by_id["id_name"] == ID_OB_NAME and by_id["data_path"] == "rotation_mode"
+          and by_id["lib_name"] == "" and not by_id["use_context"], by_id)
+    check("no session UID", "session_uid" not in by_id, list(by_id))
+    check("an enum on the context",
+          by_context["use_context"]
+          and by_context["data_path"] == "tool_settings.transform_pivot_point", by_context)
+
+
+SC["store_fields"] = s_store_fields
+
+
+def s_store_collapsed():
+    """The collapsed state, a position that's the pin's, and scale free values."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    yield from click(v[2] - PIN_ICON, v[3] - TITLE_Y)
+    yield from park()
+    path = store_path("collapsed")
+    yield from save_file(path)
+    yield from open_file(path)
+    entry = entry_of(stored(), "PANEL")
+    log("entry", entry)
+    check("collapsed", entry is not None and entry["collapsed"], entry)
+    check("its left", abs(entry["x"] - v[0]) <= 2, (entry["x"], v))
+    # Screenshots count from the bottom, on a window 1000 high.
+    top = 1000 - entry["y"]
+    check("its top", abs(top - v[3]) <= 2, (top, v))
+
+    # Twice the scale, half the numbers.
+    bpy.context.preferences.view.ui_scale = 2.0
+    yield 0.8
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from save_file(path)
+    bpy.context.preferences.view.ui_scale = 1.0
+    yield from open_file(path)
+    entries = stored()
+    log("at scale 2", entries)
+    # The one from the open above is still on the list, as nothing restores yet.
+    entry = list(entries.values())[-1] if entries else None
+    log("the new one", entry)
+    check("scale free", entry is not None and entry["x"] < 400 and entry["y"] < 400, entry)
+
+
+SC["store_collapsed"] = s_store_collapsed
+
+
+def s_store_twice():
+    """Saving doesn't add up, and closing with the X between saves removes it."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    first, second, third = (store_path("twice" + n) for n in "123")
+    yield from save_file(first)
+    yield from save_file(second)
+    check("the session's list stays empty", stored() == {}, stored())
+    yield from click(v[2] - X_ICON, v[3] - TITLE_Y)
+    yield from park()
+    yield from save_file(third)
+    yield from open_file(first)
+    check("first save: one", len(stored()) == 1, stored())
+    yield from open_file(second)
+    check("second save: still one", len(stored()) == 1, stored())
+    yield from open_file(third)
+    check("after the X: none", len(stored()) == 0, stored())
+
+
+SC["store_twice"] = s_store_twice
+
+
+def s_store_failed_save():
+    """A save that fails leaves everything as it was."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    # A folder can't be written as a file.
+    folder = os.path.join(os.environ["BLENDER_USER_CONFIG"], "store_folder.blend")
+    os.makedirs(folder, exist_ok=True)
+    failed = False
+    try:
+        with bpy.context.temp_override(window=win()):
+            bpy.ops.wm.save_as_mainfile(filepath=folder, check_existing=False)
+    except RuntimeError as ex:
+        failed = True
+        log("failed as expected", str(ex)[:100])
+    yield 0.5
+    check("the save failed", failed)
+    check("the session's list stays empty", stored() == {}, stored())
+    path = store_path("failed")
+    yield from save_file(path)
+    yield from open_file(path)
+    check("and the next save still has the pin", len(stored()) == 1, stored())
+
+
+SC["store_failed_save"] = s_store_failed_save
+
+
+def s_store_pending():
+    """What's still to restore goes before the open pins, keeps its data, and stays on the list.
+    Sound groups are all Python can write, see the plan."""
+    yield from begin()
+    group = win().workspace.bl_system_properties_get(do_create=True)
+    group["bfa_tear_offs"] = {
+        "7": {"version": 1, "kind": "MENU", "idname": "SIM_MT_gone"},
+        "8": {"version": 99, "kind": "FUTURE", "new_field": 5},
+        "9": "not a group",
+    }
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    path = store_path("pending")
+    yield from save_file(path)
+    now = stored()
+    check("the session's list keeps its own names", list(now) == ["7", "8", "9"], list(now))
+    yield from open_file(path)
+    entries = stored()
+    log("saved", entries)
+    check("renumbered, without what isn't a group", list(entries) == ["0", "1", "2"], list(entries))
+    check("the pending one first", entries["0"].get("idname") == "SIM_MT_gone", entries)
+    check("an unknown version kept whole",
+          entries["1"].get("version") == 99 and entries["1"].get("new_field") == 5, entries)
+    check("then the open pin", entries["2"].get("idname") == "SIM_PT_field", entries)
+
+    # A list of the wrong type is replaced, with no error.
+    group = win().workspace.bl_system_properties_get(do_create=True)
+    group["bfa_tear_offs"] = 5
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from save_file(path)
+    value = win().workspace.bl_system_properties_get(do_create=False)["bfa_tear_offs"]
+    check("the session keeps what it had", value == 5, value)
+    yield from open_file(path)
+    check("the file has the pin", len(stored()) == 1, stored())
+
+
+SC["store_pending"] = s_store_pending
+
+
+def s_store_startup_a():
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_menu("VIEW3D_MT_object"); yield 0.8
+    move(center()[0] - 200, center()[1]); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    with bpy.context.temp_override(window=win()):
+        bpy.ops.wm.save_homefile()
+    yield 0.5
+    check("the session's list stays empty", stored() == {}, stored())
+
+
+def s_store_startup_b():
+    yield 1.0
+    entries = stored()
+    log("startup", entries)
+    check("both are in the startup file", len(entries) == 2, entries)
+    kinds = [e.get("kind") for e in entries.values()]
+    check("menu, then panel", kinds == ["MENU", "PANEL"], kinds)
+
+
+SC["store_startup_a"] = s_store_startup_a
+SC["store_startup_b"] = s_store_startup_b
+
+
+def s_store_quit_a():
+    """Quits for real, because that's what writes quit.blend."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    check("a pin is open", True)
+    yield from finish_with_memory_report()
+
+
+def s_store_quit_b():
+    yield 1.0
+    path = os.path.join(os.environ["TEMP"], "quit.blend")
+    check("quit.blend is in the sim's own folder", os.path.exists(path), os.environ["TEMP"])
+    # Load UI is off in factory settings, and recovering follows it: the session's workspaces stay.
+    prefs = bpy.context.preferences.filepaths
+    check("Load UI starts off", not prefs.use_load_ui)
+    with bpy.context.temp_override(window=win()):
+        bpy.ops.wm.recover_last_session()
+    yield 1.5
+    entries = [e for ws in bpy.data.workspaces for e in stored(ws).values()]
+    check("recovered with Load UI off: not in the kept workspaces", len(entries) == 0, entries)
+    prefs.use_load_ui = True
+    with bpy.context.temp_override(window=win()):
+        bpy.ops.wm.recover_last_session()
+    yield 1.5
+    entries = [e for ws in bpy.data.workspaces for e in stored(ws).values()]
+    log("recovered", entries)
+    check("recovered with Load UI on: the pin", len(entries) == 1, entries)
+
+
+SC["store_quit_a"] = s_store_quit_a
+SC["store_quit_b"] = s_store_quit_b

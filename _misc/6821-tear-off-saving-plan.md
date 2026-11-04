@@ -2,6 +2,8 @@
 
 **Status:** in progress, see the build order. A test user asked for this. The first draft was checked against the code by independent reviews, which found one blocker and twelve major problems. This version has the corrections. It comes from reading the code until each phase's tests say otherwise.
 
+**Bforartists' factory default is Load UI off.** With default settings a file's own pins don't load: you keep the workspaces you have, and their pins. Pins in the startup file load at the start of a session either way. Recover Last Session follows Load UI too.
+
 **The request:**
 - With **Load UI on**, opening a file brings back the panels pinned in that file.
 - With **Load UI off**, you keep the workspaces you have, and their pinned panels.
@@ -134,7 +136,7 @@ Each phase compiles alone, has its own tests and gets its own commits.
 | Phase | What | Status |
 |---|---|---|
 | 0 | Collapsed fade | Done, `993d02c194a`. Scenarios `p13_pin_fade_stale`, `p13_pin_fade_bright` and the collapse set pass |
-| 1 | Store and save scope. Writes only, nothing restores yet | |
+| 1 | Store and save scope. Writes only, nothing restores yet | Done, `7c14ecfa020`, `dd2f7151fbd`, `4a8d0cce927`. Scenarios `store_*` pass, including across a restart |
 | 2 | Entries that survive closing | |
 | 3 | Restore menus and row popovers | |
 | 4 | Region and shelf panels, crop, scroll, collapse | |
@@ -157,7 +159,7 @@ Each phase compiles alone, has its own tests and gets its own commits.
 | Duplicating a workspace | The copy gets entries not yet restored, but not open pins. Acceptable for a first version |
 | A live enum whose ID is already gone | It has no name to store, so a save drops it |
 | Inner layout sections | They reset to their defaults |
-| Autosave from undo memory | Can't be bracketed, so it may hold older pins |
+| Auto-save | Goes through the same scope as saving and quitting. Not tested on its own, because the sim can't mark a file as changed. A hand test |
 | Blender_Light's menu strip at rest | Stays under 3:1 over a dark viewport. Accepted |
 
 ## Decisions
