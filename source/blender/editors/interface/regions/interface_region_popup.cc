@@ -1252,13 +1252,16 @@ static void tear_off_panel_header_align(Block *block, const float bounds)
   }
 }
 
-/* BFA - Tear-Off Menu/Panel: the pin and close icons on whole pixels, as square as their row is
- * tall. Layout leaves them on fractions, and rounding each edge alone could make one a pixel wider,
- * which shows when its highlight lights up. */
+/* BFA - Tear-Off Menu/Panel: the pin and close icons are square, which shows when a highlight lights
+ * up. They're in an aligned row, and #widget_roundbox_set stitches a button to its left neighbor by
+ * making it a pixel wider, which also takes the glyph off center. These have no shared edge to
+ * hide, so no alignment. Whole pixels too, because layout leaves them on fractions, and rounding
+ * each edge alone can do the same. */
 static void tear_off_header_icons_snap(Block *block)
 {
   for (Button &bt : block->buttons()) {
     if (bt.tear_off_header && ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE)) {
+      bt.drawflag &= ~BUT_ALIGN_ALL;
       const float size = std::round(BLI_rctf_size_y(&bt.rect));
       bt.rect.xmin = std::round(bt.rect.xmin);
       bt.rect.ymin = std::round(bt.rect.ymin);
