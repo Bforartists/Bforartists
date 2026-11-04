@@ -8003,6 +8003,413 @@ def s_cursor_node_editor():
 SC["cursor_node_editor"] = s_cursor_node_editor
 
 
+def inset(box, n=3):
+    return box[0] + n, box[1] + n, box[2] - n, box[3] - n
+
+
+def raise_two():
+    """A taller panel behind a newer one that covers its top right corner, title included. Returns
+    the box of each, and of what they share. Leaves `a_alone` and `b_front` in FRAME."""
+    yield from begin(SIM_PT_mid.state)
+    cx, cy = center()
+    move(cx - 250, cy); yield 0.3
+    move(cx - 250, cy); yield 0.3
+    tear_panel("SIM_PT_mid"); yield 0.8
+    yield from park()
+    yield from grab("a_alone")
+    a = need(popup_box("base", "a_alone"), "the one behind opens")
+    log("behind", a)
+    move(a[2] + 300, a[3] - 200); yield 0.3
+    move(a[2] + 300, a[3] - 200); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("b_open")
+    b = need(popup_box("a_alone", "b_open"), "the newer one opens")
+    log("newer", b)
+    dx, dy = a[2] - 80 - b[0], a[3] - 60 - b[1]
+    yield from drag_title(b, dx, dy)
+    yield from park()
+    yield from grab("b_front")
+    b = (b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy)
+    log("newer, moved", b)
+    over = (max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3]))
+    check("they overlap", over[0] < over[2] and over[1] < over[3], over)
+    return a, b, over
+
+
+def s_raise_click():
+    """The last one clicked is on top, and what's on top gets the click."""
+    a, b, over = yield from raise_two()
+    a_free = (a[0] + 60, a[3] - TITLE_Y)
+    b_free = (b[2] - 60, b[3] - TITLE_Y)
+    n = rdiff("a_alone", "b_front", inset(over))
+    check("the newer one starts on top", n > 200, n)
+
+    yield from click(*a_free)
+    yield from park()
+    yield from grab("a_front")
+    n = rdiff("a_alone", "a_front", inset(over))
+    check("clicked, the one behind shows whole", n < 30, n)
+    # Past its shadow.
+    exposed = (a[2] + 30, b[1] + 4, b[2] - 4, b[3] - 40)
+    n = rdiff("b_front", "a_front", exposed)
+    check("the other doesn't change where it still shows", n == 0, n)
+
+    yield from click(*b_free)
+    yield from park()
+    yield from grab("b_again")
+    n = rdiff("b_front", "b_again", inset(over))
+    check("clicking the other puts it back on top", n < 30, n)
+
+    # Each mouse button, and a row.
+    for button in ("RIGHTMOUSE", "MIDDLEMOUSE"):
+        move(*a_free); yield 0.3
+        move(*a_free); yield 0.3
+        press(*a_free, button); yield 0.05
+        release(*a_free, button); yield 0.3
+        yield from esc()
+        yield from park()
+        yield from grab("by_" + button)
+        n = rdiff("a_alone", "by_" + button, inset(over))
+        check(button + " brings it forward too", n < 30, n)
+        yield from click(*b_free)
+        yield from park()
+
+    row = (a[0] + 60, a[1] + 60)
+    yield from click(*row)
+    yield from esc()
+    yield from park()
+    yield from grab("by_row")
+    n = rdiff("a_alone", "by_row", inset(over))
+    check("a click on a row brings it forward too", n < 30, n)
+
+    # It's in front now, so its title gets a press where the other one was on top before. Its pin
+    # and X are further right.
+    under = (a[2] - 70, a[3] - TITLE_Y)
+    yield from drag(*under, -110, -60)
+    yield from park()
+    yield from grab("a_moved")
+    n = rdiff("by_row", "a_moved", (a[0] - 100, a[1] - 50, a[0] - 20, a[3] - 90))
+    check("it's the one that moves", n > 200, n)
+    n = rdiff("by_row", "a_moved", exposed)
+    check("and the other stays", n == 0, n)
+
+
+SC["raise_click"] = s_raise_click
+
+
+def s_raise_fade():
+    """What covered it gives way gradually, and nothing else about it changes on the way."""
+    a, b, over = yield from raise_two()
+    a_free = (a[0] + 60, a[3] - TITLE_Y)
+    b_free = (b[2] - 60, b[3] - TITLE_Y)
+    yield from click(*a_free)
+    yield from grab("a_front")
+    yield from click(*b_free)
+    yield from park()
+    yield from grab("b_front2")
+
+    # The pixel where the two differ most, away from their edges.
+    x0, y0, x1, y1 = inset(over, 6)
+    gap = np.abs(FRAME["a_front"][y0:y1, x0:x1] - FRAME["b_front2"][y0:y1, x0:x1]).max(axis=2)
+    gy, gx = np.unravel_index(int(np.argmax(gap)), gap.shape)
+    px, py = x0 + int(gx), y0 + int(gy)
+    far, near = FRAME["a_front"][py, px].copy(), FRAME["b_front2"][py, px].copy()
+    log("pixel", px, py, "a", far, "b", near)
+    check("they differ enough to tell", float(np.abs(far - near).max()) > 0.1, (far, near))
+
+    # What only the one behind has, title and all, away from the other's shadow.
+    alone = (a[0] + 4, a[1] + 4, b[0] - 30, a[3] - 4)
+    found = False
+    worst = 0
+    for i in range(12):
+        move(*a_free); yield 0.3
+        move(*a_free); yield 0.3
+        press(*a_free); yield 0.0
+        release(*a_free)
+        yield i * 0.012
+        yield from quick_grab(f"mid{i}")
+        now = FRAME[f"mid{i}"][py, px]
+        low, high = np.minimum(far, near), np.maximum(far, near)
+        between = bool(np.all(now >= low - 0.002) and np.all(now <= high + 0.002) and
+                       float(np.abs(now - far).max()) > 0.02 and
+                       float(np.abs(now - near).max()) > 0.02)
+        # Not zero: a theme's translucent body shows slightly less of the viewport through two
+        # copies, by a few levels in 255. Fading the whole of it would be far more.
+        worst = max(worst, rdiff("a_front", f"mid{i}", alone, thresh=0.04))
+        log("on its way", i, now, between)
+        found = found or between
+        yield 0.5
+        yield from click(*b_free)
+        yield 0.5
+    check("it passes through a value between the two", found)
+    check("the rest of it doesn't dip at any moment", worst == 0, worst)
+
+    yield from click(*a_free)
+    yield from grab("settled")
+    yield 1.0
+    yield from grab("settled2")
+    n = rdiff("a_front", "settled", inset(over))
+    check("it ends fully in front", n < 30, n)
+    n = rdiff("settled", "settled2")
+    check("and nothing is left running", n == 0, n)
+
+
+SC["raise_fade"] = s_raise_fade
+
+
+def s_raise_fade_shadow():
+    """The copy where it was goes without a step in the shadow, and a fade starts only if covered."""
+    a, b, over = yield from raise_two()
+    a_free = (a[0] + 60, a[3] - TITLE_Y)
+    yield from click(*a_free)
+    yield from park()
+    yield from grab("settled")
+    # Its shadow over the viewport, below the panel.
+    strip = (a[0] + 20, a[1] - 8, a[0] + 120, a[1] - 1)
+    n = rdiff("a_alone", "settled", strip, thresh=0.01)
+    check("its shadow ends as it was", n == 0, n)
+    # Not covered by anything: dragged clear, a click changes nothing at any moment.
+    yield from drag(b[2] - 60, b[3] - TITLE_Y, 300, 0)
+    yield from click(b[2] + 240, b[3] - TITLE_Y)
+    move(*a_free); yield 0.3
+    move(*a_free); yield 0.3
+    yield from grab("before_click")
+    press(*a_free); yield 0.0
+    release(*a_free)
+    yield from quick_grab("no_fade")
+    n = rdiff("before_click", "no_fade", inset(a), thresh=0.01)
+    check("not covered: nothing changes", n == 0, n)
+
+
+SC["raise_fade_shadow"] = s_raise_fade_shadow
+
+
+def s_raise_saved():
+    """The order goes in the file, and comes back."""
+    a, b, over = yield from raise_two()
+    a_free = (a[0] + 60, a[3] - TITLE_Y)
+    b_free = (b[2] - 60, b[3] - TITLE_Y)
+    path = store_path("raise")
+
+    yield from click(*a_free)
+    yield from park()
+    yield from grab("a_front")
+    yield from save_file(path)
+    yield from open_file(path, load_ui=True)
+    yield from park()
+    yield from grab("loaded_a")
+    n = rdiff("a_front", "loaded_a", inset(over))
+    check("clicked last, on top after opening", n < 60, n)
+
+    yield from click(*b_free)
+    yield from park()
+    yield from grab("b_front2")
+    n = rdiff("b_front", "b_front2", inset(over))
+    check("and the other can still be brought forward", n < 60, n)
+    yield from save_file(path)
+    yield from open_file(path, load_ui=True)
+    yield from park()
+    yield from grab("loaded_b")
+    n = rdiff("b_front2", "loaded_b", inset(over))
+    check("the other way round too", n < 60, n)
+
+
+SC["raise_saved"] = s_raise_saved
+
+
+def s_raise_above():
+    """A regular popup stays above, and a tear-off under one doesn't come forward."""
+    a, b, over = yield from raise_two()
+    a_free = (a[0] + 60, a[3] - TITLE_Y)
+    b_free = (b[2] - 60, b[3] - TITLE_Y)
+    # From a row of the one behind, right beside the other: the menu opens over both.
+    row = (over[0] - 20, over[1] + 10)
+    move(*row); yield 0.3
+    move(*row); yield 0.3
+    press(*row, "RIGHTMOUSE"); yield 0.05
+    release(*row, "RIGHTMOUSE"); yield 0.6
+    yield from grab("context")
+    menu = need(popup_box("b_front", "context"), "a context menu opens")
+    log("context menu", menu)
+    # The tear-off is in front of the other now, so the only other change is where they overlap.
+    # A press on the other doesn't bring it forward through the menu. It only closes the menu.
+    n = rdiff("a_alone", "context", inset(over))
+    log("with the menu", n)
+    yield from esc()
+    yield from park()
+    yield from grab("closed")
+    n = rdiff("a_alone", "closed", inset(over))
+    check("the row's click brought it forward", n < 30, n)
+
+    # Anything regular that's open: the click closes that, and the order stays.
+    move(*center()); yield 0.3
+    move(*center()); yield 0.3
+    with bpy.context.temp_override(**override()):
+        bpy.ops.sim.dialog("INVOKE_DEFAULT")
+    yield 0.6
+    move(*b_free); yield 0.3
+    move(*b_free); yield 0.3
+    press(*b_free); yield 0.05
+    release(*b_free); yield 0.3
+    yield from esc()
+    yield from esc()
+    yield from park()
+    yield from grab("after_dialog")
+    n = rdiff("a_alone", "after_dialog", inset(over))
+    check("under a dialog, a click doesn't reach it", n < 30, n)
+    yield from click(*a_free)
+    yield from click(*b_free)
+    yield from park()
+    yield from grab("back_b")
+    n = rdiff("b_front", "back_b", inset(over))
+    check("then it works as before", n < 30, n)
+
+
+SC["raise_above"] = s_raise_above
+
+
+def s_raise_close_mid():
+    """Closed mid fade: the one coming forward, and the one that was above it. No crash, no leak,
+    and nothing left half faded."""
+    a, b, over = yield from raise_two()
+    a_free = (a[0] + 60, a[3] - TITLE_Y)
+    b_x = (b[2] - X_ICON, b[3] - TITLE_Y)
+    # Closing what covered it, on the very next event. It was the region the copy is drawn below.
+    move(*a_free); yield 0.3
+    move(*a_free); yield 0.3
+    press(*a_free); yield 0.0
+    release(*a_free); yield 0.0
+    move(*b_x); yield 0.0
+    move(*b_x); yield 0.0
+    press(*b_x); yield 0.0
+    release(*b_x); yield 0.0
+    yield 0.6
+    yield from park()
+    yield from grab("b_gone")
+    n = rdiff("a_alone", "b_gone", (a[0] - 12, a[1] - 12, a[2] + 12, a[3] + 12), thresh=0.01)
+    check("the other closed and this one is whole", n == 0, n)
+
+    # A third behind it, then the one coming forward closes itself.
+    move(*center()); yield 0.3
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("c_open")
+    c = need(popup_box("b_gone", "c_open"), "another opens")
+    dx, dy = a[2] - 80 - c[0], a[3] - 60 - c[1]
+    yield from drag_title(c, dx, dy)
+    c = (c[0] + dx, c[1] + dy, c[2] + dx, c[3] + dy)
+    a_x = (a[2] - X_ICON, a[3] - TITLE_Y)
+    move(*a_free); yield 0.3
+    move(*a_free); yield 0.3
+    press(*a_free); yield 0.0
+    release(*a_free); yield 0.0
+    move(*a_x); yield 0.0
+    move(*a_x); yield 0.0
+    press(*a_x); yield 0.0
+    release(*a_x); yield 0.0
+    yield 0.6
+    yield from park()
+    yield from grab("a_gone")
+    n = rdiff("base", "a_gone", (a[0] - 12, a[1] - 12, c[0] - 20, a[3] - 4), thresh=0.04)
+    check("the one coming forward closed cleanly", n < 30, n)
+    yield from close_all()
+    yield from finish_with_memory_report()
+
+
+SC["raise_close_mid"] = s_raise_close_mid
+
+
+def s_raise_strip():
+    """A collapsed strip, in a stack with an open panel."""
+    yield from begin(SIM_PT_mid.state)
+    cx, cy = center()
+    move(cx - 250, cy); yield 0.3
+    move(cx - 250, cy); yield 0.3
+    tear_panel("SIM_PT_mid"); yield 0.8
+    yield from park()
+    yield from grab("a_open")
+    a = need(popup_box("base", "a_open"), "it opens")
+    yield from click(a[2] - PIN_ICON, a[3] - TITLE_Y)
+    y = a[3] - TITLE_Y
+    free = (a[0] + 8, y)
+    move(*free); yield 0.3
+    move(*free); yield 0.3
+    yield from grab("strip_lit")
+    strip = (a[0], a[3] - 30, a[2], a[3])
+
+    move(a[2] + 300, a[3] - 200); yield 0.3
+    move(a[2] + 300, a[3] - 200); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("b_open")
+    b = need(box_bbox("strip_lit", "b_open", (a[2] + 40, 25, 1340, 999)), "the panel opens")
+    dx, dy = a[2] - 80 - b[0], y - 40 - b[1]
+    yield from drag_title(b, dx, dy)
+    b = (b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy)
+    over = (max(a[0], b[0]) + 3, a[3] - 26, a[2] - 3, a[3] - 8)
+    log("strip over", over)
+    move(*free); yield 0.3
+    move(*free); yield 0.3
+    yield from grab("behind_lit")
+    n = rdiff("strip_lit", "behind_lit", over)
+    check("the panel starts on top of the strip", n > 20, n)
+
+    yield from click(*free)
+    yield from grab("front_lit")
+    n = rdiff("strip_lit", "front_lit", over)
+    check("clicked, the strip is on top", n < 30, n)
+
+    # What's on top gets the press: a strip's label over the panel moves the strip.
+    yield from click(b[2] - 60, b[3] - TITLE_Y)
+    move(*free); yield 0.3
+    move(*free); yield 0.3
+    yield from grab("behind_again")
+    n = rdiff("behind_lit", "behind_again", over)
+    check("clicking the panel puts it back on top", n < 30, n)
+
+    # Brought forward and opened, it's in front of the panel. Simulated presses can't be double
+    # clicks, so that way is a hand test.
+    yield from click(*free)
+    yield from click(a[2] - PIN_ICON, y)
+    yield from park()
+    yield from grab("expanded")
+    a_over = (max(a[0], b[0]) + 3, max(a[1], b[1]) + 3, min(a[2], b[2]) - 3, min(a[3], b[3]) - 3)
+    n = rdiff("a_open", "expanded", a_over)
+    check("opened, it's in front", n < 40, n)
+
+
+SC["raise_strip"] = s_raise_strip
+
+
+def s_raise_workspace():
+    """The order is kept through another workspace, whose tear-offs don't count."""
+    a, b, over = yield from raise_two()
+    a_free = (a[0] + 60, a[3] - TITLE_Y)
+    yield from click(*a_free)
+    yield from park()
+    yield from grab("a_front")
+    w = win()
+    home = w.workspace
+    other = next(ws for ws in bpy.data.workspaces if ws != home)
+    w.workspace = other; yield 0.8
+    move(*center()); yield 0.3
+    w.workspace = home; yield 0.8
+    yield from park()
+    yield from grab("returned")
+    n = rdiff("a_front", "returned", inset(over))
+    check("still in front after coming back", n < 30, n)
+    yield from click(b[2] - 60, b[3] - TITLE_Y)
+    yield from park()
+    yield from grab("b_front2")
+    n = rdiff("b_front", "b_front2", inset(over))
+    check("and still works", n < 30, n)
+
+
+SC["raise_workspace"] = s_raise_workspace
+
+
 def s_store_startup_a():
     yield from begin()
     move(*center()); yield 0.3
