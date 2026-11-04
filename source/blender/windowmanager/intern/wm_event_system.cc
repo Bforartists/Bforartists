@@ -468,6 +468,21 @@ void WM_main_remap_editor_id_reference(const bke::id::IDRemapper &mappings)
         }
       });
     }
+    /* BFA - Tear-Off Menu/Panel: a workspace deleted as an ID, from the Outliner or a script, skips
+     * #ED_workspace_delete, and its hidden pins would keep a pointer to it. */
+    mappings.iter([&](ID *old_id, ID *new_id) {
+      if (new_id == nullptr && GS(old_id->name) == ID_WS) {
+        bContext *C = CTX_create();
+        CTX_data_main_set(C, bmain);
+        CTX_wm_manager_set(C, wm);
+        for (wmWindow &win : wm->windows) {
+          CTX_wm_window_set(C, &win);
+          ui::tear_off_handlers_remove_for_workspace(
+              C, &win, reinterpret_cast<const WorkSpace *>(old_id));
+        }
+        CTX_free(C);
+      }
+    });
   }
 
   AS_asset_library_remap_ids(mappings);

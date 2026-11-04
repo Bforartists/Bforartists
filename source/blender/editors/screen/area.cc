@@ -2948,6 +2948,8 @@ void ED_area_newspace(bContext *C, ScrArea *area, int type, const bool skip_regi
   SpaceType *st = BKE_spacetype_from_id(type);
 
   if (area->spacetype != type) {
+    /* BFA - Tear-Off Menu/Panel: a stored pin can be waiting for this editor. */
+    ui::tear_off_restore_tag(CTX_wm_manager(C));
     SpaceLink *slold = area->spacedata.first_as<SpaceLink>();
     /* store area->type->exit callback */
     void (*area_exit)(wmWindowManager *, ScrArea *) = area->type ? area->type->exit : nullptr;

@@ -61,7 +61,7 @@ namespace idprop = bke::idprop;
 static constexpr const char *TEAR_OFF_LIST_KEY = "bfa_tear_offs";
 /** Raise this when a field changes meaning. An entry with another number is kept unread. */
 static constexpr int TEAR_OFF_ENTRY_VERSION = 1;
-/** Restored per window in one pass. What's left waits for the next one. */
+/** Pins created per window in one pass, and a next pass does the rest. */
 static constexpr int TEAR_OFF_RESTORE_MAX = 64;
 /** A position beyond this isn't a position. */
 static constexpr float TEAR_OFF_POSITION_MAX = 100000.0f;
@@ -299,8 +299,9 @@ static IDProperty *entry_create(Main *bmain,
     return nullptr;
   }
 
-  /* Without UI scale, so it means the same at another scale. The height counts from the window's
-   * top, so a shorter window keeps a pin near the top. */
+  /* Without UI scale, so it means the same at another scale. The pin's own, because #UI_SCALE_FAC
+   * belongs to the window handling the event, and windows on two monitors can differ. The height
+   * counts from the window's top, so a shorter window keeps a pin near the top. */
   const int win_height = WM_window_native_pixel_size(&win)[1];
   const float scale = (handle.tear_off_scale_fac > 0.0f) ? handle.tear_off_scale_fac :
                                                            UI_SCALE_FAC;
@@ -311,8 +312,8 @@ static IDProperty *entry_create(Main *bmain,
   field_add(entry.get(), "area_index", entry_area_index(win, handle));
   /* A string, because the enum's numbers can change in any merge. */
   field_add(entry.get(), "mode", CTX_data_mode_string_from_enum(handle.tear_off_mode));
-  field_add(entry.get(), "x", float(handle.tear_off_pin_xy[0]) / UI_SCALE_FAC);
-  field_add(entry.get(), "y", float(win_height - handle.tear_off_pin_xy[1]) / UI_SCALE_FAC);
+  field_add(entry.get(), "x", float(handle.tear_off_pin_xy[0]) / scale);
+  field_add(entry.get(), "y", float(win_height - handle.tear_off_pin_xy[1]) / scale);
   field_add_bool(entry.get(), "collapsed", handle.tear_off_collapsed);
   field_add(entry.get(), "height", handle.tear_off_user_height);
   field_add(entry.get(), "scroll", handle.scrolloffset / scale);
@@ -338,6 +339,10 @@ static void entries_add_open_pins(Main *bmain,
       const PopupBlockHandle *handle = tear_off_from_handler(handler);
       if (handle == nullptr || handle->tear_off_workspace != workspace) {
         continue;
+      }
+      /* A waiting entry can hold any name, and adding a name twice would lose this pin. */
+      while (IDP_GetPropertyFromGroup(list, std::to_string(index))) {
+        index++;
       }
       if (IDProperty *entry = entry_create(bmain, win, *handle, index)) {
         IDP_AddToGroup(list, entry);
@@ -470,7 +475,9 @@ void tear_off_restore_tag(wmWindowManager *wm)
 }
 
 /* The source editor in the window's current screen, as #tear_off_context_ensure finds it: the one
- * it came from if that's still the same type, or else the first of the type. */
+ * it came from if that's still the same type, or else the first of the type. A pin needs both an
+ * area and a region. A live pin has them, while a file could name a menu or panel whose C code
+ * dereferences them with nothing to check first. */
 static bool entry_area_resolve(const wmWindow &win,
                                const bScreen &screen,
                                const EntryData &data,
@@ -479,8 +486,8 @@ static bool entry_area_resolve(const wmWindow &win,
 {
   *r_area = nullptr;
   *r_region = nullptr;
-  if (data.space == 0) {
-    return true;
+  if (data.space == 0 || data.region == -1) {
+    return false;
   }
   ScrArea *found = nullptr;
   if (data.area_index >= 0) {
@@ -501,10 +508,6 @@ static bool entry_area_resolve(const wmWindow &win,
     return false;
   }
   *r_area = found;
-  if (data.region == -1) {
-    return true;
-  }
-  /* A pin with a space type and no region would count as having no source. */
   *r_region = BKE_area_find_region_type(found, data.region);
   return *r_region != nullptr;
 }
@@ -512,20 +515,33 @@ static bool entry_area_resolve(const wmWindow &win,
 /* The type must belong to this editor or be registered by name. The all-spaces fallback of
  * #tear_off_paneltype_find is for pins made in the session: a file naming a panel of another
  * editor could crash its C poll. */
-static bool entry_panel_type_exists(const ARegion *region, const std::string &idname)
+static const PanelType *entry_panel_type_find(const ARegion *region, const std::string &idname)
 {
-  if (region && region->runtime->type) {
+  if (region->runtime->type) {
     for (const PanelType &pt : region->runtime->type->paneltypes) {
       if (idname == pt.idname) {
-        return true;
+        return &pt;
       }
     }
   }
-  return WM_paneltype_find(idname.c_str(), true) != nullptr;
+  return WM_paneltype_find(idname.c_str(), true);
+}
+
+/* These need custom data that a pin never has. #panel_can_be_torn_off refuses them for a live pin,
+ * and a file could name one. */
+static bool panel_type_is_instanced(const PanelType *pt)
+{
+  for (; pt; pt = pt->parent) {
+    if (pt->flag & PANEL_TYPE_INSTANCED) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /* Sets the handle's fields. Direct, as the setter of the collapsed state would overwrite the
- * position. The refresh that #tear_off_handle_init tagged moves it there before anything draws. */
+ * position. The refresh that #tear_off_handle_init tagged moves it there before anything draws, and
+ * clamps a collapsed pin, once it has the width stored here. */
 static void entry_apply(const EntryData &data,
                         wmWindow *win,
                         PopupBlockHandle *handle)
@@ -540,18 +556,12 @@ static void entry_apply(const EntryData &data,
   handle->tear_off_user_height = data.height;
   /* Scale free floats, rounded, which stay exact at the same scale. A live scale change works
    * differently on purpose, as it starts from a position already on the screen. */
-  handle->scrolloffset = data.scroll * UI_SCALE_FAC;
+  handle->scrolloffset = std::round(data.scroll * UI_SCALE_FAC);
   handle->tear_off_collapsed = data.collapsed;
   handle->tear_off_pin_xy[0] = int(std::round(data.x * UI_SCALE_FAC));
   handle->tear_off_pin_xy[1] = WM_window_native_pixel_size(win)[1] -
                                int(std::round(data.y * UI_SCALE_FAC));
   copy_v2_v2_int(handle->popup_create_vars.event_xy, handle->tear_off_pin_xy);
-  if (data.collapsed) {
-    Block *block = handle->region->runtime->uiblocks.first();
-    if (block) {
-      tear_off_clamp_to_window(win, handle, block, handle->region);
-    }
-  }
 }
 
 /* Fills an enum's operator properties. False if its data isn't here, which can change: an ID can
@@ -602,17 +612,20 @@ static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, 
   const char *ot_name = nullptr;
   const char *idname_prop = nullptr;
   if (data.kind == "MENU") {
-    /* No poll guard in a menu's first layout, unlike a panel's. */
+    /* No poll guard in a menu's first layout, unlike a panel's. A context menu has no Tear Off row
+     * and gets no header, so it could never be closed. */
     MenuType *mt = WM_menutype_find(data.idname.c_str(), true);
-    if (mt == nullptr || !WM_menutype_poll(C, mt)) {
+    if (mt == nullptr || !WM_menutype_poll(C, mt) ||
+        BLI_strcasestr(data.idname.c_str(), "_context_menu"))
+    {
       return false;
     }
     ot_name = "WM_OT_menu_tear_off";
     idname_prop = "menu_idname";
   }
   else if (data.kind == "PANEL") {
-    /* A region panel measures its region. */
-    if (!entry_panel_type_exists(region, data.idname) || (data.from_region && !region)) {
+    const PanelType *pt = entry_panel_type_find(region, data.idname);
+    if (pt == nullptr || panel_type_is_instanced(pt)) {
       return false;
     }
     ot_name = "WM_OT_panel_tear_off";
@@ -685,12 +698,10 @@ static void workspace_restore(bContext *C,
   /* Names, because the list can change while a pin is being created. */
   Vector<std::string> names;
   for (const IDProperty &entry : list->data.group) {
-    if (names.size() == TEAR_OFF_RESTORE_MAX) {
-      break;
-    }
     names.append(entry.name);
   }
 
+  int created = 0;
   for (const std::string &name : names) {
     IDProperty *entry = IDP_GetPropertyFromGroup(list, name);
     if (entry == nullptr || !group_is_sound(entry)) {
@@ -715,19 +726,27 @@ static void workspace_restore(bContext *C,
     }
     CTX_wm_area_set(C, area);
     CTX_wm_region_set(C, region);
-    /* It waits for its mode. A pin with no source ignores the mode, as #tear_off_is_visible does. */
-    const bool mode_matches = data.space == 0 || data.mode.empty() ||
-                              data.mode == CTX_data_mode_string(C);
-    if (mode_matches && entry_pin_create(C, win, data, region)) {
-      list = IDP_GetPropertyFromGroup(root, TEAR_OFF_LIST_KEY);
-      if (IDProperty *entry_now = list ? IDP_GetPropertyFromGroup(list, name) : nullptr) {
-        IDP_FreeFromGroup(list, entry_now);
-      }
-    }
+    /* It waits for its mode. */
+    const bool mode_matches = data.mode.empty() || data.mode == CTX_data_mode_string(C);
+    const bool is_created = mode_matches && entry_pin_create(C, win, data, region);
     CTX_wm_area_set(C, nullptr);
     CTX_wm_region_set(C, nullptr);
-    if (list == nullptr) {
+
+    /* Python can run in a poll or draw, whether or not the pin was created. */
+    root = IDP_ID_system_properties_get(&workspace->id);
+    list = root ? IDP_GetPropertyFromGroup(root, TEAR_OFF_LIST_KEY) : nullptr;
+    if (list == nullptr || !group_is_sound(list)) {
       return;
+    }
+    if (is_created) {
+      if (IDProperty *entry_now = IDP_GetPropertyFromGroup(list, name)) {
+        IDP_FreeFromGroup(list, entry_now);
+      }
+      created++;
+      if (created == TEAR_OFF_RESTORE_MAX) {
+        tear_off_restore_tag(wm);
+        break;
+      }
     }
   }
   list_free_if_empty(workspace, list);

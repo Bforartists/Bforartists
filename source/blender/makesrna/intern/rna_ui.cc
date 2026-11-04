@@ -484,6 +484,11 @@ static StructRNA *rna_Panel_register(Main *bmain,
   /* update while blender is running */
   WM_main_add_notifier(NC_WINDOW, nullptr);
 
+  /* BFA - Tear-Off Menu/Panel: a stored pin can be waiting for this type. */
+  if (wmWindowManager *wm = bmain->wm.first()) {
+    ui::tear_off_restore_tag(wm);
+  }
+
   return pt->rna_ext.srna;
 }
 
@@ -1143,6 +1148,11 @@ static StructRNA *rna_Menu_register(Main *bmain,
 
   /* update while blender is running */
   WM_main_add_notifier(NC_WINDOW, nullptr);
+
+  /* BFA - Tear-Off Menu/Panel: a stored pin can be waiting for this type. */
+  if (wmWindowManager *wm = bmain->wm.first()) {
+    ui::tear_off_restore_tag(wm);
+  }
 
   return mt->rna_ext.srna;
 }

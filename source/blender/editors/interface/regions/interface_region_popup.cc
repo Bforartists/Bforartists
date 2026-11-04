@@ -1593,6 +1593,12 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     blocklist_free_inactive(C, region);
   }
 
+  /* BFA - Tear-Off Menu/Panel: a stored pin gets its width from this layout, and a pin's width
+   * comes from the block. */
+  if (handle->is_tear_off && handle->tear_off_collapsed) {
+    tear_off_clamp_to_window(window, handle, block, region);
+  }
+
   /* checks which buttons are visible, sets flags to prevent draw (do after region init) */
   popup_block_scrolltest(block);
 

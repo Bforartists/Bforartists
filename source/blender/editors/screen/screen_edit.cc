@@ -1476,6 +1476,10 @@ void screen_change_update(bContext *C, wmWindow *win, bScreen *screen)
 
   ED_screen_refresh(C, CTX_wm_manager(C), win);
 
+  /* BFA - Tear-Off Menu/Panel: another workspace can have pins to restore, and leaving a maximized
+   * area can bring back the editor a pin waits for. */
+  ui::tear_off_restore_tag(CTX_wm_manager(C));
+
   BKE_screen_view3d_scene_sync(screen, scene); /* sync new screen with scene data */
   WM_event_add_notifier(C, NC_WINDOW, nullptr);
   WM_event_add_notifier(C, NC_SCREEN | ND_LAYOUTSET, layout);
