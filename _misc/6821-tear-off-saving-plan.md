@@ -1,6 +1,6 @@
 # Saving Pinned Panels in the File and Startup: Plan (#6821)
 
-**Status:** in progress, see the build order. A test user asked for this. The first draft was checked against the code by independent reviews, which found one blocker and twelve major problems. This version has the corrections. It comes from reading the code until each phase's tests say otherwise.
+**Status:** built, on `tear_off`, waiting for its hand tests. A test user asked for this. The first draft was checked against the code by independent reviews, which found one blocker and twelve major problems. Two reviews of the finished code found twenty more, all fixed (`f47662b5f49`, `53d0841ff2d`).
 
 **Bforartists' factory default is Load UI off.** With default settings a file's own pins don't load: you keep the workspaces you have, and their pins. Pins in the startup file load at the start of a session either way. Recover Last Session follows Load UI too.
 
@@ -141,7 +141,7 @@ Each phase compiles alone, has its own tests and gets its own commits.
 | 3 | Restore menus and row popovers | Done, `ddaff87d562`, `1d0b590c447`. Scenarios `restore_*`, and `restore_startup` across a restart |
 | 4 | Region and shelf panels, crop, scroll, collapse | Done, `f6777df3c7f` |
 | 5 | Enums | Done, `8a55802a781` |
-| 6 | Docs and hand tests | |
+| 6 | Docs and hand tests | Hand tests below. The manual's still to do |
 
 **The harness gains, in Phase 1:** `SIM_CONFIG`, `SIM_FACTORY=0` and `SIM_ARGS` in `run.sh`, and a new `run_chain.sh name` for what spans a restart: it runs `name_a`, then `name_b` on the same temporary config. Tests read a file's list by opening it with the preference off.
 

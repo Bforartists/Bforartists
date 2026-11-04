@@ -6193,7 +6193,10 @@ def s_store_pending():
     yield from begin()
     group = win().workspace.bl_system_properties_get(do_create=True)
     group["bfa_tear_offs"] = {
-        "7": {"version": 1, "kind": "MENU", "idname": "SIM_MT_gone"},
+        # Valid, with a type that isn't registered, so it waits.
+        "7": {"version": 1, "kind": "MENU", "idname": "SIM_MT_gone", "winid": 1, "space": 1,
+              "region": 1, "area_index": -1, "mode": "objectmode", "x": 300.0, "y": 300.0,
+              "collapsed": False, "height": 0.0, "scroll": 0.0},
         "8": {"version": 99, "kind": "FUTURE", "new_field": 5},
         "9": "not a group",
     }
@@ -6807,7 +6810,7 @@ def s_restore_bad_panel():
         "5": dict(common, kind="PANEL", idname="SIM_PT_field", space=-3),
         "6": dict(common, kind="PANEL", idname="SIM_PT_field", height=-5.0),
         "7": dict(common, kind="PANEL"),
-        "8": dict(common, kind="PANEL", idname="SIM_PT_field", width=10.0, width_chrome=50.0),
+        "8": dict(common, kind="PANEL", idname="SIM_PT_field", width=-10.0),
     }
     w = win()
     home = w.workspace
