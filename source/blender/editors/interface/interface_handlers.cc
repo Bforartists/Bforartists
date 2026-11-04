@@ -14046,6 +14046,14 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
         WM_cursor_set(win, WM_CURSOR_DEFAULT);
         win->tag_cursor_refresh = true;
       }
+      /* The same for dragging an open one by its title, which would stick to the cursor when it
+       * shows again. */
+      if (block->handle->is_tear_off && block->handle->is_grab) {
+        wmWindow *win = CTX_wm_window(C);
+        block->handle->is_grab = false;
+        WM_cursor_set(win, WM_CURSOR_DEFAULT);
+        win->tag_cursor_refresh = true;
+      }
       CTX_wm_region_popup_set(C, region_popup);
       return WM_UI_HANDLER_CONTINUE;
     }
@@ -14566,9 +14574,13 @@ void tear_off_handlers_remove_for_workspace(bContext *C,
     }
     PopupBlockHandle *menu = static_cast<PopupBlockHandle *>(handler->user_data);
     if (menu->is_tear_off && menu->tear_off_workspace == workspace) {
+      /* Tagged and not freed, as a script can delete a workspace from a modal operator, with the
+       * event loop about to visit this handler. It frees what's tagged. Without its remove function
+       * nothing reaches the freed handle: every other walk over handlers filters on it or the tag.
+       */
       popup_handler_remove(C, menu);
-      BLI_remlink(handlers, handler);
-      wm_event_free_handler(&handler->head);
+      handler->remove_fn = nullptr;
+      handler->head.flag |= WM_HANDLER_DO_FREE;
     }
   }
 }

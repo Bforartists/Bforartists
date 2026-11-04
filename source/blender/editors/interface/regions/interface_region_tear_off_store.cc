@@ -22,6 +22,7 @@
 #include "DNA_ID.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_enums.h"
+#include "DNA_userdef_types.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 
@@ -63,6 +64,9 @@ static constexpr const char *TEAR_OFF_LIST_KEY = "bfa_tear_offs";
 static constexpr int TEAR_OFF_ENTRY_VERSION = 1;
 /** Pins created per window in one pass, and a next pass does the rest. */
 static constexpr int TEAR_OFF_RESTORE_MAX = 64;
+/** Entries looked at in one pass. A pass can run often while entries wait, and a file can hold any
+ * number of them. */
+static constexpr int TEAR_OFF_RESTORE_LOOK_MAX = 1024;
 /** A position beyond this isn't a position. */
 static constexpr float TEAR_OFF_POSITION_MAX = 100000.0f;
 
@@ -191,8 +195,10 @@ static bool entry_read(const IDProperty &entry, EntryData &r_data)
     const std::optional<float> width = read_float(entry, "width");
     const std::optional<float> width_default = read_float(entry, "width_default");
     const std::optional<float> width_chrome = read_float(entry, "width_chrome");
+    /* What isn't layout can be more than the width, from a very narrow shelf, and the layout width
+     * copes with that. */
     if (!(from_region && width && width_default && width_chrome) || *width < 0.0f ||
-        *width_default < 0.0f || *width_chrome < 0.0f || *width_chrome > *width)
+        *width_default < 0.0f || *width_chrome < 0.0f)
     {
       return false;
     }
@@ -299,9 +305,12 @@ static IDProperty *entry_create(Main *bmain,
     return nullptr;
   }
 
-  /* Without UI scale, so it means the same at another scale. The pin's own, because #UI_SCALE_FAC
-   * belongs to the window handling the event, and windows on two monitors can differ. The height
-   * counts from the window's top, so a shorter window keeps a pin near the top. */
+  /* Without UI scale, so it means the same at another scale. Its window's, because #UI_SCALE_FAC
+   * belongs to the window handling the event, and windows on two monitors can differ. As it is now,
+   * as #PopupBlockHandle::tear_off_scale_fac is out of date on a hidden pin. That one is right for
+   * the scroll position, which follows it at the next refresh. The height counts from the window's
+   * top, so a shorter window keeps a pin near the top. */
+  const float scale_now = WM_window_dpi_get_scale(&win) * U.ui_scale;
   const int win_height = WM_window_native_pixel_size(&win)[1];
   const float scale = (handle.tear_off_scale_fac > 0.0f) ? handle.tear_off_scale_fac :
                                                            UI_SCALE_FAC;
@@ -312,8 +321,8 @@ static IDProperty *entry_create(Main *bmain,
   field_add(entry.get(), "area_index", entry_area_index(win, handle));
   /* A string, because the enum's numbers can change in any merge. */
   field_add(entry.get(), "mode", CTX_data_mode_string_from_enum(handle.tear_off_mode));
-  field_add(entry.get(), "x", float(handle.tear_off_pin_xy[0]) / scale);
-  field_add(entry.get(), "y", float(win_height - handle.tear_off_pin_xy[1]) / scale);
+  field_add(entry.get(), "x", float(handle.tear_off_pin_xy[0]) / scale_now);
+  field_add(entry.get(), "y", float(win_height - handle.tear_off_pin_xy[1]) / scale_now);
   field_add_bool(entry.get(), "collapsed", handle.tear_off_collapsed);
   field_add(entry.get(), "height", handle.tear_off_user_height);
   field_add(entry.get(), "scroll", handle.scrolloffset / scale);
@@ -698,6 +707,9 @@ static void workspace_restore(bContext *C,
   /* Names, because the list can change while a pin is being created. */
   Vector<std::string> names;
   for (const IDProperty &entry : list->data.group) {
+    if (names.size() == TEAR_OFF_RESTORE_LOOK_MAX) {
+      break;
+    }
     names.append(entry.name);
   }
 

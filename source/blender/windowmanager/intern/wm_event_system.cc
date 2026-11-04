@@ -764,6 +764,15 @@ void wm_event_do_notifiers(bContext *C)
      */
 
     wm->runtime->notifier_queue_set.remove_contained(note);
+
+    /* BFA - Tear-Off Menu/Panel: a stored pin can be waiting for data, an active object or a poll
+     * that could depend on anything, so any change can be what it needs. A pass costs nothing with
+     * no entries waiting. Not for a frame change, or playback would run their polls on each frame.
+     */
+    if (!(note->category == NC_SCENE && note->data == ND_FRAME)) {
+      ui::tear_off_restore_tag(wm);
+    }
+
     for (wmWindow &win : wm->windows) {
       Scene *scene = WM_window_get_active_scene(&win);
       bScreen *screen = WM_window_get_active_screen(&win);
