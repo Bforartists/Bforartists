@@ -701,8 +701,9 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
 
   BLF_batch_draw_begin();
   widgetbase_draw_cache_begin();
+  /* Where the text of a header checkbox was: past the grip, and the room of the checkbox's box. */
   rctf title = rect;
-  title.xmax -= UI_UNIT_X;
+  bool has_grip = false;
   bool has_title = false;
   for (Button &but : block->buttons()) {
     const bool is_close = but.icon == ICON_PANEL_CLOSE;
@@ -720,7 +721,10 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
       title.xmax = but_rect.xmin;
     }
     else if (but.type == ButtonType::Label) {
-      title.xmin = but_rect.xmax;
+      if (!has_grip) {
+        title.xmin = but_rect.xmax + UI_UNIT_X;
+        has_grip = true;
+      }
       has_title |= !but.drawstr.empty();
     }
 
