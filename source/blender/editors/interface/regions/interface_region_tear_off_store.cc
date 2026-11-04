@@ -118,6 +118,9 @@ struct EntryData {
   std::string kind;
   std::string idname;
   bool from_region = false;
+  float width = 0.0f;
+  float width_default = 0.0f;
+  float width_chrome = 0.0f;
   int winid = 0;
   int space = 0;
   int region = -1;
@@ -175,10 +178,18 @@ static bool entry_read(const IDProperty &entry, EntryData &r_data)
   }
   if (r_data.kind == "PANEL") {
     const std::optional<bool> from_region = IDP_group_lookup_bool(entry, "from_region");
-    if (!from_region) {
+    const std::optional<float> width = read_float(entry, "width");
+    const std::optional<float> width_default = read_float(entry, "width_default");
+    const std::optional<float> width_chrome = read_float(entry, "width_chrome");
+    if (!(from_region && width && width_default && width_chrome) || *width < 0.0f ||
+        *width_default < 0.0f || *width_chrome < 0.0f || *width_chrome > *width)
+    {
       return false;
     }
     r_data.from_region = *from_region;
+    r_data.width = *width;
+    r_data.width_default = *width_default;
+    r_data.width_chrome = *width_chrome;
   }
   return true;
 }
@@ -484,6 +495,13 @@ static void entry_apply(const EntryData &data,
                         wmWindow *win,
                         PopupBlockHandle *handle)
 {
+  /* After #tear_off_init_from_region measured the region: the stored width is the pin's own, and
+   * the shelf can be any width by now. */
+  if (data.kind == "PANEL") {
+    handle->tear_off_width = data.width;
+    handle->tear_off_width_default = data.width_default;
+    handle->tear_off_width_chrome = data.width_chrome;
+  }
   handle->tear_off_user_height = data.height;
   /* Scale free floats, rounded, which stay exact at the same scale. A live scale change works
    * differently on purpose, as it starts from a position already on the screen. */
@@ -515,8 +533,9 @@ static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, 
     ot_name = "WM_OT_menu_tear_off";
     idname_prop = "menu_idname";
   }
-  else if (data.kind == "PANEL" && !data.from_region) {
-    if (!entry_panel_type_exists(region, data.idname)) {
+  else if (data.kind == "PANEL") {
+    /* A region panel measures its region. */
+    if (!entry_panel_type_exists(region, data.idname) || (data.from_region && !region)) {
       return false;
     }
     ot_name = "WM_OT_panel_tear_off";
@@ -533,6 +552,11 @@ static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, 
   const PopupBlockHandle *newest = tear_off_newest_popup(win);
   PointerRNA props = WM_operator_properties_create_ptr(ot);
   RNA_string_set(&props, idname_prop, data.idname.c_str());
+  if (data.kind == "PANEL") {
+    RNA_boolean_set(&props, "from_region_panel", data.from_region);
+    /* As a live pin does when its poll fails, it shows "Not available", so its X still works. */
+    RNA_boolean_set(&props, "skip_poll", true);
+  }
   /* The region variants would force the window region. */
   WM_operator_name_call_ptr(C, ot, wm::OpCallContext::ExecDefault, &props, nullptr);
   WM_operator_properties_free(&props);

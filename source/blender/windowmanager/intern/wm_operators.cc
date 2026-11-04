@@ -2813,7 +2813,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
 
   ui::PopupBlockHandle *handle = nullptr;
   wmOperatorStatus status = ui::popover_paneltype_invoke(
-      C, pt, true, false, &handle, true, tear_off_init);
+      C, pt, true, false, &handle, true, tear_off_init, RNA_boolean_get(op->ptr, "skip_poll"));
 
   /* BFA - Tear-Off Menu/Panel */
   tear_off_handle_init(C, handle);
@@ -2842,6 +2842,11 @@ static void WM_OT_panel_tear_off(wmOperatorType *ot)
   ot->name = "Tear-Off Panel";
   ot->idname = "WM_OT_panel_tear_off";
   ot->description = "Tear-Off panel to a persistent floating window";
+
+  /* For a stored pin. Its first layout has the same guard against a failing poll as a live pin's
+   * refresh. */
+  PropertyRNA *prop_skip_poll = RNA_def_boolean(ot->srna, "skip_poll", false, "Skip Poll", "");
+  RNA_def_property_flag(prop_skip_poll, PROP_HIDDEN | PROP_SKIP_SAVE);
 
   ot->exec = wm_panel_tear_off_exec;
   ot->poll = wm_tear_off_poll;

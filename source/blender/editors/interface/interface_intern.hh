@@ -1225,10 +1225,10 @@ struct PopupBlockHandle {
    * expand, and scale changes recompute from it. */
   float tear_off_width = 0.0f;
   /** BFA - Tear-Off Menu/Panel: > 0 means a tool shelf panel, and this is the width it was torn
-   * off at. Set once. */
+   * off at. Set once, at creation or when restored from a file. */
   float tear_off_width_default = 0.0f;
   /** BFA - Tear-Off Menu/Panel: how much of #tear_off_width wasn't layout in the shelf (tab strip,
-   * panel margins), in the same units. Set once. */
+   * panel margins), in the same units. Set once, at creation or when restored from a file. */
   float tear_off_width_chrome = 0.0f;
   /** BFA - Tear-Off Menu/Panel: the edge under the cursor, and the edge being dragged. */
   uint8_t tear_off_hover_zone = 0;
@@ -1244,8 +1244,8 @@ struct PopupBlockHandle {
    * the focus returns, its release must not run the row under the cursor, in any tear-off. */
   bool tear_off_skip_release = false;
   /** BFA - Tear-Off Menu/Panel: the height the user cropped the block to, without UI scale, so
-   * scale changes recompute it. 0 for no crop. For this session only, and kept through collapse
-   * and expand. */
+   * scale changes recompute it. 0 for no crop. Kept through collapse and expand, and in the file.
+   */
   float tear_off_user_height = 0.0f;
   /** BFA - Tear-Off Menu/Panel: block height at the press on the bottom edge, or the scroll
    * position a scrollbar drag counts from, which is after any jump to the press. */
@@ -1398,7 +1398,8 @@ wmOperatorStatus popover_paneltype_invoke(bContext *C,
                                           bool use_numselect,
                                           PopupBlockHandle **r_handle,
                                           bool is_tear_off,
-                                          const TearOffInit &tear_off_init = {});
+                                          const TearOffInit &tear_off_init = {},
+                                          bool skip_poll = false);
 /* BFA - Tear-Off Menu/Panel: most C panels are only on a region type, not in
  * #WM_paneltype_find. */
 PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);

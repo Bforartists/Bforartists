@@ -566,10 +566,12 @@ wmOperatorStatus popover_paneltype_invoke(bContext *C,
                                           bool use_numselect,
                                           PopupBlockHandle **r_handle,
                                           const bool is_tear_off,
-                                          const TearOffInit &tear_off_init)
+                                          const TearOffInit &tear_off_init,
+                                          const bool skip_poll)
 {
   Layout *layout;
-  if (pt->poll && (pt->poll(C, pt) == false)) {
+  /* BFA - Tear-Off Menu/Panel: `skip_poll`, for a stored pin. */
+  if (!skip_poll && pt->poll && (pt->poll(C, pt) == false)) {
     /* cancel but allow event to pass through, just like operators do */
     return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
   }
