@@ -6359,18 +6359,21 @@ void draw_tear_off_panel_header_back(const ARegion *region, const Block *block)
   GPU_blend(GPU_BLEND_NONE);
 }
 
-/* BFA - Tear-Off Menu/Panel: a collapsed tear-off has the corners, outline and shadow of the open
- * one. */
+/* BFA - Tear-Off Menu/Panel: a collapsed tear-off has the color, corners, outline and shadow of the
+ * open one's header, see #draw_popover_back. */
 void draw_tear_off_pin_back(const Block *block, const rcti *rect)
 {
   uiWidgetColors wcol = *widget_type(WidgetStyle::MenuBack)->wcol_theme;
-  if (block_has_tear_off_panel_colors(block)) {
+  if (block_is_tear_off_shelf(block)) {
+    theme::get_color_4ubv(TH_BACK, wcol.inner);
+    wcol.inner[3] = 255;
+  }
+  else if (block_has_tear_off_panel_colors(block)) {
+    float back[4], header[4];
+    tear_off_panel_colors_get(block, back, header);
+    rgba_float_to_uchar(wcol.inner, header);
     wcol.roundness = tear_off_panel_roundness();
   }
-  float back[4];
-  theme::get_color_4fv(TH_PANEL_HEADER, back);
-  back[3] = 0.9f;
-  rgba_float_to_uchar(wcol.inner, back);
   draw_popover_back_impl(&wcol, rect, 0, U.widget_unit, nullptr);
 }
 
