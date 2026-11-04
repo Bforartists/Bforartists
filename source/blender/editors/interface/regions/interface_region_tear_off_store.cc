@@ -34,6 +34,8 @@
 #include "BKE_context.hh"
 #include "BKE_global.hh"
 #include "BKE_idprop.hh"
+#include "BKE_idtype.hh"
+#include "BKE_lib_id.hh"
 #include "BKE_main.hh"
 #include "BKE_screen.hh"
 #include "BKE_wm_runtime.hh"
@@ -121,6 +123,14 @@ struct EntryData {
   float width = 0.0f;
   float width_default = 0.0f;
   float width_chrome = 0.0f;
+  bool use_context = false;
+  int id_type = 0;
+  std::string id_name;
+  std::string lib_name;
+  std::string data_path;
+  std::string op_idname;
+  std::string op_propname;
+  int op_context = 0;
   int winid = 0;
   int space = 0;
   int region = -1;
@@ -190,6 +200,31 @@ static bool entry_read(const IDProperty &entry, EntryData &r_data)
     r_data.width = *width;
     r_data.width_default = *width_default;
     r_data.width_chrome = *width_chrome;
+  }
+  if (r_data.kind == "ENUM") {
+    const std::optional<bool> use_context = IDP_group_lookup_bool(entry, "use_context");
+    const std::optional<int> id_type = IDP_group_lookup_int(entry, "id_type");
+    const std::optional<std::string> id_name = read_string(entry, "id_name", MAX_ID_NAME);
+    const std::optional<std::string> lib_name = read_string(entry, "lib_name", MAX_ID_NAME);
+    /* Resolved on every refresh, so it stays a reasonable length. */
+    const std::optional<std::string> data_path = read_string(entry, "data_path", 1024);
+    const std::optional<std::string> op_idname = read_string(entry, "op_idname", MAX_NAME);
+    const std::optional<std::string> op_propname = read_string(entry, "op_propname", MAX_NAME);
+    const std::optional<int> op_context = IDP_group_lookup_int(entry, "op_context");
+    if (!(use_context && id_type && id_name && lib_name && data_path && op_idname && op_propname &&
+          op_context) ||
+        *op_context < 0 || *op_context > int(wm::OpCallContext::ExecScreen))
+    {
+      return false;
+    }
+    r_data.use_context = *use_context;
+    r_data.id_type = *id_type;
+    r_data.id_name = *id_name;
+    r_data.lib_name = *lib_name;
+    r_data.data_path = *data_path;
+    r_data.op_idname = *op_idname;
+    r_data.op_propname = *op_propname;
+    r_data.op_context = *op_context;
   }
   return true;
 }
@@ -519,6 +554,48 @@ static void entry_apply(const EntryData &data,
   }
 }
 
+/* Fills an enum's operator properties. False if its data isn't here, which can change: an ID can
+ * come back with another file, and an operator's poll with another context. */
+static bool entry_enum_props_set(bContext *C, const EntryData &data, PointerRNA *props)
+{
+  RNA_string_set(props, "op_idname", data.op_idname.c_str());
+  RNA_string_set(props, "op_propname", data.op_propname.c_str());
+  RNA_int_set(props, "op_context", data.op_context);
+  if (!data.op_idname.empty()) {
+    /* It would call the operator's item function, which a poll may be guarding. */
+    wmOperatorType *ot = WM_operatortype_find(data.op_idname.c_str(), true);
+    return ot && WM_operator_poll(C, ot);
+  }
+
+  uint32_t session_uid = 0;
+  if (!data.use_context) {
+    /* #which_libbase asserts on a bad type. */
+    if (!BKE_idtype_idcode_is_valid(short(data.id_type))) {
+      return false;
+    }
+    Main *bmain = CTX_data_main(C);
+    const ID *id = BKE_libblock_find_name_and_library(
+        bmain,
+        short(data.id_type),
+        data.id_name.c_str(),
+        data.lib_name.empty() ? nullptr : data.lib_name.c_str());
+    if (id == nullptr) {
+      return false;
+    }
+    session_uid = id->session_uid;
+  }
+  if (!enum_tear_off_property_restorable(
+          C, data.use_context, short(data.id_type), session_uid, data.data_path.c_str()))
+  {
+    return false;
+  }
+  RNA_boolean_set(props, "use_context", data.use_context);
+  RNA_int_set(props, "id_type", data.id_type);
+  RNA_int_set(props, "session_uid", int(session_uid));
+  RNA_string_set(props, "data_path", data.data_path.c_str());
+  return true;
+}
+
 /* With the window, area and region of the entry in the context. A failure stays on the list. */
 static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, ARegion *region)
 {
@@ -541,6 +618,9 @@ static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, 
     ot_name = "WM_OT_panel_tear_off";
     idname_prop = "panel_idname";
   }
+  else if (data.kind == "ENUM") {
+    ot_name = "WM_OT_enum_tear_off";
+  }
   else {
     return false;
   }
@@ -551,7 +631,13 @@ static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, 
   }
   const PopupBlockHandle *newest = tear_off_newest_popup(win);
   PointerRNA props = WM_operator_properties_create_ptr(ot);
-  RNA_string_set(&props, idname_prop, data.idname.c_str());
+  if (idname_prop) {
+    RNA_string_set(&props, idname_prop, data.idname.c_str());
+  }
+  else if (!entry_enum_props_set(C, data, &props)) {
+    WM_operator_properties_free(&props);
+    return false;
+  }
   if (data.kind == "PANEL") {
     RNA_boolean_set(&props, "from_region_panel", data.from_region);
     /* As a live pin does when its poll fails, it shows "Not available", so its X still works. */

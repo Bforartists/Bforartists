@@ -376,6 +376,26 @@ PopupBlockHandle *enum_tear_off_popup_create(bContext *C, PointerRNA *op_ptr)
   return handle;
 }
 
+bool enum_tear_off_property_restorable(bContext *C,
+                                       const bool use_context,
+                                       const short id_type,
+                                       const uint32_t id_session_uid,
+                                       const char *data_path)
+{
+  EnumTearOffSource source;
+  source.use_context = use_context;
+  source.id_type = id_type;
+  source.id_session_uid = id_session_uid;
+  source.data_path = data_path;
+  PointerRNA ptr;
+  PropertyRNA *prop;
+  if (!enum_tear_off_resolve(C, source, &ptr, &prop)) {
+    return false;
+  }
+  /* Index-based Screen paths can silently point at another area after an area edit. */
+  return ptr.owner_id && !ELEM(GS(ptr.owner_id->name), ID_SCR, ID_WM);
+}
+
 bool enum_tear_off_store(const EnumTearOffSource *source, Main *bmain, IDProperty *entry)
 {
   std::string id_name, lib_name;

@@ -1559,6 +1559,16 @@ PopupBlockHandle *enum_tear_off_popup_create(bContext *C, PointerRNA *op_ptr);
  * ID is already gone, as there is no name left to store.
  */
 bool enum_tear_off_store(const EnumTearOffSource *source, Main *bmain, IDProperty *entry);
+/**
+ * BFA - Tear-Off Menu/Panel: true if a stored property enum can be shown here. A file names these,
+ * so this keeps to what the Tear Off row would offer: data that resolves to an enum, on an ID that
+ * isn't a screen or window manager.
+ */
+bool enum_tear_off_property_restorable(bContext *C,
+                                       bool use_context,
+                                       short id_type,
+                                       uint32_t id_session_uid,
+                                       const char *data_path);
 
 /** \} */
 
