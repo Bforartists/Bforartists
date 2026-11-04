@@ -5516,7 +5516,7 @@ def corner_mismatch(open_name, col_name, v, base="base"):
 
 
 def collapses_in_place(name, title_y, has_plain_title=True, title_end=48, base="base",
-                       box=(30, 25, 1340, 999)):
+                       box=(30, 25, 1340, 999), free_x=None):
     """Collapsing only moves the bottom edge up, and the header stays under the cursor."""
     yield from park()
     open_name, col_name = name + "_open", name + "_col"
@@ -5546,6 +5546,10 @@ def collapses_in_place(name, title_y, has_plain_title=True, title_end=48, base="
         t_col = ink(col_name, (v[0] + 3, row[0], v[2] - title_end, row[1]))
         log(name, "title ink", t_open, t_col)
         check(name + ": the title stays", near(t_open, t_col), (t_open, t_col))
+    # A column free of text and icons, in the header's row.
+    free_x = v[0] + (width(v) * 3 // 5 if free_x is None else free_x)
+    n = float(np.abs(FRAME[open_name][y, free_x] - FRAME[col_name][y, free_x]).max())
+    check(name + ": the same color", n <= 0.03, (n, FRAME[open_name][y, free_x], FRAME[col_name][y, free_x]))
     n = corner_mismatch(open_name, col_name, v, base)
     log(name, "corner mismatch", n)
     check(name + ": the same top corners", n <= 12, n)
@@ -5592,6 +5596,10 @@ def s_p13_collapse_in_place():
     yield 0.8
     yield from collapses_in_place("panel", 12)
 
+    yield from tear_center("VIEW3D_PT_tools_active", rt="TOOLS")
+    # Narrow, with no grip. Only the start of its row is free.
+    yield from collapses_in_place("shelf", TITLE_Y, has_plain_title=False, free_x=7)
+
     yield from tear_props("RENDER_PT_format", "OUTPUT")
     # Past the preset's icon, which a collapsed pin doesn't draw.
     yield from collapses_in_place("preset", 12, title_end=90)
@@ -5629,7 +5637,8 @@ def s_p13_checkbox_title():
     yield from grab("open")
     v = need(popup_box("base", "open"), "it opens")
     y = v[3] - TITLE_Y
-    band = (v[0] + 3, y - 8, v[2] - 48, y + 8)
+    # Past the grip and the checkbox's box, which the collapsed pin doesn't draw.
+    band = (v[0] + 50, y - 8, v[2] - 48, y + 8)
     t_open = ink("open", band)
     yield from click(v[2] - PIN_ICON, y)
     yield from park()
@@ -5639,9 +5648,10 @@ def s_p13_checkbox_title():
     log("title", t_open, t_col, "box", v, c)
     check("the row stays", abs(c[2] - v[2]) <= 1 and abs(c[3] - v[3]) <= 1, (v, c))
     check("the title shows", t_col is not None and t_col[2] - t_col[0] > 40, t_col)
-    check("and ends about where it did",
-          t_open is not None and t_col is not None and abs(t_col[2] - t_open[2]) <= 4,
-          (t_open, t_col))
+    check("in the same place", near(t_open, t_col), (t_open, t_col))
+    x0, y0, x1, y1 = band
+    bright = [float(FRAME[f][y0:y1 + 1, x0:x1 + 1].mean(axis=2).max()) for f in ("open", "col")]
+    check("and as bright", abs(bright[0] - bright[1]) <= 0.03, bright)
     yield from click(v[2] - X_ICON, y)
     yield from park()
     yield from grab("closed")

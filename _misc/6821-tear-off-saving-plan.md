@@ -31,7 +31,7 @@ Blender already decides where workspaces come from, and this rule matches the re
 - **Opened in Blender:** the pins don't appear, and the file works normally. Blender keeps the property and writes it back when it saves, so the pins are still there when the file returns to Bforartists.
 - **One visible trace:** in Blender, the property shows in the Workspace tab's Custom Properties panel. Bforartists hides it there.
 
-I can't confirm the round trip here, because no stock Blender is installed on this machine. It's a hand test below.
+This comes from reading the code. I didn't find a stock Blender on this machine to confirm the round trip, so it's a hand test below.
 
 ### Alternatives ruled out
 
@@ -125,7 +125,7 @@ Each step compiles alone and gets its own commit.
 | UI scale differs | Values are stored without scale, as the handle already keeps them |
 | Splash at startup | `tear_off_under_regular_popup` already handles a pin under a regular popup |
 | Slow startup | Only the active workspace's pins are created, which is usually a few |
-| Undo | Nothing is stored during undo steps, and undo doesn't close popups. Tested below |
+| Undo | Nothing is stored during undo steps, and the code that closes popups on load isn't part of undo. To be confirmed by the test below |
 | Duplicating a workspace | The copy gets entries not yet restored, but not open pins, as those are only written on save. Acceptable for a first version |
 | Autosave and Recover | Autosave can write from the undo memory without running the save hook, so a recovered file can have older pins. Acceptable |
 
