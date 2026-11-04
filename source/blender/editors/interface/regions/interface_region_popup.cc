@@ -1215,7 +1215,9 @@ static void tear_off_panel_header_align(Block *block, const float bounds)
   if (!block_has_tear_off_panel_colors(block)) {
     return;
   }
-  const float up = std::round(bounds - (PNL_HEADER - UI_UNIT_Y) * 0.5f / block->aspect);
+  /* At some scales this is a tie, which the aspect's float noise would break differently from one
+   * layout to the next, moving the row by a pixel. */
+  const float up = std::round(bounds - (PNL_HEADER - UI_UNIT_Y) * 0.5f / block->aspect - 0.01f);
   const float right = std::round(bounds - 0.2f * UI_UNIT_X / block->aspect);
   /* The title is the last label. What's before it goes left with it, and the rest goes right. */
   int title_index = -1;
