@@ -169,7 +169,7 @@ static void entries_add_open_pins(Main *bmain,
       continue;
     }
     /* New handlers go at the head, so the oldest pin is last. */
-    for (wmEventHandler *handler = win.runtime->modalhandlers.last_; handler;
+    for (wmEventHandler *handler = win.runtime->modalhandlers.last(); handler;
          handler = handler->prev)
     {
       const PopupBlockHandle *handle = tear_off_from_handler(handler);
