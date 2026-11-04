@@ -6377,6 +6377,22 @@ void draw_tear_off_pin_back(const Block *block, const rcti *rect)
   draw_popover_back_impl(&wcol, rect, 0, U.widget_unit, nullptr);
 }
 
+/* BFA - Tear-Off Menu/Panel: a panel's title can be the text of its header checkbox. A collapsed
+ * pin can't use the checkbox, so this draws only the text, where #widget_optionbut leaves it. */
+void draw_tear_off_pin_checkbox_title(uiStyle *style, Button *but, rcti *rect)
+{
+  const int height = BLI_rcti_size_y(rect);
+  const int delta = (height - 2 * U.pixelsize) / 6;
+  rect->xmin += height - 2 * delta + int(delta * 0.9f);
+
+  WidgetType *wt = widget_type(WidgetStyle::Checkbox);
+  WidgetStateInfo state = {0};
+  state.but_flag = but->flag & ~UI_HOVER;
+  state.but_drawflag = but->drawflag;
+  wt->state(wt, &state, but->emboss);
+  wt->text(&style->widget, &wt->wcol, but, rect);
+}
+
 void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const rcti *rect)
 {
   WidgetType *wt = widget_type(WidgetStyle::MenuBack);

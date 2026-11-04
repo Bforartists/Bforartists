@@ -1178,10 +1178,6 @@ struct PopupBlockHandle {
   bool tear_off_pin_hover_x = false;
   bool tear_off_pin_hover_pin = false;
 
-  /** BFA - Tear-Off Menu/Panel: label of the torn-off panel/menu, shown in the collapsed
-   * pin widget. */
-  char tear_off_label[64] = "";
-
   /** BFA - Tear-Off Menu/Panel: workspace this panel was torn off in. Pinned panels are
    * scoped per workspace: they hide when another workspace is active and reappear when the
    * user returns. nullptr means unpinned. */
@@ -1537,9 +1533,7 @@ void enum_tear_off_row_draw_operator(Layout *layout,
                                      const char *propname,
                                      wm::OpCallContext opcontext);
 void enum_tear_off_unavailable_draw(Layout *layout);
-PopupBlockHandle *enum_tear_off_popup_create(bContext *C,
-                                             PointerRNA *op_ptr,
-                                             std::string &r_label);
+PopupBlockHandle *enum_tear_off_popup_create(bContext *C, PointerRNA *op_ptr);
 
 /** \} */
 
@@ -2023,6 +2017,7 @@ bool block_has_tear_off_panel_colors(const Block *block) ATTR_WARN_UNUSED_RESULT
 /* BFA - Tear-Off Menu/Panel: the header's color, under its buttons. */
 void draw_tear_off_panel_header_back(const ARegion *region, const Block *block);
 void draw_tear_off_pin_back(const Block *block, const rcti *rect);
+void draw_tear_off_pin_checkbox_title(uiStyle *style, Button *but, rcti *rect);
 /* BFA - Tear-Off Menu/Panel: top edge of the scrolling content. Equal to `rect.ymax` exactly for
  * anything without a sticky header, so regular popups compare and clip as upstream. Never below
  * `rect.ymin`, so it's safe as a clamp limit in a window too small for the header. */

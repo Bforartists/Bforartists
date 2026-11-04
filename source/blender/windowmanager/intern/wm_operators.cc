@@ -2538,9 +2538,9 @@ static bool wm_tear_off_poll(bContext *C)
   return ui::tear_off_enabled() && WM_operator_winactive(C);
 }
 
-/* BFA - Tear-Off Menu/Panel: finish a popup just created as a tear-off. `label` names the
- * collapsed pin widget, null leaves it empty. Does nothing if the popup wasn't created. */
-static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle, const char *label)
+/* BFA - Tear-Off Menu/Panel: finish a popup just created as a tear-off. Does nothing if the popup
+ * wasn't created. */
+static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle)
 {
   if (handle == nullptr || handle->region == nullptr) {
     return;
@@ -2565,10 +2565,6 @@ static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle, cons
   handle->tear_off_mode = CTX_data_mode_enum(C);
   handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
   handle->tear_off_workspace = CTX_wm_workspace(C);
-
-  if (label) {
-    BLI_strncpy(handle->tear_off_label, label, sizeof(handle->tear_off_label));
-  }
 
   ED_region_tag_refresh_ui(handle->region);
 }
@@ -2650,8 +2646,7 @@ static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
   wmOperatorStatus status = ui::popup_menu_invoke(C, idname, op->reports, &handle, true);
 
   /* BFA - Tear-Off Menu/Panel */
-  const MenuType *mt = WM_menutype_find(idname, true);
-  tear_off_handle_init(C, handle, mt ? CTX_IFACE_(mt->translation_context, mt->label) : nullptr);
+  tear_off_handle_init(C, handle);
   tear_off_place_at_source(op, handle);
   tear_off_grab_begin(C, op, handle);
 
@@ -2736,12 +2731,11 @@ static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
 static wmOperatorStatus wm_enum_tear_off_exec(bContext *C, wmOperator *op)
 {
   const TearOffSourceContext source_context(C);
-  std::string label;
-  ui::PopupBlockHandle *handle = ui::enum_tear_off_popup_create(C, op->ptr, label);
+  ui::PopupBlockHandle *handle = ui::enum_tear_off_popup_create(C, op->ptr);
   if (handle == nullptr) {
     return OPERATOR_CANCELLED;
   }
-  tear_off_handle_init(C, handle, label.c_str());
+  tear_off_handle_init(C, handle);
   tear_off_place_at_source(op, handle);
   tear_off_grab_begin(C, op, handle);
   return OPERATOR_INTERFACE;
@@ -2822,7 +2816,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
       C, pt, true, false, &handle, true, tear_off_init);
 
   /* BFA - Tear-Off Menu/Panel */
-  tear_off_handle_init(C, handle, CTX_IFACE_(pt->translation_context, pt->label));
+  tear_off_handle_init(C, handle);
   tear_off_place_at_source(op, handle);
 
   tear_off_grab_begin(C, op, handle); /* BFA - Tear-Off Menu/Panel */

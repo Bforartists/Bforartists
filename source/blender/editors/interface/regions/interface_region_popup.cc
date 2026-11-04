@@ -681,7 +681,8 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
 
 /* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off. The
  * header's own buttons, so they look the same as when open, apart from the pin icon. Controls of
- * the panel's header aren't drawn, because a collapsed pin can't use them. */
+ * the panel's header aren't drawn, because a collapsed pin can't use them, but the text of a
+ * header checkbox can be the panel's title. */
 static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *block)
 {
   PopupBlockHandle *handle = block->handle;
@@ -701,15 +702,13 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
 
   BLF_batch_draw_begin();
   widgetbase_draw_cache_begin();
-  /* Where the text of a header checkbox was: past the grip, and the room of the checkbox's box. */
-  rctf title = rect;
-  bool has_grip = false;
-  bool has_title = false;
   for (Button &but : block->buttons()) {
     const bool is_close = but.icon == ICON_PANEL_CLOSE;
     const bool is_pin = but.icon == ICON_UNPINNED;
+    const bool is_checkbox_title = ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN) &&
+                                   !but.drawstr.empty();
     if (!but.tear_off_header || (but.flag & UI_HIDDEN) ||
-        !(but.type == ButtonType::Label || is_close || is_pin))
+        !(but.type == ButtonType::Label || is_close || is_pin || is_checkbox_title))
     {
       continue;
     }
@@ -717,15 +716,9 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
     rcti but_px;
     BLI_rcti_rctf_copy_round(&but_px, &but_rect);
 
-    if (is_pin) {
-      title.xmax = but_rect.xmin;
-    }
-    else if (but.type == ButtonType::Label) {
-      if (!has_grip) {
-        title.xmin = but_rect.xmax + UI_UNIT_X;
-        has_grip = true;
-      }
-      has_title |= !but.drawstr.empty();
+    if (is_checkbox_title) {
+      draw_tear_off_pin_checkbox_title(&style, &but, &but_px);
+      continue;
     }
 
     /* Only for this draw. The hover state is the pin's own, and the press that collapsed it can
@@ -745,22 +738,6 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
   }
   widgetbase_draw_cache_end();
   BLF_batch_draw_end();
-
-  /* The panel's title can be part of a header checkbox, which isn't drawn. */
-  if (!has_title && BLI_rctf_size_x(&title) > UI_UNIT_X && handle->tear_off_label[0] != '\0') {
-    rcti title_px;
-    BLI_rcti_rctf_copy_round(&title_px, &title);
-    uchar title_color[4];
-    theme::get_color_4ubv(TH_TEXT, title_color);
-    FontStyleDrawParams params{};
-    params.align = UI_STYLE_TEXT_LEFT;
-    fontstyle_draw(&style.widget,
-                   &title_px,
-                   handle->tear_off_label,
-                   strlen(handle->tear_off_label),
-                   title_color,
-                   &params);
-  }
 
   GPU_matrix_pop_projection();
   GPU_matrix_pop();

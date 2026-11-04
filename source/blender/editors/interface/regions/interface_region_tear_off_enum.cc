@@ -329,9 +329,7 @@ static void enum_tear_off_draw(bContext *C,
   enum_menu_draw(C, layout, params);
 }
 
-PopupBlockHandle *enum_tear_off_popup_create(bContext *C,
-                                             PointerRNA *op_ptr,
-                                             std::string &r_label)
+PopupBlockHandle *enum_tear_off_popup_create(bContext *C, PointerRNA *op_ptr)
 {
   auto source = std::make_shared<EnumTearOffSource>();
   source->op_idname = RNA_string_get(op_ptr, "op_idname");
@@ -363,7 +361,6 @@ PopupBlockHandle *enum_tear_off_popup_create(bContext *C,
     source->label = RNA_property_ui_name_raw(prop, &ptr);
     source->label_context = RNA_property_translation_context(prop);
   }
-  r_label = CTX_IFACE_(source->label_context.c_str(), source->label.c_str());
 
   std::shared_ptr<const EnumTearOffSource> source_const = source;
   /* #srna_owner stays unset: it would stop the refresh when a type unregisters, and that refresh
