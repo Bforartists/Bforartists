@@ -137,10 +137,10 @@ Each phase compiles alone, has its own tests and gets its own commits.
 |---|---|---|
 | 0 | Collapsed fade | Done, `993d02c194a`. Scenarios `p13_pin_fade_stale`, `p13_pin_fade_bright` and the collapse set pass |
 | 1 | Store and save scope. Writes only, nothing restores yet | Done, `7c14ecfa020`, `dd2f7151fbd`, `4a8d0cce927`. Scenarios `store_*` pass, including across a restart |
-| 2 | Entries that survive closing | |
-| 3 | Restore menus and row popovers | |
-| 4 | Region and shelf panels, crop, scroll, collapse | |
-| 5 | Enums | |
+| 2 | Entries that survive closing | Done, `80661d8cf07`. Scenarios `close_*` |
+| 3 | Restore menus and row popovers | Done, `ddaff87d562`, `1d0b590c447`. Scenarios `restore_*`, and `restore_startup` across a restart |
+| 4 | Region and shelf panels, crop, scroll, collapse | Done, `f6777df3c7f` |
+| 5 | Enums | Done, `8a55802a781` |
 | 6 | Docs and hand tests | |
 
 **The harness gains, in Phase 1:** `SIM_CONFIG`, `SIM_FACTORY=0` and `SIM_ARGS` in `run.sh`, and a new `run_chain.sh name` for what spans a restart: it runs `name_a`, then `name_b` on the same temporary config. Tests read a file's list by opening it with the preference off.
