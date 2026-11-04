@@ -10315,7 +10315,8 @@ keyconfig_data = \
  ("Window",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "oskey": True}, None),
+   [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "oskey": True},
+     {"properties": [("load_ui", False)]}),
     ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "oskey": True}, None),
     ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "oskey": True}, None),
     ("wm.call_panel",
