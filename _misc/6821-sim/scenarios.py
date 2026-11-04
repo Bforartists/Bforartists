@@ -5881,6 +5881,77 @@ def s_p13_pin_fade_stale():
 SC["p13_pin_fade_stale"] = s_p13_pin_fade_stale
 
 
+def quick_grab(name):
+    """As #grab with no wait first, to catch something on its way."""
+    yield from shot(name)
+    p = os.path.join(SHOTS, f"{SCEN}-{name}.png")
+    img = bpy.data.images.load(p, check_existing=False)
+    w, h = img.size
+    a = np.empty(w * h * 4, dtype=np.float32); img.pixels.foreach_get(a)
+    FRAME[name] = a.reshape(h, w, 4)[:, :, :3]
+    bpy.data.images.remove(img)
+    yield 0.02
+
+
+def s_p13_pin_fade_progressive():
+    """It passes through values between solid and at rest, on the way out and back."""
+    yield from begin()
+    move(*center()); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("open")
+    v = need(popup_box("base", "open"), "it opens")
+    y = v[3] - TITLE_Y
+    free_x = v[0] + 8
+    yield from click(v[2] - PIN_ICON, y)
+    move(free_x, y); yield 0.3
+    move(free_x, y); yield 0.3
+    yield from grab("hot")
+    yield from park()
+    yield from grab("rest")
+    hot, rest = FRAME["hot"][y, free_x].copy(), FRAME["rest"][y, free_x].copy()
+    log("hot", hot, "rest", rest)
+    check("they differ enough to tell", float(np.abs(hot - rest).max()) > 0.03, (hot, rest))
+
+    def between(name):
+        now = FRAME[name][y, free_x]
+        low, high = np.minimum(hot, rest), np.maximum(hot, rest)
+        return bool(np.all(now > low + 0.002) and np.all(now < high - 0.002)), now
+
+    found = False
+    for i in range(6):
+        move(free_x, y); yield 0.3
+        move(free_x, y); yield 0.3
+        # On the way out, at a different moment each try.
+        yield from park_fast()
+        yield 0.02 + i * 0.03
+        yield from quick_grab(f"out{i}")
+        ok, now = between(f"out{i}")
+        log("on the way out", i, now, ok)
+        yield 0.5
+        if ok:
+            found = True
+            break
+    check("it passes through a value between", found)
+    # And it arrives where it should, with nothing left running to move it.
+    yield from park()
+    yield from grab("settled")
+    yield 1.0
+    yield from grab("settled2")
+    n = rdiff("rest", "settled", (v[0], v[3] - 40, v[2], v[3]))
+    check("it settles at rest", n < 30, n)
+    n = rdiff("settled", "settled2", (v[0], v[3] - 40, v[2], v[3]))
+    check("and stays there", n == 0, n)
+
+
+def park_fast():
+    move(*PARK)
+    yield 0.0
+
+
+SC["p13_pin_fade_progressive"] = s_p13_pin_fade_progressive
+
+
 def rel_lum(c):
     """WCAG relative luminance of a display color."""
     lin = [(v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4) for v in c]
@@ -7835,6 +7906,101 @@ def s_template_rule():
 
 
 SC["template_rule"] = s_template_rule
+
+
+def wiggle(label, points):
+    """Moves over the points, between two marks that the count of cursor changes reads."""
+    print("SIMMARK start", label, flush=True)
+    for _ in range(3):
+        for x, y in points:
+            move(x, y); yield 0.08
+    print("SIMMARK end", label, flush=True)
+    yield 0.05
+
+
+def s_cursor_stacked():
+    """The cursor over pins and panels stacked as a user has them. It shouldn't change while the
+    cursor moves within one thing. This only moves it: to see the changes, make a build that prints
+    "SIMCURSOR <from> <to>" in #WM_cursor_set when the shape changes, and read the .out file with
+    count_cursor.py. It gave 24 changes in 12 moves before this was fixed, and 0 after."""
+    yield from begin()
+    cx, cy = center()
+    strips = []
+    # Newest last. Strips made from the bottom up, so each can be measured from the last frame.
+    last = "base"
+    for i in range(4):
+        move(cx - 300, cy - 280 + i * 70); yield 0.3
+        move(cx - 300, cy - 280 + i * 70); yield 0.3
+        tear_panel("SIM_PT_field"); yield 0.8
+        yield from park()
+        name = f"pin{i}"
+        yield from grab(name + "_open")
+        v = need(popup_box(last, name + "_open"), "it opens: " + name)
+        yield from click(v[2] - PIN_ICON, v[3] - TITLE_Y)
+        yield from park()
+        yield from grab(name)
+        last = name
+        strips.append(v)
+        log(name, v)
+    # An open one, with its title and rows.
+    move(cx + 200, cy); yield 0.3
+    move(cx + 200, cy); yield 0.3
+    tear_panel("SIM_PT_field"); yield 0.8
+    yield from park()
+    yield from grab("open_panel")
+    panel = need(popup_box(last, "open_panel"), "the panel opens")
+    log("open panel", panel)
+
+    for i, v in enumerate(strips):
+        y = v[3] - TITLE_Y
+        yield from wiggle(f"on the label of pin {i}",
+                          [(v[0] + 40 + d, y + (d % 3)) for d in (0, 20, 40, 60)])
+    # From one strip's label to the next, and off to the side.
+    a, b = strips[0], strips[1]
+    yield from wiggle("across two strips",
+                      [(a[0] + 40, a[3] - TITLE_Y), (b[0] + 40, b[3] - TITLE_Y)])
+    y = panel[3] - TITLE_Y
+    yield from wiggle("on the title of the open panel",
+                      [(panel[0] + 40 + d, y) for d in (0, 20, 40, 60)])
+    y = panel[3] - 60
+    yield from wiggle("on the rows of the open panel",
+                      [(panel[0] + 60 + d, y) for d in (0, 20, 40, 60)])
+    # Below the lowest strip.
+    yield from wiggle("away from all of them",
+                      [(PARK[0] + d, strips[0][3] - 60) for d in (0, 20, 40, 60)])
+
+
+SC["cursor_stacked"] = s_cursor_stacked
+
+
+def s_cursor_node_editor():
+    """In an editor that sets its cursor on every mouse move."""
+    yield from begin()
+    area().ui_type = "ShaderNodeTree"
+    yield 1.0
+    a = area("NODE_EDITOR")
+    r = region_of(a, "WINDOW")
+    cx, cy = r.x + r.width // 2, r.y + r.height // 2
+    move(cx, cy); yield 0.3
+    move(cx, cy); yield 0.3
+    yield from grab("base_node")
+    with bpy.context.temp_override(window=win(), screen=scr(), area=a, region=region_of(a, "HEADER")):
+        bpy.ops.wm.menu_tear_off(menu_idname="NODE_MT_view")
+    yield 0.8
+    move(cx - 500, cy - 300); yield 0.3
+    move(cx - 500, cy - 300); yield 0.3
+    yield from grab("node_open")
+    v = need(box_bbox("base_node", "node_open", (30, 25, 1340, 999)), "it opens")
+    log("node menu", v)
+    y = v[3] - TITLE_MENU
+    yield from wiggle("node editor: on the title", [(v[0] + 40 + d, y) for d in (0, 20, 40, 60)])
+    y = v[3] - 60
+    yield from wiggle("node editor: on the rows", [(v[0] + 40 + d, y) for d in (0, 20, 40, 60)])
+    yield from wiggle("node editor: off it",
+                      [(cx - 500 + d, cy - 300) for d in (0, 20, 40, 60)])
+
+
+SC["cursor_node_editor"] = s_cursor_node_editor
 
 
 def s_store_startup_a():

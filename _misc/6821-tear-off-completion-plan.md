@@ -32,6 +32,7 @@ Line numbers are from the mid-merge tree and will drift.
 | Pinned panel header metrics | Done | `69b66121158` | Scenario `p12_header_metrics` and the 28 others that use region panels. Linked as a side copy, because the Release exe was open |
 | Collapsing only moves the bottom edge up: same width, corners, row and buttons | Done | `b43a4bf8466`, `78ba4b2f807`, `85ee9f60a1b`, `cdf6fba6654`, `10a6b0a387e` | Scenarios `p13_collapse_in_place`, `p13_checkbox_title` and the 20 others that collapse |
 | Collapsed strip keeps the open header's color, a checkbox's title stays exact | Done | `e800819c495`, `2ae00d367b9`, `00d5dad9d11` | Scenarios `p13_collapse_in_place`, `p13_checkbox_title` and the 20 others that collapse |
+| Collapsed pins fade over time, and the cursor holds still over them | Done | `ecb9c982f12`, `68537d63b9c` | `p13_pin_fade_progressive` and `p13_pin_fade_*`. `cursor_stacked`, counted with a logging build: 24 real cursor changes in 12 moves before, 0 after |
 
 **The look rule:** a menu or enum keeps the menu color, a popover torn off through its row keeps the popup color, a panel torn off a region has the panel header, background and subpanel colors, and a tool shelf panel keeps the plain region color. See `block_is_tear_off_panel` and `block_has_tear_off_panel_colors`.
 
