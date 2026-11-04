@@ -690,7 +690,7 @@ void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, cons
     handle->tear_off_pin_hover = false;
     handle->tear_off_pin_hover_x = false;
     handle->tear_off_pin_hover_pin = false;
-    handle->tear_off_pin_move_cursor = false;
+    handle->tear_off_move_cursor = false;
   }
 
   ED_region_tag_redraw(region);

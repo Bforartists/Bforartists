@@ -1183,8 +1183,9 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: the cursor is over this collapsed pin and can use it, so it shows
    * at full strength. See #tear_off_pin_hover_sync. */
   bool tear_off_pin_hover = false;
-  /** BFA - Tear-Off Menu/Panel: this pin set the move cursor, so it's the one to take it back. */
-  bool tear_off_pin_move_cursor = false;
+  /** BFA - Tear-Off Menu/Panel: this tear-off set the move cursor, over its title or its pin's
+   * label, so it's the one to take it back. */
+  bool tear_off_move_cursor = false;
   /** BFA - Tear-Off Menu/Panel: how far this collapsed pin has come back, from 0 at rest to 1 at
    * full strength, see #tear_off_pin_fade_tick. */
   float tear_off_pin_fade = 0.0f;

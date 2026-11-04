@@ -11750,6 +11750,18 @@ static int handle_menu_event(bContext *C,
       else if (event->type == MOUSEMOVE && !win->modalcursor) {
         /* Hover over draggable area. */
         WM_cursor_set(win, PopupTitleHoverCursor);
+        /* BFA - Tear-Off Menu/Panel */
+        menu->tear_off_move_cursor = menu->is_tear_off;
+      }
+    }
+    /* BFA - Tear-Off Menu/Panel: only what it set itself, or it undoes what a pin or another
+     * tear-off under the cursor has just set, on every mouse move. */
+    else if (menu->is_tear_off) {
+      if (menu->tear_off_move_cursor) {
+        menu->tear_off_move_cursor = false;
+        if (win->cursor == PopupTitleHoverCursor) {
+          WM_cursor_set(win, WM_CURSOR_DEFAULT);
+        }
       }
     }
     else if (win->cursor == PopupTitleHoverCursor) {
@@ -13542,8 +13554,8 @@ static void tear_off_pin_hover_sync(bContext *C, const wmEvent *event)
     if (input_owned) {
       continue;
     }
-    had_move_cursor |= pin->tear_off_pin_move_cursor;
-    pin->tear_off_pin_move_cursor = false;
+    had_move_cursor |= pin->tear_off_move_cursor;
+    pin->tear_off_move_cursor = false;
     if (hover) {
       rctf icon_rect;
       const bool over_x = tear_off_pin_icon_rect(pin, ICON_PANEL_CLOSE, &icon_rect) &&
@@ -13556,7 +13568,7 @@ static void tear_off_pin_hover_sync(bContext *C, const wmEvent *event)
     }
   }
   if (over_label) {
-    over_label->tear_off_pin_move_cursor = true;
+    over_label->tear_off_move_cursor = true;
     if (!win->modalcursor) {
       WM_cursor_set(win, WM_CURSOR_MOVE);
     }
@@ -14177,7 +14189,7 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
         if (event->type == WINDEACTIVATE) {
           handle->tear_off_pin_dragging = false;
           handle->tear_off_pin_hover = false;
-          handle->tear_off_pin_move_cursor = false;
+          handle->tear_off_move_cursor = false;
           handle->tear_off_skip_release = true;
           tear_off_pin_fade_start(C, handle);
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
@@ -14187,7 +14199,7 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
           handle->tear_off_pin_dragging = false;
           /* A drag can end with the cursor past the clamped pin. */
           handle->tear_off_pin_hover = inside;
-          handle->tear_off_pin_move_cursor = false;
+          handle->tear_off_move_cursor = false;
           WM_cursor_set(CTX_wm_window(C), WM_CURSOR_DEFAULT);
           ED_region_tag_redraw(menu->region);
           tear_off_pin_fade_start(C, handle);
