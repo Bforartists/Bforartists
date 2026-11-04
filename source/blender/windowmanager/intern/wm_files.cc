@@ -2324,7 +2324,12 @@ static bool wm_file_write(bContext *C,
   blend_write_params.use_save_as_copy = use_save_as_copy;
   blend_write_params.thumb = thumb;
 
-  const bool success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
+  bool success;
+  {
+    /* BFA - Tear-Off Menu/Panel */
+    const ui::TearOffSaveScope tear_off_save_scope(bmain, CTX_wm_manager(C));
+    success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
+  }
 
   if (success) {
     if (use_save_as_copy == false) {
@@ -2455,7 +2460,12 @@ bool WM_autosave_write(wmWindowManager *wm, Main *bmain, ReportList *reports)
 
   /* Error reporting into console. */
   BlendFileWriteParams params{};
-  const bool success = BLO_write_file(bmain, filepath, fileflags, &params, reports);
+  bool success;
+  {
+    /* BFA - Tear-Off Menu/Panel */
+    const ui::TearOffSaveScope tear_off_save_scope(bmain, wm);
+    success = BLO_write_file(bmain, filepath, fileflags, &params, reports);
+  }
 
   /* Restart auto-save timer. */
   wm_autosave_timer_end(wm);
@@ -2708,8 +2718,12 @@ static wmOperatorStatus wm_homefile_write_exec(bContext *C, wmOperator *op)
   /* Don't apply any path changes to the current blend file. */
   blend_write_params.use_save_as_copy = true;
 
-  const bool success = BLO_write_file(
-      bmain, filepath, fileflags, &blend_write_params, op->reports);
+  bool success;
+  {
+    /* BFA - Tear-Off Menu/Panel */
+    const ui::TearOffSaveScope tear_off_save_scope(bmain, CTX_wm_manager(C));
+    success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, op->reports);
+  }
 
   BKE_callback_exec_string(bmain, "", success ? BKE_CB_EVT_SAVE_POST : BKE_CB_EVT_SAVE_POST_FAIL);
 

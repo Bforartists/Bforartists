@@ -22,6 +22,7 @@
 #include "BLT_translation.hh"
 
 #include "BKE_context.hh"
+#include "BKE_idprop.hh"
 #include "BKE_idtype.hh"
 #include "BKE_lib_id.hh"
 #include "BKE_paint.hh"
@@ -365,9 +366,43 @@ PopupBlockHandle *enum_tear_off_popup_create(bContext *C, PointerRNA *op_ptr)
   std::shared_ptr<const EnumTearOffSource> source_const = source;
   /* #srna_owner stays unset: it would stop the refresh when a type unregisters, and that refresh
    * is what shows "Not available". */
-  return popup_menu_tear_off_create(C, [source_const](bContext *C, Layout *layout) {
-    enum_tear_off_draw(C, layout, source_const);
-  });
+  PopupBlockHandle *handle = popup_menu_tear_off_create(
+      C, [source_const](bContext *C, Layout *layout) {
+        enum_tear_off_draw(C, layout, source_const);
+      });
+  if (handle) {
+    handle->tear_off_enum_source = source_const.get();
+  }
+  return handle;
+}
+
+bool enum_tear_off_store(const EnumTearOffSource *source, Main *bmain, IDProperty *entry)
+{
+  std::string id_name, lib_name;
+  /* A name, because a session UID is only good for this session. The library's name and not its
+   * path, because a path changes with the machine. */
+  if (source->op_idname.empty() && !source->use_context) {
+    const ID *id = BKE_libblock_find_session_uid(bmain, source->id_type, source->id_session_uid);
+    if (id == nullptr) {
+      return false;
+    }
+    id_name = BKE_id_name(*id);
+    if (id->lib) {
+      lib_name = BKE_id_name(id->lib->id);
+    }
+  }
+  auto add_string = [&](const char *name, const std::string &value) {
+    IDP_AddToGroup(entry, bke::idprop::create(name, StringRefNull(value)).release());
+  };
+  IDP_AddToGroup(entry, bke::idprop::create_bool("use_context", source->use_context).release());
+  IDP_AddToGroup(entry, bke::idprop::create("id_type", int32_t(source->id_type)).release());
+  add_string("id_name", id_name);
+  add_string("lib_name", lib_name);
+  add_string("data_path", source->data_path);
+  add_string("op_idname", source->op_idname);
+  add_string("op_propname", source->op_propname);
+  IDP_AddToGroup(entry, bke::idprop::create("op_context", int32_t(source->op_context)).release());
+  return true;
 }
 
 }  // namespace blender::ui

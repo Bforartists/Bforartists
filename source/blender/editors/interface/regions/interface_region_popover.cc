@@ -633,6 +633,16 @@ wmOperatorStatus popover_panel_invoke(
 /* BFA - Tear-Off Menu/Panel: search the source region first. A region can draw another space's
  * list (`category_override`, see #ED_view3d_buttons_region_layout_ex), so all spaces are the
  * last resort. */
+const char *tear_off_panel_idname(const PopupBlockHandle *handle)
+{
+  const Block *block = handle->region->runtime->uiblocks.first();
+  if (block == nullptr || !(block->flag & BLOCK_POPOVER)) {
+    return nullptr;
+  }
+  const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
+  return (pup && pup->panel_type) ? pup->panel_type->idname : nullptr;
+}
+
 PanelType *tear_off_paneltype_find(const bContext *C, const char *idname)
 {
   auto find_in = [&](ARegionType &art) -> PanelType * {

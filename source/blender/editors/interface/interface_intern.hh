@@ -1074,6 +1074,9 @@ enum {
   TEAR_OFF_ZONE_WAIT_RELEASE = 1 << 3,
 };
 
+/* BFA - Tear-Off Menu/Panel */
+struct EnumTearOffSource;
+
 struct PopupBlockHandle {
   /* internal */
   ARegion *region = nullptr;
@@ -1180,6 +1183,11 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: the cursor is over this collapsed pin and can use it, so it shows
    * at full strength. See #tear_off_pin_hover_sync. */
   bool tear_off_pin_hover = false;
+
+  /** BFA - Tear-Off Menu/Panel: what an enum tear-off shows, for storing it. Owned by the popup's
+   * create function, so it lives as long as this handle. Raw, because the handle is copied with
+   * memcpy. */
+  const EnumTearOffSource *tear_off_enum_source = nullptr;
 
   /** BFA - Tear-Off Menu/Panel: workspace this panel was torn off in. Pinned panels are
    * scoped per workspace: they hide when another workspace is active and reappear when the
@@ -1394,6 +1402,10 @@ wmOperatorStatus popover_paneltype_invoke(bContext *C,
 /* BFA - Tear-Off Menu/Panel: most C panels are only on a region type, not in
  * #WM_paneltype_find. */
 PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);
+/* BFA - Tear-Off Menu/Panel: null if this tear-off isn't of a panel type. */
+const char *tear_off_panel_idname(const PopupBlockHandle *handle);
+/* BFA - Tear-Off Menu/Panel: the tear-off on this modal handler, or null. */
+PopupBlockHandle *tear_off_from_handler(blender::wmEventHandler *handler);
 /* BFA - Tear-Off Menu/Panel: creation data for a panel torn off the current region. */
 TearOffInit tear_off_init_from_region(const bContext *C, const PanelType *pt);
 /* BFA - Tear-Off Menu/Panel: pixel width of the layout for a non-zero #tear_off_width. */
@@ -1537,6 +1549,11 @@ void enum_tear_off_row_draw_operator(Layout *layout,
                                      wm::OpCallContext opcontext);
 void enum_tear_off_unavailable_draw(Layout *layout);
 PopupBlockHandle *enum_tear_off_popup_create(bContext *C, PointerRNA *op_ptr);
+/**
+ * BFA - Tear-Off Menu/Panel: adds the fields that find an enum tear-off's data again. False if the
+ * ID is already gone, as there is no name left to store.
+ */
+bool enum_tear_off_store(const EnumTearOffSource *source, Main *bmain, IDProperty *entry);
 
 /** \} */
 

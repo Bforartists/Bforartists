@@ -56,6 +56,7 @@ set(SRC
   regions/interface_region_popup.cc
   regions/interface_region_search.cc
   regions/interface_region_tear_off_enum.cc
+  regions/interface_region_tear_off_store.cc
   regions/interface_region_tooltip.cc
   regions/interface_regions.cc
   interface_string_search.cc

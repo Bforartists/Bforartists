@@ -1550,6 +1550,12 @@ const char *CTX_data_mode_string(const bContext *C)
   return data_mode_strings[CTX_data_mode_enum(C)];
 }
 
+/* BFA - Tear-Off Menu/Panel */
+const char *CTX_data_mode_string_from_enum(const int mode)
+{
+  return (mode >= 0 && mode < CTX_MODE_NUM) ? data_mode_strings[mode] : "";
+}
+
 void CTX_data_scene_set(bContext *C, Scene *scene)
 {
   C->data.scene = scene;

@@ -56,6 +56,8 @@ struct ReportList;
 struct ResultBLF;
 struct ScrArea; /* BFA - Tear-Off Menu/Panel: for #tear_off_handlers_area_exit. */
 struct WorkSpace; /* BFA - Tear-Off Menu/Panel: for #tear_off_handlers_remove_for_workspace. */
+struct Main;      /* BFA - Tear-Off Menu/Panel: for #TearOffSaveScope. */
+struct wmWindowManager; /* BFA - Tear-Off Menu/Panel: for #TearOffSaveScope. */
 struct bContext;
 struct bContextStore;
 struct bNode;
@@ -2504,6 +2506,23 @@ void panel_tear_off_gesture_cancel_all(bContext *C, wmWindow *win);
 void tear_off_handlers_remove_for_workspace(bContext *C,
                                             wmWindow *win,
                                             const WorkSpace *workspace);
+/**
+ * BFA - Tear-Off Menu/Panel: goes directly around a #BLO_write_file. For that long each workspace's
+ * list also holds its open pins, so they're in the file while the session's list stays what's still
+ * to restore. Otherwise a save would leave them on it, and they'd come back duplicated, or after
+ * being closed.
+ */
+class TearOffSaveScope {
+ public:
+  TearOffSaveScope(Main *bmain, wmWindowManager *wm);
+  ~TearOffSaveScope();
+  TearOffSaveScope(const TearOffSaveScope &) = delete;
+  TearOffSaveScope &operator=(const TearOffSaveScope &) = delete;
+
+ private:
+  struct Data;
+  Data *data_ = nullptr;
+};
 /**
  * BFA - Tear-Off Menu/Panel: true if the screen has a temporary region that takes input over the
  * regions below it. Tear-offs aren't modal, so they don't count. Tooltips do, as upstream.

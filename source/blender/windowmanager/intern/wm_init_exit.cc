@@ -581,6 +581,8 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
       ED_image_internal_autosave_flush(bmain);
 
       BlendFileWriteParams blend_file_write_params{};
+      /* BFA - Tear-Off Menu/Panel */
+      const ui::TearOffSaveScope tear_off_save_scope(bmain, wm);
       if (BLO_write_file(bmain, filepath, fileflags, &blend_file_write_params, nullptr)) {
         CLOG_INFO_NOCHECK(&LOG_BLEND, "Saved session recovery to \"%s\"", filepath);
       }

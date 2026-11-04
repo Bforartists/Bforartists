@@ -13342,6 +13342,13 @@ static PopupBlockHandle *popup_from_handler(wmEventHandler *handler_base)
 }
 
 /* BFA - Tear-Off Menu/Panel */
+PopupBlockHandle *tear_off_from_handler(wmEventHandler *handler)
+{
+  PopupBlockHandle *menu = popup_from_handler(handler);
+  return (menu && menu->is_tear_off) ? menu : nullptr;
+}
+
+/* BFA - Tear-Off Menu/Panel */
 bool tear_off_enabled()
 {
   return (U.bfa_ui_flag & USER_BFA_TEAR_OFF_DISABLED) == 0;

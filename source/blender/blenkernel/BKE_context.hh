@@ -401,6 +401,8 @@ RenderEngineType *CTX_data_engine_type(const bContext *C);
 ToolSettings *CTX_data_tool_settings(const bContext *C);
 
 const char *CTX_data_mode_string(const bContext *C);
+/** BFA - Tear-Off Menu/Panel: empty for a value that isn't a mode. */
+const char *CTX_data_mode_string_from_enum(int mode);
 enum eContextObjectMode CTX_data_mode_enum_ex(const Object *obedit,
                                               const Object *ob,
                                               eObjectMode object_mode);
