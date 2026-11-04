@@ -965,6 +965,8 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
 
   GPU_shader_uniform_float_ex(shader, rect_tex_loc, 4, 1, rectt);
   GPU_shader_uniform_float_ex(shader, rect_geo_loc, 4, 1, rectg);
+  /* BFA - Tear-Off Menu/Panel: after rect_tex and rect_geo, which must not change with it. */
+  alpha *= region->runtime->tear_off_alpha * region->runtime->tear_off_raise_alpha;
   GPU_shader_uniform_float_ex(shader, color_loc, 4, 1, float4{alpha, alpha, alpha, alpha});
 
   gpu::Batch *quad = GPU_batch_preset_quad();
@@ -975,6 +977,21 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
 
   if (blend) {
     GPU_blend(GPU_BLEND_NONE);
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: a tear-off coming to the front is also drawn where it was, as it was.
+ * What covered it then shows through as it fades in on top, and the rest of it doesn't change.
+ * Fading only the copy at the front would make the whole tear-off dip, background and all. */
+static void wm_draw_tear_off_raise_under(bScreen *screen, const ARegion *next)
+{
+  for (ARegion &raised : screen->regionbase) {
+    if (raised.runtime->tear_off_raise_next == next && raised.runtime->visible) {
+      const float alpha = raised.runtime->tear_off_raise_alpha;
+      raised.runtime->tear_off_raise_alpha = raised.runtime->tear_off_raise_under_alpha;
+      wm_draw_region_blend(&raised, 0, true);
+      raised.runtime->tear_off_raise_alpha = alpha;
+    }
   }
 }
 
@@ -1270,6 +1287,8 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
 
   /* Blend in floating regions (menus). */
   for (ARegion &region : screen->regionbase) {
+    /* BFA - Tear-Off Menu/Panel: before the visibility test, as what was above it can be hidden. */
+    wm_draw_tear_off_raise_under(screen, &region);
     if (!region.runtime->visible) {
       continue;
     }

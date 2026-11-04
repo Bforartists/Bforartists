@@ -15,8 +15,11 @@
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
 
+#include "WM_api.hh" /* BFA - Tear-Off Menu/Panel */
+
 #include "wm_draw.hh"
 
+#include "ED_render.hh" /* BFA - Tear-Off Menu/Panel */
 #include "ED_screen.hh"
 
 #include "interface_regions_intern.hh"
@@ -40,8 +43,26 @@ void region_temp_remove(bContext *C, bScreen *screen, ARegion *region)
 
   BLI_assert(region->regiontype == RGN_TYPE_TEMPORARY);
   BLI_assert(BLI_findindex(&screen->regionbase, region) != -1);
+
+  /* BFA - Tear-Off Menu/Panel: a tear-off coming to the front is drawn just below this region. */
+  for (ARegion &raised : screen->regionbase) {
+    if (raised.runtime->tear_off_raise_next == region) {
+      raised.runtime->tear_off_raise_next = region->next;
+      if (region->next == nullptr) {
+        raised.runtime->tear_off_raise_alpha = 1.0f;
+      }
+    }
+  }
   if (win) {
     wm_draw_region_clear(win, region);
+  }
+
+  /* BFA - Tear-Off Menu/Panel: a preview job in a popup is owned by the region, see
+   * #ED_preview_draw, and so is its Render. The kill waits for the job's thread, so the free has
+   * to come after it. */
+  if (!region->ui_previews.is_empty()) {
+    WM_jobs_kill_all_from_owner(CTX_wm_manager(C), region);
+    ED_preview_render_free_owner(CTX_wm_manager(C), region);
   }
 
   ED_region_exit(C, region);

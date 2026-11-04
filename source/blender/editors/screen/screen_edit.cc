@@ -52,6 +52,7 @@
 
 #include "UI_interface.hh"
 #include "UI_interface_c.hh"
+#include "../interface/interface_intern.hh" // BFA - Tear-Off Menu/Panel
 
 #include "WM_message.hh"
 #include "WM_toolsystem.hh"
@@ -667,6 +668,14 @@ void ED_screen_do_listen(bContext *C, const wmNotifier *note)
     case NC_SCENE:
       if (note->data == ND_MODE) {
         region_cursor_set(win, true);
+        /* BFA - Tear-Off Menu/Panel: re-evaluate pinned tear-off visibility on mode change. */
+        for (ARegion &region : screen->regionbase) {
+          if (region.regiontype == RGN_TYPE_TEMPORARY) {
+            ED_region_tag_redraw(&region);
+          }
+        }
+        /* BFA - Tear-Off Menu/Panel: a stored pin waits for its mode. */
+        ui::tear_off_restore_tag(CTX_wm_manager(C));
       }
       break;
   }
@@ -938,6 +947,8 @@ void ED_region_exit(bContext *C, ARegion *region)
 
   WM_event_remove_handlers(C, &region->runtime->handlers);
   WM_event_modal_handler_region_replace(win, region, nullptr);
+  /* BFA - Tear-Off Menu/Panel: a tear-off outlives this region, don't restore a freed one. */
+  ui::tear_off_handlers_region_exit(win, region);
 
   /* Stop panel animation in this region if there are any. */
   for (Panel &panel : region->panels) {
@@ -990,6 +1001,8 @@ void ED_area_exit(bContext *C, ScrArea *area)
 
   WM_event_remove_handlers(C, &area->handlers);
   WM_event_modal_handler_area_replace(win, area, nullptr);
+  /* BFA - Tear-Off Menu/Panel: a tear-off outlives its area, don't restore a freed one. */
+  ui::tear_off_handlers_area_exit(win, area);
 
   CTX_wm_area_set(C, prevsa);
 }
@@ -1417,6 +1430,23 @@ void screen_change_prepare(
      * See: #144958. */
     ui::popup_handlers_remove_all(C, &win->runtime->modalhandlers);
 
+    /* BFA - Tear-Off Menu/Panel: transfer persistent tear-off popups to the new screen. Forward
+     * iteration keeps their stacking order, matching the unchanged handler order. */
+    for (ARegion &region : screen_old->regionbase.items_mutable()) {
+      if (region.regiontype == RGN_TYPE_TEMPORARY && region.runtime->uiblocks.first()) {
+        ui::Block *block = region.runtime->uiblocks.first();
+        if (block->flag & ui::BLOCK_TEAR_OFF) {
+          BLI_remlink(&screen_old->regionbase, &region);
+          BLI_addtail(&screen_new->regionbase, &region);
+        }
+      }
+    }
+
+    /* BFA - Tear-Off Menu/Panel: the region exit that detaches this handler from its area runs
+     * later, in #ED_screen_exit, so the loop below would drop the handler and leak its state. A
+     * script or timer can switch screens during the wait, since the handler lets timers pass. */
+    ui::panel_tear_off_gesture_cancel_all(C, win);
+
     /* remove handlers referencing areas in old screen */
     for (ScrArea &area : screen_old->areabase) {
       WM_event_remove_handlers_by_area(&win->runtime->modalhandlers, &area);
@@ -1445,6 +1475,10 @@ void screen_change_update(bContext *C, wmWindow *win, bScreen *screen)
   CTX_wm_window_set(C, win); /* stores C->wm.screen... hrmf */
 
   ED_screen_refresh(C, CTX_wm_manager(C), win);
+
+  /* BFA - Tear-Off Menu/Panel: another workspace can have pins to restore, and leaving a maximized
+   * area can bring back the editor a pin waits for. */
+  ui::tear_off_restore_tag(CTX_wm_manager(C));
 
   BKE_screen_view3d_scene_sync(screen, scene); /* sync new screen with scene data */
   WM_event_add_notifier(C, NC_WINDOW, nullptr);

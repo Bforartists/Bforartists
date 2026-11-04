@@ -468,6 +468,21 @@ void WM_main_remap_editor_id_reference(const bke::id::IDRemapper &mappings)
         }
       });
     }
+    /* BFA - Tear-Off Menu/Panel: a workspace deleted as an ID, from the Outliner or a script, skips
+     * #ED_workspace_delete, and its hidden pins would keep a pointer to it. */
+    mappings.iter([&](ID *old_id, ID *new_id) {
+      if (new_id == nullptr && GS(old_id->name) == ID_WS) {
+        bContext *C = CTX_create();
+        CTX_data_main_set(C, bmain);
+        CTX_wm_manager_set(C, wm);
+        for (wmWindow &win : wm->windows) {
+          CTX_wm_window_set(C, &win);
+          ui::tear_off_handlers_remove_for_workspace(
+              C, &win, reinterpret_cast<const WorkSpace *>(old_id));
+        }
+        CTX_free(C);
+      }
+    });
   }
 
   AS_asset_library_remap_ids(mappings);
@@ -749,6 +764,15 @@ void wm_event_do_notifiers(bContext *C)
      */
 
     wm->runtime->notifier_queue_set.remove_contained(note);
+
+    /* BFA - Tear-Off Menu/Panel: a stored pin can be waiting for data, an active object or a poll
+     * that could depend on anything, so any change can be what it needs. A pass costs nothing with
+     * no entries waiting. Not for a frame change, or playback would run their polls on each frame.
+     */
+    if (!(note->category == NC_SCENE && note->data == ND_FRAME)) {
+      ui::tear_off_restore_tag(wm);
+    }
+
     for (wmWindow &win : wm->windows) {
       Scene *scene = WM_window_get_active_scene(&win);
       bScreen *screen = WM_window_get_active_screen(&win);
@@ -831,6 +855,10 @@ void wm_event_do_notifiers(bContext *C)
   }
 
   wm_event_do_refresh_wm_and_depsgraph(C);
+
+  /* BFA - Tear-Off Menu/Panel: with the depsgraph current and before drawing, so no frame shows
+   * without them. The warnings below stack on top of them. */
+  ui::tear_off_restore_pending_run(C, wm);
 
   RE_FreeUnusedGPUResources();
 
@@ -961,6 +989,9 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
     }
   }
 
+  /* BFA - Tear-Off Menu/Panel: read the flag now, the call below can free the handler. */
+  const bool keep_ui_wheel = bool(handler->head.flag & WM_HANDLER_KEEP_UI_WHEEL);
+
   int retval = handler->handle_fn(C, event, handler->user_data);
 
   /* Putting back screen context. */
@@ -982,7 +1013,7 @@ static eHandlerActionFlag wm_handler_ui_call(bContext *C,
   }
 
   /* Event not handled in UI, if wheel then we temporarily disable it. */
-  if (is_wheel) {
+  if (is_wheel && !keep_ui_wheel) { /* BFA - Tear-Off Menu/Panel */
     do_wheel_ui = false;
   }
 

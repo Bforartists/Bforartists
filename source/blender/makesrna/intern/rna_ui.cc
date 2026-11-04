@@ -484,6 +484,11 @@ static StructRNA *rna_Panel_register(Main *bmain,
   /* update while blender is running */
   WM_main_add_notifier(NC_WINDOW, nullptr);
 
+  /* BFA - Tear-Off Menu/Panel: a stored pin can be waiting for this type. */
+  if (wmWindowManager *wm = bmain->wm.first()) {
+    ui::tear_off_restore_tag(wm);
+  }
+
   return pt->rna_ext.srna;
 }
 
@@ -1144,6 +1149,11 @@ static StructRNA *rna_Menu_register(Main *bmain,
   /* update while blender is running */
   WM_main_add_notifier(NC_WINDOW, nullptr);
 
+  /* BFA - Tear-Off Menu/Panel: a stored pin can be waiting for this type. */
+  if (wmWindowManager *wm = bmain->wm.first()) {
+    ui::tear_off_restore_tag(wm);
+  }
+
   return mt->rna_ext.srna;
 }
 
@@ -1523,6 +1533,12 @@ static int rna_UILayout_direction_get(PointerRNA *ptr)
   return int(ptr->data_as<const Layout>()->local_direction());
 }
 
+/* BFA - Tear-Off Menu/Panel: lets Python keep the shelf's columns in a tear-off. */
+static float rna_UILayout_tear_off_width_get(PointerRNA *ptr)
+{
+  return ui::tear_off_layout_width_get(ptr->data_as<const Layout>());
+}
+
 static float rna_UILayout_scale_x_get(PointerRNA *ptr)
 {
   return ptr->data_as<const Layout>()->scale_x();
@@ -1854,6 +1870,15 @@ static void rna_def_ui_layout(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, direction_items);
   RNA_def_property_enum_funcs(prop, "rna_UILayout_direction_get", nullptr, nullptr);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
+  /* BFA - Tear-Off Menu/Panel: lets the tool shelf panels keep their columns in a tear-off. */
+  prop = RNA_def_property(srna, "tear_off_width", PROP_FLOAT, PROP_UNSIGNED);
+  RNA_def_property_float_funcs(prop, "rna_UILayout_tear_off_width_get", nullptr, nullptr);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop,
+                           "Tear-Off Width",
+                           "Width of this panel torn off a tool shelf, without zoom or UI scale. "
+                           "0 when the layout isn't in a tear-off from a tool shelf");
 
   prop = RNA_def_property(srna, "scale_x", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_float_funcs(

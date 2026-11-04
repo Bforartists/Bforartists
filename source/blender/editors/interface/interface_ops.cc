@@ -66,6 +66,7 @@
 
 #include "WM_api.hh"
 #include "WM_types.hh"
+#include "wm_window.hh" // BFA - Tear-Off Menu/Panel
 
 #include "ED_object.hh"
 #include "ED_outliner.hh"
@@ -288,9 +289,69 @@ static void UI_OT_copy_as_driver_button(wmOperatorType *ot)
 /** \name Copy Python Command Operator
  * \{ */
 
+ // BFA - Tear-Off Menu/Panel
+static Button *button_under_cursor_or_active(bContext *C)
+{
+  /* BFA - Tear-Off Menu/Panel: the active button always wins, including the popup a context
+   * menu was opened from (see #151170). The cursor must not be checked first: when this runs
+   * from a context menu item, the cursor is over whatever sits beneath that item, which would
+   * resolve to the wrong button. */
+  Button *but = context_active_but_get_respect_popup(C);
+  if (!but) {
+    but = context_active_but_get(C);
+  }
+
+  /* BFA - Tear-Off Menu/Panel Fallback: use context store to find the button by RNA pointer/property.
+   * This helps when a tear-off popup is active and the main region button
+   * lost its active state due to redraw. */
+  if (!but) {
+    ARegion *region_main = CTX_wm_region(C);
+    if (region_main) {
+      const bContextStore *ctx_store = CTX_store_get(C);
+      if (ctx_store) {
+        const PointerRNA *btn_ptr = CTX_store_ptr_lookup(ctx_store, "button_pointer");
+        const PointerRNA *btn_prop = CTX_store_ptr_lookup(ctx_store, "button_prop");
+        if (btn_ptr && btn_ptr->data && btn_prop && btn_prop->data) {
+          PropertyRNA *prop = static_cast<PropertyRNA *>(btn_prop->data);
+          for (Block &block_base : region_main->runtime->uiblocks) {
+            for (Button &but_iter : block_base.buttons()) {
+              if (but_iter.rnapoin.data == btn_ptr->data && but_iter.rnaprop == prop) {
+                but = &but_iter;
+                break;
+              }
+            }
+            if (but) {
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: last resort. While a tear-off holds the modal handler, buttons
+   * in the main UI don't get activated, so nothing above finds a button hovered there. */
+  if (!but) {
+    wmWindow *win = CTX_wm_window(C);
+    int xy[2];
+    if (win && wm_cursor_position_get(win, &xy[0], &xy[1])) {
+      /* Popup first: it floats over the region, so a button under it isn't the one hovered. */
+      if (ARegion *region_popup = CTX_wm_region_popup(C)) {
+        but = button_find_mouse_over_ex(region_popup, xy, false, false, nullptr, nullptr);
+      }
+      ARegion *region_main = CTX_wm_region(C);
+      if (!but && region_main) {
+        but = button_find_mouse_over_ex(region_main, xy, false, false, nullptr, nullptr);
+      }
+    }
+  }
+
+  return but;
+}
+
 static bool copy_python_command_button_poll(bContext *C)
 {
-  Button *but = context_active_but_get_respect_popup(C);
+  Button *but = button_under_cursor_or_active(C); // BFA - Tear-Off Menu/Panel
 
   if (but && (but->optype != nullptr)) {
     return true;
@@ -299,9 +360,50 @@ static bool copy_python_command_button_poll(bContext *C)
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: undo the temporary tear-off context swap, including when the saved
+ * values are null (handler context is cleared by a workspace switch). */
+static void tear_off_op_context_restore(bContext *C,
+                                        const bool restored,
+                                        ScrArea *area,
+                                        ARegion *region)
+{
+  if (restored) {
+    CTX_wm_area_set(C, area);
+    CTX_wm_region_set(C, region);
+  }
+}
+
 static wmOperatorStatus copy_python_command_button_exec(bContext *C, wmOperator * /*op*/)
 {
-  Button *but = context_active_but_get_respect_popup(C);
+  /* BFA - Tear-Off Menu/Panel: when a tear-off menu is active, temporarily restore
+   * the original context (ctx_area, ctx_region) from the popup handle. This allows
+   * Copy Python Command to find buttons in the main UI instead of the popup's context. */
+  ARegion *region_popup = CTX_wm_region_popup(C);
+  ScrArea *ctx_area_saved = nullptr;
+  ARegion *ctx_region_saved = nullptr;
+  bool context_restored = false;
+
+  if (region_popup) {
+    Block *block = region_popup->runtime->uiblocks.first();
+    if (block && (block->flag & BLOCK_TEAR_OFF) && block->handle) {
+      PopupBlockHandle *handle = static_cast<PopupBlockHandle *>(block->handle);
+      tear_off_context_ensure(C, handle); /* BFA - Tear-Off Menu/Panel */
+      if (handle->ctx_area || handle->ctx_region) {
+        /* Save current context and restore original context from popup handle */
+        ctx_area_saved = CTX_wm_area(C);
+        ctx_region_saved = CTX_wm_region(C);
+        if (handle->ctx_area) {
+          CTX_wm_area_set(C, handle->ctx_area);
+        }
+        if (handle->ctx_region) {
+          CTX_wm_region_set(C, handle->ctx_region);
+        }
+        context_restored = true;
+      }
+    }
+  }
+
+  Button *but = button_under_cursor_or_active(C);
 
   if (but && (but->optype != nullptr)) {
     /* allocated when needed, the button owns it */
@@ -311,8 +413,14 @@ static wmOperatorStatus copy_python_command_button_exec(bContext *C, wmOperator 
 
     WM_clipboard_text_set(str.c_str(), false);
 
+    /* BFA - Tear-Off Menu/Panel Restore context if it was modified for tear-off menu */
+    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
+
     return OPERATOR_FINISHED;
   }
+
+  /* BFA - Tear-Off Menu/Panel Restore context if it was modified for tear-off menu */
+  tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
   return OPERATOR_CANCELLED;
 }
@@ -2193,13 +2301,125 @@ static wmOperatorStatus editsource_text_edit(bContext *C,
   WM_operator_properties_free(&op_props);
   return result;
 }
+// BFA - Tear-Off Menu/Panel
+static wmOperatorStatus editsource_exec_finish(bContext *C,
+                                               wmOperator *op,
+                                               ARegion *region,
+                                               const bool use_match)
+{
+  wmOperatorStatus ret;
 
+  /* It's possible the key button referenced in `editsource_info` has been freed.
+   * This typically happens with popovers but could happen in other situations, see: #140439. */
+  Set<const Button *> valid_buttons_in_region;
+  for (Block &block_base : region->runtime->uiblocks) {
+    Block *block_pair[2] = {&block_base, block_base.oldblock};
+    for (Block *block : Span(block_pair, block_pair[1] ? 2 : 1)) {
+      for (Button &but : block->buttons()) {
+        valid_buttons_in_region.add(&but);
+      }
+    }
+  }
+
+  EditSourceButStore *but_store = nullptr;
+  for (const auto &item : editsource_info->hash.items()) {
+    const Button *but_key = item.key;
+    if (but_key == nullptr) {
+      continue;
+    }
+
+    if (!valid_buttons_in_region.contains(but_key)) {
+      continue;
+    }
+
+    if (!use_match || editsource_uibut_match(&editsource_info->but_orig, but_key)) {
+      but_store = item.value.get();
+      break;
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel If the region was redrawn (e.g., while a tear-off popup is open), buttons in the
+   * hash are stale/freed pointers. Match against all currently valid buttons instead. */
+  if (!but_store && use_match) {
+    for (Block &block_base : region->runtime->uiblocks) {
+      Block *block_pair[2] = {&block_base, block_base.oldblock};
+      for (Block *block : Span(block_pair, block_pair[1] ? 2 : 1)) {
+        for (Button &but : block->buttons()) {
+          if (editsource_uibut_match(&editsource_info->but_orig, &but)) {
+            /* Capture fresh debug info for the newly created button */
+            editsource_active_but_test(&but);
+            std::unique_ptr<EditSourceButStore> *store_ptr = editsource_info->hash.lookup_ptr(&but);
+            if (store_ptr) {
+              but_store = store_ptr->get();
+            }
+            break;
+          }
+        }
+        if (but_store) break;
+      }
+      if (but_store) break;
+    }
+  }
+
+  if (but_store) {
+    if (but_store->py_dbg_line_number != -1) {
+      ret = editsource_text_edit(C, op, but_store->py_dbg_fn, but_store->py_dbg_line_number);
+    }
+    else {
+      BKE_report(
+          op->reports, RPT_ERROR, "Active button is not from a script, cannot edit source");
+      ret = OPERATOR_CANCELLED;
+    }
+  }
+  else {
+    BKE_report(op->reports, RPT_ERROR, "Active button match cannot be found");
+    ret = OPERATOR_CANCELLED;
+  }
+
+  editsource_active_but_clear();
+  return ret; // BFA - Tear-Off Menu/Panel
+} // BFA - Tear-Off Menu/Panel
+
+// BFA - Tear-Off Menu/Panel
 static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
 {
-
-  ARegion *region = nullptr;
+  /* BFA - Tear-Off Menu/Panel: upstream only looks at the active button of one region. A tear-off
+   * stays open over the main UI and its button may not be active, and the operator can run with
+   * the tear-off as context popup, so this needs a wider lookup and a temporary context swap. */
   Button *but = nullptr;
+  ARegion *region = nullptr;
 
+  /* BFA - Tear-Off Menu/Panel: when a tear-off menu is active, temporarily restore
+   * the original context (ctx_area, ctx_region) from the popup handle. This allows
+   * Edit Source to find buttons in the main UI instead of the popup's context. */
+  ARegion *region_popup = CTX_wm_region_popup(C);
+  ScrArea *ctx_area_saved = nullptr;
+  ARegion *ctx_region_saved = nullptr;
+  bool context_restored = false;
+
+  if (region_popup) {
+    Block *block = region_popup->runtime->uiblocks.first();
+    if (block && (block->flag & BLOCK_TEAR_OFF) && block->handle) {
+      PopupBlockHandle *handle = static_cast<PopupBlockHandle *>(block->handle);
+      tear_off_context_ensure(C, handle); /* BFA - Tear-Off Menu/Panel */
+      if (handle->ctx_area || handle->ctx_region) {
+        /* Save current context and restore original context from popup handle */
+        ctx_area_saved = CTX_wm_area(C);
+        ctx_region_saved = CTX_wm_region(C);
+        if (handle->ctx_area) {
+          CTX_wm_area_set(C, handle->ctx_area);
+        }
+        if (handle->ctx_region) {
+          CTX_wm_region_set(C, handle->ctx_region);
+        }
+        context_restored = true;
+      }
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: the cursor comes last, as in Copy Python Command. It can't come
+   * first: when this runs from a context menu item, the cursor is over whatever is under that
+   * item. "popup_region" is upstream's lookup, set by the button context menu. */
   {
     const bContextStore *ctx_store = CTX_store_get(C);
     const PointerRNA *region_ptr = ctx_store ? CTX_store_ptr_lookup(
@@ -2208,83 +2428,124 @@ static wmOperatorStatus editsource_exec(bContext *C, wmOperator *op)
     if (region_ptr && region_ptr->has_data()) {
       region = region_ptr->data_as<ARegion>();
       but = region_find_active_but(region);
-      if (region->regiontype == RGN_TYPE_TEMPORARY && !but->block->handle->can_refresh) {
-        BKE_report(op->reports,
-                   RPT_ERROR,
-                   "Cannot edit source in popup regions that does not support refresh.");
-        return OPERATOR_CANCELLED;
-      }
-    }
-    else {
-      but = context_active_but_get(C);
-      region = CTX_wm_region(C);
     }
   }
-
-  if (but) {
-    wmOperatorStatus ret;
-
-    // printf("%s: begin\n", __func__);
-
-    /* take care not to return before calling editsource_active_but_clear */
-    editsource_active_but_set(but);
-
-    /* Needed so the active button does not get updated. */
-    button_active_free(C, but);
-
-    /* redraw and get active button python info */
-    region_redraw_immediately(C, region);
-
-    /* It's possible the key button referenced in `editsource_info` has been freed.
-     * This typically happens with popovers but could happen in other situations, see: #140439. */
-    Set<const Button *> valid_buttons_in_region;
-    for (Block &block_base : region->runtime->uiblocks) {
-      Block *block_pair[2] = {&block_base, block_base.oldblock};
-      for (Block *block : Span(block_pair, block_pair[1] ? 2 : 1)) {
-        for (Button &but : block->buttons()) {
-          valid_buttons_in_region.add(&but);
+  if (!but) {
+    but = context_active_but_get(C);
+    region = CTX_wm_region(C);
+  }
+  if (!but) {
+    but = context_active_but_get_respect_popup(C);
+    region = CTX_wm_region_popup(C);
+  }
+  /* Last resort for a tear-off with nothing active: popup first, it floats over the region. */
+  if (!but) {
+    wmWindow *win = CTX_wm_window(C);
+    int xy[2];
+    if (win && wm_cursor_position_get(win, &xy[0], &xy[1])) {
+      for (ARegion *region_test : {CTX_wm_region_popup(C), CTX_wm_region(C)}) {
+        if (region_test) {
+          but = button_find_mouse_over_ex(region_test, xy, false, false, nullptr, nullptr);
+          if (but) {
+            region = region_test;
+            break;
+          }
         }
       }
     }
-
-    EditSourceButStore *but_store = nullptr;
-    for (const auto &item : editsource_info->hash.items()) {
-      const Button *but_key = item.key;
-      if (but_key == nullptr) {
-        continue;
-      }
-
-      if (!valid_buttons_in_region.contains(but_key)) {
-        continue;
-      }
-
-      if (editsource_uibut_match(&editsource_info->but_orig, but_key)) {
-        but_store = item.value.get();
-        break;
-      }
-    }
-
-    if (but_store) {
-      if (but_store->py_dbg_line_number != -1) {
-        ret = editsource_text_edit(C, op, but_store->py_dbg_fn, but_store->py_dbg_line_number);
-      }
-      else {
-        BKE_report(
-            op->reports, RPT_ERROR, "Active button is not from a script, cannot edit source");
-        ret = OPERATOR_CANCELLED;
-      }
-    }
-    else {
-      BKE_report(op->reports, RPT_ERROR, "Active button match cannot be found");
-      ret = OPERATOR_CANCELLED;
-    }
-
-    editsource_active_but_clear();
-
-    // printf("%s: end\n", __func__);
-
-    return ret;
   }
+
+  /* BFA - Tear-Off Menu/Panel: upstream refuses to edit source in popup regions that cannot
+   * refresh. Tear-off menus/panels are exempt: they are intentionally persistent and their
+   * buttons are matched through the hash instead of a refresh. */
+  if (but && region && (region->regiontype == RGN_TYPE_TEMPORARY) && but->block->handle &&
+      !but->block->handle->can_refresh && !(but->block->flag & BLOCK_TEAR_OFF))
+  {
+    BKE_report(op->reports,
+               RPT_ERROR,
+               "Cannot edit source in popup regions that does not support refresh.");
+    /* BFA - Tear-Off Menu/Panel: don't leave the context swapped. */
+    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
+    return OPERATOR_CANCELLED;
+  }
+
+  if (but) {
+    /* needed else the active button does not get tested */
+    UI_screen_free_active_but_highlight(C, CTX_wm_screen(C));
+
+    editsource_active_but_set(but);
+
+    /* Needed so the active button does not get updated. Must run before the redraw below,
+     * which recreates the blocks and may free `but`. */
+    button_active_free(C, but);
+
+    region_redraw_immediately(C, region);
+
+    /* Restore context if it was modified for tear-off menu */
+    tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
+
+    return editsource_exec_finish(C, op, region, true);
+  }
+
+  /* BFA - Tear-Off Menu/Panel Fallback: use context store to find the button by RNA
+   * pointer/property. When a tear-off popup is open, CTX_wm_region(C) may be a region with no UI
+   * blocks (e.g., the popup's own region or a header). Search ALL regions of the screen to find
+   * the button. This runs from a button's context menu, when a rebuild dropped that button while
+   * the menu was open and the same property is shown elsewhere. */
+  {
+    const bContextStore *ctx_store = CTX_store_get(C);
+    if (ctx_store) {
+      const PointerRNA *btn_ptr = CTX_store_ptr_lookup(ctx_store, "button_pointer");
+      const PointerRNA *btn_prop = CTX_store_ptr_lookup(ctx_store, "button_prop");
+      if (btn_ptr && btn_ptr->data && btn_prop && btn_prop->data) {
+        PropertyRNA *prop = static_cast<PropertyRNA *>(btn_prop->data);
+        bScreen *screen = CTX_wm_screen(C);
+        if (screen) {
+          for (ScrArea *area = screen->areabase.first(); area; area = area->next) {
+            for (ARegion *reg_iter = area->regionbase.first(); reg_iter; reg_iter = reg_iter->next) {
+              if (reg_iter->runtime == nullptr) {
+                continue;
+              }
+              for (Block &block_base : reg_iter->runtime->uiblocks) {
+                Block *block_pair[2] = {&block_base, block_base.oldblock};
+                for (Block *block : Span(block_pair, block_pair[1] ? 2 : 1)) {
+                  for (Button &but_iter : block->buttons()) {
+                    if (but_iter.rnapoin.data == btn_ptr->data && but_iter.rnaprop == prop) {
+                      but = &but_iter;
+                      region = reg_iter;
+                      break;
+                    }
+                  }
+                  if (but) break;
+                }
+                if (but) break;
+              }
+              if (but) break;
+            }
+            if (but) break;
+          }
+        }
+      }
+    }
+    if (but) {
+      UI_screen_free_active_but_highlight(C, CTX_wm_screen(C));
+      editsource_active_but_set(but);
+
+      /* Needed so the active button does not get updated. Must run before the redraw below,
+       * which recreates the blocks and may free `but`. */
+      button_active_free(C, but);
+
+      region_redraw_immediately(C, region);
+
+      /* Restore context if it was modified for tear-off menu */
+      tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
+
+      return editsource_exec_finish(C, op, region, true);
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel Restore context if it was modified for tear-off menu */
+  tear_off_op_context_restore(C, context_restored, ctx_area_saved, ctx_region_saved);
 
   BKE_report(op->reports, RPT_ERROR, "Active button not found");
   return OPERATOR_CANCELLED;

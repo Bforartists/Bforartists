@@ -718,6 +718,10 @@ enum eWM_EventHandlerFlag {
   WM_HANDLER_BLOCKING = (1 << 0),
   /** Handler accepts double key press events. */
   WM_HANDLER_ACCEPT_DBL_CLICK = (1 << 1),
+  /** BFA - Tear-Off Menu/Panel: returning CONTINUE on a wheel event doesn't disable UI wheel
+   * handling for later handlers. A tear-off isn't modal, so a list under the cursor must
+   * still scroll. */
+  WM_HANDLER_KEEP_UI_WHEEL = (1 << 2),
 
   /* Internal. */
   /** Handler tagged to be freed in #wm_handlers_do(). */

@@ -242,6 +242,9 @@ static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(bContext *C,
    * Code copied from `wm_init_exit.cc`. */
   WM_jobs_kill_all(wm);
 
+  /* BFA - Tear-Off Menu/Panel: the file was read, so a failed open can't lose them. */
+  ui::tear_off_store_closing_all(bmain, wm);
+
   wmWindow *active_win = CTX_wm_window(C);
   for (wmWindow &win : wm->windows) {
     CTX_wm_window_set(C, &win); /* Needed by operator close callbacks. */
@@ -864,6 +867,12 @@ static void wm_file_read_post(bContext *C,
       /* Ensure tools are registered. */
       WM_toolsystem_init(C);
     }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: a load closed the pins, and loading preferences can have turned
+   * the preference on. */
+  if ((use_data || use_userdef) && !G.background) {
+    ui::tear_off_restore_tag(CTX_wm_manager(C));
   }
 }
 
@@ -2324,7 +2333,12 @@ static bool wm_file_write(bContext *C,
   blend_write_params.use_save_as_copy = use_save_as_copy;
   blend_write_params.thumb = thumb;
 
-  const bool success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
+  bool success;
+  {
+    /* BFA - Tear-Off Menu/Panel */
+    const ui::TearOffSaveScope tear_off_save_scope(bmain, CTX_wm_manager(C));
+    success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
+  }
 
   if (success) {
     if (use_save_as_copy == false) {
@@ -2455,7 +2469,12 @@ bool WM_autosave_write(wmWindowManager *wm, Main *bmain, ReportList *reports)
 
   /* Error reporting into console. */
   BlendFileWriteParams params{};
-  const bool success = BLO_write_file(bmain, filepath, fileflags, &params, reports);
+  bool success;
+  {
+    /* BFA - Tear-Off Menu/Panel */
+    const ui::TearOffSaveScope tear_off_save_scope(bmain, wm);
+    success = BLO_write_file(bmain, filepath, fileflags, &params, reports);
+  }
 
   /* Restart auto-save timer. */
   wm_autosave_timer_end(wm);
@@ -2708,8 +2727,12 @@ static wmOperatorStatus wm_homefile_write_exec(bContext *C, wmOperator *op)
   /* Don't apply any path changes to the current blend file. */
   blend_write_params.use_save_as_copy = true;
 
-  const bool success = BLO_write_file(
-      bmain, filepath, fileflags, &blend_write_params, op->reports);
+  bool success;
+  {
+    /* BFA - Tear-Off Menu/Panel */
+    const ui::TearOffSaveScope tear_off_save_scope(bmain, CTX_wm_manager(C));
+    success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, op->reports);
+  }
 
   BKE_callback_exec_string(bmain, "", success ? BKE_CB_EVT_SAVE_POST : BKE_CB_EVT_SAVE_POST_FAIL);
 
@@ -3029,9 +3052,20 @@ static wmOperatorStatus wm_homefile_read_exec(bContext *C, wmOperator *op)
   char filepath_buf[FILE_MAX];
   const char *filepath = nullptr;
   UserDef U_backup = dna::shallow_copy(U);
+  bool template_forces_ui = false; /* BFA */
 
   if (!use_factory_settings) {
     PropertyRNA *prop = RNA_struct_find_property(op->ptr, "filepath");
+
+    /* BFA - Choosing a template by name asks for its workspaces, including the one already in use,
+     * whatever Load UI is set to. Upstream only does so for another template, so after opening a
+     * file with its UI, the current template couldn't be brought back. A script can still say no. */
+    if (RNA_struct_property_is_set(op->ptr, "app_template") &&
+        !RNA_struct_property_is_set(op->ptr, "load_ui"))
+    {
+      RNA_boolean_set(op->ptr, "load_ui", true);
+      template_forces_ui = true;
+    }
 
     /* This can be used when loading of a start-up file should only change
      * the scene content but keep the blender UI as it is. */
@@ -3098,6 +3132,11 @@ static wmOperatorStatus wm_homefile_read_exec(bContext *C, wmOperator *op)
   read_homefile_params.filepath_startup_override = filepath;
   read_homefile_params.app_template_override = app_template;
   wm_homefile_read(C, &read_homefile_params, op->reports);
+
+  /* BFA - Only for this load. The next file operation follows the preference. */
+  if (template_forces_ui) {
+    SET_FLAG_FROM_TEST(G.fileflags, U.flag & USER_FILENOUI, G_FILE_NO_UI);
+  }
 
   if (use_splash) {
     WM_init_splash(C);

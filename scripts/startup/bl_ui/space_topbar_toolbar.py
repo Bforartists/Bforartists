@@ -374,7 +374,8 @@ class TOPBAR_MT_file(Menu):
 
             if addon_prefs.topbar_file_load_save:
                 row = layout.row(align=True)
-                row.operator("wm.read_homefile", text="", icon='NEW')
+                # BFA - A blank slate in the current workspaces, as File > New.
+                row.operator("wm.read_homefile", text="", icon='NEW').load_ui = False
                 row.menu("TOPBAR_MT_file_new", text="", icon='FILE_NEW')
 
                 row = layout.row(align=True)

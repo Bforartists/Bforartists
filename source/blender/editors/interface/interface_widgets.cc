@@ -1415,7 +1415,10 @@ static void widget_draw_icon(
       }
       /* BFA: For menus (not pie menus), use consistent icon alignment.
        * This ensures all menu icons align vertically regardless of emboss type or tool status. */
-      else if (block_is_menu(but->block) || block_is_popover(but->block)) {
+      /* BFA - Tear-Off Menu/Panel: a shelf tear-off aligns its icons like the shelf. */
+      else if (block_is_menu(but->block) ||
+               (block_is_popover(but->block) && !block_is_tear_off_shelf(but->block)))
+      {
         xs = rect->xmin + 2.5f * ofs;
       }
       else if (but->emboss == EmbossType::None || but->type == ButtonType::Label) {
@@ -3101,7 +3104,8 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
      * Use small icons for popup. */
 #ifdef USE_UI_TOOLBAR_HACK
     const float aspect_orig = but->block->aspect;
-    if (is_tool && (but->block->flag & BLOCK_POPOVER)) {
+    /* BFA - Tear-Off Menu/Panel: this makes small icons for popups, the shelf has large ones. */
+    if (is_tool && (but->block->flag & BLOCK_POPOVER) && !block_is_tear_off_shelf(but->block)) {
       but->block->aspect *= 2.0f;
     }
 #endif
@@ -3136,7 +3140,11 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
       }
     }
     /* Menu items (including tools in menus), but only if they are not icon-only (rare). */
-    else if ((block_is_menu(but->block) || block_is_popover(but->block)) && but->drawstr[0]) {
+    /* BFA - Tear-Off Menu/Panel: a shelf tear-off has the shelf's text padding. */
+    else if ((block_is_menu(but->block) ||
+              (block_is_popover(but->block) && !block_is_tear_off_shelf(but->block))) &&
+             but->drawstr[0])
+    {
       rect->xmin += 0.2f * U.widget_unit;
     }
 
@@ -5768,6 +5776,12 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
         wt = widget_type(WidgetStyle::Swatch);
         break;
       case ButtonType::Label:
+        /* BFA - Tear-Off Menu/Panel: the title of a panel torn off a region sits on panel colors,
+         * so the menu's text color could be unreadable there with a custom theme. */
+        if (block_is_tear_off_panel(but->block)) {
+          wt = widget_type(WidgetStyle::Label);
+          break;
+        }
         widget_draw_text_icon(&style->widget, &tui->wcol_menu_back, but, rect);
         break;
       case ButtonType::Sepr:
@@ -6098,6 +6112,13 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
 
   const float zoom = 1.0f / but->block->aspect;
   wt->state(wt, &state, but->emboss);
+  /* BFA - Tear-Off Menu/Panel: the title sits on the panel header color, which regions pair with
+   * panel_title, see #panel_title_color_get. */
+  if (but->type == ButtonType::Label && but->tear_off_header &&
+      block_has_tear_off_panel_colors(but->block))
+  {
+    copy_v3_v3_uchar(wt->wcol.text, tui->panel_title);
+  }
   if (wt->custom) {
     wt->custom(but, &wt->wcol, rect, &state, roundboxalign, zoom);
   }
@@ -6135,8 +6156,10 @@ static void draw_clip_tri(Block *block, const rcti *rect, WidgetType *wt)
     draw_color[3] = 1.0f;
 
     if (block->flag & BLOCK_CLIPTOP) {
+      /* BFA - Tear-Off Menu/Panel: the arrow sits below a sticky header. */
+      const float top_ofs = (block->rect.ymax - block_scroll_top(block)) / block->aspect;
       draw_icon_tri(BLI_rcti_cent_x(rect),
-                    rect->ymax - (6 * UI_SCALE_FAC) / block->aspect,
+                    rect->ymax - (6 * UI_SCALE_FAC) / block->aspect - top_ofs,
                     't',
                     draw_color,
                     block->aspect);
@@ -6192,12 +6215,13 @@ void draw_menu_back(uiStyle * /*style*/, Block *block, const rcti *rect)
   wt->state(wt, &STATE_INFO_NULL, EmbossType::Undefined);
   if (block) {
     const float zoom = 1.0f / block->aspect;
-    wt->draw_block(&wt->wcol,
-                   rect,
-                   block->flag,
-                   block->alert_level == BlockAlertLevel::None ? block->direction :
-                                                                 char(UI_DIR_DOWN),
-                   zoom);
+    char direction = block->alert_level == BlockAlertLevel::None ? block->direction :
+                                                                   char(UI_DIR_DOWN);
+    /* BFA - Tear-Off Menu/Panel: no longer attached to a button, so all its corners are round. */
+    if (block->handle && block->handle->is_tear_off) {
+      direction = 0;
+    }
+    wt->draw_block(&wt->wcol, rect, block->flag, direction, zoom);
     if (block->alert_level != BlockAlertLevel::None) {
       draw_dialog_alert(block, rect);
     }
@@ -6283,16 +6307,225 @@ static void draw_popover_back_impl(const uiWidgetColors *wcol,
   GPU_blend(GPU_BLEND_NONE);
 }
 
+/* BFA - Tear-Off Menu/Panel: the colors of a panel in the region it came from. A region's panels
+ * blend over the region, and a floating one can sit over anything, so this is that result, opaque.
+ * The source's theme, because the region's color can differ per editor. */
+static void tear_off_panel_colors_get(const Block *block, float r_back[4], float r_header[4])
+{
+  const PopupBlockHandle *handle = block->handle;
+  theme::bThemeState theme_state;
+  theme::theme_store(&theme_state);
+  theme::theme_set(handle->tear_off_spacetype, handle->tear_off_ctx_region_type);
+  float region_back[4], panel_back[4], panel_header[4];
+  theme::get_color_4fv(TH_BACK, region_back);
+  theme::get_color_4fv(TH_PANEL_BACK, panel_back);
+  theme::get_color_4fv(TH_PANEL_HEADER, panel_header);
+  theme::theme_restore(&theme_state);
+
+  interp_v3_v3v3(r_back, region_back, panel_back, panel_back[3]);
+  r_back[3] = 1.0f;
+  /* A region's header and body don't overlap, so this blends over the region too. */
+  interp_v3_v3v3(r_header, region_back, panel_header, panel_header[3]);
+  r_header[3] = 1.0f;
+}
+
+/* BFA - Tear-Off Menu/Panel: as #panel_draw_aligned_backdrop. */
+static float tear_off_panel_roundness()
+{
+  return theme::theme_get()->tui.panel_roundness * 0.5f;
+}
+
+void draw_tear_off_panel_header_back(const ARegion *region, const Block *block)
+{
+  if (!block_has_tear_off_panel_colors(block)) {
+    return;
+  }
+  /* As tall as a region's header. */
+  rctf strip = block->rect;
+  strip.ymin = std::max(block->rect.ymax - float(PNL_HEADER) / block->aspect, block->rect.ymin);
+  const rcti strip_px = rect_to_pixelrect(region, block, &strip);
+  rctf strip_pxf;
+  BLI_rctf_rcti_copy(&strip_pxf, &strip_px);
+  /* Inside the outline. */
+  strip_pxf.xmin += U.pixelsize;
+  strip_pxf.xmax -= U.pixelsize;
+  strip_pxf.ymax -= U.pixelsize;
+
+  float back[4], header[4];
+  tear_off_panel_colors_get(block, back, header);
+  GPU_blend(GPU_BLEND_ALPHA);
+  draw_roundbox_corner_set(CNR_TOP_LEFT | CNR_TOP_RIGHT);
+  draw_roundbox_4fv(&strip_pxf, true, tear_off_panel_roundness() * U.widget_unit, header);
+  GPU_blend(GPU_BLEND_NONE);
+}
+
+/* BFA - Tear-Off Menu/Panel: a collapsed tear-off has the color, corners, outline and shadow of the
+ * open one's header, see #draw_popover_back. `back_alpha` fades the color and outline, and `shadow`
+ * the shadow, which only adds clutter around a pin at rest. */
+void draw_tear_off_pin_back(const Block *block,
+                            const rcti *rect,
+                            const float back_alpha,
+                            const float shadow)
+{
+  uiWidgetColors wcol = *widget_type(WidgetStyle::MenuBack)->wcol_theme;
+  if (block_is_tear_off_shelf(block)) {
+    theme::get_color_4ubv(TH_BACK, wcol.inner);
+    wcol.inner[3] = 255;
+  }
+  else if (block_has_tear_off_panel_colors(block)) {
+    float back[4], header[4];
+    tear_off_panel_colors_get(block, back, header);
+    rgba_float_to_uchar(wcol.inner, header);
+    wcol.roundness = tear_off_panel_roundness();
+  }
+  wcol.inner[3] *= back_alpha;
+  wcol.outline[3] *= back_alpha;
+  const float radius = wcol.roundness * U.widget_unit;
+
+  /* As #draw_popover_back_impl with no arrow, and #widget_softshadow with its own strength. */
+  GPU_blend(GPU_BLEND_ALPHA);
+  if (shadow > 0.0f) {
+    rctf shadow_rect;
+    BLI_rctf_rcti_copy(&shadow_rect, rect);
+    BLI_rctf_pad(&shadow_rect, -U.pixelsize, -U.pixelsize);
+    draw_roundbox_corner_set(CNR_ALL);
+    draw_dropshadow(&shadow_rect,
+                    radius,
+                    theme::get_menu_shadow_width(),
+                    1.0f,
+                    theme::theme_get()->tui.menu_shadow_fac * shadow);
+  }
+  WidgetBase wtb;
+  widget_init(&wtb);
+  round_box_edges(&wtb, CNR_ALL, rect, radius);
+  wtb.draw_emboss = false;
+  widgetbase_draw(&wtb, &wcol);
+  GPU_blend(GPU_BLEND_NONE);
+}
+
+/* BFA - Tear-Off Menu/Panel: a panel's title can be the text of its header checkbox. A collapsed
+ * pin can't use the checkbox, so this draws only the text, where #widget_optionbut leaves it and
+ * with what #draw_button sets up for a checkbox. */
+void draw_tear_off_pin_checkbox_title(uiStyle *style, Button *but, rcti *rect)
+{
+  const int height = BLI_rcti_size_y(rect);
+  const int delta = (height - 2 * U.pixelsize) / 6;
+  rect->xmin += height - 2 * delta + int(delta * 0.9f);
+
+  but->drawflag |= BUT_TEXT_LEFT | BUT_NO_TEXT_PADDING;
+  WidgetType *wt = widget_type(WidgetStyle::Checkbox);
+  if (but->block->theme_style == BLOCK_THEME_STYLE_POPUP) {
+    wt->state = widget_state_option_menu;
+  }
+  WidgetStateInfo state = {0};
+  state.but_flag = but->flag & ~UI_HOVER;
+  state.but_drawflag = but->drawflag;
+  wt->state(wt, &state, but->emboss);
+  wt->text(&style->widget, &wt->wcol, but, rect);
+}
+
 void draw_popover_back(ARegion *region, uiStyle * /*style*/, Block *block, const rcti *rect)
 {
   WidgetType *wt = widget_type(WidgetStyle::MenuBack);
+  /* BFA - Tear-Off Menu/Panel: a tear-off keeps the look of what it came from, see
+   * #block_is_tear_off_panel. A popover needs nothing here. The shelf's color is forced opaque,
+   * because the theme's alpha is 0 (an overlapping shelf is see-through) and a floating panel can
+   * sit over anything. */
+  uiWidgetColors wcol = *wt->wcol_theme;
+  if (block_is_tear_off_shelf(block)) {
+    theme::get_color_4ubv(TH_BACK, wcol.inner);
+    wcol.inner[3] = 255;
+  }
+  else if (block_has_tear_off_panel_colors(block)) {
+    float back[4], header[4];
+    tear_off_panel_colors_get(block, back, header);
+    rgba_float_to_uchar(wcol.inner, back);
+    wcol.roundness = tear_off_panel_roundness();
+  }
 
   float mval_origin[2] = {float(block->bounds_offset[0]), float(block->bounds_offset[1])};
   window_to_block_fl(region, block, &mval_origin[0], &mval_origin[1]);
   draw_popover_back_impl(
-      wt->wcol_theme, rect, block->direction, U.widget_unit / block->aspect, mval_origin);
+      &wcol, rect, block->direction, U.widget_unit / block->aspect, mval_origin);
 
   draw_clip_tri(block, rect, wt);
+}
+
+/* BFA - Tear-Off Menu/Panel: the scrollbar, drawn as #view2d_scrollers_draw does so it looks the
+ * same in every theme. */
+static void draw_tear_off_scrollbar(const ARegion *region, const Block *block)
+{
+  const PopupBlockHandle *handle = block->handle;
+  rctf track, thumb;
+  if (!tear_off_scrollbar_calc(handle, block, &track, &thumb)) {
+    return;
+  }
+  const bTheme *btheme = theme::theme_get();
+  uiWidgetColors wcol = btheme->tui.wcol_scroll; /* A copy, #draw_widget_scroll changes it. */
+  const float alpha = handle->tear_off_scroll_alpha / 255.0f;
+  const float alpha_fac = alpha * (1.0f - V2D_SCROLL_MIN_ALPHA) + V2D_SCROLL_MIN_ALPHA;
+  if (wcol.inner[3] == 0) {
+    wcol.inner[3] = 0.25f * handle->tear_off_scroll_alpha;
+  }
+  else {
+    wcol.inner[3] *= alpha_fac;
+  }
+  wcol.item[3] *= alpha_fac;
+  wcol.outline[3] = 0;
+  const char emboss_alpha = btheme->tui.widget_emboss[3];
+  const_cast<bTheme *>(btheme)->tui.widget_emboss[3] = 0;
+  const rcti vert = rect_to_pixelrect(region, block, &track);
+  const rcti slider = rect_to_pixelrect(region, block, &thumb);
+  GPU_blend(GPU_BLEND_ALPHA);
+  draw_widget_scroll(&wcol,
+                     &vert,
+                     &slider,
+                     (handle->tear_off_drag_zone & TEAR_OFF_ZONE_SCROLLBAR) ? SCROLL_PRESSED : 0);
+  GPU_blend(GPU_BLEND_NONE);
+  const_cast<bTheme *>(btheme)->tui.widget_emboss[3] = emboss_alpha;
+}
+
+/* BFA - Tear-Off Menu/Panel: a grip shows as a line on its edge while hovered or dragged, so it's
+ * clear what a press would resize. Nothing draws at rest. #TEAR_OFF_ZONE_WAIT_RELEASE has no edge
+ * bit, so nothing lights after a drag ended early. */
+void draw_tear_off_edges(const ARegion *region, const Block *block)
+{
+  draw_tear_off_scrollbar(region, block);
+
+  const PopupBlockHandle *handle = block->handle;
+  const uint8_t zone = handle->tear_off_drag_zone ? handle->tear_off_drag_zone :
+                                                    handle->tear_off_hover_zone;
+  if (!(zone & (TEAR_OFF_ZONE_WIDTH | TEAR_OFF_ZONE_HEIGHT))) {
+    return;
+  }
+  /* The rect of the block, not of its last button. */
+  rcti rect;
+  button_to_pixelrect(&rect, region, block, nullptr);
+
+  const bTheme *btheme = theme::theme_get();
+  const float thickness = 2.0f * UI_SCALE_FAC;
+  /* Stops short of the rounded corners, where a straight line would stick out. */
+  const float corner = btheme->tui.wcol_menu_back.roundness * U.widget_unit / block->aspect;
+  float color[4];
+  rgba_uchar_to_float(color, btheme->tui.wcol_scroll.item);
+
+  draw_roundbox_corner_set(CNR_ALL);
+  if (zone & TEAR_OFF_ZONE_WIDTH) {
+    rctf line;
+    line.xmin = float(rect.xmax) - thickness;
+    line.xmax = float(rect.xmax);
+    line.ymin = float(rect.ymin) + corner;
+    line.ymax = float(rect.ymax) - corner;
+    draw_roundbox_4fv(&line, true, thickness / 2.0f, color);
+  }
+  if (zone & TEAR_OFF_ZONE_HEIGHT) {
+    rctf line;
+    line.xmin = float(rect.xmin) + corner;
+    line.xmax = float(rect.xmax) - corner;
+    line.ymin = float(rect.ymin);
+    line.ymax = float(rect.ymin) + thickness;
+    draw_roundbox_4fv(&line, true, thickness / 2.0f, color);
+  }
 }
 
 static void draw_disk_shaded(float start,

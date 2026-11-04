@@ -1403,25 +1403,26 @@ int popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
 {
   bScreen *screen = CTX_wm_screen(C);
   const bool has_panel_category = panel_category_tabs_is_visible(region);
-  const bool any_item_visible = has_panel_category;
+  /* BFA - Tear-Off Menu/Panel: subpanels and regions without tabs have no sidebar items, but they
+   * can still tear off. Tearing off is the only entry there, so nothing else changes for them. */
+  const bool is_subpanel = panel && panel->type->parent != nullptr;
+  const bool show_sidebar_items = has_panel_category && !is_subpanel &&
+                                  BKE_regiontype_uses_category_tabs(region->runtime->type);
+  const bool show_tear_off = panel_can_be_torn_off(region, panel);
 
-  if (!any_item_visible) {
-    return WM_UI_HANDLER_CONTINUE;
-  }
-  if (panel && panel->type->parent != nullptr) {
-    return WM_UI_HANDLER_CONTINUE;
-  }
-
-  if (!BKE_regiontype_uses_category_tabs(region->runtime->type)) {
+  if (!show_sidebar_items && !show_tear_off) {
     return WM_UI_HANDLER_CONTINUE;
   }
 
   PointerRNA ptr = RNA_pointer_create_discrete(&screen->id, RNA_Panel, panel);
 
-  PopupMenu *pup = popup_menu_begin(C, IFACE_("Sidebar"), ICON_NONE);
+  /* BFA - Tear-Off Menu/Panel: a menu with only the tear-off entry isn't the sidebar's. */
+  PopupMenu *pup = popup_menu_begin(
+      C, show_sidebar_items ? IFACE_("Sidebar") : IFACE_("Panel"), ICON_NONE);
   Layout &layout = *popup_menu_layout(pup);
 
-  if (BKE_regiontype_uses_panel_categories_search(region->runtime->type)) {
+  /* BFA - Tear-Off Menu/Panel: added show_sidebar_items, see above. */
+  if (show_sidebar_items && BKE_regiontype_uses_panel_categories_search(region->runtime->type)) {
     layout.op("UI_OT_region_start_filter",
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Search..."),
               ICON_VIEWZOOM,
@@ -1430,7 +1431,8 @@ int popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
     layout.separator();
   }
 
-  if (has_panel_category && panel && panel_can_be_pinned(panel)) {
+  /* BFA - Tear-Off Menu/Panel: show_sidebar_items replaces has_panel_category, see above. */
+  if (show_sidebar_items && panel && panel_can_be_pinned(panel)) {
     char tmpstr[80];
     SNPRINTF_UTF8(
         tmpstr, "%s" UI_SEP_CHAR_S "%s", IFACE_("Pin Panel"), IFACE_("Shift Left Mouse"));
@@ -1443,6 +1445,31 @@ int popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
       but->flag |= BUT_HAS_SEP_CHAR;
     }
     layout.separator();
+  }
+
+  /* BFA - Tear-Off Menu/Panel: the region must stay the source region, so this can't use the menu
+   * default ExecRegionWin, which would switch to the main region. */
+  if (show_tear_off) {
+    char tmpstr[128];
+    SNPRINTF_UTF8(tmpstr,
+                  "%s" UI_SEP_CHAR_S "%s",
+                  IFACE_("Tear Off Panel"),
+                  IFACE_("Shift Left Mouse Drag"));
+    PointerRNA op_ptr = layout.op(
+        "WM_OT_panel_tear_off", tmpstr, ICON_GRIP, wm::OpCallContext::ExecDefault, UI_ITEM_NONE);
+    RNA_string_set(&op_ptr, "panel_idname", panel->type->idname);
+    RNA_boolean_set(&op_ptr, "from_region_panel", true);
+    /* evil, force shortcut flag, same as Pin above */
+    Button *but = layout.block()->buttons_ptrs.last().get();
+    but->flag |= BUT_HAS_SEP_CHAR;
+    if (show_sidebar_items) {
+      layout.separator();
+    }
+  }
+
+  if (!show_sidebar_items) {
+    popup_menu_end(C, pup);
+    return WM_UI_HANDLER_BREAK;
   }
 
   /* BFA - View2D reset option if view2d is initialized */

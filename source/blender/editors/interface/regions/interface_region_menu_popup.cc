@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <functional>
+#include <string> /* BFA - Tear-Off Menu/Panel: #PopupMenu::title_owned. */
 
 #include "MEM_guardedalloc.h"
 
@@ -165,6 +166,9 @@ struct PopupMenu {
 
   /* Menu hash is created from this, to keep a memory of recently opened menus. */
   StringRef title;
+  /* BFA - Tear-Off Menu/Panel: what #title refers to in a tear-off. A translated title points into
+   * the translation catalog, and a tear-off outlives it when the language changes. */
+  std::string title_owned;
 
   int mx, my;
   bool popup, slideout;
@@ -234,6 +238,9 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
 
     if (pup->menu_func) {
       pup->block->handle = handle;
+      if (handle && handle->is_tear_off) {
+        block_flag_enable(pup->block, BLOCK_TEAR_OFF);
+      }
       pup->menu_func(C, pup->layout);
       pup->block->handle = nullptr;
     }
@@ -254,6 +261,12 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
     /* Minimum width to enforce. */
     if (!pup->but->drawstr.empty()) {
       minwidth = BLI_rctf_size_x(&pup->but->rect);
+      /* BFA - Tear-Off Menu/Panel: rows of a fitted menu can be narrower than any row used to be,
+       * and a submenu must open as wide as it does from anywhere else. */
+      const PopupBlockHandle *parent = pup->but->block->handle;
+      if (parent && parent->is_tear_off && !(pup->but->block->flag & BLOCK_POPOVER)) {
+        minwidth = std::max<int>(minwidth, UI_MENU_WIDTH_MIN);
+      }
     }
     else {
       /* For buttons with no text, use the minimum (typically icon only). */
@@ -261,7 +274,8 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
     }
   }
   else {
-    minwidth = UI_MENU_WIDTH_MIN;
+    /* BFA - Tear-Off Menu/Panel: no button to line up with, so the rows decide the width. */
+    minwidth = handle->is_tear_off ? 0 : UI_MENU_WIDTH_MIN;
   }
 
   /* Find block direction. */
@@ -345,7 +359,8 @@ static Block *block_func_POPUP(bContext *C, PopupBlockHandle *handle, void *arg_
     /* in rare cases this is needed since moving the popup
      * to be within the window bounds may move it away from the mouse,
      * This ensures we set an item to be active. */
-    if (but_activate) {
+    /* BFA - Tear-Off Menu/Panel: don't highlight the header's pin icon on creation. */
+    if (but_activate && !handle->is_tear_off) {
       ARegion *region = CTX_wm_region(C);
       if (region && region->regiontype == RGN_TYPE_TOOLS && but_activate->block &&
           (but_activate->block->flag & BLOCK_POPUP_HOLD))
@@ -396,16 +411,27 @@ static PopupBlockHandle *popup_menu_create_impl(
     Button *but,
     const char *title,
     std::function<void(bContext *, Layout *)> menu_func,
-    const bool can_refresh)
+    const bool can_refresh,
+    const bool is_tear_off = false) // BFA - Tear-Off Menu/Panel
 {
   wmWindow *window = CTX_wm_window(C);
 
   PopupMenu *pup = MEM_new<PopupMenu>(__func__);
-  pup->title = title;
+  /* BFA - Tear-Off Menu/Panel: see #PopupMenu::title_owned. */
+  if (is_tear_off && title) {
+    pup->title_owned = title;
+    pup->title = pup->title_owned;
+  }
+  else {
+    pup->title = title;
+  }
   /* menu is created from a callback */
   pup->menu_func = menu_func;
   if (but) {
-    pup->slideout = block_is_menu(but->block);
+    /* BFA - Tear-Off Menu/Panel: submenus of a torn-off menu slide out like any menu's. A dropdown
+     * in a torn-off panel opens under its button, as it does in a regular popover. */
+    pup->slideout = block_is_menu(but->block) ||
+                    ((but->block->flag & BLOCK_TEAR_OFF) && !(but->block->flag & BLOCK_POPOVER));
     pup->but = but;
 
     if (but->type == ButtonType::Pulldown) {
@@ -421,7 +447,7 @@ static PopupBlockHandle *popup_menu_create_impl(
     pup->popup = true;
   }
   PopupBlockHandle *handle = popup_block_create(
-      C, butregion, but, nullptr, block_func_POPUP, pup, block_free_func_POPUP, can_refresh);
+      C, butregion, but, nullptr, block_func_POPUP, pup, block_free_func_POPUP, can_refresh, is_tear_off); // BFA - Tear-Off Menu/Panel
 
   if (!but) {
     handle->popup = true;
@@ -447,6 +473,15 @@ PopupBlockHandle *popup_menu_create(bContext *C,
       nullptr,
       [menu_func, arg](bContext *C, Layout *layout) { menu_func(C, layout, arg); },
       can_refresh);
+}
+
+/* BFA - Tear-Off Menu/Panel: a menu with no source button, drawn from `menu_func` on each refresh.
+ * The title stays null: #PopupMenu::title doesn't own its string, and the header shows the label
+ * anyway. */
+PopupBlockHandle *popup_menu_tear_off_create(bContext *C,
+                                             std::function<void(bContext *, Layout *)> menu_func)
+{
+  return popup_menu_create_impl(C, nullptr, nullptr, nullptr, std::move(menu_func), true, true);
 }
 
 /** \} */
@@ -604,37 +639,47 @@ void popup_menu_reports(bContext *C, ReportList *reports)
   }
 }
 
-static void popup_menu_create_from_menutype(bContext *C,
-                                            MenuType *mt,
-                                            const char *title,
-                                            const int icon)
+static PopupBlockHandle *popup_menu_create_from_menutype(bContext *C, // BFA - Tear-Off Menu/Panel
+                                                         MenuType *mt,
+                                                         const char *title,
+                                                         const int icon,
+                                                         const bool is_tear_off) // BFA - Tear-Off Menu/Panel
 {
   PopupBlockHandle *handle = popup_menu_create_impl(
       C,
       nullptr,
       nullptr,
       title,
-      [mt, title, icon](bContext *C, Layout *layout) -> void {
-        if (title && title[0]) {
+      /* BFA - Tear-Off Menu/Panel: it doesn't draw the title, so it mustn't keep the pointer. */
+      [mt, title = is_tear_off ? nullptr : title, icon](bContext *C, Layout *layout) -> void {
+        Block *block = layout->block(); // BFA - Tear-Off Menu/Panel
+        if (title && title[0] && !(block->handle && block->handle->is_tear_off)) { // BFA - Tear-Off Menu/Panel
           create_title_button(*layout, title, icon);
         }
         item_menutype_func(C, layout, mt);
       },
-      true);
+      true,
+      is_tear_off); // BFA - Tear-Off Menu/Panel
   handle->srna_owner = mt->rna_ext.srna;
   STRNCPY_UTF8(handle->menu_idname, mt->idname);
 
-  WorkspaceStatus status(C);
-  // bfa - gooengine disable_search_on_keypress
-  if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
-    status.range(IFACE_("Search"), ICON_EVENT_A, ICON_EVENT_Z);
+  /* BFA - Tear-Off Menu/Panel: letter and space keys pass through a tear-off, so the hint
+   * would be false, and nothing would clear it until another popup closes. */
+  if (!is_tear_off) {
+    WorkspaceStatus status(C);
+    // bfa - gooengine disable_search_on_keypress
+    if (flag_is_set(mt->flag, MenuTypeFlag::SearchOnKeyPress) && !bool(U.flag & USER_FLAG_DISABLE_SEARCH_ON_KEYPRESS)) {
+      status.range(IFACE_("Search"), ICON_EVENT_A, ICON_EVENT_Z);
+    }
+    else if (mt->idname[0]) {
+      status.item(IFACE_("Search"), ICON_EVENT_SPACEKEY);
+    }
   }
-  else if (mt->idname[0]) {
-    status.item(IFACE_("Search"), ICON_EVENT_SPACEKEY);
-  }
+  // BFA - Tear-Off Menu/Panel
+  return handle; // BFA - Tear-Off Menu/Panel
 }
 
-wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports)
+wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports, PopupBlockHandle **r_handle, const bool is_tear_off) // BFA - Tear-Off Menu/Panel
 {
   MenuType *mt = WM_menutype_find(idname, true);
 
@@ -652,8 +697,9 @@ wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *
   const bool allow_refresh = true;
 
   const char *title = CTX_IFACE_(mt->translation_context, mt->label);
+  PopupBlockHandle *handle = nullptr; // BFA - Tear-Off Menu/Panel
   if (allow_refresh) {
-    popup_menu_create_from_menutype(C, mt, title, ICON_NONE);
+    handle = popup_menu_create_from_menutype(C, mt, title, ICON_NONE, is_tear_off); // BFA - Tear-Off Menu/Panel
   }
   else {
     /* If no refresh is needed, create the block directly. */
@@ -661,6 +707,10 @@ wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *
     Layout *layout = popup_menu_layout(pup);
     menutype_draw(C, mt, layout);
     popup_menu_end(C, pup);
+  }
+
+  if (r_handle) { // BFA - Tear-Off Menu/Panel
+    *r_handle = handle; // BFA - Tear-Off Menu/Panel
   }
 
   return OPERATOR_INTERFACE;

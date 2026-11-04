@@ -326,6 +326,17 @@ static void update_flexible_spacing(const ARegion *region, Block *block)
     return;
   }
 
+  /* BFA - Tear-Off Menu/Panel: this pass targets the *region* width (headers/toolbars), which
+   * is meaningless for popup blocks that are sized after this point. Worse, a torn-off panel can
+   * contain its own #SeprSpacer (e.g. the properties context pin row); the translate loop below
+   * would then shift every later button to the right, breaking the whole layout. Skip tear-offs
+   * entirely - their header icons are right-aligned by #block_tear_off_align_header instead.
+   * Check both the flag and the handle: #BLOCK_TEAR_OFF is only set after the invoking operator
+   * returns (i.e. on refreshes), while #PopupBlockHandle::is_tear_off is already known here. */
+  if ((block->flag & BLOCK_TEAR_OFF) || (block->handle && block->handle->is_tear_off)) {
+    return;
+  }
+
   rcti rect;
   button_to_pixelrect(&rect, region, block, block->buttons_ptrs.last().get());
   const float buttons_width = std::ceil(float(rect.xmax) + 8.0f * UI_SCALE_FAC);
@@ -366,6 +377,78 @@ static void update_flexible_spacing(const ARegion *region, Block *block)
     }
   }
   block_bounds_calc(block);
+}
+
+/* BFA - Tear-Off Menu/Panel: the tear-off header icons identify themselves by their operator
+ * idnames. */
+static bool but_is_tear_off_header_icon(const Button &but)
+{
+  return but.optype && (strstr(but.optype->idname, "tear_off_collapse") != nullptr ||
+                        strstr(but.optype->idname, "tear_off_close") != nullptr);
+}
+
+/* BFA - Tear-Off Menu/Panel: right-align the pin/close buttons of the tear-off header
+ * row to the block's content width. This runs after layout because a layout-level
+ * spacer would rely on #update_flexible_spacing, which targets the region width
+ * (meaningless for popup blocks, whose region is sized later) and previously shifted
+ * the whole block content to the right. */
+static void block_tear_off_align_header(Block *block)
+{
+  auto is_header_but = but_is_tear_off_header_icon;
+
+  if (!std::any_of(block->buttons().begin(), block->buttons().end(), is_header_but)) {
+    return;
+  }
+
+  /* Right edge of the block content, excluding the header buttons themselves. */
+  float content_xmax = -FLT_MAX;
+  for (const Button &but : block->buttons()) {
+    if (is_header_but(but)) {
+      continue;
+    }
+    content_xmax = std::max(content_xmax, but.rect.xmax);
+  }
+  if (content_xmax == -FLT_MAX) {
+    return;
+  }
+
+  /* Move the pin/close icons as a rigid group, flush with the content's right
+   * edge (minus a small padding). */
+  float group_xmax = -FLT_MAX;
+  for (const Button &but : block->buttons()) {
+    if (is_header_but(but)) {
+      group_xmax = std::max(group_xmax, but.rect.xmax);
+    }
+  }
+  /* Clamp to >= 0: when the header row is the widest content in the block (short menus),
+   * the icons are already at the right edge and must not be moved left over the label. */
+  const float offset = std::max((content_xmax - (0.25f * UI_UNIT_X)) - group_xmax, 0.0f);
+  for (Button &but : block->buttons()) {
+    if (is_header_but(but)) {
+      BLI_rctf_translate(&but.rect, offset, 0.0f);
+    }
+  }
+
+  /* Keep the block rect containing the shifted buttons. Do not recalculate the
+   * bounds here: popup blocks got extra safety padding from
+   * #block_bounds_calc_popup that must be preserved. */
+  block->rect.xmax = std::max(block->rect.xmax, group_xmax + offset);
+
+  /* BFA - Tear-Off Menu/Panel: stretch the separator line directly below the header row so it
+   * spans the full content width. The tear-off header separator is the topmost #SeprLine in the
+   * block (the title button is skipped for tear-offs, and this runs for tear-offs only). */
+  Button *sep_line = nullptr;
+  float top_ymax = -FLT_MAX;
+  for (Button &but : block->buttons()) {
+    /* A panel's header has no line, and a line in its content must stay as it is. */
+    if (but.tear_off_header && but.type == ButtonType::SeprLine && but.rect.ymax > top_ymax) {
+      top_ymax = but.rect.ymax;
+      sep_line = &but;
+    }
+  }
+  if (sep_line) {
+    sep_line->rect.xmax = std::max(sep_line->rect.xmax, content_xmax);
+  }
 }
 
 static void update_window_matrix(const wmWindow *window, const ARegion *region, Block *block)
@@ -420,6 +503,31 @@ static bool but_is_row_alignment_group(const Button *left, const Button *right)
   return is_same_align_group && (left->rect.xmin < right->rect.xmin);
 }
 
+/* BFA - Tear-Off Menu/Panel: the header spans all columns, so it can't be sized as part of the
+ * first one. Sized with the rows it would also add the row padding as dead space. It sets the
+ * minimum instead, which #block_bounds_calc_text gives to the last column. Returns where column
+ * sizing starts. */
+static std::unique_ptr<Button> *block_tear_off_header_skip(Block *block, const float offset)
+{
+  std::unique_ptr<Button> *content = block->buttons_ptrs.begin();
+  std::unique_ptr<Button> *end = block->buttons_ptrs.end();
+  float xmin = FLT_MAX, xmax = -FLT_MAX;
+  for (; content < end && (*content)->tear_off_header; content++) {
+    Button &but = **content;
+    but.rect.xmin += offset;
+    but.rect.xmax += offset;
+    if (!ELEM(but.type, ButtonType::Sepr, ButtonType::SeprLine)) {
+      xmin = std::min(xmin, but.rect.xmin);
+      xmax = std::max(xmax, but.rect.xmax);
+    }
+  }
+  if (xmax > xmin) {
+    /* The right padding matches #block_tear_off_align_header. */
+    block->minbounds = std::max(block->minbounds, int(ceilf(xmax - xmin + 0.25f * UI_UNIT_X)));
+  }
+  return content;
+}
+
 static void block_bounds_calc_text(Block *block, float offset)
 {
   if (block->buttons_ptrs.is_empty()) {
@@ -433,6 +541,7 @@ static void block_bounds_calc_text(Block *block, float offset)
   std::unique_ptr<Button> *end = block->buttons_ptrs.end();
 
   std::unique_ptr<Button> *init_col_bt = block->buttons_ptrs.begin();
+  init_col_bt = block_tear_off_header_skip(block, offset); /* BFA - Tear-Off Menu/Panel */
   for (std::unique_ptr<Button> *bt = init_col_bt; bt < end; bt++) {
     if (!ELEM((*bt)->type, ButtonType::Sepr, ButtonType::SeprLine, ButtonType::SeprSpacer)) {
       j = BLF_width(style->widget.uifont_id, (*bt)->drawstr.c_str(), (*bt)->drawstr.size());
@@ -982,6 +1091,10 @@ static void but_update_old_active_from_new(Button *oldbut, Button *but)
   /* still stuff needs to be copied */
   oldbut->rect = but->rect;
   oldbut->context = but->context; /* set by Layout */
+  /* BFA - Tear-Off Menu/Panel: pairing by order can match the same property across the header and
+   * the body, so the new button decides which side this one is on now. */
+  oldbut->tear_off_header = but->tear_off_header;
+  oldbut->tear_off_text_sized = but->tear_off_text_sized;
 
   /* drawing */
   oldbut->icon = but->icon;
@@ -1327,6 +1440,14 @@ static bool but_is_rna_undo(const Button *but)
 
 /** \} */
 
+/* BFA - Tear-Off Menu/Panel: the row has no flag of its own, its operator is what marks it. */
+bool button_is_tear_off_row(const Button *but)
+{
+  return but->optype && (STREQ(but->optype->idname, "WM_OT_menu_tear_off") ||
+                         STREQ(but->optype->idname, "WM_OT_panel_tear_off") ||
+                         STREQ(but->optype->idname, "WM_OT_enum_tear_off"));
+}
+
 /* -------------------------------------------------------------------- */
 /** \name Menu Key Accelerators
  * \{ */
@@ -1361,6 +1482,11 @@ static void menu_block_set_keyaccels(Block *block)
                 ButtonType::Row) ||
           (but.flag & UI_HIDDEN))
       {
+        continue;
+      }
+
+      /* BFA - Tear-Off Menu/Panel: the row is an addition, so regular items keep their keys. */
+      if (button_is_tear_off_row(&but)) {
         continue;
       }
 
@@ -2280,6 +2406,10 @@ void block_end_ex(const bContext *C,
 
   update_flexible_spacing(region, block);
 
+  /* BFA - Tear-Off Menu/Panel: after bounds are final, right-align the pin/close
+   * buttons of the tear-off header row to the block content width. */
+  block_tear_off_align_header(block);
+
   block->endblock = true;
   if (!postpone_callbacks) {
     block_post_layout_callbacks_exec(C, region, block);
@@ -2365,6 +2495,14 @@ void block_draw(const bContext *C, Block *block)
   rcti rect;
   button_to_pixelrect(&rect, region, block, nullptr);
 
+  /* BFA - Tear-Off Menu/Panel: the header is drawn apart, because cached widgets flush at whatever
+   * scissor is active later. */
+  const bool sticky = block_scroll_top(block) < block->rect.ymax &&
+                      (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM));
+  rctf content_block = block->rect;
+  content_block.ymax = block_scroll_top(block);
+  const rcti content_px = rect_to_pixelrect(region, block, &content_block);
+
   /* pixel space for AA widgets */
   GPU_matrix_push_projection();
   GPU_matrix_push();
@@ -2381,6 +2519,7 @@ void block_draw(const bContext *C, Block *block)
   }
   else if (block->flag & BLOCK_POPOVER) {
     draw_popover_back(region, &style, block, &rect);
+    draw_tear_off_panel_header_back(region, block); /* BFA - Tear-Off Menu/Panel */
   }
   else if (block->flag & BLOCK_LOOP) {
     draw_menu_back(&style, block, &rect);
@@ -2398,10 +2537,49 @@ void block_draw(const bContext *C, Block *block)
   if (block->panel && ELEM(region->regiontype, RGN_TYPE_HUD, RGN_TYPE_TEMPORARY)) {
     /* TODO: Add as theme color. */
     float subpanel_backcolor[4]{0.2f, 0.3f, 0.33f, 0.05f};
+    /* BFA - Tear-Off Menu/Panel: subpanels as in the region this panel came from. */
+    if (block_has_tear_off_panel_colors(block)) {
+      theme::get_color_4fv(TH_PANEL_SUB_BACK, subpanel_backcolor);
+    }
     const bTheme *btheme = theme::theme_get();
     const float aspect = block->panel->runtime->block->aspect;
     const float radius = btheme->tui.panel_roundness * U.widget_unit * 0.5f / aspect;
-    draw_layout_panels_backdrop(region, block->panel, radius, subpanel_backcolor);
+    /* BFA - Tear-Off Menu/Panel: otherwise a faint band shows behind a sticky header, and the
+     * backdrop reaches into the shadow margin below a crop. */
+    if (sticky) {
+      GPU_scissor(content_px.xmin,
+                  content_px.ymin,
+                  BLI_rcti_size_x(&content_px),
+                  std::max(BLI_rcti_size_y(&content_px), 0));
+    }
+    /* BFA - Tear-Off Menu/Panel: see the inset's comment. */
+    draw_layout_panels_backdrop(region,
+                                block->panel,
+                                radius,
+                                subpanel_backcolor,
+                                block_has_tear_off_panel_colors(block) ? U.pixelsize : 0.0f);
+    if (sticky) {
+      GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
+    }
+  }
+
+  /* BFA - Tear-Off Menu/Panel: in its own pass, flushed before the content's scissor applies. */
+  if (sticky) {
+    BLF_batch_draw_begin();
+    widgetbase_draw_cache_begin();
+    for (Button &but : block->buttons()) {
+      if (but.tear_off_header && !(but.flag & UI_HIDDEN)) {
+        rcti but_rect;
+        button_to_pixelrect(&but_rect, region, block, &but);
+        if (but_pixelrect_in_view(region, &but_rect) && but_rect.xmin < but_rect.xmax &&
+            but_rect.ymin < but_rect.ymax)
+        {
+          draw_button(C, region, &style, &but, &but_rect);
+        }
+      }
+    }
+    widgetbase_draw_cache_end();
+    BLF_batch_draw_end();
   }
 
   BLF_batch_draw_begin();
@@ -2409,13 +2587,21 @@ void block_draw(const bContext *C, Block *block)
 
   if (block->flag & (BLOCK_CLIPTOP | BLOCK_CLIPBOTTOM)) {
     const int arrow_size = UI_MENU_SCROLL_MOUSE / block->aspect;
-    const int ymax = rect.ymax - ((block->flag & BLOCK_CLIPTOP) ? arrow_size : 0.0f);
+    /* BFA - Tear-Off Menu/Panel: content ends below a sticky header, and the height can be
+     * negative in a window too small for the header. */
+    const int ymax = (sticky ? content_px.ymax : rect.ymax) -
+                     ((block->flag & BLOCK_CLIPTOP) ? arrow_size : 0.0f);
     const int ymin = rect.ymin + ((block->flag & BLOCK_CLIPBOTTOM) ? arrow_size : 0.0f);
-    GPU_scissor(rect.xmin, ymin, BLI_rcti_size_x(&rect), ymax - ymin);
+    GPU_scissor(
+        rect.xmin, ymin, BLI_rcti_size_x(&rect), sticky ? std::max(ymax - ymin, 0) : ymax - ymin);
   }
   /* widgets */
   for (Button &but : block->buttons()) {
     if (but.flag & (UI_HIDDEN | UI_SCROLLED)) {
+      continue;
+    }
+    /* BFA - Tear-Off Menu/Panel: drawn in its own pass above. */
+    if (sticky && but.tear_off_header) {
       continue;
     }
 
@@ -2440,6 +2626,11 @@ void block_draw(const bContext *C, Block *block)
     /* and material preview is redrawn in main window (temp fix for bug #23848) */
     if (rect.xmin < rect.xmax && rect.ymin < rect.ymax) {
       draw_button(C, region, &style, &but, &rect);
+      /* BFA - Tear-Off Menu/Panel: scope and curve widgets end with the test off, and rows drawn
+       * after them would paint over the sticky header. */
+      if (sticky) {
+        GPU_scissor_test(true);
+      }
     }
   }
 
@@ -2447,6 +2638,11 @@ void block_draw(const bContext *C, Block *block)
   BLF_batch_draw_end();
   block_views_draw_overlays(region, block);
   GPU_scissor(scissor[0], scissor[1], scissor[2], scissor[3]);
+
+  /* BFA - Tear-Off Menu/Panel: after the content, because a grip reaches into its edge. */
+  if (block->handle && block->handle->is_tear_off && !block->handle->tear_off_collapsed) {
+    draw_tear_off_edges(region, block);
+  }
 
   /* restore matrix */
   GPU_matrix_pop_projection();
@@ -4688,12 +4884,13 @@ void def_but_icon_clear(Button *but)
   but->drawflag &= ~BUT_ICON_LEFT;
 }
 
-static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
+/* BFA - Tear-Off Menu/Panel: this is the body of #def_but_rna__menu, with the source button's
+ * values passed in `params`, because an enum tear-off has no source button to read them from. */
+void enum_menu_draw(bContext *C, Layout *layout, const EnumMenuDrawParams &params)
 {
   Block *block = layout->block();
   PopupBlockHandle *handle = block->handle;
-  Button *but = static_cast<Button *>(but_p);
-  const int current_value = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
+  const int current_value = RNA_property_enum_get(params.ptr, params.prop);
 
   /* see comment in ui_item_enum_expand, re: `uiname`. */
   const EnumPropertyItem *item_array;
@@ -4702,8 +4899,8 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
 
   bool free;
   RNA_property_enum_items_gettexted(static_cast<bContext *>(block->evil_C),
-                                    &but->rnapoin,
-                                    but->rnaprop,
+                                    params.ptr,
+                                    params.prop,
                                     &item_array,
                                     nullptr,
                                     &free);
@@ -4720,7 +4917,7 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
   const wmWindow *win = CTX_wm_window(C);
 
   /* Calculate the maximum number of rows that can fit in half the height of this window. */
-  const float row_height = float(UI_UNIT_Y) / but->block->aspect;
+  const float row_height = float(UI_UNIT_Y) / params.aspect;
   const float vertical_space = (float(WM_window_native_pixel_y(win)) / 2.0f) - (UI_UNIT_Y * 3.0f);
   const int max_rows = std::max(int(vertical_space / row_height) - 1, 1);
 
@@ -4752,7 +4949,7 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
     rows = std::max(rows, col_rows);
   }
   text_width += col_width;
-  text_width /= but->block->aspect;
+  text_width /= params.aspect;
 
   if (categories == 0) {
     /* Long lists without categories (section titles) can be wrapped
@@ -4780,12 +4977,7 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
     rows = totitems;
   }
 
-  const char *title = RNA_property_ui_name(but->rnaprop, but->rnapoin ? &but->rnapoin : nullptr);
-
-  /* Is there a non-blank label before this button on the same row? */
-  Button *but_prev = but->block->prev_but(but);
-  const bool prior_label = but_prev && but_prev->type == ButtonType::Label && but_prev->str[0] &&
-                           but_prev->alignnr == but->alignnr;
+  const char *title = RNA_property_ui_name(params.prop, *params.ptr ? params.ptr : nullptr);
 
   /* When true, store a copy of the description and use the tool-tip callback to return that copy.
    * This way, further calls to #EnumPropertyRNA::item_fn which occur when evaluating shortcuts
@@ -4798,15 +4990,24 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
    *   Make an exception for menus as they aren't typically refreshed during animation
    *   playback or other situations where the overhead would be noticeable.
    */
-  const bool use_enum_copy_description = free &&
-                                         ((RNA_property_is_idprop(but->rnaprop) == false) &&
-                                          (RNA_property_py_data_get(but->rnaprop) != nullptr));
+  const bool is_py_enum = (RNA_property_is_idprop(params.prop) == false) &&
+                          (RNA_property_py_data_get(params.prop) != nullptr);
+  /* BFA - Tear-Off Menu/Panel: a tear-off keeps its buttons long after this call, so it can't
+   * point at strings the item function or Python may free. Static C strings need no copy. */
+  const bool use_enum_copy_description = params.copy_descriptions ? (free || is_py_enum) :
+                                                                    (free && is_py_enum);
 
-  if (title && title[0] && (categories == 0) && (!but->str[0] || !prior_label)) {
+  if (title && title[0] && (categories == 0) && params.show_title) {
     /* Show title when no categories and calling button has no text or prior label. */
     uiDefBut(
         block, ButtonType::Label, title, 0, 0, UI_UNIT_X * 5, UI_UNIT_Y, nullptr, 0.0, 0.0, "");
     layout->separator();
+  }
+
+  /* BFA - Tear-Off Menu/Panel: after the title, where a menu draws its row. A torn-off copy can't
+   * tear off again, so it passes no source. */
+  if (params.tear_off_row_source) {
+    enum_tear_off_row_draw_property(C, layout, params.tear_off_row_source);
   }
 
   /* NOTE: `item_array[...]` is reversed on access. */
@@ -4913,6 +5114,11 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
 
       button_enum_prop_value_set(item_but, item->value);
 
+      /* BFA - Tear-Off Menu/Panel */
+      if (params.item_fn) {
+        params.item_fn(*item_but, *item);
+      }
+
       if (use_enum_copy_description) {
         if (item->description && item->description[0]) {
           button_func_tooltip_set(
@@ -4931,6 +5137,24 @@ static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
   if (free) {
     MEM_delete(item_array);
   }
+}
+
+/* BFA - Tear-Off Menu/Panel: reads what #enum_menu_draw needs from the source button. */
+static void def_but_rna__menu(bContext *C, Layout *layout, void *but_p)
+{
+  Button *but = static_cast<Button *>(but_p);
+  /* Is there a non-blank label before this button on the same row? */
+  Button *but_prev = but->block->prev_but(but);
+  const bool prior_label = but_prev && but_prev->type == ButtonType::Label && but_prev->str[0] &&
+                           but_prev->alignnr == but->alignnr;
+  EnumMenuDrawParams params;
+  params.ptr = &but->rnapoin;
+  params.prop = but->rnaprop;
+  params.aspect = but->block->aspect;
+  /* Show title when no categories and calling button has no text or prior label. */
+  params.show_title = !but->str[0] || !prior_label;
+  params.tear_off_row_source = but;
+  enum_menu_draw(C, layout, params);
 }
 
 static void def_but_rna__panel_type(bContext *C, Layout *layout, void *arg)
@@ -5254,7 +5478,10 @@ static Button *def_but_operator_ptr(Block *block,
   button_operator_set(but, ot, opcontext);
 
   /* Enable quick tooltip label if this is a tool button without a label. */
-  if (str.is_empty() && !block_is_popover(block) && but_is_tool(but)) {
+  /* BFA - Tear-Off Menu/Panel: a shelf tear-off shows tools as the shelf does. */
+  if (str.is_empty() && (!block_is_popover(block) || block_is_tear_off_shelf(block)) &&
+      but_is_tool(but))
+  {
     button_drawflag_enable(but, BUT_HAS_QUICK_TOOLTIP);
   }
 

@@ -593,6 +593,13 @@ enum eUserpref_OutlinerEditorFlags : int {
   USER_OUTLINER_COL_COLLECTION_ROWS = (1 << 0),
 };
 
+/** #UserDef.bfa_ui_flag */
+/* BFA - Bforartists-only UI options, stored as *disabled* bits. Zero means on, so existing
+ * preference files keep the options on with no versioning. */
+enum eUserpref_BFA_UI_Flag : char {
+  USER_BFA_TEAR_OFF_DISABLED = (1 << 0), /* BFA - Tear-Off Menu/Panel */
+};
+
 enum eUserpref_ShaderCompileMethod : short {
   USER_SHADER_COMPILE_THREAD = 0,
   USER_SHADER_COMPILE_SUBPROCESS = 1,
@@ -1377,7 +1384,8 @@ struct UserDef {
   int outliner_editor_flag =
       USER_OUTLINER_COL_COLLECTION_ROWS; /* BFA - eUserpref_OutlinerEditorFlags */
   float node_color_blend = 0.2f;         /* BFA - Node Color Blend */
-  char _pad_custom[4] = {};              /* BFA - for future alignment/padding if needed */
+  char bfa_ui_flag = 0;                  /* BFA - #eUserpref_BFA_UI_Flag */
+  char _pad_custom[3] = {};              /* BFA - for future alignment/padding if needed */
 
   /** Runtime data (keep last). */
   UserDef_Runtime runtime;

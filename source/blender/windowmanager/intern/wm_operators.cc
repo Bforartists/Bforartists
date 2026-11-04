@@ -10,6 +10,8 @@
  */
 
 #include "UI_interface_c.hh"
+#include "interface_intern.hh" /* BFA - Tear-Off Menu/Panel */
+
 #include <algorithm>
 #include <cctype>
 #include <cerrno>
@@ -2526,6 +2528,362 @@ static void WM_OT_quit_blender(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Tear-Off Menu Operator
+ * \{ */
+
+/* BFA - Tear-Off Menu/Panel: shared by all tear-off operators, which must not run when the
+ * preference is off, whichever way they are called. */
+static bool wm_tear_off_poll(bContext *C)
+{
+  return ui::tear_off_enabled() && WM_operator_winactive(C);
+}
+
+/* BFA - Tear-Off Menu/Panel: finish a popup just created as a tear-off. Does nothing if the popup
+ * wasn't created. */
+static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle)
+{
+  if (handle == nullptr || handle->region == nullptr) {
+    return;
+  }
+
+  if (ui::Block *block = handle->region->runtime->uiblocks.first()) {
+    /* Make the popup persistent and pass-through for outside events. */
+    ui::block_flag_enable(block, ui::BLOCK_KEEP_OPEN);
+    ui::block_flag_enable(block, ui::BLOCK_TEAR_OFF);
+    ui::block_flag_disable(block, ui::BLOCK_MOVEMOUSE_QUIT);
+    ui::block_flag_enable(block, ui::BLOCK_NO_ACCELERATOR_KEYS);
+
+    /* Remember the top-left corner so the collapsed pin widget appears where the header was.
+     * Stored in window coordinates because the collapsed region covers the whole window
+     * (region-local == window). */
+    handle->tear_off_pin_xy[0] = int(block->rect.xmin) + handle->region->winrct.xmin;
+    handle->tear_off_pin_xy[1] = int(block->rect.ymax) + handle->region->winrct.ymin;
+  }
+
+  /* Record the context this popup was torn off from so it can be hidden/restored when the editor
+   * domain or its mode changes. */
+  handle->tear_off_mode = CTX_data_mode_enum(C);
+  handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
+  handle->tear_off_workspace = CTX_wm_workspace(C);
+
+  ED_region_tag_refresh_ui(handle->region);
+}
+
+/* BFA - Tear-Off Menu/Panel: the row runs in the window region because of the popup's operator
+ * context, while the popup drew in the region of the button that opened it. Some data only
+ * resolves from that region (the asset shelf's, through #ARegionType::context), so a tear-off
+ * created from the window region would redraw without it. Restored by the destructor. */
+struct TearOffSourceContext {
+  bContext *C;
+  ScrArea *area;
+  ARegion *region;
+
+  explicit TearOffSourceContext(bContext *C)
+      : C(C), area(CTX_wm_area(C)), region(CTX_wm_region(C))
+  {
+    const ARegion *popup = CTX_wm_region_popup(C);
+    const ui::Block *block = popup ? popup->runtime->uiblocks.first() : nullptr;
+    const ui::PopupBlockHandle *source = block ? block->handle : nullptr;
+    if (source && source->ctx_area && source->ctx_region) {
+      CTX_wm_area_set(C, source->ctx_area);
+      CTX_wm_region_set(C, source->ctx_region);
+    }
+  }
+  ~TearOffSourceContext()
+  {
+    CTX_wm_area_set(C, area);
+    CTX_wm_region_set(C, region);
+  }
+};
+
+/* BFA - Tear-Off Menu/Panel: a drag holds the new float until the release, see the callers. */
+static void tear_off_grab_begin(bContext *C, wmOperator *op, ui::PopupBlockHandle *handle)
+{
+  if (handle && RNA_boolean_get(op->ptr, "use_grab")) {
+    handle->is_grab = true;
+    copy_v2_v2_int(handle->grab_xy_prev, CTX_wm_window(C)->runtime->eventstate->xy);
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: set by a drag on the row, and by the panel header gesture. */
+static void tear_off_grab_prop_def(wmOperatorType *ot)
+{
+  PropertyRNA *prop = RNA_def_boolean(ot->srna, "use_grab", false, "Grab", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  /* Set by a row, see #button_activate_exit. */
+  prop = RNA_def_int_vector(
+      ot->srna, "source_xy", 2, nullptr, INT_MIN, INT_MAX, "", "", INT_MIN, INT_MAX);
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+}
+
+/* BFA - Tear-Off Menu/Panel: the new tear-off's top left stays where the popup's was, so tearing
+ * off holds it in place and doesn't jump to the cursor. The refresh tagged by
+ * #tear_off_handle_init moves it there. */
+static void tear_off_place_at_source(wmOperator *op, ui::PopupBlockHandle *handle)
+{
+  if (handle && RNA_struct_property_is_set(op->ptr, "source_xy")) {
+    RNA_int_get_array(op->ptr, "source_xy", handle->tear_off_pin_xy);
+    /* The top only holds while the block fits below it. A context menu's corner has no relation to
+     * the panel's height, and the clip only trims, so a lower top would crop the panel. */
+    if (const ui::Block *block = handle->region->runtime->uiblocks.first()) {
+      handle->tear_off_pin_xy[1] = std::max(handle->tear_off_pin_xy[1],
+                                            int(BLI_rctf_size_y(&block->rect)) + UI_SCREEN_MARGIN);
+    }
+    copy_v2_v2_int(handle->popup_create_vars.event_xy, handle->tear_off_pin_xy);
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static wmOperatorStatus wm_menu_tear_off_exec(bContext *C, wmOperator *op)
+{
+  char idname[MAX_NAME];
+  RNA_string_get(op->ptr, "menu_idname", idname);
+
+  const TearOffSourceContext source_context(C);
+
+  /* Open the popup menu in the current window */
+  ui::PopupBlockHandle *handle = nullptr;
+  wmOperatorStatus status = ui::popup_menu_invoke(C, idname, op->reports, &handle, true);
+
+  /* BFA - Tear-Off Menu/Panel */
+  tear_off_handle_init(C, handle);
+  tear_off_place_at_source(op, handle);
+  tear_off_grab_begin(C, op, handle);
+
+  return status;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_menu_tear_off(wmOperatorType *ot)
+{
+  ot->name = "Tear-Off Menu";
+  ot->idname = "WM_OT_menu_tear_off";
+  ot->description = "Tear-Off menu to a persistent floating window";
+
+  ot->exec = wm_menu_tear_off_exec;
+  ot->poll = wm_tear_off_poll;
+
+  RNA_def_string(ot->srna, "menu_idname", "Menu", MAX_NAME, "Menu", "");
+  tear_off_grab_prop_def(ot); /* BFA - Tear-Off Menu/Panel */
+}
+
+/* BFA - Tear-Off Menu/Panel: the tear-off an operator was called from, or null. The operators run
+ * from buttons in the tear-off, and popup_handler sets the context popup before dispatching. */
+static ui::PopupBlockHandle *tear_off_handle_from_context(bContext *C)
+{
+  wmWindow *win = CTX_wm_window(C);
+  ARegion *region = CTX_wm_region_popup(C);
+  return (win && region) ? ui::tear_off_handle_from_region(win, region) : nullptr;
+}
+
+/* BFA - Tear-Off Menu/Panel: shared by the menu and panel close operators. */
+static wmOperatorStatus wm_tear_off_close_exec(bContext *C, wmOperator * /*op*/)
+{
+  ui::PopupBlockHandle *menu = tear_off_handle_from_context(C);
+  if (menu == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
+
+  menu->menuretval = ui::RETURN_CANCEL;
+  /* BFA - Tear-Off Menu/Panel: popup_handler consumes menuretval on the next event.
+   * Force one, because after-funcs may free popups so popup_handler can't safely read
+   * the handle again after running them. */
+  WM_event_add_mousemove(CTX_wm_window(C));
+  return OPERATOR_FINISHED;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_menu_tear_off_close(wmOperatorType *ot)
+{
+  ot->name = "Close Menu";
+  ot->idname = "WM_OT_menu_tear_off_close";
+  ot->description = "Close the torn-off menu";
+
+  ot->exec = wm_tear_off_close_exec;
+  ot->poll = wm_tear_off_poll;
+}
+
+/* BFA - Tear-Off Menu/Panel: collapse the pinned menu or panel to the small pin widget. */
+static wmOperatorStatus wm_tear_off_collapse_exec(bContext *C, wmOperator * /*op*/)
+{
+  ui::PopupBlockHandle *menu = tear_off_handle_from_context(C);
+  if (menu == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
+
+  ui::tear_off_set_collapsed(menu, true, CTX_wm_window(C));
+  return OPERATOR_FINISHED;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
+{
+  ot->name = "Collapse Menu";
+  ot->idname = "WM_OT_menu_tear_off_collapse";
+  ot->description = "Collapse the torn-off menu to a pin";
+
+  ot->exec = wm_tear_off_collapse_exec;
+  ot->poll = wm_tear_off_poll;
+}
+
+/* BFA - Tear-Off Menu/Panel: stores identifiers rather than a button, because the source button
+ * can be freed on redraw and pointers don't survive undo. */
+static wmOperatorStatus wm_enum_tear_off_exec(bContext *C, wmOperator *op)
+{
+  const TearOffSourceContext source_context(C);
+  ui::PopupBlockHandle *handle = ui::enum_tear_off_popup_create(C, op->ptr);
+  if (handle == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
+  tear_off_handle_init(C, handle);
+  tear_off_place_at_source(op, handle);
+  tear_off_grab_begin(C, op, handle);
+  return OPERATOR_INTERFACE;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_enum_tear_off(wmOperatorType *ot)
+{
+  ot->name = "Tear-Off Enum Menu";
+  ot->idname = "WM_OT_enum_tear_off";
+  ot->description = "Tear-Off this list to a persistent floating window";
+
+  ot->exec = wm_enum_tear_off_exec;
+  ot->poll = wm_tear_off_poll;
+  ot->flag = OPTYPE_INTERNAL;
+
+  PropertyRNA *prop;
+  prop = RNA_def_string(
+      ot->srna, "data_path", nullptr, 0, "Data Path", "Path to the enum property");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_boolean(
+      ot->srna, "use_context", false, "Use Context", "Resolve the path from the context");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_int(
+      ot->srna, "id_type", 0, SHRT_MIN, SHRT_MAX, "ID Type", "", SHRT_MIN, SHRT_MAX);
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  WM_operator_properties_id_lookup(ot, false); /* Adds a hidden "session_uid". */
+  prop = RNA_def_string(ot->srna, "op_idname", nullptr, 0, "Operator", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_string(ot->srna, "op_propname", nullptr, 0, "Operator Property", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_int(ot->srna,
+                     "op_context",
+                     int(wm::OpCallContext::InvokeRegionWin),
+                     0,
+                     int(wm::OpCallContext::ExecScreen),
+                     "Operator Context",
+                     "",
+                     0,
+                     int(wm::OpCallContext::ExecScreen));
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  tear_off_grab_prop_def(ot);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Tear-Off Panel Operator
+ * \{ */
+
+static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
+{
+  char idname[MAX_NAME];
+  RNA_string_get(op->ptr, "panel_idname", idname);
+  const bool from_region_panel = RNA_boolean_get(op->ptr, "from_region_panel");
+
+  /* BFA - Tear-Off Menu/Panel: save the original popup region before creating
+   * the tear-off, since popover_panel_invoke changes CTX_wm_region_popup. */
+  ARegion *region_popup_orig = CTX_wm_region_popup(C);
+
+  /* BFA - Tear-Off Menu/Panel: changes nothing for a region panel, which isn't in a popup. */
+  const TearOffSourceContext source_context(C);
+
+  /* BFA - Tear-Off Menu/Panel: resolved once, so the panel and its label can't disagree. */
+  PanelType *pt = ui::tear_off_paneltype_find(C, idname);
+  if (pt == nullptr) {
+    BKE_reportf(op->reports, RPT_ERROR, "Panel \"%s\" not found", idname);
+    return OPERATOR_CANCELLED;
+  }
+
+  /* BFA - Tear-Off Menu/Panel: a row in a popover isn't the shelf, even inside one. */
+  const ui::TearOffInit tear_off_init = from_region_panel ?
+                                            ui::tear_off_init_from_region(C, pt) :
+                                            ui::TearOffInit{};
+
+  ui::PopupBlockHandle *handle = nullptr;
+  wmOperatorStatus status = ui::popover_paneltype_invoke(
+      C, pt, true, false, &handle, true, tear_off_init, RNA_boolean_get(op->ptr, "skip_poll"));
+
+  /* BFA - Tear-Off Menu/Panel */
+  tear_off_handle_init(C, handle);
+  tear_off_place_at_source(op, handle);
+
+  tear_off_grab_begin(C, op, handle); /* BFA - Tear-Off Menu/Panel */
+
+  /* BFA - Tear-Off Menu/Panel: close the original popover/menu so it behaves like tear-off menus
+   * (original closes when torn off). A region panel stays in place: it's a second live view. */
+  if (region_popup_orig && !from_region_panel) {
+    ui::tear_off_source_popup_close_tag(region_popup_orig);
+    /* BFA - Tear-Off Menu/Panel: the source closes on the next event, which has to get past the
+     * new tear-off under the cursor. */
+    WM_event_add_mousemove(CTX_wm_window(C));
+    if (handle) {
+      handle->tear_off_pass_next_mousemove = true;
+    }
+  }
+
+  return status;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_panel_tear_off(wmOperatorType *ot)
+{
+  ot->name = "Tear-Off Panel";
+  ot->idname = "WM_OT_panel_tear_off";
+  ot->description = "Tear-Off panel to a persistent floating window";
+
+  /* For a stored pin. Its first layout has the same guard against a failing poll as a live pin's
+   * refresh. */
+  PropertyRNA *prop_skip_poll = RNA_def_boolean(ot->srna, "skip_poll", false, "Skip Poll", "");
+  RNA_def_property_flag(prop_skip_poll, PROP_HIDDEN | PROP_SKIP_SAVE);
+
+  ot->exec = wm_panel_tear_off_exec;
+  ot->poll = wm_tear_off_poll;
+
+  RNA_def_string(ot->srna, "panel_idname", "Panel", MAX_NAME, "Panel", "");
+  /* BFA - Tear-Off Menu/Panel: set by the panel header gesture and context menu. */
+  PropertyRNA *prop = RNA_def_boolean(
+      ot->srna, "from_region_panel", false, "From Region Panel", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  tear_off_grab_prop_def(ot);
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_panel_tear_off_collapse(wmOperatorType *ot)
+{
+  ot->name = "Collapse Panel";
+  ot->idname = "WM_OT_panel_tear_off_collapse";
+  ot->description = "Collapse the torn-off panel to a pin";
+
+  ot->exec = wm_tear_off_collapse_exec;
+  ot->poll = wm_tear_off_poll;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_panel_tear_off_close(wmOperatorType *ot)
+{
+  ot->name = "Close Panel";
+  ot->idname = "WM_OT_panel_tear_off_close";
+  ot->description = "Close the torn-off panel";
+
+  ot->exec = wm_tear_off_close_exec;
+  ot->poll = wm_tear_off_poll;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Console Toggle Operator (WIN32 only)
  * \{ */
 
@@ -4384,6 +4742,13 @@ void wm_operatortypes_register()
   WM_operatortype_append(WM_OT_search_single_menu);
   WM_operatortype_append(WM_OT_call_menu);
   WM_operatortype_append(WM_OT_call_menu_pie);
+  WM_operatortype_append(WM_OT_menu_tear_off); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_menu_tear_off_close); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_menu_tear_off_collapse); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_enum_tear_off); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_panel_tear_off); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_panel_tear_off_close); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_panel_tear_off_collapse); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_call_panel);
   WM_operatortype_append(WM_OT_call_asset_shelf_popover);
   WM_operatortype_append(WM_OT_radial_control);
