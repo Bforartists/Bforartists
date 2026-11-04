@@ -4,7 +4,7 @@
 
 **Bforartists' factory default is Load UI off.** With default settings a file's own pins don't load: you keep the workspaces you have, and their pins. Pins in the startup file load at the start of a session either way. Recover Last Session follows Load UI too.
 
-**Picking the template already in use, with Load UI off, keeps the current workspaces and their pins.** Upstream's rule, unchanged: a template forces its UI only when it differs from the current one. Measured as the same on this build, a build without tear-offs, and 5.2.3. A different template always resets.
+**Choosing a template in File > New always brings its workspaces, and plain New never does**, whatever Load UI is set to: New is a blank slate in the workspaces you're in, so your pins stay. This differs from upstream on purpose, see `45af096c9db`. A script's own `load_ui` still counts, and a plain script call still follows the preference.
 
 **The request:**
 - With **Load UI on**, opening a file brings back the panels pinned in that file.
@@ -23,7 +23,8 @@ Blender already decides where workspaces come from, and this rule matches the re
 | Open, Load UI on | The file | The file's |
 | Open, Load UI off | Kept from the session | The ones you have now |
 | Start the app | The startup file | The startup file's |
-| File > New | Follows Load UI, as above | The startup file's, or the ones you have now |
+| File > New | Kept from the session, whatever Load UI is set to | The ones you have now |
+| File > New > a template | That template, whatever Load UI is set to | The template's |
 | Load Factory Settings | Factory startup | None |
 | Open an old file, or one saved in Blender | The file | None, as today |
 | Library or asset file | Kept from the session (treated as Load UI off) | The ones you have now |

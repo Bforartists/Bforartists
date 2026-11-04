@@ -7783,6 +7783,60 @@ SC["restore_small_a"] = s_restore_small_a
 SC["restore_small_b"] = s_restore_small_b
 
 
+def template_state():
+    """'file' if the workspaces are still the marked ones of the saved file, or 'template'."""
+    return "file" if any(ws.name.startswith("MARK") for ws in bpy.data.workspaces) else "template"
+
+
+def s_template_rule():
+    """Choosing a template always brings its workspaces, and plain New never does."""
+    yield from begin()
+    prefs = bpy.context.preferences.filepaths
+    win().workspace.name = "MARK Saved"
+    yield 0.5
+    path = store_path("template")
+    yield from save_file(path)
+    for load_ui in (True, False):
+        prefs.use_load_ui = load_ui
+        tag = "Load UI " + ("on" if load_ui else "off")
+        # The template already in use, and another one.
+        for template in ("", "2D_Animation", "2D_Animation", ""):
+            yield from open_file(path, load_ui=True)
+            check(tag + ": the file's UI is loaded", template_state() == "file", template_state())
+            bpy.ops.wm.read_homefile(app_template=template)
+            yield 1.2
+            check(f"{tag}: choosing {template or 'General'} brings its workspaces",
+                  template_state() == "template", template_state())
+            check(tag + ": the preference is unchanged", prefs.use_load_ui == load_ui)
+        # A script can still say no.
+        yield from open_file(path, load_ui=True)
+        bpy.ops.wm.read_homefile(app_template="", load_ui=False)
+        yield 1.2
+        check(tag + ": a script's own load_ui counts", template_state() == "file", template_state())
+        # The shortcut: a blank slate in the current workspaces.
+        yield from open_file(path, load_ui=True)
+        x, y = center()
+        move(x, y); yield 0.3
+        move(x, y); yield 0.3
+        win().event_simulate(type="N", value="PRESS", ctrl=True, x=x, y=y); yield 0.1
+        win().event_simulate(type="N", value="RELEASE", ctrl=True, x=x, y=y); yield 1.5
+        check(tag + ": Ctrl+N keeps the workspaces", template_state() == "file", template_state())
+        check(tag + ": and it's a new file", bpy.data.filepath == "", bpy.data.filepath)
+    # What the next load does is still the preference.
+    prefs.use_load_ui = False
+    yield from open_file(path, load_ui=True)
+    bpy.ops.wm.read_homefile(app_template="")
+    yield 1.2
+    yield from open_file(path, load_ui=True)
+    bpy.ops.wm.read_homefile()
+    yield 1.2
+    check("a script's plain call still follows the preference", template_state() == "file",
+          template_state())
+
+
+SC["template_rule"] = s_template_rule
+
+
 def s_store_startup_a():
     yield from begin()
     move(*center()); yield 0.3
