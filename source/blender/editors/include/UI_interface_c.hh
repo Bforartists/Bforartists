@@ -2507,6 +2507,12 @@ void tear_off_handlers_remove_for_workspace(bContext *C,
                                             wmWindow *win,
                                             const WorkSpace *workspace);
 /**
+ * BFA - Tear-Off Menu/Panel: a file load is about to close every pin. They go on their workspace's
+ * list first, which is what keeps them through a Load UI off open. With Load UI on, those
+ * workspaces go too.
+ */
+void tear_off_store_closing_all(Main *bmain, wmWindowManager *wm);
+/**
  * BFA - Tear-Off Menu/Panel: goes directly around a #BLO_write_file. For that long each workspace's
  * list also holds its open pins, so they're in the file while the session's list stays what's still
  * to restore. Otherwise a save would leave them on it, and they'd come back duplicated, or after

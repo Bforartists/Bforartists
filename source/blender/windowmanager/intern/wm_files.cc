@@ -242,6 +242,9 @@ static BlendFileReadWMSetupData *wm_file_read_setup_wm_init(bContext *C,
    * Code copied from `wm_init_exit.cc`. */
   WM_jobs_kill_all(wm);
 
+  /* BFA - Tear-Off Menu/Panel: the file was read, so a failed open can't lose them. */
+  ui::tear_off_store_closing_all(bmain, wm);
+
   wmWindow *active_win = CTX_wm_window(C);
   for (wmWindow &win : wm->windows) {
     CTX_wm_window_set(C, &win); /* Needed by operator close callbacks. */

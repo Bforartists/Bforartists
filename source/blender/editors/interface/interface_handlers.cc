@@ -13945,6 +13945,8 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
    * get past that popup. The mouse move added when the popup closes brings it back here. */
   if (menu->is_tear_off && !tear_off_enabled() && !tear_off_under_regular_popup(C, menu)) {
     wmWindow *win = CTX_wm_window(C);
+    /* Turning the preference back on brings it back, and a save meanwhile keeps it. */
+    tear_off_store_closing_one(CTX_data_main(C), win, menu);
     /* A collapsed pin sets this cursor over its label and nothing else would restore it. */
     if (menu->tear_off_collapsed && win->cursor == WM_CURSOR_MOVE) {
       WM_cursor_set(win, WM_CURSOR_DEFAULT);
@@ -14751,6 +14753,11 @@ void refresh_for_srna_unregister(Main *bmain, StructRNA *srna_to_unreg)
       PopupBlockHandle *popup_block_handle = static_cast<PopupBlockHandle *>(handler->user_data);
       if (!popup_needs_update_for_unreg_srna_recursive(C, popup_block_handle, srna_to_unreg)) {
         return;
+      }
+      /* BFA - Tear-Off Menu/Panel: Reload Scripts and disabling an add-on only take the type away
+       * for now. It's still valid here, as it's freed after this. */
+      if (popup_block_handle->is_tear_off) {
+        tear_off_store_closing_one(bmain, CTX_wm_window(C), popup_block_handle);
       }
       if (handler->remove_fn) {
         handler->remove_fn(C, handler->user_data);

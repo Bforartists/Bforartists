@@ -218,6 +218,86 @@ static void entries_copy(const IDProperty *from, IDProperty *to, int &index)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Pins That Close Without Being Removed
+ * \{ */
+
+/* Null if the workspace's properties can't be trusted. A list of the wrong type goes, as nothing
+ * could read it. */
+static IDProperty *list_ensure(WorkSpace *workspace)
+{
+  IDProperty *root = IDP_ID_system_properties_ensure(&workspace->id);
+  if (!group_is_sound(root)) {
+    return nullptr;
+  }
+  IDProperty *list = IDP_GetPropertyFromGroup(root, TEAR_OFF_LIST_KEY);
+  if (list && !group_is_sound(list)) {
+    IDP_FreeFromGroup(root, list);
+    list = nullptr;
+  }
+  if (list == nullptr) {
+    list = idprop::create_group(TEAR_OFF_LIST_KEY).release();
+    IDP_AddToGroup(root, list);
+  }
+  return list;
+}
+
+/* A file with no pins has no list. */
+static void list_free_if_empty(WorkSpace *workspace, IDProperty *list)
+{
+  if (list->len == 0) {
+    IDP_FreeFromGroup(IDP_ID_system_properties_get(&workspace->id), list);
+  }
+}
+
+/* An entry can have any name in a file, so the next counter isn't always free. */
+static int list_next_index(const IDProperty *list)
+{
+  int index = list->len;
+  while (IDP_GetPropertyFromGroup(list, std::to_string(index))) {
+    index++;
+  }
+  return index;
+}
+
+void tear_off_store_closing_all(Main *bmain, wmWindowManager *wm)
+{
+  for (WorkSpace &workspace : bmain->workspaces) {
+    if (!workspace_has_open_pins(wm, &workspace)) {
+      continue;
+    }
+    if (IDProperty *list = list_ensure(&workspace)) {
+      int index = list_next_index(list);
+      entries_add_open_pins(bmain, wm, &workspace, list, index);
+      list_free_if_empty(&workspace, list);
+    }
+  }
+}
+
+void tear_off_store_closing_one(Main *bmain, const wmWindow *win, const PopupBlockHandle *handle)
+{
+  /* The workspace can be on its way out, with the handle not yet told. */
+  if (WM_window_is_temp_screen(win) ||
+      BLI_findindex(&bmain->workspaces, handle->tear_off_workspace) == -1)
+  {
+    return;
+  }
+  IDProperty *list = list_ensure(handle->tear_off_workspace);
+  if (list == nullptr) {
+    return;
+  }
+  if (IDProperty *entry = entry_create(bmain, *win, *handle, list_next_index(list))) {
+    IDP_AddToGroup(list, entry);
+    /* Pins close newest first, because that's the order handlers run in. Oldest first on the list
+     * means they stack as they did. */
+    BLI_remlink(&list->data.group, entry);
+    BLI_addhead(&list->data.group, entry);
+  }
+  list_free_if_empty(handle->tear_off_workspace, list);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Saving
  * \{ */
 

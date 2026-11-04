@@ -1404,6 +1404,8 @@ wmOperatorStatus popover_paneltype_invoke(bContext *C,
 PanelType *tear_off_paneltype_find(const bContext *C, const char *idname);
 /* BFA - Tear-Off Menu/Panel: null if this tear-off isn't of a panel type. */
 const char *tear_off_panel_idname(const PopupBlockHandle *handle);
+/* BFA - Tear-Off Menu/Panel: this pin is about to close, but not because the user removed it. */
+void tear_off_store_closing_one(Main *bmain, const wmWindow *win, const PopupBlockHandle *handle);
 /* BFA - Tear-Off Menu/Panel: the tear-off on this modal handler, or null. */
 PopupBlockHandle *tear_off_from_handler(blender::wmEventHandler *handler);
 /* BFA - Tear-Off Menu/Panel: creation data for a panel torn off the current region. */
