@@ -604,7 +604,8 @@ msgid "Animation Data"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﻩٔﺩﺍﺩ"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "ﻩﺩﺍﺩ ﮎﻮﻠﺑ ﯼﺍﺮﺑ ﻦﺸﯿﻤﯿﻧﺍ ﯼﺎﻫ ﻩﺩﺍﺩ"
 
 
@@ -612,7 +613,8 @@ msgid "Action"
 msgstr "ﻞﻤﻋ"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "ﻩﺩﺍﺩ ﮎﻮﻠﺑ ﻦﯾﺍ ﯼﺍﺮﺑ ﻝﺎﻌﻓ ﻡﺍﺪﻗﺍ"
 
 
@@ -712,7 +714,8 @@ msgid "Drivers"
 msgstr "ﺎﻫﺭﻮﯾﺍﺭﺩ"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "ﻩﺩﺍﺩ ﮎﻮﻠﺑ ﻦﯾﺍ ﺕﺍﺭﺎﺒﻋ/ﺎﻫﺭﻮﯾﺍﺭﺩ"
 
 
@@ -980,7 +983,8 @@ msgid "Show Menus"
 msgstr "ﺎﻫﻮﻨﻣ ﺶﯾﺎﻤﻧ"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "ﺭﺪﻫ ﺭﺩ ﺎﻫ ﻮﻨﻣ ﺶﯾﺎﻤﻧ"
 
 
@@ -1104,7 +1108,8 @@ msgid "Outliner"
 msgstr "ءﺎﯿﺷﺍ ﺖﯾﺮﯾﺪﻣ"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "ﺩﻮﺟﻮﻣ ﻩﺩﺍﺩ ﯼﺎﻫ ﮎﻮﻠﺑ ﻡﺎﻤﺗ ﻭ ﻪﻨﺤﺻ ﺭﺍﺩﻮﻤﻧ ﯽﻠﮐ ﯼﺎﻤﻧ"
 
 
@@ -1112,7 +1117,8 @@ msgid "Properties"
 msgstr "ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "ﻦﮐ ﺶﯾﺍﺮﯾﻭ ﺍﺭ ﻂﺒﺗﺮﻣ ﻩﺩﺍﺩ ﯼﺎﻫ ﮎﻮﻠﺑ ﻭ ﻝﺎﻌﻓ ﯽﺷ ﯼﺎﻫ ﯽﮔﮋﯾﻭ"
 
 
@@ -5379,3 +5385,41 @@ msgstr "ﻮﻣ ﯽﻨﺤﻨﻣ ﻥﺩﺮﮐ ﻑﺎﺻ"
 msgid "Amount of straightening"
 msgstr "ﻥﺩﺮﮐ ﻑﺎﺻ ﺭﺍﺪﻘﻣ"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  ﺎﻫ‌ﮎﺮﺗ ﻦﺘﺳﻮﯿﭘ"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "ﻑﺬﺣ"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "ﺩﻮﺷ ﺲﮑﻋﺮﺑ ﻡﻭﺯ ﺖﻬﺟ"
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "ﺖﻬﺟ"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "ﻪﺑﺎﺸﻣ ﺏﺎﺨﺘﻧﺍ"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "ﻪﺑﺎﺸﻣ ﺏﺎﺨﺘﻧﺍ"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "ﻉﻮﻧ"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "ﻩﺪﺸﻧ ﺭﺍﺬﮔﺍﻭ (Catalogue)"

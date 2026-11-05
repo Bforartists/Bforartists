@@ -700,7 +700,8 @@ msgid "Show Menus"
 msgstr "ﺔﻤﺋﺎﻘﻟﺍ ﺮﻬﻇﺃ"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "ﺔﻴﺳﺃﺮﻟﺍ ﻲﻓ ﺔﻤﺋﺎﻘﻟﺍ ﺮﻬﻇﺃ"
 
 
@@ -1012,7 +1013,8 @@ msgid "Bake Data"
 msgstr "ﺕﺎﻧﺎﻴﺒﻟﺍ ﻥﺰﺧ"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "ﺪﻬﺸﻤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻜﻟ ﺕﺎﻧﺎﻴﺒﻟﺍ ﻥﺰﺧ"
 
 
@@ -1152,7 +1154,8 @@ msgid "Internal"
 msgstr "ﻲﻠﺧﺍﺩ"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "ﺔﻴﻠﺧﺍﺩ ﺓﺭﻮﺻ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻛ ﻲﻓ ﻥﺰﺨﻤﻟﺍ ﺔﻄﻳﺮﺧ ﻆﻔﺣﺍ"
 
 
@@ -2495,7 +2498,8 @@ msgid "Stereo"
 msgstr "ﻮﻳﺮﻴﺘﺳ"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "ﺍﺮﻴﻣﺎﻜﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻜﻟ ﻢﻴﺴﺠﺘﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
@@ -19309,8 +19313,9 @@ msgid "Clear Useless Actions"
 msgstr "ﺔﻣﺪﺨﺘﺴﻣ ﺮﻴﻐﻟﺍ ﺕﺎﻛﺮﺤﻟﺍ ﻒﻈﻧ"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "...ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺮﻳﺪﺼﺗ"
 
 
@@ -19988,7 +19993,10 @@ msgid "Set Keyframe Interpolation"
 msgstr "ﺡﺎﺘﻔﻤﻟﺍ ﺪﻴﻟﻮﺗ ﻊﺿ"
 
 
-msgid "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+# BFA - reworded, Blender: "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgid ""
+"Keyframe Interpolation\n"
+"Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺡﺎﺘﻔﻤﻟﺍ ﻦﻣ ﺎﻗﻼ﻿ﻄﻧﺍ ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﻡﺎﺴﻗﻷ﻿ ﺪﻴﻟﻮﺘﻟﺍ ﻊﺿﻭ ﻊﺿ"
 
 
@@ -20154,12 +20162,14 @@ msgid "Create New Action"
 msgstr "ﺪﻳﺪﺟ ﺙﺪﺣ ﺊﺸﻧﺃ"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "ﺙﺪﺤﻟﺍ ﻞﺼﻓﺇ"
 
 
-msgid "Reset viewable area to show full keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show full keyframe range"
+msgid "Zooms in or out to fit the display to show full keyframe range"
 msgstr "ﻼ﻿ﻣﺎﻛ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻕﺎﻄﻧ ﺭﺎﻬﻇﻹ﻿ ﺓﺮﻫﺎﻈﻟﺍ ﺔﻘﻄﻨﻤﻟﺍ ﻂﺒﺿ ﺪﻋﺃ"
 
 
@@ -20316,7 +20326,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "(ﺭﺍﺭﺯﺍ) ﺡﺎﺘﻔﻣ ﻞﺧﺩﺍ"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "ﺔﻴﻟﺎﺤﻟﺍ ﺔﻟﺎﻌﻔﻟﺍ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﺔﻴﺻﺎﺨﻟ ﺡﺎﺘﻔﻣ ﻒﺿﺃ"
 
 
@@ -21513,7 +21524,8 @@ msgid "Shrink/Fatten"
 msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "ﺓﺭﺎﺘﺨﻣ ﺮﻴﻐﻟﺍ ﻢﻜﺤﺘﻟﺍ ﻂﻘﻧ ﺮﻴﻔﺧﺍ"
 
 
@@ -25144,7 +25156,8 @@ msgid "Remove Paint Curve Point"
 msgstr "ﻢﺳﺮﻟﺍ ﻰﻨﺤﻨﻣ ﺔﻄﻘﻧ ﻑﺬﺣﺇ"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "ﻰﻨﺤﻨﻣ ﻢﺳﺭﺃ"
 
 
@@ -25262,6 +25275,7 @@ msgid "Less than 90 limits the angle used in the tonal range"
 msgstr "ﻲﻤﻐﻨﻟﺍ ﻕﺎﻄﻨﻟﺍ ﻲﻓ ﺔﻠﻤﻌﺘﺴﻤﻟﺍ ﺔﻳﻭﺍﺰﻟﺍ ﺪﺤﺗ 90 ﻦﻣ ﻞﻗﺃ"
 
 
+# BFA - reworded, Blender: "Set Vertex Colors"
 msgctxt "Operator"
 msgid "Set Vertex Color"
 msgstr "ﻂﻘﻨﻟﺍ ﻥﺍﻮﻟﺍ ﻊﺿ"
@@ -25472,7 +25486,7 @@ msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻥﺍﺯﻭﺍ ﻭ ﻲﻟﺎﺤﻟﺍ ﺓﺎ�
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "ﺔﻔﻗﻮﻟﺍ ﻞﺼّﻔﻣ"
 
 
@@ -26500,7 +26514,8 @@ msgid "Duplicate the current line"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﺮﻄﺴﻟﺍ ﺦﺴﻧﺍ"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "ﺮﻄﺴﻠﻟ ﺮﺷﺆﻤﻟﺎﺑ ﺰﻔﻗﺍ"
 
 
@@ -26928,8 +26943,9 @@ msgid "Select all pinned UV vertices"
 msgstr "ﺔﺘﺒﺜﻤﻟﺍ UV ﻂﻘﻧ ﻞﻛ ﺮﺘﺧﺇ"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "ﻞﺻﺎﻔﻟﺍ ﺮﺘﺧﺍ"
 
 
@@ -27434,8 +27450,9 @@ msgid "Save Startup File"
 msgstr "ﻲﺋﺍﺪﺒﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﻊﺿ"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "ﺭﺪﻨﻠﺒﻟﺍ ﻒﻠﻣ ﻆﻔﺣﺍ"
 
 
@@ -30276,7 +30293,8 @@ msgid "Result of rendering, including all layers and passes"
 msgstr "ﺔﻨﻤﻀﺘﻤﻟﺍ ﺕﺎﻘﺒﻄﻟﺍ ﻭ ﺕﺎﻘﺒﻄﻟﺍ ﻞﻛ ﻞﻤﺸﺗ ،ﺮﻴﻴﺼﺘﻟﺍ ﺔﺠﻴﺘﻧ"
 
 
-msgid "Rendering settings for a Scene data-block"
+# BFA - reworded, Blender: "Rendering settings for a Scene data-block"
+msgid "Rendering settings for a Scene"
 msgstr "ﺪﻬﺸﻣ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻜﻟ ﺮﻴﻴﺼﺘﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
@@ -32883,7 +32901,8 @@ msgid "View Height"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﻉﺎﻔﺗﺭﺇ"
 
 
-msgid "Lighting for a World data-block"
+# BFA - reworded, Blender: "Lighting for a World data-block"
+msgid "Lighting for a World data"
 msgstr "ﻢﻟﺎﻋ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻜﻟ ﺓءﺎﺿﻹ﻿ﺍ"
 
 
@@ -32899,7 +32918,8 @@ msgid "World Mist"
 msgstr "ﻢﻟﺎﻋ ﺏﺎﺒﺿ"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "ﻢﻟﺎﻌﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻜﻟ ﺏﺎﺒﻀﻟﺍ ﺩﺍﺪﻋﺇ"
 
 
@@ -34114,8 +34134,9 @@ msgid "Sound"
 msgstr "ﺕﻮﺻ"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "ﺕﺎﻛﺮﺤﻟﺍ ﺔﻃﺮﺷﺃ ﻞﻳﺪﻌﺗ ﻦﻋ ﻒﻗﻮﺗ"
 
 
@@ -34154,8 +34175,9 @@ msgid "Text"
 msgstr "ﺺﻧ"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "...ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺮﻴﻏ"
 
 
@@ -34403,8 +34425,9 @@ msgid "Extend Child"
 msgstr "ﻉﺮﻔﻟﺍ ﻊﻴﺳﻮﺗ"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻂﻤﻧ"
 
 
@@ -34513,8 +34536,9 @@ msgid "Path"
 msgstr "ﺭﺎﺴﻤﻟﺍ"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "ﺲﺑﺮﻧ ﺢﻄﺳ"
 
 
@@ -36142,7 +36166,8 @@ msgid "Mean Bevel Weight:"
 msgstr ":ﻂﺳﻮﺘﻠﻟ ﺔﻔﻄﺸﻟﺍ ﻥﺯﻭ"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr ":X ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
 
 
@@ -36447,7 +36472,8 @@ msgid "Create Along Paths"
 msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﻝﻮﻃ ﻰﻠﻋ ﺊﺸﻧﺃ"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr ":ﻲﻤﻟﺎﻌﻟﺍ ﺮﻴﺛﺄﺘﻟﺍ"
 
 
@@ -36815,3 +36841,117 @@ msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﻞﺒﻗ ﻦﻣ ﺔﺒﺼﻨﻤﻟﺍ ﺲﺑ�
 msgid "Import-Export"
 msgstr "ﺪﻳﺭﻮﺗ-ﺮﻳﺪﺼﺗ"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "ﺔﻔﻗﻮﻟﺍ ﻞﺼّﻔﻣ (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      ﺔﻌﻨﻗﻷ﻿ﺍ"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  ﺕﺍﺭﺎﺴﻤﻟﺍ ﺞﻣﺩﺍ"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "ﺔﻤﺴﻟﺍ ﺐﺴﺣ ﻞﻛ ﺭﺎﻴﺘﺧﺍ"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "ﺔﻴﺗﺍﺫ ﺔﻓﺎﺿﺇ"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "ﺔﻳﺍﺪﺒﻟﺍ ﻢﻠﻗ"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "ﺔﻳﺍﺪﺒﻟﺍ ﻢﻠﻗ"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "ﻑﺬﺣﺍ"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "ﻖﻤﻌﻟﺍ"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "ﺮﻄﺴﻠﻟ ﺮﺷﺆﻤﻟﺎﺑ ﺰﻔﻗﺍ"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "ﻢﻠﻔﻟﺍ"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "ﺔﻋﻮﻤﺠﻤﻟﺍ ﺮﺘﺧﺍ"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "ﺔﻋﻮﻤﺠﻤﻟﺍ ﺮﺘﺧﺍ"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "ﻢﻴﺠﺤﺘﻟﺍ ﻩﺎﺠﺗﺍ ﺲﻜﻋﺇ"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "ﻦﺗﺎﻬﻨﻣ"
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "ﻩﺎﺠﺗﺍ"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "ءﺎﻄﻏ"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "ﺮﻬﻇﺃ"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "ﺢﺼّﻧ/ﺶﻤﻜﻧﺍ"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "ﻞﺛﺎﻤﻤﻟﺍ ﺮﺘﺧﺇ"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "ﻞﺋﺎﻤﺘﻤﻟﺍ ﺭﺎﺘﺧﺇ"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Nurbs ﺓﺮﺋﺍﺩ"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "ﻉﻮﻨﻟﺍ"
+
+# BFA - reworded, Blender: "Use internal text data-block"
+msgid "Use internal text data"
+msgstr "ﺔﻴﻠﺧﺍﺩ ﺺﻧ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻛ ﻡﺪﺨﺘﺳﺍ"
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "ﺩﻭﺪﺤﻟﺍ ﻰﺘﺣ ﻢﺠّﺣ"

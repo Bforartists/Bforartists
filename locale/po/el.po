@@ -732,7 +732,8 @@ msgid "Animation Data"
 msgstr "Δεδομένα Κινησιοδότησης"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Δεδομένα κινησιοδότησης για μπλοκ δεδομένων"
 
 
@@ -740,7 +741,8 @@ msgid "Action"
 msgstr "Ενέργεια"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Ενεργή Ενέργεια για αυτό το μπλοκ δεδομένων"
 
 
@@ -1144,7 +1146,8 @@ msgid "Show Menus"
 msgstr "Εμφάνιση των Μενού"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Εμφάνιση των μενού στην κεφαλίδα"
 
 
@@ -2475,3 +2478,15 @@ msgstr "Αντικατάσταση πρωτότυπης ακτίνας"
 msgid "Replace Length"
 msgstr "Αντικατάσταση μήκους"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Διαγραφή"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Τύπος"

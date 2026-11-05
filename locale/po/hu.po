@@ -1048,7 +1048,8 @@ msgid "Weight"
 msgstr "Súly"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Kollekció adatblokkok"
 
 
@@ -1056,7 +1057,8 @@ msgid "Color Space"
 msgstr "Színtér"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Görbe adatblokkok"
 
 
@@ -1072,23 +1074,28 @@ msgid "Grease Pencil data-blocks"
 msgstr "Zsírkréta adatblokkok"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Haj görbe adatblokkok"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Kép adatblokkok"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Fény adatblokkok"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Anyag adatblokkok"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Térháló adatblokkok"
 
 
@@ -1108,7 +1115,8 @@ msgid "Window Managers"
 msgstr "Ablakkezelők"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Ablakkezelő adatblokkok"
 
 
@@ -5485,7 +5493,8 @@ msgid "Window Manager"
 msgstr "Ablakkezelő"
 
 
-msgid "Window manager data-block defining open windows and other user interface data"
+# BFA - reworded, Blender: "Window manager data-block defining open windows and other user interface data"
+msgid "Window manager data defining open windows and other user interface data"
 msgstr "Ablakkezelő adatblokk, amely nyitott ablakokat és egyéb felhasználói felületadatokat határoz meg"
 
 
@@ -9377,8 +9386,9 @@ msgid "Clear Useless Actions"
 msgstr "Nem használt akciók törlése"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "Kulcsozókészlet exportálása..."
 
 
@@ -9557,7 +9567,10 @@ msgid "Operator Cheat Sheet"
 msgstr "Operátor puska"
 
 
-msgid "Jump to a different tab inside the properties editor"
+# BFA - reworded, Blender: "Jump to a different tab inside the properties editor"
+msgid ""
+"Change Context\n"
+"Jump to a different tab inside the properties editor"
 msgstr "Egy másik fülre ugrás a Tulajdonságok szerkesztőn belül"
 
 
@@ -10691,11 +10704,13 @@ msgid "X-Ray"
 msgstr "Röntgen"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "Kör alakú mesh létrehozása"
 
 
-msgid "Construct a conic mesh"
+# BFA - reworded, Blender: "Construct a conic mesh"
+msgid "Add a conic mesh"
 msgstr "Kúp alakú mesh létrehozása"
 
 
@@ -10703,15 +10718,18 @@ msgid "Construct a cube mesh"
 msgstr "Kocka alakú mesh létrehozása"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "Henger alakú mesh létrehozása"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "Suzanne mesh létrehozása"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "4 pontból álló, kitöltött síklap mesh létrehozása"
 
 
@@ -12103,8 +12121,9 @@ msgid "Update the audio animation cache"
 msgstr "Audió animáció gyorsítótár frissítése"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "Lekeverés"
 
 
@@ -12156,11 +12175,13 @@ msgid "Jump"
 msgstr "Ugrás"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "Kurzor küldése megadott sorba"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "A használni kívánt sor száma"
 
 
@@ -12674,12 +12695,14 @@ msgid "Save Startup File"
 msgstr "Indítófájl újratöltése"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Blender fájl mentése"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Az aktuális Blender fájl mentése"
 
 
@@ -14050,7 +14073,8 @@ msgid "Show Source"
 msgstr "Forrás megjelenítése"
 
 
-msgid "Shape key in a shape keys data-block"
+# BFA - reworded, Blender: "Shape key in a shape keys data-block"
+msgid "Shape key in a shape keys data"
 msgstr "Formakulcs egy formakulcsok adatblokkban"
 
 
@@ -14798,7 +14822,8 @@ msgid "World Mist"
 msgstr "Világ köd"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "Köd beállítások egy Világ adatblokkhoz"
 
 
@@ -15295,7 +15320,8 @@ msgid "Base Thickness"
 msgstr "Alap vastagság"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "Képkeret"
 
 
@@ -15550,8 +15576,9 @@ msgid "Make"
 msgstr "Létrehozás"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "Minden kijelölése típus alapján"
 
 
@@ -15767,7 +15794,8 @@ msgid "I18n Branches"
 msgstr "I18n ágak"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "Automatikus mentés"
 
 
@@ -16783,7 +16811,8 @@ msgid "Create Along Paths"
 msgstr "Létrehozás útvonal mentén"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Globális befolyás:"
 
 
@@ -16899,3 +16928,77 @@ msgstr "Minden felhasználó által telepített kiegészítő"
 msgid "Import-Export"
 msgstr "Importálás-Exportálás"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Font size to use for displaying the text"
+msgid "Adjust the font size for displaying the text"
+msgstr "A szöveg megjelenítéséhez használt betűméret"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "Minden kijelölése típus alapján"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Törlés"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Mélység"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "Kurzor küldése megadott sorba"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Mozgat"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Zoomolás irányának megfordítása"
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Irány"
+
+# BFA - reworded, Blender: "Unlink Action"
+msgctxt "Operator"
+msgid "Remove Action"
+msgstr "Akció leválasztása"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Maszk"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Nurbs Kör"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Típus"
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "Zoomolás kereten belülre"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Kilépés a Bforartistsből"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Kilépés a Bforartistsből"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Bforartists Render"

@@ -593,7 +593,8 @@ msgid "Animation Data"
 msgstr "Datele Animației"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Date de animație pentru blocul de date"
 
 
@@ -601,7 +602,8 @@ msgid "Action"
 msgstr "Acțiune"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Acțiune Activă pentru acest bloc de date"
 
 
@@ -693,7 +695,8 @@ msgid "Drivers"
 msgstr "Drivere"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "Driverele/Expresiile pentru acest bloc de date"
 
 
@@ -905,7 +908,8 @@ msgid "Show Menus"
 msgstr "Afișare Meniuri"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Afișarea meniurilor în antet"
 
 
@@ -1029,7 +1033,8 @@ msgid "Outliner"
 msgstr "Outliner"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "Prezentare generală a graficului de scenă și a tuturor blocurilor de date disponibile"
 
 
@@ -1037,7 +1042,8 @@ msgid "Properties"
 msgstr "Proprietăți"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Editați proprietățile obiectului activ și ale blocurilor de date aferente"
 
 
@@ -1329,7 +1335,8 @@ msgid "Bake Data"
 msgstr "Coacere Date"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "Coaceți date pentru un bloc de date Scene"
 
 
@@ -1473,7 +1480,8 @@ msgid "Internal"
 msgstr "Intern"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Salvați mapa de coacere într-o imagine internală de bloc de date"
 
 
@@ -1649,35 +1657,43 @@ msgid "Softbody goal weight"
 msgstr "Greutatea obiectivului Softbody"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Structura principală de date reprezentând un fișier .blend și toate blocurile sale de date"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Acțiunile blocurilor de date"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Blocuri de date ale armăturilor"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Blocurile de date ale periilor"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Blocurile de date Fișierelor cache"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Blocurile de date ale camerelor"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Blocurile de date ale colecțiilor"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Blocurile de date ale curbelor"
 
 
@@ -1693,7 +1709,8 @@ msgid "Vector Fonts"
 msgstr "Fonturi Vector"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Blocurile de date ale fontului vector"
 
 
@@ -1701,7 +1718,8 @@ msgid "Grease Pencil data-blocks"
 msgstr "Blocurile de date ale Creionului de Grăsime"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Blocurile de date ale imaginilor"
 
 
@@ -1721,7 +1739,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "A fost sesiunea curentă salvată pe disk ca un fișier .blend"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Blocuri de date ale laticii"
 
 
@@ -1729,11 +1748,13 @@ msgid "Libraries"
 msgstr "Biblioteci"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Blocurile de date ale bibliotecilor"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Blocurilor de date ale luminilor"
 
 
@@ -1741,27 +1762,33 @@ msgid "Line Styles"
 msgstr "Stiluri de Linii"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Blocurile de date ale Stilurilor de Linii"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Blocurile de date ale măștilor"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Blocurile de date ale materialelor"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Blocurile de date ale plaselor"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Blocurile de date ale metaball-ului"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Blocurile de date ale clipurilor de film"
 
 
@@ -1769,7 +1796,8 @@ msgid "Node Groups"
 msgstr "Grupuri Nodule"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Blocurile de date ale nodurilor"
 
 
@@ -1777,11 +1805,13 @@ msgid "Object data-blocks"
 msgstr "Blocurile de date ale obiectelor"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Blocurile de date ale Picturii Curbelor"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Blocurile de date ale paletelor"
 
 
@@ -1789,7 +1819,8 @@ msgid "Particles"
 msgstr "Particule"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Blocurile de date ale particulelor"
 
 
@@ -1797,7 +1828,8 @@ msgid "Point cloud data-blocks"
 msgstr "Blocurile de date ale norilor de puncte"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Blocurile de date ale scenelor"
 
 
@@ -1805,7 +1837,8 @@ msgid "Screens"
 msgstr "Ecrane"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Blocurile de date ale ecranului"
 
 
@@ -1813,7 +1846,8 @@ msgid "Shape Keys"
 msgstr "Chei de Formă"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Blocurile de date ale Cheilor de Formă"
 
 
@@ -3751,7 +3785,8 @@ msgid "Mean Bevel Weight:"
 msgstr "Greutatea medie a teșiței:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Raza X:"
 
 
@@ -3888,3 +3923,45 @@ msgstr "Tunde curbele de păr în mod aleatoriu până la o anumită lungime"
 msgid "Replace Length"
 msgstr "Înlocuiește lungimea"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Măști"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Cutie de Selectare (Legacy)"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Ștergere"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Adâncime"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Mutare"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Tip"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Render Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Vizualizatorul de Fișiere Bforartists"

@@ -550,6 +550,18 @@ def phase_status_report(args):
     print_step("LFS status:")
     print_ok("LFS checkout complete (verified with fsck)")
 
+    # BFA - Translations audit (#5701): UI strings Bforartists changed since last week's merge that
+    # no locale/po file translates. Report only, never blocks the merge.
+    print()
+    print_step("Translations audit (BFA strings changed since the last weekly merge):")
+    last_merge = run_output(["git", "log", "-1", "--first-parent", "--merges", "--grep=merge-week",
+                             "--format=%H", f"{args.origin_remote}/master"], exit_on_error=False)
+    audit = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bforartists_i18n_audit.py")
+    audit_cmd = [sys.executable, audit, "--blender-ref", f"{args.blender_remote}/main"]
+    if last_merge:
+        audit_cmd += ["--since", last_merge]
+    run(audit_cmd, exit_on_error=False)
+
     # Next steps
     print()
     print(f"{Color.BOLD}{Color.CYAN}{'═' * 72}{Color.RESET}")
