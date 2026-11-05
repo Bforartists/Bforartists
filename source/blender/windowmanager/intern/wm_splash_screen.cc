@@ -122,12 +122,13 @@ static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
 static void wm_project_splash_logo_add(ImBuf *ibuf)
 {
   /* Magic numbers match logo positioning and size in default splash image. */
-  ImBuf *logo = ui::svg_icon_bitmap(ICON_BLENDER_LOGO_LARGE, ibuf->x * 0.127f, false);
+  ImBuf *logo = ui::svg_icon_bitmap(
+      ICON_BLENDER_LOGO_LARGE, ibuf->x * 0.127f, true); /* BFA - project splash logo in color */
   if (logo == nullptr) {
     return;
   }
 
-  /* The monochrome logo has alpha in all channels, unpremultiply to get white with alpha. */
+  /* BFA - the multicolor logo is premultiplied RGBA, unpremultiply for IMB_rectblend. */
   IMB_unpremultiply_alpha(logo);
 
   /* Rows are stored bottom to top. */
