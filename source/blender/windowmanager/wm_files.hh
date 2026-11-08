@@ -105,6 +105,8 @@ bool wm_file_or_session_data_has_unsaved_changes(const Main *bmain, const wmWind
  * Important to ask confirmation, as this is a very common scenario of data loss.
  */
 void wm_save_file_overwrite_dialog(bContext *C, wmOperator *op);
+/* bfa drop blendfile dialog */
+void WM_OT_drop_blend_file(wmOperatorType *ot);
 
 void WM_OT_save_auto_save(wmOperatorType *ot);
 void WM_OT_save_homefile(wmOperatorType *ot);

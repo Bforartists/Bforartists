@@ -3864,87 +3864,87 @@ class WM_MT_region_toggle_pie(Menu):
         pie = layout.menu_pie()
         self._draw_pie_regions_from_alignment(context, pie)
 
+# BFA drop blendfile - moved to source wm_files.cc for uiItemsAlertBox 
+# class WM_OT_drop_blend_file(Operator):
+#     bl_idname = "wm.drop_blend_file"
+#     bl_label = "Handle dropped .blend file"
+#     bl_options = {'INTERNAL'}
 
-class WM_OT_drop_blend_file(Operator):
-    bl_idname = "wm.drop_blend_file"
-    bl_label = "Handle dropped .blend file"
-    bl_options = {'INTERNAL'}
+#     filepath: StringProperty(
+#         subtype='FILE_PATH',
+#         options={'SKIP_SAVE'},
+#     )
+#     use_scripts: BoolProperty(
+#         name="Trusted Source",
+#         options={'SKIP_SAVE'},
+#         description="Allow .blend file to execute scripts automatically, default available from system preferences"
+#     )
 
-    filepath: StringProperty(
-        subtype='FILE_PATH',
-        options={'SKIP_SAVE'},
-    )
-    use_scripts: BoolProperty(
-        name="Trusted Source",
-        options={'SKIP_SAVE'},
-        description="Allow .blend file to execute scripts automatically, default available from system preferences"
-    )
+#     @classmethod
+#     def _is_autoexec(cls, filepath, *, skip_overrides):
+#         """
+#         Return true when the directory of ``filepath`` isn't excluded,
+#         ``skip_overrides`` ignores the preference & command line override
+#         which otherwise give the default for "Trusted Source".
+#         """
+#         return bpy.path.is_autoexec(
+#             filepath,
+#             skip_overrides=skip_overrides,
+#             canonicalize=True,
+#             strip_filename=True,
+#         )
 
-    @classmethod
-    def _is_autoexec(cls, filepath, *, skip_overrides):
-        """
-        Return true when the directory of ``filepath`` isn't excluded,
-        ``skip_overrides`` ignores the preference & command line override
-        which otherwise give the default for "Trusted Source".
-        """
-        return bpy.path.is_autoexec(
-            filepath,
-            skip_overrides=skip_overrides,
-            canonicalize=True,
-            strip_filename=True,
-        )
+#     def draw(self, context):
+#         layout = self.layout
+#         filepath = self.filepath
 
-    def draw(self, context):
-        layout = self.layout
-        filepath = self.filepath
+#         layout.label(text=bpy.path.basename(filepath), icon='QUESTION')
 
-        layout.label(text=bpy.path.basename(filepath), icon='QUESTION')
+#         col = layout.column()
+#         col.operator_context = 'INVOKE_DEFAULT'
+#         # Return activates "Open", the primary action of this popup.
+#         col.active_default = True
+#         props = col.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
+#         props.filepath = filepath
+#         props.display_file_selector = False
+#         props.use_scripts = self.use_scripts
 
-        col = layout.column()
-        col.operator_context = 'INVOKE_DEFAULT'
-        # Return activates "Open", the primary action of this popup.
-        col.active_default = True
-        props = col.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
-        props.filepath = filepath
-        props.display_file_selector = False
-        props.use_scripts = self.use_scripts
+#         # Excluded paths can't be trusted, unless the command line overrides the preference.
+#         is_untrusted = (
+#             context.preferences.filepaths.use_scripts_auto_execute and
+#             bpy.app.autoexec_override is None and
+#             not self._is_autoexec(filepath, skip_overrides=True)
+#         )
 
-        # Excluded paths can't be trusted, unless the command line overrides the preference.
-        is_untrusted = (
-            context.preferences.filepaths.use_scripts_auto_execute and
-            bpy.app.autoexec_override is None and
-            not self._is_autoexec(filepath, skip_overrides=True)
-        )
+#         col = layout.column()
+#         if not is_untrusted:
+#             col.prop(self, "use_scripts")
+#         else:
+#             col.enabled = False
+#             col.prop(self, "use_scripts", text="Trusted Source [Untrusted Path]")
 
-        col = layout.column()
-        if not is_untrusted:
-            col.prop(self, "use_scripts")
-        else:
-            col.enabled = False
-            col.prop(self, "use_scripts", text="Trusted Source [Untrusted Path]")
+#         layout.separator(type='LINE')
 
-        layout.separator(type='LINE')
+#         col = layout.column()
+#         col.operator_context = 'INVOKE_DEFAULT'
+#         # Use the confirm template so pressing these closes the popup,
+#         # the popup is kept open otherwise (see `BLOCK_KEEP_OPEN`).
+#         col.template_popup_confirm(
+#             "wm.link", text="Link...", icon='LINK_BLEND', cancel_text="",
+#         ).filepath = filepath
+#         col.template_popup_confirm(
+#             "wm.append", text="Append...", icon='APPEND_BLEND', cancel_text="",
+#         ).filepath = filepath
 
-        col = layout.column()
-        col.operator_context = 'INVOKE_DEFAULT'
-        # Use the confirm template so pressing these closes the popup,
-        # the popup is kept open otherwise (see `BLOCK_KEEP_OPEN`).
-        col.template_popup_confirm(
-            "wm.link", text="Link...", icon='LINK_BLEND', cancel_text="",
-        ).filepath = filepath
-        col.template_popup_confirm(
-            "wm.append", text="Append...", icon='APPEND_BLEND', cancel_text="",
-        ).filepath = filepath
+#     def execute(self, context):
+#         # Needed so the popup draws this operators UI.
+#         return {'CANCELLED'}
 
-    def execute(self, context):
-        # Needed so the popup draws this operators UI.
-        return {'CANCELLED'}
-
-    def invoke(self, context, _event):
-        # Match the file selector.
-        self.use_scripts = self._is_autoexec(self.filepath, skip_overrides=False)
-        # The popup shows this operators own UI, keeping it alive while it's open.
-        return context.window_manager.invoke_popup(self, width=200, auto_keymap=True)
+#     def invoke(self, context, _event):
+#         # Match the file selector.
+#         self.use_scripts = self._is_autoexec(self.filepath, skip_overrides=False)
+#         # The popup shows this operators own UI, keeping it alive while it's open.
+#         return context.window_manager.invoke_popup(self, width=200, auto_keymap=True)
 
 
 classes = (
@@ -3968,7 +3968,7 @@ classes = (
     WM_OT_context_toggle_enum,
     WM_OT_doc_view,
     WM_OT_doc_view_manual,
-    WM_OT_drop_blend_file,
+    # WM_OT_drop_blend_file, # BFA drop blendfile 
     WM_OT_operator_cheat_sheet,
     WM_OT_operator_pie_enum,
     WM_OT_path_open,

@@ -4388,6 +4388,7 @@ void wm_operatortypes_register()
   WM_operatortype_append(WM_OT_call_asset_shelf_popover);
   WM_operatortype_append(WM_OT_radial_control);
   WM_operatortype_append(WM_OT_stereo3d_set);
+  WM_operatortype_append(WM_OT_drop_blend_file); // bfa drop blendfile
 #if defined(WIN32)
   WM_operatortype_append(WM_OT_console_toggle);
 #endif
