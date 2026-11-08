@@ -5421,48 +5421,66 @@ struct DropBlendFileData {
   bool use_scripts;
 };
 
-static void drop_blend_open_cb(bContext *C, void * /*arg_block*/, void *arg_data)
+static void drop_blend_open_cb(bContext *C, void *arg_block, void *arg_data)
 {
   DropBlendFileData *data = static_cast<DropBlendFileData *>(arg_data);
 
-  wmOperatorType *ot = WM_operatortype_find("WM_OT_open_mainfile", false);
-  PointerRNA props_ptr = WM_operator_properties_create_ptr(ot);
+  wmWindow *win = CTX_wm_window(C);
+  popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
 
-  RNA_string_set(&props_ptr, "filepath", data->filepath);
-  RNA_boolean_set(&props_ptr, "display_file_selector", false);
-  RNA_boolean_set(&props_ptr, "use_scripts", data->use_scripts);
+  PointerRNA operator_propptr = {};
+  PointerRNA *operator_propptr_p = &operator_propptr;
+  IDProperty *operator_idproperties = nullptr;
+  WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_open_mainfile");
 
-  WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
+  RNA_string_set(operator_propptr_p, "filepath", data->filepath);
+  RNA_boolean_set(operator_propptr_p, "display_file_selector", false);
+  RNA_boolean_set(operator_propptr_p, "use_scripts", data->use_scripts);
 
-  WM_operator_properties_free(&props_ptr);
+  WM_operator_name_call(
+      C, "WM_OT_open_mainfile", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
+
+  WM_operator_properties_free(operator_propptr_p);
 }
 
-static void drop_blend_link_cb(bContext *C, void * /*arg_block*/, void *arg_data)
+static void drop_blend_append_cb(bContext *C, void *arg_block, void *arg_data)
 {
   DropBlendFileData *data = static_cast<DropBlendFileData *>(arg_data);
 
-  wmOperatorType *ot = WM_operatortype_find("WM_OT_link", false);
-  PointerRNA props_ptr = WM_operator_properties_create_ptr(ot);
+  wmWindow *win = CTX_wm_window(C);
+  popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
 
-  RNA_string_set(&props_ptr, "filepath", data->filepath);
+  PointerRNA operator_propptr = {};
+  PointerRNA *operator_propptr_p = &operator_propptr;
+  IDProperty *operator_idproperties = nullptr;
+  WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_append");
 
-  WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
+  RNA_string_set(operator_propptr_p, "filepath", data->filepath);
 
-  WM_operator_properties_free(&props_ptr);
+  WM_operator_name_call(
+      C, "WM_OT_append", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
+
+  WM_operator_properties_free(operator_propptr_p);
 }
 
-static void drop_blend_append_cb(bContext *C, void * /*arg_block*/, void *arg_data)
+static void drop_blend_link_cb(bContext *C, void *arg_block, void *arg_data)
 {
   DropBlendFileData *data = static_cast<DropBlendFileData *>(arg_data);
 
-  wmOperatorType *ot = WM_operatortype_find("WM_OT_append", false);
-  PointerRNA props_ptr = WM_operator_properties_create_ptr(ot);
+  wmWindow *win = CTX_wm_window(C);
+  popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
 
-  RNA_string_set(&props_ptr, "filepath", data->filepath);
+  PointerRNA operator_propptr = {};
+  PointerRNA *operator_propptr_p = &operator_propptr;
+  IDProperty *operator_idproperties = nullptr;
+  WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_link");
 
-  WM_operator_name_call_ptr(C, ot, wm::OpCallContext::InvokeDefault, &props_ptr, nullptr);
+  RNA_string_set(operator_propptr_p, "filepath", data->filepath);
 
-  WM_operator_properties_free(&props_ptr);
+  WM_operator_name_call(
+      C, "WM_OT_link", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
+
+  WM_operator_properties_free(operator_propptr_p);
 }
 
 static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *region, void *arg_v)
