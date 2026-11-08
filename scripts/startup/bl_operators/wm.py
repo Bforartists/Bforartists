@@ -3595,6 +3595,7 @@ class WM_MT_splash(Menu):
 
         if found_recent:
             col2_title.label(text="Project Files" if found_project else "Recent Files")
+            col2_title.separator()
             if found_project and found_other:
                 col2_other_title.label(text="Other Recent Files")
             col_more = col2.column()
