@@ -5571,7 +5571,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
                                          ui::ButtonType::But,
-                                         ICON_NONE,
+                                         ICON_FILE_FOLDER,
                                          IFACE_("Open"),
                                          0,
                                          0,
@@ -5589,7 +5589,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
                                          ui::ButtonType::But,
-                                         ICON_NONE,
+                                         ICON_LINK_BLEND,
                                          IFACE_("Append"),
                                          0,
                                          0,
@@ -5606,7 +5606,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
                                          ui::ButtonType::But,
-                                         ICON_NONE,
+                                         ICON_LINK_BLEND,
                                          IFACE_("Link"),
                                          0,
                                          0,
@@ -5629,7 +5629,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
                                          ui::ButtonType::But,
-                                         ICON_NONE,
+                                         ICON_APPEND_BLEND,
                                          IFACE_("Append"),
                                          0,
                                          0,
@@ -5651,7 +5651,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       split_right.column(false);
       ui::Button *but = uiDefIconTextBut(block,
                                          ui::ButtonType::But,
-                                         ICON_NONE,
+                                         ICON_LINK_BLEND,
                                          IFACE_("Link"),
                                          0,
                                          0,
@@ -5668,7 +5668,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       split_right.column(false);
       ui::Button *but = uiDefIconTextBut(block,
                                          ui::ButtonType::But,
-                                         ICON_NONE,
+                                         ICON_FILE_FOLDER,
                                          IFACE_("Open"),
                                          0,
                                          0,
