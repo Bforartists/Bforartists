@@ -956,7 +956,7 @@ static void apply_mask_from_settings(const Depsgraph &depsgraph,
     case bke::pbvh::Type::Mesh: {
       Mesh &mesh = *id_cast<Mesh *>(object.data);
       bke::MutableAttributeAccessor attributes = mesh.attributes_for_write();
-      bke::SpanAttributeWriter mask = attributes.lookup_or_add_for_write_span<float>(
+      bke::SpanAttributeWriter mask = attributes.ensure_for_write_span<float>(
           ".sculpt_mask", bke::AttrDomain::Point);
       const VArraySpan hide_vert = *attributes.lookup<bool>(".hide_vert", bke::AttrDomain::Point);
       MutableSpan<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
@@ -1085,6 +1085,13 @@ static wmOperatorStatus mask_from_cavity_exec(bContext *C, wmOperator *op)
 
       break;
     case MaskSettingsSource::Scene:
+      scene_copy.mesh_automasking_settings->flags = sd.paint.mesh_automasking_settings->flags;
+      scene_copy.mesh_automasking_settings->cavity_factor =
+          sd.paint.mesh_automasking_settings->cavity_factor;
+      scene_copy.mesh_automasking_settings->cavity_curve =
+          sd.paint.mesh_automasking_settings->cavity_curve;
+      scene_copy.mesh_automasking_settings->cavity_blur_steps =
+          sd.paint.mesh_automasking_settings->cavity_blur_steps;
       /* Ensure only cavity masking is enabled. */
       scene_copy.mesh_automasking_settings->flags &= BRUSH_AUTOMASKING_CAVITY_ALL |
                                                      BRUSH_AUTOMASKING_CAVITY_USE_CURVE;
@@ -1291,6 +1298,10 @@ static wmOperatorStatus mask_from_boundary_exec(bContext *C, wmOperator *op)
 
       break;
     case MaskSettingsSource::Scene:
+      scene_copy.mesh_automasking_settings->flags = sd.paint.mesh_automasking_settings->flags;
+      scene_copy.mesh_automasking_settings->boundary_edges_propagation_steps =
+          sd.paint.mesh_automasking_settings->boundary_edges_propagation_steps;
+
       scene_copy.mesh_automasking_settings->flags &= BRUSH_AUTOMASKING_BOUNDARY_EDGES |
                                                      BRUSH_AUTOMASKING_BOUNDARY_FACE_SETS;
       break;

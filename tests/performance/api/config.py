@@ -203,7 +203,7 @@ class TestConfig:
 
     def _update_devices(self, env, device_filters: list) -> None:
         # Find devices matching the filters.
-        need_gpus = device_filters != ['CPU']
+        need_gpus = any(device not in {'CPU', 'CPU-OSL'} for device in device_filters)
         machine = env.get_machine(need_gpus)
 
         self.devices = []
@@ -272,9 +272,8 @@ class TestConfig:
             if test.use_device():
                 supported_device_types = test.supported_device_types()
 
-            devices = filter(lambda device: device.type in test.supported_device_types(), self.devices)
-            if not devices:
-                devices = filter(lambda device: device.type == 'CPU', self.devices)
+            devices = list(filter(lambda device: device.type in test.supported_device_types(), self.devices))
+            devices = test.remove_redundant_device_types(devices)
 
             for device in devices:
                 entry = self.queue.find(revision_name, test_name, test_category, device.id)

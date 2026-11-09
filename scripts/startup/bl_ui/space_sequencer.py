@@ -1106,8 +1106,7 @@ class SEQUENCER_MT_add_clip(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        for clip in bpy.data.movieclips:
-            layout.operator("sequencer.movieclip_strip_add", text=clip.name, translate=False).clip = clip.name
+        layout.operator_enum("sequencer.movieclip_strip_add", "clip")
 
 
 class SEQUENCER_MT_add_mask(Menu):
@@ -1117,8 +1116,7 @@ class SEQUENCER_MT_add_mask(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        for mask in bpy.data.masks:
-            layout.operator("sequencer.mask_strip_add", text=mask.name, translate=False).mask = mask.name
+        layout.operator_enum("sequencer.mask_strip_add", "mask")
 
 
 class SEQUENCER_MT_add_transitions(Menu):
@@ -1577,11 +1575,13 @@ class SEQUENCER_MT_strip(Menu):
                     "sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT"
                 )
                 props.type = "SOFT"
+                props.only_selected = True
 
                 props = layout.operator(
-                    "sequencer.split", text="Hold Split", text_ctxt=i18n_contexts.id_sequence, icon="HOLD_SPLIT"
+                    "sequencer.split", text="Hard Split", text_ctxt=i18n_contexts.id_sequence, icon="HOLD_SPLIT"
                 )
                 props.type = "HARD"
+                props.only_selected = True
 
             layout.separator()
 
@@ -1780,7 +1780,12 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.operator_context = "INVOKE_REGION_WIN"
 
-        layout.operator("sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT").type = "SOFT"
+        props = layout.operator("sequencer.split", text="Split", text_ctxt=i18n_contexts.id_sequence, icon="CUT")
+        props.type = "SOFT"
+        props.only_selected = True
+        # BFA - keeps its own context menu layout. Blender reorganized its menu by selection
+        # in week 43; the behavior changes (only_selected, keep_offset, no cursor position)
+        # are applied to the BFA entries below.
 
         layout.separator()
 
@@ -1799,8 +1804,8 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS")
-        layout.operator("sequencer.snap", icon="SEQ_SNAP_STRIP")
+        layout.operator("sequencer.slip", text="Slip Strip Contents", icon="SEQ_SLIP_CONTENTS").use_cursor_position = False
+        layout.operator("sequencer.snap", icon="SEQ_SNAP_STRIP").keep_offset = True
 
         layout.separator()
 
@@ -1973,7 +1978,7 @@ class SEQUENCER_MT_view_pie(Menu):
         pie = layout.menu_pie()
         pie.operator("sequencer.view_all")
         pie.operator("sequencer.view_selected", text="Frame Selected", icon="ZOOM_SELECTED")
-        pie.separator()
+        pie.operator("sequencer.view_frame", icon="VIEW_FRAME")  # BFA - icon
         if context.sequencer_scene.use_preview_range:
             pie.operator("anim.scene_range_frame", text="Frame Preview Range")
         else:
@@ -2045,12 +2050,15 @@ class SEQUENCER_MT_modifier_add(Menu):
         else:
             self.operator_modifier_add(layout, "BRIGHT_CONTRAST")
             self.operator_modifier_add(layout, "COLOR_BALANCE")
-            self.operator_modifier_add(layout, 'COMPOSITOR')
             self.operator_modifier_add(layout, 'CURVES')
             self.operator_modifier_add(layout, 'HUE_CORRECT')
             self.operator_modifier_add(layout, 'MASK')
             self.operator_modifier_add(layout, 'TONEMAP')
             self.operator_modifier_add(layout, 'WHITE_BALANCE')
+            # BFA - Compositor moved to the bottom as in Blender. The asset catalogs stay
+            # in the separate Add Asset Modifier menu (#6598), so they are not listed here.
+            layout.separator()
+            self.operator_modifier_add(layout, 'COMPOSITOR')
 
 
 class SequencerButtonsPanel:

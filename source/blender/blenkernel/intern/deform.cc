@@ -441,7 +441,7 @@ void BKE_defvert_flip_merged(MDeformVert *dvert, const int *flip_map, const int 
       if (flip_map[dw->def_nr] >= 0) {
         /* error checkers complain of this but we'll never get nullptr return */
         dw_cpy = BKE_defvert_ensure_index(dvert, flip_map[dw->def_nr]);
-        dw = &dvert->dw[i]; /* in case array got realloced */
+        dw = &dvert->dw[i]; /* in case array got reallocated */
 
         /* distribute weights: if only one of the vertex groups was
          * assigned this will halve the weights, otherwise it gets
@@ -656,7 +656,7 @@ static int *object_defgroup_unlocked_flip_map_ex(const Object *ob,
         continue;
       }
 
-      BLI_string_flip_side_name(name_flip, dg->name, false, sizeof(name_flip));
+      BLI_string_flip_side_name(name_flip, dg->name, false);
 
       if (!STREQ(name_flip, dg->name)) {
         flip_num = BKE_object_defgroup_name_index(ob, name_flip);
@@ -704,7 +704,7 @@ int *BKE_object_defgroup_flip_map_single(const Object *ob,
 
   bDeformGroup *dg = static_cast<bDeformGroup *>(BLI_findlink(defbase, defgroup));
 
-  BLI_string_flip_side_name(name_flip, dg->name, false, sizeof(name_flip));
+  BLI_string_flip_side_name(name_flip, dg->name, false);
   if (!STREQ(name_flip, dg->name)) {
     flip_num = BKE_object_defgroup_name_index(ob, name_flip);
 
@@ -725,7 +725,7 @@ int BKE_object_defgroup_flip_index(const Object *ob, int index, const bool use_d
 
   if (dg) {
     char name_flip[sizeof(dg->name)];
-    BLI_string_flip_side_name(name_flip, dg->name, false, sizeof(name_flip));
+    BLI_string_flip_side_name(name_flip, dg->name, false);
 
     if (!STREQ(name_flip, dg->name)) {
       flip_index = BKE_object_defgroup_name_index(ob, name_flip);
@@ -760,8 +760,7 @@ void BKE_object_defgroup_unique_name(bDeformGroup *dg, Object *ob)
   BLI_uniquename_cb([&](const StringRef name) { return defgroup_find_name_dupe(name, dg, ob); },
                     DATA_("Group"),
                     '.',
-                    dg->name,
-                    sizeof(dg->name));
+                    dg->name);
 }
 
 void BKE_object_defgroup_set_name(bDeformGroup *dg, Object *ob, const char *new_name)

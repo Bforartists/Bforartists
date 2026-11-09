@@ -8,6 +8,11 @@ from bpy.app.handlers import persistent
 
 @persistent
 def load_handler(_):
+    # BFA - Our startup file is saved in Sculpt Mode with its own mesh, unlike Blender's empty one.
+    # In Sculpt Mode this operator adds to that mesh and pushes an undo step, and the undo stack
+    # doesn't exist yet at this point, which crashed the template (#6941).
+    if bpy.context.mode == 'SCULPT':
+        return
     bpy.ops.mesh.primitive_quad_sphere_add(segments=64)
     bpy.ops.object.mode_set(mode='SCULPT')
 

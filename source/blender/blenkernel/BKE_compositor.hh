@@ -24,6 +24,8 @@ namespace blender {
 struct Scene;
 struct View3D;
 struct RegionView3D;
+struct SpaceNode;
+struct ScrArea;
 struct BlendWriter;
 struct BlendDataReader;
 struct Main;
@@ -195,6 +197,15 @@ bool is_viewport_compositor_enabled(const View3D &view_3d, const RegionView3D &r
 
 /* Checks if the viewport compositor is currently being used in any 3D viewport. */
 bool is_viewport_compositor_used(const bContext &context);
+
+/* Checks if the given area has a compositor viewer visible. */
+bool is_compositor_viewer_visible(const ScrArea &area);
+
+/* Checks if the given area has compositor node previews visible. */
+bool are_compositor_node_previews_visible(const ScrArea &area);
+
+/* Get the compositor node editor that has the active viewer. */
+const SpaceNode *get_active_compositor_node_editor(const bContext &C);
 
 /* --------------------------------------------------------------------
  * Depsgraph.

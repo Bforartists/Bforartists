@@ -19,6 +19,7 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_matrix.hh"
+#include "BLI_math_vector.hh"
 #include "BLI_path_utils.hh"
 #include "BLI_rect.hh"
 #include "BLI_task.hh"
@@ -155,13 +156,17 @@ static void ensure_ibuf_is_color_space(ImBuf *ibuf, bool make_float, const char 
     if (ibuf->byte_data() != nullptr) {
       IMB_free_byte_pixels(ibuf);
     }
+    /* Already in the needed colorspace: nothing to do. */
+    if (STREQ(from_colorspace, to_colorspace)) {
+      return;
+    }
     IMB_colormanagement_transform_float(ibuf->float_data_for_write(),
                                         ibuf->x,
                                         ibuf->y,
                                         ibuf->channels,
                                         from_colorspace,
                                         to_colorspace,
-                                        true);
+                                        ibuf->can_contain_alpha() && IMB_alpha_affects_rgb(ibuf));
     IMB_colormanagement_assign_float_colorspace(ibuf, to_colorspace);
   }
 }
@@ -207,8 +212,6 @@ void render_new_render_data(Main *bmain,
   r_context->preview_render_size = preview_render_size;
   r_context->ignore_missing_media = false;
   r_context->render = render;
-  r_context->motion_blur_samples = 0;
-  r_context->motion_blur_shutter = 0;
   r_context->skip_cache = false;
   r_context->view_id = 0;
   r_context->gpu_offscreen = nullptr;
@@ -466,6 +469,39 @@ static void sequencer_image_crop_init(const Strip *strip,
   BLI_rctf_init(r_crop, left, in->x - right, bottom, in->y - top);
 }
 
+/* Check bounds used by strip occlusion against the actual cropped and transformed image. */
+static bool strip_result_covers_strip_quad(const RenderData *context,
+                                           const Strip *strip,
+                                           const ImBuf *image,
+                                           const float3x3 &matrix,
+                                           const float crop_scale_factor)
+{
+  rctf crop;
+  sequencer_image_crop_init(strip, image, crop_scale_factor, &crop);
+  const rctf image_bounds{0.0f, float(image->x), 0.0f, float(image->y)};
+  BLI_rctf_isect(&crop, &image_bounds, &crop);
+  if (BLI_rctf_is_empty(&crop)) {
+    return false;
+  }
+
+  const float2 center(context->rectx * 0.5f, context->recty * 0.5f);
+  const float2 display_scale = image_transform_mirror_factor_get(strip) *
+                               float2(context->scene->r.xasp / context->scene->r.yasp, 1.0f);
+  const auto to_screen = [&](const float2 point) {
+    return (math::transform_point(matrix, point) - center) * display_scale + center;
+  };
+  const StripScreenQuad actual_quad{to_screen(float2(crop.xmin, crop.ymin)),
+                                    to_screen(float2(crop.xmax, crop.ymin)),
+                                    to_screen(float2(crop.xmax, crop.ymax)),
+                                    to_screen(float2(crop.xmin, crop.ymax))};
+  if (math::cross(actual_quad.v1 - actual_quad.v0, actual_quad.v3 - actual_quad.v0) == 0.0f) {
+    /* Zero area quad. */
+    return false;
+  }
+  const StripScreenQuad strip_quad = get_strip_screen_quad(context, strip);
+  return !strip_quad.is_empty() && is_quad_a_inside_b(strip_quad, actual_quad);
+}
+
 static bool is_strip_covering_screen(const RenderData *context, const Strip *strip)
 {
   /* The check is done by checking whether all corners of viewport fit inside
@@ -680,14 +716,33 @@ static SeqResult input_preprocess(const RenderData *context,
     modifier_apply_stack(mod_context);
   }
 
-  /* After everything above is done but before transform is applied,
-   * remember whether the image was opaque. */
-  result.is_opaque_before_transform = !result.image->can_contain_alpha();
+  const bool do_transform = sequencer_use_crop(strip) || sequencer_use_transform(strip) ||
+                            context->rectx != result.image->x ||
+                            context->recty != result.image->y ||
+                            (strip->is_effect() && image_scale_factor != 1.0f) ||
+                            result.translation != float2(0, 0);
+  /* Modifiers can change image dimensions and translation. Use the final transform for both
+   * coverage validation and image processing, including preview/proxy scaling and centering. */
+  const float3x3 matrix = do_transform ?
+                              calc_strip_transform_matrix(scene,
+                                                          strip,
+                                                          int2(result.image->x, result.image->y),
+                                                          int2(context->rectx, context->recty),
+                                                          image_scale_factor,
+                                                          preview_scale_factor) *
+                                  math::from_location<float3x3>(result.translation) :
+                              float3x3::identity();
 
-  if (sequencer_use_crop(strip) || sequencer_use_transform(strip) ||
-      context->rectx != result.image->x || context->recty != result.image->y ||
-      (strip->is_effect() && image_scale_factor != 1.0f) || result.translation != float2(0, 0))
-  {
+  /* Only use opaque source content as an occluder if it covers the assumed strip bounds. */
+  result.is_opaque_before_transform = !result.image->can_contain_alpha() &&
+                                      strip_result_covers_strip_quad(
+                                          context,
+                                          strip,
+                                          result.image,
+                                          matrix,
+                                          do_scale_to_render_size ? 1.0f : preview_scale_factor);
+
+  if (do_transform) {
     PRF_scope_with_name("SeqStripTransform", ProfileCategory::Draw);
 
     const int x = context->rectx;
@@ -695,22 +750,16 @@ static SeqResult input_preprocess(const RenderData *context,
     ImBuf *transformed_ibuf = IMB_allocImBuf(
         x, y, result.image->float_data() ? ImBufFlags::FloatData : ImBufFlags::ByteData);
 
-    /* Note: calculate matrix again; modifiers can actually change the image size. */
-    float3x3 matrix = calc_strip_transform_matrix(scene,
-                                                  strip,
-                                                  int2(result.image->x, result.image->y),
-                                                  int2(context->rectx, context->recty),
-                                                  image_scale_factor,
-                                                  preview_scale_factor);
-    matrix *= math::from_location<float3x3>(result.translation);
-    matrix = math::invert(matrix);
     sequencer_preprocess_transform_crop(result.image,
                                         transformed_ibuf,
                                         context,
                                         strip,
-                                        matrix,
+                                        math::invert(matrix),
                                         !do_scale_to_render_size,
                                         preview_scale_factor);
+    if (!result.is_opaque_before_transform) {
+      transformed_ibuf->color_mode = ImColorMode::RGBA;
+    }
     transformed_ibuf->byte_buffer.colorspace = result.image->byte_buffer.colorspace;
     transformed_ibuf->float_buffer.colorspace = result.image->float_buffer.colorspace;
     IMB_metadata_copy(transformed_ibuf, result.image);
@@ -889,7 +938,7 @@ static ImBuf *seq_render_image_strip_view(
   else {
     char filepath_view[FILE_MAX];
     if (!seq_multiview_view_filepath_get(
-            *context->scene, filepath, view_id, filepath_view, sizeof(filepath_view), nullptr))
+            *context->scene, filepath, view_id, filepath_view, nullptr))
     {
       return nullptr;
     }
@@ -967,7 +1016,7 @@ static ImBuf *seq_render_image_strip(const RenderData *context,
     return nullptr;
   }
 
-  BLI_path_join(filepath, sizeof(filepath), strip->data->dirpath, s_elem->filename);
+  BLI_path_join(filepath, strip->data->dirpath, s_elem->filename);
   BLI_path_abs(filepath, ID_BLEND_PATH_FROM_GLOBAL(&context->scene->id));
 
   /* Try to get a proxy image. */
@@ -1520,9 +1569,6 @@ static ImBuf *seq_render_scene_strip_ex(const RenderData *context,
     camera = scene->camera;
   }
 
-#if 0 /* UNUSED */
-  bool have_seq = (scene->r.scemode & R_DOSEQ) && scene->ed && scene->ed->seqbase.first;
-#endif
   const bool is_viewport_render = view3d_fn && is_preview && camera;
   const bke::compositor::ExecutionMode execution_mode =
       is_viewport_render ? bke::compositor::ExecutionMode::Preview :

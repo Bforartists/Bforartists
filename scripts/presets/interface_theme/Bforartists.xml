@@ -353,7 +353,7 @@
             outline_sel="#2d2d2dff"
             inner="#ffffff00"
             inner_sel="#5680c2ff"
-            item="#000000ff"
+            item="#00000033"
             text="#cccccc"
             text_sel="#ffffff"
             show_shaded="FALSE"
@@ -365,7 +365,7 @@
         </wcol_list_item>
         <wcol_state>
           <ThemeWidgetStateColors
-            error="#804040ff"
+            error="#e6000099"
             warning="#806b40ff"
             info="#404080ff"
             success="#188625ff"

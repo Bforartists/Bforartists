@@ -249,18 +249,16 @@ struct ModifierTypeInfo {
                           MutableSpan<float3x3> matrices);
   /**
    * Like deform_verts but called during edit-mode if supported. The \a mesh argument might be a
-   * wrapper around edit BMesh data.
+   * wrapper around edit BMesh data (#ME_WRAPPER_TYPE_BMESH).
    */
   void (*deform_verts_EM)(ModifierData *md,
                           const ModifierEvalContext *ctx,
-                          const BMEditMesh *em,
                           Mesh *mesh,
                           MutableSpan<float3> positions);
 
   /** Set deform matrix per vertex for crazy-space correction. */
   void (*deform_matrices_EM)(ModifierData *md,
                              const ModifierEvalContext *ctx,
-                             const BMEditMesh *em,
                              Mesh *mesh,
                              MutableSpan<float3> positions,
                              MutableSpan<float3x3> matrices);
@@ -468,7 +466,7 @@ void BKE_modifier_copydata_ex(const ModifierData *md, ModifierData *target, int 
 bool BKE_modifier_depends_ontime(Scene *scene, ModifierData *md);
 bool BKE_modifier_supports_mapping(ModifierData *md);
 bool BKE_modifier_supports_cage(Scene *scene, ModifierData *md);
-bool BKE_modifier_couldbe_cage(Scene *scene, ModifierData *md);
+bool BKE_modifier_could_be_cage(Scene *scene, ModifierData *md);
 bool BKE_modifier_is_correctable_deformed(ModifierData *md);
 bool BKE_modifier_is_same_topology(ModifierData *md);
 bool BKE_modifier_is_non_geometrical(ModifierData *md);
@@ -602,7 +600,7 @@ void BKE_modifier_mdef_compact_influences(ModifierData *md);
 /**
  * Initializes `path` with either the blend file or temporary directory.
  */
-void BKE_modifier_path_init(char *path, int path_maxncpy, const char *name);
+void BKE_modifier_path_init(MutableCStr path, const char *name);
 const char *BKE_modifier_path_relbase(Main *bmain, Object *ob);
 const char *BKE_modifier_path_relbase_from_global(Object *ob);
 
@@ -629,7 +627,6 @@ bool BKE_modifier_deform_verts(ModifierData *md,
 
 void BKE_modifier_deform_vertsEM(ModifierData *md,
                                  const ModifierEvalContext *ctx,
-                                 const BMEditMesh *em,
                                  Mesh *mesh,
                                  MutableSpan<float3> positions);
 

@@ -304,8 +304,7 @@ static void mesh_foreach_path(ID *id, BPathForeachPathData *bpath_data)
                       return CustomData_external_test(&data, eCustomDataType(layer.type));
                     }))
     {
-      BKE_bpath_foreach_path_fixed_process(
-          bpath_data, data.external->filepath, sizeof(data.external->filepath));
+      BKE_bpath_foreach_path_fixed_process(bpath_data, data.external->filepath);
     }
   }
 }
@@ -467,7 +466,6 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
   CustomData_blend_read(reader, &mesh->fdata_legacy, mesh->totface_legacy);
   CustomData_blend_read(reader, &mesh->corner_data, mesh->corners_num);
   CustomData_blend_read(reader, &mesh->face_data, mesh->faces_num);
-  mesh->attribute_storage.wrap().blend_read(*reader);
   if (mesh->deform_verts().is_empty()) {
     /* Vertex group data was also an owning pointer in old Blender versions.
      * Don't read them again if they were read as part of #CustomData. */
@@ -495,6 +493,10 @@ static void mesh_blend_read_data(BlendDataReader *reader, ID *id)
                      nullptr;
         });
   }
+
+  mesh->attribute_storage.wrap().blend_read(*reader, [&](const bke::AttrDomain domain) {
+    return mesh->attributes().domain_size(domain);
+  });
 
   if (mesh->mselect == nullptr) {
     mesh->totselect = 0;
@@ -1880,11 +1882,8 @@ void BKE_mesh_material_remap(Mesh *mesh, const uint *remap, uint remap_len)
   }
   else {
     MutableAttributeAccessor attributes = mesh->attributes_for_write();
-    SpanAttributeWriter<int> material_indices = attributes.lookup_or_add_for_write_span<int>(
+    SpanAttributeWriter<int> material_indices = attributes.ensure_for_write_span<int>(
         "material_index", AttrDomain::Face);
-    if (!material_indices) {
-      return;
-    }
     for (const int i : material_indices.span.index_range()) {
       MAT_NR_REMAP(material_indices.span[i]);
     }
@@ -1923,8 +1922,8 @@ void mesh_sharp_edges_set_from_angle(Mesh &mesh, const float angle, const bool k
   if (!keep_sharp_edges) {
     attributes.remove("sharp_edge");
   }
-  SpanAttributeWriter<bool> sharp_edges = attributes.lookup_or_add_for_write_span<bool>(
-      "sharp_edge", AttrDomain::Edge);
+  SpanAttributeWriter<bool> sharp_edges = attributes.ensure_for_write_span<bool>("sharp_edge",
+                                                                                 AttrDomain::Edge);
   const VArraySpan<bool> sharp_faces = *attributes.lookup<bool>("sharp_face", AttrDomain::Face);
   mesh::edges_sharp_from_angle_set(mesh.faces(),
                                    mesh.corner_verts(),
@@ -2051,15 +2050,6 @@ const VectorSet<int> &Mesh::material_indices_used() const
 
 namespace bke {
 
-static void translate_positions(MutableSpan<float3> positions, const float3 &translation)
-{
-  threading::parallel_for(positions.index_range(), 2048, [&](const IndexRange range) {
-    for (float3 &position : positions.slice(range)) {
-      position += translation;
-    }
-  });
-}
-
 void mesh_translate(Mesh &mesh, const float3 &translation, const bool do_shape_keys)
 {
   if (math::is_zero(translation)) {
@@ -2071,11 +2061,11 @@ void mesh_translate(Mesh &mesh, const float3 &translation, const bool do_shape_k
     bounds = mesh.runtime->bounds_cache.data();
   }
 
-  translate_positions(mesh.vert_positions_for_write(), translation);
+  math::translate_points(mesh.vert_positions_for_write(), translation);
 
   if (do_shape_keys && mesh.key) {
     for (KeyBlock &kb : mesh.key->block) {
-      translate_positions({static_cast<float3 *>(kb.data), kb.totelem}, translation);
+      math::translate_points({static_cast<float3 *>(kb.data), kb.totelem}, translation);
     }
   }
 

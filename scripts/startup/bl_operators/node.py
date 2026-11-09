@@ -1242,6 +1242,18 @@ class NodeInterfaceOperator():
             return False
         return True
 
+    @staticmethod
+    def clear_interface_selection(interface, keep_active=False):
+        for item in interface.items_tree:
+            item.select = False
+
+        if keep_active:
+            if active := interface.active:
+                active.select = True
+        else:
+            # Have no active item if `keep_active` is False.
+            interface.active_index = -1
+
 
 class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
     """Add a new item to the interface"""
@@ -1302,6 +1314,8 @@ class NODE_OT_interface_item_new(NodeInterfaceOperator, Operator):
                 interface.move_to_parent(item, active_item, len(active_item.interface_items))
             else:
                 interface.move_to_parent(item, active_item.parent, active_pos + 1)
+
+        self.clear_interface_selection(interface, keep_active=True)
         interface.active = item
 
         return {"FINISHED"}
@@ -1389,7 +1403,7 @@ class NODE_OT_interface_item_new_panel_toggle(Operator):
         return {'FINISHED'}
 
 
-class NODE_OT_interface_item_new_panel_toggle(Operator):
+class NODE_OT_interface_item_new_panel_toggle(NodeInterfaceOperator, Operator):
     '''Add a checkbox to the currently selected panel'''
     bl_idname = "node.interface_item_new_panel_toggle"
     bl_label = "New Panel Toggle"
@@ -1438,6 +1452,7 @@ class NODE_OT_interface_item_new_panel_toggle(Operator):
         interface.move_to_parent(item, active_panel, 0)
         item.is_panel_toggle = True
 
+        self.clear_interface_selection(interface, keep_active=True)
         return {'FINISHED'}
 
 
@@ -1467,6 +1482,7 @@ class NODE_OT_interface_item_duplicate(NodeInterfaceOperator, Operator):
             item_copy = interface.copy(item)
             interface.active = item_copy
 
+        self.clear_interface_selection(interface, keep_active=True)
         return {'FINISHED'}
 
 
@@ -1557,6 +1573,7 @@ class NODE_OT_interface_item_make_panel_toggle(NodeInterfaceOperator, Operator):
         # Make the panel active.
         interface.active = parent_panel
 
+        self.clear_interface_selection(interface, keep_active=True)
         return {'FINISHED'}
 
 
@@ -1609,6 +1626,7 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
         # Make the socket active.
         interface.active = first_item
 
+        self.clear_interface_selection(interface, keep_active=True)
         return {"FINISHED"}
 
 
@@ -1687,6 +1705,8 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
     def gather_selected_roots(interface):
         """Selected items in display order. Children of a selected panel and
         panel toggle sockets are excluded (they move with their panel)."""
+        # The active item counts as selected even when its `select` flag is
+        # off, so the single-item behaviour from before keeps working.
         active = interface.active
         selected = [item for item in interface.items_tree if item.select or item == active]
         selected_ptrs = {item.as_pointer() for item in selected}
@@ -1756,7 +1776,7 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
         moved, or None if this rule doesn't apply."""
         if is_panel(item) or item.parent is None:
             # panels already nest into sibling panels via adjacent_panel
-            return None  
+            return None
 
         step = -1 if self.direction == 'UP' else 1
         neighbor_pos = item.position + step
@@ -1775,9 +1795,11 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
             return None
 
         if self.direction == 'UP':
+            # Entering from below: land at the end of the panel.
             target_index = len(neighbor.interface_items)
         else:
-            # skip header toggle
+            # Entering from above: land at the start, but after the panel's
+            # header toggle, which must stay the panel's first item.
             target_index = get_panel_toggle(neighbor) is not None
 
         interface.move_to_parent(item, neighbor, target_index)
@@ -1786,9 +1808,11 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
     def move_single(self, interface, item, blocked):
         """Move one item. Returns True if it moved. Items that can't move are
         added to `blocked` so selected siblings behind them don't pass them."""
+        # as_pointer() gives a stable, hashable identity for the `blocked` set.
         item_ptr = item.as_pointer()
 
-        # Unparented socket next to a panel -> parent it into that panel.
+        # A socket right next to a panel steps into that panel first, rather
+        # than jumping over the whole panel in one press.
         entered = self.enter_adjacent_panel(interface, item, blocked)
         if entered:
             return True
@@ -1803,8 +1827,11 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
                 blocked.add(item_ptr)
                 return False
 
+            # interface.move() inserts *before* the target index, so moving
+            # down by one slot needs +2.
             offset = -1 if self.direction == 'UP' else 2
             interface.move(item, old_position + offset)
+            # Position unchanged means the item is already at the edge.
             if old_position == item.position:
                 blocked.add(item_ptr)
                 return False
@@ -1840,17 +1867,25 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
         interface = tree.interface
         active_item = interface.active
 
+        # BFA - Multi-selection support (#6215): the operator used to move only
+        # the active item. It now moves every selected item, one step at a time.
         items = self.gather_selected_roots(interface)
         if not items:
             return {'CANCELLED'}
 
-        # Setting active_index also edits `select` flags, so snapshot them.
+        # Setting active_index also edits `select` flags, so snapshot them
+        # here and restore them once everything has moved.
         select_state = [(item, item.select) for item in interface.items_tree]
 
-        # Leading items first when going up, trailing items first when going down.
+        # Move the item nearest the destination first (top-most for UP,
+        # bottom-most for DOWN). Otherwise an item would swap places with a
+        # selected neighbour instead of the whole group shifting by one.
         if self.direction == 'DOWN':
             items.reverse()
 
+        # Pointers of selected items that couldn't move this step (they hit
+        # the top/bottom). Items behind them stop too, so the group keeps its
+        # order instead of the trailing items leapfrogging the stuck ones.
         blocked = set()
         changed = False
         for item in items:
@@ -1860,6 +1895,12 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
             return {'CANCELLED'}
 
         interface.active_index = active_item.index
+
+        # BFA - Restore the selection instead of calling
+        # `self.clear_interface_selection(interface, keep_active=True)` like the
+        # other interface operators. Upstream clears it because those operators
+        # only act on the active item. This one moves every selected item, so the
+        # selection has to survive to allow pressing Up/Down repeatedly on a group.
         for item, was_selected in select_state:
             item.select = was_selected
 

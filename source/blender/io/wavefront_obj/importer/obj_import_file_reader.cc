@@ -24,8 +24,9 @@
 #include "obj_export_mtl.hh"
 #include "obj_import_file_reader.hh"
 
+#include "fast_float.h"
+
 #include <algorithm>
-#include <charconv>
 
 #include <fcntl.h>
 #ifndef WIN32
@@ -117,7 +118,7 @@ static void geom_add_mrgb_colors(const char *p, const char *end, GlobalVertices 
   const int mrgb_length = 8;
   while (p + mrgb_length <= end) {
     uint32_t value = 0;
-    std::from_chars_result res = std::from_chars(p, p + mrgb_length, value, 16);
+    fast_float::from_chars_result res = fast_float::from_chars(p, p + mrgb_length, value, 16);
     if (ELEM(res.ec, std::errc::invalid_argument, std::errc::result_out_of_range)) {
       return;
     }
@@ -869,10 +870,10 @@ void OBJParser::add_default_mtl_library()
    * from foo.mtl (see #97757). */
   char mtl_file_path[FILE_MAX];
   STRNCPY(mtl_file_path, import_params_.filepath);
-  BLI_path_extension_replace(mtl_file_path, sizeof(mtl_file_path), ".mtl");
+  BLI_path_extension_replace(mtl_file_path, ".mtl");
   if (BLI_exists(mtl_file_path)) {
     char mtl_file_base[FILE_MAX];
-    BLI_path_split_file_part(mtl_file_path, mtl_file_base, sizeof(mtl_file_base));
+    BLI_path_split_file_part(mtl_file_path, mtl_file_base);
     add_mtl_library(mtl_file_base);
   }
 }
@@ -880,13 +881,13 @@ void OBJParser::add_default_mtl_library()
 MTLParser::MTLParser(StringRefNull mtl_library, StringRefNull obj_filepath)
 {
   char obj_file_dir[FILE_MAXDIR];
-  BLI_path_split_dir_part(obj_filepath.data(), obj_file_dir, FILE_MAXDIR);
-  BLI_path_join(mtl_file_path_, FILE_MAX, obj_file_dir, mtl_library.data());
+  BLI_path_split_dir_part(obj_filepath.data(), obj_file_dir);
+  BLI_path_join(MutableCStr(mtl_file_path_, FILE_MAX), obj_file_dir, mtl_library.data());
 
   /* Normalize the path to handle different paths pointing to the same file */
   BLI_path_normalize(mtl_file_path_);
 
-  BLI_path_split_dir_part(mtl_file_path_, mtl_dir_path_, FILE_MAXDIR);
+  BLI_path_split_dir_part(mtl_file_path_, MutableCStr(mtl_dir_path_, FILE_MAXDIR));
 }
 
 void MTLParser::parse_and_store(Map<string, std::unique_ptr<MTLMaterial>> &r_materials)

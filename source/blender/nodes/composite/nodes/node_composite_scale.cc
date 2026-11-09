@@ -302,10 +302,12 @@ class ScaleOperation : public NodeOperation {
   /* Scale such that the new size matches the input absolute size. */
   float2 get_scale_absolute()
   {
-    const float2 input_size = float2(get_input("Image").domain().display_size);
-    const float2 absolute_size = float2(get_input("X").get_single_value_default<float>(),
-                                        get_input("Y").get_single_value_default<float>());
-    return absolute_size / input_size;
+    const Result &input = this->get_input("Image");
+    const float2 pixel_size = input.domain().pixel_size;
+    const float2 input_size = float2(input.domain().display_size);
+    const float2 absolute_size = float2(this->get_input("X").get_single_value_default<float>(),
+                                        this->get_input("Y").get_single_value_default<float>());
+    return (absolute_size * pixel_size) / input_size;
   }
 
   /* Scale by the render resolution percentage. */
@@ -361,7 +363,7 @@ class ScaleOperation : public NodeOperation {
     return float2(math::max(scale.x, scale.y));
   }
 
-  bool is_variable_size()
+  bool is_variable_size() const
   {
     /* Only relative scaling can be variable. */
     if (get_type() != CMP_NODE_SCALE_RELATIVE) {
@@ -371,7 +373,7 @@ class ScaleOperation : public NodeOperation {
     return !get_input("X").is_single_value() || !get_input("Y").is_single_value();
   }
 
-  CMPNodeScaleMethod get_type()
+  CMPNodeScaleMethod get_type() const
   {
     return CMPNodeScaleMethod(this->get_input("Type").get_single_value_default<MenuValue>().value);
   }
@@ -380,6 +382,11 @@ class ScaleOperation : public NodeOperation {
   {
     return CMPNodeScaleRenderSizeMethod(
         this->get_input("Frame Type").get_single_value_default<MenuValue>().value);
+  }
+
+  bool uses_asynchronous_execution() const override
+  {
+    return this->is_variable_size();
   }
 };
 

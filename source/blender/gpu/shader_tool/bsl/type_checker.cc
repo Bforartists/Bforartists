@@ -335,7 +335,7 @@ struct ExpressionTypeParser
                         ConstexprValue(std::bit_cast<int32_t>(res.value.comp_cast<float>(0)))};
               }
               if (fn->identifier == "uintBitsToFloat") {
-                return {table->uint_cls,
+                return {table->float_cls,
                         ConstexprValue(std::bit_cast<float>(res.value.comp_cast<uint32_t>(0)))};
               }
               if (fn->identifier == "intBitsToFloat") {
@@ -405,6 +405,10 @@ struct ExpressionTypeParser
 
   ExpressionResult member(ExpressionResult left, const ast::Node &t)
   {
+    if (t.type() == ast::NodeType::OpDeref && !left.is_ptr) {
+      error(t, Diag::OperatorInvalidPointer, left.type->original);
+    }
+
     SymbolClass *l = left.type;
     ast::Node right = consume();
     switch (right.type()) {
@@ -449,7 +453,8 @@ struct ExpressionTypeParser
   {
     /* Subscript operator. */
     if (ast::Subscript sub = t; sub.is_valid()) {
-      if (left.array_dim > 0) {
+      /* Array index first, then pointer dereference, matching codegen. */
+      if (left.array_dim > 0 || left.is_ptr) {
         ExpressionResult arg = subscript_parameter(sub);
 
         if (!(table->get_conversion_rank(arg.type, table->int_cls) >= MatchRank::Promotion ||
@@ -461,7 +466,13 @@ struct ExpressionTypeParser
           error(t, Diag::ReferenceCannotBindNonConstSubscript);
         }
 
-        left.array_dim -= 1;
+        if (left.array_dim > 0) {
+          left.array_dim -= 1;
+        }
+        else {
+          /* TODO(fclem): Check for 'this' somehow. */
+          left.is_ptr = false;
+        }
         return left;
       }
       /* Call subscript operator */
@@ -489,12 +500,38 @@ struct ExpressionTypeParser
     using namespace builtin;
     ExpressionResult right = expr(p);
 
+    TokenType op_type = t.front().type();
+    if (op_type == '&') {
+      error(t, Diag::OperatorAddressOfUnsupported);
+      return table->err_cls;
+    }
+
+    if (op_type == '*' && right.is_ptr) {
+      if (right.array_dim > 0) {
+        /* Dereference of an array of pointers, converted to `[0]` in codegen. */
+        right.array_dim -= 1;
+        return right;
+      }
+      /* Dereference operator is only used/allowed on this.
+       * Make it a noop since `this` is converted to a reference in codegen. */
+      right.is_ptr = false;
+      return right;
+    }
+
     if (right.array_dim > 0) {
       error(node, Diag::ArrayTypeOperand);
       return table->err_cls;
     }
 
-    TokenType op_type = t.front().type();
+    if (op_type == '*') {
+      error(t, Diag::OperatorInvalidIndirection, right.type->original);
+      return table->err_cls;
+    }
+
+    if (right.is_ptr) {
+      error(t, Diag::PointerArithmetic);
+      return table->err_cls;
+    }
 
     ClassId type_id = unary_prefix_operator_return_type(op_type, right.type);
     if (type_id == builtin::Invalid) {
@@ -549,6 +586,11 @@ struct ExpressionTypeParser
     using namespace builtin;
     if (left.array_dim > 0) {
       error(node, Diag::ArrayTypeOperand);
+      return table->err_cls;
+    }
+
+    if (left.is_ptr) {
+      error(t, Diag::PointerArithmetic);
       return table->err_cls;
     }
 
@@ -611,6 +653,11 @@ struct ExpressionTypeParser
       return table->err_cls;
     }
 
+    if (lhs.is_ptr || rhs.is_ptr) {
+      error(t, Diag::PointerArithmetic);
+      return table->err_cls;
+    }
+
     TokenType op_type = t.front().type();
 
     ClassId type_id = binary_operator_return_type(lhs.type, op_type, rhs.type);
@@ -646,12 +693,20 @@ struct ExpressionTypeParser
                       error(t, Diag::ConstexprDivisionByZero);
                       return lhs.value * rhs.value;
                     }
+                    if (contains_division_overflow(lhs.value, rhs.value)) {
+                      error(t, Diag::ConstexprIntegerOverflow);
+                      return decltype(lhs.value / rhs.value)(0);
+                    }
                     return lhs.value / rhs.value;
                   }()};
         case Modulo:
           return {type, [&]() {
                     if (contains_zero(rhs.value)) {
                       error(t, Diag::ConstexprDivisionByZero, constexpr_to_string(rhs.value));
+                      return decltype(lhs.value % rhs.value)(0);
+                    }
+                    if (contains_division_overflow(lhs.value, rhs.value)) {
+                      error(t, Diag::ConstexprIntegerOverflow);
                       return decltype(lhs.value % rhs.value)(0);
                     }
                     return lhs.value % rhs.value;
@@ -767,7 +822,7 @@ struct ExpressionTypeParser
 
   TokenType peek() const
   {
-    return node.is_valid() ? node.front().type() : Invalid;
+    return node.is_valid() ? to_type(node) : Invalid;
   }
 
   ast::Node consume()
@@ -780,11 +835,17 @@ struct ExpressionTypeParser
   TokenType to_type(const ast::Node &t) const
   {
     ast::NodeType type = t.type();
-    return type != ast::NodeType::Invalid ?
-               (type == ast::NodeType::IdQualified || type == ast::NodeType::FuncCall ?
-                    Word :
-                    t.front().type()) :
-               Invalid;
+    switch (type) {
+      case ast::NodeType::Invalid:
+        return Invalid;
+      case ast::NodeType::IdQualified:
+      case ast::NodeType::FuncCall:
+        return Word;
+      case ast::NodeType::OpDeref:
+        return Deref;
+      default:
+        return t.front().type();
+    }
   }
 
  private:

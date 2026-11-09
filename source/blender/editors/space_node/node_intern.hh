@@ -613,6 +613,9 @@ void NODE_GGT_backdrop_box_mask(wmGizmoGroupType *gzgt);
 void NODE_GGT_backdrop_ellipse_mask(wmGizmoGroupType *gzgt);
 void NODE_GGT_backdrop_split(wmGizmoGroupType *gzgt);
 void NODE_GGT_compositor_translate(wmGizmoGroupType *gzgt);
+void NODE_GGT_compositor_transform(wmGizmoGroupType *gzgt);
+void NODE_GGT_compositor_scale(wmGizmoGroupType *gzgt);
+
 // bfa node minimap
 void NODE_GGT_minimap(wmGizmoGroupType *gzgt);
 void NODE_GT_minimap(wmGizmoType *gzt);

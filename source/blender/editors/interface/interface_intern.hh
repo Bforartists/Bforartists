@@ -15,6 +15,7 @@
 #include "BLI_compiler_attrs.hh"
 #include "BLI_enum_flags.hh"
 #include "BLI_math_vector_types.hh"
+#include "BLI_span.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
 
@@ -264,7 +265,7 @@ struct Button : NonMovable {
 
   /** Run an action when holding the button down. */
   ButtonHandleHoldFunc hold_func = nullptr;
-  void *hold_argN = nullptr;
+  std::string *hold_arg = nullptr;
 
   StringRef tip;
   ButtonToolTipFunc tip_func = nullptr;
@@ -434,7 +435,7 @@ struct ButtonNumberSlider : public Button {
 
 /** Derived struct for #ButtonType::Color */
 struct ButtonColor : public Button {
-  bool is_pallete_color = false;
+  bool is_palette_color = false;
   int palette_color_index = -1;
 };
 
@@ -524,6 +525,12 @@ struct ButtonLabel : public Button {
   /** Maximum lines to be drawn in multi-line labels, 0 means all. */
   int max_lines = 0;
   FontStyleAlign text_align = UI_STYLE_TEXT_LEFT;
+};
+
+/** Derived struct for #ButtonType::Image. */
+struct ButtonImage : public Button {
+  /** Uniquely identifies the image, to reuse it from the previous redraw. */
+  std::string key;
 };
 
 /** Derived struct for #ButtonType::Scroll. */
@@ -922,12 +929,11 @@ void hsvcube_pos_from_vals(
  * when out of reasonable range (outside of 1e3/1e-3).
  */
 void button_string_get_ex(Button *but,
-                          char *str,
-                          size_t str_maxncpy,
+                          MutableCStr str,
                           int float_precision,
                           bool use_exp_float,
-                          bool *r_use_exp_float) ATTR_NONNULL(1, 2);
-void button_string_get(Button *but, char *str, size_t str_maxncpy) ATTR_NONNULL();
+                          bool *r_use_exp_float) ATTR_NONNULL(1);
+void button_string_get(Button *but, MutableCStr str) ATTR_NONNULL();
 /**
  * A version of #button_string_get_ex for dynamic buffer sizes
  * (where #button_string_get_maxncpy returns 0).
@@ -938,7 +944,7 @@ char *button_string_get_dynamic(Button *but, int *r_str_size);
 /**
  * \param str: will be overwritten.
  */
-void button_convert_to_unit_alt_name(Button *but, char *str, size_t str_maxncpy) ATTR_NONNULL();
+void button_convert_to_unit_alt_name(Button *but, MutableCStr str) ATTR_NONNULL();
 bool button_string_set(bContext *C, Button *but, const char *str) ATTR_NONNULL();
 bool button_string_eval_number(bContext *C, const Button *but, const char *str, double *r_value)
     ATTR_NONNULL();
@@ -1637,7 +1643,7 @@ void button_anim_paste_driver(bContext *C);
  * \a str can be NULL to only perform check if \a but has an expression at all.
  * \return if button has an expression.
  */
-bool button_anim_expression_get(Button *but, char *str, size_t str_maxncpy);
+bool button_anim_expression_get(Button *but, std::optional<MutableCStr> str);
 bool button_anim_expression_set(Button *but, const char *str);
 /**
  * Create new expression for button (i.e. a "scripted driver"), if it can be created.

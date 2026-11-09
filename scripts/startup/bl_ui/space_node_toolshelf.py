@@ -78,43 +78,46 @@ def is_tool_tree(context):
 class NodePanel:
     @staticmethod
     def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, props=None, pad=0, **kwargs):
+        # BFA - `props` is the values of the entry. Assigning the operator to it made the loop below
+        # read the operator's ID properties, which raises a TypeError and stops the panel drawing.
         if (operator == "node.add_node") or (text != ""):
             text = " " + text + (" "*pad)
-            props = layout.operator(operator, text=text, icon=icon)
+            op = layout.operator(operator, text=text, icon=icon)
         else:
-            props = layout.operator(operator, icon=icon)
+            op = layout.operator(operator, icon=icon)
 
-        if hasattr(props, "use_transform"):
-            props.use_transform = True
+        if hasattr(op, "use_transform"):
+            op.use_transform = True
 
         if props is not None:
             for prop_key, prop_value in props.items():
-                setattr(props, prop_key, prop_value)
+                setattr(op, prop_key, prop_value)
 
         if node is not None:
-            props.type = node
+            op.type = node
 
         if settings is not None:
             for name, value in settings.items():
-                ops = props.settings.add()
+                ops = op.settings.add()
                 ops.name = name
                 ops.value = value
 
     @staticmethod
     def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None, props=None, **kwargs):
-        props = layout.operator(operator, text="", icon=icon)
-        props.use_transform = True
+        # BFA - See draw_text_button.
+        op = layout.operator(operator, text="", icon=icon)
+        op.use_transform = True
 
         if props is not None:
             for prop_key, prop_value in props.items():
-                setattr(props, prop_key, prop_value)
+                setattr(op, prop_key, prop_value)
 
         if node is not None:
-            props.type = node
+            op.type = node
 
         if settings is not None:
             for name, value in settings.items():
-                ops = props.settings.add()
+                ops = op.settings.add()
                 ops.name = name
                 ops.value = value
 

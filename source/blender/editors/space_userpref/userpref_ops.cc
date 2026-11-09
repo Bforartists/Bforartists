@@ -159,14 +159,14 @@ static wmOperatorStatus preferences_asset_library_add_exec(bContext *C, wmOperat
 
   switch (library_type) {
     case bUserAssetLibraryAddType::Local: {
-      char *dirpath = RNA_string_get_alloc(op->ptr, "directory", nullptr, 0, nullptr);
+      char *dirpath = RNA_string_get_alloc(op->ptr, "directory", std::nullopt, nullptr);
       ED_userpref_asset_library_new(C, name, dirpath, library_type, false, {}, {});
       MEM_delete(dirpath);
       break;
     }
     case bUserAssetLibraryAddType::Remote: {
-      char *remote_url = RNA_string_get_alloc(op->ptr, "remote_url", nullptr, 0, nullptr);
-      char *auth_token_str = RNA_string_get_alloc(op->ptr, "auth_token", nullptr, 0, nullptr);
+      char *remote_url = RNA_string_get_alloc(op->ptr, "remote_url", std::nullopt, nullptr);
+      char *auth_token_str = RNA_string_get_alloc(op->ptr, "auth_token", std::nullopt, nullptr);
       const bool use_auth_token = RNA_boolean_get(op->ptr, "use_auth_token");
       std::optional<char *> auth_token = {};
       if (use_auth_token) {
@@ -235,22 +235,6 @@ static void preferences_asset_library_add_ui(bContext * /*C*/, wmOperator *op)
   }
 }
 
-static constexpr EnumPropertyItem custom_library_type_items[] = {
-    {int(bUserAssetLibraryAddType::Remote),
-     "REMOTE",
-     ICON_INTERNET,
-     "Add Remote Asset Library",
-     "Add an asset library referencing a remote repository "
-     "with support for listing and updating asset libraries"},
-    {int(bUserAssetLibraryAddType::Local),
-     "LOCAL",
-     ICON_DISK_DRIVE,
-     "Add Local Asset Library",
-     "Add an asset library managed via the file system without referencing an external "
-     "repository"},
-    {0, nullptr, 0, nullptr, nullptr},
-};
-
 static const EnumPropertyItem *custom_library_type_itemf(bContext * /*C*/,
                                                          PointerRNA * /*ptr*/,
                                                          PropertyRNA * /*prop*/,
@@ -265,7 +249,7 @@ static const EnumPropertyItem *custom_library_type_itemf(bContext * /*C*/,
 
   /* Since the Remote item is the first in the list, we can just return a pointer to
    * the 2nd item in the list, when remote asset libraries should be hidden. */
-  static_assert(custom_library_type_items[0].value == int(bUserAssetLibraryAddType::Remote));
+  BLI_assert(custom_library_type_items[0].value == int(bUserAssetLibraryAddType::Remote));
   return custom_library_type_items + 1;
 }
 
@@ -403,6 +387,91 @@ static void PREFERENCES_OT_asset_library_remove(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name BFA Asset libraries move
+ * \{ */
+
+#define BFA_ASSET_LIBARIES_UI_OFFSET 2
+
+static bUserAssetLibrary *asset_library_active_get()
+{
+  const int list_index = U.active_asset_library - BFA_ASSET_LIBARIES_UI_OFFSET;
+  if (list_index < 0) {
+    return nullptr;
+  }
+  return static_cast<bUserAssetLibrary *>(BLI_findlink(&U.asset_libraries, list_index));
+}
+
+static bool asset_library_move_poll(bContext *C)
+{
+  if (U.asset_libraries.is_empty()) {
+    CTX_wm_operator_poll_msg_set(C, "There is no asset library to move");
+    return false;
+  }
+  return asset_library_active_get() != nullptr;
+}
+
+static wmOperatorStatus asset_library_move_exec(bContext *C, wmOperator *op)
+{
+  bUserAssetLibrary *library = asset_library_active_get();
+  if (library == nullptr) {
+    BKE_report(op->reports, RPT_INFO, "Selected library cannot be moved");
+    return OPERATOR_CANCELLED;
+  }
+
+  const int step = (RNA_enum_get(op->ptr, "direction") == 0) ? -1 : 1;
+
+  /* Get neighbor from the direction of travel. */
+  const bUserAssetLibrary *neighbor = (step < 0) ? library->prev : library->next;
+  if (neighbor == nullptr) {
+    BKE_report(op->reports, RPT_INFO, "Library is already at the end of the list");
+    return OPERATOR_CANCELLED;
+  }
+
+  /* Since there is builtin library above, with the 2 offset 
+   * this make sure it does not cross into the other owner's group. */
+  if (BKE_preferences_asset_library_owner_get(neighbor) !=
+      BKE_preferences_asset_library_owner_get(library))
+  {
+    BKE_report(op->reports, RPT_INFO, "Library is already at the end of user added library list");
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!BLI_listbase_link_move(&U.asset_libraries, library, step)) {
+    return OPERATOR_CANCELLED;
+  }
+  U.active_asset_library = BLI_findindex(&U.asset_libraries, library) +
+                           BFA_ASSET_LIBARIES_UI_OFFSET;
+
+  blender::ed::asset::list::clear_all_library(C);
+  WM_main_add_notifier(NC_SPACE | ND_SPACE_ASSET_PARAMS, nullptr);
+  U.runtime.is_dirty = true;
+
+  return OPERATOR_FINISHED;
+}
+
+static void PREFERENCES_OT_asset_library_move(wmOperatorType *ot)
+{
+  static const EnumPropertyItem direction_items[] = {
+      {0, "UP", 0, "Move Up", ""},
+      {1, "DOWN", 0, "Move Down", ""},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
+  ot->name = "Move Asset Library";
+  ot->idname = "PREFERENCES_OT_asset_library_move";
+  ot->description = "Move the active asset library up or down";
+
+  ot->exec = asset_library_move_exec;
+  ot->poll = asset_library_move_poll;
+  ot->flag = OPTYPE_INTERNAL;
+
+  RNA_def_enum(ot->srna, "direction", direction_items, 0, "Direction",
+               "Which way to move the active library");
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Add Extension Repository Operator
  * \{ */
 
@@ -452,7 +521,7 @@ static wmOperatorStatus preferences_extension_repo_add_exec(bContext *C, wmOpera
 
     if (use_access_token) {
       if (RNA_string_length(op->ptr, "access_token")) {
-        access_token = RNA_string_get_alloc(op->ptr, "access_token", nullptr, 0, nullptr);
+        access_token = RNA_string_get_alloc(op->ptr, "access_token", std::nullopt, nullptr);
       }
     }
   }
@@ -801,8 +870,8 @@ static wmOperatorStatus preferences_extension_repo_remove_invoke(bContext *C,
   if (remove_files) {
     char dirpath[FILE_MAX];
     char user_dirpath[FILE_MAX];
-    BKE_preferences_extension_repo_dirpath_get(repo, dirpath, sizeof(dirpath));
-    BKE_preferences_extension_repo_user_dirpath_get(repo, user_dirpath, sizeof(user_dirpath));
+    BKE_preferences_extension_repo_dirpath_get(repo, dirpath);
+    BKE_preferences_extension_repo_user_dirpath_get(repo, user_dirpath);
 
     if (dirpath[0] || user_dirpath[0]) {
       message = IFACE_("Remove all files in:");
@@ -868,7 +937,7 @@ static wmOperatorStatus preferences_extension_repo_remove_exec(bContext *C, wmOp
 
   if (remove_files) {
     char dirpath[FILE_MAX];
-    BKE_preferences_extension_repo_dirpath_get(repo, dirpath, sizeof(dirpath));
+    BKE_preferences_extension_repo_dirpath_get(repo, dirpath);
     if (dirpath[0] && BLI_is_dir(dirpath)) {
 
       /* Removing custom directories has the potential to remove user data
@@ -894,7 +963,7 @@ static wmOperatorStatus preferences_extension_repo_remove_exec(bContext *C, wmOp
       }
     }
 
-    BKE_preferences_extension_repo_user_dirpath_get(repo, dirpath, sizeof(dirpath));
+    BKE_preferences_extension_repo_user_dirpath_get(repo, dirpath);
     if (dirpath[0] && BLI_is_dir(dirpath)) {
       if (BLI_delete(dirpath, true, true) != 0) {
         BKE_reportf(op->reports,
@@ -1307,6 +1376,7 @@ void ED_operatortypes_userpref()
 
   WM_operatortype_append(PREFERENCES_OT_asset_library_add);
   WM_operatortype_append(PREFERENCES_OT_asset_library_remove);
+  WM_operatortype_append(PREFERENCES_OT_asset_library_move); // bfa asset libraries move
 
   WM_operatortype_append(PREFERENCES_OT_extension_repo_add);
   WM_operatortype_append(PREFERENCES_OT_extension_repo_remove);

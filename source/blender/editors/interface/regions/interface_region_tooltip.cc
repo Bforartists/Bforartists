@@ -209,9 +209,9 @@ static void tooltip_region_draw_cb(const bContext * /*C*/, ARegion *region)
   theme::get_color_4fv(TH_INFO, active_color);
   color_blend_f3_f3(active_color, main_color, 1.0f - active_color[3]);
 
-  /* `alert_color` is red, push a bit toward text color. */
-  theme::get_color_3fv(TH_REDALERT, alert_color);
-  color_blend_f3_f3(alert_color, main_color, 0.3f);
+  /* `alert_color` is red, alpha as blend factor toward text color. */
+  theme::get_color_4fv(TH_REDALERT, alert_color);
+  color_blend_f3_f3(alert_color, main_color, 1.0f - alert_color[3]);
 
   /* Draw text. */
   BLF_size(data->fstyle.uifont_id, data->fstyle.points * UI_SCALE_FAC);
@@ -745,6 +745,35 @@ static std::unique_ptr<TooltipData> tooltip_data_from_tool(bContext *C,
     }
   }
 
+  if (show_shortcut) {
+    /* Shortcut for Hold
+     *
+     * As a third option, we may have a shortcut that enables a tool when held, and
+     * returns to the previous tool when released.
+     */
+
+    std::optional<std::string> shortcut;
+    if (wmOperatorType *ot_hold = WM_operatortype_find("WM_OT_tool_set_by_id_hold", false)) {
+      PointerRNA op_props = WM_operator_properties_create_ptr(ot_hold);
+      RNA_string_set(&op_props, "name", tool_id);
+      shortcut = WM_key_event_operator_string(C,
+                                              ot_hold->idname,
+                                              wm::OpCallContext::InvokeRegionWin,
+                                              static_cast<IDProperty *>(op_props.data),
+                                              true);
+      WM_operator_properties_free(&op_props);
+    }
+
+    if (shortcut) {
+      tooltip_text_field_add(*data,
+                             fmt::format(fmt::runtime(TIP_("Shortcut Hold: {}")), *shortcut),
+                             {},
+                             TIP_STYLE_NORMAL,
+                             TIP_LC_VALUE,
+                             true);
+    }
+  }
+
   /* Python */
   if ((is_quick_tip == false) && (U.flag & USER_TOOLTIPS_PYTHON)) {
     std::string str = tooltip_text_python_from_op(C, but->optype, but->opptr);
@@ -1153,7 +1182,7 @@ static std::unique_ptr<TooltipData> tooltip_data_from_button_or_extra_icon(
     /* Better not show the value of a password. */
     if ((rnaprop && (RNA_property_subtype(rnaprop) == PROP_PASSWORD)) == 0) {
       /* Full string. */
-      button_string_get(but, buf, sizeof(buf));
+      button_string_get(but, buf);
       if (buf[0]) {
         tooltip_text_field_add(*data,
                                fmt::format(fmt::runtime(TIP_("Value: {}")), buf),
@@ -1179,7 +1208,7 @@ static std::unique_ptr<TooltipData> tooltip_data_from_button_or_extra_icon(
       BLI_assert(variables.has_value());
 
       const blender::Vector<blender::bke::path_templates::Error> errors = BKE_path_apply_template(
-          filepath, sizeof(filepath), *variables);
+          filepath, *variables);
 
       if (errors.is_empty()) {
         tooltip_text_field_add(
@@ -1206,7 +1235,7 @@ static std::unique_ptr<TooltipData> tooltip_data_from_button_or_extra_icon(
     }
 
     if (but->flag & BUT_DRIVEN) {
-      if (button_anim_expression_get(but, buf, sizeof(buf))) {
+      if (button_anim_expression_get(but, buf)) {
         tooltip_text_field_add(*data,
                                fmt::format(fmt::runtime(TIP_("Expression: {}")), buf),
                                {},
@@ -1798,11 +1827,23 @@ ARegion *tooltip_create_from_gizmo(bContext *C, wmGizmo *gz)
   return tooltip_create_with_data(C, std::move(data), init_position, nullptr);
 }
 
+ARegion *tooltip_create_from_func(bContext *C,
+                                  const FunctionRef<void(TooltipData &data)> create_fn,
+                                  const float init_position[2])
+{
+  std::unique_ptr<TooltipData> data = std::make_unique<TooltipData>();
+  create_fn(*data);
+  if (data->fields.is_empty()) {
+    return nullptr;
+  }
+  return tooltip_create_with_data(C, std::move(data), init_position, nullptr);
+}
+
 static void tooltip_from_image(Image &ima, TooltipData &data)
 {
   if (ima.filepath[0]) {
     char root[FILE_MAX];
-    BLI_path_split_dir_part(ima.filepath, root, FILE_MAX);
+    BLI_path_split_dir_part(ima.filepath, root);
     tooltip_text_field_add(data, root, {}, TIP_STYLE_NORMAL, TIP_LC_VALUE, true);
   }
 
@@ -1877,7 +1918,7 @@ static void tooltip_from_clip(MovieClip &clip, TooltipData &data)
 {
   if (clip.filepath[0]) {
     char root[FILE_MAX];
-    BLI_path_split_dir_part(clip.filepath, root, FILE_MAX);
+    BLI_path_split_dir_part(clip.filepath, root);
     tooltip_text_field_add(data, root, {}, TIP_STYLE_NORMAL, TIP_LC_NORMAL);
   }
 

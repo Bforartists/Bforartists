@@ -129,8 +129,7 @@ IDTypeInfo IDType_ID_LINK_PLACEHOLDER = {
  * absolute, in which case it is not altered.
  */
 static bool lib_id_library_local_paths_callback(BPathForeachPathData *bpath_data,
-                                                char *path_dst,
-                                                size_t path_dst_maxncpy,
+                                                MutableCStr path_dst,
                                                 const char *path_src)
 {
   const char **data = static_cast<const char **>(bpath_data->user_data);
@@ -153,7 +152,7 @@ static bool lib_id_library_local_paths_callback(BPathForeachPathData *bpath_data
      * because it won't work for paths that start with `//../` */
     BLI_path_normalize(filepath);
     BLI_path_rel(filepath, base_new);
-    BLI_strncpy(path_dst, filepath, path_dst_maxncpy);
+    STRNCPY(path_dst, filepath);
     return true;
   }
 
@@ -514,6 +513,21 @@ void BKE_id_newptr_and_tag_clear(ID *id)
   }
 }
 
+void bke::id::id_lib_set(ID &id, Library *lib)
+{
+  id.lib = lib;
+  bNodeTree *ntree = node_tree_from_id(&id);
+  if (ntree) {
+    ntree->id.lib = lib;
+  }
+  if (GS(id.name) == ID_SCE) {
+    Scene &scene = reinterpret_cast<Scene &>(id);
+    if (scene.master_collection) {
+      scene.master_collection->id.lib = lib;
+    }
+  }
+}
+
 static int lib_id_expand_local_cb(LibraryIDLinkCallbackData *cb_data)
 {
   Main *bmain = cb_data->bmain;
@@ -676,6 +690,10 @@ bool BKE_lib_id_make_local(Main *bmain, ID *id, const int flags)
   /* Skip indirectly linked IDs, unless the whole library is made local, or handling them is
    * explicitly requested. */
   if (!(lib_local || (flags & LIB_ID_MAKELOCAL_INDIRECT) != 0) && (id->tag & ID_TAG_INDIRECT)) {
+    return false;
+  }
+
+  if ((flags & LIB_ID_MAKELOCAL_LINKEDPACKED_KEEP) != 0 && ID_IS_PACKED(id)) {
     return false;
   }
 
@@ -965,7 +983,7 @@ void BKE_id_move_to_same_lib(Main &bmain, ID &id, const ID &owner_id)
 
   BKE_main_namemap_remove_id(bmain, id);
 
-  id.lib = owner_id.lib;
+  bke::id::id_lib_set(id, owner_id.lib);
   id.tag |= ID_TAG_INDIRECT;
 
   ListBaseT<ID> &lb = *which_libbase(&bmain, id.id_type());
@@ -1225,7 +1243,7 @@ void BKE_libblock_management_main_add(Main *bmain, void *idv)
       bool is_new_;
       Library *archive_lib = bke::library::ensure_archive_library(
           *bmain, *id, *id->lib, id->deep_hash, is_new_);
-      id->lib = archive_lib;
+      bke::id::id_lib_set(*id, archive_lib);
     }
   }
 
@@ -1516,7 +1534,7 @@ void *BKE_libblock_alloc_in_lib(Main *bmain,
       }
     }
     else {
-      BLI_strncpy(id->name + 2, name, sizeof(id->name) - 2);
+      STRNCPY(MutableCStr(id->name).drop_front(2), name);
       id->lib = owner_library ? *owner_library : nullptr;
     }
 
@@ -2060,13 +2078,13 @@ IDNewNameResult BKE_id_new_name_validate(Main &bmain,
     if (mode == IDNewNameMode::RenameExistingAlways ||
         (mode == IDNewNameMode::RenameExistingSameRoot && STREQ(prev_name_root, new_name_root)))
     {
-      BLI_strncpy(id_other->name + 2, name, sizeof(id_other->name) - 2);
+      STRNCPY(MutableCStr(id_other->name).drop_front(2), name);
       id_sort_by_name(&lb, id_other, nullptr);
 
       const bool is_idname_changed = !STREQ(BKE_id_name(id), orig_name);
       IDNewNameResult result = {IDNewNameResult::Action::UNCHANGED_COLLISION, id_other};
       if (is_idname_changed) {
-        BLI_strncpy(id.name + 2, orig_name, sizeof(id.name) - 2);
+        STRNCPY(MutableCStr(id.name).drop_front(2), orig_name);
         result.action = IDNewNameResult::Action::RENAMED_COLLISION_FORCED;
       }
       id_sort_by_name(&lb, &id, nullptr);
@@ -2083,7 +2101,7 @@ IDNewNameResult BKE_id_new_name_validate(Main &bmain,
 
   IDNewNameResult result = {IDNewNameResult::Action::UNCHANGED, nullptr};
   if (is_idname_changed) {
-    BLI_strncpy(id.name + 2, name, sizeof(id.name) - 2);
+    STRNCPY(MutableCStr(id.name).drop_front(2), name);
     result.action = had_name_collision ? IDNewNameResult::Action::RENAMED_COLLISION_ADJUSTED :
                                          IDNewNameResult::Action::RENAMED_NO_COLLISION;
   }
@@ -2293,7 +2311,7 @@ void BKE_main_id_indirect_linked_update(Main &bmain, std::optional<Span<ID *>> l
       return IDWALK_RET_NOP;
     }
     if (cb_data->cb_flag & IDWALK_CB_LOOPBACK) {
-      /* Loop-back usages (e.g. from shpaekey to their mesh etc.) can be ignored in ID dependency
+      /* Loop-back usages (e.g. from shape-key to their mesh etc.) can be ignored in ID dependency
        * processes. */
       return IDWALK_RET_NOP;
     }

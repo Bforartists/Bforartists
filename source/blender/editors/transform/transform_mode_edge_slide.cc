@@ -104,26 +104,9 @@ struct EdgeSlideParams {
   bool update_status_bar;
 };
 
-/**
- * Get the first valid TransDataContainer *.
- *
- * Note we cannot trust TRANS_DATA_CONTAINER_FIRST_OK because of multi-object that
- * may leave items with invalid custom data in the transform data container.
- */
-static TransDataContainer *edge_slide_container_first_ok(TransInfo *t)
-{
-  FOREACH_TRANS_DATA_CONTAINER (t, tc) {
-    if (tc->custom.mode.data) {
-      return tc;
-    }
-  }
-  BLI_assert_msg(0, "Should never happen, at least one EdgeSlideData should be valid");
-  return nullptr;
-}
-
 static EdgeSlideData *edgeSlideFirstGet(TransInfo *t)
 {
-  TransDataContainer *tc = edge_slide_container_first_ok(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   return static_cast<EdgeSlideData *>(tc->custom.mode.data);
 }
 
@@ -600,7 +583,7 @@ static void drawEdgeSlide(TransInfo *t)
 
 static void edge_slide_snap_apply(TransInfo *t, float *value)
 {
-  TransDataContainer *tc = edge_slide_container_first_ok(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   EdgeSlideParams *slp = static_cast<EdgeSlideParams *>(t->custom.mode.data);
   EdgeSlideData *sld_active = static_cast<EdgeSlideData *>(tc->custom.mode.data);
   TransDataEdgeSlideVert *sv = &sld_active->sv[sld_active->curr_sv_index];
@@ -797,14 +780,14 @@ static void applyEdgeSlide(TransInfo *t)
   t->values_final[0] = final;
 
   /* Header string. */
-  ofs += BLI_strncpy_utf8_rlen(str + ofs, RPT_("Edge Slide: "), sizeof(str) - ofs);
+  ofs += STRNCPY_UTF8_RLEN(MutableCStr(str).drop_front(ofs), RPT_("Edge Slide: "));
   if (hasNumInput(&t->num)) {
     char c[NUM_STR_REP_LEN];
     outputNumInput(&(t->num), c, t->scene->unit);
-    ofs += BLI_strncpy_utf8_rlen(str + ofs, &c[0], sizeof(str) - ofs);
+    ofs += STRNCPY_UTF8_RLEN(MutableCStr(str).drop_front(ofs), &c[0]);
   }
   else {
-    ofs += BLI_snprintf_utf8_rlen(str + ofs, sizeof(str) - ofs, "%.4f ", final);
+    ofs += SNPRINTF_UTF8_RLEN(MutableCStr(str).drop_front(ofs), "%.4f ", final);
   }
   /* Done with header string. */
 
@@ -858,7 +841,7 @@ static void edge_slide_transform_matrix_fn(TransInfo *t, float mat_xform[4][4])
   float delta[3], orig_co[3], final_co[3];
 
   EdgeSlideParams *slp = static_cast<EdgeSlideParams *>(t->custom.mode.data);
-  TransDataContainer *tc = edge_slide_container_first_ok(t);
+  TransDataContainer *tc = transform_mode_container_first_ok(t);
   EdgeSlideData *sld_active = static_cast<EdgeSlideData *>(tc->custom.mode.data);
   TransDataEdgeSlideVert &sv_active = sld_active->sv[sld_active->curr_sv_index];
 

@@ -20,6 +20,7 @@
 
 #include "BKE_appdir.hh"
 #include "BKE_blendfile.hh"
+#include "BKE_compositor.hh"
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
 #include "BKE_lib_id.hh"
@@ -490,8 +491,7 @@ static WorkspaceConfigFileData *workspace_config_file_read(const char *app_templ
   char startup_file_path[FILE_MAX] = {0};
 
   if (cfgdir.has_value()) {
-    BLI_path_join(
-        startup_file_path, sizeof(startup_file_path), cfgdir->c_str(), BLENDER_STARTUP_FILE);
+    BLI_path_join(startup_file_path, cfgdir->c_str(), BLENDER_STARTUP_FILE);
   }
 
   bool has_path = BLI_exists(startup_file_path);
@@ -507,12 +507,12 @@ static WorkspaceConfigFileData *workspace_system_file_read(const char *app_templ
   }
 
   char template_dir[FILE_MAX];
-  if (!BKE_appdir_app_template_id_search(app_template, template_dir, sizeof(template_dir))) {
+  if (!BKE_appdir_app_template_id_search(app_template, template_dir)) {
     return nullptr;
   }
 
   char startup_file_path[FILE_MAX];
-  BLI_path_join(startup_file_path, sizeof(startup_file_path), template_dir, BLENDER_STARTUP_FILE);
+  BLI_path_join(startup_file_path, template_dir, BLENDER_STARTUP_FILE);
 
   bool has_path = BLI_exists(startup_file_path);
   return (has_path) ? BKE_blendfile_workspace_config_read(startup_file_path, nullptr, 0, nullptr) :
@@ -545,7 +545,8 @@ static void workspace_append_button(ui::Layout &layout,
 
 static void workspace_add_menu(bContext * /*C*/, ui::Layout *layout, void *template_v)
 {
-  const char *app_template = static_cast<const char *>(template_v);
+  const std::string *app_template_str = static_cast<const std::string *>(template_v);
+  const char *app_template = app_template_str ? app_template_str->c_str() : nullptr;
   bool has_startup_items = false;
 
   wmOperatorType *ot_append = WM_operatortype_find("WORKSPACE_OT_append_activate", true);
@@ -594,7 +595,7 @@ static void workspace_add_menu_draw(ui::Layout &layout)
 {
   {
     PointerRNA props = layout.op("WM_OT_search_single_menu",
-                                 "Search...",
+                                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Search..."),
                                  ICON_VIEWZOOM,
                                  wm::OpCallContext::InvokeDefault,
                                  UI_ITEM_NONE);
@@ -611,10 +612,15 @@ static void workspace_add_menu_draw(ui::Layout &layout)
     char *app_template = static_cast<char *>(link.data);
     char display_name[FILE_MAX];
 
-    BLI_path_to_display_name(display_name, sizeof(display_name), IFACE_(app_template));
+    BLI_path_to_display_name(display_name, IFACE_(app_template));
 
-    /* Steals ownership of link data string. */
-    layout.menu_fn_argN_free(display_name, ICON_NONE, workspace_add_menu, app_template);
+    layout.menu_fn_argN_free(display_name,
+                             ICON_NONE,
+                             workspace_add_menu,
+                             MEM_new<std::string>(__func__, app_template),
+                             ui::but_func_argN_free<std::string>,
+                             ui::but_func_argN_copy<std::string>);
+    MEM_delete(app_template);
   }
 
   templates.free_no_destruct();
@@ -709,6 +715,71 @@ static void WORKSPACE_OT_reorder_to_front(wmOperatorType *ot)
   ot->exec = workspace_reorder_to_front_exec;
 }
 
+enum ReorderDirection : short {
+  LEFT = 0,
+  RIGHT = 1,
+};
+
+static wmOperatorStatus workspace_reorder_to_left_right_exec(bContext *C, wmOperator *op)
+{
+  Main *bmain = CTX_data_main(C);
+  WorkSpace *workspace = workspace_context_get(C);
+  const ReorderDirection direction = ReorderDirection(RNA_enum_get(op->ptr, "direction"));
+
+  const Vector<ID *> ordered_workspaces = BKE_id_ordered_list(&bmain->workspaces.cast<ID>());
+  const int active_index = ordered_workspaces.first_index_of(&workspace->id);
+
+  const int target_index = active_index + (direction == ReorderDirection::LEFT ? -1 : 1);
+
+  if (target_index < 0 || target_index >= ordered_workspaces.size()) {
+    return OPERATOR_CANCELLED;
+  }
+
+  WorkSpace *target_workspace = reinterpret_cast<WorkSpace *>(ordered_workspaces[target_index]);
+
+  std::swap(workspace->order, target_workspace->order);
+
+  WM_event_add_notifier(C, NC_WINDOW, nullptr);
+
+  return OPERATOR_INTERFACE;
+}
+
+static const EnumPropertyItem rna_enum_order_direction_items[] = {
+    {ReorderDirection::LEFT, "LEFT", 0, "Left", ""},
+    {ReorderDirection::RIGHT, "RIGHT", 0, "Right", ""},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+static std::string workspace_reorder_to_left_right_description(bContext * /*C*/,
+                                                               wmOperatorType * /*ot*/,
+                                                               PointerRNA *ptr)
+{
+  if (ReorderDirection(RNA_enum_get(ptr, "direction")) == ReorderDirection::RIGHT) {
+    return TIP_("Reorder workspace to the right in the list");
+  }
+  return TIP_("Reorder workspace to the left in the list");
+}
+
+static void WORKSPACE_OT_reorder_to_left_right(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Workspace Reorder";
+  ot->description = "Reorder workspace to be left or right in the list";
+  ot->idname = "WORKSPACE_OT_reorder_to_left_right";
+
+  /* API callbacks. */
+  ot->poll = workspace_context_poll;
+  ot->exec = workspace_reorder_to_left_right_exec;
+  ot->get_description = workspace_reorder_to_left_right_description;
+
+  ot->prop = RNA_def_enum(ot->srna,
+                          "direction",
+                          rna_enum_order_direction_items,
+                          ReorderDirection::LEFT,
+                          "Direction",
+                          "Move the workspace towards left or right");
+}
+
 static wmOperatorStatus workspace_scene_pin_toggle_exec(bContext *C, wmOperator * /*op*/)
 {
   WorkSpace *workspace = workspace_context_get(C);
@@ -749,6 +820,7 @@ void ED_operatortypes_workspace()
   WM_operatortype_append(WORKSPACE_OT_append_activate);
   WM_operatortype_append(WORKSPACE_OT_reorder_to_back);
   WM_operatortype_append(WORKSPACE_OT_reorder_to_front);
+  WM_operatortype_append(WORKSPACE_OT_reorder_to_left_right);
   WM_operatortype_append(WORKSPACE_OT_scene_pin_toggle);
 }
 

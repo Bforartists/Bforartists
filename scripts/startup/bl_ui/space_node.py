@@ -1337,6 +1337,14 @@ class NODE_PT_quality(Panel):
             row.separator()
             row.prop(rd, "use_compositor_frames_cache", text="Frames")
 
+            heading = layout.column(heading="Proxy", align=True)
+            row = heading.row(align=True)
+            row.prop(rd, "compositor_proxy_use_preview_scale", text="")
+            sub = row.row()
+            sub.active = rd.compositor_proxy_use_preview_scale
+            sub.prop(rd, "compositor_proxy_preview_scale", text="")
+            heading.prop(rd, "compositor_proxy_adapt_to_render_scale", text="Adapt To Render Scale")
+
 
 class NODE_PT_overlay(Panel):
     bl_space_type = 'NODE_EDITOR'

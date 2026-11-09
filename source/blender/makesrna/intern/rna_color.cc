@@ -511,7 +511,8 @@ static void rna_ColorManagedDisplaySettings_display_device_set(PointerRNA *ptr, 
   ColorManagedDisplaySettings *display = static_cast<ColorManagedDisplaySettings *>(ptr->data);
   const char *name = IMB_colormanagement_display_get_indexed_name(value);
 
-  if (name) {
+  /* Keep the current display for invalid indices, that may come from animation. */
+  if (name && name[0]) {
     STRNCPY_UTF8(display->display_device, name);
   }
 }
@@ -1167,7 +1168,7 @@ static void rna_def_color_ramp_element(BlenderRNA *brna)
   prop = RNA_def_property(srna, "position", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, nullptr, "pos");
   RNA_def_property_range(prop, 0, 1);
-  RNA_def_property_ui_range(prop, 0, 1, 1, 3);
+  RNA_def_property_ui_range(prop, 0, 1, 0.5f, 3);
   RNA_def_property_ui_text(prop, "Position", "Set position of selected color stop");
   RNA_def_property_update(prop, 0, "rna_ColorRamp_update");
 }

@@ -211,7 +211,7 @@ BLI_NOINLINE static void update_elimination_mask_for_close_points(
     return;
   }
 
-  const KDTreeNew<float3> tree(positions);
+  const KDTree<float3> tree(positions);
 
   for (const int i : positions.index_range()) {
     if (elimination_mask[i]) {
@@ -447,7 +447,7 @@ BLI_NOINLINE static void compute_attribute_outputs(const Mesh &mesh,
 {
   MutableAttributeAccessor point_attributes = points.attributes_for_write();
 
-  SpanAttributeWriter<int> ids = point_attributes.lookup_or_add_for_write_only_span<int>(
+  SpanAttributeWriter<int> ids = point_attributes.ensure_for_write_only_span<int>(
       "id", AttrDomain::Point);
 
   SpanAttributeWriter<float3> normals;
