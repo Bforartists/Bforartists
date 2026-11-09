@@ -551,7 +551,8 @@ msgid "Show Menus"
 msgstr "Прикажи меније"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Мрикажи мени у заглављу"
 
 
@@ -11837,7 +11838,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "Уметни кључни кадар (дугмад)"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "Уметни кључни кадар за све елементе у низу"
 
 
@@ -14847,7 +14849,8 @@ msgid "Add Plane"
 msgstr "Додај плочу"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "Формирај испуњену раван меш од 4 темена"
 
 
@@ -16122,7 +16125,8 @@ msgid "Child"
 msgstr "Дете"
 
 
-msgid "Select all visible objects that are linked"
+# BFA - reworded, Blender: "Select all visible objects that are linked"
+msgid "Select all visible objects that are linked to the active element"
 msgstr "Изабери све видљиве повезане објекте"
 
 
@@ -16747,7 +16751,8 @@ msgid "Copy Pose"
 msgstr "Копирај позу"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "Означи изабране кости као невидљиве у резиму позирања"
 
 
@@ -17597,8 +17602,9 @@ msgid "Zoom preview to fit in the area"
 msgstr "Зумирај поглед да испуни простор"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "Миксуј"
 
 
@@ -17758,11 +17764,13 @@ msgid "Jump"
 msgstr "Пребаци"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "Пребацује курсор на линију"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "Број линије за пребацивање"
 
 
@@ -18299,8 +18307,9 @@ msgid "Select all pinned UV vertices"
 msgstr "Означава сва закачена UV темена"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Изабери корење"
 
 
@@ -18842,12 +18851,14 @@ msgid "Save Startup File"
 msgstr "Сачувај почетну датотеку"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Сачувај Blender датотеку"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Уписује тренутну Blender датотеку"
 
 
@@ -23313,8 +23324,9 @@ msgid "Extend Child"
 msgstr "Наставак"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Изабери мустру ..."
 
 
@@ -23408,23 +23420,27 @@ msgid "Path"
 msgstr "Путања"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "Nurbs површ"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "Nurbs ваљак"
 
 
+# BFA - reworded, Blender: "Nurbs Sphere"
 msgctxt "Operator"
-msgid "Nurbs Sphere"
+msgid "Surface Sphere"
 msgstr "Nurbs сфера"
 
 
+# BFA - reworded, Blender: "Nurbs Torus"
 msgctxt "Operator"
-msgid "Nurbs Torus"
+msgid "Surface Torus"
 msgstr "Nurbs торус"
 
 
@@ -24734,7 +24750,8 @@ msgid "W:"
 msgstr "W:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Полупречник X:"
 
 
@@ -24983,7 +25000,8 @@ msgid "Create Along Paths"
 msgstr "Направи дуж путања"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Утицај:"
 
 
@@ -25271,3 +25289,103 @@ msgstr "Збирка поза"
 msgid "Import-Export"
 msgstr "Увоз-извоз"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Маске"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Споји стазе"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Дубина"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "Пребацује курсор на линију"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Помери"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "Изабрана група"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Изабрана група"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Обрнути смер увећавања"
+
+# BFA - reworded, Blender: "Set type of handle for selected keyframes"
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "Изабери врсту ручки за изабране кључне кадрове"
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Оријентација"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Маска"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Прикажи"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Скупљање/ширење"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Изабери слично"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Изабери слично"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Nurbs круг"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Врста"
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "Приближи на оквир"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Излаз из Bforartists-а"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Излаз из Bforartists-а"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Bforartists рендеринг"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Bforartists-ов преглед датотека"

@@ -514,7 +514,8 @@ msgid "Animation Data"
 msgstr "Animaatio-data"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Animaatio-data data-palikalle"
 
 
@@ -522,7 +523,8 @@ msgid "Action"
 msgstr "Toiminto"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Aktiiviset toiminnot tälle data-palikalle"
 
 
@@ -1219,7 +1221,8 @@ msgid "Worlds"
 msgstr "Maailmat"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Näytä maailman data-palikat"
 
 
@@ -1759,7 +1762,8 @@ msgid "Weight"
 msgstr "Paino"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Toiminnan data-palikat"
 
 
@@ -1767,23 +1771,28 @@ msgid "Annotation"
 msgstr "Huomiointi"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Luurangon data-palikat"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Siveltimen data-palikat"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Välimuistin data-palikat"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Kameran data-palikat"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Kokoelman data-palikat"
 
 
@@ -1791,7 +1800,8 @@ msgid "Color Space"
 msgstr "Väriavaruus"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Käyrän data-palikat"
 
 
@@ -1807,7 +1817,8 @@ msgid "Vector Fonts"
 msgstr "Vektorifontit"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Vektorifontin data-palikat"
 
 
@@ -1815,11 +1826,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Öljykynän data-palikat"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Hiuskäyrien data-palikat"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Kuvien data-palikat"
 
 
@@ -1839,7 +1852,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Nykyinen sessio tallennettu levylle .blend-tiedostona"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Säleikon data-palikat"
 
 
@@ -1847,15 +1861,18 @@ msgid "Libraries"
 msgstr "Kirjastot"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Kirjaston data-palikat"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Valoluotaimen data-palikat"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Valon data-palikat"
 
 
@@ -1863,27 +1880,33 @@ msgid "Line Styles"
 msgstr "Viivatyylit"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Viivatyylin data-palikat"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Maskin data-palikat"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Materiaalin data-palikat"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Muodon data-palikat"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Metapallon data-palikat"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Elokuvaklipin data-palikat"
 
 
@@ -1891,7 +1914,8 @@ msgid "Node Groups"
 msgstr "Noodiryhmät"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Noodiryhmän data-palikat"
 
 
@@ -1899,11 +1923,13 @@ msgid "Object data-blocks"
 msgstr "Objektin data-palikat"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Maalikäyrien data-palikat"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Paletin data-palikat"
 
 
@@ -1911,7 +1937,8 @@ msgid "Particles"
 msgstr "Partikkelit"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Partikkelin data-palikat"
 
 
@@ -1919,7 +1946,8 @@ msgid "Point cloud data-blocks"
 msgstr "Pistepilven data-palikat"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Kohtauksen data-palikat"
 
 
@@ -1927,7 +1955,8 @@ msgid "Screens"
 msgstr "Näytöt"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Näytön data-palikat"
 
 
@@ -1935,15 +1964,18 @@ msgid "Shape Keys"
 msgstr "Muotoavaimet"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Muotoavaimen data-palikat"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Äänen data-palikat"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Kaiuttimen data-palikat"
 
 
@@ -1951,7 +1983,8 @@ msgid "Text data-blocks"
 msgstr "Tekstin data-palikat"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Tekstuurin data-palikat"
 
 
@@ -1971,7 +2004,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Tiedostomuodon versio, jolla .blend-tiedosto on tallennettu"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Volyymin data-palikat"
 
 
@@ -1979,15 +2013,18 @@ msgid "Window Managers"
 msgstr "Ikkunamanagerit"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Ikkunamanagerin data-palikat"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Työtilan data-palikat"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Maailman data-palikat"
 
 
@@ -2579,7 +2616,8 @@ msgid "Volume"
 msgstr "Volyymi"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "Luu luurangon data-palikassa"
 
 
@@ -4641,7 +4679,8 @@ msgid "Source"
 msgstr "Lähde"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "Lajittele data-palikat"
 
 
@@ -9928,7 +9967,8 @@ msgid "Save As Image"
 msgstr "Tallenna kuvana"
 
 
-msgid "Save the image with another name and/or settings"
+# BFA - reworded, Blender: "Save the image with another name and/or settings"
+msgid "Saves the image with another name and/or settings"
 msgstr "Tallenna kuva toisella nimellä ja/tai asetuksilla"
 
 
@@ -11359,7 +11399,8 @@ msgid "Display X Axis"
 msgstr "Näytä X-Akseli"
 
 
-msgid "Show the X axis line"
+# BFA - reworded, Blender: "Show the X axis line"
+msgid "Show the X axis line in perspective / orthographic views"
 msgstr "Näytä X-akselin viiva"
 
 
@@ -11367,7 +11408,8 @@ msgid "Display Y Axis"
 msgstr "Näytä Y-Akseli"
 
 
-msgid "Show the Y axis line"
+# BFA - reworded, Blender: "Show the Y axis line"
+msgid "Show the Y axis line in perspective / orthographic views"
 msgstr "Näytä Y-akselin viiva"
 
 
@@ -11375,7 +11417,8 @@ msgid "Display Z Axis"
 msgstr "Näytä Z-Akseli"
 
 
-msgid "Show the Z axis line"
+# BFA - reworded, Blender: "Show the Z axis line"
+msgid "Show the Z axis line in perspective / orthographic views"
 msgstr "Näytä Z-akselin viiva"
 
 
@@ -13036,8 +13079,9 @@ msgid "Replace..."
 msgstr "Korvaa..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Tallenna kopio..."
 
 
@@ -13169,8 +13213,9 @@ msgid "Render Animation"
 msgstr "Renderöi animaatio"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Renderöi ääni..."
 
 
@@ -13348,8 +13393,9 @@ msgid "Camera"
 msgstr "Kamera"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "Tuo OpenVDB..."
 
 
@@ -14418,7 +14464,8 @@ msgid "Offset:"
 msgstr "Siirros:"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr "Kuvioalue:"
 
 
@@ -14430,7 +14477,8 @@ msgid "Height:"
 msgstr "Korkeus:"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr "Hakualue:"
 
 
@@ -14822,7 +14870,8 @@ msgid "Vertices Data:"
 msgstr "Kärkien tieto:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "X-säde:"
 
 
@@ -17185,3 +17234,61 @@ msgstr "Työkalu"
 msgid "Surface Normal"
 msgstr "Pinnan normaali"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Maskit"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "Valitse kaikki piirteen mukaan"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Poista"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Syvyys"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "Manhattan"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "Uusi tiedosto"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Maski"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Valitse samankaltainen"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Valitse samankaltainen"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Tyyppi"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Bforartists renderöinti"
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Päivittäminen viimeisimpään macOS-versioon saattaa parantaa Bforartists-tukea"

@@ -730,7 +730,8 @@ msgid "Animation Data"
 msgstr "ﺎﭩﯾﮈ ﺕﺎﯿﮐﺮﺣ"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "ﺎﭩﯾﮈ ﺎﮐ ﯼﺮﯾﺬﭘ ﺖﮐﺮﺣ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -738,7 +739,8 @@ msgid "Action"
 msgstr "ﻦﺸﮑﯾﺍ"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "ﻡﺍﺪﻗﺍ ﻝﺎﻌﻓ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺱﺍ"
 
 
@@ -838,7 +840,8 @@ msgid "Drivers"
 msgstr "ﺯﺭﻮﯿﺋﺍﺭﮈ"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "ﺭﺎﮩﻇﺍ/ﺯﺭﻮﯿﺋﺍﺭﮈ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺱﺍ"
 
 
@@ -1338,7 +1341,8 @@ msgid "Show Menus"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﻮﯿﻨﯿﻣ"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﻮﯿﻨﯿﻣ ﮟﯿﻣ ﺭﮉﯿﮨ"
 
 
@@ -1462,7 +1466,8 @@ msgid "Outliner"
 msgstr "ﺮﻨﺋﻻ﻿ ﭦﺅﺁ"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "ﮦﺰﺋﺎﺟ ﺎﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺏﺎﯿﺘﺳﺩ ﻡﺎﻤﺗ ﺭﻭﺍ ﻑﺍﺮﮔ ﺮﻈﻨﻣ"
 
 
@@ -1470,7 +1475,8 @@ msgid "Properties"
 msgstr "ﺰﯿﭨﺮﭘﺍﺮﭘ"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "ﮟﯾﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﺕﺎﯿﺻﻮﺼﺧ ﯽﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮧﻘﻠﻌﺘﻣ ﺭﻭﺍ ﮯﺷ ﻝﺎﻌﻓ"
 
 
@@ -2127,7 +2133,8 @@ msgid "Worlds"
 msgstr "ﮞﺅﺎﯿﻧﺩ"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻟﺭﻭ"
 
 
@@ -2503,7 +2510,8 @@ msgid "Bake Data"
 msgstr "ﺎﭩﯾﮈ ﮏﯿﺑ"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "ﮟﯾﺮﮐ ﮏﯿﺑ ﺎﭩﯾﮈ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻦﯿﺳ"
 
 
@@ -2687,7 +2695,8 @@ msgid "Internal"
 msgstr "ﯽﻧﻭﺭﺪﻧﺍ"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺞﯿﻣﺍ ﯽﻧﻭﺭﺪﻧﺍ ﻮﮐ ﭗﯿﻣ ﮓﻨﮑﯿﺑ"
 
 
@@ -2971,11 +2980,13 @@ msgid "Blend-File Data"
 msgstr "ﺎﭩﯾﮈ ﻞﺋﺎﻓ ﮉﻨﯿﻠﺑ"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "ﮧﭽﻧﺎﮬﮈ ﺎﭩﯾﮈ ﯼﺰﮐﺮﻣ ﻻ﻿ﺍﻭ ﮯﻧﺮﮐ ﯽﮔﺪﻨﺋﺎﻤﻧ ﯽﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻡﺎﻤﺗ ﮯﮐ ﺱﺍ ﺭﻭﺍ ﻞﺋﺎﻓ blend. ﮏﯾﺍ"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻡﺍﺪﻗﺍ"
 
 
@@ -2991,23 +3002,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "(Grease Pencil ﯽﺴﯿﮕﯿﻟ) ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﺤﯾﺮﺸﺗ"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﭽﻣﺭﺁ"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺵﺮﺑ"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮟﯿﻠﺋﺎﻓ ﮯﺸﯿﮐ"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺮﻤﯿﮐ"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻊﻤﺟ"
 
 
@@ -3015,7 +3031,8 @@ msgid "Color Space"
 msgstr "ﮧﮕﺟ ﻦﯿﮕﻧﺭ"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻢﺧ"
 
 
@@ -3031,7 +3048,8 @@ msgid "Vector Fonts"
 msgstr "ﺲﭩﻧﻮﻓ ﺮﭩﮑﯾﻭ"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﻧﻮﻓ ﺮﭩﮑﯾﻭ"
 
 
@@ -3039,11 +3057,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Grease Pencil ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ  ﻢﺧ  ﮯﮐ ﮞﻮﻟﺎﺑ"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺮﯾﻮﺼﺗ"
 
 
@@ -3063,7 +3083,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "ﮯﮨ ﺎﯿﮔ ﺎﯿﮐ ﻅﻮﻔﺤﻣ ﮟﯿﻣ ﮏﺳﮈ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﻞﺋﺎﻓ blend. ﻮﮐ ﻦﺸﯿﺳ ﮦﺩﻮﺟﻮﻣ ﺎﯿﮐ"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﻠﻌﺟ"
 
 
@@ -3071,15 +3092,18 @@ msgid "Libraries"
 msgstr "ﮞﺎﯾﺮﯾﺮﺒﺋﻻ﻿"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺮﯾﺮﺒﺋﻻ﻿"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺏﻭﺮﭘ ﭧﺋﻻ﻿"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﮑﻠﮨ"
 
 
@@ -3087,27 +3111,33 @@ msgid "Line Styles"
 msgstr "ﺰﻠﺋﺎﭩﺳﺍ ﻦﺋﻻ﻿"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﺋﺎﭩﺳﺍ ﻦﺋﻻ﻿"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﺳﺎﻣ"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﯾﺮﭩﯿﻣ"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺶﯿﻣ"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻝﺎﺑ ﺎﭩﯿﻣ"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﭗﻠﮐ ﯼﻭﻮﻣ"
 
 
@@ -3115,7 +3145,8 @@ msgid "Node Groups"
 msgstr "ﮦﻭﺮﮔ ﮈﻮﻧ"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﻭﺮﮔ ﮈﻮﻧ"
 
 
@@ -3123,11 +3154,13 @@ msgid "Object data-blocks"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺰﯿﭼ"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺯﻭﺮﮐ ﭧﻨﯿﭘ"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﯿﻠﯿﭘ"
 
 
@@ -3135,7 +3168,8 @@ msgid "Particles"
 msgstr "ﺕﺍﺭﺫ"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﮑﯿﭨﺭﺎﭘ"
 
 
@@ -3143,7 +3177,8 @@ msgid "Point cloud data-blocks"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮈﺅﻼ﻿ﮐ ﭧﻨﺋﺍﻮﭘ"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﻈﻨﻣ"
 
 
@@ -3151,7 +3186,8 @@ msgid "Screens"
 msgstr "ﮟﯿﻨﯾﺮﮑﺳ"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻦﯾﺮﮑﺳﺍ"
 
 
@@ -3159,15 +3195,18 @@ msgid "Shape Keys"
 msgstr "ﮞﺎﯿﺑﺎﭼ ﯽﮐ ﻞﮑﺷ"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺪﯿﻠﮐ ﻞﮑﺷ"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻧﺅﺎﺳ"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﮑﯿﭙﺳﺍ"
 
 
@@ -3175,7 +3214,8 @@ msgid "Text data-blocks"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﭽﺴﮑﯿﭨ"
 
 
@@ -3195,7 +3235,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "ﺎﮭﺗ ﺎﯿﮔ ﺎﯿﮐ ﻅﻮﻔﺤﻣ ﻮﮐ ﻞﺋﺎﻓ blend. ﻥﮊﺭﻭ ﭧﯿﻣﺭﺎﻓ ﻞﺋﺎﻓ"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻢﺠﺣ"
 
 
@@ -3203,15 +3244,18 @@ msgid "Window Managers"
 msgstr "ﺯﺮﺠﯿﻨﯿﻣ ﻭﮉﻧﻭ"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﺠﯿﻨﯿﻣ ﻭﮉﻧﻭ"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺲﯿﭙﺳﺍ ﮎﺭﻭ"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻟﺭﻭ"
 
 
@@ -4028,7 +4072,8 @@ msgid "Volume"
 msgstr "ﻢﺠﺣ"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "ﯼﮉﮨ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﭽﻣﺭﺁ"
 
 
@@ -5950,7 +5995,8 @@ msgid "Stereo"
 msgstr "ﻮﯾﺮﯿﭩﺳ"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﯽﭘﻮﮑﺳﻮﯾﺮﯿﭩﺳ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺮﻤﯿﮐ"
 
 
@@ -10027,7 +10073,8 @@ msgid "Curve Slice"
 msgstr "ﺍﮍﮑﭨ  ﮟﯿﻤﺧ"
 
 
-msgid "A single curve from a curves data-block"
+# BFA - reworded, Blender: "A single curve from a curves data-block"
+msgid "A single curve from a curves data"
 msgstr "ﻢﺧ ﺪﺣﺍﻭ ﮏﯾﺍ ﮯﺳ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ  ﮟﯿﻤﺧ"
 
 
@@ -10479,7 +10526,8 @@ msgid "Include Missing NLA"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ NLA ﮦﺪﺸﻤﮔ"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "(ﺮﭩﯾﮉﯾﺍ ﮮﺍ ﻞﯾﺍ ﻦﯾﺍ ﻑﺮﺻ) ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺕﺎﯿﮐﺮﺣ  ﮯﮐ ﺎﭩﯾﮈ ﮮﺍ ﻞﯾﺍ ﻦﯾﺍ ﺮﯿﻐﺑ"
 
 
@@ -10487,7 +10535,8 @@ msgid "Display Modifier Data"
 msgstr "ﺎﭩﯾﮈ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮯﻠﭙﺳﮈ"
 
 
-msgid "Include visualization of animation data related to data-blocks linked to modifiers"
+# BFA - reworded, Blender: "Include visualization of animation data related to data-blocks linked to modifiers"
+msgid "Include visualization of animation data related to data linked to modifiers"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺭﻮﺼﺗ ﺎﮐ ﺎﭩﯾﮈ ﺕﺎﯿﮐﺮﺣ  ﻖﻠﻌﺘﻣ ﮯﺳ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﻠﺴﻨﻣ ﮯﺳ ﺯﺮﺋﺎﻔﯾﮈﻮﻣ"
 
 
@@ -10611,7 +10660,8 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "ID-Block ﺮﭘ ﺭﻮﻃ ﻡﺎﻋ ،ﮯﮨ ﺎﺗﺮﮐ ﯽﮔﺪﻨﺋﺎﻤﻧ ﯽﮐ ﺎﭩﯾﮈ ﮧﻌﯾﺭﺫ ID_SCE (ﺮﻈﻨﻣ ﯽﻨﻌﯾ)"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -11567,7 +11617,8 @@ msgid "Edit Bone"
 msgstr "ﮟﯾﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﯼﮉﮨ"
 
 
-msgid "Edit mode bone in an armature data-block"
+# BFA - reworded, Blender: "Edit mode bone in an armature data-block"
+msgid "Editmode bone in an armature data"
 msgstr "ﮟﯾﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﯼﮉﮨ ﯽﮐ ﮈﻮﻣ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﭽﯿﻣﺭﺁ ﮏﯾﺍ"
 
 
@@ -15885,7 +15936,8 @@ msgid "Freestyle Settings"
 msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﻞﺋﺎﭩﺳﺍ ﯼﺮﻓ"
 
 
-msgid "Freestyle settings for a ViewLayer data-block"
+# BFA - reworded, Blender: "Freestyle settings for a ViewLayer data-block"
+msgid "Freestyle settings for a ViewLayer"
 msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﻞﺋﺎﭩﺳﺍ ﯼﺮﻓ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﯿﺌﻟﻮﯾﻭ"
 
 
@@ -17239,7 +17291,8 @@ msgid "Animation data for this data-block"
 msgstr "ﺎﭩﯾﮈ ﺎﮐ ﯼﺮﯾﺬﭘ ﺖﮐﺮﺣ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺱﺍ"
 
 
-msgid "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+# BFA - reworded, Blender: "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+msgid "Armature data containing a hierarchy of bones, usually used for rigging characters"
 msgstr "ﮯﮨ ﺎﺗﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮯﯿﻟ ﮯﮐ ﻑﻭﺮﺣ ﮯﮐ ﯽﻟﺪﻧﺎﮬﺩ ﺮﭘ ﺭﻮﻃ ﻡﺎﻋ ،ﮯﮨ ﺎﺗﻮﮨ ﯼﺪﻨﺑ ﮧﺟﺭﺩ ﺎﮐ ﮞﻮﯾﮉﮨ ﮟﯿﻣ ﺲﺟ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﭽﻣﺭﺁ"
 
 
@@ -17391,7 +17444,8 @@ msgid "Apply changes to matching bone on opposite side of X-Axis"
 msgstr "X-ﮟﯿﺋﺎﮕﻟ ﮞﺎﯿﻠﯾﺪﺒﺗ ﮟﯿﻣ ﯼﮉﮨ ﻞﺛﺎﻤﻣ ﺐﻧﺎﺟ ﻒﻟﺎﺨﻣ ﮯﮐ ﺭﻮﺤﻣ"
 
 
-msgid "Brush data-block for storing brush settings for painting and sculpting"
+# BFA - reworded, Blender: "Brush data-block for storing brush settings for painting and sculpting"
+msgid "Brush data for storing brush settings for painting and sculpting"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺵﺮﺑ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﮦﺮﯿﺧﺫ ﻮﮐ ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﺵﺮﺑ ﮯﯿﻟ ﮯﮐ ﯼﺯﺎﺳ ﮧﻤﺴﺠﻣ ﺭﻭﺍ ﮓﻨﭩﻨﯿﭘ"
 
 
@@ -19242,7 +19296,8 @@ msgid "Frame"
 msgstr "ﻢﯾﺮﻓ"
 
 
-msgid "Camera data-block for storing camera settings"
+# BFA - reworded, Blender: "Camera data-block for storing camera settings"
+msgid "Camera data for storing camera settings"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺮﻤﯿﮐ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﮦﺮﯿﺧﺫ ﻮﮐ ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﮮﺮﻤﯿﮐ"
 
 
@@ -19726,7 +19781,8 @@ msgid "Panoramic"
 msgstr "ﮏﻣﺍﺭﻮﻨﯿﭘ"
 
 
-msgid "Collection of Object data-blocks"
+# BFA - reworded, Blender: "Collection of Object data-blocks"
+msgid "Collection of Object data"
 msgstr "ﮧﻋﻮﻤﺠﻣ ﺎﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺰﯿﭼ"
 
 
@@ -19922,7 +19978,8 @@ msgid "Assign intersection priority value for this collection"
 msgstr "ﮟﯾﺮﮐ ﺾﯾﻮﻔﺗ ﺭﺪﻗ ﯽﺤﯿﺟﺮﺗ ﯽﮐ ﻦﺸﮑﯿﺳﺮﭩﻧﺍ ﮯﯿﻟ ﮯﮐ ﮧﻋﻮﻤﺠﻣ ﺱﺍ"
 
 
-msgid "Curve data-block storing curves, splines and NURBS"
+# BFA - reworded, Blender: "Curve data-block storing curves, splines and NURBS"
+msgid "Curve data storing curves, splines and NURBS"
 msgstr "NURBS ﺭﻭﺍ ﺰﻨﺋﻼ﻿ﭙﺳﺍ ،ﺭﺎﺗ  ﮟﯿﻤﺧ ﮯﻟﺍﻭ ﮯﻧﺮﮐ ﮦﺮﯿﺧﺫ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ  ﻢﺧ"
 
 
@@ -20250,7 +20307,8 @@ msgid "Surface Curve"
 msgstr "ﺭﺎﺗ  ﮟﯿﻤﺧ ﺎﮐ ﺢﻄﺳ"
 
 
-msgid "Curve data-block used for storing surfaces"
+# BFA - reworded, Blender: "Curve data-block used for storing surfaces"
+msgid "Curve data used for storing surfaces"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﺑ ﻻ﻿ﺍﻭ ﮯﻧﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﮦﺮﯿﺧﺫ ﻮﮐ ﮞﻮﺤﻄﺳ"
 
 
@@ -20258,7 +20316,8 @@ msgid "Text Curve"
 msgstr "ﻢﺧ ﺎﮐ ﻦﺘﻣ"
 
 
-msgid "Curve data-block used for storing text"
+# BFA - reworded, Blender: "Curve data-block used for storing text"
+msgid "Curve data used for storing text"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﺑ ﻻ﻿ﺍﻭ ﮯﻧﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﮦﺮﯿﺧﺫ ﻮﮐ ﻦﺘﻣ"
 
 
@@ -20522,11 +20581,13 @@ msgid "Don't fill polygons while editing"
 msgstr "ﮟﯾﺮﮭﺑ ﮧﻧ ﻮﮐ ﻢﺴﺠﻣ ﺖﻗﻭ ﮯﺗﺮﮐ ﻢﯿﻣﺮﺗ"
 
 
-msgid "Hair data-block for hair curves"
+# BFA - reworded, Blender: "Hair data-block for hair curves"
+msgid "Hair data for hair curves"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﺌﯿﮨ ﮯﯿﻟ ﮯﮐ  ﮟﯿﻤﺧ ﮯﮐ ﮞﻮﻟﺎﺑ"
 
 
-msgid "All curves in the data-block"
+# BFA - reworded, Blender: "All curves in the data-block"
+msgid "All curves in the data"
 msgstr "ﺭﺎﺗ  ﮟﯿﻤﺧ ﻡﺎﻤﺗ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -21258,7 +21319,8 @@ msgid "Display onion keyframes for looping animations"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﺰﻤﯾﺮﻓ ﯽﮐ ﮯﮐ ﺯﺎﯿﭘ ﮯﯿﻟ ﮯﮑﺗﺎﯿﮐﺮﺣ ﮓﻨﭘﻮﻟ"
 
 
-msgid "Image data-block referencing an external or packed image"
+# BFA - reworded, Blender: "Image data-block referencing an external or packed image"
+msgid "Image data referencing an external or packed image"
 msgstr "ﮯﮨ ﺎﺘﯾﺩ ﮧﻟﺍﻮﺣ ﺎﮐ ﺮﯾﻮﺼﺗ ﯼﺮﮭﺑ ﺎﯾ ﯽﻧﻭﺮﯿﺑ ﮏﯾﺍ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺮﯾﻮﺼﺗ"
 
 
@@ -21677,7 +21739,8 @@ msgid "Single file with an encoded stereo pair"
 msgstr "ﻞﺋﺎﻓ ﻞﮕﻨﺳ ﮫﺗﺎﺳ ﮯﮐ ﮮﮌﻮﺟ ﻮﯾﺮﯿﭩﺳ ﮦﺪﺷ ﮈﻮﮑﻧﺍ"
 
 
-msgid "Shape keys data-block containing different shapes of geometric data-blocks"
+# BFA - reworded, Blender: "Shape keys data-block containing different shapes of geometric data-blocks"
+msgid "Shape keys data containing different shapes of geometric data"
 msgstr "ﮟﯿﮨ ﯽﺗﻮﮨ ﮟﯿﻠﮑﺷ ﻒﻠﺘﺨﻣ ﯽﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮎﺮﭩﯿﻣﻮﯿﺟ ﮟﯿﻣ ﺲﺟ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺰﯿﮐ ﻞﮑﺷ"
 
 
@@ -21705,11 +21768,13 @@ msgid "User"
 msgstr "ﻑﺭﺎﺻ"
 
 
-msgid "Data-block using these shape keys"
+# BFA - reworded, Blender: "Data-block using these shape keys"
+msgid "Data using these shape keys"
 msgstr "ﮟﯾﺮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﺋﻮﮨ ﮯﺗﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺎﮐ ﮞﻭﺪﯿﻠﮐ ﯽﻟﺍﻭ ﻞﮑﺷ ﻥﺍ"
 
 
-msgid "Lattice data-block defining a grid for deforming other objects"
+# BFA - reworded, Blender: "Lattice data-block defining a grid for deforming other objects"
+msgid "Lattice data defining a grid for deforming other objects"
 msgstr "ﮯﮨ ﺎﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﮈﺮﮔ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﺖﺳﺭﺩ ﻮﮐ ءﺎﯿﺷﺍ ﯼﺮﺳﻭﺩ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﻟﺎﺟ"
 
 
@@ -21786,7 +21851,8 @@ msgid "Light"
 msgstr "ﯽﻨﺷﻭﺭ"
 
 
-msgid "Light data-block for lighting a scene"
+# BFA - reworded, Blender: "Light data-block for lighting a scene"
+msgid "Light data for lighting a scene"
 msgstr "ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﻦﺷﻭﺭ ﻮﮐﻮﯾﻭ ﯽﺴﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺋﻻ﻿"
 
 
@@ -22100,7 +22166,8 @@ msgid "End distance of the cascaded shadow map (only in perspective view)"
 msgstr "(ﮟﯿﻣ ﮦﺎﮕﻧ ﻑﺮﺻ) ﮧﻠﺻﺎﻓ ﯽﻣﺎﺘﺘﺧﺍ ﺎﮐ ﭗﯿﻣ ﻭﮉﯿﺷ ﮯﻟﺍﻭ ﮯﻧﺮﮭﺟ"
 
 
-msgid "Light Probe data-block for lighting capture objects"
+# BFA - reworded, Blender: "Light Probe data-block for lighting capture objects"
+msgid "Light Probe data for lighting capture objects"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺏﻭﺮﭘ ﭧﺋﻻ﻿ ﮯﯿﻟ ﮯﮐ ﮯﺷ ﺮﭽﭙﯿﮐ ﮓﻨﭩﺋﻻ﻿"
 
 
@@ -22416,7 +22483,8 @@ msgid "Offset sampling of the irradiance grid in the viewing direction to reduce
 msgstr "ﺎﻨﯿﻟ ﮧﻧﻮﻤﻧ ﭧﯿﺳ ﻑﺁ ﺎﮐ ﮈﺮﮔ ﯼﺰﯾﺭ ﻉﺎﻌﺷ ﮟﯿﻣ ﺖﻤﺳ ﯽﮐ ﮯﻨﮭﮑﯾﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﻢﮐ ﻮﮐ ﮯﻨﮩﺑ ﻥﻮﺧ ﮯﮑﻠﮨ"
 
 
-msgid "Mask data-block defining mask for compositing"
+# BFA - reworded, Blender: "Mask data-block defining mask for compositing"
+msgid "Mask data defining mask for compositing"
 msgstr "ﮏﺳﺎﻣ ﮓﻨﻨﺋﺎﻔﯾﮈ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﺳﺎﻣ ﮯﯿﻟ ﮯﮐ ﮓﻨﭨﺯﻮﭙﻤﮐ"
 
 
@@ -22440,7 +22508,8 @@ msgid "Collection of layers which defines this mask"
 msgstr "ﮯﮨ ﺎﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﮏﺳﺎﻣ ﺱﺍ ﻮﺟ ﮧﻋﻮﻤﺠﻣ ﺎﮐ ﮞﻮﮩﺗ"
 
 
-msgid "Material data-block to define the appearance of geometric objects for rendering"
+# BFA - reworded, Blender: "Material data-block to define the appearance of geometric objects for rendering"
+msgid "Material data to define the appearance of geometric objects for rendering"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﯾﺮﭩﯿﻣ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﻞﮑﺷ ﯼﺮﮨﺎﻇ ﯽﮐ ءﺎﯿﺷﺍ ﮎﺮﭩﯿﻣﻮﯿﺟ ﮯﯿﻟ ﮯﮐ ﮓﻧﺭﮉﻨﯾﺭ"
 
 
@@ -23165,7 +23234,8 @@ msgid "Vertices of the mesh"
 msgstr "ﮯﺼﺣ ﯼﺩﻮﻤﻋ ﮯﮐ ﺶﯿﻣ"
 
 
-msgid "Metaball data-block to define blobby surfaces"
+# BFA - reworded, Blender: "Metaball data-block to define blobby surfaces"
+msgid "Metaball data to define blobby surfaces"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻝﺎﺑ ﺎﭩﯿﻣ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﮞﻮﺤﻄﺳ ﯽﺑﻼ﻿ﺑ"
 
 
@@ -23217,7 +23287,8 @@ msgid "While editing, don't update metaball at all"
 msgstr "ﮟﯾﺮﮐ ﮧﻧ ﭧﯾﮈ ﭖﺍ ﯽﮭﺑ ﻞﮑﻟﺎﺑ ﻮﮐ ﻝﺎﺑ ﺎﭩﯿﻣ ،ﺖﻗﻭ ﮯﺗﺮﮐ ﻢﯿﻣﺮﺗ"
 
 
-msgid "MovieClip data-block referencing an external movie file"
+# BFA - reworded, Blender: "MovieClip data-block referencing an external movie file"
+msgid "MovieClip data referencing an external movie file"
 msgstr "ﮯﮨ ﺎﺘﯾﺩ ﮧﻟﺍﻮﺣ ﺎﮐ ﻞﺋﺎﻓ ﯼﻭﻮﻣ ﯽﻧﻭﺮﯿﺑ ﮏﯾﺍ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭗﻠﮐ ﯼﻭﻮﻣ"
 
 
@@ -23461,7 +23532,8 @@ msgid "Shader Node Tree"
 msgstr "ﯼﺮﭨ ﮈﻮﻨﺘﮕﻧﺭ"
 
 
-msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+# BFA - reworded, Blender: "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+msgid "Node tree consisting of linked nodes used for materials (and other shading data)"
 msgstr "(ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺖﮕﻧﺭ  ﮮﺮﺳﻭﺩ ﺭﻭﺍ) ﮯﮨ ﺎﺗﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮯﯿﻟ ﮯﮐ ﺩﺍﻮﻣ ﻮﺟ ﮯﮨ ﺎﺗﻮﮨ ﻞﻤﺘﺸﻣ ﺮﭘ ﺱﮈﻮﻧ ﮉﮑﻨﻟ ﻮﺟ ﯼﺮﭨ ﮈﻮﻧ"
 
 
@@ -23473,7 +23545,8 @@ msgid "Node tree consisting of linked nodes used for textures"
 msgstr "ﯼﺮﭨ ﮈﻮﻧ ﻞﻤﺘﺸﻣ ﺮﭘ ﺱﮈﻮﻧ ﮏﻠﺴﻨﻣ ﮯﻟﺍﻭ ﮯﻧﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮯﯿﻟ ﮯﮐ ﺖﺧﺎﺳ"
 
 
-msgid "Object data-block defining an object in a scene"
+# BFA - reworded, Blender: "Object data-block defining an object in a scene"
+msgid "Object data defining an object in a scene"
 msgstr "ﮯﮨ ﺎﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﮯﺷ ﯽﺴﮐ ﮟﯿﻣﻮﯾﻭ ﯽﺴﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺰﯿﭼ"
 
 
@@ -25593,11 +25666,13 @@ msgid "Relative amount of virtual parents"
 msgstr "ﺭﺍﺪﻘﻣ ﮧﺘﺒﺴﻧ ﯽﮐ ﻦﯾﺪﻟﺍﻭ ﻞﺋﻮﭼﺭﻭ"
 
 
-msgid "Point cloud data-block"
+# BFA - reworded, Blender: "Point cloud data-block"
+msgid "Point cloud data"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮈﺅﻼ﻿ﮐ ﭧﻨﺋﺍﻮﭘ"
 
 
-msgid "Scene data-block, consisting in objects and defining time and render related settings"
+# BFA - reworded, Blender: "Scene data-block, consisting in objects and defining time and render related settings"
+msgid "Scene, consisting in objects and defining time and render related settings"
 msgstr "ﺎﻧﺮﮐ ﺶﯿﭘ ﻮﮐ ﺕﺎﺒﯿﺗﺮﺗ ﮧﻘﻠﻌﺘﻣ ﺭﻭﺍ ﺖﺣﺎﺿﻭ ﯽﮐ ﺖﻗﻭ ﺭﻭﺍ ﻞﻤﺘﺸﻣ ﺮﭘ ءﺎﯿﺷﺍ ،ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﻈﻨﻣ"
 
 
@@ -26078,7 +26153,8 @@ msgid "World used for rendering the scene"
 msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺎﮐ ﺎﯿﻧﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﺶﯿﭘ ﺮﻈﻨﻣ"
 
 
-msgid "Screen data-block, defining the layout of areas in a window"
+# BFA - reworded, Blender: "Screen data-block, defining the layout of areas in a window"
+msgid "Screen data, defining the layout of areas in a window"
 msgstr "ﺎﻧﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﺐﯿﺗﺮﺗ ﯽﮐ ﮞﻮﻗﻼ﻿ﻋ ﮟﯿﻣ ﯽﮐﮍﮭﮐ ،ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻦﯾﺮﮑﺳﺍ"
 
 
@@ -26158,7 +26234,8 @@ msgid "Top-Left 3D Editor"
 msgstr "ﺮﭩﯾﮉﯾﺍ 3D ﮟﯿﺋﺎﺑ ﺮﭘﻭﺍ"
 
 
-msgid "Sound data-block referencing an external or packed sound file"
+# BFA - reworded, Blender: "Sound data-block referencing an external or packed sound file"
+msgid "Sound data referencing an external or packed sound file"
 msgstr "ﮯﮨ ﺎﺘﯾﺩ ﮧﻟﺍﻮﺣ ﺎﮐ ﻞﺋﺎﻓ ﮉﻧﺅﺎﺳ ﮉﮑﯿﭘ ﺎﯾ ﯽﻧﻭﺮﯿﺑ ﮏﯾﺍ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻧﺅﺎﺳ"
 
 
@@ -26186,7 +26263,8 @@ msgid "6.1 Surround"
 msgstr "ﺅﺍﺮﯿﮭﮔ 6.1"
 
 
-msgid "Sound sample file used by this Sound data-block"
+# BFA - reworded, Blender: "Sound sample file used by this Sound data-block"
+msgid "Sound sample file used by this Sound data"
 msgstr "ﻞﺋﺎﻓ ﮧﻧﻮﻤﻧ ﯽﺗﻮﺻ ﮦﺪﺷ ﻝﺎﻤﻌﺘﺳﺍ ﮧﻌﯾﺭﺫ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻧﺅﺎﺳ ﺱﺍ"
 
 
@@ -26206,7 +26284,8 @@ msgid "If the file contains multiple audio channels they are rendered to a singl
 msgstr "ﮟﯿﮨ ﮯﺗﺎﺟ ﮈﺭﮉﻨﯾﺭ ﮟﯿﻣ ﯽﮨ ﮏﯾﺍ ﮦﻭ ﻮﺗ ﮟﯿﮨ ﺰﻠﻨﯿﭼ ﻮﯾﮈﺁ ﮦﺩﺎﯾﺯ ﮯﺳ ﮏﯾﺍ ﮟﯿﻣ ﻞﺋﺎﻓ ﺮﮔﺍ"
 
 
-msgid "Speaker data-block for 3D audio speaker objects"
+# BFA - reworded, Blender: "Speaker data-block for 3D audio speaker objects"
+msgid "Speaker data´for 3D audio speaker objects"
 msgstr "3D ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﮑﯿﭙﺳﺍ ﮯﯿﻟ ﮯﮐ ءﺎﯿﺷﺍ ﺮﮑﯿﭙﺳﺍ ﻮﯾﮈﺁ"
 
 
@@ -26272,7 +26351,8 @@ msgid "Playback pitch of the sound"
 msgstr "ﭻﭘ ﮏﯿﺑ ﮯﻠﭘ ﯽﮐ ﺯﺍﻭﺁ"
 
 
-msgid "Sound data-block used by this speaker"
+# BFA - reworded, Blender: "Sound data-block used by this speaker"
+msgid "Sound data used by this speaker"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻧﺅﺎﺳ ﻻ﻿ﺍﻭ ﮯﻧﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮧﻌﯾﺭﺫ ﮯﮐ ﺮﮑﯿﭙﺳﺍ ﺱﺍ"
 
 
@@ -26296,7 +26376,8 @@ msgid "Minimum volume, no matter how far away the object is"
 msgstr "ﮯﮨ ﺭﻭﺩ ﯽﮨ ﯽﻨﺘﮐ ﮯﺷ ﮧﮐ ﮯﮨ ﺎﺗﮍﭘ ﮟﯿﮩﻧ ﻕﺮﻓ ﯽﺋﻮﮐ ﮯﺳ ﺱﺍ ،ﻢﺠﺣ ﻢﮐ ﺯﺍ ﻢﮐ"
 
 
-msgid "Text data-block referencing an external or packed text file"
+# BFA - reworded, Blender: "Text data-block referencing an external or packed text file"
+msgid "Text file referencing an external or packed text file"
 msgstr "ﮯﮨ ﺎﺘﯾﺩ ﮧﻟﺍﻮﺣ ﺎﮐ ﻞﺋﺎﻓ ﭧﺴﮑﯿﭨ ﮉﮑﯿﭘ ﺎﯾ ﯽﻧﻭﺮﯿﺑ ﮏﯾﺍ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ"
 
 
@@ -26417,7 +26498,8 @@ msgid "Run this text as a Python script on loading"
 msgstr "ﮟﯿﺋﻼ﻿ﭼ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﭧﭘﺮﮑﺳﺍ ﯽﮐPython ﻮﮐ ﻦﺘﻣ ﺱﺍ ﺮﭘ ﮯﻧﻮﮨ ﮈﻮﻟ"
 
 
-msgid "Texture data-block used by materials, lights, worlds and brushes"
+# BFA - reworded, Blender: "Texture data-block used by materials, lights, worlds and brushes"
+msgid "Texture used by materials, lights, worlds and brushes"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ  ﺖﺧﺎﺳ ﮯﻟﺍﻭ ﮯﻧﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮯﻌﯾﺭﺫ ﮯﮐ ﺵﺮﺑ ﺭﻭﺍ ﺎﯿﻧﺩ ،ﯽﻨﺷﻭﺭ ،ﺩﺍﻮﻣ"
 
 
@@ -27299,7 +27381,8 @@ msgid "Vector font for Text objects"
 msgstr "ﭧﻧﻮﻓ ﺮﭩﮑﯾﻭ ﮯﯿﻟ ﮯﮐ ﮯﺷ ﭧﺴﮑﯿﭨ"
 
 
-msgid "Volume data-block for 3D volume grids"
+# BFA - reworded, Blender: "Volume data-block for 3D volume grids"
+msgid "Volume data for 3D volume grids"
 msgstr "3D ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻡﻮﯿﻟﺍﻭ ﮯﯿﻟ ﮯﮐ ﺯﮈﺮﮔ ﻡﻮﯿﻟﺍﻭ"
 
 
@@ -27307,7 +27390,8 @@ msgid "Volume display settings for 3D viewport"
 msgstr "3D ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﮯﻧﺎﮭﮐﺩ ﻡﻮﯿﻟﺍﻭ ﮯﯿﻟ ﮯﮐ ﭦﺭﻮﭘ ﻮﯾﻭ"
 
 
-msgid "Volume file used by this Volume data-block"
+# BFA - reworded, Blender: "Volume file used by this Volume data-block"
+msgid "Volume file used by this Volume"
 msgstr "ﻞﺋﺎﻓ ﻡﻮﯿﻟﺍﻭ ﯽﻟﺍﻭ ﮯﻧﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮧﻌﯾﺭﺫ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻡﻮﯿﻟﺍﻭ ﺱﺍ"
 
 
@@ -27387,7 +27471,8 @@ msgid "Window Manager"
 msgstr "ﺮﺠﯿﻨﯿﻣ ﻭﮉﻧﻭ"
 
 
-msgid "Window manager data-block defining open windows and other user interface data"
+# BFA - reworded, Blender: "Window manager data-block defining open windows and other user interface data"
+msgid "Window manager data defining open windows and other user interface data"
 msgstr "ﮯﮨ ﺎﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﺎﭩﯾﮈ ﺲﯿﻓﺮﭩﻧﺍ ﻑﺭﺎﺻ ﮮﺮﺳﻭﺩ ﺭﻭﺍ ﮞﻮﯿﮐﮍﮭﮐ ﯽﻠﮭﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﺠﯿﻨﯿﻣ ﻭﮉﻧﻭ"
 
 
@@ -27599,7 +27684,8 @@ msgid "Workspace"
 msgstr "ﮧﮕﺟ ﯽﮐ ﻡﺎﮐ"
 
 
-msgid "Workspace data-block, defining the working environment for the user"
+# BFA - reworded, Blender: "Workspace data-block, defining the working environment for the user"
+msgid "Workspace data, defining the working environment for the user"
 msgstr "ﮯﮨ ﺎﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﻝﻮﺣﺎﻣ ﮯﻟﺍﻭ ﮯﻧﺮﮐ ﻡﺎﮐ ﮯﯿﻟ ﮯﮐ ﻑﺭﺎﺻ ،ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺲﯿﭙﺳﺍ ﮎﺭﻭ"
 
 
@@ -27663,7 +27749,8 @@ msgid "Remember the last used scene for the workspace and switch to it whenever 
 msgstr "ﮟﯾﺮﮐ ﭻﺋﻮﺳ ﺮﭘ ﺱﺍ ﻮﺗ ﮯﺋﺎﺟﻮﮨ ﻮﻟﺎﭼ ﮦﺭﺎﺑﻭﺩ ﺲﯿﭙﺳﺍ ﮎﺭﻭ ﮧﯾ ﯽﮭﺑ ﺐﺟ ﺭﻭﺍ ﮟﯿﮭﮐﺭ ﺩﺎﯾ ﻮﮐ ﻦﯿﺳ ﮦﺪﺷ ﻝﺎﻤﻌﺘﺳﺍ ﯼﺮﺧﺁ ﮯﯿﻟ ﮯﮐ ﺲﯿﭙﺳﺍ ﮎﺭﻭ"
 
 
-msgid "World data-block describing the environment and ambient lighting of a scene"
+# BFA - reworded, Blender: "World data-block describing the environment and ambient lighting of a scene"
+msgid "World data describing the environment and ambient lighting of a scene"
 msgstr "ﮯﮨ ﺎﺗﺮﮐ ﻥﺎﯿﺑ ﻮﮐ ﯽﻨﺷﻭﺭ ﯽﻄﯿﺤﻣ ﮯﮐﻮﯾﻭ ﺭﻭﺍ ﻝﻮﺣﺎﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﻤﻟﺎﻋ"
 
 
@@ -28423,7 +28510,8 @@ msgid "True if this preview image has been modified by py script, and is no more
 msgstr "ﮯﮨ ﯽﺌﮔ ﯽﮐ ﮟﯿﮩﻧ ﺭﺎﯿﺗ ﮯﺳ ﮯﻘﯾﺮﻃ ﺭﺎﮐ ﺩﻮﺧ ﮧﻌﯾﺭﺫ ﮯﮐ ﺭﮉﻨﯿﻠﺑ ﮧﯾ ﺭﻭﺍ ،ﮯﮨ ﯽﺌﮔ ﯽﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮧﻌﯾﺭﺫ ﮯﮐ ﭧﭘﺮﮑﺳﺍ py ﮟﯿﻣ ﺮﯾﻮﺼﺗ ﯽﮐ ﻮﯾﻮﯾﺮﭘ  ﺱﺍ ﺮﮔﺍ ﮯﮨ ﺖﺳﺭﺩ"
 
 
-msgid "Parameters defining how an Image data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how an Image data-block is used by another data-block"
+msgid "Parameters defining how an Image data is used by another data"
 msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮯﺴﯿﮐ ﮯﻌﯾﺭﺫ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮮﺮﺳﻭﺩ ﻮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺮﯾﻮﺼﺗ ﮧﮐ ﮟﯿﮨ ﮯﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﺕﺎﺑ ﺱﺍ ﺮﭩﯿﻣﺍﺮﯿﭘ"
 
 
@@ -31830,7 +31918,8 @@ msgid "ID Type"
 msgstr "ID ﻢﺴﻗ ﯽﮐ"
 
 
-msgid "Name of parent object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent object in specified data-block to which parenting happens"
+msgid "Name of parent object in specified data to which parenting happens"
 msgstr "ﮯﮨ ﯽﺗﻮﮨ ﮓﻨﭩﻧﺮﯿﭘ ﮟﯿﻣ ﺲﺟ ﻡﺎﻧ ﺎﮐ ﮯﺷ ﻦﯾﺪﻟﺍﻭ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺹﻮﺼﺨﻣ"
 
 
@@ -31838,7 +31927,8 @@ msgid "Sub Parent"
 msgstr "ﻦﯾﺪﻟﺍﻭ ﯽﻠﯾﺫ"
 
 
-msgid "Name of parent sub-object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent sub-object in specified data-block to which parenting happens"
+msgid "Name of parent sub-object in specified data to which parenting happens"
 msgstr "ﮯﮨ ﯽﺗﻮﮨ ﮓﻨﭩﻧﺮﯿﭘ ﮟﯿﻣ ﺲﺟ ﻡﺎﻧ ﺎﮐ ﮯﺷ ﯽﻠﯾﺫ ﮯﮐ ﻦﯾﺪﻟﺍﻭ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺹﻮﺼﺨﻣ"
 
 
@@ -32255,7 +32345,8 @@ msgid "Link material to object or the object's data"
 msgstr "ﮟﯾﮌﻮﺟ ﮯﺳ ﺎﭩﯾﮈ ﮯﮐ ﮯﺷ ﺎﯾ ﮯﺷ ﻮﮐ ﺩﺍﻮﻣ"
 
 
-msgid "Material data-block used by this material slot"
+# BFA - reworded, Blender: "Material data-block used by this material slot"
+msgid "Material data used by this material slot"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﯾﺮﭩﯿﻣ ﻻ﻿ﺍﻭ ﮯﻧﻮﮨ ﻝﺎﻤﻌﺘﺳﺍ ﮯﻌﯾﺭﺫ ﮯﮐ ﭦﻼ﻿ﺳ ﻞﯾﺮﭩﯿﻣ ﺱﺍ"
 
 
@@ -33216,7 +33307,8 @@ msgid "Mesh Edge"
 msgstr "ﺞﯾﺍ ﺶﯿﻣ"
 
 
-msgid "Edge in a Mesh data-block"
+# BFA - reworded, Blender: "Edge in a Mesh data-block"
+msgid "Edge in a Mesh data"
 msgstr "ﮮﺭﺎﻨﮐ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺶﯿﻣ"
 
 
@@ -33264,7 +33356,8 @@ msgid "Mesh Loop"
 msgstr "ﭖﻮﻟ ﺶﯿﻣ"
 
 
-msgid "Loop in a Mesh data-block"
+# BFA - reworded, Blender: "Loop in a Mesh data-block"
+msgid "Loop in a Mesh data"
 msgstr "ﮟﯾﺮﮐ ﭖﻮﻟ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺶﯿﻣ"
 
 
@@ -33344,7 +33437,8 @@ msgid "Mesh Loop Triangle"
 msgstr "ﺚﻠﺜﻣ ﭖﻮﻟ ﺶﯿﻣ"
 
 
-msgid "Tessellated triangle in a Mesh data-block"
+# BFA - reworded, Blender: "Tessellated triangle in a Mesh data-block"
+msgid "Tessellated triangle in a Mesh data"
 msgstr "ﺚﻠﺜﻣ ﮉﯿﭩﻠﯿﺴﯿﭨ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺶﯿﻣ"
 
 
@@ -33420,7 +33514,8 @@ msgid "Mesh Polygon"
 msgstr "ﻥﻮﮕﯿﻟﻮﭘ ﺶﯿﻣ"
 
 
-msgid "Polygon in a Mesh data-block"
+# BFA - reworded, Blender: "Polygon in a Mesh data-block"
+msgid "Polygon in a Mesh data"
 msgstr "ﻢﺴﺠﻣ  ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺶﯿﻣ"
 
 
@@ -33704,7 +33799,8 @@ msgid "Metaball Element"
 msgstr "ﺮﺼﻨﻋ ﻝﺎﺑ ﺎﭩﯿﻣ"
 
 
-msgid "Blobby element in a metaball data-block"
+# BFA - reworded, Blender: "Blobby element in a metaball data-block"
+msgid "Blobby element in a Metaball data"
 msgstr "ﺮﺼﻨﻋ ﯽﺑﻼ﻿ﺑ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻝﺎﺑ ﺎﭩﯿﻣ"
 
 
@@ -40509,7 +40605,8 @@ msgid "Movie Clip User"
 msgstr "ﻑﺭﺎﺻ ﭗﻠﮐ ﯼﻭﻮﻣ"
 
 
-msgid "Parameters defining how a MovieClip data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how a MovieClip data-block is used by another data-block"
+msgid "Parameters defining how a MovieClip data is used by another data"
 msgstr "ﮯﮨ ﺎﺗﺎﺟ ﺎﯿﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮯﺴﯿﮐ ﮯﻌﯾﺭﺫ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮮﺮﺳﻭﺩ ﻮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭗﻠﮐ ﯼﻭﻮﻣ ﮧﮐ ﮟﯿﮨ ﮯﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﺕﺎﺑ ﺱﺍ ﺮﭩﯿﻣﺍﺮﯿﭘ"
 
 
@@ -45452,7 +45549,8 @@ msgid "The attribute is associated with the object geometry, and its value varie
 msgstr "ﮯﮨ ﯽﺗﻮﮨ ﻒﻠﺘﺨﻣ ﺭﺪﻧﺍ ﮯﮐ ﻢﺠﺣ ﮯﮐ ﮯﺷ ﺎﯾ ،ﮏﺗ ﯼﺩﻮﻤﻋ ﮯﺳ ﯼﺩﻮﻤﻋ ﺭﺪﻗ ﯽﮐ ﺱﺍ ﺭﻭﺍ ،ﮯﮨ ﮏﻠﺴﻨﻣ ﮫﺗﺎﺳ ﮯﮐ ﯼﺮﭩﯿﻣﻮﯿﺟ ﮯﺷ ﻒﺻﻭ ﮧﯾ"
 
 
-msgid "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+# BFA - reworded, Blender: "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+msgid "The attribute is associated with the object or mesh data itself, and its value is uniform"
 msgstr "ﮯﮨ ﮞﺎﺴﮑﯾ ﺭﺪﻗ ﯽﮐ ﺱﺍ ﺭﻭﺍ ،ﮯﮨ ﮏﻠﺴﻨﻣ ﮫﺗﺎﺳ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻝﺎﺟ ﺎﯾ ﮯﺷ ﻒﺻﻭ ﮧﯾ"
 
 
@@ -46787,7 +46885,8 @@ msgid "Internal IES file"
 msgstr "ﻞﺋﺎﻓ IES ﯽﻧﻭﺭﺪﻧﺍ"
 
 
-msgid "Whether the IES file is loaded from disk or from a text data-block"
+# BFA - reworded, Blender: "Whether the IES file is loaded from disk or from a text data-block"
+msgid "Whether the IES file is loaded from disk or from a text data"
 msgstr "ﮯﺳ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﺎﯾ ﻮﮨ ﯽﺌﮔ ﯽﮐ ﮈﻮﻟ ﮯﺳ ﮏﺳﮈ ﻞﺋﺎﻓ IES ﮯﮨﺎﭼ"
 
 
@@ -48503,8 +48602,9 @@ msgid "Export Keying Set to a Python script"
 msgstr "ﮟﯾﺮﮐ ﭦﺭﻮﭙﺴﮑﯾﺍ ﻮﮐ ﭧﯿﺳ ﮓﻨﯿﮐ ﮟﯿﻣ ﭧﭘﺮﮑﺳﺍPython ﮏﯾﺍ"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "...ﮟﯾﺮﮐ ﺪﻣﺁﺮﺑ ﭧﯿﺳ ﮓﻨﯿﮐ"
 
 
@@ -48824,7 +48924,10 @@ msgid "Console Banner"
 msgstr "ﺮﻨﯿﺑ ﻝﻮﺴﻨﮐ"
 
 
-msgid "Copy the console contents for use in a script"
+# BFA - reworded, Blender: "Copy the console contents for use in a script"
+msgid ""
+"Copy to Clipboard (as script\n"
+"Copy the console contents for use in a script"
 msgstr "ﮟﯾﺮﮐ ﯽﭘﺎﮐ ﻮﮐ ﺩﺍﻮﻣ ﮯﮐ ﻝﻮﺴﻨﮐ ﮯﯿﻟ ﮯﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮟﯿﻣ ﭧﭘﺮﮑﺳﺍ"
 
 
@@ -49786,7 +49889,10 @@ msgid "Subdivision Set"
 msgstr "ﭧﯿﺳ ﻢﯿﺴﻘﺗ ﯽﻠﯾﺫ"
 
 
-msgid "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+# BFA - reworded, Blender: "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+msgid ""
+"Converts normal object transforms to delta transforms.\n"
+"Any existing delta transform will be included as well"
 msgstr "ﺎﮔ ﮯﺋﺎﺟ ﺎﯿﮐ ﻞﻣﺎﺷ ﯽﮭﺑ ﻮﮐ ﺰﻣﺭﺎﻔﺴﻧﺍﺮﭨ ﺎﭩﻠﯾﮈ ﮦﺩﻮﺟﻮﻣ ،ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﮟﯿﻣ ﺰﻣﺭﺎﻔﺴﻧﺍﺮﭨ ﺎﭩﻠﯾﮈ ﻮﮐ ﺰﻣﺭﺎﻔﺴﻧﺍﺮﭨ ﮯﺷ ﻞﻣﺭﺎﻧ"
 
 
@@ -50956,7 +51062,10 @@ msgid "Add Property"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﯽﭨﺮﭘﺍﺮﭘ"
 
 
-msgid "Jump to a different tab inside the properties editor"
+# BFA - reworded, Blender: "Jump to a different tab inside the properties editor"
+msgid ""
+"Change Context\n"
+"Jump to a different tab inside the properties editor"
 msgstr "ﮟﯿﺋﺎﺟ ﺮﭘ ﺐﯿﭨ ﻒﻠﺘﺨﻣ ﮏﯾﺍ ﺭﺪﻧﺍ ﮯﮐ ﺮﭩﯾﮉﯾﺍ ﺰﯿﭨﺮﭘﺍﺮﭘ"
 
 
@@ -51292,7 +51401,10 @@ msgid "Set Keyframe Interpolation"
 msgstr "ﮟﯾﺮﮐ ﭧﯿﺳ ﻦﺸﯿﻟﻮﭘﺮﭩﻧﺍ ﻢﯾﺮﻓ ﯽﮐ"
 
 
-msgid "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+# BFA - reworded, Blender: "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgid ""
+"Keyframe Interpolation\n"
+"Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 msgstr "ﮟﯾﺮﮐ ﭧﯿﺳ ﮈﻮﻣ ﻦﺸﯿﻟﻮﭘﺮﭩﻧﺍ ﮯﯿﻟ ﮯﮐ ﮞﻮﺼﺣ  ﻢﺧ-ﻒﯾﺍﮯﻟﺍﻭ ﮯﻧﻮﮨ ﻉﻭﺮﺷ ﮯﺳ ﺰﻤﯾﺮﻓ ﯽﮐ ﺐﺨﺘﻨﻣ"
 
 
@@ -51371,7 +51483,8 @@ msgid "Flip times of selected keyframes using the first selected marker as the r
 msgstr "ﮟﯿﺋﺎﭩﻠﭘ ﺕﺎﻗﻭﺍ ﮯﮐ ﺰﻤﯾﺮﻓ ﯽﮐ ﺐﺨﺘﻨﻣ ﮯﺋﻮﮨ ﮯﺗﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮧﻄﻘﻧ ﮧﻟﺍﻮﺣ ﺭﻮﻄﺑ ﻮﮐ ﺮﮐﺭﺎﻣ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ ﮯﻠﮩﭘ"
 
 
-msgid "By Values Over Zero Value"
+# BFA - reworded, Blender: "By Values Over Zero Value"
+msgid "By Values Over Value=0"
 msgstr "ﮯﺳ ﺏﺎﺴﺣ ﮯﮐ ﮞﻭﺭﺪﻗ ﮦﺩﺎﯾﺯ ﮯﺳ ﻮﯿﻠﯾﻭ ﻭﺮﯾﺯ"
 
 
@@ -51742,12 +51855,14 @@ msgid "Store this action in the NLA stack as a non-contributing strip for later 
 msgstr "ﮟﯿﺋﺎﻨﺑ ﯽﺋﺍﻭﺭﺭﺎﮐ ﯽﺌﻧ ﮏﯾﺍ ﺭﻭﺍ ،ﮟﯾﺮﮐ ﺭﻮﭩﺳﺍ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﯽﭩﭘ ﯽﻟﺍﻭ ﮯﻧﺮﮐ ﻥﻭﺎﻌﺗ ﺮﯿﻏ ﮏﯾﺍ ﮟﯿﻣ ﮏﯿﭩﺳﺍ NLA ﻮﮐ ﻡﺍﺪﻗﺍ ﺱﺍ ﮯﯿﻟ ﮯﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮟﯿﻣ ﺪﻌﺑ"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "ﯽﺋﺍﻭﺭﺭﺎﮐ ﮏﻨﻟ ﺮﯿﻏ"
 
 
-msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+# BFA - reworded, Blender: "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
 msgstr "(ﮟﯿﻠﮑﻧ ﺮﮨﺎﺑ ﮯﺳ ﺭﻮﻃ ﮏﯾﻮﭨ ﺎﯾ/ﺭﻭﺍ) ﮟﯾﺮﮐ ﮏﻨﻟ ﻥﺍ ﮯﺳ ﭦﻼ﻿ﺳ ﻡﺍﺪﻗﺍ ﻝﺎﻌﻓ ﻮﮐ ﻡﺍﺪﻗﺍ ﺱﺍ"
 
 
@@ -51764,7 +51879,8 @@ msgid "Frame All"
 msgstr "ﻢﯾﺮﻓ ﻡﺎﻤﺗ"
 
 
-msgid "Reset viewable area to show full keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show full keyframe range"
+msgid "Zooms in or out to fit the display to show full keyframe range"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮯﻗﻼ﻿ﻋ ﻞﺑﺎﻗ ﮯﮐ ﮯﻨﮭﮑﯾﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﺞﻨﯾﺭ ﻢﯾﺮﻓ ﯼﺪﯿﻠﮐ ﻞﻤﮑﻣ"
 
 
@@ -51782,7 +51898,8 @@ msgid "Frame Selected"
 msgstr "ﺎﯿﮔ ﺎﯿﮐ ﺐﺨﺘﻨﻣ ﻢﯾﺮﻓ"
 
 
-msgid "Reset viewable area to show selected keyframes range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframes range"
+msgid "Zooms in or out to fit the display to show selected keyframes range"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮯﻗﻼ﻿ﻋ ﻞﺑﺎﻗ ﮯﮐ ﮯﻨﮭﮑﯾﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﻮﮐ ﺪﺣ ﯽﮐ ﮞﻮﻤﯾﺮﻓ ﯼﺪﯿﻠﮐ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ"
 
 
@@ -51813,7 +51930,8 @@ msgid "Frame Channel Under Cursor"
 msgstr "ﻞﻨﯿﭼ ﻢﯾﺮﻓ ﮯﭽﯿﻧ ﮯﮐ ﺮﺳﺮﮐ"
 
 
-msgid "Reset viewable area to show the channel under the cursor"
+# BFA - reworded, Blender: "Reset viewable area to show the channel under the cursor"
+msgid "Zooms in or out to fit the display to show the channel under the cursor"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮧﻗﻼ﻿ﻋ ﻞﺑﺎﻗ ﮯﮐ ﮯﻨﮭﮑﯾﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﮯﭽﯿﻧ ﮯﮐ ﺮﺳﺮﮐ ﻮﮐ ﻞﻨﯿﭼ"
 
 
@@ -51879,7 +51997,8 @@ msgid "Remove Empty Animation Data"
 msgstr "ﮟﯾﺩ ﺎﭩﮨ ﻮﮐ ﺎﭩﯾﮈ ﯼﺮﯾﺬﭘ ﺖﮐﺮﺣ ﯽﻟﺎﺧ"
 
 
-msgid "Delete all empty animation data containers from visible data-blocks"
+# BFA - reworded, Blender: "Delete all empty animation data containers from visible data-blocks"
+msgid "Delete all empty animation data containers from visible data"
 msgstr "ﮟﯾﺮﮐ ﻑﺬﺣ ﻮﮐ ﺯﺮﻨﯿﭩﻨﮐ ﺎﭩﯾﮈ ﺕﺎﯿﮐﺮﺣ  ﯽﻟﺎﺧ ﻡﺎﻤﺗ ﮯﺳ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﺋﺮﻣ"
 
 
@@ -52070,7 +52189,8 @@ msgid "Frame Selected Channels"
 msgstr "ﮟﯾﺮﮐ ﻢﯾﺮﻓ ﻮﮐ ﺰﻠﻨﯿﭼ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ"
 
 
-msgid "Reset viewable area to show the selected channels"
+# BFA - reworded, Blender: "Reset viewable area to show the selected channels"
+msgid "Zooms in or out to fit the display of the selected channels"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮯﻗﻼ﻿ﻋ ﻞﺑﺎﻗ ﮯﮐ ﮯﻨﮭﮑﯾﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﻮﮐ ﺰﻠﻨﯿﭼ ﺐﺨﺘﻨﻣ"
 
 
@@ -52211,7 +52331,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "(ﻦﭩﺑ) ﮟﯾﺮﮐ ﻞﺧﺍﺩ ﻢﯾﺮﻓ ﯽﮐ"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "ﮟﯾﺮﮐ ﻞﺧﺍﺩ ﻢﯾﺮﻓ ﯼﺪﯿﻠﮐ ﮯﯿﻟ ﮯﮐ ﯽﭨﺮﭘﺍﺮﭘ ﻝﺎﻌﻓ UI ﮦﺩﻮﺟﻮﻣ"
 
 
@@ -52784,7 +52905,8 @@ msgid "Hide Selected"
 msgstr "ﮟﯿﺋﺎﭙﮭﭼ ﻮﮐ ﺐﺨﺘﻨﻣ"
 
 
-msgid "Tag selected bones to not be visible in Edit Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Edit Mode"
+msgid "Hide selected bones in Edit Mode"
 msgstr "ﮟﯾﺮﮐ ﮓﯿﭨ ﻮﮐ ﮞﻮﯾﮉﮨ ﺐﺨﺘﻨﻣ ﮯﯿﻟ ﮯﮐ ﮯﻧﺁ ﮧﻧ ﺮﻈﻧ ﮟﯿﻣ ﺭﻮﻃ ﭧﯾﮉﯾﺍ"
 
 
@@ -53461,7 +53583,8 @@ msgid "Save as Brush Asset"
 msgstr "ﮧﺛﺎﺛﺍ ﺵﺮﺑ ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﺭﻮﻄﺑ"
 
 
-msgid "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+# BFA - reworded, Blender: "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+msgid "Duplicates the active brush asset, saves it into the default asset library, and make it the active brush"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﺵﺮﺑ ﻝﺎﻌﻓ ﮯﺳﺍ ﺭﻭﺍ ،ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﮟﯿﻣ ﯼﺮﯾﺮﺒﺋﻻ﻿ ﮧﺛﺎﺛﺍ ﭧﻟﺎﻔﯾﮈ ﯽﭘﺎﮐ ﮏﯾﺍ ﯽﮐ ﮧﺛﺎﺛﺍ ﺵﺮﺑ ﻝﺎﻌﻓ"
 
 
@@ -53594,7 +53717,8 @@ msgid "Toggle Pin ID"
 msgstr "ﮟﯾﺮﮐ ﻞﮔﻮﭨ ﻮﮐ ﯼﮈ ﯽﺋﺁ ﻦﭘ"
 
 
-msgid "Keep the current data-block displayed"
+# BFA - reworded, Blender: "Keep the current data-block displayed"
+msgid "Keep the current data displayed"
 msgstr "ﮟﯿﮭﮐﺭ ﮯﻧﺎﮭﮐﺩ ﻮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺩﻮﺟﻮﻣ"
 
 
@@ -55670,7 +55794,8 @@ msgid "Spline type"
 msgstr "ﻢﺴﻗ ﯽﮐ ﻦﺋﻼ﻿ﭙﺳ"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "ﺲﭩﻨﺋﺍﻮﭘ ﻝﻭﺮﭩﻨﮐ ﺐﺨﺘﻨﻣ (ﺮﯿﻏ) ﮟﯿﺋﺎﭙﮭﭼ"
 
 
@@ -57826,7 +57951,8 @@ msgid "Pack Linked Libraries"
 msgstr "ﮞﺎﯾﺮﯾﺮﺒﺋﻻ﻿ ﮉﮑﻨﻟ ﮏﯿﭘ"
 
 
-msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+# BFA - reworded, Blender: "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
 msgstr "ﮯﮑﺳ ﺎﺟ ﻻ﻿ﻮﮭﮐ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﻠﺴﻨﻣ ﮧﮐﺎﺗ ﮟﯿﮨ ﻅﻮﻔﺤﻣ ﺕﺎﺟ ﮧﻟﺍﻮﺣ ﮯﮐ ﯼﺮﯾﺮﺒﺋﻻ﻿ ﮟﯾﺮﮐ ﺭﻮﭩﺳﺍ ﮟﯿﻣ ﻞﺋﺎﻓ blend. ﮦﺩﻮﺟﻮﻣ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻡﺎﻤﺗ ﮏﻠﺴﻨﻣ ﮯﺳ ﮞﻮﻠﺋﺎﻓ blend. ﺮﮕﯾﺩ"
 
 
@@ -58047,7 +58173,8 @@ msgid "Unpack Linked Libraries"
 msgstr "ﮟﯿﻟﻮﮭﮐ ﻮﮐ ﮞﻮﯾﺮﯾﺮﺒﺋﻻ﻿ ﮦﺪﺷ ﮏﻨﻟ"
 
 
-msgid "Restore all packed linked data-blocks to their original locations"
+# BFA - reworded, Blender: "Restore all packed linked data-blocks to their original locations"
+msgid "Restore all packed linked data  to their original locations"
 msgstr "ﮟﯾﺮﮐ ﻝﺎﺤﺑ ﺮﭘ ﺕﺎﻣﺎﻘﻣ ﻞﺻﺍ ﮯﮐ ﻥﺍ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺪﺷ ﮏﻨﻟ ﮉﮑﯿﭘ ﻡﺎﻤﺗ"
 
 
@@ -58437,7 +58564,8 @@ msgid "Unlink"
 msgstr "ﮟﯾﺮﮐ ﻢﺘﺧ ﮏﻨﻟ"
 
 
-msgid "Unlink active font data-block"
+# BFA - reworded, Blender: "Unlink active font data-block"
+msgid "Remove active font"
 msgstr "ﮟﯾﺮﮐ ﮏﻨﻟ ﺮﯿﻏ ﻮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﻧﻮﻓ ﻝﺎﻌﻓ"
 
 
@@ -58699,16 +58827,19 @@ msgid "Annotation Add New"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺎﯿﻧ ﺢﯾﺮﺸﺗ"
 
 
-msgid "Add new Annotation data-block"
+# BFA - reworded, Blender: "Add new Annotation data-block"
+msgid "Add new Annotation data"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﺤﯾﺮﺸﺗ ﺎﯿﻧ"
 
 
+# BFA - reworded, Blender: "Annotation Unlink"
 msgctxt "Operator"
-msgid "Annotation Unlink"
+msgid "Remove Annotation"
 msgstr "ﮟﯾﺮﮐ ﻢﺘﺧ ﮏﻨﻟ ﺎﮐ ﺢﯾﺮﺸﺗ"
 
 
-msgid "Unlink active Annotation data-block"
+# BFA - reworded, Blender: "Unlink active Annotation data-block"
+msgid "Remove the active Annotation"
 msgstr "ﮟﯾﺮﮐ ﻢﺘﺧ ﮏﻨﻟ ﺎﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﺤﯾﺮﺸﺗ ﻝﺎﻌﻓ"
 
 
@@ -58717,7 +58848,8 @@ msgid "Add New Annotation Layer"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺕﺮﭘ ﯽﺤﯾﺮﺸﺗ ﯽﺌﻧ"
 
 
-msgid "Add new Annotation layer or note for the active data-block"
+# BFA - reworded, Blender: "Add new Annotation layer or note for the active data-block"
+msgid "Add new Annotation layer or note for the active data"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﭦﻮﻧ ﺎﯾ ﺕﺮﭘ ﯽﺤﯾﺮﺸﺗ ﯽﺌﻧ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻝﺎﻌﻓ"
 
 
@@ -59193,7 +59325,8 @@ msgid "Defines which keys to use as slope and how much to blend towards them"
 msgstr "ﮯﮨ ﺎﻧﻼ﻿ﻣ ﺎﻨﺘﮐ ﻑﺮﻃ ﯽﮐ ﻥﺍ ﺭﻭﺍ ﮯﮨ ﺎﻧﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﻥﺍﻮﻠﮬﮈ ﻮﮐ ﺰﯿﻨﮐ ﻦﮐ ﮧﮐ ﮯﮨ ﺎﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﺕﺎﺑ ﺱﺍ"
 
 
-msgid "By Times Over Zero Time"
+# BFA - reworded, Blender: "By Times Over Zero Time"
+msgid "By Times Over Time=0"
 msgstr "ﻢﺋﺎﭨ ﻭﺮﯾﺯ ﺭﻭﻭﺍ ﺰﻤﺋﺎﭨ ﮧﻌﯾﺭﺬﺑ"
 
 
@@ -59512,7 +59645,8 @@ msgid "How far in frames to offset the animation"
 msgstr "ﺭﻭﺩ ﯽﻨﺘﮐ ﮟﯿﻣ ﮞﻮﻤﯾﺮﻓ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﭧﯿﺴﻓﺁ ﻮﮐ ﺕﺎﯿﮐﺮﺣ"
 
 
-msgid "Reset viewable area to show selected keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframe range"
+msgid "Zooms in or out to fit the display to show selected keyframe range"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮧﻗﻼ﻿ﻋ ﻞﺑﺎﻗ ﮯﮐ ﮯﻨﮭﮑﯾﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﻮﮐ ﺞﻨﯾﺭ ﻢﯾﺮﻓ ﯽﮐ ﺐﺨﺘﻨﻣ"
 
 
@@ -59634,7 +59768,8 @@ msgid "Rounded"
 msgstr "ﻝﻮﮔ"
 
 
-msgid "Set as default rounded"
+# BFA - reworded, Blender: "Set as default rounded"
+msgid "Set as default rounded caps"
 msgstr "ﮟﯾﺮﮐ ﭧﯿﺳ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﻝﻮﮔ ﮦﺪﺷ ﮯﻃ"
 
 
@@ -61013,7 +61148,8 @@ msgid "Clear Render Region"
 msgstr "ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﻦﺠﯾﺭ ﺭﮉﻨﯾﺭ"
 
 
-msgid "Clear the boundaries of the render region and disable render region"
+# BFA - reworded, Blender: "Clear the boundaries of the render region and disable render region"
+msgid "Removes an existing Render Region rectangle"
 msgstr "ﮟﯾﺮﮐ ﻝﺎﻌﻓ ﺮﯿﻏ ﻮﮐ ﻦﺠﯾﺭ ﺭﮉﻨﯾﺭ ﺭﻭﺍ ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﺩﻭﺪﺣ ﯽﮐ ﻦﺠﯾﺭ ﺭﮉﻨﯾﺭ"
 
 
@@ -61431,7 +61567,8 @@ msgid "Image height"
 msgstr "ﯽﺋﺎﭽﻧﻭﺍ ﯽﮐ ﺮﯾﻮﺼﺗ"
 
 
-msgid "Image data-block name"
+# BFA - reworded, Blender: "Image data-block name"
+msgid "Image name"
 msgstr "ﻡﺎﻧ ﺎﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺮﯾﻮﺼﺗ"
 
 
@@ -61621,7 +61758,8 @@ msgid "Save As Image"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﺮﯾﻮﺼﺗ"
 
 
-msgid "Save the image with another name and/or settings"
+# BFA - reworded, Blender: "Save the image with another name and/or settings"
+msgid "Saves the image with another name and/or settings"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﮫﺗﺎﺳ ﮯﮐ ﺕﺎﺒﯿﺗﺮﺗ ﺎﯾ/ﺭﻭﺍ ﻡﺎﻧ ﺭﻭﺍ ﯽﺴﮐ ﻮﮐ ﺮﯾﻮﺼﺗ"
 
 
@@ -61705,7 +61843,8 @@ msgid "Image Name"
 msgstr "ﻡﺎﻧ ﯼﺮﯾﻮﺼﺗ"
 
 
-msgid "Image data-block name to unpack"
+# BFA - reworded, Blender: "Image data-block name to unpack"
+msgid "Image name to unpack"
 msgstr "ﻡﺎﻧ ﺎﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺮﯾﻮﺼﺗ ﮯﯿﻟ ﮯﮐ ﮯﻨﻟﻮﮭﮐ ﮏﯿﭘ"
 
 
@@ -62380,7 +62519,8 @@ msgid "Clear Restrict View"
 msgstr "ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﻮﯾﻭ ﭧﯾﺮﭩﺴﯾﺭ"
 
 
-msgid "Reveal temporarily hidden mask layers"
+# BFA - reworded, Blender: "Reveal temporarily hidden mask layers"
+msgid "Reveals the hidden layer(s)"
 msgstr "ﮟﯾﺮﮐ ﺮﮨﺎﻇ ﻮﮐ ﮞﻮﮩﺗ ﯽﮐ ﮏﺳﺎﻣ ﮦﺪﯿﺷﻮﭘ ﺮﭘ ﺭﻮﻃ ﯽﺿﺭﺎﻋ"
 
 
@@ -62389,7 +62529,8 @@ msgid "Set Restrict View"
 msgstr "Restrict ﮟﯾﺮﮐ ﭧﯿﺳﻮﯾﻭ"
 
 
-msgid "Temporarily hide mask layers"
+# BFA - reworded, Blender: "Temporarily hide mask layers"
+msgid "Hide the mask layer"
 msgstr "ﮟﯿﺋﺎﭙﮭﭼ ﻮﮐ ﮞﻮﮩﺗ ﯽﮐ ﮏﺳﺎﻣ ﺮﭘ ﺭﻮﻃ ﯽﺿﺭﺎﻋ"
 
 
@@ -62616,7 +62757,8 @@ msgid "Duplicate Metaball Elements"
 msgstr "ﺮﺻﺎﻨﻋ ﻝﺎﺑ ﺎﭩﯿﻣ ﭧﯿﮑﯿﻠﭘﮈ"
 
 
-msgid "Hide (un)selected metaball element(s)"
+# BFA - reworded, Blender: "Hide (un)selected metaball element(s)"
+msgid "Hide selected metaball element(s)"
 msgstr "(ﮟﯿﻧﺎﺑﺯ) ﺮﺼﻨﻋ ﻝﺎﺑ ﺎﭩﯿﻣ ﮦﺪﺷ ﺐﺨﺘﻨﻣ (ﺮﯿﻏ) ﮟﯿﺋﺎﭙﮭﭼ"
 
 
@@ -63499,7 +63641,8 @@ msgid "Flips the tessellation of selected quads"
 msgstr "ﮯﮨ ﺎﺘﭩﻠﭘ ﻮﮐ ﻦﺸﯿﻠﺴﯿﭨ ﮯﮐ ﺯﮈﺍﻮﮐ ﺐﺨﺘﻨﻣ"
 
 
-msgid "Hide (un)selected vertices, edges or faces"
+# BFA - reworded, Blender: "Hide (un)selected vertices, edges or faces"
+msgid "Hide selected vertices, edges or faces"
 msgstr "ﮮﺮﮩﭼ ﺎﯾ ﮞﻭﺭﺎﻨﮐ ،ﯼﺩﻮﻤﻋ ﺐﺨﺘﻨﻣ(ﺮﯿﻏ) ﮟﯿﺋﺎﭙﮭﭼ"
 
 
@@ -63845,7 +63988,8 @@ msgid "Mark Sharp"
 msgstr "ﭖﺭﺎﺷ ﮎﺭﺎﻣ"
 
 
-msgid "(Un)mark selected edges as sharp"
+# BFA - reworded, Blender: "(Un)mark selected edges as sharp"
+msgid "Mark selected edges as sharp"
 msgstr "ﮟﯾﺮﮐ ﺩﺯ ﻥﺎﺸﻧ ﺭﻮﻄﺑ ﮯﮐ ﺰﯿﺗ ﻮﮐ ﮞﻭﺭﺎﻨﮐ ﺐﺨﺘﻨﻣ (ﺮﯿﻏ)"
 
 
@@ -64200,7 +64344,8 @@ msgid "Transform at Cursor Move"
 msgstr "ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﺮﭘ ﻭﻮﻣ ﺮﺳﺮﮐ"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻝﺎﺟ ﮦﺮﺋﺍﺩ ﮏﯾﺍ"
 
 
@@ -64233,7 +64378,8 @@ msgid "Add Cone"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﻁﻭﺮﺨﻣ"
 
 
-msgid "Construct a conic mesh"
+# BFA - reworded, Blender: "Construct a conic mesh"
+msgid "Add a conic mesh"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻝﺎﺟ ﯽﻃﻭﺮﺨﻣ ﮏﯾﺍ"
 
 
@@ -64254,7 +64400,8 @@ msgid "Add Cube"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺏﻮﯿﮐ"
 
 
-msgid "Construct a cube mesh that consists of six square faces"
+# BFA - reworded, Blender: "Construct a cube mesh that consists of six square faces"
+msgid "Add a cube mesh that consists of six square faces"
 msgstr "ﮮﺮﮩﭼ ﻊﺑﺮﻣ that consists of six ﮟﯿﺋﺎﻨﺑ ﻝﺎﺟ ﺏﻮﯿﮐ ﮏﯾﺍ"
 
 
@@ -64267,7 +64414,8 @@ msgid "Add Cylinder"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺭﮉﻨﻠﺳ"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻝﺎﺟ ﺭﮉﻨﻠﺳ"
 
 
@@ -64280,7 +64428,8 @@ msgid "Add Grid"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﮈﺮﮔ"
 
 
-msgid "Construct a subdivided plane mesh"
+# BFA - reworded, Blender: "Construct a subdivided plane mesh"
+msgid "Add a subdivided plane mesh"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﺶﯿﻣ ﮦﺭﺎﯿﻃ ﮦﺪﺷ ﻢﯿﺴﻘﺗ ﯽﻠﯾﺫ ﮏﯾﺍ"
 
 
@@ -64297,7 +64446,8 @@ msgid "Add Ico Sphere"
 msgstr "Ico Sphere ﮟﯾﺮﮐ ﻞﻣﺎﺷ"
 
 
-msgid "Construct a spherical mesh that consists of equally sized triangles"
+# BFA - reworded, Blender: "Construct a spherical mesh that consists of equally sized triangles"
+msgid "Add a spherical mesh that consists of equally sized triangles"
 msgstr "ﺚﻠﺜﻣﻮﮨ ﻞﻤﺘﺸﻣ ﺮﭘ ﺰﺋﺎﺳ ﮞﺎﺴﮑﯾ ﻮﺟ ﮟﯿﺋﺎﻨﺑ ﺶﯿﻣ ﯼﻭﺮﮐ ﮏﯾﺍ"
 
 
@@ -64306,7 +64456,8 @@ msgid "Add Monkey"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺭﺪﻨﺑ"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻝﺎﺟ ﻦﯾﺯﻮﺳ"
 
 
@@ -64315,7 +64466,8 @@ msgid "Add Plane"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﮦﺭﺎﯿﻃ"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻝﺎﺟ ﺮﻧﻼ﻿ﭘ ﺍﻮﮨ ﺍﺮﮭﺑ ﮏﯾﺍ ﮫﺗﺎﺳ ﮯﮐ ﮞﻮﯿﭨﻮﭼ 4"
 
 
@@ -65744,11 +65896,13 @@ msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get t
 msgstr "ﮟﯾﺮﮐ ﻝﺎﻌﻓ ﺮﯿﻏ ﻮﮐ 'ﻮﻟﻮﺳ' ﺮﭘ ﯽﺴﮐ ﮯﺳ ﮟﯿﻣ ﺲﮑﯾﺮﭨ NLA ﺪﻌﺑ ﮯﮐ ﮯﻨﻠﮑﻧ ﺮﮨﺎﺑ ﮯﺳ ﮈﻮﻣ  ﺖﻘﻓﺍﻮﻣ ﮯﯿﻟ ﮯﮐ ﮯﻧﻻ﻿ ﺮﭘ ﻝﻮﻤﻌﻣ ﻮﮐ ﮞﻭﺰﯿﭼ"
 
 
-msgid "Reset viewable area to show full strips range"
+# BFA - reworded, Blender: "Reset viewable area to show full strips range"
+msgid "Zooms in or out to fit the display to show full strips range"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮯﻗﻼ﻿ﻋ ﺪﯾﺩ ﻞﺑﺎﻗ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﺪﺣ ﯽﮐ ﺲﭘﺮﭩﺳ ﻞﻤﮑﻣ"
 
 
-msgid "Reset viewable area to show selected strips range"
+# BFA - reworded, Blender: "Reset viewable area to show selected strips range"
+msgid "Zooms in or out to fit the display to show selected strips range"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮯﻗﻼ﻿ﻋ ﻞﺑﺎﻗ ﮯﮐ ﮯﻨﮭﮑﯾﺩ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﻮﮐ ﺪﺣ ﯽﮐ ﺲﭘﺮﭩﺳ ﺐﺨﺘﻨﻣ"
 
 
@@ -65935,11 +66089,13 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﺩﻭﺪﺣ ﮯﯿﻟ ﮯﮐ ﮞﻮﯿﺋﺍﻭﺭﺭﺎﮐ ﯽﮐ ﻦﯾﺮﻇﺎﻧ"
 
 
+# BFA - reworded, Blender: "Copy the selected nodes to the internal clipboard"
 msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "ﮟﯾﺮﮐ ﯽﭘﺎﮐ ﮟﯿﻣ ﮈﺭﻮﺑ ﭗﻠﮐ ﯽﻧﻭﺭﺪﻧﺍ ﻮﮐ ﺱﮈﻮﻧ ﺐﺨﺘﻨﻣ"
 
 
-msgid "Paste nodes from the internal clipboard to the active node tree"
+# BFA - reworded, Blender: "Paste nodes from the internal clipboard to the active node tree"
+msgid "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"
 msgstr "ﮟﯾﺮﮐ ﮞﺎﭙﺴﭼ ﺮﭘ ﯼﺮﭨ ﮈﻮﻧ ﻝﺎﻌﻓ ﮯﺳ ﮈﺭﻮﺑ ﭗﻠﮐ ﯽﻧﻭﺭﺪﻧﺍ ﻮﮐ ﺱﮈﻮﻧ"
 
 
@@ -66960,12 +67116,14 @@ msgid "Delete the selected local overrides and relink their usages to the linked
 msgstr "ﮟﯾﺮﮐ ﺩﺯ ﻥﺎﺸﻧ ﺭﻮﻄﺑ ﮯﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﻞﺑﺎﻗﺎﻧ ﮟﯿﮩﻧﺍ ﺭﻭﺍ ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮦﺭﺎﺑﻭﺩ ﮟﯿﮩﻧﺍ ﮧﻧﺭﻭ ،ﮟﯾﮌﻮﺟ ﮦﺭﺎﺑﻭﺩ ﮯﺳ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﻠﺴﻨﻣ ﻮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮯﮐ ﻥﺍ ﻮﺗ ﻮﮨ ﻦﮑﻤﻣ ﺮﮔﺍ ﺭﻭﺍ ﮟﯾﺮﮐ ﻑﺬﺣ ﻮﮐ ﺯﮉﯿﺋﺍﺭ ﺭﻭﻭﺍ ﯽﻣﺎﻘﻣ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ"
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﮟﯿﻣ ﮧﻋﻮﻤﺠﻣ"
 
 
-msgid "Add an object to a new collection"
+# BFA - reworded, Blender: "Add an object to a new collection"
+msgid "Adds the selected object to a new collection"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﮯﺷ ﮏﯾﺍ ﮟﯿﻣ ﮧﻋﻮﻤﺠﻣ ﮯﺌﻧ ﮏﯾﺍ"
 
 
@@ -67636,7 +67794,8 @@ msgid "Hide Objects"
 msgstr "ﮟﯿﺋﺎﭙﮭﭼ ءﺎﯿﺷﺍ"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "ﮟﯿﺋﺎﭙﮭﭼ ﺮﭘ ﺭﻮﻃ ﯽﺿﺭﺎﻋ ﻮﮐ ءﺎﯿﺷﺍ ﮯﺳ ﭦﺭﻮﭘ ﻮﯾﻭ"
 
 
@@ -68025,7 +68184,8 @@ msgid "Make Local"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﯽﻣﺎﻘﻣ"
 
 
-msgid "Make library linked data-blocks local to this file"
+# BFA - reworded, Blender: "Make library linked data-blocks local to this file"
+msgid "Make library linked data local to this file"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﯽﻣﺎﻘﻣ ﮟﯿﻣ ﻞﺋﺎﻓ ﺱﺍ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﻠﺴﻨﻣ ﮯﺳ ﯼﺮﯾﺮﺒﺋﻻ﻿"
 
 
@@ -68066,7 +68226,8 @@ msgid "Make object animation data local to each object"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﯽﻣﺎﻘﻣ ﮯﯿﻟ ﮯﮐ ﮯﺷ ﺮﮨ ﻮﮐ ﺎﭩﯾﮈ ﺕﺎﯿﮐﺮﺣ  ﺰﯿﭼ"
 
 
-msgid "Make materials local to each data-block"
+# BFA - reworded, Blender: "Make materials local to each data-block"
+msgid "Make materials local to each data"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﯽﻣﺎﻘﻣ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﮨ ﻮﮐ ﺩﺍﻮﻣ"
 
 
@@ -68652,11 +68813,13 @@ msgid "Current Transform"
 msgstr "ﻡﺭﺎﻔﺴﻧﺍﺮﭨ ﭧﻧﺮﮐ"
 
 
-msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+# BFA - reworded, Blender: "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgid "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled"
 msgstr "ﻮﮨ ﻝﺎﻌﻓ ﮓﻨﯿﮐ ﻮﭨﺁ ﺮﮔﺍ ﮟﯾﺮﮐ ﯼﺮﯿﮭﭘ ﺍﺮﯿﮨ ﮟﯿﻣ ﺎﭩﯾﮈ ﮯﮐ ﯼﺮﯾﺬﭘ ﺖﮐﺮﺣ ﻑﺮﺻ ،ﮟﯾﺮﮐ ﮞﺎﭙﺴﭼ ﺮﭘ ﺭﺍﺪﻗﺍ ﮦﺩﻮﺟﻮﻣ ﻑﺮﺻ"
 
 
-msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+# BFA - reworded, Blender: "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgid "Paste transform onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﮟﯾﺪﯿﻠﮐ ﯽﺌﻧ ﺮﭘ ﮞﻮﻤﯾﺮﻓ ﻥﺍ ﺮﭘ ﺭﻮﻃ ﮧﻨﮑﻤﻣ ،ﮯﮨ ﺪﯿﻠﮐ ﺐﺨﺘﻨﻣ ﮏﯾﺍ ﮟﯿﻣ ﻦﺟ ﮟﯾﺮﮐ ﮞﺎﭙﺴﭼ ﺮﭘ ﮞﻮﻤﯾﺮﻓ ﻥﺍ"
 
 
@@ -68664,7 +68827,8 @@ msgid "Bake on Key Range"
 msgstr "ﮟﯾﺮﮐ ﮏﯿﺑ ﺮﭘ ﺞﻨﯾﺭ ﯽﮐ"
 
 
-msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+# BFA - reworded, Blender: "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgid "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﻢﯾﺮﻓ ﯼﺪﯿﻠﮐ ﮯﺌﻧ ﻮﺗ ﻮﮨ ﯼﺭﻭﺮﺿ ﺮﮔﺍ ،ﮟﯾﺮﮐ ﮞﺎﭙﺴﭼ ﺮﭘ ﮞﻮﻤﯾﺮﻓ ﻡﺎﻤﺗ ﻥﺎﯿﻣﺭﺩ ﮯﮐ ﺪﯿﻠﮐ ﺐﺨﺘﻨﻣ ﯼﺮﺧﺁ ﺭﻭﺍ ﯽﻠﮩﭘ"
 
 
@@ -69053,7 +69217,8 @@ msgid "Deselect objects at the boundaries of parent/child relationships"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﺮﯿﻏ ﻮﮐ ءﺎﯿﺷﺍ ﮟﯿﻣ ﺩﻭﺪﺣ ﯽﮐ ﺕﺎﻘﻠﻌﺗ ﮯﮐ ﮞﻮﭽﺑ/ﻦﯾﺪﻟﺍﻭ"
 
 
-msgid "Select all visible objects that are linked"
+# BFA - reworded, Blender: "Select all visible objects that are linked"
+msgid "Select all visible objects that are linked to the active element"
 msgstr "ﮟﯿﮨ ﮏﻠﺴﻨﻣ ﻮﺟ ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ءﺎﯿﺷﺍ ﯽﺋﺮﻣ ﻡﺎﻤﺗ"
 
 
@@ -70479,7 +70644,8 @@ msgid "Outliner ID Data Copy"
 msgstr "ﯽﭘﺎﮐ ﺎﭩﯾﮈ ID ﺮﻨﺋﻻ﻿ ﭦﺅﺁ"
 
 
-msgid "Copy the selected data-blocks to the internal clipboard"
+# BFA - reworded, Blender: "Copy the selected data-blocks to the internal clipboard"
+msgid "Selected data are copied to the clipboard"
 msgstr "ﮟﯾﺮﮐ ﯽﭘﺎﮐ ﮟﯿﻣ ﮈﺭﻮﺑ ﭗﻠﮐ ﯽﻧﻭﺭﺪﻧﺍ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ"
 
 
@@ -70529,7 +70695,8 @@ msgid "Add Fake User"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﻑﺭﺎﺻ ﯽﻠﻌﺟ"
 
 
-msgid "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+# BFA - reworded, Blender: "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+msgid "Ensure data gets saved even if it isn't in use (e.g. for motion and material libraries)"
 msgstr "(ﮯﯿﻟ ﮯﮐ ﮞﻮﯾﺮﯾﺮﺒﺋﻻ﻿ ﯽﮐ ﺩﺍﻮﻣ ﺭﻭﺍ ﺖﮐﺮﺣ ﻼً﻿ﺜﻣ) ﻮﮨ ﮧﻧ ﮟﯿﻣ ﻝﺎﻤﻌﺘﺳﺍ ﮦﻭ ﮯﮨﺎﭼ ﮯﺋﺎﺟ ﻮﮨ ﻅﻮﻔﺤﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮧﮐ ﮟﯿﺋﺎﻨﺑ ﯽﻨﯿﻘﯾ ﻮﮐ ﺕﺎﺑ ﺱﺍ"
 
 
@@ -70546,7 +70713,8 @@ msgid "Outliner ID Data Paste"
 msgstr "ﭧﺴﯿﭘ ﺎﭩﯾﮈ ID ﺮﻨﺋﻻ﻿ ﭦﺅﺁ"
 
 
-msgid "Paste data-blocks from the internal clipboard"
+# BFA - reworded, Blender: "Paste data-blocks from the internal clipboard"
+msgid "Data from the clipboard are pasted"
 msgstr "ﮟﯾﺮﮐ ﮞﺎﭙﺴﭼ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﺳ ﮈﺭﻮﺑ ﭗﻠﮐ ﯽﻧﻭﺭﺪﻧﺍ"
 
 
@@ -70813,7 +70981,8 @@ msgid "Purge All"
 msgstr "ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﺐﺳ"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file"
+# BFA - reworded, Blender: "Clear all orphaned data-blocks without any users from the file"
+msgid "Clear all orphaned data without any users from the file"
 msgstr "ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻢﯿﺘﯾ ﻡﺎﻤﺗ ﺮﯿﻐﺑ ﮯﮐ ﻑﺭﺎﺻ ﯽﮭﺑ ﯽﺴﮐ ﮯﺳ ﻞﺋﺎﻓ"
 
 
@@ -70945,7 +71114,8 @@ msgid "Show/Hide One Level"
 msgstr "ﮟﯿﺋﺎﭙﮭﭼ/ﮟﯿﺋﺎﮭﮐﺩ ﻝﻮﯿﻟ ﮏﯾﺍ"
 
 
-msgid "Expand/collapse all entries by one level"
+# BFA - reworded, Blender: "Expand/collapse all entries by one level"
+msgid "Expand/Collapse all entries by one level"
 msgstr "ﮟﯿﭩﯿﻤﺳ / ﮟﯿﺋﻼ﻿ﯿﮭﭘ ﮯﺳ ﺢﻄﺳ ﮏﯾﺍ ﻮﮐ ﺕﺎﺟﺍﺭﺪﻧﺍ ﻡﺎﻤﺗ"
 
 
@@ -70988,7 +71158,8 @@ msgid "Slide Paint Curve Point"
 msgstr "ﭧﻨﺋﺍﻮﭘ ﻞﺑ ﭧﻨﯿﭘ ﮉﯿﺋﻼ﻿ﺳ"
 
 
-msgid "Select and slide paint curve point"
+# BFA - reworded, Blender: "Select and slide paint curve point"
+msgid "Select and slide a paint curve point"
 msgstr "ﮟﯾﺮﮐ ﮉﯿﺋﻼ﻿ﺳ ﺭﻭﺍ ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﭧﻨﺋﺍﻮﭘ ﻞﺑ ﭧﻨﯿﭘ"
 
 
@@ -70997,7 +71168,8 @@ msgid "Place Cursor"
 msgstr "ﮟﯿﮭﮐﺭ ﺮﺳﺮﮐ"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "ﮟﯿﮭﮐﺭ ﺮﺳﺮﮐ"
 
 
@@ -71010,7 +71182,8 @@ msgid "Remove Paint Curve Point"
 msgstr "ﮟﯾﺩ ﺎﭩﮨ ﻮﮐ ﭧﻨﺋﺍﻮﭘ ﻞﺑ ﭧﻨﯿﭘ"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "ﮟﯿﭽﻨﯿﮭﮐ ﻢﺧ"
 
 
@@ -71491,6 +71664,7 @@ msgid "Adjust vertex color Hue/Saturation/Value"
 msgstr "ﮟﯾﺮﮐ ﭧﺴﺟﮉﯾﺍ ﻮﮐ ﺭﺪﻗ/ﯽﺘﭘﺮﺘﻨﺳ/ﻮﯿﮨ ﮓﻧﺭ ﯼﺩﻮﻤﻋ"
 
 
+# BFA - reworded, Blender: "Set Vertex Colors"
 msgctxt "Operator"
 msgid "Set Vertex Color"
 msgstr "ﮟﯾﺮﮐ ﭧﯿﺳ ﮓﻧﺭ ﺲﮑﯿﭨﺭﻭ"
@@ -71705,7 +71879,8 @@ msgid "Add New Palette"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﭧﯿﻠﯿﭘ ﺎﯿﻧ"
 
 
-msgid "Add new palette"
+# BFA - reworded, Blender: "Add new palette"
+msgid "Add a new palette of indexed colors"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﭧﯿﻠﯿﭘ ﺎﯿﻧ"
 
 
@@ -72216,7 +72391,7 @@ msgstr "ﮟﯿﺋﺎﻨﺑ ﺭﻭﺩ ﮯﺳ ﺱﺍ ﺎﯾ ﮧﺑﺎﺸﻣ ﮦﺩ
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "ﺮﻧﺅﺍﮈ ﮏﯾﺮﺑ ﺯﻮﭘ"
 
 
@@ -72283,7 +72458,8 @@ msgid "Copy the current pose of the selected bones to the internal clipboard"
 msgstr "ﮟﯾﺮﮐ ﯽﭘﺎﮐ ﮟﯿﻣ ﮈﺭﻮﺑ ﭗﻠﮐ ﯽﻧﻭﺭﺪﻧﺍ ﻮﮐ ﺯﺍﺪﻧﺍ ﮦﺩﻮﺟﻮﻣ ﮯﮐ ﮞﻮﯾﮉﮨ ﺐﺨﺘﻨﻣ"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "ﮟﯾﺮﮐ ﮓﯿﭨ ﻮﮐ ﮞﻮﯾﮉﮨ ﺐﺨﺘﻨﻣ ﮯﯿﻟ ﮯﮐ ﮯﻧﺁ ﮧﻧ ﺮﻈﻧ ﮟﯿﻣ ﺭﻮﻃ ﺯﻮﭘ"
 
 
@@ -72445,7 +72621,7 @@ msgstr "ﮟﯾﺮﮐ ﺭﺎﭼﺮﭘ ﺎﮐ ﺯﺍﺪﻧﺍ ﺮﭘ ﮞﻮﻤﯾ�
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown (Legacy)"
+msgid "Push Pose from Breakdown"
 msgstr "ﺯﻮﭘ ﺶﭘ ﮯﺳ ﻥﺅﺍﮈ ﮏﯾﺮﺑ"
 
 
@@ -72463,7 +72639,7 @@ msgstr "ﮟﯿﺋﺎﭩﻠﭘ ﻮﮐ ﺭﺍﺪﻗﺎﯾﮍﮐﻮﭼﮯﯿﻟ ﮯ
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown (Legacy)"
+msgid "Relax Pose to Breakdown"
 msgstr "ﮟﯾﺮﮐ ﻡﺍﺭﺁ ﮟﯿﻣ ﺯﺍﺪﻧﺍ ﮯﯿﻟ ﮯﮐ ﻥﺅﺍﮈ ﮏﯾﺮﺑ"
 
 
@@ -74187,7 +74363,8 @@ msgid "Reload Scripts"
 msgstr "ﮟﯾﺮﮐ ﮈﻮﻟ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﺲﭩﭘﺮﮑﺳﺍ"
 
 
-msgid "Reload scripts"
+# BFA - reworded, Blender: "Reload scripts"
+msgid "Reload all Python Scripts, including the UI"
 msgstr "ﮟﯾﺮﮐ ﮈﻮﻟ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﺲﭩﭘﺮﮑﺳﺍ"
 
 
@@ -76438,12 +76615,14 @@ msgid "Update the audio animation cache"
 msgstr "ﮟﯾﺮﮐ ﭧﯾﮈ ﭖﺍ ﻮﮐ ﮯﺸﯿﮐ ﺕﺎﯿﮐﺮﺣ  ﻮﯾﮈﺁ"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "ﻥﺅﺍﮈ ﺲﮑﻣ"
 
 
-msgid "Mix the scene's audio to a sound file"
+# BFA - reworded, Blender: "Mix the scene's audio to a sound file"
+msgid "Mixdown and export the scene's audio to a sound file"
 msgstr "ﮟﯾﺮﮐ ﺲﮑﻣ ﮟﯿﻣ ﻞﺋﺎﻓ ﮉﻧﺅﺎﺳ ﻮﮐ ﻮﯾﮈﺁ ﯽﮐ ﺮﻈﻨﻣ"
 
 
@@ -76813,11 +76992,13 @@ msgid "Jump"
 msgstr "ﺎﻧﺎﮕﻟ ﮓﻧﻼ﻿ﮭﭼ"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "ﮟﯿﺋﺎﺟ ﺮﭘ ﻦﺋﻻ﻿ ﻮﮐ ﺮﺳﺮﮐ"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "ﺮﺒﻤﻧ ﻦﺋﻻ﻿ ﮯﯿﻟ ﮯﮐ ﮯﻧﺩﻮﮐ"
 
 
@@ -76882,7 +77063,8 @@ msgid "New Text"
 msgstr "ﻦﺘﻣ ﺎﯿﻧ"
 
 
-msgid "Create a new text data-block"
+# BFA - reworded, Blender: "Create a new text data-block"
+msgid "Create a new text file"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﺎﯿﻧ ﮏﯾﺍ"
 
 
@@ -76891,7 +77073,8 @@ msgid "Open Text"
 msgstr "ﮟﯿﻟﻮﮭﮐ ﻦﺘﻣ"
 
 
-msgid "Open a new text data-block"
+# BFA - reworded, Blender: "Open a new text data-block"
+msgid "Open a new text file"
 msgstr "ﮟﯿﻟﻮﮭﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﺎﯿﻧ ﮏﯾﺍ"
 
 
@@ -76917,7 +77100,8 @@ msgid "Reload"
 msgstr "ﮟﯾﺮﮐ ﮈﻮﻟ ﮦﺭﺎﺑﻭﺩ"
 
 
-msgid "Reload active text data-block from its file"
+# BFA - reworded, Blender: "Reload active text data-block from its file"
+msgid "Reload active text file"
 msgstr "ﮟﯾﺮﮐ ﮈﻮﻟ ﮦﺭﺎﺑﻭﺩ ﻮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﻝﺎﻌﻓ ﮯﺳ ﻞﺋﺎﻓ ﯽﮐ ﺱﺍ"
 
 
@@ -76978,7 +77162,8 @@ msgid "Save"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ"
 
 
-msgid "Save active text data-block"
+# BFA - reworded, Blender: "Save active text data-block"
+msgid "Save active text file"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﻮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﻝﺎﻌﻓ"
 
 
@@ -77032,7 +77217,8 @@ msgid "To 3D Object"
 msgstr "3D ﺮﭘ ﮯﺷ"
 
 
-msgid "Create 3D text object from active text data-block"
+# BFA - reworded, Blender: "Create 3D text object from active text data-block"
+msgid "Create 3D text object from active text data"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﮯﺷ ﭧﺴﮑﯿﭨ 3D ﮯﺳ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﻝﺎﻌﻓ"
 
 
@@ -77048,7 +77234,8 @@ msgid "Unindent selected text"
 msgstr "ﮟﯾﺩ ﺎﭩﮨ ﻮﮐ ﻦﺘﻣ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ"
 
 
-msgid "Unlink active text data-block"
+# BFA - reworded, Blender: "Unlink active text data-block"
+msgid "Remove active text"
 msgstr "ﮟﯾﺮﮐ ﮏﻨﻟ ﺮﯿﻏ ﻮﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﻝﺎﻌﻓ"
 
 
@@ -77295,7 +77482,8 @@ msgid "Transform from Gizmo"
 msgstr "ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﮯﺳ ﻮﻣﺰﮔ"
 
 
-msgid "Mirror selected items around one or more axes"
+# BFA - reworded, Blender: "Mirror selected items around one or more axes"
+msgid "Mirror selected items"
 msgstr "ﮟﯿﺋﺎﮕﻟ ﺲﮑﻋ ﺎﮐ ﺰﻤﭩﺋﺁ ﮦﺩﺮﮐ ﺐﺨﺘﻨﻣ ﺩﺮﮔ ﺩﺭﺍ ﮯﮐ ﺭﻮﺤﻣ ﮦﺩﺎﯾﺯ ﺎﯾ ﮏﯾﺍ"
 
 
@@ -77774,12 +77962,14 @@ msgid "Sample a color from the Blender Window and create Grease Pencil material"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﺩﺍﻮﻣ ﻞﺴﻨﭘ ﺲﯾﺮﮔ ﺭﻭﺍ ﮟﯿﻟ ﮧﻧﻮﻤﻧ ﺎﮐ ﮓﻧﺭ ﮯﺳ ﯽﮐﮍﮭﮐ ﺭﮉﻨﯿﻠﺑ"
 
 
+# BFA - reworded, Blender: "Eyedropper Data-Block"
 msgctxt "Operator"
-msgid "Eyedropper Data-Block"
+msgid "Eyedropper Data"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺮﭘﺍﺭﮈ ﯽﺋﺁ"
 
 
-msgid "Sample a data-block from the 3D View to store in a property"
+# BFA - reworded, Blender: "Sample a data-block from the 3D View to store in a property"
+msgid "Sample a data from the 3D View to store in a property"
 msgstr "ﮟﯿﻟ ﮧﻧﻮﻤﻧ ﺎﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﺳ ﻮﯾﻭ 3D ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﮦﺮﯿﺧﺫ ﮟﯿﻣ ﯽﭨﺮﭘﺍﺮﭘ"
 
 
@@ -78789,8 +78979,9 @@ msgid "Amount of Faces in Island"
 msgstr "ﺭﺍﺪﻘﻣ ﯽﮐ ﮞﻭﺮﮩﭼ ﮟﯿﻣ ﮮﺮﯾﺰﺟ"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﻢﯿﺴﻘﺗ"
 
 
@@ -79151,7 +79342,8 @@ msgid "Position the scene camera at the selected landmark"
 msgstr "ﮟﯿﮭﮐﺭ ﺮﭘ ﻥﺎﺸﻧ ﺐﺨﺘﻨﻣ ﻮﮐ ﮦﺮﻤﯿﮐ ﻦﯿﺳ"
 
 
-msgid "Clear the boundaries of the border render and disable border render"
+# BFA - reworded, Blender: "Clear the boundaries of the border render and disable border render"
+msgid "Removes an existing Render Region rectangle, clearning the boundaries of the render border"
 msgstr "ﮟﯾﺮﮐ ﻝﺎﻌﻓ ﺮﯿﻏ ﻮﮐ ﺭﮉﻨﯾﺭ ﺭﮈﺭﺎﺑ ﺭﻭﺍ ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﺩﻭﺪﺣ ﯽﮐ ﺭﮉﻨﯾﺭ ﺭﮈﺭﺎﺑ"
 
 
@@ -80199,7 +80391,8 @@ msgid "Create instances for object data which are not referenced by any objects"
 msgstr "ﮯﮨ ﺎﯿﮔ ﺎﯾﺩ ﮟﯿﮩﻧ ﮧﻟﺍﻮﺣ ﮯﺳ ﮯﺷ ﯽﮭﺑ ﯽﺴﮐ ﺎﮐ ﻦﺟ ﮟﯿﺋﺎﻨﺑ ﮟﯿﻟﺎﺜﻣ ﮯﯿﻟ ﮯﮐ ﺎﭩﯾﮈ ﺰﯿﭼ"
 
 
-msgid "Link the objects or data-blocks rather than appending"
+# BFA - reworded, Blender: "Link the objects or data-blocks rather than appending"
+msgid "Link the objects or data rather than appending"
 msgstr "ﮟﯾﺮﮐ ﮏﻨﻟ ﮯﺋﺎﺠﺑ ﮯﮐ ﮯﻧﺮﮐ ﮏﻠﺴﻨﻣ ﻮﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺎﯾ ءﺎﯿﺷﺍ"
 
 
@@ -80937,7 +81130,8 @@ msgid "Clear Data-Block Previews"
 msgstr "ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﯾﻮﯾﺮﭘ  ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
-msgid "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+# BFA - reworded, Blender: "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+msgid "Clear data previews (only for some types like objects, materials, textures, etc.)"
 msgstr "(ﮯﯿﻟ ﮯﮐ ﮦﺮﯿﻏﻭ ﺖﺧﺎﺳ ،ﺩﺍﻮﻣ ،ءﺎﯿﺷﺍ ﮯﺴﯿﺟ ﻡﺎﺴﻗﺍ ﮫﭽﮐ ﻑﺮﺻ) ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﯾﻮﯾﺮﭘ  ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -80945,7 +81139,8 @@ msgid "Data-Block Type"
 msgstr "ﻢﺴﻗ ﯽﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
-msgid "Which data-block previews to clear"
+# BFA - reworded, Blender: "Which data-block previews to clear"
+msgid "Which data previews to clear"
 msgstr "ﮯﮨ ﺎﻧﺮﮐ ﻑﺎﺻ ﻮﯾﻮﯾﺮﭘ  ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺎﺳ ﻥﻮﮐ"
 
 
@@ -80969,12 +81164,14 @@ msgid "Clear previews for materials, lights, worlds, textures and images"
 msgstr "ﻮﯾﻮﯾﺮﭘ  ﻑﺎﺻ ﮯﯿﻟ ﮯﮐ ﺮﯾﻭﺎﺼﺗ ﺭﻭﺍ ﺖﺧﺎﺳ ،ﺎﯿﻧﺩ ،ﯽﻨﺷﻭﺭ ،ﺩﺍﻮﻣ"
 
 
+# BFA - reworded, Blender: "Refresh Data-Block Previews"
 msgctxt "Operator"
-msgid "Refresh Data-Block Previews"
+msgid "Refresh Data Previews"
 msgstr "ﮟﯾﺮﮐ ﮦﺯﺎﺗ ﻮﯾﻮﯾﺮﭘ  ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
-msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+# BFA - reworded, Blender: "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgid "Ensure data previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 msgstr "(ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﺟ ﮯﯿﮐ ﻅﻮﻔﺤﻣ ﮟﯿﻣ ﻞﺋﺎﻓ blend. ﮯﯿﻟ ﮯﮐ ﮦﺮﯿﻏﻭ ﺖﺧﺎﺳ ،ﺩﺍﻮﻣ ﮯﺴﯿﺟ ﻡﺎﺴﻗﺍ ﮫﭽﮐ ﻑﺮﺻ) ﮟﯿﮨ ﻦﯾﺮﺗ ﮦﺯﺎﺗ ﺭﻭﺍ ﺏﺎﯿﺘﺳﺩ ﻮﯾﻮﯾﺮﭘ  ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮧﮐ ﮟﯿﺋﺎﻨﺑ ﯽﻨﯿﻘﯾ"
 
 
@@ -81398,12 +81595,14 @@ msgid "Save Startup File"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﻮﮐ ﻞﺋﺎﻓ ﭖﺍ ﭦﺭﺎﭩﺳﺍ"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﻮﮐ ﻞﺋﺎﻓ ﺭﮉﻨﯿﻠﺑ"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﻮﮐ ﻞﺋﺎﻓ ﺭﮉﻨﯿﻠﺑ ﮦﺩﻮﺟﻮﻣ"
 
 
@@ -81438,7 +81637,8 @@ msgid "Search Operator"
 msgstr "ﺮﭩﯾﺮﭘﺁ ﭺﺮﺳ"
 
 
-msgid "Pop-up a search over all available operators in current context"
+# BFA - reworded, Blender: "Pop-up a search over all available operators in current context"
+msgid "Pop-up a search panel for all available operators in current context"
 msgstr "ﮟﯾﺮﮐ ﭖﺍ ﭖﺎﭘ ﻮﮐ ﺵﻼ﻿ﺗ ﺮﭘ ﺯﺮﭩﯾﺮﭘﺁ ﺏﺎﯿﺘﺳﺩ ﻡﺎﻤﺗ ﮟﯿﻣ ﻕﺎﺒﺳ ﻭ ﻕﺎﯿﺳ ﮦﺩﻮﺟﻮﻣ"
 
 
@@ -82495,7 +82695,8 @@ msgid "New World"
 msgstr "ﺎﯿﻧﺩ ﯽﺌﻧ"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "ﮟﯿﺋﺎﻨﺑ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻟﺭﻭ ﺎﯿﻧ ﮏﯾﺍ"
 
 
@@ -83223,7 +83424,8 @@ msgid "Tracking Settings"
 msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﮓﻨﮑﯾﺮﭨ"
 
 
-msgid "Tracking Settings Extras"
+# BFA - reworded, Blender: "Tracking Settings Extras"
+msgid "Tracking Options Extras"
 msgstr "ﯽﻓﺎﺿﺍ ﮯﮐ ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﮓﻨﮑﯾﺮﭨ"
 
 
@@ -86169,7 +86371,8 @@ msgid "Duplicate Action"
 msgstr "ﻡﺍﺪﻗﺍ ﭧﯿﮑﯿﻠﭘﮈ"
 
 
-msgid "Causes actions to be duplicated with the data-blocks"
+# BFA - reworded, Blender: "Causes actions to be duplicated with the data-blocks"
+msgid "Causes actions to be duplicated with the data"
 msgstr "ﮯﮨ ﺎﺘﻨﺑ ﺐﺒﺳ ﺎﮐ ﮯﻧﺮﮐ ﻞﻘﻧ ﮫﺗﺎﺳ ﮯﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﻮﮐ ﻝﺎﻤﻋﺍ"
 
 
@@ -86645,11 +86848,13 @@ msgid "Python Scripts Directory"
 msgstr "Pythonﯼﺮﭩﮐﺮﺋﺍﮈ ﭧﭘﺮﮑﺳﺍ"
 
 
-msgid "Show Hidden Files/Data-Blocks"
+# BFA - reworded, Blender: "Show Hidden Files/Data-Blocks"
+msgid "Show Hidden Files/Data"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ/ﮟﯿﻠﺋﺎﻓ ﮦﺪﯿﺷﻮﭘ"
 
 
-msgid "Show files and data-blocks that are normally hidden"
+# BFA - reworded, Blender: "Show files and data-blocks that are normally hidden"
+msgid "Show files and data that are normally hidden"
 msgstr "ﮟﯿﮨ ﮯﺗﻮﮨ ﮦﺪﯿﺷﻮﭘ ﺮﭘ ﺭﻮﻃ ﻡﺎﻋ ﻮﺟ ﮟﯿﺋﺎﮭﮐﺩ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﺭﻭﺍ ﮟﯿﻠﺋﺎﻓ"
 
 
@@ -88168,7 +88373,8 @@ msgid "Translate New Names"
 msgstr "ﮟﯾﺮﮐ ﮧﻤﺟﺮﺗ ﺎﮐ ﮞﻮﻣﺎﻧ ﮯﺌﻧ"
 
 
-msgid "Translate the names of new data-blocks (objects, materials...)"
+# BFA - reworded, Blender: "Translate the names of new data-blocks (objects, materials...)"
+msgid "Translate the names of new data (objects, materials...)"
 msgstr "(...ﺩﺍﻮﻣ ،ءﺎﯿﺷﺍ) ﮟﯾﺮﮐ ﮧﻤﺟﺮﺗ ﺎﮐ ﮞﻮﻣﺎﻧ ﮯﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﺌﻧ"
 
 
@@ -91118,7 +91324,8 @@ msgid "Is Perspective"
 msgstr "ﮯﮨ ﮦﺎﮕﻧ"
 
 
-msgid "Lock view rotation of side views to Top/Front/Right"
+# BFA - reworded, Blender: "Lock view rotation of side views to Top/Front/Right"
+msgid "Lock view rotation in side views"
 msgstr "ﮟﯾﺮﮐ ﮎﻻ﻿ ﻮﮐ ﺵﺩﺮﮔ ﯽﮐ ﺯﻮﯾﻭ ﮉﯿﺋﺎﺳ ﻑﺮﻃ ﮟﯿﺋﺍﺩ/ﮯﻨﻣﺎﺳ/ﺮﭘﻭﺍ"
 
 
@@ -91375,7 +91582,8 @@ msgid "Result of rendering, including all layers and passes"
 msgstr "ﺰﺳﺎﭘ ﺭﻭﺍ ﮞﻮﮩﺗ ﻡﺎﻤﺗ ﻝﻮﻤﺸﺑ ،ﮧﺠﯿﺘﻧ ﺎﮐ ﮓﻧﺭﮉﻨﯾﺭ"
 
 
-msgid "Rendering settings for a Scene data-block"
+# BFA - reworded, Blender: "Rendering settings for a Scene data-block"
+msgid "Rendering settings for a Scene"
 msgstr "ﺰﮕﻨﭩﯿﺳ ﮓﻧﺭﮉﻨﯾﺭ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻦﯿﺳ"
 
 
@@ -91463,7 +91671,8 @@ msgid "Directory/name to save animations, # characters define the position and p
 msgstr "ﮟﯿﮨ ﮯﺗﺮﮐ ﺖﺣﺎﺿﻭ ﯽﮐ ﮓﻧﮉﯿﭘ ﺭﻭﺍ  ﻡﺎﻘﻣ  ﯽﮐ ﮞﻭﺮﺒﻤﻧ ﻢﯾﺮﻓ ﻑﻭﺮﺣ # ،ﻡﺎﻧ/ﯼﺮﭩﮑﯾﺮﺋﺍﮈ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﻅﻮﻔﺤﻣ ﻮﮐ ﺮﯾﻭﺎﺼﺗ ﮎﺮﺤﺘﻣ"
 
 
-msgid "World background is transparent, for compositing the render over another background"
+# BFA - reworded, Blender: "World background is transparent, for compositing the render over another background"
+msgid "Render the world background as transparent. This allows compositing the rendered image over another background"
 msgstr "ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﺯﻮﭙﻤﮐ ﻮﮐ ﺭﮉﻨﯾﺭ ﺮﭘﻮﯾﻭ ﺲﭘ ﮮﺮﺳﻭﺩ ،ﮯﮨ ﻑﺎﻔﺷﻮﯾﻭ ﺲﭘ ﯽﻤﻟﺎﻋ"
 
 
@@ -93518,7 +93727,8 @@ msgid "Python Scripts Directories"
 msgstr "Pythonﺰﯾﺮﭩﮑﯾﺮﺋﺍﮈ ﭧﭘﺮﮑﺳ"
 
 
-msgid "Sequence editing data for a Scene data-block"
+# BFA - reworded, Blender: "Sequence editing data for a Scene data-block"
+msgid "Sequence editing data for a Scene data"
 msgstr "ﺎﭩﯾﮈ ﮯﻟﺍﻭ ﮯﻧﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﺐﯿﺗﺮﺗ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻦﯿﺳ"
 
 
@@ -94178,7 +94388,8 @@ msgid "Wave Deformation effect"
 msgstr "ﺮﺛﺍ ﯽﺗﺮﺘﺧﺍ ﺮﮩﻟ"
 
 
-msgid "Shape key in a shape keys data-block"
+# BFA - reworded, Blender: "Shape key in a shape keys data-block"
+msgid "Shape key in a shape keys data"
 msgstr "ﺪﯿﻠﮐ ﻞﮑﺷ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮞﺎﯿﺑﺎﭼ ﯽﮐ ﻞﮑﺷ ﮏﯾﺍ"
 
 
@@ -94534,7 +94745,8 @@ msgid "Stiff Quads"
 msgstr "ﺍﮍﮐﻮﭼ ﺖﺨﺳ"
 
 
-msgid "Add diagonal springs on 4-gons"
+# BFA - reworded, Blender: "Add diagonal springs on 4-gons"
+msgid "Add diagonal springs on quads"
 msgstr "ﮟﯾﺮﮐ ﻞﻣﺎﺷ ﺲﮕﻧﺮﭙﺳﺍ ﻥﺮﺘﺧﺍ ﺮﭘ 4-ﻥﻮﮔ"
 
 
@@ -94595,11 +94807,13 @@ msgid "Where the annotation comes from"
 msgstr "ﮯﮨ ﯽﺗﺁ ﮯﺳ ﮞﺎﮩﮐ ﺢﯾﺮﺸﺗ"
 
 
-msgid "Show annotation data-block which belongs to movie clip"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to movie clip"
+msgid "Show annotation data which belongs to movie clip"
 msgstr "ﮯﮨ ﮯﺳ ﭗﻠﮐ ﯼﻭﻮﻣ ﻖﻠﻌﺗ ﺎﮐ ﺲﺟ ﮟﯿﺋﺎﮭﮐﺩ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﺤﯾﺮﺸﺗ"
 
 
-msgid "Show annotation data-block which belongs to active track"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to active track"
+msgid "Show annotation data which belongs to active track"
 msgstr "ﮯﮨ ﮯﺳ ﮏﯾﺮﭨ ﻝﺎﻌﻓ ﻖﻠﻌﺗ ﺎﮐ ﺲﺟ ﮟﯿﺋﺎﮭﮐﺩ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯽﺤﯾﺮﺸﺗ"
 
 
@@ -95558,7 +95772,8 @@ msgid "Node tree being displayed and edited"
 msgstr "ﮯﮨ ﺎﮨﺭ ﺎﺟ ﺎﯿﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﺭﻭﺍ ﺎﯾﺎﮭﮐﺩ ﻮﮐ ﯼﺮﭨ ﮈﻮﻧ"
 
 
-msgid "Data-block whose nodes are being edited"
+# BFA - reworded, Blender: "Data-block whose nodes are being edited"
+msgid "Data whose nodes are being edited"
 msgstr "ﮯﮨ ﯽﮨﺭ ﺎﺟ ﯽﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﺱﮈﻮﻧ ﮯﮐ ﺲﺟ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -95566,7 +95781,8 @@ msgid "ID From"
 msgstr "ID ﮯﺳ"
 
 
-msgid "Data-block from which the edited data-block is linked"
+# BFA - reworded, Blender: "Data-block from which the edited data-block is linked"
+msgid "Data from which the edited data is linked"
 msgstr "ﮯﮨ ﮏﻠﺴﻨﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺪﺷ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮯﺳ ﺲﺟ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -95582,7 +95798,8 @@ msgid "Settings for display of overlays in the Node Editor"
 msgstr "ﺰﮕﻨﭩﯿﺳ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ ﮯﮐ ﺰﯿﻟﺭﻭﻭﺍ ﮟﯿﻣ ﺮﭩﯾﮉﯾﺍ ﮈﻮﻧ"
 
 
-msgid "Path from the data-block to the currently edited node tree"
+# BFA - reworded, Blender: "Path from the data-block to the currently edited node tree"
+msgid "Path from the data to the currently edited node tree"
 msgstr "ﮧﺘﺳﺍﺭ ﺎﮐ ﮏﺗ ﯼﺮﭨ ﮈﻮﻧ ﮦﺪﺷ ﺮﺋﺎﻔﯾﮈﻮﻣ ﻝﺎﺤﻟﺍ ﯽﻓ ﮯﺳ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -95721,7 +95938,8 @@ msgid "Filter by Type"
 msgstr "ﮟﯾﺮﮐ ﺮﭩﻠﻓ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﻢﺴﻗ"
 
 
-msgid "Data-block type to show"
+# BFA - reworded, Blender: "Data-block type to show"
+msgid "Data type to show"
 msgstr "ﻢﺴﻗ ﯽﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﯿﻟ ﮯﮐ ﮯﻧﺎﮭﮐﺩ"
 
 
@@ -95817,7 +96035,8 @@ msgid "Only use complete matches of search string"
 msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﭻﯿﻣ ﻞﻤﮑﻣ ﮯﮐ ﮓﻧﺮﭩﺳ ﭺﺮﺳ ﻑﺮﺻ"
 
 
-msgid "Show only data-blocks of one type"
+# BFA - reworded, Blender: "Show only data-blocks of one type"
+msgid "Show only data of one type"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﮐ ﻢﺴﻗ ﮏﯾﺍ ﻑﺮﺻ"
 
 
@@ -96421,7 +96640,8 @@ msgid "Top line visible"
 msgstr "ﮯﮨ ﯽﺗﺁ ﺮﻈﻧ ﺮﯿﮑﻟ ﯽﮐ ﺮﭘﻭﺍ"
 
 
-msgid "Search in all text data-blocks, instead of only the active one"
+# BFA - reworded, Blender: "Search in all text data-blocks, instead of only the active one"
+msgid "Search in all text data, instead of only the active one"
 msgstr "ﮟﯾﺮﮐ ﺵﻼ﻿ﺗ ﮟﯿﻣ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﻡﺎﻤﺗ ﮯﺋﺎﺠﺑ ﮯﮐ ﻝﺎﻌﻓ ﻑﺮﺻ"
 
 
@@ -98632,7 +98852,8 @@ msgid "Text Line"
 msgstr "ﻦﺋﻻ﻿ ﭧﺴﮑﯿﭨ"
 
 
-msgid "Line of text in a Text data-block"
+# BFA - reworded, Blender: "Line of text in a Text data-block"
+msgid "Line of text in a Text file"
 msgstr "ﻦﺋﻻ﻿ ﯽﮐ ﻦﺘﻣ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ"
 
 
@@ -98668,7 +98889,8 @@ msgid "Set scaling for the texture's X, Y and Z sizes"
 msgstr "ﮟﯾﺮﮐ ﭧﯿﺳ ﮓﻨﻠﯿﮑﺳﺍ  ﮯﯿﻟ ﮯﮐ ﺰﺋﺎﺳ Z ﺭﻭﺍ X، Y ﮯﮐ ﺮﭽﺴﮑﯿﭨ"
 
 
-msgid "Texture data-block used by this texture slot"
+# BFA - reworded, Blender: "Texture data-block used by this texture slot"
+msgid "Texture used by this texture slot"
 msgstr "ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ  ﺖﺧﺎﺳ ﮦﺩﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮧﻌﯾﺭﺫ ﮯﮐ ﭦﻼ﻿ﺳ  ﺖﺧﺎﺳ ﺱﺍ"
 
 
@@ -98676,7 +98898,8 @@ msgid "Brush Texture Slot"
 msgstr "ﭦﻼ﻿ﺳ  ﺖﺧﺎﺳ ﺵﺮﺑ"
 
 
-msgid "Texture slot for textures in a Brush data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Brush data-block"
+msgid "Texture slot for textures in a Brush data"
 msgstr "ﭦﻼ﻿ﺳ  ﺖﺧﺎﺳ ﮯﯿﻟ ﮯﮐ ﺖﺧﺎﺳ  ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺵﺮﺑ"
 
 
@@ -98704,7 +98927,8 @@ msgid "LineStyle Texture Slot"
 msgstr "ﭦﻼ﻿ﺳ  ﺖﺧﺎﺳ ﻞﺋﺎﭩﺳﺍ ﻦﺋﻻ﻿"
 
 
-msgid "Texture slot for textures in a LineStyle data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a LineStyle data-block"
+msgid "Texture slot for textures in a LineStyle data"
 msgstr "ﭦﻼ﻿ﺳ  ﺖﺧﺎﺳ ﮯﯿﻟ ﮯﮐ ﺖﺧﺎﺳ  ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻞﺋﺎﭩﺳﺍ ﻦﺋﻻ﻿"
 
 
@@ -98776,7 +99000,8 @@ msgid "Particle Settings Texture Slot"
 msgstr "ﭦﻼ﻿ﺳ  ﺖﺧﺎﺳ ﺰﮕﻨﭩﯿﺳ ﻞﮑﯿﭨﺭﺎﭘ"
 
 
-msgid "Texture slot for textures in a Particle Settings data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Particle Settings data-block"
+msgid "Texture slot for textures in a Particle Settings data"
 msgstr "ﭦﻼ﻿ﺳ  ﺖﺧﺎﺳ ﮯﯿﻟ ﮯﮐ ﺖﺧﺎﺳ  ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺰﮕﻨﭩﯿﺳ ﻞﮑﯿﭨﺭﺎﭘ"
 
 
@@ -99662,7 +99887,8 @@ msgid "Active Action"
 msgstr "ﻡﺍﺪﻗﺍ ﻝﺎﻌﻓ"
 
 
-msgid "Animation data-block has active action"
+# BFA - reworded, Blender: "Animation data-block has active action"
+msgid "Animation has active action"
 msgstr "ﮯﮨ ﻡﺍﺪﻗﺍ ﻝﺎﻌﻓ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺕﺎﯿﮐﺮﺣ"
 
 
@@ -100905,7 +101131,8 @@ msgid "Draw Strokes on Back"
 msgstr "ﮟﯿﭽﻨﯿﮭﮐ ﮎﻭﺮﭩﺳﺍ ﺮﭘ ﮫﭩﯿﭘ"
 
 
-msgid "New strokes are drawn below of all strokes in the layer"
+# BFA - reworded, Blender: "New strokes are drawn below of all strokes in the layer"
+msgid "When drawing new strokes, the new stroke is drawn below of all strokes in the layer"
 msgstr "ﮟﯿﮨ ﮯﺌﮔ ﮯﺋﺎﻨﺑ ﮯﭽﯿﻧ ﮯﮐ ﮎﻭﺮﭩﺳﺍ ﻡﺎﻤﺗ ﺩﻮﺟﻮﻣ ﮟﯿﻣ ﮧﮩﺗ ﮎﻭﺮﭩﺳﺍ ﮯﺌﻧ"
 
 
@@ -101899,7 +102126,8 @@ msgid "Display X Axis"
 msgstr "ﮟﯾﺮﮐ ﮯﻧﺎﮭﮐﺩ ﺲﺴﮑﯾﺍ ﺲﮑﯾﺍ"
 
 
-msgid "Show the X axis line"
+# BFA - reworded, Blender: "Show the X axis line"
+msgid "Show the X axis line in perspective / orthographic views"
 msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﻦﺋﻻ﻿ ﺭﻮﺤﻣ ﺲﮑﯾﺍ"
 
 
@@ -101907,7 +102135,8 @@ msgid "Display Y Axis"
 msgstr "Y Axis ﮟﯾﺮﮐ ﮯﻧﺎﮭﮐﺩ"
 
 
-msgid "Show the Y axis line"
+# BFA - reworded, Blender: "Show the Y axis line"
+msgid "Show the Y axis line in perspective / orthographic views"
 msgstr "Y ﮟﯿﺋﺎﮭﮐﺩ ﻦﺋﻻ﻿ ﺭﻮﺤﻣ"
 
 
@@ -101915,7 +102144,8 @@ msgid "Display Z Axis"
 msgstr "Z Axis ﮟﯾﺮﮐ ﮯﻧﺎﮭﮐﺩ"
 
 
-msgid "Show the Z axis line"
+# BFA - reworded, Blender: "Show the Z axis line"
+msgid "Show the Z axis line in perspective / orthographic views"
 msgstr "Z ﮟﯿﺋﺎﮭﮐﺩ ﻦﺋﻻ﻿ ﺭﻮﺤﻣ"
 
 
@@ -103218,7 +103448,8 @@ msgid "Does this tool use a painting canvas"
 msgstr "ﮯﮨ ﺎﺗﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﺱﻮﻨﯿﮐ ﮓﻨﭩﻨﯿﭘ ﺭﺍﺯﻭﺍ  ﮧﯾ ﺎﯿﮐ"
 
 
-msgid "Lighting for a World data-block"
+# BFA - reworded, Blender: "Lighting for a World data-block"
+msgid "Lighting for a World data"
 msgstr "ﮓﻨﭩﺋﻻ﻿ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻟﺭﻭ"
 
 
@@ -103234,7 +103465,8 @@ msgid "World Mist"
 msgstr "ﺪﻨﮬﺩ ﯽﻤﻟﺎﻋ"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "ﺕﺎﺒﯿﺗﺮﺗ ﯽﮐ ﺪﻨﮬﺩ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮉﻟﺭﻭ"
 
 
@@ -106776,7 +107008,8 @@ msgid "Repository Alert:"
 msgstr ":ﭦﺮﻟﺍ ﻥﺰﺨﻣ"
 
 
-msgid "Internet access is required to install and update online extensions. "
+# BFA - reworded, Blender: "Internet access is required to install and update online extensions. "
+msgid "Internet access is required to install and update Extensions."
 msgstr " ﮯﮨ ﺭﺎﮐﺭﺩ ﯽﺋﺎﺳﺭ ﮏﺗ ﭧﯿﻧﺮﭩﻧﺍ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﭧﯾﮈ ﭖﺍ ﺭﻭﺍ ﻝﺎﭩﺴﻧﺍ ﻮﮐ ﺰﻨﺸﻨﯿﭩﺴﮑﯾﺍ ﻦﺋﻻ﻿ ﻥﺁ"
 
 
@@ -106823,8 +107056,9 @@ msgid "Permissions"
 msgstr "ﮟﯿﺗﺯﺎﺟﺍ"
 
 
+# BFA - reworded, Blender: "Visit Extensions Platform"
 msgctxt "Operator"
-msgid "Visit Extensions Platform"
+msgid "Visit Extensions Website"
 msgstr "ﮟﯿﺋﺎﺟ ﺮﭘ ﻡﺭﺎﻓ ﭧﯿﻠﭘ ﺰﻨﺸﻨﯿﭩﺴﮑﯾﺍ"
 
 
@@ -110020,7 +110254,8 @@ msgid "Select by"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﮯﺳ ﻑﺮﻃ ﯽﮐ"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "ﺪﺣﺮﺳ ﯼﺮﯾﻮﺼﺗ"
 
 
@@ -110301,7 +110536,8 @@ msgid "Strip Name"
 msgstr "ﻡﺎﻧ ﺎﮐ ﯽﭩﭘ"
 
 
-msgid "Max B-frames"
+# BFA - reworded, Blender: "Max B-frames"
+msgid "Max B_Frames"
 msgstr "ﻢﯾﺮﻓ ﯽﺑ ﮦﺩﺎﯾﺯ ﮯﺳ ﮦﺩﺎﯾﺯ"
 
 
@@ -112310,8 +112546,9 @@ msgid "Replace..."
 msgstr "...ﮟﯾﺩ ﻝﺪﺑ"
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "...ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﯽﭘﺎﮐ ﮏﯾﺍ"
 
 
@@ -112415,8 +112652,9 @@ msgid "Linked Duplicate"
 msgstr "ﻞﻘﻧ ﮏﻠﺴﻨﻣ"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "ﮟﯾﺮﮐ ﺪﻨﺑ ﺎﻧﺮﮐ ﭧﯾﻮﭨ ﻮﮐ ﮞﻮﯿﺋﺍﻭﺭﺭﺎﮐ ﯽﮐ ﯽﭩﭘ"
 
 
@@ -112440,13 +112678,15 @@ msgid "Start Editing Stashed Action"
 msgstr "ﮟﯾﺮﮐ ﻉﻭﺮﺷ ﺎﻧﺮﮐ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﻡﺍﺪﻗﺍ ﮉﺸﯿﭩﺳﺍ"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Full Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Full Stack)"
+msgid "Tweak Action (Full Stack)"
 msgstr "(ﮏﯿﭩﺳﺍ ﻞﻤﮑﻣ) ﮟﯾﺮﮐ ﻉﻭﺮﺷ ﻡﺍﺪﻗﺍ ﭖﺮﭩﺳ ﮓﻨﮑﯾﻮﭨ"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Lower Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgid "Tweak Action (Lower Stack)"
 msgstr "(ﮏﯿﭩﺳﺍ ﺮﺋﻮﻟ) ﮟﯾﺮﮐ ﻉﻭﺮﺷ ﻡﺍﺪﻗﺍ ﯽﭩﭘ ﮓﻨﮑﯾﻮﭨ"
 
 
@@ -112789,8 +113029,9 @@ msgid "Toggle Sequencer/Preview"
 msgstr "ﻮﯾﻮﯾﺮﭘ /ﺮﺴﻨﯾﻮﮑﯿﺳ ﻞﮔﻮﭨ"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﯽﮭﺒﺳ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﻢﺴﻗ"
 
 
@@ -112838,8 +113079,9 @@ msgid "Sound Crossfade"
 msgstr "ﮉﯿﻓ ﺱﺍﺮﮐ ﮉﻧﺅﺎﺳ"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "...ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﭧﯿﺳ ﮓﻨﯿﮐ"
 
 
@@ -112890,8 +113132,9 @@ msgid "Set Preview Range to Strips"
 msgstr "ﮟﯾﺮﮐ ﭧﯿﺳ ﺮﭘ ﺲﭘﺮﭩﺳ ﻮﮐ ﺪﺣ ﯽﮐ ﻮﯾﻮﯾﺮﭘ"
 
 
+# BFA - reworded, Blender: "Fit Preview in Window"
 msgctxt "Operator"
-msgid "Fit Preview in Window"
+msgid "Fit Preview in window"
 msgstr "ﮟﯾﺮﮐ ﭧﻓ ﻮﯾﻮﯾﺮﭘ  ﮟﯿﻣ ﻭﮉﻧﻭ"
 
 
@@ -113201,7 +113444,8 @@ msgid "Follow Current Frame"
 msgstr "ﮟﯾﺮﮐ ﻞﻤﻋ ﺮﭘ ﻢﯾﺮﻓ ﮦﺩﻮﺟﻮﻣ"
 
 
-msgid "Play In"
+# BFA - reworded, Blender: "Play In"
+msgid "Play in"
 msgstr "ﮟﯿﻠﯿﮭﮐ ﮟﯿﻣ"
 
 
@@ -113209,7 +113453,8 @@ msgid "Active Editor"
 msgstr "ﺮﭩﯾﮉﯾﺍ ﻝﺎﻌﻓ"
 
 
-msgid "Properties and Sidebars"
+# BFA - reworded, Blender: "Properties and Sidebars"
+msgid "Properties Editor and Sidebars"
 msgstr "ﺯﺭﺎﺑﮉﺋﺎﺳ ﺭﻭﺍ ﺰﯿﭨﺮﭘﺍﺮﭘ"
 
 
@@ -113329,8 +113574,9 @@ msgid "Render Animation"
 msgstr "ﻦﺸﯿﻤﯿﻨﯾﺍ ﺭﮉﻨﯾﺭ"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "...ﮟﯾﺮﮐ ﺶﯿﭘ ﻮﯾﮈﺁ"
 
 
@@ -113354,8 +113600,9 @@ msgid "Repeat History..."
 msgstr "...ﮟﯿﺋﺍﺮﮨﺩ ﻮﮐ ﺦﯾﺭﺎﺗ"
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "...ﺵﻼ﻿ﺗ ﻮﻨﯿﻣ"
 
 
@@ -113422,8 +113669,9 @@ msgid "Render Image"
 msgstr "ﮟﯾﺮﮐ ﺶﯿﭘ ﺮﯾﻮﺼﺗ"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "...ﺵﻼ﻿ﺗ ﯽﮐ ﺮﭩﯾﺮﭘﺁ"
 
 
@@ -113495,7 +113743,8 @@ msgid "User Tooltips"
 msgstr "ﺲﭙﭨ ﺭﺍﺯﻭﺍ  ﺭﺯﻮﯾ"
 
 
-msgid "Sort by Most Recent"
+# BFA - reworded, Blender: "Sort by Most Recent"
+msgid "Sort Search by Most Recent"
 msgstr "ﮟﯾﺩ ﺐﯿﺗﺮﺗ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﮧﯿﻟﺎﺣ"
 
 
@@ -113536,7 +113785,8 @@ msgid "Video Memory"
 msgstr "ﯼﺭﻮﻤﯿﻣ ﻮﯾﮉﯾﻭ"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "ﻥﮊﺭﻭ ﺭﮉﻨﯿﻠﺑ"
 
 
@@ -113742,7 +113992,8 @@ msgid "Excluded Paths"
 msgstr "ﮯﺘﺳﺍﺭ ﮦﺪﺷ ﺝﺭﺎﺧ"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "ﮟﯾﺮﮐ ﻅﻮﻔﺤﻣ ﺭﺎﮐﺩﻮﺧ"
 
 
@@ -114008,8 +114259,9 @@ msgid "More/Less"
 msgstr "ﻢﮐ/ﮦﺩﺎﯾﺯ"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "...ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻥﺮﭩﯿﭘ"
 
 
@@ -114097,8 +114349,9 @@ msgid "By Attribute"
 msgstr "ﻒﺻﻭ ﮧﻌﯾﺭﺬﺑ"
 
 
+# BFA - reworded, Blender: "Control Point Row"
 msgctxt "Operator"
-msgid "Control Point Row"
+msgid "Control Point row"
 msgstr "ﺭﺎﻄﻗ ﯽﮐ ﭧﻨﺋﺍﻮﭘ ﻝﻭﺮﭩﻨﮐ"
 
 
@@ -114211,23 +114464,27 @@ msgid "Fur"
 msgstr "ﻝﺎﮭﮐ"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "ﺢﻄﺳ ﺰﺑﺮﻧ"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "ﺭﮉﻨﻠﺳ ﺲﺑﺮﻧ"
 
 
+# BFA - reworded, Blender: "Nurbs Sphere"
 msgctxt "Operator"
-msgid "Nurbs Sphere"
+msgid "Surface Sphere"
 msgstr "ﺮﺌﯿﻔﺳﺍ ﺰﺑﺮﻧ"
 
 
+# BFA - reworded, Blender: "Nurbs Torus"
 msgctxt "Operator"
-msgid "Nurbs Torus"
+msgid "Surface Torus"
 msgstr "ﺱﺭﻮﭨ ﺲﺑﺭﻮﻧ"
 
 
@@ -114241,8 +114498,9 @@ msgid "Camera"
 msgstr "ﮦﺮﻤﯿﮐ"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "OpenVDB ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ..."
 
 
@@ -114296,8 +114554,9 @@ msgid "Origin"
 msgstr "ﻞﺻﺍ"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "...ﮟﯾﺮﮐ ﻞﯾﺪﺒﺗ ﻡﺎﻧ ﺎﮐ ﮯﺷ ﻝﺎﻌﻓ"
 
 
@@ -114725,13 +114984,15 @@ msgid "Calculate"
 msgstr "ﺎﻧﺎﮕﻟ ﺏﺎﺴﺣ"
 
 
+# BFA - reworded, Blender: "Assign to New Collection"
 msgctxt "Operator"
-msgid "Assign to New Collection"
+msgid "Assign to New"
 msgstr "ﮟﯾﺮﮐ ﺾﯾﻮﻔﺗ ﻮﮐ ﮧﻋﻮﻤﺠﻣ ﮯﺌﻧ"
 
 
+# BFA - reworded, Blender: "Add (with Targets)..."
 msgctxt "Operator"
-msgid "Add (with Targets)..."
+msgid "Add (with Targets)"
 msgstr "...(ﮫﺗﺎﺳ ﮯﮐ ﻑﺍﺪﮨﺍ) ﮟﯾﺮﮐ ﻞﻣﺎﺷ"
 
 
@@ -114860,8 +115121,9 @@ msgid "Rotate..."
 msgstr "...ﮟﯿﺋﺎﻤﮭﮔ"
 
 
+# BFA - reworded, Blender: "Point to Target..."
 msgctxt "Operator"
-msgid "Point to Target..."
+msgid "Point normals to target"
 msgstr "...ﮦﺭﺎﺷﺍ ﻑﺮﻃ ﯽﮐ ﻑﺪﮨ"
 
 
@@ -114960,7 +115222,8 @@ msgid "Color Opacity"
 msgstr "ﻦﭘﻻ﻿ﺪﻨﮬﺩ ﯽﮐ ﮓﻧﺭ"
 
 
-msgid "Attribute Text"
+# BFA - reworded, Blender: "Attribute Text"
+msgid "Attribute Text Overlay"
 msgstr "ﻦﺘﻣ ﻒﺻﻭ"
 
 
@@ -115317,13 +115580,15 @@ msgid "Recalculate Inside"
 msgstr "ﮟﯾﺮﮐ ﯽﺘﻨﮔ ﮦﺭﺎﺑﻭﺩ ﺭﺪﻧﺍ"
 
 
+# BFA - reworded, Blender: "Copy Vector"
 msgctxt "Operator"
-msgid "Copy Vector"
+msgid "Copy Vectors"
 msgstr "ﮟﯾﺮﮐ ﯽﭘﺎﮐ ﺮﭩﮑﯾﻭ"
 
 
+# BFA - reworded, Blender: "Paste Vector"
 msgctxt "Operator"
-msgid "Paste Vector"
+msgid "Paste Vectors"
 msgstr "ﺮﭩﮑﯾﻭ ﭧﺴﯿﭘ"
 
 
@@ -116041,8 +116306,9 @@ msgid "No brush selected"
 msgstr "No ﺐﺨﺘﻨﻣ ﺵﺮﺑ"
 
 
+# BFA - reworded, Blender: "Duplicate Asset..."
 msgctxt "Operator"
-msgid "Duplicate Asset..."
+msgid "Duplicate Asset"
 msgstr "...ﮧﺛﺎﺛﺍ ﻞﻘﻧ"
 
 
@@ -117341,7 +117607,8 @@ msgid "worlds"
 msgstr "ﺎﯿﻧﺩ"
 
 
-msgid "Library database with null library data-block pointer!"
+# BFA - reworded, Blender: "Library database with null library data-block pointer!"
+msgid "Library database with null library data pointer!"
 msgstr "null ﺲﯿﺑ ﺎﭩﯾﮈ ﯼﺮﯾﺮﺒﺋﻻ﻿ ﮫﺗﺎﺳ ﮯﮐ ﺮﭩﻨﺋﺍﻮﭘ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﯼﺮﯾﺮﺒﺋﻻ﻿!"
 
 
@@ -117641,11 +117908,17 @@ msgid "NLA Track is the only one evaluated in this animation data-block, with al
 msgstr "ﮟﯿﮨ ﺵﻮﻣﺎﺧ ﯽﮭﺒﺳ ﯽﻗﺎﺑ ،ﮯﮨ ﺎﯿﮔ ﺎﯿﻟ ﮦﺰﺋﺎﺟ ﺎﮐ ﮏﯾﺮﭨ NLA ﻑﺮﺻ ﮟﯿﻣ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺕﺎﯿﮐﺮﺣ  ﺱﺍ"
 
 
-msgid "Editability of keyframes for this channel"
+# BFA - reworded, Blender: "Editability of keyframes for this channel"
+msgid ""
+"Lock Channel\n"
+"Editability of keyframes for this channel"
 msgstr "ﻦﯾﻭﺪﺗ ﻞﺑﺎﻗ ﯽﮐ ﮞﻮﻤﯾﺮﻓ ﯼﺪﯿﻠﮐ ﮯﯿﻟ ﮯﮐ ﻞﻨﯿﭼ ﺱﺍ"
 
 
-msgid "Editability of NLA Strips in this track"
+# BFA - reworded, Blender: "Editability of NLA Strips in this track"
+msgid ""
+"Lock Channel\n"
+"Editability of NLA Strips in this track"
 msgstr "ﻦﯾﻭﺪﺗ ﻞﺑﺎﻗ ﯽﮐ ﺲﭘﺮﭩﺳ NLA ﮟﯿﻣ ﮏﯾﺮﭨ ﺱﺍ"
 
 
@@ -118227,7 +118500,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "ﮯﮨ ﯽﺘﮑﺳ ﺎﺟ ﯽﮐ ﮟﯿﮩﻧ ﺮﺋﺎﻔﯾﮈﻮﻣ ﮟﯿﻣ ﮒﻼ﻿ﭩﯿﮐ ﮧﺛﺎﺛﺍ ﮟﯿﻣ ﯼﺮﯾﺮﺒﺋﻻ﻿ ﯽﮐ ﮧﺛﺎﺛﺍ ﺱﺍ"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
+# BFA - reworded, Blender: "Cannot save asset catalogs before the Blender file is saved"
+msgid "Cannot save asset catalogs before the .blend file is saved"
 msgstr "ﺎﺘﮑﺳ ﺎﺟ ﺎﯿﮐ ﮟﯿﮩﻧ ﻅﻮﻔﺤﻣ ﻮﮐ ﮒﻼ﻿ﭩﯿﮐ ﯽﮐ ﮞﻮﺛﺎﺛﺍ ﮯﻠﮩﭘ ﮯﺳ ﮯﻧﻮﮨ ﻅﻮﻔﺤﻣ ﮯﮐ ﻞﺋﺎﻓ ﺭﮉﻨﯿﻠﺑ"
 
 
@@ -122327,7 +122601,8 @@ msgid "Offset:"
 msgstr ":ﭧﯿﺴﻓﺁ"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr ":ﺎﯾﺮﯾﺍ ﻥﺮﭩﯿﭘ"
 
 
@@ -122339,7 +122614,8 @@ msgid "Height:"
 msgstr ":ﯽﺋﺎﭽﻧﻭﺍ"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr ":ﮧﻗﻼ﻿ﻋ ﺎﮐ ﺵﻼ﻿ﺗ"
 
 
@@ -123292,7 +123568,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "(ﮟﯿﮭﮑﯾﺩ ﻝﻮﺴﻨﮐ ﮯﯿﻟ ﮯﮐ ﺕﻼ﻿ﯿﺼﻔﺗ) ﺎﮑﺳ ﺎﺟ ﺎﯿﮐ ﮟﯿﮩﻧ ﻞﻣﺎﺷ ﮟﯿﻣ (%s‬ : ‪%s‬‪) ﻮﮐ ﮦﺪﻨﻨﮐ ﻢﯿﻣﺮﺗ"
 
 
-msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+# BFA - reworded, Blender: "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+msgid "No active AnimData block to use (select a data expander first or set the appropriate flags on an AnimData block)"
 msgstr "(ﮟﯾﺮﮐ ﭧﯿﺳ ﮮﮉﻨﮭﺟ ﺐﺳﺎﻨﻣ ﺮﭘ ﮎﻼ﻿ﺑ AnimData ﺎﯾ ﮟﯾﺮﮐ ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﺭﮉﻨﯿﭙﺴﮑﯾﺍ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮯﻠﮩﭘ) ﮯﮨ ﮟﯿﮩﻧ ﮎﻼ﻿ﺑ AnimData ﻝﺎﻌﻓ ﯽﺋﻮﮐ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ"
 
 
@@ -123804,7 +124081,8 @@ msgid "External library data is not editable"
 msgstr "ﮯﮨ ﮟﯿﮩﻧ ﻦﯾﻭﺪﺗ ﻞﺑﺎﻗ ﺎﭩﯾﮈ ﯼﺮﯾﺮﺒﺋﻻ﻿ ﯽﻧﻭﺮﯿﺑ"
 
 
-msgid "Overridden data-blocks names are not editable"
+# BFA - reworded, Blender: "Overridden data-blocks names are not editable"
+msgid "Overridden data names are not editable"
 msgstr "ﮟﯿﮨ ﮟﯿﮩﻧ ﻦﯾﻭﺪﺗ ﻞﺑﺎﻗ ﻡﺎﻧ ﮯﮐ ﺲﮐﻼ﻿ﺑ ﺎﭩﯾﮈ ﮈﮉﯿﺋﺍﺭ ﺭﻭﻭﺍ"
 
 
@@ -123816,7 +124094,8 @@ msgid "No active item to rename"
 msgstr "ﮟﯿﮩﻧ ﻢﭩﺋﺁ ﻝﺎﻌﻓ ﯽﺋﻮﮐ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﻞﯾﺪﺒﺗ ﻡﺎﻧ"
 
 
-msgid "No selected data-blocks to copy"
+# BFA - reworded, Blender: "No selected data-blocks to copy"
+msgid "No selected data to copy"
 msgstr "ﮯﮨ ﮟﯿﮩﻧ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺐﺨﺘﻨﻣ ﯽﺋﻮﮐ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﯽﭘﺎﮐ"
 
 
@@ -123824,7 +124103,8 @@ msgid "Operation requires an active keying set"
 msgstr "ﮯﮨ ﺕﺭﻭﺮﺿ ﯽﮐ ﭧﯿﺳ ﮓﻨﯿﮐ ﻝﺎﻌﻓ ﮏﯾﺍ ﮯﯿﻟ ﮯﮐ ﻦﺸﯾﺮﭘﺁ"
 
 
-msgid "No orphaned data-blocks to purge"
+# BFA - reworded, Blender: "No orphaned data-blocks to purge"
+msgid "No orphaned data to purge"
 msgstr "ﮯﮨ ﮟﯿﮩﻧ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﻢﯿﺘﯾ ﯽﺋﻮﮐ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﻑﺎﺻ"
 
 
@@ -123860,7 +124140,8 @@ msgid "Copied %d selected data-block(s)"
 msgstr "(ﺯ)ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺐﺨﺘﻨﻣ %d‬‪ ﺎﯿﮔ ﺎﯿﮐ ﯽﭘﺎﮐ"
 
 
-msgid "%d data-block(s) pasted"
+# BFA - reworded, Blender: "%d data-block(s) pasted"
+msgid "%d data pasted"
 msgstr "‪%d‬ ﺎﯿﮔ ﺎﯾﺩ ﺮﮐ ﭧﺴﯿﭘ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
 
 
@@ -124400,7 +124681,8 @@ msgid "Mean Vertex Crease:"
 msgstr ":ﺰﯾﺮﮐ ﮯﻧﻮﮐ ﻂﺳﻭ"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr ":X ﺱﺍﺩﺭ"
 
 
@@ -127905,7 +128187,8 @@ msgid "WeightedNormal"
 msgstr "ﻞﻣﺭﺎﻧ ﯽﻧﺯﻭ"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr ":ﺮﺛﺍ ﯽﻤﻟﺎﻋ"
 
 
@@ -132353,7 +132636,8 @@ msgid "Pose Library"
 msgstr "ﯼﺮﯾﺮﺒﺋﻻ﻿ ﺯﻮﭘ"
 
 
-msgid "Pose Library based on the asset system."
+# BFA - reworded, Blender: "Pose Library based on the asset system."
+msgid "Pose Library based on the asset system"
 msgstr "ﯼﺮﯾﺮﺒﺋﻻ﻿ ﺯﺍﺪﻧﺍ ﯽﻨﺒﻣ ﺮﭘ ﻡﺎﻈﻧ ﮯﮐ ﮧﺛﺎﺛﺍ"
 
 
@@ -133679,3 +133963,311 @@ msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﭧﭘ ﻥﺍ ﺎﮐ ﯽﺋﺎﺒﻤ�
 msgid "Scale each curve uniformly to reach the target length"
 msgstr "ﮟﯾﺮﮐ ﮧﻧﺎﻤﯿﭘ ﺮﭘ ﺭﻮﻃ ﮞﺎﺴﮑﯾ ﻮﮐ ﻢﺧ ﺮﮨ ﮯﯿﻟ ﮯﮐ ﮯﻨﭽﻨﮩﭘ ﮏﺗ ﯽﺋﺎﺒﻤﻟ ﯽﮐ ﻑﺪﮨ"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "ﺮﻧﺅﺍﮈ ﮏﯾﺮﺑ ﺯﻮﭘ (Legacy)"
+
+# BFA - reworded, Blender: "Push Pose from Breakdown"
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "ﺯﻮﭘ ﺶﭘ ﮯﺳ ﻥﺅﺍﮈ ﮏﯾﺮﺑ (Legacy)"
+
+# BFA - reworded, Blender: "Relax Pose to Breakdown"
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "ﮟﯾﺮﮐ ﻡﺍﺭﺁ ﮟﯿﻣ ﺯﺍﺪﻧﺍ ﮯﯿﻟ ﮯﮐ ﻥﺅﺍﮈ ﮏﯾﺮﺑ (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      ﮏﺳﺎﻣ"
+
+# BFA - reworded, Blender: "Zero Weights"
+msgid "     Zero Weights"
+msgstr "     ﻥﺯﻭ ﺮﻔﺻ"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  ﮞﻮﮨ ﻞﻣﺎﺷ ﮟﯿﻣ ﺲﮑﯾﺮﭨ"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " ﻦﯿﮑﺳﺍ ﺭﻭﻭﺍ"
+
+# BFA - reworded, Blender: "Font size to use for displaying the text"
+msgid "Adjust the font size for displaying the text"
+msgstr "ﺰﺋﺎﺳ ﺎﮐ ﭧﻧﻮﻓ ﮯﯿﻟ ﮯﮐ ﮯﻧﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮯﯿﻟ ﮯﮐ ﺶﺋﺎﻤﻧ ﯽﮐ ﻦﺘﻣ"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﯽﮭﺒﺳ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﺖﯿﺻﻮﺼﺧ"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﯽﮭﺒﺳ ﮯﺳ ﻅﺎﺤﻟ ﮯﮐ ﻢﺴﻗ"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "ﺎﭩﯾﮈ ﺎﮐ ﯼﺮﯾﺬﭘ ﺖﮐﺮﺣ ﮯﯿﻟ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺱﺍ"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "ﮓﻨﯿﮐ ﻮﭨﺁ"
+
+# BFA - reworded, Blender: "Bake to Keyframes"
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "ﮟﯾﺮﮐ ﮏﯿﺑ ﺮﭘ ﺰﻤﯾﺮﻓ ﯽﮐ"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﺲﮐﺎﺑ (Legacy)"
+
+# BFA - reworded, Blender: "Cached Range"
+msgid "Cached Range (Info)"
+msgstr "ﺞﻨﯾﺭ ﮉﺸﯿﮐ (Info)"
+
+# BFA - reworded, Blender: "Clear Data-Block Previews"
+msgctxt "Operator"
+msgid "Clear Data Previews"
+msgstr "ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﯾﻮﯾﺮﭘ  ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "ﻉﻭﺮﺷ ﭗﻠﮐ"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "ﻉﻭﺮﺷ ﭗﻠﮐ"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "ﮯﻋﻮﻤﺠﻣ ﮯﮐ ﻝﺎﺜﻣ"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Delete"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "ﯽﺋﺍﺮﮩﮔ"
+
+# BFA - reworded, Blender: "Display overlay text"
+msgid "Display overlay text.\nAlso affects the Geometry Nodes viewer overlay"
+msgstr "ﮟﯾﺮﮐ ﮯﻧﺎﮭﮐﺩ ﭧﺴﮑﯿﭨ ﮯﻟﺭﻭﻭﺍ"
+
+# BFA - reworded, Blender: "Euclidean"
+msgid "Euclidean Distance"
+msgstr "ﻦﯾﮉﯿﻠﮐﻮﯾ"
+
+# BFA - reworded, Blender: "Extrude region together along local normals"
+msgid "Extrude Region Vertex Normals\nExtrude region together along local normals"
+msgstr "ﮟﯿﻟﺎﮑﻧ ﺮﮨﺎﺑ ﻮﮐ ﮯﻗﻼ﻿ﻋ ﮫﺗﺎﺳ ﮫﺗﺎﺳ ﮯﮐ ﻝﻮﻤﻌﻣ ﯽﻣﺎﻘﻣ"
+
+# BFA - reworded, Blender: "Auto-Masking"
+msgid "Global Auto Masking"
+msgstr "ﮓﻨﮑﺳﺎﻣ ﻮﭨﺁ"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "ﮟﯿﺋﺎﺟ ﺮﭘ ﻦﺋﻻ﻿ ﻮﮐ ﺮﺳﺮﮐ"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "ﻞﻘﺘﻨﻣ"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﮦﺪﺷ ﮦﻭﺮﮔ"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "ﮟﯾﺮﮐ ﺐﺨﺘﻨﻣ ﻮﮐ ﮦﺪﺷ ﮦﻭﺮﮔ"
+
+# BFA - reworded, Blender: "Insert Into Group"
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "ﮟﯾﺮﮐ ﻞﺧﺍﺩ ﮟﯿﻣ ﮦﻭﺮﮔ"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "ﮟﯾﺩ ﭧﻟﺍ ﻮﮐ ﺖﻤﺳ ﯽﮐ ﻡﻭﺯ"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "ﻞﺑﺎﻗ ﮯﮐ ﮯﻧﺮﮐ ﻉﻭﺮﺷ ﮦﺭﺎﺑﻭﺩ"
+
+# BFA - reworded, Blender: "Set type of handle for selected keyframes"
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "ﮟﯾﺮﮐ ﭧﯿﺳ ﻢﺴﻗ ﯽﮐ ﻝﮉﻨﯿﮨ ﮯﯿﻟ ﮯﮐ ﺰﻤﯾﺮﻓ ﯽﮐ ﺐﺨﺘﻨﻣ"
+
+# BFA - reworded, Blender: "Linked from"
+msgctxt "Operator"
+msgid "Linked From"
+msgstr "ﮯﺳ ﮏﻠﺴﻨﻣ"
+
+# BFA - reworded, Blender: "Linked to"
+msgctxt "Operator"
+msgid "Linked To"
+msgstr "to ﮏﻠﺴﻨﻣ"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "ﻦﭩﮨ ﻦﯿﻣ"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﻢﯾﺮﻓ ﻦﯾﺮﺗ ﺐﯾﺮﻗ"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﻢﯾﺮﻓ ﻦﯾﺮﺗ ﺐﯾﺮﻗ"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﮉﻨﮑﯿﺳ ﻦﯾﺮﺗ ﺐﯾﺮﻗ"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﮉﻨﮑﯿﺳ ﻦﯾﺮﺗ ﺐﯾﺮﻗ"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "ﻞﺋﺎﻓ ﯽﺌﻧ"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "...ﺵﻼ﻿ﺗ ﯽﮐ ﺮﭩﯾﺮﭘﺁ"
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "ﺖﯿﻔﻗﺍﻭ"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "ﺲﭨﻮﻧ ﺰﯿﻠﯾﺭ"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﻥﮊﺭﻭ"
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "ﭧﯿﺳ ﮯﮐ ﮮﺮﮩﭼ"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "ﮟﯿﺋﺎﮭﮐﺩ ﮟﯿﻣ"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "ﮏﺳﺎﻣ"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "ﮟﯿﺋﺎﮭﮐﺩ"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "ﺎﻧﺮﮐ ﺎﭨﻮﻣ/ﺎﻧﮍﮑﺳ"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "ﮟﯾﺮﮐ ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﺡﺮﻃ ﯽﺳﺍ"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "ﮟﯾﺮﮐ ﺏﺎﺨﺘﻧﺍ ﺎﮐ ﺡﺮﻃ ﯽﺳﺍ"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "ﻞﮐﺮﺳ ﺲﺑﺭﻮﻧ"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "ﻢﺴﻗ"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "ﮦﺩﺮﮐ ﺾﯾﻮﻔﺗ ﺮﯿﻏ (Catalogue)"
+
+# BFA - reworded, Blender: "Uninstall"
+msgctxt "Operator"
+msgid "Uninstall from System"
+msgstr "ﮟﯾﺮﮐ ﻝﺎﭩﺴﻧﺍ ﻥﺍ"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets"
+msgstr "ﮯﺛﺎﺛﺍ ﺮﯿﻏ"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets:"
+msgstr "ﮯﺛﺎﺛﺍ ﺮﯿﻏ"
+
+# BFA - reworded, Blender: "Use internal text data-block"
+msgid "Use internal text data"
+msgstr "ﮟﯾﺮﮐ ﻝﺎﻤﻌﺘﺳﺍ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﭧﺴﮑﯿﭨ ﯽﻧﻭﺭﺪﻧﺍ"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "ﺮﭩﮑﯾﻭ ﮉﯿﭙﺳ"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "ﯽﺋﺍﮌﻮﭼ ﯽﮐ ﻦﺋﻻ﻿"
+
+# BFA - reworded, Blender: "You can adjust this later from \"System\" preferences."
+msgid "You can adjust online access from \"System\" preferences."
+msgstr "ﮟﯿﮨ ﮯﺘﮑﺳ ﺮﮐ ﭧﺴﺟﮉﯾﺍ ﮯﺳ ﺕﺎﺤﯿﺟﺮﺗ ﯽﮐ \"ﻢﭩﺴﺳ\" ﮟﯿﻣ ﺪﻌﺑ ﮯﺳﺍ ﭖﺁ"
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "ﮟﯾﺮﮐ ﻡﻭﺯ ﺮﭘ ﺭﮈﺭﺎﺑ"
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮏﻠﺴﻨﻣ ﻮﮐ ﮞﻮﺛﺎﺛﺍ"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "ﮯﮨ ﮟﯿﮩﻧ ﮏﻨﻟ ﯽﺋﻮﮐ ﮯﺳ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮧﺛﺎﺛﺍ ﻞﺻﺍ ،ﮟﯾﺮﮐ ﺪﻣﺁﺭﺩ ﺮﭘ ﺭﻮﻃ ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﮦﺪﺷ ﯽﭘﺎﮐ ﻮﮐ ﮞﻮﺛﺎﺛﺍ"
+
+# BFA - reworded, Blender: "Clear Fake User and remove copy stashed in this data-block's NLA stack"
+msgid "Clear Fake User and remove copy stashed in this data's NLA stack"
+msgstr "ﮟﯾﺩ ﺎﭩﮨ ﻮﮐ ﯽﭘﺎﮐ ﯽﺋﻮﮨ ﯽﭙﮭﭼ ﮟﯿﻣ ﮏﯿﭩﺳﺍ NLA ﮯﮐ ﮎﻼ﻿ﺑ ﺎﭩﯾﮈ ﺱﺍ ﺭﻭﺍ ﮟﯾﺮﮐ ﻑﺎﺻ ﻮﮐ ﻑﺭﺎﺻ ﯽﻠﻌﺟ"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Install Application Template"
+msgstr "...ﮟﯾﺮﮐ ﻝﺎﭩﺴﻧﺍ ﭧﯿﻠﭙﻤﯿﭨ ﻦﺸﯿﮑﯿﻠﭙﯾﺍ"
+
+# BFA - reworded Blender string
+msgid "A restart of Bforartists is required"
+msgstr "Bforartists  ۔ﮯﮨ ﺕﺭﻭﺮﺿ ﯽﮐ ﮯﻧﺮﮐ ﻉﻭﺮﺷ ﮦﺭﺎﺑﻭﺩ ﻮﮐ"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Edit Preview Image"
+msgstr "...ﺮﯾﻮﺼﺗ ﻮﯾﻮﯾﺮﭘ ﮟﯾﺮﮐ ﻢﯿﻣﺮﺗ"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"

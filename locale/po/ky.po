@@ -2017,7 +2017,8 @@ msgid "X-Ray"
 msgstr "Рентген"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "Тегерек политорун жаратуу"
 
 
@@ -2048,7 +2049,8 @@ msgid "Add Monkey"
 msgstr "Маймылды кошуу"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "Сюзанна политорун жаратуу"
 
 
@@ -3678,3 +3680,46 @@ msgstr "күй."
 msgid "Import-Export"
 msgstr "Импорт-экспорт"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Маскалар"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Өчүрүү"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Тереңдиги"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Ташуу"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Маска"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Nurbs тегереги"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Түрү"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Bforartists'ден чыгуу"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Bforartists'ден чыгуу"

@@ -811,7 +811,8 @@ msgid "Animation Data"
 msgstr "Animations data"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "animations data for data-blok"
 
 
@@ -819,7 +820,8 @@ msgid "Action"
 msgstr "Handling"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Aktiv handling for denne datablok"
 
 
@@ -935,7 +937,8 @@ msgid "Drivers"
 msgstr "Drivere"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "Driverne/udtrykkene for denne datablok"
 
 
@@ -1215,7 +1218,8 @@ msgid "Show Menus"
 msgstr "Hvis menuer"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Vis menuer i hovedet"
 
 
@@ -1335,7 +1339,8 @@ msgid "Outliner"
 msgstr "Outliner"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "Oversigt over scene graf og alle tilgængelige datablokke"
 
 
@@ -1343,7 +1348,8 @@ msgid "Properties"
 msgstr "Egenskaber"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Rediger egenskaber for aktivt objekt og relaterede datablokke"
 
 
@@ -2172,7 +2178,8 @@ msgid "Bake Data"
 msgstr "Bag Data"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "Bag data til en Scene-datablok"
 
 
@@ -2348,7 +2355,8 @@ msgid "Internal"
 msgstr "Intern"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Gem bage kortet i en intern billeddata blok"
 
 
@@ -2572,11 +2580,13 @@ msgid "Blend-File Data"
 msgstr "Blend-fil data"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Hoveddatastruktur, der repræsenterer en .blend-fil og alle dens datablokke"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Handlingsdatablokke"
 
 
@@ -2588,27 +2598,33 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "Annotationsdatablokke (legacy Grease Pencil)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Skelet data-bloke"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Pensler data-blokke"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Cache-filer data-blokke"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Kamera data-blokke"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Indsamling af data-blokke"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Kurve data-blokke"
 
 
@@ -2624,7 +2640,8 @@ msgid "Vector Fonts"
 msgstr "Vektor skrifttyper"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Vektor skrifttyper"
 
 
@@ -2632,11 +2649,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Grease Pencil datablokke"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Hårkurve datablokke"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Billeddata-blokke"
 
 
@@ -2656,7 +2675,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Er den aktuelle session blevet gemt på disken som en .blend-fil"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Gitter data-blokke"
 
 
@@ -2664,15 +2684,18 @@ msgid "Libraries"
 msgstr "Biblioteker"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Biblioteksdatablokke"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Light Probe datablokke"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Lys datablokke"
 
 
@@ -2680,27 +2703,33 @@ msgid "Line Styles"
 msgstr "Linjestile"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Line Stil data-blokke"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Maske datablokke"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Materiale data-blokke"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Mesh data-blokke"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Metaball data-blokke"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Filmklip data-blokke"
 
 
@@ -2708,7 +2737,8 @@ msgid "Node Groups"
 msgstr "Nodegrupper"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Node gruppe data-blokke"
 
 
@@ -2716,11 +2746,13 @@ msgid "Object data-blocks"
 msgstr "Objektdatablokke"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Paint Curves datablokke"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Palette data-blokke"
 
 
@@ -2728,7 +2760,8 @@ msgid "Particles"
 msgstr "Partikler"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Partikeldatablokke"
 
 
@@ -2736,7 +2769,8 @@ msgid "Point cloud data-blocks"
 msgstr "Punktsky data-blokke"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Scene data-blokke"
 
 
@@ -2744,7 +2778,8 @@ msgid "Screens"
 msgstr "Skærme"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Skærm data-blokke"
 
 
@@ -2752,15 +2787,18 @@ msgid "Shape Keys"
 msgstr "Formnøgler"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Shape Key data-blokke"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Lyde data-blokke"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Højttaler data-blokke"
 
 
@@ -2768,7 +2806,8 @@ msgid "Text data-blocks"
 msgstr "Tekstdatablokke"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Tekstur data-blokke"
 
 
@@ -2788,7 +2827,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Filformatversion .blend-filen blev gemt med"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Volume data-blokke"
 
 
@@ -2796,15 +2836,18 @@ msgid "Window Managers"
 msgstr "Window Managers"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Window manager datablokke"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Workspace data-blokke"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Verdens datablokke"
 
 
@@ -3997,3 +4040,22 @@ msgstr "%s '%s' ikke fundet"
 msgid "Import-Export"
 msgstr "Importér-Expotér"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Masker"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Dybte"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Type"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Vis de aktiver, der i øjeblikket er tilgængelige i denne Bforartists-session"

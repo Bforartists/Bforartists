@@ -686,7 +686,8 @@ msgid "Animation Data"
 msgstr "Data ya Uhuishaji"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Data ya uhuishaji ya kizuizi cha data"
 
 
@@ -694,7 +695,8 @@ msgid "Action"
 msgstr "Kitendo"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Kitendo Amilifu kwa kizuizi hiki cha data"
 
 
@@ -794,7 +796,8 @@ msgid "Drivers"
 msgstr "Madereva"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "Viendeshi/Maonyesho ya kizuizi hiki cha data"
 
 
@@ -1222,7 +1225,8 @@ msgid "Show Menus"
 msgstr "Onyesha Menyu"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Onyesha menyu kwenye kichwa"
 
 
@@ -1330,7 +1334,8 @@ msgid "Outliner"
 msgstr "Muhtasari"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "Muhtasari wa grafu ya tukio na vizuizi vyote vya data vinavyopatikana"
 
 
@@ -1338,7 +1343,8 @@ msgid "Properties"
 msgstr "Sifa"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Hariri sifa za kitu amilifu na vizuizi vya data vinavyohusiana"
 
 
@@ -1923,7 +1929,8 @@ msgid "Worlds"
 msgstr "Walimwengu"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Onyesha vizuizi vya data vya Ulimwenguni"
 
 
@@ -2263,7 +2270,8 @@ msgid "The index of the color attribute used as a fallback for rendering"
 msgstr "Faharasa ya sifa ya rangi inayotumika kama njia mbadala ya uwasilishaji"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "Oka data kwa kizuizi cha data cha Onyesho"
 
 
@@ -2427,7 +2435,8 @@ msgid "Internal"
 msgstr "Ndani"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Hifadhi ramani ya kuoka kwenye kizuizi cha data cha picha ya ndani"
 
 
@@ -2699,11 +2708,13 @@ msgid "Blend-File Data"
 msgstr "Data ya Faili-Mchanganyiko"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Muundo mkuu wa data unaowakilisha faili ya .mchanganyiko na vizuizi vyake vyote vya data"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Vizuizi vya data vya vitendo"
 
 
@@ -2711,23 +2722,28 @@ msgid "Annotation"
 msgstr "Maelezo"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Vizuizi vya data vilivyokomaa"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Vizuizi vya data vya Brashi"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Vizuizi vya data vya Faili za Akiba"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Vizuizi vya data vya kamera"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Vizuizi vya data vya ukusanyaji"
 
 
@@ -2735,7 +2751,8 @@ msgid "Color Space"
 msgstr "Nafasi ya Rangi"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Vizuizi vya data vya Curve"
 
 
@@ -2751,7 +2768,8 @@ msgid "Vector Fonts"
 msgstr "Fonti za Vekta"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Vizuizi vya data vya fonti ya Vekta"
 
 
@@ -2759,11 +2777,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Vizuizi vya data vya Penseli ya Grisi"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Vizuizi vya data vya curve ya nywele"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Vizuizi vya data vya picha"
 
 
@@ -2783,7 +2803,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Je, kipindi cha sasa kimehifadhiwa kwenye diski kama faili ya .mchanganyiko"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Vizuizi vya data vya kimiani"
 
 
@@ -2791,15 +2812,18 @@ msgid "Libraries"
 msgstr "Maktaba"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Vizuizi vya data vya maktaba"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Vizuizi vya data vya Uchunguzi wa Mwanga"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Vizuizi vyepesi vya data"
 
 
@@ -2807,27 +2831,33 @@ msgid "Line Styles"
 msgstr "Mitindo ya Mstari"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Vizuizi vya data vya Mtindo wa Mstari"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Vizuizi vya data vya barakoa"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Vizuizi vya data vya nyenzo"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Vizuizi vya data vya Mesh"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Vizuizi vya data vya Metaball"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Vizuizi vya data vya Klipu ya Filamu"
 
 
@@ -2835,7 +2865,8 @@ msgid "Node Groups"
 msgstr "Vikundi vya Nodi"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Vizuizi vya data vya kikundi cha nodi"
 
 
@@ -2843,11 +2874,13 @@ msgid "Object data-blocks"
 msgstr "Vizuizi vya data vya kitu"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Vizuizi vya data vya Curves za Rangi"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Vizuizi vya data vya palette"
 
 
@@ -2855,7 +2888,8 @@ msgid "Particles"
 msgstr "Chembe"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Vizuizi vya data vya chembe"
 
 
@@ -2863,7 +2897,8 @@ msgid "Point cloud data-blocks"
 msgstr "Vizuizi vya data vya wingu la uhakika"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Vizuizi vya data vya eneo"
 
 
@@ -2871,7 +2906,8 @@ msgid "Screens"
 msgstr "Skrini"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Vizuizi vya data vya skrini"
 
 
@@ -2879,15 +2915,18 @@ msgid "Shape Keys"
 msgstr "Funguo za Umbo"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Vizuizi vya data vya Shape Key"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Vizuizi vya data vya sauti"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Vizuizi vya data vya kipaza sauti"
 
 
@@ -2895,7 +2934,8 @@ msgid "Text data-blocks"
 msgstr "Vizuizi vya data vya maandishi"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Vizuizi vya data vya muundo"
 
 
@@ -2915,7 +2955,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Toleo la umbizo la faili ya .blend ilihifadhiwa kwa kutumia"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Vizuizi vya data vya ujazo"
 
 
@@ -2923,15 +2964,18 @@ msgid "Window Managers"
 msgstr "Wasimamizi wa Dirisha"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Vizuizi vya data vya msimamizi wa dirisha"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Vizuizi vya data vya nafasi ya kazi"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Vizuizi vya data vya ulimwengu"
 
 
@@ -3736,7 +3780,8 @@ msgid "Volume"
 msgstr "Juzuu"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "Mfupa kwenye kizuizi cha data cha Armature"
 
 
@@ -5331,7 +5376,8 @@ msgid "Stereo"
 msgstr "Stirio"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "Mipangilio ya Stereoscopy ya kizuizi cha data cha Kamera"
 
 
@@ -9107,7 +9153,8 @@ msgid "Curve Slice"
 msgstr "Kipande cha Mviringo"
 
 
-msgid "A single curve from a curves data-block"
+# BFA - reworded, Blender: "A single curve from a curves data-block"
+msgid "A single curve from a curves data"
 msgstr "Mviringo mmoja kutoka kwa kizuizi cha data cha mikunjo"
 
 
@@ -9551,7 +9598,8 @@ msgid "Include Missing NLA"
 msgstr "Jumuisha NLA Isiyopo"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "Jumuisha vizuizi vya data vya uhuishaji bila data ya NLA (kihariri cha NLA pekee)"
 
 
@@ -9559,7 +9607,8 @@ msgid "Display Modifier Data"
 msgstr "Data ya Kirekebishaji cha Onyesho"
 
 
-msgid "Include visualization of animation data related to data-blocks linked to modifiers"
+# BFA - reworded, Blender: "Include visualization of animation data related to data-blocks linked to modifiers"
+msgid "Include visualization of animation data related to data linked to modifiers"
 msgstr "Jumuisha taswira ya data ya uhuishaji inayohusiana na vizuizi vya data vilivyounganishwa na virekebishaji"
 
 
@@ -9683,7 +9732,8 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "ID-Block inayowakilisha data chanzo, kwa kawaida ID_SCE (yaani Onyesho)"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "Panga Vitalu vya Data"
 
 
@@ -10624,7 +10674,8 @@ msgid "Edit Bone"
 msgstr "Hariri Mfupa"
 
 
-msgid "Edit mode bone in an armature data-block"
+# BFA - reworded, Blender: "Edit mode bone in an armature data-block"
+msgid "Editmode bone in an armature data"
 msgstr "Hariri mfupa wa modi katika kizuizi cha data cha silaha"
 
 
@@ -14266,7 +14317,8 @@ msgid "Freestyle Settings"
 msgstr "Mipangilio ya Mtindo Huria"
 
 
-msgid "Freestyle settings for a ViewLayer data-block"
+# BFA - reworded, Blender: "Freestyle settings for a ViewLayer data-block"
+msgid "Freestyle settings for a ViewLayer"
 msgstr "Mipangilio ya mitindo huru ya kizuizi cha data cha ViewLayer"
 
 
@@ -15363,7 +15415,8 @@ msgid "Animation data for this data-block"
 msgstr "Data ya uhuishaji ya kizuizi hiki cha data"
 
 
-msgid "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+# BFA - reworded, Blender: "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+msgid "Armature data containing a hierarchy of bones, usually used for rigging characters"
 msgstr "Kizuizi cha data kilichokomaa kilicho na safu ya mifupa, kawaida hutumika kwa wizi wa herufi."
 
 
@@ -15483,7 +15536,8 @@ msgid "Apply changes to matching bone on opposite side of X-Axis"
 msgstr "Tekeleza mabadiliko kwenye mfupa unaolingana upande mwingine wa X-Axis"
 
 
-msgid "Brush data-block for storing brush settings for painting and sculpting"
+# BFA - reworded, Blender: "Brush data-block for storing brush settings for painting and sculpting"
+msgid "Brush data for storing brush settings for painting and sculpting"
 msgstr "Braki kizuizi-data kwa ajili ya kuhifadhi mipangilio ya brashi kwa uchoraji na uchongaji"
 
 
@@ -17209,7 +17263,8 @@ msgid "Frame"
 msgstr "Fremu"
 
 
-msgid "Camera data-block for storing camera settings"
+# BFA - reworded, Blender: "Camera data-block for storing camera settings"
+msgid "Camera data for storing camera settings"
 msgstr "Kizuizi cha data cha kamera kwa kuhifadhi mipangilio ya kamera"
 
 
@@ -17601,7 +17656,8 @@ msgid "Orthographic"
 msgstr "Orthografia"
 
 
-msgid "Collection of Object data-blocks"
+# BFA - reworded, Blender: "Collection of Object data-blocks"
+msgid "Collection of Object data"
 msgstr "Mkusanyiko wa vizuizi vya data vya Kitu"
 
 
@@ -17765,7 +17821,8 @@ msgid "Assign intersection priority value for this collection"
 msgstr "Weka thamani ya kipaumbele ya makutano kwa mkusanyiko huu"
 
 
-msgid "Curve data-block storing curves, splines and NURBS"
+# BFA - reworded, Blender: "Curve data-block storing curves, splines and NURBS"
+msgid "Curve data storing curves, splines and NURBS"
 msgstr "Curve data-block curves, splines na NURBS"
 
 
@@ -18081,7 +18138,8 @@ msgid "Surface Curve"
 msgstr "Mzingo wa Uso"
 
 
-msgid "Curve data-block used for storing surfaces"
+# BFA - reworded, Blender: "Curve data-block used for storing surfaces"
+msgid "Curve data used for storing surfaces"
 msgstr "Kizuizi cha data cha Curve kinachotumika kuhifadhi nyuso"
 
 
@@ -18089,7 +18147,8 @@ msgid "Text Curve"
 msgstr "Mviringo wa Maandishi"
 
 
-msgid "Curve data-block used for storing text"
+# BFA - reworded, Blender: "Curve data-block used for storing text"
+msgid "Curve data used for storing text"
 msgstr "Kizuizi cha data cha Curve kinachotumika kuhifadhi maandishi"
 
 
@@ -18349,11 +18408,13 @@ msgid "Don't fill polygons while editing"
 msgstr "Usijaze poligoni wakati wa kuhariri"
 
 
-msgid "Hair data-block for hair curves"
+# BFA - reworded, Blender: "Hair data-block for hair curves"
+msgid "Hair data for hair curves"
 msgstr "Kizuizi cha data cha nywele kwa mikunjo ya nywele"
 
 
-msgid "All curves in the data-block"
+# BFA - reworded, Blender: "All curves in the data-block"
+msgid "All curves in the data"
 msgstr "Mikondo yote kwenye kizuizi cha data"
 
 
@@ -19069,7 +19130,8 @@ msgid "Display onion keyframes for looping animations"
 msgstr "Onyesha fremu muhimu za kitunguu kwa uhuishaji wa kitanzi"
 
 
-msgid "Image data-block referencing an external or packed image"
+# BFA - reworded, Blender: "Image data-block referencing an external or packed image"
+msgid "Image data referencing an external or packed image"
 msgstr "Kizuizi cha picha cha picha kinachorejelea picha ya nje au iliyopakiwa"
 
 
@@ -19425,7 +19487,8 @@ msgid "Single file with an encoded stereo pair"
 msgstr "Faili moja yenye jozi ya stereo iliyosimbwa"
 
 
-msgid "Shape keys data-block containing different shapes of geometric data-blocks"
+# BFA - reworded, Blender: "Shape keys data-block containing different shapes of geometric data-blocks"
+msgid "Shape keys data containing different shapes of geometric data"
 msgstr "Kizuizi cha data cha funguo za umbo kilicho na maumbo tofauti ya vizuizi vya data vya kijiometri"
 
 
@@ -19453,11 +19516,13 @@ msgid "User"
 msgstr "Mtumiaji"
 
 
-msgid "Data-block using these shape keys"
+# BFA - reworded, Blender: "Data-block using these shape keys"
+msgid "Data using these shape keys"
 msgstr "Kizuizi cha data kwa kutumia funguo hizi za umbo"
 
 
-msgid "Lattice data-block defining a grid for deforming other objects"
+# BFA - reworded, Blender: "Lattice data-block defining a grid for deforming other objects"
+msgid "Lattice data defining a grid for deforming other objects"
 msgstr "Kizuizi cha data cha kimiani kinachofafanua gridi ya kuharibika kwa vitu vingine"
 
 
@@ -19518,7 +19583,8 @@ msgid "Light"
 msgstr "Mwanga"
 
 
-msgid "Light data-block for lighting a scene"
+# BFA - reworded, Blender: "Light data-block for lighting a scene"
+msgid "Light data for lighting a scene"
 msgstr "Kizuizi chepesi cha data kwa ajili ya kuwasha tukio"
 
 
@@ -19779,7 +19845,8 @@ msgid "End distance of the cascaded shadow map (only in perspective view)"
 msgstr "Umbali wa mwisho wa ramani ya kivuli iliyopigwa (katika mtazamo wa mtazamo tu)"
 
 
-msgid "Light Probe data-block for lighting capture objects"
+# BFA - reworded, Blender: "Light Probe data-block for lighting capture objects"
+msgid "Light Probe data for lighting capture objects"
 msgstr "Light Probe data-block kwa ajili ya kuwasha vitu vya kunasa"
 
 
@@ -20031,7 +20098,8 @@ msgid "Offset sampling of the irradiance grid in the viewing direction to reduce
 msgstr "Sampuli za kukabiliana na gridi ya miale katika mwelekeo wa kutazama ili kupunguza kutokwa na damu kidogo"
 
 
-msgid "Mask data-block defining mask for compositing"
+# BFA - reworded, Blender: "Mask data-block defining mask for compositing"
+msgid "Mask data defining mask for compositing"
 msgstr "Kizuizi cha data cha barakoa kinachofafanua kinyago cha kutunga"
 
 
@@ -20055,7 +20123,8 @@ msgid "Collection of layers which defines this mask"
 msgstr "Mkusanyiko wa tabaka zinazofafanua kinyago hiki"
 
 
-msgid "Material data-block to define the appearance of geometric objects for rendering"
+# BFA - reworded, Blender: "Material data-block to define the appearance of geometric objects for rendering"
+msgid "Material data to define the appearance of geometric objects for rendering"
 msgstr "Kizuizi cha data cha nyenzo ili kufafanua mwonekano wa vitu vya kijiometri kwa ajili ya utoaji"
 
 
@@ -20655,7 +20724,8 @@ msgid "Vertices of the mesh"
 msgstr "Wima za matundu"
 
 
-msgid "Metaball data-block to define blobby surfaces"
+# BFA - reworded, Blender: "Metaball data-block to define blobby surfaces"
+msgid "Metaball data to define blobby surfaces"
 msgstr "Kizuizi cha data cha Metaball ili kufafanua nyuso za blobby"
 
 
@@ -20707,7 +20777,8 @@ msgid "While editing, don't update metaball at all"
 msgstr "Wakati wa kuhariri, usisasishe metaball hata kidogo"
 
 
-msgid "MovieClip data-block referencing an external movie file"
+# BFA - reworded, Blender: "MovieClip data-block referencing an external movie file"
+msgid "MovieClip data referencing an external movie file"
 msgstr "Kizuizi cha data cha MovieClip kinachorejelea faili ya filamu ya nje"
 
 
@@ -20923,7 +20994,8 @@ msgid "Shader Node Tree"
 msgstr "Mti wa Shader Nodi"
 
 
-msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+# BFA - reworded, Blender: "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+msgid "Node tree consisting of linked nodes used for materials (and other shading data)"
 msgstr "Mti wa nodi unaojumuisha nodi zilizounganishwa zinazotumika kwa nyenzo (na vizuizi vingine vya data vya kivuli)"
 
 
@@ -20935,7 +21007,8 @@ msgid "Node tree consisting of linked nodes used for textures"
 msgstr "Mti wa nodi unaojumuisha nodi zilizounganishwa zinazotumika kwa maumbo"
 
 
-msgid "Object data-block defining an object in a scene"
+# BFA - reworded, Blender: "Object data-block defining an object in a scene"
+msgid "Object data defining an object in a scene"
 msgstr "Kizuizi cha data cha kitu kinachofafanua kitu kwenye tukio"
 
 
@@ -22941,11 +23014,13 @@ msgid "Relative amount of virtual parents"
 msgstr "Kiasi cha jamaa cha wazazi pepe"
 
 
-msgid "Point cloud data-block"
+# BFA - reworded, Blender: "Point cloud data-block"
+msgid "Point cloud data"
 msgstr "Kizuizi cha data cha wingu cha uhakika"
 
 
-msgid "Scene data-block, consisting in objects and defining time and render related settings"
+# BFA - reworded, Blender: "Scene data-block, consisting in objects and defining time and render related settings"
+msgid "Scene, consisting in objects and defining time and render related settings"
 msgstr "Kizuizi cha data cha eneo, kinachojumuisha vitu na kufafanua wakati na kutoa mipangilio inayohusiana"
 
 
@@ -23378,7 +23453,8 @@ msgid "World used for rendering the scene"
 msgstr "Ulimwengu uliotumika kutoa tukio"
 
 
-msgid "Screen data-block, defining the layout of areas in a window"
+# BFA - reworded, Blender: "Screen data-block, defining the layout of areas in a window"
+msgid "Screen data, defining the layout of areas in a window"
 msgstr "Kizuizi cha data cha skrini, kikifafanua mpangilio wa maeneo kwenye dirisha"
 
 
@@ -23458,7 +23534,8 @@ msgid "Top-Left 3D Editor"
 msgstr "Mhariri wa 3D wa Juu-Kushoto"
 
 
-msgid "Sound data-block referencing an external or packed sound file"
+# BFA - reworded, Blender: "Sound data-block referencing an external or packed sound file"
+msgid "Sound data referencing an external or packed sound file"
 msgstr "Kizuizi cha data cha sauti kinachorejelea faili ya sauti ya nje au iliyopakiwa"
 
 
@@ -23478,7 +23555,8 @@ msgid "6.1 Surround"
 msgstr "6.1 Mzingira"
 
 
-msgid "Sound sample file used by this Sound data-block"
+# BFA - reworded, Blender: "Sound sample file used by this Sound data-block"
+msgid "Sound sample file used by this Sound data"
 msgstr "Sampuli ya faili ya sauti inayotumiwa na kizuizi hiki cha data cha Sauti"
 
 
@@ -23498,7 +23576,8 @@ msgid "If the file contains multiple audio channels they are rendered to a singl
 msgstr "Ikiwa faili ina chaneli nyingi za sauti hutolewa kwa moja"
 
 
-msgid "Speaker data-block for 3D audio speaker objects"
+# BFA - reworded, Blender: "Speaker data-block for 3D audio speaker objects"
+msgid "Speaker data´for 3D audio speaker objects"
 msgstr "Kizuizi cha data cha spika cha vipengee vya spika za sauti za 3D"
 
 
@@ -23560,7 +23639,8 @@ msgid "Playback pitch of the sound"
 msgstr "Kiwango cha kucheza tena cha sauti"
 
 
-msgid "Sound data-block used by this speaker"
+# BFA - reworded, Blender: "Sound data-block used by this speaker"
+msgid "Sound data used by this speaker"
 msgstr "Kizuizi cha data cha sauti kinachotumiwa na spika hii"
 
 
@@ -23584,7 +23664,8 @@ msgid "Minimum volume, no matter how far away the object is"
 msgstr "Kiwango cha chini kabisa, haijalishi kitu kiko mbali kiasi gani"
 
 
-msgid "Text data-block referencing an external or packed text file"
+# BFA - reworded, Blender: "Text data-block referencing an external or packed text file"
+msgid "Text file referencing an external or packed text file"
 msgstr "Kizuizi cha data cha maandishi kinachorejelea faili ya maandishi ya nje au iliyopakiwa"
 
 
@@ -23705,7 +23786,8 @@ msgid "Run this text as a Python script on loading"
 msgstr "Endesha maandishi haya kama hati ya Python kwenye upakiaji"
 
 
-msgid "Texture data-block used by materials, lights, worlds and brushes"
+# BFA - reworded, Blender: "Texture data-block used by materials, lights, worlds and brushes"
+msgid "Texture used by materials, lights, worlds and brushes"
 msgstr "Kizuizi cha data cha muundo kinachotumiwa na nyenzo, taa, ulimwengu na brashi"
 
 
@@ -24495,7 +24577,8 @@ msgid "Vector font for Text objects"
 msgstr "Fonti ya Vekta kwa vitu vya Maandishi"
 
 
-msgid "Volume data-block for 3D volume grids"
+# BFA - reworded, Blender: "Volume data-block for 3D volume grids"
+msgid "Volume data for 3D volume grids"
 msgstr "Kizuizi cha data cha ujazo kwa gridi za ujazo wa 3D"
 
 
@@ -24503,7 +24586,8 @@ msgid "Volume display settings for 3D viewport"
 msgstr "Mipangilio ya onyesho la sauti kwa kituo cha kutazama cha 3D"
 
 
-msgid "Volume file used by this Volume data-block"
+# BFA - reworded, Blender: "Volume file used by this Volume data-block"
+msgid "Volume file used by this Volume"
 msgstr "Faili ya ujazo inayotumiwa na kizuizi hiki cha data cha Kiasi"
 
 
@@ -24591,7 +24675,8 @@ msgid "Workspace"
 msgstr "Nafasi ya kazi"
 
 
-msgid "Workspace data-block, defining the working environment for the user"
+# BFA - reworded, Blender: "Workspace data-block, defining the working environment for the user"
+msgid "Workspace data, defining the working environment for the user"
 msgstr "Kizuizi cha data cha nafasi ya kazi, kinachofafanua mazingira ya kufanya kazi kwa mtumiaji"
 
 
@@ -24655,7 +24740,8 @@ msgid "Remember the last used scene for the workspace and switch to it whenever 
 msgstr "Kumbuka tukio la mwisho lililotumika kwa nafasi ya kazi na ubadilishe wakati wowote nafasi hii ya kazi inapoamilishwa tena."
 
 
-msgid "World data-block describing the environment and ambient lighting of a scene"
+# BFA - reworded, Blender: "World data-block describing the environment and ambient lighting of a scene"
+msgid "World data describing the environment and ambient lighting of a scene"
 msgstr "Kizuizi cha data cha ulimwengu kinachoelezea mazingira na mwangaza wa eneo la tukio"
 
 
@@ -25339,7 +25425,8 @@ msgid "True if this preview image has been modified by py script, and is no more
 msgstr "Ni kweli ikiwa picha hii ya hakikisho imerekebishwa na hati ya py, na haitolewi tena kiotomatiki na Blender."
 
 
-msgid "Parameters defining how an Image data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how an Image data-block is used by another data-block"
+msgid "Parameters defining how an Image data is used by another data"
 msgstr "Vigezo vinavyofafanua jinsi kizuizi cha data cha Picha kinatumiwa na kizuizi kingine cha data"
 
 
@@ -27781,7 +27868,8 @@ msgid "ID Type"
 msgstr "Aina ya Kitambulisho"
 
 
-msgid "Name of parent object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent object in specified data-block to which parenting happens"
+msgid "Name of parent object in specified data to which parenting happens"
 msgstr "Jina la kitu mzazi katika kizuizi maalum cha data ambapo uzazi hutokea"
 
 
@@ -27789,7 +27877,8 @@ msgid "Sub Parent"
 msgstr "Mzazi Mdogo"
 
 
-msgid "Name of parent sub-object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent sub-object in specified data-block to which parenting happens"
+msgid "Name of parent sub-object in specified data to which parenting happens"
 msgstr "Jina la kitu kidogo cha mzazi katika kizuizi maalum cha data ambapo uzazi hutokea"
 
 
@@ -28198,7 +28287,8 @@ msgid "Link material to object or the object's data"
 msgstr "Unganisha nyenzo kwa kitu au data ya kitu"
 
 
-msgid "Material data-block used by this material slot"
+# BFA - reworded, Blender: "Material data-block used by this material slot"
+msgid "Material data used by this material slot"
 msgstr "Kizuizi cha data cha nyenzo kinachotumiwa na slot hii ya nyenzo"
 
 
@@ -28805,7 +28895,8 @@ msgid "View Normal Limit"
 msgstr "Tazama Kikomo cha Kawaida"
 
 
-msgid "Edge in a Mesh data-block"
+# BFA - reworded, Blender: "Edge in a Mesh data-block"
+msgid "Edge in a Mesh data"
 msgstr "Edge katika kizuizi cha data cha Mesh"
 
 
@@ -28849,7 +28940,8 @@ msgid "Mesh Loop"
 msgstr "Kitanzi cha Mesh"
 
 
-msgid "Loop in a Mesh data-block"
+# BFA - reworded, Blender: "Loop in a Mesh data-block"
+msgid "Loop in a Mesh data"
 msgstr "Ingiza kwenye kizuizi cha data cha Mesh"
 
 
@@ -28925,7 +29017,8 @@ msgid "Mesh Loop Triangle"
 msgstr "Pembetatu ya Kitanzi cha Mesh"
 
 
-msgid "Tessellated triangle in a Mesh data-block"
+# BFA - reworded, Blender: "Tessellated triangle in a Mesh data-block"
+msgid "Tessellated triangle in a Mesh data"
 msgstr "Pembetatu iliyounganishwa kwenye kizuizi cha data cha Mesh"
 
 
@@ -28997,7 +29090,8 @@ msgid "Vector in a mesh normal array"
 msgstr "Vekta katika safu ya kawaida ya matundu"
 
 
-msgid "Polygon in a Mesh data-block"
+# BFA - reworded, Blender: "Polygon in a Mesh data-block"
+msgid "Polygon in a Mesh data"
 msgstr "Poligoni kwenye kizuizi cha data cha Mesh"
 
 
@@ -29265,7 +29359,8 @@ msgid "Metaball Element"
 msgstr "Kipengele cha Metaboli"
 
 
-msgid "Blobby element in a metaball data-block"
+# BFA - reworded, Blender: "Blobby element in a metaball data-block"
+msgid "Blobby element in a Metaball data"
 msgstr "Kipengee cha blobby katika kizuizi cha data cha metaball"
 
 
@@ -35528,7 +35623,8 @@ msgid "Movie Clip User"
 msgstr "Mtumiaji wa Klipu ya Filamu"
 
 
-msgid "Parameters defining how a MovieClip data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how a MovieClip data-block is used by another data-block"
+msgid "Parameters defining how a MovieClip data is used by another data"
 msgstr "Parameta zinazofafanua jinsi block-data ya MovieClip inatumiwa na kizuizi kingine cha data"
 
 
@@ -39557,7 +39653,8 @@ msgid "The attribute is associated with the object geometry, and its value varie
 msgstr "Sifa inahusishwa na jiometri ya kitu, na thamani yake inatofautiana kutoka kipeo hadi kipeo, au ndani ya ujazo wa kitu."
 
 
-msgid "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+# BFA - reworded, Blender: "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+msgid "The attribute is associated with the object or mesh data itself, and its value is uniform"
 msgstr "Sifa hiyo inahusishwa na kitu au matundu data-block yenyewe, na thamani yake ni sare."
 
 
@@ -40655,7 +40752,8 @@ msgid "Internal IES file"
 msgstr "Faili ya ndani ya IES"
 
 
-msgid "Whether the IES file is loaded from disk or from a text data-block"
+# BFA - reworded, Blender: "Whether the IES file is loaded from disk or from a text data-block"
+msgid "Whether the IES file is loaded from disk or from a text data"
 msgstr "Ikiwa faili ya IES imepakiwa kutoka kwa diski au kutoka kwa kizuizi cha data ya maandishi"
 
 
@@ -42214,8 +42312,9 @@ msgid "Export Keying Set to a Python script"
 msgstr "Hamisha Ufunguo Umewekwa kwa hati ya Python"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "Hamisha Ufunguo wa Seti..."
 
 
@@ -42440,7 +42539,10 @@ msgid "Console Banner"
 msgstr "Bango la Console"
 
 
-msgid "Copy the console contents for use in a script"
+# BFA - reworded, Blender: "Copy the console contents for use in a script"
+msgid ""
+"Copy to Clipboard (as script\n"
+"Copy the console contents for use in a script"
 msgstr "Nakili maudhui ya kiweko kwa matumizi katika hati"
 
 
@@ -42946,7 +43048,10 @@ msgid "Subdivision Set"
 msgstr "Seti ndogo"
 
 
-msgid "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+# BFA - reworded, Blender: "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+msgid ""
+"Converts normal object transforms to delta transforms.\n"
+"Any existing delta transform will be included as well"
 msgstr "Badilisha kitu cha kawaida hubadilika kuwa mabadiliko ya delta, mabadiliko yoyote yaliyopo ya delta yatajumuishwa pia"
 
 
@@ -43842,7 +43947,10 @@ msgid "Add Property"
 msgstr "Ongeza Mali"
 
 
-msgid "Jump to a different tab inside the properties editor"
+# BFA - reworded, Blender: "Jump to a different tab inside the properties editor"
+msgid ""
+"Change Context\n"
+"Jump to a different tab inside the properties editor"
 msgstr "Rukia kwenye kichupo tofauti ndani ya kihariri cha mali"
 
 
@@ -44155,7 +44263,10 @@ msgid "Set Keyframe Interpolation"
 msgstr "Weka Ufafanuzi wa Fremu Muhimu"
 
 
-msgid "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+# BFA - reworded, Blender: "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgid ""
+"Keyframe Interpolation\n"
+"Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 msgstr "Weka hali ya ukalimani kwa sehemu za F-Curve kuanzia kwa fremu muhimu zilizochaguliwa"
 
 
@@ -44230,7 +44341,8 @@ msgid "Flip times of selected keyframes using the first selected marker as the r
 msgstr "Badilisha nyakati za fremu muhimu zilizochaguliwa kwa kutumia alama ya kwanza iliyochaguliwa kama sehemu ya marejeleo"
 
 
-msgid "By Values Over Zero Value"
+# BFA - reworded, Blender: "By Values Over Zero Value"
+msgid "By Values Over Value=0"
 msgstr "Kwa Thamani Zilizozidi Thamani Sifuri"
 
 
@@ -44571,12 +44683,14 @@ msgid "Store this action in the NLA stack as a non-contributing strip for later 
 msgstr "Hifadhi kitendo hiki kwenye rafu ya NLA kama safu isiyochangia kwa matumizi ya baadaye, na uunde kitendo kipya."
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "Tenganisha Kitendo"
 
 
-msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+# BFA - reworded, Blender: "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
 msgstr "Tenganisha kitendo hiki kutoka kwa nafasi inayotumika ya kitendo (na/au ondoka kwenye Hali ya Tweak)"
 
 
@@ -44593,7 +44707,8 @@ msgid "Frame All"
 msgstr "Sura Yote"
 
 
-msgid "Reset viewable area to show full keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show full keyframe range"
+msgid "Zooms in or out to fit the display to show full keyframe range"
 msgstr "Weka upya eneo linaloweza kutazamwa ili kuonyesha safu kamili ya fremu muhimu"
 
 
@@ -44611,7 +44726,8 @@ msgid "Frame Selected"
 msgstr "Fremu Imechaguliwa"
 
 
-msgid "Reset viewable area to show selected keyframes range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframes range"
+msgid "Zooms in or out to fit the display to show selected keyframes range"
 msgstr "Weka upya eneo linaloweza kutazamwa ili kuonyesha anuwai ya fremu muhimu zilizochaguliwa"
 
 
@@ -44642,7 +44758,8 @@ msgid "Frame Channel Under Cursor"
 msgstr "Idhaa ya Fremu Chini ya Mshale"
 
 
-msgid "Reset viewable area to show the channel under the cursor"
+# BFA - reworded, Blender: "Reset viewable area to show the channel under the cursor"
+msgid "Zooms in or out to fit the display to show the channel under the cursor"
 msgstr "Weka upya eneo linaloweza kutazamwa ili kuonyesha chaneli chini ya kishale"
 
 
@@ -44708,7 +44825,8 @@ msgid "Remove Empty Animation Data"
 msgstr "Ondoa Data Tupu ya Uhuishaji"
 
 
-msgid "Delete all empty animation data containers from visible data-blocks"
+# BFA - reworded, Blender: "Delete all empty animation data containers from visible data-blocks"
+msgid "Delete all empty animation data containers from visible data"
 msgstr "Futa vyombo vyote tupu vya data ya uhuishaji kutoka kwa vizuizi vya data vinavyoonekana"
 
 
@@ -44894,7 +45012,8 @@ msgid "Frame Selected Channels"
 msgstr "Njia Zilizochaguliwa za Fremu"
 
 
-msgid "Reset viewable area to show the selected channels"
+# BFA - reworded, Blender: "Reset viewable area to show the selected channels"
+msgid "Zooms in or out to fit the display of the selected channels"
 msgstr "Weka upya eneo linaloweza kutazamwa ili kuonyesha chaneli zilizochaguliwa"
 
 
@@ -45035,7 +45154,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "Ingiza Fremu Muhimu (Vifungo)"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "Ingiza fremu muhimu kwa sifa inayotumika sasa ya UI"
 
 
@@ -45550,7 +45670,8 @@ msgid "Hide Selected"
 msgstr "Ficha Iliyochaguliwa"
 
 
-msgid "Tag selected bones to not be visible in Edit Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Edit Mode"
+msgid "Hide selected bones in Edit Mode"
 msgstr "Weka alama kwenye mifupa iliyochaguliwa ili isionekane katika Hali ya Kuhariri"
 
 
@@ -46274,7 +46395,8 @@ msgid "Toggle Pin ID"
 msgstr "Geuza Kitambulisho cha Pini"
 
 
-msgid "Keep the current data-block displayed"
+# BFA - reworded, Blender: "Keep the current data-block displayed"
+msgid "Keep the current data displayed"
 msgstr "Weka kizuizi cha sasa cha data kikiwa kimeonyeshwa"
 
 
@@ -48257,7 +48379,8 @@ msgid "Spline type"
 msgstr "Aina ya mstari"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "Ficha (un) sehemu za udhibiti zilizochaguliwa"
 
 
@@ -50247,7 +50370,8 @@ msgid "Pack Linked Libraries"
 msgstr "Pack Linked Maktaba"
 
 
-msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+# BFA - reworded, Blender: "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
 msgstr "Hifadhi vizuizi vyote vya data vilivyounganishwa kutoka faili zingine za .mchanganyiko katika faili ya sasa ya .mseto."
 
 
@@ -50468,7 +50592,8 @@ msgid "Unpack Linked Libraries"
 msgstr "Fungua Maktaba Zilizounganishwa"
 
 
-msgid "Restore all packed linked data-blocks to their original locations"
+# BFA - reworded, Blender: "Restore all packed linked data-blocks to their original locations"
+msgid "Restore all packed linked data  to their original locations"
 msgstr "Rejesha vizuizi vyote vya data vilivyounganishwa kwenye maeneo yao ya asili"
 
 
@@ -50854,7 +50979,8 @@ msgid "Unlink"
 msgstr "Tenganisha"
 
 
-msgid "Unlink active font data-block"
+# BFA - reworded, Blender: "Unlink active font data-block"
+msgid "Remove active font"
 msgstr "Tenganisha kizuizi cha data cha fonti amilifu"
 
 
@@ -51111,16 +51237,19 @@ msgid "Annotation Add New"
 msgstr "Ufafanuzi Ongeza Mpya"
 
 
-msgid "Add new Annotation data-block"
+# BFA - reworded, Blender: "Add new Annotation data-block"
+msgid "Add new Annotation data"
 msgstr "Ongeza kizuizi kipya cha data cha Maelezo"
 
 
+# BFA - reworded, Blender: "Annotation Unlink"
 msgctxt "Operator"
-msgid "Annotation Unlink"
+msgid "Remove Annotation"
 msgstr "Tenganisha Dokezo"
 
 
-msgid "Unlink active Annotation data-block"
+# BFA - reworded, Blender: "Unlink active Annotation data-block"
+msgid "Remove the active Annotation"
 msgstr "Tenganisha kizuizi cha data cha Dokezo kinachotumika"
 
 
@@ -51129,7 +51258,8 @@ msgid "Add New Annotation Layer"
 msgstr "Ongeza Tabaka Mpya la Ufafanuzi"
 
 
-msgid "Add new Annotation layer or note for the active data-block"
+# BFA - reworded, Blender: "Add new Annotation layer or note for the active data-block"
+msgid "Add new Annotation layer or note for the active data"
 msgstr "Ongeza safu mpya ya Ufafanuzi au dokezo la kizuizi cha data kinachotumika"
 
 
@@ -51578,7 +51708,8 @@ msgid "Defines which keys to use as slope and how much to blend towards them"
 msgstr "Inafafanua funguo zipi za kutumia kama mteremko na ni kiasi gani cha kuchanganya kuelekea kwao"
 
 
-msgid "By Times Over Zero Time"
+# BFA - reworded, Blender: "By Times Over Zero Time"
+msgid "By Times Over Time=0"
 msgstr "Kwa Nyakati Zaidi ya Muda Sifuri"
 
 
@@ -51893,7 +52024,8 @@ msgid "How far in frames to offset the animation"
 msgstr "Umbali gani katika fremu ili kukabiliana na uhuishaji"
 
 
-msgid "Reset viewable area to show selected keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframe range"
+msgid "Zooms in or out to fit the display to show selected keyframe range"
 msgstr "Weka upya eneo linaloweza kutazamwa ili kuonyesha anuwai ya fremu muhimu iliyochaguliwa"
 
 
@@ -52002,7 +52134,8 @@ msgid "Rounded"
 msgstr "Mviringo"
 
 
-msgid "Set as default rounded"
+# BFA - reworded, Blender: "Set as default rounded"
+msgid "Set as default rounded caps"
 msgstr "Weka kama chaguo-msingi iliyozungushwa"
 
 
@@ -53149,7 +53282,8 @@ msgid "Clear Render Region"
 msgstr "Wazi Eneo la Utoaji"
 
 
-msgid "Clear the boundaries of the render region and disable render region"
+# BFA - reworded, Blender: "Clear the boundaries of the render region and disable render region"
+msgid "Removes an existing Render Region rectangle"
 msgstr "Futa mipaka ya eneo la kutoa na uzime eneo la kutoa"
 
 
@@ -53311,7 +53445,8 @@ msgid "Image height"
 msgstr "Urefu wa picha"
 
 
-msgid "Image data-block name"
+# BFA - reworded, Blender: "Image data-block name"
+msgid "Image name"
 msgstr "Jina la kuzuia data la picha"
 
 
@@ -53501,7 +53636,8 @@ msgid "Save As Image"
 msgstr "Hifadhi Kama Picha"
 
 
-msgid "Save the image with another name and/or settings"
+# BFA - reworded, Blender: "Save the image with another name and/or settings"
+msgid "Saves the image with another name and/or settings"
 msgstr "Hifadhi picha kwa jina lingine na/au mipangilio"
 
 
@@ -53588,7 +53724,8 @@ msgid "Image Name"
 msgstr "Jina la Picha"
 
 
-msgid "Image data-block name to unpack"
+# BFA - reworded, Blender: "Image data-block name to unpack"
+msgid "Image name to unpack"
 msgstr "Jina la kuzuia data la picha la kufungua"
 
 
@@ -54239,7 +54376,8 @@ msgid "Clear Restrict View"
 msgstr "Mwonekano Wazi wa Vizuizi"
 
 
-msgid "Reveal temporarily hidden mask layers"
+# BFA - reworded, Blender: "Reveal temporarily hidden mask layers"
+msgid "Reveals the hidden layer(s)"
 msgstr "Onyesha tabaka za barakoa zilizofichwa kwa muda"
 
 
@@ -54248,7 +54386,8 @@ msgid "Set Restrict View"
 msgstr "Weka Mwonekano wa Kuzuia"
 
 
-msgid "Temporarily hide mask layers"
+# BFA - reworded, Blender: "Temporarily hide mask layers"
+msgid "Hide the mask layer"
 msgstr "Ficha tabaka za barakoa kwa muda"
 
 
@@ -54475,7 +54614,8 @@ msgid "Duplicate Metaball Elements"
 msgstr "Vipengee vya Metaboli Rudufu"
 
 
-msgid "Hide (un)selected metaball element(s)"
+# BFA - reworded, Blender: "Hide (un)selected metaball element(s)"
+msgid "Hide selected metaball element(s)"
 msgstr "Ficha (un)vipengele vya metaboli vilivyochaguliwa"
 
 
@@ -55310,7 +55450,8 @@ msgid "Flips the tessellation of selected quads"
 msgstr "Hugeuza utengamano wa quadi zilizochaguliwa"
 
 
-msgid "Hide (un)selected vertices, edges or faces"
+# BFA - reworded, Blender: "Hide (un)selected vertices, edges or faces"
+msgid "Hide selected vertices, edges or faces"
 msgstr "Ficha (un) wima, kingo au nyuso zilizochaguliwa"
 
 
@@ -55632,7 +55773,8 @@ msgid "(Un)mark selected edges as a seam"
 msgstr "(Un) weka kingo zilizochaguliwa kama mshono"
 
 
-msgid "(Un)mark selected edges as sharp"
+# BFA - reworded, Blender: "(Un)mark selected edges as sharp"
+msgid "Mark selected edges as sharp"
 msgstr "(Un) weka kingo zilizochaguliwa kuwa zenye ncha kali"
 
 
@@ -55956,7 +56098,8 @@ msgid "Transform at Cursor Move"
 msgstr "Badilisha kwenye Mshale Move"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "Tengeneza matundu ya duara"
 
 
@@ -55989,7 +56132,8 @@ msgid "Add Cone"
 msgstr "Ongeza Koni"
 
 
-msgid "Construct a conic mesh"
+# BFA - reworded, Blender: "Construct a conic mesh"
+msgid "Add a conic mesh"
 msgstr "Tengeneza matundu ya koni"
 
 
@@ -56019,7 +56163,8 @@ msgid "Add Cylinder"
 msgstr "Ongeza Silinda"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "Tengeneza matundu ya silinda"
 
 
@@ -56050,7 +56195,8 @@ msgid "Add Monkey"
 msgstr "Ongeza Tumbili"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "Tengeneza matundu ya Suzanne"
 
 
@@ -56059,7 +56205,8 @@ msgid "Add Plane"
 msgstr "Ongeza Ndege"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "Tengeneza matundu ya planar yaliyojazwa na wima 4"
 
 
@@ -57445,11 +57592,13 @@ msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get t
 msgstr "Lemaza 'solo' kwenye Nyimbo zozote za NLA baada ya kutoka kwa hali ya kurekebisha ili kurejesha hali ya kawaida."
 
 
-msgid "Reset viewable area to show full strips range"
+# BFA - reworded, Blender: "Reset viewable area to show full strips range"
+msgid "Zooms in or out to fit the display to show full strips range"
 msgstr "Weka upya eneo linaloweza kutazamwa ili kuonyesha masafa kamili ya vipande"
 
 
-msgid "Reset viewable area to show selected strips range"
+# BFA - reworded, Blender: "Reset viewable area to show selected strips range"
+msgid "Zooms in or out to fit the display to show selected strips range"
 msgstr "Weka upya eneo linaloweza kutazamwa ili kuonyesha masafa ya vipande vilivyochaguliwa"
 
 
@@ -57632,11 +57781,13 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Futa mipaka ya shughuli za watazamaji"
 
 
+# BFA - reworded, Blender: "Copy the selected nodes to the internal clipboard"
 msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Nakili nodi zilizochaguliwa kwenye ubao wa kunakili wa ndani"
 
 
-msgid "Paste nodes from the internal clipboard to the active node tree"
+# BFA - reworded, Blender: "Paste nodes from the internal clipboard to the active node tree"
+msgid "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"
 msgstr "Bandika nodi kutoka kwa ubao wa kunakili wa ndani hadi kwenye mti wa nodi amilifu"
 
 
@@ -58366,12 +58517,14 @@ msgid "Delete the selected local overrides and relink their usages to the linked
 msgstr "Futa ubatilishaji wa ndani uliochaguliwa na uunganishe tena matumizi yake kwa vizuizi vya data vilivyounganishwa ikiwezekana, vinginevyo ziweke upya na uziweke alama kuwa haziwezi kuhaririwa."
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "Ongeza kwenye Mkusanyiko"
 
 
-msgid "Add an object to a new collection"
+# BFA - reworded, Blender: "Add an object to a new collection"
+msgid "Adds the selected object to a new collection"
 msgstr "Ongeza kitu kwenye mkusanyiko mpya"
 
 
@@ -58917,7 +59070,8 @@ msgid "Hide Objects"
 msgstr "Ficha Vitu"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "Ficha vitu kwa muda kutoka kwa kituo cha kutazama"
 
 
@@ -59284,7 +59438,8 @@ msgid "Make Local"
 msgstr "Fanya Karibu"
 
 
-msgid "Make library linked data-blocks local to this file"
+# BFA - reworded, Blender: "Make library linked data-blocks local to this file"
+msgid "Make library linked data local to this file"
 msgstr "Fanya vizuizi vya data vilivyounganishwa vya maktaba kuwa vya ndani kwenye faili hii"
 
 
@@ -59325,7 +59480,8 @@ msgid "Make object animation data local to each object"
 msgstr "Fanya data ya uhuishaji wa kitu iwe ya ndani kwa kila kitu"
 
 
-msgid "Make materials local to each data-block"
+# BFA - reworded, Blender: "Make materials local to each data-block"
+msgid "Make materials local to each data"
 msgstr "Fanya nyenzo za ndani kwa kila kizuizi cha data"
 
 
@@ -59883,11 +60039,13 @@ msgid "Current Transform"
 msgstr "Mabadiliko ya Sasa"
 
 
-msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+# BFA - reworded, Blender: "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgid "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled"
 msgstr "Bandika kwenye thamani za sasa pekee, ukibadilisha tu data ya uhuishaji ikiwa ufunguo wa kiotomatiki umewashwa."
 
 
-msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+# BFA - reworded, Blender: "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgid "Paste transform onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "Bandika kwenye fremu zilizo na ufunguo uliochaguliwa, uwezekano wa kuunda funguo mpya kwenye fremu hizo."
 
 
@@ -59895,7 +60053,8 @@ msgid "Bake on Key Range"
 msgstr "Oka kwenye safu muhimu"
 
 
-msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+# BFA - reworded, Blender: "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgid "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "Bandika kwenye viunzi vyote kati ya kitufe cha kwanza na cha mwisho kilichochaguliwa, na kuunda fremu mpya ikiwa ni lazima."
 
 
@@ -60173,7 +60332,8 @@ msgid "Deselect objects at the boundaries of parent/child relationships"
 msgstr "Ondoa kuchagua vitu kwenye mipaka ya mahusiano ya mzazi/mtoto"
 
 
-msgid "Select all visible objects that are linked"
+# BFA - reworded, Blender: "Select all visible objects that are linked"
+msgid "Select all visible objects that are linked to the active element"
 msgstr "Chagua vitu vyote vinavyoonekana ambavyo vimeunganishwa"
 
 
@@ -61553,7 +61713,8 @@ msgid "Outliner ID Data Copy"
 msgstr "Nakala ya Data ya Kitambulisho cha Outliner"
 
 
-msgid "Copy the selected data-blocks to the internal clipboard"
+# BFA - reworded, Blender: "Copy the selected data-blocks to the internal clipboard"
+msgid "Selected data are copied to the clipboard"
 msgstr "Nakili vizuizi vya data vilivyochaguliwa kwenye ubao wa kunakili wa ndani"
 
 
@@ -61603,7 +61764,8 @@ msgid "Add Fake User"
 msgstr "Ongeza Mtumiaji Bandia"
 
 
-msgid "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+# BFA - reworded, Blender: "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+msgid "Ensure data gets saved even if it isn't in use (e.g. for motion and material libraries)"
 msgstr "Hakikisha kizuizi cha data kinahifadhiwa hata kama hakitumiki (k.m. kwa maktaba ya mwendo na nyenzo)"
 
 
@@ -61620,7 +61782,8 @@ msgid "Outliner ID Data Paste"
 msgstr "Bandika Data ya Kitambulisho cha Outliner"
 
 
-msgid "Paste data-blocks from the internal clipboard"
+# BFA - reworded, Blender: "Paste data-blocks from the internal clipboard"
+msgid "Data from the clipboard are pasted"
 msgstr "Bandika vizuizi vya data kutoka kwa ubao wa kunakili wa ndani"
 
 
@@ -61825,7 +61988,8 @@ msgid "Purge All"
 msgstr "Futa Zote"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file"
+# BFA - reworded, Blender: "Clear all orphaned data-blocks without any users from the file"
+msgid "Clear all orphaned data without any users from the file"
 msgstr "Futa vizuizi vyote vya data yatima bila watumiaji wowote kutoka kwa faili"
 
 
@@ -61957,7 +62121,8 @@ msgid "Show/Hide One Level"
 msgstr "Onyesha/Ficha Ngazi Moja"
 
 
-msgid "Expand/collapse all entries by one level"
+# BFA - reworded, Blender: "Expand/collapse all entries by one level"
+msgid "Expand/Collapse all entries by one level"
 msgstr "Panua/kunja maingizo yote kwa kiwango kimoja"
 
 
@@ -62000,7 +62165,8 @@ msgid "Slide Paint Curve Point"
 msgstr "Sehemu ya Mviringo wa Rangi ya slaidi"
 
 
-msgid "Select and slide paint curve point"
+# BFA - reworded, Blender: "Select and slide paint curve point"
+msgid "Select and slide a paint curve point"
 msgstr "Chagua na telezesha sehemu ya curve ya rangi"
 
 
@@ -62009,7 +62175,8 @@ msgid "Place Cursor"
 msgstr "Weka Mshale"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "Weka kishale"
 
 
@@ -62022,7 +62189,8 @@ msgid "Remove Paint Curve Point"
 msgstr "Ondoa Rangi Curve Point"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "Chora mkunjo"
 
 
@@ -62449,6 +62617,7 @@ msgid "Adjust vertex color Hue/Saturation/Value"
 msgstr "Rekebisha rangi ya kipeo Hue/Kueneza/Thamani"
 
 
+# BFA - reworded, Blender: "Set Vertex Colors"
 msgctxt "Operator"
 msgid "Set Vertex Color"
 msgstr "Weka Rangi za Kipeo"
@@ -62634,7 +62803,8 @@ msgid "Add New Palette"
 msgstr "Ongeza Paleti Mpya"
 
 
-msgid "Add new palette"
+# BFA - reworded, Blender: "Add new palette"
+msgid "Add a new palette of indexed colors"
 msgstr "Ongeza ubao mpya"
 
 
@@ -63136,7 +63306,7 @@ msgstr "Fanya mkao wa sasa ufanane zaidi na, au mbali zaidi na, mkao uliobaki"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "Pozi Breakdowner"
 
 
@@ -63179,7 +63349,8 @@ msgid "Copy the current pose of the selected bones to the internal clipboard"
 msgstr "Nakili mkao wa sasa wa mifupa iliyochaguliwa kwenye ubao wa kunakili wa ndani"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "Weka alama kwenye mifupa iliyochaguliwa ili isionekane katika Hali ya Uwekaji"
 
 
@@ -63333,7 +63504,7 @@ msgstr "Weka mkao kwa fremu zote muhimu zinazotokea kwenye fremu zenye Alama za 
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown (Legacy)"
+msgid "Push Pose from Breakdown"
 msgstr "Sukuma Pozi kutoka kwa Kuvunjika"
 
 
@@ -63346,7 +63517,7 @@ msgstr "Geuza thamani za quaternion ili kufikia mizunguko inayotaka, huku ukidum
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown (Legacy)"
+msgid "Relax Pose to Breakdown"
 msgstr "Tulia Pozi Kuvunjika"
 
 
@@ -64824,7 +64995,8 @@ msgid "Reload Scripts"
 msgstr "Pakia upya Hati"
 
 
-msgid "Reload scripts"
+# BFA - reworded, Blender: "Reload scripts"
+msgid "Reload all Python Scripts, including the UI"
 msgstr "Pakia upya hati"
 
 
@@ -66849,12 +67021,14 @@ msgid "Update the audio animation cache"
 msgstr "Sasisha akiba ya uhuishaji wa sauti"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "Mchanganyiko"
 
 
-msgid "Mix the scene's audio to a sound file"
+# BFA - reworded, Blender: "Mix the scene's audio to a sound file"
+msgid "Mixdown and export the scene's audio to a sound file"
 msgstr "Changanya sauti ya tukio na faili ya sauti"
 
 
@@ -67189,7 +67363,8 @@ msgid "Save"
 msgstr "Hifadhi"
 
 
-msgid "Save active text data-block"
+# BFA - reworded, Blender: "Save active text data-block"
+msgid "Save active text file"
 msgstr "Hifadhi kizuizi cha data ya maandishi kinachotumika"
 
 
@@ -67243,7 +67418,8 @@ msgid "To 3D Object"
 msgstr "Kwa Kitu cha 3D"
 
 
-msgid "Create 3D text object from active text data-block"
+# BFA - reworded, Blender: "Create 3D text object from active text data-block"
+msgid "Create 3D text object from active text data"
 msgstr "Unda kitu cha maandishi cha 3D kutoka kwa kizuizi cha data cha maandishi kinachotumika"
 
 
@@ -67259,7 +67435,8 @@ msgid "Unindent selected text"
 msgstr "Maandishi yaliyochaguliwa bila mpangilio"
 
 
-msgid "Unlink active text data-block"
+# BFA - reworded, Blender: "Unlink active text data-block"
+msgid "Remove active text"
 msgstr "Tenganisha kizuizi cha data cha maandishi kinachotumika"
 
 
@@ -67485,7 +67662,8 @@ msgid "Transform from Gizmo"
 msgstr "Badilisha kutoka Gizmo"
 
 
-msgid "Mirror selected items around one or more axes"
+# BFA - reworded, Blender: "Mirror selected items around one or more axes"
+msgid "Mirror selected items"
 msgstr "Onyesha vitu vilivyochaguliwa kuzunguka shoka moja au zaidi"
 
 
@@ -67809,7 +67987,8 @@ msgid "Sample a color from the Blender Window and create Grease Pencil material"
 msgstr "Sampuli ya rangi kutoka kwa Dirisha la Kilinganishi na uunde nyenzo za Penseli ya Grease"
 
 
-msgid "Sample a data-block from the 3D View to store in a property"
+# BFA - reworded, Blender: "Sample a data-block from the 3D View to store in a property"
+msgid "Sample a data from the 3D View to store in a property"
 msgstr "Mfano wa kizuizi cha data kutoka kwa Mwonekano wa 3D ili kuhifadhi katika mali"
 
 
@@ -68770,8 +68949,9 @@ msgid "Amount of Faces in Island"
 msgstr "Kiasi cha Nyuso katika Kisiwa"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Chagua Gawanya"
 
 
@@ -69072,7 +69252,8 @@ msgid "Position the scene camera at the selected landmark"
 msgstr "Weka kamera ya tukio katika alama muhimu iliyochaguliwa"
 
 
-msgid "Clear the boundaries of the border render and disable border render"
+# BFA - reworded, Blender: "Clear the boundaries of the border render and disable border render"
+msgid "Removes an existing Render Region rectangle, clearning the boundaries of the render border"
 msgstr "Futa mipaka ya utoaji wa mpaka na zima utoaji wa mpaka"
 
 
@@ -70077,7 +70258,8 @@ msgid "Create instances for object data which are not referenced by any objects"
 msgstr "Unda matukio ya data ya kitu ambayo haijarejelewa na vitu vyovyote"
 
 
-msgid "Link the objects or data-blocks rather than appending"
+# BFA - reworded, Blender: "Link the objects or data-blocks rather than appending"
+msgid "Link the objects or data rather than appending"
 msgstr "Unganisha vitu au vizuizi vya data badala ya kuambatanisha"
 
 
@@ -70714,12 +70896,14 @@ msgid "Clear previews for materials, lights, worlds, textures and images"
 msgstr "Futa muhtasari wa nyenzo, taa, ulimwengu, maumbo na picha"
 
 
+# BFA - reworded, Blender: "Refresh Data-Block Previews"
 msgctxt "Operator"
-msgid "Refresh Data-Block Previews"
+msgid "Refresh Data Previews"
 msgstr "Onyesha Muhtasari wa Kuzuia Data"
 
 
-msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+# BFA - reworded, Blender: "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgid "Ensure data previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 msgstr "Hakikisha uhakiki wa kizuizi cha data unapatikana na umesasishwa (ili kuhifadhiwa katika faili ya .mchanganyiko, kwa aina fulani tu kama nyenzo, maumbo, n.k.)"
 
 
@@ -71053,12 +71237,14 @@ msgid "Compress"
 msgstr "Finyiza"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Hifadhi Faili ya Mchanganyiko"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Hifadhi faili ya sasa ya Blender"
 
 
@@ -71093,7 +71279,8 @@ msgid "Search Operator"
 msgstr "Tafuta Opereta"
 
 
-msgid "Pop-up a search over all available operators in current context"
+# BFA - reworded, Blender: "Pop-up a search over all available operators in current context"
+msgid "Pop-up a search panel for all available operators in current context"
 msgstr "Ibukizi utafutaji juu ya waendeshaji wote wanaopatikana katika muktadha wa sasa"
 
 
@@ -71895,7 +72082,8 @@ msgid "New World"
 msgstr "Ulimwengu Mpya"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "Unda Kizuizi kipya cha data cha ulimwengu"
 
 
@@ -74450,7 +74638,8 @@ msgid "Duplicate Action"
 msgstr "Kitendo Nakala"
 
 
-msgid "Causes actions to be duplicated with the data-blocks"
+# BFA - reworded, Blender: "Causes actions to be duplicated with the data-blocks"
+msgid "Causes actions to be duplicated with the data"
 msgstr "Husababisha vitendo kurudiwa na vizuizi vya data"
 
 
@@ -74894,11 +75083,13 @@ msgid "Python Scripts Directory"
 msgstr "Saraka ya Hati za Chatu"
 
 
-msgid "Show Hidden Files/Data-Blocks"
+# BFA - reworded, Blender: "Show Hidden Files/Data-Blocks"
+msgid "Show Hidden Files/Data"
 msgstr "Onyesha Faili Zilizofichwa/Vizuizi vya Data"
 
 
-msgid "Show files and data-blocks that are normally hidden"
+# BFA - reworded, Blender: "Show files and data-blocks that are normally hidden"
+msgid "Show files and data that are normally hidden"
 msgstr "Onyesha faili na vizuizi vya data ambavyo kwa kawaida hufichwa"
 
 
@@ -76237,7 +76428,8 @@ msgid "Translate New Names"
 msgstr "Tafsiri Majina Mapya"
 
 
-msgid "Translate the names of new data-blocks (objects, materials...)"
+# BFA - reworded, Blender: "Translate the names of new data-blocks (objects, materials...)"
+msgid "Translate the names of new data (objects, materials...)"
 msgstr "Tafsiri majina ya vizuizi vipya vya data (vitu, nyenzo...)"
 
 
@@ -78127,7 +78319,8 @@ msgid "Is Perspective"
 msgstr "Ni Mtazamo"
 
 
-msgid "Lock view rotation of side views to Top/Front/Right"
+# BFA - reworded, Blender: "Lock view rotation of side views to Top/Front/Right"
+msgid "Lock view rotation in side views"
 msgstr "Funga mzunguko wa mwonekano wa maoni ya upande hadi Juu/Mbele/Kulia"
 
 
@@ -78384,7 +78577,8 @@ msgid "Result of rendering, including all layers and passes"
 msgstr "Matokeo ya utoaji, ikijumuisha tabaka na pasi zote"
 
 
-msgid "Rendering settings for a Scene data-block"
+# BFA - reworded, Blender: "Rendering settings for a Scene data-block"
+msgid "Rendering settings for a Scene"
 msgstr "Mipangilio ya uwasilishaji kwa kizuizi cha data cha Onyesho"
 
 
@@ -80159,7 +80353,8 @@ msgid "Python Scripts Directories"
 msgstr "Saraka za Hati za Chatu"
 
 
-msgid "Sequence editing data for a Scene data-block"
+# BFA - reworded, Blender: "Sequence editing data for a Scene data-block"
+msgid "Sequence editing data for a Scene data"
 msgstr "Data ya uhariri wa mlolongo wa kizuizi cha data cha Onyesho"
 
 
@@ -80771,7 +80966,8 @@ msgid "Wave Deformation effect"
 msgstr "Athari ya Ugeuzi wa Wimbi"
 
 
-msgid "Shape key in a shape keys data-block"
+# BFA - reworded, Blender: "Shape key in a shape keys data-block"
+msgid "Shape key in a shape keys data"
 msgstr "Kitufe cha umbo katika kizuizi cha data cha vitufe vya umbo"
 
 
@@ -81043,7 +81239,8 @@ msgid "Maximal # solver steps/frame"
 msgstr "Upeo wa juu"
 
 
-msgid "Show annotation data-block which belongs to active track"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to active track"
+msgid "Show annotation data which belongs to active track"
 msgstr "Onyesha kizuizi cha data cha maelezo ambacho ni cha wimbo amilifu"
 
 
@@ -81889,7 +82086,8 @@ msgid "Node tree being displayed and edited"
 msgstr "Mti wa nodi unaonyeshwa na kuhaririwa"
 
 
-msgid "Data-block whose nodes are being edited"
+# BFA - reworded, Blender: "Data-block whose nodes are being edited"
+msgid "Data whose nodes are being edited"
 msgstr "Data-block ambayo nodi zake zinahaririwa"
 
 
@@ -81897,7 +82095,8 @@ msgid "ID From"
 msgstr "Kitambulisho Kutoka"
 
 
-msgid "Data-block from which the edited data-block is linked"
+# BFA - reworded, Blender: "Data-block from which the edited data-block is linked"
+msgid "Data from which the edited data is linked"
 msgstr "Kizuizi cha data ambacho kizuizi cha data kilichohaririwa kimeunganishwa"
 
 
@@ -81913,7 +82112,8 @@ msgid "Settings for display of overlays in the Node Editor"
 msgstr "Mipangilio ya onyesho la viwekeleo kwenye Kihariri cha Njia"
 
 
-msgid "Path from the data-block to the currently edited node tree"
+# BFA - reworded, Blender: "Path from the data-block to the currently edited node tree"
+msgid "Path from the data to the currently edited node tree"
 msgstr "Njia kutoka kwa kizuizi-data hadi mti wa nodi uliohaririwa kwa sasa"
 
 
@@ -82044,7 +82244,8 @@ msgid "Filter by Type"
 msgstr "Chuja kwa Aina"
 
 
-msgid "Data-block type to show"
+# BFA - reworded, Blender: "Data-block type to show"
+msgid "Data type to show"
 msgstr "Aina ya kizuizi cha data cha kuonyesha"
 
 
@@ -82140,7 +82341,8 @@ msgid "Only use complete matches of search string"
 msgstr "Tumia tu uwiano kamili wa kamba ya utafutaji"
 
 
-msgid "Show only data-blocks of one type"
+# BFA - reworded, Blender: "Show only data-blocks of one type"
+msgid "Show only data of one type"
 msgstr "Onyesha vizuizi vya data vya aina moja pekee"
 
 
@@ -82724,7 +82926,8 @@ msgid "Top line visible"
 msgstr "Mstari wa juu unaonekana"
 
 
-msgid "Search in all text data-blocks, instead of only the active one"
+# BFA - reworded, Blender: "Search in all text data-blocks, instead of only the active one"
+msgid "Search in all text data, instead of only the active one"
 msgstr "Tafuta katika vizuizi vyote vya data vya maandishi, badala ya ile inayotumika pekee"
 
 
@@ -84768,7 +84971,8 @@ msgid "Text Line"
 msgstr "Mstari wa maandishi"
 
 
-msgid "Line of text in a Text data-block"
+# BFA - reworded, Blender: "Line of text in a Text data-block"
+msgid "Line of text in a Text file"
 msgstr "Mstari wa maandishi katika kizuizi cha data ya Maandishi"
 
 
@@ -84804,11 +85008,13 @@ msgid "Set scaling for the texture's X, Y and Z sizes"
 msgstr "Weka kuongeza ukubwa wa muundo wa X, Y na Z"
 
 
-msgid "Texture data-block used by this texture slot"
+# BFA - reworded, Blender: "Texture data-block used by this texture slot"
+msgid "Texture used by this texture slot"
 msgstr "Kizuizi cha data cha muundo kinachotumiwa na muundo huu wa muundo"
 
 
-msgid "Texture slot for textures in a Brush data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Brush data-block"
+msgid "Texture slot for textures in a Brush data"
 msgstr "Nafasi ya muundo wa maumbo katika kizuizi cha data cha Brashi"
 
 
@@ -84828,7 +85034,8 @@ msgid "Brush texture random angle"
 msgstr "Msuko wa brashi pembe ya nasibu"
 
 
-msgid "Texture slot for textures in a LineStyle data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a LineStyle data-block"
+msgid "Texture slot for textures in a LineStyle data"
 msgstr "Nafasi ya muundo wa maandishi katika kizuizi cha data cha LineStyle"
 
 
@@ -84880,7 +85087,8 @@ msgid "Particle Settings Texture Slot"
 msgstr "Chembe Settings Texture Slot"
 
 
-msgid "Texture slot for textures in a Particle Settings data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Particle Settings data-block"
+msgid "Texture slot for textures in a Particle Settings data"
 msgstr "Nafasi ya muundo wa maumbo katika kizuizi cha data cha Mipangilio ya Chembe"
 
 
@@ -85712,7 +85920,8 @@ msgid "Active Action"
 msgstr "Kitendo Amilifu"
 
 
-msgid "Animation data-block has active action"
+# BFA - reworded, Blender: "Animation data-block has active action"
+msgid "Animation has active action"
 msgstr "Kizuizi cha data cha uhuishaji kina kitendo amilifu"
 
 
@@ -87566,7 +87775,8 @@ msgid "Display X Axis"
 msgstr "Onyesha Mhimili wa X"
 
 
-msgid "Show the X axis line"
+# BFA - reworded, Blender: "Show the X axis line"
+msgid "Show the X axis line in perspective / orthographic views"
 msgstr "Onyesha mstari wa mhimili wa X"
 
 
@@ -87574,7 +87784,8 @@ msgid "Display Y Axis"
 msgstr "Onyesha Mhimili Y"
 
 
-msgid "Show the Y axis line"
+# BFA - reworded, Blender: "Show the Y axis line"
+msgid "Show the Y axis line in perspective / orthographic views"
 msgstr "Onyesha mstari wa mhimili wa Y"
 
 
@@ -87582,7 +87793,8 @@ msgid "Display Z Axis"
 msgstr "Onyesha Mhimili wa Z"
 
 
-msgid "Show the Z axis line"
+# BFA - reworded, Blender: "Show the Z axis line"
+msgid "Show the Z axis line in perspective / orthographic views"
 msgstr "Onyesha mstari wa mhimili wa Z"
 
 
@@ -88817,7 +89029,8 @@ msgid "Does this tool use a painting canvas"
 msgstr "Je, chombo hiki kinatumia turubai ya uchoraji"
 
 
-msgid "Lighting for a World data-block"
+# BFA - reworded, Blender: "Lighting for a World data-block"
+msgid "Lighting for a World data"
 msgstr "Kuangaza kwa Kizuizi cha data cha Ulimwengu"
 
 
@@ -88833,7 +89046,8 @@ msgid "World Mist"
 msgstr "Dunia Mist"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "Mipangilio ya ukungu kwa kizuizi cha data cha Ulimwenguni"
 
 
@@ -93399,7 +93613,8 @@ msgid "Select by"
 msgstr "Chagua kwa"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "Mpaka wa Picha"
 
 
@@ -93656,7 +93871,8 @@ msgid "Strip Name"
 msgstr "Jina la Ukanda"
 
 
-msgid "Max B-frames"
+# BFA - reworded, Blender: "Max B-frames"
+msgid "Max B_Frames"
 msgstr "Upeo wa muafaka wa B"
 
 
@@ -95497,8 +95713,9 @@ msgid "Replace..."
 msgstr "Badilisha..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Hifadhi Nakala..."
 
 
@@ -95587,8 +95804,9 @@ msgid "Linked Duplicate"
 msgstr "Nakala Iliyounganishwa"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "Acha Kurekebisha Vitendo vya Ukanda"
 
 
@@ -95612,13 +95830,15 @@ msgid "Start Editing Stashed Action"
 msgstr "Anza Kuhariri Kitendo Kilichofichwa"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Full Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Full Stack)"
+msgid "Tweak Action (Full Stack)"
 msgstr "Anza Kurekebisha Vitendo vya Ukanda (Rundo Kamili)"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Lower Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgid "Tweak Action (Lower Stack)"
 msgstr "Anza Kurekebisha Vitendo vya Ukanda (Rundo la Chini)"
 
 
@@ -95922,8 +96142,9 @@ msgid "Toggle Sequencer/Preview"
 msgstr "Geuza Sequencer/Preview"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "Chagua Zote kwa Aina"
 
 
@@ -95971,8 +96192,9 @@ msgid "Sound Crossfade"
 msgstr "Sauti Mtambuka"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "Badilisha Uwekaji Ufunguo..."
 
 
@@ -96023,8 +96245,9 @@ msgid "Set Preview Range to Strips"
 msgstr "Weka Msururu wa Onyesho la Kuchungulia hadi Vijisehemu"
 
 
+# BFA - reworded, Blender: "Fit Preview in Window"
 msgctxt "Operator"
-msgid "Fit Preview in Window"
+msgid "Fit Preview in window"
 msgstr "Onyesho la Kuchungulia la Fit kwenye Dirisha"
 
 
@@ -96215,8 +96438,9 @@ msgid "Render Animation"
 msgstr "Toa Uhuishaji"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Toa Sauti..."
 
 
@@ -96240,8 +96464,9 @@ msgid "Repeat History..."
 msgstr "Rudia Historia..."
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "Utafutaji wa Menyu..."
 
 
@@ -96304,8 +96529,9 @@ msgid "Render Image"
 msgstr "Toa Picha"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "Utafutaji wa Opereta..."
 
 
@@ -96372,7 +96598,8 @@ msgid "User Tooltips"
 msgstr "Vidokezo vya Mtumiaji"
 
 
-msgid "Sort by Most Recent"
+# BFA - reworded, Blender: "Sort by Most Recent"
+msgid "Sort Search by Most Recent"
 msgstr "Panga kwa Hivi Karibuni"
 
 
@@ -96408,7 +96635,8 @@ msgid "Video Memory"
 msgstr "Kumbukumbu ya Video"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Toleo la Blender"
 
 
@@ -96602,7 +96830,8 @@ msgid "Excluded Paths"
 msgstr "Njia Zisizojumuishwa"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "Hifadhi Kiotomatiki"
 
 
@@ -96797,8 +97026,9 @@ msgid "Select Active Camera"
 msgstr "Chagua Kamera Inayotumika"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Chagua Mchoro..."
 
 
@@ -96966,8 +97196,9 @@ msgid "Fur"
 msgstr "Manyoya"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "Nurbs Silinda"
 
 
@@ -96981,8 +97212,9 @@ msgid "Camera"
 msgstr "Kamera"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "Leta OpenVDB..."
 
 
@@ -97031,8 +97263,9 @@ msgid "Origin"
 msgstr "Asili"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "Badilisha Kipengee Kinachotumika..."
 
 
@@ -97202,13 +97435,15 @@ msgid "Calculate"
 msgstr "Hesabu"
 
 
+# BFA - reworded, Blender: "Assign to New Collection"
 msgctxt "Operator"
-msgid "Assign to New Collection"
+msgid "Assign to New"
 msgstr "Weka Mkusanyiko Mpya"
 
 
+# BFA - reworded, Blender: "Add (with Targets)..."
 msgctxt "Operator"
-msgid "Add (with Targets)..."
+msgid "Add (with Targets)"
 msgstr "Ongeza (na Malengo)..."
 
 
@@ -97327,8 +97562,9 @@ msgid "Rotate..."
 msgstr "Zungusha..."
 
 
+# BFA - reworded, Blender: "Point to Target..."
 msgctxt "Operator"
-msgid "Point to Target..."
+msgid "Point normals to target"
 msgstr "Elekeza kwa Lengo..."
 
 
@@ -97427,7 +97663,8 @@ msgid "Color Opacity"
 msgstr "Uwazi wa Rangi"
 
 
-msgid "Attribute Text"
+# BFA - reworded, Blender: "Attribute Text"
+msgid "Attribute Text Overlay"
 msgstr "Maandishi ya Sifa"
 
 
@@ -97771,13 +98008,15 @@ msgid "Recalculate Inside"
 msgstr "Hesabu upya Ndani"
 
 
+# BFA - reworded, Blender: "Copy Vector"
 msgctxt "Operator"
-msgid "Copy Vector"
+msgid "Copy Vectors"
 msgstr "Nakili Vekta"
 
 
+# BFA - reworded, Blender: "Paste Vector"
 msgctxt "Operator"
-msgid "Paste Vector"
+msgid "Paste Vectors"
 msgstr "Bandika Vekta"
 
 
@@ -99448,7 +99687,8 @@ msgid "worlds"
 msgstr "ulimwengu"
 
 
-msgid "Library database with null library data-block pointer!"
+# BFA - reworded, Blender: "Library database with null library data-block pointer!"
+msgid "Library database with null library data pointer!"
 msgstr "Hifadhidata ya maktaba iliyo na kiashiria cha kuzuia data cha maktaba!"
 
 
@@ -99680,11 +99920,17 @@ msgid "NLA Track is the only one evaluated in this animation data-block, with al
 msgstr "Wimbo wa NLA ndio pekee uliotathminiwa katika kizuizi hiki cha data cha uhuishaji, na zingine zote zimenyamazishwa."
 
 
-msgid "Editability of keyframes for this channel"
+# BFA - reworded, Blender: "Editability of keyframes for this channel"
+msgid ""
+"Lock Channel\n"
+"Editability of keyframes for this channel"
 msgstr "Uhariri wa fremu muhimu za kituo hiki"
 
 
-msgid "Editability of NLA Strips in this track"
+# BFA - reworded, Blender: "Editability of NLA Strips in this track"
+msgid ""
+"Lock Channel\n"
+"Editability of NLA Strips in this track"
 msgstr "Uhariri wa Vipande vya NLA katika wimbo huu"
 
 
@@ -100204,7 +100450,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "Katalogi za mali haziwezi kuhaririwa katika maktaba hii ya mali"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
+# BFA - reworded, Blender: "Cannot save asset catalogs before the Blender file is saved"
+msgid "Cannot save asset catalogs before the .blend file is saved"
 msgstr "Haiwezi kuhifadhi katalogi za mali kabla ya faili ya Blender kuhifadhiwa"
 
 
@@ -103524,7 +103771,8 @@ msgid "Offset:"
 msgstr "Kupunguza:"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr "Eneo la Muundo:"
 
 
@@ -103536,7 +103784,8 @@ msgid "Height:"
 msgstr "Urefu:"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr "Eneo la Utafutaji:"
 
 
@@ -104357,7 +104606,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Kirekebisha hakikuweza kuongezwa kwa (%s : %s) (angalia kiweko kwa maelezo)"
 
 
-msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+# BFA - reworded, Blender: "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+msgid "No active AnimData block to use (select a data expander first or set the appropriate flags on an AnimData block)"
 msgstr "Hakuna kizuizi kinachotumika cha AnimData cha kutumia (chagua kikuza-kizuizi cha data kwanza au weka bendera zinazofaa kwenye kizuizi cha AnimData)"
 
 
@@ -104709,7 +104959,8 @@ msgid "External library data is not editable"
 msgstr "Data ya maktaba ya nje haiwezi kuhaririwa"
 
 
-msgid "Overridden data-blocks names are not editable"
+# BFA - reworded, Blender: "Overridden data-blocks names are not editable"
+msgid "Overridden data names are not editable"
 msgstr "Majina ya vizuizi vya data yaliyobatilishwa hayawezi kuhaririwa"
 
 
@@ -104721,7 +104972,8 @@ msgid "No active item to rename"
 msgstr "Hakuna kipengee kinachotumika cha kubadilisha jina"
 
 
-msgid "No selected data-blocks to copy"
+# BFA - reworded, Blender: "No selected data-blocks to copy"
+msgid "No selected data to copy"
 msgstr "Hakuna vizuizi vya data vilivyochaguliwa vya kunakili"
 
 
@@ -104729,7 +104981,8 @@ msgid "Operation requires an active keying set"
 msgstr "Uendeshaji unahitaji seti ya vitufe inayotumika"
 
 
-msgid "No orphaned data-blocks to purge"
+# BFA - reworded, Blender: "No orphaned data-blocks to purge"
+msgid "No orphaned data to purge"
 msgstr "Hakuna vizuizi vya data yatima vya kuondoa"
 
 
@@ -104765,7 +105018,8 @@ msgid "Copied %d selected data-block(s)"
 msgstr "Imenakili vizuizi %d vilivyochaguliwa"
 
 
-msgid "%d data-block(s) pasted"
+# BFA - reworded, Blender: "%d data-block(s) pasted"
+msgid "%d data pasted"
 msgstr "block-data%d imebandikwa"
 
 
@@ -105245,7 +105499,8 @@ msgid "Mean Vertex Crease:"
 msgstr "Wastani wa Mkunjo wa Kipeo:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Radi ya X:"
 
 
@@ -108120,7 +108375,8 @@ msgid "WeightedNormal"
 msgstr "UzitoKawaida"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Ushawishi wa Ulimwengu:"
 
 
@@ -111183,7 +111439,8 @@ msgid "Pose Library"
 msgstr "Maktaba ya Pozi"
 
 
-msgid "Pose Library based on the asset system."
+# BFA - reworded, Blender: "Pose Library based on the asset system."
+msgid "Pose Library based on the asset system"
 msgstr "Weka Maktaba kulingana na mfumo wa mali."
 
 
@@ -112238,3 +112495,306 @@ msgstr "Tumia ingizo la urefu ili kubadilisha kikamilifu urefu wa asili"
 msgid "Scale each curve uniformly to reach the target length"
 msgstr "Piga kila mshororo kwa usawa ili kufikia urefu unaolengwa"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Pozi Breakdowner (Legacy)"
+
+# BFA - reworded, Blender: "Push Pose from Breakdown"
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "Sukuma Pozi kutoka kwa Kuvunjika (Legacy)"
+
+# BFA - reworded, Blender: "Relax Pose to Breakdown"
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "Tulia Pozi Kuvunjika (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Mask"
+
+# BFA - reworded, Blender: "Zero Weights"
+msgid "     Zero Weights"
+msgstr "     Uzito Sifuri"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Jiunge na Nyimbo"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " Tathmini"
+
+# BFA - reworded, Blender: "Font size to use for displaying the text"
+msgid "Adjust the font size for displaying the text"
+msgstr "Ukubwa wa herufi ya kutumia kwa kuonyesha maandishi"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "Chagua Zote kwa Aina"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "Data ya uhuishaji ya kizuizi hiki cha data"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "Uwekaji Kiotomatiki"
+
+# BFA - reworded, Blender: "Bake to Keyframes"
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "Oka kwa Fremu Muhimu"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Sanduku Chagua (Legacy)"
+
+# BFA - reworded, Blender: "Cached Range"
+msgid "Cached Range (Info)"
+msgstr "Msururu Uliohifadhiwa (Info)"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "Anza Klipu"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Anza Klipu"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "Mikusanyiko ya Taswira"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Futa"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Kina"
+
+# BFA - reworded, Blender: "Display overlay text"
+msgid "Display overlay text.\nAlso affects the Geometry Nodes viewer overlay"
+msgstr "Onyesha maandishi ya mwekeleo"
+
+# BFA - reworded, Blender: "Extrude region together along local normals"
+msgid "Extrude Region Vertex Normals\nExtrude region together along local normals"
+msgstr "Ondosha eneo pamoja kwa kanuni za kawaida"
+
+# BFA - reworded, Blender: "Auto-Masking"
+msgid "Global Auto Masking"
+msgstr "Kufunika Masking Kiotomatiki"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Sogeza"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "Chagua Vikundi"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Chagua Vikundi"
+
+# BFA - reworded, Blender: "Insert Into Group"
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "Ingiza Katika Kikundi"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Geuza Mwelekeo wa Kuza"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "Inaweza kuendelea"
+
+# BFA - reworded, Blender: "Set type of handle for selected keyframes"
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "Weka aina ya kishikio kwa fremu muhimu zilizochaguliwa"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "Uteuzi wa Fremu ya Karibu Zaidi"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "Uteuzi wa Fremu ya Karibu Zaidi"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "Uteuzi wa Karibu Zaidi"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "Uteuzi wa Karibu Zaidi"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "Faili Jipya"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "Utafutaji wa Opereta..."
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Mwelekeo"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "Vidokezo vya Kutolewa"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "Toleo la Onyesha"
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "Seti za Uso"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "Onyesha Ndani"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Kinyago"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Onyesha"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Nyinya/Nenepesha"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Chagua Vile vile"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Chagua Vile vile"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Aina"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "Haijakabidhiwa (Catalogue)"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets"
+msgstr "Mali Zisizo za Mali"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets:"
+msgstr "Mali Zisizo za Mali"
+
+# BFA - reworded, Blender: "Use internal text data-block"
+msgid "Use internal text data"
+msgstr "Tumia kizuizi cha data ya maandishi ya ndani"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "Vekta za Kasi"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "Upana wa Mstari"
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "Kuza hadi Mpaka"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Onyesha mali inayopatikana sasa katika kipindi hiki cha Bforartists"
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "Ingiza mali kama kizuizi cha data kilichounganishwa"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "Ingiza mali kama kizuizi cha data kilichonakiliwa, bila kiunga cha kizuizi cha data cha mali asili."
+
+# BFA - reworded, Blender: "Clear Fake User and remove copy stashed in this data-block's NLA stack"
+msgid "Clear Fake User and remove copy stashed in this data's NLA stack"
+msgstr "Futa Mtumiaji Bandia na uondoe nakala iliyofichwa kwenye rafu ya NLA ya kizuizi hiki cha data"
+
+# BFA - reworded Blender string
+msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+msgstr "Hifadhi faili ya sasa ya Bforartists na jina lililoongezwa kwa nambari ambalo halibatili faili zozote zilizopo"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "Kuhusu Bforartists"
+
+# BFA - reworded Blender string
+msgid "Open a window with information about Bforartists"
+msgstr "Fungua dirisha na habari kuhusu Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "Bforartists ni programu ya bure"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Tovuti ya Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Toleo la Bforartists"
+
+# BFA - reworded Blender string
+msgid "Open blend files with this Bforartists version"
+msgstr "Fungua faili za mchanganyiko na toleo hili la Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Drivers Editor"
+msgstr "Mhariri wa Madereva ya Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Info Log"
+msgstr "Kumbukumbu ya Maelezo ya Bforartists"
+
+# BFA - reworded Blender string
+msgid "Overwrite file with an older Bforartists version?"
+msgstr "Batilisha faili na toleo la zamani la Bforartists?"
+
+# BFA - reworded Blender string
+msgid "Proxies have been removed from Bforartists (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Consider re-saving any library .blend file with the newest Blender version"
+msgstr "Proksi zimeondolewa kutoka kwa Bforartists (proksi %d zilibadilishwa kiotomatiki kuwa ubatilishaji wa maktaba, proksi %d hazikuweza kubadilishwa na zilifutwa)."
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Kusasisha hadi toleo la hivi karibuni la macOS kunaweza kuboresha usaidizi wa Bforartists"

@@ -391,7 +391,8 @@ msgid "Animation Data"
 msgstr "היצמינא ינותנ"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "םינותנ-קולבל היצמינא ינותנ"
 
 
@@ -575,7 +576,8 @@ msgid "Text Editor"
 msgstr "טסקט ךרוע"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "םירושק םינותנ-יקולבו ליעפה טקייבואה לש םינותנ ךורע"
 
 
@@ -762,7 +764,8 @@ msgid "Active Color"
 msgstr "ליעפ עבצ"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "הנצס ינותנ-יקולב רובע םינותנ הפא"
 
 
@@ -814,19 +817,23 @@ msgid "Free"
 msgstr "ישפוח"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "תוכסמ ינותנ-יקולב"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "םירמוח ינותנ-יקולב"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "תורוצ ינותנ-יקולב"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "ואידיו-יפילק ינותנ-יקולב"
 
 
@@ -834,7 +841,8 @@ msgid "Node Groups"
 msgstr "םיקולב תוצובק"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "םיקולב תוצובק ינותנ-יקולב"
 
 
@@ -842,7 +850,8 @@ msgid "Object data-blocks"
 msgstr "םיטקייבוא ינותנ-יקולב"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "םיעבצ תוטלפ ינותנ-יקולב"
 
 
@@ -850,7 +859,8 @@ msgid "Particles"
 msgstr "םיקיקלח"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "םיקיקלח ינותנ-יקולב"
 
 
@@ -858,7 +868,8 @@ msgid "Point cloud data-blocks"
 msgstr "תודוקנ יננע ינותנ-יקולב"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "תונצס ינותנ-יקולב"
 
 
@@ -866,7 +877,8 @@ msgid "Screens"
 msgstr "םיכסמ"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "םיכסמ ינותנ-יקולב"
 
 
@@ -878,7 +890,8 @@ msgid "Text data-blocks"
 msgstr "טסקט ינותנ-יקולב"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "םקרמ ינותנ-יקולב"
 
 
@@ -890,7 +903,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "הב רמשנ blend. -ה ץבוקש ץבוקה תסרג"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "חפנ ינותנ-יקולב"
 
 
@@ -898,15 +912,18 @@ msgid "Window Managers"
 msgstr "תונולח-ילהנמ"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "תונולח-ילהנמ ינותנ-יקולב"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "הדובע-יבחרמ ינותנ-יקולב"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "םלוע ינותנ-יקולב"
 
 
@@ -2117,7 +2134,8 @@ msgid "Run this text as a Python script on loading"
 msgstr "הניעטב Python טפירקסכ הז טסקט ץרה"
 
 
-msgid "Texture data-block used by materials, lights, worlds and brushes"
+# BFA - reworded, Blender: "Texture data-block used by materials, lights, worlds and brushes"
+msgid "Texture used by materials, lights, worlds and brushes"
 msgstr "תושרבמו תומלוע ,הרואת ,םירמוח ידי לע שמושמה הרוטסקט ינותנ-קולב"
 
 
@@ -2576,7 +2594,8 @@ msgid "Add Cylinder"
 msgstr "לילג ףסוה"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "לילג תרוצ הנב"
 
 
@@ -2585,7 +2604,8 @@ msgid "Add Monkey"
 msgstr "ףוק ףסוה"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "ןזוס ףוקה תרוצ הנב"
 
 
@@ -3290,7 +3310,8 @@ msgid "Vertex Data:"
 msgstr ":דוקדוק ינותנ"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr ":X סוידר"
 
 
@@ -3410,3 +3431,27 @@ msgstr "יארקא קחרמ"
 msgid "Only affect selected elements"
 msgstr "דבלב םירחבנ םיטנמלא לע עפשה"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "םיצבוקמ רחב"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "םיצבוקמ רחב"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "הכסמ"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "גוס"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"

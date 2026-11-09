@@ -900,7 +900,8 @@ msgid "Animation Data"
 msgstr "ანიმაციის მონაცემები"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "ანიმაციის მონაცემები მონაცემთა ბლოკისთვის"
 
 
@@ -908,7 +909,8 @@ msgid "Action"
 msgstr "ქმედება"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "აქტიური ქმედება ამ მონაცემთა ბლოკისათვის"
 
 
@@ -1044,7 +1046,8 @@ msgid "Drivers"
 msgstr "დრაივერები"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "დრაივერები/გამოსახულებები ამ მონაცემთა ბლოკისათვის"
 
 
@@ -1600,7 +1603,8 @@ msgid "Show Menus"
 msgstr "მენიუების ჩვენება"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "აჩვენე მენიუები კოლონტიტულში"
 
 
@@ -1728,7 +1732,8 @@ msgid "Outliner"
 msgstr "მონახაზი"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "სცენის გრაფიკისა და მონაცემთა ყველა ხელმისაწვდომი ბლოკის მიმოხილვა"
 
 
@@ -1736,7 +1741,8 @@ msgid "Properties"
 msgstr "თვისებები"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "აქტიური ობიექტისა და მასთან დაკავშირებული მონაცემთა ბლოკების თვისებათა რედაქტირება"
 
 
@@ -2477,7 +2483,8 @@ msgid "Worlds"
 msgstr "სამყაროები"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "აჩვენე სამყაროს მონაცემთა ბლოკები"
 
 
@@ -2932,7 +2939,8 @@ msgid "Bake Data"
 msgstr "ცხობის მონაცემები"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "ცხობის მონაცემები სცენის მონაცემთა ბლოკისათვის"
 
 
@@ -3132,7 +3140,8 @@ msgid "Internal"
 msgstr "შიდა"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "შეინახე ცხობის პროცესში მყოფი რუკა გამოსახულებების შიდა მონაცემთა ბლოკში"
 
 
@@ -3420,11 +3429,13 @@ msgid "Blend-File Data"
 msgstr "Blend-ფაილის მონაცემები"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "მონაცემთა მთავარი სტრუქტურა, რომელიც .blend ფაილსა და მის ყველა მონაცემთა ბლოკს წარმოადგენს"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "ქმედებების მონაცემთა ბლოკები"
 
 
@@ -3444,23 +3455,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "ანოტაციის მონაცემთა ბლოკები (ძველებური გრიზ ფენსილი)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "არმატურების მონაცემთა ბლოკები"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "ფუნჯების მონაცემთა ბლოკები"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "ქეშ ფაილების მონაცემთა ბლოკები"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "კამერის მონაცემთა ბლოკები"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "კოლექციების მონაცემთა ბლოკები"
 
 
@@ -3472,7 +3488,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "ინფორმაცია blend ფაილში მონაცემთა ბლოკებისთვის გამოყენებული ფერითი სივრცის შესახებ"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "წირების მონაცემთა ბლოკები"
 
 
@@ -3488,7 +3505,8 @@ msgid "Vector Fonts"
 msgstr "ვექტორული შრიფტები"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "ვექტორული შრიფტების მონაცემთა ბლოკები"
 
 
@@ -3496,11 +3514,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "გრიზ ფენსილის მონაცემთა ბლოკები"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "თმის წირების მონაცემთა ბლოკები"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "გამოსახულებების მონაცემთა ბლოკები"
 
 
@@ -3520,7 +3540,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "შენახულია თუ არა მიმდინარე სესია დისკზე .blend ფაილად"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "გისოსის მონაცემთა ბლოკები"
 
 
@@ -3528,15 +3549,18 @@ msgid "Libraries"
 msgstr "ბიბლიოთეკები"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "ბიბლიოთეკის მონაცემთა ბლოკები"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "სინათლის ზონდის მონაცემთა ბლოკები"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "სინათლის მონაცემთა ბლოკები"
 
 
@@ -3544,27 +3568,33 @@ msgid "Line Styles"
 msgstr "ხაზთა სტილები"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "ხაზის სტილების მონაცემთა ბლოკები"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "ნიღბების მონაცემთა ბლოკები"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "მასალების მონაცემთა ბლოკები"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "მეშების მონაცემთა ბლოკები"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "მეტაბურთების მონაცემთა ბლოკები"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "ვიდეო კლიპების მონაცემთა ბლოკები"
 
 
@@ -3572,7 +3602,8 @@ msgid "Node Groups"
 msgstr "კვანძების ჯგუფები"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "კვანძების ჯგუფების მონაცემთა ბლოკები"
 
 
@@ -3580,11 +3611,13 @@ msgid "Object data-blocks"
 msgstr "ობიექტების მონაცემთა ბლოკები"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "დასახატი წირების მონაცემთა ბლოკები"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "პალიტრების მონაცემთა ბლოკები"
 
 
@@ -3592,7 +3625,8 @@ msgid "Particles"
 msgstr "ნაწილაკები"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "ნაწილაკების მონაცემთა ბლოკები"
 
 
@@ -3609,7 +3643,8 @@ msgid "The currently active Blender project, if any"
 msgstr "Blender-ის ამჟამად აქტიური პროექტი, თუ ასეთი არსებობს"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "სცენების მონაცემთა ბლოკები"
 
 
@@ -3617,7 +3652,8 @@ msgid "Screens"
 msgstr "ეკრანები"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "ეკრანების მონაცემთა ბლოკები"
 
 
@@ -3625,15 +3661,18 @@ msgid "Shape Keys"
 msgstr "ფორმების სოლები"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "ფორმების სოლების მონაცემთა ბლოკები"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "ხმების მონაცემთა ბლოკები"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "სპიკერების მონაცემთა ბლოკები"
 
 
@@ -3641,7 +3680,8 @@ msgid "Text data-blocks"
 msgstr "ტექსტების მონაცემთა ბლოკები"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "ტექსტურების მონაცემთა ბლოკები"
 
 
@@ -3661,7 +3701,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "ფაილის ფორმატის ვერსია, რომლითაც .blend ფაილი იქნა შენახული"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "მოცულობების მონაცემთა ბლოკები"
 
 
@@ -3669,15 +3710,18 @@ msgid "Window Managers"
 msgstr "ფანჯარათა მენეჯერები"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "ფანჯარათა მენეჯერების მონაცემთა ბლოკები"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "სამუშაო სივრცეების მონაცემთა ბლოკები"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "სამყაროს მონაცემთა ბლოკები"
 
 
@@ -4790,7 +4834,8 @@ msgid "Volume"
 msgstr "მოცულობა"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "ძვალი არმატურის მონაცემთა ბლოკში"
 
 
@@ -6588,7 +6633,8 @@ msgid "Stroke"
 msgstr "მონასმი"
 
 
-msgid "Painting affects only strokes, not fills"
+# BFA - reworded, Blender: "Painting affects only strokes, not fills"
+msgid "Vertex Color affects to Stroke only"
 msgstr "ხატვა მხოლოდ მონასმებზე ახდენს გავლენას, შევსებაზე კი - არა"
 
 
@@ -6596,7 +6642,8 @@ msgid "Fill"
 msgstr "შევსება"
 
 
-msgid "Painting affects only fills, not strokes"
+# BFA - reworded, Blender: "Painting affects only fills, not strokes"
+msgid "Vertex Color affects to Fill only"
 msgstr "ხატვა მხოლოდ შევსებებზე ახდენს გავლენას, მონასმებზე კი - არა"
 
 
@@ -6604,7 +6651,8 @@ msgid "Both"
 msgstr "ორივე"
 
 
-msgid "Painting affects both strokes and fills"
+# BFA - reworded, Blender: "Painting affects both strokes and fills"
+msgid "Vertex Color affects to Stroke and Fill"
 msgstr "ხატვა მონასმებზეც ახდენს გავლებას და შევსებებზეც"
 
 
@@ -6932,7 +6980,8 @@ msgid "Stereo"
 msgstr "სტერეო"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "სტერეოსკოპიული ანაწყობები კამერის მონაცემთა ბლოკისათვის"
 
 
@@ -11685,7 +11734,8 @@ msgid "Curve Slice"
 msgstr "წირის ნაჭერი"
 
 
-msgid "A single curve from a curves data-block"
+# BFA - reworded, Blender: "A single curve from a curves data-block"
+msgid "A single curve from a curves data"
 msgstr "ერთი ცალი წირი წირების მონაცემთა ბლოკიდან"
 
 
@@ -12145,7 +12195,8 @@ msgid "Include Missing NLA"
 msgstr "დაკარგული NLA-ს მითვლა"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "მოიცავი ანიმაციის მონაცემთა ბლოკები, რომლებსაც NLA მონაცემები არ გააჩნია (მხოლოდ NLA რედაქტორისთვის)"
 
 
@@ -12153,7 +12204,8 @@ msgid "Display Modifier Data"
 msgstr "მოდიფიკატორის მონაცემების ასახვა"
 
 
-msgid "Include visualization of animation data related to data-blocks linked to modifiers"
+# BFA - reworded, Blender: "Include visualization of animation data related to data-blocks linked to modifiers"
+msgid "Include visualization of animation data related to data linked to modifiers"
 msgstr "მოიცავი მოდიფიკატორებზე მიბმულ მონაცემთა ბლოკებთან დაკავშირებული ანიმაციის მონაცემთა ვიზუალიზაცია"
 
 
@@ -12285,7 +12337,8 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "ID-ბლოკი, რომელიც წარმოადგენს წყაროს მონაცემებს, ჩვეულებრივ ID_SCE (ე.ი. სცენა)"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "მონაცემთა ბლოკების დალაგება"
 
 
@@ -13259,7 +13312,8 @@ msgid "Edit Bone"
 msgstr "რედაქტირებადი ძვალი"
 
 
-msgid "Edit mode bone in an armature data-block"
+# BFA - reworded, Blender: "Edit mode bone in an armature data-block"
+msgid "Editmode bone in an armature data"
 msgstr "არმატურის მონაცემთა ბლოკის ძვალი რედაქტირების რეჟიმში"
 
 
@@ -17843,7 +17897,8 @@ msgid "Freestyle Settings"
 msgstr "Freestyle-ის ანაწყობები"
 
 
-msgid "Freestyle settings for a ViewLayer data-block"
+# BFA - reworded, Blender: "Freestyle settings for a ViewLayer data-block"
+msgid "Freestyle settings for a ViewLayer"
 msgstr "Freestyle-ის ანაწყობები ხედშრის მონაცემთა ბლოკისათვის"
 
 
@@ -19460,7 +19515,8 @@ msgid "Animation data for this data-block"
 msgstr "ანიმაციის მონაცემები ამ მონაცემთა ბლოკისთვის"
 
 
-msgid "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+# BFA - reworded, Blender: "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+msgid "Armature data containing a hierarchy of bones, usually used for rigging characters"
 msgstr "არმატურის მონაცემთა ბლოკი, რომელიც შეიცავს ძვლების იერარქიას, ჩვეულებრივ გამოიყენება პერსონაჟების დასარიგად"
 
 
@@ -19724,7 +19780,8 @@ msgid "Apply changes to matching bone on opposite side of X-Axis"
 msgstr "გამოიყენე ცვლილებები X ღერძის მოპირდაპირე მხარეს მყოფ შესატყვის ძვალზე"
 
 
-msgid "Brush data-block for storing brush settings for painting and sculpting"
+# BFA - reworded, Blender: "Brush data-block for storing brush settings for painting and sculpting"
+msgid "Brush data for storing brush settings for painting and sculpting"
 msgstr "ფუნჯის მონაცემთა ბლოკი ფუნჯის სახატავი და საძერწი ანაწყობების შესანახად"
 
 
@@ -21939,7 +21996,8 @@ msgid "Frame"
 msgstr "კადრი"
 
 
-msgid "Camera data-block for storing camera settings"
+# BFA - reworded, Blender: "Camera data-block for storing camera settings"
+msgid "Camera data for storing camera settings"
 msgstr "კამერის მონაცემთა ბლოკი კამერის ანაწყობების შესანახად"
 
 
@@ -22479,7 +22537,8 @@ msgid "Panoramic"
 msgstr "პანორამული"
 
 
-msgid "Collection of Object data-blocks"
+# BFA - reworded, Blender: "Collection of Object data-blocks"
+msgid "Collection of Object data"
 msgstr "ობიექტის მონაცემთა ბლოკების კოლექცია"
 
 
@@ -22683,7 +22742,8 @@ msgid "Assign intersection priority value for this collection"
 msgstr "მიაკუთვნე ამ კოლექციას გადაკვეთის პრიორიტეტის მნიშვნელობა"
 
 
-msgid "Curve data-block storing curves, splines and NURBS"
+# BFA - reworded, Blender: "Curve data-block storing curves, splines and NURBS"
+msgid "Curve data storing curves, splines and NURBS"
 msgstr "წირის მონაცემთა ბლოკი, რომელი ინახავს წირებს, სფლაინებსა და NURBS-ებს"
 
 
@@ -23055,7 +23115,8 @@ msgid "Surface Curve"
 msgstr "ზედაპირის წირი"
 
 
-msgid "Curve data-block used for storing surfaces"
+# BFA - reworded, Blender: "Curve data-block used for storing surfaces"
+msgid "Curve data used for storing surfaces"
 msgstr "წირის მონაცემთა ბლოკი გამოყენებული ზედაპირების შესანახად"
 
 
@@ -23063,7 +23124,8 @@ msgid "Text Curve"
 msgstr "ტექსტის წირი"
 
 
-msgid "Curve data-block used for storing text"
+# BFA - reworded, Blender: "Curve data-block used for storing text"
+msgid "Curve data used for storing text"
 msgstr "წირის მონაცემთა ბლოკი გამოყენებული ტექსტის შესანახად"
 
 
@@ -23343,11 +23405,13 @@ msgid "Don't fill polygons while editing"
 msgstr "ნუ შეავსებ წახნაგებს რედაქტირებისას"
 
 
-msgid "Hair data-block for hair curves"
+# BFA - reworded, Blender: "Hair data-block for hair curves"
+msgid "Hair data for hair curves"
 msgstr "თმის მონაცემთა ბლოკი თმის წირებისთვის"
 
 
-msgid "All curves in the data-block"
+# BFA - reworded, Blender: "All curves in the data-block"
+msgid "All curves in the data"
 msgstr "ყველა წირი მონაცემთა ბლოკში"
 
 
@@ -24109,7 +24173,8 @@ msgid "Display onion keyframes for looping animations"
 msgstr "ასახე კალკის საკვანძო ფაზები ანიმაციების ციკლირებისთვის"
 
 
-msgid "Image data-block referencing an external or packed image"
+# BFA - reworded, Blender: "Image data-block referencing an external or packed image"
+msgid "Image data referencing an external or packed image"
 msgstr "გამოსახულების მონაცემთა ბლოკი, რომელიც მიუთითებს გარე, ან შეფუთულ გამოსახულებაზე"
 
 
@@ -24604,7 +24669,8 @@ msgid "Single file with an encoded stereo pair"
 msgstr "ერთი ფაილი დაშიფრული სტერეო წყვილით"
 
 
-msgid "Shape keys data-block containing different shapes of geometric data-blocks"
+# BFA - reworded, Blender: "Shape keys data-block containing different shapes of geometric data-blocks"
+msgid "Shape keys data containing different shapes of geometric data"
 msgstr "ფორმის სოლების მონაცემთა ბლოკები, რომლებიც შეიცავენ გეომეტრიულ მონაცემთა ბლოკების სხვადასხვა ფორმებს"
 
 
@@ -24632,11 +24698,13 @@ msgid "User"
 msgstr "მომხმარებელი"
 
 
-msgid "Data-block using these shape keys"
+# BFA - reworded, Blender: "Data-block using these shape keys"
+msgid "Data using these shape keys"
 msgstr "მონაცემთა ბლოკი, რომელიც ამ ფორმის სოლებს იყენებს"
 
 
-msgid "Lattice data-block defining a grid for deforming other objects"
+# BFA - reworded, Blender: "Lattice data-block defining a grid for deforming other objects"
+msgid "Lattice data defining a grid for deforming other objects"
 msgstr "გისოსების მონაცემთა ბლოკი, რომელიც ადგენს ბადეს სხვა ობიექტების დეფორმირებისთვის"
 
 
@@ -24745,7 +24813,8 @@ msgid "Light"
 msgstr "სინათლე"
 
 
-msgid "Light data-block for lighting a scene"
+# BFA - reworded, Blender: "Light data-block for lighting a scene"
+msgid "Light data for lighting a scene"
 msgstr "სინათლის მონაცემთა ბლოკი სცენის განათებისთვის"
 
 
@@ -25109,7 +25178,8 @@ msgid "End distance of the cascaded shadow map (only in perspective view)"
 msgstr "კასკადური ჩრდილის რუკის დასრულების მანძილი (მხოლოდ პერსპექტიულ ხედში)"
 
 
-msgid "Light Probe data-block for lighting capture objects"
+# BFA - reworded, Blender: "Light Probe data-block for lighting capture objects"
+msgid "Light Probe data for lighting capture objects"
 msgstr "სინათლის ზონდის მონაცემთა ბლოკი დასაფიქსირებელი ობიექტების განათებისთვის"
 
 
@@ -25429,7 +25499,8 @@ msgid "Offset sampling of the irradiance grid in the viewing direction to reduce
 msgstr "გამოსხივების ბადის სემპლირების აცდენა დათვალიერების მიმართულებით, სინათლის ჟონვის შესამცირებლად"
 
 
-msgid "Mask data-block defining mask for compositing"
+# BFA - reworded, Blender: "Mask data-block defining mask for compositing"
+msgid "Mask data defining mask for compositing"
 msgstr "კომპოზიტირებისთვის ნიღბის განსასაზღვრი ნიღბის მონაცემთა ბლოკი"
 
 
@@ -25453,7 +25524,8 @@ msgid "Collection of layers which defines this mask"
 msgstr "ამნიღბის განმსაზღვრელი შრეების კოლექცია"
 
 
-msgid "Material data-block to define the appearance of geometric objects for rendering"
+# BFA - reworded, Blender: "Material data-block to define the appearance of geometric objects for rendering"
+msgid "Material data to define the appearance of geometric objects for rendering"
 msgstr "მასალის მონაცემთა ბლოკი, რომელიც რენდერისას გეომეტრიული ობიექტების გარეგნობას განსაზღვრავს"
 
 
@@ -26198,7 +26270,8 @@ msgid "Vertices of the mesh"
 msgstr "მეშის წვეროები"
 
 
-msgid "Metaball data-block to define blobby surfaces"
+# BFA - reworded, Blender: "Metaball data-block to define blobby surfaces"
+msgid "Metaball data to define blobby surfaces"
 msgstr "მეტაბურთის მონაცემთა ბლოკი დაბუშტული ზედაპირების გამოსაკვეთად"
 
 
@@ -26250,7 +26323,8 @@ msgid "While editing, don't update metaball at all"
 msgstr "რედაქტირების განმავლობაში საერთოდ ნუ განაახლებ მეტაბურთს"
 
 
-msgid "MovieClip data-block referencing an external movie file"
+# BFA - reworded, Blender: "MovieClip data-block referencing an external movie file"
+msgid "MovieClip data referencing an external movie file"
 msgstr "ვიდეო კლიპის მონაცემთა ბლოკი, რომელიც გარეგან ვიდეო ფაილზე მიუთითებს"
 
 
@@ -26566,7 +26640,8 @@ msgid "Shader Node Tree"
 msgstr "იერფერის კვანძოვანი ხე"
 
 
-msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+# BFA - reworded, Blender: "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+msgid "Node tree consisting of linked nodes used for materials (and other shading data)"
 msgstr "კვანძოვანი ხე, რომელიც შედგება მასალებისთვის (და შეფერადების სხვა მონაცემთა ბლოკებისთვის) გამოყენებული ურთიერთდაკავშირებული კვანძებისგან"
 
 
@@ -26578,7 +26653,8 @@ msgid "Node tree consisting of linked nodes used for textures"
 msgstr "კვანძოვანი ხე, რომელიც შედგება ტექსტურებისთვის გამოყენებული ურთიერთდაკავშირებული კვანძებისგან"
 
 
-msgid "Object data-block defining an object in a scene"
+# BFA - reworded, Blender: "Object data-block defining an object in a scene"
+msgid "Object data defining an object in a scene"
 msgstr "ობიექტის მონაცემთა ბლოკი, რომელიც განსაზღვრავს ობიექტს სცენაში"
 
 
@@ -28778,11 +28854,13 @@ msgid "Relative amount of virtual parents"
 msgstr "ვირტუალური მშობლების შეფარდებითი რაოდენობა"
 
 
-msgid "Point cloud data-block"
+# BFA - reworded, Blender: "Point cloud data-block"
+msgid "Point cloud data"
 msgstr "წერტილების ღრუბლის მონაცემთა ბლოკი"
 
 
-msgid "Scene data-block, consisting in objects and defining time and render related settings"
+# BFA - reworded, Blender: "Scene data-block, consisting in objects and defining time and render related settings"
+msgid "Scene, consisting in objects and defining time and render related settings"
 msgstr "სცენის მონაცემთა ბლოკი, რომელიც შედგება ობიექტებისგან და განსაზღვრავს დროსა და რენდერთან დაკავშირებულ ანაწყობებს"
 
 
@@ -28834,7 +28912,8 @@ msgid "Allows playing back frames before the playback start frame"
 msgstr "იძლევა დაკვრის დაწყების კადრამდე მდებარე კადრების დაკვრის საშუალებას"
 
 
-msgid "Data-block used for annotations in the 3D view"
+# BFA - reworded, Blender: "Data-block used for annotations in the 3D view"
+msgid "Data used for annotations in the 3D view"
 msgstr "3D ხედში ანოტაციებისთვის გამოყენებული მონაცემთა ბლოკი"
 
 
@@ -29364,7 +29443,8 @@ msgid "World used for rendering the scene"
 msgstr "სცენის დასარენდერებლად გამოყენებული სამყარო"
 
 
-msgid "Screen data-block, defining the layout of areas in a window"
+# BFA - reworded, Blender: "Screen data-block, defining the layout of areas in a window"
+msgid "Screen data, defining the layout of areas in a window"
 msgstr "ეკრანის მონაცემთა ბლოკი, განსაზღვრავს ფანჯარაში არეების განლაგებას"
 
 
@@ -29444,7 +29524,8 @@ msgid "Top-Left 3D Editor"
 msgstr "ზედა-მარცხენა 3D რედაქტორი"
 
 
-msgid "Sound data-block referencing an external or packed sound file"
+# BFA - reworded, Blender: "Sound data-block referencing an external or packed sound file"
+msgid "Sound data referencing an external or packed sound file"
 msgstr "ხმის მონაცემთა ბლოკი, რომელიც გარე, ან ჩაწყობილ ხმოვან ფაილზე მიუთითებს"
 
 
@@ -29472,7 +29553,8 @@ msgid "6.1 Surround"
 msgstr "6.1 გარშემორტყმა"
 
 
-msgid "Sound sample file used by this Sound data-block"
+# BFA - reworded, Blender: "Sound sample file used by this Sound data-block"
+msgid "Sound sample file used by this Sound data"
 msgstr "ხმის ნიმუშის ფაილი გამოყენებული ამ ხმის მონაცემთა ბლოკის მიერ"
 
 
@@ -29492,7 +29574,8 @@ msgid "If the file contains multiple audio channels they are rendered to a singl
 msgstr "თუ ფაილი რამოდენიმე აუდიო არხს შეიცავს, ისინი ერთ ცალად რენდერდება"
 
 
-msgid "Speaker data-block for 3D audio speaker objects"
+# BFA - reworded, Blender: "Speaker data-block for 3D audio speaker objects"
+msgid "Speaker data´for 3D audio speaker objects"
 msgstr "სპიკერის მონაცემთა ბლოკი 3D აუდიო სპიკერის ობიექტებისთვის"
 
 
@@ -29558,7 +29641,8 @@ msgid "Playback pitch of the sound"
 msgstr "ბგერის სიმაღლე დაკვრის დროს"
 
 
-msgid "Sound data-block used by this speaker"
+# BFA - reworded, Blender: "Sound data-block used by this speaker"
+msgid "Sound data used by this speaker"
 msgstr "ხმის მონაცემთა ბლოკი გამოყენებული ამ სპიკერის მიერ"
 
 
@@ -29582,7 +29666,8 @@ msgid "Minimum volume, no matter how far away the object is"
 msgstr "ხმის მინიმალური სიმაღლე, მიუხედავად იმისა, თუ რამდენად შორსაა ობიექტი"
 
 
-msgid "Text data-block referencing an external or packed text file"
+# BFA - reworded, Blender: "Text data-block referencing an external or packed text file"
+msgid "Text file referencing an external or packed text file"
 msgstr "ტექსტის მონაცემთა ბლოკი, რომელიც მიუთითებს გარეთა, ან ჩაწყობილ ტექსტურ ფაილზე"
 
 
@@ -29703,7 +29788,8 @@ msgid "Run this text as a Python script on loading"
 msgstr "ეს ტექსტი ჩატვირთვისას გაუშვი Python-ის სკრიპტად"
 
 
-msgid "Texture data-block used by materials, lights, worlds and brushes"
+# BFA - reworded, Blender: "Texture data-block used by materials, lights, worlds and brushes"
+msgid "Texture used by materials, lights, worlds and brushes"
 msgstr "ტექსტურის მონაცემთა ბლოკი გამოყენებული მასალების, სინათლეების, სამყაროებისა და ფუნჯების მიერ"
 
 
@@ -30644,7 +30730,8 @@ msgid "Vector font for Text objects"
 msgstr "ვექტორული შრიფტი ტექსტური ობიექტებისთვის"
 
 
-msgid "Volume data-block for 3D volume grids"
+# BFA - reworded, Blender: "Volume data-block for 3D volume grids"
+msgid "Volume data for 3D volume grids"
 msgstr "მოცულობის მონაცემთა ბლოკი 3D მოცულობის ბადეებისთვის"
 
 
@@ -30652,7 +30739,8 @@ msgid "Volume display settings for 3D viewport"
 msgstr "მოცულობის ასახვის ანაწყობები 3D სარკმლისთვის"
 
 
-msgid "Volume file used by this Volume data-block"
+# BFA - reworded, Blender: "Volume file used by this Volume data-block"
+msgid "Volume file used by this Volume"
 msgstr "მოცულობის ფაილი გამოყენებული ამ მოცულობის მონაცემთა ბლოკის"
 
 
@@ -30757,7 +30845,8 @@ msgid "Window Manager"
 msgstr "ფანჯრის მენეჯერი"
 
 
-msgid "Window manager data-block defining open windows and other user interface data"
+# BFA - reworded, Blender: "Window manager data-block defining open windows and other user interface data"
+msgid "Window manager data defining open windows and other user interface data"
 msgstr "ფანჯრების მმართველი მონაცემთა ბლოკი, რომელიც განსაზღვრავს გახსნილ ფანჯრებსა და მომხმარებლის ინტერფეისის სხვა მონაცემებს"
 
 
@@ -31029,7 +31118,8 @@ msgid "Workspace"
 msgstr "სამუშაო სივრცე"
 
 
-msgid "Workspace data-block, defining the working environment for the user"
+# BFA - reworded, Blender: "Workspace data-block, defining the working environment for the user"
+msgid "Workspace data, defining the working environment for the user"
 msgstr "სამუშაო სივრცის მონაცემთა ბლოკი, რომელიც მომხმარებლისთვის სამუშაო გარემოს განსაზღვრავს"
 
 
@@ -31105,7 +31195,8 @@ msgid "Set the active scene and time based on the current scene strip"
 msgstr "დააყენე აქტიური სცენა და დრო მიმდინარე სცენის ლენტზე დაყრდნობით"
 
 
-msgid "World data-block describing the environment and ambient lighting of a scene"
+# BFA - reworded, Blender: "World data-block describing the environment and ambient lighting of a scene"
+msgid "World data describing the environment and ambient lighting of a scene"
 msgstr "სამყაროს მონაცემთა ბლოკი, რომელიც აღწერს სცენის გარემოსა და გარემომცველ განათებას"
 
 
@@ -31969,7 +32060,8 @@ msgid "True if this preview image has been modified by py script, and is no more
 msgstr "ჭეშმარიტია, თუ გადახედვის გამოსახულებს მოდიფიცირებულია py სკრიპტის მიერ და აღარ არის Blender-ის მიერ ავტომატურად წარმოქმნილი"
 
 
-msgid "Parameters defining how an Image data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how an Image data-block is used by another data-block"
+msgid "Parameters defining how an Image data is used by another data"
 msgstr "პარამეტრები, რომლებიც განსაზღვრავენ, როგორ უნდა იქნას გამოყენებული გამოსახულების მონაცემთა ბლოკი სხვა მონაცემთა ბლოკის მიერ"
 
 
@@ -35484,7 +35576,8 @@ msgid "ID Type"
 msgstr "ID ტიპი"
 
 
-msgid "Name of parent object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent object in specified data-block to which parenting happens"
+msgid "Name of parent object in specified data to which parenting happens"
 msgstr "იმ მშობელი ობიექტის სახელი მითითებულ მონაცემთა ბლოკში, რომლისადმიც ხდება დაქვემდებარება"
 
 
@@ -35492,7 +35585,8 @@ msgid "Sub Parent"
 msgstr "ქვემშობელი"
 
 
-msgid "Name of parent sub-object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent sub-object in specified data-block to which parenting happens"
+msgid "Name of parent sub-object in specified data to which parenting happens"
 msgstr "იმ მშობლის ქვეობიექტის სახელი მითითებულ მონაცემთა ბლოკში, რომლისადმიც ხდება დაქვემდებარება"
 
 
@@ -36017,7 +36111,8 @@ msgid "Link material to object or the object's data"
 msgstr "დააკავშირე მასალა ობიექტთან, ან ობიექტის მონაცემებთან"
 
 
-msgid "Material data-block used by this material slot"
+# BFA - reworded, Blender: "Material data-block used by this material slot"
+msgid "Material data used by this material slot"
 msgstr "ამ მასალის სლოტის მიერ გამოყენებული მასალის მონაცემთა ბლოკი"
 
 
@@ -37063,7 +37158,8 @@ msgid "Mesh Edge"
 msgstr "მეშის წიბო"
 
 
-msgid "Edge in a Mesh data-block"
+# BFA - reworded, Blender: "Edge in a Mesh data-block"
+msgid "Edge in a Mesh data"
 msgstr "წიბო მეშის მონაცემთა ბლოკში"
 
 
@@ -37111,7 +37207,8 @@ msgid "Mesh Loop"
 msgstr "მეშის მარყუჟი"
 
 
-msgid "Loop in a Mesh data-block"
+# BFA - reworded, Blender: "Loop in a Mesh data-block"
+msgid "Loop in a Mesh data"
 msgstr "მარყუჟი მეშის მონაცემთა ბლოკში"
 
 
@@ -37191,7 +37288,8 @@ msgid "Mesh Loop Triangle"
 msgstr "მეშის მარყუჟის სამკუთხედი"
 
 
-msgid "Tessellated triangle in a Mesh data-block"
+# BFA - reworded, Blender: "Tessellated triangle in a Mesh data-block"
+msgid "Tessellated triangle in a Mesh data"
 msgstr "მოზაიკური სამკუთხედი მეშის მონაცემთა ბლოკში"
 
 
@@ -37271,7 +37369,8 @@ msgid "Mesh Polygon"
 msgstr "მეშის მრავალკუთხედი"
 
 
-msgid "Polygon in a Mesh data-block"
+# BFA - reworded, Blender: "Polygon in a Mesh data-block"
+msgid "Polygon in a Mesh data"
 msgstr "მრავალკუთხედი მეშის მონაცემთა ბლოკში"
 
 
@@ -37555,7 +37654,8 @@ msgid "Metaball Element"
 msgstr "მეტაბურთის ელემენტი"
 
 
-msgid "Blobby element in a metaball data-block"
+# BFA - reworded, Blender: "Blobby element in a metaball data-block"
+msgid "Blobby element in a Metaball data"
 msgstr "დაბუშტული ელემენტი მეტაბურთის მონაცემთა ბლოკში"
 
 
@@ -44574,7 +44674,8 @@ msgid "Movie Clip User"
 msgstr "ვიდეოკლიპის მომხმარებელი"
 
 
-msgid "Parameters defining how a MovieClip data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how a MovieClip data-block is used by another data-block"
+msgid "Parameters defining how a MovieClip data is used by another data"
 msgstr "პარამეტრები, რომლებიც განსაზღვრავს, როგორ გამოიყენებოდეს ვიდეოკლიპის მონაცემთა ბლოკი სხვა მონაცემთა ბლოკის მიერ"
 
 
@@ -51180,7 +51281,8 @@ msgid "The attribute is associated with the object geometry, and its value varie
 msgstr "ატრიბუტი ასოცირებულია ობიექტის გეომეტრიასთან, და მისი მნიშვნელობა ვარირებს წვეროდან წვერომდე, ან ობიექტის მოცულობის ფარგლებში"
 
 
-msgid "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+# BFA - reworded, Blender: "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+msgid "The attribute is associated with the object or mesh data itself, and its value is uniform"
 msgstr "ატრიბუტი ასოცირებულია ობიექტთან, ან თავად მეშის მონაცემთა ბლოკთან, დან მისი მნიშვნელობა ერთგვაროვანია"
 
 
@@ -52603,7 +52705,8 @@ msgid "Internal IES file"
 msgstr "შიდა IES ფაილი"
 
 
-msgid "Whether the IES file is loaded from disk or from a text data-block"
+# BFA - reworded, Blender: "Whether the IES file is loaded from disk or from a text data-block"
+msgid "Whether the IES file is loaded from disk or from a text data"
 msgstr "IES ფაილი დისკიდან იტვირთება, თუ ტექსტურ მონაცემთა ბლოკიდან"
 
 
@@ -54860,8 +54963,9 @@ msgid "Export Keying Set to a Python script"
 msgstr "დააექსპორტირე ჩასოლვის ნაკრები Python-ის სკრიპტში"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "ჩასოლვის ნაკრების ექსპორტი..."
 
 
@@ -55275,7 +55379,10 @@ msgid "Console Banner"
 msgstr "კონსოლის ბანერი"
 
 
-msgid "Copy the console contents for use in a script"
+# BFA - reworded, Blender: "Copy the console contents for use in a script"
+msgid ""
+"Copy to Clipboard (as script\n"
+"Copy the console contents for use in a script"
 msgstr "დააკოპირე კონსოლის შიგთავსი სკრიპტში გამოსაყენებლად"
 
 
@@ -55828,7 +55935,8 @@ msgid "Duplicate Item"
 msgstr "საგნის დუბლირება"
 
 
-msgid "Make the active boolean socket a toggle for its parent panel"
+# BFA - reworded, Blender: "Make the active boolean socket a toggle for its parent panel"
+msgid "Make the selected active boolean input socket a top-level toggle located in its parent panel"
 msgstr "აქციე ბულის ტიპის აქტიური ბუდე თავისი მშობელი პანელის გადამრთველად"
 
 
@@ -56425,7 +56533,10 @@ msgid "Subdivision Set"
 msgstr "დაყოფის კომპლექტი"
 
 
-msgid "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+# BFA - reworded, Blender: "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+msgid ""
+"Converts normal object transforms to delta transforms.\n"
+"Any existing delta transform will be included as well"
 msgstr "დააკონვერტირე ჩვეულებრივი ობიექტის გარდაქმნები დელტა გარდაქმნებად, ყველა უკვე არსებული დელტა გარდაქმნაც აქ შედის"
 
 
@@ -57704,7 +57815,10 @@ msgid "Add Property"
 msgstr "თვისების დამატება"
 
 
-msgid "Jump to a different tab inside the properties editor"
+# BFA - reworded, Blender: "Jump to a different tab inside the properties editor"
+msgid ""
+"Change Context\n"
+"Jump to a different tab inside the properties editor"
 msgstr "გადახტი სხვა ჩანართზე თვისებათა რედაქტორში"
 
 
@@ -58066,7 +58180,10 @@ msgid "Set Keyframe Interpolation"
 msgstr "საკვანძო ფაზების ინტერპოლაცია"
 
 
-msgid "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+# BFA - reworded, Blender: "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgid ""
+"Keyframe Interpolation\n"
+"Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 msgstr "დააყნე ინტერპოლაციის რეჟიმი F-წირის სეგმენტებისთვის, დაწყებული მონიშნული საკვანძო ფაზებიდან"
 
 
@@ -58154,7 +58271,8 @@ msgid "Flip times of selected keyframes using the first selected marker as the r
 msgstr "შეატრიალე მონიშნულ საკვანძო ფაზათა დროები პირველი მონიშნული მარკერის გამოყენებით მითითების წერტილად"
 
 
-msgid "By Values Over Zero Value"
+# BFA - reworded, Blender: "By Values Over Zero Value"
+msgid "By Values Over Value=0"
 msgstr "მნიშვნელობების მიხედვით ნულოვანი მნიშვნელობის მიღმა"
 
 
@@ -58541,12 +58659,14 @@ msgid "Store this action in the NLA stack as a non-contributing strip for later 
 msgstr "შეინახე ეს ქმედება NLA სტეკში, როგორც უწვლილო ლენტი მოგვიანებით გამოსაყენებლად და შექმენი ახალი ქმედება"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "ქმედების კავშირის გაწყვეტა"
 
 
-msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+# BFA - reworded, Blender: "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
 msgstr "გაწყვიტე ამ ქმედების კავშირი ქმედების აქტიურ სლოტთან (და/ან გამოდი გადაკეთების რეჟიმიდან)"
 
 
@@ -58563,7 +58683,8 @@ msgid "Frame All"
 msgstr "ყველაფრის კადრში მოქცევა"
 
 
-msgid "Reset viewable area to show full keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show full keyframe range"
+msgid "Zooms in or out to fit the display to show full keyframe range"
 msgstr "დააბრუნე დათვალიერებადი არე საწყის მდგომარეობაში, რათა გამოაჩინო საკვანძო ფაზების დიაპაზონი"
 
 
@@ -58581,7 +58702,8 @@ msgid "Frame Selected"
 msgstr "მონიშნულის მოქცევა ჩარჩოში"
 
 
-msgid "Reset viewable area to show selected keyframes range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframes range"
+msgid "Zooms in or out to fit the display to show selected keyframes range"
 msgstr "დააბრუნე დათვალიერებადი არე, რათა გამოაჩინო საკვანძო ფაზების მონიშნული დიაპაზონი"
 
 
@@ -58624,7 +58746,8 @@ msgid "Frame Channel Under Cursor"
 msgstr "კადრის არხი კურსორის ქვეშ"
 
 
-msgid "Reset viewable area to show the channel under the cursor"
+# BFA - reworded, Blender: "Reset viewable area to show the channel under the cursor"
+msgid "Zooms in or out to fit the display to show the channel under the cursor"
 msgstr "დააბრუნე დათვალიერებადი არე საწყის მდგომარეობაში, რათა გამოაჩინო კურსორის ქვეშ მდებარე არხი"
 
 
@@ -58702,7 +58825,8 @@ msgid "Remove Empty Animation Data"
 msgstr "ცარიელი ანიმაციის მონაცემების მოცილება"
 
 
-msgid "Delete all empty animation data containers from visible data-blocks"
+# BFA - reworded, Blender: "Delete all empty animation data containers from visible data-blocks"
+msgid "Delete all empty animation data containers from visible data"
 msgstr "წაშალე ცარიელი ანიმაციის მონაცემთა ყველა კონტეინერი მონაცემთა ხილული ბლოკებიდან"
 
 
@@ -58893,7 +59017,8 @@ msgid "Frame Selected Channels"
 msgstr "მონიშნული არხების კადრში მოქცევა"
 
 
-msgid "Reset viewable area to show the selected channels"
+# BFA - reworded, Blender: "Reset viewable area to show the selected channels"
+msgid "Zooms in or out to fit the display of the selected channels"
 msgstr "დაუბრუნე გადახედვად არეს პირველსახე, რათა აჩვენოს მონიშნული არხები"
 
 
@@ -59051,7 +59176,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "საკვანძო ფაზის ჩასმა (ღილაკები)"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "ჩასვი საკვანძო ფაზა მიმდინარე UI-აქტიური თვისებისთვის"
 
 
@@ -59777,7 +59903,8 @@ msgid "Hide Selected"
 msgstr "მონიშნულის დამალვა"
 
 
-msgid "Tag selected bones to not be visible in Edit Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Edit Mode"
+msgid "Hide selected bones in Edit Mode"
 msgstr "დაადე მონიშნულ ძვლებს ტეგი, რომ რედაქტირების რეჟიმში უხილავი იყოს"
 
 
@@ -60571,7 +60698,8 @@ msgid "Save as Brush Asset"
 msgstr "ფუნჯის აქტივად შენახვა"
 
 
-msgid "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+# BFA - reworded, Blender: "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+msgid "Duplicates the active brush asset, saves it into the default asset library, and make it the active brush"
 msgstr "შეინახე აქტიური ფუნჯის აქტივის ასლი აქტივთა ნაგულისხმებ ბიბლიოთეკაში და აქციე აქტიურ ფუნჯად"
 
 
@@ -60712,7 +60840,8 @@ msgid "Toggle Pin ID"
 msgstr "სამაგრის ID-ს გადართვა"
 
 
-msgid "Keep the current data-block displayed"
+# BFA - reworded, Blender: "Keep the current data-block displayed"
+msgid "Keep the current data displayed"
 msgstr "შეინარჩუნე მიმდინარე მონაცემთა ბლოკის ასახვა"
 
 
@@ -62919,7 +63048,8 @@ msgid "Spline type"
 msgstr "სფლაინის ტიპი"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "დამალე მონიშნული/მოუნიშნავი სამართავი წერტილები"
 
 
@@ -65372,7 +65502,8 @@ msgid "Pack Linked Libraries"
 msgstr "დაკავშირებული ბიბლიოთეკების შეფუთვა"
 
 
-msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+# BFA - reworded, Blender: "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
 msgstr "სხვა .blend ფაილებიდან ბმულით მომაგრებული ყველა მონაცემთა ბლოკის შენახვა მიმდინარე .blend ფაილში. ბიბლიოთეკების ბმულები ინახება, რომ დაკავშირებული მონაცემთა ბლოკების კვლავ ამოლაგება შეიძლებოდეს"
 
 
@@ -65598,7 +65729,8 @@ msgid "Unpack Linked Libraries"
 msgstr "დაკავშირებული ბიბლიოთეკების ამოლაგება"
 
 
-msgid "Restore all packed linked data-blocks to their original locations"
+# BFA - reworded, Blender: "Restore all packed linked data-blocks to their original locations"
+msgid "Restore all packed linked data  to their original locations"
 msgstr "ყველა შეფუთული, ბმულით დაკავშირებული მონაცემთა ბლოკის აღდგენა თავის ორიგინალ მდებარეობაზე"
 
 
@@ -65988,7 +66120,8 @@ msgid "Unlink"
 msgstr "კავშირის წყვეტა"
 
 
-msgid "Unlink active font data-block"
+# BFA - reworded, Blender: "Unlink active font data-block"
+msgid "Remove active font"
 msgstr "გაუწყვიტე კავშირი აქტიური შრიფტის მონაცემთა ბლოკს"
 
 
@@ -66250,16 +66383,19 @@ msgid "Annotation Add New"
 msgstr "ახალი ანოტაციის დამატება"
 
 
-msgid "Add new Annotation data-block"
+# BFA - reworded, Blender: "Add new Annotation data-block"
+msgid "Add new Annotation data"
 msgstr "დაამატე ახალი ანოტაციის მონაცემთა ბლოკი"
 
 
+# BFA - reworded, Blender: "Annotation Unlink"
 msgctxt "Operator"
-msgid "Annotation Unlink"
+msgid "Remove Annotation"
 msgstr "ანოტაციის კავშირის წყვეტა"
 
 
-msgid "Unlink active Annotation data-block"
+# BFA - reworded, Blender: "Unlink active Annotation data-block"
+msgid "Remove the active Annotation"
 msgstr "გაწყვიტე აქტიური ანოტაციის მონაცემთა ბლოკთან ბმულიანი კავშირი"
 
 
@@ -66268,7 +66404,8 @@ msgid "Add New Annotation Layer"
 msgstr "ახალი ანოტაციის შრის დამატება"
 
 
-msgid "Add new Annotation layer or note for the active data-block"
+# BFA - reworded, Blender: "Add new Annotation layer or note for the active data-block"
+msgid "Add new Annotation layer or note for the active data"
 msgstr "დაამატე ახალი ანოტაციის შრე, ან შენიშვნა აქტიური მონაცემთა ბლოკისათვის"
 
 
@@ -66797,7 +66934,8 @@ msgid "Defines which keys to use as slope and how much to blend towards them"
 msgstr "მიუთითებს, რომელი სოლები იქნას გამოყენებული დაქანებად და რამდენად მოხდეს მათკენ შეზავება"
 
 
-msgid "By Times Over Zero Time"
+# BFA - reworded, Blender: "By Times Over Zero Time"
+msgid "By Times Over Time=0"
 msgstr "დროების მიხედვით ნულოვანი დროის მიღმა"
 
 
@@ -67124,7 +67262,8 @@ msgid "How far in frames to offset the animation"
 msgstr "რამდენად შორს ააცდინოს კადრებში ანიმაცია"
 
 
-msgid "Reset viewable area to show selected keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframe range"
+msgid "Zooms in or out to fit the display to show selected keyframe range"
 msgstr "დააბრუნე დათვალიერებადი არე მონიშნული საკვანძო ფაზების დიაპაზონის ჩვენებაზე"
 
 
@@ -67298,7 +67437,8 @@ msgid "Rounded"
 msgstr "მომრგვალებული"
 
 
-msgid "Set as default rounded"
+# BFA - reworded, Blender: "Set as default rounded"
+msgid "Set as default rounded caps"
 msgstr "დააყენე ნაგულისხმებ მომრგვალებულად"
 
 
@@ -69044,7 +69184,8 @@ msgid "Clear Render Region"
 msgstr "სარენდერო მონაკვეთის გასუფთავება"
 
 
-msgid "Clear the boundaries of the render region and disable render region"
+# BFA - reworded, Blender: "Clear the boundaries of the render region and disable render region"
+msgid "Removes an existing Render Region rectangle"
 msgstr "გაასუფთავე სარენდერო მონაკვეთის საზღვრები და გამორთე სარენდერო მონაკვეთი"
 
 
@@ -69470,7 +69611,8 @@ msgid "Image height"
 msgstr "გამოსახულების სიმაღლე"
 
 
-msgid "Image data-block name"
+# BFA - reworded, Blender: "Image data-block name"
+msgid "Image name"
 msgstr "გამოსახულების მონაცემთა ბლოკის სახელი"
 
 
@@ -69676,7 +69818,8 @@ msgid "Save As Image"
 msgstr "გამოსახულებად შენახვა"
 
 
-msgid "Save the image with another name and/or settings"
+# BFA - reworded, Blender: "Save the image with another name and/or settings"
+msgid "Saves the image with another name and/or settings"
 msgstr "შეინახე გამოსახულება სხვა სახელით და/ან ანაწყობებით"
 
 
@@ -69768,7 +69911,8 @@ msgid "Image Name"
 msgstr "გამოსახულების სახელი"
 
 
-msgid "Image data-block name to unpack"
+# BFA - reworded, Blender: "Image data-block name to unpack"
+msgid "Image name to unpack"
 msgstr "ამოსალაგებელი გამოსახულების მონაცემთა ბლოკის სახელი"
 
 
@@ -70515,7 +70659,8 @@ msgid "Clear Restrict View"
 msgstr "ხედის შეზღუდვის გასუფთავება"
 
 
-msgid "Reveal temporarily hidden mask layers"
+# BFA - reworded, Blender: "Reveal temporarily hidden mask layers"
+msgid "Reveals the hidden layer(s)"
 msgstr "გამოაჩინე დროებით დამალული ნიღბის შრეები"
 
 
@@ -70524,7 +70669,8 @@ msgid "Set Restrict View"
 msgstr "ხედის შეზღუდვის დაყენება"
 
 
-msgid "Temporarily hide mask layers"
+# BFA - reworded, Blender: "Temporarily hide mask layers"
+msgid "Hide the mask layer"
 msgstr "დროებით დამალე ნიღბის შრეები"
 
 
@@ -70767,7 +70913,8 @@ msgid "Duplicate Metaball Elements"
 msgstr "მეტაბურთის ელემენტთა დუბლიკაცია"
 
 
-msgid "Hide (un)selected metaball element(s)"
+# BFA - reworded, Blender: "Hide (un)selected metaball element(s)"
+msgid "Hide selected metaball element(s)"
 msgstr "დამალე მონიშნული/მოუნიშნავი მეტაბურთის ელემენტ(ებ)ი"
 
 
@@ -71875,7 +72022,8 @@ msgid "Flips the tessellation of selected quads"
 msgstr "ატრიალებს მონიშნული ოთხკუთხედების დამოზაიკება"
 
 
-msgid "Hide (un)selected vertices, edges or faces"
+# BFA - reworded, Blender: "Hide (un)selected vertices, edges or faces"
+msgid "Hide selected vertices, edges or faces"
 msgstr "დამალე მონიშნული/მოუნიშნავი წვეროები, წიბოები და წახნაგები"
 
 
@@ -72268,7 +72416,8 @@ msgid "Mark Sharp"
 msgstr "მკვეთრად აღნიშვნა"
 
 
-msgid "(Un)mark selected edges as sharp"
+# BFA - reworded, Blender: "(Un)mark selected edges as sharp"
+msgid "Mark selected edges as sharp"
 msgstr "აღნიშნე მონიშნული წიბოები/გააუქმე მონიშნული წიბოების აღნიშვნა მკვეთრად"
 
 
@@ -72643,7 +72792,8 @@ msgid "Transform at Cursor Move"
 msgstr "გარდაქმნა კურსორის გადატანასთან"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "ააგე წრის მეში"
 
 
@@ -72676,7 +72826,8 @@ msgid "Add Cone"
 msgstr "კონუსის დამატება"
 
 
-msgid "Construct a conic mesh"
+# BFA - reworded, Blender: "Construct a conic mesh"
+msgid "Add a conic mesh"
 msgstr "ააგე კონუსისებური მეში"
 
 
@@ -72697,7 +72848,8 @@ msgid "Add Cube"
 msgstr "კუბის დამატება"
 
 
-msgid "Construct a cube mesh that consists of six square faces"
+# BFA - reworded, Blender: "Construct a cube mesh that consists of six square faces"
+msgid "Add a cube mesh that consists of six square faces"
 msgstr "ააგე კუბის მეში, რომელიც ექვსი კვადრატული წახნაგისგან შედგება"
 
 
@@ -72710,7 +72862,8 @@ msgid "Add Cylinder"
 msgstr "ცილინდრის დამატება"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "ააგე ცილინდრის მეში"
 
 
@@ -72723,7 +72876,8 @@ msgid "Add Grid"
 msgstr "ბადის დამატება"
 
 
-msgid "Construct a subdivided plane mesh"
+# BFA - reworded, Blender: "Construct a subdivided plane mesh"
+msgid "Add a subdivided plane mesh"
 msgstr "ააგე დაყოფილი სიბრტყის მეში"
 
 
@@ -72740,7 +72894,8 @@ msgid "Add Ico Sphere"
 msgstr "იკო სფეროს დამატება"
 
 
-msgid "Construct a spherical mesh that consists of equally sized triangles"
+# BFA - reworded, Blender: "Construct a spherical mesh that consists of equally sized triangles"
+msgid "Add a spherical mesh that consists of equally sized triangles"
 msgstr "ააგე სფერული მეში, რომელიც ტოლი სამკუთხედებისგან შედგება"
 
 
@@ -72749,7 +72904,8 @@ msgid "Add Monkey"
 msgstr "მაიმუნის დამატება"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "სჲუზენის მეშის აგება"
 
 
@@ -72758,7 +72914,8 @@ msgid "Add Plane"
 msgstr "სიბრტყის დამატება"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "ააგე შევსებული სიბრტყის მეში 4 წვეროთი"
 
 
@@ -74356,11 +74513,13 @@ msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get t
 msgstr "გათიშე 'სოლო' ნებისმიერ NLA ბილიკზე მას შემდეგ, რაც გამოხვალ გადაკეთების რეჟიმიდან, რომ ყველაფერი ნორმალურ მდგომარეობაში დაბრუნდეს"
 
 
-msgid "Reset viewable area to show full strips range"
+# BFA - reworded, Blender: "Reset viewable area to show full strips range"
+msgid "Zooms in or out to fit the display to show full strips range"
 msgstr "დააბრუნე დათვალიერებადი არე საწყის მდგომარეობაში, რომ აჩვენოს ლენტების მთელი დიაპაზონი"
 
 
-msgid "Reset viewable area to show selected strips range"
+# BFA - reworded, Blender: "Reset viewable area to show selected strips range"
+msgid "Zooms in or out to fit the display to show selected strips range"
 msgstr "დააბრუნე დათვალიერებადი არე საწყის მდგომარეობაში, რომ აჩვენოს მონიშნული ლენტების დიაპაზონი"
 
 
@@ -74701,11 +74860,13 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "გაასუფთავე საზღვრები მაჩვენებლის ოპერაციებისთვის"
 
 
+# BFA - reworded, Blender: "Copy the selected nodes to the internal clipboard"
 msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "დააკოპირე მონიშნული კვანძები შიდა გაცვლის ბუფერში"
 
 
-msgid "Paste nodes from the internal clipboard to the active node tree"
+# BFA - reworded, Blender: "Paste nodes from the internal clipboard to the active node tree"
+msgid "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"
 msgstr "ასვი კვანძები შიდა გაცვლის ბუფერიდან აქტიურ კვანძოვან ხეში"
 
 
@@ -74769,11 +74930,13 @@ msgid "Remove selected nodes"
 msgstr "მოაცილე მონიშნული კვანძები"
 
 
+# BFA - reworded, Blender: "Delete with Copy and Reconnect"
 msgctxt "Operator"
 msgid "Cut: Delete with Copy and Reconnect"
 msgstr "წაშალე დაკოპირებითა და ხელახალი დაკავშირებით"
 
 
+# BFA - reworded, Blender: "Copy nodes to clipboard, remove and reconnect them."
 msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
 msgstr "გადააკოპირე კვანძები გაცვლის ბუფერში, წაშალე და ხელახლა დააკავშირე."
 
@@ -76071,12 +76234,14 @@ msgid "Delete the selected local overrides and relink their usages to the linked
 msgstr "წაშალე მონიშნული ადგილობრივი უკუგდებები და ხელახლა დააკავშირე მათი გამოყენებები ბმულით დაკავშირებულ მონაცემთა ბლოკენს, სადაც შესაძლებელია, ანდა დააბრუნე ისინი საწყის მდგომარეობაში და აღნიშნე, როგორც არარედაქტირებადი"
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "კოლექციის დამატება"
 
 
-msgid "Add an object to a new collection"
+# BFA - reworded, Blender: "Add an object to a new collection"
+msgid "Adds the selected object to a new collection"
 msgstr "დაამატე ობიექტი ახალ კოლექციაში"
 
 
@@ -76597,7 +76762,8 @@ msgid "New Geometry Node Group"
 msgstr "გეომეტრიის კვანძთა ახალი ჯგუფი"
 
 
-msgid "Duplicate the active geometry node group and assign it to the active modifier"
+# BFA - reworded, Blender: "Duplicate the active geometry node group and assign it to the active modifier"
+msgid "Duplicates the active geometry node group and assigns it to the active modifier"
 msgstr "შექმენი გეომეტრიის კვანძთა აქტიური ჯგუფის დუბლიკატი და მიაკუთვნე აქტიურ მოდიფიკატორს"
 
 
@@ -76645,7 +76811,10 @@ msgid "Blank"
 msgstr "ცარიელი"
 
 
-msgid "Create an empty Grease Pencil object"
+# BFA - reworded, Blender: "Create an empty Grease Pencil object"
+msgid ""
+"Create an empty grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "შექმენი გრიზ ფენსილის ცარიელი ობიექტი"
 
 
@@ -76663,7 +76832,10 @@ msgid "Monkey"
 msgstr "მაიმუნი"
 
 
-msgid "Construct a Suzanne Grease Pencil object"
+# BFA - reworded, Blender: "Construct a Suzanne Grease Pencil object"
+msgid ""
+"Construct a Monkey names Suzanne grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "სჲუზენის გრიზ ფენსილის ობიექტის აგება"
 
 
@@ -76798,7 +76970,8 @@ msgid "Hide Objects"
 msgstr "ობიექტების დამალვა"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "დროებით დამალე ობიექტები სარკმელში"
 
 
@@ -77289,7 +77462,8 @@ msgid "Make Local"
 msgstr "გალოკალურება"
 
 
-msgid "Make library linked data-blocks local to this file"
+# BFA - reworded, Blender: "Make library linked data-blocks local to this file"
+msgid "Make library linked data local to this file"
 msgstr "გახადე ბიბლიოთეკასთან დაკავშირებული მონაცემთა ბლოკები ლოკალური ამ ფაილისთვის"
 
 
@@ -77330,7 +77504,8 @@ msgid "Make object animation data local to each object"
 msgstr "გახადე ობიექტის ანიმაციის მონაცემები ლოკალური ყოველი ობიექტისთვის"
 
 
-msgid "Make materials local to each data-block"
+# BFA - reworded, Blender: "Make materials local to each data-block"
+msgid "Make materials local to each data"
 msgstr "გაალოკალურე მასალები ყოველი მონაცემთა ბლოკისთვის"
 
 
@@ -77949,11 +78124,13 @@ msgid "Current Transform"
 msgstr "მიმდინარე გარდაქმნა"
 
 
-msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+# BFA - reworded, Blender: "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgid "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled"
 msgstr "ჩასვი მხოლოდ ამჟამინდელ მნიშვნელობებში, ანიმაციის მონაცემების მანიპულირება მხოლოდ იმ შემთხვევაში, თუ ავტო-ჩასოლვა ჩართულია"
 
 
-msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+# BFA - reworded, Blender: "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgid "Paste transform onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "ჩასვი კადრებში, რომლებსაც აქვთ მონიშნული სოლი, ამ კადრებზე ახალი სოლების შექმნის შესაძლებლობით"
 
 
@@ -77961,7 +78138,8 @@ msgid "Bake on Key Range"
 msgstr "სოლების დიაპაზონზე ცხობა"
 
 
-msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+# BFA - reworded, Blender: "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgid "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "ჩასვი პირველსა და უკანასკნელი მონიშნულ სოლებს შორის ყველა კადრზე, საჭიროების შემთხვევაში ახალი საკვანძო ფაზების შექმნით"
 
 
@@ -78350,7 +78528,8 @@ msgid "Deselect objects at the boundaries of parent/child relationships"
 msgstr "გააუქმე იმ ობიექტების მონიშვნა, რომლებიც მშობელი/შვილობილი ტიპის ურთიერთობის ზღვართან იმყოფება"
 
 
-msgid "Select all visible objects that are linked"
+# BFA - reworded, Blender: "Select all visible objects that are linked"
+msgid "Select all visible objects that are linked to the active element"
 msgstr "მონიშნე ყველა მიბმული ხილული ობიექტი"
 
 
@@ -79879,7 +80058,8 @@ msgid "Outliner ID Data Copy"
 msgstr "მონახაზის ID მონაცემთა ასლი"
 
 
-msgid "Copy the selected data-blocks to the internal clipboard"
+# BFA - reworded, Blender: "Copy the selected data-blocks to the internal clipboard"
+msgid "Selected data are copied to the clipboard"
 msgstr "გადააკოპირე მონიშნული მონაცემთა ბლოკები შიდა გაცვლის ბუფერში"
 
 
@@ -79938,7 +80118,8 @@ msgid "Add Fake User"
 msgstr "ყალბი მომხმარებლის დამატება"
 
 
-msgid "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+# BFA - reworded, Blender: "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+msgid "Ensure data gets saved even if it isn't in use (e.g. for motion and material libraries)"
 msgstr "დარწმუნდი, რომ მონაცემთა ბლოკი შეინახება მაშინაც კი, თუ ის არ გამოიყენება (მაგ.: მოძრაობისა და მასალების ბიბლიოთეკებისთვის)"
 
 
@@ -79950,7 +80131,8 @@ msgid "Rename"
 msgstr "სახელის გადარქმევა"
 
 
-msgid "Embed data-blocks into the .blend file"
+# BFA - reworded, Blender: "Embed data-blocks into the .blend file"
+msgid "Embed data into the .blend file"
 msgstr "ჩააშენე მონაცემთა ბლოკები .blend ფაილში"
 
 
@@ -79959,7 +80141,8 @@ msgid "Outliner ID Data Paste"
 msgstr "მონახაზის ID მონაცემთა ჩასმა"
 
 
-msgid "Paste data-blocks from the internal clipboard"
+# BFA - reworded, Blender: "Paste data-blocks from the internal clipboard"
+msgid "Data from the clipboard are pasted"
 msgstr "ჩასვი მონაცემთა ბლოკები შიდა გაცვლის ბუფერიდან"
 
 
@@ -80247,7 +80430,8 @@ msgid "Purge All"
 msgstr "ყველას გაწმენდა"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file"
+# BFA - reworded, Blender: "Clear all orphaned data-blocks without any users from the file"
+msgid "Clear all orphaned data without any users from the file"
 msgstr "ფაილის გასუფთავება ყველა გამოუყენებელი მონაცემთა ბლოკისაგან, რომელსაც მომხმარებელი არ გააჩნია"
 
 
@@ -80398,7 +80582,8 @@ msgid "Show/Hide One Level"
 msgstr "ერთი დონის ჩვენება/დამალვა"
 
 
-msgid "Expand/collapse all entries by one level"
+# BFA - reworded, Blender: "Expand/collapse all entries by one level"
+msgid "Expand/Collapse all entries by one level"
 msgstr "ჩამოშალე/აკეცე ყველა ჩანაწერი თითო დონით"
 
 
@@ -80441,7 +80626,8 @@ msgid "Slide Paint Curve Point"
 msgstr "გააცურე დასახატი წირის წერტილი"
 
 
-msgid "Select and slide paint curve point"
+# BFA - reworded, Blender: "Select and slide paint curve point"
+msgid "Select and slide a paint curve point"
 msgstr "მონიშნე და გააცურე დასახატი წირის წერტილი"
 
 
@@ -80450,7 +80636,8 @@ msgid "Place Cursor"
 msgstr "კურსორის მოთავსება"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "მოათავსე კურსორი"
 
 
@@ -80463,7 +80650,8 @@ msgid "Remove Paint Curve Point"
 msgstr "მოაშორე დასახატი წირის წერტილი"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "წირის დახაზვა"
 
 
@@ -80966,7 +81154,7 @@ msgstr "დაარეგულირე წვეროს ფერის ე
 
 
 msgctxt "Operator"
-msgid "Set Vertex Color"
+msgid "Set Vertex Colors"
 msgstr "წვეროთა ფერების დაყენება"
 
 
@@ -81183,7 +81371,8 @@ msgid "Add New Palette"
 msgstr "ახალი პალიტრის დამატება"
 
 
-msgid "Add new palette"
+# BFA - reworded, Blender: "Add new palette"
+msgid "Add a new palette of indexed colors"
 msgstr "დაამატე ახალი პალიტრა"
 
 
@@ -81662,6 +81851,7 @@ msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Brow
 msgstr "შექმენი ახალი პოზის აქტივი გაცვლის ბუფერში, რათა აქტივების ბრაუზერში ჩაისვას"
 
 
+# BFA - reworded, Blender: "Create Pose Asset..."
 msgctxt "Operator"
 msgid "Create Pose Asset"
 msgstr "პოზის აქტივის შექმნა..."
@@ -81798,7 +81988,7 @@ msgstr "გახადე ამჟამინდელი პოზა უძ
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "პოზის გამასაშუალოებელი"
 
 
@@ -81865,7 +82055,8 @@ msgid "Copy the current pose of the selected bones to the internal clipboard"
 msgstr "გადააკოპირე მონიშნული ძვლების ამჟამინდელი პოზა შიდა გაცვლის ბუფერში"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "გაუკეთე მონიშნულ ძვლებს აღნიშვნა, რომ პოზირების რეჟიმში არ გამოჩნდნენ"
 
 
@@ -82031,7 +82222,7 @@ msgstr "გაავრცელე პოზა ყველა საკვა
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown (Legacy)"
+msgid "Push Pose from Breakdown"
 msgstr "წაწეული პოზა შუა პოზისგან"
 
 
@@ -82049,7 +82240,7 @@ msgstr "შეატრიალე კვატერნიონის მნ�
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown (Legacy)"
+msgid "Relax Pose to Breakdown"
 msgstr "პოზის მიახლოვება შუალასთან"
 
 
@@ -83991,7 +84182,8 @@ msgid "Reload Scripts"
 msgstr "სკრიპტების ხელახლა ჩატვირთვა"
 
 
-msgid "Reload scripts"
+# BFA - reworded, Blender: "Reload scripts"
+msgid "Reload all Python Scripts, including the UI"
 msgstr "სკრიპტების ხელახლა ჩატვირთვა"
 
 
@@ -86121,7 +86313,8 @@ msgid "Delete Retiming Keys"
 msgstr "დროში ხელახლა განაწილების სოლების წაშლა"
 
 
-msgid "Delete selected retiming keys from the sequencer"
+# BFA - reworded, Blender: "Delete selected retiming keys from the sequencer"
+msgid "Delete selected retiming keyframes from the sequencer"
 msgstr "წაშალე დროში ხელახლა განაწილების მონიშნული სოლები სეკვენსერიდან"
 
 
@@ -86930,12 +87123,14 @@ msgid "Update the audio animation cache"
 msgstr "განაახლე აუდიო ანიმაციის ქეში"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "მიქსდაუნი"
 
 
-msgid "Mix the scene's audio to a sound file"
+# BFA - reworded, Blender: "Mix the scene's audio to a sound file"
+msgid "Mixdown and export the scene's audio to a sound file"
 msgstr "სცენის აუდიოს მიქშირება ხმოვან ფაილში"
 
 
@@ -87364,11 +87559,13 @@ msgid "Jump"
 msgstr "გადახტომა"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "გადაახტუნე კურსორი ხაზთან"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "გადასახტომი ხაზის ნომერი"
 
 
@@ -87433,7 +87630,8 @@ msgid "New Text"
 msgstr "ახალი ტექსტი"
 
 
-msgid "Create a new text data-block"
+# BFA - reworded, Blender: "Create a new text data-block"
+msgid "Create a new text file"
 msgstr "შექმენი ახალი ტექსტის მონაცემთა ბლოკი"
 
 
@@ -87442,7 +87640,8 @@ msgid "Open Text"
 msgstr "ტექსტის გახსნა"
 
 
-msgid "Open a new text data-block"
+# BFA - reworded, Blender: "Open a new text data-block"
+msgid "Open a new text file"
 msgstr "გახსენი ტექსტის მონაცემთა ბლოკი"
 
 
@@ -87468,7 +87667,8 @@ msgid "Reload"
 msgstr "ხელახლა ჩატვირთვა"
 
 
-msgid "Reload active text data-block from its file"
+# BFA - reworded, Blender: "Reload active text data-block from its file"
+msgid "Reload active text file"
 msgstr "ხელახლა ჩატვირთე ტექსტის მონაცემთა ბლოკი თავისი ფაილიდან"
 
 
@@ -87529,7 +87729,8 @@ msgid "Save"
 msgstr "შენახვა"
 
 
-msgid "Save active text data-block"
+# BFA - reworded, Blender: "Save active text data-block"
+msgid "Save active text file"
 msgstr "შეინახე აქტიური ტექსტის მონაცემთა ბლოკი"
 
 
@@ -87583,7 +87784,8 @@ msgid "To 3D Object"
 msgstr "3D ობიექტად"
 
 
-msgid "Create 3D text object from active text data-block"
+# BFA - reworded, Blender: "Create 3D text object from active text data-block"
+msgid "Create 3D text object from active text data"
 msgstr "შექმენი 3D ტექსტის ობიექტი აქტიური ტექსტის მონაცემთა ბლოკისგან"
 
 
@@ -87599,7 +87801,8 @@ msgid "Unindent selected text"
 msgstr "გამოწიე მონიშნული ტექსტი"
 
 
-msgid "Unlink active text data-block"
+# BFA - reworded, Blender: "Unlink active text data-block"
+msgid "Remove active text"
 msgstr "მოხსენი აქტიური ტექსტის მონაცემთა ბლოკის მაკავშირებელი ბმული"
 
 
@@ -87863,7 +88066,8 @@ msgid "Transform from Gizmo"
 msgstr "გარდაქმნა გიზმოსგან"
 
 
-msgid "Mirror selected items around one or more axes"
+# BFA - reworded, Blender: "Mirror selected items around one or more axes"
+msgid "Mirror selected items"
 msgstr "გააკეთე მონიშნული საგნების სარკისებური ანარეკლი ერთ, ან მეტ ღერძზე"
 
 
@@ -88384,12 +88588,14 @@ msgid "Material Mode"
 msgstr "მასალის რეჟიმი"
 
 
+# BFA - reworded, Blender: "Eyedropper Data-Block"
 msgctxt "Operator"
-msgid "Eyedropper Data-Block"
+msgid "Eyedropper Data"
 msgstr "პიპეტის მონაცემთა ბლოკი"
 
 
-msgid "Sample a data-block from the 3D View to store in a property"
+# BFA - reworded, Blender: "Sample a data-block from the 3D View to store in a property"
+msgid "Sample a data from the 3D View to store in a property"
 msgstr "აიღე მონაცემთა ბლოკის ნიმუში 3D ხედიდან და შეინახე თვისებაში"
 
 
@@ -89763,8 +89969,9 @@ msgid "Amount of Faces in Island"
 msgstr "წახნაგების რაოდენობა კუნძულში"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "გახლეჩილის მონიშვნა"
 
 
@@ -90162,7 +90369,8 @@ msgid "Position the scene camera at the selected landmark"
 msgstr "მოათავსე სცენის კამერა მონიშნულ ორიენტირთან"
 
 
-msgid "Clear the boundaries of the border render and disable border render"
+# BFA - reworded, Blender: "Clear the boundaries of the border render and disable border render"
+msgid "Removes an existing Render Region rectangle, clearning the boundaries of the render border"
 msgstr "გაასუფთავე საზღვრული რენდერის საზღვრები და გამორთე საზღვრული რენდერი"
 
 
@@ -91279,7 +91487,8 @@ msgid "Create instances for object data which are not referenced by any objects"
 msgstr "შექმენი ინსტანციები ობიექტთა მონაცემებისთვის, რომლებზეც მითითება არ აქვს არც ერთ ობიექტს"
 
 
-msgid "Link the objects or data-blocks rather than appending"
+# BFA - reworded, Blender: "Link the objects or data-blocks rather than appending"
+msgid "Link the objects or data rather than appending"
 msgstr "დართვის მაგივრად ბმულით დააკავშირე მონაცემთა ბლოკები"
 
 
@@ -92216,7 +92425,8 @@ msgid "Clear Data-Block Previews"
 msgstr "მონაცემთა ბლოკების გადახედვების გასუფთავება"
 
 
-msgid "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+# BFA - reworded, Blender: "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+msgid "Clear data previews (only for some types like objects, materials, textures, etc.)"
 msgstr "გაასუფთავე მონაცემთა ბლოკების გადახედვები (მხოლოდ ზოგიერთი ტიპისთვის, როგორიცაა ობიექტები, მასალები, ტექსტურები და სხვ.)"
 
 
@@ -92224,7 +92434,8 @@ msgid "Data-Block Type"
 msgstr "მონაცემთა ბლოკის ტიპი"
 
 
-msgid "Which data-block previews to clear"
+# BFA - reworded, Blender: "Which data-block previews to clear"
+msgid "Which data previews to clear"
 msgstr "მონაცემთა ბლოკების რომელი გადახედვები გასუფთავდეს"
 
 
@@ -92248,12 +92459,14 @@ msgid "Clear previews for materials, lights, worlds, textures and images"
 msgstr "გაასუფთავე გადახედვები მასალების, სინათლეების, სამყაროების, ტექსტურებისა და გამოსახულებებისთვის"
 
 
+# BFA - reworded, Blender: "Refresh Data-Block Previews"
 msgctxt "Operator"
-msgid "Refresh Data-Block Previews"
+msgid "Refresh Data Previews"
 msgstr "მონაცემთა ბლოკების გადახედვის განახლება"
 
 
-msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+# BFA - reworded, Blender: "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgid "Ensure data previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 msgstr "ზრუნვა იმაზე, რომ მონაცემთა ბლოკის გადახედვები ხელმისაწვდომი და განახლებული იყოს (.blend ფაილში შესანახად, მხოლოდ ზოგიერთი ტიპისთვის, როგორიცაა მასალები, ტექსტურები და სხვ.)"
 
 
@@ -92698,12 +92911,14 @@ msgid "Make the current file the default startup file"
 msgstr "გადააქციე მიმდინარე ფაილი ნაგულისხმებ გაშვების ფაილად"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Blender-ის ფაილის შენახვა"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "შეინახე Blender-ის მიმდინარე ფაილი"
 
 
@@ -92738,7 +92953,8 @@ msgid "Search Operator"
 msgstr "ძიების ოპერატორი"
 
 
-msgid "Pop-up a search over all available operators in current context"
+# BFA - reworded, Blender: "Pop-up a search over all available operators in current context"
+msgid "Pop-up a search panel for all available operators in current context"
 msgstr "გახსენი ძიება მიმდინარე კონტექსტის ყველა ხელმისაწვდომ ოპერატორში"
 
 
@@ -94148,7 +94364,8 @@ msgid "New World"
 msgstr "ახალი სამყარო"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "შექმენი ახალი სამყაროს მონაცემთა ბლოკი"
 
 
@@ -94945,7 +95162,8 @@ msgid "Tracking Settings"
 msgstr "თვალისდევნების ანაწყობები"
 
 
-msgid "Tracking Settings Extras"
+# BFA - reworded, Blender: "Tracking Settings Extras"
+msgid "Tracking Options Extras"
 msgstr "თვალის დევნების დამატებითი ანაწყობები"
 
 
@@ -98171,7 +98389,8 @@ msgid "Duplicate Action"
 msgstr "ქმედების დუბლიკაცია"
 
 
-msgid "Causes actions to be duplicated with the data-blocks"
+# BFA - reworded, Blender: "Causes actions to be duplicated with the data-blocks"
+msgid "Causes actions to be duplicated with the data"
 msgstr "იწვევს ქმედებების დუბლირებას მონაცემთა ბლოკებთან ერთად"
 
 
@@ -98731,11 +98950,13 @@ msgid "Python Scripts Directory"
 msgstr "Python-ის სკრიპტების დირექტორია"
 
 
-msgid "Show Hidden Files/Data-Blocks"
+# BFA - reworded, Blender: "Show Hidden Files/Data-Blocks"
+msgid "Show Hidden Files/Data"
 msgstr "დამალული ფაილების/მონაცემთა ბლოკების ჩვენება"
 
 
-msgid "Show files and data-blocks that are normally hidden"
+# BFA - reworded, Blender: "Show files and data-blocks that are normally hidden"
+msgid "Show files and data that are normally hidden"
 msgstr "აჩვენე ფაილები და მონაცემთა ბლოკები, რომლებიც ჩვეულებრივ, დამალულია"
 
 
@@ -99081,7 +99302,8 @@ msgid "Overall sensitivity of the 3D Mouse for translation"
 msgstr "3D თაგვის ზოგადი მგრძნობიარობა გადაადგილებისთვის"
 
 
-msgid "Zoom direction"
+# BFA - reworded, Blender: "Zoom direction"
+msgid "Zoom Direction"
 msgstr "ზუმის მიმართულება"
 
 
@@ -100929,7 +101151,8 @@ msgid "Translate New Names"
 msgstr "ახალი სახელების თარგმნა"
 
 
-msgid "Translate the names of new data-blocks (objects, materials...)"
+# BFA - reworded, Blender: "Translate the names of new data-blocks (objects, materials...)"
+msgid "Translate the names of new data (objects, materials...)"
 msgstr "თარგმნე მონაცემთა ახალი ბლოკების სახელები (ობიექტები, მასალები...)"
 
 
@@ -104620,7 +104843,8 @@ msgid "Is Perspective"
 msgstr "თუა პერსპექტიული"
 
 
-msgid "Lock view rotation of side views to Top/Front/Right"
+# BFA - reworded, Blender: "Lock view rotation of side views to Top/Front/Right"
+msgid "Lock view rotation in side views"
 msgstr "დაბლოკე გვერხედების ხედის ბრუნვა ზედა/წინა/მარჯვენაზე"
 
 
@@ -104897,7 +105121,8 @@ msgid "Result of rendering, including all layers and passes"
 msgstr "რენდერის შედეგი, ყველა შრისა და გადავლის ჩათვლით"
 
 
-msgid "Rendering settings for a Scene data-block"
+# BFA - reworded, Blender: "Rendering settings for a Scene data-block"
+msgid "Rendering settings for a Scene"
 msgstr "სარენდერო ანაწყობები სცენის მონაცემთა ბლოკისათვის"
 
 
@@ -105045,7 +105270,8 @@ msgid "Directory/name to save animations, # characters define the position and p
 msgstr "დირექტორია/სახელი ანიმაციების შესანახად, # სიმბოლო განსაზღვრავს კადრების ნომერთა პოზიციებსა და ფუჭი სიმბოლოებით შევსებას"
 
 
-msgid "World background is transparent, for compositing the render over another background"
+# BFA - reworded, Blender: "World background is transparent, for compositing the render over another background"
+msgid "Render the world background as transparent. This allows compositing the rendered image over another background"
 msgstr "სამყაროს ფონი გამჭვირვალეა, რენდერის სხვა ფონზე კომპოზიტირებისთვის"
 
 
@@ -106585,7 +106811,8 @@ msgid "Attenuation constant"
 msgstr "შესუსტების მუდმივა"
 
 
-msgid "Distance of object that contribute to the cavity/edge effect"
+# BFA - reworded, Blender: "Distance of object that contribute to the cavity/edge effect"
+msgid "Distance of object that contribute to the Cavity/Edge effect"
 msgstr "მანძილი ობიექტისა, რომელსაც წვლილი შეაქვს ღრმულის/კიდის ეფექტში"
 
 
@@ -107105,11 +107332,13 @@ msgid "Anti-Aliasing Samples"
 msgstr "განკბილვის ნიმუშები"
 
 
-msgid "Number of supersampling anti-aliasing samples per pixel for final render"
+# BFA - reworded, Blender: "Number of supersampling anti-aliasing samples per pixel for final render"
+msgid "Number of anti-aliasing supersamples done per pixel in final render"
 msgstr "სუპერსემპლირების განკბილვის ნიმუშტა რიცხვი თითო პიქსელზე საბოლოო რენდერისთვის"
 
 
-msgid "SMAA Threshold Viewport"
+# BFA - reworded, Blender: "SMAA Threshold Viewport"
+msgid "SMAA Threshold (Viewport)"
 msgstr "SMAA მიჯნა სარკმელში"
 
 
@@ -107117,7 +107346,8 @@ msgid "Threshold for edge detection algorithm (higher values might over-blur som
 msgstr "მიჯნა კიდის აღმოჩენის ალგორითმისთვის (უფრო მაღალმა მნიშვნელობებმა შეიძლება, გამოსახულების გარკვეული ნაწილი ზედმეტად გააბუნდოვანოს)"
 
 
-msgid "SMAA Threshold Render"
+# BFA - reworded, Blender: "SMAA Threshold Render"
+msgid "SMAA Threshold (Render)"
 msgstr "SMAA მიჯნა რენდერში"
 
 
@@ -107265,7 +107495,8 @@ msgid "Python Scripts Directories"
 msgstr "Python-ის სკრიპტების დირექტორიები"
 
 
-msgid "Sequence editing data for a Scene data-block"
+# BFA - reworded, Blender: "Sequence editing data for a Scene data-block"
+msgid "Sequence editing data for a Scene data"
 msgstr "თანამიმდევრობის რედაქტირების მონაცემების სცენის მონაცემთა ბლოკისთვის"
 
 
@@ -108053,7 +108284,8 @@ msgid "Wave Deformation effect"
 msgstr "ტალღური დეფორმაციის ეფექტი"
 
 
-msgid "Shape key in a shape keys data-block"
+# BFA - reworded, Blender: "Shape key in a shape keys data-block"
+msgid "Shape key in a shape keys data"
 msgstr "ფორმის სოლი ფორმის სოლების მონაცემთა ბლოკში"
 
 
@@ -108429,7 +108661,8 @@ msgid "Stiff Quads"
 msgstr "გახევებული ოთხკუთხედები"
 
 
-msgid "Add diagonal springs on 4-gons"
+# BFA - reworded, Blender: "Add diagonal springs on 4-gons"
+msgid "Add diagonal springs on quads"
 msgstr "დაამატე ოთხკუთხედებს დიაგონალური ზამბარები"
 
 
@@ -108490,11 +108723,13 @@ msgid "Where the annotation comes from"
 msgstr "საიდან მოდის ანოტაცია"
 
 
-msgid "Show annotation data-block which belongs to movie clip"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to movie clip"
+msgid "Show annotation data which belongs to movie clip"
 msgstr "აჩვენე ანოტაციის მონაცემთა ბლოკი, რომელიც ვიდეო კლიპს ეკუთვნის"
 
 
-msgid "Show annotation data-block which belongs to active track"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to active track"
+msgid "Show annotation data which belongs to active track"
 msgstr "აჩვენე ანოტაციის მონაცემთა ბლოკი, რომელიც აქტიურ ბილიკს ეკუთვნის"
 
 
@@ -109517,7 +109752,8 @@ msgid "Node tree being displayed and edited"
 msgstr "ასახვასა და რედაქტირებაში მყოფი კვანძოვანი ხე"
 
 
-msgid "Data-block whose nodes are being edited"
+# BFA - reworded, Blender: "Data-block whose nodes are being edited"
+msgid "Data whose nodes are being edited"
 msgstr "მონაცემთა ბლოკი, რომლის კვანძებიც რედაქტირებაშია"
 
 
@@ -109525,7 +109761,8 @@ msgid "ID From"
 msgstr "ID აქედან"
 
 
-msgid "Data-block from which the edited data-block is linked"
+# BFA - reworded, Blender: "Data-block from which the edited data-block is linked"
+msgid "Data from which the edited data is linked"
 msgstr "მონაცემთა ბლოკი, რომლიდანაც რედაქტირებაში მყოფი მონაცემთა ბლოკია დაკავშირებული"
 
 
@@ -109545,7 +109782,8 @@ msgid "Settings for display of overlays in the Node Editor"
 msgstr "ანაწყობები კვანძების რედაქტორში გადაფარებების ასახვისთვის"
 
 
-msgid "Path from the data-block to the currently edited node tree"
+# BFA - reworded, Blender: "Path from the data-block to the currently edited node tree"
+msgid "Path from the data to the currently edited node tree"
 msgstr "გზა მონაცემთა ბლოკიდან ამჟამად რედაქტირებაში მყოფი კვანძოვანი ხისკენ"
 
 
@@ -109708,7 +109946,8 @@ msgid "Filter by Type"
 msgstr "გაფილტრვა ტიპის მიხედვით"
 
 
-msgid "Data-block type to show"
+# BFA - reworded, Blender: "Data-block type to show"
+msgid "Data type to show"
 msgstr "საჩვენებელი მონაცემების ბლოკის ტიპი"
 
 
@@ -109808,7 +110047,8 @@ msgid "Only use complete matches of search string"
 msgstr "გამოიყენე საძიებო სტრიქონის მხოლოდ სრული დამთხვევები"
 
 
-msgid "Show only data-blocks of one type"
+# BFA - reworded, Blender: "Show only data-blocks of one type"
+msgid "Show only data of one type"
 msgstr "აჩვენე მხოლოდ ერთი ტიპის მონაცემთა ბლოკები"
 
 
@@ -110490,7 +110730,8 @@ msgid "Top line visible"
 msgstr "ზედა ხაზი ხილული"
 
 
-msgid "Search in all text data-blocks, instead of only the active one"
+# BFA - reworded, Blender: "Search in all text data-blocks, instead of only the active one"
+msgid "Search in all text data, instead of only the active one"
 msgstr "მოიძიე ყველა ტექსტის მონაცემთა ბლოკში და არა მხოლოდ აქტიურში"
 
 
@@ -112507,7 +112748,8 @@ msgid "Display the audio waveform inside the strip"
 msgstr "ასახე აუდიო ტალღის ფორმა ლენტში"
 
 
-msgid "Sound data-block used by this strip"
+# BFA - reworded, Blender: "Sound data-block used by this strip"
+msgid "Sound data used by this strip"
 msgstr "ხმის მონაცემთა ბლოკი გამოყენებული ამ ლენტის მიერ"
 
 
@@ -113283,7 +113525,8 @@ msgid "Text Line"
 msgstr "ტექსტის ხაზი"
 
 
-msgid "Line of text in a Text data-block"
+# BFA - reworded, Blender: "Line of text in a Text data-block"
+msgid "Line of text in a Text file"
 msgstr "ტექსტის ხაზი ტექსტის მონაცემთა ბლოკში"
 
 
@@ -113319,7 +113562,8 @@ msgid "Set scaling for the texture's X, Y and Z sizes"
 msgstr "დააყენე მასშტაბირება ტექსტურის X, Y და Z ზომებისთვის"
 
 
-msgid "Texture data-block used by this texture slot"
+# BFA - reworded, Blender: "Texture data-block used by this texture slot"
+msgid "Texture used by this texture slot"
 msgstr "ტექსტურის მონაცემთა ბლოკი გამოყენებული ამ ტექსტურის სლოტის მიერ"
 
 
@@ -113327,7 +113571,8 @@ msgid "Brush Texture Slot"
 msgstr "ფუნჯის ტექსტურის სლოტი"
 
 
-msgid "Texture slot for textures in a Brush data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Brush data-block"
+msgid "Texture slot for textures in a Brush data"
 msgstr "ტექსტურის სლოტი ტექსტურებისთვის ფუნჯის მონაცემთა ბლოკში"
 
 
@@ -113355,7 +113600,8 @@ msgid "LineStyle Texture Slot"
 msgstr "ხაზის სტილის ტექსტურის სლოტი"
 
 
-msgid "Texture slot for textures in a LineStyle data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a LineStyle data-block"
+msgid "Texture slot for textures in a LineStyle data"
 msgstr "ტექსტურის სლოტი ხაზის სტილის მონაცემთა ბლოკში მდებარე ტექსტურებისთვის"
 
 
@@ -113427,7 +113673,8 @@ msgid "Particle Settings Texture Slot"
 msgstr "ნაწილაკთა ანაწყობების ტექსტურის სლოტი"
 
 
-msgid "Texture slot for textures in a Particle Settings data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Particle Settings data-block"
+msgid "Texture slot for textures in a Particle Settings data"
 msgstr "ტექსტურის სლოტი ტექსტურებისთვის ნაწილაკთა ანაწყობების მონაცემთა ბლოკში"
 
 
@@ -114401,7 +114648,8 @@ msgid "Active Action"
 msgstr "აქტიური ქმედება"
 
 
-msgid "Animation data-block has active action"
+# BFA - reworded, Blender: "Animation data-block has active action"
+msgid "Animation has active action"
 msgstr "ანიმაციის მონაცემთა ბლოკს აქვს აქტიური ქმედება"
 
 
@@ -114409,7 +114657,8 @@ msgid "No Active Action"
 msgstr "აქტიური ქმედება არაა"
 
 
-msgid "Animation data-block does not have active action"
+# BFA - reworded, Blender: "Animation data-block does not have active action"
+msgid "Animation data does not have active action"
 msgstr "ანიმაციის მონაცემთა ბლოკს არა აქვს აქტიური ქმედება"
 
 
@@ -115928,7 +116177,8 @@ msgid "Draw Strokes on Back"
 msgstr "მონასმების დახატვა უკანა მხარეზე"
 
 
-msgid "New strokes are drawn below of all strokes in the layer"
+# BFA - reworded, Blender: "New strokes are drawn below of all strokes in the layer"
+msgid "When drawing new strokes, the new stroke is drawn below of all strokes in the layer"
 msgstr "ახალი მონასმები იხატება შრეში არსებული ყველა მონასმის ქვეშ"
 
 
@@ -117082,7 +117332,8 @@ msgid "Display X Axis"
 msgstr "X ღერძის ასახვა"
 
 
-msgid "Show the X axis line"
+# BFA - reworded, Blender: "Show the X axis line"
+msgid "Show the X axis line in perspective / orthographic views"
 msgstr "აჩვენე X ღერძის ხაზი"
 
 
@@ -117090,7 +117341,8 @@ msgid "Display Y Axis"
 msgstr "Y ღერძის ასახვა"
 
 
-msgid "Show the Y axis line"
+# BFA - reworded, Blender: "Show the Y axis line"
+msgid "Show the Y axis line in perspective / orthographic views"
 msgstr "აჩვენე Y ღერძის ხაზი"
 
 
@@ -117098,7 +117350,8 @@ msgid "Display Z Axis"
 msgstr "Z ღერძის ასახვა"
 
 
-msgid "Show the Z axis line"
+# BFA - reworded, Blender: "Show the Z axis line"
+msgid "Show the Z axis line in perspective / orthographic views"
 msgstr "აჩვენე Z ღერძის ხაზი"
 
 
@@ -118656,7 +118909,8 @@ msgid "Does this tool use a painting canvas"
 msgstr "იყენებს თუ არა ეს ხელსაწყო სახატავ ტილოს"
 
 
-msgid "Lighting for a World data-block"
+# BFA - reworded, Blender: "Lighting for a World data-block"
+msgid "Lighting for a World data"
 msgstr "განათება სამყაროს მონაცემთა ბლოკისთვის"
 
 
@@ -118672,7 +118926,8 @@ msgid "World Mist"
 msgstr "სამყაროს ნისლი"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "ნისლის ანაწყობები სამყაროს მონაცემთა ბლოკისთვის"
 
 
@@ -122999,7 +123254,8 @@ msgid "Repository Alert:"
 msgstr "საცავის საგანგაშო სიგნალი:"
 
 
-msgid "Internet access is required to install and update online extensions. "
+# BFA - reworded, Blender: "Internet access is required to install and update online extensions. "
+msgid "Internet access is required to install and update Extensions."
 msgstr "ონლაინ გაფართოებების დასაინსტალირებლად და განსაახლებლად საჭიროა წვდომა ინტერნეტზე. "
 
 
@@ -123046,8 +123302,9 @@ msgid "Permissions"
 msgstr "ნებართვები"
 
 
+# BFA - reworded, Blender: "Visit Extensions Platform"
 msgctxt "Operator"
-msgid "Visit Extensions Platform"
+msgid "Visit Extensions Website"
 msgstr "გაფართოებების პლატფორმის მონახულება"
 
 
@@ -125743,7 +126000,8 @@ msgid "No nodes selected."
 msgstr "კვანძები მოუნიშნავია."
 
 
-msgid "Only boolean input sockets are supported"
+# BFA - reworded, Blender: "Only boolean input sockets are supported"
+msgid "Active item is not a boolean input socket"
 msgstr "მხოლოდ ბულის შენატანის ბუდეებია მხარდაჭერილი"
 
 
@@ -127233,8 +127491,9 @@ msgid "Flip"
 msgstr "შეტრიალება"
 
 
+# BFA - reworded, Blender: "Flip (Topology)"
 msgctxt "Operator"
-msgid "Flip (Topology)"
+msgid "Mirror Shape Key (Topology)"
 msgstr "შეტრიალება (ტოპოლოგიური)"
 
 
@@ -127337,7 +127596,8 @@ msgid "Select by"
 msgstr "შერჩევა ნიშნით"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "გამოსახულების ჩარჩო"
 
 
@@ -127647,7 +127907,8 @@ msgid "HDR needs 10 or 12 bits"
 msgstr "HDR-ს ესაჭიროება 10, ან 12 ბიტი"
 
 
-msgid "Max B-frames"
+# BFA - reworded, Blender: "Max B-frames"
+msgid "Max B_Frames"
 msgstr "მაქს. B-კადრები"
 
 
@@ -128554,11 +128815,13 @@ msgid "Light Probes Volume Pool"
 msgstr "სინათლის ზონდის მოცულობის არე"
 
 
-msgid "SMAA Threshold"
+# BFA - reworded, Blender: "SMAA Threshold"
+msgid "Edge Threshold"
 msgstr "SMAA მიჯნა"
 
 
-msgid "SSAA Samples"
+# BFA - reworded, Blender: "SSAA Samples"
+msgid "Supersampling"
 msgstr "SSAA ნიმუშები"
 
 
@@ -129877,8 +130140,9 @@ msgid "Replace..."
 msgstr "ჩანაცვლება..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "ასლის შენახვა..."
 
 
@@ -130002,8 +130266,9 @@ msgid "Linked Duplicate"
 msgstr "დაკავშირებული დუბლიკატი"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "ლენტის ქმედებების გადაკეთების შეწყვეტა"
 
 
@@ -130027,13 +130292,15 @@ msgid "Start Editing Stashed Action"
 msgstr "მარაგში შენახული ქმედების რედაქტირების დაწყება"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Full Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Full Stack)"
+msgid "Tweak Action (Full Stack)"
 msgstr "ლენტის ქმედებათა გადაკეთების დაწყება (სრული სტეკი)"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Lower Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgid "Tweak Action (Lower Stack)"
 msgstr "ლენტის ქმედებათა გადაკეთების დაწყება (ქვედა სტეკი)"
 
 
@@ -130082,8 +130349,9 @@ msgid "Unconnected Sockets"
 msgstr "დაუკავშირებელი ბუდეები"
 
 
+# BFA - reworded, Blender: "Rename Active Node..."
 msgctxt "Operator"
-msgid "Rename Active Node..."
+msgid "Rename Active Node"
 msgstr "აქტიური კვანძისთვის სახელის გადარქმევა..."
 
 
@@ -130447,8 +130715,9 @@ msgid "Toggle Sequencer/Preview"
 msgstr "სეკვენსერის/გადახედვის გადართვა"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "ყველას მონიშვნა ტიპის მიხედვით"
 
 
@@ -130487,8 +130756,9 @@ msgid "Sound..."
 msgstr "ხმა..."
 
 
+# BFA - reworded, Blender: "Image/Sequence..."
 msgctxt "Operator"
-msgid "Image/Sequence..."
+msgid "Image/Sequence"
 msgstr "გამოსახულება/თანამიმდევრობა..."
 
 
@@ -130511,8 +130781,9 @@ msgid "Sound Crossfade"
 msgstr "ხმის წაფენა"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "ჩასოლვის ნაკრების შეცვლა..."
 
 
@@ -130583,8 +130854,9 @@ msgid "Render Sequencer Image"
 msgstr "სეკვენსერის გამოსახულების რენდერი"
 
 
+# BFA - reworded, Blender: "Fit Preview in Window"
 msgctxt "Operator"
-msgid "Fit Preview in Window"
+msgid "Fit Preview in window"
 msgstr "გადახედვის ფანჯარაში მოქცევა"
 
 
@@ -130701,8 +130973,9 @@ msgid "Show Hidden Strips"
 msgstr "დამალული ლენტების ჩვენება"
 
 
+# BFA - reworded, Blender: "Insert Keyframe with Keying Set..."
 msgctxt "Operator"
-msgid "Insert Keyframe with Keying Set..."
+msgid "Insert Keyframe with Keying Set"
 msgstr "საკვანძო ფაზის ჩასმა ჩასოლვის ნაკრებით..."
 
 
@@ -131015,7 +131288,8 @@ msgid "Follow Current Frame"
 msgstr "მიმდინარე კადრს მიყოლა"
 
 
-msgid "Play In"
+# BFA - reworded, Blender: "Play In"
+msgid "Play in"
 msgstr "დაკვრა აქ"
 
 
@@ -131023,7 +131297,8 @@ msgid "Active Editor"
 msgstr "აქტიური რედაქტორი"
 
 
-msgid "Properties and Sidebars"
+# BFA - reworded, Blender: "Properties and Sidebars"
+msgid "Properties Editor and Sidebars"
 msgstr "თვისებები და გვერდითა ზოლები"
 
 
@@ -131178,8 +131453,9 @@ msgid "Find Missing Files..."
 msgstr "დაკარგული ფაილების ძიება..."
 
 
+# BFA - reworded, Blender: "Batch-Generate Previews..."
 msgctxt "Operator"
-msgid "Batch-Generate Previews..."
+msgid "Batch-Generate Preview"
 msgstr "ერთობლივად წარმოქმენი გადახედვები..."
 
 
@@ -131198,8 +131474,9 @@ msgid "Render Animation"
 msgstr "ანიმაციის რენდერი"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "აუდიოს რენდერი..."
 
 
@@ -131223,8 +131500,9 @@ msgid "Repeat History..."
 msgstr "ისტორიის გამეორება..."
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "საძიებელი მენიუ..."
 
 
@@ -131301,8 +131579,9 @@ msgid "Render Image"
 msgstr "გამოსახულების რენდერი"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "ოპერატორის ძიება..."
 
 
@@ -131379,7 +131658,8 @@ msgid "User Tooltips"
 msgstr "მომხმარებლის მინიშნებები"
 
 
-msgid "Sort by Most Recent"
+# BFA - reworded, Blender: "Sort by Most Recent"
+msgid "Sort Search by Most Recent"
 msgstr "დალაგება სიახლის მიხედვით"
 
 
@@ -131429,7 +131709,8 @@ msgid "Video Memory"
 msgstr "ვიდეო მეხსიერება"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Blender-ის ვერსია"
 
 
@@ -131659,7 +131940,8 @@ msgid "Excluded Paths"
 msgstr "გამორიცხული მისამართები"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "ავტოშენახვა"
 
 
@@ -131983,8 +132265,9 @@ msgid "More/Less"
 msgstr "მეტი/ნაკლები"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "ფაქტურის მონიშვნა..."
 
 
@@ -132092,8 +132375,9 @@ msgid "By Attribute"
 msgstr "ატრიბუტით"
 
 
+# BFA - reworded, Blender: "Control Point Row"
 msgctxt "Operator"
-msgid "Control Point Row"
+msgid "Control Point row"
 msgstr "საკონტროლო წერტილის რიგი"
 
 
@@ -132211,23 +132495,27 @@ msgid "Fur"
 msgstr "ბეწვი"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "Nurbs ზედაპირი"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "Nurbs ცილინდრი"
 
 
+# BFA - reworded, Blender: "Nurbs Sphere"
 msgctxt "Operator"
-msgid "Nurbs Sphere"
+msgid "Surface Sphere"
 msgstr "Nurbs სფერო"
 
 
+# BFA - reworded, Blender: "Nurbs Torus"
 msgctxt "Operator"
-msgid "Nurbs Torus"
+msgid "Surface Torus"
 msgstr "Nurbs ტორუსი"
 
 
@@ -132241,8 +132529,9 @@ msgid "Camera"
 msgstr "კამერა"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "OpenVDB-ს იმპორტი..."
 
 
@@ -132266,8 +132555,9 @@ msgid "Speaker"
 msgstr "სპიკერი"
 
 
+# BFA - reworded, Blender: "Mesh Plane..."
 msgctxt "Operator"
-msgid "Mesh Plane..."
+msgid "Mesh Plane"
 msgstr "მეშის სიბრტყე..."
 
 
@@ -132311,8 +132601,9 @@ msgid "Origin"
 msgstr "სათავე"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "აქტიური ობიექტისთვის სახელის გადარქმევა..."
 
 
@@ -132755,13 +133046,15 @@ msgid "Calculate"
 msgstr "გამოანგარიშება"
 
 
+# BFA - reworded, Blender: "Assign to New Collection"
 msgctxt "Operator"
-msgid "Assign to New Collection"
+msgid "Assign to New"
 msgstr "ახალი კოლექციისთვის მიკუთვნება"
 
 
+# BFA - reworded, Blender: "Add (with Targets)..."
 msgctxt "Operator"
-msgid "Add (with Targets)..."
+msgid "Add (with Targets)"
 msgstr "დამატება (სამიზნეებთან ერთად)..."
 
 
@@ -132895,8 +133188,9 @@ msgid "Rotate..."
 msgstr "ბრუნვა..."
 
 
+# BFA - reworded, Blender: "Point to Target..."
 msgctxt "Operator"
-msgid "Point to Target..."
+msgid "Point normals to target"
 msgstr "მიმართვა სამიზნისკენ..."
 
 
@@ -133033,7 +133327,8 @@ msgid "Color Opacity"
 msgstr "ფერის გაუმჭვირვალობა"
 
 
-msgid "Attribute Text"
+# BFA - reworded, Blender: "Attribute Text"
+msgid "Attribute Text Overlay"
 msgstr "ატრიბუტის ტექსტი"
 
 
@@ -133147,8 +133442,9 @@ msgid "Project from View (Bounds)"
 msgstr "პროეცირება ხედიდან (ფარგლებში)"
 
 
+# BFA - reworded, Blender: "Center Last Stroke"
 msgctxt "Operator"
-msgid "Center Last Stroke"
+msgid "Frame Last Stroke"
 msgstr "ბოლო მონასმის ცენტრირება"
 
 
@@ -133449,13 +133745,15 @@ msgid "Recalculate Inside"
 msgstr "შიდას ხელახლა გამოთვლა"
 
 
+# BFA - reworded, Blender: "Copy Vector"
 msgctxt "Operator"
-msgid "Copy Vector"
+msgid "Copy Vectors"
 msgstr "ვექტორის კოპირება"
 
 
+# BFA - reworded, Blender: "Paste Vector"
 msgctxt "Operator"
-msgid "Paste Vector"
+msgid "Paste Vectors"
 msgstr "ვექტორის ჩასმა"
 
 
@@ -134240,8 +134538,9 @@ msgid "No brush selected"
 msgstr "ფუნჯი მოუნიშნავია"
 
 
+# BFA - reworded, Blender: "Duplicate Asset..."
 msgctxt "Operator"
-msgid "Duplicate Asset..."
+msgid "Duplicate Asset"
 msgstr "აქტივის დუბლიკაცია..."
 
 
@@ -135849,7 +136148,8 @@ msgid "worlds"
 msgstr "სამყარო"
 
 
-msgid "Library database with null library data-block pointer!"
+# BFA - reworded, Blender: "Library database with null library data-block pointer!"
+msgid "Library database with null library data pointer!"
 msgstr "ბიბლიოთეკის მონაცემთა ბაზა ბიბლიოთეკის მონაცემთა ბლოკის ნულოვანი მიმთითებლით!"
 
 
@@ -136459,11 +136759,17 @@ msgid "NLA Track is the only one evaluated in this animation data-block, with al
 msgstr "NLA ბილიკი ერთადერთია ამ ანიმაციის მონაცემთა ბლოკში, რომელიც გამოითვლება, ყველა დანარჩენი ჩახშობილია"
 
 
-msgid "Editability of keyframes for this channel"
+# BFA - reworded, Blender: "Editability of keyframes for this channel"
+msgid ""
+"Lock Channel\n"
+"Editability of keyframes for this channel"
 msgstr "საკვანძო ფაზების რედაქტირებადობა ამ არხისთვის"
 
 
-msgid "Editability of NLA Strips in this track"
+# BFA - reworded, Blender: "Editability of NLA Strips in this track"
+msgid ""
+"Lock Channel\n"
+"Editability of NLA Strips in this track"
 msgstr "NLA ლენტების რედაქტირებადობა ამ ბილიკისთვის"
 
 
@@ -137486,7 +137792,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "აქტივთა კატალოგები ვერ რედაქტირდება ამ აქტივთა ბიბლიოთეკაში"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
+# BFA - reworded, Blender: "Cannot save asset catalogs before the Blender file is saved"
+msgid "Cannot save asset catalogs before the .blend file is saved"
 msgstr "Blender-ის ფაილის შენახვამდე აქტივთა კატალოგები ვერ შეინახება"
 
 
@@ -143300,7 +143607,8 @@ msgid "Offset:"
 msgstr "აცდენა:"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr "ფაქტურის არე:"
 
 
@@ -143312,7 +143620,8 @@ msgid "Height:"
 msgstr "სიმაღლე:"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr "ძიების არე:"
 
 
@@ -144478,7 +144787,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "მოდიფიკატორი ვერ დაემატა (%s : %s) (დეტალებისთვის იხილე კონსოლი)"
 
 
-msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+# BFA - reworded, Blender: "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+msgid "No active AnimData block to use (select a data expander first or set the appropriate flags on an AnimData block)"
 msgstr "გამოსაყენებელი აქტიური AnimData ბლოკი (პირველ რიგში მონიშნე მონაცემთა ბლოკის გასაფართოებელი, ან დააყენე შესაბამისი დროშები AnimData ბლოკზე)"
 
 
@@ -145431,7 +145741,8 @@ msgid "External library data is not editable"
 msgstr "გარე ბიბლიოთეკის მონაცემები არარედაქტირებადია"
 
 
-msgid "Overridden data-blocks names are not editable"
+# BFA - reworded, Blender: "Overridden data-blocks names are not editable"
+msgid "Overridden data names are not editable"
 msgstr "მონაცემთა უკუგდებული ბლოკების სახელები რედაქტირებადი არაა"
 
 
@@ -145443,7 +145754,8 @@ msgid "No active item to rename"
 msgstr "სახელის გადასარქმევი აქტიური საგანი არ არის"
 
 
-msgid "No selected data-blocks to copy"
+# BFA - reworded, Blender: "No selected data-blocks to copy"
+msgid "No selected data to copy"
 msgstr "დასაკოპირებელი მონიშნული მონაცემთა ბლოკები არ არის"
 
 
@@ -145455,7 +145767,8 @@ msgid "Operation requires an active keying set"
 msgstr "ოპერაცია საჭიროებს აქტიურ ჩასოლვის ნაკრებს"
 
 
-msgid "No orphaned data-blocks to purge"
+# BFA - reworded, Blender: "No orphaned data-blocks to purge"
+msgid "No orphaned data to purge"
 msgstr "გასაწმენდი დაობლებული მონაცემთა ბლოკები არ არის"
 
 
@@ -145507,7 +145820,8 @@ msgid "Copied %d selected data-block(s)"
 msgstr "დაკოპირდა მონაცემთა %d მონიშნული ბლოკი"
 
 
-msgid "%d data-block(s) pasted"
+# BFA - reworded, Blender: "%d data-block(s) pasted"
+msgid "%d data pasted"
 msgstr "მონაცემთა %d ბლოკი ჩაისვა"
 
 
@@ -146514,7 +146828,8 @@ msgid "Mean Vertex Crease:"
 msgstr "წვეროს საშუალო ნაკეცი:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "რადიუსი X:"
 
 
@@ -151044,7 +151359,8 @@ msgid "WeightedNormal"
 msgstr "შეწონილინორმალი"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "გლობალური ზეგავლენა:"
 
 
@@ -159522,7 +159838,8 @@ msgid "Pose Library"
 msgstr "პოზების ბიბლიოთეკა"
 
 
-msgid "Pose Library based on the asset system."
+# BFA - reworded, Blender: "Pose Library based on the asset system."
+msgid "Pose Library based on the asset system"
 msgstr "პოზის ბიბლიოთეკა აქტივთა სისტემაზეა დაფუძნებული."
 
 
@@ -163428,3 +163745,439 @@ msgstr "ერთგვაროვნად დაამასშტაბი�
 msgid "Distance from the ground plane"
 msgstr "მანძილი მიწის სიბრტყიდან"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "პოზის გამასაშუალოებელი (Legacy)"
+
+# BFA - reworded, Blender: "Push Pose from Breakdown"
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "წაწეული პოზა შუა პოზისგან (Legacy)"
+
+# BFA - reworded, Blender: "Relax Pose to Breakdown"
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "პოზის მიახლოვება შუალასთან (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      ნიღბები"
+
+# BFA - reworded, Blender: "Zero Weights"
+msgid "     Zero Weights"
+msgstr "     ნულოვანი წონები"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  კვლების შეერთება"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " გამოსახულების ნამატი"
+
+# BFA - reworded, Blender: "Font size to use for displaying the text"
+msgid "Adjust the font size for displaying the text"
+msgstr "ტექსტის ასახვისთვის გამოსაყენებელი შრიფტის ზომა"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "ყველას მონიშვნა თვისებით"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "ყველას მონიშვნა ტიპის მიხედვით"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "ანიმაციის მონაცემები ამ მონაცემთა ბლოკისთვის"
+
+# BFA - reworded, Blender: "Apply All"
+msgctxt "Operator"
+msgid "Apply All Shape Keys"
+msgstr "ყველას გამოყენება"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "ავტო ჩასოლვა"
+
+# BFA - reworded, Blender: "Bake to Keyframes"
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "საკვანძო ფაზებად ცხობა"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "მართკუთხა მონიშვნა (Legacy)"
+
+# BFA - reworded, Blender: "Cached Range"
+msgid "Cached Range (Info)"
+msgstr "ქეშირებული დიაპაზონი (Info)"
+
+# BFA - reworded, Blender: "Clear Data-Block Previews"
+msgctxt "Operator"
+msgid "Clear Data Previews"
+msgstr "მონაცემთა ბლოკების გადახედვების გასუფთავება"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "მოკვეცის დასაწყისი"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "მოკვეცის დასაწყისი"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "კოლექციების ინსტანციები"
+
+# BFA - reworded, Blender: "Delete All"
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "ყველას წაშლა"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "წაშლა"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "სიღრმე"
+
+# BFA - reworded, Blender: "Display overlay text"
+msgid "Display overlay text.\nAlso affects the Geometry Nodes viewer overlay"
+msgstr "ასახე გადაფარებული ტექსტი"
+
+# BFA - reworded, Blender: "Euclidean"
+msgid "Euclidean Distance"
+msgstr "ევკლიდური"
+
+# BFA - reworded, Blender: "Extrude region together along local normals"
+msgid "Extrude Region Vertex Normals\nExtrude region together along local normals"
+msgstr "გამოიყვანე რეგიონი ერთად ლოკალური ნორმალების გასწვრივ"
+
+# BFA - reworded, Blender: "Auto-Masking"
+msgid "Global Auto Masking"
+msgstr "ავტომატური შენიღბვა"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "გადაახტუნე კურსორი ხაზთან"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "გადატანა"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "დაჯგუფებულის მონიშვნა"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "დაჯგუფებულის მონიშვნა"
+
+# BFA - reworded, Blender: "Insert Into Group"
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "ჯგუფში ჩასმა"
+
+# BFA - reworded, Blender: "Instance Collections on Appending"
+msgid "Instance Collections on Appending or Linking"
+msgstr "კოლექციების ინსტანცირება დართვისას"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "ზუმის მიმართულების შექცევა"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "გაგრძელებადი"
+
+# BFA - reworded, Blender: "Set type of handle for selected keyframes"
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "სახელურის ტიპის დაყენება მონიშნული საკვანძო ფაზებისთვის"
+
+# BFA - reworded, Blender: "Linked from"
+msgctxt "Operator"
+msgid "Linked From"
+msgstr "კავშირის წყარო"
+
+# BFA - reworded, Blender: "Linked to"
+msgctxt "Operator"
+msgid "Linked To"
+msgstr "კავშირის დანიშნულება"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "მანჰეტენი"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "მონიშნული უახლოეს კადრს"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "მონიშნული უახლოეს კადრთან"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "მონიშული უახლოეს წამს"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "მონიშნული უახლოეს წამთან"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "ახალი ფაილი"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "ოპერატორის ძიება..."
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "ორიენტაცია"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "შენიშვნები გამოშვებაზე"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "ვერსიის ჩვენება"
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "წახნაგების ნაკრებები"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "ჩვენება"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "ნიღაბი"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "ჩვენება"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "შეკუმშვა/გაბერვა"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "მსგავსის მონიშვნა"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "მსგავსის მონიშვნა"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Nurbs წრე"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "ტიპი"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "მიუკუთვნებელი (Catalogue)"
+
+# BFA - reworded, Blender: "Uninstall"
+msgctxt "Operator"
+msgid "Uninstall from System"
+msgstr "დეინსტალირება"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets"
+msgstr "არა-აქტივები"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets:"
+msgstr "არა-აქტივები"
+
+# BFA - reworded, Blender: "Use internal text data-block"
+msgid "Use internal text data"
+msgstr "გამოიყენე შიდა ტექსტური მონაცემთა ბლოკი"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "სისწრაფის ვექტორები"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "ხაზის სიგანე"
+
+# BFA - reworded, Blender: "You can adjust this later from \"System\" preferences."
+msgid "You can adjust online access from \"System\" preferences."
+msgstr "ამის შესწორება მოგვიანებით შეგიძლია \"სისტემა\" სასურველი პარამეტრებიდან."
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "დაზუმვა ჩარჩოში"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "აჩვენე Bforartists-ის ამ სესიაში ამჟამად ხელმისაწვდომი აქტივები"
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "მოახდინე აქტივის იმპორტი ბმულით დაკავშირებულ მონაცემთა ბლოკად"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "მოახდინე აქტივების იმპორტი დაკოპირებულ მონაცემთა ბლოკად, ორიგინალის მონაცემთა ბლოკთან ბმულის გარეშე"
+
+# BFA - reworded, Blender: "Clear Fake User and remove copy stashed in this data-block's NLA stack"
+msgid "Clear Fake User and remove copy stashed in this data's NLA stack"
+msgstr "გაასუფთავე ყალბი მომხმარებელი და მოაშორე ამ მონაცემთა ბლოკის NLA სტეკში შენახული ასლი"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Bforartists-ის დახურვა"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Bforartists-ის დახურვა"
+
+# BFA - reworded Blender string
+msgid "Exit Bforartists after saving"
+msgstr "გამოდი Bforartists-იდან შენახვის შემდეგ"
+
+# BFA - reworded Blender string
+msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+msgstr "შეინახე Bforartists-ის ამჟამინდელი ფაილი რიცხვობრივად ინკრემენტირებული სახელით, რომელიც არცერთ არსებულ ფაილს არ გადაეწერება"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "Bforartists-ის შესახებ"
+
+# BFA - reworded Blender string
+msgid "Open a window with information about Bforartists"
+msgstr "Bforartists-ის შესახებ ინფორმაციის მქონე ფანჯრის გახსნა"
+
+# BFA - reworded Blender string
+msgid "Online access required to install or update. Launch Bforartists without --offline-mode"
+msgstr "დასაინსტალირებლად, ან განსაახლებლად საჭიროა ონლაინ წვდომა. გაუშვი Bforartists --ოფლაინ-რეჟიმის გარეშე"
+
+# BFA - reworded Blender string
+msgid "Launch Bforartists without --offline-mode"
+msgstr "გაუშვი Bforartists --ოფლაინ-რეჟიმის გარეშე"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "Bforartists უფასო პროგრამაა"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Bforartists-ის ვებსაიტი"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "View Extension"
+msgstr "გაფართოების დათვალიერება"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Install Application Template"
+msgstr "აპლიკაციის შაბლონის ინსტალირება"
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Bforartists-ის ვერსია"
+
+# BFA - reworded Blender string
+msgid "A restart of Bforartists is required"
+msgstr "საჭიროა Bforartists-ის გადატვირთვა"
+
+# BFA - reworded Blender string
+msgid "Open blend files with this Bforartists version"
+msgstr "გახსენი blend ფაილები Bforartists-ის ამ ვერსიით"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Edit Preview Image"
+msgstr "გადახედვის გამოსახულების რედაქტირება"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system and cannot be overridden"
+msgstr "ამ ფაილს მართავს Bforartists-ის აქტივთა სისტემა და უკუგდებული ვერ იქნება"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Bforartists-ის რენდერი"
+
+# BFA - reworded Blender string
+msgid "Bforartists Drivers Editor"
+msgstr "Bforartists-ის დრაივერების რედაქტორი"
+
+# BFA - reworded Blender string
+msgid "Bforartists Info Log"
+msgstr "Bforartists-ის ინფო ჟურნალი"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Bforartists-ის ფაილების ხედი"
+
+# BFA - reworded Blender string
+msgid "Bforartists will start next time as it is now."
+msgstr "შემდეგში Bforartists იმ მდგომარეობაში გაეშვება, რაშიც ახლაა."
+
+# BFA - reworded Blender string
+msgid "Load Factory Bforartists Preferences"
+msgstr "ჩატვირთე Bforartists-ის ქარხნული სასურველი პარამეტრები"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system. It can only be"
+msgstr "ამ ფაილს Bforartists-ის აქტივთა სისტემა მართავს. შესაძლებელია მხოლოდ მისი"
+
+# BFA - reworded Blender string
+msgid "with an older Bforartists version?"
+msgstr "Bforartists-ის უფრო ძველი ვერსიით?"
+
+# BFA - reworded Blender string
+msgid "Overwrite file with an older Bforartists version?"
+msgstr "გადავაწეროთ ფაილი Bforartists-ის უფრო ძველი ვერსიით?"
+
+# BFA - reworded Blender string
+msgid "Proxies have been removed from Bforartists (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Consider re-saving any library .blend file with the newest Blender version"
+msgstr "პროქსები Bforartists-იდან მოცილებულია (%d პროქსი ავტომატურად კონვერტირდება ბიბლიოთეკის უკუგებებად, %d პროქსი ვერ კონვერტირდა და მოსუფთავდა). განიხილე ბიბლიოთეკის ნებისმიერი .blend ფაილის ხელახლა შენახვა Bforartists-ის ახალ ვერსიაში"
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Newer graphics drivers might be available with better Bforartists compatibility."
+msgstr "შესაძლოა, ხელმისაწვდომი იყოს ახალი გრაფიკული დრაივერები Bforartists-თან უკეთესი თავსებადობით."
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "macOS-ის უახლეს ვერსიაზე გადასვლამ შეიძლება, Bforartists-ის მხარდაჭერა გააუმჯობესოს"

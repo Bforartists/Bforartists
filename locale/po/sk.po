@@ -900,7 +900,8 @@ msgid "Animation Data"
 msgstr "Údaje animácie"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Údaje animácie pre blok údajov"
 
 
@@ -908,7 +909,8 @@ msgid "Action"
 msgstr "Akcia"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Aktívna akcia pre tento blok údajov"
 
 
@@ -1044,7 +1046,8 @@ msgid "Drivers"
 msgstr "Ovládače"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "Ovládače/výrazy pre tento blok údajov"
 
 
@@ -1600,7 +1603,8 @@ msgid "Show Menus"
 msgstr "Zobraziť ponuky"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Zobrazí ponuky v záhlaví"
 
 
@@ -1728,7 +1732,8 @@ msgid "Outliner"
 msgstr "Líniový prehľad"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "Prehľad grafov scény a všetky dostupné bloky údajov"
 
 
@@ -1736,7 +1741,8 @@ msgid "Properties"
 msgstr "Vlastnosti"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Úprava vlastností aktívneho objektu a súvisiacich blokov údajov"
 
 
@@ -2485,7 +2491,8 @@ msgid "Worlds"
 msgstr "Svety"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Zobrazí blok údajov sveta"
 
 
@@ -2940,7 +2947,8 @@ msgid "Bake Data"
 msgstr "Zapiecť údaje"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "Zapečie údaje bloku údajov scény"
 
 
@@ -3140,7 +3148,8 @@ msgid "Internal"
 msgstr "Interne"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Uloží mapu zapečenia v bloku údajov interného obrázka"
 
 
@@ -3428,11 +3437,13 @@ msgid "Blend-File Data"
 msgstr "Údaje blend-súboru"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Hlavná údaje štruktúry reprezentujúcej .blend súbor a všetky jeho bloky údajov"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Blok údajov akcií"
 
 
@@ -3452,23 +3463,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "Bloky údajov s poznámkami (zdedené po Grease Pencil)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Blok údajov armatúry"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Blok údajov štetcov"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Blok údajov súborov zásobníkov"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Blok údajov kamery"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Blok údajov kolekcie"
 
 
@@ -3480,7 +3496,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "Informácie o farebnom priestore používanom pre bloky údajov v blend súbore"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Blok údajov krivky"
 
 
@@ -3496,7 +3513,8 @@ msgid "Vector Fonts"
 msgstr "Vektorové písmo"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Blok údajov vektorového písma"
 
 
@@ -3504,11 +3522,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Blok údajov Grease Pencil"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Bloky údajov krivky vlasov"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Blok údajov obrázku"
 
 
@@ -3528,7 +3548,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Aktuálna relácia bola uložená na disk ako .blend súbor"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Blok údajov drôtenej mriežky"
 
 
@@ -3536,15 +3557,18 @@ msgid "Libraries"
 msgstr "Knižnice"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Blok údajov knižníc"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Bloky údajov svetelného snímača"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Blok údajov svetiel"
 
 
@@ -3552,27 +3576,33 @@ msgid "Line Styles"
 msgstr "Štýl čiary"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Blok údajov štýlu čiary"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Blok údajov masiek"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Blok údajov materiálov"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Blok údajov povrchových sietí"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Blok údajov meta gule"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Blok údajov filmového klipu"
 
 
@@ -3580,7 +3610,8 @@ msgid "Node Groups"
 msgstr "Skupina uzlov"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Blok údajov skupiny uzlov"
 
 
@@ -3588,11 +3619,13 @@ msgid "Object data-blocks"
 msgstr "Blok údajov objektov"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Blok údajov maľovania kriviek"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Blok údajov palety"
 
 
@@ -3600,7 +3633,8 @@ msgid "Particles"
 msgstr "Častice"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Blok údajov častíc"
 
 
@@ -3617,7 +3651,8 @@ msgid "The currently active Blender project, if any"
 msgstr "Aktuálne aktívny projekt v Blenderi, ak nejaký existuje"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Blok údajov scén"
 
 
@@ -3625,7 +3660,8 @@ msgid "Screens"
 msgstr "Obrazovky"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Bloky údajov obrazovky"
 
 
@@ -3633,15 +3669,18 @@ msgid "Shape Keys"
 msgstr "Kľúčové tvary"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Bloky údajov kľúčového tvaru"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Bloky údajov zvuku"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Bloky údajov reproduktora"
 
 
@@ -3649,7 +3688,8 @@ msgid "Text data-blocks"
 msgstr "Bloky údajov textu"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Bloky údajov textúry"
 
 
@@ -3669,7 +3709,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Verzia programu Blender uložená do .blend súboru"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Bloky údajov objemu"
 
 
@@ -3677,15 +3718,18 @@ msgid "Window Managers"
 msgstr "Manažér okien"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Bloky údajov manažéra okien"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Bloky údajov pracovného priestoru"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Bloky údajov sveta"
 
 
@@ -4894,7 +4938,8 @@ msgid "Volume"
 msgstr "Objem"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "Kosť v bloku údajov armatúry"
 
 
@@ -6696,7 +6741,8 @@ msgid "Stroke"
 msgstr "Ťah"
 
 
-msgid "Painting affects only strokes, not fills"
+# BFA - reworded, Blender: "Painting affects only strokes, not fills"
+msgid "Vertex Color affects to Stroke only"
 msgstr "Maľovanie ovplyvňuje ťahy, nie výplne"
 
 
@@ -6704,7 +6750,8 @@ msgid "Fill"
 msgstr "Vyplniť"
 
 
-msgid "Painting affects only fills, not strokes"
+# BFA - reworded, Blender: "Painting affects only fills, not strokes"
+msgid "Vertex Color affects to Fill only"
 msgstr "Maľovanie ovplyvňuje výplne, nie ťahy"
 
 
@@ -6712,7 +6759,8 @@ msgid "Both"
 msgstr "Oboje"
 
 
-msgid "Painting affects both strokes and fills"
+# BFA - reworded, Blender: "Painting affects both strokes and fills"
+msgid "Vertex Color affects to Stroke and Fill"
 msgstr "Maľovanie ovplyvňuje ťahy aj výplne"
 
 
@@ -7040,7 +7088,8 @@ msgid "Stereo"
 msgstr "Stereo"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "Nastavenie priestorového videnia pre blok údajov kamery"
 
 
@@ -12173,7 +12222,8 @@ msgid "Curve Slice"
 msgstr "Odrezok krivky"
 
 
-msgid "A single curve from a curves data-block"
+# BFA - reworded, Blender: "A single curve from a curves data-block"
+msgid "A single curve from a curves data"
 msgstr "Jedna krivka z bloku údajov kriviek"
 
 
@@ -12633,7 +12683,8 @@ msgid "Include Missing NLA"
 msgstr "Zahrnúť chýbajúce NLA"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "Zahrnie bloky údajov animácie bez údajov NLA (len editor NLA)"
 
 
@@ -12641,7 +12692,8 @@ msgid "Display Modifier Data"
 msgstr "Zobraziť údaje modifikátora"
 
 
-msgid "Include visualization of animation data related to data-blocks linked to modifiers"
+# BFA - reworded, Blender: "Include visualization of animation data related to data-blocks linked to modifiers"
+msgid "Include visualization of animation data related to data linked to modifiers"
 msgstr "Zahrnie zviditeľnenie údajov animácie súvisiacich blokov údajov prepojených s modifikátormi"
 
 
@@ -12773,7 +12825,8 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "ID bloku predstavujúce zdrojové údaje, zvyčajne ID_SCE (t. j. scéna)"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "Triediť blok údajov"
 
 
@@ -13747,7 +13800,8 @@ msgid "Edit Bone"
 msgstr "Upraviť kosť"
 
 
-msgid "Edit mode bone in an armature data-block"
+# BFA - reworded, Blender: "Edit mode bone in an armature data-block"
+msgid "Editmode bone in an armature data"
 msgstr "Režim editácie kosti v bloku údajov armatúry"
 
 
@@ -18335,7 +18389,8 @@ msgid "Freestyle Settings"
 msgstr "Nastavenia Freestyle"
 
 
-msgid "Freestyle settings for a ViewLayer data-block"
+# BFA - reworded, Blender: "Freestyle settings for a ViewLayer data-block"
+msgid "Freestyle settings for a ViewLayer"
 msgstr "Nastavenia Freestyle pre blok údajov zobrazenej vrstvy"
 
 
@@ -19956,7 +20011,8 @@ msgid "Animation data for this data-block"
 msgstr "Údaje animácie pre tento blok údajov"
 
 
-msgid "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+# BFA - reworded, Blender: "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+msgid "Armature data containing a hierarchy of bones, usually used for rigging characters"
 msgstr "Blok údajov armatúry obsahujúci hierarchiu kostí, zvyčajne použité pre výbavu postavy"
 
 
@@ -20220,7 +20276,8 @@ msgid "Apply changes to matching bone on opposite side of X-Axis"
 msgstr "Aplikuje zmeny na párovej kosti na opačnej strane osi X"
 
 
-msgid "Brush data-block for storing brush settings for painting and sculpting"
+# BFA - reworded, Blender: "Brush data-block for storing brush settings for painting and sculpting"
+msgid "Brush data for storing brush settings for painting and sculpting"
 msgstr "Blok údajov štetca pre uloženie nastavení štetca pre maľovanie a tvarovanie"
 
 
@@ -22455,7 +22512,8 @@ msgid "Frame"
 msgstr "Snímka"
 
 
-msgid "Camera data-block for storing camera settings"
+# BFA - reworded, Blender: "Camera data-block for storing camera settings"
+msgid "Camera data for storing camera settings"
 msgstr "Blok údajov kamery na uloženie nastavení kamery"
 
 
@@ -22995,7 +23053,8 @@ msgid "Panoramic"
 msgstr "Panoramatická"
 
 
-msgid "Collection of Object data-blocks"
+# BFA - reworded, Blender: "Collection of Object data-blocks"
+msgid "Collection of Object data"
 msgstr "Kolekcia blokov údajov objektov"
 
 
@@ -23199,7 +23258,8 @@ msgid "Assign intersection priority value for this collection"
 msgstr "Priradí hodnoty priority priesečníka pre túto kolekciu"
 
 
-msgid "Curve data-block storing curves, splines and NURBS"
+# BFA - reworded, Blender: "Curve data-block storing curves, splines and NURBS"
+msgid "Curve data storing curves, splines and NURBS"
 msgstr "Blok údajov krivky skladovania kriviek, drážok a NURBS"
 
 
@@ -23571,7 +23631,8 @@ msgid "Surface Curve"
 msgstr "Krivka povrchu"
 
 
-msgid "Curve data-block used for storing surfaces"
+# BFA - reworded, Blender: "Curve data-block used for storing surfaces"
+msgid "Curve data used for storing surfaces"
 msgstr "Blok údajov krivky použitý na uloženie povrchov"
 
 
@@ -23579,7 +23640,8 @@ msgid "Text Curve"
 msgstr "Krivka textu"
 
 
-msgid "Curve data-block used for storing text"
+# BFA - reworded, Blender: "Curve data-block used for storing text"
+msgid "Curve data used for storing text"
 msgstr "Blok údajov krivky použitý na uloženie textu"
 
 
@@ -23859,11 +23921,13 @@ msgid "Don't fill polygons while editing"
 msgstr "Počas editácie nevyplňuje polygóny"
 
 
-msgid "Hair data-block for hair curves"
+# BFA - reworded, Blender: "Hair data-block for hair curves"
+msgid "Hair data for hair curves"
 msgstr "Blok údajov vlasov pre krivky vlasov"
 
 
-msgid "All curves in the data-block"
+# BFA - reworded, Blender: "All curves in the data-block"
+msgid "All curves in the data"
 msgstr "Všetky krivky v bloku údajov"
 
 
@@ -24625,7 +24689,8 @@ msgid "Display onion keyframes for looping animations"
 msgstr "Zobrazí cibuľové kľúčové snímky pre slučkovanie animácií"
 
 
-msgid "Image data-block referencing an external or packed image"
+# BFA - reworded, Blender: "Image data-block referencing an external or packed image"
+msgid "Image data referencing an external or packed image"
 msgstr "Blok údajov obrázku odkazujúci na externý alebo zabalený obrázok"
 
 
@@ -25120,7 +25185,8 @@ msgid "Single file with an encoded stereo pair"
 msgstr "Jeden súbor s kódovaným stereo párom"
 
 
-msgid "Shape keys data-block containing different shapes of geometric data-blocks"
+# BFA - reworded, Blender: "Shape keys data-block containing different shapes of geometric data-blocks"
+msgid "Shape keys data containing different shapes of geometric data"
 msgstr "Blok údajov kľúča tvaru obsahujúci rôzne bloky údajov geometrických tvarov"
 
 
@@ -25148,11 +25214,13 @@ msgid "User"
 msgstr "Užívateľský"
 
 
-msgid "Data-block using these shape keys"
+# BFA - reworded, Blender: "Data-block using these shape keys"
+msgid "Data using these shape keys"
 msgstr "Blok údajov použitý týmto kľúčovým tvarom"
 
 
-msgid "Lattice data-block defining a grid for deforming other objects"
+# BFA - reworded, Blender: "Lattice data-block defining a grid for deforming other objects"
+msgid "Lattice data defining a grid for deforming other objects"
 msgstr "Blok údajov drôtenej mriežky definujúci mriežku pre deformáciu iných objektov"
 
 
@@ -25265,7 +25333,8 @@ msgid "Light"
 msgstr "Svetlo"
 
 
-msgid "Light data-block for lighting a scene"
+# BFA - reworded, Blender: "Light data-block for lighting a scene"
+msgid "Light data for lighting a scene"
 msgstr "Blok údajov svetla pre osvetlenie scény"
 
 
@@ -25629,7 +25698,8 @@ msgid "End distance of the cascaded shadow map (only in perspective view)"
 msgstr "Koncová vzdialenosť Mapy kaskádovitého tieňa (len v perspektívnom zobrazení)"
 
 
-msgid "Light Probe data-block for lighting capture objects"
+# BFA - reworded, Blender: "Light Probe data-block for lighting capture objects"
+msgid "Light Probe data for lighting capture objects"
 msgstr "Blok údajov snímača svetla na zachytenie svetla objektov"
 
 
@@ -25949,7 +26019,8 @@ msgid "Offset sampling of the irradiance grid in the viewing direction to reduce
 msgstr "Posuv snímania mriežky vyžarovania v smere pozorovania s cieľom znížiť presvitanie svetla"
 
 
-msgid "Mask data-block defining mask for compositing"
+# BFA - reworded, Blender: "Mask data-block defining mask for compositing"
+msgid "Mask data defining mask for compositing"
 msgstr "Blok údajov masky na definovania masky pre kompozíciu"
 
 
@@ -25973,7 +26044,8 @@ msgid "Collection of layers which defines this mask"
 msgstr "Kolekcia vrstiev, ktorá definuje túto masku"
 
 
-msgid "Material data-block to define the appearance of geometric objects for rendering"
+# BFA - reworded, Blender: "Material data-block to define the appearance of geometric objects for rendering"
+msgid "Material data to define the appearance of geometric objects for rendering"
 msgstr "Blok údajov materiálu definujúceho vzhľad geometrických objektov pre prekreslenie"
 
 
@@ -26722,7 +26794,8 @@ msgid "Vertices of the mesh"
 msgstr "Vrcholy povrchovej siete"
 
 
-msgid "Metaball data-block to define blobby surfaces"
+# BFA - reworded, Blender: "Metaball data-block to define blobby surfaces"
+msgid "Metaball data to define blobby surfaces"
 msgstr "Blok údajov meta gule na definovanie bublinových povrchov"
 
 
@@ -26774,7 +26847,8 @@ msgid "While editing, don't update metaball at all"
 msgstr "Počas úpravy nikdy neaktualizovať meta guľu"
 
 
-msgid "MovieClip data-block referencing an external movie file"
+# BFA - reworded, Blender: "MovieClip data-block referencing an external movie file"
+msgid "MovieClip data referencing an external movie file"
 msgstr "Blok údajov filmového klipu odkazovaný externý filmový súbor"
 
 
@@ -27098,7 +27172,8 @@ msgid "Shader Node Tree"
 msgstr "Stromu uzla tieňovača"
 
 
-msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+# BFA - reworded, Blender: "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+msgid "Node tree consisting of linked nodes used for materials (and other shading data)"
 msgstr "Strom uzlov pozostávajúci z prepojených uzlov používaných pre materiály (a iné bloky údajov tieňovania)"
 
 
@@ -27110,7 +27185,8 @@ msgid "Node tree consisting of linked nodes used for textures"
 msgstr "Strom uzlov pozostávajúci z prepojených uzlov používaných pre textúry"
 
 
-msgid "Object data-block defining an object in a scene"
+# BFA - reworded, Blender: "Object data-block defining an object in a scene"
+msgid "Object data defining an object in a scene"
 msgstr "Blok údajov objektu definujúci objekt na scéne"
 
 
@@ -29314,7 +29390,8 @@ msgid "Relative amount of virtual parents"
 msgstr "Relatívne množstvo virtuálnych rodičov"
 
 
-msgid "Point cloud data-block"
+# BFA - reworded, Blender: "Point cloud data-block"
+msgid "Point cloud data"
 msgstr "Blok údajov mračna bodov"
 
 
@@ -29334,7 +29411,8 @@ msgid "A point cloud that represents the original 3D Gaussian Splats technique"
 msgstr "Mračno bodov, ktorý znázorňuje pôvodnú techniku 3D Gaussových škvŕn"
 
 
-msgid "Scene data-block, consisting in objects and defining time and render related settings"
+# BFA - reworded, Blender: "Scene data-block, consisting in objects and defining time and render related settings"
+msgid "Scene, consisting in objects and defining time and render related settings"
 msgstr "Blok údajov scény, pozostávajúci z objektov, definovania času a súvisiacich nastavení prekreslenia"
 
 
@@ -29386,7 +29464,8 @@ msgid "Allows playing back frames before the playback start frame"
 msgstr "Povolí prehrávať snímky pred snímkou, od ktorej začína prehrávanie"
 
 
-msgid "Data-block used for annotations in the 3D view"
+# BFA - reworded, Blender: "Data-block used for annotations in the 3D view"
+msgid "Data used for annotations in the 3D view"
 msgstr "Blok údajov používaný na poznámky v 3D zobrazení"
 
 
@@ -29936,7 +30015,8 @@ msgid "Wrap the playhead around the playback range when navigating the timeline"
 msgstr "Pri navigácii na časovej osi navinie prehrávaciu hlavu tak, aby zahŕňala celý rozsah prehrávania"
 
 
-msgid "Screen data-block, defining the layout of areas in a window"
+# BFA - reworded, Blender: "Screen data-block, defining the layout of areas in a window"
+msgid "Screen data, defining the layout of areas in a window"
 msgstr "Blok údajov obrazovky, definovanie rozloženia oblastí v okne"
 
 
@@ -30016,7 +30096,8 @@ msgid "Top-Left 3D Editor"
 msgstr "3D editor hore-vľavo"
 
 
-msgid "Sound data-block referencing an external or packed sound file"
+# BFA - reworded, Blender: "Sound data-block referencing an external or packed sound file"
+msgid "Sound data referencing an external or packed sound file"
 msgstr "Blok údajov zvuku odkazujúci na externý alebo zbalený zvukový súbor"
 
 
@@ -30044,7 +30125,8 @@ msgid "6.1 Surround"
 msgstr "Priestorový 6.1"
 
 
-msgid "Sound sample file used by this Sound data-block"
+# BFA - reworded, Blender: "Sound sample file used by this Sound data-block"
+msgid "Sound sample file used by this Sound data"
 msgstr "Súbor zvukovej nahrávky používaný týmto blokom údajov zvuku"
 
 
@@ -30064,7 +30146,8 @@ msgid "If the file contains multiple audio channels they are rendered to a singl
 msgstr "Ak súbor obsahuje viac zvukových kanálov, tieto sú prekresľované ako jeden"
 
 
-msgid "Speaker data-block for 3D audio speaker objects"
+# BFA - reworded, Blender: "Speaker data-block for 3D audio speaker objects"
+msgid "Speaker data´for 3D audio speaker objects"
 msgstr "Blok údajov reproduktorov pre objekty 3D zvukového reproduktora"
 
 
@@ -30130,7 +30213,8 @@ msgid "Playback pitch of the sound"
 msgstr "Odstup prehrávania zvuku"
 
 
-msgid "Sound data-block used by this speaker"
+# BFA - reworded, Blender: "Sound data-block used by this speaker"
+msgid "Sound data used by this speaker"
 msgstr "Blok údajov zvuku používaný týmto reproduktorom"
 
 
@@ -30154,7 +30238,8 @@ msgid "Minimum volume, no matter how far away the object is"
 msgstr "Minimálna hlasitosť bez ohľadu na to, ako je objekt ďaleko"
 
 
-msgid "Text data-block referencing an external or packed text file"
+# BFA - reworded, Blender: "Text data-block referencing an external or packed text file"
+msgid "Text file referencing an external or packed text file"
 msgstr "Blok údajov textu odkazujúci na externý alebo zbalený textový súbor"
 
 
@@ -30275,7 +30360,8 @@ msgid "Run this text as a Python script on loading"
 msgstr "Pri načítaní spustí tento text ako skript Python"
 
 
-msgid "Texture data-block used by materials, lights, worlds and brushes"
+# BFA - reworded, Blender: "Texture data-block used by materials, lights, worlds and brushes"
+msgid "Texture used by materials, lights, worlds and brushes"
 msgstr "Blok údajov textúry použitej na materiály, svetlá, oblasti a štetce"
 
 
@@ -31216,7 +31302,8 @@ msgid "Vector font for Text objects"
 msgstr "Vektor písma pre textové objekty"
 
 
-msgid "Volume data-block for 3D volume grids"
+# BFA - reworded, Blender: "Volume data-block for 3D volume grids"
+msgid "Volume data for 3D volume grids"
 msgstr "Blok údajov objemu pre mriežky 3D objemu"
 
 
@@ -31224,7 +31311,8 @@ msgid "Volume display settings for 3D viewport"
 msgstr "Nastavenie zobrazenia objemu pre 3D záber"
 
 
-msgid "Volume file used by this Volume data-block"
+# BFA - reworded, Blender: "Volume file used by this Volume data-block"
+msgid "Volume file used by this Volume"
 msgstr "Súbor objemu použitý v tomto bloku údajov objemu"
 
 
@@ -31329,7 +31417,8 @@ msgid "Window Manager"
 msgstr "Manažér okna"
 
 
-msgid "Window manager data-block defining open windows and other user interface data"
+# BFA - reworded, Blender: "Window manager data-block defining open windows and other user interface data"
+msgid "Window manager data defining open windows and other user interface data"
 msgstr "Blok údajov Manažéra okna definujúci otváranie okien a ďalších údajov užívateľského rozhrania"
 
 
@@ -31605,7 +31694,8 @@ msgid "Workspace"
 msgstr "Pracovný priestor"
 
 
-msgid "Workspace data-block, defining the working environment for the user"
+# BFA - reworded, Blender: "Workspace data-block, defining the working environment for the user"
+msgid "Workspace data, defining the working environment for the user"
 msgstr "Blok údajov pracovného priestoru, definovanie pracovného prostredia pre užívateľa"
 
 
@@ -31681,7 +31771,8 @@ msgid "Set the active scene and time based on the current scene strip"
 msgstr "Nastaví aktívnu scénu a čas na základe aktuálneho pásu scény"
 
 
-msgid "World data-block describing the environment and ambient lighting of a scene"
+# BFA - reworded, Blender: "World data-block describing the environment and ambient lighting of a scene"
+msgid "World data describing the environment and ambient lighting of a scene"
 msgstr "Blok údajov oblasti popisujúci prostredie a osvetlenie okolitej scény"
 
 
@@ -32545,7 +32636,8 @@ msgid "True if this preview image has been modified by py script, and is no more
 msgstr "Pravdivé, ak tento náhľad obrázku bol upravený Python skriptom a nie je viac automaticky generovaný Blenderom"
 
 
-msgid "Parameters defining how an Image data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how an Image data-block is used by another data-block"
+msgid "Parameters defining how an Image data is used by another data"
 msgstr "Parametre definujúce spôsob používania bloku údajov obrázka iným blokom údajov"
 
 
@@ -36100,7 +36192,8 @@ msgid "ID Type"
 msgstr "ID typu"
 
 
-msgid "Name of parent object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent object in specified data-block to which parenting happens"
+msgid "Name of parent object in specified data to which parenting happens"
 msgstr "Názov rodičovského objektu v určenom bloku údajov, ku ktorému dochádza k rodičovstvu"
 
 
@@ -36108,7 +36201,8 @@ msgid "Sub Parent"
 msgstr "Pod-rodičovstvo"
 
 
-msgid "Name of parent sub-object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent sub-object in specified data-block to which parenting happens"
+msgid "Name of parent sub-object in specified data to which parenting happens"
 msgstr "Názov rodičovského pod-objektu v určenom bloku údajov, ku ktorému dochádza k rodičovstvu"
 
 
@@ -36633,7 +36727,8 @@ msgid "Link material to object or the object's data"
 msgstr "Prepojenie materiálu s objektom alebo s údajmi objektu"
 
 
-msgid "Material data-block used by this material slot"
+# BFA - reworded, Blender: "Material data-block used by this material slot"
+msgid "Material data used by this material slot"
 msgstr "Blok údajov materiálu použitý v tejto zásuvke materiálu"
 
 
@@ -37695,7 +37790,8 @@ msgid "Mesh Edge"
 msgstr "Hrana povrchovej siete"
 
 
-msgid "Edge in a Mesh data-block"
+# BFA - reworded, Blender: "Edge in a Mesh data-block"
+msgid "Edge in a Mesh data"
 msgstr "Hrana v bloku údajov povrchovej siete"
 
 
@@ -37743,7 +37839,8 @@ msgid "Mesh Loop"
 msgstr "Slučka povrchovej siete"
 
 
-msgid "Loop in a Mesh data-block"
+# BFA - reworded, Blender: "Loop in a Mesh data-block"
+msgid "Loop in a Mesh data"
 msgstr "Slučka v bloku údajov povrchovej siete"
 
 
@@ -37823,7 +37920,8 @@ msgid "Mesh Loop Triangle"
 msgstr "Trojuholník slučky povrchovej siete"
 
 
-msgid "Tessellated triangle in a Mesh data-block"
+# BFA - reworded, Blender: "Tessellated triangle in a Mesh data-block"
+msgid "Tessellated triangle in a Mesh data"
 msgstr "Trojuholník mozaiky v bloku údajov povrchovej siete"
 
 
@@ -37903,7 +38001,8 @@ msgid "Mesh Polygon"
 msgstr "Polygón povrchovej siete"
 
 
-msgid "Polygon in a Mesh data-block"
+# BFA - reworded, Blender: "Polygon in a Mesh data-block"
+msgid "Polygon in a Mesh data"
 msgstr "Polygón v bloku údajov povrchovej siete"
 
 
@@ -38187,7 +38286,8 @@ msgid "Metaball Element"
 msgstr "Prvok meta gule"
 
 
-msgid "Blobby element in a metaball data-block"
+# BFA - reworded, Blender: "Blobby element in a metaball data-block"
+msgid "Blobby element in a Metaball data"
 msgstr "Prvok kvapky v bloku údajov meta gule"
 
 
@@ -45206,7 +45306,8 @@ msgid "Movie Clip User"
 msgstr "Používateľ filmového klipu"
 
 
-msgid "Parameters defining how a MovieClip data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how a MovieClip data-block is used by another data-block"
+msgid "Parameters defining how a MovieClip data is used by another data"
 msgstr "Parametre definujúce spôsob, akým blok údajov filmového klipu používa iný blok údajov"
 
 
@@ -51936,7 +52037,8 @@ msgid "The attribute is associated with the object geometry, and its value varie
 msgstr "Atribút je spojený s geometriou objektu a jeho hodnota sa líši od vrcholu k vrcholu alebo v objeme objektu"
 
 
-msgid "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+# BFA - reworded, Blender: "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+msgid "The attribute is associated with the object or mesh data itself, and its value is uniform"
 msgstr "Atribút je priradený k samotnému objektu alebo bloku údajov povrchovej siete a jeho hodnota je jednotná"
 
 
@@ -53403,7 +53505,8 @@ msgid "Internal IES file"
 msgstr "Interný súbor IES"
 
 
-msgid "Whether the IES file is loaded from disk or from a text data-block"
+# BFA - reworded, Blender: "Whether the IES file is loaded from disk or from a text data-block"
+msgid "Whether the IES file is loaded from disk or from a text data"
 msgstr "Či je súbor IES načítaný z disku alebo z bloku údajov textu"
 
 
@@ -55672,8 +55775,9 @@ msgid "Export Keying Set to a Python script"
 msgstr "Exportuje sústavu kľúčov do skriptu jazyka Python"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "Exportovať sústavu kľúčovania..."
 
 
@@ -56087,7 +56191,10 @@ msgid "Console Banner"
 msgstr "Titulok konzoly"
 
 
-msgid "Copy the console contents for use in a script"
+# BFA - reworded, Blender: "Copy the console contents for use in a script"
+msgid ""
+"Copy to Clipboard (as script\n"
+"Copy the console contents for use in a script"
 msgstr "Kopíruje obsah konzoly na použitie v skripte"
 
 
@@ -56671,7 +56778,8 @@ msgid "Duplicate Item"
 msgstr "Vytvoriť kópiu položky"
 
 
-msgid "Make the active boolean socket a toggle for its parent panel"
+# BFA - reworded, Blender: "Make the active boolean socket a toggle for its parent panel"
+msgid "Make the selected active boolean input socket a top-level toggle located in its parent panel"
 msgstr "Vytvára logický prepínač aktívnej zásuvky pre jej nadradený panel"
 
 
@@ -57268,7 +57376,10 @@ msgid "Subdivision Set"
 msgstr "Nastaviť delenie"
 
 
-msgid "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+# BFA - reworded, Blender: "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+msgid ""
+"Converts normal object transforms to delta transforms.\n"
+"Any existing delta transform will be included as well"
 msgstr "Konvertuje transformáciu normálneho objektu na delta transformáciu, budú zahrnuté aj všetky existujúce delta transformácie"
 
 
@@ -58604,7 +58715,10 @@ msgid "Add Property"
 msgstr "Pridať vlastnosť"
 
 
-msgid "Jump to a different tab inside the properties editor"
+# BFA - reworded, Blender: "Jump to a different tab inside the properties editor"
+msgid ""
+"Change Context\n"
+"Jump to a different tab inside the properties editor"
 msgstr "Skočí na inú kartu v editore vlastností"
 
 
@@ -58975,7 +59089,10 @@ msgid "Set Keyframe Interpolation"
 msgstr "Nastaviť interpoláciu kľúčovej snímky"
 
 
-msgid "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+# BFA - reworded, Blender: "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgid ""
+"Keyframe Interpolation\n"
+"Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 msgstr "Nastaví režim interpolácie pre segmenty F-krivky počnúc vybranými kľúčovými snímkami"
 
 
@@ -59063,7 +59180,8 @@ msgid "Flip times of selected keyframes using the first selected marker as the r
 msgstr "Preklopí časy vybraných kľúčových snímok použitím prvej zvolenej značky ako referenčného bodu"
 
 
-msgid "By Values Over Zero Value"
+# BFA - reworded, Blender: "By Values Over Zero Value"
+msgid "By Values Over Value=0"
 msgstr "Podľa hodnoty nad nulovou hodnotou"
 
 
@@ -59450,12 +59568,14 @@ msgid "Store this action in the NLA stack as a non-contributing strip for later 
 msgstr "Uloží túto akciu v zásobníku NLA ako bezpríspevkový pás pre neskoršie použitie a vytvoriť novú akciu"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "Odpojiť akciu"
 
 
-msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+# BFA - reworded, Blender: "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
 msgstr "Odpojí túto akciu od aktívnej zásuvky akcie (a/alebo ukončí režim vylepšenia)"
 
 
@@ -59472,7 +59592,8 @@ msgid "Frame All"
 msgstr "Všetky snímky"
 
 
-msgid "Reset viewable area to show full keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show full keyframe range"
+msgid "Zooms in or out to fit the display to show full keyframe range"
 msgstr "Resetuje zobraziteľnú oblasť pre zobrazenie celého rozsahu kľúčovej snímky"
 
 
@@ -59490,7 +59611,8 @@ msgid "Frame Selected"
 msgstr "Vybrané snímky"
 
 
-msgid "Reset viewable area to show selected keyframes range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframes range"
+msgid "Zooms in or out to fit the display to show selected keyframes range"
 msgstr "Resetuje zobraziteľnú oblasť na zobrazenie vybraného rozsahu kľúčových snímok"
 
 
@@ -59533,7 +59655,8 @@ msgid "Frame Channel Under Cursor"
 msgstr "Kanál snímok pod kurzorom"
 
 
-msgid "Reset viewable area to show the channel under the cursor"
+# BFA - reworded, Blender: "Reset viewable area to show the channel under the cursor"
+msgid "Zooms in or out to fit the display to show the channel under the cursor"
 msgstr "Resetuje zobraziteľnú oblasť na zobrazenie kanála pod kurzorom"
 
 
@@ -59611,7 +59734,8 @@ msgid "Remove Empty Animation Data"
 msgstr "Odstrániť prázdne údaje animácie"
 
 
-msgid "Delete all empty animation data containers from visible data-blocks"
+# BFA - reworded, Blender: "Delete all empty animation data containers from visible data-blocks"
+msgid "Delete all empty animation data containers from visible data"
 msgstr "Odstráni všetky prázdne údajové kontajnery s animáciami z viditeľných blokov údajov"
 
 
@@ -59802,7 +59926,8 @@ msgid "Frame Selected Channels"
 msgstr "Kanály vybraných snímok"
 
 
-msgid "Reset viewable area to show the selected channels"
+# BFA - reworded, Blender: "Reset viewable area to show the selected channels"
+msgid "Zooms in or out to fit the display of the selected channels"
 msgstr "Resetuje zobraziteľnú oblasť pre zobrazenie vybraných kanálov"
 
 
@@ -59960,7 +60085,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "Vložiť kľúčovú snímku (tlačidlá)"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "Vloží aktuálnu kľúčovú snímku aktuálnej aktívnej vlastnosti užívateľského rozhrania"
 
 
@@ -60744,7 +60870,8 @@ msgid "Hide Selected"
 msgstr "Skryť vybrané"
 
 
-msgid "Tag selected bones to not be visible in Edit Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Edit Mode"
+msgid "Hide selected bones in Edit Mode"
 msgstr "Príznak vybranej kosti nie je viditeľný v režime úprav"
 
 
@@ -61551,7 +61678,8 @@ msgid "Save as Brush Asset"
 msgstr "Uložiť ako aktívum Štetec"
 
 
-msgid "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+# BFA - reworded, Blender: "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+msgid "Duplicates the active brush asset, saves it into the default asset library, and make it the active brush"
 msgstr "Uloží kópiu aktívneho aktíva štetca do predvolenej knižnice aktív a urobí z neho aktívny štetec"
 
 
@@ -61697,7 +61825,8 @@ msgid "Toggle Pin ID"
 msgstr "Prepnúť ID špendlíka"
 
 
-msgid "Keep the current data-block displayed"
+# BFA - reworded, Blender: "Keep the current data-block displayed"
+msgid "Keep the current data displayed"
 msgstr "Zachová aktuálne zobrazený blok údajov"
 
 
@@ -63951,7 +64080,8 @@ msgid "Spline type"
 msgstr "Typ drážky"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "Skryť vybrané(zrušené) riadiace body"
 
 
@@ -66508,7 +66638,8 @@ msgid "Pack Linked Libraries"
 msgstr "Zbaliť prepojené knižnice"
 
 
-msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+# BFA - reworded, Blender: "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
 msgstr "Uloží všetky bloky údajov prepojené z iných blend-súborov do aktuálneho blend-súboru. Odkazy na knižnice sa zachovajú, takže prepojené bloky údajov možno znova rozbaliť"
 
 
@@ -66734,7 +66865,8 @@ msgid "Unpack Linked Libraries"
 msgstr "Rozbaliť prepojené knižnice"
 
 
-msgid "Restore all packed linked data-blocks to their original locations"
+# BFA - reworded, Blender: "Restore all packed linked data-blocks to their original locations"
+msgid "Restore all packed linked data  to their original locations"
 msgstr "Obnoví všetky zbalené prepojené bloky údajov na ich pôvodné umiestnenie"
 
 
@@ -67124,7 +67256,8 @@ msgid "Unlink"
 msgstr "Odpojiť"
 
 
-msgid "Unlink active font data-block"
+# BFA - reworded, Blender: "Unlink active font data-block"
+msgid "Remove active font"
 msgstr "Odpojí blok údajov aktívneho písma"
 
 
@@ -67386,16 +67519,19 @@ msgid "Annotation Add New"
 msgstr "Pridať novú poznámku"
 
 
-msgid "Add new Annotation data-block"
+# BFA - reworded, Blender: "Add new Annotation data-block"
+msgid "Add new Annotation data"
 msgstr "Pridá nový blok údajov poznámky"
 
 
+# BFA - reworded, Blender: "Annotation Unlink"
 msgctxt "Operator"
-msgid "Annotation Unlink"
+msgid "Remove Annotation"
 msgstr "Odpojiť poznámku"
 
 
-msgid "Unlink active Annotation data-block"
+# BFA - reworded, Blender: "Unlink active Annotation data-block"
+msgid "Remove the active Annotation"
 msgstr "Zruší prepojenie aktívneho bloku údajov poznámky"
 
 
@@ -67404,7 +67540,8 @@ msgid "Add New Annotation Layer"
 msgstr "Pridať novú vrstvu poznámky"
 
 
-msgid "Add new Annotation layer or note for the active data-block"
+# BFA - reworded, Blender: "Add new Annotation layer or note for the active data-block"
+msgid "Add new Annotation layer or note for the active data"
 msgstr "Pridá novú vrstvu poznámok alebo poznámku pre aktívny blok údajov"
 
 
@@ -67933,7 +68070,8 @@ msgid "Defines which keys to use as slope and how much to blend towards them"
 msgstr "Definuje, ktoré kľúče sa majú použiť ako sklon a koľko sa ich má prelínať"
 
 
-msgid "By Times Over Zero Time"
+# BFA - reworded, Blender: "By Times Over Zero Time"
+msgid "By Times Over Time=0"
 msgstr "Podľa času nad nulový čas"
 
 
@@ -68260,7 +68398,8 @@ msgid "How far in frames to offset the animation"
 msgstr "Určuje, ako ďaleko v snímkach sa má animácia posunúť"
 
 
-msgid "Reset viewable area to show selected keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframe range"
+msgid "Zooms in or out to fit the display to show selected keyframe range"
 msgstr "Resetuje zobraziteľnú oblasť a zobrazí vybraný rozsah kľúčovej snímky"
 
 
@@ -68434,7 +68573,8 @@ msgid "Rounded"
 msgstr "Zaoblené"
 
 
-msgid "Set as default rounded"
+# BFA - reworded, Blender: "Set as default rounded"
+msgid "Set as default rounded caps"
 msgstr "Nastaviť zaoblené ak predvolené"
 
 
@@ -70189,7 +70329,8 @@ msgid "Clear Render Region"
 msgstr "Vymazať oblasť prekreslenia"
 
 
-msgid "Clear the boundaries of the render region and disable render region"
+# BFA - reworded, Blender: "Clear the boundaries of the render region and disable render region"
+msgid "Removes an existing Render Region rectangle"
 msgstr "Vymaže okraje oblasti prekreslenia a zakáže prekreslenie oblasti"
 
 
@@ -70615,7 +70756,8 @@ msgid "Image height"
 msgstr "Výška obrázka"
 
 
-msgid "Image data-block name"
+# BFA - reworded, Blender: "Image data-block name"
+msgid "Image name"
 msgstr "Názov bloku údajov obrázka"
 
 
@@ -70821,7 +70963,8 @@ msgid "Save As Image"
 msgstr "Uložiť ako obrázok"
 
 
-msgid "Save the image with another name and/or settings"
+# BFA - reworded, Blender: "Save the image with another name and/or settings"
+msgid "Saves the image with another name and/or settings"
 msgstr "Uloží obrázok pod iným názvom a/alebo nastaveniami"
 
 
@@ -70913,7 +71056,8 @@ msgid "Image Name"
 msgstr "Názov obrázka"
 
 
-msgid "Image data-block name to unpack"
+# BFA - reworded, Blender: "Image data-block name to unpack"
+msgid "Image name to unpack"
 msgstr "Názov bloku údajov obrázka na rozbalenie"
 
 
@@ -71668,7 +71812,8 @@ msgid "Clear Restrict View"
 msgstr "Zmazať obmedzené zobrazenie"
 
 
-msgid "Reveal temporarily hidden mask layers"
+# BFA - reworded, Blender: "Reveal temporarily hidden mask layers"
+msgid "Reveals the hidden layer(s)"
 msgstr "Odhalí dočasne skryté vrstvy masiek"
 
 
@@ -71677,7 +71822,8 @@ msgid "Set Restrict View"
 msgstr "Nastaviť obmedzené zobrazenie"
 
 
-msgid "Temporarily hide mask layers"
+# BFA - reworded, Blender: "Temporarily hide mask layers"
+msgid "Hide the mask layer"
 msgstr "Dočasne skryje vrstvy masky"
 
 
@@ -71920,7 +72066,8 @@ msgid "Duplicate Metaball Elements"
 msgstr "Kópia prvku meta gule"
 
 
-msgid "Hide (un)selected metaball element(s)"
+# BFA - reworded, Blender: "Hide (un)selected metaball element(s)"
+msgid "Hide selected metaball element(s)"
 msgstr "Skryje/zobrazí vybrané prvky metagule"
 
 
@@ -73122,7 +73269,8 @@ msgid "Flips the tessellation of selected quads"
 msgstr "Obráti mozaikovanie vybraných štvoruholníkov"
 
 
-msgid "Hide (un)selected vertices, edges or faces"
+# BFA - reworded, Blender: "Hide (un)selected vertices, edges or faces"
+msgid "Hide selected vertices, edges or faces"
 msgstr "Skryje (ne)vybrané vrcholy, hrany alebo plôšky"
 
 
@@ -73515,7 +73663,8 @@ msgid "Mark Sharp"
 msgstr "Vyznačiť ostré"
 
 
-msgid "(Un)mark selected edges as sharp"
+# BFA - reworded, Blender: "(Un)mark selected edges as sharp"
+msgid "Mark selected edges as sharp"
 msgstr "Zruší vyznačenie/vyznačí vybrané hrany ako ostré"
 
 
@@ -73890,7 +74039,8 @@ msgid "Transform at Cursor Move"
 msgstr "Transformácia pri pohybe kurzora"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "Vytvorí povrchovú sieť tvaru kruhu"
 
 
@@ -73923,7 +74073,8 @@ msgid "Add Cone"
 msgstr "Pridať kužeľ"
 
 
-msgid "Construct a conic mesh"
+# BFA - reworded, Blender: "Construct a conic mesh"
+msgid "Add a conic mesh"
 msgstr "Vytvorí povrchovú sieť tvaru kužeľa"
 
 
@@ -73944,7 +74095,8 @@ msgid "Add Cube"
 msgstr "Pridať kocku"
 
 
-msgid "Construct a cube mesh that consists of six square faces"
+# BFA - reworded, Blender: "Construct a cube mesh that consists of six square faces"
+msgid "Add a cube mesh that consists of six square faces"
 msgstr "Zostrojí povrchovú sieť kocky, ktorá pozostáva zo šiestich štvorcových plôšok"
 
 
@@ -73957,7 +74109,8 @@ msgid "Add Cylinder"
 msgstr "Pridať valec"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "Vytvorí povrchovú sieť tvaru valca"
 
 
@@ -73970,7 +74123,8 @@ msgid "Add Grid"
 msgstr "Pridať mriežku"
 
 
-msgid "Construct a subdivided plane mesh"
+# BFA - reworded, Blender: "Construct a subdivided plane mesh"
+msgid "Add a subdivided plane mesh"
 msgstr "Zostrojí rozdelenú rovinnú povrchovú sieť"
 
 
@@ -73987,7 +74141,8 @@ msgid "Add Ico Sphere"
 msgstr "Pridať mnohosten"
 
 
-msgid "Construct a spherical mesh that consists of equally sized triangles"
+# BFA - reworded, Blender: "Construct a spherical mesh that consists of equally sized triangles"
+msgid "Add a spherical mesh that consists of equally sized triangles"
 msgstr "Zostrojí sférickú povrchovú sieť, ktorá pozostáva z rovnako veľkých trojuholníkov"
 
 
@@ -73996,7 +74151,8 @@ msgid "Add Monkey"
 msgstr "Pridať opičku"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "Vytvorí povrchovú sieť Zuzanky"
 
 
@@ -74005,7 +74161,8 @@ msgid "Add Plane"
 msgstr "Pridať plochu"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "Vytvorí vyplnenú rovinnú povrchovú sieť so 4 vrcholmi"
 
 
@@ -75632,11 +75789,13 @@ msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get t
 msgstr "Zakáže 'sólo' na niektorú NLA stopu po ukončení režimu vylepšenia na návrat do normálu"
 
 
-msgid "Reset viewable area to show full strips range"
+# BFA - reworded, Blender: "Reset viewable area to show full strips range"
+msgid "Zooms in or out to fit the display to show full strips range"
 msgstr "Resetuje zobraziteľnú oblasť na zobrazenie celého rozsahu pásov"
 
 
-msgid "Reset viewable area to show selected strips range"
+# BFA - reworded, Blender: "Reset viewable area to show selected strips range"
+msgid "Zooms in or out to fit the display to show selected strips range"
 msgstr "Resetuje zobraziteľnú oblasť a zobrazí vybraný rozsah pásov"
 
 
@@ -75977,11 +76136,13 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Vymaže okraje pre operácie zobrazovača"
 
 
+# BFA - reworded, Blender: "Copy the selected nodes to the internal clipboard"
 msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Skopíruje vybrané uzly do internej schránky"
 
 
-msgid "Paste nodes from the internal clipboard to the active node tree"
+# BFA - reworded, Blender: "Paste nodes from the internal clipboard to the active node tree"
+msgid "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"
 msgstr "Prilepí uzly z internej schránky do stromu aktívneho uzla"
 
 
@@ -76058,11 +76219,13 @@ msgid "Remove selected nodes"
 msgstr "Odstráni vybrané uzly"
 
 
+# BFA - reworded, Blender: "Delete with Copy and Reconnect"
 msgctxt "Operator"
 msgid "Cut: Delete with Copy and Reconnect"
 msgstr "Odstrániť kopírovaním a znovu pripojením"
 
 
+# BFA - reworded, Blender: "Copy nodes to clipboard, remove and reconnect them."
 msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
 msgstr "Kopíruje uzly do schránky, odstráni ich a znova ich pripojí."
 
@@ -77385,12 +77548,14 @@ msgid "Delete the selected local overrides and relink their usages to the linked
 msgstr "Odstráni vybraté lokálne prepisy a ak je to možné, znova prepojí ich použitie s prepojenými blokmi údajov, inak ich resetujte a označí ako neupraviteľné"
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "Pridať do kolekcie"
 
 
-msgid "Add an object to a new collection"
+# BFA - reworded, Blender: "Add an object to a new collection"
+msgid "Adds the selected object to a new collection"
 msgstr "Pridá objekt do novej kolekcie"
 
 
@@ -77911,7 +78076,8 @@ msgid "New Geometry Node Group"
 msgstr "Nová skupina uzlov geometrie"
 
 
-msgid "Duplicate the active geometry node group and assign it to the active modifier"
+# BFA - reworded, Blender: "Duplicate the active geometry node group and assign it to the active modifier"
+msgid "Duplicates the active geometry node group and assigns it to the active modifier"
 msgstr "Vytvára kópiu aktívnej skupiny uzlov geometrie a priraďuje ju k aktívnemu modifikátoru"
 
 
@@ -77959,7 +78125,10 @@ msgid "Blank"
 msgstr "Prázdny"
 
 
-msgid "Create an empty Grease Pencil object"
+# BFA - reworded, Blender: "Create an empty Grease Pencil object"
+msgid ""
+"Create an empty grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "Vytvoriť prázdny objekt Grease Pencil"
 
 
@@ -77977,7 +78146,10 @@ msgid "Monkey"
 msgstr "Opička"
 
 
-msgid "Construct a Suzanne Grease Pencil object"
+# BFA - reworded, Blender: "Construct a Suzanne Grease Pencil object"
+msgid ""
+"Construct a Monkey names Suzanne grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "Vytvorí Zuzanku objektom Grease Pencil"
 
 
@@ -78112,7 +78284,8 @@ msgid "Hide Objects"
 msgstr "Skryť objekty"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "Dočasne skryje objekty z záberu"
 
 
@@ -78603,7 +78776,8 @@ msgid "Make Local"
 msgstr "Vytvoriť lokálne"
 
 
-msgid "Make library linked data-blocks local to this file"
+# BFA - reworded, Blender: "Make library linked data-blocks local to this file"
+msgid "Make library linked data local to this file"
 msgstr "Vytvorí knižnicu prepojených lokálnych blokov údajov do súboru"
 
 
@@ -78644,7 +78818,8 @@ msgid "Make object animation data local to each object"
 msgstr "Vytvorí animačné údaje objektu lokálne pre každý objekt"
 
 
-msgid "Make materials local to each data-block"
+# BFA - reworded, Blender: "Make materials local to each data-block"
+msgid "Make materials local to each data"
 msgstr "Vytvorí miestny materiál ku každému objektu"
 
 
@@ -79263,11 +79438,13 @@ msgid "Current Transform"
 msgstr "Aktuálna transformácia"
 
 
-msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+# BFA - reworded, Blender: "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgid "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled"
 msgstr "Prilepí len na aktuálne hodnoty, pričom s údajmi animácie sa manipuluje len vtedy, ak je zapnuté automatické kľúčovanie"
 
 
-msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+# BFA - reworded, Blender: "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgid "Paste transform onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "Prilepí do snímok, ktoré majú vybraný kľúč, čím sa potenciálne vytvoria nové kľúče v týchto snímkach"
 
 
@@ -79275,7 +79452,8 @@ msgid "Bake on Key Range"
 msgstr "Zapiecť na kľúčový rozsah"
 
 
-msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+# BFA - reworded, Blender: "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgid "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "Prilepí na všetky snímky medzi prvým a posledným vybraným kľúčom, v prípade potreby vytvoriť nové kľúčové snímky"
 
 
@@ -79664,7 +79842,8 @@ msgid "Deselect objects at the boundaries of parent/child relationships"
 msgstr "Zruší výber objektov na okrajoch väzieb rodič/potomok"
 
 
-msgid "Select all visible objects that are linked"
+# BFA - reworded, Blender: "Select all visible objects that are linked"
+msgid "Select all visible objects that are linked to the active element"
 msgstr "Vyberie všetky viditeľné prepojené objekty"
 
 
@@ -81193,7 +81372,8 @@ msgid "Outliner ID Data Copy"
 msgstr "Kopírovať ID údaje Líniového prehľadu"
 
 
-msgid "Copy the selected data-blocks to the internal clipboard"
+# BFA - reworded, Blender: "Copy the selected data-blocks to the internal clipboard"
+msgid "Selected data are copied to the clipboard"
 msgstr "Kopíruje vybrané bloky údajov do internej schránky"
 
 
@@ -81252,7 +81432,8 @@ msgid "Add Fake User"
 msgstr "Pridať falošného užívateľa"
 
 
-msgid "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+# BFA - reworded, Blender: "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+msgid "Ensure data gets saved even if it isn't in use (e.g. for motion and material libraries)"
 msgstr "Zabezpečí, aby bol blok údajov uložený aj v prípade, že sa nepoužíva (napr. v prípade knižníc pohybu a materiálov)"
 
 
@@ -81264,7 +81445,8 @@ msgid "Rename"
 msgstr "Premenovať"
 
 
-msgid "Embed data-blocks into the .blend file"
+# BFA - reworded, Blender: "Embed data-blocks into the .blend file"
+msgid "Embed data into the .blend file"
 msgstr "Vloží bloky údajov do súboru .blend"
 
 
@@ -81273,7 +81455,8 @@ msgid "Outliner ID Data Paste"
 msgstr "Prilepiť ID údaje Líniového prehľadu"
 
 
-msgid "Paste data-blocks from the internal clipboard"
+# BFA - reworded, Blender: "Paste data-blocks from the internal clipboard"
+msgid "Data from the clipboard are pasted"
 msgstr "Prilepí blok údajov z internej schránky"
 
 
@@ -81561,7 +81744,8 @@ msgid "Purge All"
 msgstr "Vyčistiť všetko"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file"
+# BFA - reworded, Blender: "Clear all orphaned data-blocks without any users from the file"
+msgid "Clear all orphaned data without any users from the file"
 msgstr "Vymaže zo súboru všetky osamotené bloky údajov bez užívateľov"
 
 
@@ -81712,7 +81896,8 @@ msgid "Show/Hide One Level"
 msgstr "Zobraziť/skryť jednu úroveň"
 
 
-msgid "Expand/collapse all entries by one level"
+# BFA - reworded, Blender: "Expand/collapse all entries by one level"
+msgid "Expand/Collapse all entries by one level"
 msgstr "Rozvinie/zvinie všetky položky o jednu úroveň"
 
 
@@ -81755,7 +81940,8 @@ msgid "Slide Paint Curve Point"
 msgstr "Posunúť bod krivky maľby"
 
 
-msgid "Select and slide paint curve point"
+# BFA - reworded, Blender: "Select and slide paint curve point"
+msgid "Select and slide a paint curve point"
 msgstr "Vybrať a posunúť bod krivky maľby"
 
 
@@ -81764,7 +81950,8 @@ msgid "Place Cursor"
 msgstr "Umiestniť kurzor"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "Umiestni kurzor"
 
 
@@ -81777,7 +81964,8 @@ msgid "Remove Paint Curve Point"
 msgstr "Odstrániť bod krivky maľby"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "Vykresliť krivku"
 
 
@@ -82280,7 +82468,7 @@ msgstr "Upraví farby vrcholu Odtieň/Nasýtenie/Hodnota"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Color"
+msgid "Set Vertex Colors"
 msgstr "Nastaviť farbu vrcholu"
 
 
@@ -82497,7 +82685,8 @@ msgid "Add New Palette"
 msgstr "Pridať novú paletu"
 
 
-msgid "Add new palette"
+# BFA - reworded, Blender: "Add new palette"
+msgid "Add a new palette of indexed colors"
 msgstr "Pridá novú paletu"
 
 
@@ -82976,6 +83165,7 @@ msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Brow
 msgstr "Vytvorí nové aktívum pózy v schránke, ktoré sa vloží do prehľadávača aktív"
 
 
+# BFA - reworded, Blender: "Create Pose Asset..."
 msgctxt "Operator"
 msgid "Create Pose Asset"
 msgstr "Vytvoriť aktívum pózy..."
@@ -83112,7 +83302,7 @@ msgstr "Priblíži alebo oddiali aktuálnu pózu k odpočinkovej póze"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "Rozkladač pózy"
 
 
@@ -83179,7 +83369,8 @@ msgid "Copy the current pose of the selected bones to the internal clipboard"
 msgstr "Skopíruje aktuálnu pózu vybratých kostí do internej schránky"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "Príznak vybraných kostí na neviditeľnosť v režime pózy"
 
 
@@ -83349,7 +83540,7 @@ msgstr "Rozšíri pózu na všetky kľúčové snímky vyskytujúce sa na snímk
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown (Legacy)"
+msgid "Push Pose from Breakdown"
 msgstr "Stlačiť pózu z rozkladu"
 
 
@@ -83367,7 +83558,7 @@ msgstr "Preklopí hodnoty kvaterniónu na dosiahnutie požadovanej rotácie, pri
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown (Legacy)"
+msgid "Relax Pose to Breakdown"
 msgstr "Uvoľniť pózu pre rozklad"
 
 
@@ -85484,7 +85675,8 @@ msgid "Reload Scripts"
 msgstr "Znova načítať skripty"
 
 
-msgid "Reload scripts"
+# BFA - reworded, Blender: "Reload scripts"
+msgid "Reload all Python Scripts, including the UI"
 msgstr "Znova načítať skripty"
 
 
@@ -87646,7 +87838,8 @@ msgid "Delete Retiming Keys"
 msgstr "Odstrániť časovacie kľúče"
 
 
-msgid "Delete selected retiming keys from the sequencer"
+# BFA - reworded, Blender: "Delete selected retiming keys from the sequencer"
+msgid "Delete selected retiming keyframes from the sequencer"
 msgstr "Odstráni vybrané klávesy opätovného načasovania z radiča sekvencií"
 
 
@@ -88520,12 +88713,14 @@ msgid "Update the audio animation cache"
 msgstr "Aktualizuje zásobník zvukovej animácie"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "Namiešať"
 
 
-msgid "Mix the scene's audio to a sound file"
+# BFA - reworded, Blender: "Mix the scene's audio to a sound file"
+msgid "Mixdown and export the scene's audio to a sound file"
 msgstr "Namieša zvuk scény na zvukový súbor"
 
 
@@ -88954,11 +89149,13 @@ msgid "Jump"
 msgstr "Skok"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "Skočí kurzorom na riadok"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "Číslo riadka na skočenie"
 
 
@@ -89023,7 +89220,8 @@ msgid "New Text"
 msgstr "Nový text"
 
 
-msgid "Create a new text data-block"
+# BFA - reworded, Blender: "Create a new text data-block"
+msgid "Create a new text file"
 msgstr "Vytvorí blok údajov nového textu"
 
 
@@ -89032,7 +89230,8 @@ msgid "Open Text"
 msgstr "Otvoriť text"
 
 
-msgid "Open a new text data-block"
+# BFA - reworded, Blender: "Open a new text data-block"
+msgid "Open a new text file"
 msgstr "Otvorí blok údajov nového textu"
 
 
@@ -89058,7 +89257,8 @@ msgid "Reload"
 msgstr "Obnoviť"
 
 
-msgid "Reload active text data-block from its file"
+# BFA - reworded, Blender: "Reload active text data-block from its file"
+msgid "Reload active text file"
 msgstr "Znovu načíta blok údajov aktívneho textu z jeho súboru"
 
 
@@ -89119,7 +89319,8 @@ msgid "Save"
 msgstr "Uložiť"
 
 
-msgid "Save active text data-block"
+# BFA - reworded, Blender: "Save active text data-block"
+msgid "Save active text file"
 msgstr "Uloží bloku údajov aktívneho textu"
 
 
@@ -89173,7 +89374,8 @@ msgid "To 3D Object"
 msgstr "Na 3D objekt"
 
 
-msgid "Create 3D text object from active text data-block"
+# BFA - reworded, Blender: "Create 3D text object from active text data-block"
+msgid "Create 3D text object from active text data"
 msgstr "Vytvorí 3D textový objekt z bloku údajov aktívneho textu"
 
 
@@ -89189,7 +89391,8 @@ msgid "Unindent selected text"
 msgstr "Zruší odsadenie vybraného textu"
 
 
-msgid "Unlink active text data-block"
+# BFA - reworded, Blender: "Unlink active text data-block"
+msgid "Remove active text"
 msgstr "Zruší prepojenie bloku údajov aktívneho textu"
 
 
@@ -89457,7 +89660,8 @@ msgid "Transform from Gizmo"
 msgstr "Transformácia podľa manipulátora"
 
 
-msgid "Mirror selected items around one or more axes"
+# BFA - reworded, Blender: "Mirror selected items around one or more axes"
+msgid "Mirror selected items"
 msgstr "Zrkadlí vybrané položky okolo jednej alebo viacerých osí"
 
 
@@ -89982,12 +90186,14 @@ msgid "Material Mode"
 msgstr "Režim materiálu"
 
 
+# BFA - reworded, Blender: "Eyedropper Data-Block"
 msgctxt "Operator"
-msgid "Eyedropper Data-Block"
+msgid "Eyedropper Data"
 msgstr "Blok údajov kvapkadla"
 
 
-msgid "Sample a data-block from the 3D View to store in a property"
+# BFA - reworded, Blender: "Sample a data-block from the 3D View to store in a property"
+msgid "Sample a data from the 3D View to store in a property"
 msgstr "Ukážka bloku údajov z 3D zobrazenia na uloženie v objekte"
 
 
@@ -91379,8 +91585,9 @@ msgid "Amount of Faces in Island"
 msgstr "Počet plôšok na ostrove"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Rozdeliť výber"
 
 
@@ -91778,7 +91985,8 @@ msgid "Position the scene camera at the selected landmark"
 msgstr "Umiestni kameru scény na vybraný orientačný bod"
 
 
-msgid "Clear the boundaries of the border render and disable border render"
+# BFA - reworded, Blender: "Clear the boundaries of the border render and disable border render"
+msgid "Removes an existing Render Region rectangle, clearning the boundaries of the render border"
 msgstr "Vymaže okraje ohraničenia prekreslenia a zakáže ohraničené prekreslenie"
 
 
@@ -92921,7 +93129,8 @@ msgid "Create instances for object data which are not referenced by any objects"
 msgstr "Vytvorí inštanciu pre údaje o objektoch, na ktoré neodkazujú žiadne objekty"
 
 
-msgid "Link the objects or data-blocks rather than appending"
+# BFA - reworded, Blender: "Link the objects or data-blocks rather than appending"
+msgid "Link the objects or data rather than appending"
 msgstr "Prepojí objekty alebo bloky údajov namiesto pripojenia"
 
 
@@ -93906,7 +94115,8 @@ msgid "Clear Data-Block Previews"
 msgstr "Zmazať náhľady bloku údajov"
 
 
-msgid "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+# BFA - reworded, Blender: "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+msgid "Clear data previews (only for some types like objects, materials, textures, etc.)"
 msgstr "Zmaže náhľady bloku údajov (len pre niektoré typy, ako sú objekty, materiály, textúry, atď.)"
 
 
@@ -93914,7 +94124,8 @@ msgid "Data-Block Type"
 msgstr "Typ bloku údajov"
 
 
-msgid "Which data-block previews to clear"
+# BFA - reworded, Blender: "Which data-block previews to clear"
+msgid "Which data previews to clear"
 msgstr "Ktoré bloky údajov sú na zmazanie"
 
 
@@ -93938,12 +94149,14 @@ msgid "Clear previews for materials, lights, worlds, textures and images"
 msgstr "Zmaže náhľady na materiálov, svetiel, svetov, textúr a obrázkov"
 
 
+# BFA - reworded, Blender: "Refresh Data-Block Previews"
 msgctxt "Operator"
-msgid "Refresh Data-Block Previews"
+msgid "Refresh Data Previews"
 msgstr "Obnoviť náhľady bloku údajov"
 
 
-msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+# BFA - reworded, Blender: "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgid "Ensure data previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 msgstr "Zaistí, že sú k dispozícii náhľady bloku údajov a aktualizuje ich (na uloženie v .blend súbore, len pre niektoré typy, ako sú materiály, textúry, atď.)"
 
 
@@ -94388,12 +94601,14 @@ msgid "Make the current file the default startup file"
 msgstr "Nastaví aktuálny súbor ako predvolený spúšťací súbor"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Uložiť súbor Blendera"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Uloží aktuálny .blend súbor"
 
 
@@ -94428,7 +94643,8 @@ msgid "Search Operator"
 msgstr "Operátor vyhľadávania"
 
 
-msgid "Pop-up a search over all available operators in current context"
+# BFA - reworded, Blender: "Pop-up a search over all available operators in current context"
+msgid "Pop-up a search panel for all available operators in current context"
 msgstr "Vyskakovacia ponuka vyhľadávania naprieč všetkými dostupnými operátormi v aktuálnom kontexte"
 
 
@@ -95847,7 +96063,8 @@ msgid "New World"
 msgstr "Nový svet"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "Vytvorí nový blok údajov oblasti"
 
 
@@ -96644,7 +96861,8 @@ msgid "Tracking Settings"
 msgstr "Nastavenia snímania"
 
 
-msgid "Tracking Settings Extras"
+# BFA - reworded, Blender: "Tracking Settings Extras"
+msgid "Tracking Options Extras"
 msgstr "Extra nastavenia snímania"
 
 
@@ -99907,7 +100125,8 @@ msgid "Duplicate Action"
 msgstr "Vytvárať kópiu akcie"
 
 
-msgid "Causes actions to be duplicated with the data-blocks"
+# BFA - reworded, Blender: "Causes actions to be duplicated with the data-blocks"
+msgid "Causes actions to be duplicated with the data"
 msgstr "Spôsobí vytvorenie kópie akcií s blokmi údajov"
 
 
@@ -100483,11 +100702,13 @@ msgid "Python Scripts Directory"
 msgstr "Priečinok skriptov Python"
 
 
-msgid "Show Hidden Files/Data-Blocks"
+# BFA - reworded, Blender: "Show Hidden Files/Data-Blocks"
+msgid "Show Hidden Files/Data"
 msgstr "Zobraziť skryté súbory/bloky údajov"
 
 
-msgid "Show files and data-blocks that are normally hidden"
+# BFA - reworded, Blender: "Show files and data-blocks that are normally hidden"
+msgid "Show files and data that are normally hidden"
 msgstr "Zobrazí súbory a bloky údajov, ktoré sú normálne skryté"
 
 
@@ -100833,7 +101054,8 @@ msgid "Overall sensitivity of the 3D Mouse for translation"
 msgstr "Celková citlivosť 3D myši na presun"
 
 
-msgid "Zoom direction"
+# BFA - reworded, Blender: "Zoom direction"
+msgid "Zoom Direction"
 msgstr "Smer priblíženia"
 
 
@@ -102789,7 +103011,8 @@ msgid "Translate New Names"
 msgstr "Preložiť nové názvy"
 
 
-msgid "Translate the names of new data-blocks (objects, materials...)"
+# BFA - reworded, Blender: "Translate the names of new data-blocks (objects, materials...)"
+msgid "Translate the names of new data (objects, materials...)"
 msgstr "Preloží názvy nových blokov údajov (objekty, materiály...)"
 
 
@@ -106612,7 +106835,8 @@ msgid "Is Perspective"
 msgstr "Je perspektívne"
 
 
-msgid "Lock view rotation of side views to Top/Front/Right"
+# BFA - reworded, Blender: "Lock view rotation of side views to Top/Front/Right"
+msgid "Lock view rotation in side views"
 msgstr "Uzamknutie rotácie pohľadu v bočných pohľadoch Hore/Vpredu/Vpravo"
 
 
@@ -106909,7 +107133,8 @@ msgid "Result of rendering, including all layers and passes"
 msgstr "Výsledok prekreslenia, vrátane všetkých vrstiev a prechodov"
 
 
-msgid "Rendering settings for a Scene data-block"
+# BFA - reworded, Blender: "Rendering settings for a Scene data-block"
+msgid "Rendering settings for a Scene"
 msgstr "Nastavenie prekreslenia pre blok údajov scény"
 
 
@@ -107057,7 +107282,8 @@ msgid "Directory/name to save animations, # characters define the position and p
 msgstr "Priečinok/názov na ukladanie animácií, znaky # definujú pozíciu a výplň čísla snímok"
 
 
-msgid "World background is transparent, for compositing the render over another background"
+# BFA - reworded, Blender: "World background is transparent, for compositing the render over another background"
+msgid "Render the world background as transparent. This allows compositing the rendered image over another background"
 msgstr "Pozadie oblasti sveta je priehľadné, pre prekreslenie združovania nad iným pozadím"
 
 
@@ -108637,7 +108863,8 @@ msgid "Attenuation constant"
 msgstr "Konštanta zoslabovania"
 
 
-msgid "Distance of object that contribute to the cavity/edge effect"
+# BFA - reworded, Blender: "Distance of object that contribute to the cavity/edge effect"
+msgid "Distance of object that contribute to the Cavity/Edge effect"
 msgstr "Vzdialenosť objektu prispievajúceho k efektu dutiny/hrany"
 
 
@@ -109157,11 +109384,13 @@ msgid "Anti-Aliasing Samples"
 msgstr "Ukážky anti-aliasingu"
 
 
-msgid "Number of supersampling anti-aliasing samples per pixel for final render"
+# BFA - reworded, Blender: "Number of supersampling anti-aliasing samples per pixel for final render"
+msgid "Number of anti-aliasing supersamples done per pixel in final render"
 msgstr "Počet supersamplingových anti-aliasingových snímok na pixel pre finálne prekresľovanie"
 
 
-msgid "SMAA Threshold Viewport"
+# BFA - reworded, Blender: "SMAA Threshold Viewport"
+msgid "SMAA Threshold (Viewport)"
 msgstr "Prah záberu SMAA"
 
 
@@ -109169,7 +109398,8 @@ msgid "Threshold for edge detection algorithm (higher values might over-blur som
 msgstr "Prahová hodnota pre algoritmus detekcie hrán (vyššie hodnoty môžu nadmerne rozostriť niektorú časť obrázka)"
 
 
-msgid "SMAA Threshold Render"
+# BFA - reworded, Blender: "SMAA Threshold Render"
+msgid "SMAA Threshold (Render)"
 msgstr "Prah prekreslenia SMAA"
 
 
@@ -109317,7 +109547,8 @@ msgid "Python Scripts Directories"
 msgstr "Priečinky skriptov Pythonu"
 
 
-msgid "Sequence editing data for a Scene data-block"
+# BFA - reworded, Blender: "Sequence editing data for a Scene data-block"
+msgid "Sequence editing data for a Scene data"
 msgstr "Údaje editácie sekvencie pre blok údajov scény"
 
 
@@ -110117,7 +110348,8 @@ msgid "Wave Deformation effect"
 msgstr "Efekt deformácie vlny"
 
 
-msgid "Shape key in a shape keys data-block"
+# BFA - reworded, Blender: "Shape key in a shape keys data-block"
+msgid "Shape key in a shape keys data"
 msgstr "Kľúčový tvar v bloku údajov kľúčových tvarov"
 
 
@@ -110493,7 +110725,8 @@ msgid "Stiff Quads"
 msgstr "Tuhé štvorce"
 
 
-msgid "Add diagonal springs on 4-gons"
+# BFA - reworded, Blender: "Add diagonal springs on 4-gons"
+msgid "Add diagonal springs on quads"
 msgstr "Pridá diagonálne pružiny na štvoruholníky"
 
 
@@ -110554,11 +110787,13 @@ msgid "Where the annotation comes from"
 msgstr "Kde poznámka pochádza z"
 
 
-msgid "Show annotation data-block which belongs to movie clip"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to movie clip"
+msgid "Show annotation data which belongs to movie clip"
 msgstr "Zobrazí blok údajov poznámky patriaceho do filmového klipu"
 
 
-msgid "Show annotation data-block which belongs to active track"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to active track"
+msgid "Show annotation data which belongs to active track"
 msgstr "Zobrazí bloku údajov poznámky patriaceho do aktívnej stopy"
 
 
@@ -111581,7 +111816,8 @@ msgid "Node tree being displayed and edited"
 msgstr "Strom uzla, ktorý sa má zobraziť a upraviť"
 
 
-msgid "Data-block whose nodes are being edited"
+# BFA - reworded, Blender: "Data-block whose nodes are being edited"
+msgid "Data whose nodes are being edited"
 msgstr "Blok údajov upravovaného uzla"
 
 
@@ -111589,7 +111825,8 @@ msgid "ID From"
 msgstr "ID pre"
 
 
-msgid "Data-block from which the edited data-block is linked"
+# BFA - reworded, Blender: "Data-block from which the edited data-block is linked"
+msgid "Data from which the edited data is linked"
 msgstr "Blok údajov, z ktorým je upravovaný blok údajov prepojený"
 
 
@@ -111609,7 +111846,8 @@ msgid "Settings for display of overlays in the Node Editor"
 msgstr "Nastavenia zobrazenia prekrytia v Editore uzlov"
 
 
-msgid "Path from the data-block to the currently edited node tree"
+# BFA - reworded, Blender: "Path from the data-block to the currently edited node tree"
+msgid "Path from the data to the currently edited node tree"
 msgstr "Cesta bloku údajov aktuálne upravovaného uzla stromu"
 
 
@@ -111780,7 +112018,8 @@ msgid "Filter by Type"
 msgstr "Filtrovať podľa typu"
 
 
-msgid "Data-block type to show"
+# BFA - reworded, Blender: "Data-block type to show"
+msgid "Data type to show"
 msgstr "Typ bloku údajov na zobrazenie"
 
 
@@ -111936,7 +112175,8 @@ msgid "Show grease pencil effects"
 msgstr "Zobrazí efekty Grease Pencil"
 
 
-msgid "Show only data-blocks of one type"
+# BFA - reworded, Blender: "Show only data-blocks of one type"
+msgid "Show only data of one type"
 msgstr "Zobrazí iba bloky údajov jedného typu"
 
 
@@ -112076,7 +112316,8 @@ msgid "Show Pose Bones"
 msgstr "Zobrazí pózu kostí"
 
 
-msgid "Show pose bones of armatures"
+# BFA - reworded, Blender: "Show pose bones of armatures"
+msgid "Show or hide the entire Pose Bones group of armatures in the Outliner"
 msgstr "Zobrazí pózu kostí"
 
 
@@ -112699,7 +112940,8 @@ msgid "Top line visible"
 msgstr "Viditeľný horný riadok"
 
 
-msgid "Search in all text data-blocks, instead of only the active one"
+# BFA - reworded, Blender: "Search in all text data-blocks, instead of only the active one"
+msgid "Search in all text data, instead of only the active one"
 msgstr "Vyhľadáva vo všetkých blokoch údajov textu, namiesto len jedného aktívneho"
 
 
@@ -114716,7 +114958,8 @@ msgid "Display the audio waveform inside the strip"
 msgstr "Zobrazí tvarovú vlnu vnútri pásu"
 
 
-msgid "Sound data-block used by this strip"
+# BFA - reworded, Blender: "Sound data-block used by this strip"
+msgid "Sound data used by this strip"
 msgstr "Blok údajov zvuku používaný týmto pásom"
 
 
@@ -115492,7 +115735,8 @@ msgid "Text Line"
 msgstr "Textový riadok"
 
 
-msgid "Line of text in a Text data-block"
+# BFA - reworded, Blender: "Line of text in a Text data-block"
+msgid "Line of text in a Text file"
 msgstr "Riadok textu v bloku údajov textu"
 
 
@@ -115528,7 +115772,8 @@ msgid "Set scaling for the texture's X, Y and Z sizes"
 msgstr "Nastavenie mierky pre veľkosti X, Y a Z textúry"
 
 
-msgid "Texture data-block used by this texture slot"
+# BFA - reworded, Blender: "Texture data-block used by this texture slot"
+msgid "Texture used by this texture slot"
 msgstr "Blok údajov textúry použitý touto zásuvkou textúry"
 
 
@@ -115536,7 +115781,8 @@ msgid "Brush Texture Slot"
 msgstr "Zásuvka textúry štetca"
 
 
-msgid "Texture slot for textures in a Brush data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Brush data-block"
+msgid "Texture slot for textures in a Brush data"
 msgstr "Zásuvka textúry pre blok údajov textúry štetca"
 
 
@@ -115564,7 +115810,8 @@ msgid "LineStyle Texture Slot"
 msgstr "Zásuvka textúry Štýlu čiary"
 
 
-msgid "Texture slot for textures in a LineStyle data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a LineStyle data-block"
+msgid "Texture slot for textures in a LineStyle data"
 msgstr "Zásuvka textúry pre textúry v bloku údajov Štýlu čiary"
 
 
@@ -115636,7 +115883,8 @@ msgid "Particle Settings Texture Slot"
 msgstr "Zásuvka nastavenia textúry častíc"
 
 
-msgid "Texture slot for textures in a Particle Settings data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Particle Settings data-block"
+msgid "Texture slot for textures in a Particle Settings data"
 msgstr "Zásuvka textúry pre textúry v bloku údajov nastavenia častíc"
 
 
@@ -116610,7 +116858,8 @@ msgid "Active Action"
 msgstr "Aktívna akcia"
 
 
-msgid "Animation data-block has active action"
+# BFA - reworded, Blender: "Animation data-block has active action"
+msgid "Animation has active action"
 msgstr "Blok údajov animácie aktívnej akcie"
 
 
@@ -116618,7 +116867,8 @@ msgid "No Active Action"
 msgstr "Neaktívna akcia"
 
 
-msgid "Animation data-block does not have active action"
+# BFA - reworded, Blender: "Animation data-block does not have active action"
+msgid "Animation data does not have active action"
 msgstr "Blok údajov animácie nemá aktívnu akciu"
 
 
@@ -118137,7 +118387,8 @@ msgid "Draw Strokes on Back"
 msgstr "Kresliť ťah dozadu"
 
 
-msgid "New strokes are drawn below of all strokes in the layer"
+# BFA - reworded, Blender: "New strokes are drawn below of all strokes in the layer"
+msgid "When drawing new strokes, the new stroke is drawn below of all strokes in the layer"
 msgstr "Nové ťahy sa kreslia vo vrstve pod všetkými ťahmi"
 
 
@@ -119339,7 +119590,8 @@ msgid "Display X Axis"
 msgstr "Zobraziť os X"
 
 
-msgid "Show the X axis line"
+# BFA - reworded, Blender: "Show the X axis line"
+msgid "Show the X axis line in perspective / orthographic views"
 msgstr "Zobrazí čiaru osi X"
 
 
@@ -119347,7 +119599,8 @@ msgid "Display Y Axis"
 msgstr "Zobraziť os Y"
 
 
-msgid "Show the Y axis line"
+# BFA - reworded, Blender: "Show the Y axis line"
+msgid "Show the Y axis line in perspective / orthographic views"
 msgstr "Zobrazí čiaru osi Y"
 
 
@@ -119355,7 +119608,8 @@ msgid "Display Z Axis"
 msgstr "Zobraziť os Z"
 
 
-msgid "Show the Z axis line"
+# BFA - reworded, Blender: "Show the Z axis line"
+msgid "Show the Z axis line in perspective / orthographic views"
 msgstr "Zobrazí čiaru osi Z"
 
 
@@ -120913,7 +121167,8 @@ msgid "Does this tool use a painting canvas"
 msgstr "Tento nástroj používa maliarske plátno"
 
 
-msgid "Lighting for a World data-block"
+# BFA - reworded, Blender: "Lighting for a World data-block"
+msgid "Lighting for a World data"
 msgstr "Blok údajov osvetlenia sveta"
 
 
@@ -120929,7 +121184,8 @@ msgid "World Mist"
 msgstr "Zahmlený svet"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "Blok údajov nastavenia hmly pre svet"
 
 
@@ -125671,7 +125927,8 @@ msgid "Repository Alert:"
 msgstr "Upozornenie úložiska:"
 
 
-msgid "Internet access is required to install and update online extensions. "
+# BFA - reworded, Blender: "Internet access is required to install and update online extensions. "
+msgid "Internet access is required to install and update Extensions."
 msgstr "Na inštaláciu a online aktualizáciu rozšírení je potrebný prístup na internet. "
 
 
@@ -125718,8 +125975,9 @@ msgid "Permissions"
 msgstr "Oprávnenia"
 
 
+# BFA - reworded, Blender: "Visit Extensions Platform"
 msgctxt "Operator"
-msgid "Visit Extensions Platform"
+msgid "Visit Extensions Website"
 msgstr "Navštíviť platformu rozšírení"
 
 
@@ -128450,7 +128708,8 @@ msgid "No nodes selected."
 msgstr "Nie sú vybraté žiadne uzly."
 
 
-msgid "Only boolean input sockets are supported"
+# BFA - reworded, Blender: "Only boolean input sockets are supported"
+msgid "Active item is not a boolean input socket"
 msgstr "Podporované sú len logické vstupné zásuvky"
 
 
@@ -129977,8 +130236,9 @@ msgid "Flip"
 msgstr "Preklopiť"
 
 
+# BFA - reworded, Blender: "Flip (Topology)"
 msgctxt "Operator"
-msgid "Flip (Topology)"
+msgid "Mirror Shape Key (Topology)"
 msgstr "Preklopiť (topológiu)"
 
 
@@ -130081,7 +130341,8 @@ msgid "Select by"
 msgstr "Vybrať čím"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "Okraje obrázka"
 
 
@@ -130391,7 +130652,8 @@ msgid "HDR needs 10 or 12 bits"
 msgstr "HDR potrebuje 10 alebo 12 bitov"
 
 
-msgid "Max B-frames"
+# BFA - reworded, Blender: "Max B-frames"
+msgid "Max B_Frames"
 msgstr "Maximálny počet B snímok"
 
 
@@ -131302,11 +131564,13 @@ msgid "Light Probes Volume Pool"
 msgstr "Nádrž objemu snímačov svetla"
 
 
-msgid "SMAA Threshold"
+# BFA - reworded, Blender: "SMAA Threshold"
+msgid "Edge Threshold"
 msgstr "Prah SMAA"
 
 
-msgid "SSAA Samples"
+# BFA - reworded, Blender: "SSAA Samples"
+msgid "Supersampling"
 msgstr "Snímky SSAA"
 
 
@@ -132630,8 +132894,9 @@ msgid "Replace..."
 msgstr "Nahradiť..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Uložiť kópiu..."
 
 
@@ -132755,8 +133020,9 @@ msgid "Linked Duplicate"
 msgstr "Prepojená kópia"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "Zastaviť potiahnutie akcií pásu"
 
 
@@ -132780,13 +133046,15 @@ msgid "Start Editing Stashed Action"
 msgstr "Začať úpravu schovanej akcie"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Full Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Full Stack)"
+msgid "Tweak Action (Full Stack)"
 msgstr "Spustiť ladenie akcie pásu (Plný zásobník)"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Lower Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgid "Tweak Action (Lower Stack)"
 msgstr "Spustiť ladenie akcie pásu (Spodný zásobník)"
 
 
@@ -132835,8 +133103,9 @@ msgid "Unconnected Sockets"
 msgstr "Nepripojené zásuvky"
 
 
+# BFA - reworded, Blender: "Rename Active Node..."
 msgctxt "Operator"
-msgid "Rename Active Node..."
+msgid "Rename Active Node"
 msgstr "Premenovať aktívny uzol..."
 
 
@@ -133233,8 +133502,9 @@ msgid "Toggle Sequencer/Preview"
 msgstr "Prepnúť Radič sekvencií/Náhľad"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "Vybrať všetko podľa typu"
 
 
@@ -133273,8 +133543,9 @@ msgid "Sound..."
 msgstr "Zvuk..."
 
 
+# BFA - reworded, Blender: "Image/Sequence..."
 msgctxt "Operator"
-msgid "Image/Sequence..."
+msgid "Image/Sequence"
 msgstr "Obrázok/sekvencia..."
 
 
@@ -133297,8 +133568,9 @@ msgid "Sound Crossfade"
 msgstr "Krížové prelínanie zvuku"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "Zmeniť sústavu kľúčovania..."
 
 
@@ -133369,8 +133641,9 @@ msgid "Render Sequencer Image"
 msgstr "Prekresliť obrázok radiča sekvencií"
 
 
+# BFA - reworded, Blender: "Fit Preview in Window"
 msgctxt "Operator"
-msgid "Fit Preview in Window"
+msgid "Fit Preview in window"
 msgstr "Prispôsobiť náhľad oknu"
 
 
@@ -133487,8 +133760,9 @@ msgid "Show Hidden Strips"
 msgstr "Zobraziť skryté pásy"
 
 
+# BFA - reworded, Blender: "Insert Keyframe with Keying Set..."
 msgctxt "Operator"
-msgid "Insert Keyframe with Keying Set..."
+msgid "Insert Keyframe with Keying Set"
 msgstr "Vložiť kľúčovú snímku so sústavou kľúčov..."
 
 
@@ -133820,7 +134094,8 @@ msgid "Follow Current Frame"
 msgstr "Nasledovať aktuálnu snímku"
 
 
-msgid "Play In"
+# BFA - reworded, Blender: "Play In"
+msgid "Play in"
 msgstr "Prehrať v"
 
 
@@ -133828,7 +134103,8 @@ msgid "Active Editor"
 msgstr "Aktívny editor"
 
 
-msgid "Properties and Sidebars"
+# BFA - reworded, Blender: "Properties and Sidebars"
+msgid "Properties Editor and Sidebars"
 msgstr "Vlastnosti a bočné panely"
 
 
@@ -133992,8 +134268,9 @@ msgid "Find Missing Files..."
 msgstr "Nájsť chýbajúce súbory..."
 
 
+# BFA - reworded, Blender: "Batch-Generate Previews..."
 msgctxt "Operator"
-msgid "Batch-Generate Previews..."
+msgid "Batch-Generate Preview"
 msgstr "Dávkové vygenerovanie náhľadov..."
 
 
@@ -134012,8 +134289,9 @@ msgid "Render Animation"
 msgstr "Prekresliť animáciu"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Prekresliť zvuk..."
 
 
@@ -134037,8 +134315,9 @@ msgid "Repeat History..."
 msgstr "Opakovať históriu..."
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "Vyhľadať ponuku..."
 
 
@@ -134124,8 +134403,9 @@ msgid "Render Image"
 msgstr "Prekresliť obrázok"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "Vyhľadať operátor..."
 
 
@@ -134202,7 +134482,8 @@ msgid "User Tooltips"
 msgstr "Užívateľské popisy"
 
 
-msgid "Sort by Most Recent"
+# BFA - reworded, Blender: "Sort by Most Recent"
+msgid "Sort Search by Most Recent"
 msgstr "Zoradiť podľa najnovších"
 
 
@@ -134252,7 +134533,8 @@ msgid "Video Memory"
 msgstr "Video pamäť"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Verzia Blendera"
 
 
@@ -134490,7 +134772,8 @@ msgid "Excluded Paths"
 msgstr "Vylúčené cesty"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "Automatické uloženie"
 
 
@@ -134827,8 +135110,9 @@ msgid "More/Less"
 msgstr "Viac/Menej"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Vybrať vzorku..."
 
 
@@ -134936,8 +135220,9 @@ msgid "By Attribute"
 msgstr "Podľa atribútu"
 
 
+# BFA - reworded, Blender: "Control Point Row"
 msgctxt "Operator"
-msgid "Control Point Row"
+msgid "Control Point row"
 msgstr "Riadok riadiaceho bodu"
 
 
@@ -135060,23 +135345,27 @@ msgid "Fur"
 msgstr "Kožušina"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "NURBS povrch"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "NURBS valec"
 
 
+# BFA - reworded, Blender: "Nurbs Sphere"
 msgctxt "Operator"
-msgid "Nurbs Sphere"
+msgid "Surface Sphere"
 msgstr "NURBS sféra"
 
 
+# BFA - reworded, Blender: "Nurbs Torus"
 msgctxt "Operator"
-msgid "Nurbs Torus"
+msgid "Surface Torus"
 msgstr "NURBS prstenec"
 
 
@@ -135090,8 +135379,9 @@ msgid "Camera"
 msgstr "Kamera"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "Importovať OpenVDB ..."
 
 
@@ -135115,8 +135405,9 @@ msgid "Speaker"
 msgstr "Reproduktor"
 
 
+# BFA - reworded, Blender: "Mesh Plane..."
 msgctxt "Operator"
-msgid "Mesh Plane..."
+msgid "Mesh Plane"
 msgstr "Povrchová sieť roviny..."
 
 
@@ -135160,8 +135451,9 @@ msgid "Origin"
 msgstr "Počiatok"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "Premenovať aktívny objekt..."
 
 
@@ -135604,13 +135896,15 @@ msgid "Calculate"
 msgstr "Vypočítať"
 
 
+# BFA - reworded, Blender: "Assign to New Collection"
 msgctxt "Operator"
-msgid "Assign to New Collection"
+msgid "Assign to New"
 msgstr "Priradiť k novej kolekcii"
 
 
+# BFA - reworded, Blender: "Add (with Targets)..."
 msgctxt "Operator"
-msgid "Add (with Targets)..."
+msgid "Add (with Targets)"
 msgstr "Pridať (s cieľmi)..."
 
 
@@ -135744,8 +136038,9 @@ msgid "Rotate..."
 msgstr "Rotovať..."
 
 
+# BFA - reworded, Blender: "Point to Target..."
 msgctxt "Operator"
-msgid "Point to Target..."
+msgid "Point normals to target"
 msgstr "Nasmerovať na cieľ..."
 
 
@@ -135882,7 +136177,8 @@ msgid "Color Opacity"
 msgstr "Nepriehľadnosť farieb"
 
 
-msgid "Attribute Text"
+# BFA - reworded, Blender: "Attribute Text"
+msgid "Attribute Text Overlay"
 msgstr "Text atribútu"
 
 
@@ -135996,8 +136292,9 @@ msgid "Project from View (Bounds)"
 msgstr "Premietnuť z pohľadu (okraje)"
 
 
+# BFA - reworded, Blender: "Center Last Stroke"
 msgctxt "Operator"
-msgid "Center Last Stroke"
+msgid "Frame Last Stroke"
 msgstr "Stred posledného ťahu"
 
 
@@ -136298,13 +136595,15 @@ msgid "Recalculate Inside"
 msgstr "Prepočítať na vnútorné"
 
 
+# BFA - reworded, Blender: "Copy Vector"
 msgctxt "Operator"
-msgid "Copy Vector"
+msgid "Copy Vectors"
 msgstr "Kopírovať vektor"
 
 
+# BFA - reworded, Blender: "Paste Vector"
 msgctxt "Operator"
-msgid "Paste Vector"
+msgid "Paste Vectors"
 msgstr "Prilepiť vektor"
 
 
@@ -137099,8 +137398,9 @@ msgid "No brush selected"
 msgstr "Nie je vybraný žiadny štetec"
 
 
+# BFA - reworded, Blender: "Duplicate Asset..."
 msgctxt "Operator"
-msgid "Duplicate Asset..."
+msgid "Duplicate Asset"
 msgstr "Vytvoriť kópiu aktíva..."
 
 
@@ -138745,7 +139045,8 @@ msgid "worlds"
 msgstr "svety"
 
 
-msgid "Library database with null library data-block pointer!"
+# BFA - reworded, Blender: "Library database with null library data-block pointer!"
+msgid "Library database with null library data pointer!"
 msgstr "Databáza knižnice s ukazovateľom bloku údajov nulovej knižnice!"
 
 
@@ -139355,11 +139656,17 @@ msgid "NLA Track is the only one evaluated in this animation data-block, with al
 msgstr "Stopa NLA je vyhodnotená len raz v tomto bloku údajov animácie, so stlmenými všetkými ostatnými"
 
 
-msgid "Editability of keyframes for this channel"
+# BFA - reworded, Blender: "Editability of keyframes for this channel"
+msgid ""
+"Lock Channel\n"
+"Editability of keyframes for this channel"
 msgstr "Upraviteľnosť kľúčových snímok pre tento kanál"
 
 
-msgid "Editability of NLA Strips in this track"
+# BFA - reworded, Blender: "Editability of NLA Strips in this track"
+msgid ""
+"Lock Channel\n"
+"Editability of NLA Strips in this track"
 msgstr "Upraviteľnosť NLA pásov v tejto stope"
 
 
@@ -140442,7 +140749,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "Katalógy aktív nemožno upravovať v tejto knižnici aktív"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
+# BFA - reworded, Blender: "Cannot save asset catalogs before the Blender file is saved"
+msgid "Cannot save asset catalogs before the .blend file is saved"
 msgstr "Nemožno uložiť katalógy aktív pred uložením súboru Blenderu"
 
 
@@ -146600,7 +146908,8 @@ msgid "Offset:"
 msgstr "Posuv:"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr "Oblasť vzorky:"
 
 
@@ -146612,7 +146921,8 @@ msgid "Height:"
 msgstr "Výška:"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr "Oblasť vyhľadávania:"
 
 
@@ -147782,7 +148092,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Modifikátor nemožno pridať do (%s : %s) (podrobnosti nájdete na konzole)"
 
 
-msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+# BFA - reworded, Blender: "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+msgid "No active AnimData block to use (select a data expander first or set the appropriate flags on an AnimData block)"
 msgstr "Žiadny aktívny blok údajov animácie na použitie (vyberte najprv blok údajov rozšírenia alebo nastavte príslušné príznaky bloku údajov animácie)"
 
 
@@ -148799,7 +149110,8 @@ msgid "External library data is not editable"
 msgstr "Nemožno upravovať údaje externej knižnice"
 
 
-msgid "Overridden data-blocks names are not editable"
+# BFA - reworded, Blender: "Overridden data-blocks names are not editable"
+msgid "Overridden data names are not editable"
 msgstr "Prepísané názvy blokov údajov nemožno upravovať"
 
 
@@ -148811,7 +149123,8 @@ msgid "No active item to rename"
 msgstr "Žiadna aktívna položka na premenovanie"
 
 
-msgid "No selected data-blocks to copy"
+# BFA - reworded, Blender: "No selected data-blocks to copy"
+msgid "No selected data to copy"
 msgstr "Žiadne vybrané bloky údajov na kopírovanie"
 
 
@@ -148823,7 +149136,8 @@ msgid "Operation requires an active keying set"
 msgstr "Operácia vyžaduje aktívnu sústavu kľúčovania"
 
 
-msgid "No orphaned data-blocks to purge"
+# BFA - reworded, Blender: "No orphaned data-blocks to purge"
+msgid "No orphaned data to purge"
 msgstr "Žiadne osamotené bloky údajov na vyčistenie"
 
 
@@ -148875,7 +149189,8 @@ msgid "Copied %d selected data-block(s)"
 msgstr "Kopírovaných %d vybraných blokov údajov"
 
 
-msgid "%d data-block(s) pasted"
+# BFA - reworded, Blender: "%d data-block(s) pasted"
+msgid "%d data pasted"
 msgstr "Vložených %d bokov údajov"
 
 
@@ -149954,7 +150269,8 @@ msgid "Mean Vertex Crease:"
 msgstr "Priemer záhybov vrcholov:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Polomer X:"
 
 
@@ -154772,7 +155088,8 @@ msgid "WeightedNormal"
 msgstr "VazeneNormaly"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Globálny vplyv:"
 
 
@@ -163561,7 +163878,8 @@ msgid "Pose Library"
 msgstr "Knižnica póz"
 
 
-msgid "Pose Library based on the asset system."
+# BFA - reworded, Blender: "Pose Library based on the asset system."
+msgid "Pose Library based on the asset system"
 msgstr "Knižnica póz založená na systéme aktív."
 
 
@@ -167776,3 +168094,439 @@ msgstr "Každú krivku rovnomerne upraví tak, aby bola dosiahnutá cieľová d�
 msgid "Distance from the ground plane"
 msgstr "Vzdialenosť od základnej roviny"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Rozkladač pózy (Legacy)"
+
+# BFA - reworded, Blender: "Push Pose from Breakdown"
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "Stlačiť pózu z rozkladu (Legacy)"
+
+# BFA - reworded, Blender: "Relax Pose to Breakdown"
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "Uvoľniť pózu pre rozklad (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Masky"
+
+# BFA - reworded, Blender: "Zero Weights"
+msgid "     Zero Weights"
+msgstr "     Nulové váhy"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Prepojiť stopy"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " Presah snímania"
+
+# BFA - reworded, Blender: "Font size to use for displaying the text"
+msgid "Adjust the font size for displaying the text"
+msgstr "Veľkosť písma použitá na zobrazenie textu"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "Vybrať všetko podľa črty"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "Vybrať všetko podľa typu"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "Údaje animácie pre tento blok údajov"
+
+# BFA - reworded, Blender: "Apply All"
+msgctxt "Operator"
+msgid "Apply All Shape Keys"
+msgstr "Použiť všetko"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "Automatické kľúčovanie"
+
+# BFA - reworded, Blender: "Bake to Keyframes"
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "Zapiecť na kľúčovú snímku"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Vybrať poľom (Legacy)"
+
+# BFA - reworded, Blender: "Cached Range"
+msgid "Cached Range (Info)"
+msgstr "Rozsah zásobníka (Info)"
+
+# BFA - reworded, Blender: "Clear Data-Block Previews"
+msgctxt "Operator"
+msgid "Clear Data Previews"
+msgstr "Zmazať náhľady bloku údajov"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "Orezanie Začiatok"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Orezanie Začiatok"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "Kolekcie inštancií"
+
+# BFA - reworded, Blender: "Delete All"
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Odstrániť všetko"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Odstrániť"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Hĺbka"
+
+# BFA - reworded, Blender: "Display overlay text"
+msgid "Display overlay text.\nAlso affects the Geometry Nodes viewer overlay"
+msgstr "Zobrazí text prekrytia"
+
+# BFA - reworded, Blender: "Euclidean"
+msgid "Euclidean Distance"
+msgstr "Euklidus"
+
+# BFA - reworded, Blender: "Extrude region together along local normals"
+msgid "Extrude Region Vertex Normals\nExtrude region together along local normals"
+msgstr "Vysunie oblasť spolu pozdĺž miestnych normál"
+
+# BFA - reworded, Blender: "Auto-Masking"
+msgid "Global Auto Masking"
+msgstr "Auto maskovanie"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "Skočí kurzorom na riadok"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Presunúť"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "Vybrať zoskupené"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Vybrať zoskupené"
+
+# BFA - reworded, Blender: "Insert Into Group"
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "Vložiť do skupiny"
+
+# BFA - reworded, Blender: "Instance Collections on Appending"
+msgid "Instance Collections on Appending or Linking"
+msgstr "Kolekcie inštancií pri pripájaní"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Invertovať smer približovania"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "Zhrnuteľné"
+
+# BFA - reworded, Blender: "Set type of handle for selected keyframes"
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "Nastaví typ manipulátora pre vybrané kľúčové snímky"
+
+# BFA - reworded, Blender: "Linked from"
+msgctxt "Operator"
+msgid "Linked From"
+msgstr "Prepojené z"
+
+# BFA - reworded, Blender: "Linked to"
+msgctxt "Operator"
+msgid "Linked To"
+msgstr "Prepojené na"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "Manhattan"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "Výber na najbližšiu snímku"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "Výber na najbližšiu snímku"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "Výber na najbližšiu druhú"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "Výber na najbližší druhý"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "Nový súbor"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "Vyhľadať operátor..."
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Orientácia"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "Poznámky k vydaniu"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "Zobraziť verziu"
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "Sústava plôšok"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "Zobraziť v"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Maska"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Ukázať"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Zúžiť/Rozšíriť"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Vybrať podobné"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Vybrať podobné"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "NURBS kruh"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Typ"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "Nepriradené (Catalogue)"
+
+# BFA - reworded, Blender: "Uninstall"
+msgctxt "Operator"
+msgid "Uninstall from System"
+msgstr "Odinštalovať"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets"
+msgstr "Bez aktív"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets:"
+msgstr "Bez aktív"
+
+# BFA - reworded, Blender: "Use internal text data-block"
+msgid "Use internal text data"
+msgstr "Použiť interný textový blok údajov"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "Vektory rýchlosti"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "Šírka čiary"
+
+# BFA - reworded, Blender: "You can adjust this later from \"System\" preferences."
+msgid "You can adjust online access from \"System\" preferences."
+msgstr "Túto hodnotu môžete neskôr upraviť v predvoľbách \"Systém\"."
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "Priblížiť na okraje"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Zobrazí aktíva, ktoré sú aktuálne k dispozícii v tejto relácii Bforartistsu"
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "Importovať aktíva ako prepojený blok údajov"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "Importovať aktíva ako skopírovaný blok údajov bez prepojenia na pôvodný blok údajov aktív"
+
+# BFA - reworded, Blender: "Clear Fake User and remove copy stashed in this data-block's NLA stack"
+msgid "Clear Fake User and remove copy stashed in this data's NLA stack"
+msgstr "Zmaže falošného užívateľa a odstráni kópiu uchovanú v tomto bloku údajov zásobníka NLA"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Ukončiť Bforartists"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Ukončí Bforartists"
+
+# BFA - reworded Blender string
+msgid "Exit Bforartists after saving"
+msgstr "Ukončiť Bforartists po uložení"
+
+# BFA - reworded Blender string
+msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+msgstr "Uloží aktuálny súbor Bforartistsu s číselne zvýšeným názvom, ktorý neprepíše žiadne existujúce súbory"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "O aplikácii Bforartists"
+
+# BFA - reworded Blender string
+msgid "Open a window with information about Bforartists"
+msgstr "Otvorí okno s informáciami o aplikácii Bforartists"
+
+# BFA - reworded Blender string
+msgid "Online access required to install or update. Launch Bforartists without --offline-mode"
+msgstr "Na inštaláciu alebo aktualizáciu je potrebný online prístup. Spustite Bforartists bez režimu --offline-mode"
+
+# BFA - reworded Blender string
+msgid "Launch Bforartists without --offline-mode"
+msgstr "Spustí Bforartists bez režimu --offline"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "Bforartists je voľný softvér"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Web stránka aplikácie Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "View Extension"
+msgstr "Zobraziť rozšírenie"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Install Application Template"
+msgstr "Nainštalovať šablónu aplikácie"
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Verzia Bforartistsa"
+
+# BFA - reworded Blender string
+msgid "A restart of Bforartists is required"
+msgstr "Je potrebný reštart Bforartistsu"
+
+# BFA - reworded Blender string
+msgid "Open blend files with this Bforartists version"
+msgstr "Otvorí blend súbory touto verziou Bforartistsu"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Edit Preview Image"
+msgstr "Upraviť náhľad obrázka"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system and cannot be overridden"
+msgstr "Tento súbor je spravovaný systémom aktív Bforartistsu a nie je možné ho prepísať"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Bforartists prekreslenie"
+
+# BFA - reworded Blender string
+msgid "Bforartists Drivers Editor"
+msgstr "Editor Ovládače Bforartistsa"
+
+# BFA - reworded Blender string
+msgid "Bforartists Info Log"
+msgstr "Informačný záznam Bforartistsa"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Súbor zobrazenia Bforartistsa"
+
+# BFA - reworded Blender string
+msgid "Bforartists will start next time as it is now."
+msgstr "Bforartists sa nabudúce spustí tak ako teraz."
+
+# BFA - reworded Blender string
+msgid "Load Factory Bforartists Preferences"
+msgstr "Načítať továrenské predvoľby Bforartistsa"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system. It can only be"
+msgstr "Tento súbor je spravovaný systémom aktív Bforartistsu. Môže byť iba"
+
+# BFA - reworded Blender string
+msgid "with an older Bforartists version?"
+msgstr "so staršou verziou Bforartistsu?"
+
+# BFA - reworded Blender string
+msgid "Overwrite file with an older Bforartists version?"
+msgstr "Prepísať súbor staršou verziou Bforartistsu?"
+
+# BFA - reworded Blender string
+msgid "Proxies have been removed from Bforartists (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Consider re-saving any library .blend file with the newest Blender version"
+msgstr "Náhrady boli z Bforartistsu odstránené (%d náhrady boli automaticky konvertované na prepisy knižnice, %d náhrady nemohli byť konvertované a boli vymazané). Prosím, zvážte opätovné uloženie akéhokoľvek súboru knižnice .blend najnovšou verziou Bforartistsu"
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Newer graphics drivers might be available with better Bforartists compatibility."
+msgstr "Môžu byť k dispozícii novšie grafické ovládače s lepšou kompatibilitou s Bforartistsom."
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Aktualizácia na najnovšiu verziu systému macOS môže zlepšiť podporu Bforartistsu"

@@ -378,3 +378,10 @@ msgstr "Шляхі імпарту"
 msgid "Error Message"
 msgstr "Паведамленне аб памылцы"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Тып"

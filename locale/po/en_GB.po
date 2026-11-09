@@ -900,7 +900,8 @@ msgid "Animation Data"
 msgstr "Animation Data"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Animation data for data-block"
 
 
@@ -908,7 +909,8 @@ msgid "Action"
 msgstr "Action"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Active Action for this data-block"
 
 
@@ -1044,7 +1046,8 @@ msgid "Drivers"
 msgstr "Drivers"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "The Drivers/Expressions for this data-block"
 
 
@@ -1556,7 +1559,8 @@ msgid "Show Menus"
 msgstr "Show Menus"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Show menus in the header"
 
 
@@ -1684,7 +1688,8 @@ msgid "Outliner"
 msgstr "Outliner"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "Overview of scene graph and all available data-blocks"
 
 
@@ -1692,7 +1697,8 @@ msgid "Properties"
 msgstr "Properties"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Edit properties of active object and related data-blocks"
 
 
@@ -2377,7 +2383,8 @@ msgid "Worlds"
 msgstr "Worlds"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Show World data-blocks"
 
 
@@ -2796,7 +2803,8 @@ msgid "Bake Data"
 msgstr "Bake Data"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "Bake data for a Scene data-block"
 
 
@@ -2996,7 +3004,8 @@ msgid "Internal"
 msgstr "Internal"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Save the baking map in an internal image data-block"
 
 
@@ -3284,11 +3293,13 @@ msgid "Blend-File Data"
 msgstr "Blend-File Data"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Main data structure representing a .blend file and all its data-blocks"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Action data-blocks"
 
 
@@ -3304,23 +3315,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "Annotation data-blocks (legacy Grease Pencil)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Armature data-blocks"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Brush data-blocks"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Cache Files data-blocks"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Camera data-blocks"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Collection data-blocks"
 
 
@@ -3332,7 +3348,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "Information about the colour space used for data-blocks in a blend file"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Curve data-blocks"
 
 
@@ -3348,7 +3365,8 @@ msgid "Vector Fonts"
 msgstr "Vector Fonts"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Vector font data-blocks"
 
 
@@ -3356,11 +3374,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Grease Pencil data-blocks"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Hair curve data-blocks"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Image data-blocks"
 
 
@@ -3380,7 +3400,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Has the current session been saved to disk as a .blend file"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Lattice data-blocks"
 
 
@@ -3388,15 +3409,18 @@ msgid "Libraries"
 msgstr "Libraries"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Library data-blocks"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Light Probe data-blocks"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Light data-blocks"
 
 
@@ -3404,27 +3428,33 @@ msgid "Line Styles"
 msgstr "Line Styles"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Line Style data-blocks"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Masks data-blocks"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Material data-blocks"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Mesh data-blocks"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Metaball data-blocks"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Movie Clip data-blocks"
 
 
@@ -3432,7 +3462,8 @@ msgid "Node Groups"
 msgstr "Node Groups"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Node group data-blocks"
 
 
@@ -3440,11 +3471,13 @@ msgid "Object data-blocks"
 msgstr "Object data-blocks"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Paint Curves data-blocks"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Palette data-blocks"
 
 
@@ -3452,7 +3485,8 @@ msgid "Particles"
 msgstr "Particles"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Particle data-blocks"
 
 
@@ -3460,7 +3494,8 @@ msgid "Point cloud data-blocks"
 msgstr "Point cloud data-blocks"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Scene data-blocks"
 
 
@@ -3468,7 +3503,8 @@ msgid "Screens"
 msgstr "Screens"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Screen data-blocks"
 
 
@@ -3476,15 +3512,18 @@ msgid "Shape Keys"
 msgstr "Shape Keys"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Shape Key data-blocks"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Sound data-blocks"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Speaker data-blocks"
 
 
@@ -3492,7 +3531,8 @@ msgid "Text data-blocks"
 msgstr "Text data-blocks"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Texture data-blocks"
 
 
@@ -3512,7 +3552,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "File format version the .blend file was saved with"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Volume data-blocks"
 
 
@@ -3520,15 +3561,18 @@ msgid "Window Managers"
 msgstr "Window Managers"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Window manager data-blocks"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Workspace data-blocks"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "World data-blocks"
 
 
@@ -4569,7 +4613,8 @@ msgid "Volume"
 msgstr "Volume"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "Bone in an Armature data-block"
 
 
@@ -6597,7 +6642,8 @@ msgid "Stereo"
 msgstr "Stereo"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "Stereoscopy settings for a Camera data-block"
 
 
@@ -10936,7 +10982,8 @@ msgid "Curve Slice"
 msgstr "Curve Slice"
 
 
-msgid "A single curve from a curves data-block"
+# BFA - reworded, Blender: "A single curve from a curves data-block"
+msgid "A single curve from a curves data"
 msgstr "A single curve from a curves data-block"
 
 
@@ -11392,7 +11439,8 @@ msgid "Include Missing NLA"
 msgstr "Include Missing NLA"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "Include animation data-blocks with no NLA data (NLA editor only)"
 
 
@@ -11400,7 +11448,8 @@ msgid "Display Modifier Data"
 msgstr "Display Modifier Data"
 
 
-msgid "Include visualization of animation data related to data-blocks linked to modifiers"
+# BFA - reworded, Blender: "Include visualization of animation data related to data-blocks linked to modifiers"
+msgid "Include visualization of animation data related to data linked to modifiers"
 msgstr "Include visualization of animation data related to data-blocks linked to modifiers"
 
 
@@ -11532,7 +11581,8 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "Sort Data-Blocks"
 
 
@@ -12506,7 +12556,8 @@ msgid "Edit Bone"
 msgstr "Edit Bone"
 
 
-msgid "Edit mode bone in an armature data-block"
+# BFA - reworded, Blender: "Edit mode bone in an armature data-block"
+msgid "Editmode bone in an armature data"
 msgstr "Edit mode bone in an armature data-block"
 
 
@@ -16997,7 +17048,8 @@ msgid "Freestyle Settings"
 msgstr "Freestyle Settings"
 
 
-msgid "Freestyle settings for a ViewLayer data-block"
+# BFA - reworded, Blender: "Freestyle settings for a ViewLayer data-block"
+msgid "Freestyle settings for a ViewLayer"
 msgstr "Freestyle settings for a ViewLayer data-block"
 
 
@@ -18570,7 +18622,8 @@ msgid "Animation data for this data-block"
 msgstr "Animation data for this data-block"
 
 
-msgid "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+# BFA - reworded, Blender: "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+msgid "Armature data containing a hierarchy of bones, usually used for rigging characters"
 msgstr "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
 
 
@@ -18722,7 +18775,8 @@ msgid "Apply changes to matching bone on opposite side of X-Axis"
 msgstr "Apply changes to matching bone on opposite side of X-Axis"
 
 
-msgid "Brush data-block for storing brush settings for painting and sculpting"
+# BFA - reworded, Blender: "Brush data-block for storing brush settings for painting and sculpting"
+msgid "Brush data for storing brush settings for painting and sculpting"
 msgstr "Brush data-block for storing brush settings for painting and sculpting"
 
 
@@ -20852,7 +20906,8 @@ msgid "Frame"
 msgstr "Frame"
 
 
-msgid "Camera data-block for storing camera settings"
+# BFA - reworded, Blender: "Camera data-block for storing camera settings"
+msgid "Camera data for storing camera settings"
 msgstr "Camera data-block for storing camera settings"
 
 
@@ -21392,7 +21447,8 @@ msgid "Panoramic"
 msgstr "Panoramic"
 
 
-msgid "Collection of Object data-blocks"
+# BFA - reworded, Blender: "Collection of Object data-blocks"
+msgid "Collection of Object data"
 msgstr "Collection of Object data-blocks"
 
 
@@ -21588,7 +21644,8 @@ msgid "Assign intersection priority value for this collection"
 msgstr "Assign intersection priority value for this collection"
 
 
-msgid "Curve data-block storing curves, splines and NURBS"
+# BFA - reworded, Blender: "Curve data-block storing curves, splines and NURBS"
+msgid "Curve data storing curves, splines and NURBS"
 msgstr "Curve data-block storing curves, splines and NURBS"
 
 
@@ -21952,7 +22009,8 @@ msgid "Surface Curve"
 msgstr "Surface Curve"
 
 
-msgid "Curve data-block used for storing surfaces"
+# BFA - reworded, Blender: "Curve data-block used for storing surfaces"
+msgid "Curve data used for storing surfaces"
 msgstr "Curve data-block used for storing surfaces"
 
 
@@ -21960,7 +22018,8 @@ msgid "Text Curve"
 msgstr "Text Curve"
 
 
-msgid "Curve data-block used for storing text"
+# BFA - reworded, Blender: "Curve data-block used for storing text"
+msgid "Curve data used for storing text"
 msgstr "Curve data-block used for storing text"
 
 
@@ -22232,11 +22291,13 @@ msgid "Don't fill polygons while editing"
 msgstr "Don't fill polygons while editing"
 
 
-msgid "Hair data-block for hair curves"
+# BFA - reworded, Blender: "Hair data-block for hair curves"
+msgid "Hair data for hair curves"
 msgstr "Hair data-block for hair curves"
 
 
-msgid "All curves in the data-block"
+# BFA - reworded, Blender: "All curves in the data-block"
+msgid "All curves in the data"
 msgstr "All curves in the data-block"
 
 
@@ -22990,7 +23051,8 @@ msgid "Display onion keyframes for looping animations"
 msgstr "Display onion keyframes for looping animations"
 
 
-msgid "Image data-block referencing an external or packed image"
+# BFA - reworded, Blender: "Image data-block referencing an external or packed image"
+msgid "Image data referencing an external or packed image"
 msgstr "Image data-block referencing an external or packed image"
 
 
@@ -23473,7 +23535,8 @@ msgid "Single file with an encoded stereo pair"
 msgstr "Single file with an encoded stereo pair"
 
 
-msgid "Shape keys data-block containing different shapes of geometric data-blocks"
+# BFA - reworded, Blender: "Shape keys data-block containing different shapes of geometric data-blocks"
+msgid "Shape keys data containing different shapes of geometric data"
 msgstr "Shape keys data-block containing different shapes of geometric data-blocks"
 
 
@@ -23501,11 +23564,13 @@ msgid "User"
 msgstr "User"
 
 
-msgid "Data-block using these shape keys"
+# BFA - reworded, Blender: "Data-block using these shape keys"
+msgid "Data using these shape keys"
 msgstr "Data-block using these shape keys"
 
 
-msgid "Lattice data-block defining a grid for deforming other objects"
+# BFA - reworded, Blender: "Lattice data-block defining a grid for deforming other objects"
+msgid "Lattice data defining a grid for deforming other objects"
 msgstr "Lattice data-block defining a grid for deforming other objects"
 
 
@@ -23610,7 +23675,8 @@ msgid "Light"
 msgstr "Light"
 
 
-msgid "Light data-block for lighting a scene"
+# BFA - reworded, Blender: "Light data-block for lighting a scene"
+msgid "Light data for lighting a scene"
 msgstr "Light data-block for lighting a scene"
 
 
@@ -23974,7 +24040,8 @@ msgid "End distance of the cascaded shadow map (only in perspective view)"
 msgstr "End distance of the cascaded shadow map (only in perspective view)"
 
 
-msgid "Light Probe data-block for lighting capture objects"
+# BFA - reworded, Blender: "Light Probe data-block for lighting capture objects"
+msgid "Light Probe data for lighting capture objects"
 msgstr "Light Probe data-block for lighting capture objects"
 
 
@@ -24290,7 +24357,8 @@ msgid "Offset sampling of the irradiance grid in the viewing direction to reduce
 msgstr "Offset sampling of the irradiance grid in the viewing direction to reduce light bleeding"
 
 
-msgid "Mask data-block defining mask for compositing"
+# BFA - reworded, Blender: "Mask data-block defining mask for compositing"
+msgid "Mask data defining mask for compositing"
 msgstr "Mask data-block defining mask for compositing"
 
 
@@ -24314,7 +24382,8 @@ msgid "Collection of layers which defines this mask"
 msgstr "Collection of layers which defines this mask"
 
 
-msgid "Material data-block to define the appearance of geometric objects for rendering"
+# BFA - reworded, Blender: "Material data-block to define the appearance of geometric objects for rendering"
+msgid "Material data to define the appearance of geometric objects for rendering"
 msgstr "Material data-block to define the appearance of geometric objects for rendering"
 
 
@@ -25059,7 +25128,8 @@ msgid "Vertices of the mesh"
 msgstr "Vertices of the mesh"
 
 
-msgid "Metaball data-block to define blobby surfaces"
+# BFA - reworded, Blender: "Metaball data-block to define blobby surfaces"
+msgid "Metaball data to define blobby surfaces"
 msgstr "Metaball data-block to define blobby surfaces"
 
 
@@ -25111,7 +25181,8 @@ msgid "While editing, don't update metaball at all"
 msgstr "While editing, don't update metaball at all"
 
 
-msgid "MovieClip data-block referencing an external movie file"
+# BFA - reworded, Blender: "MovieClip data-block referencing an external movie file"
+msgid "MovieClip data referencing an external movie file"
 msgstr "MovieClip data-block referencing an external movie file"
 
 
@@ -25415,7 +25486,8 @@ msgid "Shader Node Tree"
 msgstr "Shader Node Tree"
 
 
-msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+# BFA - reworded, Blender: "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+msgid "Node tree consisting of linked nodes used for materials (and other shading data)"
 msgstr "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
 
 
@@ -25427,7 +25499,8 @@ msgid "Node tree consisting of linked nodes used for textures"
 msgstr "Node tree consisting of linked nodes used for textures"
 
 
-msgid "Object data-block defining an object in a scene"
+# BFA - reworded, Blender: "Object data-block defining an object in a scene"
+msgid "Object data defining an object in a scene"
 msgstr "Object data-block defining an object in a scene"
 
 
@@ -27615,11 +27688,13 @@ msgid "Relative amount of virtual parents"
 msgstr "Relative amount of virtual parents"
 
 
-msgid "Point cloud data-block"
+# BFA - reworded, Blender: "Point cloud data-block"
+msgid "Point cloud data"
 msgstr "Point cloud data-block"
 
 
-msgid "Scene data-block, consisting in objects and defining time and render related settings"
+# BFA - reworded, Blender: "Scene data-block, consisting in objects and defining time and render related settings"
+msgid "Scene, consisting in objects and defining time and render related settings"
 msgstr "Scene data-block, consisting in objects and defining time and render related settings"
 
 
@@ -27663,7 +27738,8 @@ msgid "Active Movie Clip that can be used by motion tracking constraints or as a
 msgstr "Active Movie Clip that can be used by motion tracking constraints or as a camera's background image"
 
 
-msgid "Data-block used for annotations in the 3D view"
+# BFA - reworded, Blender: "Data-block used for annotations in the 3D view"
+msgid "Data used for annotations in the 3D view"
 msgstr "Data-block used for annotations in the 3D view"
 
 
@@ -28141,7 +28217,8 @@ msgid "World used for rendering the scene"
 msgstr "World used for rendering the scene"
 
 
-msgid "Screen data-block, defining the layout of areas in a window"
+# BFA - reworded, Blender: "Screen data-block, defining the layout of areas in a window"
+msgid "Screen data, defining the layout of areas in a window"
 msgstr "Screen data-block, defining the layout of areas in a window"
 
 
@@ -28221,7 +28298,8 @@ msgid "Top-Left 3D Editor"
 msgstr "Top-Left 3D Editor"
 
 
-msgid "Sound data-block referencing an external or packed sound file"
+# BFA - reworded, Blender: "Sound data-block referencing an external or packed sound file"
+msgid "Sound data referencing an external or packed sound file"
 msgstr "Sound data-block referencing an external or packed sound file"
 
 
@@ -28249,7 +28327,8 @@ msgid "6.1 Surround"
 msgstr "6.1 Surround"
 
 
-msgid "Sound sample file used by this Sound data-block"
+# BFA - reworded, Blender: "Sound sample file used by this Sound data-block"
+msgid "Sound sample file used by this Sound data"
 msgstr "Sound sample file used by this Sound data-block"
 
 
@@ -28269,7 +28348,8 @@ msgid "If the file contains multiple audio channels they are rendered to a singl
 msgstr "If the file contains multiple audio channels they are rendered to a single one"
 
 
-msgid "Speaker data-block for 3D audio speaker objects"
+# BFA - reworded, Blender: "Speaker data-block for 3D audio speaker objects"
+msgid "Speaker data´for 3D audio speaker objects"
 msgstr "Speaker data-block for 3D audio speaker objects"
 
 
@@ -28335,7 +28415,8 @@ msgid "Playback pitch of the sound"
 msgstr "Playback pitch of the sound"
 
 
-msgid "Sound data-block used by this speaker"
+# BFA - reworded, Blender: "Sound data-block used by this speaker"
+msgid "Sound data used by this speaker"
 msgstr "Sound data-block used by this speaker"
 
 
@@ -28359,7 +28440,8 @@ msgid "Minimum volume, no matter how far away the object is"
 msgstr "Minimum volume, no matter how far away the object is"
 
 
-msgid "Text data-block referencing an external or packed text file"
+# BFA - reworded, Blender: "Text data-block referencing an external or packed text file"
+msgid "Text file referencing an external or packed text file"
 msgstr "Text data-block referencing an external or packed text file"
 
 
@@ -28480,7 +28562,8 @@ msgid "Run this text as a Python script on loading"
 msgstr "Run this text as a Python script on loading"
 
 
-msgid "Texture data-block used by materials, lights, worlds and brushes"
+# BFA - reworded, Blender: "Texture data-block used by materials, lights, worlds and brushes"
+msgid "Texture used by materials, lights, worlds and brushes"
 msgstr "Texture data-block used by materials, lights, worlds and brushes"
 
 
@@ -29421,7 +29504,8 @@ msgid "Vector font for Text objects"
 msgstr "Vector font for Text objects"
 
 
-msgid "Volume data-block for 3D volume grids"
+# BFA - reworded, Blender: "Volume data-block for 3D volume grids"
+msgid "Volume data for 3D volume grids"
 msgstr "Volume data-block for 3D volume grids"
 
 
@@ -29429,7 +29513,8 @@ msgid "Volume display settings for 3D viewport"
 msgstr "Volume display settings for 3D viewport"
 
 
-msgid "Volume file used by this Volume data-block"
+# BFA - reworded, Blender: "Volume file used by this Volume data-block"
+msgid "Volume file used by this Volume"
 msgstr "Volume file used by this Volume data-block"
 
 
@@ -29534,7 +29619,8 @@ msgid "Window Manager"
 msgstr "Window Manager"
 
 
-msgid "Window manager data-block defining open windows and other user interface data"
+# BFA - reworded, Blender: "Window manager data-block defining open windows and other user interface data"
+msgid "Window manager data defining open windows and other user interface data"
 msgstr "Window manager data-block defining open windows and other user interface data"
 
 
@@ -29770,7 +29856,8 @@ msgid "Workspace"
 msgstr "Workspace"
 
 
-msgid "Workspace data-block, defining the working environment for the user"
+# BFA - reworded, Blender: "Workspace data-block, defining the working environment for the user"
+msgid "Workspace data, defining the working environment for the user"
 msgstr "Workspace data-block, defining the working environment for the user"
 
 
@@ -29846,7 +29933,8 @@ msgid "Set the active scene and time based on the current scene strip"
 msgstr "Set the active scene and time based on the current scene strip"
 
 
-msgid "World data-block describing the environment and ambient lighting of a scene"
+# BFA - reworded, Blender: "World data-block describing the environment and ambient lighting of a scene"
+msgid "World data describing the environment and ambient lighting of a scene"
 msgstr "World data-block describing the environment and ambient lighting of a scene"
 
 
@@ -30686,7 +30774,8 @@ msgid "True if this preview image has been modified by py script, and is no more
 msgstr "True if this preview image has been modified by py script, and is no more auto-generated by Blender"
 
 
-msgid "Parameters defining how an Image data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how an Image data-block is used by another data-block"
+msgid "Parameters defining how an Image data is used by another data"
 msgstr "Parameters defining how an Image data-block is used by another data-block"
 
 
@@ -34197,7 +34286,8 @@ msgid "ID Type"
 msgstr "ID Type"
 
 
-msgid "Name of parent object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent object in specified data-block to which parenting happens"
+msgid "Name of parent object in specified data to which parenting happens"
 msgstr "Name of parent object in specified data-block to which parenting happens"
 
 
@@ -34205,7 +34295,8 @@ msgid "Sub Parent"
 msgstr "Sub Parent"
 
 
-msgid "Name of parent sub-object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent sub-object in specified data-block to which parenting happens"
+msgid "Name of parent sub-object in specified data to which parenting happens"
 msgstr "Name of parent sub-object in specified data-block to which parenting happens"
 
 
@@ -34662,7 +34753,8 @@ msgid "Link material to object or the object's data"
 msgstr "Link material to object or the object's data"
 
 
-msgid "Material data-block used by this material slot"
+# BFA - reworded, Blender: "Material data-block used by this material slot"
+msgid "Material data used by this material slot"
 msgstr "Material data-block used by this material slot"
 
 
@@ -35676,7 +35768,8 @@ msgid "Mesh Edge"
 msgstr "Mesh Edge"
 
 
-msgid "Edge in a Mesh data-block"
+# BFA - reworded, Blender: "Edge in a Mesh data-block"
+msgid "Edge in a Mesh data"
 msgstr "Edge in a Mesh data-block"
 
 
@@ -35724,7 +35817,8 @@ msgid "Mesh Loop"
 msgstr "Mesh Loop"
 
 
-msgid "Loop in a Mesh data-block"
+# BFA - reworded, Blender: "Loop in a Mesh data-block"
+msgid "Loop in a Mesh data"
 msgstr "Loop in a Mesh data-block"
 
 
@@ -35804,7 +35898,8 @@ msgid "Mesh Loop Triangle"
 msgstr "Mesh Loop Triangle"
 
 
-msgid "Tessellated triangle in a Mesh data-block"
+# BFA - reworded, Blender: "Tessellated triangle in a Mesh data-block"
+msgid "Tessellated triangle in a Mesh data"
 msgstr "Tessellated triangle in a Mesh data-block"
 
 
@@ -35884,7 +35979,8 @@ msgid "Mesh Polygon"
 msgstr "Mesh Polygon"
 
 
-msgid "Polygon in a Mesh data-block"
+# BFA - reworded, Blender: "Polygon in a Mesh data-block"
+msgid "Polygon in a Mesh data"
 msgstr "Polygon in a Mesh data-block"
 
 
@@ -36168,7 +36264,8 @@ msgid "Metaball Element"
 msgstr "Metaball Element"
 
 
-msgid "Blobby element in a metaball data-block"
+# BFA - reworded, Blender: "Blobby element in a metaball data-block"
+msgid "Blobby element in a Metaball data"
 msgstr "Blobby element in a metaball data-block"
 
 
@@ -43145,7 +43242,8 @@ msgid "Movie Clip User"
 msgstr "Movie Clip User"
 
 
-msgid "Parameters defining how a MovieClip data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how a MovieClip data-block is used by another data-block"
+msgid "Parameters defining how a MovieClip data is used by another data"
 msgstr "Parameters defining how a MovieClip data-block is used by another data-block"
 
 
@@ -49287,7 +49385,8 @@ msgid "The attribute is associated with the object geometry, and its value varie
 msgstr "The attribute is associated with the object geometry, and its value varies from vertex to vertex, or within the object volume"
 
 
-msgid "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+# BFA - reworded, Blender: "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+msgid "The attribute is associated with the object or mesh data itself, and its value is uniform"
 msgstr "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
 
 
@@ -50682,7 +50781,8 @@ msgid "Internal IES file"
 msgstr "Internal IES file"
 
 
-msgid "Whether the IES file is loaded from disk or from a text data-block"
+# BFA - reworded, Blender: "Whether the IES file is loaded from disk or from a text data-block"
+msgid "Whether the IES file is loaded from disk or from a text data"
 msgstr "Whether the IES file is loaded from disk or from a text data-block"
 
 
@@ -52775,8 +52875,9 @@ msgid "Export Keying Set to a Python script"
 msgstr "Export Keying Set to a Python script"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "Export Keying Set..."
 
 
@@ -53101,7 +53202,10 @@ msgid "Console Banner"
 msgstr "Console Banner"
 
 
-msgid "Copy the console contents for use in a script"
+# BFA - reworded, Blender: "Copy the console contents for use in a script"
+msgid ""
+"Copy to Clipboard (as script\n"
+"Copy the console contents for use in a script"
 msgstr "Copy the console contents for use in a script"
 
 
@@ -53631,7 +53735,8 @@ msgid "Duplicate Item"
 msgstr "Duplicate Item"
 
 
-msgid "Make the active boolean socket a toggle for its parent panel"
+# BFA - reworded, Blender: "Make the active boolean socket a toggle for its parent panel"
+msgid "Make the selected active boolean input socket a top-level toggle located in its parent panel"
 msgstr "Make the active boolean socket a toggle for its parent panel"
 
 
@@ -54209,7 +54314,10 @@ msgid "Subdivision Set"
 msgstr "Subdivision Set"
 
 
-msgid "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+# BFA - reworded, Blender: "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+msgid ""
+"Converts normal object transforms to delta transforms.\n"
+"Any existing delta transform will be included as well"
 msgstr "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
 
 
@@ -55415,7 +55523,10 @@ msgid "Add Property"
 msgstr "Add Property"
 
 
-msgid "Jump to a different tab inside the properties editor"
+# BFA - reworded, Blender: "Jump to a different tab inside the properties editor"
+msgid ""
+"Change Context\n"
+"Jump to a different tab inside the properties editor"
 msgstr "Jump to a different tab inside the properties editor"
 
 
@@ -55777,7 +55888,10 @@ msgid "Set Keyframe Interpolation"
 msgstr "Set Keyframe Interpolation"
 
 
-msgid "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+# BFA - reworded, Blender: "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgid ""
+"Keyframe Interpolation\n"
+"Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 msgstr "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 
 
@@ -55856,7 +55970,8 @@ msgid "Flip times of selected keyframes using the first selected marker as the r
 msgstr "Flip times of selected keyframes using the first selected marker as the reference point"
 
 
-msgid "By Values Over Zero Value"
+# BFA - reworded, Blender: "By Values Over Zero Value"
+msgid "By Values Over Value=0"
 msgstr "By Values Over Zero Value"
 
 
@@ -56231,12 +56346,14 @@ msgid "Store this action in the NLA stack as a non-contributing strip for later 
 msgstr "Store this action in the NLA stack as a non-contributing strip for later use, and create a new action"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "Unlink Action"
 
 
-msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+# BFA - reworded, Blender: "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
 msgstr "Unlink this action from the active action slot (and/or exit Tweak Mode)"
 
 
@@ -56253,7 +56370,8 @@ msgid "Frame All"
 msgstr "Frame All"
 
 
-msgid "Reset viewable area to show full keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show full keyframe range"
+msgid "Zooms in or out to fit the display to show full keyframe range"
 msgstr "Reset viewable area to show full keyframe range"
 
 
@@ -56271,7 +56389,8 @@ msgid "Frame Selected"
 msgstr "Frame Selected"
 
 
-msgid "Reset viewable area to show selected keyframes range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframes range"
+msgid "Zooms in or out to fit the display to show selected keyframes range"
 msgstr "Reset viewable area to show selected keyframes range"
 
 
@@ -56314,7 +56433,8 @@ msgid "Frame Channel Under Cursor"
 msgstr "Frame Channel Under Cursor"
 
 
-msgid "Reset viewable area to show the channel under the cursor"
+# BFA - reworded, Blender: "Reset viewable area to show the channel under the cursor"
+msgid "Zooms in or out to fit the display to show the channel under the cursor"
 msgstr "Reset viewable area to show the channel under the cursor"
 
 
@@ -56392,7 +56512,8 @@ msgid "Remove Empty Animation Data"
 msgstr "Remove Empty Animation Data"
 
 
-msgid "Delete all empty animation data containers from visible data-blocks"
+# BFA - reworded, Blender: "Delete all empty animation data containers from visible data-blocks"
+msgid "Delete all empty animation data containers from visible data"
 msgstr "Delete all empty animation data containers from visible data-blocks"
 
 
@@ -56583,7 +56704,8 @@ msgid "Frame Selected Channels"
 msgstr "Frame Selected Channels"
 
 
-msgid "Reset viewable area to show the selected channels"
+# BFA - reworded, Blender: "Reset viewable area to show the selected channels"
+msgid "Zooms in or out to fit the display of the selected channels"
 msgstr "Reset viewable area to show the selected channels"
 
 
@@ -56741,7 +56863,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "Insert Keyframe (Buttons)"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "Insert a keyframe for current UI-active property"
 
 
@@ -57366,7 +57489,8 @@ msgid "Hide Selected"
 msgstr "Hide Selected"
 
 
-msgid "Tag selected bones to not be visible in Edit Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Edit Mode"
+msgid "Hide selected bones in Edit Mode"
 msgstr "Tag selected bones to not be visible in Edit Mode"
 
 
@@ -58081,7 +58205,8 @@ msgid "Save as Brush Asset"
 msgstr "Save as Brush Asset"
 
 
-msgid "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+# BFA - reworded, Blender: "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+msgid "Duplicates the active brush asset, saves it into the default asset library, and make it the active brush"
 msgstr "Save a copy of the active brush asset into the default asset library, and make it the active brush"
 
 
@@ -58222,7 +58347,8 @@ msgid "Toggle Pin ID"
 msgstr "Toggle Pin ID"
 
 
-msgid "Keep the current data-block displayed"
+# BFA - reworded, Blender: "Keep the current data-block displayed"
+msgid "Keep the current data displayed"
 msgstr "Keep the current data-block displayed"
 
 
@@ -60373,7 +60499,8 @@ msgid "Spline type"
 msgstr "Spline type"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "Hide (un)selected control points"
 
 
@@ -62794,7 +62921,8 @@ msgid "Pack Linked Libraries"
 msgstr "Pack Linked Libraries"
 
 
-msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+# BFA - reworded, Blender: "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
 msgstr "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
 
 
@@ -63020,7 +63148,8 @@ msgid "Unpack Linked Libraries"
 msgstr "Unpack Linked Libraries"
 
 
-msgid "Restore all packed linked data-blocks to their original locations"
+# BFA - reworded, Blender: "Restore all packed linked data-blocks to their original locations"
+msgid "Restore all packed linked data  to their original locations"
 msgstr "Restore all packed linked data-blocks to their original locations"
 
 
@@ -63410,7 +63539,8 @@ msgid "Unlink"
 msgstr "Unlink"
 
 
-msgid "Unlink active font data-block"
+# BFA - reworded, Blender: "Unlink active font data-block"
+msgid "Remove active font"
 msgstr "Unlink active font data-block"
 
 
@@ -63672,16 +63802,19 @@ msgid "Annotation Add New"
 msgstr "Annotation Add New"
 
 
-msgid "Add new Annotation data-block"
+# BFA - reworded, Blender: "Add new Annotation data-block"
+msgid "Add new Annotation data"
 msgstr "Add new Annotation data-block"
 
 
+# BFA - reworded, Blender: "Annotation Unlink"
 msgctxt "Operator"
-msgid "Annotation Unlink"
+msgid "Remove Annotation"
 msgstr "Annotation Unlink"
 
 
-msgid "Unlink active Annotation data-block"
+# BFA - reworded, Blender: "Unlink active Annotation data-block"
+msgid "Remove the active Annotation"
 msgstr "Unlink active Annotation data-block"
 
 
@@ -63690,7 +63823,8 @@ msgid "Add New Annotation Layer"
 msgstr "Add New Annotation Layer"
 
 
-msgid "Add new Annotation layer or note for the active data-block"
+# BFA - reworded, Blender: "Add new Annotation layer or note for the active data-block"
+msgid "Add new Annotation layer or note for the active data"
 msgstr "Add new Annotation layer or note for the active data-block"
 
 
@@ -64170,7 +64304,8 @@ msgid "Defines which keys to use as slope and how much to blend towards them"
 msgstr "Defines which keys to use as slope and how much to blend towards them"
 
 
-msgid "By Times Over Zero Time"
+# BFA - reworded, Blender: "By Times Over Zero Time"
+msgid "By Times Over Time=0"
 msgstr "By Times Over Zero Time"
 
 
@@ -64493,7 +64628,8 @@ msgid "How far in frames to offset the animation"
 msgstr "How far in frames to offset the animation"
 
 
-msgid "Reset viewable area to show selected keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframe range"
+msgid "Zooms in or out to fit the display to show selected keyframe range"
 msgstr "Reset viewable area to show selected keyframe range"
 
 
@@ -64651,7 +64787,8 @@ msgid "Rounded"
 msgstr "Rounded"
 
 
-msgid "Set as default rounded"
+# BFA - reworded, Blender: "Set as default rounded"
+msgid "Set as default rounded caps"
 msgstr "Set as default rounded"
 
 
@@ -66346,7 +66483,8 @@ msgid "Clear Render Region"
 msgstr "Clear Render Region"
 
 
-msgid "Clear the boundaries of the render region and disable render region"
+# BFA - reworded, Blender: "Clear the boundaries of the render region and disable render region"
+msgid "Removes an existing Render Region rectangle"
 msgstr "Clear the boundaries of the render region and disable render region"
 
 
@@ -66772,7 +66910,8 @@ msgid "Image height"
 msgstr "Image height"
 
 
-msgid "Image data-block name"
+# BFA - reworded, Blender: "Image data-block name"
+msgid "Image name"
 msgstr "Image data-block name"
 
 
@@ -66970,7 +67109,8 @@ msgid "Save As Image"
 msgstr "Save As Image"
 
 
-msgid "Save the image with another name and/or settings"
+# BFA - reworded, Blender: "Save the image with another name and/or settings"
+msgid "Saves the image with another name and/or settings"
 msgstr "Save the image with another name and/or settings"
 
 
@@ -67062,7 +67202,8 @@ msgid "Image Name"
 msgstr "Image Name"
 
 
-msgid "Image data-block name to unpack"
+# BFA - reworded, Blender: "Image data-block name to unpack"
+msgid "Image name to unpack"
 msgstr "Image data-block name to unpack"
 
 
@@ -67793,7 +67934,8 @@ msgid "Clear Restrict View"
 msgstr "Clear Restrict View"
 
 
-msgid "Reveal temporarily hidden mask layers"
+# BFA - reworded, Blender: "Reveal temporarily hidden mask layers"
+msgid "Reveals the hidden layer(s)"
 msgstr "Reveal temporarily hidden mask layers"
 
 
@@ -67802,7 +67944,8 @@ msgid "Set Restrict View"
 msgstr "Set Restrict View"
 
 
-msgid "Temporarily hide mask layers"
+# BFA - reworded, Blender: "Temporarily hide mask layers"
+msgid "Hide the mask layer"
 msgstr "Temporarily hide mask layers"
 
 
@@ -68033,7 +68176,8 @@ msgid "Duplicate Metaball Elements"
 msgstr "Duplicate Metaball Elements"
 
 
-msgid "Hide (un)selected metaball element(s)"
+# BFA - reworded, Blender: "Hide (un)selected metaball element(s)"
+msgid "Hide selected metaball element(s)"
 msgstr "Hide (un)selected metaball element(s)"
 
 
@@ -69010,7 +69154,8 @@ msgid "Flips the tessellation of selected quads"
 msgstr "Flips the tessellation of selected quads"
 
 
-msgid "Hide (un)selected vertices, edges or faces"
+# BFA - reworded, Blender: "Hide (un)selected vertices, edges or faces"
+msgid "Hide selected vertices, edges or faces"
 msgstr "Hide (un)selected vertices, edges or faces"
 
 
@@ -69380,7 +69525,8 @@ msgid "Mark Sharp"
 msgstr "Mark Sharp"
 
 
-msgid "(Un)mark selected edges as sharp"
+# BFA - reworded, Blender: "(Un)mark selected edges as sharp"
+msgid "Mark selected edges as sharp"
 msgstr "(Un)mark selected edges as sharp"
 
 
@@ -69735,7 +69881,8 @@ msgid "Transform at Cursor Move"
 msgstr "Transform at Cursor Move"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "Construct a circle mesh"
 
 
@@ -69768,7 +69915,8 @@ msgid "Add Cone"
 msgstr "Add Cone"
 
 
-msgid "Construct a conic mesh"
+# BFA - reworded, Blender: "Construct a conic mesh"
+msgid "Add a conic mesh"
 msgstr "Construct a conic mesh"
 
 
@@ -69789,7 +69937,8 @@ msgid "Add Cube"
 msgstr "Add Cube"
 
 
-msgid "Construct a cube mesh that consists of six square faces"
+# BFA - reworded, Blender: "Construct a cube mesh that consists of six square faces"
+msgid "Add a cube mesh that consists of six square faces"
 msgstr "Construct a cube mesh that consists of six square faces"
 
 
@@ -69802,7 +69951,8 @@ msgid "Add Cylinder"
 msgstr "Add Cylinder"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "Construct a cylinder mesh"
 
 
@@ -69815,7 +69965,8 @@ msgid "Add Grid"
 msgstr "Add Grid"
 
 
-msgid "Construct a subdivided plane mesh"
+# BFA - reworded, Blender: "Construct a subdivided plane mesh"
+msgid "Add a subdivided plane mesh"
 msgstr "Construct a subdivided plane mesh"
 
 
@@ -69832,7 +69983,8 @@ msgid "Add Ico Sphere"
 msgstr "Add Ico Sphere"
 
 
-msgid "Construct a spherical mesh that consists of equally sized triangles"
+# BFA - reworded, Blender: "Construct a spherical mesh that consists of equally sized triangles"
+msgid "Add a spherical mesh that consists of equally sized triangles"
 msgstr "Construct a spherical mesh that consists of equally sized triangles"
 
 
@@ -69841,7 +69993,8 @@ msgid "Add Monkey"
 msgstr "Add Monkey"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "Construct a Suzanne mesh"
 
 
@@ -69850,7 +70003,8 @@ msgid "Add Plane"
 msgstr "Add Plane"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "Construct a filled planar mesh with 4 vertices"
 
 
@@ -71359,11 +71513,13 @@ msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get t
 msgstr "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get things back to normal"
 
 
-msgid "Reset viewable area to show full strips range"
+# BFA - reworded, Blender: "Reset viewable area to show full strips range"
+msgid "Zooms in or out to fit the display to show full strips range"
 msgstr "Reset viewable area to show full strips range"
 
 
-msgid "Reset viewable area to show selected strips range"
+# BFA - reworded, Blender: "Reset viewable area to show selected strips range"
+msgid "Zooms in or out to fit the display to show selected strips range"
 msgstr "Reset viewable area to show selected strips range"
 
 
@@ -71652,11 +71808,13 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Clear the boundaries for viewer operations"
 
 
+# BFA - reworded, Blender: "Copy the selected nodes to the internal clipboard"
 msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
-msgstr "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
+msgstr "Copy the selected nodes to the internal clipboard"
 
 
-msgid "Paste nodes from the internal clipboard to the active node tree"
+# BFA - reworded, Blender: "Paste nodes from the internal clipboard to the active node tree"
+msgid "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"
 msgstr "Paste nodes from the internal clipboard to the active node tree"
 
 
@@ -71716,8 +71874,9 @@ msgid "Remove selected nodes"
 msgstr "Remove selected nodes"
 
 
+# BFA - reworded, Blender: "Copy nodes to clipboard, remove and reconnect them."
 msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
-msgstr "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
+msgstr "Copy nodes to clipboard, remove and reconnect them."
 
 
 msgid "Remove nodes and reconnect nodes as if deletion was muted"
@@ -72977,12 +73136,14 @@ msgid "Delete the selected local overrides and relink their usages to the linked
 msgstr "Delete the selected local overrides and relink their usages to the linked data-blocks if possible, else reset them and mark them as non editable"
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "Add to Collection"
 
 
-msgid "Add an object to a new collection"
+# BFA - reworded, Blender: "Add an object to a new collection"
+msgid "Adds the selected object to a new collection"
 msgstr "Add an object to a new collection"
 
 
@@ -73503,7 +73664,8 @@ msgid "New Geometry Node Group"
 msgstr "New Geometry Node Group"
 
 
-msgid "Duplicate the active geometry node group and assign it to the active modifier"
+# BFA - reworded, Blender: "Duplicate the active geometry node group and assign it to the active modifier"
+msgid "Duplicates the active geometry node group and assigns it to the active modifier"
 msgstr "Duplicate the active geometry node group and assign it to the active modifier"
 
 
@@ -73551,7 +73713,10 @@ msgid "Blank"
 msgstr "Blank"
 
 
-msgid "Create an empty Grease Pencil object"
+# BFA - reworded, Blender: "Create an empty Grease Pencil object"
+msgid ""
+"Create an empty grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "Create an empty Grease Pencil object"
 
 
@@ -73569,7 +73734,10 @@ msgid "Monkey"
 msgstr "Monkey"
 
 
-msgid "Construct a Suzanne Grease Pencil object"
+# BFA - reworded, Blender: "Construct a Suzanne Grease Pencil object"
+msgid ""
+"Construct a Monkey names Suzanne grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "Construct a Suzanne Grease Pencil object"
 
 
@@ -73704,7 +73872,8 @@ msgid "Hide Objects"
 msgstr "Hide Objects"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "Temporarily hide objects from the viewport"
 
 
@@ -74162,7 +74331,8 @@ msgid "Make Local"
 msgstr "Make Local"
 
 
-msgid "Make library linked data-blocks local to this file"
+# BFA - reworded, Blender: "Make library linked data-blocks local to this file"
+msgid "Make library linked data local to this file"
 msgstr "Make library linked data-blocks local to this file"
 
 
@@ -74203,7 +74373,8 @@ msgid "Make object animation data local to each object"
 msgstr "Make object animation data local to each object"
 
 
-msgid "Make materials local to each data-block"
+# BFA - reworded, Blender: "Make materials local to each data-block"
+msgid "Make materials local to each data"
 msgstr "Make materials local to each data-block"
 
 
@@ -74818,11 +74989,13 @@ msgid "Current Transform"
 msgstr "Current Transform"
 
 
-msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+# BFA - reworded, Blender: "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgid "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled"
 msgstr "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
 
 
-msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+# BFA - reworded, Blender: "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgid "Paste transform onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "Paste onto frames that have a selected key, potentially creating new keys on those frames"
 
 
@@ -74830,7 +75003,8 @@ msgid "Bake on Key Range"
 msgstr "Bake on Key Range"
 
 
-msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+# BFA - reworded, Blender: "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgid "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
 
 
@@ -75219,7 +75393,8 @@ msgid "Deselect objects at the boundaries of parent/child relationships"
 msgstr "Deselect objects at the boundaries of parent/child relationships"
 
 
-msgid "Select all visible objects that are linked"
+# BFA - reworded, Blender: "Select all visible objects that are linked"
+msgid "Select all visible objects that are linked to the active element"
 msgstr "Select all visible objects that are linked"
 
 
@@ -76715,7 +76890,8 @@ msgid "Outliner ID Data Copy"
 msgstr "Outliner ID Data Copy"
 
 
-msgid "Copy the selected data-blocks to the internal clipboard"
+# BFA - reworded, Blender: "Copy the selected data-blocks to the internal clipboard"
+msgid "Selected data are copied to the clipboard"
 msgstr "Copy the selected data-blocks to the internal clipboard"
 
 
@@ -76774,7 +76950,8 @@ msgid "Add Fake User"
 msgstr "Add Fake User"
 
 
-msgid "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+# BFA - reworded, Blender: "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+msgid "Ensure data gets saved even if it isn't in use (e.g. for motion and material libraries)"
 msgstr "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
 
 
@@ -76791,7 +76968,8 @@ msgid "Outliner ID Data Paste"
 msgstr "Outliner ID Data Paste"
 
 
-msgid "Paste data-blocks from the internal clipboard"
+# BFA - reworded, Blender: "Paste data-blocks from the internal clipboard"
+msgid "Data from the clipboard are pasted"
 msgstr "Paste data-blocks from the internal clipboard"
 
 
@@ -77062,7 +77240,8 @@ msgid "Purge All"
 msgstr "Purge All"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file"
+# BFA - reworded, Blender: "Clear all orphaned data-blocks without any users from the file"
+msgid "Clear all orphaned data without any users from the file"
 msgstr "Clear all orphaned data-blocks without any users from the file"
 
 
@@ -77204,7 +77383,8 @@ msgid "Show/Hide One Level"
 msgstr "Show/Hide One Level"
 
 
-msgid "Expand/collapse all entries by one level"
+# BFA - reworded, Blender: "Expand/collapse all entries by one level"
+msgid "Expand/Collapse all entries by one level"
 msgstr "Expand/collapse all entries by one level"
 
 
@@ -77247,7 +77427,8 @@ msgid "Slide Paint Curve Point"
 msgstr "Slide Paint Curve Point"
 
 
-msgid "Select and slide paint curve point"
+# BFA - reworded, Blender: "Select and slide paint curve point"
+msgid "Select and slide a paint curve point"
 msgstr "Select and slide paint curve point"
 
 
@@ -77256,7 +77437,8 @@ msgid "Place Cursor"
 msgstr "Place Cursor"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "Place cursor"
 
 
@@ -77269,7 +77451,8 @@ msgid "Remove Paint Curve Point"
 msgstr "Remove Paint Curve Point"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "Draw curve"
 
 
@@ -77763,6 +77946,7 @@ msgid "Adjust vertex color Hue/Saturation/Value"
 msgstr "Adjust vertex colour Hue/Saturation/Value"
 
 
+# BFA - reworded, Blender: "Set Vertex Colors"
 msgctxt "Operator"
 msgid "Set Vertex Color"
 msgstr "Set Vertex Colours"
@@ -77977,7 +78161,8 @@ msgid "Add New Palette"
 msgstr "Add New Palette"
 
 
-msgid "Add new palette"
+# BFA - reworded, Blender: "Add new palette"
+msgid "Add a new palette of indexed colors"
 msgstr "Add new palette"
 
 
@@ -78448,9 +78633,10 @@ msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Brow
 msgstr "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
 
 
+# BFA - reworded, Blender: "Create Pose Asset..."
 msgctxt "Operator"
 msgid "Create Pose Asset"
-msgstr "Create Pose Asset"
+msgstr "Create Pose Asset..."
 
 
 msgid "Create a new asset from the selected bones in the scene"
@@ -78584,8 +78770,8 @@ msgstr "Make the current pose more similar to, or further away from, the rest po
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
-msgstr "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
+msgstr "Pose Breakdowner"
 
 
 msgid "Create a suitable breakdown pose on the current frame"
@@ -78651,7 +78837,8 @@ msgid "Copy the current pose of the selected bones to the internal clipboard"
 msgstr "Copy the current pose of the selected bones to the internal clipboard"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "Tag selected bones to not be visible in Pose Mode"
 
 
@@ -78817,8 +79004,8 @@ msgstr "Propagate pose to all keyframes occurring on frames with Scene Markers a
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown (Legacy)"
-msgstr "Push Pose from Breakdown (Legacy)"
+msgid "Push Pose from Breakdown"
+msgstr "Push Pose from Breakdown"
 
 
 msgid "Exaggerate the current pose in regards to the breakdown pose"
@@ -78835,8 +79022,8 @@ msgstr "Flip quaternion values to achieve desired rotations, while maintaining t
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown (Legacy)"
-msgstr "Relax Pose to Breakdown (Legacy)"
+msgid "Relax Pose to Breakdown"
+msgstr "Relax Pose to Breakdown"
 
 
 msgid "Make the current pose more similar to its breakdown pose"
@@ -80659,7 +80846,8 @@ msgid "Reload Scripts"
 msgstr "Reload Scripts"
 
 
-msgid "Reload scripts"
+# BFA - reworded, Blender: "Reload scripts"
+msgid "Reload all Python Scripts, including the UI"
 msgstr "Reload scripts"
 
 
@@ -82701,7 +82889,8 @@ msgid "Delete Retiming Keys"
 msgstr "Delete Retiming Keys"
 
 
-msgid "Delete selected retiming keys from the sequencer"
+# BFA - reworded, Blender: "Delete selected retiming keys from the sequencer"
+msgid "Delete selected retiming keyframes from the sequencer"
 msgstr "Delete selected retiming keys from the sequencer"
 
 
@@ -83375,12 +83564,14 @@ msgid "Update the audio animation cache"
 msgstr "Update the audio animation cache"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "Mixdown"
 
 
-msgid "Mix the scene's audio to a sound file"
+# BFA - reworded, Blender: "Mix the scene's audio to a sound file"
+msgid "Mixdown and export the scene's audio to a sound file"
 msgstr "Mix the scene's audio to a sound file"
 
 
@@ -83781,11 +83972,13 @@ msgid "Jump"
 msgstr "Jump"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "Jump cursor to line"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "Line number to jump to"
 
 
@@ -83850,7 +84043,8 @@ msgid "New Text"
 msgstr "New Text"
 
 
-msgid "Create a new text data-block"
+# BFA - reworded, Blender: "Create a new text data-block"
+msgid "Create a new text file"
 msgstr "Create a new text data-block"
 
 
@@ -83859,7 +84053,8 @@ msgid "Open Text"
 msgstr "Open Text"
 
 
-msgid "Open a new text data-block"
+# BFA - reworded, Blender: "Open a new text data-block"
+msgid "Open a new text file"
 msgstr "Open a new text data-block"
 
 
@@ -83885,7 +84080,8 @@ msgid "Reload"
 msgstr "Reload"
 
 
-msgid "Reload active text data-block from its file"
+# BFA - reworded, Blender: "Reload active text data-block from its file"
+msgid "Reload active text file"
 msgstr "Reload active text data-block from its file"
 
 
@@ -83946,7 +84142,8 @@ msgid "Save"
 msgstr "Save"
 
 
-msgid "Save active text data-block"
+# BFA - reworded, Blender: "Save active text data-block"
+msgid "Save active text file"
 msgstr "Save active text data-block"
 
 
@@ -84000,7 +84197,8 @@ msgid "To 3D Object"
 msgstr "To 3D Object"
 
 
-msgid "Create 3D text object from active text data-block"
+# BFA - reworded, Blender: "Create 3D text object from active text data-block"
+msgid "Create 3D text object from active text data"
 msgstr "Create 3D text object from active text data-block"
 
 
@@ -84016,7 +84214,8 @@ msgid "Unindent selected text"
 msgstr "Unindent selected text"
 
 
-msgid "Unlink active text data-block"
+# BFA - reworded, Blender: "Unlink active text data-block"
+msgid "Remove active text"
 msgstr "Unlink active text data-block"
 
 
@@ -84272,7 +84471,8 @@ msgid "Transform from Gizmo"
 msgstr "Transform from Gizmo"
 
 
-msgid "Mirror selected items around one or more axes"
+# BFA - reworded, Blender: "Mirror selected items around one or more axes"
+msgid "Mirror selected items"
 msgstr "Mirror selected items around one or more axes"
 
 
@@ -84780,12 +84980,14 @@ msgid "Sample a color from the Blender Window and create Grease Pencil material"
 msgstr "Sample a colour from the Blender Window and create Grease Pencil material"
 
 
+# BFA - reworded, Blender: "Eyedropper Data-Block"
 msgctxt "Operator"
-msgid "Eyedropper Data-Block"
+msgid "Eyedropper Data"
 msgstr "Eyedropper Data-Block"
 
 
-msgid "Sample a data-block from the 3D View to store in a property"
+# BFA - reworded, Blender: "Sample a data-block from the 3D View to store in a property"
+msgid "Sample a data from the 3D View to store in a property"
 msgstr "Sample a data-block from the 3D View to store in a property"
 
 
@@ -86021,8 +86223,9 @@ msgid "Amount of Faces in Island"
 msgstr "Amount of Faces in Island"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Select Split"
 
 
@@ -86407,7 +86610,8 @@ msgid "Position the scene camera at the selected landmark"
 msgstr "Position the scene camera at the selected landmark"
 
 
-msgid "Clear the boundaries of the border render and disable border render"
+# BFA - reworded, Blender: "Clear the boundaries of the border render and disable border render"
+msgid "Removes an existing Render Region rectangle, clearning the boundaries of the render border"
 msgstr "Clear the boundaries of the border render and disable border render"
 
 
@@ -87463,7 +87667,8 @@ msgid "Create instances for object data which are not referenced by any objects"
 msgstr "Create instances for object data which are not referenced by any objects"
 
 
-msgid "Link the objects or data-blocks rather than appending"
+# BFA - reworded, Blender: "Link the objects or data-blocks rather than appending"
+msgid "Link the objects or data rather than appending"
 msgstr "Link the objects or data-blocks rather than appending"
 
 
@@ -88388,7 +88593,8 @@ msgid "Clear Data-Block Previews"
 msgstr "Clear Data-Block Previews"
 
 
-msgid "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+# BFA - reworded, Blender: "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+msgid "Clear data previews (only for some types like objects, materials, textures, etc.)"
 msgstr "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
 
 
@@ -88396,7 +88602,8 @@ msgid "Data-Block Type"
 msgstr "Data-Block Type"
 
 
-msgid "Which data-block previews to clear"
+# BFA - reworded, Blender: "Which data-block previews to clear"
+msgid "Which data previews to clear"
 msgstr "Which data-block previews to clear"
 
 
@@ -88420,12 +88627,14 @@ msgid "Clear previews for materials, lights, worlds, textures and images"
 msgstr "Clear previews for materials, lights, worlds, textures and images"
 
 
+# BFA - reworded, Blender: "Refresh Data-Block Previews"
 msgctxt "Operator"
-msgid "Refresh Data-Block Previews"
+msgid "Refresh Data Previews"
 msgstr "Refresh Data-Block Previews"
 
 
-msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+# BFA - reworded, Blender: "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgid "Ensure data previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 msgstr "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 
 
@@ -88853,12 +89062,14 @@ msgid "Make the current file the default startup file"
 msgstr "Make the current file the default startup file"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Save Blender File"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Save the current Blender file"
 
 
@@ -88893,7 +89104,8 @@ msgid "Search Operator"
 msgstr "Search Operator"
 
 
-msgid "Pop-up a search over all available operators in current context"
+# BFA - reworded, Blender: "Pop-up a search over all available operators in current context"
+msgid "Pop-up a search panel for all available operators in current context"
 msgstr "Pop-up a search over all available operators in current context"
 
 
@@ -90291,7 +90503,8 @@ msgid "New World"
 msgstr "New World"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "Create a new world Data-Block"
 
 
@@ -91076,7 +91289,8 @@ msgid "Tracking Settings"
 msgstr "Tracking Settings"
 
 
-msgid "Tracking Settings Extras"
+# BFA - reworded, Blender: "Tracking Settings Extras"
+msgid "Tracking Options Extras"
 msgstr "Tracking Settings Extras"
 
 
@@ -94213,7 +94427,8 @@ msgid "Duplicate Action"
 msgstr "Duplicate Action"
 
 
-msgid "Causes actions to be duplicated with the data-blocks"
+# BFA - reworded, Blender: "Causes actions to be duplicated with the data-blocks"
+msgid "Causes actions to be duplicated with the data"
 msgstr "Causes actions to be duplicated with the data-blocks"
 
 
@@ -94733,11 +94948,13 @@ msgid "Python Scripts Directory"
 msgstr "Python Scripts Directory"
 
 
-msgid "Show Hidden Files/Data-Blocks"
+# BFA - reworded, Blender: "Show Hidden Files/Data-Blocks"
+msgid "Show Hidden Files/Data"
 msgstr "Show Hidden Files/Data-Blocks"
 
 
-msgid "Show files and data-blocks that are normally hidden"
+# BFA - reworded, Blender: "Show files and data-blocks that are normally hidden"
+msgid "Show files and data that are normally hidden"
 msgstr "Show files and data-blocks that are normally hidden"
 
 
@@ -95075,7 +95292,8 @@ msgid "Overall sensitivity of the 3D Mouse for translation"
 msgstr "Overall sensitivity of the 3D Mouse for translation"
 
 
-msgid "Zoom direction"
+# BFA - reworded, Blender: "Zoom direction"
+msgid "Zoom Direction"
 msgstr "Zoom direction"
 
 
@@ -96755,7 +96973,8 @@ msgid "Translate New Names"
 msgstr "Translate New Names"
 
 
-msgid "Translate the names of new data-blocks (objects, materials...)"
+# BFA - reworded, Blender: "Translate the names of new data-blocks (objects, materials...)"
+msgid "Translate the names of new data (objects, materials...)"
 msgstr "Translate the names of new data-blocks (objects, materials...)"
 
 
@@ -100222,7 +100441,8 @@ msgid "Is Perspective"
 msgstr "Is Perspective"
 
 
-msgid "Lock view rotation of side views to Top/Front/Right"
+# BFA - reworded, Blender: "Lock view rotation of side views to Top/Front/Right"
+msgid "Lock view rotation in side views"
 msgstr "Lock view rotation of side views to Top/Front/Right"
 
 
@@ -100487,7 +100707,8 @@ msgid "Result of rendering, including all layers and passes"
 msgstr "Result of rendering, including all layers and passes"
 
 
-msgid "Rendering settings for a Scene data-block"
+# BFA - reworded, Blender: "Rendering settings for a Scene data-block"
+msgid "Rendering settings for a Scene"
 msgstr "Rendering settings for a Scene data-block"
 
 
@@ -100611,7 +100832,8 @@ msgid "Directory/name to save animations, # characters define the position and p
 msgstr "Directory/name to save animations, # characters define the position and padding of frame numbers"
 
 
-msgid "World background is transparent, for compositing the render over another background"
+# BFA - reworded, Blender: "World background is transparent, for compositing the render over another background"
+msgid "Render the world background as transparent. This allows compositing the rendered image over another background"
 msgstr "World background is transparent, for compositing the render over another background"
 
 
@@ -102091,7 +102313,8 @@ msgid "Attenuation constant"
 msgstr "Attenuation constant"
 
 
-msgid "Distance of object that contribute to the cavity/edge effect"
+# BFA - reworded, Blender: "Distance of object that contribute to the cavity/edge effect"
+msgid "Distance of object that contribute to the Cavity/Edge effect"
 msgstr "Distance of object that contribute to the cavity/edge effect"
 
 
@@ -102591,11 +102814,13 @@ msgid "Anti-Aliasing Samples"
 msgstr "Anti-Aliasing Samples"
 
 
-msgid "Number of supersampling anti-aliasing samples per pixel for final render"
+# BFA - reworded, Blender: "Number of supersampling anti-aliasing samples per pixel for final render"
+msgid "Number of anti-aliasing supersamples done per pixel in final render"
 msgstr "Number of supersampling anti-aliasing samples per pixel for final render"
 
 
-msgid "SMAA Threshold Viewport"
+# BFA - reworded, Blender: "SMAA Threshold Viewport"
+msgid "SMAA Threshold (Viewport)"
 msgstr "SMAA Threshold Viewport"
 
 
@@ -102603,7 +102828,8 @@ msgid "Threshold for edge detection algorithm (higher values might over-blur som
 msgstr "Threshold for edge detection algorithm (higher values might over-blur some part of the image)"
 
 
-msgid "SMAA Threshold Render"
+# BFA - reworded, Blender: "SMAA Threshold Render"
+msgid "SMAA Threshold (Render)"
 msgstr "SMAA Threshold Render"
 
 
@@ -102751,7 +102977,8 @@ msgid "Python Scripts Directories"
 msgstr "Python Scripts Directories"
 
 
-msgid "Sequence editing data for a Scene data-block"
+# BFA - reworded, Blender: "Sequence editing data for a Scene data-block"
+msgid "Sequence editing data for a Scene data"
 msgstr "Sequence editing data for a Scene data-block"
 
 
@@ -103455,7 +103682,8 @@ msgid "Wave Deformation effect"
 msgstr "Wave Deformation effect"
 
 
-msgid "Shape key in a shape keys data-block"
+# BFA - reworded, Blender: "Shape key in a shape keys data-block"
+msgid "Shape key in a shape keys data"
 msgstr "Shape key in a shape keys data-block"
 
 
@@ -103815,7 +104043,8 @@ msgid "Stiff Quads"
 msgstr "Stiff Quads"
 
 
-msgid "Add diagonal springs on 4-gons"
+# BFA - reworded, Blender: "Add diagonal springs on 4-gons"
+msgid "Add diagonal springs on quads"
 msgstr "Add diagonal springs on 4-gons"
 
 
@@ -103876,11 +104105,13 @@ msgid "Where the annotation comes from"
 msgstr "Where the annotation comes from"
 
 
-msgid "Show annotation data-block which belongs to movie clip"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to movie clip"
+msgid "Show annotation data which belongs to movie clip"
 msgstr "Show annotation data-block which belongs to movie clip"
 
 
-msgid "Show annotation data-block which belongs to active track"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to active track"
+msgid "Show annotation data which belongs to active track"
 msgstr "Show annotation data-block which belongs to active track"
 
 
@@ -104899,7 +105130,8 @@ msgid "Node tree being displayed and edited"
 msgstr "Node tree being displayed and edited"
 
 
-msgid "Data-block whose nodes are being edited"
+# BFA - reworded, Blender: "Data-block whose nodes are being edited"
+msgid "Data whose nodes are being edited"
 msgstr "Data-block whose nodes are being edited"
 
 
@@ -104907,7 +105139,8 @@ msgid "ID From"
 msgstr "ID From"
 
 
-msgid "Data-block from which the edited data-block is linked"
+# BFA - reworded, Blender: "Data-block from which the edited data-block is linked"
+msgid "Data from which the edited data is linked"
 msgstr "Data-block from which the edited data-block is linked"
 
 
@@ -104927,7 +105160,8 @@ msgid "Settings for display of overlays in the Node Editor"
 msgstr "Settings for display of overlays in the Node Editor"
 
 
-msgid "Path from the data-block to the currently edited node tree"
+# BFA - reworded, Blender: "Path from the data-block to the currently edited node tree"
+msgid "Path from the data to the currently edited node tree"
 msgstr "Path from the data-block to the currently edited node tree"
 
 
@@ -105090,7 +105324,8 @@ msgid "Filter by Type"
 msgstr "Filter by Type"
 
 
-msgid "Data-block type to show"
+# BFA - reworded, Blender: "Data-block type to show"
+msgid "Data type to show"
 msgstr "Data-block type to show"
 
 
@@ -105186,7 +105421,8 @@ msgid "Only use complete matches of search string"
 msgstr "Only use complete matches of search string"
 
 
-msgid "Show only data-blocks of one type"
+# BFA - reworded, Blender: "Show only data-blocks of one type"
+msgid "Show only data of one type"
 msgstr "Show only data-blocks of one type"
 
 
@@ -105848,7 +106084,8 @@ msgid "Top line visible"
 msgstr "Top line visible"
 
 
-msgid "Search in all text data-blocks, instead of only the active one"
+# BFA - reworded, Blender: "Search in all text data-blocks, instead of only the active one"
+msgid "Search in all text data, instead of only the active one"
 msgstr "Search in all text data-blocks, instead of only the active one"
 
 
@@ -107781,7 +108018,8 @@ msgid "Display the audio waveform inside the strip"
 msgstr "Display the audio waveform inside the strip"
 
 
-msgid "Sound data-block used by this strip"
+# BFA - reworded, Blender: "Sound data-block used by this strip"
+msgid "Sound data used by this strip"
 msgstr "Sound data-block used by this strip"
 
 
@@ -108527,7 +108765,8 @@ msgid "Text Line"
 msgstr "Text Line"
 
 
-msgid "Line of text in a Text data-block"
+# BFA - reworded, Blender: "Line of text in a Text data-block"
+msgid "Line of text in a Text file"
 msgstr "Line of text in a Text data-block"
 
 
@@ -108563,7 +108802,8 @@ msgid "Set scaling for the texture's X, Y and Z sizes"
 msgstr "Set scaling for the texture's X, Y and Z sizes"
 
 
-msgid "Texture data-block used by this texture slot"
+# BFA - reworded, Blender: "Texture data-block used by this texture slot"
+msgid "Texture used by this texture slot"
 msgstr "Texture data-block used by this texture slot"
 
 
@@ -108571,7 +108811,8 @@ msgid "Brush Texture Slot"
 msgstr "Brush Texture Slot"
 
 
-msgid "Texture slot for textures in a Brush data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Brush data-block"
+msgid "Texture slot for textures in a Brush data"
 msgstr "Texture slot for textures in a Brush data-block"
 
 
@@ -108599,7 +108840,8 @@ msgid "LineStyle Texture Slot"
 msgstr "LineStyle Texture Slot"
 
 
-msgid "Texture slot for textures in a LineStyle data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a LineStyle data-block"
+msgid "Texture slot for textures in a LineStyle data"
 msgstr "Texture slot for textures in a LineStyle data-block"
 
 
@@ -108671,7 +108913,8 @@ msgid "Particle Settings Texture Slot"
 msgstr "Particle Settings Texture Slot"
 
 
-msgid "Texture slot for textures in a Particle Settings data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Particle Settings data-block"
+msgid "Texture slot for textures in a Particle Settings data"
 msgstr "Texture slot for textures in a Particle Settings data-block"
 
 
@@ -109645,7 +109888,8 @@ msgid "Active Action"
 msgstr "Active Action"
 
 
-msgid "Animation data-block has active action"
+# BFA - reworded, Blender: "Animation data-block has active action"
+msgid "Animation has active action"
 msgstr "Animation data-block has active action"
 
 
@@ -109653,7 +109897,8 @@ msgid "No Active Action"
 msgstr "No Active Action"
 
 
-msgid "Animation data-block does not have active action"
+# BFA - reworded, Blender: "Animation data-block does not have active action"
+msgid "Animation data does not have active action"
 msgstr "Animation data-block does not have active action"
 
 
@@ -111152,7 +111397,8 @@ msgid "Draw Strokes on Back"
 msgstr "Draw Strokes on Back"
 
 
-msgid "New strokes are drawn below of all strokes in the layer"
+# BFA - reworded, Blender: "New strokes are drawn below of all strokes in the layer"
+msgid "When drawing new strokes, the new stroke is drawn below of all strokes in the layer"
 msgstr "New strokes are drawn below of all strokes in the layer"
 
 
@@ -112234,7 +112480,8 @@ msgid "Display X Axis"
 msgstr "Display X Axis"
 
 
-msgid "Show the X axis line"
+# BFA - reworded, Blender: "Show the X axis line"
+msgid "Show the X axis line in perspective / orthographic views"
 msgstr "Show the X axis line"
 
 
@@ -112242,7 +112489,8 @@ msgid "Display Y Axis"
 msgstr "Display Y Axis"
 
 
-msgid "Show the Y axis line"
+# BFA - reworded, Blender: "Show the Y axis line"
+msgid "Show the Y axis line in perspective / orthographic views"
 msgstr "Show the Y axis line"
 
 
@@ -112250,7 +112498,8 @@ msgid "Display Z Axis"
 msgstr "Display Z Axis"
 
 
-msgid "Show the Z axis line"
+# BFA - reworded, Blender: "Show the Z axis line"
+msgid "Show the Z axis line in perspective / orthographic views"
 msgstr "Show the Z axis line"
 
 
@@ -113763,7 +114012,8 @@ msgid "Does this tool use a painting canvas"
 msgstr "Does this tool use a painting canvas"
 
 
-msgid "Lighting for a World data-block"
+# BFA - reworded, Blender: "Lighting for a World data-block"
+msgid "Lighting for a World data"
 msgstr "Lighting for a World data-block"
 
 
@@ -113779,7 +114029,8 @@ msgid "World Mist"
 msgstr "World Mist"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "Mist settings for a World data-block"
 
 
@@ -117736,7 +117987,8 @@ msgid "Repository Alert:"
 msgstr "Repository Alert:"
 
 
-msgid "Internet access is required to install and update online extensions. "
+# BFA - reworded, Blender: "Internet access is required to install and update online extensions. "
+msgid "Internet access is required to install and update Extensions."
 msgstr "Internet access is required to install and update online extensions. "
 
 
@@ -117783,8 +118035,9 @@ msgid "Permissions"
 msgstr "Permissions"
 
 
+# BFA - reworded, Blender: "Visit Extensions Platform"
 msgctxt "Operator"
-msgid "Visit Extensions Platform"
+msgid "Visit Extensions Website"
 msgstr "Visit Extensions Platform"
 
 
@@ -120305,7 +120558,8 @@ msgid "No nodes selected."
 msgstr "No nodes selected."
 
 
-msgid "Only boolean input sockets are supported"
+# BFA - reworded, Blender: "Only boolean input sockets are supported"
+msgid "Active item is not a boolean input socket"
 msgstr "Only boolean input sockets are supported"
 
 
@@ -121777,8 +122031,9 @@ msgid "Flip"
 msgstr "Flip"
 
 
+# BFA - reworded, Blender: "Flip (Topology)"
 msgctxt "Operator"
-msgid "Flip (Topology)"
+msgid "Mirror Shape Key (Topology)"
 msgstr "Flip (Topology)"
 
 
@@ -121881,7 +122136,8 @@ msgid "Select by"
 msgstr "Select by"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "Image Border"
 
 
@@ -122187,7 +122443,8 @@ msgid "HDR needs 10 or 12 bits"
 msgstr "HDR needs 10 or 12 bits"
 
 
-msgid "Max B-frames"
+# BFA - reworded, Blender: "Max B-frames"
+msgid "Max B_Frames"
 msgstr "Max B-frames"
 
 
@@ -123086,11 +123343,13 @@ msgid "Light Probes Volume Pool"
 msgstr "Light Probes Volume Pool"
 
 
-msgid "SMAA Threshold"
+# BFA - reworded, Blender: "SMAA Threshold"
+msgid "Edge Threshold"
 msgstr "SMAA Threshold"
 
 
-msgid "SSAA Samples"
+# BFA - reworded, Blender: "SSAA Samples"
+msgid "Supersampling"
 msgstr "SSAA Samples"
 
 
@@ -124346,8 +124605,9 @@ msgid "Replace..."
 msgstr "Replace..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Save a Copy..."
 
 
@@ -124471,8 +124731,9 @@ msgid "Linked Duplicate"
 msgstr "Linked Duplicate"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "Stop Tweaking Strip Actions"
 
 
@@ -124496,13 +124757,15 @@ msgid "Start Editing Stashed Action"
 msgstr "Start Editing Stashed Action"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Full Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Full Stack)"
+msgid "Tweak Action (Full Stack)"
 msgstr "Start Tweaking Strip Actions (Full Stack)"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Lower Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgid "Tweak Action (Lower Stack)"
 msgstr "Start Tweaking Strip Actions (Lower Stack)"
 
 
@@ -124878,8 +125141,9 @@ msgid "Toggle Sequencer/Preview"
 msgstr "Toggle Sequencer/Preview"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "Select All by Type"
 
 
@@ -124913,8 +125177,9 @@ msgid "Sound..."
 msgstr "Sound..."
 
 
+# BFA - reworded, Blender: "Image/Sequence..."
 msgctxt "Operator"
-msgid "Image/Sequence..."
+msgid "Image/Sequence"
 msgstr "Image/Sequence..."
 
 
@@ -124937,8 +125202,9 @@ msgid "Sound Crossfade"
 msgstr "Sound Crossfade"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "Change Keying Set..."
 
 
@@ -124999,8 +125265,9 @@ msgid "Render Sequencer Image"
 msgstr "Render Sequencer Image"
 
 
+# BFA - reworded, Blender: "Fit Preview in Window"
 msgctxt "Operator"
-msgid "Fit Preview in Window"
+msgid "Fit Preview in window"
 msgstr "Fit Preview in Window"
 
 
@@ -125112,8 +125379,9 @@ msgid "Show Hidden Strips"
 msgstr "Show Hidden Strips"
 
 
+# BFA - reworded, Blender: "Insert Keyframe with Keying Set..."
 msgctxt "Operator"
-msgid "Insert Keyframe with Keying Set..."
+msgid "Insert Keyframe with Keying Set"
 msgstr "Insert Keyframe with Keying Set..."
 
 
@@ -125400,7 +125668,8 @@ msgid "Follow Current Frame"
 msgstr "Follow Current Frame"
 
 
-msgid "Play In"
+# BFA - reworded, Blender: "Play In"
+msgid "Play in"
 msgstr "Play In"
 
 
@@ -125408,7 +125677,8 @@ msgid "Active Editor"
 msgstr "Active Editor"
 
 
-msgid "Properties and Sidebars"
+# BFA - reworded, Blender: "Properties and Sidebars"
+msgid "Properties Editor and Sidebars"
 msgstr "Properties and Sidebars"
 
 
@@ -125558,8 +125828,9 @@ msgid "Find Missing Files..."
 msgstr "Find Missing Files..."
 
 
+# BFA - reworded, Blender: "Batch-Generate Previews..."
 msgctxt "Operator"
-msgid "Batch-Generate Previews..."
+msgid "Batch-Generate Preview"
 msgstr "Batch-Generate Previews..."
 
 
@@ -125578,8 +125849,9 @@ msgid "Render Animation"
 msgstr "Render Animation"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Render Audio..."
 
 
@@ -125603,8 +125875,9 @@ msgid "Repeat History..."
 msgstr "Repeat History..."
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "Menu Search..."
 
 
@@ -125676,8 +125949,9 @@ msgid "Render Image"
 msgstr "Render Image"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "Operator Search..."
 
 
@@ -125754,7 +126028,8 @@ msgid "User Tooltips"
 msgstr "User Tooltips"
 
 
-msgid "Sort by Most Recent"
+# BFA - reworded, Blender: "Sort by Most Recent"
+msgid "Sort Search by Most Recent"
 msgstr "Sort by Most Recent"
 
 
@@ -125799,7 +126074,8 @@ msgid "Video Memory"
 msgstr "Video Memory"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Blender Version"
 
 
@@ -126013,7 +126289,8 @@ msgid "Excluded Paths"
 msgstr "Excluded Paths"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "Auto-Save"
 
 
@@ -126321,8 +126598,9 @@ msgid "More/Less"
 msgstr "More/Less"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Select Pattern..."
 
 
@@ -126415,8 +126693,9 @@ msgid "By Attribute"
 msgstr "By Attribute"
 
 
+# BFA - reworded, Blender: "Control Point Row"
 msgctxt "Operator"
-msgid "Control Point Row"
+msgid "Control Point row"
 msgstr "Control Point Row"
 
 
@@ -126529,23 +126808,27 @@ msgid "Fur"
 msgstr "Fur"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "Nurbs Surface"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "Nurbs Cylinder"
 
 
+# BFA - reworded, Blender: "Nurbs Sphere"
 msgctxt "Operator"
-msgid "Nurbs Sphere"
+msgid "Surface Sphere"
 msgstr "Nurbs Sphere"
 
 
+# BFA - reworded, Blender: "Nurbs Torus"
 msgctxt "Operator"
-msgid "Nurbs Torus"
+msgid "Surface Torus"
 msgstr "Nurbs Torus"
 
 
@@ -126559,8 +126842,9 @@ msgid "Camera"
 msgstr "Camera"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "Import OpenVDB..."
 
 
@@ -126584,8 +126868,9 @@ msgid "Speaker"
 msgstr "Speaker"
 
 
+# BFA - reworded, Blender: "Mesh Plane..."
 msgctxt "Operator"
-msgid "Mesh Plane..."
+msgid "Mesh Plane"
 msgstr "Mesh Plane..."
 
 
@@ -126624,8 +126909,9 @@ msgid "Origin"
 msgstr "Origin"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "Rename Active Object..."
 
 
@@ -127063,13 +127349,15 @@ msgid "Calculate"
 msgstr "Calculate"
 
 
+# BFA - reworded, Blender: "Assign to New Collection"
 msgctxt "Operator"
-msgid "Assign to New Collection"
+msgid "Assign to New"
 msgstr "Assign to New Collection"
 
 
+# BFA - reworded, Blender: "Add (with Targets)..."
 msgctxt "Operator"
-msgid "Add (with Targets)..."
+msgid "Add (with Targets)"
 msgstr "Add (with Targets)..."
 
 
@@ -127198,8 +127486,9 @@ msgid "Rotate..."
 msgstr "Rotate..."
 
 
+# BFA - reworded, Blender: "Point to Target..."
 msgctxt "Operator"
-msgid "Point to Target..."
+msgid "Point normals to target"
 msgstr "Point to Target..."
 
 
@@ -127331,7 +127620,8 @@ msgid "Color Opacity"
 msgstr "Colour Opacity"
 
 
-msgid "Attribute Text"
+# BFA - reworded, Blender: "Attribute Text"
+msgid "Attribute Text Overlay"
 msgstr "Attribute Text"
 
 
@@ -127440,8 +127730,9 @@ msgid "Project from View (Bounds)"
 msgstr "Project from View (Bounds)"
 
 
+# BFA - reworded, Blender: "Center Last Stroke"
 msgctxt "Operator"
-msgid "Center Last Stroke"
+msgid "Frame Last Stroke"
 msgstr "Centre Last Stroke"
 
 
@@ -127737,13 +128028,15 @@ msgid "Recalculate Inside"
 msgstr "Recalculate Inside"
 
 
+# BFA - reworded, Blender: "Copy Vector"
 msgctxt "Operator"
-msgid "Copy Vector"
+msgid "Copy Vectors"
 msgstr "Copy Vector"
 
 
+# BFA - reworded, Blender: "Paste Vector"
 msgctxt "Operator"
-msgid "Paste Vector"
+msgid "Paste Vectors"
 msgstr "Paste Vector"
 
 
@@ -128495,8 +128788,9 @@ msgid "No brush selected"
 msgstr "No brush selected"
 
 
+# BFA - reworded, Blender: "Duplicate Asset..."
 msgctxt "Operator"
-msgid "Duplicate Asset..."
+msgid "Duplicate Asset"
 msgstr "Duplicate Asset..."
 
 
@@ -129955,7 +130249,8 @@ msgid "worlds"
 msgstr "worlds"
 
 
-msgid "Library database with null library data-block pointer!"
+# BFA - reworded, Blender: "Library database with null library data-block pointer!"
+msgid "Library database with null library data pointer!"
 msgstr "Library database with null library data-block pointer!"
 
 
@@ -130455,11 +130750,17 @@ msgid "NLA Track is the only one evaluated in this animation data-block, with al
 msgstr "NLA Track is the only one evaluated in this animation data-block, with all others muted"
 
 
-msgid "Editability of keyframes for this channel"
+# BFA - reworded, Blender: "Editability of keyframes for this channel"
+msgid ""
+"Lock Channel\n"
+"Editability of keyframes for this channel"
 msgstr "Editability of keyframes for this channel"
 
 
-msgid "Editability of NLA Strips in this track"
+# BFA - reworded, Blender: "Editability of NLA Strips in this track"
+msgid ""
+"Lock Channel\n"
+"Editability of NLA Strips in this track"
 msgstr "Editability of NLA Strips in this track"
 
 
@@ -131309,7 +131610,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "Asset catalogs cannot be edited in this asset library"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
+# BFA - reworded, Blender: "Cannot save asset catalogs before the Blender file is saved"
+msgid "Cannot save asset catalogs before the .blend file is saved"
 msgstr "Cannot save asset catalogs before the Blender file is saved"
 
 
@@ -136636,7 +136938,8 @@ msgid "Offset:"
 msgstr "Offset:"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr "Pattern Area:"
 
 
@@ -136648,7 +136951,8 @@ msgid "Height:"
 msgstr "Height:"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr "Search Area:"
 
 
@@ -137752,7 +138056,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Modifier could not be added to (%s : %s) (see console for details)"
 
 
-msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+# BFA - reworded, Blender: "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+msgid "No active AnimData block to use (select a data expander first or set the appropriate flags on an AnimData block)"
 msgstr "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
 
 
@@ -138611,7 +138916,8 @@ msgid "External library data is not editable"
 msgstr "External library data is not editable"
 
 
-msgid "Overridden data-blocks names are not editable"
+# BFA - reworded, Blender: "Overridden data-blocks names are not editable"
+msgid "Overridden data names are not editable"
 msgstr "Overridden data-blocks names are not editable"
 
 
@@ -138623,7 +138929,8 @@ msgid "No active item to rename"
 msgstr "No active item to rename"
 
 
-msgid "No selected data-blocks to copy"
+# BFA - reworded, Blender: "No selected data-blocks to copy"
+msgid "No selected data to copy"
 msgstr "No selected data-blocks to copy"
 
 
@@ -138635,7 +138942,8 @@ msgid "Operation requires an active keying set"
 msgstr "Operation requires an active keying set"
 
 
-msgid "No orphaned data-blocks to purge"
+# BFA - reworded, Blender: "No orphaned data-blocks to purge"
+msgid "No orphaned data to purge"
 msgstr "No orphaned data-blocks to purge"
 
 
@@ -138687,7 +138995,8 @@ msgid "Copied %d selected data-block(s)"
 msgstr "Copied %d selected data-block(s)"
 
 
-msgid "%d data-block(s) pasted"
+# BFA - reworded, Blender: "%d data-block(s) pasted"
+msgid "%d data pasted"
 msgstr "%d data-block(s) pasted"
 
 
@@ -139618,7 +139927,8 @@ msgid "Mean Vertex Crease:"
 msgstr "Mean Vertex Crease:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Radius X:"
 
 
@@ -143983,7 +144293,8 @@ msgid "WeightedNormal"
 msgstr "WeightedNormal"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Global Influence:"
 
 
@@ -151470,7 +151781,8 @@ msgid "Pose Library"
 msgstr "Pose Library"
 
 
-msgid "Pose Library based on the asset system."
+# BFA - reworded, Blender: "Pose Library based on the asset system."
+msgid "Pose Library based on the asset system"
 msgstr "Pose Library based on the asset system."
 
 
@@ -154048,3 +154360,434 @@ msgstr "Scale each curve uniformly to reach the target length"
 msgid "Distance from the ground plane"
 msgstr "Distance from the ground plane"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Pose Breakdowner (Legacy)"
+
+# BFA - reworded, Blender: "Push Pose from Breakdown"
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "Push Pose from Breakdown (Legacy)"
+
+# BFA - reworded, Blender: "Relax Pose to Breakdown"
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "Relax Pose to Breakdown (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Masks"
+
+# BFA - reworded, Blender: "Zero Weights"
+msgid "     Zero Weights"
+msgstr "     Zero Weights"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Join Tracks"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " Overscan"
+
+# BFA - reworded, Blender: "Font size to use for displaying the text"
+msgid "Adjust the font size for displaying the text"
+msgstr "Font size to use for displaying the text"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "Select All by Trait"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "Select All by Type"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "Animation data for this data-block"
+
+# BFA - reworded, Blender: "Apply All"
+msgctxt "Operator"
+msgid "Apply All Shape Keys"
+msgstr "Apply All"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "Auto Keying"
+
+# BFA - reworded, Blender: "Bake to Keyframes"
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "Bake to Keyframes"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Box Select (Legacy)"
+
+# BFA - reworded, Blender: "Cached Range"
+msgid "Cached Range (Info)"
+msgstr "Cached Range (Info)"
+
+# BFA - reworded, Blender: "Clear Data-Block Previews"
+msgctxt "Operator"
+msgid "Clear Data Previews"
+msgstr "Clear Data-Block Previews"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "Clip Start"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Clip Start"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "Instance Collections"
+
+# BFA - reworded, Blender: "Delete All"
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Delete All"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Delete"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Depth"
+
+# BFA - reworded, Blender: "Display overlay text"
+msgid "Display overlay text.\nAlso affects the Geometry Nodes viewer overlay"
+msgstr "Display overlay text"
+
+# BFA - reworded, Blender: "Euclidean"
+msgid "Euclidean Distance"
+msgstr "Euclidean"
+
+# BFA - reworded, Blender: "Extrude region together along local normals"
+msgid "Extrude Region Vertex Normals\nExtrude region together along local normals"
+msgstr "Extrude region together along local normals"
+
+# BFA - reworded, Blender: "Auto-Masking"
+msgid "Global Auto Masking"
+msgstr "Auto-Masking"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "Jump cursor to line"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Move"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "Select Grouped"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Select Grouped"
+
+# BFA - reworded, Blender: "Insert Into Group"
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "Insert Into Group"
+
+# BFA - reworded, Blender: "Instance Collections on Appending"
+msgid "Instance Collections on Appending or Linking"
+msgstr "Instance Collections on Appending"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Invert Zoom Direction"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "Resumable"
+
+# BFA - reworded, Blender: "Set type of handle for selected keyframes"
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "Set type of handle for selected keyframes"
+
+# BFA - reworded, Blender: "Linked from"
+msgctxt "Operator"
+msgid "Linked From"
+msgstr "Linked from"
+
+# BFA - reworded, Blender: "Linked to"
+msgctxt "Operator"
+msgid "Linked To"
+msgstr "Linked to"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "Manhattan"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "Selection to Nearest Frame"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "Selection to Nearest Frame"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "Selection to Nearest Second"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "Selection to Nearest Second"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "New File"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "Operator Search..."
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Orientation"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "Release Notes"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "Show Version"
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "Face Sets"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "Show In"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Mask"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Show"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Shrink/Fatten"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Select Similar"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Select Similar"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Nurbs Circle"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Type"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "Unassigned (Catalogue)"
+
+# BFA - reworded, Blender: "Uninstall"
+msgctxt "Operator"
+msgid "Uninstall from System"
+msgstr "Uninstall"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets"
+msgstr "Non-Assets"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets:"
+msgstr "Non-Assets"
+
+# BFA - reworded, Blender: "Use internal text data-block"
+msgid "Use internal text data"
+msgstr "Use internal text data-block"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "Speed Vectors"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "Line Width"
+
+# BFA - reworded, Blender: "You can adjust this later from \"System\" preferences."
+msgid "You can adjust online access from \"System\" preferences."
+msgstr "You can adjust this later from \"System\" preferences."
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "Zoom to Border"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Show the assets currently available in this Bforartists session"
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "Import the assets as linked data-block"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "Import the assets as copied data-block, with no link to the original asset data-block"
+
+# BFA - reworded, Blender: "Clear Fake User and remove copy stashed in this data-block's NLA stack"
+msgid "Clear Fake User and remove copy stashed in this data's NLA stack"
+msgstr "Clear Fake User and remove copy stashed in this data-block's NLA stack"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Quit Bforartists"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Quit Bforartists"
+
+# BFA - reworded Blender string
+msgid "Exit Bforartists after saving"
+msgstr "Exit Bforartists after saving"
+
+# BFA - reworded Blender string
+msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+msgstr "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "About Bforartists"
+
+# BFA - reworded Blender string
+msgid "Open a window with information about Bforartists"
+msgstr "Open a window with information about Bforartists"
+
+# BFA - reworded Blender string
+msgid "Online access required to install or update. Launch Bforartists without --offline-mode"
+msgstr "Online access required to install or update. Launch Bforartists without --offline-mode"
+
+# BFA - reworded Blender string
+msgid "Launch Bforartists without --offline-mode"
+msgstr "Launch Bforartists without --offline-mode"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "Bforartists is free software"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Bforartists Website"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Install Application Template"
+msgstr "Install Application Template"
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Bforartists Version"
+
+# BFA - reworded Blender string
+msgid "A restart of Bforartists is required"
+msgstr "A restart of Bforartists is required"
+
+# BFA - reworded Blender string
+msgid "Open blend files with this Bforartists version"
+msgstr "Open blend files with this Bforartists version"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Edit Preview Image"
+msgstr "Edit Preview Image"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system and cannot be overridden"
+msgstr "This file is managed by the Bforartists asset system and cannot be overridden"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Bforartists Render"
+
+# BFA - reworded Blender string
+msgid "Bforartists Drivers Editor"
+msgstr "Bforartists Drivers Editor"
+
+# BFA - reworded Blender string
+msgid "Bforartists Info Log"
+msgstr "Bforartists Info Log"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Bforartists File View"
+
+# BFA - reworded Blender string
+msgid "Bforartists will start next time as it is now."
+msgstr "Bforartists will start next time as it is now."
+
+# BFA - reworded Blender string
+msgid "Load Factory Bforartists Preferences"
+msgstr "Load Factory Bforartists Preferences"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system. It can only be"
+msgstr "This file is managed by the Bforartists asset system. It can only be"
+
+# BFA - reworded Blender string
+msgid "with an older Bforartists version?"
+msgstr "with an older Bforartists version?"
+
+# BFA - reworded Blender string
+msgid "Overwrite file with an older Bforartists version?"
+msgstr "Overwrite file with an older Bforartists version?"
+
+# BFA - reworded Blender string
+msgid "Proxies have been removed from Bforartists (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Consider re-saving any library .blend file with the newest Blender version"
+msgstr "Proxies have been removed from Bforartists (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Consider re-saving any library .blend file with the newest Bforartists version"
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Newer graphics drivers might be available with better Bforartists compatibility."
+msgstr "Newer graphics drivers might be available with better Bforartists compatibility."
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Upgrading to the latest macOS version may improve Bforartists support"

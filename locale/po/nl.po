@@ -844,7 +844,8 @@ msgid "Animation Data"
 msgstr "Animatie Data"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Animatie data voor data-blok"
 
 
@@ -852,7 +853,8 @@ msgid "Action"
 msgstr "Actie"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Actieve Actie voor dit data-blok"
 
 
@@ -956,7 +958,8 @@ msgid "Drivers"
 msgstr "Drivers"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "De Drivers/Uitdrukkingen voor dit data-blok"
 
 
@@ -1328,7 +1331,8 @@ msgid "Show Menus"
 msgstr "Menu's Weergeven"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Toon menu's in de header"
 
 
@@ -1436,7 +1440,8 @@ msgid "Properties"
 msgstr "Eigenschappen"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Bewerk eigenschappen van actief object en gerelateerde data-blokken"
 
 
@@ -1912,7 +1917,8 @@ msgid "Worlds"
 msgstr "Werelden"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Toon Wereld data-blokken"
 
 
@@ -2221,11 +2227,13 @@ msgid "Blend-File Data"
 msgstr "Blend-Bestand Data"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Hoofd-datastructuur dat een .blend-bestand en al z'n data-blokken vertegenwoordigt"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Actie data-blokken"
 
 
@@ -2233,19 +2241,23 @@ msgid "Annotation"
 msgstr "Annotatie"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Borstel data-blokken"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Cache Bestanden data-blokken"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Camera data-blokken"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Collectie data-blokken"
 
 
@@ -2257,7 +2269,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "Informatie over de kleurruimte gebruikt voor data-blokken in een blend-bestand"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Curve data-blokken"
 
 
@@ -2273,7 +2286,8 @@ msgid "Vector Fonts"
 msgstr "Vector Lettertypen"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Vector lettertypen data-blokken"
 
 
@@ -2281,11 +2295,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Grease Pencil data-blokken"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Haar curve data-blokken"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Afbeelding data-blokken"
 
 
@@ -2305,7 +2321,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Is de huidige sessie opgeslagen naar de schijf als een .blend bestand"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Rooster data-blokken"
 
 
@@ -2313,15 +2330,18 @@ msgid "Libraries"
 msgstr "Bibliotheken"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Bibliotheek data-blokken"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Licht Probe data-blokken"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Licht data-blokken"
 
 
@@ -2329,27 +2349,33 @@ msgid "Line Styles"
 msgstr "Lijn Stijlen"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Lijn Stijl data-blokken"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Maskers data-blokken"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Materiaal data-blokken"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Mesh data-blokken"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Metaball data-blokken"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Film Clip data-blokken"
 
 
@@ -2357,7 +2383,8 @@ msgid "Node Groups"
 msgstr "Node Groepen"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Node groep data-blokken"
 
 
@@ -2365,11 +2392,13 @@ msgid "Object data-blocks"
 msgstr "Object data-blokken"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Verf Curves data-blokken"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Palet data-blokken"
 
 
@@ -2377,7 +2406,8 @@ msgid "Particles"
 msgstr "Deeltjes"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Deeltje data-blokken"
 
 
@@ -2385,7 +2415,8 @@ msgid "Point cloud data-blocks"
 msgstr "Punt wolk data-blokken"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Scene data-blokken"
 
 
@@ -2393,15 +2424,18 @@ msgid "Screens"
 msgstr "Schermen"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Scherm data-blokken"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Geluid data-blokken"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Speaker data-blokken"
 
 
@@ -2409,7 +2443,8 @@ msgid "Text data-blocks"
 msgstr "Tekst data-blokken"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Textuur data-blokken"
 
 
@@ -2429,15 +2464,18 @@ msgid "File format version the .blend file was saved with"
 msgstr "Bestand-format versie waarmee het .blend bestand was opgeslagen"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Volume data-blokken"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Werkplaats data-blokken"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Wereld data-blokken"
 
 
@@ -5460,7 +5498,8 @@ msgid "Play Every Frame"
 msgstr "Speel Elk Frame"
 
 
-msgid "Screen data-block, defining the layout of areas in a window"
+# BFA - reworded, Blender: "Screen data-block, defining the layout of areas in a window"
+msgid "Screen data, defining the layout of areas in a window"
 msgstr "Scherm gegevens-blok, definieert de indeling van de gebieden in een scherm"
 
 
@@ -6583,8 +6622,9 @@ msgid "Create New Action"
 msgstr "Creëer Nieuwe Actie"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "Ontkoppel Actie"
 
 
@@ -7974,7 +8014,8 @@ msgid "Hide Objects"
 msgstr "Verberg Objecten"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "Verberg objecten tijdelijk in de weergave"
 
 
@@ -8362,7 +8403,8 @@ msgid "Unhide All"
 msgstr "Maak Alles Zichtbaar"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "Plaats cursor"
 
 
@@ -9154,8 +9196,9 @@ msgid "Pinned"
 msgstr "Vastgeprikt"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Selecteer Splits"
 
 
@@ -9216,7 +9259,8 @@ msgid "Try to re-use previously matching appended data-blocks instead of appendi
 msgstr "Probeer eerdere passende bijgevoegde datablokken te hergebruiken in plaats van een nieuw kopie bij te voegen"
 
 
-msgid "Link the objects or data-blocks rather than appending"
+# BFA - reworded, Blender: "Link the objects or data-blocks rather than appending"
+msgid "Link the objects or data rather than appending"
 msgstr "Link de objecten of data-blokken in plaats van bij te voegen"
 
 
@@ -9390,12 +9434,14 @@ msgid "Save Startup File"
 msgstr "Sla Opstartbestand Op"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Sla Blender Bestand op"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Sla het huidige Blender bestand op"
 
 
@@ -11037,8 +11083,9 @@ msgid "Replace..."
 msgstr "Vervangen..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Sla een Kopie op..."
 
 
@@ -11106,8 +11153,9 @@ msgid "Fade"
 msgstr "Vervagen"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "Pas Sleutel Set..."
 
 
@@ -11234,8 +11282,9 @@ msgid "Render Animation"
 msgstr "Render Animatie"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Render Audio..."
 
 
@@ -11301,7 +11350,8 @@ msgid "Scene Statistics"
 msgstr "Scene Statistieken"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Blender Versie"
 
 
@@ -11362,8 +11412,9 @@ msgid "Select Active Camera"
 msgstr "Selecteer Actieve Camera"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Selecteer Patroon..."
 
 
@@ -11447,8 +11498,9 @@ msgid "Camera"
 msgstr "Camera"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "Importeer OpenVDB..."
 
 
@@ -11482,8 +11534,9 @@ msgid "Origin"
 msgstr "Origin"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "Hernoem Actief Object..."
 
 
@@ -12542,3 +12595,88 @@ msgstr "klembord"
 msgid "files"
 msgstr "bestanden"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Maskers"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Koppel Banen"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "Clip Start"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Clip Start"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Verwijder"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "Hervatbaar"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "Toon In"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Mask"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Toon"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Selecteer Vergelijkbaar"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Selecteer Vergelijkbaar"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Type"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "Toon de assets momenteel beschikbaar in deze Bforartists sessie"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Bforartists Afsluiten"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Bforartists Afsluiten"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "Over Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Bforartists Versie"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Bforartists Render"

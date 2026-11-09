@@ -900,7 +900,8 @@ msgid "Animation Data"
 msgstr "Dades d'animació"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Dades d'animació del bloc de dades"
 
 
@@ -908,7 +909,8 @@ msgid "Action"
 msgstr "Acció"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Acció activa del bloc de dades"
 
 
@@ -1044,7 +1046,8 @@ msgid "Drivers"
 msgstr "Controladors"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "[Drivers]: Els controladors / expressions d'aquest bloc de dades"
 
 
@@ -1600,7 +1603,8 @@ msgid "Show Menus"
 msgstr "Mostrar menús"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "[Show Menus]: Mostra els menús a la capçalera"
 
 
@@ -1728,7 +1732,8 @@ msgid "Outliner"
 msgstr "Inventari"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "[Outliner]: Vista global de totes les gràfiques i blocs de dades d'una escena"
 
 
@@ -1736,7 +1741,8 @@ msgid "Properties"
 msgstr "Propietats"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "[Properties]: Per editar les propietats de l'objecte actiu i de blocs de dades relacionats"
 
 
@@ -2485,7 +2491,8 @@ msgid "Worlds"
 msgstr "Mons"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Mostrar blocs de dades de mons"
 
 
@@ -2940,7 +2947,8 @@ msgid "Bake Data"
 msgstr "Dades de precuinat"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "[Bake Data]: Preexecuta càlculs de blocs de dades d'una escena"
 
 
@@ -3140,7 +3148,8 @@ msgid "Internal"
 msgstr "Intern"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Desa el mapa de precuinat en un bloc de dades intern d'imatge"
 
 
@@ -3428,11 +3437,13 @@ msgid "Blend-File Data"
 msgstr "Dades de document Blender"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "[Blend File Data]: Estructura principal de dades que representen un document .blend i tots els respectius blocs de dades"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "[Actions]: Blocs de dades d'accions"
 
 
@@ -3452,23 +3463,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "[Annotation]: Blocs de dades d'anotacions (Llapis de greix antiquat)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "[Armatures]: Blocs de dades d'esquelets"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "[Brushes]: Blocs de dades de pinzells"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "[Cache Files]: Blocs de dades de documents de memòria cau"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Blocs de dades de càmeres"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Blocs de dades de col·leccions"
 
 
@@ -3480,7 +3496,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "[Color Space]: Informació sobre l'espai de color que es fa servir per als blocs de dades d'un document blend"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "[Curves]: Blocs de dades de corbes"
 
 
@@ -3496,7 +3513,8 @@ msgid "Vector Fonts"
 msgstr "Fonts vectorials"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "[Vector Fonts]: Blocs de dades de fonts vectorials"
 
 
@@ -3504,11 +3522,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "[Grease Pencil]: Blocs de dades del llapis de greix"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "[Hair Curves]: Blocs de dades de corbes de pèl"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "[Images]: Blocs de dades d'imatges"
 
 
@@ -3528,7 +3548,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Té la sessió actual desada al disc com a document .blend"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "[Lattices]: Blocs de dades de retícules"
 
 
@@ -3536,15 +3557,18 @@ msgid "Libraries"
 msgstr "Biblioteques"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "[Libraries]: Blocs de dades de biblioteques"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "[Light Probes]: Blocs de dades de sondes de llum"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "[Lights]: Blocs de dades de llums"
 
 
@@ -3552,27 +3576,33 @@ msgid "Line Styles"
 msgstr "Lineaments"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "[Line Styles]: Blocs de dades de lineaments"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "[Masks]: Blocs de dades de màscares"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Blocs de dades de materials"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "[Meshes]: Blocs de dades de malles"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "[Metaballs]: Blocs de dades de metaboles"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "[Movie Clips]: Blocs de dades de segments de vídeo"
 
 
@@ -3580,7 +3610,8 @@ msgid "Node Groups"
 msgstr "Grups de nodes"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "[Node Groups]: Blocs de dades de grups de nodes"
 
 
@@ -3588,11 +3619,13 @@ msgid "Object data-blocks"
 msgstr "Blocs de dades d'objecte"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "[Paint Curves]: Blocs de dades de corbes de pintura"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "[Palettes]: Blocs de dades de paletes"
 
 
@@ -3600,7 +3633,8 @@ msgid "Particles"
 msgstr "Partícules"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "[Particles]: Blocs de dades de partícules"
 
 
@@ -3617,7 +3651,8 @@ msgid "The currently active Blender project, if any"
 msgstr "El present projecte actiu de Blender, si n'hi ha"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Blocs de dades d'escenes"
 
 
@@ -3625,7 +3660,8 @@ msgid "Screens"
 msgstr "Pantalles"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "[Screens]: Blocs de dades de pantalles"
 
 
@@ -3633,15 +3669,18 @@ msgid "Shape Keys"
 msgstr "Morfofites"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "[Shape Keys]: Blocs de dades de fites de formes"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "[Sounds]: Blocs de dades de sons"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "[Speakers]: Blocs de dades d'altaveus"
 
 
@@ -3649,7 +3688,8 @@ msgid "Text data-blocks"
 msgstr "Blocs de dades de textos"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Blocs de dades de textures"
 
 
@@ -3669,7 +3709,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Versió de format .blend amb què el document fou desat"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "[Volumes]: Blocs de dades de volums"
 
 
@@ -3677,15 +3718,18 @@ msgid "Window Managers"
 msgstr "Gestors de finestres"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "[Windows Managers]: Blocs de dades dels gestors de finestres"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "[Workspaces]: Blocs de dades d'obradors"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "[Worlds]: Blocs de dades dels mons"
 
 
@@ -4894,7 +4938,8 @@ msgid "Volume"
 msgstr "Volum"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "Os d'un bloc de dades d'esquelet"
 
 
@@ -6696,7 +6741,8 @@ msgid "Stroke"
 msgstr "Traç"
 
 
-msgid "Painting affects only strokes, not fills"
+# BFA - reworded, Blender: "Painting affects only strokes, not fills"
+msgid "Vertex Color affects to Stroke only"
 msgstr "El pintat afecta només els traços i no els emplenats"
 
 
@@ -6704,7 +6750,8 @@ msgid "Fill"
 msgstr "Emplenar"
 
 
-msgid "Painting affects only fills, not strokes"
+# BFA - reworded, Blender: "Painting affects only fills, not strokes"
+msgid "Vertex Color affects to Fill only"
 msgstr "El pintat afecta només els emplenats i no els traços"
 
 
@@ -6712,7 +6759,8 @@ msgid "Both"
 msgstr "Ambdós"
 
 
-msgid "Painting affects both strokes and fills"
+# BFA - reworded, Blender: "Painting affects both strokes and fills"
+msgid "Vertex Color affects to Stroke and Fill"
 msgstr "El pintat afecta tant emplenats com traços"
 
 
@@ -7040,7 +7088,8 @@ msgid "Stereo"
 msgstr "Estèreo"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "[Stereo]: Paràmetres de l'estereoscòpia per a un bloc de dades de la càmera"
 
 
@@ -12173,7 +12222,8 @@ msgid "Curve Slice"
 msgstr "Llenca de corba"
 
 
-msgid "A single curve from a curves data-block"
+# BFA - reworded, Blender: "A single curve from a curves data-block"
+msgid "A single curve from a curves data"
 msgstr "[Curve Slice]: Una única corba d'un bloc de dades de corbes"
 
 
@@ -12633,7 +12683,8 @@ msgid "Include Missing NLA"
 msgstr "Incloure l'ANL extraviat"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "[Include Missing NLA]: Inclou els blocs de dades d'animació sense dades d'ANL (sols per l'editor d'ANL)"
 
 
@@ -12641,7 +12692,8 @@ msgid "Display Modifier Data"
 msgstr "Mostrar dades de modificadors"
 
 
-msgid "Include visualization of animation data related to data-blocks linked to modifiers"
+# BFA - reworded, Blender: "Include visualization of animation data related to data-blocks linked to modifiers"
+msgid "Include visualization of animation data related to data linked to modifiers"
 msgstr "[Display Modifier Data]: Inclou la visualització de dades d'animació lligades a blocs de dades vinculats a modificadors"
 
 
@@ -12773,7 +12825,8 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "[Source]: Bloc d'IDs que representa les dades d'origen, normalment ID_SCE (és a dir, Escena)"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "Ordenar blocs de dades"
 
 
@@ -13747,7 +13800,8 @@ msgid "Edit Bone"
 msgstr "Os editable"
 
 
-msgid "Edit mode bone in an armature data-block"
+# BFA - reworded, Blender: "Edit mode bone in an armature data-block"
+msgid "Editmode bone in an armature data"
 msgstr "[Edit Bone]: Os en mode edició dins un bloc de dades d'esquelet"
 
 
@@ -18335,7 +18389,8 @@ msgid "Freestyle Settings"
 msgstr "Paràmetres del Freestyle"
 
 
-msgid "Freestyle settings for a ViewLayer data-block"
+# BFA - reworded, Blender: "Freestyle settings for a ViewLayer data-block"
+msgid "Freestyle settings for a ViewLayer"
 msgstr "[Freestyle Settings]: Paràmetres del Freestyle per a un bloc de dades de capa de visionat"
 
 
@@ -19956,7 +20011,8 @@ msgid "Animation data for this data-block"
 msgstr "Dades d'animació per al bloc de dades"
 
 
-msgid "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+# BFA - reworded, Blender: "Armature data-block containing a hierarchy of bones, usually used for rigging characters"
+msgid "Armature data containing a hierarchy of bones, usually used for rigging characters"
 msgstr "Bloc de dades d'esquelet que conté una jerarquia d'ossos, normalment utilitzat per l'aparellat de personatges"
 
 
@@ -20220,7 +20276,8 @@ msgid "Apply changes to matching bone on opposite side of X-Axis"
 msgstr "[X-Axis Mirror]: Aplica els canvis a l'os corresponent del cantó oposat respecte de l'eix X"
 
 
-msgid "Brush data-block for storing brush settings for painting and sculpting"
+# BFA - reworded, Blender: "Brush data-block for storing brush settings for painting and sculpting"
+msgid "Brush data for storing brush settings for painting and sculpting"
 msgstr "Bloc de dades del pinzell que guarda els paràmetres del pinzell per a pintar i esculpir"
 
 
@@ -22455,7 +22512,8 @@ msgid "Frame"
 msgstr "Fotograma"
 
 
-msgid "Camera data-block for storing camera settings"
+# BFA - reworded, Blender: "Camera data-block for storing camera settings"
+msgid "Camera data for storing camera settings"
 msgstr "[Name]: Bloc de dades de càmera per guardar-hi els paràmetres de la càmera"
 
 
@@ -22995,7 +23053,8 @@ msgid "Panoramic"
 msgstr "Panoràmica"
 
 
-msgid "Collection of Object data-blocks"
+# BFA - reworded, Blender: "Collection of Object data-blocks"
+msgid "Collection of Object data"
 msgstr "Col·lecció de blocs de dades d'objectes"
 
 
@@ -23199,7 +23258,8 @@ msgid "Assign intersection priority value for this collection"
 msgstr "[Use Intersection Priority]: Assigna un valor prioritari d'intersecció a aquesta col·lecció"
 
 
-msgid "Curve data-block storing curves, splines and NURBS"
+# BFA - reworded, Blender: "Curve data-block storing curves, splines and NURBS"
+msgid "Curve data storing curves, splines and NURBS"
 msgstr "Bloc de dades de corbes que emmagatzema corbes, splines i NURBS"
 
 
@@ -23571,7 +23631,8 @@ msgid "Surface Curve"
 msgstr "Corba de superfície"
 
 
-msgid "Curve data-block used for storing surfaces"
+# BFA - reworded, Blender: "Curve data-block used for storing surfaces"
+msgid "Curve data used for storing surfaces"
 msgstr "[Surface Curve]: Bloc de dades de corba utilitzat per emmagatzemar superfícies"
 
 
@@ -23579,7 +23640,8 @@ msgid "Text Curve"
 msgstr "Corba de text"
 
 
-msgid "Curve data-block used for storing text"
+# BFA - reworded, Blender: "Curve data-block used for storing text"
+msgid "Curve data used for storing text"
 msgstr "[Text Curve]: Bloc de dades de corba utilitzat per emmagatzemar text"
 
 
@@ -23859,11 +23921,13 @@ msgid "Don't fill polygons while editing"
 msgstr "[Fast Editing]: No emplena els polígons mentre s'està editant"
 
 
-msgid "Hair data-block for hair curves"
+# BFA - reworded, Blender: "Hair data-block for hair curves"
+msgid "Hair data for hair curves"
 msgstr "Bloc de dades de pèl per a corbes de pèl"
 
 
-msgid "All curves in the data-block"
+# BFA - reworded, Blender: "All curves in the data-block"
+msgid "All curves in the data"
 msgstr "Totes les corbes del bloc de dades"
 
 
@@ -24625,7 +24689,8 @@ msgid "Display onion keyframes for looping animations"
 msgstr "[Show Start Frame]: Mostra fotofites en pell de ceba per a les animacions en bucle"
 
 
-msgid "Image data-block referencing an external or packed image"
+# BFA - reworded, Blender: "Image data-block referencing an external or packed image"
+msgid "Image data referencing an external or packed image"
 msgstr "[New]: Bloc de dades d'imatge que referencia una imatge externa o empaquetada"
 
 
@@ -25120,7 +25185,8 @@ msgid "Single file with an encoded stereo pair"
 msgstr "[Stereo 3D]: Un sol document amb un parell d'estereoscòpies codificades"
 
 
-msgid "Shape keys data-block containing different shapes of geometric data-blocks"
+# BFA - reworded, Blender: "Shape keys data-block containing different shapes of geometric data-blocks"
+msgid "Shape keys data containing different shapes of geometric data"
 msgstr "Bloc de dades de morfofites que contenen les diferents formes dels blocs de dades geomètrics"
 
 
@@ -25148,11 +25214,13 @@ msgid "User"
 msgstr "Usador"
 
 
-msgid "Data-block using these shape keys"
+# BFA - reworded, Blender: "Data-block using these shape keys"
+msgid "Data using these shape keys"
 msgstr "[User]: Bloc de dades que fa ús d'aquestes morfofites"
 
 
-msgid "Lattice data-block defining a grid for deforming other objects"
+# BFA - reworded, Blender: "Lattice data-block defining a grid for deforming other objects"
+msgid "Lattice data defining a grid for deforming other objects"
 msgstr "Bloc de dades de retícula que defineix una graella per deformar altres objectes"
 
 
@@ -25265,7 +25333,8 @@ msgid "Light"
 msgstr "Llum"
 
 
-msgid "Light data-block for lighting a scene"
+# BFA - reworded, Blender: "Light data-block for lighting a scene"
+msgid "Light data for lighting a scene"
 msgstr "[Light]: Bloc de dades de llum per il·luminar una escena"
 
 
@@ -25629,7 +25698,8 @@ msgid "End distance of the cascaded shadow map (only in perspective view)"
 msgstr "[Cascade Max Distance]: Distància final del mapa d'ombres de cascada (sols en la vista de perspectiva)"
 
 
-msgid "Light Probe data-block for lighting capture objects"
+# BFA - reworded, Blender: "Light Probe data-block for lighting capture objects"
+msgid "Light Probe data for lighting capture objects"
 msgstr "Blocs de dades de sonda de llum per il·luminar els objectes que es vol capturar"
 
 
@@ -25949,7 +26019,8 @@ msgid "Offset sampling of the irradiance grid in the viewing direction to reduce
 msgstr "[View Bias]: Mostratge desplaçat de la quadrícula d'irradiància en la direcció de visionat per reduir el sobreeiximent de llum"
 
 
-msgid "Mask data-block defining mask for compositing"
+# BFA - reworded, Blender: "Mask data-block defining mask for compositing"
+msgid "Mask data defining mask for compositing"
 msgstr "Bloc de dades de màscara que defineix la màscara per a compositar"
 
 
@@ -25973,7 +26044,8 @@ msgid "Collection of layers which defines this mask"
 msgstr "Col·lecció de capes que defineix aquesta màscara"
 
 
-msgid "Material data-block to define the appearance of geometric objects for rendering"
+# BFA - reworded, Blender: "Material data-block to define the appearance of geometric objects for rendering"
+msgid "Material data to define the appearance of geometric objects for rendering"
 msgstr "[Name]: Bloc de dades dels materials per definir l'aparença dels objectes geomètrics per al revelat"
 
 
@@ -26722,7 +26794,8 @@ msgid "Vertices of the mesh"
 msgstr "[Vertices]: Els vèrtexs de la malla"
 
 
-msgid "Metaball data-block to define blobby surfaces"
+# BFA - reworded, Blender: "Metaball data-block to define blobby surfaces"
+msgid "Metaball data to define blobby surfaces"
 msgstr "Bloc de dades de metabola per definir superfícies globuloses"
 
 
@@ -26774,7 +26847,8 @@ msgid "While editing, don't update metaball at all"
 msgstr "[Never]: Mentre s'edita, no actualitzar la metabola gens"
 
 
-msgid "MovieClip data-block referencing an external movie file"
+# BFA - reworded, Blender: "MovieClip data-block referencing an external movie file"
+msgid "MovieClip data referencing an external movie file"
 msgstr "Bloc de dades de vídeo que referencia un document de vídeo extern"
 
 
@@ -27098,7 +27172,8 @@ msgid "Shader Node Tree"
 msgstr "Arbre de nodes aspector"
 
 
-msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+# BFA - reworded, Blender: "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
+msgid "Node tree consisting of linked nodes used for materials (and other shading data)"
 msgstr "[Shader Node Tree]: Arbre de nodes que consisteix en nodes connectats utilitzats per a materials (i altres blocs de dades d'aspecte)"
 
 
@@ -27110,7 +27185,8 @@ msgid "Node tree consisting of linked nodes used for textures"
 msgstr "[Texture Node Tree]: Arbre de nodes que consisteix en nodes connectats utilitzats per a textures"
 
 
-msgid "Object data-block defining an object in a scene"
+# BFA - reworded, Blender: "Object data-block defining an object in a scene"
+msgid "Object data defining an object in a scene"
 msgstr "[Name]: Bloc de dades d'objecte que defineix un objecte d'una escena"
 
 
@@ -29314,7 +29390,8 @@ msgid "Relative amount of virtual parents"
 msgstr "[Virtual Parents]: Quantitat relativa de mares virtuals"
 
 
-msgid "Point cloud data-block"
+# BFA - reworded, Blender: "Point cloud data-block"
+msgid "Point cloud data"
 msgstr "[Point Cloud]: Bloc de dades de núvol de punts"
 
 
@@ -29334,7 +29411,8 @@ msgid "A point cloud that represents the original 3D Gaussian Splats technique"
 msgstr "Un núvol de punts que representa la tècnica original de l'Esquitx gaussià en 3D"
 
 
-msgid "Scene data-block, consisting in objects and defining time and render related settings"
+# BFA - reworded, Blender: "Scene data-block, consisting in objects and defining time and render related settings"
+msgid "Scene, consisting in objects and defining time and render related settings"
 msgstr "[Name]: Bloc de dades d'escena que consta d'objectes i paràmetres de definició de temps i de revelat"
 
 
@@ -29386,7 +29464,8 @@ msgid "Allows playing back frames before the playback start frame"
 msgstr "[Allow Preroll]: Permet de reproduir fotogrames anteriors del fotograma inicial"
 
 
-msgid "Data-block used for annotations in the 3D view"
+# BFA - reworded, Blender: "Data-block used for annotations in the 3D view"
+msgid "Data used for annotations in the 3D view"
 msgstr "[Annotations]: Bloc de dades per a les anotacions de la vista 3D"
 
 
@@ -29936,7 +30015,8 @@ msgid "Wrap the playhead around the playback range when navigating the timeline"
 msgstr "Limita el capçal reproductor a l'interval de reproducció mentre es navega pel cronograma"
 
 
-msgid "Screen data-block, defining the layout of areas in a window"
+# BFA - reworded, Blender: "Screen data-block, defining the layout of areas in a window"
+msgid "Screen data, defining the layout of areas in a window"
 msgstr "Bloc de dades de pantalla que defineix la disposició de les àrees d'una finestra"
 
 
@@ -30016,7 +30096,8 @@ msgid "Top-Left 3D Editor"
 msgstr "Editor 3D de dalt a l'esquerra"
 
 
-msgid "Sound data-block referencing an external or packed sound file"
+# BFA - reworded, Blender: "Sound data-block referencing an external or packed sound file"
+msgid "Sound data referencing an external or packed sound file"
 msgstr "Bloc de dades de so que fa referència a un document de so extern o empaquetat"
 
 
@@ -30044,7 +30125,8 @@ msgid "6.1 Surround"
 msgstr "Encerclant (Surround) 6.1"
 
 
-msgid "Sound sample file used by this Sound data-block"
+# BFA - reworded, Blender: "Sound sample file used by this Sound data-block"
+msgid "Sound sample file used by this Sound data"
 msgstr "Document de mostra de so utilitzat per aquest bloc de dades de so"
 
 
@@ -30064,7 +30146,8 @@ msgid "If the file contains multiple audio channels they are rendered to a singl
 msgstr "Si el document conté múltiples canals d'àudio, es revelaran en un sol"
 
 
-msgid "Speaker data-block for 3D audio speaker objects"
+# BFA - reworded, Blender: "Speaker data-block for 3D audio speaker objects"
+msgid "Speaker data´for 3D audio speaker objects"
 msgstr "Bloc de dades d'altaveu per a objectes altaveu d'àudio 3D"
 
 
@@ -30130,7 +30213,8 @@ msgid "Playback pitch of the sound"
 msgstr "[Pitch]: Elevació de reproducció del so"
 
 
-msgid "Sound data-block used by this speaker"
+# BFA - reworded, Blender: "Sound data-block used by this speaker"
+msgid "Sound data used by this speaker"
 msgstr "Bloc de dades de so utilitzat per aquest altaveu"
 
 
@@ -30154,7 +30238,8 @@ msgid "Minimum volume, no matter how far away the object is"
 msgstr "[Volume Minimum]: Volum mínim, no importa com de lluny estigui l'objecte"
 
 
-msgid "Text data-block referencing an external or packed text file"
+# BFA - reworded, Blender: "Text data-block referencing an external or packed text file"
+msgid "Text file referencing an external or packed text file"
 msgstr "Bloc de dades de text que referencia un document de text extern o empaquetat"
 
 
@@ -30275,7 +30360,8 @@ msgid "Run this text as a Python script on loading"
 msgstr "[Register]: Executa aquest text com a protocol de Python en carregar"
 
 
-msgid "Texture data-block used by materials, lights, worlds and brushes"
+# BFA - reworded, Blender: "Texture data-block used by materials, lights, worlds and brushes"
+msgid "Texture used by materials, lights, worlds and brushes"
 msgstr "Bloc de dades de textura utilitzat per materials, llums, mons i pinzells"
 
 
@@ -31216,7 +31302,8 @@ msgid "Vector font for Text objects"
 msgstr "[Vector Font]: Font vectorial per als objectes de text"
 
 
-msgid "Volume data-block for 3D volume grids"
+# BFA - reworded, Blender: "Volume data-block for 3D volume grids"
+msgid "Volume data for 3D volume grids"
 msgstr "Bloc de dades de volum per a les graelles de volum 3D"
 
 
@@ -31224,7 +31311,8 @@ msgid "Volume display settings for 3D viewport"
 msgstr "Configuració de visionat del volum per al mirador 3D"
 
 
-msgid "Volume file used by this Volume data-block"
+# BFA - reworded, Blender: "Volume file used by this Volume data-block"
+msgid "Volume file used by this Volume"
 msgstr "Document de volum utilitzat per aquest bloc de dades de volum"
 
 
@@ -31329,7 +31417,8 @@ msgid "Window Manager"
 msgstr "Gestor de finestres"
 
 
-msgid "Window manager data-block defining open windows and other user interface data"
+# BFA - reworded, Blender: "Window manager data-block defining open windows and other user interface data"
+msgid "Window manager data defining open windows and other user interface data"
 msgstr "[Window Manager]: Bloc de dades del gestor de finestres que defineix finestres obertes i altres dades de la interfície d'usuària"
 
 
@@ -31605,7 +31694,8 @@ msgid "Workspace"
 msgstr "Obrador"
 
 
-msgid "Workspace data-block, defining the working environment for the user"
+# BFA - reworded, Blender: "Workspace data-block, defining the working environment for the user"
+msgid "Workspace data, defining the working environment for the user"
 msgstr "[Workspace]: Bloc de dades de l'obrador, que defineix l'entorn de treball per a la usuària"
 
 
@@ -31681,7 +31771,8 @@ msgid "Set the active scene and time based on the current scene strip"
 msgstr "[Sync Scene Time]: Consigna l'escena i temps actius basant-se en el segment d'escena en curs"
 
 
-msgid "World data-block describing the environment and ambient lighting of a scene"
+# BFA - reworded, Blender: "World data-block describing the environment and ambient lighting of a scene"
+msgid "World data describing the environment and ambient lighting of a scene"
 msgstr "Bloc de dades de món que descriu l'entorn i la il·luminació ambiental d'una escena"
 
 
@@ -32545,7 +32636,8 @@ msgid "True if this preview image has been modified by py script, and is no more
 msgstr "VER si la imatge del previsionat ha estat modificada per un protocol py i ja no és l'autogenerada per Blender"
 
 
-msgid "Parameters defining how an Image data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how an Image data-block is used by another data-block"
+msgid "Parameters defining how an Image data is used by another data"
 msgstr "Paràmetres que defineixen com un bloc de dades d'imatge és utilitzat per un altre bloc de dades"
 
 
@@ -36100,7 +36192,8 @@ msgid "ID Type"
 msgstr "Tipus d'ID"
 
 
-msgid "Name of parent object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent object in specified data-block to which parenting happens"
+msgid "Name of parent object in specified data to which parenting happens"
 msgstr "[ID Type]: Nom de l'objecte pare al bloc de dades especificat que està subjecte a la relació"
 
 
@@ -36108,7 +36201,8 @@ msgid "Sub Parent"
 msgstr "Subpare"
 
 
-msgid "Name of parent sub-object in specified data-block to which parenting happens"
+# BFA - reworded, Blender: "Name of parent sub-object in specified data-block to which parenting happens"
+msgid "Name of parent sub-object in specified data to which parenting happens"
 msgstr "[Sub Parent]: Nom del subobjecte pare al bloc de dades especificat que està subjecte a la relació"
 
 
@@ -36633,7 +36727,8 @@ msgid "Link material to object or the object's data"
 msgstr "[Link][Material slot in an object]: Vincula el material a l'objecte o a les dades de l'objecte"
 
 
-msgid "Material data-block used by this material slot"
+# BFA - reworded, Blender: "Material data-block used by this material slot"
+msgid "Material data used by this material slot"
 msgstr "Bloc de dades de material utilitzat per aquest epígraf de material"
 
 
@@ -37695,7 +37790,8 @@ msgid "Mesh Edge"
 msgstr "Aresta de malla"
 
 
-msgid "Edge in a Mesh data-block"
+# BFA - reworded, Blender: "Edge in a Mesh data-block"
+msgid "Edge in a Mesh data"
 msgstr "[Mesh Edge]: Aresta d'un bloc de dades de malla"
 
 
@@ -37743,7 +37839,8 @@ msgid "Mesh Loop"
 msgstr "Bucle de malla"
 
 
-msgid "Loop in a Mesh data-block"
+# BFA - reworded, Blender: "Loop in a Mesh data-block"
+msgid "Loop in a Mesh data"
 msgstr "[Mesh Loop]: Bucle en un bloc de dades de malla"
 
 
@@ -37823,7 +37920,8 @@ msgid "Mesh Loop Triangle"
 msgstr "Triangle de bucle de malla"
 
 
-msgid "Tessellated triangle in a Mesh data-block"
+# BFA - reworded, Blender: "Tessellated triangle in a Mesh data-block"
+msgid "Tessellated triangle in a Mesh data"
 msgstr "[Mesh Loop Triangle]: Triangle tessel·lat en un bloc de dades de Malla"
 
 
@@ -37903,7 +38001,8 @@ msgid "Mesh Polygon"
 msgstr "Polígon de malla"
 
 
-msgid "Polygon in a Mesh data-block"
+# BFA - reworded, Blender: "Polygon in a Mesh data-block"
+msgid "Polygon in a Mesh data"
 msgstr "Polígon en un bloc de dades de malla"
 
 
@@ -38187,7 +38286,8 @@ msgid "Metaball Element"
 msgstr "Element de metabola"
 
 
-msgid "Blobby element in a metaball data-block"
+# BFA - reworded, Blender: "Blobby element in a metaball data-block"
+msgid "Blobby element in a Metaball data"
 msgstr "Element globulós d'un bloc de dades de metabola"
 
 
@@ -45206,7 +45306,8 @@ msgid "Movie Clip User"
 msgstr "Usador de clip de vídeo"
 
 
-msgid "Parameters defining how a MovieClip data-block is used by another data-block"
+# BFA - reworded, Blender: "Parameters defining how a MovieClip data-block is used by another data-block"
+msgid "Parameters defining how a MovieClip data is used by another data"
 msgstr "Paràmetres de com un bloc de dades de clip de vídeo és usat per un altre bloc de dades"
 
 
@@ -51936,7 +52037,8 @@ msgid "The attribute is associated with the object geometry, and its value varie
 msgstr "L'atribut està associat a la geometria de l'objecte i el seu valor varia d'un vèrtex a l'altre o dins del volum de l'objecte"
 
 
-msgid "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+# BFA - reworded, Blender: "The attribute is associated with the object or mesh data-block itself, and its value is uniform"
+msgid "The attribute is associated with the object or mesh data itself, and its value is uniform"
 msgstr "L'atribut està associat a l'objecte o al bloc de dades de malla mateix, i el seu valor és uniforme"
 
 
@@ -53403,7 +53505,8 @@ msgid "Internal IES file"
 msgstr "Document IES intern"
 
 
-msgid "Whether the IES file is loaded from disk or from a text data-block"
+# BFA - reworded, Blender: "Whether the IES file is loaded from disk or from a text data-block"
+msgid "Whether the IES file is loaded from disk or from a text data"
 msgstr "Si el document IES es carrega des del disc o des d'un bloc de dades de text"
 
 
@@ -55672,8 +55775,9 @@ msgid "Export Keying Set to a Python script"
 msgstr "[Export Keying Set...]: Exporta el joc d'atributs de fites a un protocol de Python"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "Exportar joc de fitoatributs..."
 
 
@@ -56087,7 +56191,10 @@ msgid "Console Banner"
 msgstr "Falca de consola"
 
 
-msgid "Copy the console contents for use in a script"
+# BFA - reworded, Blender: "Copy the console contents for use in a script"
+msgid ""
+"Copy to Clipboard (as script\n"
+"Copy the console contents for use in a script"
 msgstr "Copia el contingut de la consola per a usar-lo en un protocol o script"
 
 
@@ -56671,7 +56778,8 @@ msgid "Duplicate Item"
 msgstr "Duplicar element"
 
 
-msgid "Make the active boolean socket a toggle for its parent panel"
+# BFA - reworded, Blender: "Make the active boolean socket a toggle for its parent panel"
+msgid "Make the selected active boolean input socket a top-level toggle located in its parent panel"
 msgstr "Fa que el born booleà actiu sigui un permutador del seu plafó pare"
 
 
@@ -57268,7 +57376,10 @@ msgid "Subdivision Set"
 msgstr "Determinar subdivisions"
 
 
-msgid "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+# BFA - reworded, Blender: "Convert normal object transforms to delta transforms, any existing delta transforms will be included as well"
+msgid ""
+"Converts normal object transforms to delta transforms.\n"
+"Any existing delta transform will be included as well"
 msgstr "[Transforms to Deltas]: Converteix les transformacions d'objectes normals en transformacions delta i també s'inclouran totes les transformacions delta existents"
 
 
@@ -58604,7 +58715,10 @@ msgid "Add Property"
 msgstr "Afegir propietat"
 
 
-msgid "Jump to a different tab inside the properties editor"
+# BFA - reworded, Blender: "Jump to a different tab inside the properties editor"
+msgid ""
+"Change Context\n"
+"Jump to a different tab inside the properties editor"
 msgstr "Salta a una pestanya diferent dins l'editor de propietats"
 
 
@@ -58975,7 +59089,10 @@ msgid "Set Keyframe Interpolation"
 msgstr "Definir interpolació de fotofita"
 
 
-msgid "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+# BFA - reworded, Blender: "Set interpolation mode for the F-Curve segments starting from the selected keyframes"
+msgid ""
+"Keyframe Interpolation\n"
+"Set interpolation mode for the F-Curve segments starting from the selected keyframes"
 msgstr "[Set Keyframe Interpolation]: Especifica el mode d'interpolació per als segments de Corba F començant per les fotofites seleccionades"
 
 
@@ -59063,7 +59180,8 @@ msgid "Flip times of selected keyframes using the first selected marker as the r
 msgstr "[By Times Over First Selected Marker]: Inverteix els moments de les fotofites seleccionades usant el primer marcador seleccionat com a punt de referència"
 
 
-msgid "By Values Over Zero Value"
+# BFA - reworded, Blender: "By Values Over Zero Value"
+msgid "By Values Over Value=0"
 msgstr "Per moments sobre valor sobre zero"
 
 
@@ -59450,12 +59568,14 @@ msgid "Store this action in the NLA stack as a non-contributing strip for later 
 msgstr "Emmagatzema aquesta acció a l'estiba d'ANL com a segment no contribuïdor per a un ús posterior, i crea una nova acció"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "Desvincular acció"
 
 
-msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+# BFA - reworded, Blender: "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
 msgstr "[Unlink Action]: Desvincula l'acció des de l'epígraf d'accions actiu (i/o surt del Mode de retocat)"
 
 
@@ -59472,7 +59592,8 @@ msgid "Frame All"
 msgstr "Enquadrar tot"
 
 
-msgid "Reset viewable area to show full keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show full keyframe range"
+msgid "Zooms in or out to fit the display to show full keyframe range"
 msgstr "[Frame All]: Redisposa l'àrea visible perquè es vegi l'interval complet de fotofites"
 
 
@@ -59490,7 +59611,8 @@ msgid "Frame Selected"
 msgstr "Enquadrar selecció"
 
 
-msgid "Reset viewable area to show selected keyframes range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframes range"
+msgid "Zooms in or out to fit the display to show selected keyframes range"
 msgstr "[Frame Selected]: Redisposa l'àrea visible perquè es vegi l'interval de fotofites seleccionades"
 
 
@@ -59533,7 +59655,8 @@ msgid "Frame Channel Under Cursor"
 msgstr "Enquadrar el canal de sota el cursor"
 
 
-msgid "Reset viewable area to show the channel under the cursor"
+# BFA - reworded, Blender: "Reset viewable area to show the channel under the cursor"
+msgid "Zooms in or out to fit the display to show the channel under the cursor"
 msgstr "[Frame Channel Under Cursor]: Redisposa l'àrea visible perquè mostri el canal que està dessota el cursor"
 
 
@@ -59611,7 +59734,8 @@ msgid "Remove Empty Animation Data"
 msgstr "Suprimir dades d'animació buides"
 
 
-msgid "Delete all empty animation data containers from visible data-blocks"
+# BFA - reworded, Blender: "Delete all empty animation data containers from visible data-blocks"
+msgid "Delete all empty animation data containers from visible data"
 msgstr "[Remove Empty Animation Data]: Elimina tots els contenidors de dades d'animació buits d'entre els blocs de dades visibles"
 
 
@@ -59802,7 +59926,8 @@ msgid "Frame Selected Channels"
 msgstr "Enquadrar canals seleccionats"
 
 
-msgid "Reset viewable area to show the selected channels"
+# BFA - reworded, Blender: "Reset viewable area to show the selected channels"
+msgid "Zooms in or out to fit the display of the selected channels"
 msgstr "Redisposa l'àrea visible per a mostrar els canals seleccionats"
 
 
@@ -59960,7 +60085,8 @@ msgid "Insert Keyframe (Buttons)"
 msgstr "Inserir fotofita (botons)"
 
 
-msgid "Insert a keyframe for current UI-active property"
+# BFA - reworded, Blender: "Insert a keyframe for current UI-active property"
+msgid "Insert a keyframe for the single property"
 msgstr "[Insert Keyframe (Buttons)]: Insereix una fotofita per a la propietat activa de la IU actual"
 
 
@@ -60744,7 +60870,8 @@ msgid "Hide Selected"
 msgstr "Ocultar selecció"
 
 
-msgid "Tag selected bones to not be visible in Edit Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Edit Mode"
+msgid "Hide selected bones in Edit Mode"
 msgstr "[Hide Selected]: Etiqueta els ossos seleccionats perquè no es vegin en mode d'edició"
 
 
@@ -61551,7 +61678,8 @@ msgid "Save as Brush Asset"
 msgstr "Desar com recurs pinzell"
 
 
-msgid "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+# BFA - reworded, Blender: "Save a copy of the active brush asset into the default asset library, and make it the active brush"
+msgid "Duplicates the active brush asset, saves it into the default asset library, and make it the active brush"
 msgstr "[Duplicate Asset...]: Desa una còpia del recurs pinzell actiu dins la biblioteca de recursos per defecte i la converteix en el pinzell actiu"
 
 
@@ -61697,7 +61825,8 @@ msgid "Toggle Pin ID"
 msgstr "Permutar fixació d'ID"
 
 
-msgid "Keep the current data-block displayed"
+# BFA - reworded, Blender: "Keep the current data-block displayed"
+msgid "Keep the current data displayed"
 msgstr "[Toggle Pin ID]: Manté o no visible el present bloc de dades"
 
 
@@ -63951,7 +64080,8 @@ msgid "Spline type"
 msgstr "[Type]: Tipus de spline [Automatic/Vector/Aligned/Free][Toggle Free/Align]"
 
 
-msgid "Hide (un)selected control points"
+# BFA - reworded, Blender: "Hide (un)selected control points"
+msgid "Hide selected control points"
 msgstr "[Hide Selected]: Amaga els punts de control (des)seleccionats"
 
 
@@ -66508,7 +66638,8 @@ msgid "Pack Linked Libraries"
 msgstr "Empaquetar biblioteques vinculades"
 
 
-msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+# BFA - reworded, Blender: "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
 msgstr "[Pack Linked Libraries]: Emmagatzema tots els blocs de dades vinculats des d'altres documents .blend dins el document .blend en curs. Es conserven les referències a biblioteques, de manera que els blocs de dades vinculats es podran tornar a desempaquetar després"
 
 
@@ -66734,7 +66865,8 @@ msgid "Unpack Linked Libraries"
 msgstr "Desempaquetar biblioteques vinculades"
 
 
-msgid "Restore all packed linked data-blocks to their original locations"
+# BFA - reworded, Blender: "Restore all packed linked data-blocks to their original locations"
+msgid "Restore all packed linked data  to their original locations"
 msgstr "[Unpack Linked Libraries]: Restitueix a les seves ubicacions originals tots els blocs de dades vinculats que s'hagin empaquetat abans"
 
 
@@ -67124,7 +67256,8 @@ msgid "Unlink"
 msgstr "Desvincular"
 
 
-msgid "Unlink active font data-block"
+# BFA - reworded, Blender: "Unlink active font data-block"
+msgid "Remove active font"
 msgstr "[Unlink]: Desvincula el bloc de dades de font actiu"
 
 
@@ -67386,16 +67519,19 @@ msgid "Annotation Add New"
 msgstr "Anotació - Afegir nova"
 
 
-msgid "Add new Annotation data-block"
+# BFA - reworded, Blender: "Add new Annotation data-block"
+msgid "Add new Annotation data"
 msgstr "[Annotation Add New]: Afegeix un bloc de dades nou per anotacions"
 
 
+# BFA - reworded, Blender: "Annotation Unlink"
 msgctxt "Operator"
-msgid "Annotation Unlink"
+msgid "Remove Annotation"
 msgstr "Anotació - Desvincular"
 
 
-msgid "Unlink active Annotation data-block"
+# BFA - reworded, Blender: "Unlink active Annotation data-block"
+msgid "Remove the active Annotation"
 msgstr "[Annotation Unlink]: Desenllaça el bloc de dades d'anotació actiu"
 
 
@@ -67404,7 +67540,8 @@ msgid "Add New Annotation Layer"
 msgstr "Afegir nova capa d'anotació"
 
 
-msgid "Add new Annotation layer or note for the active data-block"
+# BFA - reworded, Blender: "Add new Annotation layer or note for the active data-block"
+msgid "Add new Annotation layer or note for the active data"
 msgstr "[Add New Annotation Layer]: Afegeix una nova capa d'anotació o una nota per al bloc de dades actiu"
 
 
@@ -67933,7 +68070,8 @@ msgid "Defines which keys to use as slope and how much to blend towards them"
 msgstr "Definir quines fites usar com a inclinació i quant s'ha de fusionar en la seva direcció"
 
 
-msgid "By Times Over Zero Time"
+# BFA - reworded, Blender: "By Times Over Zero Time"
+msgid "By Times Over Time=0"
 msgstr "Per temps sobre temps zero"
 
 
@@ -68260,7 +68398,8 @@ msgid "How far in frames to offset the animation"
 msgstr "Quants fotogrames enllà cal desplaçar l'animació"
 
 
-msgid "Reset viewable area to show selected keyframe range"
+# BFA - reworded, Blender: "Reset viewable area to show selected keyframe range"
+msgid "Zooms in or out to fit the display to show selected keyframe range"
 msgstr "Restablir àrea visible per a mostrar l'interval de fotofites seleccionades"
 
 
@@ -68434,7 +68573,8 @@ msgid "Rounded"
 msgstr "Arrodonit"
 
 
-msgid "Set as default rounded"
+# BFA - reworded, Blender: "Set as default rounded"
+msgid "Set as default rounded caps"
 msgstr "Especificar per defecte com a arrodonit"
 
 
@@ -70189,7 +70329,8 @@ msgid "Clear Render Region"
 msgstr "Retirar revelat de regió"
 
 
-msgid "Clear the boundaries of the render region and disable render region"
+# BFA - reworded, Blender: "Clear the boundaries of the render region and disable render region"
+msgid "Removes an existing Render Region rectangle"
 msgstr "[Clear Render Region]: Retira les vores de la regió de revelat i la deshabilita"
 
 
@@ -70615,7 +70756,8 @@ msgid "Image height"
 msgstr "[Height]: Alçada de la imatge"
 
 
-msgid "Image data-block name"
+# BFA - reworded, Blender: "Image data-block name"
+msgid "Image name"
 msgstr "[Name]: Nom del bloc de dades d'imatge"
 
 
@@ -70821,7 +70963,8 @@ msgid "Save As Image"
 msgstr "Desar com a imatge"
 
 
-msgid "Save the image with another name and/or settings"
+# BFA - reworded, Blender: "Save the image with another name and/or settings"
+msgid "Saves the image with another name and/or settings"
 msgstr "[Save As/a Copy...]: Desa la imatge amb un altre nom i/o paràmetres"
 
 
@@ -70913,7 +71056,8 @@ msgid "Image Name"
 msgstr "Nom d'imatge"
 
 
-msgid "Image data-block name to unpack"
+# BFA - reworded, Blender: "Image data-block name to unpack"
+msgid "Image name to unpack"
 msgstr "Nom del bloc de dades de la imatge a desempaquetar"
 
 
@@ -71668,7 +71812,8 @@ msgid "Clear Restrict View"
 msgstr "Retirar restricció de vista"
 
 
-msgid "Reveal temporarily hidden mask layers"
+# BFA - reworded, Blender: "Reveal temporarily hidden mask layers"
+msgid "Reveals the hidden layer(s)"
 msgstr "Evidenciar capes màscara temporalment ocultes"
 
 
@@ -71677,7 +71822,8 @@ msgid "Set Restrict View"
 msgstr "Determinar restricció de visió"
 
 
-msgid "Temporarily hide mask layers"
+# BFA - reworded, Blender: "Temporarily hide mask layers"
+msgid "Hide the mask layer"
 msgstr "Ocultar temporalment capes màscara"
 
 
@@ -71920,7 +72066,8 @@ msgid "Duplicate Metaball Elements"
 msgstr "Duplicar elements de metabola"
 
 
-msgid "Hide (un)selected metaball element(s)"
+# BFA - reworded, Blender: "Hide (un)selected metaball element(s)"
+msgid "Hide selected metaball element(s)"
 msgstr "Ocultar l'/els element(s) de metabola (no-)seleccionats"
 
 
@@ -73122,7 +73269,8 @@ msgid "Flips the tessellation of selected quads"
 msgstr "[Flip Quad Tessellation]: Capgira la tessel·lació dels quads seleccionats"
 
 
-msgid "Hide (un)selected vertices, edges or faces"
+# BFA - reworded, Blender: "Hide (un)selected vertices, edges or faces"
+msgid "Hide selected vertices, edges or faces"
 msgstr "[Hide (Un)Selected]: Amaga els vèrtexs, arestes o cares (des)seleccionats"
 
 
@@ -73515,7 +73663,8 @@ msgid "Mark Sharp"
 msgstr "Marcar com aguda"
 
 
-msgid "(Un)mark selected edges as sharp"
+# BFA - reworded, Blender: "(Un)mark selected edges as sharp"
+msgid "Mark selected edges as sharp"
 msgstr "[Smooth/Sharp Edges/Vertices]: (Des)marca com a aguts o cantelluts els cantells seleccionats"
 
 
@@ -73890,7 +74039,8 @@ msgid "Transform at Cursor Move"
 msgstr "Transformar al moviment del cursor"
 
 
-msgid "Construct a circle mesh"
+# BFA - reworded, Blender: "Construct a circle mesh"
+msgid "Add a circle mesh"
 msgstr "[Add Circle]: Construeix una malla cercle"
 
 
@@ -73923,7 +74073,8 @@ msgid "Add Cone"
 msgstr "Afegir con"
 
 
-msgid "Construct a conic mesh"
+# BFA - reworded, Blender: "Construct a conic mesh"
+msgid "Add a conic mesh"
 msgstr "[Add Cone]: Construeix una malla cònica"
 
 
@@ -73944,7 +74095,8 @@ msgid "Add Cube"
 msgstr "Afegir Cub"
 
 
-msgid "Construct a cube mesh that consists of six square faces"
+# BFA - reworded, Blender: "Construct a cube mesh that consists of six square faces"
+msgid "Add a cube mesh that consists of six square faces"
 msgstr "[Add Cube]: Construeix una malla cub que consisteix en sis cares quadrades"
 
 
@@ -73957,7 +74109,8 @@ msgid "Add Cylinder"
 msgstr "Afegir cilindre"
 
 
-msgid "Construct a cylinder mesh"
+# BFA - reworded, Blender: "Construct a cylinder mesh"
+msgid "Add a cylinder mesh"
 msgstr "[Add Cylinder]: Construeix una malla cilindre"
 
 
@@ -73970,7 +74123,8 @@ msgid "Add Grid"
 msgstr "Afegir graella"
 
 
-msgid "Construct a subdivided plane mesh"
+# BFA - reworded, Blender: "Construct a subdivided plane mesh"
+msgid "Add a subdivided plane mesh"
 msgstr "[Add Grid]: Construeix una malla pla subdividida"
 
 
@@ -73987,7 +74141,8 @@ msgid "Add Ico Sphere"
 msgstr "Afegir polisfera"
 
 
-msgid "Construct a spherical mesh that consists of equally sized triangles"
+# BFA - reworded, Blender: "Construct a spherical mesh that consists of equally sized triangles"
+msgid "Add a spherical mesh that consists of equally sized triangles"
 msgstr "[Add Ico Sphere]: Construeix una malla esfèrica que consisteix en triangles de mida igual"
 
 
@@ -73996,7 +74151,8 @@ msgid "Add Monkey"
 msgstr "Afegir mona"
 
 
-msgid "Construct a Suzanne mesh"
+# BFA - reworded, Blender: "Construct a Suzanne mesh"
+msgid "Add a Suzanne mesh"
 msgstr "[Add Monkey]: Construeix una Susanna de malla"
 
 
@@ -74005,7 +74161,8 @@ msgid "Add Plane"
 msgstr "Afegir pla"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "[Add Plane]: Construeix una malla planar emplenada amb 4 vèrtexs"
 
 
@@ -75632,11 +75789,13 @@ msgid "Disable 'solo' on any of the NLA Tracks after exiting tweak mode to get t
 msgstr "[Isolate Action]: Deshabilita «solo» en qualsevol de les pistes d'ANL després de sortir del mode retocar per tornar a la normalitat"
 
 
-msgid "Reset viewable area to show full strips range"
+# BFA - reworded, Blender: "Reset viewable area to show full strips range"
+msgid "Zooms in or out to fit the display to show full strips range"
 msgstr "Restablir àrea visible per mostrar tot l'abast dels segments"
 
 
-msgid "Reset viewable area to show selected strips range"
+# BFA - reworded, Blender: "Reset viewable area to show selected strips range"
+msgid "Zooms in or out to fit the display to show selected strips range"
 msgstr "Restableix l'àrea visible per a mostrar l'abast dels segments seleccionats"
 
 
@@ -75977,11 +76136,13 @@ msgid "Clear the boundaries for viewer operations"
 msgstr "Retira els límits per a operar el visor"
 
 
+# BFA - reworded, Blender: "Copy the selected nodes to the internal clipboard"
 msgid "Copy the selected nodes to the internal clipboard. You can copy and paste nodes between software instances"
 msgstr "Copiar els nodes seleccionats al porta-retalls intern"
 
 
-msgid "Paste nodes from the internal clipboard to the active node tree"
+# BFA - reworded, Blender: "Paste nodes from the internal clipboard to the active node tree"
+msgid "Paste nodes from the internal clipboard to the active node tree. You can paste nodes between software instances"
 msgstr "Enganxar els nodes des del porta-retalls intern a l'arbre de nodes actiu"
 
 
@@ -76058,13 +76219,15 @@ msgid "Remove selected nodes"
 msgstr "Suprimir nodes seleccionats"
 
 
+# BFA - reworded, Blender: "Delete with Copy and Reconnect"
 msgctxt "Operator"
 msgid "Cut: Delete with Copy and Reconnect"
 msgstr "Eliminar amb copiar i reconnectar"
 
 
+# BFA - reworded, Blender: "Copy nodes to clipboard, remove and reconnect them."
 msgid "Cuts nodes by copying to the internal clipboard then removes the selection, then reconnects sockets. You can cut and paste nodes between software instances."
-msgstr "[Cut: Delete with Copy and Reconnect ]: Copia nodes al portaretalls, els mou i els reconnecta."
+msgstr "[Delete with Copy and Reconnect ]: Es copien els nodes al portaretalls, se'ls elimina i se'ls reconnecta."
 
 
 msgid "Copy to Clipboard"
@@ -77385,12 +77548,14 @@ msgid "Delete the selected local overrides and relink their usages to the linked
 msgstr "[Clear Library Override]: Elimina els sobreseïments locals seleccionats i revincula els seus usos als blocs de dades enllaçats si és possible, altrament cal reiniciar-los i marcar-los com a no editables"
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "Afegir a col·lecció"
 
 
-msgid "Add an object to a new collection"
+# BFA - reworded, Blender: "Add an object to a new collection"
+msgid "Adds the selected object to a new collection"
 msgstr "Afegir un objecte a una nova col·lecció"
 
 
@@ -77911,7 +78076,8 @@ msgid "New Geometry Node Group"
 msgstr "Nou grup de nodes de geometria"
 
 
-msgid "Duplicate the active geometry node group and assign it to the active modifier"
+# BFA - reworded, Blender: "Duplicate the active geometry node group and assign it to the active modifier"
+msgid "Duplicates the active geometry node group and assigns it to the active modifier"
 msgstr "[New Geometry Node Group]: Duplica el grup de nodes de la geometria activa i l'assigna al modificador actiu"
 
 
@@ -77959,7 +78125,10 @@ msgid "Blank"
 msgstr "En blanc"
 
 
-msgid "Create an empty Grease Pencil object"
+# BFA - reworded, Blender: "Create an empty Grease Pencil object"
+msgid ""
+"Create an empty grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "[Blank]: Crea un objecte llapis de greix buit"
 
 
@@ -77977,7 +78146,10 @@ msgid "Monkey"
 msgstr "Mona"
 
 
-msgid "Construct a Suzanne Grease Pencil object"
+# BFA - reworded, Blender: "Construct a Suzanne Grease Pencil object"
+msgid ""
+"Construct a Monkey names Suzanne grease pencil object\n"
+"Switch to Draw mode to draw grease pencil strokes"
 msgstr "[Monkey]: Construeix un objecte Susanna de Llapis de greix"
 
 
@@ -78112,7 +78284,8 @@ msgid "Hide Objects"
 msgstr "Ocultar objectes"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "[Hide Objects]: Oculta temporalment objectes del mirador"
 
 
@@ -78603,7 +78776,8 @@ msgid "Make Local"
 msgstr "Fer local"
 
 
-msgid "Make library linked data-blocks local to this file"
+# BFA - reworded, Blender: "Make library linked data-blocks local to this file"
+msgid "Make library linked data local to this file"
 msgstr "[Make Local]: Fa locals a aquest document els blocs de dades vinculats a la biblioteca"
 
 
@@ -78644,7 +78818,8 @@ msgid "Make object animation data local to each object"
 msgstr "Fa que les dades d'objecte animació siguin locals als respectius objectes"
 
 
-msgid "Make materials local to each data-block"
+# BFA - reworded, Blender: "Make materials local to each data-block"
+msgid "Make materials local to each data"
 msgstr "Fer materials locals a cada bloc de dades"
 
 
@@ -79263,11 +79438,13 @@ msgid "Current Transform"
 msgstr "Transformació actual"
 
 
-msgid "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+# BFA - reworded, Blender: "Paste onto the current values only, only manipulating the animation data if auto-keying is enabled"
+msgid "Paste transform onto the current values, only manipulating the animation data if auto-keying is enabled"
 msgstr "[Current Transform]: Enganxa només als valors actuals, manipulant només les dades de l'animació quan la creació automàtica de fites està habilitada"
 
 
-msgid "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+# BFA - reworded, Blender: "Paste onto frames that have a selected key, potentially creating new keys on those frames"
+msgid "Paste transform onto frames that have a selected key, potentially creating new keys on those frames"
 msgstr "[Existing Keys]: Enganxa sobre fotogrames que tinguin una fita seleccionada, potencialment creant fites noves en aquests fotogrames"
 
 
@@ -79275,7 +79452,8 @@ msgid "Bake on Key Range"
 msgstr "Precuinar en l'interval de fites"
 
 
-msgid "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+# BFA - reworded, Blender: "Paste onto all frames between the first and last selected key, creating new keyframes if necessary"
+msgid "Paste transform onto all frames between the first and last selected key, creating new keyframes if necessary"
 msgstr "[Bake on Key Range]: Enganxa a tots els fotogrames entre la primera i l'última fita seleccionades, creant fotofites noves si cal"
 
 
@@ -79664,7 +79842,8 @@ msgid "Deselect objects at the boundaries of parent/child relationships"
 msgstr "[Less]: Desselecciona els objectes que estan al límit de relacions pare/fill"
 
 
-msgid "Select all visible objects that are linked"
+# BFA - reworded, Blender: "Select all visible objects that are linked"
+msgid "Select all visible objects that are linked to the active element"
 msgstr "[Select Linked]: Selecciona tots els objectes visibles que estan connectats"
 
 
@@ -81193,7 +81372,8 @@ msgid "Outliner ID Data Copy"
 msgstr "Còpiar dades d'ID en inventari"
 
 
-msgid "Copy the selected data-blocks to the internal clipboard"
+# BFA - reworded, Blender: "Copy the selected data-blocks to the internal clipboard"
+msgid "Selected data are copied to the clipboard"
 msgstr "[Copy]: Copia els blocs de dades seleccionats al porta-retalls intern"
 
 
@@ -81252,7 +81432,8 @@ msgid "Add Fake User"
 msgstr "Afegir usador fals"
 
 
-msgid "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+# BFA - reworded, Blender: "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"
+msgid "Ensure data gets saved even if it isn't in use (e.g. for motion and material libraries)"
 msgstr "[Add Fake User]: Assegura que el bloc de dades es desa fins i tot si no està en ús (p. ex. per a les biblioteques de moviments i materials)"
 
 
@@ -81264,7 +81445,8 @@ msgid "Rename"
 msgstr "Reanomenar"
 
 
-msgid "Embed data-blocks into the .blend file"
+# BFA - reworded, Blender: "Embed data-blocks into the .blend file"
+msgid "Embed data into the .blend file"
 msgstr "[Pack]: Incrusta blocs de dades al document .blend"
 
 
@@ -81273,7 +81455,8 @@ msgid "Outliner ID Data Paste"
 msgstr "Enganxar les dades d'IDE en inventari"
 
 
-msgid "Paste data-blocks from the internal clipboard"
+# BFA - reworded, Blender: "Paste data-blocks from the internal clipboard"
+msgid "Data from the clipboard are pasted"
 msgstr "[Paste]: Enganxa blocs de dades des del porta-retalls intern"
 
 
@@ -81561,7 +81744,8 @@ msgid "Purge All"
 msgstr "Purgar tot"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file"
+# BFA - reworded, Blender: "Clear all orphaned data-blocks without any users from the file"
+msgid "Clear all orphaned data without any users from the file"
 msgstr "[Purge All/Purge Unused Data...]: Retira del document de tots els blocs de dades orfes sense cap usador"
 
 
@@ -81712,7 +81896,8 @@ msgid "Show/Hide One Level"
 msgstr "Mostrar/ocultar un nivell"
 
 
-msgid "Expand/collapse all entries by one level"
+# BFA - reworded, Blender: "Expand/collapse all entries by one level"
+msgid "Expand/Collapse all entries by one level"
 msgstr "[Show One Level]: Desplega/replega totes les entrades d'un nivell"
 
 
@@ -81755,7 +81940,8 @@ msgid "Slide Paint Curve Point"
 msgstr "Lliscar punt de corba de pintura"
 
 
-msgid "Select and slide paint curve point"
+# BFA - reworded, Blender: "Select and slide paint curve point"
+msgid "Select and slide a paint curve point"
 msgstr "Seleccionar i escórrer punt de corba de pintat"
 
 
@@ -81764,7 +81950,8 @@ msgid "Place Cursor"
 msgstr "Col·locar cursor"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "Col·loca el cursor"
 
 
@@ -81777,7 +81964,8 @@ msgid "Remove Paint Curve Point"
 msgstr "Suprimeix el punt de corba de pintura"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "[Draw Curve]: Dibuixa una corba"
 
 
@@ -82280,12 +82468,12 @@ msgstr "[Hue/Saturation/Value]: Ajusta to/saturació/valor del color dels vèrte
 
 
 msgctxt "Operator"
-msgid "Set Vertex Color"
+msgid "Set Vertex Colors"
 msgstr "Definir colors de vèrtex"
 
 
 msgid "Fill the active vertex color layer with the current paint color"
-msgstr "[Set Vertex Color]: Emplena la capa de color de vèrtex activa amb el color de pintura actual"
+msgstr "[Set Vertex Colors]: Emplena la capa de color de vèrtex activa amb el color de pintura actual"
 
 
 msgid "Set color completely opaque instead of reusing existing alpha"
@@ -82497,7 +82685,8 @@ msgid "Add New Palette"
 msgstr "Afegir nova paleta"
 
 
-msgid "Add new palette"
+# BFA - reworded, Blender: "Add new palette"
+msgid "Add a new palette of indexed colors"
 msgstr "[New]: Per afegir una nova paleta"
 
 
@@ -82976,6 +83165,7 @@ msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Brow
 msgstr "[Copy Pose as Asset]: Crea un nou recurs de posa al porta-retalls, per enganxar-lo en el navegador de recursos"
 
 
+# BFA - reworded, Blender: "Create Pose Asset..."
 msgctxt "Operator"
 msgid "Create Pose Asset"
 msgstr "Crear recurs de posa..."
@@ -83112,7 +83302,7 @@ msgstr "[Blend Pose with Rest Pose]: Fa que la posa actual sigui més similar a,
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "Partionador de poses"
 
 
@@ -83179,7 +83369,8 @@ msgid "Copy the current pose of the selected bones to the internal clipboard"
 msgstr "Copia la posa actual dels ossos seleccionats al porta-retalls intern"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "Etiquetar els ossos seleccionats per a no ser visibles en el Mode posa"
 
 
@@ -83349,7 +83540,7 @@ msgstr "Propagar posa a totes les fotofites que ocorren en fotogrames amb els Ma
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown (Legacy)"
+msgid "Push Pose from Breakdown"
 msgstr "Empènyer posa des de partió"
 
 
@@ -83367,7 +83558,7 @@ msgstr "Capgira els valors de quaternió per a aconseguir les rotacions desitjad
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown (Legacy)"
+msgid "Relax Pose to Breakdown"
 msgstr "Relaxar posa a partió"
 
 
@@ -85484,7 +85675,8 @@ msgid "Reload Scripts"
 msgstr "Recarregar protocols"
 
 
-msgid "Reload scripts"
+# BFA - reworded, Blender: "Reload scripts"
+msgid "Reload all Python Scripts, including the UI"
 msgstr "[Reload Scripts]: Recarrega els protocols"
 
 
@@ -87646,7 +87838,8 @@ msgid "Delete Retiming Keys"
 msgstr "Eliminar fites de retemporització"
 
 
-msgid "Delete selected retiming keys from the sequencer"
+# BFA - reworded, Blender: "Delete selected retiming keys from the sequencer"
+msgid "Delete selected retiming keyframes from the sequencer"
 msgstr "Elimina les fites de retemporització seleccionades del seqüenciador"
 
 
@@ -88520,12 +88713,14 @@ msgid "Update the audio animation cache"
 msgstr "[Update Animation Cache]: Actualitza la memòria cau de l'animació d'àudio"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "Audiomesclar"
 
 
-msgid "Mix the scene's audio to a sound file"
+# BFA - reworded, Blender: "Mix the scene's audio to a sound file"
+msgid "Mixdown and export the scene's audio to a sound file"
 msgstr "[Render Audio...]: Mescla l'àudio de l'escena en un únic document de so"
 
 
@@ -88954,11 +89149,13 @@ msgid "Jump"
 msgstr "Saltar"
 
 
-msgid "Jump cursor to line"
+# BFA - reworded, Blender: "Jump cursor to line"
+msgid "Go to a specific line number"
 msgstr "[Jump]: Fa saltar el cursor fins a la línia"
 
 
-msgid "Line number to jump to"
+# BFA - reworded, Blender: "Line number to jump to"
+msgid "Line number to go to"
 msgstr "[Line]: Número de línia cap a on saltar"
 
 
@@ -89023,7 +89220,8 @@ msgid "New Text"
 msgstr "Nou text"
 
 
-msgid "Create a new text data-block"
+# BFA - reworded, Blender: "Create a new text data-block"
+msgid "Create a new text file"
 msgstr "[New Text]: Crea un nou bloc de dades de text"
 
 
@@ -89032,7 +89230,8 @@ msgid "Open Text"
 msgstr "Obrir text"
 
 
-msgid "Open a new text data-block"
+# BFA - reworded, Blender: "Open a new text data-block"
+msgid "Open a new text file"
 msgstr "[Open Text]: Obre un nou bloc de dades de text"
 
 
@@ -89058,7 +89257,8 @@ msgid "Reload"
 msgstr "Recarregar"
 
 
-msgid "Reload active text data-block from its file"
+# BFA - reworded, Blender: "Reload active text data-block from its file"
+msgid "Reload active text file"
 msgstr "[Reload]: Torna a carregar el bloc de dades de text actiu des del seu document"
 
 
@@ -89119,7 +89319,8 @@ msgid "Save"
 msgstr "Desar"
 
 
-msgid "Save active text data-block"
+# BFA - reworded, Blender: "Save active text data-block"
+msgid "Save active text file"
 msgstr "[Save]: Desa el bloc de dades de text actiu"
 
 
@@ -89173,7 +89374,8 @@ msgid "To 3D Object"
 msgstr "A l'objecte 3D"
 
 
-msgid "Create 3D text object from active text data-block"
+# BFA - reworded, Blender: "Create 3D text object from active text data-block"
+msgid "Create 3D text object from active text data"
 msgstr "[To 3D Object]: Crea un objecte de text 3D a partir del bloc de dades de text actiu"
 
 
@@ -89189,7 +89391,8 @@ msgid "Unindent selected text"
 msgstr "Dessagnar text seleccionat"
 
 
-msgid "Unlink active text data-block"
+# BFA - reworded, Blender: "Unlink active text data-block"
+msgid "Remove active text"
 msgstr "Desvincular bloc de dades de text actiu"
 
 
@@ -89457,7 +89660,8 @@ msgid "Transform from Gizmo"
 msgstr "Transformar des de flòstic"
 
 
-msgid "Mirror selected items around one or more axes"
+# BFA - reworded, Blender: "Mirror selected items around one or more axes"
+msgid "Mirror selected items"
 msgstr "[Transform from Gizmo]: Emmiralla els elements seleccionats en relació a un o més eixos [Interactive Mirror/XYZ Global/XYZ Local]"
 
 
@@ -89982,12 +90186,14 @@ msgid "Material Mode"
 msgstr "Mode de materials"
 
 
+# BFA - reworded, Blender: "Eyedropper Data-Block"
 msgctxt "Operator"
-msgid "Eyedropper Data-Block"
+msgid "Eyedropper Data"
 msgstr "Bloc de dades pipeta"
 
 
-msgid "Sample a data-block from the 3D View to store in a property"
+# BFA - reworded, Blender: "Sample a data-block from the 3D View to store in a property"
+msgid "Sample a data from the 3D View to store in a property"
 msgstr "[Eyedropper Data-Block]: Serveix per piscar un bloc de dades des de la vista 3D per tal d'emmagatzemar-hi una propietat"
 
 
@@ -91379,8 +91585,9 @@ msgid "Amount of Faces in Island"
 msgstr "Quantitat de cares a l'illa"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Divisió de selecció"
 
 
@@ -91778,7 +91985,8 @@ msgid "Position the scene camera at the selected landmark"
 msgstr "Col·loca la càmera de l'escena a la referència espacial seleccionat"
 
 
-msgid "Clear the boundaries of the border render and disable border render"
+# BFA - reworded, Blender: "Clear the boundaries of the border render and disable border render"
+msgid "Removes an existing Render Region rectangle, clearning the boundaries of the render border"
 msgstr "[Clear Render Region]: Retira els límits de revelat de secció i deshabilita el revelat de secció"
 
 
@@ -92921,7 +93129,8 @@ msgid "Create instances for object data which are not referenced by any objects"
 msgstr "Crea instàncies per a dades d'objecte que no estan referenciades per cap objecte"
 
 
-msgid "Link the objects or data-blocks rather than appending"
+# BFA - reworded, Blender: "Link the objects or data-blocks rather than appending"
+msgid "Link the objects or data rather than appending"
 msgstr "Vincular els objectes o blocs de dades preferiblement a incorporar-los"
 
 
@@ -93906,7 +94115,8 @@ msgid "Clear Data-Block Previews"
 msgstr "Retirar previsionats de blocs de dades"
 
 
-msgid "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+# BFA - reworded, Blender: "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+msgid "Clear data previews (only for some types like objects, materials, textures, etc.)"
 msgstr "[Clear Data-Block Previews]: Retira els previsionats de blocs de dades (només per a alguns tipus com objectes, materials, textures, etc.)"
 
 
@@ -93914,7 +94124,8 @@ msgid "Data-Block Type"
 msgstr "Tipus de bloc de dades"
 
 
-msgid "Which data-block previews to clear"
+# BFA - reworded, Blender: "Which data-block previews to clear"
+msgid "Which data previews to clear"
 msgstr "Quins previsionats de blocs de dades cal retirar"
 
 
@@ -93938,12 +94149,14 @@ msgid "Clear previews for materials, lights, worlds, textures and images"
 msgstr "Retira els previsionats de materials, llums, mons, textures i imatges"
 
 
+# BFA - reworded, Blender: "Refresh Data-Block Previews"
 msgctxt "Operator"
-msgid "Refresh Data-Block Previews"
+msgid "Refresh Data Previews"
 msgstr "Refrescar previsionats de blocs de dades"
 
 
-msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+# BFA - reworded, Blender: "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgid "Ensure data previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 msgstr "[Refresh Data-Bloc Previews]: Assegura la disponibilitat i actualització dels previsionats de blocs de dades (a efectes de desar-los en un document .blend, sols per a alguns tipus com materials, textures, etc.)"
 
 
@@ -94388,12 +94601,14 @@ msgid "Make the current file the default startup file"
 msgstr "[Defaults/Save Startup File]: Converteix el document en curs en el document d'inici predeterminat"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Desar document Blender"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "[Save]: Desa aquest mateix document del Blender, el que ara esteu fent servir"
 
 
@@ -94428,7 +94643,8 @@ msgid "Search Operator"
 msgstr "Operador de cerca"
 
 
-msgid "Pop-up a search over all available operators in current context"
+# BFA - reworded, Blender: "Pop-up a search over all available operators in current context"
+msgid "Pop-up a search panel for all available operators in current context"
 msgstr "[Search Operator]: Finestra emergent on es pot cercar entre tots els operadors disponibles en el context present"
 
 
@@ -95847,7 +96063,8 @@ msgid "New World"
 msgstr "Nou món"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "[New World]: Crea un bloc de dades nou de món"
 
 
@@ -96644,7 +96861,8 @@ msgid "Tracking Settings"
 msgstr "Paràmetres de rastreig"
 
 
-msgid "Tracking Settings Extras"
+# BFA - reworded, Blender: "Tracking Settings Extras"
+msgid "Tracking Options Extras"
 msgstr "[Tracking Settings]: Paràmetres extra de rastreig"
 
 
@@ -99907,7 +100125,8 @@ msgid "Duplicate Action"
 msgstr "Duplicar acció"
 
 
-msgid "Causes actions to be duplicated with the data-blocks"
+# BFA - reworded, Blender: "Causes actions to be duplicated with the data-blocks"
+msgid "Causes actions to be duplicated with the data"
 msgstr "[(Duplicate) Action]: Fa que les accions es dupliquin amb els blocs de dades"
 
 
@@ -100483,11 +100702,13 @@ msgid "Python Scripts Directory"
 msgstr "Directori de protocols en Python"
 
 
-msgid "Show Hidden Files/Data-Blocks"
+# BFA - reworded, Blender: "Show Hidden Files/Data-Blocks"
+msgid "Show Hidden Files/Data"
 msgstr "Mostrar documents/blocs de dades ocults"
 
 
-msgid "Show files and data-blocks that are normally hidden"
+# BFA - reworded, Blender: "Show files and data-blocks that are normally hidden"
+msgid "Show files and data that are normally hidden"
 msgstr "[Show Hidden Files/Data-Blocks]: Mostra els documents i blocs de dades que normalment estan ocults"
 
 
@@ -100833,7 +101054,8 @@ msgid "Overall sensitivity of the 3D Mouse for translation"
 msgstr "[Pan Sensitivity]: Sensibilitat genèrica del ratolí 3D per la translació"
 
 
-msgid "Zoom direction"
+# BFA - reworded, Blender: "Zoom direction"
+msgid "Zoom Direction"
 msgstr "Direcció de zoom"
 
 
@@ -102789,7 +103011,8 @@ msgid "Translate New Names"
 msgstr "Traduir noms nous"
 
 
-msgid "Translate the names of new data-blocks (objects, materials...)"
+# BFA - reworded, Blender: "Translate the names of new data-blocks (objects, materials...)"
+msgid "Translate the names of new data (objects, materials...)"
 msgstr "[New Data]: Tradueix els noms dels nous blocs de dades (objectes, materials...)"
 
 
@@ -106612,7 +106835,8 @@ msgid "Is Perspective"
 msgstr "ÉS Perspectiva"
 
 
-msgid "Lock view rotation of side views to Top/Front/Right"
+# BFA - reworded, Blender: "Lock view rotation of side views to Top/Front/Right"
+msgid "Lock view rotation in side views"
 msgstr "[Rotació]: Fixa la rotació de vista en les vistes laterals Superior/Frontal/Dreta"
 
 
@@ -106909,7 +107133,8 @@ msgid "Result of rendering, including all layers and passes"
 msgstr "Resultat del revelat, incloent-hi totes les capes i passades"
 
 
-msgid "Rendering settings for a Scene data-block"
+# BFA - reworded, Blender: "Rendering settings for a Scene data-block"
+msgid "Rendering settings for a Scene"
 msgstr "Paràmetres de revelat per a un bloc de dades d'escena"
 
 
@@ -107057,7 +107282,8 @@ msgid "Directory/name to save animations, # characters define the position and p
 msgstr "[Output Path]: Directori/nom per desar animacions, els caràcters # defineixen la posició i l'encasellat dels números de fotograma"
 
 
-msgid "World background is transparent, for compositing the render over another background"
+# BFA - reworded, Blender: "World background is transparent, for compositing the render over another background"
+msgid "Render the world background as transparent. This allows compositing the rendered image over another background"
 msgstr "El rerefons del món és transparent, per a compositar el revelat sobre un altre rerefons"
 
 
@@ -108637,7 +108863,8 @@ msgid "Attenuation constant"
 msgstr "Constant d'atenuació"
 
 
-msgid "Distance of object that contribute to the cavity/edge effect"
+# BFA - reworded, Blender: "Distance of object that contribute to the cavity/edge effect"
+msgid "Distance of object that contribute to the Cavity/Edge effect"
 msgstr "Distància de l'objecte que contribueix a l'efecte concavitat/convexitat"
 
 
@@ -109157,11 +109384,13 @@ msgid "Anti-Aliasing Samples"
 msgstr "Mostres d'antialiàsing"
 
 
-msgid "Number of supersampling anti-aliasing samples per pixel for final render"
+# BFA - reworded, Blender: "Number of supersampling anti-aliasing samples per pixel for final render"
+msgid "Number of anti-aliasing supersamples done per pixel in final render"
 msgstr "[SSAA Samples]: Nombre de mostres d'antialiàsing del supermostrejat per píxels del revelat final"
 
 
-msgid "SMAA Threshold Viewport"
+# BFA - reworded, Blender: "SMAA Threshold Viewport"
+msgid "SMAA Threshold (Viewport)"
 msgstr "Llindar d'SMAA al mirador"
 
 
@@ -109169,7 +109398,8 @@ msgid "Threshold for edge detection algorithm (higher values might over-blur som
 msgstr "[SMAA Threshold Viewport]: Llindar per a l'algorisme de detecció de vores (els valors més alts poden sobredifuminar alguna part de la imatge)"
 
 
-msgid "SMAA Threshold Render"
+# BFA - reworded, Blender: "SMAA Threshold Render"
+msgid "SMAA Threshold (Render)"
 msgstr "Llindar d'SMAA al revelat"
 
 
@@ -109317,7 +109547,8 @@ msgid "Python Scripts Directories"
 msgstr "Directoris de protocols en Python"
 
 
-msgid "Sequence editing data for a Scene data-block"
+# BFA - reworded, Blender: "Sequence editing data for a Scene data-block"
+msgid "Sequence editing data for a Scene data"
 msgstr "Data d'edició de seqüència per a un bloc de dades d'escena"
 
 
@@ -110117,7 +110348,8 @@ msgid "Wave Deformation effect"
 msgstr "Efecte de deformació de l'ona"
 
 
-msgid "Shape key in a shape keys data-block"
+# BFA - reworded, Blender: "Shape key in a shape keys data-block"
+msgid "Shape key in a shape keys data"
 msgstr "Morfofita en un bloc de dades de morfofites"
 
 
@@ -110493,7 +110725,8 @@ msgid "Stiff Quads"
 msgstr "Quads rígids"
 
 
-msgid "Add diagonal springs on 4-gons"
+# BFA - reworded, Blender: "Add diagonal springs on 4-gons"
+msgid "Add diagonal springs on quads"
 msgstr "[Stiff Quads]: Afegeix tensors a les diagonals dels 4-gons"
 
 
@@ -110554,11 +110787,13 @@ msgid "Where the annotation comes from"
 msgstr "[Annotation Source]: D'on prové l'anotació"
 
 
-msgid "Show annotation data-block which belongs to movie clip"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to movie clip"
+msgid "Show annotation data which belongs to movie clip"
 msgstr "Mostra el bloc de dades d'anotacions que pertany al clip de vídeo"
 
 
-msgid "Show annotation data-block which belongs to active track"
+# BFA - reworded, Blender: "Show annotation data-block which belongs to active track"
+msgid "Show annotation data which belongs to active track"
 msgstr "Mostra el bloc de dades d'anotacions que pertany al rastre actiu"
 
 
@@ -111581,7 +111816,8 @@ msgid "Node tree being displayed and edited"
 msgstr "Arbre de nodes que s'està mostrant i editant"
 
 
-msgid "Data-block whose nodes are being edited"
+# BFA - reworded, Blender: "Data-block whose nodes are being edited"
+msgid "Data whose nodes are being edited"
 msgstr "Bloc de dades els nodes dels quals s'estan editant"
 
 
@@ -111589,7 +111825,8 @@ msgid "ID From"
 msgstr "ID d'origen"
 
 
-msgid "Data-block from which the edited data-block is linked"
+# BFA - reworded, Blender: "Data-block from which the edited data-block is linked"
+msgid "Data from which the edited data is linked"
 msgstr "[ID From]: Bloc de dades des del qual s'ha vinculat el bloc de dades editat"
 
 
@@ -111609,7 +111846,8 @@ msgid "Settings for display of overlays in the Node Editor"
 msgstr "Configuració per mostrar sobreimpressions en l'editor de nodes"
 
 
-msgid "Path from the data-block to the currently edited node tree"
+# BFA - reworded, Blender: "Path from the data-block to the currently edited node tree"
+msgid "Path from the data to the currently edited node tree"
 msgstr "Camí des del bloc de dades a l'arbre de nodes en edició"
 
 
@@ -111780,7 +112018,8 @@ msgid "Filter by Type"
 msgstr "Filtra per tipus"
 
 
-msgid "Data-block type to show"
+# BFA - reworded, Blender: "Data-block type to show"
+msgid "Data type to show"
 msgstr "Tipus de bloc de dades per mostrar"
 
 
@@ -111936,7 +112175,8 @@ msgid "Show grease pencil effects"
 msgstr "[Grease Pencil]: Mostra els efectes de Llapis de greix"
 
 
-msgid "Show only data-blocks of one type"
+# BFA - reworded, Blender: "Show only data-blocks of one type"
+msgid "Show only data of one type"
 msgstr "Mostrar només blocs de dades d'un tipus"
 
 
@@ -112076,7 +112316,8 @@ msgid "Show Pose Bones"
 msgstr "Mostrar ossos de posa"
 
 
-msgid "Show pose bones of armatures"
+# BFA - reworded, Blender: "Show pose bones of armatures"
+msgid "Show or hide the entire Pose Bones group of armatures in the Outliner"
 msgstr "[Show Pose Bones]: Mostra els ossos de posa dels esquelets"
 
 
@@ -112699,7 +112940,8 @@ msgid "Top line visible"
 msgstr "Línia superior visible"
 
 
-msgid "Search in all text data-blocks, instead of only the active one"
+# BFA - reworded, Blender: "Search in all text data-blocks, instead of only the active one"
+msgid "Search in all text data, instead of only the active one"
 msgstr "Cercar en tots els blocs de dades de text, en lloc de només en l'actiu"
 
 
@@ -114716,7 +114958,8 @@ msgid "Display the audio waveform inside the strip"
 msgstr "Mostra el sonograma d'àudio dins de el segment"
 
 
-msgid "Sound data-block used by this strip"
+# BFA - reworded, Blender: "Sound data-block used by this strip"
+msgid "Sound data used by this strip"
 msgstr "Bloc de dades de so utilitzat en aquest segment"
 
 
@@ -115492,7 +115735,8 @@ msgid "Text Line"
 msgstr "Línia de text"
 
 
-msgid "Line of text in a Text data-block"
+# BFA - reworded, Blender: "Line of text in a Text data-block"
+msgid "Line of text in a Text file"
 msgstr "Línia de text en un bloc de dades de text"
 
 
@@ -115528,7 +115772,8 @@ msgid "Set scaling for the texture's X, Y and Z sizes"
 msgstr "[Size]: Per especificar l'escalat de les mides X, Y i Z de la textura"
 
 
-msgid "Texture data-block used by this texture slot"
+# BFA - reworded, Blender: "Texture data-block used by this texture slot"
+msgid "Texture used by this texture slot"
 msgstr "Bloc de dades de textura usat per aquest epígraf de textura"
 
 
@@ -115536,7 +115781,8 @@ msgid "Brush Texture Slot"
 msgstr "Epígraf de textura del pinzell"
 
 
-msgid "Texture slot for textures in a Brush data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Brush data-block"
+msgid "Texture slot for textures in a Brush data"
 msgstr "[Brush Texture Slot]: Epígraf de textura per a les textures s'un bloc de dades pinzell"
 
 
@@ -115564,7 +115810,8 @@ msgid "LineStyle Texture Slot"
 msgstr "Epígraf de textura de lineament"
 
 
-msgid "Texture slot for textures in a LineStyle data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a LineStyle data-block"
+msgid "Texture slot for textures in a LineStyle data"
 msgstr "Epígraf de textura per a textures en un bloc de dades de lineament"
 
 
@@ -115636,7 +115883,8 @@ msgid "Particle Settings Texture Slot"
 msgstr "Epígraf de textura per a paràmetres de partícules"
 
 
-msgid "Texture slot for textures in a Particle Settings data-block"
+# BFA - reworded, Blender: "Texture slot for textures in a Particle Settings data-block"
+msgid "Texture slot for textures in a Particle Settings data"
 msgstr "Epígraf de textura per a les textures en un bloc de dades de la configuració de partícules"
 
 
@@ -116610,7 +116858,8 @@ msgid "Active Action"
 msgstr "Acció activa"
 
 
-msgid "Animation data-block has active action"
+# BFA - reworded, Blender: "Animation data-block has active action"
+msgid "Animation has active action"
 msgstr "[Active Action]: El bloc de dades d'animació té una acció activa"
 
 
@@ -116618,7 +116867,8 @@ msgid "No Active Action"
 msgstr "Sense acció activa"
 
 
-msgid "Animation data-block does not have active action"
+# BFA - reworded, Blender: "Animation data-block does not have active action"
+msgid "Animation data does not have active action"
 msgstr "[No Active Action]: El bloc de dades d'animació no té acció activa"
 
 
@@ -118137,7 +118387,8 @@ msgid "Draw Strokes on Back"
 msgstr "Dibuixar traços darrere"
 
 
-msgid "New strokes are drawn below of all strokes in the layer"
+# BFA - reworded, Blender: "New strokes are drawn below of all strokes in the layer"
+msgid "When drawing new strokes, the new stroke is drawn below of all strokes in the layer"
 msgstr "[Draw Strokes on Back]: Els traços nous es dibuixen sota de tots els traços de la capa"
 
 
@@ -119339,7 +119590,8 @@ msgid "Display X Axis"
 msgstr "Mostrar eix X"
 
 
-msgid "Show the X axis line"
+# BFA - reworded, Blender: "Show the X axis line"
+msgid "Show the X axis line in perspective / orthographic views"
 msgstr "[X Axis]: Mostra la línia de l'eix X (vermella)"
 
 
@@ -119347,7 +119599,8 @@ msgid "Display Y Axis"
 msgstr "Mostrar eix Y"
 
 
-msgid "Show the Y axis line"
+# BFA - reworded, Blender: "Show the Y axis line"
+msgid "Show the Y axis line in perspective / orthographic views"
 msgstr "[Y Axis]: Mostra la línia de l'eix Y (verda)"
 
 
@@ -119355,7 +119608,8 @@ msgid "Display Z Axis"
 msgstr "Mostrar eix Z"
 
 
-msgid "Show the Z axis line"
+# BFA - reworded, Blender: "Show the Z axis line"
+msgid "Show the Z axis line in perspective / orthographic views"
 msgstr "[Z Axis]: Mostra la línia de l'eix Z (blava)"
 
 
@@ -120913,7 +121167,8 @@ msgid "Does this tool use a painting canvas"
 msgstr "Si l'eina utilitza un llenç de pintura"
 
 
-msgid "Lighting for a World data-block"
+# BFA - reworded, Blender: "Lighting for a World data-block"
+msgid "Lighting for a World data"
 msgstr "Enllumenat per a un bloc de dades de món"
 
 
@@ -120929,7 +121184,8 @@ msgid "World Mist"
 msgstr "Boirina del món"
 
 
-msgid "Mist settings for a World data-block"
+# BFA - reworded, Blender: "Mist settings for a World data-block"
+msgid "Mist settings for a World data"
 msgstr "[World Mist]: Paràmetres de boirina per a un bloc de dades de món"
 
 
@@ -125671,7 +125927,8 @@ msgid "Repository Alert:"
 msgstr "Alerta de repositori:"
 
 
-msgid "Internet access is required to install and update online extensions. "
+# BFA - reworded, Blender: "Internet access is required to install and update online extensions. "
+msgid "Internet access is required to install and update Extensions."
 msgstr "Cal accés a internet per instal·lar i actualitzar extensions en línia. "
 
 
@@ -125718,8 +125975,9 @@ msgid "Permissions"
 msgstr "Permisos"
 
 
+# BFA - reworded, Blender: "Visit Extensions Platform"
 msgctxt "Operator"
-msgid "Visit Extensions Platform"
+msgid "Visit Extensions Website"
 msgstr "Visitar plataforma d'extensions"
 
 
@@ -128450,7 +128708,8 @@ msgid "No nodes selected."
 msgstr "No hi ha nodes seleccionats."
 
 
-msgid "Only boolean input sockets are supported"
+# BFA - reworded, Blender: "Only boolean input sockets are supported"
+msgid "Active item is not a boolean input socket"
 msgstr "Només s'admeten borns d'entrada booleans"
 
 
@@ -129977,8 +130236,9 @@ msgid "Flip"
 msgstr "Invertir"
 
 
+# BFA - reworded, Blender: "Flip (Topology)"
 msgctxt "Operator"
-msgid "Flip (Topology)"
+msgid "Mirror Shape Key (Topology)"
 msgstr "Capgirar (topologia)"
 
 
@@ -130081,7 +130341,8 @@ msgid "Select by"
 msgstr "Seleccionar per"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "Marge d'imatge"
 
 
@@ -130391,7 +130652,8 @@ msgid "HDR needs 10 or 12 bits"
 msgstr "Amb HDR calen 10 bits o 12"
 
 
-msgid "Max B-frames"
+# BFA - reworded, Blender: "Max B-frames"
+msgid "Max B_Frames"
 msgstr "Màx fotogrames B"
 
 
@@ -131302,11 +131564,13 @@ msgid "Light Probes Volume Pool"
 msgstr "Reserva de sondes de llum (volumètrica)"
 
 
-msgid "SMAA Threshold"
+# BFA - reworded, Blender: "SMAA Threshold"
+msgid "Edge Threshold"
 msgstr "Llindar SMAA"
 
 
-msgid "SSAA Samples"
+# BFA - reworded, Blender: "SSAA Samples"
+msgid "Supersampling"
 msgstr "Mostres de SSAA"
 
 
@@ -132630,8 +132894,9 @@ msgid "Replace..."
 msgstr "Substituir..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Desar còpia..."
 
 
@@ -132755,8 +133020,9 @@ msgid "Linked Duplicate"
 msgstr "Duplicat vinculat"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "Deixar de retocar accions de segment"
 
 
@@ -132780,13 +133046,15 @@ msgid "Start Editing Stashed Action"
 msgstr "Iniciar l'edició de l'acció dipositada"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Full Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Full Stack)"
+msgid "Tweak Action (Full Stack)"
 msgstr "Iniciar el retocat d'accions de segment (estiba completa)"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Lower Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgid "Tweak Action (Lower Stack)"
 msgstr "Iniciar el retocat d'accions de segment (estiba inferior)"
 
 
@@ -132835,8 +133103,9 @@ msgid "Unconnected Sockets"
 msgstr "Borns no connectats"
 
 
+# BFA - reworded, Blender: "Rename Active Node..."
 msgctxt "Operator"
-msgid "Rename Active Node..."
+msgid "Rename Active Node"
 msgstr "Reanomenar el node actiu..."
 
 
@@ -133233,8 +133502,9 @@ msgid "Toggle Sequencer/Preview"
 msgstr "Permutar seqüenciador/previsionat"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "Seleccionar tot per tipus"
 
 
@@ -133273,8 +133543,9 @@ msgid "Sound..."
 msgstr "So..."
 
 
+# BFA - reworded, Blender: "Image/Sequence..."
 msgctxt "Operator"
-msgid "Image/Sequence..."
+msgid "Image/Sequence"
 msgstr "Imatge/seqüència..."
 
 
@@ -133297,8 +133568,9 @@ msgid "Sound Crossfade"
 msgstr "Interfusió de sons"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "Canviar joc de fitoatributs..."
 
 
@@ -133369,8 +133641,9 @@ msgid "Render Sequencer Image"
 msgstr "[Render Sequencer Animation]: Revela l'animació del seqüenciador"
 
 
+# BFA - reworded, Blender: "Fit Preview in Window"
 msgctxt "Operator"
-msgid "Fit Preview in Window"
+msgid "Fit Preview in window"
 msgstr "Ajustar previsionat a finestra"
 
 
@@ -133487,8 +133760,9 @@ msgid "Show Hidden Strips"
 msgstr "Mostrar segments ocults"
 
 
+# BFA - reworded, Blender: "Insert Keyframe with Keying Set..."
 msgctxt "Operator"
-msgid "Insert Keyframe with Keying Set..."
+msgid "Insert Keyframe with Keying Set"
 msgstr "Inserir fotofita amb joc de fitoatributs..."
 
 
@@ -133820,7 +134094,8 @@ msgid "Follow Current Frame"
 msgstr "Seguir fgr. en curs"
 
 
-msgid "Play In"
+# BFA - reworded, Blender: "Play In"
+msgid "Play in"
 msgstr "Iniciar repr."
 
 
@@ -133828,7 +134103,8 @@ msgid "Active Editor"
 msgstr "Editor actiu"
 
 
-msgid "Properties and Sidebars"
+# BFA - reworded, Blender: "Properties and Sidebars"
+msgid "Properties Editor and Sidebars"
 msgstr "Propietats i barres laterials"
 
 
@@ -133992,8 +134268,9 @@ msgid "Find Missing Files..."
 msgstr "Cercar documents extraviats..."
 
 
+# BFA - reworded, Blender: "Batch-Generate Previews..."
 msgctxt "Operator"
-msgid "Batch-Generate Previews..."
+msgid "Batch-Generate Preview"
 msgstr "Generar previsionats en sèrie..."
 
 
@@ -134012,8 +134289,9 @@ msgid "Render Animation"
 msgstr "Revelar animació"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Revelar àudio..."
 
 
@@ -134037,8 +134315,9 @@ msgid "Repeat History..."
 msgstr "Repetir l'historial..."
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "Cerca amb menú..."
 
 
@@ -134124,8 +134403,9 @@ msgid "Render Image"
 msgstr "Revelar imatge"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "Cerca d'operador..."
 
 
@@ -134202,7 +134482,8 @@ msgid "User Tooltips"
 msgstr "Pistes d'usuària"
 
 
-msgid "Sort by Most Recent"
+# BFA - reworded, Blender: "Sort by Most Recent"
+msgid "Sort Search by Most Recent"
 msgstr "Ordenar per més recent"
 
 
@@ -134252,7 +134533,8 @@ msgid "Video Memory"
 msgstr "Memòria de vídeo"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Versió del Blender"
 
 
@@ -134490,7 +134772,8 @@ msgid "Excluded Paths"
 msgstr "Rutes exclosos"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "Autodesats"
 
 
@@ -134827,8 +135110,9 @@ msgid "More/Less"
 msgstr "Més/menys"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Seleccionar patró..."
 
 
@@ -134936,8 +135220,9 @@ msgid "By Attribute"
 msgstr "Segons atribut"
 
 
+# BFA - reworded, Blender: "Control Point Row"
 msgctxt "Operator"
-msgid "Control Point Row"
+msgid "Control Point row"
 msgstr "Filera de punts de control"
 
 
@@ -135060,23 +135345,27 @@ msgid "Fur"
 msgstr "Pelatge"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "Superfície Nurbs"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "Cilindre Nurbs"
 
 
+# BFA - reworded, Blender: "Nurbs Sphere"
 msgctxt "Operator"
-msgid "Nurbs Sphere"
+msgid "Surface Sphere"
 msgstr "Esfera Nurbs"
 
 
+# BFA - reworded, Blender: "Nurbs Torus"
 msgctxt "Operator"
-msgid "Nurbs Torus"
+msgid "Surface Torus"
 msgstr "Tor Nurbs"
 
 
@@ -135090,8 +135379,9 @@ msgid "Camera"
 msgstr "Càmera"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "Importar OpenVDB..."
 
 
@@ -135115,8 +135405,9 @@ msgid "Speaker"
 msgstr "Altaveu"
 
 
+# BFA - reworded, Blender: "Mesh Plane..."
 msgctxt "Operator"
-msgid "Mesh Plane..."
+msgid "Mesh Plane"
 msgstr "Malla pla..."
 
 
@@ -135160,8 +135451,9 @@ msgid "Origin"
 msgstr "Origen"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "Reanomenar objecte actiu..."
 
 
@@ -135604,13 +135896,15 @@ msgid "Calculate"
 msgstr "Calcular"
 
 
+# BFA - reworded, Blender: "Assign to New Collection"
 msgctxt "Operator"
-msgid "Assign to New Collection"
+msgid "Assign to New"
 msgstr "Assignar a nova col·lecció"
 
 
+# BFA - reworded, Blender: "Add (with Targets)..."
 msgctxt "Operator"
-msgid "Add (with Targets)..."
+msgid "Add (with Targets)"
 msgstr "Sumar (amb referents)..."
 
 
@@ -135744,8 +136038,9 @@ msgid "Rotate..."
 msgstr "Rotar..."
 
 
+# BFA - reworded, Blender: "Point to Target..."
 msgctxt "Operator"
-msgid "Point to Target..."
+msgid "Point normals to target"
 msgstr "Apuntar a referent.."
 
 
@@ -135882,7 +136177,8 @@ msgid "Color Opacity"
 msgstr "Opacitat de color"
 
 
-msgid "Attribute Text"
+# BFA - reworded, Blender: "Attribute Text"
+msgid "Attribute Text Overlay"
 msgstr "Text d'atribut"
 
 
@@ -135996,8 +136292,9 @@ msgid "Project from View (Bounds)"
 msgstr "Projectar des de vista (límits)"
 
 
+# BFA - reworded, Blender: "Center Last Stroke"
 msgctxt "Operator"
-msgid "Center Last Stroke"
+msgid "Frame Last Stroke"
 msgstr "Centrar a últim traç"
 
 
@@ -136298,13 +136595,15 @@ msgid "Recalculate Inside"
 msgstr "Recalcular interior"
 
 
+# BFA - reworded, Blender: "Copy Vector"
 msgctxt "Operator"
-msgid "Copy Vector"
+msgid "Copy Vectors"
 msgstr "Copiar vector"
 
 
+# BFA - reworded, Blender: "Paste Vector"
 msgctxt "Operator"
-msgid "Paste Vector"
+msgid "Paste Vectors"
 msgstr "Enganxar vector"
 
 
@@ -137099,8 +137398,9 @@ msgid "No brush selected"
 msgstr "No hi cap pinzell seleccionat"
 
 
+# BFA - reworded, Blender: "Duplicate Asset..."
 msgctxt "Operator"
-msgid "Duplicate Asset..."
+msgid "Duplicate Asset"
 msgstr "Duplicar Recurs..."
 
 
@@ -138745,7 +139045,8 @@ msgid "worlds"
 msgstr "mons"
 
 
-msgid "Library database with null library data-block pointer!"
+# BFA - reworded, Blender: "Library database with null library data-block pointer!"
+msgid "Library database with null library data pointer!"
 msgstr "Base de dades de biblioteca amb un indicador de bloc de dades de biblioteca nul!"
 
 
@@ -139355,11 +139656,17 @@ msgid "NLA Track is the only one evaluated in this animation data-block, with al
 msgstr "La pista d'ANL és l'única avaluada en aquest bloc de dades d'animació, i totes les altres estan silenciades"
 
 
-msgid "Editability of keyframes for this channel"
+# BFA - reworded, Blender: "Editability of keyframes for this channel"
+msgid ""
+"Lock Channel\n"
+"Editability of keyframes for this channel"
 msgstr "Editabilitat de fotofites dins aquest canal"
 
 
-msgid "Editability of NLA Strips in this track"
+# BFA - reworded, Blender: "Editability of NLA Strips in this track"
+msgid ""
+"Lock Channel\n"
+"Editability of NLA Strips in this track"
 msgstr "Editabilitat de segments d'ANL en aquesta pista"
 
 
@@ -140442,7 +140749,8 @@ msgid "Asset catalogs cannot be edited in this asset library"
 msgstr "Els catàlegs de recursos no es poden editar en aquesta biblioteca de recursos"
 
 
-msgid "Cannot save asset catalogs before the Blender file is saved"
+# BFA - reworded, Blender: "Cannot save asset catalogs before the Blender file is saved"
+msgid "Cannot save asset catalogs before the .blend file is saved"
 msgstr "No es poden desar els catàlegs de recursos abans de desar el document Blender"
 
 
@@ -146600,7 +146908,8 @@ msgid "Offset:"
 msgstr "Decalatge:"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr "Àrea de patró:"
 
 
@@ -146612,7 +146921,8 @@ msgid "Height:"
 msgstr "Alçada:"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr "Àrea de cerca:"
 
 
@@ -147782,7 +148092,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "No s'ha pogut afegir el modificador a (%s : %s) (consulta la consola per detalls)"
 
 
-msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+# BFA - reworded, Blender: "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
+msgid "No active AnimData block to use (select a data expander first or set the appropriate flags on an AnimData block)"
 msgstr "No hi ha cap bloc actiu d'AnimData per usar (selecciona primer un expansor de blocs de dades o defineix els indicadors apropiats en un bloc d'AnimData)"
 
 
@@ -148799,7 +149110,8 @@ msgid "External library data is not editable"
 msgstr "Les dades de biblioteques externes no són editables"
 
 
-msgid "Overridden data-blocks names are not editable"
+# BFA - reworded, Blender: "Overridden data-blocks names are not editable"
+msgid "Overridden data names are not editable"
 msgstr "Els blocs de dades sobreseguts no són editables"
 
 
@@ -148811,7 +149123,8 @@ msgid "No active item to rename"
 msgstr "No hi ha cap element actiu per canviar-ne el nom"
 
 
-msgid "No selected data-blocks to copy"
+# BFA - reworded, Blender: "No selected data-blocks to copy"
+msgid "No selected data to copy"
 msgstr "No hi ha blocs de dades seleccionats per copiar"
 
 
@@ -148823,7 +149136,8 @@ msgid "Operation requires an active keying set"
 msgstr "L'operació requereix un joc de fitoatributs actiu"
 
 
-msgid "No orphaned data-blocks to purge"
+# BFA - reworded, Blender: "No orphaned data-blocks to purge"
+msgid "No orphaned data to purge"
 msgstr "No hi ha blocs de dades orfes per purgar"
 
 
@@ -148875,7 +149189,8 @@ msgid "Copied %d selected data-block(s)"
 msgstr "S'ha(n) copiat %d bloc(s) de dades seleccionat(s)"
 
 
-msgid "%d data-block(s) pasted"
+# BFA - reworded, Blender: "%d data-block(s) pasted"
+msgid "%d data pasted"
 msgstr "S'ha(n) enganxat %d bloc(s) de dades"
 
 
@@ -149954,7 +150269,8 @@ msgid "Mean Vertex Crease:"
 msgstr "Cairat mitjà de vèrtexs:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Radi X:"
 
 
@@ -154772,7 +155088,8 @@ msgid "WeightedNormal"
 msgstr "Normal_ponderada"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Influència global:"
 
 
@@ -163561,7 +163878,8 @@ msgid "Pose Library"
 msgstr "Biblioteca de poses"
 
 
-msgid "Pose Library based on the asset system."
+# BFA - reworded, Blender: "Pose Library based on the asset system."
+msgid "Pose Library based on the asset system"
 msgstr "Biblioteca de poses basada en el sistema de recursos."
 
 
@@ -167776,3 +168094,439 @@ msgstr "Escala cada corba de manera uniforme per assolir la longitud buscada"
 msgid "Distance from the ground plane"
 msgstr "Distància des del pla de terra"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Partionador de poses (Legacy)"
+
+# BFA - reworded, Blender: "Push Pose from Breakdown"
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "Empènyer posa des de partió (Legacy)"
+
+# BFA - reworded, Blender: "Relax Pose to Breakdown"
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "Relaxar posa a partió (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Màscares"
+
+# BFA - reworded, Blender: "Zero Weights"
+msgid "     Zero Weights"
+msgstr "     Pesos zero"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Unir rastres"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " Margenar"
+
+# BFA - reworded, Blender: "Font size to use for displaying the text"
+msgid "Adjust the font size for displaying the text"
+msgstr "Mida del font per a mostrar el text"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "Seleccionar tot per trets"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "Seleccionar tot per tipus"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "Dades d'animació per al bloc de dades"
+
+# BFA - reworded, Blender: "Apply All"
+msgctxt "Operator"
+msgid "Apply All Shape Keys"
+msgstr "Aplicar-les totes"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "Autofitar"
+
+# BFA - reworded, Blender: "Bake to Keyframes"
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "Precuinar a fotofites"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Selecció de caixa (Legacy)"
+
+# BFA - reworded, Blender: "Cached Range"
+msgid "Cached Range (Info)"
+msgstr "Interval en memòria cau (Info)"
+
+# BFA - reworded, Blender: "Clear Data-Block Previews"
+msgctxt "Operator"
+msgid "Clear Data Previews"
+msgstr "Retirar previsionats de blocs de dades"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "Inici de segat"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Inici de segat"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "Col·leccions d'instàncies"
+
+# BFA - reworded, Blender: "Delete All"
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Eliminar-les totes"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Eliminar"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Profunditat"
+
+# BFA - reworded, Blender: "Display overlay text"
+msgid "Display overlay text.\nAlso affects the Geometry Nodes viewer overlay"
+msgstr "[General Info]: Mostra el text en una sobreimpressió"
+
+# BFA - reworded, Blender: "Euclidean"
+msgid "Euclidean Distance"
+msgstr "Euclidià"
+
+# BFA - reworded, Blender: "Extrude region together along local normals"
+msgid "Extrude Region Vertex Normals\nExtrude region together along local normals"
+msgstr "[Extrude Faces Along Normals]: Extrudeix conjuntament la regió seguint les normals locals"
+
+# BFA - reworded, Blender: "Auto-Masking"
+msgid "Global Auto Masking"
+msgstr "Autoemmascarament"
+
+# BFA - reworded, Blender: "Jump cursor to line"
+msgctxt "Operator"
+msgid "Go To Line"
+msgstr "[Jump]: Fa saltar el cursor fins a la línia"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Moure"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "Selecció grupal"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Selecció grupal"
+
+# BFA - reworded, Blender: "Insert Into Group"
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "Inserir al grup"
+
+# BFA - reworded, Blender: "Instance Collections on Appending"
+msgid "Instance Collections on Appending or Linking"
+msgstr "Col·leccions d'instàncies en Incorporar"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Invertir direcció de zoom"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "Prosseguible"
+
+# BFA - reworded, Blender: "Set type of handle for selected keyframes"
+msgid "Keyframe Handle Type\nSet type of handle for selected keyframes"
+msgstr "[Set Keyframe Handle Type]: Especifica el tipus de nansa per a les fotofites seleccionades"
+
+# BFA - reworded, Blender: "Linked from"
+msgctxt "Operator"
+msgid "Linked From"
+msgstr "Vinculat des de"
+
+# BFA - reworded, Blender: "Linked to"
+msgctxt "Operator"
+msgid "Linked To"
+msgstr "Vinculat a"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "Manhattan"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "Selecció al fotograma més proper"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "Selecció al fotograma més pròxim"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "Selecció al segon més propera"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "Selecció al segon més pròxim"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "Nou doc"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "Cerca d'operador..."
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Orientació"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "Notes de la distribució"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "Mostrar versió"
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "Jocs de cares"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "Mostrar dins"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Màscara"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Mostrar"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Encongir/inflar"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Seleccionar similar"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Seleccionar similar"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Cercle Nurbs"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Tipus"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "No assignats (Catalogue)"
+
+# BFA - reworded, Blender: "Uninstall"
+msgctxt "Operator"
+msgid "Uninstall from System"
+msgstr "Desinstal·lar"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets"
+msgstr "No-recursos"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets:"
+msgstr "No-recursos"
+
+# BFA - reworded, Blender: "Use internal text data-block"
+msgid "Use internal text data"
+msgstr "Usa el bloc de dades de text intern"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "Vectors de rapidesa"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "Amplada de línia"
+
+# BFA - reworded, Blender: "You can adjust this later from \"System\" preferences."
+msgid "You can adjust online access from \"System\" preferences."
+msgstr "Això es pot ajustar més tard des de les preferències del \"Sistema\"."
+
+# BFA - reworded, Blender: "Zoom to Border"
+msgctxt "Operator"
+msgid "Zoom Border"
+msgstr "Zoom a secció"
+
+# BFA - reworded Blender string
+msgid "Show the assets currently available in this Bforartists session"
+msgstr "[Current File]: Mostra els recursos actualment disponibles en aquesta sessió de Bforartists"
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "[Link]: Importa els recursos com a bloc de dades vinculat"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "[Append]: Importa els recursos com a blocs de dades copiats, sense que resti cap vincle al bloc de dades del recurs d'origen"
+
+# BFA - reworded, Blender: "Clear Fake User and remove copy stashed in this data-block's NLA stack"
+msgid "Clear Fake User and remove copy stashed in this data's NLA stack"
+msgstr "[Force Delete]: Retira l'usador fals i suprimeix la còpia dipositada a l'estiba NLA d'aquest bloc de dades"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Plegar de Bforartists"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "[Quit]: Per sortir del Bforartists"
+
+# BFA - reworded Blender string
+msgid "Exit Bforartists after saving"
+msgstr "[Exit]: Surt del Bforartists després de desar"
+
+# BFA - reworded Blender string
+msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+msgstr "[Save Incremental]: Desa el document de Bforartists actual amb un nom numèricament incrementat perquè no sobreescrigui cap document ja existent"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "Quant al Bforartists"
+
+# BFA - reworded Blender string
+msgid "Open a window with information about Bforartists"
+msgstr "Obre una finestra amb informació sobre el Bforartists"
+
+# BFA - reworded Blender string
+msgid "Online access required to install or update. Launch Bforartists without --offline-mode"
+msgstr "Es requereix accés en línia per instal·lar o actualitzar. Inicieu Bforartists sense el --mode-foradelinia"
+
+# BFA - reworded Blender string
+msgid "Launch Bforartists without --offline-mode"
+msgstr "Inicieu Bforartists sense --mode-foradelinia"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "El Bforartists és programari lliure"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Lloc web del Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "View Extension"
+msgstr "Visionar extensió"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Install Application Template"
+msgstr "Instal·lar plantilla d'aplicació"
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Versió del Bforartists"
+
+# BFA - reworded Blender string
+msgid "A restart of Bforartists is required"
+msgstr "Cal reiniciar el Bforartists"
+
+# BFA - reworded Blender string
+msgid "Open blend files with this Bforartists version"
+msgstr "Obrir documents blend amb aquesta versió de Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Edit Preview Image"
+msgstr "Editar imatge de previsionat"
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system and cannot be overridden"
+msgstr "Document gestionat pel sistema de recursos de Bforartists i que no es pot sobreseure"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Revelat del Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Drivers Editor"
+msgstr "Editor de controladors del Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists Info Log"
+msgstr "Registre d'info del Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Visionat de documents del Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists will start next time as it is now."
+msgstr "El Bforartists s'iniciarà la pròxima vegada com està ara."
+
+# BFA - reworded Blender string
+msgid "Load Factory Bforartists Preferences"
+msgstr "Carregar preferències de fàbrica del Bforartists"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system. It can only be"
+msgstr "Aquest document el gestiona el sistema de recursos de Bforartists. Només pot ser"
+
+# BFA - reworded Blender string
+msgid "with an older Bforartists version?"
+msgstr "amb una versió anterior de Bforartists?"
+
+# BFA - reworded Blender string
+msgid "Overwrite file with an older Bforartists version?"
+msgstr "Sobreescriure el document amb una versió anterior de Bforartists?"
+
+# BFA - reworded Blender string
+msgid "Proxies have been removed from Bforartists (%d proxies were automatically converted to library overrides, %d proxies could not be converted and were cleared). Consider re-saving any library .blend file with the newest Blender version"
+msgstr "S'han suprimit les simulacions del Bforartists (%d simulacions s'han convertit automàticament a sobreseïments de biblioteca, %d simulacions no s'han pogut convertir i s'han retirat). Considera de tornar a desar qualsevol document de biblioteca .blend amb la versió més recent del Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Newer graphics drivers might be available with better Bforartists compatibility."
+msgstr "Poden estar disponibles controladors de gràfics més recents de millor compatibilitat amb Bforartists."
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "L'actualització a la darrera versió d'SO de pot millorar la compatibilitat de Bforartists"

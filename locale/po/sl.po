@@ -900,7 +900,8 @@ msgid "Animation Data"
 msgstr "Animacijski podatki"
 
 
-msgid "Animation data for data-block"
+# BFA - reworded, Blender: "Animation data for data-block"
+msgid "Animation data for data"
 msgstr "Animacijski podatki za podatkovni blok"
 
 
@@ -908,7 +909,8 @@ msgid "Action"
 msgstr "Akcija"
 
 
-msgid "Active Action for this data-block"
+# BFA - reworded, Blender: "Active Action for this data-block"
+msgid "Active Action for this data"
 msgstr "Aktivna akcija za ta podatkovni blok"
 
 
@@ -1044,7 +1046,8 @@ msgid "Drivers"
 msgstr "Vodniki"
 
 
-msgid "The Drivers/Expressions for this data-block"
+# BFA - reworded, Blender: "The Drivers/Expressions for this data-block"
+msgid "The Drivers/Expressions for this data"
 msgstr "Vodniki/izrazi za ta podatkovni blok"
 
 
@@ -1600,7 +1603,8 @@ msgid "Show Menus"
 msgstr "Pokaži menije"
 
 
-msgid "Show menus in the header"
+# BFA - reworded, Blender: "Show menus in the header"
+msgid "Show Show menus in the header"
 msgstr "Pokaže menije v glavi"
 
 
@@ -1728,7 +1732,8 @@ msgid "Outliner"
 msgstr "Pregled vsebine"
 
 
-msgid "Overview of scene graph and all available data-blocks"
+# BFA - reworded, Blender: "Overview of scene graph and all available data-blocks"
+msgid "Overview of scene graph and all available data"
 msgstr "Pregled sestave prizora in vseh razpoložljivih podatkovnih blokov"
 
 
@@ -1736,7 +1741,8 @@ msgid "Properties"
 msgstr "Lastnosti"
 
 
-msgid "Edit properties of active object and related data-blocks"
+# BFA - reworded, Blender: "Edit properties of active object and related data-blocks"
+msgid "Edit properties of active object and related data"
 msgstr "Za urejanje lastnosti aktivnega predmeta in sorodnih podatkovnih blokov"
 
 
@@ -2477,7 +2483,8 @@ msgid "Worlds"
 msgstr "Svetovi"
 
 
-msgid "Show World data-blocks"
+# BFA - reworded, Blender: "Show World data-blocks"
+msgid "Show World data"
 msgstr "Pokaže podatkovne bloke svetov"
 
 
@@ -2932,7 +2939,8 @@ msgid "Bake Data"
 msgstr "Zapečeni podatki"
 
 
-msgid "Bake data for a Scene data-block"
+# BFA - reworded, Blender: "Bake data for a Scene data-block"
+msgid "Bake data for a Scene"
 msgstr "Zapečeni podatki za podatkovni blok prizora"
 
 
@@ -3132,7 +3140,8 @@ msgid "Internal"
 msgstr "Notranji"
 
 
-msgid "Save the baking map in an internal image data-block"
+# BFA - reworded, Blender: "Save the baking map in an internal image data-block"
+msgid "Save the baking map in an internal image file"
 msgstr "Shrani zapečeno teksturo v notranji slikovni podatkovni blok"
 
 
@@ -3420,11 +3429,13 @@ msgid "Blend-File Data"
 msgstr "Podatki datoteke Blend"
 
 
-msgid "Main data structure representing a .blend file and all its data-blocks"
+# BFA - reworded, Blender: "Main data structure representing a .blend file and all its data-blocks"
+msgid "Main data structure representing a .blend file and all its data"
 msgstr "Glavna podatkovna struktura, ki predstavlja datoteko .blend in vse njene podatkovne bloke"
 
 
-msgid "Action data-blocks"
+# BFA - reworded, Blender: "Action data-blocks"
+msgid "Action data"
 msgstr "Akcijski podatkovni bloki"
 
 
@@ -3440,23 +3451,28 @@ msgid "Annotation data-blocks (legacy Grease Pencil)"
 msgstr "Podatkovni bloki zaznamkov (predhodnik Grease Pencila)"
 
 
-msgid "Armature data-blocks"
+# BFA - reworded, Blender: "Armature data-blocks"
+msgid "Armature data"
 msgstr "Podatkovni bloki okostij"
 
 
-msgid "Brush data-blocks"
+# BFA - reworded, Blender: "Brush data-blocks"
+msgid "Brush data"
 msgstr "Podatkovni bloki čopičev"
 
 
-msgid "Cache Files data-blocks"
+# BFA - reworded, Blender: "Cache Files data-blocks"
+msgid "Cache Files data"
 msgstr "Podatkovni bloki predpomnilniških datotek"
 
 
-msgid "Camera data-blocks"
+# BFA - reworded, Blender: "Camera data-blocks"
+msgid "Camera data"
 msgstr "Podatkovni bloki kamer"
 
 
-msgid "Collection data-blocks"
+# BFA - reworded, Blender: "Collection data-blocks"
+msgid "Collection data"
 msgstr "Podatkovni bloki zbirk"
 
 
@@ -3468,7 +3484,8 @@ msgid "Information about the color space used for data-blocks in a blend file"
 msgstr "Informacije o barvnem prostoru podatkovnih blokov v datoteki blend"
 
 
-msgid "Curve data-blocks"
+# BFA - reworded, Blender: "Curve data-blocks"
+msgid "Curve data"
 msgstr "Podatkovni bloki krivulj"
 
 
@@ -3484,7 +3501,8 @@ msgid "Vector Fonts"
 msgstr "Vektorske pisave"
 
 
-msgid "Vector font data-blocks"
+# BFA - reworded, Blender: "Vector font data-blocks"
+msgid "Vector font data"
 msgstr "Podatkovni bloki vektorskih pisav"
 
 
@@ -3492,11 +3510,13 @@ msgid "Grease Pencil data-blocks"
 msgstr "Podatkovni bloki za Grease Pencil"
 
 
-msgid "Hair curve data-blocks"
+# BFA - reworded, Blender: "Hair curve data-blocks"
+msgid "Hair curve data"
 msgstr "Podatkovni bloki dlačnih krivulj"
 
 
-msgid "Image data-blocks"
+# BFA - reworded, Blender: "Image data-blocks"
+msgid "Image data"
 msgstr "Podatkovni bloki slik"
 
 
@@ -3516,7 +3536,8 @@ msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Ali je bila trenutna seja shranjena na disk kot datoteka .blend"
 
 
-msgid "Lattice data-blocks"
+# BFA - reworded, Blender: "Lattice data-blocks"
+msgid "Lattice data"
 msgstr "Podatkovni bloki kontrolnih rešetk"
 
 
@@ -3524,15 +3545,18 @@ msgid "Libraries"
 msgstr "Knjižnice"
 
 
-msgid "Library data-blocks"
+# BFA - reworded, Blender: "Library data-blocks"
+msgid "Library data"
 msgstr "Podatkovni bloki knjižnic"
 
 
-msgid "Light Probe data-blocks"
+# BFA - reworded, Blender: "Light Probe data-blocks"
+msgid "Light Probe data"
 msgstr "Podatkovni bloki svetlobnih sond"
 
 
-msgid "Light data-blocks"
+# BFA - reworded, Blender: "Light data-blocks"
+msgid "Light data"
 msgstr "Podatkovni bloki luči"
 
 
@@ -3540,27 +3564,33 @@ msgid "Line Styles"
 msgstr "Slogi poteze"
 
 
-msgid "Line Style data-blocks"
+# BFA - reworded, Blender: "Line Style data-blocks"
+msgid "Line Style data"
 msgstr "Podatkovni bloki slogov poteze"
 
 
-msgid "Masks data-blocks"
+# BFA - reworded, Blender: "Masks data-blocks"
+msgid "Masks data"
 msgstr "Podatkovni bloki mask"
 
 
-msgid "Material data-blocks"
+# BFA - reworded, Blender: "Material data-blocks"
+msgid "Material data"
 msgstr "Podatkovni bloki materialov"
 
 
-msgid "Mesh data-blocks"
+# BFA - reworded, Blender: "Mesh data-blocks"
+msgid "Mesh data"
 msgstr "Mrežni podatkovni bloki"
 
 
-msgid "Metaball data-blocks"
+# BFA - reworded, Blender: "Metaball data-blocks"
+msgid "Metaball data"
 msgstr "Podatkovni bloki metažog"
 
 
-msgid "Movie Clip data-blocks"
+# BFA - reworded, Blender: "Movie Clip data-blocks"
+msgid "Movie Clip data"
 msgstr "Podatkovni bloki video izrezkov"
 
 
@@ -3568,7 +3598,8 @@ msgid "Node Groups"
 msgstr "Skupine vozlišč"
 
 
-msgid "Node group data-blocks"
+# BFA - reworded, Blender: "Node group data-blocks"
+msgid "Node group data"
 msgstr "Podatkovni bloki skupin vozlišč"
 
 
@@ -3576,11 +3607,13 @@ msgid "Object data-blocks"
 msgstr "Podatkovni bloki predmetov"
 
 
-msgid "Paint Curves data-blocks"
+# BFA - reworded, Blender: "Paint Curves data-blocks"
+msgid "Paint Curves data"
 msgstr "Podatkovni bloki risalnih krivulj"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Podatkovni bloki palet"
 
 
@@ -3588,7 +3621,8 @@ msgid "Particles"
 msgstr "Delci"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Podatkovni bloki delcev"
 
 
@@ -3605,7 +3639,8 @@ msgid "The currently active Blender project, if any"
 msgstr "Trenutno aktivni Blenderjev projekt, če obstaja"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Podatkovni bloki prizorov"
 
 
@@ -3613,7 +3648,8 @@ msgid "Screens"
 msgstr "Zasloni"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Podatkovni bloki zaslonov"
 
 
@@ -3621,15 +3657,18 @@ msgid "Shape Keys"
 msgstr "Oblikovni ključi"
 
 
-msgid "Shape Key data-blocks"
+# BFA - reworded, Blender: "Shape Key data-blocks"
+msgid "Shape Key data"
 msgstr "Podatkovni bloki oblikovnih ključev"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Zvočni podatkovni bloki"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Podatkovni bloki zvočnikov"
 
 
@@ -3637,7 +3676,8 @@ msgid "Text data-blocks"
 msgstr "Besedilni podatkovni bloki"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Teksturni podatkovni bloki"
 
 
@@ -3657,7 +3697,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Različica datotečnega formata, v katerem je bila shranjena datoteka .blend"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Podatkovni bloki volumnov"
 
 
@@ -3665,15 +3706,18 @@ msgid "Window Managers"
 msgstr "Upravitelji oken"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Podatkovni bloki upraviteljev oken"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Podatkovni bloki delovnih prostorov"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Podatkovni bloki svetov"
 
 
@@ -4782,7 +4826,8 @@ msgid "Volume"
 msgstr "Volumen"
 
 
-msgid "Bone in an Armature data-block"
+# BFA - reworded, Blender: "Bone in an Armature data-block"
+msgid "Bone in an Armature data"
 msgstr "Kost v okostnem podatkovnem bloku"
 
 
@@ -6580,7 +6625,8 @@ msgid "Stroke"
 msgstr "Poteza"
 
 
-msgid "Painting affects only strokes, not fills"
+# BFA - reworded, Blender: "Painting affects only strokes, not fills"
+msgid "Vertex Color affects to Stroke only"
 msgstr "Barvanje vpliva samo na poteze, ne na polnilo"
 
 
@@ -6588,7 +6634,8 @@ msgid "Fill"
 msgstr "Zapolni"
 
 
-msgid "Painting affects only fills, not strokes"
+# BFA - reworded, Blender: "Painting affects only fills, not strokes"
+msgid "Vertex Color affects to Fill only"
 msgstr "Barvanje vpliva samo na polnilo, ne na poteze"
 
 
@@ -6596,7 +6643,8 @@ msgid "Both"
 msgstr "Oboje"
 
 
-msgid "Painting affects both strokes and fills"
+# BFA - reworded, Blender: "Painting affects both strokes and fills"
+msgid "Vertex Color affects to Stroke and Fill"
 msgstr "Barvanje vpliva na poteze in polnilo"
 
 
@@ -6924,7 +6972,8 @@ msgid "Stereo"
 msgstr "Stereo"
 
 
-msgid "Stereoscopy settings for a Camera data-block"
+# BFA - reworded, Blender: "Stereoscopy settings for a Camera data-block"
+msgid "Stereoscopy settings for a Camera data"
 msgstr "Nastavitve stereoskopije za podatkovni blok kamere"
 
 
@@ -11610,7 +11659,8 @@ msgid "Curve Slice"
 msgstr "Krivuljna rezina"
 
 
-msgid "A single curve from a curves data-block"
+# BFA - reworded, Blender: "A single curve from a curves data-block"
+msgid "A single curve from a curves data"
 msgstr "Posamezna krivulja iz podatkovnega bloka krivulj"
 
 
@@ -12070,7 +12120,8 @@ msgid "Include Missing NLA"
 msgstr "Vključi manjkajočo NLA"
 
 
-msgid "Include animation data-blocks with no NLA data (NLA editor only)"
+# BFA - reworded, Blender: "Include animation data-blocks with no NLA data (NLA editor only)"
+msgid "Include animation data with no NLA data (NLA editor only)"
 msgstr "Vključi animacijske podatkovne bloke brez podatkov NLA (velja samo za urejevalnik NLA)"
 
 
@@ -12078,7 +12129,8 @@ msgid "Display Modifier Data"
 msgstr "Prikaži modifikatorske podatke"
 
 
-msgid "Include visualization of animation data related to data-blocks linked to modifiers"
+# BFA - reworded, Blender: "Include visualization of animation data related to data-blocks linked to modifiers"
+msgid "Include visualization of animation data related to data linked to modifiers"
 msgstr "Vključi vizualizacijo animacijskih podatkov, povezanih s podatkovnimi bloki, vezanimi na modifikatorje"
 
 
@@ -12210,7 +12262,8 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "ID-blok, ki predstavlja izvorne podatke, običajno ID_SCE (t.j. prizor)"
 
 
-msgid "Sort Data-Blocks"
+# BFA - reworded, Blender: "Sort Data-Blocks"
+msgid "Sort Data"
 msgstr "Razvrsti podatkovne bloke"
 
 
@@ -13184,7 +13237,8 @@ msgid "Edit Bone"
 msgstr "Urejevalna kost"
 
 
-msgid "Edit mode bone in an armature data-block"
+# BFA - reworded, Blender: "Edit mode bone in an armature data-block"
+msgid "Editmode bone in an armature data"
 msgstr "Kost v urejevalnem načinu znotraj podatkovnega bloka okostja"
 
 
@@ -16972,7 +17026,8 @@ msgid "Freestyle Settings"
 msgstr "Nastavitve Freestyle"
 
 
-msgid "Freestyle settings for a ViewLayer data-block"
+# BFA - reworded, Blender: "Freestyle settings for a ViewLayer data-block"
+msgid "Freestyle settings for a ViewLayer"
 msgstr "Nastavitve Freestyle za podatkovni blok glediščne plasti"
 
 
@@ -21927,7 +21982,8 @@ msgid "Shader Node Tree"
 msgstr "Vozliščno drevo senčilnika"
 
 
-msgid "Object data-block defining an object in a scene"
+# BFA - reworded, Blender: "Object data-block defining an object in a scene"
+msgid "Object data defining an object in a scene"
 msgstr "Podatkovni blok predmeta, ki definira predmet v prizoru"
 
 
@@ -22923,7 +22979,8 @@ msgid "Relative amount of virtual parents"
 msgstr "Sorazmerno število navideznih staršev"
 
 
-msgid "Scene data-block, consisting in objects and defining time and render related settings"
+# BFA - reworded, Blender: "Scene data-block, consisting in objects and defining time and render related settings"
+msgid "Scene, consisting in objects and defining time and render related settings"
 msgstr "Podatkovni blok prizora, ki ga sestavljajo predmeti in ki določa časovne in upodabljalne nastavitve"
 
 
@@ -36040,8 +36097,9 @@ msgid "Clear Useless Actions"
 msgstr "Počisti neuporabne akcije"
 
 
+# BFA - reworded, Blender: "Export Keying Set..."
 msgctxt "Operator"
-msgid "Export Keying Set..."
+msgid "Export Keying Set"
 msgstr "Izvozi množico ključev ..."
 
 
@@ -36225,7 +36283,10 @@ msgid "Console Banner"
 msgstr "Naslovnica konzole"
 
 
-msgid "Copy the console contents for use in a script"
+# BFA - reworded, Blender: "Copy the console contents for use in a script"
+msgid ""
+"Copy to Clipboard (as script\n"
+"Copy the console contents for use in a script"
 msgstr "Kopira vsebino konzole za lepljenje v program"
 
 
@@ -37852,7 +37913,8 @@ msgid "By Times Over First Selected Marker"
 msgstr "Po časih čez prvo izbrano oznako"
 
 
-msgid "By Values Over Zero Value"
+# BFA - reworded, Blender: "By Values Over Zero Value"
+msgid "By Values Over Value=0"
 msgstr "Po vrednostih čez ničelno vrednost"
 
 
@@ -38026,12 +38088,14 @@ msgid "Stash Action"
 msgstr "Založi akcijo"
 
 
+# BFA - reworded, Blender: "Unlink Action"
 msgctxt "Operator"
-msgid "Unlink Action"
+msgid "Remove Action"
 msgstr "Odveži akcijo"
 
 
-msgid "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+# BFA - reworded, Blender: "Unlink this action from the active action slot (and/or exit Tweak Mode)"
+msgid "Remove this action from the active action slot (and/or exit Tweak Mode)"
 msgstr "Odveže to akcijo od aktivnega akcijskega polja (in/ali preklopi iz načina cukanja)"
 
 
@@ -40779,7 +40843,8 @@ msgid "Pack Linked Libraries"
 msgstr "Zapakiraj povezane knjižnice"
 
 
-msgid "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+# BFA - reworded, Blender: "Store all data-blocks linked from other .blend files in the current .blend file. Library references are preserved so the linked data-blocks can be unpacked again"
+msgid "Pack and store all data linked from other .blend files in the current .blend file. Library references are preserved so the linked data can be unpacked again"
 msgstr "Shrani vse povezane podatkovne bloke iz drugih datotek .blend v trenutno datoteko .blend. Knjižnični sklici se ohranijo, tako da je možno povezane podatkovne bloke ponovno razpakirati"
 
 
@@ -40886,7 +40951,8 @@ msgid "Unpack Linked Libraries"
 msgstr "Razpakiraj povezane knjižnice"
 
 
-msgid "Restore all packed linked data-blocks to their original locations"
+# BFA - reworded, Blender: "Restore all packed linked data-blocks to their original locations"
+msgid "Restore all packed linked data  to their original locations"
 msgstr "Obnovi vse zapakirane povezane podatkovne bloke na njihove prvotne lokacije"
 
 
@@ -41187,8 +41253,9 @@ msgid "Eraser"
 msgstr "Radirka"
 
 
+# BFA - reworded, Blender: "Annotation Unlink"
 msgctxt "Operator"
-msgid "Annotation Unlink"
+msgid "Remove Annotation"
 msgstr "Odpni zaznamek"
 
 
@@ -44422,6 +44489,7 @@ msgid "Use Active"
 msgstr "Uporabi aktivno"
 
 
+# BFA - reworded, Blender: "Delete with Copy and Reconnect"
 msgctxt "Operator"
 msgid "Cut: Delete with Copy and Reconnect"
 msgstr "Izbriši, kopiraj in poveži"
@@ -45003,8 +45071,9 @@ msgid "Custom Camera Update"
 msgstr "Posodobi kamero po meri"
 
 
+# BFA - reworded, Blender: "Add to Collection"
 msgctxt "Operator"
-msgid "Add to Collection"
+msgid "Link to Existing Collection"
 msgstr "Dodaj v zbirko"
 
 
@@ -45259,7 +45328,8 @@ msgid "Hide Objects"
 msgstr "Skrij predmete"
 
 
-msgid "Temporarily hide objects from the viewport"
+# BFA - reworded, Blender: "Temporarily hide objects from the viewport"
+msgid "Temporarily hide selected objects from the viewport"
 msgstr "Začasno skrije predmete v 3D pogledu"
 
 
@@ -46548,7 +46618,8 @@ msgid "Purge All"
 msgstr "Prečisti vse"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file"
+# BFA - reworded, Blender: "Clear all orphaned data-blocks without any users from the file"
+msgid "Clear all orphaned data without any users from the file"
 msgstr "Iz datoteke pobriše vse osirotele podatke, ki jih ne uporablja noben uporabnik"
 
 
@@ -46623,11 +46694,13 @@ msgid "Place Cursor"
 msgstr "Postavi kazalec"
 
 
-msgid "Place cursor"
+# BFA - reworded, Blender: "Place cursor"
+msgid "Place the cursor"
 msgstr "Postavi kazalec"
 
 
-msgid "Draw curve"
+# BFA - reworded, Blender: "Draw curve"
+msgid "Draw a curve"
 msgstr "Nariše krivuljo"
 
 
@@ -46774,7 +46847,7 @@ msgstr "Barve oglišč iz uteži"
 
 
 msgctxt "Operator"
-msgid "Set Vertex Color"
+msgid "Set Vertex Colors"
 msgstr "Nastavi barve oglišč"
 
 
@@ -46969,6 +47042,7 @@ msgid "Remove Selected Bones"
 msgstr "Odstrani izbrane kosti"
 
 
+# BFA - reworded, Blender: "Create Pose Asset..."
 msgctxt "Operator"
 msgid "Create Pose Asset"
 msgstr "Ustvari pozirno sredstvo ..."
@@ -47021,7 +47095,7 @@ msgstr "Prelij pozo v mirovalno pozo"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "Razčlenitev poze"
 
 
@@ -47048,7 +47122,8 @@ msgid "Copy Pose"
 msgstr "Kopiraj pozo"
 
 
-msgid "Tag selected bones to not be visible in Pose Mode"
+# BFA - reworded, Blender: "Tag selected bones to not be visible in Pose Mode"
+msgid "Hide selected bones in Pose Mode"
 msgstr "Označi izbrane kosti, da ne bodo vidne v pozirnem načinu"
 
 
@@ -47085,7 +47160,7 @@ msgstr "Pred okvirjem"
 
 
 msgctxt "Operator"
-msgid "Push Pose from Breakdown (Legacy)"
+msgid "Push Pose from Breakdown"
 msgstr "Porini pozo iz razčlenitve"
 
 
@@ -47095,7 +47170,7 @@ msgstr "Preobrni kvaternione"
 
 
 msgctxt "Operator"
-msgid "Relax Pose to Breakdown (Legacy)"
+msgid "Relax Pose to Breakdown"
 msgstr "Zrahljaj pozo proti razčlenitvi"
 
 
@@ -47923,7 +47998,8 @@ msgid "Reload Scripts"
 msgstr "Ponovno naloži programe"
 
 
-msgid "Reload scripts"
+# BFA - reworded, Blender: "Reload scripts"
+msgid "Reload all Python Scripts, including the UI"
 msgstr "Ponovno naloži programe"
 
 
@@ -48943,12 +49019,14 @@ msgid "Update the audio animation cache"
 msgstr "Posodobi predpomnilnik zvočne animacije"
 
 
+# BFA - reworded, Blender: "Mixdown"
 msgctxt "Operator"
-msgid "Mixdown"
+msgid "Mixdown Audio"
 msgstr "Sploščitev"
 
 
-msgid "Mix the scene's audio to a sound file"
+# BFA - reworded, Blender: "Mix the scene's audio to a sound file"
+msgid "Mixdown and export the scene's audio to a sound file"
 msgstr "Zmeša zvok iz prizora v zvočno datoteko"
 
 
@@ -49643,8 +49721,9 @@ msgid "Material Mode"
 msgstr "Način materiala"
 
 
+# BFA - reworded, Blender: "Eyedropper Data-Block"
 msgctxt "Operator"
-msgid "Eyedropper Data-Block"
+msgid "Eyedropper Data"
 msgstr "Kapalka podatkovnega bloka"
 
 
@@ -50099,8 +50178,9 @@ msgid "Amount of Faces in Island"
 msgstr "Količina lic v otoku"
 
 
+# BFA - reworded, Blender: "Select Split"
 msgctxt "Operator"
-msgid "Select Split"
+msgid "Split Selection"
 msgstr "Izberi razcepljene"
 
 
@@ -51320,7 +51400,8 @@ msgid "Clear Data-Block Previews"
 msgstr "Počisti predoglede blokov"
 
 
-msgid "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+# BFA - reworded, Blender: "Clear data-block previews (only for some types like objects, materials, textures, etc.)"
+msgid "Clear data previews (only for some types like objects, materials, textures, etc.)"
 msgstr "Počisti predoglede podatkovnih blokov (mogoče le za nekatere tipe podatkov, kot so predmeti, materiali, teksture itd.)"
 
 
@@ -51332,12 +51413,14 @@ msgid "All Types"
 msgstr "Vsi tipi"
 
 
+# BFA - reworded, Blender: "Refresh Data-Block Previews"
 msgctxt "Operator"
-msgid "Refresh Data-Block Previews"
+msgid "Refresh Data Previews"
 msgstr "Osveži predoglede blokov"
 
 
-msgid "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+# BFA - reworded, Blender: "Ensure data-block previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
+msgid "Ensure data previews are available and up-to-date (to be saved in .blend file, only for some types like materials, textures, etc.)"
 msgstr "Poskrbi, da so predogledi podatkovnih blokov na voljo in ažurni (za shranjevanje v datoteko .blend; velja samo za nekatere tipe, kot so materiali, teksture itd.)"
 
 
@@ -51624,12 +51707,14 @@ msgid "Make the current file the default startup file"
 msgstr "Nastavi, da se trenutna datoteka privzeto odpre ob zagonu"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Shrani datoteko Blender"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Shrani trenutno datoteko Blenderja"
 
 
@@ -51664,7 +51749,8 @@ msgid "Search Operator"
 msgstr "Išči operator"
 
 
-msgid "Pop-up a search over all available operators in current context"
+# BFA - reworded, Blender: "Pop-up a search over all available operators in current context"
+msgid "Pop-up a search panel for all available operators in current context"
 msgstr "Izvede iskanje po vseh razpoložljivih operatorjih v trenutnem kontekstu"
 
 
@@ -52492,7 +52578,8 @@ msgid "New World"
 msgstr "Nov svet"
 
 
-msgid "Create a new world Data-Block"
+# BFA - reworded, Blender: "Create a new world Data-Block"
+msgid "Create a new world Data"
 msgstr "Ustvari nov podatkovni blok sveta"
 
 
@@ -53005,7 +53092,8 @@ msgid "Tracking Settings"
 msgstr "Obrisne nastavitve"
 
 
-msgid "Tracking Settings Extras"
+# BFA - reworded, Blender: "Tracking Settings Extras"
+msgid "Tracking Options Extras"
 msgstr "Dodatne nastavitve obrisovanja"
 
 
@@ -55088,7 +55176,8 @@ msgid "Duplicate Action"
 msgstr "Podvoji akcijo"
 
 
-msgid "Causes actions to be duplicated with the data-blocks"
+# BFA - reworded, Blender: "Causes actions to be duplicated with the data-blocks"
+msgid "Causes actions to be duplicated with the data"
 msgstr "Povzroči podvajanje akcij skupaj s podatkovnimi bloki"
 
 
@@ -55392,7 +55481,8 @@ msgid "Save Versions"
 msgstr "Shranjene različice"
 
 
-msgid "Show Hidden Files/Data-Blocks"
+# BFA - reworded, Blender: "Show Hidden Files/Data-Blocks"
+msgid "Show Hidden Files/Data"
 msgstr "Pokaži skrite datoteke / podatkovne bloke"
 
 
@@ -55546,7 +55636,8 @@ msgid "Pan Sensitivity"
 msgstr "Občutljivost premika"
 
 
-msgid "Zoom direction"
+# BFA - reworded, Blender: "Zoom direction"
+msgid "Zoom Direction"
 msgstr "Smer zuma"
 
 
@@ -56914,7 +57005,8 @@ msgid "Translate all labels in menus, buttons and panels (note that this might m
 msgstr "Prevede vse oznake v menijih, gumbih in ploščah (ta možnost lahko oteži sledenje navodilom v priročniku)"
 
 
-msgid "Translate the names of new data-blocks (objects, materials...)"
+# BFA - reworded, Blender: "Translate the names of new data-blocks (objects, materials...)"
+msgid "Translate the names of new data (objects, materials...)"
 msgstr "Prevede imena novih podatkovnih blokov (predmetov, materialov ...)"
 
 
@@ -59209,7 +59301,8 @@ msgid "Attenuation constant"
 msgstr "Konstanta slabljenja"
 
 
-msgid "Distance of object that contribute to the cavity/edge effect"
+# BFA - reworded, Blender: "Distance of object that contribute to the cavity/edge effect"
+msgid "Distance of object that contribute to the Cavity/Edge effect"
 msgstr "Oddaljenost predmetov, ki prispevajo k učinku reliefa/roba"
 
 
@@ -66404,7 +66497,8 @@ msgid "Repository Alert:"
 msgstr "Opozorilo za repozitorij:"
 
 
-msgid "Internet access is required to install and update online extensions. "
+# BFA - reworded, Blender: "Internet access is required to install and update online extensions. "
+msgid "Internet access is required to install and update Extensions."
 msgstr "Za namestitev in posodabljanje spletnih razširitev je potreben dostop do interneta. "
 
 
@@ -66451,8 +66545,9 @@ msgid "Permissions"
 msgstr "Dovoljenja"
 
 
+# BFA - reworded, Blender: "Visit Extensions Platform"
 msgctxt "Operator"
-msgid "Visit Extensions Platform"
+msgid "Visit Extensions Website"
 msgstr "Obiščite platformo razširitev"
 
 
@@ -68896,8 +68991,9 @@ msgid "Flip"
 msgstr "Obrni"
 
 
+# BFA - reworded, Blender: "Flip (Topology)"
 msgctxt "Operator"
-msgid "Flip (Topology)"
+msgid "Mirror Shape Key (Topology)"
 msgstr "Preobrni (topologija)"
 
 
@@ -68987,7 +69083,8 @@ msgid "Select by"
 msgstr "Izberi po"
 
 
-msgid "Image Border"
+# BFA - reworded, Blender: "Image Border"
+msgid "Select by Image Border"
 msgstr "Rob slike"
 
 
@@ -69289,7 +69386,8 @@ msgid "Strip Name"
 msgstr "Ime traku"
 
 
-msgid "Max B-frames"
+# BFA - reworded, Blender: "Max B-frames"
+msgid "Max B_Frames"
 msgstr "Največja količina B-okvirjev"
 
 
@@ -70144,11 +70242,13 @@ msgid "Light Probes Volume Pool"
 msgstr "Sklad obsevanosti volumna"
 
 
-msgid "SMAA Threshold"
+# BFA - reworded, Blender: "SMAA Threshold"
+msgid "Edge Threshold"
 msgstr "Prag SMAA"
 
 
-msgid "SSAA Samples"
+# BFA - reworded, Blender: "SSAA Samples"
+msgid "Supersampling"
 msgstr "Vzorci SSAA"
 
 
@@ -71431,8 +71531,9 @@ msgid "Replace..."
 msgstr "Zamenjaj ..."
 
 
+# BFA - reworded, Blender: "Save a Copy..."
 msgctxt "Operator"
-msgid "Save a Copy..."
+msgid "Save a Copy"
 msgstr "Shrani kopijo ..."
 
 
@@ -71556,8 +71657,9 @@ msgid "Linked Duplicate"
 msgstr "Podvoji povezano"
 
 
+# BFA - reworded, Blender: "Stop Tweaking Strip Actions"
 msgctxt "Operator"
-msgid "Stop Tweaking Strip Actions"
+msgid "Stop Tweaking Action"
 msgstr "Nehaj cukati trakovne akcije"
 
 
@@ -71581,13 +71683,15 @@ msgid "Start Editing Stashed Action"
 msgstr "Začni urejati založeno akcijo"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Full Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Full Stack)"
+msgid "Tweak Action (Full Stack)"
 msgstr "Začni prilagajati akcijo traku (ves sklad)"
 
 
+# BFA - reworded, Blender: "Start Tweaking Strip Actions (Lower Stack)"
 msgctxt "Operator"
-msgid "Start Tweaking Strip Actions (Lower Stack)"
+msgid "Tweak Action (Lower Stack)"
 msgstr "Začni prilagajati akcijo traku (nižji sklad)"
 
 
@@ -71636,8 +71740,9 @@ msgid "Unconnected Sockets"
 msgstr "Nepovezane vtičnice"
 
 
+# BFA - reworded, Blender: "Rename Active Node..."
 msgctxt "Operator"
-msgid "Rename Active Node..."
+msgid "Rename Active Node"
 msgstr "Preimenuj aktivno vozlišče ..."
 
 
@@ -72005,8 +72110,9 @@ msgid "Toggle Sequencer/Preview"
 msgstr "Preklopi sekvenčnik/predogled"
 
 
+# BFA - reworded, Blender: "Select All by Type"
 msgctxt "Operator"
-msgid "Select All by Type"
+msgid "All by Type"
 msgstr "Izberi vse istega tipa"
 
 
@@ -72045,8 +72151,9 @@ msgid "Sound..."
 msgstr "Zvok ..."
 
 
+# BFA - reworded, Blender: "Image/Sequence..."
 msgctxt "Operator"
-msgid "Image/Sequence..."
+msgid "Image/Sequence"
 msgstr "Slika / sekvenca ..."
 
 
@@ -72069,8 +72176,9 @@ msgid "Sound Crossfade"
 msgstr "Preliv zvoka"
 
 
+# BFA - reworded, Blender: "Change Keying Set..."
 msgctxt "Operator"
-msgid "Change Keying Set..."
+msgid "Change Keying Set"
 msgstr "Zamenjaj množico ključev ..."
 
 
@@ -72136,8 +72244,9 @@ msgid "Set Preview Range to Strips"
 msgstr "Nastavi predogledni interval na trakove"
 
 
+# BFA - reworded, Blender: "Fit Preview in Window"
 msgctxt "Operator"
-msgid "Fit Preview in Window"
+msgid "Fit Preview in window"
 msgstr "Prilagodi predogled na okno"
 
 
@@ -72254,8 +72363,9 @@ msgid "Show Hidden Strips"
 msgstr "Pokaži skrite trakove"
 
 
+# BFA - reworded, Blender: "Insert Keyframe with Keying Set..."
 msgctxt "Operator"
-msgid "Insert Keyframe with Keying Set..."
+msgid "Insert Keyframe with Keying Set"
 msgstr "Vstavi ključni okvir z množico ključev ..."
 
 
@@ -72560,7 +72670,8 @@ msgid "Follow Current Frame"
 msgstr "Sledi trenutnemu okvirju"
 
 
-msgid "Play In"
+# BFA - reworded, Blender: "Play In"
+msgid "Play in"
 msgstr "Predvajaj v"
 
 
@@ -72568,7 +72679,8 @@ msgid "Active Editor"
 msgstr "Trenutni urejevalnik"
 
 
-msgid "Properties and Sidebars"
+# BFA - reworded, Blender: "Properties and Sidebars"
+msgid "Properties Editor and Sidebars"
 msgstr "Lastnosti in stranske vrstice"
 
 
@@ -72723,8 +72835,9 @@ msgid "Find Missing Files..."
 msgstr "Poišči pogrešane datoteke ..."
 
 
+# BFA - reworded, Blender: "Batch-Generate Previews..."
 msgctxt "Operator"
-msgid "Batch-Generate Previews..."
+msgid "Batch-Generate Preview"
 msgstr "Generiraj paket predogledov ..."
 
 
@@ -72743,8 +72856,9 @@ msgid "Render Animation"
 msgstr "Upodobi animacijo"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Izgotovi zvok ..."
 
 
@@ -72768,8 +72882,9 @@ msgid "Repeat History..."
 msgstr "Ponovi zgodovino ..."
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "Išči po meniju ..."
 
 
@@ -72841,8 +72956,9 @@ msgid "Render Image"
 msgstr "Upodobi sliko"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "Iskanje operatorja ..."
 
 
@@ -72919,7 +73035,8 @@ msgid "User Tooltips"
 msgstr "Uporabniški namigi"
 
 
-msgid "Sort by Most Recent"
+# BFA - reworded, Blender: "Sort by Most Recent"
+msgid "Sort Search by Most Recent"
 msgstr "Razvrsti po nedavnih"
 
 
@@ -72965,7 +73082,8 @@ msgid "Video Memory"
 msgstr "Video pomnilnik"
 
 
-msgid "Blender Version"
+# BFA - reworded, Blender: "Blender Version"
+msgid "Base Blender Version"
 msgstr "Različica Blenderja"
 
 
@@ -73203,7 +73321,8 @@ msgid "Excluded Paths"
 msgstr "Izločene poti"
 
 
-msgid "Auto-Save"
+# BFA - reworded, Blender: "Auto-Save"
+msgid "Auto Save"
 msgstr "Samodejno shranjevanje"
 
 
@@ -73511,8 +73630,9 @@ msgid "More/Less"
 msgstr "Več / manj"
 
 
+# BFA - reworded, Blender: "Select Pattern..."
 msgctxt "Operator"
-msgid "Select Pattern..."
+msgid "By Pattern"
 msgstr "Izberi po vzorcu ..."
 
 
@@ -73615,8 +73735,9 @@ msgid "By Attribute"
 msgstr "Glede na atribut"
 
 
+# BFA - reworded, Blender: "Control Point Row"
 msgctxt "Operator"
-msgid "Control Point Row"
+msgid "Control Point row"
 msgstr "Vrstica kontrolnih točk"
 
 
@@ -73739,23 +73860,27 @@ msgid "Fur"
 msgstr "Krzno"
 
 
+# BFA - reworded, Blender: "Nurbs Surface"
 msgctxt "Operator"
-msgid "Nurbs Surface"
+msgid "Surface Patch"
 msgstr "Površina NURBS"
 
 
+# BFA - reworded, Blender: "Nurbs Cylinder"
 msgctxt "Operator"
-msgid "Nurbs Cylinder"
+msgid "Surface Cylinder"
 msgstr "Valj NURBS"
 
 
+# BFA - reworded, Blender: "Nurbs Sphere"
 msgctxt "Operator"
-msgid "Nurbs Sphere"
+msgid "Surface Sphere"
 msgstr "Sfera NURBS"
 
 
+# BFA - reworded, Blender: "Nurbs Torus"
 msgctxt "Operator"
-msgid "Nurbs Torus"
+msgid "Surface Torus"
 msgstr "Torus NURBS"
 
 
@@ -73769,8 +73894,9 @@ msgid "Camera"
 msgstr "Kamera"
 
 
+# BFA - reworded, Blender: "Import OpenVDB..."
 msgctxt "Operator"
-msgid "Import OpenVDB..."
+msgid "Import OpenVDB"
 msgstr "Uvozi OpenDVB ..."
 
 
@@ -73794,8 +73920,9 @@ msgid "Speaker"
 msgstr "Zvočnik"
 
 
+# BFA - reworded, Blender: "Mesh Plane..."
 msgctxt "Operator"
-msgid "Mesh Plane..."
+msgid "Mesh Plane"
 msgstr "Mrežna ravnina ..."
 
 
@@ -73839,8 +73966,9 @@ msgid "Origin"
 msgstr "Izhodišče"
 
 
+# BFA - reworded, Blender: "Rename Active Object..."
 msgctxt "Operator"
-msgid "Rename Active Object..."
+msgid "Rename Active Object"
 msgstr "Preimenuj aktivni predmet ..."
 
 
@@ -74283,13 +74411,15 @@ msgid "Calculate"
 msgstr "Izračunaj"
 
 
+# BFA - reworded, Blender: "Assign to New Collection"
 msgctxt "Operator"
-msgid "Assign to New Collection"
+msgid "Assign to New"
 msgstr "Dodeli v novo zbirko"
 
 
+# BFA - reworded, Blender: "Add (with Targets)..."
 msgctxt "Operator"
-msgid "Add (with Targets)..."
+msgid "Add (with Targets)"
 msgstr "Dodaj (s tarčami) ..."
 
 
@@ -74423,8 +74553,9 @@ msgid "Rotate..."
 msgstr "Rotiraj ..."
 
 
+# BFA - reworded, Blender: "Point to Target..."
 msgctxt "Operator"
-msgid "Point to Target..."
+msgid "Point normals to target"
 msgstr "Usmeri v tarčo ..."
 
 
@@ -74561,7 +74692,8 @@ msgid "Color Opacity"
 msgstr "Neprosojnost barve"
 
 
-msgid "Attribute Text"
+# BFA - reworded, Blender: "Attribute Text"
+msgid "Attribute Text Overlay"
 msgstr "Besedilo atributa"
 
 
@@ -74967,13 +75099,15 @@ msgid "Recalculate Inside"
 msgstr "Preračunaj navznoter"
 
 
+# BFA - reworded, Blender: "Copy Vector"
 msgctxt "Operator"
-msgid "Copy Vector"
+msgid "Copy Vectors"
 msgstr "Kopiraj vektor"
 
 
+# BFA - reworded, Blender: "Paste Vector"
 msgctxt "Operator"
-msgid "Paste Vector"
+msgid "Paste Vectors"
 msgstr "Prilepi vektor"
 
 
@@ -75741,8 +75875,9 @@ msgid "No brush selected"
 msgstr "Noben čopič ni izbran"
 
 
+# BFA - reworded, Blender: "Duplicate Asset..."
 msgctxt "Operator"
-msgid "Duplicate Asset..."
+msgid "Duplicate Asset"
 msgstr "Podvoji sredstvo ..."
 
 
@@ -76859,7 +76994,8 @@ msgid "worlds"
 msgstr "svetovi"
 
 
-msgid "Library database with null library data-block pointer!"
+# BFA - reworded, Blender: "Library database with null library data-block pointer!"
+msgid "Library database with null library data pointer!"
 msgstr "Podatkovna baza knjižnice z ničelnim kazalcem na knjižnični podatkovni blok!"
 
 
@@ -80495,7 +80631,8 @@ msgid "Offset:"
 msgstr "Odmik:"
 
 
-msgid "Pattern Area:"
+# BFA - reworded, Blender: "Pattern Area:"
+msgid "Pattern Area"
 msgstr "Območje vzorca:"
 
 
@@ -80507,7 +80644,8 @@ msgid "Height:"
 msgstr "Višina:"
 
 
-msgid "Search Area:"
+# BFA - reworded, Blender: "Search Area:"
+msgid "Search Area"
 msgstr "Iskalno območje:"
 
 
@@ -81598,7 +81736,8 @@ msgid "Manage Unused Data"
 msgstr "Upravljaj neuporabljene podatke"
 
 
-msgid "%d data-block(s) pasted"
+# BFA - reworded, Blender: "%d data-block(s) pasted"
+msgid "%d data pasted"
 msgstr "Prilepljenih %d podatkovnih blokov"
 
 
@@ -82119,7 +82258,8 @@ msgid "Mean Vertex Crease:"
 msgstr "Srednji pregib oglišč:"
 
 
-msgid "Radius X:"
+# BFA - reworded, Blender: "Radius X:"
+msgid "Radius X"
 msgstr "Polmer X:"
 
 
@@ -83689,7 +83829,8 @@ msgid "WeightedNormal"
 msgstr "UteženeNormale"
 
 
-msgid "Global Influence:"
+# BFA - reworded, Blender: "Global Influence:"
+msgid "Global Influence"
 msgstr "Globalni vpliv:"
 
 
@@ -87028,7 +87169,8 @@ msgid "Pose Library"
 msgstr "Knjižnica poz"
 
 
-msgid "Pose Library based on the asset system."
+# BFA - reworded, Blender: "Pose Library based on the asset system."
+msgid "Pose Library based on the asset system"
 msgstr "Knjižnica poz, ki temelji na sistemu sredstev."
 
 
@@ -88717,3 +88859,359 @@ msgstr "Prvotno dolžino povsem zamenja z vhodno dolžino"
 msgid "Scale each curve uniformly to reach the target length"
 msgstr "Skalira vsako krivuljo enakomerno, da doseže ciljno dolžino"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Razčlenitev poze (Legacy)"
+
+# BFA - reworded, Blender: "Push Pose from Breakdown"
+msgctxt "Operator"
+msgid "Push Pose from Breakdown (Legacy)"
+msgstr "Porini pozo iz razčlenitve (Legacy)"
+
+# BFA - reworded, Blender: "Relax Pose to Breakdown"
+msgctxt "Operator"
+msgid "Relax Pose to Breakdown (Legacy)"
+msgstr "Zrahljaj pozo proti razčlenitvi (Legacy)"
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Maske"
+
+# BFA - reworded, Blender: "Zero Weights"
+msgid "     Zero Weights"
+msgstr "     Ničelne uteži"
+
+# BFA - reworded, Blender: "Join Tracks"
+msgctxt "Operator"
+msgid "  Join Tracks"
+msgstr "  Združi obrise"
+
+# BFA - reworded, Blender: "Overscan"
+msgid " Overscan"
+msgstr " Upoštevaj za robovi"
+
+# BFA - reworded, Blender: "Select All by Trait"
+msgid "All by Trait"
+msgstr "Izberi vse po značilnosti"
+
+# BFA - reworded, Blender: "Select All by Type"
+msgid "All by Type"
+msgstr "Izberi vse istega tipa"
+
+# BFA - reworded, Blender: "Animation data for this data-block"
+msgid "Animation data for this data"
+msgstr "Animacijski podatki za ta podatkovni blok"
+
+# BFA - reworded, Blender: "Apply All"
+msgctxt "Operator"
+msgid "Apply All Shape Keys"
+msgstr "Nanesi vse"
+
+# BFA - reworded, Blender: "Auto Keying"
+msgid "Auto Keyframing"
+msgstr "Samodejno ključenje"
+
+# BFA - reworded, Blender: "Bake to Keyframes"
+msgctxt "Operator"
+msgid "Bake To Keyframes"
+msgstr "Zapeci v ključne okvirje"
+
+# BFA - reworded, Blender: "Box Select"
+msgctxt "Operator"
+msgid "Box Select (Legacy)"
+msgstr "Izberi pravokotno (Legacy)"
+
+# BFA - reworded, Blender: "Cached Range"
+msgid "Cached Range (Info)"
+msgstr "Predpomnjeni interval (Info)"
+
+# BFA - reworded, Blender: "Clear Data-Block Previews"
+msgctxt "Operator"
+msgid "Clear Data Previews"
+msgstr "Počisti predoglede blokov"
+
+# BFA - reworded, Blender: "Clip Start"
+msgid "Clip Near"
+msgstr "Poreži začetek"
+
+# BFA - reworded, Blender: "Clip Start"
+msgctxt "Camera"
+msgid "Clip Near"
+msgstr "Poreži začetek"
+
+# BFA - reworded, Blender: "Instance Collections"
+msgid "Collection Instances"
+msgstr "Ustvari primerke zbirk"
+
+# BFA - reworded, Blender: "Delete All"
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "Izbriši vse"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Izbriši"
+
+# BFA - reworded, Blender: "Depth"
+msgid "Depth:"
+msgstr "Globina"
+
+# BFA - reworded, Blender: "Euclidean"
+msgid "Euclidean Distance"
+msgstr "Evklidska"
+
+# BFA - reworded, Blender: "Auto-Masking"
+msgid "Global Auto Masking"
+msgstr "Samodejno maskiranje"
+
+# BFA - reworded, Blender: "Move"
+msgctxt "Operator"
+msgid "Grab/Move"
+msgstr "Premik"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgid "Grouped"
+msgstr "Izberi skupino"
+
+# BFA - reworded, Blender: "Select Grouped"
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "Izberi skupino"
+
+# BFA - reworded, Blender: "Insert Into Group"
+msgctxt "Operator"
+msgid "Insert into Group "
+msgstr "Vstavi v skupino"
+
+# BFA - reworded, Blender: "Instance Collections on Appending"
+msgid "Instance Collections on Appending or Linking"
+msgstr "Ustvari primerke zbirk pri pripenjanju"
+
+# BFA - reworded, Blender: "Invert Zoom Direction"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Obrni smer zuma"
+
+# BFA - reworded, Blender: "Resumable"
+msgid "Is Resumable"
+msgstr "Zna nadaljevati"
+
+# BFA - reworded, Blender: "Linked from"
+msgctxt "Operator"
+msgid "Linked From"
+msgstr "Vezane iz"
+
+# BFA - reworded, Blender: "Linked to"
+msgctxt "Operator"
+msgid "Linked To"
+msgstr "Vezane v"
+
+# BFA - reworded, Blender: "Manhattan"
+msgid "Manhattan Distance"
+msgstr "Manhattanska"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgid "Nearest Frame"
+msgstr "Izbor na najbližji okvir"
+
+# BFA - reworded, Blender: "Selection to Nearest Frame"
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "Izbor na najbližji okvir"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgid "Nearest Second"
+msgstr "Izbor na najbližjo sekundo"
+
+# BFA - reworded, Blender: "Selection to Nearest Second"
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "Izbor na najbližjo sekundo"
+
+# BFA - reworded, Blender: "New File"
+msgid "New File from Template"
+msgstr "Nova datoteka"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "Iskanje operatorja ..."
+
+# BFA - reworded, Blender: "Orientation"
+msgid "Orientation:"
+msgstr "Usmerjenost"
+
+# BFA - reworded, Blender: "Release Notes"
+msgctxt "Operator"
+msgid "Release notes"
+msgstr "Opombe ob izdaji"
+
+# BFA - reworded, Blender: "Show Version"
+msgid "Show Bforartists version"
+msgstr "Pokaži različico"
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "Množice lic"
+
+# BFA - reworded, Blender: "Show In"
+msgid "Show in"
+msgstr "Pokaži v"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Maska"
+
+# BFA - reworded, Blender: "Show"
+msgid "Show:"
+msgstr "Pokaži"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Skrči / odebeli"
+
+# BFA - reworded, Blender: "Select Similar"
+msgid "Similar"
+msgstr "Izberi sorodne"
+
+# BFA - reworded, Blender: "Select Similar"
+msgctxt "Operator"
+msgid "Similar"
+msgstr "Izberi sorodne"
+
+# BFA - reworded, Blender: "Nurbs Circle"
+msgctxt "Operator"
+msgid "Surface Circle"
+msgstr "Krožnica NURBS"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Tip"
+
+# BFA - reworded, Blender: "Unassigned"
+msgid "Unassigned (Catalogue)"
+msgstr "Neuvrščeno (Catalogue)"
+
+# BFA - reworded, Blender: "Uninstall"
+msgctxt "Operator"
+msgid "Uninstall from System"
+msgstr "Odstrani"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets"
+msgstr "Ne-sredstva"
+
+# BFA - reworded, Blender: "Non-Assets"
+msgid "Unmarked Assets:"
+msgstr "Ne-sredstva"
+
+# BFA - reworded, Blender: "Speed Vectors"
+msgid "Use Speed Vectors"
+msgstr "Vektorji hitrosti"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "Širina črte"
+
+# BFA - reworded, Blender: "You can adjust this later from \"System\" preferences."
+msgid "You can adjust online access from \"System\" preferences."
+msgstr "To lahko prilagodite tudi kasneje v nastavitvah \"Sistem\"."
+
+# BFA - reworded, Blender: "Import the assets as linked data-block"
+msgid "Import the assets as linked data"
+msgstr "Uvozi sredstva kot povezane podatkovne bloke"
+
+# BFA - reworded, Blender: "Import the assets as copied data-block, with no link to the original asset data-block"
+msgid "Import the assets as copied data, with no link to the original asset data"
+msgstr "Uvozi sredstva kot kopirane podatkovne bloke. Povezava z originalom se ne ohrani"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Zapiranje Bforartistsja"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Zapiranje Bforartistsja"
+
+# BFA - reworded Blender string
+msgid "Exit Bforartists after saving"
+msgstr "Shrani delo in nato zapre Bforartists"
+
+# BFA - reworded Blender string
+msgid "Save the current Bforartists file with a numerically incremented name that does not overwrite any existing files"
+msgstr "Shrani trenutno datoteko Bforartistsja v novo datoteko s povečanim števcem v imenu, da ne prepiše obstoječih datotek"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "About Bforartists"
+msgstr "O Bforartistsju"
+
+# BFA - reworded Blender string
+msgid "Open a window with information about Bforartists"
+msgstr "Odpre okno z informacijami o Bforartistsju"
+
+# BFA - reworded Blender string
+msgid "Online access required to install or update. Launch Bforartists without --offline-mode"
+msgstr "Za namestitev ali posodabljanje je potreben dostop do interneta. Bforartists zaženite brez zastavice --offline-mode"
+
+# BFA - reworded Blender string
+msgid "Launch Bforartists without --offline-mode"
+msgstr "Bforartists zaženite brez zastavice --offline-mode"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "Bforartists je prosto programje"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Bforartistsjevo spletišče"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Install Application Template"
+msgstr "Namesti aplikacijsko predlogo "
+
+# BFA - reworded Blender string
+msgid "Bforartists Version"
+msgstr "Različica Bforartistsja"
+
+# BFA - reworded Blender string
+msgid "A restart of Bforartists is required"
+msgstr "Bforartists je treba ponovno zagnati"
+
+# BFA - reworded Blender string
+msgid "Open blend files with this Bforartists version"
+msgstr "Odpri datoteke blend s to različico Bforartistsja"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Edit Preview Image"
+msgstr "Uredi predogledno sliko "
+
+# BFA - reworded Blender string
+msgid "Bforartists"
+msgstr "Bforartists"
+
+# BFA - reworded Blender string
+msgid "This file is managed by the Bforartists asset system and cannot be overridden"
+msgstr "Za to datoteko skrbi Bforartistsjev sistem sredstev, zato je ni mogoče povoziti"
+
+# BFA - reworded Blender string
+msgid "Bforartists Render"
+msgstr "Upodabljalnik Bforartists"
+
+# BFA - reworded Blender string
+msgid "Bforartists File View"
+msgstr "Datotečni pogled Bforartists"
+
+# BFA - reworded Blender string
+msgctxt "WindowManager"
+msgid "Upgrading to the latest macOS version may improve Bforartists support"
+msgstr "Posodobitev na najnovejšo različico sistema macOS bo morda nudila boljšo podporo za Bforartists"

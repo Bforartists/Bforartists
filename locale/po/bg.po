@@ -244,7 +244,8 @@ msgid "Tilt"
 msgstr "Наклон"
 
 
-msgid "Palette data-blocks"
+# BFA - reworded, Blender: "Palette data-blocks"
+msgid "Palette data"
 msgstr "Блокове данни на палитрите"
 
 
@@ -252,11 +253,13 @@ msgid "Particles"
 msgstr "Частици"
 
 
-msgid "Particle data-blocks"
+# BFA - reworded, Blender: "Particle data-blocks"
+msgid "Particle data"
 msgstr "Блокове данни на частиците"
 
 
-msgid "Scene data-blocks"
+# BFA - reworded, Blender: "Scene data-blocks"
+msgid "Scene data"
 msgstr "Блокове данни на сцената"
 
 
@@ -264,15 +267,18 @@ msgid "Screens"
 msgstr "Екрани"
 
 
-msgid "Screen data-blocks"
+# BFA - reworded, Blender: "Screen data-blocks"
+msgid "Screen data"
 msgstr "Блокове данни на екраните"
 
 
-msgid "Sound data-blocks"
+# BFA - reworded, Blender: "Sound data-blocks"
+msgid "Sound data"
 msgstr "Блокове данни на звуците"
 
 
-msgid "Speaker data-blocks"
+# BFA - reworded, Blender: "Speaker data-blocks"
+msgid "Speaker data"
 msgstr "Блокове данни на високоговорителите"
 
 
@@ -280,7 +286,8 @@ msgid "Text data-blocks"
 msgstr "Блокове данни на текстовете"
 
 
-msgid "Texture data-blocks"
+# BFA - reworded, Blender: "Texture data-blocks"
+msgid "Texture data"
 msgstr "Блокове данни на текстурите"
 
 
@@ -296,7 +303,8 @@ msgid "File format version the .blend file was saved with"
 msgstr "Версия на файлов формат, в който .blend файла е бил запазен"
 
 
-msgid "Volume data-blocks"
+# BFA - reworded, Blender: "Volume data-blocks"
+msgid "Volume data"
 msgstr "Блокове данни на обемите"
 
 
@@ -304,15 +312,18 @@ msgid "Window Managers"
 msgstr "Оправители на прозорци"
 
 
-msgid "Window manager data-blocks"
+# BFA - reworded, Blender: "Window manager data-blocks"
+msgid "Window manager data"
 msgstr "Блокове данни на оправителите на прозорци"
 
 
-msgid "Workspace data-blocks"
+# BFA - reworded, Blender: "Workspace data-blocks"
+msgid "Workspace data"
 msgstr "Блокове данни на работните пространства"
 
 
-msgid "World data-blocks"
+# BFA - reworded, Blender: "World data-blocks"
+msgid "World data"
 msgstr "Блокове данни на световете"
 
 
@@ -1594,7 +1605,8 @@ msgid "Merge selected vertices"
 msgstr "Скриване на избраните лица"
 
 
-msgid "Construct a filled planar mesh with 4 vertices"
+# BFA - reworded, Blender: "Construct a filled planar mesh with 4 vertices"
+msgid "Add a filled planar mesh with 4 vertices"
 msgstr "Конструирай запълненa плоска мрежа с 4 върха "
 
 
@@ -1754,7 +1766,7 @@ msgstr "Показване"
 
 
 msgctxt "Operator"
-msgid "Pose Breakdowner (Legacy)"
+msgid "Pose Breakdowner"
 msgstr "Разбивач на Пози"
 
 
@@ -2014,12 +2026,14 @@ msgid "Remap Relative"
 msgstr "Преначертай относителните"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Запази Blender Файл"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Запази текущия Blender файл"
 
 
@@ -2311,3 +2325,38 @@ msgstr "Засенчване"
 msgid "Pose Library"
 msgstr "Библиотека с Пози"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Pose Breakdowner"
+msgctxt "Operator"
+msgid "Pose Breakdowner (Legacy)"
+msgstr "Разбивач на Пози (Legacy)"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Изтриване"
+
+# BFA - reworded, Blender: "Mask"
+msgid "Show Mask"
+msgstr "Маскиране"
+
+# BFA - reworded, Blender: "Shrink/Fatten"
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Смали/Удебели"
+
+# BFA - reworded, Blender: "Type"
+msgid "Type:"
+msgstr "Тип"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Quit Bforartists"
+msgstr "Излез от Bforartists"
+
+# BFA - reworded Blender string
+msgid "Quit Bforartists"
+msgstr "Излез от Bforartists"
