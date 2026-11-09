@@ -73329,3 +73329,7 @@ msgstr "Bforartists-Dateibetrachter"
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Ein Upgrade auf die aktuellste macOS-Version könnte die Unterstützung von Bforartists verbessern"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Mausoperator, bitte die Maus verwenden"

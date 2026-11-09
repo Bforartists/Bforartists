@@ -182046,3 +182046,7 @@ msgstr "Es posible que existan nuevos controladores gráficos que ofrezcan una m
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Actualizar a la versión más reciente de macOS podría mejorar el soporte para Bforartists"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Operador de ratón, usa el ratón"

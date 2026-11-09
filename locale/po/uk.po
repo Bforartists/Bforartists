@@ -103088,3 +103088,7 @@ msgstr "Інфо Лог Bforartists'а"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Перегляд файлу Bforartists"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Операція мишею, використовуйте мишу"

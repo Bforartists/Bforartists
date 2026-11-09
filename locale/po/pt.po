@@ -151634,3 +151634,7 @@ msgstr "Renderizador interno Bforartists"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Visualização de ficheiros do Bforartists"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Operador de rato, por favor use o rato"

@@ -182146,3 +182146,7 @@ msgstr "较新的图形驱动程序可能具有更好的 Bforartists 兼容性�
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "升级到最新的 macOS 版本可能会改善对 Bforartists 的支持"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "鼠标操作，请使用鼠标"

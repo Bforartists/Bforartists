@@ -166847,3 +166847,7 @@ msgstr "이전 버전의 Bforartists로 바꾸시겠습니까?"
 # BFA - reworded Blender string
 msgid "Overwrite file with an older Bforartists version?"
 msgstr "이전 버전의 Bforartists로 파일을 덮어쓰시겠습니까?"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "마우스 연산자입니다. 마우스를 사용하세요"

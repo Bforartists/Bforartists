@@ -182020,3 +182020,7 @@ msgstr "Могут быть доступны более новые графич�
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Обновление до последней версии macOS может улучшить поддержку Bforartists'а"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Операция мышью, используйте мышь"

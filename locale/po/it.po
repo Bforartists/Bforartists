@@ -84285,3 +84285,7 @@ msgstr "Visualizza File di Bforartists"
 # BFA - reworded Blender string
 msgid "Load Factory Bforartists Preferences"
 msgstr "Carica Impostazioni di fabbrica di Bforartists"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Operatore del mouse, usa il mouse"

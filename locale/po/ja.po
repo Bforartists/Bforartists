@@ -182287,3 +182287,7 @@ msgstr "もっと新しいグラフィックドライバーで Bforartists の�
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "最新版の macOS にアップグレードすると Bforartists の対応が改善します"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "マウス操作の機能です．マウスを使ってください"

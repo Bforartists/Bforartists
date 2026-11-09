@@ -113450,3 +113450,7 @@ msgstr "Bforartists 檔案檢視"
 # BFA - reworded Blender string
 msgid "Load Factory Bforartists Preferences"
 msgstr "載入出廠 Bforartists 偏好設定"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "滑鼠操作，請使用滑鼠"

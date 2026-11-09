@@ -136259,3 +136259,7 @@ msgstr "Dosyayı eski bir Bforartists sürümüyle üzerine yazmak ister misiniz
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "En son macOS sürümüne yükseltme yapmak Bforartists desteğini iyileştirebilir"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Fare operatörü, lütfen fareyi kullanın"
