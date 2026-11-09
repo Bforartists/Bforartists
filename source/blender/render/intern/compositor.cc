@@ -10,6 +10,7 @@
 #include <string>
 
 #include "BLI_listbase.hh"
+#include "BLI_math_matrix.hh"
 #include "BLI_math_vector_types.hh"
 #include "BLI_memory_utils.hh"
 #include "BLI_threads.hh"
@@ -158,9 +159,33 @@ class Context : public compositor::Context {
     return size;
   }
 
+  float get_proxy_scale() const
+  {
+    /* Proxy is only for interactive preview, not final render. */
+    if (this->render_context()) {
+      return 1.0f;
+    }
+
+    /* Proxy disabled. */
+    if (!flag_is_set(this->get_render_data().compositor_proxy_flags,
+                     CompositorProxyFlags::UsePreviewScale))
+    {
+      return 1.0f;
+    }
+
+    return this->get_render_data().compositor_proxy_preview_scale / 100.0f;
+  }
+
   compositor::Domain get_compositing_domain() const override
   {
-    return compositor::Domain(this->get_render_size());
+    compositor::Domain domain = compositor::Domain(this->get_render_size());
+    domain.pixel_size *= this->get_proxy_scale();
+    if (flag_is_set(this->get_render_data().compositor_proxy_flags,
+                    CompositorProxyFlags::AdaptToRenderScale))
+    {
+      domain.pixel_size *= float2(this->get_render_data().size / 100.0f);
+    }
+    return domain;
   }
 
   void write_output_image(const compositor::Result &result)
@@ -557,6 +582,10 @@ class Context : public compositor::Context {
       pass_data.release();
     }
 
+    pass.domain().pixel_size = this->get_compositing_domain().pixel_size;
+    pass.domain().transformation *= math::from_scale<float3x3>(float2(this->get_proxy_scale())) *
+                                    pass.domain().transformation;
+
     /* We assume the given pass is a Cryptomatte pass and retrieve its layer name. If it wasn't a
      * Cryptomatte pass, the checks below will fail anyway. */
     const std::string combined_pass_name = std::string(view_layer->name) + "." + pass_name;
@@ -573,25 +602,25 @@ class Context : public compositor::Context {
     BKE_stamp_info_callback(
         &callback_data,
         render_result->stamp_data,
-        [](void *user_data, const char *key, char *value, int /*value_maxncpy*/) {
+        [](void *user_data, const char *key, MutableCStr value) {
           StampCallbackData *data = static_cast<StampCallbackData *>(user_data);
 
           const std::string manifest_key = bke::cryptomatte::BKE_cryptomatte_meta_data_key(
               data->cryptomatte_layer_name, "manifest");
           if (key == manifest_key) {
-            data->meta_data->cryptomatte.manifest = value;
+            data->meta_data->cryptomatte.manifest = value.data();
           }
 
           const std::string hash_key = bke::cryptomatte::BKE_cryptomatte_meta_data_key(
               data->cryptomatte_layer_name, "hash");
           if (key == hash_key) {
-            data->meta_data->cryptomatte.hash = value;
+            data->meta_data->cryptomatte.hash = value.data();
           }
 
           const std::string conversion_key = bke::cryptomatte::BKE_cryptomatte_meta_data_key(
               data->cryptomatte_layer_name, "conversion");
           if (key == conversion_key) {
-            data->meta_data->cryptomatte.conversion = value;
+            data->meta_data->cryptomatte.conversion = value.data();
           }
         },
         false);
@@ -633,18 +662,9 @@ class Context : public compositor::Context {
     return this->get_scene().runtime->compositor.nodes_evaluation_log.get();
   }
 
-  void evaluate_operation_post() const override
+  bool supports_canceling() const override
   {
-    /* If the compositor is executing due to a user edit the node tree, we wait until the operation
-     * finishes executing on the GPU before we continue to improve interactivity. The improvement
-     * comes from the fact that the user might be rapidly changing values, so we need to cancel
-     * previous evaluations to make editing faster, but we can't do that if all operations are
-     * submitted to the GPU all at once, and we can't cancel work that was already submitted to the
-     * GPU. This does have a performance penalty, but in practice, the improved interactivity is
-     * worth it according to user feedback. */
-    if (this->use_gpu() && input_data_.triggered_by_user) {
-      GPU_finish();
-    }
+    return input_data_.triggered_by_user;
   }
 
   bool is_canceled() const override

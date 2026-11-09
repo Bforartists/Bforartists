@@ -54,14 +54,8 @@ static int write_audio_frame(MovieWriter *context)
   frame->pts = context->audio_time / av_q2d(c->time_base);
   frame->nb_samples = context->audio_input_samples;
   frame->format = c->sample_fmt;
-#    ifdef FFMPEG_USE_OLD_CHANNEL_VARS
-  frame->channels = c->channels;
-  frame->channel_layout = c->channel_layout;
-  const int num_channels = c->channels;
-#    else
   av_channel_layout_copy(&frame->ch_layout, &c->ch_layout);
   const int num_channels = c->ch_layout.nb_channels;
-#    endif
 
   if (context->audio_deinterleave) {
     int channel, i;
@@ -117,9 +111,6 @@ static int write_audio_frame(MovieWriter *context)
 
     pkt->stream_index = context->audio_stream->index;
     av_packet_rescale_ts(pkt, c->time_base, context->audio_stream->time_base);
-#    ifdef FFMPEG_USE_DURATION_WORKAROUND
-    my_guess_pkt_duration(context->outfile, context->audio_stream, pkt);
-#    endif
 
     pkt->flags |= AV_PKT_FLAG_KEY;
 
@@ -152,11 +143,7 @@ bool movie_audio_open(MovieWriter *context,
     AVCodecContext *c = context->audio_codec;
 
     aud::DeviceSpecs specs;
-#    ifdef FFMPEG_USE_OLD_CHANNEL_VARS
-    specs.channels = aud::Channels(c->channels);
-#    else
     specs.channels = aud::Channels(c->ch_layout.nb_channels);
-#    endif
 
     switch (av_get_packed_sample_fmt(c->sample_fmt)) {
       case AV_SAMPLE_FMT_U8:
@@ -207,8 +194,7 @@ AVStream *alloc_audio_stream(MovieWriter *context,
                              int audio_channels,
                              AVCodecID codec_id,
                              AVFormatContext *of,
-                             char *error,
-                             int error_maxncpy,
+                             MutableCStr error,
                              ReportList *reports)
 {
   AVStream *st;
@@ -330,12 +316,7 @@ AVStream *alloc_audio_stream(MovieWriter *context,
   c->bit_rate = context->ffmpeg_audio_bitrate * 1000;
   c->sample_fmt = AV_SAMPLE_FMT_S16;
 
-#  ifdef FFMPEG_USE_OLD_CHANNEL_VARS
-  c->channels = audio_channels;
-  c->channel_layout = channel_layout_mask;
-#  else
   av_channel_layout_from_mask(&c->ch_layout, channel_layout_mask);
-#  endif
 
   if (request_float_audio_buffer(codec_id)) {
     /* mainly for AAC codec which is experimental */
@@ -388,7 +369,7 @@ AVStream *alloc_audio_stream(MovieWriter *context,
     char error_str[AV_ERROR_MAX_STRING_SIZE];
     av_make_error_string(error_str, AV_ERROR_MAX_STRING_SIZE, ret);
     CLOG_ERROR(&LOG, "Couldn't initialize audio codec: %s", error_str);
-    BLI_strncpy(error, ffmpeg_last_error(), error_maxncpy);
+    STRNCPY(error, ffmpeg_last_error());
     avcodec_free_context(&c);
     context->audio_codec = nullptr;
     return nullptr;

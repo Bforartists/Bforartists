@@ -157,15 +157,6 @@ struct TransformCoordsOrig {
   /** Size & pivot when the drag began, every scale is relative to these. */
   float3 dims;
   float3 pivot;
-  /**
-   * Median edits accumulated since the drag began, in object space.
-   *
-   * A drag can cover the median buttons too (see #multibut_states_tag) and restoring the
-   * coordinates would undo those edits, so fold them into the scale matrix as a translation.
-   * Moving the stored coordinates instead needs the inverse of the scale, which doesn't
-   * exist once a dimension reaches zero.
-   */
-  float3 location_offset = float3(0.0f);
 
   /* For the update in progress. */
 
@@ -2037,9 +2028,6 @@ static void v3d_editvertex_buts(
         dims_mat = median_dims_scale_matrix_calc(
             *ob, bounds_matrix, coords_orig->pivot, coords_orig->dims, dims_new);
         if (dims_mat) {
-          /* Keep median edits made in the same drag, see #TransformCoordsOrig::location_offset. */
-          coords_orig->location_offset += float3(median_basis.generic.location);
-          dims_mat->location() += coords_orig->location_offset;
           coords_orig->coords_index = 0;
         }
       }
@@ -2049,7 +2037,12 @@ static void v3d_editvertex_buts(
     const bool apply_vcos = (tot == 1) || dims_mat.has_value() ||
                             (len_squared_v3(median_basis.generic.location) != 0.0f);
 
-    /* Scaling takes the coordinate from the drag start, the median is folded into `dims_mat`. */
+    /* Scaling takes the coordinate from the drag start.
+     *
+     * NOTE(@ideasman42): dragging location & dimensions together isn't supported,
+     * dimensions take priority and location edits are ignored.
+     * Preventing both being dragged at once is possible, however the buttons are far apart
+     * so this is unlikely in practice and not worth the hassle. */
     auto apply_coord_fn = [&](float co[3]) {
       if (dims_mat) {
         coords_orig->apply(*dims_mat, *reinterpret_cast<float3 *>(co));
@@ -2578,7 +2571,7 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 /** \name Transform Buttons
  * \{ */
 
-static void v3d_transform_butsR(const bContext *C, ui::Layout &layout, PointerRNA *ptr)
+static void v3d_transform_butsR(ui::Layout &layout, PointerRNA *ptr)
 {
   /* bfa - rewrite transform panel to match the Python one */
   ui::Layout *col, *row, *sub;
@@ -2706,7 +2699,7 @@ static void v3d_transform_butsR(const bContext *C, ui::Layout &layout, PointerRN
   row->separator(1.0);     /* bfa - helps the icon has spacer! */
   row->use_property_decorate_set(false); /* bfa - no decorator before 4L/blank icon */
   row->prop(ptr, "rotation_mode", UI_ITEM_NONE, "", ICON_NONE); /* bfa - no label */
-  row->op_menu_enum(C, "ANIM_OT_rotation_mode_convert", "mode", "", ICON_SWAP);
+  row->menu("ANIM_MT_rotation_mode_convert", "", ICON_SWAP); /* bfa - Blender's new menu, BFA icon */
 
   if (draw_4l) {
     row->prop(ptr,
@@ -2736,7 +2729,7 @@ static void v3d_transform_butsR(const bContext *C, ui::Layout &layout, PointerRN
   /* end bfa */
 }
 
-static void v3d_posearmature_buts(const bContext *C, ui::Layout &layout, Object *ob)
+static void v3d_posearmature_buts(ui::Layout &layout, Object *ob)
 {
   bPoseChannel *pchan = BKE_pose_channel_active_if_bonecoll_visible(ob);
 
@@ -2752,7 +2745,7 @@ static void v3d_posearmature_buts(const bContext *C, ui::Layout &layout, Object 
   /* XXX: RNA buts show data in native types (i.e. quaternion, 4-component axis/angle, etc.)
    * but old-school UI shows in eulers always. Do we want to be able to still display in Eulers?
    * Maybe needs RNA/UI options to display rotations as different types. */
-  v3d_transform_butsR(C, col, &pchanptr);
+  v3d_transform_butsR(col, &pchanptr);
 }
 
 static void v3d_editarmature_buts(ui::Layout &layout, Object *ob)
@@ -2919,11 +2912,11 @@ static void view3d_panel_transform(const bContext *C, Panel *panel)
     }
   }
   else if (ob->mode & OB_MODE_POSE) {
-    v3d_posearmature_buts(C, col, ob);
+    v3d_posearmature_buts(col, ob);
   }
   else {
     PointerRNA obptr = RNA_id_pointer_create(&ob->id);
-    v3d_transform_butsR(C, col, &obptr);
+    v3d_transform_butsR(col, &obptr);
 
     /* Dimensions and editmode are mostly the same check. */
     if (OB_TYPE_SUPPORT_EDITMODE(ob->type) || ELEM(ob->type, OB_VOLUME, OB_LIGHTPROBE)) {
@@ -3157,11 +3150,10 @@ static void handle_curves_aspect_ratio(bContext *C, void * /*arg1*/, void * /*ar
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<float> aspect_ratio =
-            attributes.lookup_or_add_for_write_span<float>(
-                "aspect_ratio",
-                bke::AttrDomain::Curve,
-                bke::AttributeInitVArray(VArray<float>::from_single(1.0f, curves.curves_num())));
+        bke::SpanAttributeWriter<float> aspect_ratio = attributes.ensure_for_write_span<float>(
+            "aspect_ratio",
+            bke::AttrDomain::Curve,
+            bke::AttributeInitVArray(VArray<float>::from_single(1.0f, curves.curves_num())));
         index_mask::masked_fill(aspect_ratio.span, modified_state.aspect_ratio, selection);
         aspect_ratio.finish();
       });
@@ -3177,7 +3169,7 @@ static void handle_curves_softness(bContext *C, void * /*arg1*/, void * /*arg2*/
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<float> softness = attributes.lookup_or_add_for_write_span<float>(
+        bke::SpanAttributeWriter<float> softness = attributes.ensure_for_write_span<float>(
             "softness", bke::AttrDomain::Curve);
         index_mask::masked_fill(softness.span, modified_state.softness, selection);
         softness.finish();
@@ -3194,7 +3186,7 @@ static void handle_curves_u_scale(bContext *C, void * /*arg1*/, void * /*arg2*/)
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<float> u_scale = attributes.lookup_or_add_for_write_span<float>(
+        bke::SpanAttributeWriter<float> u_scale = attributes.ensure_for_write_span<float>(
             "u_scale",
             bke::AttrDomain::Curve,
             bke::AttributeInitVArray(VArray<float>::from_single(1.0f, curves.curves_num())));
@@ -3213,9 +3205,8 @@ static void handle_curves_fill_opacity(bContext *C, void * /*arg1*/, void * /*ar
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        if (bke::SpanAttributeWriter<float> fill_opacity =
-                attributes.lookup_or_add_for_write_span<float>(
-                    "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f)))
+        if (bke::SpanAttributeWriter<float> fill_opacity = attributes.ensure_for_write_span<float>(
+                "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f)))
         {
           index_mask::masked_fill(fill_opacity.span, modified_state.fill_opacity, selection);
           fill_opacity.finish();
@@ -3233,7 +3224,7 @@ static void handle_curves_end_cap(bContext *C, void * /*arg1*/, void * /*arg2*/)
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<int8_t> end_cap = attributes.lookup_or_add_for_write_span<int8_t>(
+        bke::SpanAttributeWriter<int8_t> end_cap = attributes.ensure_for_write_span<int8_t>(
             "end_cap",
             bke::AttrDomain::Curve,
             bke::AttributeInitVArray(
@@ -3255,12 +3246,11 @@ static void handle_curves_start_cap(bContext *C, void * /*arg1*/, void * /*arg2*
          const IndexMask &selection,
          bke::CurvesGeometry &curves) {
         bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-        bke::SpanAttributeWriter<int8_t> start_cap =
-            attributes.lookup_or_add_for_write_span<int8_t>(
-                "start_cap",
-                bke::AttrDomain::Curve,
-                bke::AttributeInitVArray(
-                    VArray<int8_t>::from_single(GP_STROKE_CAP_TYPE_ROUND, curves.curves_num())));
+        bke::SpanAttributeWriter<int8_t> start_cap = attributes.ensure_for_write_span<int8_t>(
+            "start_cap",
+            bke::AttrDomain::Curve,
+            bke::AttributeInitVArray(
+                VArray<int8_t>::from_single(GP_STROKE_CAP_TYPE_ROUND, curves.curves_num())));
         if (start_cap) {
           index_mask::masked_fill(start_cap.span, modified_state.start_cap, selection);
           start_cap.finish();

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "BLI_span.hh"
+
 namespace blender {
 
 struct ARegion;
@@ -53,5 +55,9 @@ bool ED_time_scrub_event_in_region_poll(const wmWindow *win,
 
 void ED_time_scrub_channel_search_draw(const bContext *C, ARegion *region, bDopeSheet *dopesheet);
 void ED_time_scrub_region_rect_get(const ARegion *region, rcti *r_rect);
+void ED_time_scrub_frame_str_get(const Scene *scene,
+                                 bool display_seconds,
+                                 const float frame,
+                                 MutableCStr r_str);
 
 }  // namespace blender

@@ -65,6 +65,7 @@ set(SRC
   intern/blender_cli_command.cc
   intern/blender_copybuffer.cc
   intern/blender_project.cc
+  intern/blender_project_config.cc
   intern/blender_undo.cc
   intern/blender_user_menu.cc
   intern/blendfile.cc
@@ -176,6 +177,7 @@ set(SRC
   intern/light_linking.cc
   intern/lightprobe.cc
   intern/linestyle.cc
+  intern/list.cc
   intern/main.cc
   intern/main_idmap.cc
   intern/main_invariants.cc
@@ -284,8 +286,8 @@ set(SRC
   intern/subdiv_displacement.cc
   intern/subdiv_displacement_multires.cc
   intern/subdiv_eval.cc
-  intern/subdiv_foreach.cc
   intern/subdiv_mesh.cc
+  intern/subdiv_mesh_layout.cc
   intern/subdiv_modifier.cc
   intern/subdiv_stats.cc
   intern/subdiv_topology.cc
@@ -307,6 +309,7 @@ set(SRC
   intern/vfont.cc
   intern/vfont_curve.cc
   intern/vfontdata_freetype.cc
+  intern/view3d_runtime.cc
   intern/viewer_path.cc
   intern/volume.cc
   intern/volume_grid.cc
@@ -449,6 +452,8 @@ set(SRC
   BKE_light_linking.h
   BKE_lightprobe.h
   BKE_linestyle.h
+  BKE_list.hh
+  BKE_list_fwd.hh
   BKE_main.hh
   BKE_main_idmap.hh
   BKE_main_invariants.hh
@@ -526,8 +531,8 @@ set(SRC
   BKE_subdiv_ccg.hh
   BKE_subdiv_deform.hh
   BKE_subdiv_eval.hh
-  BKE_subdiv_foreach.hh
   BKE_subdiv_mesh.hh
+  BKE_subdiv_mesh_layout.hh
   BKE_subdiv_modifier.hh
   BKE_subdiv_topology.hh
   BKE_text.h
@@ -540,6 +545,7 @@ set(SRC
   BKE_uvproject.h
   BKE_vfont.hh
   BKE_vfontdata.hh
+  BKE_view3d_runtime.hh
   BKE_viewer_path.hh
   BKE_volume.hh
   BKE_volume_enums.hh
@@ -801,6 +807,7 @@ if(WITH_GTESTS)
     intern/main_test.cc
     intern/nla_test.cc
     intern/node_socket_value_iter_test.cc
+    intern/node_socket_value_test.cc
     intern/path_templates_test.cc
     intern/recents_test.cc
     intern/scene_test.cc

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Alpha (b'c02032f9693d')\n"
+"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 07:25+0000\n"
+"POT-Creation-Date: 2026-10-26 10:44+0000\n"
 "PO-Revision-Date: 2026-09-23 21:13+0000\n"
 "Last-Translator: Karlo Pavicic <soulcreature@hotmail.com>\n"
 "Language-Team: Croatian <https://translate.blender.org/projects/blender-ui/ui/hr/>\n"
@@ -810,24 +810,24 @@ msgid "Delete"
 msgstr "Obriši"
 
 
-msgid "Clean Up"
-msgstr "Počisti"
+msgid "Navigation"
+msgstr "Navigacija"
 
 
 msgid "Light"
 msgstr "Svjetlo"
 
 
-msgid "Merge"
-msgstr "Spajanje"
-
-
-msgid "Navigation"
-msgstr "Navigacija"
-
-
 msgid "Relations"
 msgstr "Odnosi"
+
+
+msgid "Clean Up"
+msgstr "Počisti"
+
+
+msgid "Merge"
+msgstr "Spajanje"
 
 
 msgid "Console"
@@ -1119,7 +1119,8 @@ msgid "Add Grid"
 msgstr "Kreiraj plohu s mrežom"
 
 
-msgid "Construct a subdivided plane mesh"
+# BFA - reworded, Blender: "Construct a subdivided plane mesh"
+msgid "Add a subdivided plane mesh"
 msgstr "Kreiraj podjeljenju plohu"
 
 
@@ -1328,12 +1329,14 @@ msgid "Save Copy"
 msgstr "Spremi kopiju"
 
 
+# BFA - reworded, Blender: "Save Blender File"
 msgctxt "Operator"
-msgid "Save Blender File"
+msgid "Save Blend File"
 msgstr "Spremi Blender datoteku"
 
 
-msgid "Save the current Blender file"
+# BFA - reworded, Blender: "Save the current Blender file"
+msgid "Save the current Blend file"
 msgstr "Spremi otvorenu datoteku"
 
 
@@ -1355,12 +1358,12 @@ msgid "New Main Window"
 msgstr "Kreiraj kopiju glavnog prozora"
 
 
-msgid "Stereoscopy"
-msgstr "Stereoskopija"
-
-
 msgid "Drawing Plane"
 msgstr "Crtača ploha"
+
+
+msgid "Stereoscopy"
+msgstr "Stereoskopija"
 
 
 msgid "Bone Constraints"
@@ -1799,8 +1802,9 @@ msgid "Render Animation"
 msgstr "Renderiranje animacije"
 
 
+# BFA - reworded, Blender: "Render Audio..."
 msgctxt "Operator"
-msgid "Render Audio..."
+msgid "Render Audio"
 msgstr "Renderiranje zvuka..."
 
 
@@ -1824,8 +1828,9 @@ msgid "Repeat History..."
 msgstr "Povijest ponavljanja..."
 
 
+# BFA - reworded, Blender: "Menu Search..."
 msgctxt "Operator"
-msgid "Menu Search..."
+msgid "Menu Search"
 msgstr "Pretraživanje izbornika..."
 
 
@@ -1858,8 +1863,9 @@ msgid "Render Image"
 msgstr "Renderiranje slike"
 
 
+# BFA - reworded, Blender: "Operator Search..."
 msgctxt "Operator"
-msgid "Operator Search..."
+msgid "Operator Search"
 msgstr "Pretraživanje operatora..."
 
 
@@ -2658,3 +2664,36 @@ msgstr "ID krivulje"
 msgid "ID of each curve"
 msgstr "ID svake kriulje"
 
+
+# BFA - Bforartists strings Blender has no entry for (#5701). Keep this section at the end
+# BFA - of the file; on a merge conflict here keep both sides, Blender's entries first.
+
+# BFA - reworded, Blender: "Masks"
+msgid "      Masks"
+msgstr "      Maske"
+
+# BFA - reworded, Blender: "Delete"
+msgctxt "Operator"
+msgid "Delete Track        "
+msgstr "Obriši"
+
+# BFA - reworded, Blender: "Operator Search..."
+msgid "Operator Search"
+msgstr "Pretraživanje operatora..."
+
+# BFA - reworded, Blender: "Face Sets"
+msgid "Show Face Sets"
+msgstr "Skupovi lica"
+
+# BFA - reworded, Blender: "Line Width"
+msgid "Viewport Line Width"
+msgstr "Debljina linije"
+
+# BFA - reworded Blender string
+msgid "Bforartists is free software"
+msgstr "Bforartists softver je besplatan"
+
+# BFA - reworded Blender string
+msgctxt "Operator"
+msgid "Bforartists Website"
+msgstr "Bforartists web stranica"

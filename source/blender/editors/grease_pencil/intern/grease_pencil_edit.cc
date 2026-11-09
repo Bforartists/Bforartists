@@ -534,7 +534,7 @@ static bool remove_stroke_or_fill_based_on_mode(Object &object,
     return false;
   }
   if (mode == DeleteMode::OnlyStrokes) {
-    bke::SpanAttributeWriter<bool> hide_strokes = attributes.lookup_or_add_for_write_span<bool>(
+    bke::SpanAttributeWriter<bool> hide_strokes = attributes.ensure_for_write_span<bool>(
         "hide_stroke", bke::AttrDomain::Curve, bke::AttributeInitValue(false));
     index_mask::masked_fill(hide_strokes.span, true, fills_with_stroke);
     hide_strokes.finish();
@@ -909,7 +909,7 @@ static wmOperatorStatus grease_pencil_stroke_material_set_exec(bContext *C, wmOp
 
     bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
     bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-    bke::SpanAttributeWriter<int> materials = attributes.lookup_or_add_for_write_span<int>(
+    bke::SpanAttributeWriter<int> materials = attributes.ensure_for_write_span<int>(
         "material_index", bke::AttrDomain::Curve);
 
     const IndexMask fill_strokes = bke::greasepencil::selected_mask_to_fills(
@@ -962,8 +962,8 @@ static const EnumPropertyItem prop_cyclical_types[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-static bke::CurvesGeometry subdivide_last_segement(const bke::CurvesGeometry &curves,
-                                                   const IndexMask &strokes)
+static bke::CurvesGeometry subdivide_last_segment(const bke::CurvesGeometry &curves,
+                                                  const IndexMask &strokes)
 {
   const VArray<bool> cyclic = curves.cyclic();
   const Span<float3> positions = curves.positions();
@@ -1044,7 +1044,7 @@ static wmOperatorStatus grease_pencil_cyclical_set_exec(bContext *C, wmOperator 
       /* Update to properly calculate the lengths. */
       curves.tag_topology_changed();
 
-      curves = subdivide_last_segement(curves, strokes);
+      curves = subdivide_last_segment(curves, strokes);
     }
 
     info.drawing.tag_topology_changed();
@@ -1217,7 +1217,7 @@ static wmOperatorStatus grease_pencil_set_uniform_opacity_exec(bContext *C, wmOp
     MutableSpan<float> opacities = info.drawing.opacities_for_write();
     bke::curves::fill_points<float>(points_by_curve, strokes, opacity_stroke, opacities);
 
-    if (SpanAttributeWriter<float> fill_opacities = attributes.lookup_or_add_for_write_span<float>(
+    if (SpanAttributeWriter<float> fill_opacities = attributes.ensure_for_write_span<float>(
             "fill_opacity", AttrDomain::Curve, bke::AttributeInitValue(1.0f)))
     {
       index_mask::masked_fill(fill_opacities.span, opacity_fill, strokes);
@@ -1473,39 +1473,29 @@ static wmOperatorStatus grease_pencil_caps_set_exec(bContext *C, wmOperator *op)
     if (ELEM(mode, CapsMode::ROUND, CapsMode::FLAT)) {
       const int8_t flag_set = (mode == CapsMode::ROUND) ? int8_t(GP_STROKE_CAP_TYPE_ROUND) :
                                                           int8_t(GP_STROKE_CAP_TYPE_FLAT);
-      if (bke::SpanAttributeWriter<int8_t> start_caps =
-              attributes.lookup_or_add_for_write_span<int8_t>("start_cap", bke::AttrDomain::Curve))
-      {
-        index_mask::masked_fill(start_caps.span, flag_set, strokes);
-        start_caps.finish();
-      }
-      if (bke::SpanAttributeWriter<int8_t> end_caps =
-              attributes.lookup_or_add_for_write_span<int8_t>("end_cap", bke::AttrDomain::Curve))
-      {
-        index_mask::masked_fill(end_caps.span, flag_set, strokes);
-        end_caps.finish();
-      }
+      bke::SpanAttributeWriter<int8_t> start_caps = attributes.ensure_for_write_span<int8_t>(
+          "start_cap", bke::AttrDomain::Curve);
+      index_mask::masked_fill(start_caps.span, flag_set, strokes);
+      start_caps.finish();
+      bke::SpanAttributeWriter<int8_t> end_caps = attributes.ensure_for_write_span<int8_t>(
+          "end_cap", bke::AttrDomain::Curve);
+      index_mask::masked_fill(end_caps.span, flag_set, strokes);
+      end_caps.finish();
     }
     else {
       switch (mode) {
         case CapsMode::START: {
-          if (bke::SpanAttributeWriter<int8_t> caps =
-                  attributes.lookup_or_add_for_write_span<int8_t>("start_cap",
-                                                                  bke::AttrDomain::Curve))
-          {
-            toggle_caps(caps.span, strokes);
-            caps.finish();
-          }
+          bke::SpanAttributeWriter<int8_t> caps = attributes.ensure_for_write_span<int8_t>(
+              "start_cap", bke::AttrDomain::Curve);
+          toggle_caps(caps.span, strokes);
+          caps.finish();
           break;
         }
         case CapsMode::END: {
-          if (bke::SpanAttributeWriter<int8_t> caps =
-                  attributes.lookup_or_add_for_write_span<int8_t>("end_cap",
-                                                                  bke::AttrDomain::Curve))
-          {
-            toggle_caps(caps.span, strokes);
-            caps.finish();
-          }
+          bke::SpanAttributeWriter<int8_t> caps = attributes.ensure_for_write_span<int8_t>(
+              "end_cap", bke::AttrDomain::Curve);
+          toggle_caps(caps.span, strokes);
+          caps.finish();
           break;
         }
         case CapsMode::ROUND:
@@ -2871,14 +2861,12 @@ static IndexRange clipboard_paste_strokes_ex(Main &bmain,
   if (!clipboard_material_remap.is_empty()) {
     /* Remap the material indices of the pasted curves to the target object material indices. */
     bke::MutableAttributeAccessor attributes = drawing.strokes_for_write().attributes_for_write();
-    bke::SpanAttributeWriter<int> material_indices = attributes.lookup_or_add_for_write_span<int>(
+    bke::SpanAttributeWriter<int> material_indices = attributes.ensure_for_write_span<int>(
         "material_index", bke::AttrDomain::Curve);
-    if (material_indices) {
-      for (const int i : pasted_curves_range) {
-        material_indices.span[i] = clipboard_material_remap[material_indices.span[i]];
-      }
-      material_indices.finish();
+    for (const int i : pasted_curves_range) {
+      material_indices.span[i] = clipboard_material_remap[material_indices.span[i]];
     }
+    material_indices.finish();
   }
 
   drawing.tag_topology_changed();
@@ -5061,16 +5049,13 @@ static wmOperatorStatus grease_pencil_set_corner_type_exec(bContext *C, wmOperat
       return;
     }
 
-    if (bke::SpanAttributeWriter<float> miter_angles =
-            attributes.lookup_or_add_for_write_span<float>(
-                "miter_angle",
-                bke::AttrDomain::Point,
-                bke::AttributeInitValue(GP_STROKE_MITER_ANGLE_ROUND)))
-    {
-      index_mask::masked_fill(miter_angles.span, miter_angle, selection);
-      miter_angles.finish();
-      changed.store(true, std::memory_order_relaxed);
-    }
+    bke::SpanAttributeWriter<float> miter_angles = attributes.ensure_for_write_span<float>(
+        "miter_angle",
+        bke::AttrDomain::Point,
+        bke::AttributeInitValue(GP_STROKE_MITER_ANGLE_ROUND));
+    index_mask::masked_fill(miter_angles.span, miter_angle, selection);
+    miter_angles.finish();
+    changed.store(true, std::memory_order_relaxed);
   });
 
   if (changed) {
@@ -5161,9 +5146,9 @@ static wmOperatorStatus grease_pencil_set_stroke_type_exec(bContext *C, wmOperat
     bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
     bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
 
-    bke::SpanAttributeWriter<bool> hide_stroke = attributes.lookup_or_add_for_write_span<bool>(
+    bke::SpanAttributeWriter<bool> hide_stroke = attributes.ensure_for_write_span<bool>(
         "hide_stroke", bke::AttrDomain::Curve);
-    bke::SpanAttributeWriter<int> fill_ids = attributes.lookup_or_add_for_write_span<int>(
+    bke::SpanAttributeWriter<int> fill_ids = attributes.ensure_for_write_span<int>(
         "fill_id", bke::AttrDomain::Curve);
 
     switch (type) {
@@ -5417,7 +5402,7 @@ static wmOperatorStatus grease_pencil_join_fills_exec(bContext *C, wmOperator *o
   }
   bke::CurvesGeometry &curves = drawing_dst->strokes_for_write();
   bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
-  bke::SpanAttributeWriter<int> fill_ids = attributes.lookup_or_add_for_write_span<int>(
+  bke::SpanAttributeWriter<int> fill_ids = attributes.ensure_for_write_span<int>(
       "fill_id", bke::AttrDomain::Curve);
 
   const IndexMask selected_strokes = bke::greasepencil::selected_mask_to_fills(
@@ -5694,7 +5679,7 @@ static void remap_material_indices(bke::greasepencil::Drawing &drawing,
   bke::CurvesGeometry &curves = drawing.strokes_for_write();
   bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
   /* Validate material indices and add missing materials. */
-  bke::SpanAttributeWriter<int> material_writer = attributes.lookup_or_add_for_write_span<int>(
+  bke::SpanAttributeWriter<int> material_writer = attributes.ensure_for_write_span<int>(
       "material_index", bke::AttrDomain::Curve);
   threading::parallel_for(curves.curves_range(), 1024, [&](const IndexRange range) {
     for (const int curve_i : range) {
@@ -5750,16 +5735,16 @@ static bke::AttributeStorage merge_attributes(const bke::AttributeAccessor &a,
   bke::AttributeStorage new_storage;
   for (const auto &[name, type] : new_types.items()) {
     const CPPType &cpp_type = bke::attribute_type_to_cpp_type(type);
-    auto new_data = bke::Attribute::ArrayData::from_uninitialized(cpp_type, dst_size);
+    GArray<> new_data(cpp_type, dst_size, NoInitialization());
 
     const GVArray data_a = *a.lookup_or_default(name, bke::AttrDomain::Layer, type);
-    data_a.materialize_to_uninitialized(new_data.data);
+    data_a.materialize_to_uninitialized(new_data.data());
 
     const GVArray data_b = *b.lookup_or_default(name, bke::AttrDomain::Layer, type);
     data_b.materialize_to_uninitialized(
-        POINTER_OFFSET(new_data.data, cpp_type.size * domain_size_a));
+        POINTER_OFFSET(new_data.data(), cpp_type.size * domain_size_a));
 
-    new_storage.add(name, bke::AttrDomain::Layer, type, std::move(new_data));
+    new_storage.add(name, bke::AttrDomain::Layer, bke::GList(std::move(new_data)));
   }
 
   return new_storage;

@@ -21,6 +21,7 @@
 #include "DNA_userdef_types.h"
 #include "DNA_windowmanager_types.h"
 
+#include "BLI_fileops.hh"
 #include "BLI_listbase.hh"
 #include "BLI_memory_cache.hh"
 #include "BLI_path_utils.hh"
@@ -34,6 +35,7 @@
 #include "BLO_writefile.hh"
 
 #include "BKE_blender.hh"
+#include "BKE_blender_project.hh"
 #include "BKE_blendfile.hh"
 #include "BKE_callbacks.hh"
 #include "BKE_context.hh"
@@ -48,6 +50,7 @@
 #include "BKE_preferences.h"
 #include "BKE_preview_image.hh"
 #include "BKE_recents.hh"
+#include "BKE_report.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
 #include "BKE_sound.hh"
@@ -443,6 +446,31 @@ void WM_init_splash_on_startup(bContext *C)
   WM_init_splash(C);
 }
 
+bool wm_init_last_project_on_startup(Main *bmain)
+{
+  if (G.background || !(U.pref_flag & USER_PREF_FLAG_PROJECT_REMEMBER)) {
+    return false;
+  }
+
+  const std::string root_path = recents::Section("project").get<std::string>("last");
+  if (root_path.empty() || !BLI_is_dir(root_path.c_str())) {
+    return false;
+  }
+
+  return BKE_blender_project_init_from_root_path(bmain, root_path);
+}
+
+static void wm_exit_project_data_store(Main *bmain)
+{
+  BKE_blender_project_config_autosave(bmain);
+
+  const std::string root_path = BKE_blender_project_read_callback(
+      bmain, [](const bke::BlenderProject *project) {
+        return project ? std::string(project->get_root_path()) : std::string();
+      });
+  recents::Section("project").set("last", root_path);
+}
+
 void WM_init_splash(bContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -540,12 +568,14 @@ void WM_exit_ex(bContext *C, const bool do_python_exit, const bool do_user_exit_
   /* NOTE: same code copied in `wm_files.cc`. */
   if (C && wm) {
     if (do_user_exit_actions) {
+      wm_exit_project_data_store(CTX_data_main(C));
+
       /* Save quit.blend. */
       Main *bmain = CTX_data_main(C);
       char filepath[FILE_MAX];
       const int fileflags = G.fileflags | G_FILE_COMPRESS | G_FILE_RECOVER_WRITE;
 
-      BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_base(), BLENDER_QUIT_FILE);
+      BLI_path_join(filepath, BKE_tempdir_base(), BLENDER_QUIT_FILE);
 
       ED_editors_flush_edits(bmain);
       ED_image_internal_autosave_flush(bmain);

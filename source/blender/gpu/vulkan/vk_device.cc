@@ -112,15 +112,16 @@ void VKDevice::deinit()
   samplers_.free();
   GPU_SHADER_FREE_SAFE(vk_backbuffer_blit_sh_);
 
+  /* Destroy resources that reached a zero ref count but were never consumed by a submission,
+   * as no further submissions will drain them. */
+  {
+    Vector<render_graph::VKResourceStateTracker::DiscardableResource> discardable =
+        resources.pop_discardable_resources();
+    orphaned_data.discard_resources(discardable, UINT64_MAX);
+  }
   orphaned_data_render.deinit(*this);
   orphaned_data.deinit(*this);
-  {
-    while (!thread_data_.is_empty()) {
-      VKThreadData *thread_data = thread_data_.pop_last();
-      delete thread_data;
-    }
-    thread_data_.clear();
-  }
+  descriptor_pools.deinit(*this);
   pipelines.write_to_disk();
   pipelines.free_data(*this);
   descriptor_set_layouts_.deinit();
@@ -236,12 +237,7 @@ void VKDevice::init_physical_device_features()
 
   VkPhysicalDeviceFeatures2 features = {};
   features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-  vk_physical_device_vulkan_11_features_.sType =
-      VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-
-  features.pNext = &vk_physical_device_vulkan_11_features_;
-  vk_physical_device_vulkan_11_features_.pNext =
-      &vk_physical_device_acceleration_structure_features_;
+  features.pNext = &vk_physical_device_acceleration_structure_features_;
 
   vkGetPhysicalDeviceFeatures2(vk_physical_device_, &features);
   vk_physical_device_features_ = features.features;
@@ -462,35 +458,8 @@ std::string VKDevice::driver_version() const
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name VKThreadData
- * \{ */
-
-VKThreadData::VKThreadData(VKDevice &device, pthread_t thread_id) : thread_id(thread_id)
-{
-  descriptor_pools.init(device);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Resource management
  * \{ */
-
-VKThreadData &VKDevice::current_thread_data()
-{
-  std::scoped_lock mutex(resources.mutex);
-  pthread_t current_thread_id = pthread_self();
-
-  for (VKThreadData *thread_data : thread_data_) {
-    if (pthread_equal(thread_data->thread_id, current_thread_id)) {
-      return *thread_data;
-    }
-  }
-
-  VKThreadData *thread_data = new VKThreadData(*this, current_thread_id);
-  thread_data_.append(thread_data);
-  return *thread_data;
-}
 
 void VKDevice::context_register(VKContext &context)
 {
@@ -566,13 +535,6 @@ void VKDevice::debug_print() const
   os << " FragmentOutLib: " << pipelines.fragment_output_libs_.size() << "\n";
   os << "Descriptor sets\n";
   os << " VkDescriptorSetLayouts: " << descriptor_set_layouts_.size() << "\n";
-  for (const VKThreadData *thread_data : thread_data_) {
-    /* NOTE: Assumption that this is always called form the main thread. This could be solved by
-     * keeping track of the main thread inside the thread data. */
-    const bool is_main = pthread_equal(thread_data->thread_id, pthread_self());
-    os << "ThreadData" << (is_main ? " (main-thread)" : "") << ")\n";
-    os << " Rendering_depth: " << thread_data->rendering_depth << "\n";
-  }
   os << "Discard pool\n";
   os << orphaned_data << "\n";
   os << "Discard pool (render)\n";

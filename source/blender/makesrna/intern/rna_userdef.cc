@@ -69,6 +69,13 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
      ICON_PLUGIN,
      "Add-ons",
      "Manage add-ons installed via Extensions"}, /* BFA - Added Icons */
+    /* BFA - Asset Libraries follows Blender into the Extensions group (extensions can provide
+     * asset libraries since Blender 5.3), keeps the BFA icon. */
+    {USER_SECTION_ASSETS,
+     "ASSETS",
+     ICON_ASSET_MANAGER,
+     "Asset Libraries",
+     "Manage remote, local, and extension asset libraries"},
     {USER_SECTION_THEME,
      "THEMES",
      ICON_COLOR,
@@ -80,8 +87,6 @@ const EnumPropertyItem rna_enum_preference_section_items[] = {
     {USER_SECTION_WORKSPACE_ADDONS, "WORKSPACE_ADDONS", 0, "Add-on Overrides", ""},
     {USER_SECTION_WORKSPACE_KEYMAPS, "WORKSPACE_KEYMAPS", 0, "Keymap Overrides", ""},
 #endif
-    RNA_ENUM_ITEM_SEPR,
-    {USER_SECTION_ASSETS, "ASSETS", ICON_ASSET_MANAGER, "Asset Libraries", ""}, /* BFA - Added Icons */
     RNA_ENUM_ITEM_SEPR,
     {USER_SECTION_INPUT, "INPUT", ICON_INPUT_BOOL, "Input", ""}, /* BFA - Added Icons */
     {USER_SECTION_NAVIGATION,
@@ -723,14 +728,14 @@ static void rna_userdef_extension_repo_custom_directory_set(PointerRNA *ptr, con
 static void rna_userdef_extension_repo_directory_get(PointerRNA *ptr, char *value)
 {
   const bUserExtensionRepo *repo = static_cast<bUserExtensionRepo *>(ptr->data);
-  BKE_preferences_extension_repo_dirpath_get(repo, value, FILE_MAX);
+  BKE_preferences_extension_repo_dirpath_get(repo, MutableCStr(value, FILE_MAX));
 }
 
 static int rna_userdef_extension_repo_directory_length(PointerRNA *ptr)
 {
   const bUserExtensionRepo *repo = static_cast<bUserExtensionRepo *>(ptr->data);
   char dirpath[FILE_MAX];
-  return BKE_preferences_extension_repo_dirpath_get(repo, dirpath, sizeof(dirpath));
+  return BKE_preferences_extension_repo_dirpath_get(repo, dirpath);
 }
 
 static void rna_userdef_extension_repo_access_token_get(PointerRNA *ptr, char *value)
@@ -980,40 +985,6 @@ static void rna_userdef_asset_library_remove(bContext *C, ReportList *reports, P
   USERDEF_TAG_DIRTY;
 }
 
-/* BFA: Move asset library to new position and update active library index */
-static void rna_userdef_asset_library_move(bContext *C, ReportList *reports, int from_index, int to_index)
-{
-  const int count = BLI_listbase_count(&U.asset_libraries);
-  
-  if (from_index < 0 || from_index >= count || to_index < 0 || to_index >= count) {
-    BKE_reportf(reports, RPT_ERROR, "Invalid indices: from '%d' to '%d'", from_index, to_index);
-    return;
-  }
-
-  if (!BLI_listbase_move_index(&U.asset_libraries, from_index, to_index)) {
-    BKE_reportf(reports, RPT_ERROR, "Could not move asset library from index '%d' to '%d'", from_index, to_index);
-    return;
-  }
-
-  /* Update active library index if needed. */
-  if (U.active_asset_library == from_index) {
-    U.active_asset_library = to_index;
-  }
-  else if (from_index < U.active_asset_library && to_index >= U.active_asset_library) {
-    U.active_asset_library--;
-  }
-  else if (from_index > U.active_asset_library && to_index <= U.active_asset_library) {
-    U.active_asset_library++;
-  }
-
-  ed::asset::list::clear_all_library(C);
-
-  /* Trigger refresh for the Asset Browser. */
-  WM_main_add_notifier(NC_SPACE | ND_SPACE_ASSET_PARAMS, nullptr);
-
-  USERDEF_TAG_DIRTY;
-}
-
 static bUserExtensionRepo *rna_userdef_extension_repo_new(const char *name,
                                                           const char *module,
                                                           const char *custom_directory,
@@ -1079,6 +1050,13 @@ static void rna_userdef_window_csd_params_update(Main *bmain, Scene *scene, Poin
 #  ifdef WITH_GHOST_CSD
   WM_window_csd_params_update();
 #  endif
+  rna_userdef_update(bmain, scene, ptr);
+}
+
+static void rna_userdef_anisotropic_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+  /* The anisotropic filtering level is set on textures when they are created. */
+  BKE_image_free_all_gpu_texture_caches(bmain);
   rna_userdef_update(bmain, scene, ptr);
 }
 
@@ -5678,7 +5656,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   prop = RNA_def_property(srna, "header_align", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, header_align_items);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "uiflag");
-  RNA_def_property_enum_default(prop, USER_HEADER_FROM_PREF | USER_HEADER_BOTTOM);
+  RNA_def_property_enum_default(prop, 0);
   RNA_def_property_ui_text(prop, "Header Position", "Default header position for new space-types");
   RNA_def_property_update(prop, 0, "rna_userdef_screen_update_header_default");
 
@@ -6693,7 +6671,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, nullptr, "anisotropic_filter");
   RNA_def_property_enum_items(prop, anisotropic_items);
   RNA_def_property_ui_text(prop, "Anisotropic Filtering", "Quality of anisotropic filtering");
-  RNA_def_property_update(prop, 0, "rna_userdef_update");
+  RNA_def_property_update(prop, 0, "rna_userdef_anisotropic_update");
 
   prop = RNA_def_property(srna, "gl_texture_limit", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "glreslimit");
@@ -6814,6 +6792,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "network_timeout", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, nullptr, "network_timeout");
+  RNA_def_property_int_default(prop, 10);
   RNA_def_property_ui_text(
       prop,
       "Network Timeout",
@@ -6822,6 +6801,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "network_connection_limit", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, nullptr, "network_connection_limit");
+  RNA_def_property_int_default(prop, 5);
   RNA_def_property_ui_text(
       prop,
       "Network Connection Limit",
@@ -7773,14 +7753,6 @@ static void rna_def_userdef_asset_library_collection(BlenderRNA *brna, PropertyR
   parm = RNA_def_pointer(func, "library", "UserAssetLibrary", "", "");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
   RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, ParameterFlag(0));
-
-  func = RNA_def_function(srna, "move", "rna_userdef_asset_library_move");
-  RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_USE_CONTEXT | FUNC_USE_REPORTS);
-  RNA_def_function_ui_description(func, "Move an asset library to a different position");
-  parm = RNA_def_int(func, "from_index", -1, INT_MIN, INT_MAX, "From Index", "Index to move", 0, 10000);
-  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
-  parm = RNA_def_int(func, "to_index", -1, INT_MIN, INT_MAX, "To Index", "Target index", 0, 10000);
-  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
 }
 
 static void rna_def_userdef_extension_repos_collection(BlenderRNA *brna, PropertyRNA *cprop)
@@ -8284,11 +8256,6 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Remote Asset Libraries", "Enable asset libraries served over HTTP/HTTPS");
 
-  prop = RNA_def_property(srna, "use_collection_importer", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_ui_text(
-      prop, "Collection Import", "Enables a file importer to be configured on a Collection");
-  RNA_def_property_update(prop, 0, "rna_userdef_ui_update");
-
   prop = RNA_def_property(srna, "use_extensions_debug", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_ui_text(
       prop,
@@ -8556,6 +8523,14 @@ void RNA_def_userdef(BlenderRNA *brna)
       prop,
       "Auto-save Project",
       "Save projects automatically on exit and when saving or switching blend files");
+  RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+  prop = RNA_def_property(srna, "use_project_remember", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "pref_flag", USER_PREF_FLAG_PROJECT_REMEMBER);
+  RNA_def_property_ui_text(
+      prop,
+      "Remember Last Project",
+      "On startup, automatically re-open the project that was last open when Blender was closed");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   prop = RNA_def_property(srna, "is_dirty", PROP_BOOLEAN, PROP_NONE);

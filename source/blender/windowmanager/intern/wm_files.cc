@@ -40,6 +40,7 @@
 #include "BLI_math_base_c.hh"
 #include "BLI_math_time.hh"
 #include "BLI_memory_cache.hh"
+#include "BLI_path_utils.hh"
 #include "BLI_string.hh"
 #include "BLI_string_utf8.hh"
 #include "BLI_system.hh"
@@ -74,6 +75,7 @@
 #include "BKE_appdir.hh"
 #include "BKE_autoexec.hh"
 #include "BKE_blender.hh"
+#include "BKE_blender_project.hh"
 #include "BKE_blender_version.h"
 #include "BKE_blendfile.hh"
 #include "BKE_callbacks.hh"
@@ -431,6 +433,9 @@ static void wm_file_read_setup_wm_use_new(bContext *C,
   BKE_libblock_free_data(&old_wm->id, false);
   BKE_libblock_free_data_py(&old_wm->id);
   MEM_delete(old_wm);
+
+  wmWindow *win = wm->runtime->winactive ? wm->runtime->winactive : wm->windows.first();
+  wm_window_make_drawable(wm, win);
 }
 
 /**
@@ -864,13 +869,20 @@ static void wm_file_read_post(bContext *C,
 
 static void wm_read_callback_pre_wrapper(bContext *C, const char *filepath)
 {
+  Main *bmain = CTX_data_main(C);
   /* NOTE: either #BKE_CB_EVT_LOAD_POST or #BKE_CB_EVT_LOAD_POST_FAIL must run.
    * Runs at the end of this function, don't return beforehand. */
-  BKE_callback_exec_string(CTX_data_main(C), filepath, BKE_CB_EVT_LOAD_PRE);
+  BKE_callback_exec_string(bmain, filepath, BKE_CB_EVT_LOAD_PRE);
 
-  /* The handlers above switch to the project of the new file, immediately update
+  /* Auto save (if enabled) the project config and then see if we should load in a
+   * new project if the project root path has changed.
+   */
+  BKE_blender_project_config_autosave(bmain);
+  BKE_blender_project_refresh(bmain, filepath);
+
+  /* The function above switch to the project of the new file, immediately update
    * color management to match as blend file read needs the project config. */
-  IMB_colormanagement_project_read_post(CTX_data_main(C));
+  IMB_colormanagement_project_read_post(bmain);
 }
 
 static void wm_read_callback_post_wrapper(bContext *C, const char *filepath, const bool success)
@@ -1115,6 +1127,7 @@ bool WM_file_read(bContext *C,
 
       if (do_history_file_update) {
         wm_history_file_update();
+        BKE_blender_project_recent_update(CTX_data_main(C));
       }
 
       wmFileReadPost_Params read_file_post_params{};
@@ -1167,6 +1180,38 @@ bool WM_file_read(bContext *C,
   BLI_assert(BKE_main_namemap_validate(*CTX_data_main(C)));
 
   return success;
+}
+
+bool WM_file_read_project(bContext *C, const char *filepath, ReportList *reports)
+{
+  const std::string project_root_path = BKE_is_path_inside_blender_project(filepath);
+
+  if (project_root_path.empty()) {
+    BKE_reportf(
+        reports, RPT_ERROR, "Could not find a project within the specified path: %s", filepath);
+    return false;
+  }
+
+  /* Initialize project before blend file, so it is taken into account. */
+  if (!BKE_blender_project_init_from_root_path(CTX_data_main(C), project_root_path)) {
+    BKE_reportf(
+        reports, RPT_ERROR, "Failed to load project from path: %s", project_root_path.c_str());
+    return false;
+  }
+
+  /* Read the startup file again with project configuration applied. */
+  wmHomeFileRead_Params read_homefile_params{};
+  read_homefile_params.use_data = true;
+  read_homefile_params.use_userdef = false;
+  read_homefile_params.use_factory_settings = G.factory_startup;
+  read_homefile_params.app_template_override = WM_init_state_app_template_get();
+  wm_homefile_read(C, &read_homefile_params, reports);
+
+  if (!G.background) {
+    BKE_blender_project_recent_update(CTX_data_main(C));
+  }
+
+  return true;
 }
 
 static struct {
@@ -1340,12 +1385,10 @@ void wm_homefile_read_ex(bContext *C,
   const std::optional<std::string> cfgdir = BKE_appdir_folder_id(BLENDER_USER_CONFIG, nullptr);
   if (!use_factory_settings) {
     if (cfgdir.has_value()) {
-      BLI_path_join(
-          filepath_startup, sizeof(filepath_startup), cfgdir->c_str(), BLENDER_STARTUP_FILE);
+      BLI_path_join(filepath_startup, cfgdir->c_str(), BLENDER_STARTUP_FILE);
       filepath_startup_is_factory = false;
       if (use_userdef) {
-        BLI_path_join(
-            filepath_userdef, sizeof(filepath_startup), cfgdir->c_str(), BLENDER_USERPREF_FILE);
+        BLI_path_join(filepath_userdef, cfgdir->c_str(), BLENDER_USERPREF_FILE);
       }
     }
     else {
@@ -1377,10 +1420,13 @@ void wm_homefile_read_ex(bContext *C,
     }
   }
 
+  /* Open last project on startup. */
+  if (params_homefile->is_first_time && use_data && wm_init_last_project_on_startup(bmain)) {
+    IMB_colormanagement_project_read_post(bmain);
+  }
+
   if ((app_template != nullptr) && (app_template[0] != '\0')) {
-    if (!BKE_appdir_app_template_id_search(
-            app_template, app_template_system, sizeof(app_template_system)))
-    {
+    if (!BKE_appdir_app_template_id_search(app_template, app_template_system)) {
       /* Can safely continue with code below, just warn it's not found. */
       BKE_reportf(reports, RPT_WARNING, "Application Template \"%s\" not found", app_template);
     }
@@ -1390,10 +1436,8 @@ void wm_homefile_read_ex(bContext *C,
     /* Note that the path is being set even when `use_factory_settings == true`
      * this is done so we can load a templates factory-settings. */
     if (!use_factory_settings && cfgdir.has_value()) {
-      BLI_path_join(
-          app_template_config, sizeof(app_template_config), cfgdir->c_str(), app_template);
-      BLI_path_join(
-          filepath_startup, sizeof(filepath_startup), app_template_config, BLENDER_STARTUP_FILE);
+      BLI_path_join(app_template_config, cfgdir->c_str(), app_template);
+      BLI_path_join(filepath_startup, app_template_config, BLENDER_STARTUP_FILE);
       filepath_startup_is_factory = false;
       if (BLI_access(filepath_startup, R_OK) != 0) {
         filepath_startup[0] = '\0';
@@ -1404,8 +1448,7 @@ void wm_homefile_read_ex(bContext *C,
     }
 
     if (filepath_startup[0] == '\0') {
-      BLI_path_join(
-          filepath_startup, sizeof(filepath_startup), app_template_system, BLENDER_STARTUP_FILE);
+      BLI_path_join(filepath_startup, app_template_system, BLENDER_STARTUP_FILE);
       filepath_startup_is_factory = true;
 
       /* Update defaults only for system templates. */
@@ -1486,14 +1529,14 @@ void wm_homefile_read_ex(bContext *C,
     char temp_path[FILE_MAX];
     temp_path[0] = '\0';
     if (!use_factory_settings) {
-      BLI_path_join(temp_path, sizeof(temp_path), app_template_config, BLENDER_USERPREF_FILE);
+      BLI_path_join(temp_path, app_template_config, BLENDER_USERPREF_FILE);
       if (BLI_access(temp_path, R_OK) != 0) {
         temp_path[0] = '\0';
       }
     }
 
     if (temp_path[0] == '\0') {
-      BLI_path_join(temp_path, sizeof(temp_path), app_template_system, BLENDER_USERPREF_FILE);
+      BLI_path_join(temp_path, app_template_system, BLENDER_USERPREF_FILE);
     }
 
     if (use_userdef) {
@@ -1621,7 +1664,7 @@ void wm_history_file_read()
   LinkNode *l;
   int num;
 
-  BLI_path_join(filepath, sizeof(filepath), cfgdir->c_str(), BLENDER_HISTORY_FILE);
+  BLI_path_join(filepath, cfgdir->c_str(), BLENDER_HISTORY_FILE);
 
   LinkNode *lines = BLI_file_read_as_lines(filepath);
 
@@ -1685,7 +1728,7 @@ static void wm_history_file_write()
     return;
   }
 
-  BLI_path_join(filepath, sizeof(filepath), user_config_dir->c_str(), BLENDER_HISTORY_FILE);
+  BLI_path_join(filepath, user_config_dir->c_str(), BLENDER_HISTORY_FILE);
 
   fp = BLI_fopen(filepath, "w");
   if (fp) {
@@ -1739,6 +1782,45 @@ static void wm_history_file_update()
     const GHOST_ISystemPaths *ghost_system_paths = GHOST_ISystemPaths::get();
     ghost_system_paths->addToSystemRecentFiles(blendfile_path);
   }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Recent Project Files
+ * \{ */
+
+static std::optional<std::string> wm_project_root_path_get(const Main *bmain)
+{
+  return BKE_blender_project_read_callback(
+      bmain, [](const bke::BlenderProject *project) -> std::optional<std::string> {
+        if (project == nullptr) {
+          return std::nullopt;
+        }
+        return project->get_root_path();
+      });
+}
+
+/** Most recently used blend file, to initialize file browsers. */
+static std::string wm_recent_filepath_get(const Main *bmain)
+{
+  const std::optional<std::string> root_path = wm_project_root_path_get(bmain);
+  if (!root_path) {
+    const RecentFile *recent = G.recent_files.first();
+    return recent ? recent->filepath : "";
+  }
+
+  /* In a project, use a file from the project, or the project directory. */
+  for (const RecentFile &recent : G.recent_files) {
+    if (BLI_path_contains(root_path->c_str(), recent.filepath)) {
+      return recent.filepath;
+    }
+  }
+
+  char dirpath[FILE_MAX];
+  STRNCPY(dirpath, root_path->c_str());
+  BLI_path_slash_ensure(dirpath);
+  return dirpath;
 }
 
 /** \} */
@@ -2075,7 +2157,7 @@ bool write_crash_blend()
   char filepath[FILE_MAX];
 
   STRNCPY(filepath, BKE_main_blendfile_path_from_global());
-  BLI_path_extension_replace(filepath, sizeof(filepath), "_crash.blend");
+  BLI_path_extension_replace(filepath, "_crash.blend");
   BlendFileWriteParams params{};
   const bool success = BLO_write_file(G_MAIN, filepath, G.fileflags, &params, nullptr);
   printf("%s: \"%s\"\n", success ? "written" : "failed", filepath);
@@ -2245,19 +2327,11 @@ static bool wm_file_write(bContext *C,
   const bool success = BLO_write_file(bmain, filepath, fileflags, &blend_write_params, reports);
 
   if (success) {
-    const bool do_history_file_update = (G.background == false) &&
-                                        (CTX_wm_manager(C)->op_undo_depth == 0);
-
     if (use_save_as_copy == false) {
       STRNCPY(bmain->filepath, filepath); /* Is guaranteed current file. */
     }
 
     SET_FLAG_FROM_TEST(G.fileflags, fileflags & G_FILE_COMPRESS, G_FILE_COMPRESS);
-
-    /* Prevent background mode scripts from clobbering history. */
-    if (do_history_file_update) {
-      wm_history_file_update();
-    }
 
     /* Run this function after because the file can't be written before the blend is. */
     if (ibuf_thumb) {
@@ -2274,6 +2348,21 @@ static bool wm_file_write(bContext *C,
 
   BKE_callback_exec_string(
       bmain, filepath, success ? BKE_CB_EVT_SAVE_POST : BKE_CB_EVT_SAVE_POST_FAIL);
+
+  /* Auto save (if enabled) the project config and then see if we should load in a
+   * new project if the project root path has changed.
+   */
+  BKE_blender_project_config_autosave(bmain);
+  BKE_blender_project_refresh(bmain, bmain->filepath);
+
+  /* Prevent background mode scripts from clobbering history.
+   * After BKE_blender_project_refresh which activates the project. */
+  const bool do_history_file_update = (G.background == false) &&
+                                      (CTX_wm_manager(C)->op_undo_depth == 0);
+  if (success && do_history_file_update) {
+    wm_history_file_update();
+    BKE_blender_project_recent_update(bmain);
+  }
 
   if (ibuf_thumb) {
     IMB_freeImBuf(ibuf_thumb);
@@ -2293,7 +2382,7 @@ static bool wm_file_write(bContext *C,
 /** \name Auto-Save API
  * \{ */
 
-static void wm_autosave_location(char filepath[FILE_MAX])
+static void wm_autosave_location(MutableCStr filepath)
 {
   const int pid = abs(getpid());
   char filename[FILE_MAX];
@@ -2313,7 +2402,7 @@ static void wm_autosave_location(char filepath[FILE_MAX])
   }
 
   const char *tempdir_base = BKE_tempdir_base();
-  BLI_path_join(filepath, FILE_MAX, tempdir_base, filename);
+  BLI_path_join(filepath, tempdir_base, filename);
 }
 
 static bool wm_autosave_write_try(Main *bmain, wmWindowManager *wm)
@@ -2437,7 +2526,7 @@ void wm_autosave_delete()
 
   if (BLI_exists(filepath)) {
     char filepath_quit[FILE_MAX];
-    BLI_path_join(filepath_quit, sizeof(filepath_quit), BKE_tempdir_base(), BLENDER_QUIT_FILE);
+    BLI_path_join(filepath_quit, BKE_tempdir_base(), BLENDER_QUIT_FILE);
 
     /* For global undo; remove temporarily saved file, otherwise rename. */
     if (U.uiflag & USER_GLOBALUNDO) {
@@ -2602,7 +2691,7 @@ static wmOperatorStatus wm_homefile_write_exec(bContext *C, wmOperator *op)
   /* Update keymaps in user preferences. */
   WM_keyconfig_update(wm);
 
-  BLI_path_join(filepath, sizeof(filepath), cfgdir->c_str(), BLENDER_STARTUP_FILE);
+  BLI_path_join(filepath, cfgdir->c_str(), BLENDER_STARTUP_FILE);
 
   CLOG_INFO_NOCHECK(&LOG, "Writing startup file: \"%s\" ", filepath);
 
@@ -2648,7 +2737,7 @@ static wmOperatorStatus wm_homefile_write_invoke(bContext *C,
 
   /* A different message if this is overriding a specific template startup file. */
   char display_name[FILE_MAX];
-  BLI_path_to_display_name(display_name, sizeof(display_name), IFACE_(U.app_template));
+  BLI_path_to_display_name(display_name, IFACE_(U.app_template));
   std::string message = fmt::format(
       fmt::runtime(IFACE_("Template \"{}\" will start next time as it is now.")),
       IFACE_(display_name));
@@ -2860,7 +2949,7 @@ static wmOperatorStatus wm_userpref_read_invoke(bContext *C,
 
   if (template_only) {
     char display_name[FILE_MAX];
-    BLI_path_to_display_name(display_name, sizeof(display_name), IFACE_(U.app_template));
+    BLI_path_to_display_name(display_name, IFACE_(U.app_template));
     title = fmt::format(fmt::runtime(IFACE_("Load Factory \"{}\" Preferences.")),
                         IFACE_(display_name));
   }
@@ -3135,7 +3224,7 @@ static wmOperatorStatus wm_read_factory_settings_invoke(bContext *C,
 
   if (template_only) {
     char display_name[FILE_MAX];
-    BLI_path_to_display_name(display_name, sizeof(display_name), IFACE_(U.app_template));
+    BLI_path_to_display_name(display_name, IFACE_(U.app_template));
     title = fmt::format(fmt::runtime(IFACE_("Load Factory \"{}\" Startup File and Preferences")),
                         IFACE_(display_name));
   }
@@ -3289,9 +3378,9 @@ static wmOperatorStatus wm_open_mainfile__select_file_path_exec(bContext *C, wmO
   }
 
   /* If possible, get the name of the most recently used `.blend` file. */
-  if (G.recent_files.first()) {
-    RecentFile *recent = G.recent_files.first();
-    blendfile_path = recent->filepath;
+  const std::string recent_filepath = wm_recent_filepath_get(bmain);
+  if (!recent_filepath.empty()) {
+    blendfile_path = recent_filepath.c_str();
   }
 
   RNA_string_set(op->ptr, "filepath", blendfile_path);
@@ -3311,7 +3400,7 @@ static wmOperatorStatus wm_open_mainfile__open(bContext *C, wmOperator *op)
   bool success;
 
   RNA_string_get(op->ptr, "filepath", filepath);
-  BLI_path_canonicalize_native(filepath, sizeof(filepath));
+  BLI_path_canonicalize_native(filepath);
 
   /* For file opening, also print in console for warnings, not only errors. */
   BKE_report_print_level_set(op->reports, RPT_WARNING);
@@ -3566,7 +3655,7 @@ bool WM_file_recover_last_session(bContext *C,
                                   ReportList *reports)
 {
   char filepath[FILE_MAX];
-  BLI_path_join(filepath, sizeof(filepath), BKE_tempdir_base(), BLENDER_QUIT_FILE);
+  BLI_path_join(filepath, BKE_tempdir_base(), BLENDER_QUIT_FILE);
   G.fileflags |= G_FILE_RECOVER_READ;
   const bool success = wm_file_read_opwrap(C, filepath, use_scripts_autoexec_check, reports);
   G.fileflags &= ~G_FILE_RECOVER_READ;
@@ -3643,7 +3732,7 @@ static wmOperatorStatus wm_recover_auto_save_exec(bContext *C, wmOperator *op)
   bool success;
 
   RNA_string_get(op->ptr, "filepath", filepath);
-  BLI_path_canonicalize_native(filepath, sizeof(filepath));
+  BLI_path_canonicalize_native(filepath);
 
   const bool use_scripts_autoexec_check = wm_open_init_use_scripts(op, OpenTrust::Recover);
   SET_FLAG_FROM_TEST(G.f, RNA_boolean_get(op->ptr, "use_scripts"), G_FLAG_SCRIPT_AUTOEXEC);
@@ -3946,7 +4035,7 @@ static void wm_filepath_default(const Main *bmain, char *filepath)
     char filename_untitled[FILE_MAXFILE];
     /* While a filename need not be UTF8, at this point the constructed name should be UTF8. */
     SNPRINTF_UTF8(filename_untitled, "%s.blend", DATA_("Untitled"));
-    BLI_path_filename_ensure(filepath, FILE_MAX, filename_untitled);
+    BLI_path_filename_ensure(MutableCStr(filepath, FILE_MAX), filename_untitled);
   }
 }
 
@@ -3976,9 +4065,8 @@ static void save_set_filepath(bContext *C, wmOperator *op)
   if (!RNA_property_is_set(op->ptr, prop)) {
     const char *blendfile_path = BKE_main_blendfile_path(bmain);
     /* If not saved before, get the name of the most recently used `.blend` file. */
-    if ((blendfile_path[0] == '\0') && G.recent_files.first()) {
-      RecentFile *recent = G.recent_files.first();
-      STRNCPY(filepath, recent->filepath);
+    if (blendfile_path[0] == '\0') {
+      STRNCPY(filepath, wm_recent_filepath_get(bmain).c_str());
     }
     else {
       STRNCPY(filepath, blendfile_path);
@@ -3990,7 +4078,7 @@ static void save_set_filepath(bContext *C, wmOperator *op)
      * there are further checks to prevent this entirely. */
     if (bmain->is_asset_edit_file && StringRef(filepath).endswith(BLENDER_ASSET_FILE_SUFFIX)) {
       filepath[strlen(filepath) - strlen(BLENDER_ASSET_FILE_SUFFIX)] = '\0';
-      BLI_path_extension_ensure(filepath, FILE_MAX, ".blend");
+      BLI_path_extension_ensure(filepath, ".blend");
     }
 
     wm_filepath_default(bmain, filepath);
@@ -4068,7 +4156,7 @@ static wmOperatorStatus wm_save_as_mainfile_exec(bContext *C, wmOperator *op)
   const bool is_filepath_set = RNA_struct_property_is_set(op->ptr, "filepath");
   if (is_filepath_set) {
     RNA_string_get(op->ptr, "filepath", filepath);
-    BLI_path_canonicalize_native(filepath, sizeof(filepath));
+    BLI_path_canonicalize_native(filepath);
   }
   else {
     STRNCPY(filepath, BKE_main_blendfile_path(bmain));
@@ -4084,7 +4172,7 @@ static wmOperatorStatus wm_save_as_mainfile_exec(bContext *C, wmOperator *op)
   if ((is_save_as == false) && is_incremental) {
     char head[FILE_MAXFILE], tail[FILE_MAXFILE];
     ushort digits;
-    int num = BLI_path_sequence_decode(filepath, head, sizeof(head), tail, sizeof(tail), &digits);
+    int num = BLI_path_sequence_decode(filepath, head, tail, &digits);
     /* Numbers greater than INT_MAX return 0, resulting in always appending "1" to the name. */
     if (num == 0 && digits == 0) {
       /* This does nothing if there are no numbers at the end of the head. */
@@ -4097,7 +4185,7 @@ static wmOperatorStatus wm_save_as_mainfile_exec(bContext *C, wmOperator *op)
     do {
       num++;
       tries++;
-      BLI_path_sequence_encode(filepath, sizeof(filepath), head, tail, digits, num);
+      BLI_path_sequence_encode(filepath, head, tail, digits, num);
       in_use = BLI_exists(filepath);
     } while (in_use && tries < tries_limit && num < INT_MAX);
     if (in_use) {
@@ -4179,7 +4267,7 @@ static bool wm_save_mainfile_check(bContext * /*C*/, wmOperator *op)
     /* NOTE(@ideasman42): some users would prefer #BLI_path_extension_replace(),
      * we have had some nitpicking bug reports about this.
      * Always adding the extension as users may use '.' as part of the file-name. */
-    BLI_path_extension_ensure(filepath, FILE_MAX, ".blend");
+    BLI_path_extension_ensure(filepath, ".blend");
     RNA_string_set(op->ptr, "filepath", filepath);
     return true;
   }
@@ -4370,7 +4458,7 @@ void WM_OT_save_mainfile(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Clear Recent Files List Operator
+/** \name Clear Recent Files/Projects List Operators
  * \{ */
 
 enum ClearRecentInclude { CLEAR_RECENT_ALL, CLEAR_RECENT_MISSING };
@@ -4428,6 +4516,39 @@ void WM_OT_clear_recent_files(wmOperatorType *ot)
 
   ot->invoke = wm_clear_recent_files_invoke;
   ot->exec = wm_clear_recent_files_exec;
+  ot->ui = wm_clear_recent_files_ui;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER;
+
+  /* props */
+  ot->prop = RNA_def_enum(
+      ot->srna, "remove", prop_clear_recent_types, CLEAR_RECENT_ALL, "Remove", "");
+}
+
+static wmOperatorStatus wm_clear_recent_projects_invoke(bContext *C,
+                                                        wmOperator *op,
+                                                        const wmEvent *event)
+{
+  return WM_operator_props_popup_confirm_ex(
+      C, op, event, IFACE_("Clear Recent Projects List"), IFACE_("Remove"));
+}
+
+static wmOperatorStatus wm_clear_recent_projects_exec(bContext * /*C*/, wmOperator *op)
+{
+  const ClearRecentInclude include = ClearRecentInclude(RNA_enum_get(op->ptr, "remove"));
+  BKE_blender_project_recent_clear(include == CLEAR_RECENT_MISSING);
+  return OPERATOR_FINISHED;
+}
+
+void WM_OT_clear_recent_projects(wmOperatorType *ot)
+{
+  ot->name = "Clear Recent Projects List";
+  ot->idname = "WM_OT_clear_recent_projects";
+  ot->description = "Clear the recent projects list";
+
+  ot->invoke = wm_clear_recent_projects_invoke;
+  ot->exec = wm_clear_recent_projects_exec;
   ot->ui = wm_clear_recent_files_ui;
 
   /* flags */
@@ -4701,15 +4822,13 @@ static void file_overwrite_detailed_info_show(ui::Layout &parent_layout, Main *b
     char current_ver_str[16];
     if (bmain->versionfile == BLENDER_VERSION) {
       BKE_blender_version_blendfile_string_from_values(
-          writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, bmain->subversionfile);
+          writer_ver_str, bmain->versionfile, bmain->subversionfile);
       BKE_blender_version_blendfile_string_from_values(
-          current_ver_str, sizeof(current_ver_str), BLENDER_FILE_VERSION, BLENDER_FILE_SUBVERSION);
+          current_ver_str, BLENDER_FILE_VERSION, BLENDER_FILE_SUBVERSION);
     }
     else {
-      BKE_blender_version_blendfile_string_from_values(
-          writer_ver_str, sizeof(writer_ver_str), bmain->versionfile, -1);
-      BKE_blender_version_blendfile_string_from_values(
-          current_ver_str, sizeof(current_ver_str), BLENDER_VERSION, -1);
+      BKE_blender_version_blendfile_string_from_values(writer_ver_str, bmain->versionfile, -1);
+      BKE_blender_version_blendfile_string_from_values(current_ver_str, BLENDER_VERSION, -1);
     }
     // start bfa version save
     char bfa_writer_ver_str[16];
@@ -4899,7 +5018,7 @@ static ui::Block *block_create_save_file_overwrite_dialog(bContext *C, ARegion *
   const char *blendfile_path = BKE_main_blendfile_path(CTX_data_main(C));
   char filename[FILE_MAX];
   if (blendfile_path[0] != '\0') {
-    BLI_path_split_file_part(blendfile_path, filename, sizeof(filename));
+    BLI_path_split_file_part(blendfile_path, filename);
   }
   else {
     /* While a filename need not be UTF8, at this point the constructed name should be UTF8. */
@@ -5135,7 +5254,7 @@ static ui::Block *block_create__close_file_dialog(bContext *C, ARegion *region, 
   const char *blendfile_path = BKE_main_blendfile_path(CTX_data_main(C));
   char filename[FILE_MAX];
   if (blendfile_path[0] != '\0') {
-    BLI_path_split_file_part(blendfile_path, filename, sizeof(filename));
+    BLI_path_split_file_part(blendfile_path, filename);
   }
   else {
     /* While a filename need not be UTF8, at this point the constructed name should be UTF8. */

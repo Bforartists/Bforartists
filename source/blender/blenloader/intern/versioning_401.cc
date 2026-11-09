@@ -11,7 +11,7 @@
 #include "ANIM_armature_iter.hh"
 
 /* Define macros in `DNA_genfile.h`. */
-#define DNA_GENFILE_VERSIONING_MACROS
+#define DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "DNA_anim_types.h"
 #include "DNA_brush_types.h"
@@ -24,7 +24,7 @@
 #include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
 
-#undef DNA_GENFILE_VERSIONING_MACROS
+#undef DNA_GENFILE_VERSIONING_MACROS_LEGACY
 
 #include "BLI_listbase.hh"
 #include "BLI_math_vector_c.hh"
@@ -627,7 +627,7 @@ void version_socket_identifier_suffixes_for_dynamic_types(const ListBaseT<bNodeS
     else {
       /* Rename existing identifiers so that they don't conflict with the renamed one. Those will
        * be removed after versioning code. */
-      BLI_strncat(socket.identifier, "_deprecated", sizeof(socket.identifier));
+      BLI_strncat(socket.identifier, "_deprecated");
       socket.runtime->identifier_ustr = UString(socket.identifier);
     }
   }

@@ -304,7 +304,7 @@ bool BLI_file_is_writable(const char *filepath)
   else {
     /* File doesn't exist -- check I can create it in parent directory. */
     char parent[FILE_MAX];
-    BLI_path_split_dir_part(filepath, parent, sizeof(parent));
+    BLI_path_split_dir_part(filepath, parent);
 #ifdef WIN32
     /* Windows does not have X_OK. */
     writable = BLI_access(parent, W_OK) == 0;
@@ -454,7 +454,18 @@ bool BLI_dir_create_recursive(const char *dirname)
 bool BLI_file_ensure_parent_dir_exists(const char *filepath)
 {
   char di[FILE_MAX];
-  BLI_path_split_dir_part(filepath, di, sizeof(di));
+  BLI_path_split_dir_part(filepath, di);
+
+  if (di[0] == '\0') {
+    /* This means the filepath did not have any directory component, and thus the current directory
+     * should be made to exist. However, if it doesn't exist, Blender fails (at least on Linux) to
+     * even get the CWD. */
+    BLI_path_abs_from_cwd(di);
+    if (di[0] == '\0') {
+      /* Still empty, which means getting CWD failed. */
+      return false;
+    }
+  }
 
   /* Make if the dir doesn't exist. */
   return BLI_dir_create_recursive(di);
@@ -729,7 +740,7 @@ static bool delete_recursive(const char *dir)
 
       /* dir listing produces dir path without trailing slash... */
       STRNCPY(path, fl->path);
-      BLI_path_slash_ensure(path, sizeof(path));
+      BLI_path_slash_ensure(path);
 
       if (delete_recursive(path)) {
         err = true;
@@ -798,8 +809,7 @@ int BLI_delete_soft(const char *file, const char **r_error_message)
  */
 static const char *path_destination_ensure_filename(const char *path_src,
                                                     const char *path_dst,
-                                                    char *buf,
-                                                    size_t buf_size)
+                                                    MutableCStr buf)
 {
   const char *filename_src = BLI_path_basename(path_src);
   /* Unlikely but possible this has no slashes. */
@@ -808,10 +818,11 @@ static const char *path_destination_ensure_filename(const char *path_src,
     /* Check if `path_dst` points to a directory. */
     if (path_dst_len && BLI_path_slash_is_native_compat(path_dst[path_dst_len - 1])) {
       size_t buf_size_needed = path_dst_len + strlen(filename_src) + 1;
-      char *path_dst_with_filename = (buf_size_needed <= buf_size) ?
-                                         buf :
+      char *path_dst_with_filename = (buf_size_needed <= buf.size()) ?
+                                         buf.data() :
                                          MEM_new_array_zeroed<char>(buf_size_needed, __func__);
-      BLI_string_join(path_dst_with_filename, buf_size_needed, path_dst, filename_src);
+      BLI_string_join(
+          MutableCStr(path_dst_with_filename, buf_size_needed), path_dst, filename_src);
       return path_dst_with_filename;
     }
   }
@@ -822,7 +833,7 @@ int BLI_path_move(const char *path_src, const char *path_dst)
 {
   char path_dst_buf[FILE_MAX_STATIC_BUF];
   const char *path_dst_with_filename = path_destination_ensure_filename(
-      path_src, path_dst, path_dst_buf, sizeof(path_dst_buf));
+      path_src, path_dst, path_dst_buf);
 
   int err;
 
@@ -848,7 +859,7 @@ int BLI_copy(const char *path_src, const char *path_dst)
 {
   char path_dst_buf[FILE_MAX_STATIC_BUF];
   const char *path_dst_with_filename = path_destination_ensure_filename(
-      path_src, path_dst, path_dst_buf, sizeof(path_dst_buf));
+      path_src, path_dst, path_dst_buf);
   int err;
 
   UTF16_ENCODE(path_src);
@@ -959,16 +970,16 @@ static void strbuf_append_path(StrBuf *buf, const char *filename)
   const size_t filename_len = strlen(filename);
   const size_t len = buf->str_len + (has_slash ? 0 : 1) + filename_len;
 
-  if (buf->str_len_alloc < len) {
+  if (buf->str_len_alloc <= len) {
     buf->str = static_cast<char *>(realloc(static_cast<void *>(buf->str), len + 1));
-    buf->str_len_alloc = len;
+    buf->str_len_alloc = len + 1;
   }
   if (has_slash == false) {
     buf->str[buf->str_len++] = SEP;
   }
   memcpy(buf->str + buf->str_len, filename, filename_len + 1);
   buf->str_len += filename_len;
-  BLI_assert(buf->str_len <= buf->str_len_alloc);
+  BLI_assert(buf->str_len < buf->str_len_alloc);
 }
 
 static void strbuf_trim(StrBuf *buf, size_t len)
@@ -1525,8 +1536,7 @@ int BLI_path_move(const char *path_src, const char *path_dst)
 
 static const char *path_destination_ensure_filename(const char *path_src,
                                                     const char *path_dst,
-                                                    char *buf,
-                                                    size_t buf_size)
+                                                    MutableCStr buf)
 {
   if (BLI_is_dir(path_dst)) {
     char *path_src_no_slash = BLI_strdup(path_src);
@@ -1534,10 +1544,10 @@ static const char *path_destination_ensure_filename(const char *path_src,
     const char *filename_src = BLI_path_basename(path_src_no_slash);
     if (filename_src != path_src_no_slash) {
       const size_t buf_size_needed = strlen(path_dst) + 1 + strlen(filename_src) + 1;
-      char *path_dst_with_filename = (buf_size_needed <= buf_size) ?
-                                         buf :
+      char *path_dst_with_filename = (buf_size_needed <= buf.size()) ?
+                                         buf.data() :
                                          MEM_new_array_zeroed<char>(buf_size_needed, __func__);
-      BLI_path_join(path_dst_with_filename, buf_size_needed, path_dst, filename_src);
+      BLI_path_join(MutableCStr(path_dst_with_filename, buf_size_needed), path_dst, filename_src);
       path_dst = path_dst_with_filename;
     }
     MEM_delete(path_src_no_slash);
@@ -1549,7 +1559,7 @@ int BLI_copy(const char *path_src, const char *path_dst)
 {
   char path_dst_buf[FILE_MAX_STATIC_BUF];
   const char *path_dst_with_filename = path_destination_ensure_filename(
-      path_src, path_dst, path_dst_buf, sizeof(path_dst_buf));
+      path_src, path_dst, path_dst_buf);
   int ret;
 
   ret = recursive_operation(

@@ -241,7 +241,9 @@ const bTheme U_theme_default = {
       .outline_sel = RGBA(0x2d2d2dff),
       .inner = RGBA(0xffffff00),
       .inner_sel = RGBA(0x5680c2ff),
-      .item = RGBA(0x000000ff),
+      /* BFA - item is now drawn as the text selection highlight (Blender #164455). BFA black at
+       * the opacity Blender used to force (51), so the selection looks as before. */
+      .item = RGBA(0x00000033),
       .text = RGBA(0xccccccff),
       .text_sel = RGBA(0xffffffff),
       .roundness = 0.2f,
@@ -259,7 +261,9 @@ const bTheme U_theme_default = {
       .roundness = 0.2f,
     },
     .wcol_state = {
-      .error = RGBA(0x804040ff),
+      /* BFA - Blender 5.3 uses the error alpha as the red-alert tint amount (#493e6712224),
+       * so the old opaque BFA color (0x804040ff) would paint alert text solid dark red. */
+      .error = RGBA(0xe6000099),
       .warning = RGBA(0x806b40ff),
       .info = RGBA(0x404080ff),
       .success = RGBA(0x188625ff),

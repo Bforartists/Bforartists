@@ -98,6 +98,7 @@ enum eUserpref_Save_Modified_Images : char {
 enum eUserPref_PrefFlag : char {
   USER_PREF_FLAG_SAVE = (1 << 0),
   USER_PREF_FLAG_PROJECT_SAVE = (1 << 1),
+  USER_PREF_FLAG_PROJECT_REMEMBER = (1 << 2),
 };
 ENUM_OPERATORS(eUserPref_PrefFlag)
 
@@ -646,7 +647,7 @@ struct bUserMenu {
 struct bUserMenuItem {
   struct bUserMenuItem *next = nullptr, *prev = nullptr;
   char ui_name[64] = "";
-  char type = 0;
+  eUserMenu_Type type = {}; /* BFA - same type as Blender (char sized), so the layout is unchanged */
   char _pad0[3] = {};
   /* BFA: Quick Favorites context-aware filtering - Original space type where this item was added */
   char space_type = 0;
@@ -943,8 +944,7 @@ struct UserDef_Experimental {
    * actually remove this flag is tracked in #158903.
    */
   char use_remote_asset_libraries = 1;
-  char use_collection_importer = 0;
-  char _pad[3] = {};
+  char _pad[4] = {};
 };
 
 #define USER_EXPERIMENTAL_TEST(userdef, member) (((userdef)->experimental).member)
@@ -1221,7 +1221,7 @@ struct UserDef {
   eZoomFrame_Mode view_frame_type = ZOOM_FRAME_MODE_KEEP_RANGE;
 
   /** Number of keyframes to zoom around current frame. */
-  int view_frame_keyframes = 0;
+  int view_frame_keyframes = 1;
   /** Seconds to zoom around current frame. */
   float view_frame_seconds = 0;
 

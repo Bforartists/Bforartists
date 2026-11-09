@@ -11,6 +11,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "ED_gizmo_library.hh"
 #include "ED_screen.hh"
@@ -45,6 +46,9 @@ namespace blender {
 /* Margin around the smaller buttons. */
 #define GIZMO_MINI_OFFSET 2.0f
 
+/* BFA - gap between the roll ring and the navigation buttons, in unscaled pixels (#6839). */
+#define GIZMO_ROLL_RING_GAP 10.0f
+
 namespace {
 
 enum {
@@ -63,7 +67,10 @@ enum {
   GZ_INDEX_CAMERA_LOCK = 7,
   GZ_INDEX_CAMERA_UNLOCK = 8,
 
-  GZ_INDEX_TOTAL = 9,
+  /* BFA - arc next to the rotate gizmo to roll the view (#6839). */
+  GZ_INDEX_ROLL = 9,
+
+  GZ_INDEX_TOTAL = 10,
 };
 
 struct NavigateGizmoInfo {
@@ -83,6 +90,7 @@ struct NavigateWidgetGroup {
       bool is_camera;
       eRegionView3D_ViewLock viewlock;
       char cameralock;
+      bool is_axis_view; /* BFA - roll ring hidden in axis views (#6839). */
     } rv3d;
   } state;
 };
@@ -149,6 +157,12 @@ static NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
         ICON_LOCK_TO_CAMVIEW,
         navigate_context_toggle_camera_lock_init,
     }, /* BFA */
+    {
+        "VIEW3D_OT_view_roll",
+        "VIEW3D_GT_navigate_roll",
+        ICON_NONE,
+        nullptr,
+    }, /* BFA - roll gizmo #6839 */
 };
 
 static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType * /*gzgt*/)
@@ -263,6 +277,19 @@ static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
     gz->drag_part = 0;
   }
 
+  /* BFA - roll gizmo #6839: same size as the rotate gizmo, it draws around it. */
+  {
+    wmGizmo *gz = navgroup->gz_array[GZ_INDEX_ROLL];
+    gz->scale_basis = GIZMO_SIZE / 2.0f;
+    /* Roll around the view center like the sidebar View Roll field, not the orbit pivot. */
+    wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
+    if (gzop != nullptr) {
+      RNA_boolean_set(&gzop->ptr, "use_view_center", true);
+      /* BFA - #6932: drag left / right, Ctrl snaps, with an angle indicator on the ring. */
+      RNA_boolean_set(&gzop->ptr, "use_horizontal_drag", true);
+    }
+  }
+
   gzgroup->customdata = navgroup;
 }
 
@@ -287,7 +314,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       (navgroup->state.rv3d.is_persp == rv3d->is_persp) &&
       (navgroup->state.rv3d.is_camera == (rv3d->persp == RV3D_CAMOB)) &&
       (navgroup->state.rv3d.cameralock == (v3d->flag2 & V3D_LOCK_CAMERA)) &&
-      (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d)))
+      (navgroup->state.rv3d.viewlock == bke::region_view3d_lock_flags_get(rv3d)) &&
+      (navgroup->state.rv3d.is_axis_view == RV3D_VIEW_IS_AXIS(rv3d->view))) /* BFA */
   {
     return;
   }
@@ -295,8 +323,9 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   navgroup->state.rect_visible = *rect_visible;
   navgroup->state.rv3d.is_persp = rv3d->is_persp;
   navgroup->state.rv3d.is_camera = (rv3d->persp == RV3D_CAMOB);
-  navgroup->state.rv3d.viewlock = RV3D_LOCK_FLAGS(rv3d);
+  navgroup->state.rv3d.viewlock = bke::region_view3d_lock_flags_get(rv3d);
   navgroup->state.rv3d.cameralock = v3d->flag2 & V3D_LOCK_CAMERA;
+  navgroup->state.rv3d.is_axis_view = RV3D_VIEW_IS_AXIS(rv3d->view); /* BFA */
 
   const bool show_navigate = (U.uiflag & USER_SHOW_GIZMO_NAVIGATE) != 0;
   const bool show_rotate_gizmo = (U.mini_axis_type == USER_MINI_AXIS_TYPE_GIZMO &&
@@ -314,7 +343,12 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   float icon_offset_from_axis = icon_offset_mini * 0.75f;
   switch (eUserpref_MiniAxisType(U.mini_axis_type)) {
     case USER_MINI_AXIS_TYPE_GIZMO:
-      icon_offset_from_axis = icon_offset * 2.2f;
+      /* BFA - keep the buttons a fixed gap away from the roll ring around the gizmo, in both the
+       * horizontal and vertical layout, for any gizmo size (#6839). Blender: `icon_offset * 2.2f`. */
+      icon_offset_from_axis = icon_offset + UI_SCALE_FAC * (GIZMO_SIZE / 2.0f *
+                                                                VIEW3D_NAVIGATE_ROLL_RING_RADIUS +
+                                                            GIZMO_MINI_SIZE / 2.0f +
+                                                            GIZMO_ROLL_RING_GAP);
       break;
     case USER_MINI_AXIS_TYPE_MINIMAL:
       if (region->alignment != RGN_ALIGN_QSPLIT ||
@@ -353,6 +387,17 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     gz->matrix_basis[3][0] = roundf(co_rotate[0]);
     gz->matrix_basis[3][1] = roundf(co_rotate[1]);
     WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
+
+    /* BFA - roll gizmo #6839, around the rotate gizmo. Hidden when rotation is locked, and in axis
+     * views (Top, Front...), where rolling would leave the axis view (and orthographic). */
+    if (((bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_ROTATION) == 0) &&
+        !RV3D_VIEW_IS_AXIS(rv3d->view))
+    {
+      gz = navgroup->gz_array[GZ_INDEX_ROLL];
+      gz->matrix_basis[3][0] = roundf(co_rotate[0]);
+      gz->matrix_basis[3][1] = roundf(co_rotate[1]);
+      WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
+    }
   }
 
   if (show_navigate) {
@@ -369,19 +414,19 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       }
     };
 
-    if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ZOOM_AND_DOLLY) == 0) {
+    if ((bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_ZOOM_AND_DOLLY) == 0) {
       gz = navgroup->gz_array[GZ_INDEX_ZOOM];
       apply_gizmo_pos(gz, icon_mini_slot++);
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
 
-    if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_LOCATION) == 0) {
+    if ((bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_LOCATION) == 0) {
       gz = navgroup->gz_array[GZ_INDEX_MOVE];
       apply_gizmo_pos(gz, icon_mini_slot++);
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
 
-    if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {
+    if ((bke::region_view3d_lock_flags_get(rv3d) & RV3D_LOCK_ROTATION) == 0) {
       gz = navgroup
                ->gz_array[(rv3d->persp == RV3D_CAMOB) ? GZ_INDEX_CAMERA_ON : GZ_INDEX_CAMERA_OFF];
       apply_gizmo_pos(gz, icon_mini_slot++);

@@ -269,7 +269,8 @@ BHead *blo_bhead_prev(FileData *fd, BHead *thisblock) ATTR_NONNULL(1, 2);
  * Warning! Caller's responsibility to ensure given bhead **is** an ID one!
  *
  * Will return `nullptr` if the name is not valid (e.g. because it has no null-char terminator, if
- * it was saved in a version of Blender with higher MAX_ID_NAME value).
+ * it was saved in a version of Blender with higher MAX_ID_NAME value, or if the data block is too
+ * small to contain it).
  */
 const char *blo_bhead_id_name(FileData *fd, const BHead *bhead);
 /**
@@ -285,7 +286,8 @@ short blo_bhead_id_flag(const FileData *fd, const BHead *bhead);
 AssetMetaData *blo_bhead_id_asset_data_address(const FileData *fd, const BHead *bhead);
 
 /**
- * Return the stored filepath (may be relative) of a library ID.
+ * Return the stored filepath (may be relative) of a library ID, or `nullptr` if the data block
+ * does not contain a valid one.
  *
  * Warning! Caller's responsibility to ensure that the given bhead **is** a Library ID one!
  */
@@ -348,6 +350,7 @@ void blo_do_versions_500(FileData *fd, Library *lib, Main *bmain);
 void blo_do_versions_501(FileData *fd, Library *lib, Main *bmain);
 void blo_do_versions_502(FileData *fd, Library *lib, Main *bmain);
 void blo_do_versions_503(FileData *fd, Library *lib, Main *bmain);
+void blo_do_versions_504(FileData *fd, Library *lib, Main *bmain);
 
 void do_versions_after_linking_250(Main *bmain);
 void do_versions_after_linking_260(Main *bmain);
@@ -365,6 +368,7 @@ void do_versions_after_linking_500(FileData *fd, Main *bmain);
 void do_versions_after_linking_501(FileData *fd, Main *bmain);
 void do_versions_after_linking_502(FileData *fd, Main *bmain);
 void do_versions_after_linking_503(FileData *fd, Main *bmain);
+void do_versions_after_linking_504(FileData *fd, Main *bmain);
 
 void do_versions_after_setup(Main *new_bmain,
                              BlendfileLinkAppendContext *lapp_context,

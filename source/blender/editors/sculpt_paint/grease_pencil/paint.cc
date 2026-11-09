@@ -18,6 +18,7 @@
 #include "BKE_paint.hh"
 #include "BKE_scene.hh"
 
+#include "BLI_array_utils.hh"
 #include "BLI_bounds.hh"
 #include "BLI_color_types.hh"
 #include "BLI_length_parameterize.hh"
@@ -180,6 +181,8 @@ class PaintOperation : public GreasePencilStrokeOperation {
   bke::greasepencil::Drawing *drawing_;
   int frame_number_;
   Vector<ed::greasepencil::MutableDrawingInfo> multi_frame_drawings_;
+  float fill_opacity_sum_ = 0.0f;
+  int fill_opacity_count_ = 0;
 
   /** Screen space coordinates from input samples. */
   Vector<float2> screen_space_coords_orig_;
@@ -233,9 +236,6 @@ class PaintOperation : public GreasePencilStrokeOperation {
 
   /** Set to true when the paint operation is used to draw fill guides. */
   bool do_fill_guides_;
-
-  /** Used when hiding the fill while drawing. (#GP_BRUSH_DISSABLE_LASSO). */
-  float start_opacity_;
 
   friend struct PaintOperationExecutor;
 
@@ -422,15 +422,15 @@ struct PaintOperationExecutor {
       self.drawing_->fill_colors_for_write()[active_curve] = fill_color_;
       curve_attributes_to_skip.add("fill_color");
     }
-    bke::SpanAttributeWriter<float> delta_times = attributes.convert_or_add_for_write_span<float>(
+    bke::SpanAttributeWriter<float> delta_times = attributes.ensure_for_write_span<float>(
         "delta_time", bke::AttrDomain::Point);
     delta_times.span[last_active_point] = 0.0f;
     point_attributes_to_skip.add("delta_time");
     delta_times.finish();
 
-    bke::SpanAttributeWriter<int> materials = attributes.convert_or_add_for_write_span<int>(
+    bke::SpanAttributeWriter<int> materials = attributes.ensure_for_write_span<int>(
         "material_index", bke::AttrDomain::Curve);
-    bke::SpanAttributeWriter<bool> cyclic = attributes.convert_or_add_for_write_span<bool>(
+    bke::SpanAttributeWriter<bool> cyclic = attributes.ensure_for_write_span<bool>(
         "cyclic", bke::AttrDomain::Curve);
     cyclic.span[active_curve] = cyclic_stroke;
     materials.span[active_curve] = material_index;
@@ -438,45 +438,43 @@ struct PaintOperationExecutor {
     cyclic.finish();
     materials.finish();
 
-    bke::SpanAttributeWriter<float> softness = attributes.convert_or_add_for_write_span<float>(
+    bke::SpanAttributeWriter<float> softness = attributes.ensure_for_write_span<float>(
         "softness", bke::AttrDomain::Curve);
     softness.span[active_curve] = softness_;
     curve_attributes_to_skip.add("softness");
     softness.finish();
-    bke::SpanAttributeWriter u_scale = attributes.convert_or_add_for_write_span<float>(
+    bke::SpanAttributeWriter u_scale = attributes.ensure_for_write_span<float>(
         "u_scale", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f));
     u_scale.span[active_curve] = 1.0f;
     curve_attributes_to_skip.add("u_scale");
     u_scale.finish();
-    bke::SpanAttributeWriter aspect_ratio = attributes.convert_or_add_for_write_span<float>(
+    bke::SpanAttributeWriter aspect_ratio = attributes.ensure_for_write_span<float>(
         "aspect_ratio", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f));
     aspect_ratio.span[active_curve] = aspect_ratio_;
     curve_attributes_to_skip.add("aspect_ratio");
     aspect_ratio.finish();
 
     if (!use_stroke) {
-      bke::SpanAttributeWriter<bool> hide_stroke = attributes.convert_or_add_for_write_span<bool>(
+      bke::SpanAttributeWriter<bool> hide_stroke = attributes.ensure_for_write_span<bool>(
           "hide_stroke", bke::AttrDomain::Curve);
       hide_stroke.span[active_curve] = true;
       curve_attributes_to_skip.add("hide_stroke");
       hide_stroke.finish();
     }
     if (use_fill) {
-      if (bke::SpanAttributeWriter<int> fill_id = attributes.lookup_or_add_for_write_span<int>(
-              "fill_id", bke::AttrDomain::Curve))
-      {
-        /* Set new fill id to zero, because it will have uninitialized memory otherwise.
-         * Then get the #VArray of all fill ids to compute a new one. */
-        fill_id.span[active_curve] = 0;
-        const int new_fill_id = bke::greasepencil::get_next_available_fill_id(fill_id.span);
-        fill_id.span[active_curve] = new_fill_id;
-        curve_attributes_to_skip.add("fill_id");
-        fill_id.finish();
-      }
+      bke::SpanAttributeWriter<int> fill_id = attributes.ensure_for_write_span<int>(
+          "fill_id", bke::AttrDomain::Curve);
+      /* Set new fill id to zero, because it will have uninitialized memory otherwise.
+       * Then get the #VArray of all fill ids to compute a new one. */
+      fill_id.span[active_curve] = 0;
+      const int new_fill_id = bke::greasepencil::get_next_available_fill_id(fill_id.span);
+      fill_id.span[active_curve] = new_fill_id;
+      curve_attributes_to_skip.add("fill_id");
+      fill_id.finish();
     }
 
     if (settings_->uv_random > 0.0f || attributes.contains("rotation")) {
-      bke::SpanAttributeWriter<float> rotations = attributes.convert_or_add_for_write_span<float>(
+      bke::SpanAttributeWriter<float> rotations = attributes.ensure_for_write_span<float>(
           "rotation", bke::AttrDomain::Point);
       rotations.span[last_active_point] = start_rotation;
       point_attributes_to_skip.add("rotation");
@@ -485,31 +483,32 @@ struct PaintOperationExecutor {
 
     /* Only set the attribute if the type is not the default or if it already exists. */
     if (settings_->caps_type != GP_STROKE_CAP_TYPE_ROUND || attributes.contains("start_cap")) {
-      bke::SpanAttributeWriter<int8_t> start_caps =
-          attributes.convert_or_add_for_write_span<int8_t>("start_cap", bke::AttrDomain::Curve);
+      bke::SpanAttributeWriter<int8_t> start_caps = attributes.ensure_for_write_span<int8_t>(
+          "start_cap", bke::AttrDomain::Curve);
       start_caps.span[active_curve] = settings_->caps_type;
       curve_attributes_to_skip.add("start_cap");
       start_caps.finish();
     }
 
     if (settings_->caps_type != GP_STROKE_CAP_TYPE_ROUND || attributes.contains("end_cap")) {
-      bke::SpanAttributeWriter<int8_t> end_caps = attributes.convert_or_add_for_write_span<int8_t>(
+      bke::SpanAttributeWriter<int8_t> end_caps = attributes.ensure_for_write_span<int8_t>(
           "end_cap", bke::AttrDomain::Curve);
       end_caps.span[active_curve] = settings_->caps_type;
       curve_attributes_to_skip.add("end_cap");
       end_caps.finish();
     }
 
+    self.fill_opacity_sum_ = use_fill ? start_opacity : 0.0f;
+    self.fill_opacity_count_ = use_fill ? 1 : 0;
+
     if (attributes.contains("fill_opacity") ||
         (use_fill && (start_opacity < 1.0f || hide_fill_while_drawing)))
     {
-      bke::SpanAttributeWriter<float> fill_opacities =
-          attributes.convert_or_add_for_write_span<float>(
-              "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f));
+      bke::SpanAttributeWriter<float> fill_opacities = attributes.ensure_for_write_span<float>(
+          "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f));
       if (use_fill) {
         /* Use 10% opacity when using the option to hide the fill while drawing
          * (#GP_BRUSH_DISSABLE_LASSO). */
-        self.start_opacity_ = start_opacity;
         fill_opacities.span[active_curve] = !hide_fill_while_drawing ? start_opacity : 0.1f;
       }
       else {
@@ -519,7 +518,7 @@ struct PaintOperationExecutor {
       fill_opacities.finish();
     }
 
-    bke::SpanAttributeWriter<float> init_times = attributes.convert_or_add_for_write_span<float>(
+    bke::SpanAttributeWriter<float> init_times = attributes.ensure_for_write_span<float>(
         "init_time", bke::AttrDomain::Curve);
     /* Truncating time in ms to uint32 then we don't lose precision in lower bits. */
     init_times.span[active_curve] = float(uint64_t(self.start_time_ * 1e3)) / float(1e3);
@@ -527,8 +526,8 @@ struct PaintOperationExecutor {
     init_times.finish();
 
     if (self.do_fill_guides_) {
-      bke::SpanAttributeWriter<bool> is_fill_boundary =
-          attributes.convert_or_add_for_write_span<bool>(".is_fill_guide", bke::AttrDomain::Curve);
+      bke::SpanAttributeWriter<bool> is_fill_boundary = attributes.ensure_for_write_span<bool>(
+          ".is_fill_guide", bke::AttrDomain::Curve);
       is_fill_boundary.span[active_curve] = true;
       curve_attributes_to_skip.add(".is_fill_guide");
       is_fill_boundary.finish();
@@ -758,6 +757,21 @@ struct PaintOperationExecutor {
 
     const int active_curve = on_back ? curves.curves_range().first() :
                                        curves.curves_range().last();
+
+    const bool use_fill = (settings_->flag2 & GP_BRUSH_USE_FILL) != 0;
+    const bool hide_fill_while_drawing = (settings_->flag & GP_BRUSH_DISSABLE_LASSO) != 0;
+
+    if (use_fill) {
+      self.fill_opacity_sum_ += opacity;
+      self.fill_opacity_count_++;
+      if (!hide_fill_while_drawing) {
+        bke::SpanAttributeWriter<float> fill_opacities = attributes.ensure_for_write_span<float>(
+            "fill_opacity", bke::AttrDomain::Curve, bke::AttributeInitValue(1.0f));
+        fill_opacities.span[active_curve] = self.fill_opacity_sum_ / self.fill_opacity_count_;
+        fill_opacities.finish();
+      }
+    }
+
     const IndexRange curve_points = points_by_curve[active_curve];
     const int last_active_point = curve_points.last();
 
@@ -892,7 +906,7 @@ struct PaintOperationExecutor {
 
     /* Randomize rotations. */
     if (use_settings_random_ && (settings_->uv_random > 0.0f || attributes.contains("rotation"))) {
-      bke::SpanAttributeWriter<float> rotations = attributes.convert_or_add_for_write_span<float>(
+      bke::SpanAttributeWriter<float> rotations = attributes.ensure_for_write_span<float>(
           "rotation", bke::AttrDomain::Point);
       const MutableSpan<float> new_rotations = rotations.span.slice(new_points);
       for (const int i : IndexRange(new_points_num)) {
@@ -925,7 +939,7 @@ struct PaintOperationExecutor {
     }
 
     const double new_delta_time = BLI_time_now_seconds() - self.start_time_;
-    bke::SpanAttributeWriter<float> delta_times = attributes.convert_or_add_for_write_span<float>(
+    bke::SpanAttributeWriter<float> delta_times = attributes.ensure_for_write_span<float>(
         "delta_time", bke::AttrDomain::Point);
     linear_interpolation<float>(
         float(self.delta_time_), float(new_delta_time), delta_times.span.slice(new_points));
@@ -1521,7 +1535,7 @@ static int trim_end_points(bke::greasepencil::Drawing &drawing,
     }
 
     bke::GSpanAttributeWriter dst = attributes.lookup_for_write_span(iter.name);
-    bke::attribute_math::shift_left(dst.span, current_points_num, dst.span.size(), new_points_num);
+    array_utils::shift_left(dst.span, current_points_num, dst.span.size(), new_points_num);
     dst.finish();
   });
 
@@ -1752,8 +1766,8 @@ void PaintOperation::on_stroke_done(const bContext &C)
    * changes in topology with the operations below get propagated correctly. */
   bke::MutableAttributeAccessor attributes = drawing.strokes_for_write().attributes_for_write();
   bke::SpanAttributeWriter<float2> screen_space_positions =
-      attributes.convert_or_add_for_write_only_span<float2>(".draw_tool_screen_space_positions",
-                                                            bke::AttrDomain::Point);
+      attributes.ensure_for_write_only_span<float2>(".draw_tool_screen_space_positions",
+                                                    bke::AttrDomain::Point);
   BLI_assert(screen_space_positions);
   screen_space_positions.span.slice(points).copy_from(this->screen_space_final_coords_);
   screen_space_positions.finish();
@@ -1763,7 +1777,7 @@ void PaintOperation::on_stroke_done(const bContext &C)
     bke::SpanAttributeWriter<float> fill_opacities = attributes.lookup_for_write_span<float>(
         "fill_opacity");
     BLI_assert(fill_opacities);
-    fill_opacities.span[active_curve] = start_opacity_;
+    fill_opacities.span[active_curve] = fill_opacity_sum_ / fill_opacity_count_;
     fill_opacities.finish();
   }
 

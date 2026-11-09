@@ -497,12 +497,14 @@ void BlenderSync::sync_integrator(blender::ViewLayer &b_view_layer,
   else {
     integrator->set_ao_bounces(0);
   }
-
-#ifdef WITH_CYCLES_DEBUG
-  DirectLightSamplingType direct_light_sampling_type = (DirectLightSamplingType)get_enum(
-      cscene, "direct_light_sampling_type", DIRECT_LIGHT_SAMPLING_NUM, DIRECT_LIGHT_SAMPLING_MIS);
-  integrator->set_direct_light_sampling_type(direct_light_sampling_type);
-#endif
+  if (use_developer_ui) {
+    DirectLightSamplingType direct_light_sampling_type = (DirectLightSamplingType)get_enum(
+        cscene,
+        "direct_light_sampling_type",
+        DIRECT_LIGHT_SAMPLING_NUM,
+        DIRECT_LIGHT_SAMPLING_MIS);
+    integrator->set_direct_light_sampling_type(direct_light_sampling_type);
+  }
 
   integrator->set_use_guiding(get_boolean(cscene, "use_guiding"));
   integrator->set_use_surface_guiding(get_boolean(cscene, "use_surface_guiding"));
@@ -1252,7 +1254,7 @@ DenoiseParams BlenderSync::get_denoise_params(blender::Scene &b_scene,
 
       denoising.passes = DENOISER_PASS_ALBEDO | DENOISER_PASS_SPECULAR_ALBEDO |
                          DENOISER_PASS_NORMAL | DENOISER_PASS_ROUGHNESS | DENOISER_PASS_DEPTH |
-                         DENOISER_PASS_MOTION | DENOISER_PASS_SPECULAR_MOTION;
+                         DENOISER_PASS_BACKWARD_MOTION | DENOISER_PASS_SPECULAR_MOTION;
       return denoising;
     }
   }

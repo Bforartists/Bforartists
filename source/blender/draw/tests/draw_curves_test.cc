@@ -7,6 +7,7 @@
 #include "BKE_curves.hh"
 
 #include "GPU_batch.hh"
+#include "GPU_capabilities.hh"
 #include "GPU_shader.hh"
 
 #include "draw_curves_defines.hh"
@@ -20,6 +21,10 @@ namespace blender::draw {
 
 static void test_draw_curves_lib()
 {
+  if (!GPU_vertex_pipeline_stores_and_atomics_support()) {
+    GTEST_SKIP() << "Storage buffer writes from the vertex shader are not supported";
+  }
+
   Manager manager;
 
   gpu::Shader *sh = GPU_shader_create_from_info_name("draw_curves_test");
@@ -81,7 +86,9 @@ static void test_draw_curves_lib()
     pass.bind_texture("curves_indirection_buf", indirection_ribbon_buf);
     pass.bind_ssbo("result_pos_buf", result_pos);
     pass.bind_ssbo("result_indices_buf", result_idx);
-    pass.draw(batch_ribbon);
+    /* The test owns the batch; wrap it without ownership for command recording. */
+    Batch batch(batch_ribbon, false);
+    pass.draw(&batch);
     pass.barrier(GPU_BARRIER_BUFFER_UPDATE);
 
     manager.submit(pass);
@@ -150,7 +157,9 @@ static void test_draw_curves_lib()
     pass.bind_texture("curves_indirection_buf", indirection_cylinder_buf);
     pass.bind_ssbo("result_pos_buf", result_pos);
     pass.bind_ssbo("result_indices_buf", result_idx);
-    pass.draw(batch_cylinder);
+    /* The test owns the batch; wrap it without ownership for command recording. */
+    Batch batch(batch_cylinder, false);
+    pass.draw(&batch);
     pass.barrier(GPU_BARRIER_BUFFER_UPDATE);
 
     manager.submit(pass);

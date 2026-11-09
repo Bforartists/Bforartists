@@ -39,3 +39,6 @@ leak:*libOpenEXR*
 leak:pa_xmalloc
 leak:*::x265_malloc*
 leak:libceres*
+leak:libopentimelineio*
+leak:libdbus-1.so
+leak:libstdc++.so

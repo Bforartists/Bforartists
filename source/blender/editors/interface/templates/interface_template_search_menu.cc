@@ -1147,8 +1147,8 @@ void button_func_menu_search(Button *but, const char *single_menu_idname)
                          searchbox_create_menu,
                          menu_search_update_fn,
                          data,
-                         false,
                          menu_search_arg_free_fn,
+                         nullptr,
                          menu_search_exec_fn,
                          nullptr);
 
@@ -1166,8 +1166,7 @@ void uiTemplateMenuSearch(Layout *layout)
   block = layout->block();
   block_layout_set_current(block, layout);
 
-  but = uiDefSearchBut(
-      block, search, ICON_VIEWZOOM, sizeof(search), 0, 0, UI_UNIT_X * 6, UI_UNIT_Y, "");
+  but = uiDefSearchBut(block, search, ICON_VIEWZOOM, 0, 0, UI_UNIT_X * 6, UI_UNIT_Y, "");
   button_func_menu_search(but);
 }
 

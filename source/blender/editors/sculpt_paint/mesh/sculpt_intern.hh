@@ -283,7 +283,8 @@ struct StrokeCache {
   const Brush *brush = nullptr;
   const Paint *paint = nullptr;
 
-  float special_rotation = 0.0f;
+  float3 tip_motion_normal = float3(0);
+  float3 tip_motion_normal_symm = float3(0);
   float3 grab_delta = float3(0);
   float3 grab_delta_symm = float3(0);
   float3 old_grab_location = float3(0);
@@ -319,11 +320,6 @@ struct StrokeCache {
    * Transforms from model-space coords to local area coords.
    */
   float4x4 brush_local_mat = float4x4::zero();
-  /**
-   * The matrix from local area coords to model-space coords is used to calculate the vector
-   * displacement in area plane mode.
-   */
-  float4x4 brush_local_mat_inv = float4x4::zero();
 
   /* used to shift the plane around when doing tiled strokes */
   float3 plane_offset = float3(0);
@@ -634,16 +630,22 @@ void fake_neighbors_free(Object &ob);
  *
  * \param tip_normal: Tip normal is the sculpt normal under spherical falloff, but when under
  * projected falloff, it is the view normal.
+ * \param motion_normal_local: Normal direction of the brush motion. Calculate with
+ * calc_motion_normal_from_angle.
  */
-void calc_brush_local_mat(const float rotation,
-                          const float special_rotation,
-                          const ViewContext &vc,
-                          const Object &ob,
-                          const float3 &tip_normal,
+void calc_brush_local_mat(const float3 &tip_normal,
+                          const float3 &motion_normal_local,
                           const float3 &tip_location,
                           const float radius,
                           float local_mat[4][4],
                           float local_mat_inv[4][4]);
+
+/**
+ * Converts a screen-space angle into an object-space motion normal.
+ */
+float3 calc_motion_normal_from_angle(const ViewContext &vc,
+                                     const float3 &tip_location,
+                                     const float angle);
 
 float brush_plane_offset_get(const Brush &brush, const SculptSession &ss);
 
@@ -660,26 +662,10 @@ void calc_brush_plane(const Depsgraph &depsgraph,
                       float3 &r_area_no,
                       float3 &r_area_co);
 
-std::optional<float3> calc_area_normal(const Depsgraph &depsgraph,
-                                       const Brush &brush,
-                                       const Object &ob,
-                                       const IndexMask &node_mask);
-
-/**
- * This calculates flatten center and area normal together,
- * amortizing the memory bandwidth and loop overhead to calculate both at the same time.
- */
-void calc_area_normal_and_center(const Depsgraph &depsgraph,
-                                 const Brush &brush,
-                                 const Object &ob,
-                                 const IndexMask &node_mask,
-                                 float r_area_no[3],
-                                 float r_area_co[3]);
-void calc_area_center(const Depsgraph &depsgraph,
-                      const Brush &brush,
-                      const Object &ob,
-                      const IndexMask &node_mask,
-                      float r_area_co[3]);
+std::optional<float3> sample_plane_normal(const Depsgraph &depsgraph,
+                                          const Brush &brush,
+                                          const Object &ob,
+                                          const IndexMask &node_mask);
 
 std::optional<int> nearest_vert_calc_mesh(const bke::pbvh::Tree &pbvh,
                                           Span<float3> vert_positions,
@@ -761,11 +747,11 @@ std::array<int, PAINT_SYMM_AREAS> find_all_symm_verts(
 bool node_fully_masked_or_hidden(const bke::pbvh::Node &node);
 bool node_in_sphere(const bke::pbvh::Node &node,
                     const float3 &location,
-                    float radius_sq,
+                    float radius,
                     bool original);
 bool node_in_cylinder(const DistRayAABB_Precalc &ray_dist_precalc,
                       const bke::pbvh::Node &node,
-                      float radius_sq,
+                      float radius,
                       bool original);
 /**
  * Calculates whether the node intersects a local-space volume.
@@ -792,13 +778,13 @@ IndexMask gather_nodes(const bke::pbvh::Tree &pbvh,
                        eBrushFalloffShape falloff_shape,
                        bool use_original,
                        const float3 &location,
-                       float radius_sq,
+                       float radius,
                        const std::optional<float3> &ray_direction,
                        IndexMaskMemory &memory);
 
 const float *brush_frontface_normal_from_falloff_shape(const SculptSession &ss,
                                                        char falloff_shape);
-float4x4 cube_tip_init(const Sculpt &sd, const Object &ob, const Brush &brush);
+float4x4 cube_tip_init(const Object &ob, const Brush &brush);
 
 /** Sample the brush's texture value. */
 void apply_brush_texture(PaintMode paint_mode,
@@ -808,12 +794,6 @@ void apply_brush_texture(PaintMode paint_mode,
                          int thread_id,
                          float *r_value,
                          float4 &r_rgba);
-
-/**
- * Calculates the vertex offset for a single vertex depending on the brush setting rgb as vector
- * displacement.
- */
-void calc_vertex_displacement(const SculptSession &ss, const Brush &brush, float translation[3]);
 
 /**
  * Tilts a normal by the x and y tilt values using the view axis.

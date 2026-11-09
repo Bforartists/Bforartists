@@ -78,43 +78,46 @@ def is_tool_tree(context):
 class NodePanel:
     @staticmethod
     def draw_text_button(layout, node=None, operator="node.add_node", text="", icon=None, settings=None, props=None, pad=0, **kwargs):
+        # BFA - `props` is the values of the entry. Assigning the operator to it made the loop below
+        # read the operator's ID properties, which raises a TypeError and stops the panel drawing.
         if (operator == "node.add_node") or (text != ""):
             text = " " + text + (" "*pad)
-            props = layout.operator(operator, text=text, icon=icon)
+            op = layout.operator(operator, text=text, icon=icon)
         else:
-            props = layout.operator(operator, icon=icon)
+            op = layout.operator(operator, icon=icon)
 
-        if hasattr(props, "use_transform"):
-            props.use_transform = True
+        if hasattr(op, "use_transform"):
+            op.use_transform = True
 
         if props is not None:
             for prop_key, prop_value in props.items():
-                setattr(props, prop_key, prop_value)
+                setattr(op, prop_key, prop_value)
 
         if node is not None:
-            props.type = node
+            op.type = node
 
         if settings is not None:
             for name, value in settings.items():
-                ops = props.settings.add()
+                ops = op.settings.add()
                 ops.name = name
                 ops.value = value
 
     @staticmethod
     def draw_icon_button(layout, node=None, operator="node.add_node", icon=None, settings=None, props=None, **kwargs):
-        props = layout.operator(operator, text="", icon=icon)
-        props.use_transform = True
+        # BFA - See draw_text_button.
+        op = layout.operator(operator, text="", icon=icon)
+        op.use_transform = True
 
         if props is not None:
             for prop_key, prop_value in props.items():
-                setattr(props, prop_key, prop_value)
+                setattr(op, prop_key, prop_value)
 
         if node is not None:
-            props.type = node
+            op.type = node
 
         if settings is not None:
             for name, value in settings.items():
-                ops = props.settings.add()
+                ops = op.settings.add()
                 ops.name = name
                 ops.value = value
 
@@ -252,6 +255,7 @@ class NODES_PT_relations_layout(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("NodeComment"),  # BFA - new node, Add > Layout order
             OperatorEntry("NodeFrame"),
             OperatorEntry("NodeReroute"),
         )
@@ -275,6 +279,7 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         use_common = addon_prefs.Node_shader_add_common
+        is_eevee_object = is_shader_type(context, 'OBJECT') and is_engine(context, 'BLENDER_EEVEE')  # BFA - EEVEE-only light nodes
 
         # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
         # There is currently no way to determine the correct padding length other than trial-and-error.
@@ -298,12 +303,15 @@ class NODES_PT_toolshelf_shader_add_input(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeFresnel", pad=22),
                 OperatorEntry("ShaderNodeNewGeometry", pad=18),
                 OperatorEntry("ShaderNodeLayerWeight", pad=12),
+                OperatorEntry("ShaderNodeLightEvaluation", pad=6, poll=is_eevee_object),  # BFA - new node
+                OperatorEntry("ShaderNodeLightInfo", pad=16, poll=is_eevee_object),  # BFA - new node
                 OperatorEntry("ShaderNodeLightPath", pad=16),
                 OperatorEntry("ShaderNodeObjectInfo", pad=14),
                 Separator,
                 OperatorEntry("ShaderNodeParticleInfo", pad=12),
                 OperatorEntry("ShaderNodePointInfo", pad=16 ),
                 OperatorEntry("ShaderNodeRaycast", pad=21),
+                OperatorEntry("ShaderNodeShadowRaycast", pad=9, poll=is_eevee_object),  # BFA - new node
                 OperatorEntry("ShaderNodeTangent", pad=20),
                 OperatorEntry("ShaderNodeTexCoord", pad=1),
                 OperatorEntry("ShaderNodeUVAlongStroke", pad=4, poll=is_shader_type(context, 'LINESTYLE')),
@@ -450,6 +458,7 @@ class NODES_PT_toolshelf_shader_add_shader(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeBsdfGlossy", pad=17, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfHair", pad=22, poll=is_object and not is_eevee),
                 OperatorEntry("ShaderNodeHoldout", pad=26, poll=is_object),
+                OperatorEntry("ShaderNodeLightAccumulation", pad=7, poll=is_object and is_eevee),  # BFA - new node
                 OperatorEntry("ShaderNodeBsdfMetallic", pad=16, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfPrincipled", pad=12, poll=is_object),
                 OperatorEntry("ShaderNodeBsdfHairPrincipled", pad=4, poll=is_object and not is_eevee),
@@ -1711,6 +1720,7 @@ class NODES_PT_toolshelf_gn_add_input_file(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeImportCSV", pad=2),  # BFA - Add menu order
             OperatorEntry("GeometryNodeImportOBJ", pad=2),
             OperatorEntry("GeometryNodeImportPLY", pad=2),
+            OperatorEntry("GeometryNodeImportSPZ", pad=3),  # BFA - new node
             OperatorEntry("GeometryNodeImportSTL", pad=3),
             OperatorEntry("GeometryNodeImportText", pad=2),
             OperatorEntry("GeometryNodeImportVDB", pad=2),
@@ -1800,12 +1810,14 @@ class NODES_PT_toolshelf_gn_add_attribute(bpy.types.Panel, NodePanel):
         entries = (
             OperatorEntry("GeometryNodeAttributeStatistic", pad=15),
             OperatorEntry("GeometryNodeAttributeDomainSize", pad=24),
+            OperatorEntry("GeometryNodeGetAttributeNames", pad=10),  # BFA - new node
             Separator,
             OperatorEntry("GeometryNodeBlurAttribute", pad=22),
             OperatorEntry("GeometryNodeCaptureAttribute", pad=15),
             OperatorEntry("GeometryNodeRemoveAttribute", pad=2),
             OperatorEntry("GeometryNodeRenameAttribute", pad=16),
             OperatorEntry("GeometryNodeStoreNamedAttribute", pad=7),
+            OperatorEntry("GeometryNodeTransferAttributes", pad=13),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -1856,14 +1868,16 @@ class NODES_PT_toolshelf_gn_add_geometry_read(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
-            OperatorEntry("GeometryNodeInputID", pad=25),
-            OperatorEntry("GeometryNodeInputIndex", pad=19),
-            OperatorEntry("GeometryNodeInputNamedAttribute", pad=1),
-            OperatorEntry("GeometryNodeInputNormal", pad=18),
-            OperatorEntry("GeometryNodeInputPosition", pad=16),
-            OperatorEntry("GeometryNodeInputRadius", pad=18),
-            OperatorEntry("GeometryNodeToolActiveElement", pad=4, poll=is_tool),  # BFA - Add menu order
-            OperatorEntry("GeometryNodeToolSelection", pad=14, poll=is_tool),
+            OperatorEntry("GeometryNodeInputID", pad=32),
+            OperatorEntry("GeometryNodeInputIndex", pad=26),
+            OperatorEntry("GeometryNodeInputNamedAttribute", pad=8),
+            OperatorEntry("GeometryNodeInputNormal", pad=25),
+            OperatorEntry("GeometryNodeInputPosition", pad=23),
+            OperatorEntry("GeometryNodeInputRadius", pad=25),
+            OperatorEntry("GeometryNodeToolActiveElement", pad=11, poll=is_tool),  # BFA - Add menu order
+            OperatorEntry("GeometryNodeToolSelection", pad=21, poll=is_tool),
+            Separator,
+            OperatorEntry("GeometryNodeGetGeometryBundle"),  # BFA - new node, widest entry (others padded to match)
         )
 
         self.draw_entries(context, layout, entries)
@@ -1917,6 +1931,7 @@ class NODES_PT_toolshelf_gn_add_geometry_write(bpy.types.Panel, NodePanel):
         # There is currently no way to determine the correct padding length other than trial-and-error.
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
+            OperatorEntry("GeometryNodeSetGeometryBundle"),  # BFA - new node, Add menu order
             OperatorEntry("GeometryNodeSetGeometryName", pad=2),
             OperatorEntry("GeometryNodeSetID", pad=25),
             OperatorEntry("GeometryNodeSetPosition", pad=15),
@@ -2615,8 +2630,11 @@ class NODES_PT_toolshelf_gn_add_point(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodePointsToSDFGrid", pad=16),
             OperatorEntry("GeometryNodePointsToVertices", pad=17),
             OperatorEntry("GeometryNodePointsToVolume", pad=17),
+            OperatorEntry("GeometryNodeRasterizePoints", pad=19),  # BFA - new node
             Separator,
             OperatorEntry("GeometryNodeSetPointRadius", pad=19),
+            Separator,
+            OperatorEntry("GeometryNodePointsSetType", pad=11),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -2699,6 +2717,7 @@ class NODES_PT_toolshelf_gn_add_volume_sample(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeGridDivergence", pad=11),
             OperatorEntry("GeometryNodeGridGradient", pad=16),
             OperatorEntry("GeometryNodeGridLaplacian", pad=14),
+            OperatorEntry("GeometryNodeGridSolvePoisson", pad=7),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -2981,7 +3000,10 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeStringJoin", pad=14),
             OperatorEntry("FunctionNodeMatchString", pad=13),
             OperatorEntry("FunctionNodeReplaceString", pad=10),
+            OperatorEntry("FunctionNodeReverseString", pad=9),  # BFA - new node
+            OperatorEntry("FunctionNodeSetStringCase", pad=7),  # BFA - new node
             OperatorEntry("FunctionNodeSliceString", pad=15),
+            OperatorEntry("FunctionNodeSplitString", pad=15),  # BFA - was missing
             OperatorEntry("FunctionNodeTrimString", pad=15),
             Separator,
             OperatorEntry("FunctionNodeFindInString", pad=10),
@@ -2991,6 +3013,7 @@ class NODES_PT_toolshelf_gn_add_utilities_text(bpy.types.Panel, NodePanel):
             OperatorEntry("FunctionNodeValueToString", pad=7),
             Separator,
             OperatorEntry("FunctionNodeInputSpecialCharacters", pad=1),
+            OperatorEntry("GeometryNodeTagFilter", pad=17),  # BFA - new node
         )
 
         self.draw_entries(context, layout, entries)
@@ -3016,6 +3039,7 @@ class NODES_PT_toolshelf_gn_add_utilities_vector(bpy.types.Panel, NodePanel):
         # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
         entries = (
             OperatorEntry("ShaderNodeCombineXYZ", pad=16),
+            OperatorEntry("FunctionNodeGetVectorComponent"),  # BFA - new node
             OperatorEntry("ShaderNodeMapRange", text=iface_("Map Range"), pad=20, settings={"data_type": "'FLOAT_VECTOR'"}),
             OperatorEntry("ShaderNodeMix", text=iface_("Mix Vector"), pad=20, settings={"data_type": "'VECTOR'"}),
             OperatorEntry("ShaderNodeSeparateXYZ", pad=16),
@@ -3052,7 +3076,10 @@ class NODES_PT_toolshelf_gn_add_utilities_bundle(bpy.types.Panel, NodePanel):
             OperatorEntry("NodeJoinBundle", pad=22),  # BFA - Add menu order
             OperatorEntry("NodeSeparateBundle", pad=15),
             OperatorEntry("NodeGetBundleItem", pad=14),
+            OperatorEntry("NodeGetNestedBundlePaths"),  # BFA - new node
             OperatorEntry("NodeStoreBundleItem", pad=11),
+            Separator,
+            OperatorEntry(operator="node.add_typed_bundle", text=iface_("Typed Bundle"), icon="NODE_BUNDLE_TYPED", pad=18),  # BFA - new operator
         )
 
         self.draw_entries(context, layout, entries)

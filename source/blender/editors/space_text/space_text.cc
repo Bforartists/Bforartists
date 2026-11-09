@@ -141,8 +141,8 @@ static std::optional<ARegionIMECursorState> text_main_region_cursor_ime(wmWindow
   const int y = (*cursor_xy)[1];
 
   /* Report the glyph extent, not the line cell: the preview sits its baseline a descender
-   * above `ymin` (see #region_overlay_draw) while the editor draws text one line height
-   * below the cell top, both use the same font & size so the descender matches. */
+   * above `ymin` (see #wm_window_IME_region_preview_draw) while the editor draws text one
+   * line height below the cell top, both use the same font & size so the descender matches. */
   const int line_height = st->runtime->line_height_px;
   const int baseline_y = y - line_height;
   const int ymin = baseline_y + st->runtime->descender_px;
@@ -475,12 +475,17 @@ static void text_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink *
 {
   SpaceText *st = reinterpret_cast<SpaceText *>(sl);
   st->runtime = MEM_new<ed::text::SpaceText_Runtime>(__func__);
+
+  /* Live edit runs scripts, don't keep this setting on file load since it's
+   * not obvious editing the text has this consequence. */
+  st->live_edit = false;
 }
 
 static void text_space_blend_write(BlendWriter *writer, SpaceLink *sl)
 {
   writer->write_struct_cast<SpaceText>(sl, [](BlendStructWriter<SpaceText> &struct_writer) {
     struct_writer.shallow_data.runtime = nullptr;
+    struct_writer.shallow_data.live_edit = false;
   });
 }
 
@@ -497,6 +502,7 @@ void ED_spacetype_text()
 
   st->spaceid = SPACE_TEXT;
   STRNCPY_UTF8(st->name, "Text");
+  st->struct_size = sizeof(SpaceText);
 
   st->create = text_create;
   st->free = text_free;

@@ -341,6 +341,8 @@ if(WITH_BLENDER)
 
       # letter B
       back
+      backdrop_pan
+      backdrop_zoom
       background
       bake
       bake_action
@@ -505,6 +507,7 @@ if(WITH_BLENDER)
       constraint_bone
       constraint_data
       controlpointrow
+      convert_rotation_mode
       convexhull
       copy_id
       copy_from_object
@@ -789,8 +792,10 @@ if(WITH_BLENDER)
       gesture_pan
       gesture_rotate
       gesture_zoom
+      get_attribute_names
       get_id
       get_list_item
+      get_vector_component
       ghost
       ghost_disabled
       ghost_enabled
@@ -1024,7 +1029,9 @@ if(WITH_BLENDER)
       load_fbx
       load_gltf
       load_obj
+      load_otio
       load_ply
+      load_spz
       load_stl
       load_svg
       load_svg_gpencil
@@ -1281,10 +1288,12 @@ if(WITH_BLENDER)
       node_bundle_combine
       node_bundle_get
       node_bundle_get_item
+      node_bundle_get_nested_paths
       node_bundle_join
       node_bundle_separate
       node_bundle_set
       node_bundle_store_item
+      node_bundle_typed
       node_channel
       node_checker
       node_chroma
@@ -1304,6 +1313,7 @@ if(WITH_BLENDER)
       node_combinexyz
       node_combineycbcra
       node_combineyuva
+      node_comment
       node_compositing
       node_compositing_active
       node_construct_curves
@@ -1359,6 +1369,7 @@ if(WITH_BLENDER)
       node_gridlaplacian
       node_gridmean
       node_gridmedian
+      node_gridsolvepoisson
       node_gridtomesh
       node_gridtoplogyboolean
       node_grid_info
@@ -1378,6 +1389,9 @@ if(WITH_BLENDER)
       node_keyingscreen
       node_layerweight
       node_lensdistort
+      node_light_accumulation
+      node_light_evaluation
+      node_light_info
       node_lightfalloff
       node_lightpath
       node_linestyle_output
@@ -1433,6 +1447,7 @@ if(WITH_BLENDER)
       node_separatexyz
       node_setgridbackground
       node_setgridtransform
+      node_shadow_raycast
       node_set_nurbs_order
       node_set_nurbs_weight
       node_side
@@ -1660,6 +1675,7 @@ if(WITH_BLENDER)
       point_translate
       pointcloud_data
       pointcloud_point
+      points_set_type
       points_to_curves
       points_to_vertices
       pokefaces
@@ -1717,6 +1733,7 @@ if(WITH_BLENDER)
       random_float
       randomize
       randomize_transform
+      rasterize_points
       raycast
       rec
       recalc_normals
@@ -1772,6 +1789,7 @@ if(WITH_BLENDER)
       # ##
       retopo
       reverse_colors
+      reverse_string
       reverse_uvs
       rew
       rightarrow
@@ -1842,6 +1860,7 @@ if(WITH_BLENDER)
       save_fbx
       save_gltf
       save_obj
+      save_otio
       save_pdf
       save_ply
       save_prefs
@@ -1940,10 +1959,7 @@ if(WITH_BLENDER)
       seq_strip
       seq_strip_data
       seq_strip_duplicate
-      seq_strip_expand
-      seq_strip_overwrite
       seq_strip_modifier
-      seq_strip_shuffle
       seq_swap_left
       seq_swap_right
       seq_text
@@ -1951,6 +1967,7 @@ if(WITH_BLENDER)
       set_curve_handle_positions
       set_curve_radius
       set_curve_tilt
+      set_end_frame
       set_face_set
       set_frames
       set_from_faces
@@ -1963,6 +1980,8 @@ if(WITH_BLENDER)
       set_shade_smooth
       set_smooth
       set_spline_resolution
+      set_string_case
+      set_start_frame
       set_time
       set_uppercase
       settings
@@ -2127,6 +2146,7 @@ if(WITH_BLENDER)
 
       # letter t
       tag
+      tag_filter
       temp
       template
       text
@@ -2235,6 +2255,7 @@ if(WITH_BLENDER)
       # letter v
       value_to_selection
       value_to_string
+      variables
 	    variance
       vector_displace
       vertcolfromweight
@@ -2259,6 +2280,7 @@ if(WITH_BLENDER)
       view_camera_unselected
       view_fill
       view_fit
+      view_flip
       view_frame
       view_front
       view_global_local
@@ -2272,6 +2294,7 @@ if(WITH_BLENDER)
       view_remove_local
       view_reset
       view_right
+      view_roll_reset
       view_selected
       view_stretch
       view_switchactivecam

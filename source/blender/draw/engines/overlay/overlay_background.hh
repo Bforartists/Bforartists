@@ -27,7 +27,7 @@ class Background : Overlay {
   gpu::FrameBuffer *framebuffer_ref_ = nullptr;
 
   /* Padded bbox vertices. */
-  std::array<float4, 8> bbox_;
+  UniformArrayBuffer<float4, 8> bbox_;
 
  public:
   void begin_sync(Resources &res, const State &state) final
@@ -84,13 +84,14 @@ class Background : Overlay {
 
     if ((state.clipping_plane_count != 0) && (state.rv3d) && (state.rv3d->clipbb)) {
       for (int i : IndexRange(8)) {
-        bbox_[i] = state.rv3d->clipbb->vec[i];
+        bbox_[i] = float4(float3(state.rv3d->clipbb->vec[i]), 1.0f);
       }
+      bbox_.push_update();
 
       bg_ps_.state_set(DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA | DRW_STATE_CULL_BACK);
       bg_ps_.shader_set(res.shaders->background_clip_bound.get());
+      bg_ps_.bind_ubo("boundbox", &bbox_);
       bg_ps_.push_constant("ucolor", res.theme.colors.clipping_border);
-      bg_ps_.push_constant("boundbox", bbox_.data(), 8);
       bg_ps_.draw(res.shapes.cube_solid.get());
     }
 

@@ -179,7 +179,7 @@ static void do_version_glare_node_star_45_option_to_input_animation(bNodeTree *n
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -250,7 +250,7 @@ static void do_version_bokeh_image_node_options_to_inputs_animation(bNodeTree *n
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -307,7 +307,7 @@ static void do_version_time_curve_node_options_to_inputs_animation(bNodeTree *no
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -385,7 +385,7 @@ static void do_version_mask_node_options_to_inputs_animation(bNodeTree *node_tre
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -439,7 +439,7 @@ static void do_version_switch_node_options_to_inputs_animation(bNodeTree *node_t
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -482,7 +482,7 @@ static void do_version_split_node_options_to_inputs_animation(bNodeTree *node_tr
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -535,7 +535,7 @@ static void do_version_invert_node_options_to_inputs_animation(bNodeTree *node_t
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -580,7 +580,7 @@ static void do_version_z_combine_node_options_to_inputs_animation(bNodeTree *nod
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -669,7 +669,7 @@ static void do_version_tone_map_node_options_to_inputs_animation(bNodeTree *node
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -733,7 +733,7 @@ static void do_version_dilate_node_options_to_inputs_animation(bNodeTree *node_t
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -771,7 +771,7 @@ static void do_version_inpaint_node_options_to_inputs_animation(bNodeTree *node_
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -805,7 +805,7 @@ static void do_version_pixelate_node_options_to_inputs_animation(bNodeTree *node
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -862,7 +862,7 @@ static void do_version_kuwahara_node_options_to_inputs_animation(bNodeTree *node
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -920,7 +920,7 @@ static void do_version_despeckle_node_options_to_inputs_animation(bNodeTree *nod
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -963,7 +963,7 @@ static void do_version_denoise_node_options_to_inputs_animation(bNodeTree *node_
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1019,7 +1019,7 @@ static void do_version_anti_alias_node_options_to_inputs_animation(bNodeTree *no
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1080,7 +1080,7 @@ static void do_version_vector_blur_node_options_to_inputs_animation(bNodeTree *n
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1133,7 +1133,7 @@ static void do_version_channel_matte_node_options_to_inputs_animation(bNodeTree 
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1192,7 +1192,7 @@ static void do_version_chroma_matte_node_options_to_inputs_animation(bNodeTree *
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1255,7 +1255,7 @@ static void do_version_color_matte_node_options_to_inputs_animation(bNodeTree *n
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1312,7 +1312,7 @@ static void do_version_difference_matte_node_options_to_inputs_animation(bNodeTr
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1362,7 +1362,7 @@ static void do_version_distance_matte_node_options_to_inputs_animation(bNodeTree
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1415,7 +1415,7 @@ static void do_version_luminance_matte_node_options_to_inputs_animation(bNodeTre
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1478,7 +1478,7 @@ static void do_version_color_spill_node_options_to_inputs_animation(bNodeTree *n
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1537,7 +1537,7 @@ static void do_version_keying_screen_node_options_to_inputs_animation(bNodeTree 
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1661,7 +1661,7 @@ static void do_version_keying_node_options_to_inputs_animation(bNodeTree *node_t
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1741,7 +1741,7 @@ static void do_version_id_mask_node_options_to_inputs_animation(bNodeTree *node_
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1780,7 +1780,7 @@ static void do_version_stabilize_node_options_to_inputs_animation(bNodeTree *nod
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -1832,7 +1832,7 @@ static void do_version_plane_track_deform_node_options_to_inputs_animation(bNode
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2067,7 +2067,7 @@ static void do_version_color_correction_node_options_to_inputs_animation(bNodeTr
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2217,7 +2217,7 @@ static void do_version_lens_distortion_node_options_to_inputs_animation(bNodeTre
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2280,7 +2280,7 @@ static void do_version_box_mask_node_options_to_inputs_animation(bNodeTree *node
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2357,7 +2357,7 @@ static void do_version_ellipse_mask_node_options_to_inputs_animation(bNodeTree *
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2427,7 +2427,7 @@ static void do_version_sun_beams_node_options_to_inputs_animation(bNodeTree *nod
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2506,7 +2506,7 @@ static void do_version_directional_blur_node_options_to_inputs_animation(bNodeTr
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2586,7 +2586,7 @@ static void do_version_bilateral_blur_node_options_to_inputs_animation(bNodeTree
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2905,7 +2905,7 @@ static void do_version_alpha_over_node_options_to_inputs_animation(bNodeTree *no
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -2940,7 +2940,7 @@ static void do_version_bokeh_blur_node_options_to_inputs_animation(bNodeTree *no
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -3019,13 +3019,13 @@ static void version_escape_curly_braces(char string[], const int string_array_le
   while (bytes_processed < string_array_length && string[bytes_processed] != '\0') {
     if (string[bytes_processed] == '{') {
       BLI_string_replace_range(
-          string, string_array_length, bytes_processed, bytes_processed + 1, "{{");
+          MutableCStr(string, string_array_length), bytes_processed, bytes_processed + 1, "{{");
       bytes_processed += 2;
       continue;
     }
     if (string[bytes_processed] == '}') {
       BLI_string_replace_range(
-          string, string_array_length, bytes_processed, bytes_processed + 1, "}}");
+          MutableCStr(string, string_array_length), bytes_processed, bytes_processed + 1, "}}");
       bytes_processed += 2;
       continue;
     }
@@ -3448,7 +3448,7 @@ static void do_version_crop_node_options_to_inputs_animation(bNodeTree *node_tre
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -3579,7 +3579,7 @@ static void do_version_color_balance_node_options_to_inputs_animation(bNodeTree 
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {
@@ -3896,7 +3896,7 @@ static void do_version_blur_node_options_to_inputs_animation(bNodeTree *node_tre
 {
   /* Compute the RNA path of the node. */
   char escaped_node_name[sizeof(node->name) * 2 + 1];
-  BLI_str_escape(escaped_node_name, node->name, sizeof(escaped_node_name));
+  BLI_str_escape(escaped_node_name, node->name);
   const std::string node_rna_path = fmt::format("nodes[\"{}\"]", escaped_node_name);
 
   BKE_fcurves_id_cb(&node_tree->id, [&](ID * /*id*/, FCurve *fcurve) {

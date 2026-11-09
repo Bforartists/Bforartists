@@ -156,6 +156,7 @@ void ED_spacetype_toolbar(void)
   ARegionType *art;
 
   st->spaceid = SPACE_TOOLBAR;
+  st->struct_size = sizeof(SpaceToolbar); /* BFA - required since Blender 200c60730dc */
   STRNCPY(st->name, "Toolbar");
 
   st->create = toolbar_create;

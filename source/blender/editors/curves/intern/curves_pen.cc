@@ -57,8 +57,8 @@ static const EnumPropertyItem prop_handle_types[] = {
 };
 
 /* Used to scale the default select distance. */
-constexpr float selection_distance_factor = 0.9f;
-constexpr float selection_distance_factor_edge = 0.5f;
+constexpr float selection_distance_factor = 0.3f;
+constexpr float selection_distance_factor_edge = 0.2f;
 
 /* Used when creating a single curve from nothing. */
 constexpr float default_handle_px_distance = 16.0f;
@@ -162,40 +162,44 @@ static void pen_find_closest_handle(const PenToolOperation &ptd,
                                     ClosestElement &r_closest_element)
 {
   const Array<int> point_to_curve_map = curves.point_to_curve_map();
-  const Span<float3> handle_left = *curves.handle_positions_left();
-  const Span<float3> handle_right = *curves.handle_positions_right();
 
-  bezier_points.foreach_index([&](const int point_i) {
-    const float2 pos_proj = ptd.layer_to_screen(layer_to_object, handle_left[point_i]);
-    const float distance_squared = math::distance_squared(pos_proj, mouse_co);
+  if (const std::optional<Span<float3>> handle_left = curves.handle_positions_left()) {
+    const Span<float3> handle_left_span = *handle_left;
+    bezier_points.foreach_index([&](const int point_i) {
+      const float2 pos_proj = ptd.layer_to_screen(layer_to_object, handle_left_span[point_i]);
+      const float distance_squared = math::distance_squared(pos_proj, mouse_co);
 
-    /* Save the closest point. */
-    if (r_closest_element.is_closer(
-            distance_squared, ElementMode::HandleLeft, ptd.threshold_distance))
-    {
-      r_closest_element.curve_index = point_to_curve_map[point_i];
-      r_closest_element.point_index = point_i;
-      r_closest_element.element_mode = ElementMode::HandleLeft;
-      r_closest_element.distance_squared = distance_squared;
-      r_closest_element.drawing_index = drawing_index;
-    }
-  });
+      /* Save the closest point. */
+      if (r_closest_element.is_closer(
+              distance_squared, ElementMode::HandleLeft, ptd.threshold_distance))
+      {
+        r_closest_element.curve_index = point_to_curve_map[point_i];
+        r_closest_element.point_index = point_i;
+        r_closest_element.element_mode = ElementMode::HandleLeft;
+        r_closest_element.distance_squared = distance_squared;
+        r_closest_element.drawing_index = drawing_index;
+      }
+    });
+  }
 
-  bezier_points.foreach_index([&](const int point_i) {
-    const float2 pos_proj = ptd.layer_to_screen(layer_to_object, handle_right[point_i]);
-    const float distance_squared = math::distance_squared(pos_proj, mouse_co);
+  if (const std::optional<Span<float3>> handle_right = curves.handle_positions_right()) {
+    const Span<float3> handle_right_span = *handle_right;
+    bezier_points.foreach_index([&](const int point_i) {
+      const float2 pos_proj = ptd.layer_to_screen(layer_to_object, handle_right_span[point_i]);
+      const float distance_squared = math::distance_squared(pos_proj, mouse_co);
 
-    /* Save the closest point. */
-    if (r_closest_element.is_closer(
-            distance_squared, ElementMode::HandleRight, ptd.threshold_distance))
-    {
-      r_closest_element.curve_index = point_to_curve_map[point_i];
-      r_closest_element.point_index = point_i;
-      r_closest_element.element_mode = ElementMode::HandleRight;
-      r_closest_element.distance_squared = distance_squared;
-      r_closest_element.drawing_index = drawing_index;
-    }
-  });
+      /* Save the closest point. */
+      if (r_closest_element.is_closer(
+              distance_squared, ElementMode::HandleRight, ptd.threshold_distance))
+      {
+        r_closest_element.curve_index = point_to_curve_map[point_i];
+        r_closest_element.point_index = point_i;
+        r_closest_element.element_mode = ElementMode::HandleRight;
+        r_closest_element.distance_squared = distance_squared;
+        r_closest_element.drawing_index = drawing_index;
+      }
+    });
+  }
 }
 
 static float2 line_segment_closest_point(const float2 &pos_1,
@@ -701,6 +705,7 @@ static void insert_point_to_curve(const PenToolOperation &ptd, bke::CurvesGeomet
 {
   const bke::AttributeAccessor src_attributes = src.attributes();
   const OffsetIndices<int> points_by_curve = src.points_by_curve();
+  const VArray<int8_t> src_curve_types = src.curve_types();
   const int old_points_num = src.points_num();
   const int src_point_index = ptd.closest_element.point_index;
   const int dst_point_index = src_point_index + 1;
@@ -753,31 +758,39 @@ static void insert_point_to_curve(const PenToolOperation &ptd, bke::CurvesGeomet
                          dst_to_src_points,
                          dst_attributes);
 
-  Span<float3> src_positions = src.positions();
+  const Span<float3> src_positions = src.positions();
   MutableSpan<float3> dst_positions = dst.positions_for_write();
-  MutableSpan<int8_t> handle_types_left = dst.handle_types_left_for_write();
-  MutableSpan<int8_t> handle_types_right = dst.handle_types_right_for_write();
-  const Span<float3> src_handles_left = *src.handle_positions_left();
-  const Span<float3> src_handles_right = *src.handle_positions_right();
-  MutableSpan<float3> dst_handles_left = dst.handle_positions_left_for_write();
-  MutableSpan<float3> dst_handles_right = dst.handle_positions_right_for_write();
-  handle_types_left[dst_point_index] = BEZIER_HANDLE_ALIGN;
-  handle_types_right[dst_point_index] = BEZIER_HANDLE_ALIGN;
 
-  const bke::curves::bezier::Insertion inserted_point = bke::curves::bezier::insert(
-      src_positions[src_point_index],
-      src_handles_right[src_point_index],
-      src_handles_left[src_point_index_2],
-      src_positions[src_point_index_2],
-      ptd.closest_element.edge_t);
+  if (src_curve_types[curve_index] == CURVE_TYPE_BEZIER) {
+    MutableSpan<int8_t> handle_types_left = dst.handle_types_left_for_write();
+    MutableSpan<int8_t> handle_types_right = dst.handle_types_right_for_write();
+    const Span<float3> src_handles_left = *src.handle_positions_left();
+    const Span<float3> src_handles_right = *src.handle_positions_right();
+    MutableSpan<float3> dst_handles_left = dst.handle_positions_left_for_write();
+    MutableSpan<float3> dst_handles_right = dst.handle_positions_right_for_write();
+    handle_types_left[dst_point_index] = BEZIER_HANDLE_ALIGN;
+    handle_types_right[dst_point_index] = BEZIER_HANDLE_ALIGN;
 
-  dst_positions[dst_point_index] = inserted_point.position;
-  dst_handles_left[dst_point_index] = inserted_point.left_handle;
-  dst_handles_right[dst_point_index] = inserted_point.right_handle;
-  dst_handles_right[dst_point_index - 1] = inserted_point.handle_prev;
-  dst_handles_left[dst_point_index_2] = inserted_point.handle_next;
-  handle_types_right[dst_point_index - 1] = BEZIER_HANDLE_FREE;
-  handle_types_left[dst_point_index_2] = BEZIER_HANDLE_FREE;
+    const bke::curves::bezier::Insertion inserted_point = bke::curves::bezier::insert(
+        src_positions[src_point_index],
+        src_handles_right[src_point_index],
+        src_handles_left[src_point_index_2],
+        src_positions[src_point_index_2],
+        ptd.closest_element.edge_t);
+
+    dst_positions[dst_point_index] = inserted_point.position;
+    dst_handles_left[dst_point_index] = inserted_point.left_handle;
+    dst_handles_right[dst_point_index] = inserted_point.right_handle;
+    dst_handles_right[dst_point_index - 1] = inserted_point.handle_prev;
+    dst_handles_left[dst_point_index_2] = inserted_point.handle_next;
+    handle_types_right[dst_point_index - 1] = BEZIER_HANDLE_FREE;
+    handle_types_left[dst_point_index_2] = BEZIER_HANDLE_FREE;
+  }
+  else {
+    dst_positions[dst_point_index] = math::interpolate(src_positions[src_point_index],
+                                                       src_positions[src_point_index_2],
+                                                       ptd.closest_element.edge_t);
+  }
 
   dst.update_curve_types();
   dst.calculate_bezier_auto_handles();
@@ -829,7 +842,7 @@ static void add_single_point_and_curve(const PenToolOperation &ptd,
 
   const int material_index = ptd.vc.obact->actcol - 1;
   if (material_index != -1) {
-    bke::SpanAttributeWriter<int> material_indexes = attributes.lookup_or_add_for_write_span<int>(
+    bke::SpanAttributeWriter<int> material_indexes = attributes.ensure_for_write_span<int>(
         "material_index", bke::AttrDomain::Curve, bke::AttributeInitValue(0));
     material_indexes.span.last() = material_index;
     material_indexes.finish();
@@ -978,6 +991,9 @@ static void invoke_curves(PenToolOperation &ptd, bContext *C, wmOperator *op, co
   std::atomic<bool> point_added = false;
   std::atomic<bool> point_removed = false;
 
+  const bool extrude_only = !ptd.select_point && !ptd.move_seg && !ptd.move_point &&
+                            ptd.extrude_point;
+
   threading::parallel_for(ptd.curves_range(), 1, [&](const IndexRange curves_range) {
     for (const int curves_index : curves_range) {
       bke::CurvesGeometry &curves = ptd.get_curves(curves_index);
@@ -987,16 +1003,18 @@ static void invoke_curves(PenToolOperation &ptd, bContext *C, wmOperator *op, co
       }
 
       if (ptd.closest_element.element_mode == ElementMode::Edge) {
-        add_single.store(false, std::memory_order_relaxed);
-        if (ptd.insert_point && ptd.closest_element.drawing_index == curves_index) {
-          insert_point_to_curve(ptd, curves);
-          ptd.tag_curve_changed(curves_index);
-          changed.store(true, std::memory_order_relaxed);
+        if (ptd.move_seg || ptd.insert_point) {
+          add_single.store(false, std::memory_order_relaxed);
+          if (ptd.insert_point && ptd.closest_element.drawing_index == curves_index) {
+            insert_point_to_curve(ptd, curves);
+            ptd.tag_curve_changed(curves_index);
+            changed.store(true, std::memory_order_relaxed);
+          }
+          continue;
         }
-        continue;
       }
 
-      if (ptd.closest_element.element_mode == ElementMode::None) {
+      if (ptd.closest_element.element_mode == ElementMode::None || extrude_only) {
         if (ptd.extrude_point) {
           IndexMaskMemory memory;
           const IndexMask editable_curves = ptd.editable_curves(curves_index, memory);

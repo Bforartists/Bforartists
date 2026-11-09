@@ -12,6 +12,7 @@
 #include "BLI_rect.hh"
 
 #include "BKE_context.hh"
+#include "BKE_view3d_runtime.hh"
 
 #include "WM_api.hh"
 
@@ -20,10 +21,22 @@
 
 #include "ED_screen.hh"
 
+#include "DNA_userdef_types.h" /* BFA - roll gizmo drag (#6932) */
+
 #include "view3d_intern.hh"
 #include "view3d_navigate.hh" /* own include */
 
 namespace blender {
+
+/* BFA - roll around the view center, ignoring Orbit Around Selection / Auto Depth.
+ * Used by the navigation roll gizmo (#6839), so it matches the sidebar View Roll field. */
+static const ViewOpsType ViewOpsType_roll_view_center = {
+    /*flag*/ VIEWOPS_FLAG_NONE,
+    /*idname*/ "VIEW3D_OT_view_roll",
+    /*poll_fn*/ nullptr,
+    /*init_fn*/ nullptr,
+    /*apply_fn*/ nullptr,
+};
 
 /* -------------------------------------------------------------------- */
 /** \name View Roll Operator
@@ -60,10 +73,35 @@ static void view_roll_angle(ARegion *region,
   }
 }
 
-static void viewroll_apply(ViewOpsData *vod, int x, int y)
+/* BFA - roll gizmo (#6932): degrees of roll per pixel of horizontal drag (at UI scale 1). */
+#define VIEW3D_ROLL_DRAG_DEGREES_PER_PIXEL 0.5f
+
+float view3d_roll_drag_angle(const float delta_x, const bool snap)
 {
-  const float current_position[2] = {float(x), float(y)};
-  float angle = BLI_dial_angle(vod->init.dial, current_position);
+  /* Dragging right rolls the view clockwise (a negative angle), like turning a dial. */
+  float angle = -(delta_x / UI_SCALE_FAC) * DEG2RADF(VIEW3D_ROLL_DRAG_DEGREES_PER_PIXEL);
+  if (snap) {
+    /* Ctrl: snap to the numpad roll step (Shift Numpad 4/6), 15 degrees by default. */
+    const float step = DEG2RADF(U.pad_rot_angle);
+    if (step > 0.0f) {
+      angle = roundf(angle / step) * step;
+    }
+  }
+  return angle;
+}
+
+static void viewroll_apply(
+    ViewOpsData *vod, int x, int y, const bool use_horizontal_drag, const bool snap)
+{
+  float angle;
+  if (use_horizontal_drag) {
+    /* BFA - roll gizmo (#6932): drag left / right instead of around the view center. */
+    angle = view3d_roll_drag_angle(float(x - vod->init.event_xy[0]), snap);
+  }
+  else {
+    const float current_position[2] = {float(x), float(y)};
+    angle = BLI_dial_angle(vod->init.dial, current_position);
+  }
 
   if (vod->rv3d->persp == RV3D_CAMOB && (vod->rv3d->rflag & RV3D_FLIP_X) != 0) {
     angle = -angle;
@@ -87,7 +125,7 @@ static void viewroll_apply(ViewOpsData *vod, int x, int y)
         vod->rv3d->ofs, vod->init.ofs, vod->init.quat, vod->rv3d->viewquat, vod->dyn_ofs);
   }
 
-  if (RV3D_LOCK_FLAGS(vod->rv3d) & RV3D_BOXVIEW) {
+  if (bke::region_view3d_lock_flags_get(vod->rv3d) & RV3D_BOXVIEW) {
     view3d_boxview_sync(vod->area, vod->region);
   }
 
@@ -128,6 +166,12 @@ static wmOperatorStatus viewroll_modal(bContext *C, wmOperator *op, const wmEven
     if (event->type == MOUSEMOVE) {
       event_code = VIEW_APPLY;
     }
+    /* BFA - roll gizmo (#6932): pressing / releasing Ctrl snaps right away, without moving. */
+    else if (ELEM(event->type, EVT_LEFTCTRLKEY, EVT_RIGHTCTRLKEY) &&
+             RNA_boolean_get(op->ptr, "use_horizontal_drag"))
+    {
+      event_code = VIEW_APPLY;
+    }
     else if (event->type == vod->init.event_type) {
       /* Check `vod->init.event_type` first in case RMB was used to invoke.
        * in this case confirming takes precedence over canceling, see: #102937. */
@@ -144,7 +188,11 @@ static wmOperatorStatus viewroll_modal(bContext *C, wmOperator *op, const wmEven
 
   switch (event_code) {
     case VIEW_APPLY: {
-      viewroll_apply(vod, event->xy[0], event->xy[1]);
+      viewroll_apply(vod,
+                     event->xy[0],
+                     event->xy[1],
+                     RNA_boolean_get(op->ptr, "use_horizontal_drag"), /* BFA - #6932 */
+                     (event->modifier & KM_CTRL) != 0);
       if (ED_screen_animation_playing(CTX_wm_manager(C))) {
         use_autokey = true;
       }
@@ -277,7 +325,10 @@ static wmOperatorStatus viewroll_invoke(bContext *C, wmOperator *op, const wmEve
     }
 
     /* makes op->customdata */
-    vod = viewops_data_create(C, event, &ViewOpsType_roll, false);
+    /* BFA - optionally roll around the view center (#6839). */
+    const bool use_view_center = RNA_boolean_get(op->ptr, "use_view_center");
+    vod = viewops_data_create(
+        C, event, use_view_center ? &ViewOpsType_roll_view_center : &ViewOpsType_roll, false);
 
     const float start_position[2] = {float(BLI_rcti_cent_x(&vod->region->winrct)),
                                      float(BLI_rcti_cent_y(&vod->region->winrct))};
@@ -292,7 +343,7 @@ static wmOperatorStatus viewroll_invoke(bContext *C, wmOperator *op, const wmEve
 
     if (event->type == MOUSEROTATE) {
       vod->init.event_xy[0] = vod->prev.event_xy[0] = event->xy[0];
-      viewroll_apply(vod, event->prev_xy[0], event->prev_xy[1]);
+      viewroll_apply(vod, event->prev_xy[0], event->prev_xy[1], false, false); /* BFA - #6932 */
 
       viewops_data_free(C, static_cast<ViewOpsData *>(op->customdata));
       op->customdata = nullptr;
@@ -336,6 +387,23 @@ void VIEW3D_OT_view_roll(wmOperatorType *ot)
                       "Roll Angle Source",
                       "How roll angle is calculated");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+  /* BFA - set by the navigation roll gizmo (#6839). */
+  prop = RNA_def_boolean(ot->srna,
+                         "use_view_center",
+                         false,
+                         "Roll Around View Center",
+                         "Roll around the center of the view, ignoring Orbit Around Selection");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+
+  /* BFA - set by the navigation roll gizmo (#6932): left / right drag, Ctrl snaps. */
+  prop = RNA_def_boolean(ot->srna,
+                         "use_horizontal_drag",
+                         false,
+                         "Horizontal Drag",
+                         "Roll by dragging left or right instead of around the view center, Ctrl "
+                         "snaps to the roll step");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /** \} */

@@ -25,7 +25,8 @@ namespace eevee::camera {
 
 float2 equirectangular_from_direction(CameraData cam, float3 dir)
 {
-  float phi = atan(-dir.z, dir.x);
+  /* U wraps around behind the camera at the edges, like Cycles. */
+  float phi = atan(-dir.x, -dir.z) + M_PI_2;
   float theta = acos(dir.y / length(dir));
   return (float2(phi, theta) - cam.equirect_bias) * cam.equirect_scale_inv;
 }
@@ -128,11 +129,15 @@ float3 fisheye_equisolid_to_direction(CameraData cam, float2 uv)
 
 float2 fisheye_lens_polynomial_from_direction(CameraData cam, float3 dir)
 {
-  const float theta = -safe_acos(-dir.z);
+  const float theta = -atan(length(dir.xy), -dir.z);
 
   float r = (theta - cam.fisheye_polynomial_bias) / cam.fisheye_polynomial_coefficients.x;
   const float4 diff_coefficients = float4(1.0f, 2.0f, 3.0f, 4.0f) *
                                    cam.fisheye_polynomial_coefficients;
+  /* Clamp the search to the monotonic region of the polynomial to avoid diverging. */
+  const float side = (r < 0.0f) ? -1.0f : 1.0f;
+  float r_min = 0.0f;
+  float r_max = FLT_MAX;
 
   for (int i = 0; i < 20; i++) {
     const float old_r = r;
@@ -141,7 +146,18 @@ float2 fisheye_lens_polynomial_from_direction(CameraData cam, float3 dir)
     const float F_r = theta -
                       (cam.fisheye_polynomial_bias + dot(cam.fisheye_polynomial_coefficients, rr));
     const float dF_r = dot(diff_coefficients, float4(1.0f, r, r2, r2 * r));
-    r += F_r / dF_r;
+    const bool is_folded = dF_r * cam.fisheye_polynomial_coefficients.x <= 0.0f;
+    const float step = F_r / dF_r;
+    if (is_folded || step * side < 0.0f) {
+      r_max = min(r_max, r * side);
+    }
+    else {
+      r_min = max(r_min, r * side);
+    }
+    r += step;
+    if (is_folded || r * side < r_min || r * side > r_max) {
+      r = side * 0.5f * (r_min + r_max);
+    }
 
     if (abs(r - old_r) < 1.0e-6f) {
       break;
@@ -228,6 +244,20 @@ float2 uv_from_view(float4x4 projmat, bool is_persp, float3 vV)
 
 float3 view_from_uv(CameraData cam, float2 uv)
 {
+  if (is_panoramic(cam.type) && cam.type != CAMERA_PANO_EQUIRECT &&
+      cam.type != CAMERA_PANO_CENTRAL_CYLINDRICAL)
+  {
+    /* uv can land past the camera's frame in viewport so we need to bound it. Equirectangular
+     * and central cylindrical are periodic/meant to wrap instead of clip. Add a margin to avoid
+     * clipping edge AA taps. */
+    const float margin = 0.1f;
+    float2 frame_uv = uv * cam.uv_scale + cam.uv_bias;
+    if (any(lessThan(frame_uv, float2(-margin))) ||
+        any(greaterThan(frame_uv, float2(1.0f + margin))))
+    {
+      return float3(0.0f);
+    }
+  }
   float3 vV;
   switch (cam.type) {
     default:

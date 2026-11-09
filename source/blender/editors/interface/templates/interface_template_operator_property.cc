@@ -6,6 +6,7 @@
  * \ingroup edinterface
  */
 
+#include "BKE_collection.hh"
 #include "BKE_context.hh"
 #include "BKE_file_handler.hh"
 #include "BKE_idprop.hh"
@@ -188,7 +189,7 @@ static AutoPropButsReturn template_operator_property_buts_draw_single(
       /* if button is operator's default property, and a text-field, enable focus for it
        * - this is used for allowing operators with popups to rename stuff with fewer clicks
        */
-      if (is_popup) {
+      if (is_popup && op->type->prop) {
         if ((but.rnaprop == op->type->prop) && ELEM(but.type, ButtonType::Text, ButtonType::Num)) {
           button_focus_on_enter_event(CTX_wm_window(C), &but);
         }
@@ -343,7 +344,9 @@ static void draw_import_controls(bContext *C, Layout &layout, const std::string 
 {
   layout.label(label, ICON_NONE);
   if (valid) {
-    Layout &row = layout.row(false);
+    Layout &col = layout.column(false);
+
+    Layout &row = col.row(false);
     row.emboss_set(EmbossType::None);
     row.popover(C, "WM_PT_operator_presets", "", ICON_PRESET);
   }
@@ -386,10 +389,6 @@ static void draw_import_properties(bContext *C,
 
 void template_collection_importer(Layout *layout, bContext *C)
 {
-  if (!U.experimental.use_collection_importer) {
-    return;
-  }
-
   Collection *collection = CTX_data_collection(C);
   CollectionImport *data = collection->importer;
 
@@ -399,9 +398,15 @@ void template_collection_importer(Layout *layout, bContext *C)
     return;
   }
 
+  /* If the collection has already been imported, change to the Reload operator. */
+  const char *op_name = "COLLECTION_OT_importer_import";
+  if (data->runtime->archive_library) {
+    op_name = "COLLECTION_OT_importer_reload";
+  }
+
   Layout &row = layout->row(true);
-  row.op("COLLECTION_OT_importer_import", IFACE_("Import"), ICON_IMPORT);
-  row.op("COLLECTION_OT_importer_remove", "", ICON_X);
+  row.op(op_name, IFACE_("Import to Collection"), ICON_IMPORT);
+  row.menu("COLLECTION_MT_importer_control", "", ICON_DOWNARROW_HLT);
 
   layout->separator();
 

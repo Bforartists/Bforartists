@@ -54,6 +54,7 @@
 #include <string_view>
 #include <thread>
 #include <unordered_set>
+#include <variant>
 
 #ifdef WITH_GHOST_WAYLAND_DYNLOAD
 #  include <wayland_dynload_cursor.h>
@@ -1519,6 +1520,29 @@ static void gwl_seat_ime_rect_reset(GWL_Seat *seat)
 
 /** \} */
 
+#ifdef WITH_GHOST_DBUS
+/* -------------------------------------------------------------------- */
+/** \name Internal #GWL_DBusEvent Type
+ * \{ */
+
+/**
+ * A change the back-end must act on itself, never forwarded to the consumer.
+ * Queued in `GWL_Display::dbus.events`, handled by #GHOST_SystemWayland::dbus_event_handle.
+ */
+struct GWL_DBusEvent {
+  struct CursorSize {
+    int32_t size;
+  };
+  struct CSD_ButtonLayout {
+    std::string layout;
+  };
+
+  std::variant<CursorSize, CSD_ButtonLayout> data;
+};
+
+/** \} */
+#endif /* WITH_GHOST_DBUS */
+
 /* -------------------------------------------------------------------- */
 /** \name Internal #GWL_Display Type (#wl_display & #wl_compositor wrapper)
  * \{ */
@@ -1641,10 +1665,36 @@ struct GWL_Display {
    * When true, try to draw our own CSD.
    */
   bool use_window_frame_csd = false;
+  /**
+   * Preferences from the desktop, applied to seats & windows as they're created.
+   * Updated when the portal reports a change (unless overridden by the environment),
+   * see #GHOST_SystemWayland::dbus_event_handle.
+   */
+  struct {
+    /** The cursor size in logical pixels. */
+    int cursor_size = 0;
 #ifdef WITH_GHOST_CSD
-  /** The base CSD layout (unfiltered by wm_capabilities). */
-  GHOST_CSD_Layout csd_layout_base = {0};
+    /** The desktop's button layout, before filtering by each window's `wm_capabilities`. */
+    GHOST_CSD_Layout csd_button_layout = {0};
 #endif
+  } preferences;
+
+#ifdef WITH_GHOST_DBUS
+  struct {
+    /**
+     * Changes added from the DBUS thread,
+     * applied from the main thread in #GHOST_SystemWayland::processEvents.
+     */
+    std::vector<GWL_DBusEvent> events;
+    /** Guard against multiple threads accessing `events` at once. */
+    std::mutex events_mutex;
+    /**
+     * Set after pushing to `events`,
+     * avoids locking `events_mutex` on every call to #GHOST_SystemWayland::processEvents.
+     */
+    std::atomic<bool> has_events = false;
+  } dbus;
+#endif /* WITH_GHOST_DBUS */
 
   /* Threaded event handling. */
 #ifdef USE_EVENT_BACKGROUND_THREAD
@@ -1793,7 +1843,7 @@ static bool gwl_display_seat_active_set(GWL_Display *display, const GWL_Seat *se
 /** \name Internal #GWL_RegistryHandler
  * \{ */
 
-struct GWL_RegisteryAdd_Params {
+struct GWL_RegistryAdd_Params {
   uint32_t name = 0;
   /** Index within `gwl_registry_handlers`. */
   int interface_slot = 0;
@@ -1809,9 +1859,9 @@ struct GWL_RegisteryAdd_Params {
  * \param params: Various arguments needed for registration.
  */
 using GWL_RegistryHandler_AddFn = void (*)(GWL_Display *display,
-                                           const GWL_RegisteryAdd_Params &params);
+                                           const GWL_RegistryAdd_Params &params);
 
-struct GWL_RegisteryUpdate_Params {
+struct GWL_RegistryUpdate_Params {
   uint32_t name = 0;
   /** Index within `gwl_registry_handlers`. */
   int interface_slot = 0;
@@ -1828,7 +1878,7 @@ struct GWL_RegisteryUpdate_Params {
  * \param params: Various arguments needed for updating.
  */
 using GWL_RegistryHandler_UpdateFn = void (*)(GWL_Display *display,
-                                              const GWL_RegisteryUpdate_Params &params);
+                                              const GWL_RegistryUpdate_Params &params);
 
 /**
  * Remove callback for object registry.
@@ -1888,7 +1938,7 @@ struct GWL_RegistryEntry {
 };
 
 static void gwl_registry_entry_add(GWL_Display *display,
-                                   const GWL_RegisteryAdd_Params &params,
+                                   const GWL_RegistryAdd_Params &params,
                                    void *user_data)
 {
   GWL_RegistryEntry *reg = new GWL_RegistryEntry;
@@ -2019,7 +2069,7 @@ static void gwl_registry_entry_update_all(GWL_Display *display, const int interf
       continue;
     }
 
-    GWL_RegisteryUpdate_Params params{};
+    GWL_RegistryUpdate_Params params{};
     params.name = reg->name;
     params.interface_slot = reg->interface_slot;
     params.version = reg->version;
@@ -2464,10 +2514,18 @@ static GHOST_TTabletMode tablet_tool_map_type(enum zwp_tablet_tool_v2_type wp_ta
 
 static const int default_cursor_size = 24;
 
+#ifdef WITH_GHOST_DBUS
+/** How long to wait for the portal's initial values before creating the first window. */
+static const int dbus_initial_timeout_ms = 100;
+/** Pre-allocated size of the DBUS event queue, shrunk back to this when it grows past it. */
+static const size_t dbus_events_default_size = 8;
+#endif
+
 /**
  * The cursor size from `XCURSOR_SIZE`, unset when it isn't a usable value.
  * This environment variable is used by enough WAYLAND applications that it
  * makes sense to check it (see the `Xcursor` man page).
+ * When set this overrides the value from DBUS.
  */
 static std::optional<int> cursor_size_from_env()
 {
@@ -4024,9 +4082,12 @@ static void relative_pointer_handle_relative_motion(
   if (wl_surface *wl_surface_focus = seat->pointer.wl.surface_window) {
     CLOG_DEBUG(LOG, "relative_motion");
     GHOST_WindowWayland *win = ghost_wl_surface_user_data(wl_surface_focus);
+    /* In most cases `wl_fixed_t` values are scaled by the window: `win->wl_fixed_from_window(..)`
+     * In this case however, it's desired behavior that the mouse moves faster on outputs that
+     * use scaling, scaling here makes the pointers relative motion too slow, see: #129230. */
     const wl_fixed_t xy_next[2] = {
-        seat->pointer.xy[0] + win->wl_fixed_from_window(dx),
-        seat->pointer.xy[1] + win->wl_fixed_from_window(dy),
+        seat->pointer.xy[0] + dx,
+        seat->pointer.xy[1] + dy,
     };
     relative_pointer_handle_relative_motion_impl(seat, win, xy_next, event_ms);
   }
@@ -4444,7 +4505,7 @@ static void data_device_handle_drop(void *data, wl_data_device * /*wl_data_devic
     }
   }
 
-  CLOG_DEBUG(LOG, "drop mime_recieve=%s", mime_receive);
+  CLOG_DEBUG(LOG, "drop mime_receive=%s", mime_receive);
 
   auto read_drop_data_fn = [](GWL_Seat *const seat,
                               GWL_DataOffer *data_offer,
@@ -4644,6 +4705,19 @@ static bool update_cursor_scale(GWL_Seat *seat,
   }
   return false;
 }
+
+#ifdef WITH_GHOST_DBUS
+/** Apply a new cursor size, re-rendering the custom cursor for both the pointer & tablet. */
+static void cursor_size_set(GWL_Seat *seat, const int size_new)
+{
+  if (seat->cursor.theme_size == size_new) {
+    return;
+  }
+  seat->cursor.theme_size = size_new;
+  cursor_shape_refresh_for_pointer(seat, &seat->pointer);
+  cursor_shape_refresh_for_pointer(seat, &seat->tablet);
+}
+#endif /* WITH_GHOST_DBUS */
 
 static void cursor_surface_handle_enter(void *data, wl_surface *wl_surface, wl_output *wl_output)
 {
@@ -7526,7 +7600,7 @@ static void gwl_seat_capability_pointer_enable(GWL_Seat *seat)
 
   gwl_seat_capability_pointer_multitouch_enable(seat);
   {
-    seat->cursor.theme_size = cursor_size_from_env().value_or(default_cursor_size);
+    seat->cursor.theme_size = seat->system->preferences_cursor_size_get();
 
     /* TODO: detect this from the system.
      * We *could* have weak support based on checking for known themes. */
@@ -7958,8 +8032,7 @@ static CLG_LogRef LOG_WL_REGISTRY = {"ghost.wl.handle.registry"};
 
 /* #GWL_Display.wl_compositor */
 
-static void gwl_registry_compositor_add(GWL_Display *display,
-                                        const GWL_RegisteryAdd_Params &params)
+static void gwl_registry_compositor_add(GWL_Display *display, const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 3u, 6u);
 
@@ -7979,7 +8052,7 @@ static void gwl_registry_compositor_remove(GWL_Display *display,
 /* #GWL_Display.wl_subcompositor */
 
 static void gwl_registry_subcompositor_add(GWL_Display *display,
-                                           const GWL_RegisteryAdd_Params &params)
+                                           const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -7999,7 +8072,7 @@ static void gwl_registry_subcompositor_remove(GWL_Display *display,
 /* #GWL_Display.xdg_decor.shell */
 
 static void gwl_registry_xdg_wm_base_add(GWL_Display *display,
-                                         const GWL_RegisteryAdd_Params &params)
+                                         const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 6u);
 
@@ -8025,7 +8098,7 @@ static void gwl_registry_xdg_wm_base_remove(GWL_Display *display,
 /* #GWL_Display.xdg_decor.manager */
 
 static void gwl_registry_xdg_decoration_manager_add(GWL_Display *display,
-                                                    const GWL_RegisteryAdd_Params &params)
+                                                    const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8050,7 +8123,7 @@ static void gwl_registry_xdg_decoration_manager_remove(GWL_Display *display,
 /* #GWL_Display.xdg_output_manager */
 
 static void gwl_registry_xdg_output_manager_add(GWL_Display *display,
-                                                const GWL_RegisteryAdd_Params &params)
+                                                const GWL_RegistryAdd_Params &params)
 {
   /* NOTE(@ideasman42): only version 3 and over is well supported.
    * Support version 1 so GNOME-32 (on the build-bots Rocky8) can be used.
@@ -8072,7 +8145,7 @@ static void gwl_registry_xdg_output_manager_remove(GWL_Display *display,
 
 /* #GWL_Display.wl_output */
 
-static void gwl_registry_wl_output_add(GWL_Display *display, const GWL_RegisteryAdd_Params &params)
+static void gwl_registry_wl_output_add(GWL_Display *display, const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 2u, 4u);
 
@@ -8088,7 +8161,7 @@ static void gwl_registry_wl_output_add(GWL_Display *display, const GWL_Registery
   gwl_registry_entry_add(display, params, static_cast<void *>(output));
 }
 static void gwl_registry_wl_output_update(GWL_Display *display,
-                                          const GWL_RegisteryUpdate_Params &params)
+                                          const GWL_RegistryUpdate_Params &params)
 {
   GWL_Output *output = static_cast<GWL_Output *>(params.user_data);
   if (display->xdg.output_manager) {
@@ -8137,7 +8210,7 @@ static void gwl_registry_wl_output_remove(GWL_Display *display,
 /* #GWL_Display.wp_color_manager */
 
 static void gwl_registry_wp_color_manager_add(GWL_Display *display,
-                                              const GWL_RegisteryAdd_Params &params)
+                                              const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
   ColorManagerV1Data *data = new ColorManagerV1Data();
@@ -8164,7 +8237,7 @@ static void gwl_registry_wp_color_manager_remove(GWL_Display *display,
 
 /* #GWL_Display.seats */
 
-static void gwl_registry_wl_seat_add(GWL_Display *display, const GWL_RegisteryAdd_Params &params)
+static void gwl_registry_wl_seat_add(GWL_Display *display, const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 5u, 9u);
 
@@ -8186,7 +8259,7 @@ static void gwl_registry_wl_seat_add(GWL_Display *display, const GWL_RegisteryAd
   has_wl_trackpad_physical_direction = version >= 9;
 }
 static void gwl_registry_wl_seat_update(GWL_Display *display,
-                                        const GWL_RegisteryUpdate_Params &params)
+                                        const GWL_RegistryUpdate_Params &params)
 {
   GWL_Seat *seat = static_cast<GWL_Seat *>(params.user_data);
 
@@ -8356,7 +8429,7 @@ static void gwl_registry_wl_seat_remove(GWL_Display *display, void *user_data, c
 
 /* #GWL_Display.wl_shm */
 
-static void gwl_registry_wl_shm_add(GWL_Display *display, const GWL_RegisteryAdd_Params &params)
+static void gwl_registry_wl_shm_add(GWL_Display *display, const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8376,7 +8449,7 @@ static void gwl_registry_wl_shm_remove(GWL_Display *display,
 /* #GWL_Display.wl_data_device_manager */
 
 static void gwl_registry_wl_data_device_manager_add(GWL_Display *display,
-                                                    const GWL_RegisteryAdd_Params &params)
+                                                    const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 3u, 3u);
 
@@ -8396,7 +8469,7 @@ static void gwl_registry_wl_data_device_manager_remove(GWL_Display *display,
 /* #GWL_Display.wp_tablet_manager */
 
 static void gwl_registry_wp_tablet_manager_add(GWL_Display *display,
-                                               const GWL_RegisteryAdd_Params &params)
+                                               const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8416,7 +8489,7 @@ static void gwl_registry_wp_tablet_manager_remove(GWL_Display *display,
 /* #GWL_Display.wp_relative_pointer_manager */
 
 static void gwl_registry_wp_relative_pointer_manager_add(GWL_Display *display,
-                                                         const GWL_RegisteryAdd_Params &params)
+                                                         const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8437,7 +8510,7 @@ static void gwl_registry_wp_relative_pointer_manager_remove(GWL_Display *display
 /* #GWL_Display.wp_pointer_constraints */
 
 static void gwl_registry_wp_pointer_constraints_add(GWL_Display *display,
-                                                    const GWL_RegisteryAdd_Params &params)
+                                                    const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8457,7 +8530,7 @@ static void gwl_registry_wp_pointer_constraints_remove(GWL_Display *display,
 /* #GWL_Display.wp_pointer_gestures */
 
 static void gwl_registry_wp_pointer_gestures_add(GWL_Display *display,
-                                                 const GWL_RegisteryAdd_Params &params)
+                                                 const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 3u, 3u);
 
@@ -8480,7 +8553,7 @@ static void gwl_registry_wp_pointer_gestures_remove(GWL_Display *display,
 /* #GWL_Display.xdg_activation */
 
 static void gwl_registry_xdg_activation_add(GWL_Display *display,
-                                            const GWL_RegisteryAdd_Params &params)
+                                            const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8521,7 +8594,7 @@ static const xdg_toplevel_icon_manager_v1_listener xdg_toplevel_icon_manager_lis
 };
 
 static void gwl_registry_xdg_toplevel_icon_manager_add(GWL_Display *display,
-                                                       const GWL_RegisteryAdd_Params &params)
+                                                       const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8544,7 +8617,7 @@ static void gwl_registry_xdg_toplevel_icon_manager_remove(GWL_Display *display,
 /* #GWL_Display.wp_fractional_scale_manger */
 
 static void gwl_registry_wp_fractional_scale_manager_add(GWL_Display *display,
-                                                         const GWL_RegisteryAdd_Params &params)
+                                                         const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8565,7 +8638,7 @@ static void gwl_registry_wp_fractional_scale_manager_remove(GWL_Display *display
 /* #GWL_Display.wl_viewport */
 
 static void gwl_registry_wp_viewporter_add(GWL_Display *display,
-                                           const GWL_RegisteryAdd_Params &params)
+                                           const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8585,7 +8658,7 @@ static void gwl_registry_wp_viewporter_remove(GWL_Display *display,
 /* #GWL_Display.wp_primary_selection_device_manager */
 
 static void gwl_registry_wp_primary_selection_device_manager_add(
-    GWL_Display *display, const GWL_RegisteryAdd_Params &params)
+    GWL_Display *display, const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8612,7 +8685,7 @@ static void gwl_registry_wp_primary_selection_device_manager_remove(GWL_Display 
 /* #GWL_Display.wp_text_input_manager */
 
 static void gwl_registry_wp_text_input_manager_add(GWL_Display *display,
-                                                   const GWL_RegisteryAdd_Params &params)
+                                                   const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8634,7 +8707,7 @@ static void gwl_registry_wp_text_input_manager_remove(GWL_Display *display,
 /* #GWL_Display.wp_cursor_shape_manager */
 
 static void gwl_registry_wp_cursor_shape_manager_add(GWL_Display *display,
-                                                     const GWL_RegisteryAdd_Params &params)
+                                                     const GWL_RegistryAdd_Params &params)
 {
   const uint version = GWL_IFACE_VERSION_CLAMP(params.version, 1u, 1u);
 
@@ -8847,7 +8920,7 @@ static void global_handle_add(void *data,
     const GWL_RegistryEntry *registry_entry_prev = display->registry_entry;
 
     /* The interface name that is ensured not to be freed. */
-    GWL_RegisteryAdd_Params params{};
+    GWL_RegistryAdd_Params params{};
     params.name = name;
     params.interface_slot = interface_slot;
     params.version = version;
@@ -9033,6 +9106,37 @@ GHOST_SystemWayland::GHOST_SystemWayland(const bool background)
 #endif
   }
 
+#ifdef WITH_GHOST_CSD
+  if (use_window_frame) {
+#  ifdef USE_GHOST_CSD_FORCE
+    display_->use_window_frame_csd = true;
+#  else
+    display_->use_window_frame_csd = GHOST_WindowCSD_Check(current_desktop);
+#  endif
+  }
+#endif /* WITH_GHOST_CSD */
+
+  const std::optional<int> cursor_size_env = cursor_size_from_env();
+
+  /* The portal may replace these, see #dbus_event_handle. */
+  display_->preferences.cursor_size = cursor_size_env.value_or(default_cursor_size);
+#ifdef WITH_GHOST_CSD
+  if (display_->use_window_frame_csd) {
+    GHOST_CSD_Layout csd_button_layout = {0};
+    GHOST_WindowCSD_LayoutDefault(csd_button_layout);
+
+    this->setWindowCSD_Layout(csd_button_layout);
+    display_->preferences.csd_button_layout = csd_button_layout;
+  }
+#endif /* WITH_GHOST_CSD */
+
+#ifdef WITH_GHOST_DBUS
+  /* Like the WAYLAND event thread, there's no need for this in background mode. */
+  if (!background) {
+    dbus_watcher_start(!cursor_size_env.has_value());
+  }
+#endif /* WITH_GHOST_DBUS */
+
   /* This may be removed later if decorations are required, needed as part of registration. */
   display_->xdg_decor = new GWL_XDG_Decor_System;
 
@@ -9058,25 +9162,6 @@ GHOST_SystemWayland::GHOST_SystemWayland(const bool background)
     use_gnome_motion_missing_time_hack = true;
   }
 #endif
-
-#ifdef WITH_GHOST_CSD
-  if (use_window_frame) {
-#  ifdef USE_GHOST_CSD_FORCE
-    display_->use_window_frame_csd = true;
-#  else
-    display_->use_window_frame_csd = GHOST_WindowCSD_Check(current_desktop);
-#  endif
-  }
-  if (display_->use_window_frame_csd) {
-    GHOST_CSD_Layout csd_layout = {0};
-    if (!GHOST_WindowCSD_LayoutFromSystem(csd_layout)) {
-      GHOST_WindowCSD_LayoutDefault(csd_layout);
-    }
-
-    this->setWindowCSD_Layout(csd_layout);
-    display_->csd_layout_base = csd_layout;
-  }
-#endif /* WITH_GHOST_CSD */
 
   {
     const GWL_XDG_Decor_System &decor = *display_->xdg_decor;
@@ -9106,32 +9191,13 @@ GHOST_SystemWayland::GHOST_SystemWayland(const bool background)
   /* Could be null in background mode, however there are enough
    * references to the timer-manager that it's safer to create it. */
   display_->key_repeat_timer_manager = new GHOST_TimerManager();
-
-#ifdef WITH_GHOST_DBUS
-  /* Like the WAYLAND event thread, there's no need for this in background mode. */
-  if (!background) {
-    dbus_watcher_ = std::make_unique<GHOST_SystemDBusUnix>();
-    dbus_watcher_->setting_add(
-        "org.freedesktop.appearance", "color-scheme", [this](const GHOST_DBusValue &value) {
-          const uint32_t *value_uint = std::get_if<uint32_t>(&value);
-          if (!value_uint) {
-            return;
-          }
-          if (dbus_.color_scheme.exchange(*value_uint) == *value_uint) {
-            return;
-          }
-          CLOG_INFO(&LOG, "XDG: color-scheme changed: %u", *value_uint);
-        });
-    dbus_watcher_->start();
-  }
-#endif
 }
 
 void GHOST_SystemWayland::display_destroy_and_free_all()
 {
 #ifdef WITH_GHOST_DBUS
-  /* Stop the watcher before freeing `display_`: its callback (which can still run up until
-   * this returns) accesses `display_` indirectly via `pushEvent_maybe_pending`. */
+  /* Stop the watcher first: its callbacks (which can still run up until this returns)
+   * capture `this` & push into `display_->dbus`. */
   dbus_watcher_.reset();
 #endif
 
@@ -9208,6 +9274,10 @@ bool GHOST_SystemWayland::processEvents(bool waitForEvent)
     }
   }
 #endif /* USE_EVENT_BACKGROUND_THREAD */
+
+#ifdef WITH_GHOST_DBUS
+  dbus_events_handle_pending();
+#endif
 
   const uint64_t now = getMilliSeconds();
   {
@@ -10161,6 +10231,15 @@ GHOST_IWindow *GHOST_SystemWayland::createWindow(const char *title,
 {
   const GHOST_ContextParams context_params = GHOST_CONTEXT_PARAMS_FROM_GPU_SETTINGS(gpu_settings);
 
+#ifdef WITH_GHOST_DBUS
+  /* The desktop settings decide the decorations, apply them before the first window draws.
+   * Normally the values have arrived long before now so this doesn't wait. */
+  if (dbus_watcher_) {
+    dbus_watcher_->wait_initial(dbus_initial_timeout_ms);
+    dbus_events_handle_pending();
+  }
+#endif
+
   /* Globally store pointer to window manager. */
   GHOST_WindowWayland *window = new GHOST_WindowWayland(this,
                                                         title,
@@ -10896,12 +10975,25 @@ bool GHOST_SystemWayland::use_window_frame_csd_get() const
   return display_->use_window_frame_csd;
 }
 
-#ifdef WITH_GHOST_CSD
-const GHOST_CSD_Layout &GHOST_SystemWayland::csd_layout_base_get() const
+int GHOST_SystemWayland::preferences_cursor_size_get() const
 {
-  return display_->csd_layout_base;
+  return display_->preferences.cursor_size;
 }
-#endif
+
+#ifdef WITH_GHOST_CSD
+const GHOST_CSD_Layout &GHOST_SystemWayland::preferences_csd_button_layout_get() const
+{
+  return display_->preferences.csd_button_layout;
+}
+
+#  ifdef WITH_GHOST_DBUS
+static bool csd_layout_is_equal(const GHOST_CSD_Layout &a, const GHOST_CSD_Layout &b)
+{
+  return (a.buttons_num == b.buttons_num) &&
+         std::equal(a.buttons, a.buttons + a.buttons_num, b.buttons);
+}
+#  endif /* WITH_GHOST_DBUS */
+#endif   /* WITH_GHOST_CSD */
 
 /** \} */
 
@@ -11032,6 +11124,127 @@ GHOST_WindowWayland *ghost_wl_surface_user_data(wl_surface *wl_surface)
  *
  * Functionality only used for the WAYLAND implementation.
  * \{ */
+
+#ifdef WITH_GHOST_DBUS
+void GHOST_SystemWayland::dbus_watcher_start(const bool watch_cursor_size)
+{
+  dbus_watcher_ = std::make_unique<GHOST_SystemDBusUnix>();
+  display_->dbus.events.reserve(dbus_events_default_size);
+  dbus_watcher_->setting_add(
+      "org.freedesktop.appearance", "color-scheme", [this](const GHOST_DBusValue &value) {
+        const uint32_t *value_uint = std::get_if<uint32_t>(&value);
+        if (!value_uint) {
+          return;
+        }
+        if (dbus_.color_scheme.exchange(*value_uint) == *value_uint) {
+          return;
+        }
+        CLOG_INFO(&LOG, "XDG: color-scheme changed: %u", *value_uint);
+      });
+  if (watch_cursor_size) {
+    const auto on_change = [this](const GHOST_DBusValue &value) {
+      const int32_t *value_int = std::get_if<int32_t>(&value);
+      if (!value_int || (*value_int <= 0)) {
+        return;
+      }
+      this->dbus_event_push(GWL_DBusEvent{
+          .data =
+              GWL_DBusEvent::CursorSize{
+                  .size = *value_int,
+              },
+      });
+    };
+    dbus_watcher_->setting_add("org.gnome.desktop.interface", "cursor-size", on_change);
+  }
+#  ifdef WITH_GHOST_CSD
+  if (display_->use_window_frame_csd) {
+    const auto on_change = [this](const GHOST_DBusValue &value) {
+      const std::string *value_str = std::get_if<std::string>(&value);
+      if (!value_str) {
+        return;
+      }
+      this->dbus_event_push(GWL_DBusEvent{
+          .data =
+              GWL_DBusEvent::CSD_ButtonLayout{
+                  .layout = *value_str,
+              },
+      });
+    };
+    dbus_watcher_->setting_add("org.gnome.desktop.wm.preferences", "button-layout", on_change);
+  }
+#  endif
+  /* Start early so the values are likely to have arrived by the time a window is created,
+   * the callbacks only touch `display_->dbus` & `dbus_` which already exist. */
+  dbus_watcher_->start();
+}
+
+void GHOST_SystemWayland::dbus_event_push(GWL_DBusEvent dbus_event)
+{
+  std::lock_guard lock{display_->dbus.events_mutex};
+  display_->dbus.events.push_back(std::move(dbus_event));
+  display_->dbus.has_events.store(true);
+}
+
+void GHOST_SystemWayland::dbus_events_handle_pending()
+{
+  if (display_->dbus.has_events.exchange(false)) [[unlikely]] {
+    std::lock_guard lock{display_->dbus.events_mutex};
+#  ifdef USE_EVENT_BACKGROUND_THREAD
+    std::lock_guard lock_server_guard{*server_mutex};
+#  endif
+    for (const GWL_DBusEvent &dbus_event : display_->dbus.events) {
+      dbus_event_handle(dbus_event);
+    }
+    display_->dbus.events.clear();
+
+    if (display_->dbus.events.capacity() > dbus_events_default_size) [[unlikely]] {
+      display_->dbus.events.shrink_to_fit();
+      display_->dbus.events.reserve(dbus_events_default_size);
+    }
+  }
+}
+
+void GHOST_SystemWayland::dbus_event_handle(const GWL_DBusEvent &dbus_event)
+{
+  if (const GWL_DBusEvent::CursorSize *value = std::get_if<GWL_DBusEvent::CursorSize>(
+          &dbus_event.data))
+  {
+    CLOG_INFO(&LOG, "XDG: cursor-size: %d", value->size);
+    display_->preferences.cursor_size = value->size;
+
+    for (GWL_Seat *seat : display_->seats) {
+      cursor_size_set(seat, value->size);
+    }
+  }
+#  ifdef WITH_GHOST_CSD
+  else if (const GWL_DBusEvent::CSD_ButtonLayout *value =
+               std::get_if<GWL_DBusEvent::CSD_ButtonLayout>(&dbus_event.data))
+  {
+    CLOG_INFO(&LOG, "XDG: button-layout: \"%s\"", value->layout.c_str());
+    GHOST_CSD_Layout csd_button_layout = {0};
+    if (!GHOST_WindowCSD_LayoutFromString(csd_button_layout, value->layout)) {
+      CLOG_WARN(&LOG, "XDG: ignoring invalid button-layout: \"%s\"", value->layout.c_str());
+      return;
+    }
+    if (csd_layout_is_equal(preferences_csd_button_layout_get(), csd_button_layout)) {
+      return;
+    }
+    display_->preferences.csd_button_layout = csd_button_layout;
+
+    /* Each window overwrites this with the layout filtered by its own capabilities,
+     * set it here too for the case there are no windows yet. */
+    this->setWindowCSD_Layout(csd_button_layout);
+
+    for (GHOST_IWindow *iwin : getWindowManager()->getWindows()) {
+      static_cast<GHOST_WindowWayland *>(iwin)->csd_layout_refresh();
+    }
+  }
+#  endif /* WITH_GHOST_CSD */
+  else {
+    GHOST_ASSERT(false, "Unhandled variant");
+  }
+}
+#endif /* WITH_GHOST_DBUS */
 
 uint64_t GHOST_SystemWayland::ms_from_input_time(const uint32_t timestamp_as_uint)
 {
