@@ -265,7 +265,7 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
 
             col.separator()
 
-            col.prop(gpcolor, "use_fill_holdout")
+            # col.prop(gpcolor, "use_fill_holdout") # BFA - double entry, Holdout is shown below for all fill styles
 
             col.prop(gpcolor, "texture_offset", text="Location")
 
