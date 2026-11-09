@@ -300,11 +300,13 @@ def draw_shape_key_properties(context, layout):
         row.active = enable_edit_value
         row.prop(key, "eval_time")
 
-    if ob.type == "MESH":
-        row = layout.row()
-        row.use_property_split = False  # BFA - Align property left
-        row.prop(ob, "add_rest_position_attribute")
-        row.prop_decorator(ob, "add_rest_position_attribute")
+    # BFA - not used, Blender now draws Add Rest Position in DATA_PT_shape_keys,
+    # so with an active shape key the checkbox showed up twice.
+    # if ob.type == "MESH":
+    #     row = layout.row()
+    #     row.use_property_split = False  # BFA - Align property left
+    #     row.prop(ob, "add_rest_position_attribute")
+    #     row.prop_decorator(ob, "add_rest_position_attribute")
 
 
 class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
