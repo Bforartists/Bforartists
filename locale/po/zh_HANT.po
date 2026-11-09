@@ -64822,7 +64822,8 @@ msgid "When entering numbers while transforming, default to advanced mode for fu
 msgstr "在進行轉換時輸入數字，預設使用高級模式進行完整的表達式評估"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "在 3D 檢視中朝滑鼠指標位置遠近調焦，而不是 2D 視窗中心"
 
 

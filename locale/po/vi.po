@@ -100025,7 +100025,8 @@ msgid "Zoom to Mouse Position"
 msgstr "Thu-Phóng vào Vị Trí của Chuột"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "Thu-phóng vào vị trí của con trỏ chuột trong góc nhìn 3D, thay vì vào trung tâm cửa sổ 2D"
 
 

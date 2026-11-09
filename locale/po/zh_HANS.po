@@ -101229,7 +101229,8 @@ msgid "Zoom to Mouse Position"
 msgstr "缩放至鼠标位置"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "在 3D 视图中以鼠标光标为缩放中心, 而不是 2D 窗口的中心"
 
 
