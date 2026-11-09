@@ -1569,7 +1569,7 @@ class CLIP_MT_view(Menu):
 
         else:
             layout.operator_context = "INVOKE_REGION_PREVIEW"
-            layout.operator("clip.graph_view_all")
+            # layout.operator("clip.graph_view_all") # BFA - removed double entry, Graph and Dope Sheet have their own Frame All below
             if sc.view == "GRAPH":
                 layout.operator_context = "INVOKE_REGION_PREVIEW"
                 layout.operator(
