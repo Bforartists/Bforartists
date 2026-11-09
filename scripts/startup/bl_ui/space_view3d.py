@@ -1141,10 +1141,15 @@ class VIEW3D_HT_header(Header):
                 icon=VIEW3D_HT_header._mesh_paint_automasking_icon(paint),
             )
 
-            # BFA - removed loop select button from the header. mesh.loop_select only works in Edit Mode,
-            # and the paint loop select operators pick the loop under the mouse, so they can't work from a button.
-            # Face loop select stays in the Select menu and on Alt+click with the face selection mask.
-            # layout.operator("mesh.loop_select", text="", icon="LOOPSEL")
+            # BFA - expose loop select in the header, so the Alt+click hotkey can be discovered.
+            # mesh.loop_select only runs in Edit Mode, so use the paint version for the active
+            # selection mask. Both pick the loop under the mouse; their tooltips say to use the mouse.
+            # Without a mask it stays greyed out, which hints that loop select needs one.
+            mesh = context.object.data
+            if mesh.use_paint_mask_vertex:
+                layout.operator("paint.vert_select_loop", text="", icon="LOOPSEL")
+            else:
+                layout.operator("paint.face_select_loop", text="", icon="LOOPSEL")
         elif object_mode == "WEIGHT_GREASE_PENCIL":
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon="GROUP_VERTEX")
