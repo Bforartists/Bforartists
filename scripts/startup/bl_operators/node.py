@@ -1632,15 +1632,14 @@ class NODE_OT_interface_item_unlink_panel_toggle(NodeInterfaceOperator, Operator
 
 ## BFA - BFA operator for GUI buttons to re-order items - Start
 class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
-    """Move the active item to the specified direction\nYou can also alternatively drag and drop the active item to reorder"""
-
+    """Move the selected items in the specified direction\nYou can also alternatively drag and drop the selected items to reorder"""
     bl_idname = "node.interface_item_move"
-    bl_label = "Move Item"
+    bl_label = "Move Selected Items"
     bl_options = {"REGISTER", "UNDO"}
 
     direction: EnumProperty(
         name="Direction",
-        description="Specifies which direction the active item is moved towards",
+        description="Specifies which direction the selected items are moved towards",
         items=(("UP", "Move Up", ""), ("DOWN", "Move Down", "")),
     )
 
@@ -1701,7 +1700,32 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
                 return next(i for i in filter(is_panel, items))
         except StopIteration:
             return None
-        
+
+    @staticmethod
+    def gather_selected_roots(interface):
+        """Selected items in display order. Children of a selected panel and
+        panel toggle sockets are excluded (they move with their panel)."""
+        # BFA - The active item counts as selected even when its `select` flag is
+        # off, so the single-item behaviour from before keeps working.
+        active = interface.active
+        selected = [item for item in interface.items_tree if item.select or item == active]
+        selected_ptrs = {item.as_pointer() for item in selected}
+
+        roots = []
+        for item in selected:
+            if isinstance(item, bpy.types.NodeTreeInterfaceSocket) and item.is_panel_toggle:
+                continue
+            parent = item.parent
+            has_selected_ancestor = False
+            while parent is not None:
+                if parent.as_pointer() in selected_ptrs:
+                    has_selected_ancestor = True
+                    break
+                parent = parent.parent
+            if not has_selected_ancestor:
+                roots.append(item)
+        return roots
+
     def next_panel_up(self, panel):
         while True:
             target = panel
@@ -1746,45 +1770,140 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
             
         return target
 
+    def enter_adjacent_panel(self, interface, item, blocked):
+        """If a socket sits right next to a sibling panel in the move direction
+        (at any nesting depth), move it into that panel. Returns True if it
+        moved, or None if this rule doesn't apply."""
+        if is_panel(item) or item.parent is None:
+            # panels already nest into sibling panels via adjacent_panel
+            return None
+
+        step = -1 if self.direction == 'UP' else 1
+        neighbor_pos = item.position + step
+        siblings = item.parent.interface_items
+        if not (0 <= neighbor_pos < len(siblings)):
+            return None
+
+        neighbor = siblings[neighbor_pos]
+        if not is_panel(neighbor):
+            return None
+        if neighbor.as_pointer() in blocked:
+            # blocked selected panel: let the wall logic handle it
+            return None
+        if neighbor.select:
+            # a selected panel moves on its own, so don't enter it
+            return None
+
+        if self.direction == 'UP':
+            # BFA - Entering from below: land at the end of the panel.
+            target_index = len(neighbor.interface_items)
+        else:
+            # BFA - Entering from above: land at the start, but after the panel's
+            # header toggle, which must stay the panel's first item.
+            target_index = get_panel_toggle(neighbor) is not None
+
+        interface.move_to_parent(item, neighbor, target_index)
+        return True
+
+    def move_single(self, interface, item, blocked):
+        """Move one item. Returns True if it moved. Items that can't move are
+        added to `blocked` so selected siblings behind them don't pass them."""
+        # BFA - as_pointer() gives a stable, hashable identity for the `blocked` set.
+        item_ptr = item.as_pointer()
+
+        # BFA - A socket right next to a panel steps into that panel first, rather
+        # than jumping over the whole panel in one press.
+        entered = self.enter_adjacent_panel(interface, item, blocked)
+        if entered:
+            return True
+
+        if not self.should_change_parents(item):
+            old_position = item.position
+
+            # Don't jump over a selected neighbour that couldn't move.
+            neighbor_pos = old_position + (-1 if self.direction == 'UP' else 1)
+            siblings = item.parent.interface_items
+            if 0 <= neighbor_pos < len(siblings) and siblings[neighbor_pos].as_pointer() in blocked:
+                blocked.add(item_ptr)
+                return False
+
+            # BFA - interface.move() inserts *before* the target index, so moving
+            # down by one slot needs +2.
+            offset = -1 if self.direction == 'UP' else 2
+            interface.move(item, old_position + offset)
+            # BFA - Position unchanged means the item is already at the edge.
+            if old_position == item.position:
+                blocked.add(item_ptr)
+                return False
+            return True
+
+        # Move into a different parent panel.
+        if self.direction == "UP":
+            target_panel = self.get_nearest_panel_up(item)
+        else:
+            target_panel = self.get_nearest_panel_down(item)
+
+        if target_panel is None:
+            blocked.add(item_ptr)
+            return False
+
+        if self.direction == "UP":
+            if is_panel(item) and target_panel == item.parent.parent:
+                target_index = item.parent.position
+            else:
+                target_index = len(target_panel.interface_items)
+        else:
+            if is_panel(item) and target_panel == item.parent.parent:
+                target_index = item.parent.position + 1
+            else:
+                target_index = get_panel_toggle(target_panel) is not None
+
+        interface.move_to_parent(item, target_panel, target_index)
+        return True
+
     def execute(self, context):
         snode = context.space_data
         tree = snode.edit_tree
         interface = tree.interface
         active_item = interface.active
 
-        offset = -1 if self.direction == 'UP' else 2
-
-        if not self.should_change_parents(active_item):
-            old_position = active_item.position
-            interface.move(active_item, active_item.position + offset)
-
-            if old_position == active_item.position:
-                return {'CANCELLED'}
-
-            interface.active_index = active_item.index
-            return {'FINISHED'}
-
-        if self.direction == "UP":
-            target_panel = self.get_nearest_panel_up(active_item)
-            if is_panel(active_item) and (target_panel == active_item.parent.parent):
-                target_index = active_item.parent.position
-            else:
-                target_index = len(target_panel.interface_items)
-            
-        elif self.direction == "DOWN":
-            target_panel = self.get_nearest_panel_down(active_item)
-            if is_panel(active_item) and (target_panel == active_item.parent.parent):
-                target_index = active_item.parent.position + 1
-            else:
-                has_panel_toggle = get_panel_toggle(target_panel) is not None
-                target_index = has_panel_toggle
-
-        if target_panel is None:
+        # BFA - Multi-selection support (#6215): the operator used to move only
+        # the active item. It now moves every selected item, one step at a time.
+        items = self.gather_selected_roots(interface)
+        if not items:
             return {'CANCELLED'}
-        
-        interface.move_to_parent(active_item, target_panel, target_index)
+
+        # BFA - Setting active_index also edits `select` flags, so snapshot them
+        # here and restore them once everything has moved.
+        select_state = [(item, item.select) for item in interface.items_tree]
+
+        # BFA - Move the item nearest the destination first (top-most for UP,
+        # bottom-most for DOWN). Otherwise an item would swap places with a
+        # selected neighbour instead of the whole group shifting by one.
+        if self.direction == 'DOWN':
+            items.reverse()
+
+        # BFA - Pointers of selected items that couldn't move this step (they hit
+        # the top/bottom). Items behind them stop too, so the group keeps its
+        # order instead of the trailing items leapfrogging the stuck ones.
+        blocked = set()
+        changed = False
+        for item in items:
+            changed |= self.move_single(interface, item, blocked)
+
+        if not changed:
+            return {'CANCELLED'}
+
         interface.active_index = active_item.index
-        self.clear_interface_selection(interface, keep_active=True)  # BFA - keep in line with the upstream multi-selection of items
+
+        # BFA - Restore the selection instead of calling
+        # `self.clear_interface_selection(interface, keep_active=True)` like the
+        # other interface operators. Upstream clears it because those operators
+        # only act on the active item. This one moves every selected item, so the
+        # selection has to survive to allow pressing Up/Down repeatedly on a group.
+        for item, was_selected in select_state:
+            item.select = was_selected
+
         return {'FINISHED'}
 
 
