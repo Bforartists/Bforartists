@@ -180097,3 +180097,13 @@ msgstr "Có thể đã có các trình điều vận đồ họa mới hơn vớ
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Nâng cấp lên phiên bản macOS mới nhất có thể cải thiện khả năng hỗ trợ Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"Tách phân các dải được chọn ra thành hai\n"
+"Bạn cũng có thể nhấp và kéo để tách và xóa nội dung các dải trong phạm vi đã chọn\n"
+"Trong các trình biên tập video khác còn gọi là xóa gợn (ripple delete)"

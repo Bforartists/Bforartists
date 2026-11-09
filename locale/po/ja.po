@@ -182287,3 +182287,13 @@ msgstr "もっと新しいグラフィックドライバーで Bforartists の�
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "最新版の macOS にアップグレードすると Bforartists の対応が改善します"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"選択中のストリップを二つに分割します\n"
+"クリックしてドラッグすると，選択範囲で分割し，範囲内のストリップの内容を削除することもできます\n"
+"他のビデオ編集ソフトではリップル削除とも呼ばれます"

@@ -103088,3 +103088,13 @@ msgstr "Інфо Лог Bforartists'а"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Перегляд файлу Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"Розділити вибрані смужки на дві\n"
+"Також можна натиснути й перетягнути, щоб розділити та видалити вміст смужок у вибраному діапазоні\n"
+"В інших відеоредакторах це називають видаленням зі зсувом (ripple delete)"
