@@ -1705,7 +1705,7 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
     def gather_selected_roots(interface):
         """Selected items in display order. Children of a selected panel and
         panel toggle sockets are excluded (they move with their panel)."""
-        # The active item counts as selected even when its `select` flag is
+        # BFA - The active item counts as selected even when its `select` flag is
         # off, so the single-item behaviour from before keeps working.
         active = interface.active
         selected = [item for item in interface.items_tree if item.select or item == active]
@@ -1795,10 +1795,10 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
             return None
 
         if self.direction == 'UP':
-            # Entering from below: land at the end of the panel.
+            # BFA - Entering from below: land at the end of the panel.
             target_index = len(neighbor.interface_items)
         else:
-            # Entering from above: land at the start, but after the panel's
+            # BFA - Entering from above: land at the start, but after the panel's
             # header toggle, which must stay the panel's first item.
             target_index = get_panel_toggle(neighbor) is not None
 
@@ -1808,10 +1808,10 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
     def move_single(self, interface, item, blocked):
         """Move one item. Returns True if it moved. Items that can't move are
         added to `blocked` so selected siblings behind them don't pass them."""
-        # as_pointer() gives a stable, hashable identity for the `blocked` set.
+        # BFA - as_pointer() gives a stable, hashable identity for the `blocked` set.
         item_ptr = item.as_pointer()
 
-        # A socket right next to a panel steps into that panel first, rather
+        # BFA - A socket right next to a panel steps into that panel first, rather
         # than jumping over the whole panel in one press.
         entered = self.enter_adjacent_panel(interface, item, blocked)
         if entered:
@@ -1827,11 +1827,11 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
                 blocked.add(item_ptr)
                 return False
 
-            # interface.move() inserts *before* the target index, so moving
+            # BFA - interface.move() inserts *before* the target index, so moving
             # down by one slot needs +2.
             offset = -1 if self.direction == 'UP' else 2
             interface.move(item, old_position + offset)
-            # Position unchanged means the item is already at the edge.
+            # BFA - Position unchanged means the item is already at the edge.
             if old_position == item.position:
                 blocked.add(item_ptr)
                 return False
@@ -1873,17 +1873,17 @@ class NODE_OT_interface_item_move(NodeInterfaceOperator, Operator):
         if not items:
             return {'CANCELLED'}
 
-        # Setting active_index also edits `select` flags, so snapshot them
+        # BFA - Setting active_index also edits `select` flags, so snapshot them
         # here and restore them once everything has moved.
         select_state = [(item, item.select) for item in interface.items_tree]
 
-        # Move the item nearest the destination first (top-most for UP,
+        # BFA - Move the item nearest the destination first (top-most for UP,
         # bottom-most for DOWN). Otherwise an item would swap places with a
         # selected neighbour instead of the whole group shifting by one.
         if self.direction == 'DOWN':
             items.reverse()
 
-        # Pointers of selected items that couldn't move this step (they hit
+        # BFA - Pointers of selected items that couldn't move this step (they hit
         # the top/bottom). Items behind them stop too, so the group keeps its
         # order instead of the trailing items leapfrogging the stuck ones.
         blocked = set()
