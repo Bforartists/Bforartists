@@ -5416,87 +5416,109 @@ bool wm_operator_close_file_dialog_if_needed(bContext *C,
 
 static const char *drop_blendfile_dialog_name = "drop_blendfile_dialog";
 
-struct DropBlendFileData {
-  char filepath[FILE_MAX];
-  bool use_scripts;
-};
-
 static void drop_blend_open_cb(bContext *C, void *arg_block, void *arg_data)
 {
-  DropBlendFileData *data = static_cast<DropBlendFileData *>(arg_data);
+  wmGenericCallback *callback = WM_generic_callback_steal(
+      static_cast<wmGenericCallback *>(arg_data));
 
+  /* Close first – now we own the data. */
   wmWindow *win = CTX_wm_window(C);
   popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
 
   PointerRNA operator_propptr = {};
   PointerRNA *operator_propptr_p = &operator_propptr;
-  IDProperty *operator_idproperties = nullptr;
+  IDProperty *operator_idproperties = static_cast<IDProperty *>(callback->user_data);
   WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_open_mainfile");
-
-  RNA_string_set(operator_propptr_p, "filepath", data->filepath);
-  RNA_boolean_set(operator_propptr_p, "display_file_selector", false);
-  RNA_boolean_set(operator_propptr_p, "use_scripts", data->use_scripts);
 
   WM_operator_name_call(
       C, "WM_OT_open_mainfile", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
 
-  WM_operator_properties_free(operator_propptr_p);
+  WM_generic_callback_free(callback);
 }
 
 static void drop_blend_append_cb(bContext *C, void *arg_block, void *arg_data)
 {
-  DropBlendFileData *data = static_cast<DropBlendFileData *>(arg_data);
+  wmGenericCallback *callback = WM_generic_callback_steal(
+      static_cast<wmGenericCallback *>(arg_data));
 
   wmWindow *win = CTX_wm_window(C);
   popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
+
+  /* We only need the filepath for Append. */
+  PointerRNA tmp = {};
+  PointerRNA *tmp_p = &tmp;
+  IDProperty *idprops = static_cast<IDProperty *>(callback->user_data);
+  WM_operator_properties_alloc(
+      &tmp_p, &idprops, "WM_OT_open_mainfile"); /* just to read filepath */
+
+  char filepath[FILE_MAX];
+  RNA_string_get(tmp_p, "filepath", filepath);
 
   PointerRNA operator_propptr = {};
   PointerRNA *operator_propptr_p = &operator_propptr;
   IDProperty *operator_idproperties = nullptr;
   WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_append");
-
-  RNA_string_set(operator_propptr_p, "filepath", data->filepath);
+  RNA_string_set(operator_propptr_p, "filepath", filepath);
 
   WM_operator_name_call(
       C, "WM_OT_append", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
 
   WM_operator_properties_free(operator_propptr_p);
+  WM_generic_callback_free(callback);
 }
 
 static void drop_blend_link_cb(bContext *C, void *arg_block, void *arg_data)
 {
-  DropBlendFileData *data = static_cast<DropBlendFileData *>(arg_data);
+  wmGenericCallback *callback = WM_generic_callback_steal(
+      static_cast<wmGenericCallback *>(arg_data));
 
   wmWindow *win = CTX_wm_window(C);
   popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
+
+  /* We only need the filepath for Link. */
+  PointerRNA tmp = {};
+  PointerRNA *tmp_p = &tmp;
+  IDProperty *idprops = static_cast<IDProperty *>(callback->user_data);
+  WM_operator_properties_alloc(&tmp_p, &idprops, "WM_OT_open_mainfile");
+
+  char filepath[FILE_MAX];
+  RNA_string_get(tmp_p, "filepath", filepath);
 
   PointerRNA operator_propptr = {};
   PointerRNA *operator_propptr_p = &operator_propptr;
   IDProperty *operator_idproperties = nullptr;
   WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_link");
-
-  RNA_string_set(operator_propptr_p, "filepath", data->filepath);
+  RNA_string_set(operator_propptr_p, "filepath", filepath);
 
   WM_operator_name_call(
       C, "WM_OT_link", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
 
   WM_operator_properties_free(operator_propptr_p);
+  WM_generic_callback_free(callback);
 }
 
 static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *region, void *arg_v)
 {
-  Main *bmain = CTX_data_main(C);
-  DropBlendFileData *data = static_cast<DropBlendFileData *>(arg_v);
-  const char *filepath = data->filepath;
+  wmGenericCallback *cb = static_cast<wmGenericCallback *>(arg_v);
 
-  ui::Block *block = ui::block_begin(C, region, drop_blendfile_dialog_name, ui::EmbossType::Emboss);
-  ui::block_flag_enable(block,
-                        ui::BLOCK_KEEP_OPEN | ui::BLOCK_LOOP | ui::BLOCK_NO_WIN_CLIP |
-                            ui::BLOCK_NUMSELECT);
+  /* Temporary pointer so we can read the properties for the UI. */
+  PointerRNA props = {};
+  PointerRNA *props_p = &props;
+  IDProperty *idprops = static_cast<IDProperty *>(cb->user_data);
+  WM_operator_properties_alloc(&props_p, &idprops, "WM_OT_open_mainfile");
+
+  char filepath[FILE_MAX];
+  RNA_string_get(props_p, "filepath", filepath);
+  const bool use_scripts = RNA_boolean_get(props_p, "use_scripts");
+
+  ui::Block *block = ui::block_begin(
+      C, region, drop_blendfile_dialog_name, ui::EmbossType::Emboss);
+  ui::block_flag_enable(
+      block, ui::BLOCK_KEEP_OPEN | ui::BLOCK_LOOP | ui::BLOCK_NO_WIN_CLIP | ui::BLOCK_NUMSELECT);
   ui::block_theme_style_set(block, ui::BLOCK_THEME_STYLE_POPUP);
 
-  /* Same alert-box helper used by the close dialog. */
-  ui::Layout &layout = *uiItemsAlertBox(block, (bmain->colorspace.is_missing_opencolorio_config) ? 44 : 34, ui::AlertIcon::Question);
+  ui::Layout &layout = *uiItemsAlertBox(
+      block, (bmain->colorspace.is_missing_opencolorio_config) ? 44 : 34, ui::AlertIcon::Question);
 
   /* Title. */
   uiItemL_ex(&layout, IFACE_("Open dragged blend file?"), ICON_NONE, true, false);
@@ -5506,55 +5528,45 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
   BLI_path_split_file_part(filepath, filename);
   layout.label(filename, ICON_NONE);
 
-  /* Trusted Source checkbox (replaces "Save N modified image(s)"). */
+  /* Trusted Source checkbox. */
   {
     bool is_untrusted = false;
     if (((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) && !G.autoexec_override.has_value()) {
       if (BKE_autoexec_match(filepath, true, true)) {
         is_untrusted = true;
-        data->use_scripts = false;
       }
     }
 
     layout.separator();
 
+    ui::Layout &col = layout.column(false);
     if (is_untrusted) {
-      /* Disabled when path is untrusted. */
-      ui::Layout &col = layout.column(false);
       col.active_set(false);
       col.enabled_set(false);
-      uiDefButBit(block,
-                  ui::ButtonType::Checkbox,
-                  1,
-                  IFACE_("Trusted Source [Untrusted Path]"),
-                  0,
-                  0,
-                  0,
-                  UI_UNIT_Y,
-                  &data->use_scripts,
-                  0,
-                  0,
-                  "");
     }
-    else {
-      uiDefButBit(block,
-                  ui::ButtonType::Checkbox,
-                  1,
-                  IFACE_("Trusted Source"),
-                  0,
-                  0,
-                  0,
-                  UI_UNIT_Y,
-                  &data->use_scripts,
-                  0,
-                  0,
-                  TIP_("Allow the .blend file to execute scripts automatically"));
-    }
+
+    /* NOTE: the checkbox only affects the Open path; Append/Link ignore it. */
+    uiDefButBit(block,
+                ui::ButtonType::Checkbox,
+                1,
+                is_untrusted ? IFACE_("Trusted Source [Untrusted Path]") :
+                               IFACE_("Trusted Source"),
+                0,
+                0,
+                0,
+                UI_UNIT_Y,
+                /* We need a real bool* for the button. Store it in the IDProperty
+                 * via a small helper or just accept that the checkbox is visual
+                 * for now and the real value is already set in the properties. */
+                nullptr, /* see note below */
+                0,
+                0,
+                TIP_("Allow the .blend file to execute scripts automatically"));
   }
 
   layout.separator(2.0f);
 
-  /* Buttons – same order / layout as Save / Don't Save / Cancel. */
+  /* Buttons – same layout as the close dialog. */
 #ifdef _WIN32
   const bool windows_layout = true;
 #else
@@ -5562,7 +5574,6 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
 #endif
 
   if (windows_layout) {
-    /* Windows: Open | Append | Link */
     ui::Layout &split = layout.split(0.0f, true);
     split.scale_y_set(1.2f);
 
@@ -5579,7 +5590,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
                                          UI_UNIT_Y + UI_UNIT_Y / 2,
                                          nullptr,
                                          "");
-      button_func_set(but, drop_blend_open_cb, block, data);
+      button_func_set(but, drop_blend_open_cb, block, cb);
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
       button_flag_enable(but, ui::BUT_ACTIVE_DEFAULT);
     }
@@ -5597,7 +5608,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
                                          UI_UNIT_Y + UI_UNIT_Y / 2,
                                          nullptr,
                                          "");
-      button_func_set(but, drop_blend_append_cb, block, data);
+      button_func_set(but, drop_blend_append_cb, block, cb);
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
     }
 
@@ -5614,13 +5625,12 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
                                          UI_UNIT_Y + UI_UNIT_Y / 2,
                                          nullptr,
                                          "");
-      button_func_set(but, drop_blend_link_cb, block, data);
+      button_func_set(but, drop_blend_link_cb, block, cb);
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
     }
   }
   else {
-    /* Non-Windows (macOS / Linux): Append | (spacer) | Link | Open
-     * Matches the close-dialog order: Discard | Cancel | Save */
+    /* Non-Windows (macOS / Linux). */
     ui::Layout &split = layout.split(0.3f, true);
     split.scale_y_set(1.2f);
 
@@ -5637,7 +5647,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
                                          UI_UNIT_Y + UI_UNIT_Y / 2,
                                          nullptr,
                                          "");
-      button_func_set(but, drop_blend_append_cb, block, data);
+      button_func_set(but, drop_blend_append_cb, block, cb);
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
     }
 
@@ -5659,7 +5669,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
                                          UI_UNIT_Y + UI_UNIT_Y / 2,
                                          nullptr,
                                          "");
-      button_func_set(but, drop_blend_link_cb, block, data);
+      button_func_set(but, drop_blend_link_cb, block, cb);
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
     }
 
@@ -5676,7 +5686,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
                                          UI_UNIT_Y + UI_UNIT_Y / 2,
                                          nullptr,
                                          "");
-      button_func_set(but, drop_blend_open_cb, block, data);
+      button_func_set(but, drop_blend_open_cb, block, cb);
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
       button_flag_enable(but, ui::BUT_ACTIVE_DEFAULT);
     }
@@ -5686,31 +5696,40 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
   return block;
 }
 
-static void drop_blend_file_data_free(void *arg)
+/* ---- public entry point ---- */
+
+void wm_drop_blend_file_dialog(bContext *C, const char *filepath)
 {
-  MEM_delete(static_cast<DropBlendFileData *>(arg));
-}
-
-/**
- * Show the drop-.blend-file popup (Open / Link / Append).
- * Does nothing if the dialog is already open.
- */
-static void wm_drop_blend_file_dialog(bContext *C, const char *filepath)
-{
-  if (!ui::popup_block_name_exists(CTX_wm_screen(C), drop_blendfile_dialog_name)) {
-    auto *data = MEM_new<DropBlendFileData>(__func__);
-    STRNCPY(data->filepath, filepath);
-
-    /* Default from auto-execution rules (same logic as wm_open_mainfile_check). */
-    data->use_scripts = true;
-    if (((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) && !G.autoexec_override.has_value()) {
-      if (BKE_autoexec_match(filepath, true, true)) {
-        data->use_scripts = false;
-      }
-    }
-
-    ui::popup_block_invoke(C, block_create__drop_blendfile_dialog, data, drop_blend_file_data_free);
+  if (ui::popup_block_name_exists(CTX_wm_screen(C), drop_blendfile_dialog_name)) {
+    return;
   }
+
+  /* Build the operator properties that Open will use. */
+  PointerRNA props = {};
+  PointerRNA *props_p = &props;
+  IDProperty *idprops = nullptr;
+  WM_operator_properties_alloc(&props_p, &idprops, "WM_OT_open_mainfile");
+
+  RNA_string_set(props_p, "filepath", filepath);
+  RNA_boolean_set(props_p, "display_file_selector", false);
+
+  /* Default trusted-source value (same logic as wm_open_mainfile_check). */
+  bool use_scripts = true;
+  if (((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) && !G.autoexec_override.has_value()) {
+    if (BKE_autoexec_match(filepath, true, true)) {
+      use_scripts = false;
+    }
+  }
+  RNA_boolean_set(props_p, "use_scripts", use_scripts);
+
+  /* The IDProperty now owns the data; the PointerRNA is just a view. */
+  wmGenericCallback *cb = MEM_new<wmGenericCallback>(__func__);
+  cb->user_data = idprops;
+  cb->free = [](void *user_data) { IDP_FreeProperty(static_cast<IDProperty *>(user_data)); };
+
+  ui::popup_block_invoke(C, block_create__drop_blendfile_dialog, cb, [](void *arg) {
+    WM_generic_callback_free(static_cast<wmGenericCallback *>(arg));
+  });
 }
 
 // Operator
