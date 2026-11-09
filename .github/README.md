@@ -16,11 +16,11 @@ Bforartists is a fork of the popular 3D software Blender, with the goal to impro
 
 It supports the entirety of the 3D pipeline—modeling, rigging, animation, simulation, rendering, compositing,
 
-The project page, the binary downloads and further information can be found at the project page: https://www.bforartists.de/
+The project page, the binary downloads and further information can be found at the project page: https://www.bforartists.co/
 
 Please use the tracker to add issues, bug reports and requests. The tracker can be found here: https://github.com/Bforartists/Bforartists/issues
 
-![alt text](https://www.bforartists.de/wp-content/uploads/2020/04/modelingbfa2.jpg)
+![The Bforartists interface](https://cdn.prod.website-files.com/650c5901cff33429a5e537f5/6a21fd0d758de7fd33f50319_workspace_main.webp)
 
 Why choose Bforartists, and not Blender? Because our UI  is streamlined, cleaner, better organized, has colored icons, left aligned text, and much more of all those things that makes a good UI and the life easier. Bforartists is fully compatible with Blender. You can use both asides to make yourself a picture. The files are transferable. So try it, you loose nothing.
 
@@ -41,14 +41,14 @@ The main Differences between Bforartists and Blender are:
 - Some neat addons to improve usability, like the reset 3D View addon or the Set Dimensions addon with which you can scale in world coordinates in edit mode.
 - And lots more small details like not so much confirm dialogs. Or that we have resurrected the tabs in the tool shelf to allow quicker access to the tools.
 
-A detailed list of the changes can be found in the release notes: www.bforartists.de/wiki/release-notes
+A detailed list of the changes can be found in the release notes: https://www.bforartists.co/support/release-notes
 
 But the code is just half of the show. Another important bit are the non code things.
 
 - The target audience for Bforartists are hobbyists and indie developers. Blender tries to target professionals. That’s a completely different audience and development target.
 - We have a better manual. The Blender manual is unsearchable in big parts, has an odd structure, and still relies heavily on the Blender keymap to name just a few flaws. This makes it nearly unusable for users. And that’s why we have rewritten it. With the tools in mind, not the hotkeys. Without odd opinions like Angle based is better than LSCM to unwrap. Without general CG Tutorials for a tool, and forgetting to describe how the tool really works and what it does. And a structure that follows the editors and the menus.
 
-Here you can find some examples of the vital differences between Blender and Bforartists: https://www.bforartists.de/the-differences-to-blender/
+Here you can find some examples of the vital differences between Blender and Bforartists: https://www.bforartists.co/about/blender
 
 This youtube video describes the differences by showing them.
 
@@ -64,11 +64,11 @@ https://github.com/Bforartists/Manual
 
 For those who want to make changes to Bforartists and compile your own, or simply to compile it yourself, the setup is exactly the same has Blender, just change the git clone url etc, see below for the building on Blender links.
 
-Building on Linux: [https://wiki.blender.org/wiki/Building_Blender/Linux](https://developer.blender.org/docs/handbook/building_blender/linux/)
+Building on Linux: [Building Blender on Linux](https://developer.blender.org/docs/handbook/building_blender/linux/)
 
-Building on Mac: [https://wiki.blender.org/index.php/Dev:Doc/Building_Blender/Mac](https://developer.blender.org/docs/handbook/building_blender/mac/)
+Building on Mac: [Building Blender on macOS](https://developer.blender.org/docs/handbook/building_blender/mac/)
 
-Building on Windows: [https://wiki.blender.org/index.php/Dev:Doc/Building_Blender/Windows](https://developer.blender.org/docs/handbook/building_blender/windows/)
+Building on Windows: [Building Blender on Windows](https://developer.blender.org/docs/handbook/building_blender/windows/)
 
 You might want to compile an older Bforartists version where the newest precompiled libs do not work. Here you can find the precompiled libs for all previous Blender versions:
 
