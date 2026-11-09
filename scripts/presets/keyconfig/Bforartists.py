@@ -7481,6 +7481,8 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.tool_set_by_id_hold", {"type": 'C', "value": 'PRESS'},
+     {"properties": [("name", 'builtin.blade')]}),  # BFA - hold C for the Blade tool, as in Blender
     ("sequencer.slip", {"type": 'S', "value": 'PRESS'}, None),
     ("wm.context_set_int",
      {"type": 'O', "value": 'PRESS'},
