@@ -5589,7 +5589,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
                                          ui::ButtonType::But,
-                                         ICON_LINK_BLEND,
+                                         ICON_APPEND_BLEND,
                                          IFACE_("Append"),
                                          0,
                                          0,
