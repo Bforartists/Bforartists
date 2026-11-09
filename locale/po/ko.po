@@ -75554,8 +75554,10 @@ msgid "Duplicate Shape Key"
 msgstr "모양 키 복제"
 
 
-msgid "Duplicate the active shape key"
-msgstr "활성 모양 키 복제"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "선택한 모양 키 복제"
 
 
 msgctxt "Operator"

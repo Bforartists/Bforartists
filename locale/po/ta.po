@@ -76275,8 +76275,10 @@ msgid "Duplicate Shape Key"
 msgstr "நகல் வடிவ விசை"
 
 
-msgid "Duplicate the active shape key"
-msgstr "செயலில் வடிவ விசையை நகலெடுக்கவும்"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "தேர்ந்தெடுக்கப்பட்ட வடிவ விசைகளை நகலெடுக்கவும்"
 
 
 msgctxt "Operator"

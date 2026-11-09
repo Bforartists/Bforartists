@@ -80130,8 +80130,10 @@ msgid "Duplicate Shape Key"
 msgstr "Vytvoriť kópiu kľúčového tvaru"
 
 
-msgid "Duplicate the active shape key"
-msgstr "Vytvorí kópiu aktívneho kľúčového tvaru"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Vytvorí kópiu vybraných kľúčových tvarov"
 
 
 msgctxt "Operator"

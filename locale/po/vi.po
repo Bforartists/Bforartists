@@ -79168,8 +79168,10 @@ msgid "Duplicate Shape Key"
 msgstr "Nhân Đôi Hình Mẫu"
 
 
-msgid "Duplicate the active shape key"
-msgstr "Nhân đôi hình mẫu đang hoạt động"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Nhân đôi các hình mẫu được chọn"
 
 
 msgctxt "Operator"

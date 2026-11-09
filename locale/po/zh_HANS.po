@@ -80132,8 +80132,10 @@ msgid "Duplicate Shape Key"
 msgstr "复制形态键"
 
 
-msgid "Duplicate the active shape key"
-msgstr "复制活动形态键"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "复制选中的形态键"
 
 
 msgctxt "Operator"

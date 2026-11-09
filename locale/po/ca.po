@@ -80130,8 +80130,10 @@ msgid "Duplicate Shape Key"
 msgstr "Duplicar morfofita"
 
 
-msgid "Duplicate the active shape key"
-msgstr "[Duplicate]: Duplica la morfofita activa"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Duplica les morfofites seleccionades"
 
 
 msgctxt "Operator"

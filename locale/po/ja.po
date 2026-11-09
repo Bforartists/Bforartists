@@ -80345,8 +80345,10 @@ msgid "Duplicate Shape Key"
 msgstr "シェイプキーを複製"
 
 
-msgid "Duplicate the active shape key"
-msgstr "アクティブシェイプキーを複製します"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "選択中のシェイプキーを複製します"
 
 
 msgctxt "Operator"
