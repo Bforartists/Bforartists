@@ -57,15 +57,33 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
             row.prop(ob, "show_empty_image_only_axis_aligned", text="Only Axis Aligned")
             row.prop_decorator(ob, "show_empty_image_only_axis_aligned")
 
-            col = layout.column(align=False, heading="Opacity")
-            col.use_property_decorate = False
-            row = col.row(align=True)
-            sub = row.row(align=True)
-            sub.prop(ob, "use_empty_image_alpha", text="")
-            sub = sub.row(align=True)
-            sub.active = ob.use_empty_image_alpha
-            sub.prop(ob, "color", text="", index=3, slider=True)
-            row.prop_decorator(ob, "color", index=3)
+            # BFA - Float left. Checkbox left with a disclosure triangle, the opacity slider is hidden while unused
+            # col = layout.column(align=False, heading="Opacity")
+            # col.use_property_decorate = False
+            # row = col.row(align=True)
+            # sub = row.row(align=True)
+            # sub.prop(ob, "use_empty_image_alpha", text="")
+            # sub = sub.row(align=True)
+            # sub.active = ob.use_empty_image_alpha
+            # sub.prop(ob, "color", text="", index=3, slider=True)
+            # row.prop_decorator(ob, "color", index=3)
+            row = layout.row()
+            row.use_property_split = False
+            split = row.split(factor=0.5)
+            row = split.row()
+            row.prop(ob, "use_empty_image_alpha", text="Opacity")
+            row = split.row()
+            if ob.use_empty_image_alpha:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+            if ob.use_empty_image_alpha:
+                row = layout.row()
+                row.use_property_split = False
+                row.separator()
+                row.prop(ob, "color", text="Opacity", index=3, slider=True)
+                row.prop_decorator(ob, "color", index=3)
 
 
 class DATA_PT_empty_image(DataButtonsPanel, Panel):
