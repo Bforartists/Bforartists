@@ -11467,7 +11467,8 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Removal Operators
-            col.operator("grease_pencil.stroke_merge_by_distance", icon="REMOVE_DOUBLES").use_unselected = False
+            # BFA - removed Merge by Distance from the context menu, Blender doesn't have it here either. It stays in the Clean Up menu
+            # col.operator("grease_pencil.stroke_merge_by_distance", icon="REMOVE_DOUBLES").use_unselected = False
             col.operator_enum("grease_pencil.dissolve", "type")
 
             col.separator()
