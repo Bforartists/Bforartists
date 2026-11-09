@@ -1698,7 +1698,9 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
     if (dtmd->layers_select_src[DT_MULTILAYER_INDEX_MDEFORMVERT] >= 0) {
       Object *ob_dst = CTX_data_active_object(C); /* XXX Is this OK? */
 
-      if (ob_dst) {
+      /* BFA - Tear-Off Menu/Panel: a pinned dropdown stays on its modifier while another object
+       * becomes active, unlike an attached one. Any object type gets here. */
+      if (ob_dst && BKE_object_supports_vertex_groups(ob_dst)) {
         const bDeformGroup *dg;
         int i;
 
@@ -1721,7 +1723,8 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
     if (dtmd->layers_select_src[DT_MULTILAYER_INDEX_UV] >= 0) {
       Object *ob_dst = CTX_data_active_object(C); /* XXX Is this OK? */
 
-      if (ob_dst && ob_dst->data) {
+      /* BFA - Tear-Off Menu/Panel: as above, the active object can be anything. */
+      if (ob_dst && ob_dst->type == OB_MESH && ob_dst->data) {
         Mesh *me_dst = id_cast<Mesh *>(ob_dst->data);
         const VectorSet<StringRefNull> uv_map_names = me_dst->uv_map_names();
         const int num_data = uv_map_names.size();
@@ -1747,7 +1750,8 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_dst_itemf(
     if (dtmd->layers_select_src[multilayer_index] >= 0) {
       Object *ob_dst = CTX_data_active_object(C); /* XXX Is this OK? */
 
-      if (ob_dst && ob_dst->data) {
+      /* BFA - Tear-Off Menu/Panel: as above, the active object can be anything. */
+      if (ob_dst && ob_dst->type == OB_MESH && ob_dst->data) {
         eCustomDataType types[2] = {CD_PROP_COLOR, CD_PROP_BYTE_COLOR};
 
         Mesh *me_dst = id_cast<Mesh *>(ob_dst->data);

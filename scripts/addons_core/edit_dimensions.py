@@ -136,7 +136,7 @@ def add_button_to_panel(self, context):
     row.scale_y = 2
 
     if context.mode in {'EDIT_MESH'}:
-        column_count = toolsystem_column_count(context.region)
+        column_count = toolsystem_column_count(context.region, layout)
 
         if column_count >= 4:
             row.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")

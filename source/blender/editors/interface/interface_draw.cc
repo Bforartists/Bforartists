@@ -491,6 +491,49 @@ static void histogram_draw_one(float r,
   GPU_line_smooth(false);
 }
 
+/* BFA - Tear-Off Menu/Panel: these widgets replace the scissor with their own rect, so one
+ * scrolling under the sticky header would paint over it. The current scissor already excludes the
+ * header. Everything else keeps the region, as upstream. */
+static rcti but_scissor_limit(const ARegion *region, const Button *but, const int scissor[4])
+{
+  if (but->block->tear_off_header_ymin > 0.0f) {
+    return {scissor[0], scissor[0] + scissor[2], scissor[1], scissor[1] + scissor[3]};
+  }
+  return {0, region->winx, 0, region->winy};
+}
+
+/* BFA - Tear-Off Menu/Panel: for a widget that replaces its scissor again after
+ * #but_scissor_limit. Everything else gets exactly the values passed, as upstream. */
+static void but_scissor_set(const Button *but,
+                            const rcti &scissor_region,
+                            const int x,
+                            const int y,
+                            const int w,
+                            const int h)
+{
+  if (but->block->tear_off_header_ymin > 0.0f) {
+    rcti limited = {x, x + w, y, y + h};
+    BLI_rcti_isect(&limited, &scissor_region, &limited);
+    GPU_scissor(limited.xmin, limited.ymin, BLI_rcti_size_x(&limited), BLI_rcti_size_y(&limited));
+    return;
+  }
+  GPU_scissor(x, y, w, h);
+}
+
+/* BFA - Tear-Off Menu/Panel: the outline comes after the widget turned the scissor test off, so
+ * in a tear-off it would cross a sticky header. The scissor is already restored at this point. */
+static void but_scope_end(const Button *but, const rctf *rect)
+{
+  const bool in_tear_off = but->block->tear_off_header_ymin > 0.0f;
+  if (in_tear_off) {
+    GPU_scissor_test(true);
+  }
+  draw_scope_end(rect);
+  if (in_tear_off) {
+    GPU_scissor_test(false);
+  }
+}
+
 #define HISTOGRAM_TOT_GRID_LINES 4
 
 void draw_but_HISTOGRAM(ARegion *region,
@@ -531,7 +574,8 @@ void draw_but_HISTOGRAM(ARegion *region,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -595,7 +639,7 @@ void draw_but_HISTOGRAM(ARegion *region,
   GPU_scissor(UNPACK4(scissor));
 
   /* outline */
-  draw_scope_end(&rect);
+  but_scope_end(but, &rect); /* BFA - Tear-Off Menu/Panel: don't cross a sticky header. */
 }
 
 #undef HISTOGRAM_TOT_GRID_LINES
@@ -746,7 +790,8 @@ void draw_but_WAVEFORM(const bContext *C,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -944,7 +989,7 @@ void draw_but_WAVEFORM(const bContext *C,
   GPU_scissor(UNPACK4(scissor));
 
   /* outline */
-  draw_scope_end(&rect);
+  but_scope_end(but, &rect); /* BFA - Tear-Off Menu/Panel: don't cross a sticky header. */
 
   GPU_blend(GPU_BLEND_NONE);
 }
@@ -1081,7 +1126,8 @@ void draw_but_VECTORSCOPE(const bContext *C,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -1257,7 +1303,7 @@ void draw_but_VECTORSCOPE(const bContext *C,
   GPU_scissor_test(false);
   GPU_scissor(UNPACK4(scissor));
   /* outline */
-  draw_scope_end(&rect);
+  but_scope_end(but, &rect); /* BFA - Tear-Off Menu/Panel: don't cross a sticky header. */
 
   GPU_blend(GPU_BLEND_NONE);
 }
@@ -1663,7 +1709,8 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
   scissor_new.ymin = rect->ymin;
   scissor_new.xmax = rect->xmax;
   scissor_new.ymax = rect->ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -1904,6 +1951,10 @@ void draw_but_CURVE(ARegion *region, Button *but, const uiWidgetColors *wcol, co
       0, scissor_new.xmax + int(point_size * ((cumap->clipr.xmax == cumap->curr.xmax) ? 1 : 0)));
   scissor_for_points.ymax = std::max(
       0, scissor_new.ymax + int(point_size * ((cumap->clipr.ymax == cumap->curr.ymax) ? 1 : 0)));
+  /* BFA - Tear-Off Menu/Panel: points reach past the widget, but not into a sticky header. */
+  if (but->block->tear_off_header_ymin > 0.0f) {
+    BLI_rcti_isect(&scissor_for_points, &scissor_region, &scissor_for_points);
+  }
 
   GPU_scissor(scissor_for_points.xmin,
               scissor_for_points.ymin,
@@ -2051,7 +2102,8 @@ void draw_but_CURVEPROFILE(ARegion *region,
   scissor_new.xmax = rect->xmax;
   scissor_new.ymax = rect->ymax;
 
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -2266,6 +2318,10 @@ void draw_but_CURVEPROFILE(ARegion *region,
       0,
       scissor_new.ymax +
           int(point_size * ((profile->clip_rect.ymax == profile->view_rect.ymax) ? 1 : 0)));
+  /* BFA - Tear-Off Menu/Panel: points reach past the widget, but not into a sticky header. */
+  if (but->block->tear_off_header_ymin > 0.0f) {
+    BLI_rcti_isect(&scissor_for_points, &scissor_region, &scissor_for_points);
+  }
 
   GPU_scissor(scissor_for_points.xmin,
               scissor_for_points.ymin,
@@ -2440,7 +2496,8 @@ void draw_but_TRACKPREVIEW(ARegion *region,
   scissor_new.ymin = rect.ymin;
   scissor_new.xmax = rect.xmax;
   scissor_new.ymax = rect.ymax;
-  const rcti scissor_region = {0, region->winx, 0, region->winy};
+  /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+  const rcti scissor_region = but_scissor_limit(region, but, scissor);
   BLI_rcti_isect(&scissor_new, &scissor_region, &scissor_new);
   GPU_scissor(scissor_new.xmin,
               scissor_new.ymin,
@@ -2496,7 +2553,8 @@ void draw_but_TRACKPREVIEW(ARegion *region,
     GPU_matrix_push();
 
     /* draw content of pattern area */
-    GPU_scissor(rect.xmin, rect.ymin, scissor[2], scissor[3]);
+    /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+    but_scissor_set(but, scissor_region, rect.xmin, rect.ymin, scissor[2], scissor[3]);
 
     if (width > 0 && height > 0) {
       const ImBuf *drawibuf = scopes->track_preview;
@@ -2527,7 +2585,13 @@ void draw_but_TRACKPREVIEW(ARegion *region,
 
       /* draw cross for pixel position */
       GPU_matrix_translate_2f(rect.xmin + scopes->track_pos[0], rect.ymin + scopes->track_pos[1]);
-      GPU_scissor(rect.xmin, rect.ymin, BLI_rctf_size_x(&rect), BLI_rctf_size_y(&rect));
+      /* BFA - Tear-Off Menu/Panel: don't paint over a sticky header. */
+      but_scissor_set(but,
+                      scissor_region,
+                      rect.xmin,
+                      rect.ymin,
+                      BLI_rctf_size_x(&rect),
+                      BLI_rctf_size_y(&rect));
 
       GPUVertFormat *format = immVertexFormat();
       const uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
@@ -2584,7 +2648,7 @@ void draw_but_TRACKPREVIEW(ARegion *region,
   GPU_scissor_test(false);
   GPU_scissor(UNPACK4(scissor));
   /* outline */
-  draw_scope_end(&rect);
+  but_scope_end(but, &rect); /* BFA - Tear-Off Menu/Panel: don't cross a sticky header. */
 
   GPU_blend(GPU_BLEND_NONE);
 }

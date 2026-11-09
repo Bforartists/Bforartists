@@ -74,6 +74,10 @@ struct WindowManagerRuntime {
    */
   bool break_events_handling = false;
 
+  /** BFA - Tear-Off Menu/Panel: a workspace's stored pins may be ready to restore, see
+   * #ui::tear_off_restore_tag. */
+  bool tear_off_restore_pending = false;
+
   /** Information and error reports. */
   ReportList reports;
 

@@ -39,6 +39,7 @@
 
 #include "WM_api.hh"
 #include "WM_types.hh"
+#include "wm_event_system.hh" /* BFA - Tear-Off Menu/Panel: #wmEventHandler_UI. */
 
 #include "ED_screen.hh"
 
@@ -1226,7 +1227,8 @@ static void panel_draw_aligned_widgets(const uiStyle *style,
 void draw_layout_panels_backdrop(const ARegion *region,
                                  const Panel *panel,
                                  const float radius,
-                                 float subpanel_backcolor[4])
+                                 float subpanel_backcolor[4],
+                                 const float inset) /* BFA - Tear-Off Menu/Panel */
 {
   /* Draw backdrops for layout panels. */
   const float aspect = block_is_popup_any(panel->runtime->block) ? panel->runtime->block->aspect :
@@ -1261,7 +1263,14 @@ void draw_layout_panels_backdrop(const ARegion *region,
     rcti panel_pixelspace = rect_to_pixelrect(region, panel->runtime->block, &panel_blockspace);
     rctf panel_pixelspacef;
     BLI_rctf_rcti_copy(&panel_pixelspacef, &panel_pixelspace);
-    draw_roundbox_4fv(&panel_pixelspacef, true, radius, subpanel_backcolor);
+    /* BFA - Tear-Off Menu/Panel: an opaque color would cover the outline of a tear-off. */
+    panel_pixelspacef.xmin += inset;
+    panel_pixelspacef.xmax -= inset;
+    if (is_main_panel_end) {
+      panel_pixelspacef.ymin += inset;
+    }
+    draw_roundbox_4fv(
+        &panel_pixelspacef, true, std::max(radius - inset, 0.0f), subpanel_backcolor);
   }
 }
 
@@ -2203,6 +2212,11 @@ static void panel_drag_collapse(const bContext *C,
     window_to_block_fl(region, &block, &xy_a_block[0], &xy_a_block[1]);
     window_to_block_fl(region, &block, &xy_b_block[0], &xy_b_block[1]);
 
+    /* BFA - Tear-Off Menu/Panel: dragging past the title or crop must not flip hidden panels. */
+    if (block.tear_off_header_ymin > 0.0f) {
+      xy_b_block[1] = std::clamp(xy_b_block[1], block.rect.ymin, block_scroll_top(&block));
+    }
+
     for (LayoutPanelHeader &header : panel->runtime->layout_panels.headers) {
       rctf rect = block.rect;
       rect.ymin = block.rect.ymax + header.start_y;
@@ -2343,7 +2357,8 @@ static void handle_panel_header(const bContext *C,
                                 const int mx,
                                 const int event_type,
                                 const bool ctrl,
-                                const bool shift)
+                                const bool shift,
+                                const bool after_release = false) /* BFA - Tear-Off Menu/Panel */
 {
   Panel *panel = block->panel;
   ARegion *region = CTX_wm_region(C);
@@ -2393,7 +2408,9 @@ static void handle_panel_header(const bContext *C,
 
     SET_FLAG_FROM_TEST(panel->flag, !panel_is_closed(panel), PNL_CLOSED);
 
-    if (event_type == LEFTMOUSE) {
+    /* BFA - Tear-Off Menu/Panel: this handler ends only on a release. Replaying a Shift+click
+     * after the release would leave it swallowing the next left mouse press. */
+    if (event_type == LEFTMOUSE && !after_release) {
       panel_drag_collapse_handler_add(C, panel_is_closed(panel));
     }
 
@@ -2413,6 +2430,10 @@ static void handle_panel_header(const bContext *C,
     const float drag_area_xmin = block->rect.xmax - (PNL_ICON * 1.5f);
     const float drag_area_xmax = block->rect.xmax;
     if (IN_RANGE(mx, drag_area_xmin, drag_area_xmax)) {
+      /* BFA - Tear-Off Menu/Panel: same reason. A click on the grip with no drag does nothing. */
+      if (after_release) {
+        return;
+      }
       if (panel_custom_pin_to_last_get(panel)) {
         /* bfa - REMOVED: panel_custom_pin_to_last_set - we use the toggle itself to unpin */
         return;
@@ -2432,6 +2453,175 @@ static void handle_panel_header(const bContext *C,
       return;
     }
   }
+}
+
+/* BFA - Tear-Off Menu/Panel */
+bool panel_can_be_torn_off(const ARegion *region, const Panel *panel)
+{
+  if (!tear_off_enabled() || panel == nullptr || panel->type == nullptr) {
+    return false;
+  }
+  /* The redo panel shows the last operator and can't outlive it. */
+  if (region->alignment == RGN_ALIGN_FLOAT) {
+    return false;
+  }
+  /* Instanced panels need per-instance data. Their subpanels don't carry the flag, see
+   * #modifier_subpanel_register, so check the whole chain and the data itself. */
+  for (const PanelType *pt = panel->type; pt; pt = pt->parent) {
+    if (pt->flag & PANEL_TYPE_INSTANCED) {
+      return false;
+    }
+  }
+  return panel->runtime->custom_data_ptr == nullptr;
+}
+
+/* BFA - Tear-Off Menu/Panel: Shift+press on a header waits, because it can still become a click
+ * (today's behaviour) or a drag (tear off). The panel isn't touched until one of them happens. */
+struct PanelTearOffGesture {
+  /** Null once the region has exited, see #panel_tear_off_gesture_region_exit. */
+  ARegion *region;
+  Panel *panel;
+  int press_xy[2];
+  /** Panel space, for replaying the click. */
+  int press_mx;
+  int drag_threshold;
+};
+
+static void panel_tear_off_gesture_remove(bContext * /*C*/, void *userdata)
+{
+  MEM_delete(static_cast<PanelTearOffGesture *>(userdata));
+}
+
+static int panel_tear_off_gesture_handler(bContext *C, const wmEvent *event, void *userdata);
+
+static void panel_tear_off_gesture_end(bContext *C, PanelTearOffGesture *gesture)
+{
+  wmWindow *win = CTX_wm_window(C);
+  /* Not postponed. The new popup sits in front and can break the handler loop before the tagged
+   * handler is unlinked, and #WM_event_remove_handlers would then free `gesture` a second time.
+   * Nothing touches the handler after this callback returns. */
+  WM_event_remove_ui_handler(&win->runtime->modalhandlers,
+                             panel_tear_off_gesture_handler,
+                             panel_tear_off_gesture_remove,
+                             gesture,
+                             false);
+  panel_tear_off_gesture_remove(C, gesture);
+}
+
+static int panel_tear_off_gesture_handler(bContext *C, const wmEvent *event, void *userdata)
+{
+  PanelTearOffGesture *gesture = static_cast<PanelTearOffGesture *>(userdata);
+
+  /* Timers belong to others, and losing focus can lose the release, so don't wait for it. */
+  if (ISTIMER(event->type)) {
+    return WM_UI_HANDLER_CONTINUE;
+  }
+  if (event->type == WINDEACTIVATE) {
+    panel_tear_off_gesture_end(C, gesture);
+    return WM_UI_HANDLER_CONTINUE;
+  }
+
+  /* Blocks are rebuilt on redraw and the panel can be gone, so look it up by pointer value
+   * only. */
+  ARegion *region = CTX_wm_region(C);
+  Block *block = nullptr;
+  if (gesture->region != nullptr && region == gesture->region) {
+    for (Block &block_iter : region->runtime->uiblocks) {
+      if (block_iter.panel == gesture->panel && block_iter.panel->type != nullptr) {
+        block = &block_iter;
+        break;
+      }
+    }
+  }
+  /* A popup opened during the wait would take the release, and a later move would tear off with
+   * no button held, so cancel on Escape and on other buttons. */
+  if (block == nullptr || (event->type == EVT_ESCKEY && event->val == KM_PRESS) ||
+      (ISMOUSE_BUTTON(event->type) && event->type != LEFTMOUSE && event->val == KM_PRESS))
+  {
+    panel_tear_off_gesture_end(C, gesture);
+    return WM_UI_HANDLER_BREAK;
+  }
+
+  if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
+    const int mx = gesture->press_mx;
+    panel_tear_off_gesture_end(C, gesture);
+    handle_panel_header(C, block, mx, LEFTMOUSE, false, true, true);
+    return WM_UI_HANDLER_BREAK;
+  }
+
+  if (event->type == MOUSEMOVE) {
+    if (abs(event->xy[0] - gesture->press_xy[0]) > gesture->drag_threshold ||
+        abs(event->xy[1] - gesture->press_xy[1]) > gesture->drag_threshold)
+    {
+      const PanelType *pt = block->panel->type;
+      panel_tear_off_gesture_end(C, gesture);
+      PointerRNA props = WM_operator_properties_create("WM_OT_panel_tear_off");
+      RNA_string_set(&props, "panel_idname", pt->idname);
+      RNA_boolean_set(&props, "from_region_panel", true);
+      RNA_boolean_set(&props, "use_grab", true);
+      WM_operator_name_call(
+          C, "WM_OT_panel_tear_off", wm::OpCallContext::ExecDefault, &props, event);
+      WM_operator_properties_free(&props);
+    }
+  }
+  /* Same as a panel drag: nothing else acts while the button is held. */
+  return WM_UI_HANDLER_BREAK;
+}
+
+void panel_tear_off_gesture_region_exit(wmWindow *win, const ARegion *region)
+{
+  /* Operators get their region replaced and popups are handled by
+   * #tear_off_handlers_region_exit, nothing does it for this handler. The next event cancels. */
+  for (wmEventHandler &handler_base : win->runtime->modalhandlers) {
+    if (handler_base.type != WM_HANDLER_TYPE_UI || bool(handler_base.flag & WM_HANDLER_DO_FREE)) {
+      continue;
+    }
+    wmEventHandler_UI *handler = reinterpret_cast<wmEventHandler_UI *>(&handler_base);
+    if (handler->handle_fn != panel_tear_off_gesture_handler) {
+      continue;
+    }
+    PanelTearOffGesture *gesture = static_cast<PanelTearOffGesture *>(handler->user_data);
+    if (gesture->region == region) {
+      gesture->region = nullptr;
+      handler->context.area = nullptr;
+      handler->context.region = nullptr;
+    }
+  }
+}
+
+void panel_tear_off_gesture_cancel_all(bContext *C, wmWindow *win)
+{
+  WM_event_free_ui_handler_all(C,
+                               &win->runtime->modalhandlers,
+                               panel_tear_off_gesture_handler,
+                               panel_tear_off_gesture_remove);
+}
+
+static void panel_tear_off_gesture_begin(bContext *C,
+                                         const wmEvent *event,
+                                         ARegion *region,
+                                         Panel *panel,
+                                         const int mx)
+{
+  wmWindow *win = CTX_wm_window(C);
+  PanelTearOffGesture *gesture = MEM_new<PanelTearOffGesture>(__func__);
+  gesture->region = region;
+  gesture->panel = panel;
+  copy_v2_v2_int(gesture->press_xy, event->xy);
+  gesture->press_mx = mx;
+  /* Not #WM_event_drag_threshold. A queued press still has the previous press in prev_press_type,
+   * which is the Shift key here, and that selects the keyboard threshold. This gesture is always
+   * the left button. */
+  gesture->drag_threshold = int((WM_event_is_tablet(event) ? U.drag_threshold_tablet :
+                                                             U.drag_threshold_mouse) *
+                                UI_SCALE_FAC);
+  WM_tooltip_clear(C, win);
+  WM_event_add_ui_handler(C,
+                          &win->runtime->modalhandlers,
+                          panel_tear_off_gesture_handler,
+                          panel_tear_off_gesture_remove,
+                          gesture,
+                          eWM_EventHandlerFlag(0));
 }
 
 bool panel_category_is_visible(const ARegion *region)
@@ -2785,8 +2975,18 @@ int handler_panel_region(bContext *C,
       /* All mouse clicks inside panel headers should return in break. */
       if (ELEM(event->type, EVT_RETKEY, EVT_PADENTER, LEFTMOUSE)) {
         retval = WM_UI_HANDLER_BREAK;
-        handle_panel_header(
-            C, &block, mx, event->type, event->modifier & KM_CTRL, event->modifier & KM_SHIFT);
+        /* BFA - Tear-Off Menu/Panel: exactly Shift, so Ctrl+Shift+click keeps its meaning. A
+         * double-click counts as a press, or a fast second Shift+click would pin immediately and
+         * the two clicks would no longer behave alike. */
+        if (event->type == LEFTMOUSE && ELEM(event->val, KM_PRESS, KM_DBL_CLICK) &&
+            event->modifier == KM_SHIFT && panel_can_be_torn_off(region, panel))
+        {
+          panel_tear_off_gesture_begin(C, event, region, panel, mx);
+        }
+        else {
+          handle_panel_header(
+              C, &block, mx, event->type, event->modifier & KM_CTRL, event->modifier & KM_SHIFT);
+        }
       }
       else if (event->type == RIGHTMOUSE) {
         retval = popup_context_menu_for_panel(C, region, block.panel);

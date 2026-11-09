@@ -319,6 +319,12 @@ static const char *buttons_main_region_context_string(const short mainb)
   return "";
 }
 
+/* BFA - Tear-Off Menu/Panel */
+const char *ED_buttons_tab_context_string(const short mainb)
+{
+  return buttons_main_region_context_string(mainb);
+}
+
 static void buttons_main_region_layout_properties(const bContext *C,
                                                   SpaceProperties *sbuts,
                                                   ARegion *region)

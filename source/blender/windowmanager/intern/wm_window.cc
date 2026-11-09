@@ -3571,9 +3571,9 @@ std::optional<ARegionIMECursor> WM_window_IME_region_refresh(wmWindow *win,
    * otherwise any redraw while the popup is open re-enables the IME, see #ED_region_do_draw.
    * Tool-tips match too, harmless as an existing session isn't ended. */
   const bScreen *screen = WM_window_get_active_screen(win);
-  if (!screen->regionbase.is_empty() &&
-      (BKE_screen_find_region_type(screen, RGN_TYPE_TEMPORARY) != nullptr))
-  {
+  /* BFA - Tear-Off Menu/Panel: a tear-off isn't modal and is carried to every screen, so it must
+   * not keep region IME off for as long as one exists. */
+  if (ui::screen_has_blocking_popup(screen)) {
     return std::nullopt;
   }
 

@@ -54,6 +54,10 @@ struct PointerRNA;
 struct PropertyRNA;
 struct ReportList;
 struct ResultBLF;
+struct ScrArea; /* BFA - Tear-Off Menu/Panel: for #tear_off_handlers_area_exit. */
+struct WorkSpace; /* BFA - Tear-Off Menu/Panel: for #tear_off_handlers_remove_for_workspace. */
+struct Main;      /* BFA - Tear-Off Menu/Panel: for #TearOffSaveScope. */
+struct wmWindowManager; /* BFA - Tear-Off Menu/Panel: for #TearOffSaveScope. */
 struct bContext;
 struct bContextStore;
 struct bNode;
@@ -325,6 +329,12 @@ enum {
    * and inherited by sub-menus from their parent.
    */
   BLOCK_NO_ACCELERATOR_KEYS = 1 << 27,
+  /**
+   * BFA - Tear-Off Menu/Panel
+   * The block is a tear-off menu that should remain visible and allow
+   * interaction with the rest of the UI when events occur outside it.
+   */
+  BLOCK_TEAR_OFF = 1 << 28,
 };
 
 /** #PopupBlockHandle.menuretval */
@@ -952,7 +962,11 @@ bool popup_menu_end_or_cancel(bContext *C, PopupMenu *pup);
 Layout *popup_menu_layout(PopupMenu *pup);
 
 void popup_menu_reports(bContext *C, ReportList *reports) ATTR_NONNULL();
-wmOperatorStatus popup_menu_invoke(bContext *C, const char *idname, ReportList *reports)
+wmOperatorStatus popup_menu_invoke(bContext *C,
+                                     const char *idname,
+                                     ReportList *reports, // BFA - Tear-Off Menu/Panel
+                                     struct PopupBlockHandle **r_handle = nullptr, // BFA - Tear-Off Menu/Panel
+                                     bool is_tear_off = false) // BFA - Tear-Off Menu/Panel
     ATTR_NONNULL(1, 2);
 
 /**
@@ -993,7 +1007,13 @@ void popup_menu_but_set(PopupMenu *pup, ARegion *butregion, Button *but);
 struct Popover;
 
 wmOperatorStatus popover_panel_invoke(
-    bContext *C, const char *idname, bool keep_open, bool use_numselect, ReportList *reports);
+    bContext *C,
+    const char *idname,
+    bool keep_open,
+    bool use_numselect,
+    ReportList *reports,                            // BFA - Tear-Off Menu/Panel
+    struct PopupBlockHandle **r_handle = nullptr,   // BFA - Tear-Off Menu/Panel
+    bool is_tear_off = false);                      // BFA - Tear-Off Menu/Panel
 
 /**
  * Only return handler, and set optional title.
@@ -2455,6 +2475,74 @@ void popup_handlers_add(bContext *C,
                         char flag);
 void popup_handlers_remove(ListBaseT<wmEventHandler> *handlers, PopupBlockHandle *popup);
 void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers);
+/**
+ * BFA - Tear-Off Menu/Panel: false if the user turned tear-offs off in the Preferences. Every way
+ * of creating a tear-off must check this, so that the feature can be fully turned off. Open
+ * tear-offs close by themselves on the next event once this is false.
+ */
+bool tear_off_enabled();
+/**
+ * BFA - Tear-Off Menu/Panel: #PopupBlockHandle::tear_off_width for the block of this layout, 0
+ * when it isn't in a tear-off of a tool shelf panel. For RNA, which can't see the handle.
+ */
+float tear_off_layout_width_get(const Layout *layout);
+/**
+ * BFA - Tear-Off Menu/Panel: tear-off handlers outlive the area they were created in, so drop
+ * their reference when that area exits, and rebuild their buttons, which may point into its
+ * space data. Other popups are left untouched.
+ */
+void tear_off_handlers_area_exit(wmWindow *win, const ScrArea *area);
+/**
+ * BFA - Tear-Off Menu/Panel: a single region can be freed without its area exiting (leaving Quad
+ * View), so tear-off handlers must drop their reference to it on region exit as well.
+ */
+void tear_off_handlers_region_exit(wmWindow *win, const ARegion *region);
+/**
+ * BFA - Tear-Off Menu/Panel: end a Shift+press on a panel header that hasn't become a click or a
+ * drag yet. #WM_event_remove_handlers_by_area would free its handler without freeing its state.
+ */
+void panel_tear_off_gesture_cancel_all(bContext *C, wmWindow *win);
+/** BFA - Tear-Off Menu/Panel: close tear-offs scoped to a workspace that is being deleted. */
+void tear_off_handlers_remove_for_workspace(bContext *C,
+                                            wmWindow *win,
+                                            const WorkSpace *workspace);
+/**
+ * BFA - Tear-Off Menu/Panel: stored pins may be ready to come back. Only a flag, because this can
+ * be too early for popups: at startup there's no window yet when the file loads, and a workspace
+ * change can be inside a script's `context.temp_override()`.
+ */
+void tear_off_restore_tag(wmWindowManager *wm);
+/** BFA - Tear-Off Menu/Panel: what #tear_off_restore_tag asked for, with no window in the context.
+ */
+void tear_off_restore_pending_run(bContext *C, wmWindowManager *wm);
+/**
+ * BFA - Tear-Off Menu/Panel: a file load is about to close every pin. They go on their workspace's
+ * list first, which is what keeps them through a Load UI off open. With Load UI on, those
+ * workspaces go too.
+ */
+void tear_off_store_closing_all(Main *bmain, wmWindowManager *wm);
+/**
+ * BFA - Tear-Off Menu/Panel: goes directly around a #BLO_write_file. For that long each workspace's
+ * list also holds its open pins, so they're in the file while the session's list stays what's still
+ * to restore. Otherwise a save would leave them on it, and they'd come back duplicated, or after
+ * being closed.
+ */
+class TearOffSaveScope {
+ public:
+  TearOffSaveScope(Main *bmain, wmWindowManager *wm);
+  ~TearOffSaveScope();
+  TearOffSaveScope(const TearOffSaveScope &) = delete;
+  TearOffSaveScope &operator=(const TearOffSaveScope &) = delete;
+
+ private:
+  struct Data;
+  Data *data_ = nullptr;
+};
+/**
+ * BFA - Tear-Off Menu/Panel: true if the screen has a temporary region that takes input over the
+ * regions below it. Tear-offs aren't modal, so they don't count. Tooltips do, as upstream.
+ */
+bool screen_has_blocking_popup(const bScreen *screen);
 
 /**
  * Tags for refresh popup/menu handlers referencing a #StructRNA that is being unregistered,

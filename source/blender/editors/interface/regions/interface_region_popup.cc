@@ -16,10 +16,14 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_userdef_types.h"
+#include "DNA_workspace_types.h" /* BFA - Tear-Off Menu/Panel: WorkSpace::id. */
 
 #include "BLF_api.hh"
 
+#include "GPU_matrix.hh" /* BFA - Tear-Off Menu/Panel: the collapsed pin. */
+
 #include "BLI_listbase.hh"
+#include "BLI_math_base_c.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
 #include "BLI_utildefines.hh"
@@ -28,10 +32,21 @@
 #include "BKE_context.hh"
 #include "BKE_screen.hh"
 
+/* BFA - Tear-Off Menu/Panel: the active tool's message bus subscription. */
+#include "RNA_access.hh"
+#include "RNA_prototypes.hh"
+
 #include "WM_api.hh"
+#include "WM_message.hh" /* BFA - Tear-Off Menu/Panel */
 #include "WM_types.hh"
 
 #include "ED_screen.hh"
+
+/* BFA - Tear-Off Menu/Panel: used to draw the collapsed pin widget. */
+#include "UI_interface_c.hh"
+#include "UI_interface_icons.hh"
+#include "UI_resources.hh"
+#include "UI_view2d.hh" /* BFA - Tear-Off Menu/Panel: the scrollbar's width. */
 
 #include "interface_intern.hh"
 #include "interface_regions_intern.hh"
@@ -42,7 +57,9 @@ namespace blender::ui {
 /** \name Utility Functions
  * \{ */
 
-void popup_translate(ARegion *region, const int mdiff[2])
+/* BFA - Tear-Off Menu/Panel: `win` is an addition, so a dragged tear-off can be clamped to the
+ * window. Other popups aren't affected. */
+void popup_translate(ARegion *region, const int mdiff[2], const wmWindow *win)
 {
   BLI_rcti_translate(&region->winrct, UNPACK2(mdiff));
 
@@ -56,11 +73,109 @@ void popup_translate(ARegion *region, const int mdiff[2])
     /* Make empty, will be initialized on next use, see #60608. */
     BLI_rctf_init(&handle->prev_block_rect, 0, 0, 0, 0);
 
+    /* BFA - Tear-Off Menu/Panel: keep the collapsed pin widget position in sync when the
+     * expanded panel is dragged, so collapsing later shows the pin where the panel is. */
+    if (handle->is_tear_off) {
+      handle->tear_off_pin_xy[0] += mdiff[0];
+      handle->tear_off_pin_xy[1] += mdiff[1];
+    }
+
     for (SafetyRect &saferct : block.saferct) {
       BLI_rctf_translate(&saferct.parent, UNPACK2(mdiff));
       BLI_rctf_translate(&saferct.safety, UNPACK2(mdiff));
     }
   }
+
+  /* BFA - Tear-Off Menu/Panel: clamp expanded tear-off panels so they can't be dragged
+   * past the window edges. */
+  if (win) {
+    for (Block &block : region->runtime->uiblocks) {
+      PopupBlockHandle *handle = block.handle;
+      if (handle && handle->is_tear_off && !handle->tear_off_collapsed) {
+        tear_off_clamp_to_window(win, handle, &block, region);
+      }
+    }
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: clamp a tear-off panel so it stays entirely within the window
+ * bounds (with margin). Handles both collapsed and expanded states. */
+bool tear_off_clamp_to_window(const wmWindow *win,
+                              PopupBlockHandle *handle,
+                              Block *block,
+                              ARegion *region)
+{
+  const int2 win_size = WM_window_native_pixel_size(win);
+  const float margin = UI_SCREEN_MARGIN;
+
+  if (handle->tear_off_collapsed) {
+    /* --- Collapsed state: clamp the pin widget position --- */
+    rctf widget;
+    tear_off_pin_widget_rect(handle, &widget);
+    const float widget_w = BLI_rctf_size_x(&widget);
+    const float widget_h = BLI_rctf_size_y(&widget);
+
+    /* The upper limits can be below the lower ones in a window smaller than the pin, and
+     * #std::clamp is undefined then. A restored pin can be wider than a small window. */
+    const int min_x = int(margin);
+    const int min_y = int(widget_h + margin);
+    const int clamped_x = std::clamp(handle->tear_off_pin_xy[0],
+                                     min_x,
+                                     std::max(min_x, int(win_size[0] - widget_w - margin)));
+    const int clamped_y = std::clamp(
+        handle->tear_off_pin_xy[1], min_y, std::max(min_y, int(win_size[1] - margin)));
+
+    if (clamped_x != handle->tear_off_pin_xy[0] || clamped_y != handle->tear_off_pin_xy[1]) {
+      const int dx = clamped_x - handle->tear_off_pin_xy[0];
+      const int dy = clamped_y - handle->tear_off_pin_xy[1];
+      handle->tear_off_pin_xy[0] = clamped_x;
+      handle->tear_off_pin_xy[1] = clamped_y;
+      handle->popup_create_vars.event_xy[0] += dx;
+      handle->popup_create_vars.event_xy[1] += dy;
+      return true;
+    }
+    return false;
+  }
+
+  /* --- Expanded state: clamp the region position so the panel stays on-screen --- */
+  /* The block is in region-space. The on-screen content bounds are:
+   *   region->winrct.xmin + block->rect.xmin ... region->winrct.xmin + block->rect.xmax
+   * Clamp so these stay within [margin, win_size - margin]. */
+  const int content_xmin = region->winrct.xmin + int(block->rect.xmin);
+  const int content_xmax = region->winrct.xmin + int(block->rect.xmax);
+  const int content_ymin = region->winrct.ymin + int(block->rect.ymin);
+  const int content_ymax = region->winrct.ymin + int(block->rect.ymax);
+
+  int dx = 0, dy = 0;
+
+  if (content_xmin < int(margin)) {
+    dx = int(margin) - content_xmin;
+  }
+  else if (content_xmax > int(win_size[0] - margin)) {
+    dx = int(win_size[0] - margin) - content_xmax;
+  }
+
+  if (content_ymin < int(margin)) {
+    dy = int(margin) - content_ymin;
+  }
+  else if (content_ymax > int(win_size[1] - margin)) {
+    dy = int(win_size[1] - margin) - content_ymax;
+  }
+
+  if (dx != 0 || dy != 0) {
+    BLI_rcti_translate(&region->winrct, dx, dy);
+    ED_region_update_rect(region);
+
+    /* Sync pin and event_xy so collapsing/expanding is consistent. */
+    handle->tear_off_pin_xy[0] += dx;
+    handle->tear_off_pin_xy[1] += dy;
+    handle->popup_create_vars.event_xy[0] += dx;
+    handle->popup_create_vars.event_xy[1] += dy;
+
+    ED_region_tag_redraw(region);
+    return true;
+  }
+  return false;
 }
 
 /* position block relative to but, result is in window space */
@@ -416,6 +531,25 @@ static void block_region_refresh(const bContext *C, ARegion *region)
   ScrArea *ctx_area = CTX_wm_area(C);
   ARegion *ctx_region = CTX_wm_region(C);
 
+  /* BFA - Tear-Off Menu/Panel: this runs on every window draw, so it's the one place that
+   * sees a tear-off becoming visible again, and scale changes from all paths (macOS native
+   * resolution, DPI hint, Resolution Scale). */
+  for (Block &block : region->runtime->uiblocks) {
+    PopupBlockHandle *handle = block.handle;
+    if (!handle || !handle->is_tear_off || !tear_off_is_visible(C, handle)) {
+      continue;
+    }
+    if (handle->tear_off_refresh_pending || (handle->tear_off_scale_fac != UI_SCALE_FAC)) {
+      /* Unlike the size fields this one is in pixels, and must show the same rows afterwards. */
+      if (handle->tear_off_scale_fac != UI_SCALE_FAC && handle->tear_off_scale_fac > 0.0f) {
+        handle->scrolloffset *= UI_SCALE_FAC / handle->tear_off_scale_fac;
+      }
+      handle->tear_off_refresh_pending = false;
+      handle->tear_off_scale_fac = UI_SCALE_FAC;
+      region->runtime->do_draw |= RGN_REFRESH_UI;
+    }
+  }
+
   if (region->runtime->do_draw & RGN_REFRESH_UI) {
     ScrArea *handle_ctx_area;
     ARegion *handle_ctx_region;
@@ -424,7 +558,15 @@ static void block_region_refresh(const bContext *C, ARegion *region)
     for (Block &block : region->runtime->uiblocks.items_mutable()) {
       PopupBlockHandle *handle = block.handle;
 
+      /* BFA - Tear-Off Menu/Panel: a hidden tear-off may reference another screen or a
+       * freed area. Defer its refresh until it is visible. */
+      if (handle->is_tear_off && !tear_off_is_visible(C, handle)) {
+        handle->tear_off_refresh_pending = true;
+        continue;
+      }
+
       if (handle->can_refresh) {
+        tear_off_context_ensure(const_cast<bContext *>(C), handle); /* BFA - Tear-Off Menu/Panel */
         handle_ctx_area = handle->ctx_area;
         handle_ctx_region = handle->ctx_region;
 
@@ -446,9 +588,299 @@ static void block_region_refresh(const bContext *C, ARegion *region)
   CTX_wm_region_set(const_cast<bContext *>(C), ctx_region);
 }
 
+/* BFA - Tear-Off Menu/Panel: where a button of the open header is when collapsed. A collapsed
+ * block keeps its layout but not its position, so this goes by its top left corner. */
+static rctf tear_off_pin_but_rect(const PopupBlockHandle *handle,
+                                  const Block *block,
+                                  const Button &but)
+{
+  rctf rect = but.rect;
+  BLI_rctf_translate(&rect,
+                     handle->tear_off_pin_xy[0] - block->rect.xmin,
+                     handle->tear_off_pin_xy[1] - block->rect.ymax);
+  return rect;
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+bool tear_off_pin_icon_rect(const PopupBlockHandle *handle, const int icon, rctf *r_rect)
+{
+  const Block *block = handle->region->runtime->uiblocks.first();
+  if (block) {
+    for (const Button &but : block->buttons()) {
+      if (but.tear_off_header && but.icon == icon) {
+        *r_rect = tear_off_pin_but_rect(handle, block, but);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/* BFA - Tear-Off Menu/Panel: geometry of the collapsed pin widget, shared by draw and
+ * event handling. `r_rect` is in region-local coordinates. Collapsing only moves the bottom edge
+ * up, so the open header's buttons stay under the cursor: double-clicking the title can't end up
+ * on the close icon. As much is left below the row as there is above it. */
+void tear_off_pin_widget_rect(const PopupBlockHandle *handle, rctf *r_rect)
+{
+  float width = 4.0f * UI_UNIT_X;
+  float height = UI_UNIT_Y;
+  rctf icon;
+  if (tear_off_pin_icon_rect(handle, ICON_PANEL_CLOSE, &icon)) {
+    const Block *block = handle->region->runtime->uiblocks.first();
+    width = BLI_rctf_size_x(&block->rect);
+    height = 2.0f * (handle->tear_off_pin_xy[1] - BLI_rctf_cent_y(&icon));
+  }
+  r_rect->xmin = handle->tear_off_pin_xy[0];
+  r_rect->xmax = handle->tear_off_pin_xy[0] + width;
+  r_rect->ymin = handle->tear_off_pin_xy[1] - height;
+  r_rect->ymax = handle->tear_off_pin_xy[1];
+}
+
+/* BFA - Tear-Off Menu/Panel: collapse or expand a pinned tear-off popup.
+ *
+ * Collapsing switches the popup to the small draggable pin widget. The region must cover the
+ * whole window (same approach as pie menus) so the GPU scissor never clips the widget, and so
+ * region-local coordinates equal window coordinates (which `tear_off_pin_xy` relies on).
+ *
+ * Expanding switches back to the full panel. The panel is re-laid-out through the normal
+ * refresh path (`popup_block_refresh`), which resets the region `winrct` to the panel size.
+ */
+void tear_off_set_collapsed(PopupBlockHandle *handle, const bool collapsed, const wmWindow *win)
+{
+  ARegion *region = handle->region;
+  handle->tear_off_collapsed = collapsed;
+
+  if (collapsed) {
+    Block *block = region->runtime->uiblocks.first();
+    if (block) {
+      /* BFA - Tear-Off Menu/Panel: capture the current header position so the collapsed pin
+       * widget appears exactly where the panel header was (top-left corner in window coords).
+       * The block is in region-space; add region origin for window-space coords. */
+      handle->tear_off_pin_xy[0] = region->winrct.xmin + int(block->rect.xmin);
+      handle->tear_off_pin_xy[1] = region->winrct.ymin + int(block->rect.ymax);
+      handle->popup_create_vars.event_xy[0] = handle->tear_off_pin_xy[0];
+      handle->popup_create_vars.event_xy[1] = handle->tear_off_pin_xy[1];
+    }
+
+    /* Cover the whole window so the widget is never clipped and region-local == window. */
+    const int2 win_size = WM_window_native_pixel_size(win);
+    region->winrct.xmin = 0;
+    region->winrct.ymin = 0;
+    region->winrct.xmax = win_size[0];
+    region->winrct.ymax = win_size[1];
+    ED_region_update_rect(region);
+
+    /* Clamp the pin widget to window bounds (basic visibility only, so the pin stays
+     * exactly where the header was). */
+    if (block) {
+      tear_off_clamp_to_window(win, handle, block, region);
+    }
+
+    /* It collapses under the cursor, and must not fade until the cursor leaves. If the cursor is
+     * elsewhere, the next mouse move starts it. */
+    handle->tear_off_pin_fade = 1.0f;
+    rctf widget;
+    tear_off_pin_widget_rect(handle, &widget);
+    const int *xy = win->runtime->eventstate->xy;
+    handle->tear_off_pin_hover = BLI_rctf_isect_pt(&widget, xy[0], xy[1]);
+  }
+  else {
+    /* Re-layout the full panel; `popup_block_refresh` resets `winrct` to the panel size. */
+    ED_region_tag_refresh_ui(region);
+    handle->tear_off_pin_hover = false;
+    handle->tear_off_pin_hover_x = false;
+    handle->tear_off_pin_hover_pin = false;
+    handle->tear_off_move_cursor = false;
+  }
+
+  ED_region_tag_redraw(region);
+}
+
+/* BFA - Tear-Off Menu/Panel: how far a collapsed pin recedes while the cursor is elsewhere, so it
+ * doesn't clutter the view. REST_ALPHA fades it as one layer, which keeps the title readable over a
+ * bright viewport, because the text blends toward the viewport and not toward its own color.
+ * REST_BACK_ALPHA lowers the color and outline further, to 0.6 overall. A title over a white
+ * viewport then has a contrast of about 3:1 (2.9 for a menu, 3.0 for a panel), and less would make
+ * it hard to read. */
+static constexpr float TEAR_OFF_PIN_REST_ALPHA = 0.8f;
+static constexpr float TEAR_OFF_PIN_REST_BACK_ALPHA = 0.75f;
+/* BFA - Tear-Off Menu/Panel: seconds. Coming back is quick, as the user is reaching for it. Going
+ * is slower, so passing over a pin doesn't read as a flash. */
+static constexpr double TEAR_OFF_PIN_FADE_IN_TIME = 0.08;
+static constexpr double TEAR_OFF_PIN_FADE_OUT_TIME = 0.3;
+static constexpr double TEAR_OFF_PIN_FADE_STEP = 1.0 / 60.0;
+
+static float tear_off_pin_fade_target(const PopupBlockHandle *handle)
+{
+  return (handle->tear_off_pin_hover || handle->tear_off_pin_dragging) ? 1.0f : 0.0f;
+}
+
+void tear_off_pin_fade_start(const bContext *C, PopupBlockHandle *handle)
+{
+  if (handle->tear_off_pin_fade_timer == nullptr && handle->tear_off_collapsed &&
+      handle->tear_off_pin_fade != tear_off_pin_fade_target(handle))
+  {
+    handle->tear_off_pin_fade_timer = WM_event_timer_add(
+        CTX_wm_manager(C), CTX_wm_window(C), TIMER, TEAR_OFF_PIN_FADE_STEP);
+  }
+}
+
+bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event)
+{
+  wmTimer *timer = handle->tear_off_pin_fade_timer;
+  if (timer == nullptr || event->customdata != timer) {
+    return false;
+  }
+  const float target = tear_off_pin_fade_target(handle);
+  const double time = (target > handle->tear_off_pin_fade) ? TEAR_OFF_PIN_FADE_IN_TIME :
+                                                             TEAR_OFF_PIN_FADE_OUT_TIME;
+  const float step = float(timer->time_delta / time);
+  handle->tear_off_pin_fade = (target > handle->tear_off_pin_fade) ?
+                                  std::min(handle->tear_off_pin_fade + step, target) :
+                                  std::max(handle->tear_off_pin_fade - step, target);
+  ED_region_tag_redraw(handle->region);
+  /* An expanded pin has nothing left to fade. */
+  if (handle->tear_off_pin_fade == target || !handle->tear_off_collapsed) {
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer);
+    handle->tear_off_pin_fade_timer = nullptr;
+  }
+  return true;
+}
+
+/* BFA - Tear-Off Menu/Panel: seconds, for what covered a clicked tear-off to give way to it. Only a
+ * touch, because it follows a click and shouldn't feel like a wait. */
+static constexpr double TEAR_OFF_RAISE_TIME = 0.18;
+/* BFA - Tear-Off Menu/Panel: how far through it the copy where it was starts to go. Only once the
+ * one at the front is solid, or the tear-off would dip. Removing that copy at once instead would
+ * show as a step in its shadow, which is doubled until then. */
+static constexpr float TEAR_OFF_RAISE_UNDER_START = 0.7f;
+
+void tear_off_raise_fade_start(const bContext *C,
+                               PopupBlockHandle *handle,
+                               const ARegion *under_next)
+{
+  bke::ARegionRuntime &runtime = *handle->region->runtime;
+  runtime.tear_off_raise_next = under_next;
+  runtime.tear_off_raise_alpha = 0.0f;
+  runtime.tear_off_raise_under_alpha = 1.0f;
+  handle->tear_off_raise_fade = 0.0f;
+  if (handle->tear_off_raise_timer == nullptr) {
+    handle->tear_off_raise_timer = WM_event_timer_add(
+        CTX_wm_manager(C), CTX_wm_window(C), TIMER, TEAR_OFF_PIN_FADE_STEP);
+  }
+  ED_region_tag_redraw(handle->region);
+}
+
+bool tear_off_raise_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event)
+{
+  wmTimer *timer = handle->tear_off_raise_timer;
+  if (timer == nullptr || event->customdata != timer) {
+    return false;
+  }
+  handle->tear_off_raise_fade = std::min(
+      handle->tear_off_raise_fade + float(timer->time_delta / TEAR_OFF_RAISE_TIME), 1.0f);
+  const float fade = handle->tear_off_raise_fade;
+  const auto ease = [](const float x) { return x * x * (3.0f - 2.0f * x); };
+  const float under_start = TEAR_OFF_RAISE_UNDER_START;
+
+  bke::ARegionRuntime &runtime = *handle->region->runtime;
+  runtime.tear_off_raise_alpha = ease(std::min(fade / under_start, 1.0f));
+  runtime.tear_off_raise_under_alpha = 1.0f -
+                                       ease(std::max((fade - under_start) / (1.0f - under_start),
+                                                     0.0f));
+  if (fade == 1.0f) {
+    runtime.tear_off_raise_next = nullptr;
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer);
+    handle->tear_off_raise_timer = nullptr;
+  }
+  ED_region_tag_redraw(handle->region);
+  return true;
+}
+
+/* BFA - Tear-Off Menu/Panel: draw the collapsed pin widget for a hidden pinned tear-off. The
+ * header's own buttons, so they look the same as when open, apart from the pin icon. Controls of
+ * the panel's header aren't drawn, because a collapsed pin can't use them, but the text of a
+ * header checkbox can be the panel's title. */
+static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *block)
+{
+  PopupBlockHandle *handle = block->handle;
+  uiStyle style = *style_get_dpi();
+
+  rctf rect;
+  tear_off_pin_widget_rect(handle, &rect);
+  rcti rect_px;
+  BLI_rcti_rctf_copy_round(&rect_px, &rect);
+
+  GPU_matrix_push_projection();
+  GPU_matrix_push();
+  GPU_matrix_identity_set();
+  wmOrtho2_region_pixelspace(region);
+
+  /* Eased, as a straight line starts and stops with a visible step. */
+  const float fade = handle->tear_off_pin_fade;
+  const float eased = fade * fade * (3.0f - 2.0f * fade);
+  region->runtime->tear_off_alpha = interpf(1.0f, TEAR_OFF_PIN_REST_ALPHA, eased);
+  draw_tear_off_pin_back(
+      block, &rect_px, interpf(1.0f, TEAR_OFF_PIN_REST_BACK_ALPHA, eased), eased);
+
+  BLF_batch_draw_begin();
+  widgetbase_draw_cache_begin();
+  for (Button &but : block->buttons()) {
+    const bool is_close = but.icon == ICON_PANEL_CLOSE;
+    const bool is_pin = but.icon == ICON_UNPINNED;
+    const bool is_checkbox_title = ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN) &&
+                                   !but.drawstr.empty();
+    if (!but.tear_off_header || (but.flag & UI_HIDDEN) ||
+        !(but.type == ButtonType::Label || is_close || is_pin || is_checkbox_title))
+    {
+      continue;
+    }
+    const rctf but_rect = tear_off_pin_but_rect(handle, block, but);
+    rcti but_px;
+    BLI_rcti_rctf_copy_round(&but_px, &but_rect);
+
+    if (is_checkbox_title) {
+      draw_tear_off_pin_checkbox_title(&style, &but, &but_px);
+      continue;
+    }
+
+    /* Only for this draw. The hover state is the pin's own, and the press that collapsed it can
+     * be left on the block. */
+    const int icon = but.icon;
+    const int flag = but.flag;
+    but.flag &= ~(UI_HOVER | UI_SELECT);
+    if ((is_pin && handle->tear_off_pin_hover_pin) || (is_close && handle->tear_off_pin_hover_x)) {
+      but.flag |= UI_HOVER;
+    }
+    if (is_pin) {
+      but.icon = ICON_PINNED;
+    }
+    draw_button(C, region, &style, &but, &but_px);
+    but.icon = icon;
+    but.flag = flag;
+  }
+  widgetbase_draw_cache_end();
+  BLF_batch_draw_end();
+
+  GPU_matrix_pop_projection();
+  GPU_matrix_pop();
+}
+
 static void block_region_draw(const bContext *C, ARegion *region)
 {
+  /* BFA - Tear-Off Menu/Panel: only a pin at rest fades, see #tear_off_pin_widget_draw. */
+  region->runtime->tear_off_alpha = 1.0f;
   for (Block &block : region->runtime->uiblocks) {
+    /* BFA - Tear-Off Menu/Panel: hide pinned tear-offs whose editor domain, mode or workspace
+     * no longer matches the current context. The handle stays alive so the panel can reappear. */
+    if (block.handle && !tear_off_is_visible(C, block.handle)) {
+      continue;
+    }
+    /* BFA - Tear-Off Menu/Panel: user-collapsed pinned panel draws as the pin widget. */
+    if (block.handle && block.handle->is_tear_off && block.handle->tear_off_collapsed) {
+      tear_off_pin_widget_draw(C, region, &block);
+      continue;
+    }
     block_draw(C, &block);
   }
 }
@@ -473,6 +905,121 @@ static void block_region_popup_window_listener(const wmRegionListenerParams *par
       break;
     }
   }
+}
+
+/* BFA - Tear-Off Menu/Panel: notifiers after which a tear-off's buttons may be stale. */
+static bool tear_off_notifier_invalidates_buttons(const wmNotifier *wmn)
+{
+  switch (wmn->category) {
+    case NC_SCREEN:
+    case NC_UI:
+      return false;
+    case NC_SPACE:
+      /* BFA - Tear-Off Menu/Panel: these change what a panel's poll answers: the Properties tab,
+       * the Image editor mode, the node tree type, the sequencer view, the Clip editor mode and
+       * view, the Dope Sheet mode and the Graph editor mode. An allow-list, because
+       * ND_SPACE_VIEW3D fires on every view change and ND_SPACE_INFO_REPORT on every report. */
+      return ELEM(wmn->data,
+                  ND_SPACE_PROPERTIES,
+                  ND_SPACE_IMAGE,
+                  ND_SPACE_NODE,
+                  ND_SPACE_SEQUENCER,
+                  ND_SPACE_CLIP,
+                  ND_SPACE_DOPESHEET,
+                  ND_SPACE_GRAPH);
+    case NC_WM:
+      return ELEM(wmn->data, ND_UNDO, ND_DATACHANGED);
+    default:
+      /* Includes plain NC_WINDOW, which undo sends (see ed_undo.cc). */
+      return true;
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: keep tear-off panels inside the window when it is resized.
+ * Handles both collapsed (pin widget) and expanded (full panel) states. */
+static void tear_off_region_window_listener(const wmRegionListenerParams *params)
+{
+  ARegion *region = params->region;
+  const wmNotifier *wmn = params->notifier;
+
+  if (wmn->category != NC_WINDOW || wmn->action != NA_EDITED) {
+    /* BFA - Tear-Off Menu/Panel: a tear-off stays open across data changes, unlike a modal popup,
+     * so its buttons must not keep pointers to deleted data until the next hover. */
+    if (tear_off_notifier_invalidates_buttons(wmn)) {
+      ED_region_tag_refresh_ui(region);
+    }
+    return;
+  }
+
+  for (Block &block : region->runtime->uiblocks) {
+    PopupBlockHandle *handle = block.handle;
+    if (!handle || !handle->is_tear_off) {
+      continue;
+    }
+
+    if (handle->tear_off_collapsed) {
+      /* Collapsed: clamp pin widget to the (new) window bounds and keep region covering
+       * the whole window. Expanded-size nudge happens on expand (in popup_block_refresh). */
+      tear_off_clamp_to_window(params->window, handle, &block, region);
+
+      /* Keep the region covering the whole (new) window size. */
+      const int2 win_size = WM_window_native_pixel_size(params->window);
+      region->winrct.xmin = 0;
+      region->winrct.ymin = 0;
+      region->winrct.xmax = win_size[0];
+      region->winrct.ymax = win_size[1];
+      ED_region_update_rect(region);
+    }
+    else {
+      /* Expanded: refresh the layout (repositions block at pin, clips to fit) so the
+       * panel "pops" to a valid position when the window is enlarged. */
+      ED_region_tag_refresh_ui(region);
+    }
+
+    ED_region_tag_redraw(region);
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: a tool change only publishes on the message bus. Regions redraw from
+ * that, but a tear-off bakes the active tool's highlight into its buttons, so it needs a rebuild.
+ */
+static void tear_off_msg_notify_refresh(bContext * /*C*/,
+                                        wmMsgSubscribeKey * /*msg_key*/,
+                                        wmMsgSubscribeValue *msg_val)
+{
+  ED_region_tag_refresh_ui(static_cast<ARegion *>(msg_val->owner));
+}
+
+/* BFA - Tear-Off Menu/Panel: see #tear_off_msg_notify_refresh. */
+static void tear_off_region_message_subscribe(const wmRegionMessageSubscribeParams *params)
+{
+  wmMsgSubscribeValue msg_val{};
+  msg_val.owner = params->region;
+  msg_val.user_data = params->region;
+  msg_val.notify = tear_off_msg_notify_refresh;
+  WM_msg_subscribe_rna_prop(params->message_bus,
+                            &params->workspace->id,
+                            params->workspace,
+                            WorkSpace,
+                            tools,
+                            &msg_val);
+}
+
+/* BFA - Tear-Off Menu/Panel: tear-offs need their own region type. The type in
+ * popup_block_create is shared and reset by every new popup, which would drop this listener,
+ * and it could also give tear-offs the centered-popup listener by accident. */
+static ARegionType *tear_off_region_type_get()
+{
+  static ARegionType type;
+  if (type.draw == nullptr) {
+    memset(&type, 0, sizeof(ARegionType));
+    type.draw = block_region_draw;
+    type.layout = block_region_refresh;
+    type.regionid = RGN_TYPE_TEMPORARY;
+    type.listener = tear_off_region_window_listener;
+    type.message_subscribe = tear_off_region_message_subscribe;
+  }
+  return &type;
 }
 
 static void popup_block_clip(wmWindow *window, Block *block)
@@ -528,12 +1075,18 @@ void popup_block_scrolltest(Block *block)
     block->flag |= BLOCK_CLIPBOTTOM;
   }
 
+  /* BFA - Tear-Off Menu/Panel: content ends at the bottom of a sticky header, which never
+   * hides. */
+  const float scroll_top = block_scroll_top(block);
   for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header) {
+      continue;
+    }
     /* Tag buttons that are outside boundary */
     if (bt.rect.ymax < block->rect.ymin) {
       bt.flag |= UI_SCROLLED;
     }
-    if (bt.rect.ymin > block->rect.ymax) {
+    if (bt.rect.ymin > scroll_top) {
       bt.flag |= UI_SCROLLED;
     }
     /* Tag buttons overlapping arrows, if we have them */
@@ -543,7 +1096,7 @@ void popup_block_scrolltest(Block *block)
       }
     }
     if (block->flag & BLOCK_CLIPTOP) {
-      if (bt.rect.ymin > block->rect.ymax - UI_MENU_SCROLL_MOUSE / block->aspect) {
+      if (bt.rect.ymin > scroll_top - UI_MENU_SCROLL_MOUSE / block->aspect) {
         bt.flag |= UI_SCROLLED;
       }
     }
@@ -590,12 +1143,27 @@ static void popup_block_remove(bContext *C, PopupBlockHandle *handle)
   if (handle->scrolltimer) {
     WM_event_timer_remove(wm, win, handle->scrolltimer);
   }
+  /* BFA - Tear-Off Menu/Panel */
+  if (handle->tear_off_pin_fade_timer) {
+    WM_event_timer_remove(wm, win, handle->tear_off_pin_fade_timer);
+    handle->tear_off_pin_fade_timer = nullptr;
+  }
+  if (handle->tear_off_raise_timer) {
+    WM_event_timer_remove(wm, win, handle->tear_off_raise_timer);
+    handle->tear_off_raise_timer = nullptr;
+  }
   if (handle->keep_open_timer) {
     WM_event_timer_remove(wm, win, handle->keep_open_timer);
   }
   if (handle->mmb_panning) {
     WM_cursor_set(win, WM_CURSOR_DEFAULT);
     WM_cursor_grab_disable(win, nullptr);
+  }
+  /* BFA - Tear-Off Menu/Panel: a free through Reload Scripts or the preference switch must not
+   * leave the grip cursor. */
+  if (handle->tear_off_hover_zone || handle->tear_off_drag_zone) {
+    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    win->tag_cursor_refresh = true;
   }
 }
 
@@ -674,6 +1242,169 @@ void popup_dummy_panel_set(ARegion *region, Block *block, StringRef idname)
   panel->runtime->block = block;
 }
 
+/* BFA - Tear-Off Menu/Panel: natural height, and the least that keeps the header and one whole row
+ * usable. Before any scroll offset, so the top button is the top of the header. */
+static float tear_off_height_min(const Block *block, float *r_natural)
+{
+  float header_ymin = FLT_MAX, ymin = FLT_MAX, ymax = -FLT_MAX;
+  for (const Button &bt : block->buttons()) {
+    ymin = std::min(ymin, bt.rect.ymin);
+    ymax = std::max(ymax, bt.rect.ymax);
+    if (bt.tear_off_header) {
+      header_ymin = std::min(header_ymin, bt.rect.ymin);
+    }
+  }
+  const float bounds = block->bounds / block->aspect;
+  *r_natural = ymax - ymin + 2.0f * bounds;
+  if (header_ymin == FLT_MAX) {
+    return 0.0f;
+  }
+  return std::min(*r_natural,
+                  ymax - header_ymin + bounds + UI_UNIT_Y + 2.0f * UI_MENU_SCROLL_MOUSE);
+}
+
+/* BFA - Tear-Off Menu/Panel: a menu's rows reach its edge, and the bar must not cover their arrows
+ * and shortcuts. Panels have their margin. The room is always there, so a menu keeps its width
+ * when it starts to overflow and the bar appears inside it: while it fits, the rows fill that
+ * room. */
+static void tear_off_menu_gutter_add(wmWindow *window, Block *block, const bool overflows)
+{
+  if (block->flag & BLOCK_POPOVER) {
+    return;
+  }
+  const float gutter = V2D_SCROLL_WIDTH + 2.0f * UI_SCALE_FAC;
+  float rows_xmax = -FLT_MAX;
+  for (const Button &bt : block->buttons()) {
+    if (!bt.tear_off_header) {
+      rows_xmax = std::max(rows_xmax, bt.rect.xmax);
+    }
+  }
+  block->rect.xmax += gutter;
+  /* #block_tear_off_align_header already ran, so the icons and line must follow the edge. */
+  for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header && bt.optype) {
+      BLI_rctf_translate(&bt.rect, gutter, 0.0f);
+    }
+    else if (bt.tear_off_header && bt.type == ButtonType::SeprLine) {
+      bt.rect.xmax += gutter;
+    }
+    /* Only the last column, in a menu with several. */
+    else if (!bt.tear_off_header && !overflows && bt.rect.xmax >= rows_xmax - 1.0f) {
+      bt.rect.xmax += gutter;
+    }
+  }
+  popup_block_clip(window, block);
+}
+
+/* BFA - Tear-Off Menu/Panel: a pin can park 30 px above the window bottom, and the clip only
+ * trims, so expanding there would leave a block shorter than its header. Grow upward instead. The
+ * pin sync after this records the new position. */
+static void tear_off_height_apply(wmWindow *window, const PopupBlockHandle *handle, Block *block)
+{
+  float natural;
+  const float min_h = tear_off_height_min(block, &natural);
+  const float lack = min_h - BLI_rctf_size_y(&block->rect);
+  if (lack > 0.0f) {
+    const float top_limit = WM_window_native_pixel_size(window)[1] - UI_POPUP_MENU_TOP;
+    const float lift = std::min(lack, std::max(top_limit - block->rect.ymax, 0.0f));
+    block_translate(block, 0.0f, lift);
+    block->rect.ymin -= lift;
+  }
+  /* This only ever raises the bottom, so the top stays at the pin. Content shorter than the crop
+   * doesn't reach it. */
+  if (handle->tear_off_user_height > 0.0f) {
+    const float crop = std::max(handle->tear_off_user_height * UI_SCALE_FAC, min_h);
+    block->rect.ymin = std::max(block->rect.ymin, block->rect.ymax - crop);
+  }
+  /* Comparing heights also catches a block trimmed at the top, whose buttons only move down later,
+   * in #tear_off_header_scroll_prepare. */
+  tear_off_menu_gutter_add(window, block, natural > BLI_rctf_size_y(&block->rect) + 0.5f);
+}
+
+/* BFA - Tear-Off Menu/Panel: a panel torn off a region has the header of a region's panel: the row
+ * centered in #PNL_HEADER, and the close icon as far from the edge as a panel's grip, see
+ * #panel_draw_aligned_widgets. The block's margin would otherwise push the row in on all sides.
+ * Only these buttons move, so the scroll range, which doesn't count them, stays the same. */
+static void tear_off_panel_header_align(Block *block, const float bounds)
+{
+  if (!block_has_tear_off_panel_colors(block)) {
+    return;
+  }
+  /* At some scales this is a tie, which the aspect's float noise would break differently from one
+   * layout to the next, moving the row by a pixel. */
+  const float up = std::round(bounds - (PNL_HEADER - UI_UNIT_Y) * 0.5f / block->aspect - 0.01f);
+  const float right = std::round(bounds - 0.2f * UI_UNIT_X / block->aspect);
+  /* The title is the last label. What's before it goes left with it, and the rest goes right. */
+  int title_index = -1;
+  int index = 0;
+  for (const Button &bt : block->buttons()) {
+    if (bt.tear_off_header && bt.type == ButtonType::Label) {
+      title_index = index;
+    }
+    index++;
+  }
+  index = 0;
+  for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header) {
+      bt.rect.ymin += up;
+      bt.rect.ymax += up;
+      if (index == title_index) {
+        /* Only its start, as the room freed on its right belongs to it. */
+        bt.rect.xmin -= bounds;
+      }
+      else {
+        BLI_rctf_translate(&bt.rect, index < title_index ? -bounds : right, 0.0f);
+      }
+    }
+    index++;
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: the pin and close icons are square, which shows when a highlight lights
+ * up. They're in an aligned row, and #widget_roundbox_set stitches a button to its left neighbor by
+ * making it a pixel wider, which also takes the glyph off center. These have no shared edge to
+ * hide, so no alignment. Whole pixels too, because layout leaves them on fractions, and rounding
+ * each edge alone can do the same. */
+static void tear_off_header_icons_snap(Block *block)
+{
+  for (Button &bt : block->buttons()) {
+    if (bt.tear_off_header && ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE)) {
+      /* Centered too, as in a menu they'd line up with the icons of its rows, off center here. */
+      bt.drawflag &= ~(BUT_ALIGN_ALL | BUT_ICON_LEFT);
+      const float size = std::round(BLI_rctf_size_y(&bt.rect));
+      bt.rect.xmin = std::round(bt.rect.xmin);
+      bt.rect.ymin = std::round(bt.rect.ymin);
+      bt.rect.xmax = bt.rect.xmin + size;
+      bt.rect.ymax = bt.rect.ymin + size;
+    }
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: the header stays, so the content scrolls below it. If the window
+ * trimmed the top of the block, move everything down, or the header would stay cut off. */
+static void tear_off_header_scroll_prepare(Block *block, const float bounds)
+{
+  float ymin = FLT_MAX, ymax = -FLT_MAX;
+  for (const Button &bt : block->buttons()) {
+    if (bt.tear_off_header) {
+      ymin = std::min(ymin, bt.rect.ymin);
+      ymax = std::max(ymax, bt.rect.ymax);
+    }
+  }
+  if (ymin == FLT_MAX) {
+    return;
+  }
+  const float excess = std::max(ymax + bounds - block->rect.ymax, 0.0f);
+  for (Button &bt : block->buttons()) {
+    bt.rect.ymin -= excess;
+    bt.rect.ymax -= excess;
+  }
+  /* Above 0 even in a window too small for the header, because 0 means there is none. */
+  block->tear_off_header_ymin = std::max(ymin - excess, 1.0f);
+  tear_off_panel_header_align(block, bounds);
+  tear_off_header_icons_snap(block);
+}
+
 Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butregion, Button *but)
 {
   const int margin = UI_POPUP_MARGIN;
@@ -706,6 +1437,14 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
 
   /* Don't create accelerator keys if the parent menu does not have them. */
   if (but && but->block->flag & BLOCK_NO_ACCELERATOR_KEYS) {
+    block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
+  }
+  /* BFA - Tear-Off Menu/Panel: propagate no-accelerator to sub-menus of tear-off menus. */
+  if (but && but->block->handle && but->block->handle->is_tear_off) {
+    block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
+  }
+  /* BFA - Tear-Off Menu/Panel: preserve no-accelerator state across refreshes. */
+  if (block_old && (block_old->flag & BLOCK_NO_ACCELERATOR_KEYS)) {
     block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
   }
 
@@ -746,7 +1485,10 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
   }
 
   block->flag |= BLOCK_LOOP;
-  block_theme_style_set(block, BLOCK_THEME_STYLE_POPUP);
+  /* BFA - Tear-Off Menu/Panel: labels and checkboxes as in a panel, to go with its color. */
+  block_theme_style_set(block,
+                        block_is_tear_off_panel(block) ? BLOCK_THEME_STYLE_REGULAR :
+                                                         BLOCK_THEME_STYLE_POPUP);
 
   /* defer this until blocks are translated (below) */
   block->oldblock = nullptr;
@@ -842,17 +1584,60 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
       block_translate(block, 0, -unit_half);
     }
 
+    /* BFA - Tear-Off Menu/Panel: close button is now added through the layout system
+     * in menutype_draw / paneltype_draw_impl, which gives proper sizing. */
+
     /* clip block with window boundary */
     popup_block_clip(window, block);
 
     /* Avoid menu moving down and losing cursor focus by keeping it at the same height when the
      * popup is displaced down by at least one window unit. */
-    if (handle->refresh && (handle->prev_block_rect.ymax - block->rect.ymax) > 1.0f) {
+    /* BFA - Tear-Off Menu/Panel: the pin anchor below places a tear-off, and restoring the old
+     * ymin would stop a crop ever growing again. */
+    if (handle->refresh && !handle->is_tear_off &&
+        (handle->prev_block_rect.ymax - block->rect.ymax) > 1.0f)
+    {
       if (block->bounds_type != BLOCK_BOUNDS_POPUP_CENTER) {
         const float offset = handle->prev_block_rect.ymax - block->rect.ymax;
         block_translate(block, 0, offset);
         block->rect.ymin = handle->prev_block_rect.ymin;
       }
+    }
+
+    /* BFA - Tear-Off Menu/Panel: when expanding from collapsed (or refreshing an expanded
+     * tear-off), reposition the block to where the pin widget was, instead of the original
+     * source button. On initial creation the pin position is not yet set, so skip. */
+    if (handle->is_tear_off && !handle->tear_off_collapsed && handle->refresh) {
+      /* block->rect is in window coordinates. Translate so the panel's top-left corner
+       * (block->rect.xmin, block->rect.ymax) aligns with the stored pin position. */
+      const float dx = handle->tear_off_pin_xy[0] - block->rect.xmin;
+      /* BFA - Tear-Off Menu/Panel: a pin can be above where #popup_block_clip stops the top, at
+       * any UI scale above 1 or after the window shrinks. Moved there, the clip would trim a block
+       * that fits, and the lost pixels would become a scroll range, arrows and a menu's gutter. */
+      const float pin_y = std::min<float>(handle->tear_off_pin_xy[1],
+                                          WM_window_native_pixel_size(window)[1] -
+                                              UI_POPUP_MENU_TOP);
+      const float dy = pin_y - block->rect.ymax;
+      if (dx != 0.0f || dy != 0.0f) {
+        block_translate(block, dx, dy);
+        /* Re-clip after repositioning so the panel stays within window bounds.
+         * This handles the case where the expanded panel is wider than the pin widget
+         * and would extend past the right window edge — `popup_block_clip` nudges it left. */
+        popup_block_clip(window, block);
+      }
+      tear_off_height_apply(window, handle, block);
+      /* Sync pin position to the clipped block position so subsequent window resize
+       * refreshes use the corrected position rather than the stale pre-clip pin. */
+      handle->tear_off_pin_xy[0] = int(block->rect.xmin);
+      handle->tear_off_pin_xy[1] = int(block->rect.ymax);
+      handle->popup_create_vars.event_xy[0] = handle->tear_off_pin_xy[0];
+      handle->popup_create_vars.event_xy[1] = handle->tear_off_pin_xy[1];
+    }
+
+    /* BFA - Tear-Off Menu/Panel: a collapsed pin is as wide as the open block. Its rows aren't
+     * drawn, so whether they overflow doesn't matter. */
+    if (handle->is_tear_off && handle->tear_off_collapsed) {
+      tear_off_menu_gutter_add(window, block, false);
     }
 
     handle->prev_block_rect = block->rect;
@@ -865,11 +1650,30 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
     region->winrct.ymin = block->rect.ymin - margin;
     region->winrct.ymax = block->rect.ymax + UI_POPUP_MENU_TOP;
 
+    /* BFA - Tear-Off Menu/Panel: a collapsed tear-off draws a small pin widget that can be
+     * dragged anywhere in the window. Cover the whole window so the region scissor never
+     * clips it (same approach as pie menus). This also makes region-local coordinates equal
+     * window coordinates, which `tear_off_pin_xy` relies on. */
+    if (handle->is_tear_off && handle->tear_off_collapsed) {
+      const int2 win_size = WM_window_native_pixel_size(window);
+      region->winrct.xmin = 0;
+      region->winrct.ymin = 0;
+      region->winrct.xmax = win_size[0];
+      region->winrct.ymax = win_size[1];
+    }
+
     block_translate(block, -region->winrct.xmin, -region->winrct.ymin);
+    if (handle->is_tear_off) {
+      tear_off_header_scroll_prepare(block, block->bounds / block->aspect);
+    }
     /* Popups can change size, fix scroll offset if a panel was closed. */
     float ymin = FLT_MAX;
     float ymax = -FLT_MAX;
     for (const Button &bt : block->buttons()) {
+      /* BFA - Tear-Off Menu/Panel: the sticky header isn't part of what scrolls. */
+      if (bt.tear_off_header) {
+        continue;
+      }
       ymin = min_ff(ymin, bt.rect.ymin);
       ymax = max_ff(ymax, bt.rect.ymax);
     }
@@ -877,11 +1681,20 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
 
     handle->scrollmin = std::round(std::min(block->rect.ymax - (ymax + bounds), 0.0f));
     handle->scrollmax = std::round(std::max(block->rect.ymin - (ymin - bounds), 0.0f));
-    handle->scrolloffset = std::clamp(handle->scrolloffset, handle->scrollmin, handle->scrollmax);
+    /* BFA - Tear-Off Menu/Panel: a collapsed block has no crop or pin position yet, so its range
+     * says nothing about the scroll position it will return to. */
+    if (!(handle->is_tear_off && handle->tear_off_collapsed)) {
+      handle->scrolloffset = std::clamp(
+          handle->scrolloffset, handle->scrollmin, handle->scrollmax);
+    }
 
     /* apply scroll offset */
     if (handle->scrolloffset != 0.0f) {
       for (Button &bt : block->buttons()) {
+        /* BFA - Tear-Off Menu/Panel: the sticky header stays put. */
+        if (bt.tear_off_header) {
+          continue;
+        }
         bt.rect.ymin += handle->scrolloffset;
         bt.rect.ymax += handle->scrolloffset;
       }
@@ -896,7 +1709,23 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
   if (block_old) {
     block->oldblock = block_old;
     block_update_from_old(C, block);
+    /* BFA - Tear-Off Menu/Panel: preserve tear-off state across refreshes. */
+    if (block_old->flag & BLOCK_KEEP_OPEN) {
+      block->flag |= BLOCK_KEEP_OPEN;
+    }
+    if (block_old->flag & BLOCK_TEAR_OFF) {
+      block->flag |= BLOCK_TEAR_OFF;
+    }
+    if (block_old->flag & BLOCK_NO_ACCELERATOR_KEYS) {
+      block->flag |= BLOCK_NO_ACCELERATOR_KEYS;
+    }
     blocklist_free_inactive(C, region);
+  }
+
+  /* BFA - Tear-Off Menu/Panel: a stored pin gets its width from this layout, and a pin's width
+   * comes from the block. */
+  if (handle->is_tear_off && handle->tear_off_collapsed) {
+    tear_off_clamp_to_window(window, handle, block, region);
   }
 
   /* checks which buttons are visible, sets flags to prevent draw (do after region init) */
@@ -928,7 +1757,10 @@ PopupBlockHandle *popup_block_create(bContext *C,
                                      BlockHandleCreateFunc handle_create_func,
                                      void *arg,
                                      FreeArgFunc arg_free,
-                                     const bool can_refresh)
+                                     const bool can_refresh,
+                                     const bool is_tear_off, // BFA - Tear-Off Menu/Panel
+                                     /* BFA - Tear-Off Menu/Panel */
+                                     const TearOffInit &tear_off_init)
 {
   wmWindow *window = CTX_wm_window(C);
 
@@ -954,6 +1786,22 @@ PopupBlockHandle *popup_block_create(bContext *C,
   handle->ctx_region = CTX_wm_region(C);
   handle->ctx_region_popup = CTX_wm_region_popup(C);
   handle->can_refresh = can_refresh;
+  /* BFA - Tear-Off Menu/Panel: known before the first layout, so it never draws the regular
+   * row and the pin position comes from the real block. A tear-off outlives the popup it
+   * came from, so it must not keep that popup as its context (#151170 is about short-lived
+   * context menus): its X and pin would act on the parent. */
+  handle->is_tear_off = is_tear_off;
+  if (is_tear_off) {
+    handle->ctx_region_popup = nullptr;
+    handle->tear_off_ctx_region_type = handle->ctx_region ? handle->ctx_region->regiontype : -1;
+    handle->tear_off_scale_fac = UI_SCALE_FAC;
+    handle->tear_off_from_region = tear_off_init.from_region;
+    /* Known before the first layout, so the popup is placed with its real width and Python never
+     * measures the source region. */
+    handle->tear_off_width = tear_off_init.width;
+    handle->tear_off_width_default = tear_off_init.width;
+    handle->tear_off_width_chrome = tear_off_init.width_chrome;
+  }
 
   /* store vars to refresh popup (RGN_REFRESH_UI) */
   handle->popup_create_vars.create_func = create_func;
@@ -974,6 +1822,9 @@ PopupBlockHandle *popup_block_create(bContext *C,
   type.layout = block_region_refresh;
   type.regionid = RGN_TYPE_TEMPORARY;
   region->runtime->type = &type;
+  if (is_tear_off) { /* BFA - Tear-Off Menu/Panel */
+    region->runtime->type = tear_off_region_type_get();
+  }
 
   region_handlers_add(&region->runtime->handlers);
 
@@ -1018,6 +1869,110 @@ PopupBlockHandle *popup_block_create(bContext *C,
   }
 
   return handle;
+}
+
+/* BFA - Tear-Off Menu/Panel: a tear-off outlives the area and region it stored at creation, so
+ * they can dangle after an area close, a maximize restore or a layout delete. */
+void tear_off_context_ensure(bContext *C, PopupBlockHandle *handle)
+{
+  if (!handle->is_tear_off || handle->tear_off_spacetype == 0) {
+    return;
+  }
+  const wmWindow *win = CTX_wm_window(C);
+  const bScreen *screen = CTX_wm_screen(C);
+  if (!win || !screen) {
+    return;
+  }
+  /* A tear-off hidden on another workspace keeps its real area for when it returns. */
+  if (handle->tear_off_workspace && CTX_wm_workspace(C) != handle->tear_off_workspace) {
+    return;
+  }
+
+  ScrArea *area_valid = nullptr;
+  ED_screen_areas_iter (win, screen, area) {
+    if (area == handle->ctx_area && area->spacetype == handle->tear_off_spacetype) {
+      area_valid = area;
+      break;
+    }
+  }
+  if (area_valid && handle->ctx_region &&
+      BLI_findindex(&area_valid->regionbase, handle->ctx_region) != -1)
+  {
+    return;
+  }
+  if (!area_valid) {
+    ED_screen_areas_iter (win, screen, area) {
+      if (area->spacetype == handle->tear_off_spacetype) {
+        area_valid = area;
+        break;
+      }
+    }
+  }
+  handle->ctx_area = area_valid;
+  handle->ctx_region = area_valid ?
+                           BKE_area_find_region_type(area_valid,
+                                                     handle->tear_off_ctx_region_type) :
+                           nullptr;
+}
+
+bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)
+{
+  /* Only pinned tear-offs are subject to the domain/mode visibility rule. */
+  if (!handle->is_tear_off || handle->tear_off_spacetype == 0) {
+    return true;
+  }
+
+  /* BFA - Tear-Off Menu/Panel: pinned panels are scoped per workspace. Hide when
+   * another workspace is active; the panel reappears when the user returns to the workspace it was
+   * torn off in. */
+  if (handle->tear_off_workspace && CTX_wm_workspace(C) != handle->tear_off_workspace) {
+    return false;
+  }
+
+  /* Requirement 2: the originating editor domain must still exist in the active screen.
+   * If another editor of the same domain exists, the panel stays visible. */
+  const bScreen *screen = CTX_wm_screen(C);
+  const wmWindow *win = CTX_wm_window(C);
+  if (screen && win) {
+    bool domain_found = false;
+    /* BFA - Tear-Off Menu/Panel: include global areas. The top bar isn't in
+     * `screen->areabase`, so its torn-off menus would hide immediately. */
+    ED_screen_areas_iter (win, screen, area) {
+      if (area->spacetype == handle->tear_off_spacetype) {
+        domain_found = true;
+        break;
+      }
+    }
+    if (!domain_found) {
+      return false;
+    }
+  }
+
+  /* Requirement 1: the object mode must match the mode the panel was torn off in. */
+  if (handle->tear_off_mode >= 0 && CTX_data_mode_enum(C) != handle->tear_off_mode) {
+    return false;
+  }
+
+  return true;
+}
+
+/* BFA - Tear-Off Menu/Panel */
+bool screen_has_blocking_popup(const bScreen *screen)
+{
+  for (const ARegion &region : screen->regionbase) {
+    if (region.regiontype != RGN_TYPE_TEMPORARY) {
+      continue;
+    }
+    bool is_tear_off = false;
+    for (const Block &block : region.runtime->uiblocks) {
+      is_tear_off = (block.flag & BLOCK_TEAR_OFF) != 0;
+      break;
+    }
+    if (!is_tear_off) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void popup_block_free(bContext *C, PopupBlockHandle *handle)

@@ -85,7 +85,9 @@ void template_preview(Layout *layout,
   }
 
   /* Find or add the uiPreview to the current Region. */
-  ARegion *region = CTX_wm_region(C);
+  /* BFA - Tear-Off Menu/Panel: same as template_list. A tear-off outlives the source region, which
+   * frees this on close, and the draw callback keeps the pointer. */
+  ARegion *region = CTX_wm_region_popup(C) ? CTX_wm_region_popup(C) : CTX_wm_region(C);
   uiPreview *ui_preview = static_cast<uiPreview *>(
       BLI_findstring(&region->ui_previews, preview_id, offsetof(uiPreview, preview_id)));
 

@@ -198,7 +198,8 @@ class CenterAlignMixIn:
         width = context.region.width
         ui_scale = context.preferences.system.ui_scale
         # No horizontal margin if region is rather small.
-        is_wide = width > (350 * ui_scale)
+        # BFA - a torn-off panel is much narrower than the region it reports, so margins squeeze it.
+        is_wide = width > (350 * ui_scale) and context.region_popup is None
 
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
@@ -260,6 +261,12 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(prefs, "disable_search_on_keypress", text="Disable Search on Key Press")
         # bfa - gooengine disable_material_icon
         flow.prop(prefs, "disable_material_icon", text="Disable Material Icon Rendering")
+
+        # BFA - Tear-Off Menu/Panel: lets users opt out of the Bforartists-only tear-off feature.
+        # On its own row, as the label gets cut off in a column of the grid above.
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(prefs, "use_tear_off", text="Tear-Off Menus and Panels")
 
 
 class USERPREF_PT_interface_text(InterfacePanel, CenterAlignMixIn, Panel):

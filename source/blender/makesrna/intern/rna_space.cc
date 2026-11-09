@@ -1143,6 +1143,9 @@ static void rna_Space_show_toolshelf_tabs_update(bContext * /*C*/, PointerRNA *p
   if (region) {
     ED_region_tag_redraw(region);
   }
+  /* BFA - Tear-Off Menu/Panel: tab panels poll this, and a tear-off has no other reason to
+   * re-poll. Plain NC_WINDOW reaches the refresh path. */
+  WM_main_add_notifier(NC_WINDOW, nullptr);
 }
 
 static bool rna_Space_show_region_tool_props_get(PointerRNA *ptr)
@@ -7297,7 +7300,9 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_space_sequencer_view_type_items);
   RNA_def_property_ui_text(
       prop, "View Type", "Type of the Sequencer view (sequencer, preview or both)");
-  RNA_def_property_update(prop, 0, "rna_Sequencer_view_type_update");
+  /* BFA - Tear-Off Menu/Panel: Sequencer tab panels poll this, and a torn-off panel only re-polls
+   * on a notifier. Upstream only refreshes the area, which a tear-off isn't part of. */
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_Sequencer_view_type_update");
 
   /* display type, fairly important */
   prop = RNA_def_property(srna, "display_mode", PROP_ENUM, PROP_NONE);

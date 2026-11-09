@@ -45,5 +45,8 @@ void ED_buttons_set_context(const bContext *C,
                             SpaceProperties *sbuts,
                             PointerRNA *ptr,
                             eSpaceButtons_Context context);
+/* BFA - Tear-Off Menu/Panel: the #PanelType::context value that the given tab shows, so a torn-off
+ * panel can tell its tab is no longer active. Popups never run the filter in panel_add_check. */
+const char *ED_buttons_tab_context_string(short mainb);
 
 }  // namespace blender

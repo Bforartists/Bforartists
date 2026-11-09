@@ -756,7 +756,13 @@ void ED_preview_draw(
     ID *parent = static_cast<ID *>(parentp);
     MTex *slot = static_cast<MTex *>(slotp);
     SpaceProperties *sbuts = CTX_wm_space_properties(C);
+    /* BFA - Tear-Off Menu/Panel: popups draw with no area, and a null owner matches any preview
+     * job (see wm_job_find), which would make the source panel and the tear-off restart each
+     * other. */
     const void *owner = CTX_wm_area(C);
+    if (owner == nullptr) {
+      owner = CTX_wm_region_popup(C);
+    }
     ShaderPreview *sp = static_cast<ShaderPreview *>(
         WM_jobs_customdata_from_type(wm, owner, WM_JOB_TYPE_RENDER_PREVIEW));
     rcti newrect;
@@ -799,16 +805,42 @@ void ED_preview_draw(
 
 void ED_previews_tag_dirty_by_id(const Main &bmain, const ID &id)
 {
+  auto tag_region = [&](const ARegion &region) {
+    for (uiPreview &preview : region.ui_previews) {
+      if (preview.id_session_uid == id.session_uid) {
+        preview.tag |= UI_PREVIEW_TAG_DIRTY;
+      }
+    }
+  };
   for (const bScreen &screen : bmain.screens) {
     for (const ScrArea &area : screen.areabase) {
       for (const ARegion &region : area.regionbase) {
-        for (uiPreview &preview : region.ui_previews) {
-          if (preview.id_session_uid == id.session_uid) {
-            preview.tag |= UI_PREVIEW_TAG_DIRTY;
-          }
-        }
+        tag_region(region);
       }
     }
+    /* BFA - Tear-Off Menu/Panel: popups keep their previews here. */
+    for (const ARegion &region : screen.regionbase) {
+      tag_region(region);
+    }
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel */
+void ED_preview_render_free_owner(wmWindowManager *wm, const void *owner)
+{
+  /* The list of Renders has no lock, and a running job can be walking it on its own thread. Jobs
+   * only start on this thread, so none can start before the free. Keeping a Render until exit is
+   * what upstream does for a closed area, so that's the safe side. Threads outside the job system
+   * aren't covered, the same exposure as #NestedTreePreviews freeing its Render. */
+  if (WM_jobs_has_running(wm, nullptr, WM_JOB_TYPE_ANY)) {
+    return;
+  }
+  if (Render *re = RE_GetRender(owner)) {
+    RE_FreeRender(re);
+  }
+  /* The second half of a split preview, see #shader_preview_render. */
+  if (Render *re = RE_GetRender(static_cast<const char *>(owner) + 1)) {
+    RE_FreeRender(re);
   }
 }
 

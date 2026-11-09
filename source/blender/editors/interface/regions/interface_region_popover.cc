@@ -25,14 +25,23 @@
  * - No title.
  */
 
+#include <algorithm> /* BFA - Tear-Off Menu/Panel: std::max. */
+#include <cmath>     /* BFA - Tear-Off Menu/Panel: fabsf. */
+#include <cstring>   /* BFA - Tear-Off Menu/Panel: strcmp in STREQ. */
+#include <memory>    /* BFA - Tear-Off Menu/Panel: the space type list holds unique_ptr. */
+
 #include "MEM_guardedalloc.h"
 
+#include "DNA_space_enums.h" /* BFA - Tear-Off Menu/Panel: the shelf editors. */
 #include "DNA_userdef_types.h"
 
 #include "BLI_listbase.hh"
 
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
+#include "BLI_utildefines.hh" /* BFA - Tear-Off Menu/Panel: STREQ. */
+
+#include "BLT_translation.hh" /* BFA - Tear-Off Menu/Panel: the width of the title. */
 
 #include "BKE_context.hh"
 #include "BKE_report.hh"
@@ -44,6 +53,7 @@
 #include "WM_types.hh"
 
 #include "UI_interface_layout.hh"
+#include "UI_view2d.hh" /* BFA - Tear-Off Menu/Panel: the shelf's zoom. */
 
 #include "interface_intern.hh"
 
@@ -111,12 +121,210 @@ static void popover_create_block(bContext *C,
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: must give the same value as #toolsystem_column_count in
+ * space_toolsystem_common.py, so the column count doesn't change on tearing off. */
+static void tear_off_shelf_width_measure(const ARegion *region,
+                                         const PanelType *pt,
+                                         TearOffInit &init)
+{
+  if (!(region->v2d.flag & V2D_IS_INIT)) {
+    return;
+  }
+  const float view_scale = view2d_region_to_view_x(&region->v2d, 1.0f) -
+                           view2d_region_to_view_x(&region->v2d, 0.0f);
+  /* Zoom removed, UI scale still included. */
+  const float view_width = region->winx * view_scale;
+  /* What #ED_region_panels_layout_ex takes off before the panel layout. */
+  const float tabs = panel_category_tabs_is_visible(region) ? UI_PANEL_CATEGORY_MARGIN_WIDTH :
+                                                              0.0f;
+  const float margin = panel_should_show_background(region, pt) ? 2.0f * UI_PANEL_MARGIN_X : 0.0f;
+  const float layout_width = view_width - tabs - margin - 2.0f * style_get_dpi()->panelspace;
+  /* The Python thresholds drop by 20 when the tabs are hidden. Folding that in here means the
+   * column count can't change when the tabs of the source shelf are toggled later. */
+  const float tabs_offset = (region->flag & RGN_FLAG_HIDE_CATEGORY_TABS) ? 20.0f : 0.0f;
+  init.width = view_width / UI_SCALE_FAC + tabs_offset;
+  init.width_chrome = init.width - layout_width / UI_SCALE_FAC;
+}
+
+/* BFA - Tear-Off Menu/Panel: the floor fits the two header icons, about what a one column shelf
+ * has of layout, so its tools stay as wide as in the shelf. */
+int tear_off_layout_width(const wmWindow *win, const PopupBlockHandle *handle)
+{
+  const float width = (handle->tear_off_width - handle->tear_off_width_chrome) * UI_SCALE_FAC;
+  /* BFA - Tear-Off Menu/Panel: a window made smaller must not leave a wider panel behind. */
+  const int max_width = WM_window_native_pixel_size(win)[0] - 2 * UI_SCREEN_MARGIN -
+                        U.widget_unit;
+  return std::max(std::min(int(width + 0.5f), max_width), 2 * UI_UNIT_X);
+}
+
+/* BFA - Tear-Off Menu/Panel: same formula as #popover_panel_create. */
+static int tear_off_panel_designed_ui_size(const Popover *pup)
+{
+  const int ui_units_x = (pup->panel_type->ui_units_x == 0) ? UI_POPOVER_WIDTH_UNITS :
+                                                              pup->panel_type->ui_units_x;
+  return int(ui_units_x * U.widget_unit *
+             (style_get_dpi()->widget.points / UI_DEFAULT_TEXT_POINTS));
+}
+
+/* BFA - Tear-Off Menu/Panel: what the title, the grip, the two icons and a margin need, plus the
+ * panel's own header buttons. A draw_header with several buttons isn't measured. */
+static int tear_off_panel_header_ui_size(const Popover *pup)
+{
+  const PanelType *pt = pup->panel_type;
+  const char *title = CTX_IFACE_(pt->translation_context, pt->label);
+  const bool has_header = !(pt->flag & PANEL_TYPE_NO_HEADER);
+  const int units = 4 + ((has_header && pt->draw_header) ? 1 : 0) +
+                    ((has_header && pt->draw_header_preset) ? 1 : 0);
+  return units * UI_UNIT_X + fontstyle_string_width(&style_get_dpi()->widget, title);
+}
+
+/* BFA - Tear-Off Menu/Panel: the designed width, or what the header needs if that's more. There's
+ * no other floor, so the block is exactly as wide as its layout. */
+static int tear_off_panel_default_ui_size(const Popover *pup)
+{
+  return std::max(tear_off_panel_designed_ui_size(pup), tear_off_panel_header_ui_size(pup));
+}
+
+/* BFA - Tear-Off Menu/Panel: in the units of #tear_off_width. */
+static float tear_off_panel_width_designed(const PopupBlockHandle *handle)
+{
+  const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
+  return float(tear_off_panel_default_ui_size(pup)) / UI_SCALE_FAC;
+}
+
+/* BFA - Tear-Off Menu/Panel: the points of #ED_region_generic_tools_region_snap_size. They fall in
+ * the bands of #toolsystem_column_count in space_toolsystem_common.py, so keep those in sync. The
+ * width counts the tab strip whether or not it shows, see #tear_off_shelf_width_measure. */
+static float tear_off_shelf_width_snap(const float width, const float max_width)
+{
+  const float tabs = (U.uiflag2 & USER_UIFLAG2_PANEL_TABS_COMPACT) ? 28.0f : 20.0f;
+  const auto step = [&](const int n) { return tabs + n * UI_TOOLBAR_COLUMN + UI_TOOLBAR_MARGIN; };
+  /* Free above the last step, as on the real shelf: the text list reflows. */
+  if (width > step(4) && max_width > step(4)) {
+    return std::min(width, max_width);
+  }
+  float best = step(1);
+  for (int n = 2; n <= 4 && step(n) <= max_width; n++) {
+    if (fabsf(step(n) - width) < fabsf(best - width)) {
+      best = step(n);
+    }
+  }
+  return best;
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. The layout can't say, because it estimates text
+ * in a panel at a fixed 10 units. So take how much of its width each button's text would use at
+ * the designed width: buttons narrow about in proportion to the layout, and the tightest one ends
+ * the drag. A button sized to its text doesn't narrow, so it's a limit of its own. */
+float tear_off_panel_width_min(const PopupBlockHandle *handle, const Block *block)
+{
+  const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
+  const uiFontStyle *fstyle = &style_get_dpi()->widget;
+  const float to_designed = float(tear_off_panel_default_ui_size(pup)) / float(pup->ui_size_x);
+  float used = 0.0f;
+  float text_sized = 0.0f;
+  for (const Button &but : block->buttons()) {
+    const float but_width = BLI_rctf_size_x(&but.rect);
+    if (but.tear_off_header || (but.flag & UI_HIDDEN) || but.drawstr.empty() || but_width < 1.0f) {
+      continue;
+    }
+    /* These clip and scroll their value already, so long data doesn't get to set a limit. */
+    if (ELEM(but.type, ButtonType::Text, ButtonType::SearchMenu)) {
+      continue;
+    }
+    int needed = fontstyle_string_width(fstyle, but.drawstr.c_str());
+    /* The text's padding, which a plain label doesn't draw. */
+    if (but.type != ButtonType::Label || (but.flag & UI_HAS_ICON)) {
+      needed += int(0.8f * UI_UNIT_X);
+    }
+    /* The room of an icon, a checkbox or a dropdown's arrow. */
+    if (but.flag & UI_HAS_ICON) {
+      needed += UI_UNIT_X;
+    }
+    if (ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN, ButtonType::Menu)) {
+      needed += UI_UNIT_X;
+    }
+    /* Text that already clips at the designed width can't be what stops the panel. */
+    if (but.tear_off_text_sized) {
+      if (needed < tear_off_panel_default_ui_size(pup)) {
+        text_sized = std::max<float>(text_sized, needed);
+      }
+      continue;
+    }
+    const float share = needed / (but_width * to_designed);
+    if (share < 1.0f) {
+      used = std::max(used, share);
+    }
+  }
+  const float layout_width = std::max(float(tear_off_panel_default_ui_size(pup)) * used, text_sized);
+  return std::max<float>(layout_width, tear_off_panel_header_ui_size(pup)) / UI_SCALE_FAC;
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+bool tear_off_panel_width_drag(PopupBlockHandle *handle,
+                               const float start_field,
+                               const float delta_px,
+                               const float room_px)
+{
+  const float max_width = (room_px - U.widget_unit) / UI_SCALE_FAC + handle->tear_off_width_chrome;
+  const float base = start_field > 0.0f ? start_field : tear_off_panel_width_designed(handle);
+  const float wanted = base + delta_px / UI_SCALE_FAC;
+  float width;
+  if (handle->tear_off_width_default > 0.0f) {
+    width = tear_off_shelf_width_snap(wanted, max_width);
+  }
+  else {
+    const float designed = tear_off_panel_width_designed(handle);
+    /* Never above the designed width: a panel with long rows can already clip them there. Nor
+     * above the width at the press: the measure is an estimate that can differ a little at each
+     * width, and a drag that pulls in must not push the edge out. */
+    const float min_width = std::min({handle->tear_off_drag_min_width, designed, base});
+    width = std::min(std::max(wanted, min_width), std::max(max_width, min_width));
+    /* The designed width itself is stored as 0, which follows the scale formula. */
+    if (fabsf(width - designed) < 0.5f) {
+      width = 0.0f;
+    }
+  }
+  if (width == handle->tear_off_width) {
+    return false;
+  }
+  handle->tear_off_width = width;
+  return true;
+}
+
+/* BFA - Tear-Off Menu/Panel: tool shelf panels keep the shelf's look and column count. Other
+ * panels keep their designed width, including the Clip and File Browser `TOOLS` regions, which
+ * don't use the column count. */
+TearOffInit tear_off_init_from_region(const bContext *C, const PanelType *pt)
+{
+  TearOffInit init;
+  init.from_region = true;
+  const ScrArea *area = CTX_wm_area(C);
+  const ARegion *region = CTX_wm_region(C);
+  if (area && region && region->regiontype == RGN_TYPE_TOOLS &&
+      ELEM(area->spacetype, SPACE_VIEW3D, SPACE_IMAGE, SPACE_NODE, SPACE_SEQ))
+  {
+    tear_off_shelf_width_measure(region, pt, init);
+  }
+  return init;
+}
+
 static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *arg_pup)
 {
   Popover *pup = static_cast<Popover *>(arg_pup);
 
   /* Create UI block and layout now if it wasn't done between begin/end. */
   if (!pup->layout) {
+    /* BFA - Tear-Off Menu/Panel: a tear-off survives scale changes, so recompute the width
+     * (same formula as popover_panel_create) or the panel keeps its old pixel width. */
+    if (handle->is_tear_off && pup->panel_type) {
+      if (handle->tear_off_width > 0.0f) {
+        pup->ui_size_x = tear_off_layout_width(CTX_wm_window(C), handle);
+      }
+      else {
+        pup->ui_size_x = tear_off_panel_default_ui_size(pup);
+      }
+    }
     popover_create_block(C, handle->region, pup, wm::OpCallContext::InvokeRegionWin);
 
     if (pup->popover_func) {
@@ -167,7 +375,15 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
     /* Store the button location for positioning the popover arrow hint. */
     if (!handle->refresh) {
       float center[2] = {BLI_rctf_cent_x(&pup->but->rect), BLI_rctf_cent_y(&pup->but->rect)};
-      block_to_window_fl(handle->ctx_region, pup->but->block, &center[0], &center[1]);
+      /* BFA - Tear-Off Menu/Panel: a button in a tear-off is in the popup's region, not the region
+       * the tear-off takes its context from, so the arrow pointed somewhere else. */
+      const PopupBlockHandle *but_handle = pup->but->block->handle;
+      block_to_window_fl((but_handle && but_handle->is_tear_off) ?
+                             handle->popup_create_vars.butregion :
+                             handle->ctx_region,
+                         pup->but->block,
+                         &center[0],
+                         &center[1]);
       /* These variables aren't used for popovers,
        * we could add new variables if there is a conflict. */
       block->bounds_offset[0] = int(center[0]);
@@ -220,7 +436,9 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
     block_flag_enable(block, BLOCK_LOOP);
     block_theme_style_set(block, BLOCK_THEME_STYLE_POPUP);
     block_direction_set(block, block->direction);
-    block->minbounds = UI_MENU_WIDTH_MIN;
+    /* BFA - Tear-Off Menu/Panel: the width of a tear-off is exact, the minimum would widen the
+     * block and leave dead space beside its layout. */
+    block->minbounds = handle->is_tear_off ? 0 : UI_MENU_WIDTH_MIN;
 
     if (!handle->refresh) {
       const Button *but = nullptr;
@@ -233,6 +451,13 @@ static Block *block_func_POPOVER(bContext *C, PopupBlockHandle *handle, void *ar
           but = &but_iter;
           break;
         }
+      }
+
+      /* BFA - Tear-Off Menu/Panel: a tear-off opens with its header under the cursor. Placing a
+       * selected toggle there would jump the panel, and a grab would hold it by that toggle.
+       * `but_first` is on the header row: the collapse icon or a draw_header checkbox. */
+      if (handle->is_tear_off) {
+        but = nullptr;
       }
 
       if (but) {
@@ -269,7 +494,10 @@ PopupBlockHandle *popover_panel_create(bContext *C,
                                        ARegion *butregion,
                                        Button *but,
                                        PopoverCreateFunc popover_func,
-                                       const PanelType *panel_type)
+                                       const PanelType *panel_type,
+                                       const bool is_tear_off, // BFA - Tear-Off Menu/Panel
+                                       /* BFA - Tear-Off Menu/Panel */
+                                       const TearOffInit &tear_off_init)
 {
   wmWindow *window = CTX_wm_window(C);
   const uiStyle *style = style_get_dpi();
@@ -293,13 +521,25 @@ PopupBlockHandle *popover_panel_create(bContext *C,
   {
     /* Ideally this would be passed in. */
     const wmEvent *event = window->runtime->eventstate;
-    pup->is_once = (event->type == LEFTMOUSE) && (event->val == KM_PRESS);
+    /* BFA - Tear-Off Menu/Panel: "once" closes the popup on a release over a button, and
+     * RETURN_CANCEL frees even a tear-off. Tearing off during a drag has the left button held, so
+     * this would be true. Without it, the is_grab path doesn't depend on who gets the release. */
+    pup->is_once = !is_tear_off && (event->type == LEFTMOUSE) && (event->val == KM_PRESS);
   }
 #endif
 
   /* Create popup block. */
-  PopupBlockHandle *handle = popup_block_create(
-      C, butregion, but, nullptr, block_func_POPOVER, pup, block_free_func_POPOVER, true);
+  /* BFA - Tear-Off Menu/Panel: is_tear_off and tear_off_init. */
+  PopupBlockHandle *handle = popup_block_create(C,
+                                                butregion,
+                                                but,
+                                                nullptr,
+                                                block_func_POPOVER,
+                                                pup,
+                                                block_free_func_POPOVER,
+                                                true,
+                                                is_tear_off,
+                                                tear_off_init);
 
   /* Add handlers. If attached to a button, the button will already
    * add a modal handler and pass on events. */
@@ -318,24 +558,30 @@ PopupBlockHandle *popover_panel_create(bContext *C,
 /** \name Standard Popover Panels
  * \{ */
 
-wmOperatorStatus popover_panel_invoke(
-    bContext *C, const char *idname, bool keep_open, bool use_numselect, ReportList *reports)
+/* BFA - Tear-Off Menu/Panel: split out of #popover_panel_invoke, because most C panels can't be
+ * found by name in #WM_paneltype_find. */
+wmOperatorStatus popover_paneltype_invoke(bContext *C,
+                                          PanelType *pt,
+                                          bool keep_open,
+                                          bool use_numselect,
+                                          PopupBlockHandle **r_handle,
+                                          const bool is_tear_off,
+                                          const TearOffInit &tear_off_init,
+                                          const bool skip_poll)
 {
   Layout *layout;
-  PanelType *pt = WM_paneltype_find(idname, true);
-  if (pt == nullptr) {
-    BKE_reportf(reports, RPT_ERROR, "Panel \"%s\" not found", idname);
-    return OPERATOR_CANCELLED;
-  }
-
-  if (pt->poll && (pt->poll(C, pt) == false)) {
+  /* BFA - Tear-Off Menu/Panel: `skip_poll`, for a stored pin. */
+  if (!skip_poll && pt->poll && (pt->poll(C, pt) == false)) {
     /* cancel but allow event to pass through, just like operators do */
     return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
   }
 
   Block *block = nullptr;
+  PopupBlockHandle *handle = nullptr; // BFA - Tear-Off Menu/Panel
   if (keep_open) {
-    PopupBlockHandle *handle = popover_panel_create(C, nullptr, nullptr, item_paneltype_func, pt);
+    /* BFA - Tear-Off Menu/Panel: is_tear_off and tear_off_init. */
+    handle = popover_panel_create(
+        C, nullptr, nullptr, item_paneltype_func, pt, is_tear_off, tear_off_init);
     Popover *pup = static_cast<Popover *>(handle->popup_create_vars.arg);
     pup->use_numselect = use_numselect;
     block = pup->block;
@@ -355,13 +601,78 @@ wmOperatorStatus popover_panel_invoke(
     ui::UI_paneltype_draw(C, pt, layout);
     ui::popover_end(C, pup, nullptr);
     block = pup->block;
+    handle = block ? block->handle : nullptr; // BFA - Tear-Off Menu/Panel
   }
 
   if (block) {
-    PopupBlockHandle *handle = block->handle;
+    handle = block->handle; // BFA - Tear-Off Menu/Panel
     block_active_only_flagged_buttons(C, handle->region, block);
   }
+  if (r_handle) { // BFA - Tear-Off Menu/Panel
+    *r_handle = handle; // BFA - Tear-Off Menu/Panel
+  }
   return OPERATOR_INTERFACE;
+}
+
+wmOperatorStatus popover_panel_invoke(
+    bContext *C,
+    const char *idname,
+    bool keep_open,
+    bool use_numselect,
+    ReportList *reports,  // BFA - Tear-Off Menu/Panel
+    PopupBlockHandle **r_handle, // BFA - Tear-Off Menu/Panel
+    const bool is_tear_off) // BFA - Tear-Off Menu/Panel
+
+{
+  PanelType *pt = WM_paneltype_find(idname, true);
+  if (pt == nullptr) {
+    BKE_reportf(reports, RPT_ERROR, "Panel \"%s\" not found", idname);
+    return OPERATOR_CANCELLED;
+  }
+  return popover_paneltype_invoke(C, pt, keep_open, use_numselect, r_handle, is_tear_off);
+}
+
+/* BFA - Tear-Off Menu/Panel: search the source region first. A region can draw another space's
+ * list (`category_override`, see #ED_view3d_buttons_region_layout_ex), so all spaces are the
+ * last resort. */
+const char *tear_off_panel_idname(const PopupBlockHandle *handle)
+{
+  const Block *block = handle->region->runtime->uiblocks.first();
+  if (block == nullptr || !(block->flag & BLOCK_POPOVER)) {
+    return nullptr;
+  }
+  const Popover *pup = static_cast<const Popover *>(handle->popup_create_vars.arg);
+  return (pup && pup->panel_type) ? pup->panel_type->idname : nullptr;
+}
+
+PanelType *tear_off_paneltype_find(const bContext *C, const char *idname)
+{
+  auto find_in = [&](ARegionType &art) -> PanelType * {
+    for (PanelType &pt : art.paneltypes) {
+      if (STREQ(pt.idname, idname)) {
+        return &pt;
+      }
+    }
+    return nullptr;
+  };
+  if (const ARegion *region = CTX_wm_region(C)) {
+    if (region->runtime->type) {
+      if (PanelType *pt = find_in(*region->runtime->type)) {
+        return pt;
+      }
+    }
+  }
+  if (PanelType *pt = WM_paneltype_find(idname, true)) {
+    return pt;
+  }
+  for (const std::unique_ptr<SpaceType> &st : BKE_spacetypes_list()) {
+    for (ARegionType &art : st->regiontypes) {
+      if (PanelType *pt = find_in(art)) {
+        return pt;
+      }
+    }
+  }
+  return nullptr;
 }
 
 /** \} */

@@ -8682,7 +8682,8 @@ keyconfig_data = \
  ("Window",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
+   [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True},
+     {"properties": [("load_ui", False)]}),
     ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
     ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True}, None),
     ("wm.call_panel",

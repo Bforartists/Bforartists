@@ -59,6 +59,7 @@
 
 #include "PRF_profile.hh"
 
+#include "UI_interface_c.hh" /* BFA - Tear-Off Menu/Panel: for #ui::screen_has_blocking_popup. */
 #include "UI_resources.hh"
 
 #include "paint_intern.hh"
@@ -1050,10 +1051,10 @@ static void paint_update_mouse_cursor(PaintCursorContext &pcontext)
   }
 
   /* Don't set the cursor when a temporary popup is opened (e.g. a context menu, pie menu or
-   * dialog), see: #137386. */
-  if (!pcontext.screen->regionbase.is_empty() &&
-      (BKE_screen_find_region_type(pcontext.screen, RGN_TYPE_TEMPORARY) != nullptr))
-  {
+   * dialog), see: #137386.
+   * BFA - Tear-Off Menu/Panel: a tear-off isn't modal and is carried to every screen, so it must
+   * not freeze the paint cursor for as long as one exists. */
+  if (ui::screen_has_blocking_popup(pcontext.screen)) {
     return;
   }
 

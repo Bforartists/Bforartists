@@ -15,6 +15,8 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h" /* BFA - Tear-Off Menu/Panel */
+#include "DNA_space_types.h" /* BFA - Tear-Off Menu/Panel */
 #include "DNA_userdef_types.h"
 
 #include "BLI_array.hh"
@@ -24,6 +26,7 @@
 #include "BLI_math_base_c.hh"
 #include "BLI_path_utils.hh"
 #include "BLI_rect.hh"
+#include "BLI_string.hh" // BFA - Tear-Off Menu/Panel
 #include "BLI_string_ref.hh"
 #include "BLI_string_utf8.hh"
 
@@ -43,6 +46,7 @@
 
 #include "UI_interface_layout.hh"
 
+#include "ED_buttons.hh" /* BFA - Tear-Off Menu/Panel */
 #include "ED_id_management.hh"
 
 #include "WM_api.hh"
@@ -119,6 +123,8 @@ enum class ItemType : int8_t {
   LayoutRadial, /* AKA: menu pie. */
 
   LayoutRoot,
+  /* BFA - Tear-Off Menu/Panel: what a torn-off panel draws in, standing in for the root. */
+  LayoutTearOffBody,
 #if 0
   TemplateColumnFlow,
   TemplateSplit,
@@ -602,6 +608,7 @@ LayoutDirection Layout::local_direction() const
 {
   switch (this->type()) {
     case ItemType::LayoutRoot:
+    case ItemType::LayoutTearOffBody: /* BFA - Tear-Off Menu/Panel */
     case ItemType::LayoutRow:
     case ItemType::LayoutOverlap:
     case ItemType::LayoutPanelHeader:
@@ -1513,6 +1520,11 @@ static void item_menu_hold(bContext *C, ARegion *butregion, Button *but)
       default:
         direction = UI_DIR_DOWN;
         break;
+    }
+    /* BFA - Tear-Off Menu/Panel: a temporary region has no alignment, so sub-tools would open
+     * downward over the tools below, instead of beside the column as in the shelf. */
+    if (block_is_tear_off_shelf(but->block)) {
+      direction = UI_DIR_RIGHT;
     }
   }
   block_direction_set(block, direction);
@@ -2857,7 +2869,8 @@ void Layout::textbox(const bContext *C,
                      const int initial_visible_lines)
 {
   TextboxState *textbox_state = textbox_ensure_state(
-      CTX_wm_region(C),
+      /* BFA - Tear-Off Menu/Panel: same reason as #template_preview. */
+      CTX_wm_region_popup(C) ? CTX_wm_region_popup(C) : CTX_wm_region(C),
       fmt::format("{}.{}", RNA_struct_identifier(ptr->type), propname),
       initial_visible_lines);
   this->textbox_with_state(ptr, propname, textbox_state, name_opt, placeholder);
@@ -3003,9 +3016,13 @@ void Layout::prop_search(PointerRNA *ptr,
   this->prop_search(ptr, prop, searchptr, searchprop, nullptr, name, icon, false);
 }
 
+/* BFA - Tear-Off Menu/Panel */
+static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt);
+
 void item_menutype_func(bContext *C, Layout *layout, void *arg_mt)
 {
   MenuType *mt = static_cast<MenuType *>(arg_mt);
+  menutype_tear_off_affordance_draw(layout, mt); /* BFA - Tear-Off Menu/Panel */
   menutype_draw(C, mt, layout);
 }
 
@@ -3013,6 +3030,17 @@ void item_paneltype_func(bContext *C, Layout *layout, void *arg_pt)
 {
   PanelType *pt = static_cast<PanelType *>(arg_pt);
   UI_paneltype_draw(C, pt, layout);
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+float tear_off_layout_width_get(const Layout *layout)
+{
+  const Block *block = layout->block();
+  const PopupBlockHandle *handle = block ? block->handle : nullptr;
+  /* Only a shelf's width means anything to Python. */
+  return (handle && handle->is_tear_off && handle->tear_off_width_default > 0.0f) ?
+             handle->tear_off_width :
+             0.0f;
 }
 
 static Button *item_menu(Layout *layout,
@@ -3816,6 +3844,10 @@ static void menu_item_enum_opname_menu(bContext *C, Layout *layout, void *arg)
   /* The calling but's str _probably_ contains the active
    * menu item name, set in #Layout::op_menu_enum. */
   const int active = menu_item_enum_opname_menu_active(C, but, lvl);
+
+  /* BFA - Tear-Off Menu/Panel: before the context is set, so the row keeps the region-win context
+   * in menus that call their items with INVOKE_DEFAULT, and the tear-off gets the main region. */
+  enum_tear_off_row_draw_operator(layout, but, lvl->opname, lvl->propname, lvl->opcontext);
 
   layout->operator_context_set(lvl->opcontext);
   layout->op_enum(lvl->opname, lvl->propname, op_props, lvl->opcontext, UI_ITEM_NONE, active);
@@ -5915,7 +5947,10 @@ void Layout::resolve_dynamic_height()
 
   /* For simplicity a column is a grid of n rows and 1 columns, and a row is a grid of 1 rows and n
    * columns. */
-  const LayoutDirection direction = this->type() == ItemType::LayoutRoot ?
+  /* BFA - Tear-Off Menu/Panel: the tear-off's body stacks its items as the root does. */
+  const LayoutDirection direction = ELEM(this->type(),
+                                         ItemType::LayoutRoot,
+                                         ItemType::LayoutTearOffBody) ?
                                         this->root_->direction :
                                     this->type() == ItemType::LayoutSplit ?
                                         LayoutDirection::Horizontal :
@@ -6000,6 +6035,9 @@ static void layout_free(Layout *layout)
     if (item->type() == ItemType::Button) {
       ButtonItem *bitem = static_cast<ButtonItem *>(item);
 
+      /* BFA - Tear-Off Menu/Panel: see #Button::tear_off_text_sized. */
+      bitem->but->tear_off_text_sized = layout->type() == ItemType::LayoutRow &&
+                                        layout->alignment() != LayoutAlign::Expand;
       bitem->but->layout = nullptr;
       MEM_delete(item);
     }
@@ -6417,6 +6455,115 @@ std::optional<StringRefNull> button_asset_shelf_type_idname_get(const Button *bu
   return asset_shelf_idname_from_button_context(but);
 }
 
+/* BFA - Tear-Off Menu/Panel: everything so far is the header, because it's the first thing drawn
+ * in a tear-off. That includes the invisible padding button above it, which must not scroll. */
+static void block_tear_off_header_tag(Block *block)
+{
+  for (Button &but : block->buttons()) {
+    but.tear_off_header = true;
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: a narrow shelf has too little room for the grip, the title and the
+ * header icons. Give up the grip first, then a clipped title. Below 2.5 units a clipped title says
+ * nothing, and the collapsed pin still shows the name. */
+static void tear_off_shelf_title_get(const Block *block,
+                                     const char *label,
+                                     const int reserved,
+                                     int *r_icon,
+                                     const char **r_title)
+{
+  *r_icon = ICON_GRIP;
+  *r_title = label;
+  if (!block_is_tear_off_shelf(block)) {
+    return;
+  }
+  const bContext *C = static_cast<const bContext *>(block->evil_C);
+  const int room = tear_off_layout_width(CTX_wm_window(C), block->handle) - reserved;
+  const int text_w = fontstyle_string_width(UI_FSTYLE_WIDGET, label);
+  /* The padding factors of #text_pad_none, with and without the icon. */
+  if (text_w + int(ceilf(UI_UNIT_X * 1.75f)) > room) {
+    const bool show_text = text_w + int(ceilf(UI_UNIT_X * 0.25f)) <= room ||
+                           room >= int(2.5f * UI_UNIT_X);
+    /* Only the two icons fit in a one column shelf. The margin around them still drags it. */
+    *r_icon = (show_text || room < UI_UNIT_X) ? ICON_NONE : ICON_GRIP;
+    *r_title = show_text ? label : "";
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: draw the tear-off header row (menu/panel label on the left,
+ * pin + close icons on the right) followed by a separator line. The icons are right-aligned
+ * to the block content width after layout by #block_tear_off_align_header(); a spacer is not
+ * used because #update_flexible_spacing targets the region width, which is meaningless for
+ * popup blocks (and would shift the whole block). */
+void tear_off_header_draw(Layout *layout,
+                          const char *translation_context,
+                          const char *label,
+                          const char *collapse_op,
+                          const char *close_op)
+{
+  const EmbossType prev_emboss = layout->emboss_or_undefined();
+  layout->emboss_set(EmbossType::Pulldown);
+  Layout *row = &layout->row(true);
+  /* BFA - Tear-Off Menu/Panel: a menu's width comes from its contents, so the title must measure
+   * itself rather than take the estimated 10 units. Panels keep the width they were given. */
+  if (!(layout->block()->flag & BLOCK_POPOVER)) {
+    row->alignment_set(LayoutAlign::Left);
+  }
+  /* The reserved room is the two header icons. */
+  int title_icon;
+  const char *title;
+  tear_off_shelf_title_get(layout->block(),
+                           CTX_IFACE_(translation_context, label),
+                           2 * UI_UNIT_X,
+                           &title_icon,
+                           &title);
+  row->label(title, title_icon);
+  /* Nested non-expanding row keeps the two icons compact together. */
+  Layout *icons = &row->row(true);
+  icons->fixed_size_set(true);
+  icons->op(collapse_op, "", ICON_UNPINNED);
+  icons->op(close_op, "", ICON_PANEL_CLOSE);
+  layout->emboss_set(prev_emboss);
+  /* BFA - Tear-Off Menu/Panel: with the panel colors, the header's own color is what ends it. */
+  if (!block_has_tear_off_panel_colors(layout->block())) {
+    layout->separator(1.0f, LayoutSeparatorType::Line);
+  }
+  block_tear_off_header_tag(layout->block());
+}
+
+/* BFA - Tear-Off Menu/Panel: called only from #item_menutype_func, the root and submenu entry.
+ * #Layout::menu_contents also goes through #menutype_draw on the same block, and it must not
+ * add a row or a second header in the middle of its parent menu. */
+static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt)
+{
+  Block *block = layout->block();
+  const bool is_context_menu = BLI_strcasestr(mt->idname, "_context_menu") != nullptr;
+  const bool is_tear_off = block->handle && block->handle->is_tear_off;
+  /* BFA - Tear-Off Menu/Panel: a menu opened from a button bound to a property or carrying context
+   * pointers reads them while drawing. A tear-off has no source button and can't store them, so it
+   * would redraw empty (for example the color space menu). */
+  const Button *source_but = block->handle ? block->handle->popup_create_vars.but : nullptr;
+  const bool menu_needs_source_but = source_but && (source_but->rnaprop || source_but->context);
+  if (!STREQ(mt->idname, "WM_MT_tear_off_menu") && block->handle && !is_context_menu)
+  {
+    if (is_tear_off) {
+      tear_off_header_draw(layout,
+                           mt->translation_context,
+                           mt->label,
+                           "WM_OT_menu_tear_off_collapse",
+                           "WM_OT_menu_tear_off_close");
+    }
+    else if (tear_off_enabled() && !menu_needs_source_but) { /* BFA - No row when turned off. */
+      PointerRNA opptr = layout->op("WM_OT_menu_tear_off", "Tear Off Menu", ICON_GRIP);
+      if (opptr.data) {
+        RNA_string_set(&opptr, "menu_idname", mt->idname);
+      }
+      layout->separator(1.0f, LayoutSeparatorType::Line);
+    }
+  }
+}
+
 void menutype_draw(bContext *C, MenuType *mt, Layout *layout)
 {
   Menu menu{};
@@ -6476,11 +6623,111 @@ static bool layout_has_panel_label(const Layout *layout, const PanelType *pt)
   return false;
 }
 
+/* BFA - Tear-Off Menu/Panel: #tear_off_header_draw for a panel, with its own header buttons. The
+ * root of a popover skips draw_header, so enable checkboxes vanished. The preset goes before the
+ * icons, which #block_tear_off_align_header keeps at the right edge. */
+static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel, Layout *layout)
+{
+  const char *label = CTX_IFACE_(pt->translation_context, pt->label);
+  const bool has_header = !(pt->flag & PANEL_TYPE_NO_HEADER);
+  const EmbossType prev_emboss = layout->emboss_or_undefined();
+  layout->emboss_set(EmbossType::Pulldown);
+  Layout *row = &layout->row(true);
+  if (pt->draw_header && has_header) {
+    Layout *left = &row->row(true);
+    left->fixed_size_set(true);
+    left->label("", ICON_GRIP);
+    /* Region headers are embossed. Pulldown would make a checkbox look like a menu item. */
+    left->emboss_set(EmbossType::Emboss);
+    panel->layout = left;
+    pt->draw_header(C, panel);
+    panel->layout = nullptr;
+    /* draw_header can add the label itself in a row tear-off, through
+     * `text=self.bl_label if self.is_popover`. The empty label keeps the icons on the right. */
+    row->label(layout_has_panel_label(left, pt) ? "" : label, ICON_NONE);
+  }
+  else {
+    /* The reserved room is the two header icons and the preset. */
+    int title_icon;
+    const char *title;
+    const int reserved = (2 + ((pt->draw_header_preset && has_header) ? 1 : 0)) * UI_UNIT_X;
+    tear_off_shelf_title_get(layout->block(), label, reserved, &title_icon, &title);
+    /* An empty label would still take up room from the icons. */
+    if (title[0] != '\0' || title_icon != ICON_NONE) {
+      row->label(title, title_icon);
+    }
+  }
+  if (pt->draw_header_preset && has_header) {
+    Layout *preset = &row->row(true);
+    preset->fixed_size_set(true);
+    preset->emboss_set(EmbossType::Emboss);
+    panel->layout = preset;
+    pt->draw_header_preset(C, panel);
+    panel->layout = nullptr;
+  }
+  Layout *icons = &row->row(true);
+  icons->fixed_size_set(true);
+  icons->op("WM_OT_panel_tear_off_collapse", "", ICON_UNPINNED);
+  icons->op("WM_OT_panel_tear_off_close", "", ICON_PANEL_CLOSE);
+  layout->emboss_set(prev_emboss);
+  /* With the panel colors, the header's own color is what ends it. */
+  if (!block_has_tear_off_panel_colors(layout->block())) {
+    layout->separator(1.0f, LayoutSeparatorType::Line);
+  }
+  block_tear_off_header_tag(layout->block());
+}
+
+/* BFA - Tear-Off Menu/Panel: a region only polls top level panels, and it filters Properties
+ * panels by tab, so panels rely on both. A tear-off has neither check, so a refresh would draw
+ * with the None its poll guards against, and raise a Python error. Subpanels need the parent's
+ * poll too. With no source region left, no poll can be trusted. */
+static bool tear_off_panel_available(const bContext *C,
+                                     const PopupBlockHandle *handle,
+                                     PanelType *pt)
+{
+  if (handle->tear_off_spacetype != 0 &&
+      (handle->ctx_area == nullptr || handle->ctx_region == nullptr))
+  {
+    return false;
+  }
+  const PanelType *root = pt;
+  while (root->parent) {
+    root = root->parent;
+  }
+  /* Only a region's panels were filtered by tab. A popover row can show a panel of any context,
+   * such as STRIP_PT_color_tag_picker with its "none". */
+  if (handle->tear_off_from_region) {
+    if (const SpaceProperties *sbuts = CTX_wm_space_properties(C)) {
+      /* The Tool tab shows 3D View panels, and hide by mode already filters those. */
+      const bool is_tool_tab = sbuts->mainb == BCONTEXT_TOOL;
+      if (root->space_type != SPACE_PROPERTIES) {
+        if (!is_tool_tab) {
+          return false;
+        }
+      }
+      else if (root->context[0] != '\0' &&
+               (is_tool_tab || !STREQ(root->context, ED_buttons_tab_context_string(sbuts->mainb))))
+      {
+        return false;
+      }
+    }
+  }
+  for (PanelType *iter = pt; iter; iter = iter->parent) {
+    if (iter->poll && !iter->poll(C, iter)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool show_header)
 {
   Block *block = layout->block();
   Panel *panel = BKE_panel_new(pt);
-  panel->flag = PNL_POPOVER;
+  /* BFA - Tear-Off Menu/Panel: a panel from a region shows what the region shows. Panels hide
+   * content under is_popover because the tool header already has it, and a tear-off has none. */
+  panel->flag = (block->handle && block->handle->tear_off_from_region) ? ePanel_Flag(0) :
+                                                                         PNL_POPOVER;
 
   if (pt->listener) {
     block_add_dynamic_listener(block, pt->listener);
@@ -6520,20 +6767,88 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
     if (!layout_has_panel_label(header, pt)) {
       header->label(CTX_IFACE_(pt->translation_context, pt->label), ICON_NONE);
     }
+    /* BFA - Tear-Off Menu/Panel: a region draws a child's preset too, see area.cc, and a popover
+     * doesn't. A tear-off is a live view of the region's panel. A sub-row, because presets set
+     * emboss on their layout. */
+    if (block->handle && block->handle->is_tear_off && pt->draw_header_preset &&
+        !(pt->flag & PANEL_TYPE_NO_HEADER))
+    {
+      Layout *preset = &header->row(true);
+      preset->fixed_size_set(true);
+      preset->emboss_set(EmbossType::Emboss);
+      panel->layout = preset;
+      pt->draw_header_preset(C, panel);
+      panel->layout = nullptr;
+    }
   }
   else {
     body = layout;
   }
 
+  bool tear_off_unavailable = false; /* BFA - Tear-Off Menu/Panel */
   if (body) {
-    panel->layout = body;
-    pt->draw(C, panel);
-    panel->layout = nullptr;
+    /* BFA - Tear-Off Menu/Panel Tear-off affordance for popover root panels. */
+    if ((block->flag & BLOCK_POPOVER) && !show_header) {
+      const bool is_tear_off = block->handle && block->handle->is_tear_off;
+      if (is_tear_off) {
+        tear_off_unavailable = !tear_off_panel_available(C, block->handle, pt);
+        /* BFA - Tear-Off Menu/Panel: draw_header can't read poll-guarded data this way. */
+        if (tear_off_unavailable) {
+          tear_off_header_draw(body,
+                               pt->translation_context,
+                               pt->label,
+                               "WM_OT_panel_tear_off_collapse",
+                               "WM_OT_panel_tear_off_close");
+          enum_tear_off_unavailable_draw(body);
+        }
+        else {
+          tear_off_panel_header_draw(C, pt, panel, body);
+        }
+      }
+      /* BFA - Tear-Off Menu/Panel: no row when turned off. A tear-off has no source button or
+       * creator, so a panel reading context from them would redraw empty, the same rule as
+       * `menu_needs_source_but`. Both end up on this layout: the button's in
+       * #popover_create_block, and a creator sets its own, as the asset shelf's shortcut does. A
+       * property on the button doesn't count: panels opened with #Layout::prop_with_popover read
+       * their own data. */
+      else if (tear_off_enabled() && !body->context()) {
+        const EmbossType prev_emboss = body->emboss_or_undefined();
+        body->emboss_set(EmbossType::Pulldown);
+        PointerRNA opptr = body->op("WM_OT_panel_tear_off", "Tear Off Panel", ICON_GRIP);
+        if (opptr.data) {
+          RNA_string_set(&opptr, "panel_idname", pt->idname);
+        }
+        body->emboss_set(prev_emboss);
+        body->separator(1.0f, LayoutSeparatorType::Line);
+      }
+    }
+
+    /* BFA - Tear-Off Menu/Panel: a panel with only children has no draw, see area.cc. */
+    if (pt->draw && !tear_off_unavailable) {
+      /* BFA - Tear-Off Menu/Panel: draw sets active, enabled, scale and use_property_split on its
+       * layout. resolve() applies the first three to everything in that layout, and children
+       * inherit the last, so they would reach the close icon, the header checkbox and the
+       * children. In a region these are separate layouts.
+       * A plain column wouldn't do: a root counts as horizontal for #Layout::local_direction, so
+       * an expanded enum or a vector on it makes a row, and in a column it would stack. */
+      Layout *draw_layout = body;
+      if (block->handle && block->handle->is_tear_off) {
+        draw_layout = MEM_new<LayoutColumn>(__func__, ItemType::LayoutTearOffBody, nullptr);
+        LayoutInternal::init_from_parent(draw_layout, body, false);
+        /* Keep the spacing of `body`, because a plain column uses buttonspacey. */
+        LayoutInternal::layout_space_set(draw_layout, LayoutInternal::layout_space_get(body));
+        block_layout_set_current(block, draw_layout);
+      }
+      panel->layout = draw_layout;
+      pt->draw(C, panel);
+      panel->layout = nullptr;
+    }
   }
   BLI_assert(panel->runtime->custom_data_ptr == nullptr);
 
   BKE_panel_free(panel);
-  if (!body) {
+  /* BFA - Tear-Off Menu/Panel: children may rely on the poll that just failed. */
+  if (!body || tear_off_unavailable) {
     return;
   }
   /* Draw child panels. */
