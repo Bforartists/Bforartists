@@ -7064,21 +7064,22 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_faces_legacy")  # bfa menu
 
         layout.operator("mesh.poke", icon="POKEFACES")
-        layout.operator(
-            "view3d.edit_mesh_extrude_move_normal",
-            text="Extrude Faces",
-            icon="EXTRUDE_REGION",
-        )
-        layout.operator(
-            "view3d.edit_mesh_extrude_move_shrink_fatten",
-            text="Extrude Faces Along Normals",
-            icon="EXTRUDE_REGION",
-        )
-        layout.operator(
-            "mesh.extrude_faces_move",
-            text="Extrude Individual Faces",
-            icon="EXTRUDE_REGION",
-        )
+        # BFA - removed the extrude entries, they are doubles of the Mesh > Extrude menu
+        # layout.operator(
+        #     "view3d.edit_mesh_extrude_move_normal",
+        #     text="Extrude Faces",
+        #     icon="EXTRUDE_REGION",
+        # )
+        # layout.operator(
+        #     "view3d.edit_mesh_extrude_move_shrink_fatten",
+        #     text="Extrude Faces Along Normals",
+        #     icon="EXTRUDE_REGION",
+        # )
+        # layout.operator(
+        #     "mesh.extrude_faces_move",
+        #     text="Extrude Individual Faces",
+        #     icon="EXTRUDE_REGION",
+        # )
 
         layout.separator()
 
