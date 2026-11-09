@@ -30,7 +30,7 @@ class MotionPathButtonsPanel:
         if mps.type == 'RANGE':
             row = range_group.row()
             row.separator()
-            row.prop(mps, "range", text="Calculation Range")
+            row.prop(mps, "range", text="Computation Range") # BFA - same name as in the Calculate Paths operator, was "Calculation Range"
 
         if mps.type == 'CURRENT_FRAME':
             col = layout.column(align=True)
