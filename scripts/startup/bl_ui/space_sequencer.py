@@ -1796,6 +1796,7 @@ class SEQUENCER_MT_context_menu(Menu):
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
         layout.operator("sequencer.delete", text="Delete", icon="DELETE")
+        layout.operator("sequencer.ripple_delete", text="Ripple Delete", icon="RIPPLE_DELETE")  # BFA - from Blender's reorganized context menu (week 43)
 
         strip = context.active_strip
         if strip and strip.type == "SCENE":
@@ -1814,6 +1815,12 @@ class SEQUENCER_MT_context_menu(Menu):
             text="Set Preview Range to Strips",
             icon="PREVIEW_RANGE",
         ).preview = True
+        # BFA - from Blender's reorganized context menu (week 43), named like the Range menu entry
+        layout.operator(
+            "sequencer.set_range_to_strips",
+            text="Set Frame Range to Strips",
+            icon="PREVIEW_RANGE",
+        )
 
         layout.separator()
 
