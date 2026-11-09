@@ -354,7 +354,7 @@ class MASK_PT_transforms:
 class MASK_MT_mask(Menu):
     bl_label = "Mask"
 
-    def draw(self, _context):
+    def draw(self, context): # BFA - context is used for the Move to Layer menu below
         layout = self.layout
 
         layout.menu("MASK_MT_transform") #BFA - made consistent with other transform panels
@@ -373,6 +373,12 @@ class MASK_MT_mask(Menu):
 
         layout.operator("mask.parent_set", icon = "PARENT_SET")
         layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
+
+        # BFA - exposed Move to Layer, Blender only reaches it by the M hotkey.
+        # Only drawn with a mask, the menu needs one to list its layers.
+        if context.space_data.mask:
+            layout.separator()
+            layout.menu("MASK_MT_move_to_layer")
 
         layout.separator()
 
