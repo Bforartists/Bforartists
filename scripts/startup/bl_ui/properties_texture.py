@@ -508,6 +508,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
             sub.prop(tex, "repeat_y", text="Y")
 
             col = flow.column(heading="Mirror", heading_ctxt=i18n_contexts.id_image)
+            row = layout.row() # BFA - own row, else Mirror X lands in the Flip Axes row above
             row.active = (tex.repeat_x > 1)
             row.use_property_split = False
             row.prop(tex, "use_mirror_x", text="X")
@@ -526,6 +527,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
 
             col = flow.column(heading="Tiles")
 
+            row = layout.row() # BFA - own row, else Even lands in the Flip Axes row above
             row.use_property_split = False # BFA
             row.prop(tex, "use_checker_even", text="Even", text_ctxt=i18n_contexts.amount)
             row.prop_decorator(tex, "use_checker_even")
