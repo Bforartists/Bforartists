@@ -349,6 +349,7 @@ class PARTICLE_PT_emission_source(ParticleButtonsPanel, Panel):
             row = col.row()
             row.prop(part, "hexagonal_grid")
             row.prop_decorator(part, "hexagonal_grid")
+            col.use_property_split = True # BFA - restore split, so the Resolution and Random sliders below get their label in front
         else:
             col.use_property_split = False
             col.prop(part, "use_emit_random", text="Random Order")
