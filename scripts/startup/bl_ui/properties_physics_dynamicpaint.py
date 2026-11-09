@@ -805,9 +805,11 @@ class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
                 col.prop(brush, "use_proximity_project")
                 col.use_property_split = True
 
-                sub = col.column()
-                sub.active = brush.use_proximity_project
-                sub.prop(brush, "ray_direction")
+                # BFA - hide Ray Direction instead of greying it out, it only applies with Project enabled
+                if brush.use_proximity_project:
+                    sub = col.column()
+                    # sub.active = brush.use_proximity_project # BFA - hidden instead, see above
+                    sub.prop(brush, "ray_direction")
 
 
 class PHYSICS_PT_dp_brush_source_color_ramp(PhysicButtonsPanel, Panel):
