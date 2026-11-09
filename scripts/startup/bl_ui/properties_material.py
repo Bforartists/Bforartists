@@ -285,6 +285,7 @@ def draw_material_surface_settings(layout, mat, is_eevee=True):
         row.separator()
         max_diplacement_text = "Max Distance" if is_eevee else "Max Displacement"
         row.enabled = mat.displacement_method != 'BUMP' or is_eevee
+        row.use_property_split = True # BFA - label in front of the slider, not inside it
         row.prop(mat, "max_vertex_displacement", text=max_diplacement_text)
 
         if mat.displacement_method == 'DISPLACEMENT':
