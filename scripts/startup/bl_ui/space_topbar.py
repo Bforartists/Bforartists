@@ -456,7 +456,7 @@ class TOPBAR_MT_file_project(Menu):
 
         layout.operator("project.new", text="New...", icon='ADD')
         layout.operator("project.open", text="Open...", icon='FILE_FOLDER')
-        layout.operator("project.close", text="Close")
+        layout.operator("project.close", text="Close", icon="PANEL_CLOSE")  # BFA - Icon Added, same as Close Area
 
         layout.separator()
 
