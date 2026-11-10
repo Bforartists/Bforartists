@@ -672,6 +672,7 @@ DEF_ICON_NODE_SOCKET_DRAW(bundle, eNodeSocketDatatype::SOCK_BUNDLE)
 DEF_ICON_NODE_SOCKET_DRAW(closure, eNodeSocketDatatype::SOCK_CLOSURE)
 DEF_ICON_NODE_SOCKET_DRAW(int_vector, eNodeSocketDatatype::SOCK_INT_VECTOR)
 DEF_ICON_NODE_SOCKET_DRAW(virtual, eNodeSocketDatatype::SOCK_CUSTOM)
+DEF_ICON_NODE_SOCKET_DRAW(dynamic, eNodeSocketDatatype::SOCK_DYNAMIC)
 
 /* BFA - Add icons for node structure type */
 #  define DEF_ICON_NODE_STRUCTURE_DRAW(name, structure_type) \
@@ -1092,6 +1093,7 @@ static void init_internal_icons()
   def_internal_vicon(ICON_NODE_SOCKET_MASK, icon_node_socket_draw_mask);
   def_internal_vicon(ICON_NODE_SOCKET_SOUND, icon_node_socket_draw_sound);
   def_internal_vicon(ICON_NODE_SOCKET_INT_VECTOR, icon_node_socket_draw_int_vector);
+  def_internal_vicon(ICON_NODE_SOCKET_DYNAMIC, icon_node_socket_draw_dynamic);
 }
 
 #else
@@ -1886,11 +1888,10 @@ static void icon_draw_size(float x,
       const float zoom_factor = w / UI_ICON_SIZE;
       uiFontStyle fstyle_small = *UI_FSTYLE_WIDGET;
       fstyle_small.points *= zoom_factor * 0.8f;
-      fstyle_small.shadow = short(is_light ? FontShadowType::Outline : FontShadowType::None);
-      fstyle_small.shadx = 0;
-      fstyle_small.shady = 0;
       rcti text_rect = {int(x), int(x + UI_UNIT_X * zoom_factor), int(y), int(y)};
       FontStyleDrawParams params = {UI_STYLE_TEXT_RIGHT, 0};
+      params.use_shadow = is_light;
+      params.use_outline = true;
       fontstyle_draw(&fstyle_small,
                      &text_rect,
                      text_overlay->text,

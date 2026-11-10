@@ -141,6 +141,7 @@ struct CurvesDataPanelState {
   float softness;
   float u_scale;
   float aspect_ratio;
+  int8_t stroke_type;
 };
 
 /**
@@ -318,10 +319,9 @@ static void transform_panel_interaction_update_fn(bContext *C,
   tfp->tag_for_update = false;
 
   Object *ob = static_cast<Object *>(arg1);
-  BMEditMesh *em = BKE_editmesh_from_object(ob);
+  EditMesh *em = BKE_editmesh_from_object(ob);
 
-  BKE_editmesh_looptris_and_normals_calc_with_partial(
-      em, BKE_editmesh_bmesh_get_for_write(ob), bmpinfo);
+  BKE_editmesh_looptris_and_normals_calc_with_partial(em, BKE_editmesh_bmesh_ensure(ob), bmpinfo);
 }
 
 /** \} */
@@ -580,6 +580,15 @@ struct CurvesPointSelectionStatus {
 };
 
 /**
+ * Points in a layer scaled to zero are left out of the median & size. The panel can't move them,
+ * and scaling them would overwrite the layer-space coordinate on the zero axis.
+ */
+static bool grease_pencil_layer_is_skipped(const float4x4 &grease_pencil_layer_to_object)
+{
+  return math::determinant(float3x3(grease_pencil_layer_to_object)) == 0.0f;
+}
+
+/**
  * \param grease_pencil_layer_to_object: Grease pencil strokes are in layer space, the median &
  * bounds in object space. Null when the points are already in object space.
  */
@@ -676,8 +685,8 @@ static CurvesPointSelectionStatus init_curves_point_selection_status(
 /**
  * Return the object to layer matrix.
  *
- * A layer that scales an axis to zero has no true inverse, #invert_m4_m4_safe_ortho fills that
- * axis in from the others, so an edit still reaches the points on the axes that are left.
+ * Layers scaled to zero are skipped by callers, see #grease_pencil_layer_is_skipped.
+ * #invert_m4_m4_safe_ortho only guards against a near singular matrix that check misses.
  */
 static float4x4 object_to_grease_pencil_layer_calc(const float4x4 &grease_pencil_layer_to_object)
 {
@@ -842,7 +851,7 @@ struct CurvesSelectionStatus {
   int resolution_max = 0;
 
   StatusValue<float> fill_opacity;
-  /* Use int for start_cap and end_cap, even though the underlying
+  /* Use int for start_cap, end_cap and stroke_type, even though the underlying
    * attribute is int8_t. The statusvalue is used to hold the
    * summation of the value over all curves, so it needs the headroom.
    */
@@ -851,6 +860,7 @@ struct CurvesSelectionStatus {
   StatusValue<float> softness;
   StatusValue<float> u_scale;
   StatusValue<float> aspect_ratio;
+  StatusValue<int> stroke_type;
 
   static CurvesSelectionStatus sum(const CurvesSelectionStatus &a, const CurvesSelectionStatus &b)
   {
@@ -872,6 +882,7 @@ struct CurvesSelectionStatus {
         StatusValue<float>::sum(a.softness, b.softness),
         StatusValue<float>::sum(a.u_scale, b.u_scale),
         StatusValue<float>::sum(a.aspect_ratio, b.aspect_ratio),
+        StatusValue<int>::sum(a.stroke_type, b.stroke_type),
     };
   }
 };
@@ -991,6 +1002,28 @@ static CurvesSelectionStatus init_grease_pencil_selection_status(
       *attributes.lookup<float>("u_scale", bke::AttrDomain::Curve), selection, 1.0f);
   status.aspect_ratio = init_status_from_attribute(
       *attributes.lookup<float>("aspect_ratio", bke::AttrDomain::Curve), selection, 1.0f);
+
+  const VArray<bool> hide_strokes = *attributes.lookup_or_default<bool>(
+      "hide_stroke", bke::AttrDomain::Curve, false);
+  const VArray<int> fill_ids = *attributes.lookup_or_default<int>(
+      "fill_id", bke::AttrDomain::Curve, 0);
+
+  status.stroke_type = init_status_from_attribute(
+      VArray<int>::from_func(curves.curves_num(),
+                             [&](const int64_t curve_i) {
+                               const int fill_id = fill_ids[curve_i];
+                               const bool hide_stroke = hide_strokes[curve_i];
+
+                               if (fill_id != 0) {
+                                 if (hide_stroke) {
+                                   return int(bke::greasepencil::StrokeType::Fill);
+                                 }
+                                 return int(bke::greasepencil::StrokeType::Both);
+                               }
+                               return int(bke::greasepencil::StrokeType::Stroke);
+                             }),
+      selection,
+      int(bke::greasepencil::StrokeType::Stroke));
 
   return status;
 }
@@ -1225,7 +1258,7 @@ static void v3d_editvertex_buts(
   if (ob->type == OB_MESH) {
     TransformMedian_Mesh &median = median_basis.mesh;
     Mesh *mesh = id_cast<Mesh *>(ob->data);
-    BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh);
+    BMesh *bm = BKE_editmesh_bmesh_ensure(mesh);
     calc_median_bmesh(*bm, bounds_matrix, median, select_bounds, tot, totedgedata);
 
     has_meshdata = (tot || totedgedata);
@@ -1348,6 +1381,9 @@ static void v3d_editvertex_buts(
               const MutableDrawingInfo &info = drawings[drawing];
               const float4x4 grease_pencil_layer_to_object =
                   grease_pencil.layer(info.layer_index).to_object_space(*ob);
+              if (grease_pencil_layer_is_skipped(grease_pencil_layer_to_object)) {
+                continue;
+              }
               value = CurvesPointSelectionStatus::sum(
                   value,
                   init_curves_point_selection_status(
@@ -2061,7 +2097,7 @@ static void v3d_editvertex_buts(
       const TransformMedian_Mesh &median = median_basis.mesh;
       const TransformMedian_Mesh &ve_median = ve_median_basis.mesh;
       Mesh *mesh = id_cast<Mesh *>(ob->data);
-      BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh);
+      BMesh *bm = BKE_editmesh_bmesh_ensure(mesh);
       apply_median_to_bmesh(*bm, median, ve_median, tot, apply_vcos, apply_coord_fn);
 
       if (apply_vcos) {
@@ -2191,6 +2227,10 @@ static void v3d_editvertex_buts(
         bke::CurvesGeometry &curves = info.drawing.strokes_for_write();
         const float4x4 grease_pencil_layer_to_object =
             grease_pencil.layer(info.layer_index).to_object_space(*ob);
+        /* Must match the measurement, #tot and #coords_orig only count these points. */
+        if (grease_pencil_layer_is_skipped(grease_pencil_layer_to_object)) {
+          return;
+        }
         if (apply_to_curves_point_selection(tot,
                                             median_basis.curves,
                                             ve_median_basis.curves,
@@ -3054,7 +3094,7 @@ static void handle_curves_knot_mode(bContext *C, void * /*arg1*/, void * /*arg2*
         const Span<float> src_custom_knots = curves.nurbs_custom_knots();
         const ImplicitSharingInfo *knots_sharing_info = curves.runtime->custom_knots_sharing_info;
         if (knots_sharing_info != nullptr) {
-          knots_sharing_info->add_weak_user();
+          knots_sharing_info->add_user();
         }
 
         Array<int8_t> src_knot_modes;
@@ -3076,7 +3116,7 @@ static void handle_curves_knot_mode(bContext *C, void * /*arg1*/, void * /*arg2*
         update_custom_knots(src_custom_knots_by_curve, src_knot_modes, src_custom_knots, curves);
 
         if (knots_sharing_info != nullptr) {
-          knots_sharing_info->remove_weak_user_and_delete_if_last();
+          knots_sharing_info->remove_user_and_delete_if_last();
         }
       });
 }
@@ -3098,7 +3138,7 @@ static void handle_curves_order(bContext *C, void * /*arg1*/, void * /*arg2*/)
         const Span<float> src_custom_knots = curves.nurbs_custom_knots();
         const ImplicitSharingInfo *knots_sharing_info = curves.runtime->custom_knots_sharing_info;
         if (knots_sharing_info != nullptr) {
-          knots_sharing_info->add_weak_user();
+          knots_sharing_info->add_user();
         }
 
         bool knot_modes_changed = false;
@@ -3123,7 +3163,7 @@ static void handle_curves_order(bContext *C, void * /*arg1*/, void * /*arg2*/)
         }
 
         if (knots_sharing_info != nullptr) {
-          knots_sharing_info->remove_weak_user_and_delete_if_last();
+          knots_sharing_info->remove_user_and_delete_if_last();
         }
       });
 }
@@ -3258,6 +3298,22 @@ static void handle_curves_start_cap(bContext *C, void * /*arg1*/, void * /*arg2*
       });
 }
 
+static void handle_curves_stroke_type(bContext *C, void * /*arg1*/, void * /*arg2*/)
+{
+  using namespace blender;
+
+  apply_to_active_object(
+      C,
+      [](const CurvesDataPanelState &modified_state,
+         const IndexMask &selection,
+         bke::CurvesGeometry &curves) {
+        bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
+
+        bke::greasepencil::set_stroke_type(
+            attributes, selection, bke::greasepencil::StrokeType(modified_state.stroke_type));
+      });
+}
+
 constexpr std::array<EnumPropertyItem, 5> enum_curve_knot_mode_items{{
     {NURBS_KNOT_MODE_NORMAL,
      "NORMAL",
@@ -3320,17 +3376,45 @@ static void grease_pencil_cap_menu(bContext * /*C*/, ui::Layout *layout, void *c
   layout->column(false);
 
   for (const EnumPropertyItem &item : enum_grease_pencil_cap_items) {
-    ui::Button *but = uiDefButV(block,
-                                ui::ButtonType::ButMenu,
-                                CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
-                                0,
-                                0,
-                                UI_UNIT_X * 5,
-                                UI_UNIT_Y,
-                                reinterpret_cast<int *>(cap_type_p),
-                                0.0,
-                                0.0,
-                                "");
+    ui::Button *but = uiDefIconTextBut(block,
+                                       ui::ButtonType::ButMenu,
+                                       item.icon,
+                                       CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL, item.name),
+                                       0,
+                                       0,
+                                       UI_UNIT_X * 5,
+                                       UI_UNIT_Y,
+                                       reinterpret_cast<int *>(cap_type_p),
+                                       "");
+    button_enum_prop_value_set(but, item.value);
+  }
+}
+
+constexpr std::array<EnumPropertyItem, 3> enum_grease_pencil_stroke_type_items{{
+    {int(bke::greasepencil::StrokeType::Stroke), "STROKE", ICON_GP_DRAW_STROKE, "Stroke", ""},
+    {int(bke::greasepencil::StrokeType::Fill), "FILL", ICON_GP_DRAW_FILL, "Fill", ""},
+    {int(bke::greasepencil::StrokeType::Both), "BOTH", ICON_GP_DRAW_BOTH, "Both", ""},
+}};
+
+static void grease_pencil_stroke_type_menu(bContext * /*C*/,
+                                           ui::Layout *layout,
+                                           void *stroke_type_p)
+{
+  ui::Block *block = layout->block();
+  blender::ui::block_layout_set_current(block, layout);
+  layout->column(false);
+
+  for (const EnumPropertyItem &item : enum_grease_pencil_stroke_type_items) {
+    ui::Button *but = uiDefIconTextBut(block,
+                                       ui::ButtonType::ButMenu,
+                                       item.icon,
+                                       IFACE_(item.name),
+                                       0,
+                                       0,
+                                       UI_UNIT_X * 5,
+                                       UI_UNIT_Y,
+                                       reinterpret_cast<int *>(stroke_type_p),
+                                       "");
     button_enum_prop_value_set(but, item.value);
   }
 }
@@ -3408,6 +3492,7 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
   current.softness = math::safe_divide(status.softness.value_sum, float(status.curve_count));
   current.aspect_ratio = math::safe_divide(status.aspect_ratio.value_sum,
                                            float(status.curve_count));
+  current.stroke_type = math::safe_divide(status.stroke_type.value_sum, status.curve_count);
 
   modified = current;
 
@@ -3437,6 +3522,29 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
 
   const int butw = 10 * UI_UNIT_X;
   const int buth = 20 * UI_SCALE_FAC;
+
+  if (ob->type == OB_GREASE_PENCIL) {
+    add_labeled_field(
+        IFACE_("Stroke Type"),
+        status.stroke_type.value_max * status.curve_count == status.stroke_type.value_sum,
+        [&]() {
+          ui::Button *but = uiDefIconTextMenuBut(
+              block,
+              grease_pencil_stroke_type_menu,
+              &modified.stroke_type,
+              enum_grease_pencil_stroke_type_items[modified.stroke_type].icon,
+              CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL,
+                         enum_grease_pencil_stroke_type_items[modified.stroke_type].name),
+              0,
+              0,
+              butw,
+              buth,
+              "");
+          button_type_set_menu_from_pulldown(but);
+          button_func_set(but, handle_curves_stroke_type, nullptr, nullptr);
+          return but;
+        });
+  }
 
   add_labeled_field(
       IFACE_("Cyclic"),
@@ -3520,10 +3628,11 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
                       status.start_cap.value_max * status.curve_count ==
                           status.start_cap.value_sum,
                       [&]() {
-                        ui::Button *but = uiDefMenuBut(
+                        ui::Button *but = uiDefIconTextMenuBut(
                             block,
                             grease_pencil_cap_menu,
                             &modified.start_cap,
+                            enum_grease_pencil_cap_items[modified.start_cap].icon,
                             CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL,
                                        enum_grease_pencil_cap_items[modified.start_cap].name),
                             0,
@@ -3539,10 +3648,11 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
     add_labeled_field(IFACE_("End Cap"),
                       status.end_cap.value_max * status.curve_count == status.end_cap.value_sum,
                       [&]() {
-                        ui::Button *but = uiDefMenuBut(
+                        ui::Button *but = uiDefIconTextMenuBut(
                             block,
                             grease_pencil_cap_menu,
                             &modified.end_cap,
+                            enum_grease_pencil_cap_items[modified.end_cap].icon,
                             CTX_IFACE_(BLT_I18NCONTEXT_ID_GPENCIL,
                                        enum_grease_pencil_cap_items[modified.end_cap].name),
                             0,

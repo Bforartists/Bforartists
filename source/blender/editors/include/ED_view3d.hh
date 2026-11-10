@@ -22,7 +22,7 @@ namespace blender {
 struct ARegion;
 struct BMEdge;
 struct BMElem;
-struct BMEditMesh;
+struct EditMesh;
 struct BMFace;
 struct BMVert;
 struct BPoint;
@@ -90,7 +90,7 @@ struct ViewContext {
   wmWindow *win;
   wmWindowManager *wm;
   RegionView3D *rv3d;
-  BMEditMesh *em;
+  EditMesh *em;
   int mval[2];
 };
 
@@ -567,6 +567,37 @@ eV3DProjStatus ED_view3d_project_float_object(const ARegion *region,
                                               const float co[3],
                                               float r_co[2],
                                               eV3DProjTest flag);
+
+/**
+ * Calculate clipping planes to use when #V3D_PROJ_TEST_CLIP_CONTENT is enabled.
+ *
+ * Planes are selected from the viewpoint using `clip_flag`
+ * to detect which planes should be applied (maximum 6).
+ *
+ * \return The number of planes written into `planes`.
+ */
+int ED_view3d_content_planes_from_clip_flag(const ARegion *region,
+                                            const Object *ob,
+                                            eV3DProjTest clip_flag,
+                                            float planes[6][4]);
+
+/**
+ * Edge projection is more involved since part of the edge may be behind the view
+ * or extend beyond the far limits. In the case of single points, these can be ignored.
+ * However it just may still be visible on screen, so constrained the edge to planes
+ * defined by the port to ensure both ends of the edge can be projected, see #32214.
+ *
+ * \note This is unrelated to #V3D_PROJ_TEST_CLIP_BB which must be checked separately.
+ */
+bool ED_view3d_project_segment_to_screen_with_content_clip_planes(const ARegion *region,
+                                                                  const float v_a[3],
+                                                                  const float v_b[3],
+                                                                  eV3DProjTest clip_flag,
+                                                                  const rctf *win_rect,
+                                                                  const float content_planes[][4],
+                                                                  int content_planes_len,
+                                                                  float r_screen_co_a[2],
+                                                                  float r_screen_co_b[2]);
 
 float ED_view3d_pixel_size(const RegionView3D *rv3d, const float co[3]);
 float ED_view3d_pixel_size_no_ui_scale(const RegionView3D *rv3d, const float co[3]);
@@ -1095,6 +1126,10 @@ bool ED_view3d_context_user_region(bContext *C, View3D **r_v3d, ARegion **r_regi
  * Also works if \a v3d is not the active space.
  */
 bool ED_view3d_area_user_region(const ScrArea *area, const View3D *v3d, ARegion **r_region);
+/**
+ * Get the main window region with 3D viewport. In quad view, this is the camera region.
+ */
+ARegion *ED_view3d_area_main_region(const ScrArea *area, const View3D *v3d);
 bool ED_operator_rv3d_user_region_poll(bContext *C);
 
 /**

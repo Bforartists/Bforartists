@@ -3236,7 +3236,7 @@ class SEQUENCER_PT_edit_mode(Panel):
         #
         # col.prop(sequencer_tool_settings, "ripple_insert")
         #
-        # col = layout.column(heading="Delete")
+        # col = layout.column(heading="Remove")
         # col.use_property_split = True
         #
         # col.prop(sequencer_tool_settings, "ripple_clear_ranges")
@@ -3261,7 +3261,7 @@ class SEQUENCER_PT_edit_mode(Panel):
         row.prop(sequencer_tool_settings, "ripple_insert")
 
         col = layout.column(align=True)
-        col.label(text="Delete")
+        col.label(text="Remove")  # BFA - Blender renamed Delete to Remove (also covers ripple trim)
         row = col.row()
         row.separator()
         row.prop(sequencer_tool_settings, "ripple_clear_ranges")

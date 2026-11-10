@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: Leandro Paganelli <leandrobp@fastmail.com>\n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-10-20 16:12+0000\n"
 "Last-Translator: Gilberto Rodrigues <gilbertorodrigues@outlook.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.blender.org/projects/blender-ui/ui/pt_BR/>\n"
@@ -21207,6 +21207,54 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
+msgid "Enable Bone Options"
+msgstr "Habilitar opções de ossos"
+
+
+msgid "Disable Bone Options"
+msgstr "Desabilitar as opções de ossos"
+
+
+msgid "Mesh Select Mode"
+msgstr "Modo de seleção de malhas"
+
+
+msgid "Face Data"
+msgstr "Dados das faces"
+
+
+msgid "Clean Up"
+msgstr "Limpeza"
+
+
+msgid "Merge"
+msgstr "Fundir"
+
+
+msgid "Show/Hide"
+msgstr "Mostrar ou ocultar"
+
+
+msgid "Special Characters"
+msgstr "Caracteres especiais"
+
+
+msgid "Metaball"
+msgstr "Meta-esfera"
+
+
+msgid "Names"
+msgstr "Nomes"
+
+
+msgid "Bone Roll"
+msgstr "Rolagem dos ossos"
+
+
+msgid "Math"
+msgstr "Matemática"
+
+
 msgid "Pivot Point"
 msgstr "Pontos de pivô"
 
@@ -21221,6 +21269,10 @@ msgstr "Tipo de decaimento para edição proporcional"
 
 msgid "Mirror"
 msgstr "Espelhar"
+
+
+msgid "Instances"
+msgstr "Instâncias"
 
 
 msgid "UV Mapping"
@@ -21243,16 +21295,16 @@ msgid "Align View"
 msgstr "Alinhar visualização"
 
 
+msgid "Import"
+msgstr "Importar"
+
+
 msgid "Align View to Active"
 msgstr "Alinhar vista para o ativo"
 
 
 msgid "View Regions"
 msgstr "Visualizar Regiões"
-
-
-msgid "Math"
-msgstr "Matemática"
 
 
 msgid "Select More/Less"
@@ -21275,8 +21327,8 @@ msgid "Select Loops"
 msgstr "Selecionar anéis"
 
 
-msgid "Metaball"
-msgstr "Meta-esfera"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Light"
@@ -21287,20 +21339,12 @@ msgid "Light Probe"
 msgstr "Sonda de Luz"
 
 
-msgid "Instances"
-msgstr "Instâncias"
-
-
 msgid "Add Image"
 msgstr "Adicionar Imagem"
 
 
 msgid "Relations"
 msgstr "Relações"
-
-
-msgid "Import"
-msgstr "Importar"
 
 
 msgid "Rigid Body"
@@ -21319,14 +21363,6 @@ msgid "Quick Effects"
 msgstr "Efeitos instantâneos"
 
 
-msgid "Show/Hide"
-msgstr "Mostrar ou ocultar"
-
-
-msgid "Clean Up"
-msgstr "Limpeza"
-
-
 msgid "Make Single User"
 msgstr "Tornar usuário único"
 
@@ -21335,12 +21371,16 @@ msgid "Convert"
 msgstr "Converter"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Hooks"
 msgstr "Ganchos"
+
+
+msgid "Linked"
+msgstr "Vinculando"
+
+
+msgid "Layout"
+msgstr "Organizar"
 
 
 msgid "Random Mask"
@@ -21359,56 +21399,16 @@ msgid "Propagate"
 msgstr "Propagar"
 
 
-msgid "Names"
-msgstr "Nomes"
-
-
-msgid "Toggle Bone Options"
-msgstr "Alternar opções de ossos"
-
-
-msgid "Enable Bone Options"
-msgstr "Habilitar opções de ossos"
-
-
-msgid "Disable Bone Options"
-msgstr "Desabilitar as opções de ossos"
-
-
-msgid "Mesh Select Mode"
-msgstr "Modo de seleção de malhas"
-
-
-msgid "Face Data"
-msgstr "Dados das faces"
-
-
-msgid "Merge"
-msgstr "Fundir"
-
-
-msgid "Linked"
-msgstr "Vinculando"
-
-
-msgid "Layout"
-msgstr "Organizar"
-
-
-msgid "Special Characters"
-msgstr "Caracteres especiais"
-
-
-msgid "Bone Roll"
-msgstr "Rolagem dos ossos"
-
-
 msgid "Keying"
 msgstr "Inserção de chaves"
 
 
 msgid "Tracking"
 msgstr "Rastreamento"
+
+
+msgid "Toggle Bone Options"
+msgstr "Alternar opções de ossos"
 
 
 msgid "Basic"
@@ -29006,11 +29006,6 @@ msgstr "Carrega e aplica um arquivo de temas XML Blender."
 msgctxt "Operator"
 msgid "Install Theme..."
 msgstr "Instalar tema..."
-
-
-msgctxt "Operator"
-msgid "Add Asset Library"
-msgstr "Adicionar Biblioteca de Recursos"
 
 
 msgid "Add an Integrator Preset"
@@ -41029,10 +41024,6 @@ msgid "New Collection"
 msgstr "Nova Coleção"
 
 
-msgid "Add a new collection inside selected collection"
-msgstr "Adicionar uma nova coleção dentro da coleção selecionada"
-
-
 msgid "Nested"
 msgstr "Aninhada"
 
@@ -42587,6 +42578,11 @@ msgstr "O nome do módulo de complemento a ser removido."
 
 msgid "Remove existing template with the same ID"
 msgstr "Remove os modelos existentes com o mesmo identificador."
+
+
+msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "Adicionar Biblioteca de Recursos"
 
 
 msgctxt "Operator"

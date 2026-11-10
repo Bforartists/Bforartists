@@ -2514,6 +2514,9 @@ class _defs_grease_pencil_paint:
 
     @staticmethod
     def grease_pencil_primitive_toolbar(context, layout, _tool, props):
+        if context.region.type != 'TOOL_HEADER':
+            return False
+
         paint = context.tool_settings.gpencil_paint
         brush = paint.brush
 
@@ -4041,12 +4044,13 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         _defs_grease_pencil_paint.curve,
     )
 
+    # Keep the tool order in sync with `_tools_select`.
     _tools_grease_pencil_select = (
         (
             _defs_grease_pencil_paint.select,
-            _defs_grease_pencil_paint.lasso_select,
             _defs_grease_pencil_paint.box_select,
             _defs_grease_pencil_paint.circle_select,
+            _defs_grease_pencil_paint.lasso_select,
         ),
     )
 

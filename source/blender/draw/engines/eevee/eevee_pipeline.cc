@@ -250,15 +250,19 @@ void Prepass::init(DRWState extra_state,
   supports_motion_vectors_ = supports_motion_vectors;
   supports_raycast_visibility_ = supports_raycast_visibility;
 
-  pass_.init();
-  /* Common resources. */
-  pass_.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
-  pass_.bind_resources(inst_.uniform_data);
-  pass_.bind_resources(inst_.velocity);
-  pass_.bind_resources(inst_.sampling);
-  if (pass_setup_cb) {
-    pass_setup_cb(pass_);
-  }
+  auto pass_setup = [&](PassMain &pass) {
+    pass.init();
+    /* Common resources. */
+    pass.bind_texture(RBUFS_UTILITY_TEX_SLOT, inst_.pipelines.utility_tx);
+    pass.bind_resources(inst_.uniform_data);
+    pass.bind_resources(inst_.velocity);
+    pass.bind_resources(inst_.sampling);
+    if (pass_setup_cb) {
+      pass_setup_cb(pass);
+    }
+  };
+  pass_setup(pass_);
+  pass_setup(pass_hide_from_raycast_);
 
   static constexpr const char
       *subpass_names[2 /*hide from raycast*/][2 /*double sided*/][2 /*moving*/][2 /*write id*/] = {
@@ -291,7 +295,8 @@ void Prepass::init(DRWState extra_state,
             setup_sub = nullptr;
             continue;
           }
-          sub = &pass_.sub(subpass_names[hide_from_raycast][double_sided][moving][write_id]);
+          PassMain &pass = hide_from_raycast ? pass_hide_from_raycast_ : pass_;
+          sub = &pass.sub(subpass_names[hide_from_raycast][double_sided][moving][write_id]);
           setup_sub = &sub->sub("Setup");
         }
       }
@@ -342,53 +347,64 @@ void Prepass::end_sync()
             continue;
           }
           const bool write_raycast = has_raycast && !hide_from_raycast;
-          const bool read_raycast = has_raycast && hide_from_raycast;
           const bool write_motion = supports_motion_vectors_ && moving;
           DRWState state = common_state_;
           SET_FLAG_FROM_TEST(state, !double_sided, DRW_STATE_CULL_BACK);
           SET_FLAG_FROM_TEST(state, write_raycast || write_motion, DRW_STATE_WRITE_COLOR);
           sub->state_set(state);
+          /* Hide-from-raycast sub-passes are drawn on a frame-buffer without the prepass
+           * normal/object-ID attachments, so those are ignored in the transition (see #render). */
           sub->subpass_transition(
               GPU_ATTACHMENT_WRITE,
-              {write_raycast ?
-                   GPU_ATTACHMENT_WRITE :
-                   (read_raycast ? GPU_ATTACHMENT_READ : GPU_ATTACHMENT_IGNORE), /* normal */
-               (write_raycast && write_id) ?
-                   GPU_ATTACHMENT_WRITE :
-                   (read_raycast ? GPU_ATTACHMENT_READ : GPU_ATTACHMENT_IGNORE),
+              {write_raycast ? GPU_ATTACHMENT_WRITE : GPU_ATTACHMENT_IGNORE, /* normal */
+               (write_raycast && write_id) ? GPU_ATTACHMENT_WRITE : GPU_ATTACHMENT_IGNORE,
                write_motion ? GPU_ATTACHMENT_WRITE : GPU_ATTACHMENT_IGNORE});
         }
       }
     }
   }
 
-  if (supports_raycast_visibility_) {
-    /* First Raycast-visible Subpass. */
-    setup_subs_[false][false][false][false]->bind_ubo(PIPELINE_BUF_SLOT, &pipeline_buf_copy_);
-  }
   /* First HideFromRaycast Subpass. */
-  setup_subs_[true][false][false][false]->bind_ubo(PIPELINE_BUF_SLOT,
-                                                   &pipeline_buf_copy_hide_from_raycast_);
-
   if (has_raycast && supports_raycast_visibility_) {
     setup_subs_[true][false][false][false]->texture_copy(&fb_depth_tx_,
                                                          &inst_.render_buffers.raycast_depth_tx);
   }
 }
 
-void Prepass::render(View &view, gpu::Texture *fb_depth_tx, bool can_raycast)
+void Prepass::render(View &view,
+                     Framebuffer &prepass_hide_from_raycast_fb,
+                     gpu::Texture *fb_depth_tx,
+                     bool can_raycast)
 {
-  *pipeline_buf_copy_.data() = *inst_.uniform_data.pipeline.data();
-  pipeline_buf_copy_.can_raycast = false;
-  pipeline_buf_copy_.push_update();
-
-  *pipeline_buf_copy_hide_from_raycast_.data() = *inst_.uniform_data.pipeline.data();
-  pipeline_buf_copy_hide_from_raycast_.can_raycast = can_raycast;
-  pipeline_buf_copy_hide_from_raycast_.push_update();
-
   fb_depth_tx_ = fb_depth_tx;
 
+  /* Raycast-visible objects must not ray-cast against the prepass (that would self-hit the
+   * buffers they write), so disable ray-casting for the main pass. */
+  bool32_t can_raycast_orig = inst_.uniform_data.pipeline.can_raycast;
+  if (assign_if_different(inst_.uniform_data.pipeline.can_raycast, bool32_t(false))) {
+    inst_.uniform_data.pipeline.push_update();
+  }
   inst_.manager->submit(pass_, view);
+
+  if (!pass_hide_from_raycast_.is_empty()) {
+    /* The prepass normal/object-ID attachments must be stored to memory before the hide
+     * sub-passes sample them, so draw them on a frame-buffer without those attachments. */
+    if (assign_if_different(inst_.uniform_data.pipeline.can_raycast, bool32_t(can_raycast))) {
+      inst_.uniform_data.pipeline.push_update();
+    }
+    gpu::FrameBuffer *write_fb = GPU_framebuffer_active_get();
+    GPU_framebuffer_bind(prepass_hide_from_raycast_fb);
+    inst_.manager->submit(pass_hide_from_raycast_, view);
+    if (write_fb != nullptr) {
+      GPU_framebuffer_bind(write_fb);
+    }
+  }
+
+  /* The #pipeline uniform is shared with the subsequent passes, so restore the original value
+   * so they keep ray-casting (the main pass above disabled it to avoid self-hits). */
+  if (assign_if_different(inst_.uniform_data.pipeline.can_raycast, can_raycast_orig)) {
+    inst_.uniform_data.pipeline.push_update();
+  }
 }
 
 /** \} */
@@ -629,6 +645,7 @@ bool ForwardPipeline::use_colored_transparency() const
 void ForwardPipeline::render(View &view,
                              gpu::Texture *depth_tx,
                              Framebuffer &prepass_fb,
+                             Framebuffer &prepass_hide_from_raycast_fb,
                              Framebuffer &transparent_fb,
                              Framebuffer &combined_fb,
                              int2 extent)
@@ -644,7 +661,7 @@ void ForwardPipeline::render(View &view,
   GPU_debug_group_begin("Forward.Opaque");
 
   prepass_fb.bind();
-  prepass_.render(view, nullptr, true);
+  prepass_.render(view, prepass_hide_from_raycast_fb, nullptr, true);
 
   inst_.hiz_buffer.set_dirty();
   inst_.hiz_buffer.update();
@@ -807,10 +824,15 @@ bool DeferredLayer::do_merge_direct_indirect_eval(const Instance &inst)
   return !inst.raytracing.use_raytracing();
 }
 
+bool DeferredLayer::do_modify_radiance(const Instance &inst)
+{
+  return inst.sampling.use_clamp_direct() || inst.sampling.use_clamp_indirect() ||
+         inst.sampling.use_direct_scale() || inst.sampling.use_indirect_scale();
+}
+
 bool DeferredLayer::do_split_direct_indirect_radiance(const Instance &inst)
 {
-  return do_merge_direct_indirect_eval(inst) &&
-         (inst.sampling.use_clamp_direct() || inst.sampling.use_clamp_indirect());
+  return do_merge_direct_indirect_eval(inst) && do_modify_radiance(inst);
 }
 
 void DeferredLayer::end_sync(bool is_first_pass,
@@ -826,15 +848,11 @@ void DeferredLayer::end_sync(bool is_first_pass,
   const bool has_reflect_closure = (closure_bits_ & (CLOSURE_REFLECTION | CLOSURE_DIFFUSE));
   const bool has_transparent_shader_to_rgba = (closure_bits_ & CLOSURE_TRANSPARENCY) &&
                                               (closure_bits_ & CLOSURE_SHADER_TO_RGBA);
-  const bool use_direct_scale = inst_.sampling.use_direct_scale();
-  const bool use_indirect_scale = inst_.sampling.use_indirect_scale();
   use_raytracing_ = (has_transmit_closure || has_reflect_closure) &&
                     inst_.raytracing.use_raytracing();
-  use_clamp_direct_ = inst_.sampling.use_clamp_direct();
-  use_clamp_indirect_ = inst_.sampling.use_clamp_indirect();
-  /* Is the radiance split for the combined pass. */
-  use_split_radiance_ = use_raytracing_ || use_clamp_direct_ || use_clamp_indirect_ ||
-                        use_indirect_scale || use_direct_scale;
+  /* Is the radiance split for the combined pass. Must match what the light evaluation writes:
+   * either ray-tracing writes the indirect radiance, or the light-probe evaluation does. */
+  use_split_radiance_ = use_raytracing_ || do_split_direct_indirect_radiance(inst_);
 
   /* The first pass will never have any surfaces behind it. Nothing is refracted except the
    * environment. So in this case, disable tracing and fallback to probe. */
@@ -996,7 +1014,7 @@ void DeferredLayer::end_sync(bool is_first_pass,
                                    (rbuf_data.specular_color_id != -1));
       pass.specialize_constant(sh, "use_split_radiance", use_split_radiance_);
       pass.specialize_constant(
-          sh, "use_radiance_feedback", use_feedback_output_ && use_clamp_direct_);
+          sh, "use_radiance_feedback", use_feedback_output_ && do_modify_radiance(inst_));
       pass.specialize_constant(sh, "render_pass_normal_enabled", rbuf_data.normal_id != -1);
       pass.specialize_constant(sh, "render_pass_position_enabled", rbuf_data.position_id != -1);
       pass.specialize_constant(
@@ -1072,6 +1090,7 @@ PassMain::Sub *DeferredLayer::material_add(blender::Material *blender_mat, GPUMa
 
 gpu::Texture *DeferredLayer::render(View &render_view,
                                     Framebuffer &prepass_fb,
+                                    Framebuffer &prepass_hide_from_raycast_fb,
                                     Framebuffer &combined_fb,
                                     Framebuffer &gbuffer_fb,
                                     int2 extent,
@@ -1099,7 +1118,7 @@ gpu::Texture *DeferredLayer::render(View &render_view,
   /* Clear stencil buffer so that prepass can tag it. Then draw a full-screen triangle that will
    * clear AOVs for all the pixels touched by this layer. */
   GPU_framebuffer_clear_stencil(prepass_fb, 0xFFu);
-  prepass_.render(render_view, rb.depth_tx, true);
+  prepass_.render(render_view, prepass_hide_from_raycast_fb, rb.depth_tx, true);
   if (!clear_aovs_ps_.is_empty()) {
     inst_.manager->submit(clear_aovs_ps_);
   }
@@ -1139,7 +1158,9 @@ gpu::Texture *DeferredLayer::render(View &render_view,
 
   radiance_feedback_tx_ = rt_buffer.feedback_ensure(!use_feedback_output_, extent);
 
-  if (use_feedback_output_ && use_clamp_direct_) {
+  const bool modify_radiance = do_modify_radiance(inst_);
+
+  if (use_feedback_output_ && modify_radiance) {
     /* We need to do a copy before the combine pass (otherwise we have a dependency issue) to save
      * the emission and the previous layer's radiance. */
     GPU_texture_copy(radiance_feedback_tx_, rb.combined_tx);
@@ -1148,7 +1169,7 @@ gpu::Texture *DeferredLayer::render(View &render_view,
   GPU_framebuffer_bind(combined_fb);
   inst_.manager->submit(combine_ps_, render_view);
 
-  if (use_feedback_output_ && !use_clamp_direct_) {
+  if (use_feedback_output_ && !modify_radiance) {
     /* We skip writing the radiance during the combine pass. Do a simple fast copy. */
     GPU_texture_copy(radiance_feedback_tx_, rb.combined_tx);
   }
@@ -1254,6 +1275,7 @@ PassMain::Sub *DeferredPipeline::material_add(blender::Material *blender_mat, GP
 void DeferredPipeline::render(View & /*main_view*/,
                               View &render_view,
                               Framebuffer &prepass_fb,
+                              Framebuffer &prepass_hide_from_raycast_fb,
                               Framebuffer &combined_fb,
                               Framebuffer &gbuffer_fb,
                               int2 extent,
@@ -1265,6 +1287,7 @@ void DeferredPipeline::render(View & /*main_view*/,
   GPU_debug_group_begin("Deferred.Opaque");
   feedback_tx = opaque_layer_.render(render_view,
                                      prepass_fb,
+                                     prepass_hide_from_raycast_fb,
                                      combined_fb,
                                      gbuffer_fb,
                                      extent,
@@ -1275,6 +1298,7 @@ void DeferredPipeline::render(View & /*main_view*/,
   GPU_debug_group_begin("Deferred.Refract");
   feedback_tx = refraction_layer_.render(render_view,
                                          prepass_fb,
+                                         prepass_hide_from_raycast_fb,
                                          combined_fb,
                                          gbuffer_fb,
                                          extent,
@@ -1565,6 +1589,7 @@ PassMain::Sub *DeferredProbePipeline::material_add(blender::Material *blender_ma
 
 void DeferredProbePipeline::render(View &view,
                                    Framebuffer &prepass_fb,
+                                   Framebuffer &prepass_hide_from_raycast_fb,
                                    Framebuffer &combined_fb,
                                    Framebuffer &gbuffer_fb,
                                    int2 extent)
@@ -1576,7 +1601,8 @@ void DeferredProbePipeline::render(View &view,
   prepass_fb.bind();
   prepass_fb.clear_depth(inst_.film.depth.clear_value);
   prepass_fb.clear_color(float4(0.0f));
-  opaque_layer_.prepass_.render(view, inst_.render_buffers.depth_tx, true);
+  opaque_layer_.prepass_.render(
+      view, prepass_hide_from_raycast_fb, inst_.render_buffers.depth_tx, true);
 
   inst_.hiz_buffer.set_source(&inst_.render_buffers.depth_tx);
   inst_.hiz_buffer.update();
@@ -1666,6 +1692,7 @@ PassMain::Sub *PlanarProbePipeline::material_add(blender::Material *blender_mat,
 void PlanarProbePipeline::render(View &view,
                                  gpu::Texture *depth_layer_tx,
                                  Framebuffer &prepass_fb,
+                                 Framebuffer &prepass_hide_from_raycast_fb,
                                  Framebuffer &gbuffer_fb,
                                  Framebuffer &combined_fb,
                                  int2 extent)
@@ -1679,7 +1706,7 @@ void PlanarProbePipeline::render(View &view,
 
   GPU_framebuffer_bind(prepass_fb);
   GPU_framebuffer_clear_depth(prepass_fb, inst_.film.depth.clear_value);
-  prepass_.render(view, depth_layer_tx, true);
+  prepass_.render(view, prepass_hide_from_raycast_fb, depth_layer_tx, true);
 
   /* TODO(fclem): This is the only place where we use the layer source to HiZ.
    * This is because the texture layer view is still a layer texture. */

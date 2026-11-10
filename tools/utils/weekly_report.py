@@ -14,8 +14,8 @@ Can run in two modes:
 Usage:
     python weekly_report.py                           # Remote mode, last 7 full days
     python weekly_report.py --repo /path/to/blender   # Local repo mode
-    python weekly_report.py --since 2026-09-28 --until 2026-10-06
-    python weekly_report.py --since 2026-09-21
+    python weekly_report.py --since 2026-10-29 --until 2026-11-09
+    python weekly_report.py --since 2026-10-29
     python weekly_report.py --show-all                 # Include fixes/cleanups
 """
 

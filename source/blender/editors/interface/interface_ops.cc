@@ -151,7 +151,6 @@ static bool copy_data_path_button_poll(bContext *C)
 
 static wmOperatorStatus copy_data_path_button_exec(bContext *C, wmOperator *op)
 {
-  Main *bmain = CTX_data_main(C);
   PointerRNA ptr;
   PropertyRNA *prop;
   int index;
@@ -174,7 +173,7 @@ static wmOperatorStatus copy_data_path_button_exec(bContext *C, wmOperator *op)
     }
     else {
       const int index_dim = (index != -1 && RNA_property_array_check(prop)) ? 1 : 0;
-      path = RNA_path_from_real_ID_to_property_index(bmain, &ptr, prop, index_dim, index, &id);
+      path = RNA_path_from_real_ID_to_property_index(&ptr, prop, index_dim, index, &id);
 
       if (!path) {
         path = RNA_path_from_ID_to_property_index(&ptr, prop, index_dim, index);
@@ -240,7 +239,6 @@ static bool copy_as_driver_button_poll(bContext *C)
 
 static wmOperatorStatus copy_as_driver_button_exec(bContext *C, wmOperator *op)
 {
-  Main *bmain = CTX_data_main(C);
   PointerRNA ptr;
   PropertyRNA *prop;
   int index;
@@ -252,7 +250,7 @@ static wmOperatorStatus copy_as_driver_button_exec(bContext *C, wmOperator *op)
     ID *id;
     const int dim = RNA_property_array_dimension(&ptr, prop, nullptr);
     if (const std::optional<std::string> path = RNA_path_from_real_ID_to_property_index(
-            bmain, &ptr, prop, dim, index, &id))
+            &ptr, prop, dim, index, &id))
     {
       ANIM_copy_as_driver(id, path->c_str(), RNA_property_identifier(prop));
       return OPERATOR_FINISHED;
@@ -3161,7 +3159,7 @@ static wmOperatorStatus view_item_click_select(bContext &C,
   }
 
   if (!extend) {
-    view.foreach_view_item([](AbstractViewItem &item) { item.set_selected(false); });
+    view.foreach_view_item([&](AbstractViewItem &item) { item.set_selected(C, false); });
   }
 
   if (clicked_item == nullptr) {
@@ -3175,7 +3173,7 @@ static wmOperatorStatus view_item_click_select(bContext &C,
       if (item.is_active() ^ (&item == clicked_item)) {
         is_inside_range = !is_inside_range;
         /* Select end items from the range. */
-        item.set_selected(true);
+        item.set_selected(C, true);
       }
 
       if (!item.is_filtered_visible()) {
@@ -3185,7 +3183,7 @@ static wmOperatorStatus view_item_click_select(bContext &C,
 
       if (is_inside_range) {
         /* Select items within the range. */
-        item.set_selected(true);
+        item.set_selected(C, true);
       }
     });
     return OPERATOR_FINISHED;

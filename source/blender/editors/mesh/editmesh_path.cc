@@ -181,8 +181,8 @@ static void mouse_mesh_shortest_path_vert(Scene * /*scene*/,
                                           BMVert *v_act,
                                           BMVert *v_dst)
 {
-  BMEditMesh *em = BKE_editmesh_from_object(obedit);
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+  EditMesh *em = BKE_editmesh_from_object(obedit);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
 
   int cd_offset = -1;
   switch (op_params->edge_mode) {
@@ -348,7 +348,7 @@ static void edgetag_set_cb(BMEdge *e, bool val, void *user_data_v)
 
 static void edgetag_ensure_cd_flag(Mesh *mesh, const char edge_mode)
 {
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(mesh);
 
   switch (edge_mode) {
     case EDGE_MODE_TAG_CREASE:
@@ -379,8 +379,8 @@ static void edgetag_ensure_cd_flag(Mesh *mesh, const char edge_mode)
 static void mouse_mesh_shortest_path_edge(
     Scene *scene, Object *obedit, const PathSelectParams *op_params, BMEdge *e_act, BMEdge *e_dst)
 {
-  BMEditMesh *em = BKE_editmesh_from_object(obedit);
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+  EditMesh *em = BKE_editmesh_from_object(obedit);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
 
   edgetag_ensure_cd_flag(id_cast<Mesh *>(obedit->data), op_params->edge_mode);
 
@@ -530,8 +530,8 @@ static void mouse_mesh_shortest_path_face(Scene * /*scene*/,
                                           BMFace *f_act,
                                           BMFace *f_dst)
 {
-  BMEditMesh *em = BKE_editmesh_from_object(obedit);
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+  EditMesh *em = BKE_editmesh_from_object(obedit);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
 
   int cd_offset = -1;
   switch (op_params->edge_mode) {
@@ -692,7 +692,7 @@ static wmOperatorStatus edbm_shortest_path_pick_exec(bContext *C, wmOperator *op
 
 static BMElem *edbm_elem_find_nearest(ViewContext *vc, const char htype)
 {
-  BMEditMesh *em = vc->em;
+  EditMesh *em = vc->em;
   float dist = ED_view3d_select_dist_px();
 
   if ((em->selectmode & SCE_SELECT_VERTEX) && (htype == BM_VERT)) {
@@ -737,8 +737,8 @@ static wmOperatorStatus edbm_shortest_path_pick_invoke(bContext *C,
   copy_v2_v2_int(vc.mval, event->mval);
   BKE_view_layer_synced_ensure(*vc.bmain, vc.scene, vc.view_layer);
   Base *basact = BKE_view_layer_active_base_get(vc.view_layer);
-  BMEditMesh *em = vc.em;
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(vc.obedit);
+  EditMesh *em = vc.em;
+  BMesh *bm = BKE_editmesh_bmesh_ensure(vc.obedit);
 
   view3d_operator_needs_gpu(C);
 
@@ -809,7 +809,7 @@ static wmOperatorStatus edbm_shortest_path_pick_exec(bContext *C, wmOperator *op
 {
   Scene *scene = CTX_data_scene(C);
   Object *obedit = CTX_data_edit_object(C);
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
 
   const int index = RNA_int_get(op->ptr, "index");
   if (index < 0 || index >= (bm->totvert + bm->totedge + bm->totface)) {
@@ -876,8 +876,8 @@ static wmOperatorStatus edbm_shortest_path_select_exec(bContext *C, wmOperator *
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       *bmain, scene, view_layer, CTX_wm_view3d(C));
   for (Object *obedit : objects) {
-    BMEditMesh *em = BKE_editmesh_from_object(obedit);
-    BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+    EditMesh *em = BKE_editmesh_from_object(obedit);
+    BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
     BMIter iter;
     BMEditSelection *ese_src, *ese_dst;
     BMElem *ele_src = nullptr, *ele_dst = nullptr, *ele;

@@ -213,12 +213,12 @@ struct SnapCache_EditMesh : public SnapObjectContext::SnapCache {
   /* Reference to pointers that change when the mesh is changed. It is used to detect updates. */
   const Mesh *mesh_ref;
   bke::MeshRuntime *runtime_ref;
-  bke::EditMeshData *edit_data_ref;
+  bke::MeshWrapperCacheData *edit_data_ref;
 
   bool has_mesh_updated(const Mesh *mesh)
   {
     if (mesh != this->mesh_ref || mesh->runtime != this->runtime_ref ||
-        mesh->runtime->edit_data.get() != this->edit_data_ref)
+        mesh->runtime->bmesh_wrapper_data.get() != this->edit_data_ref)
     {
       return true;
     }
@@ -247,7 +247,7 @@ static Mesh *create_mesh(const Object *ob_eval)
 {
   Mesh *mesh = BKE_id_new_nomain<Mesh>(nullptr);
   Object *ob_orig = const_cast<Object *>(DEG_get_original(ob_eval));
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(ob_orig);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(ob_orig);
   /* The hide and selection status is all that's needed to find the elements that can be snapped
    * to, see #SnapTargetTreesEditMesh. */
   BM_mesh_bm_to_me_only_select_and_hide(*bm, *mesh);
@@ -291,7 +291,7 @@ static SnapCache_EditMesh *snap_object_data_editmesh_get(SnapObjectContext *sctx
     if (mesh_ref) {
       em_cache->mesh_ref = mesh_ref;
       em_cache->runtime_ref = mesh_ref->runtime;
-      em_cache->edit_data_ref = mesh_ref->runtime->edit_data.get();
+      em_cache->edit_data_ref = mesh_ref->runtime->bmesh_wrapper_data.get();
     }
   }
 

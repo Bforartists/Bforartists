@@ -1116,6 +1116,8 @@ void popup_block_close(bContext *C, wmWindow *win, Block *block);
 
 bool popup_block_name_exists(const bScreen *screen, StringRef name);
 
+bool popup_region_from_operator(const bScreen *screen, const ARegion *region);
+
 /* Blocks
  *
  * Functions for creating, drawing and freeing blocks. A Block is a
@@ -2283,7 +2285,7 @@ struct AutoComplete;
 #define AUTOCOMPLETE_FULL_MATCH 1
 #define AUTOCOMPLETE_PARTIAL_MATCH 2
 
-AutoComplete *autocomplete_begin(const char *startname, size_t maxncpy);
+AutoComplete *autocomplete_begin(const char *startname, size_t maxncpy, bool is_utf8);
 void autocomplete_update_name(AutoComplete *autocpl, StringRef name);
 int autocomplete_end(AutoComplete *autocpl, char *autoname);
 
@@ -2540,9 +2542,10 @@ class TearOffSaveScope {
 };
 /**
  * BFA - Tear-Off Menu/Panel: true if the screen has a temporary region that takes input over the
- * regions below it. Tear-offs aren't modal, so they don't count. Tooltips do, as upstream.
+ * regions below it. Tear-offs aren't modal, so they don't count. Tooltips do, unless passed as
+ * `ignore_region` (the IME check skips them, as upstream).
  */
-bool screen_has_blocking_popup(const bScreen *screen);
+bool screen_has_blocking_popup(const bScreen *screen, const ARegion *ignore_region = nullptr);
 
 /**
  * Tags for refresh popup/menu handlers referencing a #StructRNA that is being unregistered,
@@ -3035,6 +3038,8 @@ void template_light_linking_collection(
 void template_bone_collection_tree(Layout *layout, bContext *C);
 void template_grease_pencil_layer_tree(Layout *layout, bContext *C);
 
+void template_project_asset_libraries_tree(Layout *layout, bContext *C);
+
 void template_tree_interface(Layout *layout, const bContext *C, PointerRNA *ptr);
 /**
  * Draw all node buttons and socket default values with the same panel structure used by the node.
@@ -3156,6 +3161,13 @@ struct FontStyleDrawParams {
   FontStyleAlign align;
   uint word_wrap : 1;
   bool word_clip = true;
+  /** Draw the theme text shadow, disabled for hint text for example. */
+  bool use_shadow = true;
+  /**
+   * Draw an outline using the theme text shadow color, ignoring the theme shadow type and offset.
+   * Used to override outlines for example on text drawn over icons.
+   */
+  bool use_outline = false;
 };
 
 /* Styled text draw */
@@ -3373,8 +3385,6 @@ namespace theme {
 void init_default();
 
 }  // namespace theme
-
-void style_init_default();
 
 void interface_tag_script_reload();
 

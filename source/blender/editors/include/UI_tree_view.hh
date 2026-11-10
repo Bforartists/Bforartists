@@ -99,6 +99,17 @@ class TreeViewItemContainer {
    */
   AbstractTreeViewItem &add_tree_item(std::unique_ptr<AbstractTreeViewItem> item);
 
+  /**
+   * Whether the items in this conatiner should be considered as sortable.
+   *
+   * Returning `false` will prevent sorting the immediate children of the container. it will not
+   * prevent sorting the content of these children, if they are themselves sortable.
+   */
+  virtual bool is_content_sortable() const
+  {
+    return true;
+  }
+
  protected:
   void foreach_item_recursive(ItemIterFn iter_fn, IterOptions options = IterOptions::None) const;
   void foreach_parent(ItemIterFn iter_fn) const;
@@ -335,7 +346,7 @@ class AbstractTreeViewItem : public AbstractViewItem, public TreeViewItemContain
    */
   void toggle_collapsed_from_view(bContext &C);
 
-  void change_state_delayed() override;
+  void change_state_delayed(const bContext &C) override;
 
   /** See #AbstractViewItem::matches(). */
   /* virtual */ bool matches(const AbstractViewItem &other) const override;

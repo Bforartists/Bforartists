@@ -473,6 +473,11 @@ bool BKE_image_scale(Image *image, int width, int height, ImageUser *iuser);
 bool BKE_image_has_alpha(Image *image);
 
 /**
+ * Check if image float buffers are initialized.
+ */
+bool BKE_image_is_float(Image *image);
+
+/**
  * Get tile index for tiled images.
  * \return The string length.
  */
@@ -528,7 +533,8 @@ bool BKE_image_tile_filepath_exists(const char *filepath);
  * The returned pattern is typically passed to either #BKE_image_get_tile_number_from_filepath or
  * #BKE_image_set_filepath_from_tile_number.
  */
-char *BKE_image_get_tile_strformat(const char *filepath, eUDIM_TILE_FORMAT *r_tile_format);
+[[nodiscard]] char *BKE_image_get_tile_strformat(const char *filepath,
+                                                 eUDIM_TILE_FORMAT *r_tile_format) ATTR_MALLOC;
 bool BKE_image_get_tile_number_from_filepath(const char *filepath,
                                              const char *pattern,
                                              eUDIM_TILE_FORMAT tile_format,
@@ -578,8 +584,12 @@ void BKE_image_buf_fill_checker_color(unsigned char *rect,
 
 /* Cycles hookup */
 
-unsigned char *BKE_image_get_pixels_for_frame(Image *image, int frame, int tile);
-float *BKE_image_get_float_pixels_for_frame(Image *image, int frame, int tile);
+[[nodiscard]] unsigned char *BKE_image_get_pixels_for_frame(Image *image,
+                                                            int frame,
+                                                            int tile) ATTR_MALLOC;
+[[nodiscard]] float *BKE_image_get_float_pixels_for_frame(Image *image,
+                                                          int frame,
+                                                          int tile) ATTR_MALLOC;
 
 /* Image modifications */
 

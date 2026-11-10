@@ -1869,21 +1869,21 @@ static std::optional<std::string> rna_MeshColor_path(const PointerRNA *ptr)
 
 static int rna_Mesh_tot_vert_get(PointerRNA *ptr)
 {
-  Mesh *mesh = rna_mesh(ptr);
-  const BMesh *bm = BKE_editmesh_bmesh_get(mesh);
-  return bm ? bm->totvertsel : 0;
+  int count[3];
+  BKE_mesh_count_selected_items(rna_mesh(ptr), count);
+  return count[0];
 }
 static int rna_Mesh_tot_edge_get(PointerRNA *ptr)
 {
-  Mesh *mesh = rna_mesh(ptr);
-  const BMesh *bm = BKE_editmesh_bmesh_get(mesh);
-  return bm ? bm->totedgesel : 0;
+  int count[3];
+  BKE_mesh_count_selected_items(rna_mesh(ptr), count);
+  return count[1];
 }
 static int rna_Mesh_tot_face_get(PointerRNA *ptr)
 {
-  Mesh *mesh = rna_mesh(ptr);
-  const BMesh *bm = BKE_editmesh_bmesh_get(mesh);
-  return bm ? bm->totfacesel : 0;
+  int count[3];
+  BKE_mesh_count_selected_items(rna_mesh(ptr), count);
+  return count[2];
 }
 
 static PointerRNA rna_Mesh_vertex_color_new(Mesh *mesh,
@@ -1891,20 +1891,21 @@ static PointerRNA rna_Mesh_vertex_color_new(Mesh *mesh,
                                             const char *name,
                                             const bool do_init)
 {
-  std::string new_name = ED_mesh_color_add(mesh, name, false, do_init, reports);
-  if (new_name.empty()) {
+  const std::optional<std::string> new_name = ED_mesh_color_add(
+      mesh, name, false, do_init, reports);
+  if (!new_name) {
     return {};
   }
 
   if (!mesh->active_color_attribute) {
-    mesh->active_color_attribute = BLI_strdup(new_name.c_str());
+    mesh->active_color_attribute = BLI_strdup(new_name->c_str());
   }
   if (!mesh->default_color_attribute) {
-    mesh->default_color_attribute = BLI_strdup(new_name.c_str());
+    mesh->default_color_attribute = BLI_strdup(new_name->c_str());
   }
 
   PointerRNA attr_ptr = rna_AttributeGroup_lookup_string(RNA_id_pointer_create(&mesh->id),
-                                                         new_name,
+                                                         *new_name,
                                                          ATTR_DOMAIN_MASK_CORNER,
                                                          CD_MASK_PROP_BYTE_COLOR);
   attr_ptr.type = RNA_MeshLoopColorLayer;
@@ -1922,18 +1923,17 @@ static PointerRNA rna_Mesh_uv_layers_new(Mesh *mesh,
                                          const char *name,
                                          const bool do_init)
 {
-  int index = ED_mesh_uv_add(mesh, name, false, do_init, reports);
-  if (index == -1) {
+  const std::optional<std::string> new_name = ED_mesh_uv_add(mesh, name, false, do_init, reports);
+  if (!new_name) {
     return {};
   }
-  const StringRef used_name = mesh->uv_map_names()[index];
   PointerRNA attr_ptr = rna_AttributeGroup_lookup_string(
-      RNA_id_pointer_create(&mesh->id), used_name, ATTR_DOMAIN_MASK_CORNER, CD_MASK_PROP_FLOAT2);
+      RNA_id_pointer_create(&mesh->id), *new_name, ATTR_DOMAIN_MASK_CORNER, CD_MASK_PROP_FLOAT2);
   if (mesh->active_uv_map_name().is_empty()) {
-    mesh->uv_maps_active_set(used_name);
+    mesh->uv_maps_active_set(*new_name);
   }
   if (mesh->default_uv_map_name().is_empty()) {
-    mesh->uv_maps_default_set(used_name);
+    mesh->uv_maps_default_set(*new_name);
   }
   attr_ptr.type = RNA_MeshUVLoopLayer;
   return attr_ptr;
@@ -1943,9 +1943,8 @@ static void rna_Mesh_uv_layers_remove(Mesh *mesh, ReportList *reports, PointerRN
 {
   AttributeOwner owner = AttributeOwner::from_id(&mesh->id);
   const StringRefNull name = rna_Attribute_name_get(*uv_ptr);
-  if (mesh->runtime->edit_mesh) {
-    BMesh &bm = *mesh->runtime->edit_mesh->bm;
-    if (!CustomData_has_layer_named(&bm.ldata, CD_PROP_FLOAT2, name)) {
+  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+    if (!CustomData_has_layer_named(&bm->ldata, CD_PROP_FLOAT2, name)) {
       BKE_reportf(reports, RPT_ERROR, "UV map '%s' not found", name.c_str());
       return;
     }

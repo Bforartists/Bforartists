@@ -441,10 +441,10 @@ static wmOperatorStatus material_slot_de_select(bContext *C, bool select)
     bool changed = false;
 
     if (ob->type == OB_MESH) {
-      BMEditMesh *em = BKE_editmesh_from_object(ob);
+      EditMesh *em = BKE_editmesh_from_object(ob);
 
       if (em) {
-        BMesh *bm = BKE_editmesh_bmesh_get_for_write(ob);
+        BMesh *bm = BKE_editmesh_bmesh_ensure(ob);
         changed = EDBM_deselect_by_material(bm, mat_nr_active, select);
       }
     }
@@ -2977,6 +2977,7 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
         bmain, &ma->nodetree->id, paste_material_nodetree_ids_relink_or_clear, bmain, IDWALK_NOP);
 
     ma->nodetree->owner_id = &ma->id;
+    BKE_libblock_owner_bmain_set(ma->nodetree->id, bmain, false);
   }
   BKE_main_free(temp_bmain);
 

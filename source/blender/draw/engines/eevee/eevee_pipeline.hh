@@ -148,6 +148,8 @@ class Prepass {
   Instance &inst_;
 
   PassMain pass_{"Prepass"};
+  PassMain pass_hide_from_raycast_{"Prepass.HideFromRaycast"};
+
   PassMain::Sub *subs_[2 /*hide from raycast*/][2 /*double sided*/][2 /*moving*/][2 /*write id*/] =
       {{{{nullptr}}}};
   PassMain::Sub *setup_subs_[2 /*hide from raycast*/][2 /*double sided*/][2 /*moving*/]
@@ -163,11 +165,6 @@ class Prepass {
   Texture dummy_raycast_id_tx_{"prepass.dummy_raycast_id_tx_"};
   Texture dummy_raycast_normal_tx_{"prepass.dummy_raycast_normal_tx_"};
 
-  /* Copies of UniformDataModule::pipeline with can_raycast overridden.
-   * Needed so we can render the whole Prepass in a single PassMain. */
-  draw::UniformBuffer<PipelineInfoData> pipeline_buf_copy_{"prepass.pipeline_buf"};
-  draw::UniformBuffer<PipelineInfoData> pipeline_buf_copy_hide_from_raycast_{
-      "prepass.pipeline_buf_hide_from_raycast"};
   gpu::Texture *fb_depth_tx_;
 
  public:
@@ -185,7 +182,10 @@ class Prepass {
 
   void end_sync();
 
-  void render(View &view, gpu::Texture *fb_depth_tx, bool can_raycast);
+  void render(View &view,
+              Framebuffer &prepass_hide_from_raycast_fb,
+              gpu::Texture *fb_depth_tx,
+              bool can_raycast);
 };
 
 /** \} */
@@ -263,6 +263,7 @@ class ForwardPipeline {
   void render(View &view,
               gpu::Texture *depth_tx,
               Framebuffer &prepass_fb,
+              Framebuffer &prepass_hide_from_raycast_fb,
               Framebuffer &transparent_fb,
               Framebuffer &combined_fb,
               int2 extent);
@@ -402,8 +403,6 @@ class DeferredLayer : DeferredLayerBase {
   bool use_raytracing_ = false;
   bool use_screen_transmission_ = false;
   bool use_screen_reflection_ = false;
-  bool use_clamp_direct_ = false;
-  bool use_clamp_indirect_ = false;
 
  public:
   DeferredLayer(Instance &inst) : DeferredLayerBase(inst), inst_(inst)
@@ -437,12 +436,16 @@ class DeferredLayer : DeferredLayerBase {
 
   /* Do we compute indirect lighting inside the light eval pass. */
   static bool do_merge_direct_indirect_eval(const Instance &inst);
+  /* Do the clamp or light intensity settings change the radiance in the combine pass.
+   * If so, the radiance cannot be fed back to the next layer as-is. */
+  static bool do_modify_radiance(const Instance &inst);
   /* Is the radiance split for the lighting pass. */
   static bool do_split_direct_indirect_radiance(const Instance &inst);
 
   /* Returns the radiance buffer to feed the next layer. */
   gpu::Texture *render(View &render_view,
                        Framebuffer &prepass_fb,
+                       Framebuffer &prepass_hide_from_raycast_fb,
                        Framebuffer &combined_fb,
                        Framebuffer &gbuffer_fb,
                        int2 extent,
@@ -478,6 +481,7 @@ class DeferredPipeline {
   void render(View &main_view,
               View &render_view,
               Framebuffer &prepass_fb,
+              Framebuffer &prepass_hide_from_raycast_fb,
               Framebuffer &combined_fb,
               Framebuffer &gbuffer_fb,
               int2 extent,
@@ -660,6 +664,7 @@ class DeferredProbePipeline {
 
   void render(View &view,
               Framebuffer &prepass_fb,
+              Framebuffer &prepass_hide_from_raycast_fb,
               Framebuffer &combined_fb,
               Framebuffer &gbuffer_fb,
               int2 extent);
@@ -718,7 +723,8 @@ class PlanarProbePipeline : DeferredLayerBase {
   void render(View &view,
               gpu::Texture *depth_layer_tx,
               Framebuffer &prepass_fb,
-              Framebuffer &gbuffer,
+              Framebuffer &prepass_hide_from_raycast_fb,
+              Framebuffer &gbuffer_fb,
               Framebuffer &combined_fb,
               int2 extent);
 };
@@ -796,6 +802,19 @@ class UtilityTexture : public Texture {
       memcpy(layer.data, lut::ltc_mat_ggx, sizeof(layer));
     }
     {
+      Layer &layer = data[UTIL_OREN_NAYAR_LAYER];
+      for (auto x : IndexRange(lut_size)) {
+        for (auto y : IndexRange(lut_size)) {
+          layer.data[y][x][0] = lut::oren_nayar[y][x][0];
+          layer.data[y][x][1] = lut::oren_nayar[y][x][1];
+        }
+      }
+    }
+    {
+      Layer &layer = data[UTIL_LTC_MAT_OREN_NAYAR_LAYER];
+      memcpy(layer.data, lut::ltc_mat_oren_nayar, sizeof(layer));
+    }
+    {
       Layer &layer = data[UTIL_BRDF_LAYER];
       for (auto x : IndexRange(lut_size)) {
         for (auto y : IndexRange(lut_size)) {
@@ -807,7 +826,7 @@ class UtilityTexture : public Texture {
       }
     }
     {
-      for (auto layer_id : IndexRange(16)) {
+      for (auto layer_id : IndexRange(UTIL_BSDF_LAYER_COUNT)) {
         Layer &layer = data[UTIL_BSDF_LAYER + layer_id];
         for (auto x : IndexRange(lut_size)) {
           for (auto y : IndexRange(lut_size)) {

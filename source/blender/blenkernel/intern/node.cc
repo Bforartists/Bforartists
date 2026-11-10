@@ -397,6 +397,7 @@ static void library_foreach_node_socket(bNodeSocket *sock, LibraryForeachIDData 
     case SOCK_BUNDLE:
     case SOCK_CLOSURE:
     case SOCK_INT_VECTOR:
+    case SOCK_DYNAMIC:
       break;
   }
 }
@@ -1231,6 +1232,7 @@ static void write_node_socket_default_value(BlendWriter *writer, const bNodeSock
     case SOCK_GEOMETRY:
     case SOCK_BUNDLE:
     case SOCK_CLOSURE:
+    case SOCK_DYNAMIC:
       BLI_assert_unreachable();
       break;
   }
@@ -1494,6 +1496,7 @@ static bool is_node_socket_supported(const bNodeSocket *sock)
     case SOCK_BUNDLE:
     case SOCK_CLOSURE:
     case SOCK_INT_VECTOR:
+    case SOCK_DYNAMIC:
       return true;
   }
   return false;
@@ -1711,6 +1714,7 @@ static void direct_link_node_socket_default_value(BlendDataReader *reader, bNode
       case SOCK_GEOMETRY:
       case SOCK_BUNDLE:
       case SOCK_CLOSURE:
+      case SOCK_DYNAMIC:
         BLI_assert_unreachable();
         break;
     }
@@ -1878,12 +1882,13 @@ static void direct_link_node_socket_default_value(BlendDataReader *reader, bNode
       case SOCK_TEXT_ID:
       case SOCK_MASK:
       case SOCK_SOUND:
-        /* Those data-block types did not exist in the older version. */
+      /* Those data-block types did not exist in the older version. */
       case SOCK_SHADER:
       case SOCK_GEOMETRY:
       case SOCK_BUNDLE:
       case SOCK_CLOSURE:
       case SOCK_INT_VECTOR:
+      case SOCK_DYNAMIC:
         BLI_assert_unreachable();
         break;
     }
@@ -2111,6 +2116,9 @@ void node_tree_blend_read_data(BlendDataReader *reader, ID *owner_id, bNodeTree 
     ntree->id.flag |= ID_FLAG_EMBEDDED_DATA;
   }
   ntree->owner_id = owner_id;
+  if (owner_id != nullptr) {
+    BKE_libblock_owner_bmain_set(ntree->id, owner_id->owner_bmain_for_write(), false);
+  }
 
   /* NOTE: writing and reading goes in sync, for speed. */
   ntree->typeinfo = nullptr;
@@ -2406,6 +2414,7 @@ static std::unique_ptr<IDProperty, idprop::IDPropertyDeleter> create_socket_meta
     case SOCK_TEXT_ID:
     case SOCK_MASK:
     case SOCK_SOUND:
+    case SOCK_DYNAMIC:
       break;
   }
   return socket_prop;
@@ -3434,6 +3443,7 @@ void node_modify_socket_type(bNodeTree &ntree,
         case SOCK_BUNDLE:
         case SOCK_CLOSURE:
         case SOCK_INT_VECTOR:
+        case SOCK_DYNAMIC:
           break;
       }
     }
@@ -3698,6 +3708,8 @@ std::optional<StringRefNull> node_static_socket_type(const int type,
       return "NodeSocketBundle";
     case SOCK_CLOSURE:
       return "NodeSocketClosure";
+    case SOCK_DYNAMIC:
+      return "NodeSocketDynamic";
     case SOCK_CUSTOM:
       break;
   }
@@ -3912,6 +3924,8 @@ std::optional<StringRefNull> node_static_socket_interface_type_new(
       return "NodeTreeInterfaceSocketBundle";
     case SOCK_CLOSURE:
       return "NodeTreeInterfaceSocketClosure";
+    case SOCK_DYNAMIC:
+      return "NodeTreeInterfaceSocketDynamic";
     case SOCK_CUSTOM:
       break;
   }
@@ -3969,6 +3983,8 @@ std::optional<StringRefNull> node_static_socket_label(const int type, const int 
       return "Closure";
     case SOCK_INT_VECTOR:
       return "Integer Vector";
+    case SOCK_DYNAMIC:
+      return "Dynamic";
     case SOCK_CUSTOM:
       break;
   }
@@ -4523,6 +4539,7 @@ bNode *node_copy_with_mapping(bNodeTree *dst_tree,
     case SOCK_GEOMETRY:
     case SOCK_BUNDLE:
     case SOCK_CLOSURE:
+    case SOCK_DYNAMIC:
       return false;
   }
 
@@ -4976,6 +4993,7 @@ static bNodeTree *node_tree_add_tree_do(Main *bmain,
     *ntree_owner_ptr = ntree;
     bke::id::id_lib_set(ntree->id, owner_id->lib);
     ntree->id.tag |= owner_id->tag & int(ID_TAG_EXTERN | ID_TAG_INDIRECT);
+    BKE_libblock_owner_bmain_set(ntree->id, owner_id->owner_bmain_for_write(), false);
   }
   else {
     BLI_assert(owner_id == nullptr);

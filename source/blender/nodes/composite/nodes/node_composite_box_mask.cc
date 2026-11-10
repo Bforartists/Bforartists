@@ -38,6 +38,7 @@ static void node_declare(NodeDeclarationBuilder &b)
       .default_value(0.0f)
       .min(0.0f)
       .max(1.0f)
+      .is_default_link_socket()
       .structure_type(StructureType::Dynamic);
   b.add_input<decl::Float>("Value"_ustr)
       .subtype(PROP_FACTOR)
@@ -208,7 +209,7 @@ class BoxMaskOperation : public NodeOperation {
   Domain compute_domain() override
   {
     if (get_input("Mask").is_single_value()) {
-      return context().get_compositing_domain();
+      return this->context().get_compositing_domain().realize_transformation();
     }
     return get_input("Mask").domain();
   }

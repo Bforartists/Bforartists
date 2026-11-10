@@ -193,8 +193,9 @@ static void mesh_copy_data(Main *bmain,
     /* Meshes copied during evaluation pass the edit mesh pointer to determine whether a mapping
      * from the evaluated to the original state is possible. */
     mesh_dst->runtime->edit_mesh = mesh_src->runtime->edit_mesh;
-    if (const bke::EditMeshData *edit_data = mesh_src->runtime->edit_data.get()) {
-      mesh_dst->runtime->edit_data = std::make_unique<bke::EditMeshData>(*edit_data);
+    if (const bke::MeshWrapperCacheData *edit_data = mesh_src->runtime->bmesh_wrapper_data.get()) {
+      mesh_dst->runtime->bmesh_wrapper_data = std::make_unique<bke::MeshWrapperCacheData>(
+          *edit_data);
     }
   }
 
@@ -589,7 +590,7 @@ void BKE_mesh_ensure_skin_customdata(Mesh *mesh)
 
 bool BKE_mesh_has_custom_loop_normals(Mesh *mesh)
 {
-  if (BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh)) {
+  if (const BMesh *bm = BKE_editmesh_bmesh_get(mesh)) {
     return CustomData_has_layer_named(&bm->ldata, CD_PROP_INT16_2D, "custom_normal");
   }
 
@@ -1001,7 +1002,7 @@ void mesh_apply_spatial_organization(Mesh &mesh)
       bke::GSpanAttributeWriter attribute = attributes_for_write.lookup_for_write_span(iter.name);
       GMutableSpan attribute_data = attribute.span;
       const CPPType &type = attribute_data.type();
-      GArray<> new_values(type, new_face_order.size());
+      GArray<> new_values(type, new_face_order.size(), NoInitialization{});
 
       int new_face_idx = 0;
       for (const int old_face_idx : new_face_order) {
@@ -1015,7 +1016,7 @@ void mesh_apply_spatial_organization(Mesh &mesh)
       bke::GSpanAttributeWriter attribute = attributes_for_write.lookup_for_write_span(iter.name);
       GMutableSpan attribute_data = attribute.span;
       const CPPType &type = attribute_data.type();
-      GArray<> new_values(type, new_vert_order.size());
+      GArray<> new_values(type, new_vert_order.size(), NoInitialization{});
 
       int new_vert_idx = 0;
       for (const int old_vert_idx : new_vert_order) {
@@ -1029,7 +1030,7 @@ void mesh_apply_spatial_organization(Mesh &mesh)
       bke::GSpanAttributeWriter attribute = attributes_for_write.lookup_for_write_span(iter.name);
       GMutableSpan attribute_data = attribute.span;
       const CPPType &type = attribute_data.type();
-      GArray<> new_values(type, attribute_data.size());
+      GArray<> new_values(type, attribute_data.size(), NoInitialization{});
 
       int new_corner_idx = 0;
       for (const int old_face_idx : new_face_order) {
@@ -1948,7 +1949,8 @@ std::optional<Bounds<float3>> Mesh::bounds_min_max() const
     switch (this->runtime->wrapper_type) {
       case ME_WRAPPER_TYPE_BMESH:
         r_bounds = *BKE_editmesh_cache_calc_minmax(
-            *const_cast<BMesh *>(BKE_editmesh_bmesh_get(this)), *this->runtime->edit_data);
+            *const_cast<BMesh *>(BKE_editmesh_bmesh_get(this)),
+            *this->runtime->bmesh_wrapper_data);
         break;
       case ME_WRAPPER_TYPE_MDATA:
       case ME_WRAPPER_TYPE_SUBD:
@@ -1964,16 +1966,10 @@ void Mesh::bounds_set_eager(const Bounds<float3> &bounds)
   this->runtime->bounds_cache.ensure([&](Bounds<float3> &r_data) { r_data = bounds; });
 }
 
-static bool use_bmesh_material_indices(const Mesh &mesh)
-{
-  return mesh.runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH && BKE_editmesh_bmesh_get(&mesh);
-}
-
 std::optional<int> Mesh::material_index_max() const
 {
   this->runtime->max_material_index.ensure([&](std::optional<int> &value) {
-    if (use_bmesh_material_indices(*this)) {
-      const BMesh *bm = BKE_editmesh_bmesh_get(this);
+    if (const BMesh *bm = BKE_editmesh_bmesh_get(this)) {
       if (bm->totface == 0) {
         value = std::nullopt;
         return;
@@ -2015,8 +2011,7 @@ const VectorSet<int> &Mesh::material_indices_used() const
 
     /* Find used indices in parallel and then create the vector set in the end. */
     Array<bool> used_indices(max_material_index + 1, false);
-    if (use_bmesh_material_indices(*this)) {
-      const BMesh *bm = BKE_editmesh_bmesh_get(this);
+    if (const BMesh *bm = BKE_editmesh_bmesh_get(this)) {
       BMFace *efa;
       BMIter iter;
       BM_ITER_MESH (efa, &iter, const_cast<BMesh *>(bm), BM_FACES_OF_MESH) {

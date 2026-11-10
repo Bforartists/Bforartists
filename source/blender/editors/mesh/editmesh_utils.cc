@@ -62,7 +62,7 @@ BMBackup EDBM_redo_state_store(BMesh *bm)
   return backup;
 }
 
-void EDBM_redo_state_restore(BMBackup *backup, BMEditMesh *em, BMesh *bm, bool recalc_looptris)
+void EDBM_redo_state_restore(BMBackup *backup, EditMesh *em, BMesh *bm, bool recalc_looptris)
 {
   BM_mesh_data_free(bm);
   BMesh *tmpbm = BM_mesh_copy(backup->bmcopy);
@@ -76,7 +76,7 @@ void EDBM_redo_state_restore(BMBackup *backup, BMEditMesh *em, BMesh *bm, bool r
 }
 
 void EDBM_redo_state_restore_and_free(BMBackup *backup,
-                                      BMEditMesh *em,
+                                      EditMesh *em,
                                       BMesh *bm,
                                       bool recalc_looptris)
 {
@@ -319,7 +319,7 @@ void EDBM_mesh_make_from_mesh(Object *ob,
 
   /* Executing operators re-tessellates,
    * so we can avoid doing here but at some point it may need to be added back. */
-  mesh->runtime->edit_mesh = std::make_shared<BMEditMesh>();
+  mesh->runtime->edit_mesh = std::make_shared<EditMesh>();
   mesh->runtime->edit_mesh->bm = bm;
 
   mesh->runtime->edit_mesh->selectmode = bm->selectmode = select_mode;
@@ -327,6 +327,19 @@ void EDBM_mesh_make_from_mesh(Object *ob,
 
   /* we need to flush selection because the mode may have changed from when last in editmode */
   EDBM_selectmode_flush(bm, select_mode);
+
+  if (bm->uv_select_sync_valid) {
+    if (select_mode & (SCE_SELECT_VERTEX | SCE_SELECT_EDGE)) {
+      /* Flush the UV selection too, so it matches the mesh. */
+      BM_mesh_uvselect_mode_flush(bm);
+    }
+    else {
+      /* The select mode may also have changed to face only, where a separate UV selection can't
+       * be represented, matching what #EDBM_selectmode_set does when switching mode in edit-mode.
+       */
+      EDBM_uvselect_clear(bm);
+    }
+  }
 
   /* Conversion to edit-mesh may have modified the attribute layers.
    * Re-resolve the active attribute by name to keep it stable. */
@@ -343,7 +356,7 @@ void EDBM_mesh_make_from_mesh(Object *ob,
 void EDBM_mesh_load_ex(Main *bmain, Object *ob, bool free_data)
 {
   Mesh *mesh = id_cast<Mesh *>(ob->data);
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(mesh);
 
   /* Workaround for #42360, 'ob->shapenr' should be 1 in this case.
    * however this isn't synchronized between objects at the moment. */
@@ -362,7 +375,7 @@ void EDBM_mesh_load(Main *bmain, Object *ob)
   EDBM_mesh_load_ex(bmain, ob, true);
 }
 
-void EDBM_mesh_free_data(BMEditMesh *em)
+void EDBM_mesh_free_data(EditMesh *em)
 {
   /* These tables aren't used yet, so it's not strictly necessary
    * to 'end' them but if someone tries to start using them,
@@ -383,7 +396,7 @@ void EDBM_selectmode_to_scene(bContext *C)
 {
   Scene *scene = CTX_data_scene(C);
   Object *obedit = CTX_data_edit_object(C);
-  BMEditMesh *em = BKE_editmesh_from_object(obedit);
+  EditMesh *em = BKE_editmesh_from_object(obedit);
 
   if (!em) {
     return;
@@ -1268,20 +1281,6 @@ UvElement *BM_uv_element_get_head(UvElementMap *element_map, UvElement *child)
 /** \name Data Layer Checks
  * \{ */
 
-BMFace *EDBM_uv_active_face_get(Mesh *mesh, const bool sloppy, const bool selected)
-{
-  if (!EDBM_uv_check(mesh)) {
-    return nullptr;
-  }
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh);
-  BMFace *efa = BM_mesh_active_face_get(bm, sloppy, selected);
-  if (efa) {
-    return efa;
-  }
-
-  return nullptr;
-}
-
 bool EDBM_uv_check(const Mesh *mesh)
 {
   if (!mesh->runtime->edit_mesh) {
@@ -1329,7 +1328,7 @@ static BMVert *cache_mirr_intptr_as_bmvert(const intptr_t *index_lookup, int ind
 #define BM_SEARCH_MAXDIST_MIRR 0.00002f
 #define BM_CD_LAYER_ID "__mirror_index"
 
-void EDBM_verts_mirror_cache_begin_ex(BMEditMesh *em,
+void EDBM_verts_mirror_cache_begin_ex(EditMesh *em,
                                       BMesh *bm,
                                       const int axis,
                                       const bool use_self,
@@ -1446,7 +1445,7 @@ void EDBM_verts_mirror_cache_begin_ex(BMEditMesh *em,
   }
 }
 
-void EDBM_verts_mirror_cache_begin(BMEditMesh *em,
+void EDBM_verts_mirror_cache_begin(EditMesh *em,
                                    BMesh *bm,
                                    const int axis,
                                    const bool use_self,
@@ -1466,7 +1465,7 @@ void EDBM_verts_mirror_cache_begin(BMEditMesh *em,
                                    nullptr);
 }
 
-BMVert *EDBM_verts_mirror_get(BMEditMesh *em, BMesh *bm, BMVert *v)
+BMVert *EDBM_verts_mirror_get(EditMesh *em, BMesh *bm, BMVert *v)
 {
   const int *mirr = static_cast<const int *>(
       CustomData_bmesh_get_layer_n(&bm->vdata, v->head.data, em->mirror_cdlayer));
@@ -1487,7 +1486,7 @@ BMVert *EDBM_verts_mirror_get(BMEditMesh *em, BMesh *bm, BMVert *v)
   return nullptr;
 }
 
-BMEdge *EDBM_verts_mirror_get_edge(BMEditMesh *em, BMesh *bm, BMEdge *e)
+BMEdge *EDBM_verts_mirror_get_edge(EditMesh *em, BMesh *bm, BMEdge *e)
 {
   BMVert *v1_mirr, *v2_mirr;
   if ((v1_mirr = EDBM_verts_mirror_get(em, bm, e->v1)) &&
@@ -1501,7 +1500,7 @@ BMEdge *EDBM_verts_mirror_get_edge(BMEditMesh *em, BMesh *bm, BMEdge *e)
   return nullptr;
 }
 
-BMFace *EDBM_verts_mirror_get_face(BMEditMesh *em, BMesh *bm, BMFace *f)
+BMFace *EDBM_verts_mirror_get_face(EditMesh *em, BMesh *bm, BMFace *f)
 {
   Array<BMVert *, BM_DEFAULT_NGON_STACK_SIZE> v_mirr_arr(f->len);
 
@@ -1518,7 +1517,7 @@ BMFace *EDBM_verts_mirror_get_face(BMEditMesh *em, BMesh *bm, BMFace *f)
   return BM_face_exists(v_mirr_arr.data(), v_mirr_arr.size());
 }
 
-void EDBM_verts_mirror_cache_clear(BMEditMesh *em, BMesh *bm, BMVert *v)
+void EDBM_verts_mirror_cache_clear(EditMesh *em, BMesh *bm, BMVert *v)
 {
   int *mirr = static_cast<int *>(
       CustomData_bmesh_get_layer_n(&bm->vdata, v->head.data, em->mirror_cdlayer));
@@ -1530,12 +1529,12 @@ void EDBM_verts_mirror_cache_clear(BMEditMesh *em, BMesh *bm, BMVert *v)
   }
 }
 
-void EDBM_verts_mirror_cache_end(BMEditMesh *em)
+void EDBM_verts_mirror_cache_end(EditMesh *em)
 {
   em->mirror_cdlayer = -1;
 }
 
-void EDBM_verts_mirror_apply(BMEditMesh *em, BMesh *bm, const int sel_from, const int sel_to)
+void EDBM_verts_mirror_apply(EditMesh *em, BMesh *bm, const int sel_from, const int sel_to)
 {
   BMIter iter;
   BMVert *v;
@@ -1793,7 +1792,7 @@ void EDBM_stats_update(BMesh *bm)
 
 void EDBM_update(Mesh *mesh, const EDBMUpdate_Params *params)
 {
-  BMEditMesh *em = mesh->runtime->edit_mesh.get();
+  EditMesh *em = mesh->runtime->edit_mesh.get();
   BMesh *bm = BKE_editmesh_bmesh_get_for_write(mesh);
   /* Order of calling isn't important. */
   DEG_id_tag_update(&mesh->id, ID_RECALC_GEOMETRY);
@@ -1837,6 +1836,16 @@ void EDBM_update(Mesh *mesh, const EDBMUpdate_Params *params)
 
 void EDBM_update_extern(Mesh *mesh, const bool do_tessellation, const bool is_destructive)
 {
+  /* Python may assign `BMesh.select_mode`, apply it to the edit-mesh.
+   * Since Python doesn't expose the edit-mesh, see: #166007. */
+  EditMesh *em = mesh->runtime->edit_mesh.get();
+  const BMesh *bm = BKE_editmesh_bmesh_get(mesh);
+  if (em->selectmode != bm->selectmode) {
+    em->selectmode = bm->selectmode;
+    DEG_id_tag_update(&mesh->id, ID_RECALC_SELECT);
+    WM_main_add_notifier(NC_GEOM | ND_SELECT, &mesh->id);
+  }
+
   EDBMUpdate_Params params{};
   params.calc_looptris = do_tessellation;
   params.calc_normals = false;
@@ -1865,7 +1874,7 @@ bool EDBM_view3d_poll(bContext *C)
 /** \name BMesh Element API
  * \{ */
 
-BMElem *EDBM_elem_from_selectmode(BMEditMesh *em, BMVert *eve, BMEdge *eed, BMFace *efa)
+BMElem *EDBM_elem_from_selectmode(EditMesh *em, BMVert *eve, BMEdge *eed, BMFace *efa)
 {
   if ((em->selectmode & SCE_SELECT_VERTEX) && eve) {
     return reinterpret_cast<BMElem *>(eve);
@@ -1921,7 +1930,7 @@ BMElem *EDBM_elem_from_index_any(BMesh *bm, uint index)
 int EDBM_elem_to_index_any_multi(const Main &bmain,
                                  const Scene *scene,
                                  ViewLayer *view_layer,
-                                 BMEditMesh *em,
+                                 EditMesh *em,
                                  BMElem *ele,
                                  int *r_object_index)
 {
@@ -1932,7 +1941,7 @@ int EDBM_elem_to_index_any_multi(const Main &bmain,
   for (const int base_index : bases.index_range()) {
     Base *base_iter = bases[base_index];
     if (BKE_editmesh_from_object(base_iter->object) == em) {
-      BMesh *bm = BKE_editmesh_bmesh_get_for_write(base_iter->object);
+      BMesh *bm = BKE_editmesh_bmesh_ensure(base_iter->object);
       *r_object_index = base_index;
       elem_index = EDBM_elem_to_index_any(bm, ele);
       break;
@@ -1953,7 +1962,7 @@ BMElem *EDBM_elem_from_index_any_multi(const Main &bmain,
   *r_obedit = nullptr;
   Object *obedit = (object_index < bases.size()) ? bases[object_index]->object : nullptr;
   if (obedit != nullptr) {
-    BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+    BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
     BMElem *ele = EDBM_elem_from_index_any(bm, elem_index);
     if (ele != nullptr) {
       *r_obedit = obedit;
@@ -2074,7 +2083,7 @@ void EDBM_project_snap_verts(bContext *C, Depsgraph *depsgraph, ARegion *region,
   BMVert *eve;
 
   ED_view3d_init_mats_rv3d(obedit, static_cast<RegionView3D *>(region->regiondata));
-  BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+  BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
 
   const Scene *scene = CTX_data_scene(C);
   transform::SnapObjectContext *snap_context = transform::snap_object_context_create();

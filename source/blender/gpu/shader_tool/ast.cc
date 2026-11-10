@@ -162,11 +162,6 @@ bool UsingStmt::is_namespace() const
   return front().next() == TokenType::Namespace;
 }
 
-bool IdType::is_constexpr() const
-{
-  return is_const() && constant().front() == Constexpr;
-}
-
 static std::string to_string(ast::NodeType type);
 static bool display_type(ast::NodeType type);
 
@@ -267,6 +262,8 @@ static std::string to_string(ast::NodeType type)
       return "IdType";
     case ast::NodeType::Const:
       return "Const";
+    case ast::NodeType::Constexpr:
+      return "Constexpr";
     case ast::NodeType::Reference:
       return "Reference";
     case ast::NodeType::EnumValue:
@@ -373,6 +370,16 @@ static std::string to_string(ast::NodeType type)
       return "ArrayDecl";
     case ast::NodeType::Pointer:
       return "Pointer";
+    case ast::NodeType::PureSpecifier:
+      return "PureSpecifier";
+    case ast::NodeType::VirtualSpecifier:
+      return "VirtualSpecifier";
+    case ast::NodeType::DefaultedBody:
+      return "DefaultedBody";
+    case ast::NodeType::DeletedBody:
+      return "DeletedBody";
+    case ast::NodeType::VirtualStmt:
+      return "VirtualStmt";
   }
   return "Error";
 }
@@ -401,7 +408,9 @@ static bool display_type(ast::NodeType type)
     case ast::NodeType::IdType:
       return false;
     case ast::NodeType::Const:
-      return true;
+      return false;
+    case ast::NodeType::Constexpr:
+      return false;
     case ast::NodeType::Reference:
       return true;
     case ast::NodeType::EnumValue:
@@ -507,6 +516,16 @@ static bool display_type(ast::NodeType type)
     case ast::NodeType::ArrayDecl:
       return false;
     case ast::NodeType::Pointer:
+      return false;
+    case ast::NodeType::PureSpecifier:
+      return false;
+    case ast::NodeType::VirtualSpecifier:
+      return false;
+    case ast::NodeType::DefaultedBody:
+      return false;
+    case ast::NodeType::DeletedBody:
+      return false;
+    case ast::NodeType::VirtualStmt:
       return false;
   }
   return false;

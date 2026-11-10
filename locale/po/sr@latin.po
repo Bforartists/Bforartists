@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2025-07-23 14:56+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Serbian (Latin script) <https://translate.blender.org/projects/blender-ui/ui/sr_Latn/>\n"
@@ -8483,6 +8483,46 @@ msgid "Material slot name"
 msgstr "Naziv slota materijala"
 
 
+msgid "Enable Bone Options"
+msgstr "Omogući opcije kostiju"
+
+
+msgid "Disable Bone Options"
+msgstr "Onemogući opcije kostiju"
+
+
+msgid "Mesh Select Mode"
+msgstr "Mod izbora mreže"
+
+
+msgid "Merge"
+msgstr "Sjedini"
+
+
+msgid "Show/Hide"
+msgstr "Prikaži/sakrij"
+
+
+msgid "Special Characters"
+msgstr "Specijalni znaci"
+
+
+msgid "Metaball"
+msgstr "Meta lopta"
+
+
+msgid "Names"
+msgstr "Imena"
+
+
+msgid "Bone Roll"
+msgstr "Rolna kostiju"
+
+
+msgid "Math"
+msgstr "Matematika"
+
+
 msgid "Snap"
 msgstr "Lepljenje"
 
@@ -8507,16 +8547,16 @@ msgid "Align View"
 msgstr "Poravnaj pogled"
 
 
-msgid "Math"
-msgstr "Matematika"
+msgid "Import"
+msgstr "Uvoz"
 
 
 msgid "Select Linked"
 msgstr "Izaberi povezano"
 
 
-msgid "Metaball"
-msgstr "Meta lopta"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Light"
@@ -8525,10 +8565,6 @@ msgstr "Svetlost"
 
 msgid "Relations"
 msgstr "Odnosi"
-
-
-msgid "Import"
-msgstr "Uvoz"
 
 
 msgid "Rigid Body"
@@ -8547,16 +8583,12 @@ msgid "Quick Effects"
 msgstr "Brzi efekti"
 
 
-msgid "Show/Hide"
-msgstr "Prikaži/sakrij"
-
-
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Hooks"
 msgstr "Udice"
+
+
+msgid "Linked"
+msgstr "Povezano"
 
 
 msgid "Clear Transform"
@@ -8571,48 +8603,16 @@ msgid "Propagate"
 msgstr "Prenesi"
 
 
-msgid "Names"
-msgstr "Imena"
-
-
-msgid "Toggle Bone Options"
-msgstr "Manje/više informacija"
-
-
-msgid "Enable Bone Options"
-msgstr "Omogući opcije kostiju"
-
-
-msgid "Disable Bone Options"
-msgstr "Onemogući opcije kostiju"
-
-
-msgid "Mesh Select Mode"
-msgstr "Mod izbora mreže"
-
-
-msgid "Merge"
-msgstr "Sjedini"
-
-
-msgid "Linked"
-msgstr "Povezano"
-
-
-msgid "Special Characters"
-msgstr "Specijalni znaci"
-
-
-msgid "Bone Roll"
-msgstr "Rolna kostiju"
-
-
 msgid "Keying"
 msgstr "Zbirka tastera"
 
 
 msgid "Tracking"
 msgstr "Praćenje"
+
+
+msgid "Toggle Bone Options"
+msgstr "Manje/više informacija"
 
 
 msgid "Basic"

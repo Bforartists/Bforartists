@@ -280,6 +280,11 @@ const bTheme U_theme_default = {
       .blend = 0.5f,
     },
     .widget_emboss = RGBA(0xffffff05),
+    /* BFA - text shadow moved from the font styles to the theme (Blender 4c6a9739e87): no shadow,
+     * same as the old BFA widget text style (shadow 0, black at 0.25, no offset). */
+    .text_shadow_color = RGBA(0x00000040),
+    .text_shadow_offset = {0, 0},
+    .text_shadow_type = 0,
     .menu_shadow_fac = 0.01f,
     .editor_border = RGBA(0x161616ff),
     .editor_outline = RGBA(0x1f1f1fff),

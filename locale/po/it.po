@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-05-04 00:12+0000\n"
 "Last-Translator: Alessandro Vecchio <alessandrovecchio1907@gmail.com>\n"
 "Language-Team: Italian <https://translate.blender.org/projects/blender-ui/ui/it/>\n"
@@ -24544,6 +24544,70 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
+msgid "Enable Bone Options"
+msgstr "Abilita Opzioni Osso"
+
+
+msgid "Disable Bone Options"
+msgstr "Disabilita Opzioni Osso"
+
+
+msgid "Mesh Select Mode"
+msgstr "Modalità Selezione Mesh"
+
+
+msgid "Face Data"
+msgstr "Dati Faccia"
+
+
+msgid "Select by Face Strength"
+msgstr "Seleziona per Intensità delle Facce"
+
+
+msgid "Set Face Strength"
+msgstr "Imposta Intensità Faccia"
+
+
+msgid "Clean Up"
+msgstr "Ripulisci"
+
+
+msgid "Merge"
+msgstr "Unisci"
+
+
+msgid "Show/Hide"
+msgstr "Mostra/Nascondi"
+
+
+msgid "Special Characters"
+msgstr "Caratteri Speciali"
+
+
+msgid "Kerning"
+msgstr "Crenatura"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Names"
+msgstr "Nomi"
+
+
+msgid "Bone Roll"
+msgstr "Rollio Osso"
+
+
+msgid "Math"
+msgstr "Matematica"
+
+
+msgid "Utilities"
+msgstr "Utilità"
+
+
 msgid "Pivot Point"
 msgstr "Punto di Perno"
 
@@ -24572,8 +24636,28 @@ msgid "Vertex Group Locks"
 msgstr "Blocchi del Gruppo di Vertici"
 
 
+msgid "Read"
+msgstr "Lettura"
+
+
+msgid "Sample"
+msgstr "Campione"
+
+
+msgid "Write"
+msgstr "Scrittura"
+
+
+msgid "Primitives"
+msgstr "Primitive"
+
+
 msgid "Mirror"
 msgstr "Specchia"
+
+
+msgid "Instances"
+msgstr "Istanze"
 
 
 msgid "UV Mapping"
@@ -24596,6 +24680,10 @@ msgid "Align View"
 msgstr "Allinea Vista"
 
 
+msgid "Import"
+msgstr "Importa"
+
+
 msgid "Align View to Active"
 msgstr "Allinea Vista a Attivo"
 
@@ -24604,16 +24692,8 @@ msgid "View Regions"
 msgstr "Regione Vista"
 
 
-msgid "Math"
-msgstr "Matematica"
-
-
 msgid "Select More/Less"
 msgstr "Seleziona Più/Meno"
-
-
-msgid "Utilities"
-msgstr "Utilità"
 
 
 msgid "Select Similar"
@@ -24632,28 +24712,12 @@ msgid "Select Loops"
 msgstr "Seleziona Anelli"
 
 
-msgid "Read"
-msgstr "Lettura"
-
-
-msgid "Sample"
-msgstr "Campione"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Assign Material"
 msgstr "Assegna Materiale"
-
-
-msgid "Write"
-msgstr "Scrittura"
-
-
-msgid "Primitives"
-msgstr "Primitive"
-
-
-msgid "Metaball"
-msgstr "Metaball"
 
 
 msgid "Light"
@@ -24664,20 +24728,12 @@ msgid "Light Probe"
 msgstr "Sensore di Luce"
 
 
-msgid "Instances"
-msgstr "Istanze"
-
-
 msgid "Add Image"
 msgstr "Aggiungi Immagine"
 
 
 msgid "Relations"
 msgstr "Relazioni"
-
-
-msgid "Import"
-msgstr "Importa"
 
 
 msgid "Rigid Body"
@@ -24696,14 +24752,6 @@ msgid "Quick Effects"
 msgstr "Effetti Veloci"
 
 
-msgid "Show/Hide"
-msgstr "Mostra/Nascondi"
-
-
-msgid "Clean Up"
-msgstr "Ripulisci"
-
-
 msgid "Asset"
 msgstr "Risorsa"
 
@@ -24716,16 +24764,20 @@ msgid "Convert"
 msgstr "Converti"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Link/Transfer Data"
 msgstr "Collega/Trasferisci Dati"
 
 
 msgid "Hooks"
 msgstr "Ganci"
+
+
+msgid "Linked"
+msgstr "Collegato"
+
+
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Face Sets Init"
@@ -24740,6 +24792,10 @@ msgid "Clear Transform"
 msgstr "Cancella Trasformazione"
 
 
+msgid "Adjust"
+msgstr "Regola"
+
+
 msgid "In-Betweens"
 msgstr "Intermedio"
 
@@ -24752,72 +24808,16 @@ msgid "Bone Collections"
 msgstr "Raccolte di Ossa"
 
 
-msgid "Names"
-msgstr "Nomi"
-
-
-msgid "Toggle Bone Options"
-msgstr "Attiva/disattiva Opzioni Osso"
-
-
-msgid "Enable Bone Options"
-msgstr "Abilita Opzioni Osso"
-
-
-msgid "Disable Bone Options"
-msgstr "Disabilita Opzioni Osso"
-
-
-msgid "Mesh Select Mode"
-msgstr "Modalità Selezione Mesh"
-
-
-msgid "Face Data"
-msgstr "Dati Faccia"
-
-
-msgid "Select by Face Strength"
-msgstr "Seleziona per Intensità delle Facce"
-
-
-msgid "Set Face Strength"
-msgstr "Imposta Intensità Faccia"
-
-
-msgid "Merge"
-msgstr "Unisci"
-
-
-msgid "Linked"
-msgstr "Collegato"
-
-
-msgid "Layout"
-msgstr "Layout"
-
-
-msgid "Special Characters"
-msgstr "Caratteri Speciali"
-
-
-msgid "Kerning"
-msgstr "Crenatura"
-
-
-msgid "Adjust"
-msgstr "Regola"
-
-
-msgid "Bone Roll"
-msgstr "Rollio Osso"
-
-
 msgid "Keying"
 msgstr "Keying"
 
 
 msgid "Tracking"
 msgstr "Tracciamento"
+
+
+msgid "Toggle Bone Options"
+msgstr "Attiva/disattiva Opzioni Osso"
 
 
 msgid "Keyframe Insert Pie"
@@ -44074,10 +44074,6 @@ msgid "New Collection"
 msgstr "Nuova Raccolta"
 
 
-msgid "Add a new collection inside selected collection"
-msgstr "Aggiungi una nuova raccolta all'interno della raccolta selezionata"
-
-
 msgid "Nested"
 msgstr "Nidificato"
 
@@ -62341,6 +62337,11 @@ msgid "Show"
 msgstr "Mostra"
 
 
+msgctxt "Collection"
+msgid "New"
+msgstr "Nuovo"
+
+
 msgid "Object Children"
 msgstr "Oggetto Figlio"
 
@@ -62348,11 +62349,6 @@ msgstr "Oggetto Figlio"
 msgctxt "Operator"
 msgid "Hide One Level"
 msgstr "Nascondi Un Livello"
-
-
-msgctxt "Collection"
-msgid "New"
-msgstr "Nuovo"
 
 
 msgctxt "Operator"

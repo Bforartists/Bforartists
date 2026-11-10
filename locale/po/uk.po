@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-07-22 11:12+0000\n"
 "Last-Translator: Gamfid <gamfid@users.noreply.translate.blender.org>\n"
 "Language-Team: Ukrainian <https://translate.blender.org/projects/blender-ui/ui/uk/>\n"
@@ -26437,6 +26437,70 @@ msgid "Material slot name"
 msgstr "Назва гнізда матеріалу"
 
 
+msgid "Enable Bone Options"
+msgstr "Увімкнути параметри кісток"
+
+
+msgid "Disable Bone Options"
+msgstr "Відключити параметри кісток"
+
+
+msgid "Mesh Select Mode"
+msgstr "Режим Вибору Сіті"
+
+
+msgid "Face Data"
+msgstr "Дані граней"
+
+
+msgid "Select by Face Strength"
+msgstr "Вибрати за Силою Грані"
+
+
+msgid "Set Face Strength"
+msgstr "Задати Силу Грані"
+
+
+msgid "Clean Up"
+msgstr "Вичищення"
+
+
+msgid "Merge"
+msgstr "Об'єднання"
+
+
+msgid "Show/Hide"
+msgstr "Показати/приховати"
+
+
+msgid "Special Characters"
+msgstr "Спеціальні символи"
+
+
+msgid "Kerning"
+msgstr "Кернінг"
+
+
+msgid "Metaball"
+msgstr "Метакуля"
+
+
+msgid "Names"
+msgstr "Назви"
+
+
+msgid "Bone Roll"
+msgstr "Прокручення Кістки"
+
+
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "Utilities"
+msgstr "Утиліти"
+
+
 msgid "Pivot Point"
 msgstr "Точка Опертя"
 
@@ -26465,6 +26529,14 @@ msgid "Vertex Group Locks"
 msgstr "Блокування Груп Вершин"
 
 
+msgid "Sample"
+msgstr "Вибірка"
+
+
+msgid "Primitives"
+msgstr "Примітиви"
+
+
 msgid "Mirror"
 msgstr "Дзеркалення"
 
@@ -26489,6 +26561,10 @@ msgid "Align View"
 msgstr "Вирівняти Огляд"
 
 
+msgid "Import"
+msgstr "Імпортувати"
+
+
 msgid "Align View to Active"
 msgstr "Вирівняти Огляд за Активним"
 
@@ -26497,16 +26573,8 @@ msgid "View Regions"
 msgstr "Регіони Огляду"
 
 
-msgid "Math"
-msgstr "Математика"
-
-
 msgid "Select More/Less"
 msgstr "Вибрати більше/менше"
-
-
-msgid "Utilities"
-msgstr "Утиліти"
 
 
 msgid "Select Similar"
@@ -26525,20 +26593,12 @@ msgid "Select Loops"
 msgstr "Виділити петлі"
 
 
-msgid "Sample"
-msgstr "Вибірка"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Assign Material"
 msgstr "Призначити Матеріал"
-
-
-msgid "Primitives"
-msgstr "Примітиви"
-
-
-msgid "Metaball"
-msgstr "Метакуля"
 
 
 msgid "Light"
@@ -26557,10 +26617,6 @@ msgid "Relations"
 msgstr "Зв'язки"
 
 
-msgid "Import"
-msgstr "Імпортувати"
-
-
 msgid "Rigid Body"
 msgstr "Тверде тіло"
 
@@ -26577,14 +26633,6 @@ msgid "Quick Effects"
 msgstr "Швидкі ефекти"
 
 
-msgid "Show/Hide"
-msgstr "Показати/приховати"
-
-
-msgid "Clean Up"
-msgstr "Вичищення"
-
-
 msgid "Asset"
 msgstr "Актив"
 
@@ -26597,16 +26645,20 @@ msgid "Convert"
 msgstr "Конвертування"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Link/Transfer Data"
 msgstr "Пов'язати/Перенести Дані"
 
 
 msgid "Hooks"
 msgstr "Гачки"
+
+
+msgid "Linked"
+msgstr "Пов'язане"
+
+
+msgid "Layout"
+msgstr "Розстановка"
 
 
 msgid "Sculpt Set Pivot"
@@ -26629,68 +26681,16 @@ msgid "Propagate"
 msgstr "Поширити"
 
 
-msgid "Names"
-msgstr "Назви"
-
-
-msgid "Toggle Bone Options"
-msgstr "Перемкнути параметри кісток"
-
-
-msgid "Enable Bone Options"
-msgstr "Увімкнути параметри кісток"
-
-
-msgid "Disable Bone Options"
-msgstr "Відключити параметри кісток"
-
-
-msgid "Mesh Select Mode"
-msgstr "Режим Вибору Сіті"
-
-
-msgid "Face Data"
-msgstr "Дані граней"
-
-
-msgid "Select by Face Strength"
-msgstr "Вибрати за Силою Грані"
-
-
-msgid "Set Face Strength"
-msgstr "Задати Силу Грані"
-
-
-msgid "Merge"
-msgstr "Об'єднання"
-
-
-msgid "Linked"
-msgstr "Пов'язане"
-
-
-msgid "Layout"
-msgstr "Розстановка"
-
-
-msgid "Special Characters"
-msgstr "Спеціальні символи"
-
-
-msgid "Kerning"
-msgstr "Кернінг"
-
-
-msgid "Bone Roll"
-msgstr "Прокручення Кістки"
-
-
 msgid "Keying"
 msgstr "Ключування"
 
 
 msgid "Tracking"
 msgstr "Стеження"
+
+
+msgid "Toggle Bone Options"
+msgstr "Перемкнути параметри кісток"
 
 
 msgid "Basic"
@@ -37090,11 +37090,6 @@ msgstr "Завантажити та застосувати XML-файл з те�
 msgctxt "Operator"
 msgid "Install Theme..."
 msgstr "Інсталювати Тему..."
-
-
-msgctxt "Operator"
-msgid "Add Asset Library"
-msgstr "Додати Бібліотеку Активів"
 
 
 msgid "Add an Integrator Preset"
@@ -51721,10 +51716,6 @@ msgid "New Collection"
 msgstr "Нова Колекція"
 
 
-msgid "Add a new collection inside selected collection"
-msgstr "Додати нову колекцію всередину вибраної колекції"
-
-
 msgid "Nested"
 msgstr "Вкладене"
 
@@ -53538,6 +53529,11 @@ msgstr "Назва модуля додатку для вилучення"
 
 msgid "Remove existing template with the same ID"
 msgstr "Вилучити наявний шаблон з таким самим ID"
+
+
+msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "Додати Бібліотеку Активів"
 
 
 msgid "Identifier (not necessarily unique) for the asset library"
@@ -85981,8 +85977,8 @@ msgid "No active item to rename"
 msgstr "Немає активного елемента для перейменування"
 
 
-# BFA - reworded, Blender: "No selected data-blocks to copy"
-msgid "No selected data to copy"
+# BFA - reworded, Blender: "No valid selected data-blocks to copy"
+msgid "No valid selected data to copy"
 msgstr "Нема вибраних блоків даних для копіювання"
 
 

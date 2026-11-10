@@ -2290,8 +2290,9 @@ bSoundFrequencySampler::bSoundFrequencySampler(AUD_Sound sound,
   /* This could be a parameter but a single fixed value seems fine for now and makes caching much
    * simpler. */
   window_cache_stride_ = key.fft_size / 8;
-  const int window_caches_num = std::ceil(info.length * info.specs.samplerate /
-                                          window_cache_stride_);
+  /* The length is negative for sounds of unknown duration. */
+  const int window_caches_num = std::max<int>(
+      std::ceil(info.length * info.specs.samplerate / window_cache_stride_), 0);
   window_caches_.reinitialize(window_caches_num);
 }
 #endif
@@ -2327,8 +2328,12 @@ std::optional<Array<float>> bSoundFrequencySampler::compute_fft(const int start_
       throw;
     }
   }
-  const Span<float> read_buffer = read_buffer_extra.as_span().drop_front(warmup_samples *
-                                                                         channels_num);
+  const Span<float> read_buffer = read_buffer_extra
+                                      .as_span()
+                                      /* Limit to actually read values. */
+                                      .take_front(length * channels_num)
+                                      /* Drop the warmup samples. */
+                                      .drop_front(warmup_samples * channels_num);
   const int read_length = read_buffer.size() / channels_num;
 
   /* Pull out the samples for the requested channel(s). */
@@ -2528,6 +2533,10 @@ float bSoundFrequencySampler::sample_cumulative_frequency(const Span<float> wind
 
 std::optional<Span<float>> bSoundFrequencySampler::ensure_window_cache(int window_i) const
 {
+  if (window_caches_.is_empty()) {
+    return std::nullopt;
+  }
+
   /* Clamp window so that too low or high indices get mapped to the closest valid index. */
   window_i = std::clamp<int>(window_i, 0, window_caches_.size() - 1);
 

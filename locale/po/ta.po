@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-02-24 05:12+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://translate.blender.org/projects/blender-ui/ui/ta/>\n"
@@ -34892,8 +34892,72 @@ msgid "Editor menu containing buttons"
 msgstr "பொத்தான்களைக் கொண்ட திருத்தி பட்டியல்"
 
 
+msgid "Enable Bone Options"
+msgstr "எலும்பு விருப்பங்களை இயக்கவும்"
+
+
+msgid "Disable Bone Options"
+msgstr "எலும்பு விருப்பங்களை முடக்கு"
+
+
+msgid "Mesh Select Mode"
+msgstr "கண்ணி தேர்ந்தெடுக்கப்பட்ட பயன்முறையைத் தேர்ந்தெடுக்கவும்"
+
+
 msgid "Creative"
 msgstr "படைப்பாற்றல்"
+
+
+msgid "Face Data"
+msgstr "முகத்தை முகம்"
+
+
+msgid "Select by Face Strength"
+msgstr "முக வலிமையால் தேர்ந்தெடுக்கவும்"
+
+
+msgid "Set Face Strength"
+msgstr "முக வலிமையை அமைக்கவும்"
+
+
+msgid "Clean Up"
+msgstr "தூய்மை செய்"
+
+
+msgid "Merge"
+msgstr "ஒன்றிணைக்கவும்"
+
+
+msgid "Show/Hide"
+msgstr "காட்டு/மறைக்க"
+
+
+msgid "Special Characters"
+msgstr "சிறப்பு எழுத்துக்கள்"
+
+
+msgid "Kerning"
+msgstr "கெர்னிங்"
+
+
+msgid "Metaball"
+msgstr "வளர்சிதை மாற்ற"
+
+
+msgid "Names"
+msgstr "பெயர்கள்"
+
+
+msgid "Bone Roll"
+msgstr "எலும்பு ரோல்"
+
+
+msgid "Math"
+msgstr "கணிதம்"
+
+
+msgid "Utilities"
+msgstr "பயன்பாடுகள்"
 
 
 msgid "Pivot Point"
@@ -34924,8 +34988,32 @@ msgid "Vertex Group Locks"
 msgstr "வெர்டெக்ச் குழு பூட்டுகள்"
 
 
+msgid "Read"
+msgstr "படி"
+
+
+msgid "Sample"
+msgstr "மாதிரி"
+
+
+msgid "Write"
+msgstr "எழுதுங்கள்"
+
+
+msgid "Primitives"
+msgstr "ப்ரைமிடிவ்ச்"
+
+
+msgid "Gizmo"
+msgstr "கிச்மோ"
+
+
 msgid "Mirror"
 msgstr "கண்ணாடி"
+
+
+msgid "Instances"
+msgstr "நிகழ்வுகள்"
 
 
 msgid "UV Mapping"
@@ -34948,6 +35036,10 @@ msgid "Align View"
 msgstr "பார்வையை சீரமைக்கவும்"
 
 
+msgid "Import"
+msgstr "இறக்குமதி"
+
+
 msgid "Align View to Active"
 msgstr "செயலில் பார்வையை சீரமைக்கவும்"
 
@@ -34956,16 +35048,8 @@ msgid "View Regions"
 msgstr "மண்டலங்களைக் காண்க"
 
 
-msgid "Math"
-msgstr "கணிதம்"
-
-
 msgid "Select More/Less"
 msgstr "மேலும்/குறைவாக தேர்ந்தெடுக்கவும்"
-
-
-msgid "Utilities"
-msgstr "பயன்பாடுகள்"
 
 
 msgid "Select Similar"
@@ -34976,6 +35060,10 @@ msgid "Select All by Trait"
 msgstr "அனைத்தையும் பண்பின் மூலம் தேர்ந்தெடுக்கவும்"
 
 
+msgid "Deprecated"
+msgstr "மதிப்பிடப்பட்டது"
+
+
 msgid "Select Linked"
 msgstr "இணைக்கப்பட்டதைத் தேர்ந்தெடுக்கவும்"
 
@@ -34984,28 +35072,16 @@ msgid "Select Loops"
 msgstr "சுழல்களைத் தேர்ந்தெடுக்கவும்"
 
 
-msgid "Read"
-msgstr "படி"
+msgid "Render Preview"
+msgstr "வழங்குதல் முன்னோட்டம்"
 
 
-msgid "Sample"
-msgstr "மாதிரி"
+msgid "UV"
+msgstr "புறஊதா"
 
 
 msgid "Assign Material"
 msgstr "மூலப்பொருள் ஒதுக்க"
-
-
-msgid "Write"
-msgstr "எழுதுங்கள்"
-
-
-msgid "Primitives"
-msgstr "ப்ரைமிடிவ்ச்"
-
-
-msgid "Metaball"
-msgstr "வளர்சிதை மாற்ற"
 
 
 msgid "Light"
@@ -35016,24 +35092,12 @@ msgid "Light Probe"
 msgstr "ஒளி ஆய்வு"
 
 
-msgid "Gizmo"
-msgstr "கிச்மோ"
-
-
-msgid "Instances"
-msgstr "நிகழ்வுகள்"
-
-
 msgid "Add Image"
 msgstr "படத்தைச் சேர்க்கவும்"
 
 
 msgid "Relations"
 msgstr "உறவுகள்"
-
-
-msgid "Import"
-msgstr "இறக்குமதி"
 
 
 msgid "Rigid Body"
@@ -35048,20 +35112,8 @@ msgid "Track"
 msgstr "டிராக்"
 
 
-msgid "Deprecated"
-msgstr "மதிப்பிடப்பட்டது"
-
-
 msgid "Quick Effects"
 msgstr "விரைவான விளைவுகள்"
-
-
-msgid "Show/Hide"
-msgstr "காட்டு/மறைக்க"
-
-
-msgid "Clean Up"
-msgstr "தூய்மை செய்"
 
 
 msgid "Asset"
@@ -35072,16 +35124,8 @@ msgid "Make Single User"
 msgstr "ஒற்றை பயனரை உருவாக்குங்கள்"
 
 
-msgid "Render Preview"
-msgstr "வழங்குதல் முன்னோட்டம்"
-
-
 msgid "Convert"
 msgstr "மாற்றவும்"
-
-
-msgid "UV"
-msgstr "புறஊதா"
 
 
 msgid "Link/Transfer Data"
@@ -35090,6 +35134,14 @@ msgstr "இணைப்பு/பரிமாற்ற தரவு"
 
 msgid "Hooks"
 msgstr "கொக்கிகள்"
+
+
+msgid "Linked"
+msgstr "இணைக்கப்பட்ட"
+
+
+msgid "Layout"
+msgstr "தளவமைப்பு"
 
 
 msgid "Trim/Add"
@@ -35112,6 +35164,10 @@ msgid "Clear Transform"
 msgstr "தெளிவான உருமாற்றம்"
 
 
+msgid "Adjust"
+msgstr "சரிசெய்யவும்"
+
+
 msgid "In-Betweens"
 msgstr "இன்-பெட்வீன்ச்"
 
@@ -35124,72 +35180,16 @@ msgid "Bone Collections"
 msgstr "எலும்பு வசூல்"
 
 
-msgid "Names"
-msgstr "பெயர்கள்"
-
-
-msgid "Toggle Bone Options"
-msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
-
-
-msgid "Enable Bone Options"
-msgstr "எலும்பு விருப்பங்களை இயக்கவும்"
-
-
-msgid "Disable Bone Options"
-msgstr "எலும்பு விருப்பங்களை முடக்கு"
-
-
-msgid "Mesh Select Mode"
-msgstr "கண்ணி தேர்ந்தெடுக்கப்பட்ட பயன்முறையைத் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Face Data"
-msgstr "முகத்தை முகம்"
-
-
-msgid "Select by Face Strength"
-msgstr "முக வலிமையால் தேர்ந்தெடுக்கவும்"
-
-
-msgid "Set Face Strength"
-msgstr "முக வலிமையை அமைக்கவும்"
-
-
-msgid "Merge"
-msgstr "ஒன்றிணைக்கவும்"
-
-
-msgid "Linked"
-msgstr "இணைக்கப்பட்ட"
-
-
-msgid "Layout"
-msgstr "தளவமைப்பு"
-
-
-msgid "Special Characters"
-msgstr "சிறப்பு எழுத்துக்கள்"
-
-
-msgid "Kerning"
-msgstr "கெர்னிங்"
-
-
-msgid "Adjust"
-msgstr "சரிசெய்யவும்"
-
-
-msgid "Bone Roll"
-msgstr "எலும்பு ரோல்"
-
-
 msgid "Keying"
 msgstr "கீயிங்"
 
 
 msgid "Tracking"
 msgstr "கண்காணிப்பு"
+
+
+msgid "Toggle Bone Options"
+msgstr "எலும்பு விருப்பங்களை மாற்றவும்"
 
 
 msgid "Keyframe Insert Pie"
@@ -55071,11 +55071,6 @@ msgstr "கலப்பான் எக்ச்எம்எல் கருப�
 msgctxt "Operator"
 msgid "Install Theme..."
 msgstr "கருப்பொருள் நிறுவவும் ..."
-
-
-msgctxt "Operator"
-msgid "Add Asset Library"
-msgstr "சொத்து நூலகத்தைச் சேர்க்கவும்"
 
 
 msgid "Add or remove a white balance preset"
@@ -77353,10 +77348,6 @@ msgid "New Collection"
 msgstr "புதிய தொகுப்பு"
 
 
-msgid "Add a new collection inside selected collection"
-msgstr "தேர்ந்தெடுக்கப்பட்ட சேகரிப்புக்குள் புதிய தொகுப்பைச் சேர்க்கவும்"
-
-
 msgid "Nested"
 msgstr "கூடு"
 
@@ -79926,6 +79917,11 @@ msgstr "அகற்றுவதற்கு கூடுதல் பகுத�
 
 msgid "Remove existing template with the same ID"
 msgstr "அதே ஐடியுடன் இருக்கும் வார்ப்புருவை அகற்றவும்"
+
+
+msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "சொத்து நூலகத்தைச் சேர்க்கவும்"
 
 
 msgid "Add a directory to be used by the Asset Browser as source of assets"
@@ -97114,10 +97110,6 @@ msgstr "செர்மன் - செர்மன்"
 
 msgid "Greek - Ελληνικά"
 msgstr "கிரேக்கம் - கிரேக்கம்"
-
-
-msgid "Locale code: el_GR. Translation progress: 1%"
-msgstr "மொழி குறியீடு: el_GR. மொழிபெயர்ப்பு முன்னேற்றம்: 1%"
 
 
 msgid "Hebrew - תירִבְעִ"
@@ -125909,6 +125901,11 @@ msgid "Disable in Render"
 msgstr "ரெண்டரில் முடக்கு"
 
 
+msgctxt "Collection"
+msgid "New"
+msgstr "புதிய"
+
+
 msgctxt "Operator"
 msgid "Instance to Scene"
 msgstr "காட்சிக்கு நிகழ்வு"
@@ -125943,11 +125940,6 @@ msgstr "ஒரு நிலையை மறை"
 msgctxt "Operator"
 msgid "Relocate"
 msgstr "இடமாற்றம்"
-
-
-msgctxt "Collection"
-msgid "New"
-msgstr "புதிய"
 
 
 msgctxt "Operator"
@@ -139890,8 +139882,8 @@ msgid "No active item to rename"
 msgstr "மறுபெயரிட செயலில் உள்ள உருப்படி இல்லை"
 
 
-# BFA - reworded, Blender: "No selected data-blocks to copy"
-msgid "No selected data to copy"
+# BFA - reworded, Blender: "No valid selected data-blocks to copy"
+msgid "No valid selected data to copy"
 msgstr "நகலெடுக்க தேர்ந்தெடுக்கப்பட்ட தரவு-தொகுதிகள் இல்லை"
 
 
@@ -140270,6 +140262,10 @@ msgstr "(காலியாக)"
 
 msgid "Strip None"
 msgstr "எதுவும் இல்லை"
+
+
+msgid "There is no asset library to remove"
+msgstr "அகற்ற சொத்து நூலகம் இல்லை"
 
 
 msgid "Cannot reload with running modal operators"
@@ -140812,10 +140808,6 @@ msgid "Extension operator not found \"%s\""
 msgstr "நீட்டிப்பு ஆபரேட்டர் \"%s\" காணப்படவில்லை"
 
 
-msgid "There is no asset library to remove"
-msgstr "அகற்ற சொத்து நூலகம் இல்லை"
-
-
 msgid "There is no extension repository to remove"
 msgstr "அகற்ற நீட்டிப்பு களஞ்சியம் இல்லை"
 
@@ -141181,10 +141173,6 @@ msgstr "பார்வை ஆஃப்செட் பூட்டப்பட�
 
 msgid "Depth too large"
 msgstr "ஆழம் மிகப் பெரியது"
-
-
-msgid "No objects selected to copy"
-msgstr "நகலெடுக்க பொருள்கள் எதுவும் தேர்ந்தெடுக்கப்படவில்லை"
 
 
 msgid "No objects to paste"
@@ -151829,18 +151817,6 @@ msgstr "நகல் \"%s\" என சேமிக்கப்பட்டது
 
 msgid "Saved as \"%s\""
 msgstr "\"%s\" என சேமிக்கப்பட்டது"
-
-
-msgid ""
-"To match renders with the previous working space as closely as possible,\n"
-"colors in all materials, lights and geometry must be converted.\n"
-"\n"
-"Some nodes graphs cannot be converted accurately and may need manual fix-ups."
-msgstr ""
-"ரெண்டர்களை முந்தைய பணியிடத்துடன் முடிந்தவரை நெருக்கமாகப் பொருத்த, \n"
-"அனைத்து பொருட்கள், விளக்குகள் மற்றும் வடிவவியலில் உள்ள வண்ணங்கள் மாற்றப்பட வேண்டும். \n"
-"\n"
-"சில கணு வரைபடங்களை துல்லியமாக மாற்ற முடியாது மற்றும் கைமுறையாக சரிசெய்தல் தேவைப்படலாம்."
 
 
 msgid "Can't change working space while jobs are running"

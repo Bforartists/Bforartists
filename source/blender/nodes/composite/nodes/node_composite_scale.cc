@@ -305,9 +305,10 @@ class ScaleOperation : public NodeOperation {
     const Result &input = this->get_input("Image");
     const float2 pixel_size = input.domain().pixel_size;
     const float2 input_size = float2(input.domain().display_size);
+    const float2 input_scale = math::to_scale(float2x2(input.domain().transformation));
     const float2 absolute_size = float2(this->get_input("X").get_single_value_default<float>(),
                                         this->get_input("Y").get_single_value_default<float>());
-    return (absolute_size * pixel_size) / input_size;
+    return (absolute_size * pixel_size) / (input_size * input_scale);
   }
 
   /* Scale by the render resolution percentage. */
@@ -334,9 +335,11 @@ class ScaleOperation : public NodeOperation {
    * potentially stretched, hence the name. */
   float2 get_scale_render_size_stretch()
   {
-    const float2 input_size = float2(get_input("Image").domain().display_size);
+    const Result &input = this->get_input("Image");
+    const float2 input_size = float2(input.domain().display_size);
+    const float2 input_scale = math::to_scale(float2x2(input.domain().transformation));
     const float2 render_size = float2(context().get_compositing_domain().display_size);
-    return render_size / input_size;
+    return render_size / (input_size * input_scale);
   }
 
   /* Scale such that the dimension with the smaller scaling factor matches that of the render size
@@ -345,9 +348,11 @@ class ScaleOperation : public NodeOperation {
    * inside that region, hence the name. */
   float2 get_scale_render_size_fit()
   {
-    const float2 input_size = float2(get_input("Image").domain().display_size);
+    const Result &input = this->get_input("Image");
+    const float2 input_size = float2(input.domain().display_size);
+    const float2 input_scale = math::to_scale(float2x2(input.domain().transformation));
     const float2 render_size = float2(context().get_compositing_domain().display_size);
-    const float2 scale = render_size / input_size;
+    const float2 scale = render_size / (input_size * input_scale);
     return float2(math::min(scale.x, scale.y));
   }
 
@@ -357,9 +362,11 @@ class ScaleOperation : public NodeOperation {
    * region, hence the name. */
   float2 get_scale_render_size_crop()
   {
-    const float2 input_size = float2(get_input("Image").domain().display_size);
+    const Result &input = this->get_input("Image");
+    const float2 input_size = float2(input.domain().display_size);
+    const float2 input_scale = math::to_scale(float2x2(input.domain().transformation));
     const float2 render_size = float2(context().get_compositing_domain().display_size);
-    const float2 scale = render_size / input_size;
+    const float2 scale = render_size / (input_size * input_scale);
     return float2(math::max(scale.x, scale.y));
   }
 

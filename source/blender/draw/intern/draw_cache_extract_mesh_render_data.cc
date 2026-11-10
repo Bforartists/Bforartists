@@ -23,8 +23,6 @@
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
 
-#include "ED_mesh.hh"
-
 #include "DRW_render.hh"
 
 #include "mesh_extractors/extract_mesh.hh"
@@ -422,13 +420,13 @@ MeshRenderData mesh_render_data_create(Object &object,
   mr.use_hide = use_hide;
 
   const Mesh *orig_mesh = mesh_get_original_mesh(object);
-  if (BMEditMesh *edit_mesh = orig_mesh ? orig_mesh->runtime->edit_mesh.get() : nullptr) {
+  if (EditMesh *edit_mesh = orig_mesh ? orig_mesh->runtime->edit_mesh.get() : nullptr) {
     const Mesh *eval_cage = DRW_object_get_editmesh_cage_for_drawing(object);
 
     mr.bm = const_cast<BMesh *>(BKE_editmesh_bmesh_get(orig_mesh));
-    mr.edit_bmesh = edit_mesh;
+    mr.edit_mesh = edit_mesh;
     mr.mesh = (do_final) ? &mesh : eval_cage;
-    mr.edit_data = is_editmode ? mr.mesh->runtime->edit_data.get() : nullptr;
+    mr.bmesh_wrapper_data = is_editmode ? mr.mesh->runtime->bmesh_wrapper_data.get() : nullptr;
 
     /* If there is no distinct cage, hide unmapped edges that can't be selected. */
     mr.hide_unmapped_edges = !do_final || &mesh == eval_cage;
@@ -440,9 +438,9 @@ MeshRenderData mesh_render_data_create(Object &object,
     mr.bm_free_normal_offset_corner = CustomData_get_offset_named(
         &mr.bm->ldata, CD_PROP_FLOAT3, "custom_normal");
 
-    if (bke::EditMeshData *emd = mr.edit_data) {
+    if (bke::MeshWrapperCacheData *emd = mr.bmesh_wrapper_data) {
       if (!emd->vert_positions.is_empty()) {
-        mr.bm_vert_coords = mr.edit_data->vert_positions;
+        mr.bm_vert_coords = mr.bmesh_wrapper_data->vert_positions;
         if (mr.bm_free_normal_offset_vert == -1) {
           mr.bm_vert_normals = BKE_editmesh_cache_ensure_vert_normals(*mr.bm, *emd);
         }
@@ -457,7 +455,9 @@ MeshRenderData mesh_render_data_create(Object &object,
     BM_mesh_elem_index_ensure(mr.bm, bm_ensure_types);
     BM_mesh_elem_table_ensure(mr.bm, bm_ensure_types & ~BM_LOOP);
 
-    mr.efa_act_uv = EDBM_uv_active_face_get(const_cast<Mesh *>(mr.mesh), false, false);
+    mr.efa_act_uv = CustomData_has_layer(&mr.bm->ldata, CD_PROP_FLOAT2) ?
+                        BM_mesh_active_face_get(mr.bm, false, false) :
+                        nullptr;
     mr.efa_act = BM_mesh_active_face_get(mr.bm, false, true);
     mr.eed_act = BM_mesh_active_edge_get(mr.bm);
     mr.eve_act = BM_mesh_active_vert_get(mr.bm);
@@ -503,7 +503,7 @@ MeshRenderData mesh_render_data_create(Object &object,
   }
   else {
     mr.mesh = &mesh;
-    mr.edit_bmesh = nullptr;
+    mr.edit_mesh = nullptr;
     mr.extract_type = MeshExtractType::Mesh;
     mr.hide_unmapped_edges = false;
 

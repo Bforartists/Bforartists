@@ -117,6 +117,7 @@ ImageMetaData ImageHandle::metadata(Progress &progress)
     if (image_texture->type == ImageTexture::SINGLE) {
       ImageSingle *img = static_cast<ImageSingle *>(image_texture);
       manager->load_image_metadata(img, progress);
+      const thread_scoped_lock image_lock(img->mutex);
       return img->metadata;
     }
     if (image_texture->type == ImageTexture::UDIM) {
@@ -261,13 +262,15 @@ void ImageManager::load_image_metadata(ImageSingle *img, Progress &progress)
    * application processing. */
   isolate_task([&]() {
     /* Change image to use tx file if supported. */
+    bool metadata_incomplete = false;
     const ImageLoaderParams params = {.use_texture_cache = use_texture_cache,
                                       .auto_texture_cache = auto_texture_cache,
                                       .texture_cache_path = texture_cache_path,
                                       .colorspace = img->params.colorspace,
                                       .alpha_type = img->params.alpha_type,
                                       .load_failure_num = load_failure_num,
-                                      .tx_failure_num = tx_failure_num};
+                                      .tx_failure_num = tx_failure_num,
+                                      .metadata_incomplete = metadata_incomplete};
 
     ImageMetaData &metadata = img->metadata;
     metadata = ImageMetaData();
@@ -282,7 +285,10 @@ void ImageManager::load_image_metadata(ImageSingle *img, Progress &progress)
 
     metadata.finalize(img->params.alpha_type);
 
-    img->need_metadata = false;
+    /* Load again next update if cancelled, tx generation might be incomplete. */
+    if (!metadata_incomplete) {
+      img->need_metadata = false;
+    }
   });
 }
 
@@ -478,6 +484,11 @@ void ImageManager::device_load_image(Device *device,
   progress.set_status("Updating Images", "Loading " + img->loader->name());
 
   load_image_metadata(img, progress);
+
+  /* Metadata may be incomplete if cancelled, don't load pixels then. */
+  if (progress.get_cancel()) {
+    return;
+  }
 
   KernelImageTexture tex;
   tex.width = img->metadata.width;
@@ -675,7 +686,10 @@ void ImageManager::device_update(Device *device, Scene *scene, Progress &progres
   /* Copy device arrays. */
   device_copy_image_textures(device, scene);
 
-  need_update_ = false;
+  /* Load remaining images next update if cancelled. */
+  if (!progress.get_cancel()) {
+    need_update_ = false;
+  }
 }
 
 void ImageManager::device_load_images(Device *device,

@@ -159,18 +159,16 @@ void remove_selection_attributes(bke::MutableAttributeAccessor &attributes,
 }
 
 std::optional<Span<float3>> get_selection_attribute_positions(
-    const bke::CurvesGeometry &curves,
-    const bke::crazyspace::GeometryDeformation &deformation,
-    const StringRef attribute_name)
+    const bke::crazyspace::GeometryDeformation &deformation, const StringRef attribute_name)
 {
   if (attribute_name == ".selection") {
     return deformation.positions;
   }
   if (attribute_name == ".selection_handle_left") {
-    return curves.handle_positions_left();
+    return deformation.handle_positions_left;
   }
   if (attribute_name == ".selection_handle_right") {
-    return curves.handle_positions_right();
+    return deformation.handle_positions_right;
   }
   BLI_assert_unreachable();
   return {};
@@ -237,8 +235,8 @@ static void init_selectable_foreach(
   r_bezier_attribute_names = get_curves_bezier_selection_attribute_names(curves);
   r_positions = deformation.positions;
   if (handle_display != eHandleDisplay::CURVE_HANDLE_NONE && r_bezier_attribute_names.size() > 0) {
-    r_bezier_handle_positions = {*curves.handle_positions_left(),
-                                 *curves.handle_positions_right()};
+    r_bezier_handle_positions = {deformation.handle_positions_left,
+                                 deformation.handle_positions_right};
     r_bezier_curves = curves.indices_for_curve_type(CURVE_TYPE_BEZIER, r_memory);
   }
   else {
@@ -1362,7 +1360,7 @@ IndexMask select_box_mask(const ViewContext &vc,
                           IndexMaskMemory &memory)
 {
   const std::optional<Span<float3>> positions_opt = get_selection_attribute_positions(
-      curves, deformation, attribute_name);
+      deformation, attribute_name);
   if (!positions_opt) {
     return {};
   }
@@ -1380,10 +1378,7 @@ IndexMask select_box_mask(const ViewContext &vc,
     return BLI_rcti_isect_segment(&rect, int2(pos_proj), int2(next_pos_proj));
   };
 
-  const IndexMask &mask = (selection_domain != bke::AttrDomain::Point ||
-                           attribute_name == ".selection") ?
-                              selection_mask :
-                              bezier_mask;
+  const IndexMask &mask = (attribute_name == ".selection") ? selection_mask : bezier_mask;
   return select_mask_from_predicates(
       curves, mask, selection_domain, memory, point_predicate, line_predicate);
 }
@@ -1402,7 +1397,7 @@ IndexMask select_lasso_mask(const ViewContext &vc,
   rcti bbox;
   BLI_lasso_boundbox(&bbox, lasso_coords);
   const std::optional<Span<float3>> positions_opt = get_selection_attribute_positions(
-      curves, deformation, attribute_name);
+      deformation, attribute_name);
   if (!positions_opt) {
     return {};
   }
@@ -1427,10 +1422,7 @@ IndexMask select_lasso_mask(const ViewContext &vc,
                                     IS_CLIPPED);
   };
 
-  const IndexMask &mask = (selection_domain != bke::AttrDomain::Point ||
-                           attribute_name == ".selection") ?
-                              selection_mask :
-                              bezier_mask;
+  const IndexMask &mask = (attribute_name == ".selection") ? selection_mask : bezier_mask;
   return select_mask_from_predicates(
       curves, mask, selection_domain, memory, point_predicate, line_predicate);
 }
@@ -1449,7 +1441,7 @@ IndexMask select_circle_mask(const ViewContext &vc,
 {
   const float radius_sq = pow2f(radius);
   const std::optional<Span<float3>> positions_opt = get_selection_attribute_positions(
-      curves, deformation, attribute_name);
+      deformation, attribute_name);
   if (!positions_opt) {
     return {};
   }
@@ -1469,10 +1461,7 @@ IndexMask select_circle_mask(const ViewContext &vc,
     return distance_proj_sq <= radius_sq;
   };
 
-  const IndexMask &mask = (selection_domain != bke::AttrDomain::Point ||
-                           attribute_name == ".selection") ?
-                              selection_mask :
-                              bezier_mask;
+  const IndexMask &mask = (attribute_name == ".selection") ? selection_mask : bezier_mask;
   return select_mask_from_predicates(
       curves, mask, selection_domain, memory, point_predicate, line_predicate);
 }

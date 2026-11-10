@@ -7,6 +7,9 @@
         icon_alpha="1"
         icon_saturation="0.5"
         widget_emboss="#00000026"
+        text_shadow_color="#00000080"
+        text_shadow_type="SMALL"
+        text_shadow_offset="0 -1"
         link="#6fa9e6ff"
         editor_border="#161616"
         editor_outline="#ffffff15"
@@ -813,7 +816,6 @@
         frame_node="#0f0f0fcc"
         matte_node="#5a3838"
         distor_node="#3e5a5b"
-        noodle_curving="4"
         grid_levels="3"
         dash_alpha="0.5"
         input_node="#82354c"
@@ -1232,42 +1234,4 @@
       </ThemeStripColor>
     </strip_color>
   </Theme>
-  <ThemeStyle>
-    <panel_title>
-      <ThemeFontStyle
-        points="11"
-        character_weight="400"
-        shadow="3"
-        shadow_offset_x="0"
-        shadow_offset_y="-1"
-        shadow_alpha="0.5"
-        shadow_value="0"
-        >
-      </ThemeFontStyle>
-    </panel_title>
-    <widget>
-      <ThemeFontStyle
-        points="11"
-        character_weight="400"
-        shadow="1"
-        shadow_offset_x="0"
-        shadow_offset_y="-1"
-        shadow_alpha="0.5"
-        shadow_value="0"
-        >
-      </ThemeFontStyle>
-    </widget>
-    <tooltip>
-      <ThemeFontStyle
-        points="11"
-        character_weight="400"
-        shadow="1"
-        shadow_offset_x="0"
-        shadow_offset_y="-1"
-        shadow_alpha="0.5"
-        shadow_value="0"
-        >
-      </ThemeFontStyle>
-    </tooltip>
-  </ThemeStyle>
 </bpy>

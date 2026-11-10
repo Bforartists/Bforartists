@@ -926,6 +926,11 @@ static void image_main_region_listener(const wmRegionListenerParams *params)
 
   /* context changes */
   switch (wmn->category) {
+    case NC_SCENE:
+      if (wmn->data == ND_TOOLSETTINGS) {
+        ED_region_tag_redraw(region);
+      }
+      break;
     case NC_GEOM:
       if (ELEM(wmn->data, ND_DATA, ND_SELECT)) {
         WM_gizmomap_tag_refresh(region->runtime->gizmo_map);
@@ -982,7 +987,11 @@ static void image_main_region_listener(const wmRegionListenerParams *params)
           bke::compositor::is_compositor_viewer_visible(*params->area))
       {
         Scene *scene = WM_window_get_active_scene(params->window);
-        DEG_id_tag_update(&scene->id, ID_RECALC_COMPOSITOR);
+        ViewLayer *view_layer = WM_window_get_active_view_layer(params->window);
+        Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
+        if (depsgraph) {
+          DEG_id_tag_update_for_side_effect_request(depsgraph, &scene->id, ID_RECALC_COMPOSITOR);
+        }
       }
       break;
   }

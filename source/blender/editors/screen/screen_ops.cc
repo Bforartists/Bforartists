@@ -18,6 +18,7 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_rotation_c.hh"
 #include "BLI_math_vector_c.hh"
+#include "BLI_threads.hh"
 #include "BLI_time.hh"
 #include "BLI_utildefines.hh"
 
@@ -805,7 +806,7 @@ bool ED_operator_uvmap(bContext *C)
   if (obedit->type != OB_MESH) {
     return false;
   }
-  BMEditMesh *em = BKE_editmesh_from_object(obedit);
+  EditMesh *em = BKE_editmesh_from_object(obedit);
   if (!em) {
     return false;
   }
@@ -3910,7 +3911,7 @@ static wmOperatorStatus frame_offset_exec(bContext *C, wmOperator *op)
 
   const bool wrap_timeline_navigation = scene->r.flag & SCER_WRAP_TIMELINE_NAVIGATION;
   if (wrap_timeline_navigation) {
-    const ScenePlaybackRange playback_range = BKE_scene_get_playback_range(scene);
+    const ScenePlaybackRange playback_range = ED_scene_get_effective_playback_range(*C, scene);
     scene->r.cfra = wrap_frame_in_range(scene->r.cfra, playback_range);
   }
   else {
@@ -3959,7 +3960,7 @@ static wmOperatorStatus frame_jump_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
   wmTimer *animtimer = CTX_wm_screen(C)->animtimer;
-  const ScenePlaybackRange playback_range = BKE_scene_get_playback_range(scene);
+  const ScenePlaybackRange playback_range = ED_scene_get_effective_playback_range(*C, scene);
 
   /* Don't change scene->r.cfra directly if animtimer is running as this can cause
    * first/last frame not to be actually shown (bad since for example physics
@@ -4063,7 +4064,7 @@ static wmOperatorStatus frame_jump_delta_exec(bContext *C, wmOperator *op)
 
   const bool wrap_timeline_navigation = scene->r.flag & SCER_WRAP_TIMELINE_NAVIGATION;
   if (wrap_timeline_navigation) {
-    const ScenePlaybackRange playback_range = BKE_scene_get_playback_range(scene);
+    const ScenePlaybackRange playback_range = ED_scene_get_effective_playback_range(*C, scene);
     scene->r.cfra = wrap_frame_in_range(scene->r.cfra, playback_range);
   }
   else {
@@ -4226,7 +4227,7 @@ static wmOperatorStatus keyframe_jump_exec(bContext *C, wmOperator *op)
   const float cfra = BKE_scene_frame_get(scene);
 
   const bool wrap_timeline_navigation = scene->r.flag & SCER_WRAP_TIMELINE_NAVIGATION;
-  const ScenePlaybackRange playback_range = BKE_scene_get_playback_range(scene);
+  const ScenePlaybackRange playback_range = ED_scene_get_effective_playback_range(*C, scene);
 
   /* Find matching keyframe in the right direction. */
   const ActKeyColumn *ak;
@@ -4389,7 +4390,7 @@ static wmOperatorStatus marker_jump_exec(bContext *C, wmOperator *op)
 
   std::optional<ScenePlaybackRange> playback_range;
   if (scene->r.flag & SCER_WRAP_TIMELINE_NAVIGATION) {
-    playback_range = BKE_scene_get_playback_range(scene);
+    playback_range = ED_scene_get_effective_playback_range(*C, scene);
   }
 
   const bool next = RNA_boolean_get(op->ptr, "next");
@@ -7189,6 +7190,12 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
                                                      wmOperator * /*op*/,
                                                      const wmEvent *event)
 {
+  /* This function touches a lot of things that only the main thread should touch.
+   * For example cfra and the animation timer.
+   * If this is not called by the main thread we will run into a lot of race conditions.
+   */
+  BLI_assert(BLI_thread_is_main());
+
   bScreen *screen = CTX_wm_screen(C);
   wmTimer *wt = screen->animtimer;
 
@@ -7232,7 +7239,17 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
   else if ((scene->audio.flag & AUDIO_SYNC) && (sad->flag & ANIMPLAY_FLAG_REVERSE) == false &&
            isfinite(time = BKE_sound_sync_scene(scene_eval)))
   {
+    /* Go to the closest frame according to the audio backend. */
     scene->r.cfra = round(time * scene->frames_per_second());
+
+    /* Calculate how much offset there is between the audio backend and the blender frame timer.
+     * As we can't know how long each frame will take to render, we just try to make sure
+     * that the audio clock and Blender's frame pacing clock is aligned.
+     */
+    double seconds_per_frame = 1.0 / scene->frames_per_second();
+    double audio_delay = remainder(time, seconds_per_frame);
+    double time_to_next_refresh = wt->time_next - BLI_time_now_seconds();
+    double time_offset = audio_delay + time_to_next_refresh - seconds_per_frame;
 
 #ifdef PROFILE_AUDIO_SYNC
     newfra_int = scene->r.cfra;
@@ -7242,9 +7259,34 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
     else if (newfra_int > old_frame + 1) {
       printf("forward +%d jump detected, frame %d!\n", newfra_int - old_frame, old_frame);
     }
+    printf("frame: %f\n", time * scene->frames_per_second());
+    printf("delta time: %f ms, audio delay: %f ms, time offset %f ms\n",
+           wt->time_delta * 1000.0,
+           audio_delay * 1000.0,
+           time_offset * 1000.0);
+
     fflush(stdout);
     old_frame = newfra_int;
 #endif
+
+    double abs_time_offset = abs(time_offset);
+    if (abs_time_offset > 0.02) {
+      /* The desync is larger than 20 ms, do quick adjustment to try to get us back on time as
+       * quick as possible.
+       */
+      wt->time_last -= time_offset;
+      wt->time_next -= time_offset;
+      wt->time_start -= time_offset;
+    }
+    else if (abs_time_offset > 0.001) {
+      /* The desync is between 1ms and 20 ms. Try to slowly nudge the timer in the right direction
+       * to remedy the drift.
+       */
+      time_offset *= 0.1;
+      wt->time_last -= time_offset;
+      wt->time_next -= time_offset;
+      wt->time_start -= time_offset;
+    }
   }
   else {
     if (sync) {
@@ -7296,9 +7338,21 @@ static wmOperatorStatus screen_animation_step_invoke(bContext *C,
    * this function. */
   bool do_stop_playback = false;
 
+  float start_frame = scene->playback_start();
+  float end_frame = scene->playback_end();
+
+  /* The preview range takes precedence over the scene strip range. */
+  if (sad->use_seq_scenestrip_range && (scene->r.flag & SCER_PRV_RANGE) == 0) {
+    /* Note: We cannot use #ED_scene_get_effective_playback_range here as it checks whether strip
+     * range playback applies in the current context, which in turn may change during playback,
+     * e.g. mouse hovers over a different editor).  */
+    if (const std::optional<ScenePlaybackRange> range = ed::vse::get_scene_strip_frame_range(*C)) {
+      start_frame = range->start_frame;
+      end_frame = range->end_frame;
+    }
+  }
+
   /* Handle reaching the extreme frames. */
-  const int start_frame = scene->playback_start();
-  const int end_frame = scene->playback_end();
   const bool is_playing_forward = (sad->flag & ANIMPLAY_FLAG_REVERSE) == 0;
   const bool is_extreme_frame = is_playing_forward ? scene->r.cfra > end_frame :
                                                      scene->r.cfra < start_frame;

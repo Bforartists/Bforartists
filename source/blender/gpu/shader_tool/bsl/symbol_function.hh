@@ -72,13 +72,16 @@ struct SymbolFunction : SymbolScope {
   SymbolFunction *overload_next = nullptr;
 
   SymbolFunctionTemplate *template_data = nullptr;
-  SymbolClass *return_type = nullptr;
+  const SymbolClass *return_type = nullptr;
 
   ast::FuncForwardDecl fwd = {};
   ast::FuncDecl decl = {};
 
+  /* If virtual, the last direct override of this method. */
+  const SymbolFunction *override_next = nullptr;
+
   vector<bool> arg_const;
-  vector<SymbolClass *> arg_types;
+  vector<const SymbolClass *> arg_types;
   vector<ast::Expr> arg_defaults;
 
   bool is_error = false;
@@ -96,6 +99,12 @@ struct SymbolFunction : SymbolScope {
   bool is_inline = false;
   /* False if this function was only forward declared. */
   bool is_defined = true;
+  /* True if function is declared as virtual (makes it not callable under BSL rules). */
+  bool is_virtual = false;
+  /* True if function is declared as pure virtual (makes it not callable under BSL rules). */
+  bool is_pure_virtual = false;
+  /* True for methods with const qualifier. */
+  bool is_const = false;
 
   /* Identifier of the temporary return variable.
    * The real identifier is then specialized per instantiation. */
@@ -105,15 +114,19 @@ struct SymbolFunction : SymbolScope {
   enum class EntryPointType { FRAG, VERT, COMP, NONE } entry_point_type;
 
   template<typename AstNodeT>
-  SymbolFunction(SymbolScope *parent,
-                 SymbolClass *return_type,
+  SymbolFunction(SymbolScope &parent,
+                 const SymbolClass &return_type,
                  AstNodeT decl,
                  const string &suffix = "")
       : SymbolScope(
             parent, decl.front(), string(decl.identifier().name().str()) + suffix, FUNCTION),
-        return_type(return_type),
+        return_type(&return_type),
         decl(decl),
         is_inline(decl.attributes().contains_attr("force_inline")),
+        /* Note: We leave to the C++ linting to catch invalid keyword usage. */
+        is_virtual(decl.virtual_qualifier().is_valid() || decl.virtual_specifier().is_valid()),
+        is_pure_virtual(is_virtual && decl.pure_specifier().is_valid()),
+        is_const(decl.is_const()),
         fn_type(decl.is_method() ? (decl.is_static() ? STATIC : MEMBER) : GLOBAL),
         entry_point_type(EntryPointType::NONE)
   {
@@ -134,10 +147,14 @@ struct SymbolFunction : SymbolScope {
     }
   }
 
-  SymbolFunction(
-      SymbolScope *parent, Token tok, SymbolClass *return_type, const string &id, Type fn_type)
+  /* For builtins or constructors. */
+  SymbolFunction(SymbolScope &parent,
+                 Token tok,
+                 const SymbolClass &return_type,
+                 const string &id,
+                 Type fn_type)
       : SymbolScope(parent, tok, id, FUNCTION),
-        return_type(return_type),
+        return_type(&return_type),
         fn_type(fn_type),
         entry_point_type(EntryPointType::NONE)
   {
@@ -168,6 +185,20 @@ struct SymbolFunction : SymbolScope {
     return is_builtin && allow_vector_promotion;
   }
 
+  bool is_overridden() const
+  {
+    return override_next;
+  }
+
+  /* This uses GLSL rules for comparing signature: references and pointers are not taken into
+   * account.
+   * Note that we do not compare array extents as overloading based on them has different
+   * behavior in GLSL and C++/MSL. */
+  bool has_same_signature(const SymbolFunction &other) const
+  {
+    return is_const == other.is_const && arg_types == other.arg_types;
+  }
+
   /* Only used for sorting purpose. Return a unique location. */
   SourceLocation decl_loc() const
   {
@@ -180,26 +211,26 @@ struct SymbolFunction : SymbolScope {
   /* To be called on the first registered overload. */
   Result<SymbolFunction *> lookup_overload(ast::IdQualified id,
                                            const SymbolTable &table,
-                                           const vector<SymbolClass *> &arg_types);
+                                           const vector<const SymbolClass *> &arg_types);
 
   void add_overload(SymbolFunction *fn);
-  void add_argument(bool is_const, SymbolClass *type, ast::Expr default_value = {});
+  void add_argument(bool is_const, const SymbolClass &type, ast::Expr default_value = {});
 
   void reserve_arguments(int n);
 
-  bool is_compatible(ResourceType res_type);
+  bool is_compatible(ResourceType res_type) const;
 
-  static Result<vector<SymbolClass *>> to_arg_types(const SymbolTable &table,
-                                                    const SymbolScope &scope,
-                                                    ast::FuncParamList list);
-  static Result<vector<SymbolClass *>> to_arg_types(const SymbolTable &table,
-                                                    const SymbolScope &scope,
-                                                    ast::FuncArgList list);
+  static Result<vector<const SymbolClass *>> to_arg_types(const SymbolTable &table,
+                                                          const SymbolScope &scope,
+                                                          ast::FuncParamList list);
+  static Result<vector<const SymbolClass *>> to_arg_types(const SymbolTable &table,
+                                                          const SymbolScope &scope,
+                                                          ast::FuncArgList list);
 
  private:
   /* Returning empty indicates this is not a viable candidate */
-  optional<vector<MatchRank>> get_match_ranks(const SymbolTable &table,
-                                              const vector<SymbolClass *> &param_types) const;
+  optional<vector<MatchRank>> get_match_ranks(
+      const SymbolTable &table, const vector<const SymbolClass *> &param_types) const;
 };
 
 std::string to_str(SymbolFunction::EntryPointType type);
