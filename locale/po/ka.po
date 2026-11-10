@@ -78816,8 +78816,10 @@ msgid "Duplicate Shape Key"
 msgstr "ფორმის სოლის დუბლიკატი"
 
 
-msgid "Duplicate the active shape key"
-msgstr "შექმენი აქტიური ფორმის სოლის დუბლიკატი"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "შექმენი მონიშნული ფორმის სოლების დუბლიკატი"
 
 
 msgctxt "Operator"

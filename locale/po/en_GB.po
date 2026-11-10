@@ -75677,8 +75677,10 @@ msgid "Duplicate Shape Key"
 msgstr "Duplicate Shape Key"
 
 
-msgid "Duplicate the active shape key"
-msgstr "Duplicate the active shape key"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Duplicate the selected shape keys"
 
 
 msgctxt "Operator"

@@ -438,7 +438,8 @@ void OBJECT_OT_shape_key_copy(wmOperatorType *ot)
 {
   ot->name = "Duplicate Shape Key";
   ot->idname = "OBJECT_OT_shape_key_copy";
-  ot->description = "Duplicate the active shape key";
+  /* BFA - the operator duplicates all selected shape keys, not only the active one */
+  ot->description = "Duplicate the selected shape keys";
 
   ot->poll = shape_key_mode_exists_poll;
   ot->exec = shape_key_copy_exec;
