@@ -168,14 +168,11 @@ void ShaderCreateInfo::finalize(const bool recursive)
      * shader resources, we need to avoid inserting duplicates.
      * TODO: Optimize create info preparation to include each individual "additional_info"
      * only a single time. */
-    vertex_inputs_.extend_non_duplicates(info.vertex_inputs_);
     vertex_out_interfaces_.extend_non_duplicates(info.vertex_out_interfaces_);
     specialization_constants_.extend_non_duplicates(info.specialization_constants_);
     compilation_constants_.extend_non_duplicates(info.compilation_constants_);
 
     shared_variables_.extend(info.shared_variables_);
-
-    validate_vertex_attributes(&info);
 
     /* Insert with duplicate check. */
     defines_.extend_non_duplicates(info.defines_);
@@ -193,6 +190,9 @@ void ShaderCreateInfo::finalize(const bool recursive)
     for (const auto &res : info.geometry_resources_) {
       extend_predicate(geometry_resources_, res, additional_info.conditions);
     }
+    for (const auto &res : info.vertex_inputs_) {
+      extend_predicate(vertex_inputs_, res, additional_info.conditions);
+    }
     for (const auto &res : info.fragment_outputs_) {
       extend_predicate(fragment_outputs_, res, additional_info.conditions);
     }
@@ -202,6 +202,8 @@ void ShaderCreateInfo::finalize(const bool recursive)
     for (const auto &res : info.geometry_out_interfaces_) {
       extend_predicate(geometry_out_interfaces_, res, additional_info.conditions);
     }
+
+    validate_vertex_attributes(&info);
 
     /* API-specific parameters.
      * We will only copy API-specific parameters if they are otherwise unassigned. */
@@ -586,7 +588,8 @@ void ShaderCreateInfo::validate_merge(const ShaderCreateInfo &other_info)
 void ShaderCreateInfo::validate_vertex_attributes(const ShaderCreateInfo *other_info)
 {
   uint32_t attr_bits = 0;
-  for (auto &attr : vertex_inputs_) {
+  for (const int attr_index : vertex_inputs_.index_range()) {
+    const VertIn &attr = vertex_inputs_[attr_index];
     if (attr.type == Type::float3x3_t) {
       std::cout << name_ << ": \"" << attr.name << "\" : float3x3 unsupported as vertex attribute."
                 << std::endl;
@@ -606,6 +609,13 @@ void ShaderCreateInfo::validate_vertex_attributes(const ShaderCreateInfo *other_
       std::cout << name_ << ": Invalid index for attribute \"" << attr.name << "\"" << std::endl;
       BLI_assert(0);
     }
+
+    /* The same attribute reached through multiple additional infos is kept until conditions are
+     * evaluated when compiling. */
+    if (vertex_inputs_.as_span().take_front(attr_index).contains(attr)) {
+      continue;
+    }
+
     uint32_t attr_new = 0;
     if (attr.type == Type::float4x4_t) {
       for (int i = 0; i < 4; i++) {

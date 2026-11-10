@@ -9,13 +9,14 @@
  *
  * The \link edmesh EDBM module \endlink is for editmode bmesh stuff.
  * In contrast, this module is for code shared with blenkernel that's
- * only concerned with low level operations on the #BMEditMesh structure.
+ * only concerned with low level operations on the #EditMesh structure.
  */
 
 #include <array>
 
 #include "BLI_array.hh"
 #include "BLI_math_vector_types.hh"
+#include "BLI_vector.hh"
 
 #include "bmesh.hh"
 
@@ -26,6 +27,7 @@ struct BMPartialUpdate;
 struct BMesh;
 struct BMeshCalcTessellation_Params;
 struct Depsgraph;
+struct Main;
 struct Mesh;
 struct Object;
 struct Scene;
@@ -39,7 +41,7 @@ struct Scene;
  *
  * #Mesh.runtime.edit_mesh stores a pointer to this structure.
  */
-struct BMEditMesh {
+struct EditMesh {
   /**
    * Always owned by an original mesh in edit mode. Access via #BKE_editmesh_bmesh_get_for_write or
    * BKE_editmesh_bmesh_get.
@@ -71,16 +73,16 @@ struct BMEditMesh {
 
 /* editmesh.cc */
 
-void BKE_editmesh_looptris_calc_ex(BMEditMesh *em,
+void BKE_editmesh_looptris_calc_ex(EditMesh *em,
                                    BMesh *bm,
                                    const BMeshCalcTessellation_Params *params);
-void BKE_editmesh_looptris_calc(BMEditMesh *em, BMesh *bm);
-void BKE_editmesh_looptris_calc_with_partial_ex(BMEditMesh *em,
+void BKE_editmesh_looptris_calc(EditMesh *em, BMesh *bm);
+void BKE_editmesh_looptris_calc_with_partial_ex(EditMesh *em,
                                                 BMesh *bm,
                                                 BMPartialUpdate *bmpinfo,
                                                 const BMeshCalcTessellation_Params *params);
-void BKE_editmesh_looptris_calc_with_partial(BMEditMesh *em, BMesh *bm, BMPartialUpdate *bmpinfo);
-void BKE_editmesh_looptris_and_normals_calc_with_partial(BMEditMesh *em,
+void BKE_editmesh_looptris_calc_with_partial(EditMesh *em, BMesh *bm, BMPartialUpdate *bmpinfo);
+void BKE_editmesh_looptris_and_normals_calc_with_partial(EditMesh *em,
                                                          BMesh *bm,
                                                          BMPartialUpdate *bmpinfo);
 
@@ -88,16 +90,16 @@ void BKE_editmesh_looptris_and_normals_calc_with_partial(BMEditMesh *em,
  * Performing the face normal calculation at the same time as tessellation
  * gives a reasonable performance boost (approx ~20% faster).
  */
-void BKE_editmesh_looptris_and_normals_calc(BMEditMesh *em, BMesh *bm);
+void BKE_editmesh_looptris_and_normals_calc(EditMesh *em, BMesh *bm);
 
 /**
  * \note The caller is responsible for ensuring triangulation data,
  * typically by calling #BKE_editmesh_looptris_calc.
  */
-BMEditMesh *BKE_editmesh_create(BMesh *bm);
-BMEditMesh *BKE_editmesh_copy(BMEditMesh *em);
+EditMesh *BKE_editmesh_create(BMesh *bm);
+EditMesh *BKE_editmesh_copy(EditMesh *em);
 /**
- * \brief Return the #BMEditMesh for a given object
+ * \brief Return the #EditMesh for a given object
  *
  * \note this function assumes this is a mesh object,
  * don't add NULL data check here. caller must do that.
@@ -106,14 +108,57 @@ BMEditMesh *BKE_editmesh_copy(BMEditMesh *em);
  * evaluated mesh may have had its edit-mesh cleared.
  *
  * In this case the caller must either:
- * - Use the original mesh to guarantee #BMEditMesh is returned.
+ * - Use the original mesh to guarantee #EditMesh is returned.
  * - Null check the result if we want to respect the evaluated result, see: #154739.
  */
-BMEditMesh *BKE_editmesh_from_object(Object *ob);
+EditMesh *BKE_editmesh_from_object(Object *ob);
+
+/**
+ * Get the edit-mode #BMesh if it holds the mesh's data, otherwise null. In some cases during and
+ * after evaluation, the mesh may carry a reference to the original mesh's #EditMesh, but that is
+ * only the source of truth for mesh data if the mesh is a #ME_WRAPPER_TYPE_BMESH wrapper.
+ *
+ * The #Object overload is only for original objects. After evaluation, the data of an evaluated
+ * object is its final mesh, so to ask whether the original is in edit mode, pass
+ * #DEG_get_original or #BKE_object_get_pre_modified_mesh instead.
+ */
 const BMesh *BKE_editmesh_bmesh_get(const Object *ob);
 const BMesh *BKE_editmesh_bmesh_get(const Mesh *mesh);
+
+/**
+ * Same as #BKE_editmesh_bmesh_get, but for callers that change the #BMesh, which is only allowed
+ * on original meshes.
+ */
 BMesh *BKE_editmesh_bmesh_get_for_write(Mesh *mesh);
 BMesh *BKE_editmesh_bmesh_get_for_write(Object *ob);
+
+/**
+ * Get the edit-mode #BMesh for code that needs it to exist and a #Mesh alternative is not
+ * implemented. Only valid for original meshes in edit mode.
+ *
+ * \note For now this is the same as #BKE_editmesh_bmesh_get_for_write. Once the #BMesh is created
+ * lazily from the #Mesh data, this will build it when necessary, see #163678.
+ */
+BMesh *BKE_editmesh_bmesh_ensure(Mesh *mesh);
+BMesh *BKE_editmesh_bmesh_ensure(Object *object);
+
+namespace bke {
+
+/** Find objects that refer to vertices of the mesh with hook modifiers or vertex parenting. */
+Vector<Object *> mesh_find_objects_with_vert_references(Main &bmain, const Mesh &mesh);
+
+/**
+ * Update the vertex indices of hook modifiers and vertex parents to match topology changes.
+ *
+ * \param objects: Objects found with #mesh_find_objects_with_vert_references.
+ * \param old_to_new_verts: The new index of every vertex before the change, or -1 when it was
+ * removed. Indices past its end are treated as removed too.
+ */
+void mesh_remap_object_vert_indices(Span<Object *> objects,
+                                    const Mesh &mesh,
+                                    Span<int> old_to_new_verts);
+
+}  // namespace bke
 
 /**
  * Return whether the evaluated mesh is a "descendant" of the original mesh: whether it is a
@@ -123,9 +168,9 @@ BMesh *BKE_editmesh_bmesh_get_for_write(Object *ob);
 bool BKE_editmesh_eval_orig_map_available(const Mesh &mesh_eval, const Mesh *mesh_orig);
 
 /**
- * \note Does not free the #BMEditMesh itself.
+ * \note Does not free the #EditMesh itself.
  */
-void BKE_editmesh_free_data(BMEditMesh *em);
+void BKE_editmesh_free_data(EditMesh *em);
 
 Array<float3> BKE_editmesh_vert_coords_alloc(Depsgraph *depsgraph,
                                              const BMesh *bm,

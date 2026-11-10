@@ -79,6 +79,9 @@ class Context : public compositor::Context {
   Vector<gpu::Texture *> cached_gpu_passes_;
   Vector<ImBuf *> cached_cpu_passes_;
 
+  /* Tracks if a viewer node was executed and a viewer was written. */
+  bool viewer_was_written_ = false;
+
   /* True if GPU compute is supported and can be used, if false, we fallback to CPU. */
   bool gpu_supported_ = true;
 
@@ -178,8 +181,10 @@ class Context : public compositor::Context {
 
   compositor::Domain get_compositing_domain() const override
   {
-    compositor::Domain domain = compositor::Domain(this->get_render_size());
-    domain.pixel_size *= this->get_proxy_scale();
+    const float2 proxy_scale = float2(this->get_proxy_scale());
+    compositor::Domain domain = compositor::Domain(this->get_render_size(),
+                                                   math::from_scale<float3x3>(proxy_scale));
+    domain.pixel_size *= proxy_scale;
     if (flag_is_set(this->get_render_data().compositor_proxy_flags,
                     CompositorProxyFlags::AdaptToRenderScale))
     {
@@ -418,6 +423,7 @@ class Context : public compositor::Context {
     IMB_partial_update_mark_full(image_buffer);
     BKE_image_release_ibuf(image, image_buffer, lock);
     BLI_thread_unlock(LOCK_DRAW_IMAGE);
+    viewer_was_written_ = true;
   }
 
   void write_viewer(compositor::Result &viewer_result) override
@@ -582,9 +588,9 @@ class Context : public compositor::Context {
       pass_data.release();
     }
 
-    pass.domain().pixel_size = this->get_compositing_domain().pixel_size;
-    pass.domain().transformation *= math::from_scale<float3x3>(float2(this->get_proxy_scale())) *
-                                    pass.domain().transformation;
+    const compositor::Domain compositing_domain = this->get_compositing_domain();
+    pass.domain().pixel_size = compositing_domain.pixel_size;
+    pass.domain().transformation = compositing_domain.transformation;
 
     /* We assume the given pass is a Cryptomatte pass and retrieve its layer name. If it wasn't a
      * Cryptomatte pass, the checks below will fail anyway. */
@@ -624,6 +630,10 @@ class Context : public compositor::Context {
           }
         },
         false);
+
+    if (pass.meta_data.is_cryptomatte_layer()) {
+      pass.domain().realization_options.interpolation = compositor::Interpolation::Nearest;
+    }
 
     return pass;
   }
@@ -751,12 +761,27 @@ class Context : public compositor::Context {
     /* Reset log before evaluation. */
     this->get_scene().runtime->compositor.nodes_evaluation_log =
         std::make_unique<nodes::eval_log::NodesEvalLog>();
+    viewer_was_written_ = false;
 
     compositor::SceneCompositorEffectsOperation operation =
         compositor::SceneCompositorEffectsOperation(*this);
     compositor::Result combined_pass = this->get_pass(&this->get_scene(), 0, RE_PASSNAME_COMBINED);
     operation.map_input_to_result(&combined_pass);
     operation.evaluate();
+
+    const bool needs_viewer_output = flag_is_set(this->needed_side_effect_output_types(),
+                                                 compositor::SideEffectOutputTypes::ViewerNode);
+    BLI_SCOPED_DEFER([&]() {
+      /* If a viewer node exists, we need a viewer output, and no viewer was written, we free the
+       * stale viewer image data. This can happen for instance if the active viewer node is inside
+       * a repeat zone whose iterations is zero and thus didn't run. */
+      if (this->viewer_compute_context() && needs_viewer_output && !viewer_was_written_) {
+        Image *image = BKE_image_ensure_viewer(G.main, IMA_TYPE_COMPOSITE, "Viewer Node");
+        BLI_thread_lock(LOCK_DRAW_IMAGE);
+        BKE_image_free_buffers(image);
+        BLI_thread_unlock(LOCK_DRAW_IMAGE);
+      }
+    });
 
     if (!operation.has_output()) {
       operation.free_results();
@@ -767,8 +792,6 @@ class Context : public compositor::Context {
 
     /* If the operation does not have a viewer output but one is needed, write the output as a
      * viewer. */
-    const bool needs_viewer_output = flag_is_set(this->needed_side_effect_output_types(),
-                                                 compositor::SideEffectOutputTypes::ViewerNode);
     if (!this->viewer_compute_context() && needs_viewer_output) {
       this->write_viewer(output_result);
     }

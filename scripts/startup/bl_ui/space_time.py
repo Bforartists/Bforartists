@@ -361,6 +361,10 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
             row.active = not scene.lock_frame_selection_to_range
             row.prop(scene, "allow_preroll")
             col.prop(screen, "use_follow", text="Follow Current Frame")
+            # BFA - WIP: Blender's scene strip playback range lives in a Sequencer sub-panel there,
+            # here next to the other playback limits. How it fits with the Scene Strip Gizmo
+            # preview/frame range options (#6780) is still open.
+            col.prop(context.workspace, "use_strip_scene_range_for_playback", text="Use Scene Strip Range")
 
             col = panel.column()
             col.prop(scene, "playback_loop_mode", text="Loop")
@@ -396,6 +400,8 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
 
         # BFA - Sequencer sub-panel commented out: use_scene_time_sync is already exposed
         # in the header via playback_controls(), no need to duplicate in popover.
+        # Blender's "Use Scene Strip Range" (use_strip_scene_range_for_playback) from this
+        # sub-panel is in the Timeline > Playback section above.
         # if st.type == 'SEQUENCE_EDITOR':
         #     header, panel = layout.panel("TIME_PT_playback_sequencer")
         #     header.label(text="Sequencer")

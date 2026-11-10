@@ -50,7 +50,9 @@ When resolving conflicts: keep upstream logic changes, but preserve every hunk c
 marker comment (see below). Blender often moves/renames UI code, so BFA edits may need to be
 re-applied at the new location rather than simply kept. For interface files, Bforartists (`HEAD`)
 wins by default. Frequent conflict hotspots are `scripts/startup/bl_ui/space_view3d.py`,
-`source/blender/makesrna/intern/rna_nodetree.cc` and theme files. In `locale/po` conflicts keep our
+the node definition lists and theme files. Node icons are the last `define(...)` argument, per
+tree type in `source/blender/makesrna/intern/rna_nodes_{shader,geometry,compositor,function,texture}.cc`
+(NodeInternal in `rna_nodetree.cc`); Blender split them out of `rna_nodetree.cc` in week 45. In `locale/po` conflicts keep our
 English `msgid` line and take Blender's `msgstr`; at the end of a file keep both sides, Blender's first. If a build misbehaves after a
 merge, clean the submodules (`git submodule foreach --recursive git reset --hard` / `git clean -fd`).
 

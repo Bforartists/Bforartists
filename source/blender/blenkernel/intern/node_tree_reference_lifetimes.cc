@@ -60,7 +60,8 @@ std::ostream &operator<<(std::ostream &stream, const ReferenceSetInfo &info)
 
 static bool socket_may_have_reference(const bNodeSocket &socket)
 {
-  return socket.may_be_field() || ELEM(socket.type, SOCK_BUNDLE, SOCK_CLOSURE, SOCK_GEOMETRY);
+  return socket.may_be_field() ||
+         ELEM(socket.type, SOCK_BUNDLE, SOCK_CLOSURE, SOCK_GEOMETRY, SOCK_DYNAMIC);
 }
 
 static bool or_into_each_other_masked(MutableBoundedBitSpan a,
@@ -88,12 +89,12 @@ static bool or_into_each_other(MutableBoundedBitSpan a, MutableBoundedBitSpan b)
 bool can_contain_reference(const eNodeSocketDatatype socket_type)
 {
   return nodes::socket_type_supports_fields(socket_type) ||
-         ELEM(socket_type, SOCK_GEOMETRY, SOCK_BUNDLE, SOCK_CLOSURE);
+         ELEM(socket_type, SOCK_GEOMETRY, SOCK_BUNDLE, SOCK_CLOSURE, SOCK_DYNAMIC);
 }
 
 bool can_contain_referenced_data(const eNodeSocketDatatype socket_type)
 {
-  return ELEM(socket_type, SOCK_GEOMETRY, SOCK_BUNDLE, SOCK_CLOSURE);
+  return ELEM(socket_type, SOCK_GEOMETRY, SOCK_BUNDLE, SOCK_CLOSURE, SOCK_DYNAMIC);
 }
 
 static const bNodeTreeZone *get_zone_of_node_if_full(const bNodeTreeZones *zones,
@@ -287,7 +288,7 @@ static Vector<ReferenceSetInfo> find_reference_sets(
       for (const rl::AvailableRelation &relation : relations->available_relations) {
         const bNodeSocket &data_socket = node->output_socket(relation.data_output);
         const bNodeSocket &reference_socket = node->output_socket(relation.reference_output);
-        if (!reference_socket.is_available() || !reference_socket.is_available()) {
+        if (!reference_socket.is_available() || !data_socket.is_available()) {
           continue;
         }
         if (!reference_socket.is_directly_linked() || !data_socket.is_directly_linked()) {

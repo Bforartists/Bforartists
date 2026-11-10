@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-10-15 14:12+0000\n"
 "Last-Translator: Fadhul Rahim <fadhulrahim@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.blender.org/projects/blender-ui/ui/id/>\n"
@@ -17770,16 +17770,16 @@ msgid "Use Material Mask"
 msgstr "Gunakan Masker Bahan"
 
 
-msgid "Snap"
-msgstr "Jepret"
+msgid "Merge"
+msgstr "Menggabungkan"
 
 
-msgid "Mirror"
-msgstr "Cermin"
+msgid "Metaball"
+msgstr "Metabola"
 
 
-msgid "Navigation"
-msgstr "Navigasi"
+msgid "Names"
+msgstr "Nama"
 
 
 msgid "Math"
@@ -17790,20 +17790,44 @@ msgid "Utilities"
 msgstr "Utilitas"
 
 
-msgid "Select Linked"
-msgstr "Seleksi yang Terhubung"
+msgid "Snap"
+msgstr "Jepret"
 
 
 msgid "Sample"
 msgstr "Sampel"
 
 
+msgid "Gizmo"
+msgstr "Gizmo"
+
+
+msgid "Mirror"
+msgstr "Cermin"
+
+
+msgid "Instances"
+msgstr "Contoh-contoh"
+
+
+msgid "Navigation"
+msgstr "Navigasi"
+
+
+msgid "Import"
+msgstr "Impor"
+
+
+msgid "Select Linked"
+msgstr "Seleksi yang Terhubung"
+
+
+msgid "UV"
+msgstr "UV"
+
+
 msgid "Assign Material"
 msgstr "Tugaskan Bahan"
-
-
-msgid "Metaball"
-msgstr "Metabola"
 
 
 msgid "Light"
@@ -17814,20 +17838,8 @@ msgid "Light Probe"
 msgstr "Probe Cahaya"
 
 
-msgid "Gizmo"
-msgstr "Gizmo"
-
-
-msgid "Instances"
-msgstr "Contoh-contoh"
-
-
 msgid "Add Image"
 msgstr "Tambah Gambar"
-
-
-msgid "Import"
-msgstr "Impor"
 
 
 msgid "Apply"
@@ -17842,20 +17854,8 @@ msgid "Asset"
 msgstr "Aset"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Hooks"
 msgstr "Kait"
-
-
-msgid "Names"
-msgstr "Nama"
-
-
-msgid "Merge"
-msgstr "Menggabungkan"
 
 
 msgid "Linked"
@@ -24895,10 +24895,6 @@ msgstr "Hubungkan Koleksi"
 msgctxt "Operator"
 msgid "New Collection"
 msgstr "Koleksi Baru"
-
-
-msgid "Add a new collection inside selected collection"
-msgstr "Tambah koleksi baru di dalam koleksi terseleksi"
 
 
 msgctxt "Operator"

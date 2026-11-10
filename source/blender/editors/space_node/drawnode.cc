@@ -1049,6 +1049,7 @@ static const float std_node_socket_colors[][4] = {
     {0, 0, 0, 1},            /* SOCK_MASK */
     {0.39, 0.34, 0.26, 1},   /* SOCK_SOUND */
     {0.36, 0.47, 0.61, 1.0}, /* SOCK_INT_VECTOR */
+    {0.2, 0.2, 0.2, 1.0},    /* SOCK_DYNAMIC */
 };
 
 /* BFA - Expose virtual socket color outside this file, used in interface_icons.cc*/
@@ -1094,7 +1095,7 @@ static const SocketColorFn std_node_socket_color_funcs[] = {
     std_node_socket_color_fn<SOCK_CLOSURE>,    std_node_socket_color_fn<SOCK_FONT>,
     std_node_socket_color_fn<SOCK_SCENE>,      std_node_socket_color_fn<SOCK_TEXT_ID>,
     std_node_socket_color_fn<SOCK_MASK>,       std_node_socket_color_fn<SOCK_SOUND>,
-    std_node_socket_color_fn<SOCK_INT_VECTOR>,
+    std_node_socket_color_fn<SOCK_INT_VECTOR>, std_node_socket_color_fn<SOCK_DYNAMIC>,
 };
 
 /** \} */
@@ -1625,6 +1626,7 @@ static void std_node_socket_interface_draw(ID *id,
     case SOCK_MATRIX:
     case SOCK_BUNDLE:
     case SOCK_CLOSURE:
+    case SOCK_DYNAMIC:
       break;
 
     case SOCK_CUSTOM:
@@ -1838,7 +1840,7 @@ float2 socket_link_connection_location(const bNode &node,
 
 static void calculate_inner_link_bezier_points(std::array<float2, 4> &points)
 {
-  const int curving = ui::theme::get_value_type(TH_NODE_CURVING, SPACE_NODE);
+  const int curving = U.noodle_curving;
   if (curving == 0) {
     /* Straight line: align all points. */
     points[1] = math::interpolate(points[0], points[3], 1.0f / 3.0f);
@@ -2345,7 +2347,9 @@ static bool node_link_is_field_link(const SpaceNode &snode, const bNodeLink &lin
   if (!link.fromsock) {
     return false;
   }
-  if (!nodes::socket_type_supports_fields(link.fromsock->type)) {
+  if (!nodes::socket_type_supports_fields(link.fromsock->type) &&
+      link.fromsock->type != SOCK_DYNAMIC)
+  {
     /* Normally, StructureType::Dynamic would result in dashed links. We override that for socket
      * types we know currently can't be used as fields. */
     return false;

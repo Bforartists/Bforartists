@@ -2237,14 +2237,16 @@ static void rna_def_uilist(BlenderRNA *brna)
                          "active_data",
                          "AnyType",
                          "",
-                         "Data from which to take property for the active element");
-  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+                         "Data from which to take property for the active element, "
+                         "None for lists that store the active item in the region");
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED | PARM_RNAPTR);
   parm = RNA_def_string(func,
                         "active_property",
                         nullptr,
                         0,
                         "",
-                        "Identifier of property in active_data, for the active element");
+                        "Identifier of property in active_data, for the active element, "
+                        "empty when active_data is None");
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED | PARM_PYFUNC_REGISTER_OPTIONAL);
   parm = RNA_def_int(
       func, "index", 0, 0, INT_MAX, "", "Index of the item in the collection", 0, INT_MAX);
@@ -2743,6 +2745,12 @@ static void rna_def_file_handler(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, nullptr, "type->icon");
   RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
   RNA_def_property_ui_text(prop, "Icon", "Icon to display for the file handler");
+
+  prop = RNA_def_property(srna, "bl_collection_import_enabled", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "type->collection_import_enabled", 0);
+  RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
+  RNA_def_property_ui_text(
+      prop, "Collection Import Enabled", "Can the file handler be used for collection import");
 
   PropertyRNA *parm;
   FunctionRNA *func;

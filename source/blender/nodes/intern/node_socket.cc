@@ -820,6 +820,12 @@ static bke::bNodeSocketType *make_socket_type_virtual()
   return stype;
 }
 
+static bke::bNodeSocketType *make_socket_type_dynamic()
+{
+  bke::bNodeSocketType *socket_type = make_standard_socket_type(SOCK_DYNAMIC, PROP_NONE);
+  return socket_type;
+}
+
 static void make_common_type_prop(StructRNA &srna,
                                   const bNodeTreeInterfaceSocket &socket,
                                   const EnumPropertyItem *items,
@@ -836,6 +842,7 @@ static void make_common_type_prop(StructRNA &srna,
       "");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+  RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
 }
 static void make_common_type_prop(StructRNA &srna,
@@ -928,6 +935,7 @@ static void make_common_attribute_name_prop(StructRNA &srna,
           .c_str(),
       socket.description().c_str());
   RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+  RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
 }
 
@@ -1005,6 +1013,7 @@ static bke::bNodeSocketType *make_socket_type_bool()
     PropertyRNA *prop = RNA_def_boolean(
         &srna, "value", data->value, socket.name().c_str(), socket.description().c_str());
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     make_common_type_prop(
         srna,
@@ -1026,6 +1035,7 @@ static bke::bNodeSocketType *make_socket_type_bool()
             .c_str(),
         socket.description().c_str());
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   };
   socktype->make_compositor_nodes_input_srna = [](const bNodeTree & /*tree*/,
@@ -1090,6 +1100,7 @@ static bke::bNodeSocketType *make_socket_type_rotation()
                                                -FLT_MAX,
                                                FLT_MAX);
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     make_common_value_and_attribute_props(srna, socket, r_generated);
   };
@@ -1260,6 +1271,7 @@ static bke::bNodeSocketType *make_socket_type_float(PropertySubType subtype)
                          data->min,
                          data->max);
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     RNA_def_property_subtype(prop, PropertySubType(data->subtype));
     make_common_value_and_attribute_props(srna, socket, r_generated);
@@ -1339,6 +1351,7 @@ static bke::bNodeSocketType *make_socket_type_int(PropertySubType subtype)
                        data->min,
                        data->max);
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     RNA_def_property_subtype(prop, PropertySubType(data->subtype));
     make_common_value_and_attribute_props(srna, socket, r_generated);
@@ -1418,6 +1431,7 @@ static bke::bNodeSocketType *make_socket_type_vector(PropertySubType subtype, co
                                 data->min,
                                 data->max);
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     RNA_def_property_subtype(prop, PropertySubType(data->subtype));
     make_common_value_and_attribute_props(srna, socket, r_generated);
@@ -1554,6 +1568,7 @@ static bke::bNodeSocketType *make_socket_type_rgba()
                                             0.0f,
                                             1.0f);
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     make_common_value_and_attribute_props(srna, socket, r_generated);
   };
@@ -1628,6 +1643,7 @@ static bke::bNodeSocketType *make_socket_type_string(PropertySubType subtype)
                           socket.name().c_str(),
                           socket.description().c_str());
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     PropertySubType subtype = PropertySubType(data->subtype);
     RNA_def_property_subtype(prop, subtype);
@@ -1741,6 +1757,7 @@ static bke::bNodeSocketType *make_socket_type_menu()
                                      socket.name().c_str(),
                                      socket.description().c_str());
     RNA_def_property_flag(prop, PROP_FORCE_GEOMETRY_EVAL);
+    RNA_def_property_update_runtime(prop, nodes::geometry_nodes_property_update);
     RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
     make_common_value_props(srna, socket, r_generated);
   };
@@ -2303,6 +2320,8 @@ void register_standard_node_socket_types()
   bke::node_register_socket_type(*make_socket_type_closure());
 
   bke::node_register_socket_type(*make_socket_type_virtual());
+
+  bke::node_register_socket_type(*make_socket_type_dynamic());
 }
 
 }  // namespace blender

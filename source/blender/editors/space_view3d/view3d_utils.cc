@@ -227,6 +227,18 @@ bool ED_view3d_viewplane_get(const Depsgraph *depsgraph,
   return params.is_ortho;
 }
 
+ARegion *ED_view3d_area_main_region(const ScrArea *area, const View3D *v3d)
+{
+  const ListBaseT<ARegion> *regionbase = (area && v3d == area->spacedata.first_) ?
+                                             &area->regionbase :
+                                             &v3d->regionbase;
+
+  /* Other regions are always inserted before the window region. */
+  ARegion *region = regionbase->last();
+  BLI_assert(region == nullptr || region->regiontype == RGN_TYPE_WINDOW);
+  return region;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1070,7 +1082,10 @@ void ED_view3d_quadview_update(ScrArea *area, ARegion *region, bool do_clip)
   }
 
   if (bke::region_view3d_lock_flags_get(rv3d) & RV3D_BOXVIEW) {
-    view3d_boxview_sync(area, region_sync ? region_sync : area->regionbase.last());
+    view3d_boxview_sync(area,
+                        region_sync ?
+                            region_sync :
+                            ED_view3d_area_main_region(area, area->spacedata.first_as<View3D>()));
   }
 
   /* ensure locked regions have an axis, locked user views don't make much sense */
@@ -1416,7 +1431,6 @@ float ED_view3d_offset_distance(const float mat[4][4],
 
 void ED_view3d_distance_set(RegionView3D *rv3d, const float dist)
 {
-  float viewinv[4];
   float tvec[3];
 
   BLI_assert(dist >= 0.0f);
@@ -1426,8 +1440,10 @@ void ED_view3d_distance_set(RegionView3D *rv3d, const float dist)
 #if 0
   mul_mat3_m4_v3(rv3d->viewinv, tvec);
 #else
-  invert_qt_qt_normalized(viewinv, rv3d->viewquat);
-  mul_qt_v3(viewinv, tvec);
+  /* Rotate the distance delta by the same rotation the view matrix is built from. */
+  float mat[3][3];
+  quat_to_mat3(mat, rv3d->viewquat);
+  mul_m3_v3(mat, tvec);
 #endif
   sub_v3_v3(rv3d->ofs, tvec);
 

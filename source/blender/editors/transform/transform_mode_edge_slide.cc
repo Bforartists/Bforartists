@@ -246,13 +246,13 @@ static void calcEdgeSlide_mval_range(TransInfo *t,
   if (use_occlude_geometry) {
     Scene *scene_eval = DEG_get_evaluated(t->depsgraph, t->scene);
     Object *obedit_eval = DEG_get_evaluated(t->depsgraph, tc->obedit);
-    BMEditMesh *em = BKE_editmesh_from_object(tc->obedit);
+    EditMesh *em = BKE_editmesh_from_object(tc->obedit);
 
     const Span<float3> vert_positions = BKE_editmesh_vert_coords_when_deformed(
         t->depsgraph, scene_eval, obedit_eval, bmbvh_coord_storage);
 
     bmbvh = BKE_bmbvh_new_from_editmesh(em,
-                                        BKE_editmesh_bmesh_get_for_write(tc->obedit),
+                                        BKE_editmesh_bmesh_ensure(tc->obedit),
                                         BMBVH_RESPECT_HIDDEN,
                                         vert_positions.is_empty() ? nullptr :
                                                                     vert_positions.data(),

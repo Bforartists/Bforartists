@@ -556,7 +556,7 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
 
                 col.alignment = 'RIGHT'
                 sub = col.column(align=True)
-                split = sub.split(factor=0.5, align=True)
+                split = sub.split(factor=col.property_split_factor, align=True)
                 split.alignment = 'RIGHT'
                 if sound.packed_file:
                     split.label(text="Unpack")
@@ -570,7 +570,7 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
 
                 col = layout.box()
                 col = col.column(align=True)
-                split = col.split(factor=0.5, align=False)
+                split = col.split(factor=col.property_split_factor, align=False)
                 split.alignment = 'RIGHT'
                 split.label(text="Sample Rate")
                 split.alignment = 'LEFT'
@@ -579,7 +579,7 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
                 else:
                     split.label(text="{:d} Hz".format(sound.samplerate), translate=False)
 
-                split = col.split(factor=0.5, align=False)
+                split = col.split(factor=col.property_split_factor, align=False)
                 split.alignment = 'RIGHT'
                 split.label(text="Channels")
                 split.alignment = 'LEFT'
@@ -636,7 +636,7 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
             # Resolution.
             col = layout.box()
             col = col.column(align=True)
-            split = col.split(factor=0.5, align=False)
+            split = col.split(factor=col.property_split_factor, align=False)
             split.alignment = 'RIGHT'
             split.label(text="Resolution")
             size = (elem.orig_width, elem.orig_height) if elem else (0, 0)
@@ -647,7 +647,7 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
                 split.label(text="None")
             # FPS
             if elem.orig_fps:
-                split = col.split(factor=0.5, align=False)
+                split = col.split(factor=col.property_split_factor, align=False)
                 split.alignment = 'RIGHT'
                 split.label(text="FPS")
                 split.alignment = 'LEFT'

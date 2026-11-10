@@ -145,7 +145,11 @@ enum eWorkSpaceFlags : int {
   WORKSPACE_USE_PIN_SCENE = (1 << 2),
   /* Used for syncing time between sequencer scene strips and the active scene. */
   WORKSPACE_SYNC_SCENE_TIME = (1 << 3),
-  WORKSPACE_SYNC_SCENE_BFA = (1 << 4), /* bfa 3D Sequencer overlay*/
+  /* Used to define playback scene playback range from strip content length. */
+  WORKSPACE_USE_STRIP_SCENE_RANGE_FOR_PLAYBACK = (1 << 4),
+  /* bfa 3D Sequencer overlay. Was (1 << 4) until the week 45 merge, Blender took that bit for
+   * WORKSPACE_USE_STRIP_SCENE_RANGE_FOR_PLAYBACK. */
+  WORKSPACE_SYNC_SCENE_BFA = (1 << 5),
 };
 ENUM_OPERATORS(eWorkSpaceFlags)
 

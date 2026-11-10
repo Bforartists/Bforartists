@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-09-15 16:12+0000\n"
 "Last-Translator: Isaac Gicheha <shwaky3@gmail.com>\n"
 "Language-Team: Swahili <https://translate.blender.org/projects/blender-ui/ui/sw/>\n"
@@ -28300,20 +28300,20 @@ msgid "Editor menu containing buttons"
 msgstr "Menyu ya mhariri iliyo na vitufe"
 
 
-msgid "Pivot Point"
-msgstr "Egemeo"
+msgid "Clean Up"
+msgstr "Safisha"
 
 
-msgid "Snap"
-msgstr "Picha"
+msgid "Merge"
+msgstr "Unganisha"
 
 
-msgid "Mirror"
-msgstr "Kioo"
+msgid "Show/Hide"
+msgstr "Onyesha/Ficha"
 
 
-msgid "Navigation"
-msgstr "Urambazaji"
+msgid "Metaball"
+msgstr "Mpira wa miguu"
 
 
 msgid "Math"
@@ -28324,8 +28324,12 @@ msgid "Utilities"
 msgstr "Huduma"
 
 
-msgid "Select Linked"
-msgstr "Chagua Imeunganishwa"
+msgid "Pivot Point"
+msgstr "Egemeo"
+
+
+msgid "Snap"
+msgstr "Picha"
 
 
 msgid "Read"
@@ -28344,8 +28348,28 @@ msgid "Primitives"
 msgstr "Watu wa kwanza"
 
 
-msgid "Metaball"
-msgstr "Mpira wa miguu"
+msgid "Mirror"
+msgstr "Kioo"
+
+
+msgid "Instances"
+msgstr "Matukio"
+
+
+msgid "Navigation"
+msgstr "Urambazaji"
+
+
+msgid "Import"
+msgstr "Ingiza"
+
+
+msgid "Deprecated"
+msgstr "Imeacha kutumika"
+
+
+msgid "Select Linked"
+msgstr "Chagua Imeunganishwa"
 
 
 msgid "Light"
@@ -28356,40 +28380,12 @@ msgid "Light Probe"
 msgstr "Uchunguzi wa Mwanga"
 
 
-msgid "Instances"
-msgstr "Matukio"
-
-
-msgid "Import"
-msgstr "Ingiza"
-
-
 msgid "Apply"
 msgstr "Tumia"
 
 
-msgid "Deprecated"
-msgstr "Imeacha kutumika"
-
-
-msgid "Show/Hide"
-msgstr "Onyesha/Ficha"
-
-
-msgid "Clean Up"
-msgstr "Safisha"
-
-
 msgid "Asset"
 msgstr "Mali"
-
-
-msgid "Bone Collections"
-msgstr "Mikusanyo ya Mifupa"
-
-
-msgid "Merge"
-msgstr "Unganisha"
 
 
 msgid "Linked"
@@ -28402,6 +28398,10 @@ msgstr "Mpangilio"
 
 msgid "Adjust"
 msgstr "Rekebisha"
+
+
+msgid "Bone Collections"
+msgstr "Mikusanyo ya Mifupa"
 
 
 msgid "Keying"
@@ -43268,11 +43268,6 @@ msgstr "Pakia na utumie faili ya mandhari ya Blender XML"
 msgctxt "Operator"
 msgid "Install Theme..."
 msgstr "Sakinisha Mandhari..."
-
-
-msgctxt "Operator"
-msgid "Add Asset Library"
-msgstr "Ongeza Maktaba ya Mali"
 
 
 msgid "Add an Integrator Preset"
@@ -61576,10 +61571,6 @@ msgid "New Collection"
 msgstr "Mkusanyiko Mpya"
 
 
-msgid "Add a new collection inside selected collection"
-msgstr "Ongeza mkusanyiko mpya ndani ya mkusanyiko uliochaguliwa"
-
-
 msgid "Nested"
 msgstr "Kiota"
 
@@ -63661,6 +63652,11 @@ msgstr "Jina la moduli la programu jalizi ya kuondoa"
 
 msgid "Remove existing template with the same ID"
 msgstr "Ondoa kiolezo kilichopo na kitambulisho sawa"
+
+
+msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "Ongeza Maktaba ya Mali"
 
 
 msgid "Add a directory to be used by the Asset Browser as source of assets"
@@ -96030,6 +96026,11 @@ msgid "Disable in Render"
 msgstr "Zima katika Kutoa"
 
 
+msgctxt "Collection"
+msgid "New"
+msgstr "Mpya"
+
+
 msgctxt "Operator"
 msgid "Instance to Scene"
 msgstr "Mfano kwa Onyesho"
@@ -96055,11 +96056,6 @@ msgstr "Yaliyomo ya Kitu"
 msgctxt "Operator"
 msgid "Hide One Level"
 msgstr "Ficha Ngazi Moja"
-
-
-msgctxt "Collection"
-msgid "New"
-msgstr "Mpya"
 
 
 msgctxt "Operator"
@@ -104973,8 +104969,8 @@ msgid "No active item to rename"
 msgstr "Hakuna kipengee kinachotumika cha kubadilisha jina"
 
 
-# BFA - reworded, Blender: "No selected data-blocks to copy"
-msgid "No selected data to copy"
+# BFA - reworded, Blender: "No valid selected data-blocks to copy"
+msgid "No valid selected data to copy"
 msgstr "Hakuna vizuizi vya data vilivyochaguliwa vya kunakili"
 
 
@@ -105146,6 +105142,10 @@ msgstr "(tupu)"
 
 msgid "Strip None"
 msgstr "Ondoa Hakuna"
+
+
+msgid "There is no asset library to remove"
+msgstr "Hakuna maktaba ya kipengee ya kuondoa"
 
 
 msgid "Add a color strip to the sequencer"
@@ -105446,10 +105446,6 @@ msgstr "Kujiondoa hakuwezekani kutoka kwa usakinishaji wa Duka la Microsoft"
 
 msgid "File association unregistered"
 msgstr "Muungano wa faili haujasajiliwa"
-
-
-msgid "There is no asset library to remove"
-msgstr "Hakuna maktaba ya kipengee ya kuondoa"
 
 
 msgid "There is no extension repository to remove"

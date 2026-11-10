@@ -126,16 +126,34 @@ bool apply_mask_as_selection(bke::CurvesGeometry &curves,
     return false;
   }
 
-  bke::GSpanAttributeWriter writer = ed::curves::ensure_selection_attribute(
-      curves, selection_domain, bke::AttrType::Bool, attribute_name);
+  if (selection_domain == bke::AttrDomain::Curve) {
+    const Span<StringRef> selection_attribute_names =
+        ed::curves::get_curves_selection_attribute_names(curves);
+    for (const StringRef selection_attribute_name : selection_attribute_names) {
+      bke::GSpanAttributeWriter writer = ed::curves::ensure_selection_attribute(
+          curves, selection_domain, bke::AttrType::Bool, selection_attribute_name);
 
-  selection_mask.foreach_index(
-      [&](const int64_t element_i) {
-        ed::curves::apply_selection_operation_at_index(writer.span, element_i, sel_op);
-      },
-      exec_mode::grain_size(4096));
+      selection_mask.foreach_index(
+          [&](const int64_t element_i) {
+            ed::curves::apply_selection_operation_at_index(writer.span, element_i, sel_op);
+          },
+          exec_mode::grain_size(4096));
 
-  writer.finish();
+      writer.finish();
+    }
+  }
+  else {
+    bke::GSpanAttributeWriter writer = ed::curves::ensure_selection_attribute(
+        curves, selection_domain, bke::AttrType::Bool, attribute_name);
+
+    selection_mask.foreach_index(
+        [&](const int64_t element_i) {
+          ed::curves::apply_selection_operation_at_index(writer.span, element_i, sel_op);
+        },
+        exec_mode::grain_size(4096));
+
+    writer.finish();
+  }
 
   return true;
 }
@@ -264,6 +282,20 @@ bool selection_update(const ViewContext *vc,
         continue;
       }
 
+      /* Modes that un-set all elements not in the mask. */
+      if (ELEM(sel_op, SEL_OP_SET, SEL_OP_AND)) {
+        for (const StringRef attribute_name : selection_attribute_names) {
+          if (bke::SpanAttributeWriter<bool> selection =
+                  curves.attributes_for_write().lookup_or_add_for_write_span<bool>(
+                      attribute_name, selection_domain))
+          {
+            ed::curves::fill_selection_false(selection.span);
+            changed = true;
+            selection.finish();
+          }
+        }
+      }
+
       for (const StringRef attribute_name : selection_attribute_names) {
         IndexMask changed_element_mask = select_operation(info, elements, attribute_name, memory);
 
@@ -271,20 +303,6 @@ bool selection_update(const ViewContext *vc,
         if (selection_domain == bke::AttrDomain::Curve) {
           changed_element_mask = bke::greasepencil::selected_mask_to_fills(
               changed_element_mask, curves, selection_domain, memory);
-        }
-
-        /* Modes that un-set all elements not in the mask. */
-        if (ELEM(sel_op, SEL_OP_SET, SEL_OP_AND)) {
-          if (bke::SpanAttributeWriter<bool> selection =
-                  curves.attributes_for_write().lookup_or_add_for_write_span<bool>(
-                      attribute_name, selection_domain))
-          {
-            const IndexMask not_in_mask = changed_element_mask.complement(
-                selection.span.index_range(), memory);
-            ed::curves::fill_selection_false(selection.span, not_in_mask);
-            changed = true;
-            selection.finish();
-          }
         }
 
         if (use_segment_selection) {
@@ -1207,10 +1225,6 @@ static void GREASE_PENCIL_OT_material_select(wmOperatorType *ot)
   RNA_def_property_flag(ot->prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
-namespace {
-enum class StrokeType : int8_t { Stroke, Fill };
-}
-
 static wmOperatorStatus grease_pencil_select_by_stroke_type_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
@@ -1220,7 +1234,8 @@ static wmOperatorStatus grease_pencil_select_by_stroke_type_exec(bContext *C, wm
 
   const bke::AttrDomain selection_domain = ED_grease_pencil_selection_domain_get(ts, object);
 
-  const StrokeType stroke_type = StrokeType(RNA_enum_get(op->ptr, "type"));
+  const bke::greasepencil::StrokeType stroke_type = bke::greasepencil::StrokeType(
+      RNA_enum_get(op->ptr, "type"));
   const bool select = !RNA_boolean_get(op->ptr, "deselect");
   const int action = select ? SEL_SELECT : SEL_DESELECT;
 
@@ -1235,7 +1250,7 @@ static wmOperatorStatus grease_pencil_select_by_stroke_type_exec(bContext *C, wm
     }
 
     const bke::CurvesGeometry &curves = info.drawing.strokes();
-    if (stroke_type == StrokeType::Stroke) {
+    if (stroke_type == bke::greasepencil::StrokeType::Stroke) {
       if (const VArray<bool> hide_stroke = *curves.attributes().lookup<bool>(
               "hide_stroke", bke::AttrDomain::Curve))
       {
@@ -1250,7 +1265,7 @@ static wmOperatorStatus grease_pencil_select_by_stroke_type_exec(bContext *C, wm
       }
       changed.store(true, std::memory_order_relaxed);
     }
-    else if (stroke_type == StrokeType::Fill) {
+    else if (stroke_type == bke::greasepencil::StrokeType::Fill) {
       if (const VArray<int> fill_id = *curves.attributes().lookup<int>("fill_id",
                                                                        bke::AttrDomain::Curve))
       {
@@ -1276,8 +1291,8 @@ static wmOperatorStatus grease_pencil_select_by_stroke_type_exec(bContext *C, wm
 }
 /*BFA - icon added*/
 static const EnumPropertyItem select_by_stroke_type_items[] = {
-    {int(StrokeType::Stroke), "STROKE", ICON_STROKE, "Stroke", ""},
-    {int(StrokeType::Fill), "FILL", ICON_GP_FILL, "Fill", ""},
+    {int(bke::greasepencil::StrokeType::Stroke), "STROKE", ICON_STROKE, "Stroke", ""},
+    {int(bke::greasepencil::StrokeType::Fill), "FILL", ICON_GP_FILL, "Fill", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 

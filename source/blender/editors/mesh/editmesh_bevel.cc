@@ -73,7 +73,7 @@ static const float value_start[NUM_VALUE_KINDS] = {0.0f, 0.0f, 0.5f, 1.0f};
 static const float value_scale_per_inch[NUM_VALUE_KINDS] = {0.0f, 100.0f, 1.0f, 4.0f};
 
 struct BevelObjectStore {
-  /** Every object must have a valid #BMEditMesh. */
+  /** Every object must have a valid #EditMesh. */
   Object *ob;
   BMBackup mesh_backup;
 };
@@ -269,7 +269,7 @@ static bool edbm_bevel_init(bContext *C, wmOperator *op, const bool is_modal)
     for (Object *obedit : objects) {
       float scale = mat4_to_scale(obedit->object_to_world().ptr());
       opdata->max_obj_scale = max_ff(opdata->max_obj_scale, scale);
-      const BMesh *bm = BKE_editmesh_bmesh_get(obedit);
+      const BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
       if (bm->totvertsel > 0) {
         opdata->ob_store.append(BevelObjectStore{obedit, {}});
       }
@@ -307,7 +307,7 @@ static bool edbm_bevel_init(bContext *C, wmOperator *op, const bool is_modal)
 
     for (BevelObjectStore &ob_store : opdata->ob_store) {
       Object *obedit = ob_store.ob;
-      BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+      BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
       ob_store.mesh_backup = EDBM_redo_state_store(bm);
     }
     opdata->draw_handle_pixel = ED_region_draw_cb_activate(region->runtime->type,
@@ -347,8 +347,8 @@ static bool edbm_bevel_calc(wmOperator *op)
   for (BevelObjectStore &ob_store : opdata->ob_store) {
     Object *obedit = ob_store.ob;
     Mesh *mesh = id_cast<Mesh *>(obedit->data);
-    BMEditMesh *em = mesh->runtime->edit_mesh.get();
-    BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+    EditMesh *em = mesh->runtime->edit_mesh.get();
+    BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
 
     /* revert to original mesh */
     if (opdata->is_modal) {
@@ -437,8 +437,8 @@ static void edbm_bevel_exit(bContext *C, wmOperator *op)
   }
 
   for (BevelObjectStore &ob_store : opdata->ob_store) {
-    BMEditMesh *em = BKE_editmesh_from_object(ob_store.ob);
-    BMesh *bm = BKE_editmesh_bmesh_get_for_write(ob_store.ob);
+    EditMesh *em = BKE_editmesh_from_object(ob_store.ob);
+    BMesh *bm = BKE_editmesh_bmesh_ensure(ob_store.ob);
     /* Without this, faces surrounded by selected edges/verts will be unselected. */
     if ((em->selectmode & SCE_SELECT_FACE) == 0) {
       EDBM_selectmode_flush(bm, em->selectmode);
@@ -464,8 +464,8 @@ static void edbm_bevel_cancel(bContext *C, wmOperator *op)
   if (opdata->is_modal) {
     for (BevelObjectStore &ob_store : opdata->ob_store) {
       Object *obedit = ob_store.ob;
-      BMEditMesh *em = BKE_editmesh_from_object(obedit);
-      BMesh *bm = BKE_editmesh_bmesh_get_for_write(obedit);
+      EditMesh *em = BKE_editmesh_from_object(obedit);
+      BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
       EDBM_redo_state_restore_and_free(&ob_store.mesh_backup, em, bm, true);
 
       EDBMUpdate_Params params{};

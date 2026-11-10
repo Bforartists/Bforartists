@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "BKE_curves.hh"
 #include "BKE_grease_pencil.hh"
 
 #include "BKE_attribute_filter.hh"
@@ -275,6 +276,14 @@ bool grease_pencil_layer_parent_set(bke::greasepencil::Layer &layer,
                                     bool keep_transform);
 
 void grease_pencil_layer_parent_clear(bke::greasepencil::Layer &layer, bool keep_transform);
+
+/** The clipboard used to copy and paste keyframes in the animation editors. */
+KeyframeClipboard &keyframe_clipboard();
+/**
+ * Free the drawings in the clipboard, which have to be freed before the GPU back-end exits because
+ * their attributes can store values on the GPU.
+ */
+void keyframe_clipboard_free();
 
 bool grease_pencil_copy_keyframes(bAnimContext *ac, KeyframeClipboard &clipboard);
 
@@ -1007,25 +1016,31 @@ struct CurveBooleanOpParameters {
   bool separate_islands;
 };
 
+struct CurveBooleanResult {
+  bke::CurvesGeometry curves;
+  Array<bool> unchanged_curves;
+  Array<int> dst_to_src_curves;
+};
+
 /* Project the point from local space to the clipping 2d space. */
 using ProjectionFunc = FunctionRef<float2(const float3)>;
 
-bke::CurvesGeometry curve_boolean(const CurveBooleanOpParameters op_params,
-                                  const bke::CurvesGeometry &curves,
-                                  ProjectionFunc project_fn,
-                                  GroupedSpan<int> shapes,
-                                  const IndexMask &editable_shapes,
-                                  const IndexMask &clipping_shapes);
+CurveBooleanResult curve_boolean(const CurveBooleanOpParameters op_params,
+                                 const bke::CurvesGeometry &curves,
+                                 ProjectionFunc project_fn,
+                                 GroupedSpan<int> shapes,
+                                 const IndexMask &editable_shapes,
+                                 const IndexMask &clipping_shapes);
 
-bke::CurvesGeometry curve_boolean_with_planes(const CurveBooleanOpParameters op_params,
-                                              const bke::CurvesGeometry &curves,
-                                              ProjectionFunc project_fn,
-                                              GroupedSpan<int> shapes,
-                                              Span<float4> curve_planes,
-                                              const IndexMask &editable_shapes,
-                                              const IndexMask &clipping_shapes,
-                                              const float4x4 &layer_to_world,
-                                              const ARegion &region);
+CurveBooleanResult curve_boolean_with_planes(const CurveBooleanOpParameters op_params,
+                                             const bke::CurvesGeometry &curves,
+                                             ProjectionFunc project_fn,
+                                             GroupedSpan<int> shapes,
+                                             Span<float4> curve_planes,
+                                             const IndexMask &editable_shapes,
+                                             const IndexMask &clipping_shapes,
+                                             const float4x4 &layer_to_world,
+                                             const ARegion &region);
 
 }  // namespace boolean
 

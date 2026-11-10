@@ -28,19 +28,12 @@ set(INC_GLSL
 
 set(SRC_GLSL_VERT
   overlay_clipbound_vert.glsl
-  overlay_depth_only_curves_vert.glsl
-  overlay_depth_only_gpencil_vert.glsl
-  overlay_depth_only_mesh_conservative_vert.glsl
-  overlay_depth_only_pointcloud_vert.glsl
-  overlay_depth_only_vert.glsl
   overlay_edit_curve_handle_vert.glsl
   overlay_edit_curve_normals_vert.glsl
   overlay_edit_curve_point_vert.glsl
   overlay_edit_curve_wire_vert.glsl
   overlay_edit_curves_handle_vert.glsl
   overlay_edit_gpencil_canvas_vert.glsl
-  overlay_edit_lattice_point_vert.glsl
-  overlay_edit_lattice_wire_vert.glsl
   overlay_edit_pointcloud_vert.glsl
   overlay_edit_mesh_analysis_vert.glsl
   overlay_edit_mesh_normal_vert.glsl
@@ -66,11 +59,6 @@ set(SRC_GLSL_VERT
   overlay_image_vert.glsl
   overlay_motion_path_line_vert.glsl
   overlay_motion_path_point_vert.glsl
-  overlay_outline_prepass_curves_vert.glsl
-  overlay_outline_prepass_gpencil_vert.glsl
-  overlay_outline_prepass_pointcloud_vert.glsl
-  overlay_outline_prepass_vert.glsl
-  overlay_outline_prepass_wire_vert.glsl
   overlay_paint_face_vert.glsl
   overlay_paint_point_vert.glsl
   overlay_paint_texture_vert.glsl
@@ -86,13 +74,10 @@ set(SRC_GLSL_VERT
   overlay_viewer_attribute_curves_vert.glsl
   overlay_viewer_attribute_mesh_vert.glsl
   overlay_viewer_attribute_pointcloud_vert.glsl
-  overlay_wireframe_vert.glsl
 )
 
 set(SRC_GLSL_FRAG
   overlay_background_frag.glsl
-  overlay_depth_only_frag.glsl
-  overlay_depth_only_gpencil_frag.glsl
   overlay_edit_mesh_analysis_frag.glsl
   overlay_edit_uv_edges_frag.glsl
   overlay_edit_uv_image_mask_frag.glsl
@@ -105,8 +90,6 @@ set(SRC_GLSL_FRAG
   overlay_image_frag.glsl
   overlay_motion_path_line_frag.glsl
   overlay_outline_detect_frag.glsl
-  overlay_outline_prepass_frag.glsl
-  overlay_outline_prepass_gpencil_frag.glsl
   overlay_paint_texture_frag.glsl
   overlay_paint_weight_frag.glsl
   overlay_particle_frag.glsl
@@ -119,7 +102,6 @@ set(SRC_GLSL_FRAG
   # TODO(fclem): rename to overlay_varying_color_frag.glsl
   overlay_varying_color.glsl
   overlay_viewer_attribute_frag.glsl
-  overlay_wireframe_frag.glsl
 )
 
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-08-25 20:13+0000\n"
 "Last-Translator: \"Mattis V.\" <mattis@users.noreply.translate.blender.org>\n"
 "Language-Team: German <https://translate.blender.org/projects/blender-ui/ui/de/>\n"
@@ -19347,6 +19347,54 @@ msgid "Material slot name"
 msgstr "Materialsteckplatzname"
 
 
+msgid "Enable Bone Options"
+msgstr "Knochen-Optionen einschalten"
+
+
+msgid "Disable Bone Options"
+msgstr "Knochen-Optionen ausschalten"
+
+
+msgid "Mesh Select Mode"
+msgstr "Maschenauswahlmodus"
+
+
+msgid "Face Data"
+msgstr "Flächendaten"
+
+
+msgid "Clean Up"
+msgstr "Aufräumen"
+
+
+msgid "Merge"
+msgstr "Zusammenführen"
+
+
+msgid "Show/Hide"
+msgstr "Zeigen/Verbergen"
+
+
+msgid "Special Characters"
+msgstr "Sonderzeichen"
+
+
+msgid "Kerning"
+msgstr "Kerning"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Names"
+msgstr "Namen"
+
+
+msgid "Math"
+msgstr "Mathe"
+
+
 msgid "Pivot Point"
 msgstr "Drehpunkt"
 
@@ -19367,8 +19415,28 @@ msgid "Vertex Group Locks"
 msgstr "Punktgruppen sperren"
 
 
+msgid "Read"
+msgstr "Lesen"
+
+
+msgid "Sample"
+msgstr "Beispiel"
+
+
+msgid "Write"
+msgstr "Schreiben"
+
+
+msgid "Primitives"
+msgstr "Grundkörper"
+
+
 msgid "Mirror"
 msgstr "Spiegeln"
+
+
+msgid "Instances"
+msgstr "Instanzen"
 
 
 msgid "Local View"
@@ -19387,16 +19455,16 @@ msgid "Align View"
 msgstr "Ansicht ausrichten"
 
 
+msgid "Import"
+msgstr "Importieren"
+
+
 msgid "Align View to Active"
 msgstr "Ansicht auf Aktiv ausrichten"
 
 
 msgid "View Regions"
 msgstr "Vierfenster Ansicht"
-
-
-msgid "Math"
-msgstr "Mathe"
 
 
 msgid "Select More/Less"
@@ -19419,28 +19487,12 @@ msgid "Select Loops"
 msgstr "Schleifen auswählen"
 
 
-msgid "Read"
-msgstr "Lesen"
-
-
-msgid "Sample"
-msgstr "Beispiel"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Assign Material"
 msgstr "Material zuweisen"
-
-
-msgid "Write"
-msgstr "Schreiben"
-
-
-msgid "Primitives"
-msgstr "Grundkörper"
-
-
-msgid "Metaball"
-msgstr "Metaball"
 
 
 msgid "Light"
@@ -19451,20 +19503,12 @@ msgid "Light Probe"
 msgstr "Lichtsonde"
 
 
-msgid "Instances"
-msgstr "Instanzen"
-
-
 msgid "Add Image"
 msgstr "Bild hinzufügen"
 
 
 msgid "Relations"
 msgstr "Beziehungen"
-
-
-msgid "Import"
-msgstr "Importieren"
 
 
 msgid "Rigid Body"
@@ -19483,14 +19527,6 @@ msgid "Quick Effects"
 msgstr "Schnelle Effekte"
 
 
-msgid "Show/Hide"
-msgstr "Zeigen/Verbergen"
-
-
-msgid "Clean Up"
-msgstr "Aufräumen"
-
-
 msgid "Asset"
 msgstr "Asset"
 
@@ -19503,12 +19539,16 @@ msgid "Convert"
 msgstr "Konvertieren"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Hooks"
 msgstr "Haken"
+
+
+msgid "Linked"
+msgstr "Verknüpft"
+
+
+msgid "Layout"
+msgstr "Layout"
 
 
 msgid "Random Mask"
@@ -19523,56 +19563,16 @@ msgid "In-Betweens"
 msgstr "Dazwischen"
 
 
-msgid "Names"
-msgstr "Namen"
-
-
-msgid "Toggle Bone Options"
-msgstr "Knochen-Optionen umschalten"
-
-
-msgid "Enable Bone Options"
-msgstr "Knochen-Optionen einschalten"
-
-
-msgid "Disable Bone Options"
-msgstr "Knochen-Optionen ausschalten"
-
-
-msgid "Mesh Select Mode"
-msgstr "Maschenauswahlmodus"
-
-
-msgid "Face Data"
-msgstr "Flächendaten"
-
-
-msgid "Merge"
-msgstr "Zusammenführen"
-
-
-msgid "Linked"
-msgstr "Verknüpft"
-
-
-msgid "Layout"
-msgstr "Layout"
-
-
-msgid "Special Characters"
-msgstr "Sonderzeichen"
-
-
-msgid "Kerning"
-msgstr "Kerning"
-
-
 msgid "Keying"
 msgstr "Schlüsselbilder"
 
 
 msgid "Tracking"
 msgstr "Verfolgen"
+
+
+msgid "Toggle Bone Options"
+msgstr "Knochen-Optionen umschalten"
 
 
 msgid "Assets"
@@ -25785,11 +25785,6 @@ msgstr "Studiolicht deinstallieren"
 msgctxt "Operator"
 msgid "Install Theme..."
 msgstr "Thema installieren..."
-
-
-msgctxt "Operator"
-msgid "Add Asset Library"
-msgstr "Hinzufügen der Asset-Bibliothek"
 
 
 msgid "Add an Integrator Preset"
@@ -35373,6 +35368,11 @@ msgstr "Modulname des zu entfernenden Add-Ons"
 
 msgid "Remove existing template with the same ID"
 msgstr "Entfernen vorhandener Vorlage mit derselben ID"
+
+
+msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "Hinzufügen der Asset-Bibliothek"
 
 
 msgctxt "Operator"
@@ -56625,8 +56625,8 @@ msgid "No active item to rename"
 msgstr "Kein Aktives Element zum umbenennen"
 
 
-# BFA - reworded, Blender: "No selected data-blocks to copy"
-msgid "No selected data to copy"
+# BFA - reworded, Blender: "No valid selected data-blocks to copy"
+msgid "No valid selected data to copy"
 msgstr "Kein ausgewählter Datenblock zum kopieren"
 
 

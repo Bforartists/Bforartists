@@ -1797,6 +1797,12 @@ void DepsgraphRelationBuilder::build_animdata_drivers(ID *id)
       add_relation(driver_unshare_key, driver_key, "Un-share shared data before drivers");
     }
   }
+
+  /* Un-sharing writes to the driven properties, which can also be written by the animation. */
+  OperationKey animation_exit_key(id, NodeType::ANIMATION, OperationCode::ANIMATION_EXIT);
+  if (has_node(animation_exit_key) && has_node(driver_unshare_key)) {
+    add_relation(animation_exit_key, driver_unshare_key, "AnimData Before Un-share");
+  }
 }
 
 void DepsgraphRelationBuilder::build_animation_images(ID *id)
@@ -3520,6 +3526,9 @@ static bool strip_build_prop_cb(Strip *strip, void *user_data)
           sequence_scene_key, cd->sequencer_key, "Sequence Scene -> Sequencer");
     }
     ViewLayer *strip_view_layer = BKE_view_layer_find(strip->scene, strip->scene_view_layer_name);
+    if (strip_view_layer == nullptr) {
+      strip_view_layer = BKE_view_layer_default_render(strip->scene);
+    }
     cd->builder->build_scene_speakers(strip->scene, strip_view_layer);
   }
   if (strip->type == STRIP_TYPE_COMPOSITOR && strip->effectdata) {

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2026-07-08 11:12+0000\n"
 "Last-Translator: Timo Hoetmer <timo@timohoetmer.nl>\n"
 "Language-Team: Dutch <https://translate.blender.org/projects/blender-ui/ui/nl/>\n"
@@ -5807,6 +5807,14 @@ msgid "Dots"
 msgstr "Stippen"
 
 
+msgid "Show/Hide"
+msgstr "Toon/Verberg"
+
+
+msgid "Names"
+msgstr "Namen"
+
+
 msgid "Mirror"
 msgstr "Spiegel"
 
@@ -5817,6 +5825,10 @@ msgstr "Lokale Scherm"
 
 msgid "Navigation"
 msgstr "Navigatie"
+
+
+msgid "Import"
+msgstr "Importeren"
 
 
 msgid "Select Similar"
@@ -5839,20 +5851,12 @@ msgid "Relations"
 msgstr "Relaties"
 
 
-msgid "Import"
-msgstr "Importeren"
-
-
 msgid "Rigid Body"
 msgstr "Star Lichaam"
 
 
 msgid "Quick Effects"
 msgstr "Snelle Effecten"
-
-
-msgid "Show/Hide"
-msgstr "Toon/Verberg"
 
 
 msgid "Convert"
@@ -5863,20 +5867,16 @@ msgid "Hooks"
 msgstr "Haken"
 
 
-msgid "Clear Transform"
-msgstr "Maak Transformatie Leeg"
-
-
-msgid "Names"
-msgstr "Namen"
-
-
 msgid "Linked"
 msgstr "Gekoppeld"
 
 
 msgid "Layout"
 msgstr "Indeling"
+
+
+msgid "Clear Transform"
+msgstr "Maak Transformatie Leeg"
 
 
 msgctxt "MovieClip"

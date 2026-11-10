@@ -12,7 +12,8 @@ and the node icon table, and reports what is out of sync. Read-only: no file is 
 Sources:
   scripts/startup/bl_ui/node_add_menu_*.py         Add menus (follow Blender upstream)
   scripts/startup/bl_ui/space_node_toolshelf.py    Bforartists toolshelf
-  source/blender/makesrna/intern/rna_nodetree.cc   Node icons (ICON_NONE = no icon)
+  source/blender/makesrna/intern/rna_nodetree.cc   Node icons (ICON_NONE = no icon), plus
+  source/blender/makesrna/intern/rna_nodes_*.cc    since Blender split the node definitions (week 45)
 
 Reports, per node editor:
   1. Missing from toolshelf:   in the Add menu, not in the toolshelf.
@@ -38,7 +39,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BL_UI = ROOT / "scripts" / "startup" / "bl_ui"
 TOOLSHELF_FILE = BL_UI / "space_node_toolshelf.py"
-RNA_NODETREE_FILE = ROOT / "source" / "blender" / "makesrna" / "intern" / "rna_nodetree.cc"
+RNA_DIR = ROOT / "source" / "blender" / "makesrna" / "intern"
+# Node definitions with their icons: NodeInternal in rna_nodetree.cc, the rest per tree type.
+RNA_NODE_FILES = [RNA_DIR / "rna_nodetree.cc", *sorted(RNA_DIR.glob("rna_nodes_*.cc"))]
 
 # Editor key: (display name, Add menu file, toolshelf panel class prefix).
 EDITORS = {
@@ -187,15 +190,20 @@ def parse_toolshelf(path, class_prefix):
     return entries
 
 
-def parse_icons(path):
-    """Return {node_id: (icon, comment)} from the define(brna, ...) table."""
+def parse_icons(paths):
+    """Return {node_id: (icon, comment)} from the define(...) lists."""
     define_re = re.compile(
-        r'define\(\s*brna\s*,\s*"\w+"\s*,\s*"(\w+)"\s*,\s*[^,]+,\s*(ICON_\w+)\s*\)\s*;\s*(?:/[/*]\s*(.*?)\s*(?:\*/)?)?$')
+        r'define\(\s*(?:brna\s*,\s*)?"\w+"\s*,\s*"(\w+)"(?:\s*,\s*[^,()]+)?(?:\s*,\s*(ICON_\w+))?\s*\)\s*;'
+        r'\s*(?:/[/*]\s*(.*?)\s*(?:\*/)?)?$')
     icons = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
+    lines = [line for path in paths for line in path.read_text(encoding="utf-8").splitlines()]
+    for line in lines:
         match = define_re.search(line)
         if match:
-            icons[match.group(1)] = (match.group(2), (match.group(3) or "").strip())
+            # No icon argument at all: usually a node Blender added that has no BFA icon yet.
+            icon = match.group(2) or "ICON_NONE"
+            note = (match.group(3) or "").strip() or ("" if match.group(2) else "no icon set (new upstream?)")
+            icons[match.group(1)] = (icon, note)
     return icons
 
 
@@ -269,7 +277,7 @@ def print_markdown(results):
                 print(f"| `{_display(key)}` | {', '.join(menu_cats)} | {', '.join(shelf_cats)} |")
             print()
         if res["no_icon"]:
-            print("**No icon**\n\n| Node | Note in rna_nodetree.cc |\n|---|---|")
+            print("**No icon**\n\n| Node | Note in rna_nodetree.cc / rna_nodes_*.cc |\n|---|---|")
             for key, comment in res["no_icon"]:
                 print(f"| `{key}` | {comment} |")
             print()
@@ -283,7 +291,7 @@ def main():
     parser.add_argument("--markdown", action="store_true", help="Print Markdown tables for issues and PRs")
     args = parser.parse_args()
 
-    icons = parse_icons(RNA_NODETREE_FILE)
+    icons = parse_icons(RNA_NODE_FILES)
     editors = [args.editor] if args.editor else list(EDITORS)
     results = {editor: audit_editor(editor, icons) for editor in editors}
 

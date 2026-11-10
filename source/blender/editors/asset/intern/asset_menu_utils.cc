@@ -163,15 +163,9 @@ void draw_node_menu_for_catalog(const asset_system::AssetCatalogTreeItem &item,
   col.menu(menu_name, IFACE_(item.get_name()), ICON_NONE);
 }
 
-/*BFA - Bforartists: the upstream version always used ICON_NONE and the default operator
- * call context. Bforartists added these two parameters so the BFA 'Add' menus (modifier
- * assets, node group assets, strip modifier assets) can pass their own icon (e.g.
- * ICON_NODETREE) and the operator call context of the menu entry. */
 void draw_asset_menu_item(const asset_system::AssetRepresentation *asset,
-                          StringRefNull opname,
-                          const wm::OpCallContext operator_call_context, /*BFA*/
                           ui::Layout &layout,
-                          const int icon) /*BFA*/
+                          FunctionRef<void(ui::Layout &, BIFIconID)> draw_item_fn)
 {
   ui::Layout &row = layout.row(true);
   if (asset->is_online_only()) {
@@ -181,17 +175,33 @@ void draw_asset_menu_item(const asset_system::AssetRepresentation *asset,
       nullptr, RNA_AssetRepresentation, const_cast<asset_system::AssetRepresentation *>(asset));
   row.context_ptr_set("asset", &asset_ptr);
 
-  /*BFA - fall back to the icon passed by the caller (e.g. ICON_NODETREE in the 'Add'
-   * menus) instead of ICON_NONE, keeping the upstream status icons for online-only and
-   * missing remote assets. */
   const int icon_local = asset->remote_file_status() ==
-                             asset_system::RemoteAssetFileStatus::NO_MATCH ?
+                                 asset_system::RemoteAssetFileStatus::NO_MATCH ?
                              ICON_STATUS_WARNING :
-                             icon;
-  const int icon_final = asset->is_online_only() ? ICON_INTERNET : icon_local;
-  PointerRNA props_ptr = row.op(
-      opname, IFACE_(asset->get_name()), icon_final, operator_call_context, UI_ITEM_NONE);
-  asset::operator_asset_reference_props_set(*asset, props_ptr);
+                             ICON_NONE;
+  const int icon = asset->is_online_only() ? ICON_INTERNET : icon_local;
+  draw_item_fn(row, icon);
+}
+
+/*BFA - the upstream version always uses ICON_NONE. Bforartists added the icon parameter so the
+ * BFA 'Add' menus (modifier assets, node group assets, strip modifier assets) can pass their own
+ * icon (e.g. ICON_NODETREE), keeping the upstream status icons for online-only and missing remote
+ * assets. */
+void draw_asset_menu_item(const asset_system::AssetRepresentation *asset,
+                          StringRefNull opname,
+                          const wm::OpCallContext operator_call_context,
+                          ui::Layout &layout,
+                          const int icon) /*BFA*/
+{
+  draw_asset_menu_item(asset, layout, [&](ui::Layout &sub, BIFIconID asset_icon) {
+    /* BFA - the menu's own icon (e.g. ICON_NODETREE) unless the asset has a status icon. */
+    PointerRNA props_ptr = sub.op(opname,
+                                  IFACE_(asset->get_name()),
+                                  asset_icon == ICON_NONE ? icon : asset_icon,
+                                  operator_call_context,
+                                  UI_ITEM_NONE);
+    asset::operator_asset_reference_props_set(*asset, props_ptr);
+  });
 }
 
 }  // namespace blender::ed::asset

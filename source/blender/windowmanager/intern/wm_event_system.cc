@@ -597,7 +597,7 @@ static void wm_event_timers_execute(bContext *C)
 static bool notifier_refreshes_node_group_operators(const wmNotifier &note)
 {
   if (note.category == NC_ASSET) {
-    if (ELEM(note.data, ND_ASSET_LIST, ND_ASSET_LIST_READING)) {
+    if (ELEM(note.data, ND_ASSET_LIST, ND_ASSET_LIST_READING, ND_ASSET_CATALOGS)) {
       return true;
     }
   }
@@ -2951,8 +2951,12 @@ static eHandlerActionFlag wm_handler_fileselect_do(bContext *C,
 
   switch (val) {
     case EVT_FILESELECT_FULL_OPEN: {
+      /* Maximized file browser does not work for file browsing from popups, as switching the
+       * screen closes it. */
+      const int display_type = handler->is_fileselect_keep_popup ? USER_TEMP_SPACE_DISPLAY_WINDOW :
+                                                                   U.filebrowser_display_type;
       ScrArea *area = ED_screen_temp_space_open(
-          C, IFACE_("Bforartists File View"), SPACE_FILE, U.filebrowser_display_type, true);
+          C, IFACE_("Bforartists File View"), SPACE_FILE, display_type, true);
       if (!area) {
         BKE_report(&wm->runtime->reports, RPT_ERROR, "Failed to open file browser!");
         return WM_HANDLER_BREAK;
@@ -4789,6 +4793,8 @@ void WM_event_add_fileselect(bContext *C, wmOperator *op)
   handler->head.type = WM_HANDLER_TYPE_OP;
 
   handler->is_fileselect = true;
+  handler->is_fileselect_keep_popup = ui::popup_region_from_operator(CTX_wm_screen(C),
+                                                                     CTX_wm_region_popup(C));
   handler->op = op;
   handler->context.win = root_win;
   handler->context.area = root_area;
@@ -5226,10 +5232,8 @@ bool WM_event_handler_region_marker_poll(const wmWindow *win,
     }
   }
 
-  /* FIXME: Ideally we should not have to use G_MAIN here, though practically this is probably fine
-   * for now. */
   const ListBaseT<TimeMarker> *markers = ED_scene_markers_get_from_area(
-      *G_MAIN, scene, WM_window_get_active_view_layer(win), area);
+      *scene->id.owner_bmain(), scene, WM_window_get_active_view_layer(win), area);
   if (markers->is_empty()) {
     return false;
   }
@@ -5250,10 +5254,9 @@ bool WM_event_handler_region_v2d_mask_no_marker_poll(const wmWindow *win,
     return false;
   }
   /* Casting away `const` is only needed for a non-constant return value. */
-  /* FIXME: Ideally we should not have to use G_MAIN here, though practically this is probably fine
-   * for now. */
+  Scene *scene = WM_window_get_active_scene(win);
   const ListBaseT<TimeMarker> *markers = ED_scene_markers_get_from_area(
-      *G_MAIN, WM_window_get_active_scene(win), WM_window_get_active_view_layer(win), area);
+      *scene->id.owner_bmain(), scene, WM_window_get_active_view_layer(win), area);
   if (markers && !markers->is_empty()) {
     return !WM_event_handler_region_marker_poll(win, area, region, event);
   }
@@ -7104,7 +7107,7 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
         name = kmi->idname;
       }
 
-      STRNCPY(cd->text[button_index][type_index], name.c_str());
+      STRNCPY_UTF8(cd->text[button_index][type_index], name.c_str());
     }
   }
 

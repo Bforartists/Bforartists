@@ -1453,6 +1453,9 @@ class DOPESHEET_PT_dopesheet_overlay(Panel):
             # BFA (#6780): lead-in/out padding for the "Extend Frame Range" gizmo.
             subcol.prop(overlay_settings, "clamp_lead_in", text="Lead In")
             subcol.prop(overlay_settings, "clamp_lead_out", text="Lead Out")
+            # BFA (#6780): shade the scene strip's frame range behind the keys
+            # (drawn only while the Scene Strip Gizmo is on as well).
+            subcol.prop(overlay_settings, "show_scene_strip_range", text="Show Frame Range")
             subcol.separator()
             # BFA (#6780): layered strip indicator display options (opt-in).
             subcol.prop(overlay_settings, "show_scene_strip_all", text="Show All Strips")

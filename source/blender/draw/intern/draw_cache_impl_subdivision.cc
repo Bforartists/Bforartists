@@ -1542,7 +1542,9 @@ static bool draw_subdiv_create_requested_buffers(Object &ob,
   BMesh *bm = nullptr;
   if (mesh.runtime->edit_mesh) {
     mesh_eval = BKE_object_get_editmesh_eval_final(&ob);
-    bm = BKE_editmesh_bmesh_get_for_write(&mesh);
+    if (const Mesh *mesh_orig = BKE_object_get_pre_modified_mesh(&ob)) {
+      bm = const_cast<BMesh *>(BKE_editmesh_bmesh_get(mesh_orig));
+    }
   }
 
 #ifdef WITH_OPENSUBDIV
@@ -1623,7 +1625,7 @@ static bool draw_subdiv_create_requested_buffers(Object &ob,
   /* Used for setting loop normals flags. Mapped extraction is only used during edit mode.
    * See comments in #extract_lnor_iter_face_mesh.
    */
-  draw_cache.is_edit_mode = mr.edit_bmesh != nullptr;
+  draw_cache.is_edit_mode = mr.edit_mesh != nullptr;
 
   draw_subdiv_cache_update_extra_coarse_face_data(draw_cache, mesh_eval, mr);
 

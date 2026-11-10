@@ -1318,7 +1318,7 @@ bNodeTreeInterfaceSocket *add_interface_socket_from_node(
    * generated socket. */
   if (from_node.is_group() && from_sock.is_input() == is_input) {
     if (const bNodeTree *group = reinterpret_cast<const bNodeTree *>(from_node.id)) {
-      /* Copy interface socket directly from source group to avoid loosing data. */
+      /* Copy interface socket directly from source group to avoid losing data. */
       group->ensure_interface_cache();
       const bNodeTreeInterfaceSocket &src_io_socket =
           from_sock.is_input() ? *group->interface_inputs()[from_sock.index()] :
@@ -1410,6 +1410,7 @@ bNode *create_proxy_const_input_node(const eNodeSocketDatatype socket_type,
     case SOCK_TEXT_ID:
     case SOCK_MASK:
     case SOCK_SOUND:
+    case SOCK_DYNAMIC:
       return nullptr;
 
     case SOCK_FLOAT: {
@@ -1605,6 +1606,7 @@ bNode *create_proxy_implicit_input_node(const eNodeSocketDatatype socket_type,
     case SOCK_ROTATION:
     case SOCK_MENU:
     case SOCK_FONT:
+    case SOCK_DYNAMIC:
       return nullptr;
 
     case SOCK_OBJECT: {

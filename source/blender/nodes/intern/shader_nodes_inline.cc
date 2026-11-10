@@ -26,6 +26,7 @@
 #include "NOD_node_in_compute_context.hh"
 #include "NOD_shader_nodes_inline.hh"
 #include "NOD_shader_nodes_multi_function.hh"
+#include "NOD_socket.hh"
 
 namespace blender::nodes {
 namespace {
@@ -270,6 +271,19 @@ class ShaderNodesInliner {
    */
   Set<const ComputeContext *> handled_side_effect_contexts_;
 
+  /**
+   * When error messages are first created, they are only "pending". That is because
+   * sometimes an error is produced by a node in a repeat zone before it was inlined. Later when
+   * the zone is inlined, the error might not happen anymore in which case the error should be
+   * discarded.
+   */
+  struct PendingError {
+    NodeInContext node;
+    std::string message;
+    NodeWarningType type;
+  };
+  Vector<PendingError> pending_errors_;
+
  public:
   ShaderNodesInliner(const bNodeTree &src_tree,
                      bNodeTree &dst_tree,
@@ -344,6 +358,7 @@ class ShaderNodesInliner {
 
     this->restore_zones_in_output_tree();
     this->position_nodes_in_output_tree();
+    this->flush_pending_errors();
     return true;
   }
 
@@ -1388,6 +1403,7 @@ class ShaderNodesInliner {
     /* Use a truncate node to turn the input value into an int. */
     bNode &truncate_math_node = *this->add_node("ShaderNodeMath"_ustr);
     truncate_math_node.custom1 = NODE_MATH_TRUNC;
+    truncate_math_node.typeinfo->updatefunc(&dst_tree_, &truncate_math_node);
     bNodeSocket &truncate_input = *truncate_math_node.inputs.first();
     bNodeSocket &truncate_output = *truncate_math_node.outputs.first();
     this->set_input_socket_value(node, truncate_math_node, truncate_input, *index_input_value);
@@ -1408,6 +1424,7 @@ class ShaderNodesInliner {
       else {
         bNode &add_math_node = *this->add_node("ShaderNodeMath"_ustr);
         add_math_node.custom1 = NODE_MATH_ADD;
+        add_math_node.typeinfo->updatefunc(&dst_tree_, &add_math_node);
         bNodeSocket &add_in_1 = *add_math_node.inputs.first();
         bNodeSocket &add_in_2 = *add_in_1.next;
         bke::node_add_link(
@@ -1549,6 +1566,9 @@ class ShaderNodesInliner {
     const std::optional<PrimitiveSocketValue> primitive_show = show_value->to_primitive(
         *show_input_socket->typeinfo);
     if (!primitive_show) {
+      /* Don't use #report_required_constant_input_or_backtrack here because we don't want to break
+       * a preserved repeat zone just because of a warning node. This could cause significant
+       * slowdowns even if the warning is not triggered. */
       this->report_error(
           node, TIP_("Warnings only work when inputs are constant values"), NodeWarningType::Info);
       this->store_socket_value_fallback(socket);
@@ -1854,6 +1874,8 @@ class ShaderNodesInliner {
     }
     bNode *not_node = this->add_node("FunctionNodeBooleanMath"_ustr);
     not_node->custom1 = NODE_BOOLEAN_MATH_NOT;
+    /* Remove the second input that only exists for binary operations. */
+    update_node_declaration_and_sockets(dst_tree_, *not_node);
     this->set_input_socket_value(node, *not_node, *not_node->inputs.first(), value);
     return {LinkedSocketValue{not_node, not_node->outputs.first()}};
   }
@@ -2211,6 +2233,7 @@ class ShaderNodesInliner {
   {
     bNode &math_node = *this->add_node("ShaderNodeMath"_ustr);
     math_node.custom1 = NODE_MATH_GREATER_THAN;
+    math_node.typeinfo->updatefunc(&dst_tree_, &math_node);
     bNodeSocket &value_in = *math_node.inputs.first();
     bNodeSocket &threshold_in = *value_in.next;
     bNodeSocket &value_out = *math_node.outputs.first();
@@ -2251,10 +2274,14 @@ class ShaderNodesInliner {
       if (dst_socket.flag & SOCK_HIDE_VALUE) {
         /* Can't store the primitive value directly on the socket. So create a new input node and
          * link it instead. */
-        const NodeAndSocket node_and_socket = this->primitive_value_to_output_socket(
+        const NodeAndSocket node_and_socket = this->try_primitive_value_to_output_socket(
             *primitive_value);
-        if (dst_tree_.typeinfo->validate_link(node_and_socket.socket->typeinfo->type,
-                                              dst_socket.typeinfo->type))
+        if (!node_and_socket.socket) {
+          /* There is no input node for this value type, so store it on the socket after all. */
+          this->set_primitive_value_on_socket(dst_socket, *primitive_value);
+        }
+        else if (dst_tree_.typeinfo->validate_link(node_and_socket.socket->typeinfo->type,
+                                                   dst_socket.typeinfo->type))
         {
           bke::node_add_link(
               dst_tree_, *node_and_socket.node, *node_and_socket.socket, dst_node, dst_socket);
@@ -2315,7 +2342,7 @@ class ShaderNodesInliner {
     BLI_assert_unreachable();
   }
 
-  NodeAndSocket primitive_value_to_output_socket(const PrimitiveSocketValue &value)
+  NodeAndSocket try_primitive_value_to_output_socket(const PrimitiveSocketValue &value)
   {
     if (const float *value_float = std::get_if<float>(&value.value)) {
       bNode *node = this->add_node("ShaderNodeValue"_ustr);
@@ -2349,6 +2376,10 @@ class ShaderNodesInliner {
       copy_v3_v3(socket_storage->value, *value_color);
       socket_storage->value[3] = 1.0f;
       return {node, output_socket};
+    }
+    if (std::get_if<std::string>(&value.value) || std::get_if<MenuValue>(&value.value)) {
+      /* There is no node that outputs these values in the destination tree. */
+      return {};
     }
     BLI_assert_unreachable();
     return {};
@@ -2502,10 +2533,30 @@ class ShaderNodesInliner {
 
   void report_error(const NodeInContext &node, const StringRef message, const NodeWarningType type)
   {
+    pending_errors_.append({node, message, type});
+  }
+
+  void flush_pending_errors()
+  {
+    for (const PendingError &pending_error : pending_errors_) {
+      /* Skip errors which are not relevant anymore because the node which created them is not
+       * used. */
+      if (this->is_in_force_inlined_repeat_zone(pending_error.node.context)) {
+        continue;
+      }
+      this->flush_pending_error(pending_error);
+    }
+    pending_errors_.clear();
+  }
+
+  void flush_pending_error(const PendingError &pending_error)
+  {
     Vector<NodeInContext> nodes;
-    nodes.append(node);
-    for (const ComputeContext *context = node.context; context; context = context->parent()) {
-      if (!warning_is_propagated(nodes.last()->warning_propagation, type)) {
+    nodes.append(pending_error.node);
+    for (const ComputeContext *context = pending_error.node.context; context;
+         context = context->parent())
+    {
+      if (!warning_is_propagated(nodes.last()->warning_propagation, pending_error.type)) {
         break;
       }
       if (const auto *group_context = dynamic_cast<const bke::GroupNodeComputeContext *>(context))
@@ -2514,8 +2565,24 @@ class ShaderNodesInliner {
       }
     }
     for (const NodeInContext &node : nodes) {
-      params_.r_error_messages.append({&*node, message, type});
+      params_.r_error_messages.append({&*node, pending_error.message, pending_error.type});
     }
+  }
+
+  bool is_in_force_inlined_repeat_zone(const ComputeContext *context) const
+  {
+    for (const ComputeContext *ctx = context; ctx; ctx = ctx->parent()) {
+      const auto *repeat_zone_ctx = dynamic_cast<const bke::RepeatZoneComputeContext *>(ctx);
+      if (!repeat_zone_ctx || repeat_zone_ctx->iteration() != preserved_repeat_zone_iteration) {
+        continue;
+      }
+      if (repeat_zones_to_force_inline_.contains(
+              {repeat_zone_ctx->parent(), repeat_zone_ctx->output_node_id()}))
+      {
+        return true;
+      }
+    }
+    return false;
   }
 };
 

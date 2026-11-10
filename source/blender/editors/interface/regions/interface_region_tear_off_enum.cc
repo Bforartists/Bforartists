@@ -113,7 +113,7 @@ static bool enum_tear_off_source_from_property(bContext *C,
   ID *real_id = nullptr;
   /* The real ID, because a session UID lookup can't find embedded node trees or collections. */
   const std::optional<std::string> path = RNA_path_from_real_ID_to_property_index(
-      CTX_data_main(C), &ptr, prop, 0, -1, &real_id);
+      &ptr, prop, 0, -1, &real_id);
   /* Index-based Screen paths can silently point at another area after an area edit. */
   if (!path || !real_id || ELEM(GS(real_id->name), ID_SCR, ID_WM)) {
     return false;

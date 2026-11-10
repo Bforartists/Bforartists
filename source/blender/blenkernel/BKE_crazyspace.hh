@@ -15,7 +15,7 @@
 namespace blender {
 
 struct BMesh;
-struct BMEditMesh;
+struct EditMesh;
 struct Depsgraph;
 struct Mesh;
 struct Object;
@@ -43,6 +43,11 @@ struct GeometryDeformation {
    * evaluated data. This may be empty if not available.
    */
   Span<float3x3> deform_mats;
+  /**
+   * Will be empty when handle attribute does not exist.
+   */
+  Span<float3> handle_positions_left;
+  Span<float3> handle_positions_right;
 
   float3 translation_from_deformed_to_original(const int position_i,
                                                const float3 &translation) const
@@ -89,7 +94,7 @@ void BKE_crazyspace_set_quats_mesh(Mesh *mesh,
 int BKE_crazyspace_get_first_deform_matrices_editbmesh(Depsgraph *depsgraph,
                                                        Scene *,
                                                        Object *,
-                                                       BMEditMesh *em,
+                                                       EditMesh *em,
                                                        Array<float3x3, 0> &deformmats,
                                                        Array<float3, 0> &deformcos);
 int BKE_sculpt_get_first_deform_matrices(Depsgraph *depsgraph,

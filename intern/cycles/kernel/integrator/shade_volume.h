@@ -1998,6 +1998,10 @@ ccl_device void volume_integrate_null_scattering(KernelGlobals kg,
 
   volume_direct_scatter_mis(ray, vstate, equiangular_coeffs, result);
 
+  if (sd->runtime_flag & SR_CACHE_MISS) {
+    return;
+  }
+
   /* Write accumulated emission. */
   if (!is_zero(vstate.emission)) {
     if (light_link_object_match(kg, light_link_receiver_forward(kg, state), sd->object)) {
@@ -2422,6 +2426,10 @@ ccl_device_forceinline void volume_integrate_ray_marching(
     }
   }
 
+  if (sd->runtime_flag & SR_CACHE_MISS) {
+    return;
+  }
+
   /* Write accumulated emission. */
   if (!is_zero(accum_emission)) {
     if (light_link_object_match(kg, light_link_receiver_forward(kg, state), sd->object)) {
@@ -2769,7 +2777,7 @@ volume_integrate_event(KernelGlobals kg,
       else {
         /* If the direct scattering event is not at the same distance as the indirect one, the
          * direct light event will contribute to the out-scattered contribution of the current path
-         * segment and not to the incomming radiance from the segment direction. We therefore need
+         * segment and not to the incoming radiance from the segment direction. We therefore need
          * to adjust the unlit_throughput to include the scattering at the previous path vertex.
          */
         float3 scatterEval = one_float3();

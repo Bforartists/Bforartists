@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Beta (b'f0219159730a')\n"
+"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-26 10:44+0000\n"
+"POT-Creation-Date: 2026-11-09 09:34+0000\n"
 "PO-Revision-Date: 2025-07-23 15:31+0000\n"
 "Last-Translator: VertexSelection <amacsizk2021@gmail.com>\n"
 "Language-Team: Turkish <https://translate.blender.org/projects/blender-ui/ui/tr/>\n"
@@ -28795,6 +28795,70 @@ msgid "Editor menu containing buttons"
 msgstr "Düğmeler içeren düzenleyici menüsü"
 
 
+msgid "Enable Bone Options"
+msgstr "Kemik Seçeneklerini Etkinleştir"
+
+
+msgid "Disable Bone Options"
+msgstr "Kemik Seçeneklerini Devre Dışı Bırak"
+
+
+msgid "Mesh Select Mode"
+msgstr "Örgü Seçim Kipi"
+
+
+msgid "Face Data"
+msgstr "Yüz Verileri"
+
+
+msgid "Select by Face Strength"
+msgstr "Yüz Gücüne Göre Seç"
+
+
+msgid "Set Face Strength"
+msgstr "Yüz Gücünü Ayarla"
+
+
+msgid "Clean Up"
+msgstr "Temizle"
+
+
+msgid "Merge"
+msgstr "Birleştir"
+
+
+msgid "Show/Hide"
+msgstr "Göster/Gizle"
+
+
+msgid "Special Characters"
+msgstr "Özel Karakterler"
+
+
+msgid "Kerning"
+msgstr "Harf aralığı"
+
+
+msgid "Metaball"
+msgstr "Metabol"
+
+
+msgid "Names"
+msgstr "Adlar"
+
+
+msgid "Bone Roll"
+msgstr "Kemik Rulosu"
+
+
+msgid "Math"
+msgstr "Matematik"
+
+
+msgid "Utilities"
+msgstr "Kamu hizmetleri"
+
+
 msgid "Pivot Point"
 msgstr "Pivot Noktası"
 
@@ -28823,8 +28887,28 @@ msgid "Vertex Group Locks"
 msgstr "Vertex Grup Kilitleri"
 
 
+msgid "Read"
+msgstr "Okumak"
+
+
+msgid "Sample"
+msgstr "Örnek"
+
+
+msgid "Write"
+msgstr "Yazmak"
+
+
+msgid "Primitives"
+msgstr "İlkel"
+
+
 msgid "Mirror"
 msgstr "Yansıtma"
+
+
+msgid "Instances"
+msgstr "Örnekler"
 
 
 msgid "UV Mapping"
@@ -28847,6 +28931,10 @@ msgid "Align View"
 msgstr "Görünümü hizala"
 
 
+msgid "Import"
+msgstr "İçe Aktar"
+
+
 msgid "Align View to Active"
 msgstr "Görünümü Etkin Olarak Hizala"
 
@@ -28855,16 +28943,8 @@ msgid "View Regions"
 msgstr "Bölgeleri Görüntüle"
 
 
-msgid "Math"
-msgstr "Matematik"
-
-
 msgid "Select More/Less"
 msgstr "Daha Fazla/Daha Az Seç"
-
-
-msgid "Utilities"
-msgstr "Kamu hizmetleri"
 
 
 msgid "Select Similar"
@@ -28875,6 +28955,10 @@ msgid "Select All by Trait"
 msgstr "Özelliğe Göre Tümünü Seç"
 
 
+msgid "Deprecated"
+msgstr "Kullanım dışı bırakıldı"
+
+
 msgid "Select Linked"
 msgstr "Bağlantılıyı Seç"
 
@@ -28883,28 +28967,12 @@ msgid "Select Loops"
 msgstr "Döngüleri Seç"
 
 
-msgid "Read"
-msgstr "Okumak"
-
-
-msgid "Sample"
-msgstr "Örnek"
+msgid "UV"
+msgstr "UV"
 
 
 msgid "Assign Material"
 msgstr "Malzeme Atamak"
-
-
-msgid "Write"
-msgstr "Yazmak"
-
-
-msgid "Primitives"
-msgstr "İlkel"
-
-
-msgid "Metaball"
-msgstr "Metabol"
 
 
 msgid "Light"
@@ -28915,20 +28983,12 @@ msgid "Light Probe"
 msgstr "Işık Sondası"
 
 
-msgid "Instances"
-msgstr "Örnekler"
-
-
 msgid "Add Image"
 msgstr "Resim Ekle"
 
 
 msgid "Relations"
 msgstr "İlişkiler"
-
-
-msgid "Import"
-msgstr "İçe Aktar"
 
 
 msgid "Rigid Body"
@@ -28943,20 +29003,8 @@ msgid "Track"
 msgstr "İzlemek"
 
 
-msgid "Deprecated"
-msgstr "Kullanım dışı bırakıldı"
-
-
 msgid "Quick Effects"
 msgstr "Hızlı Etkiler"
-
-
-msgid "Show/Hide"
-msgstr "Göster/Gizle"
-
-
-msgid "Clean Up"
-msgstr "Temizle"
 
 
 msgid "Asset"
@@ -28971,16 +29019,20 @@ msgid "Convert"
 msgstr "Çevir"
 
 
-msgid "UV"
-msgstr "UV"
-
-
 msgid "Link/Transfer Data"
 msgstr "Veriyi Bağlantıla/Aktar"
 
 
 msgid "Hooks"
 msgstr "Kancalar"
+
+
+msgid "Linked"
+msgstr "Bağlantılı"
+
+
+msgid "Layout"
+msgstr "Yerleşim"
 
 
 msgid "Trim/Add"
@@ -29003,6 +29055,10 @@ msgid "Clear Transform"
 msgstr "Temizle Dönüşüm"
 
 
+msgid "Adjust"
+msgstr "Ayarlamak"
+
+
 msgid "In-Betweens"
 msgstr "Arada Kalanlar"
 
@@ -29015,72 +29071,16 @@ msgid "Bone Collections"
 msgstr "Kemik Koleksiyonları"
 
 
-msgid "Names"
-msgstr "Adlar"
-
-
-msgid "Toggle Bone Options"
-msgstr "Kemik Seçeneklerini Değiştir"
-
-
-msgid "Enable Bone Options"
-msgstr "Kemik Seçeneklerini Etkinleştir"
-
-
-msgid "Disable Bone Options"
-msgstr "Kemik Seçeneklerini Devre Dışı Bırak"
-
-
-msgid "Mesh Select Mode"
-msgstr "Örgü Seçim Kipi"
-
-
-msgid "Face Data"
-msgstr "Yüz Verileri"
-
-
-msgid "Select by Face Strength"
-msgstr "Yüz Gücüne Göre Seç"
-
-
-msgid "Set Face Strength"
-msgstr "Yüz Gücünü Ayarla"
-
-
-msgid "Merge"
-msgstr "Birleştir"
-
-
-msgid "Linked"
-msgstr "Bağlantılı"
-
-
-msgid "Layout"
-msgstr "Yerleşim"
-
-
-msgid "Special Characters"
-msgstr "Özel Karakterler"
-
-
-msgid "Kerning"
-msgstr "Harf aralığı"
-
-
-msgid "Adjust"
-msgstr "Ayarlamak"
-
-
-msgid "Bone Roll"
-msgstr "Kemik Rulosu"
-
-
 msgid "Keying"
 msgstr "Anahtarlama"
 
 
 msgid "Tracking"
 msgstr "Takip"
+
+
+msgid "Toggle Bone Options"
+msgstr "Kemik Seçeneklerini Değiştir"
 
 
 msgid "Keyframe Insert Pie"
@@ -44861,11 +44861,6 @@ msgstr "Bir Blender XML tema dosyası yükleyin ve uygulayın"
 msgctxt "Operator"
 msgid "Install Theme..."
 msgstr "Tema Kur..."
-
-
-msgctxt "Operator"
-msgid "Add Asset Library"
-msgstr "Varlık Kütüphanesi Ekle"
 
 
 msgid "Add or remove a white balance preset"
@@ -63650,10 +63645,6 @@ msgid "New Collection"
 msgstr "Yeni Koleksiyon"
 
 
-msgid "Add a new collection inside selected collection"
-msgstr "Seçili koleksiyonun içine yeni bir koleksiyon ekle"
-
-
 msgid "Nested"
 msgstr "İç içe geçmiş"
 
@@ -65885,6 +65876,11 @@ msgstr "Kaldırılacak eklentinin modül adı"
 
 msgid "Remove existing template with the same ID"
 msgstr "Aynı kimliğe sahip mevcut şablonu kaldırın"
+
+
+msgctxt "Operator"
+msgid "Add Asset Library"
+msgstr "Varlık Kütüphanesi Ekle"
 
 
 msgid "Identifier (not necessarily unique) for the asset library"
@@ -103073,6 +103069,11 @@ msgid "Disable in Render"
 msgstr "Render'da devre dışı bırak"
 
 
+msgctxt "Collection"
+msgid "New"
+msgstr "Yeni"
+
+
 msgctxt "Operator"
 msgid "Instance to Scene"
 msgstr "Örnekten Sahneye"
@@ -103102,11 +103103,6 @@ msgstr "Nesne İçeriği"
 msgctxt "Operator"
 msgid "Hide One Level"
 msgstr "Bir Seviyeyi Gizle"
-
-
-msgctxt "Collection"
-msgid "New"
-msgstr "Yeni"
 
 
 msgctxt "Operator"
@@ -113234,8 +113230,8 @@ msgid "No active item to rename"
 msgstr "Yeniden adlandırılacak etkin öğe yok"
 
 
-# BFA - reworded, Blender: "No selected data-blocks to copy"
-msgid "No selected data to copy"
+# BFA - reworded, Blender: "No valid selected data-blocks to copy"
+msgid "No valid selected data to copy"
 msgstr "Kopyalanacak seçili veri bloğu yok"
 
 
@@ -113343,6 +113339,10 @@ msgstr "(boş)"
 
 msgid "Strip None"
 msgstr "Hiçbirini soyma"
+
+
+msgid "There is no asset library to remove"
+msgstr "Kaldırılacak varlık kütüphanesi yok"
 
 
 msgid "Add a color strip to the sequencer"
@@ -113679,10 +113679,6 @@ msgstr "Dizin kaldırılamıyor: %s"
 
 msgid "Extension operator not found \"%s\""
 msgstr "Uzantı operatörü bulunamadı \"%s\""
-
-
-msgid "There is no asset library to remove"
-msgstr "Kaldırılacak varlık kütüphanesi yok"
 
 
 msgid "There is no extension repository to remove"

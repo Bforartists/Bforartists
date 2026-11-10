@@ -1960,7 +1960,7 @@ char *BKE_object_data_editmode_flush_ptr_get(ID *id)
   const short type = id->id_type();
   switch (type) {
     case ID_ME: {
-      if (BMEditMesh *em = (id_cast<Mesh *>(id))->runtime->edit_mesh.get()) {
+      if (EditMesh *em = (id_cast<Mesh *>(id))->runtime->edit_mesh.get()) {
         return &em->needs_flush_to_id;
       }
       break;
@@ -3274,16 +3274,16 @@ static void give_parvert(const Object *par, int nr, float vec[3], const bool use
   zero_v3(vec);
 
   if (par->type == OB_MESH) {
-    const BMesh *bm = BKE_editmesh_bmesh_get(par);
-    const Mesh *mesh_eval = (bm) ? BKE_object_get_editmesh_eval_final(par) :
-                                   BKE_object_get_evaluated_mesh(par);
+    const Mesh *mesh_eval = BKE_editmesh_bmesh_get(DEG_get_original(par)) ?
+                                BKE_object_get_editmesh_eval_final(par) :
+                                BKE_object_get_evaluated_mesh(par);
 
     if (mesh_eval) {
       const Span<float3> positions = mesh_eval->vert_positions();
       int count = 0;
       int numVerts = mesh_eval->verts_num;
 
-      if (bm && mesh_eval->runtime->wrapper_type == ME_WRAPPER_TYPE_BMESH) {
+      if (const BMesh *bm = BKE_editmesh_bmesh_get(mesh_eval)) {
         numVerts = bm->totvert;
         if (bm->elem_table_dirty & BM_VERT) {
 #ifdef VPARENT_THREADING_HACK
@@ -3297,10 +3297,10 @@ static void give_parvert(const Object *par, int nr, float vec[3], const bool use
 #endif
         }
         if (nr < numVerts) {
-          if (mesh_eval && mesh_eval->runtime->edit_data &&
-              !mesh_eval->runtime->edit_data->vert_positions.is_empty())
+          if (mesh_eval && mesh_eval->runtime->bmesh_wrapper_data &&
+              !mesh_eval->runtime->bmesh_wrapper_data->vert_positions.is_empty())
           {
-            add_v3_v3(vec, mesh_eval->runtime->edit_data->vert_positions[nr]);
+            add_v3_v3(vec, mesh_eval->runtime->bmesh_wrapper_data->vert_positions[nr]);
           }
           else {
             const BMVert *v = BM_vert_at_index(const_cast<BMesh *>(bm), nr);

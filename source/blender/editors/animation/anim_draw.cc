@@ -14,7 +14,7 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
-#include "DNA_sequence_types.h"
+#include "DNA_sequence_types.h" /* BFA (#6780) - scrub target ghost */
 #include "DNA_space_types.h"
 #include "DNA_userdef_types.h"
 #include "DNA_workspace_types.h"
@@ -42,6 +42,9 @@
 #include "ED_keyframes_keylist.hh"
 #include "ED_sequencer.hh"
 
+#include "SEQ_scene_strip.hh" /* BFA (#6780) - scene strip range shading */
+#include "SEQ_time.hh"        /* BFA (#6780) - scrub target ghost */
+
 #include "RNA_access.hh"
 #include "RNA_path.hh"
 
@@ -50,10 +53,6 @@
 
 #include "GPU_immediate.hh"
 #include "GPU_state.hh"
-
-#include "SEQ_time.hh"
-
-#include <utility>
 
 namespace blender {
 
@@ -127,23 +126,24 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   {
     return;
   }
-  // bfa 3d sequencer: the single "Scene Strip Gizmo" toggle (ADS_SHOW_SCENE_STRIP_GIZMOS) controls
-  // both the range shading here and the interactive gizmos, so they always stay in sync.
-  if ((space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0) {
+  /* BFA (#6780): the shading shows the scene strip range for Blender's "Use Scene Strip Range"
+   * playback limit and for the BFA Scene Strip Gizmo, either one turns it on. The strip is found
+   * the same sync-agnostic way as the interactive gizmos (#ANIM_scene_strip_master_get): whichever
+   * master store (workspace sequencer scene, or the legacy 3D Sequencer addon master) holds a
+   * scene strip for the active scene, found by iterating the master timeline and not by the
+   * playhead position, so the shading is stable while scrubbing and works with sync off. With
+   * sync on it is the strip Blender finds under the playhead. */
+  const WorkSpace *workspace = CTX_wm_workspace(C);
+  const bool use_strip_range = workspace &&
+                               (workspace->flags & WORKSPACE_USE_STRIP_SCENE_RANGE_FOR_PLAYBACK);
+  if (!use_strip_range && (space_action->overlays.flag & ADS_SHOW_SCENE_STRIP_GIZMOS) == 0) {
     return;
   }
-  /* BFA (#6780): the strip range shading follows the same sync-agnostic strip
-   * resolution as the interactive gizmos (#ANIM_scene_strip_master_get) -
-   * whichever master store (workspace sequencer scene, or the legacy 3D
-   * Sequencer addon master) actually holds a scene strip for the active scene.
-   * The old sync-flag gate made the shading invisible until the user enabled
-   * sync, even though the gizmos (and the resolution itself) never needed it.
-   * The strip is the one referencing the active scene, found by iterating the
-   * master timeline - not the playhead position - so the shading is stable
-   * while scrubbing. */
   Scene *sequencer_scene = nullptr;
   const Strip *scene_strip = ANIM_scene_strip_master_get(C, &sequencer_scene);
-  if (!scene_strip || !scene_strip->scene) {
+  const std::optional<ScenePlaybackRange> range =
+      scene_strip ? seq::scene_strip_frame_range_get(sequencer_scene, scene_strip) : std::nullopt;
+  if (!range) {
     return;
   }
   GPU_blend(GPU_BLEND_ALPHA);
@@ -154,23 +154,8 @@ void ANIM_draw_scene_strip_range(const bContext *C, View2D *v2d)
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformThemeColorShadeAlpha(TH_ANIM_SCENE_STRIP_RANGE, -25, -30);
 
-  /* ..._handle are frames in "sequencer logic", meaning that on the right_handle point in time,
-   * the strip is not visible any more. The last visible frame of the strip is actually on
-   * (right_handle-1), hence the -1 when computing the end_frame. */
-  const float left_handle = scene_strip->left_handle();
-  const float right_handle = scene_strip->right_handle(sequencer_scene);
-  float start_frame = seq::give_frame_index(sequencer_scene, scene_strip, left_handle) +
-                      scene_strip->scene->r.sfra + scene_strip->anim_startofs;
-  float end_frame = seq::give_frame_index(sequencer_scene, scene_strip, right_handle - 1) +
-                    scene_strip->scene->r.sfra + scene_strip->anim_startofs;
-
-  /* This can happen when the strip time is reversed. */
-  if (start_frame > end_frame) {
-    std::swap(start_frame, end_frame);
-  }
-
-  immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, start_frame, v2d->cur.ymax);
-  immRectf(pos, end_frame, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+  immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, range->start_frame, v2d->cur.ymax);
+  immRectf(pos, range->end_frame, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
 
   immUnbindProgram();
 

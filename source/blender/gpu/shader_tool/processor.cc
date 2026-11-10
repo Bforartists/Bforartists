@@ -303,7 +303,6 @@ SourceProcessor::Result SourceProcessor::convert_bsl()
     lower_printf(parser);
 
     /* Linting phase. Detect valid syntax with invalid usage. */
-    lint_reserved_tokens(parser);
     lint_attributes_ast(parser);
 
     lower_srt_accessor_templates_ast(parser);   /* Legacy. To remove. */
@@ -325,6 +324,9 @@ SourceProcessor::Result SourceProcessor::convert_bsl()
 
     parser.language = Language::IL;
     parser.apply_mutations();
+
+    /* Lint reserved tokens after lowering. */
+    lint_reserved_tokens(parser);
 
     /* GLSL syntax compatibility. */
     lower_reference_arguments(parser);
@@ -891,19 +893,34 @@ void SourceProcessor::lower_namesless_parameters(Parser &parser)
 
 void SourceProcessor::lower_namesless_parameters_ast(Parser &parser)
 {
-  for (FuncDecl fn : parser.root().descendants_of_type<FuncDecl>()) {
+  auto lower_arguments = [&](FuncArgList arguments) {
     int i = 0;
-    for (FuncArg arg : fn.arguments().children_of_type<FuncArg>()) {
+    for (FuncArg arg : arguments.children_of_type<FuncArg>()) {
       if (!arg.identifier().is_valid()) {
-        bool is_ref = arg.is_reference();
-        ast::ArrayDecl arr = arg.array();
-        Token arg_back(is_ref ? arg.declarator().reference().back() :
-                                (arr.is_valid() ? arr.front().prev() : arg.back()));
+        /* Name goes after the type, `*` or `&`, before any array declarator or default value. */
+        const Declarator declarator = arg.declarator();
+        Token arg_back = arg.type().back();
+        if (declarator.is_reference()) {
+          arg_back = declarator.reference().back();
+        }
+        else if (declarator.is_pointer()) {
+          arg_back = declarator.pointer().back();
+        }
         /* Append a name for nameless argument. */
         parser.replace(arg_back.str_index_last_no_whitespace() + 1,
                        arg_back.str_index_last(),
                        " _" + std::to_string(i++));
       }
+    }
+  };
+
+  for (FuncDecl fn : parser.root().descendants_of_type<FuncDecl>()) {
+    lower_arguments(fn.arguments());
+  }
+  for (FuncForwardDecl fn : parser.root().descendants_of_type<FuncForwardDecl>()) {
+    /* Template instantiations are not emitted, they only select the template arguments. */
+    if (!TemplateInst(fn.parent()).is_valid()) {
+      lower_arguments(fn.arguments());
     }
   }
 }
@@ -1435,6 +1452,10 @@ void SourceProcessor::lower_pipeline_definition(Parser &parser, const string &fi
       };
       scope.foreach_match(".A=A", process_constant);
       scope.foreach_match(".A=1", process_constant);
+      scope.foreach_match(".A=-1", [&](const vector<Token> &toks) {
+        create_info_decl += "COMPILATION_CONSTANT(int, " + string(toks[1].str()) + ", -" +
+                            string(toks[4].str()) + ")\n";
+      });
       tok = scope.back().next();
     }
 
@@ -1822,7 +1843,7 @@ void SourceProcessor::lower_noop_keywords(Parser &parser)
   parser().foreach_token(Static, [&](Token tok) {
     ScopeType scope_type = tok.scope().type();
     if (scope_type != ScopeType::Struct && scope_type != ScopeType::Preprocessor) {
-      if (tok.next() != Constexpr) {
+      if (tok.next() != TokenType::Constexpr) {
         parser.erase(tok);
       }
     }

@@ -185,6 +185,14 @@ struct Token : lexit::Token {
   {
     return *this != TokenType(type);
   }
+  bool operator==(std::string_view str) const
+  {
+    return this->str() == str;
+  }
+  bool operator!=(std::string_view str) const
+  {
+    return this->str() != str;
+  }
 };
 
 }  // namespace blender::gpu::shader::parser
@@ -198,6 +206,8 @@ static inline std::string to_str(TokenType type)
       return "Word";
     case Number:
       return "Number";
+    case Delete:
+      return "delete";
     case Default:
       return "default";
     case TemplateOpen:

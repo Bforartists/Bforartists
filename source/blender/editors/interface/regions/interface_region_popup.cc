@@ -1957,10 +1957,11 @@ bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)
 }
 
 /* BFA - Tear-Off Menu/Panel */
-bool screen_has_blocking_popup(const bScreen *screen)
+bool screen_has_blocking_popup(const bScreen *screen, const ARegion *ignore_region)
 {
   for (const ARegion &region : screen->regionbase) {
-    if (region.regiontype != RGN_TYPE_TEMPORARY) {
+    /* `ignore_region`: e.g. the tool-tip region, which takes no input. */
+    if (region.regiontype != RGN_TYPE_TEMPORARY || &region == ignore_region) {
       continue;
     }
     bool is_tear_off = false;

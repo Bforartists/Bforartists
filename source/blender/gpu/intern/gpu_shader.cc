@@ -343,13 +343,7 @@ void GPU_shader_async_compilation_cancel(AsyncCompilationHandle &handle)
 
 bool GPU_shader_compiler_has_pending_work()
 {
-  return GPUBackend::get()->get_compiler()->is_compiling() ||
-         GPUBackend::get()->pipelines_compiled_since_last_reset();
-}
-
-void GPU_shader_compiler_reset_frame_pipeline_tracking()
-{
-  GPUBackend::get()->reset_pipeline_compilation_tracking();
+  return GPUBackend::get()->get_compiler()->is_compiling();
 }
 
 void GPU_shader_compiler_wait_for_all()
@@ -900,6 +894,7 @@ Shader *ShaderCompiler::compile(const shader::ShaderCreateInfo &orig_info, bool 
   cleanup_duplicates(specialized_info.batch_resources_);
   cleanup_duplicates(specialized_info.geometry_resources_);
   cleanup_duplicates(specialized_info.push_constants_);
+  cleanup_duplicates(specialized_info.vertex_inputs_);
   cleanup_duplicates(specialized_info.fragment_outputs_);
   cleanup_duplicates(specialized_info.subpass_inputs_);
   cleanup_duplicates(specialized_info.geometry_out_interfaces_);
