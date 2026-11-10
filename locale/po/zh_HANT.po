@@ -113451,3 +113451,13 @@ msgstr "Bforartists 檔案檢視"
 # BFA - reworded Blender string
 msgid "Load Factory Bforartists Preferences"
 msgstr "載入出廠 Bforartists 偏好設定"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"將所選片段一分為二\n"
+"也可以點擊拖曳，在所選範圍內分割並移除片段內容\n"
+"在其他影片編輯器中也稱為波紋刪除"

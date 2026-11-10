@@ -73330,3 +73330,13 @@ msgstr "Bforartists-Dateibetrachter"
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Ein Upgrade auf die aktuellste macOS-Version könnte die Unterstützung von Bforartists verbessern"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"Ausgewählte Streifen in zwei teilen\n"
+"Mit Klicken und Ziehen kannst du auch teilen und den Inhalt der Streifen im ausgewählten Bereich entfernen\n"
+"In anderen Videoschnittprogrammen auch als Ripple Delete bekannt"

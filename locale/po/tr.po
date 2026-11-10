@@ -136259,3 +136259,13 @@ msgstr "Dosyayı eski bir Bforartists sürümüyle üzerine yazmak ister misiniz
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "En son macOS sürümüne yükseltme yapmak Bforartists desteğini iyileştirebilir"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"Seçilen şeritleri ikiye bölün\n"
+"Ayrıca tıklayıp sürükleyerek bölebilir ve seçilen aralıktaki şeritlerin içeriğini kaldırabilirsiniz\n"
+"Diğer video düzenleyicilerde dalgalı silme (ripple delete) olarak da bilinir"

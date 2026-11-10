@@ -84286,3 +84286,13 @@ msgstr "Visualizza File di Bforartists"
 # BFA - reworded Blender string
 msgid "Load Factory Bforartists Preferences"
 msgstr "Carica Impostazioni di fabbrica di Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"Divide le strisce selezionate in due\n"
+"Puoi anche fare clic e trascinare per dividere e rimuovere il contenuto delle strisce nell'intervallo selezionato\n"
+"Noto anche come eliminazione con scorrimento (ripple delete) in altri editor video"

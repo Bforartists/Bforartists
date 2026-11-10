@@ -166848,3 +166848,13 @@ msgstr "이전 버전의 Bforartists로 바꾸시겠습니까?"
 # BFA - reworded Blender string
 msgid "Overwrite file with an older Bforartists version?"
 msgstr "이전 버전의 Bforartists로 파일을 덮어쓰시겠습니까?"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"선택한 스트립을 둘로 나눔\n"
+"클릭 후 드래그하면 선택한 범위에서 분할하고 범위 안의 스트립 내용을 제거할 수도 있습니다\n"
+"다른 비디오 편집기에서는 리플 삭제라고도 합니다"

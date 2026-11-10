@@ -182021,3 +182021,13 @@ msgstr "Могут быть доступны более новые графич�
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Обновление до последней версии macOS может улучшить поддержку Bforartists'а"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"Разрезать выделенные дорожки на две части\n"
+"Также можно нажать и перетащить, чтобы разрезать и удалить содержимое дорожек в выбранном диапазоне\n"
+"В других видеоредакторах это называется удалением со сдвигом (ripple delete)"

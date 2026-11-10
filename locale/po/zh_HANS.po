@@ -182147,3 +182147,13 @@ msgstr "较新的图形驱动程序可能具有更好的 Bforartists 兼容性�
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "升级到最新的 macOS 版本可能会改善对 Bforartists 的支持"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"将所选片段一分为二\n"
+"也可以点击拖动，在所选范围内分割并移除片段内容\n"
+"在其他视频编辑器中也称为波纹删除"

@@ -151635,3 +151635,13 @@ msgstr "Renderizador interno Bforartists"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Visualização de ficheiros do Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors"
+msgstr ""
+"Dividir as faixas seleccionadas em dois\n"
+"Também pode clicar e arrastar para dividir e remover o conteúdo das faixas dentro do intervalo seleccionado\n"
+"Também conhecido como eliminação em cascata (ripple delete) noutros editores de vídeo"
