@@ -180093,3 +180093,7 @@ msgstr ""
 "Vous pouvez aussi cliquer-glisser pour couper et supprimer le contenu des bandes dans la plage sélectionnée\n"
 "Aussi appelé suppression avec décalage (ripple delete) dans d’autres logiciels de montage vidéo\n"
 "Maintenez C pour l’utiliser un instant, relâchez pour revenir à l’outil précédent"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Opérateur de souris, veuillez utiliser la souris"

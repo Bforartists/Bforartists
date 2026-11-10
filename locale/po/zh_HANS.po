@@ -182161,3 +182161,7 @@ msgstr ""
 "也可以点击拖动，在所选范围内分割并移除片段内容\n"
 "在其他视频编辑器中也称为波纹删除\n"
 "按住 C 可临时使用，松开后返回之前的工具"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "鼠标操作，请使用鼠标"

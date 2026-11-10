@@ -84298,3 +84298,7 @@ msgstr ""
 "Puoi anche fare clic e trascinare per dividere e rimuovere il contenuto delle strisce nell'intervallo selezionato\n"
 "Noto anche come eliminazione con scorrimento (ripple delete) in altri editor video\n"
 "Tieni premuto C per usarlo per un momento, rilascia per tornare allo strumento precedente"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Operatore del mouse, usa il mouse"

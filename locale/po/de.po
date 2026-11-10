@@ -73342,3 +73342,7 @@ msgstr ""
 "Mit Klicken und Ziehen kannst du auch teilen und den Inhalt der Streifen im ausgewählten Bereich entfernen\n"
 "In anderen Videoschnittprogrammen auch als Ripple Delete bekannt\n"
 "Halte C gedrückt, um es kurz zu verwenden; loslassen, um zum vorherigen Werkzeug zurückzukehren"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Mausoperator, bitte die Maus verwenden"

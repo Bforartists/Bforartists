@@ -82066,3 +82066,7 @@ msgstr ""
 "Você também pode clicar e arrastar para dividir e remover o conteúdo das faixas dentro do intervalo selecionado\n"
 "Também conhecido como exclusão em cascata (ripple delete) em outros editores de vídeo\n"
 "Segure C para usá-la por um momento; solte para voltar à ferramenta anterior"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Operador de mouse, por favor use o mouse"

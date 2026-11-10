@@ -1141,8 +1141,15 @@ class VIEW3D_HT_header(Header):
                 icon=VIEW3D_HT_header._mesh_paint_automasking_icon(paint),
             )
 
-            # BFA - expose loop select operator in header
-            layout.operator("mesh.loop_select", text="", icon="LOOPSEL")
+            # BFA - expose loop select in the header, so the Alt+click hotkey can be discovered.
+            # mesh.loop_select only runs in Edit Mode, so use the paint version for the active
+            # selection mask. Both pick the loop under the mouse; their tooltips say to use the mouse.
+            # Without a mask it stays greyed out, which hints that loop select needs one.
+            mesh = context.object.data
+            if mesh.use_paint_mask_vertex:
+                layout.operator("paint.vert_select_loop", text="", icon="LOOPSEL")
+            else:
+                layout.operator("paint.face_select_loop", text="", icon="LOOPSEL")
         elif object_mode == "WEIGHT_GREASE_PENCIL":
             row = layout.row()
             row.popover(panel="VIEW3D_PT_slots_vertex_groups", icon="GROUP_VERTEX")

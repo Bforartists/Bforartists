@@ -182061,3 +182061,7 @@ msgstr ""
 "También puedes hacer clic y arrastrar para dividir y eliminar el contenido de los clips dentro del rango seleccionado\n"
 "También conocido como eliminación con desplazamiento (ripple delete) en otros editores de video\n"
 "Mantén pulsada la tecla C para usarla un momento; suéltala para volver a la herramienta anterior"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Operador de ratón, usa el ratón"

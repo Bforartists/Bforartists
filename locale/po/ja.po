@@ -182302,3 +182302,7 @@ msgstr ""
 "クリックしてドラッグすると，選択範囲で分割し，範囲内のストリップの内容を削除することもできます\n"
 "他のビデオ編集ソフトではリップル削除とも呼ばれます\n"
 "Cキーを押し続けると一時的に使用でき，離すと前のツールに戻ります"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "マウス操作の機能です．マウスを使ってください"

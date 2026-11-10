@@ -447,6 +447,17 @@ static wmOperatorStatus paintvert_select_loop_invoke(bContext *C,
   return OPERATOR_FINISHED;
 }
 
+/* BFA - The operator is shown in the Weight Paint header, but it picks the loop under the mouse,
+ * so tell users to use the mouse (Alt+click), like the face loop select tooltip.
+ * Each line is translated on its own, so the first line keeps Blender's translation. */
+static std::string PAINT_OT_vert_select_loop_get_description(bContext * /*C*/,
+                                                             wmOperatorType * /*ot*/,
+                                                             PointerRNA * /*ptr*/)
+{
+  return std::string(TIP_("Select vertex loop under the cursor")) + "\n" +
+         TIP_("Mouse Operator, please use the mouse");
+}
+
 void PAINT_OT_vert_select_loop(wmOperatorType *ot)
 {
   ot->name = "Select Loop";
@@ -454,6 +465,7 @@ void PAINT_OT_vert_select_loop(wmOperatorType *ot)
   ot->idname = "PAINT_OT_vert_select_loop";
 
   ot->invoke = paintvert_select_loop_invoke;
+  ot->get_description = PAINT_OT_vert_select_loop_get_description; /* BFA - mouse hint */
   ot->poll = vert_paint_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;

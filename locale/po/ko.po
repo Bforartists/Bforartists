@@ -166862,3 +166862,7 @@ msgstr ""
 "클릭 후 드래그하면 선택한 범위에서 분할하고 범위 안의 스트립 내용을 제거할 수도 있습니다\n"
 "다른 비디오 편집기에서는 리플 삭제라고도 합니다\n"
 "C를 누르고 있으면 잠시 사용할 수 있고, 놓으면 이전 도구로 돌아갑니다"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "마우스 연산자입니다. 마우스를 사용하세요"

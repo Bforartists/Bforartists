@@ -113463,3 +113463,7 @@ msgstr ""
 "也可以點擊拖曳，在所選範圍內分割並移除片段內容\n"
 "在其他影片編輯器中也稱為波紋刪除\n"
 "按住 C 可暫時使用，放開後返回之前的工具"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "滑鼠操作，請使用滑鼠"

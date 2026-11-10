@@ -136271,3 +136271,7 @@ msgstr ""
 "Ayrıca tıklayıp sürükleyerek bölebilir ve seçilen aralıktaki şeritlerin içeriğini kaldırabilirsiniz\n"
 "Diğer video düzenleyicilerde dalgalı silme (ripple delete) olarak da bilinir\n"
 "Geçici olarak kullanmak için C tuşunu basılı tutun, önceki araca dönmek için bırakın"
+
+# BFA - machine translated, please review
+msgid "Mouse Operator, please use the mouse"
+msgstr "Fare operatörü, lütfen fareyi kullanın"
