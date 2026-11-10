@@ -801,13 +801,23 @@ class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
 
             if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE'}:
                 col = flow.column() if brush.paint_source != 'VOLUME_DISTANCE' else col.column()
-                col.use_property_split = False
-                col.prop(brush, "use_proximity_project")
-                col.use_property_split = True
+                # BFA - Float left. Project checkbox with a disclosure arrow. Ray Direction only applies
+                # with Project on, so it is hidden until then and drawn indented below, instead of greyed out.
+                row = col.row()
+                row.use_property_split = False
+                split = row.split(factor=0.5)
+                row = split.row()
+                row.prop(brush, "use_proximity_project")
+                row = split.row()
+                if brush.use_proximity_project:
+                    row.label(icon='DISCLOSURE_TRI_DOWN')
+                else:
+                    row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-                sub = col.column()
-                sub.active = brush.use_proximity_project
-                sub.prop(brush, "ray_direction")
+                if brush.use_proximity_project:
+                    row = col.row()
+                    row.separator()
+                    row.prop(brush, "ray_direction")
 
 
 class PHYSICS_PT_dp_brush_source_color_ramp(PhysicButtonsPanel, Panel):

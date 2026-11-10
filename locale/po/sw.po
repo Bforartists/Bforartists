@@ -75408,7 +75408,8 @@ msgid "Zoom to Mouse Position"
 msgstr "Kuza hadi Nafasi ya Kipanya"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "Vuta karibu na nafasi ya kielekezi cha kipanya katika mwonekano wa 3D, badala ya kituo cha dirisha cha 2D"
 
 

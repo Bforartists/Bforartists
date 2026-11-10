@@ -426,15 +426,20 @@ def draw_modetext(self, context, obj):
 
 
      # ----------------------------------------- Weight Paint Section Grease Pencil -------------------------------------
-    keymaps_WEIGHT_GPENCIL_LEGACY = wm.keyconfigs.active.keymaps['Grease Pencil Stroke Weight Mode'] # Hotkeys in the 'Grease Pencil Stroke Weight Mode' Section,
+    # BFA - the legacy 'Grease Pencil Stroke Weight Mode' keymap no longer exists, it is 'Grease Pencil Weight Paint' now.
+    # Use .get() so a missing keymap can't raise a KeyError in every mode.
+    keymaps_WEIGHT_GPENCIL_LEGACY = wm.keyconfigs.active.keymaps.get('Grease Pencil Weight Paint') # Hotkeys in the 'Grease Pencil Weight Paint' Section,
     # keymaps_WEIGHT_GPENCIL_LEGACY is a variable name that we freely choose. I have chosen the blender internal variable name for Grease Pencil Stroke Weight Mode here.
     # The keymap categories in the blender keymap manager doesn't count. Important is just the name.
     # Have a look into the bfa or blender keymap to get the name of the keymap chapter that you want to retreive.
     # In this case it is the 'Grease Pencil Stroke Weight Mode' chapter
 
+    # BFA - empty items if the keymap is missing, so self._flag below is still set
+    keymap_items_WEIGHT_GPENCIL = keymaps_WEIGHT_GPENCIL_LEGACY.keymap_items if keymaps_WEIGHT_GPENCIL_LEGACY is not None else {}
+
     if not self._flag:
-        print(tuple(keymaps_WEIGHT_GPENCIL_LEGACY.keymap_items.keys()))     # debug. prints the tuple content for the grease pencil keymaps.
-        for item, km in keymaps_WEIGHT_GPENCIL_LEGACY.keymap_items.items(): # all the items in the tuple. Check them to know what key items are available.
+        print(tuple(keymap_items_WEIGHT_GPENCIL.keys()))     # debug. prints the tuple content for the grease pencil keymaps.
+        for item, km in keymap_items_WEIGHT_GPENCIL.items(): # all the items in the tuple. Check them to know what key items are available.
 
             # ------------- Select bone
             if item == 'view3d.select': #key item view3d.select, this is what shows in the tuple and what we can access then

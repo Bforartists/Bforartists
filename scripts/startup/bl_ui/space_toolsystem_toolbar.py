@@ -3523,6 +3523,14 @@ class _defs_sequencer_generic:
         return dict(
             idname="builtin.blade",
             label="Blade",
+            # BFA - the drag to cut and remove (ripple delete) feature was not discoverable, mention it in the tooltip
+            description=(
+                "Split the selected strips in two\n"
+                "You can also click drag to split and remove the strips content within the selected range\n"
+                "Also known as ripple delete in other video editors\n"
+                # BFA - holding C to switch tools for a moment is hard to find, mention it (#6949)
+                "Hold C to use it for a moment, release to go back to the previous tool"
+            ),
             icon="ops.sequencer.blade",
             cursor='CROSSHAIR',
             widget="SEQUENCER_GGT_blade",

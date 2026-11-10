@@ -80107,8 +80107,10 @@ msgid "Duplicate Shape Key"
 msgstr "Dupliquer la clé de forme"
 
 
-msgid "Duplicate the active shape key"
-msgstr "Dupliquer la clé de forme active"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Dupliquer les clés de forme sélectionnées"
 
 
 msgctxt "Operator"
@@ -101186,7 +101188,8 @@ msgid "Zoom to Mouse Position"
 msgstr "Zoomer sur la position de la souris"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "Zoomer sur la position du pointeur de la souris dans la vue 3D, à la place du centre de la vue"
 
 
@@ -180078,6 +180081,18 @@ msgstr "Des pilotes graphiques plus récents sont peut-être disponibles, avec u
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Une mise à jour vers la dernière version de macOS peut améliorer la prise en charge de Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors\n"
+"Hold C to use it for a moment, release to go back to the previous tool"
+msgstr ""
+"Couper les bandes sélectionnées en deux\n"
+"Vous pouvez aussi cliquer-glisser pour couper et supprimer le contenu des bandes dans la plage sélectionnée\n"
+"Aussi appelé suppression avec décalage (ripple delete) dans d’autres logiciels de montage vidéo\n"
+"Maintenez C pour l’utiliser un instant, relâchez pour revenir à l’outil précédent"
 
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"

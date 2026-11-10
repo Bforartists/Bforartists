@@ -7071,21 +7071,23 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_faces_legacy")  # bfa menu
 
         layout.operator("mesh.poke", icon="POKEFACES")
-        layout.operator(
-            "view3d.edit_mesh_extrude_move_normal",
-            text="Extrude Faces",
-            icon="EXTRUDE_REGION",
-        )
-        layout.operator(
-            "view3d.edit_mesh_extrude_move_shrink_fatten",
-            text="Extrude Faces Along Normals",
-            icon="EXTRUDE_REGION",
-        )
-        layout.operator(
-            "mesh.extrude_faces_move",
-            text="Extrude Individual Faces",
-            icon="EXTRUDE_REGION",
-        )
+        # BFA - moved the extrude entries to Face > Legacy (VIEW3D_MT_edit_mesh_faces_legacy).
+        # They double the extrude tools in the toolshelf and the Mesh > Extrude menu.
+        # layout.operator(
+        #     "view3d.edit_mesh_extrude_move_normal",
+        #     text="Extrude Faces",
+        #     icon="EXTRUDE_REGION",
+        # )
+        # layout.operator(
+        #     "view3d.edit_mesh_extrude_move_shrink_fatten",
+        #     text="Extrude Faces Along Normals",
+        #     icon="EXTRUDE_REGION",
+        # )
+        # layout.operator(
+        #     "mesh.extrude_faces_move",
+        #     text="Extrude Individual Faces",
+        #     icon="EXTRUDE_REGION",
+        # )
 
         layout.separator()
 
@@ -7144,6 +7146,25 @@ class VIEW3D_MT_edit_mesh_faces_legacy(Menu):
         layout = self.layout
 
         layout.operator("mesh.inset", icon="INSET_FACES")
+
+        # BFA - the extrude entries moved here from the Face menu. They double the extrude
+        # tools in the toolshelf, but stay in the menus so they can still be found.
+        layout.operator_context = "INVOKE_REGION_WIN"
+        layout.operator(
+            "view3d.edit_mesh_extrude_move_normal",
+            text="Extrude Faces",
+            icon="EXTRUDE_REGION",
+        )
+        layout.operator(
+            "view3d.edit_mesh_extrude_move_shrink_fatten",
+            text="Extrude Faces Along Normals",
+            icon="EXTRUDE_REGION",
+        )
+        layout.operator(
+            "mesh.extrude_faces_move",
+            text="Extrude Individual Faces",
+            icon="EXTRUDE_REGION",
+        )
 
         # bfa - we need the check, or BFA will crash at this operator
         if selected_faces_len >= 2:
@@ -11474,7 +11495,8 @@ class VIEW3D_MT_greasepencil_edit_context_menu(Menu):
             col.separator()
 
             # Removal Operators
-            col.operator("grease_pencil.stroke_merge_by_distance", icon="REMOVE_DOUBLES").use_unselected = False
+            # BFA - removed Merge by Distance from the context menu, Blender doesn't have it here either. It stays in the Clean Up menu
+            # col.operator("grease_pencil.stroke_merge_by_distance", icon="REMOVE_DOUBLES").use_unselected = False
             col.operator_enum("grease_pencil.dissolve", "type")
 
             col.separator()

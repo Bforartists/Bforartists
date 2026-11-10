@@ -76275,8 +76275,10 @@ msgid "Duplicate Shape Key"
 msgstr "நகல் வடிவ விசை"
 
 
-msgid "Duplicate the active shape key"
-msgstr "செயலில் வடிவ விசையை நகலெடுக்கவும்"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "தேர்ந்தெடுக்கப்பட்ட வடிவ விசைகளை நகலெடுக்கவும்"
 
 
 msgctxt "Operator"
@@ -96205,7 +96207,8 @@ msgid "Zoom to Mouse Position"
 msgstr "சுட்டி நிலைக்கு பெரிதாக்கு"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "2 டி சாளர மையத்தை விட 3d பார்வையில் சுட்டி சுட்டிக்காட்டி நிலையை நோக்கி பெரிதாக்கவும்"
 
 

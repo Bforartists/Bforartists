@@ -80130,8 +80130,10 @@ msgid "Duplicate Shape Key"
 msgstr "Duplicar morfofita"
 
 
-msgid "Duplicate the active shape key"
-msgstr "[Duplicate]: Duplica la morfofita activa"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Duplica les morfofites seleccionades"
 
 
 msgctxt "Operator"
@@ -101227,7 +101229,8 @@ msgid "Zoom to Mouse Position"
 msgstr "Fer zoom fins al ratolí"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "[Zoom to Mouse Position]: Aproxima la vista 3D anant vers el punter del ratolí, preferentment que al centre de la finestra 2D"
 
 

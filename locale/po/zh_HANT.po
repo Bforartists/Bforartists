@@ -64822,7 +64822,8 @@ msgid "When entering numbers while transforming, default to advanced mode for fu
 msgstr "在進行轉換時輸入數字，預設使用高級模式進行完整的表達式評估"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "在 3D 檢視中朝滑鼠指標位置遠近調焦，而不是 2D 視窗中心"
 
 
@@ -113450,6 +113451,18 @@ msgstr "Bforartists 檔案檢視"
 # BFA - reworded Blender string
 msgid "Load Factory Bforartists Preferences"
 msgstr "載入出廠 Bforartists 偏好設定"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors\n"
+"Hold C to use it for a moment, release to go back to the previous tool"
+msgstr ""
+"將所選片段一分為二\n"
+"也可以點擊拖曳，在所選範圍內分割並移除片段內容\n"
+"在其他影片編輯器中也稱為波紋刪除\n"
+"按住 C 可暫時使用，放開後返回之前的工具"
 
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"

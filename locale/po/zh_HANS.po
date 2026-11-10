@@ -80132,8 +80132,10 @@ msgid "Duplicate Shape Key"
 msgstr "复制形态键"
 
 
-msgid "Duplicate the active shape key"
-msgstr "复制活动形态键"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "复制选中的形态键"
 
 
 msgctxt "Operator"
@@ -101229,7 +101231,8 @@ msgid "Zoom to Mouse Position"
 msgstr "缩放至鼠标位置"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "在 3D 视图中以鼠标光标为缩放中心, 而不是 2D 窗口的中心"
 
 
@@ -182146,6 +182149,18 @@ msgstr "较新的图形驱动程序可能具有更好的 Bforartists 兼容性�
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "升级到最新的 macOS 版本可能会改善对 Bforartists 的支持"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors\n"
+"Hold C to use it for a moment, release to go back to the previous tool"
+msgstr ""
+"将所选片段一分为二\n"
+"也可以点击拖动，在所选范围内分割并移除片段内容\n"
+"在其他视频编辑器中也称为波纹删除\n"
+"按住 C 可临时使用，松开后返回之前的工具"
 
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"

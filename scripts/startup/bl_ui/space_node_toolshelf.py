@@ -1245,6 +1245,7 @@ class NODES_PT_toolshelf_compositor_add_utilities(bpy.types.Panel, NodePanel):
             OperatorEntry("CompositorNodeLevels", pad=33),
             OperatorEntry("CompositorNodeNormalize", pad=26),
             OperatorEntry("FunctionNodeRandomValue", pad=19),  # BFA - ported to the Compositor
+            OperatorEntry(operator="node.add_repeat_zone", pad=19, text="Repeat Zone", icon="REPEAT"),  # BFA - repeat zones are new in the Compositor
             Separator,
             OperatorEntry("NodeImplicitConversion", pad=8),
             OperatorEntry("CompositorNodeSplit", pad=35),
@@ -1428,6 +1429,33 @@ class NODES_PT_toolshelf_compositor_add_utilities_text(bpy.types.Panel, NodePane
             OperatorEntry("FunctionNodeValueToString", pad=8),
             Separator,
             OperatorEntry("FunctionNodeInputSpecialCharacters", pad=0),
+        )
+
+        self.draw_entries(context, layout, entries)
+
+
+# BFA - closure zones are new in the Compositor, same subpanel as in Geometry Nodes and the Add > Utilities > Closure menu
+class NODES_PT_toolshelf_compositor_add_utilities_closure(bpy.types.Panel, NodePanel):
+    bl_label = "Closure"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_compositor_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'CompositorNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=24),
+            OperatorEntry("NodeEvaluateClosure", pad=8),
         )
 
         self.draw_entries(context, layout, entries)
@@ -3345,6 +3373,7 @@ classes = (
     NODES_PT_toolshelf_compositor_add_utilities_rotation,
     NODES_PT_toolshelf_compositor_add_utilities_vector,
     NODES_PT_toolshelf_compositor_add_utilities_text,
+    NODES_PT_toolshelf_compositor_add_utilities_closure,  # BFA - new in the Compositor
     #-----------------------
 
     #-----------------------

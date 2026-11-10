@@ -1665,8 +1665,9 @@ keyconfig_data = \
       },
      ),
     ("clip.view_all", {"type": 'HOME', "value": 'PRESS'}, None),
+    # BFA - View Fit was on plain Home too, so it never fired. Shift+Home, like in the Image Editor
     ("clip.view_all",
-     {"type": 'HOME', "value": 'PRESS'},
+     {"type": 'HOME', "value": 'PRESS', "shift": True},
      {"properties":
       [("fit_view", True),
        ],
@@ -8956,6 +8957,8 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.tool_set_by_id_hold", {"type": 'C', "value": 'PRESS'},
+     {"properties": [("name", 'builtin.blade')]}),  # BFA - hold C for the Blade tool, as in Blender
     ("sequencer.slip", {"type": 'S', "value": 'PRESS'}, None),
     ("wm.context_set_int",
      {"type": 'O', "value": 'PRESS'},

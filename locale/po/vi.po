@@ -79168,8 +79168,10 @@ msgid "Duplicate Shape Key"
 msgstr "Nhân Đôi Hình Mẫu"
 
 
-msgid "Duplicate the active shape key"
-msgstr "Nhân đôi hình mẫu đang hoạt động"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Nhân đôi các hình mẫu được chọn"
 
 
 msgctxt "Operator"
@@ -100025,7 +100027,8 @@ msgid "Zoom to Mouse Position"
 msgstr "Thu-Phóng vào Vị Trí của Chuột"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "Thu-phóng vào vị trí của con trỏ chuột trong góc nhìn 3D, thay vì vào trung tâm cửa sổ 2D"
 
 
@@ -180097,6 +180100,18 @@ msgstr "Có thể đã có các trình điều vận đồ họa mới hơn vớ
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Nâng cấp lên phiên bản macOS mới nhất có thể cải thiện khả năng hỗ trợ Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors\n"
+"Hold C to use it for a moment, release to go back to the previous tool"
+msgstr ""
+"Tách phân các dải được chọn ra thành hai\n"
+"Bạn cũng có thể nhấp và kéo để tách và xóa nội dung các dải trong phạm vi đã chọn\n"
+"Trong các trình biên tập video khác còn gọi là xóa gợn (ripple delete)\n"
+"Giữ phím C để dùng tạm thời, thả ra để quay lại công cụ trước đó"
 
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"

@@ -80139,8 +80139,10 @@ msgid "Duplicate Shape Key"
 msgstr "Duplicar Forma Chave"
 
 
-msgid "Duplicate the active shape key"
-msgstr "Duplicar a forma chave activa"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Duplicar as formas chave seleccionadas"
 
 
 msgctxt "Operator"
@@ -101237,7 +101239,8 @@ msgid "Zoom to Mouse Position"
 msgstr "Ampliar para Posição do Cursor"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "Ampliar em direcção do ponteiro do rato dentro da janela de visualização 3D, em vez do centro da janela 2D"
 
 
@@ -151634,6 +151637,18 @@ msgstr "Renderizador interno Bforartists"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Visualização de ficheiros do Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors\n"
+"Hold C to use it for a moment, release to go back to the previous tool"
+msgstr ""
+"Dividir as faixas seleccionadas em dois\n"
+"Também pode clicar e arrastar para dividir e remover o conteúdo das faixas dentro do intervalo seleccionado\n"
+"Também conhecido como eliminação em cascata (ripple delete) noutros editores de vídeo\n"
+"Mantenha C premido para a usar por um momento; solte para voltar à ferramenta anterior"
 
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"

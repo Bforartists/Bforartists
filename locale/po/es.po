@@ -80126,8 +80126,10 @@ msgid "Duplicate Shape Key"
 msgstr "Duplicar forma clave"
 
 
-msgid "Duplicate the active shape key"
-msgstr "Duplica la forma clave activa"
+# BFA - reworded, Blender: "Duplicate the active shape key"
+# BFA - machine translated, please review
+msgid "Duplicate the selected shape keys"
+msgstr "Duplica las formas clave seleccionadas"
 
 
 msgctxt "Operator"
@@ -101223,7 +101225,8 @@ msgid "Zoom to Mouse Position"
 msgstr "Ampliar hacia posición del ratón"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "Amplía hacia la posición del ratón en la Vista 3D, en vez de hacerlo hacia el centro 2D de la pantalla"
 
 
@@ -182046,6 +182049,18 @@ msgstr "Es posible que existan nuevos controladores gráficos que ofrezcan una m
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Actualizar a la versión más reciente de macOS podría mejorar el soporte para Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors\n"
+"Hold C to use it for a moment, release to go back to the previous tool"
+msgstr ""
+"Divide los clips seleccionados en dos\n"
+"También puedes hacer clic y arrastrar para dividir y eliminar el contenido de los clips dentro del rango seleccionado\n"
+"También conocido como eliminación con desplazamiento (ripple delete) en otros editores de video\n"
+"Mantén pulsada la tecla C para usarla un momento; suéltala para volver a la herramienta anterior"
 
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"

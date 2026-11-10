@@ -52594,7 +52594,8 @@ msgid "Emulate 3 Button Mouse"
 msgstr "Emula Mouse a 3 bottoni"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "Zoomma nella posizione del mouse in vista 3D, anziché al centro della finestra 2D"
 
 
@@ -84285,6 +84286,18 @@ msgstr "Visualizza File di Bforartists"
 # BFA - reworded Blender string
 msgid "Load Factory Bforartists Preferences"
 msgstr "Carica Impostazioni di fabbrica di Bforartists"
+
+# BFA - machine translated, please review
+msgid ""
+"Split the selected strips in two\n"
+"You can also click drag to split and remove the strips content within the selected range\n"
+"Also known as ripple delete in other video editors\n"
+"Hold C to use it for a moment, release to go back to the previous tool"
+msgstr ""
+"Divide le strisce selezionate in due\n"
+"Puoi anche fare clic e trascinare per dividere e rimuovere il contenuto delle strisce nell'intervallo selezionato\n"
+"Noto anche come eliminazione con scorrimento (ripple delete) in altri editor video\n"
+"Tieni premuto C per usarlo per un momento, rilascia per tornare allo strumento precedente"
 
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"
