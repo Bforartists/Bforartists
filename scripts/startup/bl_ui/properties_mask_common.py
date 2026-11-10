@@ -378,7 +378,7 @@ class MASK_MT_mask(Menu):
         # Only drawn with a mask, the menu needs one to list its layers.
         if context.space_data.mask:
             layout.separator()
-            layout.menu("MASK_MT_move_to_layer")
+            layout.menu("MASK_MT_move_to_layer", icon="LAYER")  # BFA - icon added
 
         layout.separator()
 
