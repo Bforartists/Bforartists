@@ -991,8 +991,9 @@ keyconfig_data = \
       },
      ),
     ("clip.view_all", {"type": 'HOME', "value": 'PRESS'}, None),
+    # BFA - View Fit was on plain Home too, so it never fired. Shift+Home, like in the Image Editor
     ("clip.view_all",
-     {"type": 'HOME', "value": 'PRESS'},
+     {"type": 'HOME', "value": 'PRESS', "shift": True},
      {"properties":
       [("fit_view", True),
        ],

@@ -1526,10 +1526,11 @@ class CLIP_MT_view_zoom(Menu):
                 icon="ZOOM_SET",  # BFA
             ).ratio = ratio
 
-        layout.separator()
-        layout.operator("clip.view_zoom_in")
-        layout.operator("clip.view_zoom_out")
-        layout.operator("clip.view_all", text="Zoom to Fit").fit_view = True
+        # BFA - removed double entries, Zoom In, Zoom Out and View Fit are already in the View menu
+        # layout.separator()
+        # layout.operator("clip.view_zoom_in")
+        # layout.operator("clip.view_zoom_out")
+        # layout.operator("clip.view_all", text="Zoom to Fit").fit_view = True
 
 
 class CLIP_MT_view(Menu):
