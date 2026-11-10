@@ -7034,10 +7034,11 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   /* view zoom */
   prop = RNA_def_property(srna, "use_zoom_to_mouse", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "uiflag", USER_ZOOM_TO_MOUSEPOS);
+  /* BFA - the preference now also affects the Compositor backdrop zoom, mention it */
   RNA_def_property_ui_text(prop,
                            "Zoom to Mouse Position",
-                           "Zoom in towards the mouse pointer's position in the 3D view, "
-                           "rather than the 2D window center");
+                           "Zoom in towards the mouse pointer's position in the 3D view "
+                           "and the Compositor backdrop, rather than the 2D window center");
 
   /* view rotation */
   prop = RNA_def_property(srna, "use_auto_perspective", PROP_BOOLEAN, PROP_NONE);

@@ -95084,7 +95084,8 @@ msgid "Zoom to Mouse Position"
 msgstr "마우스 위치로 줌"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "2D 창 중심 대신 3D뷰에서 마우스 포인터의 위치를 확대"
 
 
