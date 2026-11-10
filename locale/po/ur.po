@@ -87249,7 +87249,8 @@ msgid "Zoom to Mouse Position"
 msgstr "ﮟﯾﺮﮐ ﻡﻭﺯ ﻮﮐ  ﻡﺎﻘﻣ  ﯽﮐ ﺱﺅﺎﻣ"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+# BFA - reworded, Blender: "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgid "Zoom in towards the mouse pointer's position in the 3D view and the Compositor backdrop, rather than the 2D window center"
 msgstr "2D 3 ﮯﺋﺎﺠﺑ ﮯﮐ ﺮﭩﻨﯿﺳ ﯽﮐﮍﮭﮐD ﮟﯾﺮﮐ ﻥﺍ ﻡﻭﺯ ﻑﺮﻃ ﯽﮐ  ﻡﺎﻘﻣ  ﯽﮐ ﺮﭩﻨﺋﺍﻮﭘ ﺱﺅﺎﻣ ﮟﯿﻣﻮﯾﻭ"
 
 

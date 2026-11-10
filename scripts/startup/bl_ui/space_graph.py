@@ -346,6 +346,7 @@ class GRAPH_MT_view(Menu):
 
         layout.operator("graph.view_all", icon="VIEWALL")
         layout.operator("graph.view_selected", icon="VIEW_SELECTED")
+        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")  # BFA - moved here from Channel > Move, framing belongs in the View menu
         layout.operator("graph.local_view") # BFA - WIP
         layout.operator("graph.view_frame", icon="VIEW_FRAME")
 
@@ -604,8 +605,9 @@ class GRAPH_MT_channel_move(Menu):
         layout.operator("anim.channels_move", text="Down", icon="MOVE_DOWN").direction = "DOWN"
         layout.operator("anim.channels_move", text="To Bottom", icon="MOVE_TO_BOTTOM").direction = "BOTTOM"
 
-        layout.separator()
-        layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
+        # BFA - moved Frame Selected Channels to the View menu, framing isn't moving channels
+        # layout.separator()
+        # layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
 
 class GRAPH_MT_key_density(Menu):

@@ -538,8 +538,11 @@ def draw_modifier_curve_common(box, modifier, has_range, has_value):
     row = box.row()
     row.prop(modifier, "mapping", text="Mapping")
     if modifier.mapping == 'LINEAR':
-        box.use_property_split = False # align left
-        box.prop(modifier, "invert")
+        # BFA - Invert in its own row, so only the checkbox aligns left and the
+        # Range/Value fields below keep their label in front of the edit box.
+        row = box.row()
+        row.use_property_split = False # align left
+        row.prop(modifier, "invert")
     if has_range:
         col = box.column(align=True)
         col.prop(modifier, "range_min", text="Range Min")

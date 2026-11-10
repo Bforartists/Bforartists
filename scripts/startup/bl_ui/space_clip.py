@@ -357,7 +357,7 @@ class CLIP_GRAPH_MT_select(Menu):
 
 
 class CLIP_GRAPH_MT_graph(Menu):
-    bl_label = "GRAPH"
+    bl_label = "Graph"  # BFA - menu title in title case like all other menus
 
     def draw(self, context):
         layout = self.layout
@@ -1526,10 +1526,11 @@ class CLIP_MT_view_zoom(Menu):
                 icon="ZOOM_SET",  # BFA
             ).ratio = ratio
 
-        layout.separator()
-        layout.operator("clip.view_zoom_in")
-        layout.operator("clip.view_zoom_out")
-        layout.operator("clip.view_all", text="Zoom to Fit").fit_view = True
+        # BFA - removed double entries, Zoom In, Zoom Out and View Fit are already in the View menu
+        # layout.separator()
+        # layout.operator("clip.view_zoom_in")
+        # layout.operator("clip.view_zoom_out")
+        # layout.operator("clip.view_all", text="Zoom to Fit").fit_view = True
 
 
 class CLIP_MT_view(Menu):
@@ -1569,7 +1570,7 @@ class CLIP_MT_view(Menu):
 
         else:
             layout.operator_context = "INVOKE_REGION_PREVIEW"
-            layout.operator("clip.graph_view_all")
+            # layout.operator("clip.graph_view_all") # BFA - removed double entry, Graph and Dope Sheet have their own Frame All below
             if sc.view == "GRAPH":
                 layout.operator_context = "INVOKE_REGION_PREVIEW"
                 layout.operator(
