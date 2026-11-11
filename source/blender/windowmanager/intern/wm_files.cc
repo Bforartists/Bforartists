@@ -5416,100 +5416,59 @@ bool wm_operator_close_file_dialog_if_needed(bContext *C,
 
 static const char *drop_blendfile_dialog_name = "drop_blendfile_dialog";
 
+static void drop_blend_user_data_free(void *user_data)
+{
+  PointerRNA *ptr = static_cast<PointerRNA *>(user_data);
+  WM_operator_properties_free(ptr);
+  MEM_delete(ptr);
+}
+
+static void drop_blend_callback_common(
+    bContext *C, void *arg_block, void *arg_data, const char *opname, const bool is_open)
+{
+  wmGenericCallback *callback = WM_generic_callback_steal(
+      static_cast<wmGenericCallback *>(arg_data));
+
+  popup_block_close(C, CTX_wm_window(C), static_cast<ui::Block *>(arg_block));
+
+  PointerRNA *src = static_cast<PointerRNA *>(callback->user_data);
+  char filepath[FILE_MAX];
+  RNA_string_get(src, "filepath", filepath);
+
+  PointerRNA ptr = WM_operator_properties_create(opname);
+  RNA_string_set(&ptr, "filepath", filepath);
+  if (is_open) {
+    RNA_boolean_set(&ptr, "display_file_selector", false);
+    RNA_boolean_set(&ptr, "use_scripts", RNA_boolean_get(src, "use_scripts"));
+  }
+  WM_operator_name_call(C, opname, wm::OpCallContext::InvokeDefault, &ptr, nullptr);
+  WM_operator_properties_free(&ptr);
+
+  WM_generic_callback_free(callback); /* frees user_data via free_user_data */
+}
+
 static void drop_blend_open_cb(bContext *C, void *arg_block, void *arg_data)
 {
-  wmGenericCallback *callback = WM_generic_callback_steal(
-      static_cast<wmGenericCallback *>(arg_data));
-
-  /* Close first – now we own the data. */
-  wmWindow *win = CTX_wm_window(C);
-  popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
-
-  PointerRNA operator_propptr = {};
-  PointerRNA *operator_propptr_p = &operator_propptr;
-  IDProperty *operator_idproperties = static_cast<IDProperty *>(callback->user_data);
-  WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_open_mainfile");
-
-  WM_operator_name_call(
-      C, "WM_OT_open_mainfile", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
-
-  WM_generic_callback_free(callback);
+  drop_blend_callback_common(C, arg_block, arg_data, "WM_OT_open_mainfile", true);
 }
-
 static void drop_blend_append_cb(bContext *C, void *arg_block, void *arg_data)
 {
-  wmGenericCallback *callback = WM_generic_callback_steal(
-      static_cast<wmGenericCallback *>(arg_data));
-
-  wmWindow *win = CTX_wm_window(C);
-  popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
-
-  /* We only need the filepath for Append. */
-  PointerRNA tmp = {};
-  PointerRNA *tmp_p = &tmp;
-  IDProperty *idprops = static_cast<IDProperty *>(callback->user_data);
-  WM_operator_properties_alloc(
-      &tmp_p, &idprops, "WM_OT_open_mainfile"); /* just to read filepath */
-
-  char filepath[FILE_MAX];
-  RNA_string_get(tmp_p, "filepath", filepath);
-
-  PointerRNA operator_propptr = {};
-  PointerRNA *operator_propptr_p = &operator_propptr;
-  IDProperty *operator_idproperties = nullptr;
-  WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_append");
-  RNA_string_set(operator_propptr_p, "filepath", filepath);
-
-  WM_operator_name_call(
-      C, "WM_OT_append", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
-
-  WM_operator_properties_free(operator_propptr_p);
-  WM_generic_callback_free(callback);
+  drop_blend_callback_common(C, arg_block, arg_data, "WM_OT_append", false);
 }
-
 static void drop_blend_link_cb(bContext *C, void *arg_block, void *arg_data)
 {
-  wmGenericCallback *callback = WM_generic_callback_steal(
-      static_cast<wmGenericCallback *>(arg_data));
-
-  wmWindow *win = CTX_wm_window(C);
-  popup_block_close(C, win, static_cast<ui::Block *>(arg_block));
-
-  /* We only need the filepath for Link. */
-  PointerRNA tmp = {};
-  PointerRNA *tmp_p = &tmp;
-  IDProperty *idprops = static_cast<IDProperty *>(callback->user_data);
-  WM_operator_properties_alloc(&tmp_p, &idprops, "WM_OT_open_mainfile");
-
-  char filepath[FILE_MAX];
-  RNA_string_get(tmp_p, "filepath", filepath);
-
-  PointerRNA operator_propptr = {};
-  PointerRNA *operator_propptr_p = &operator_propptr;
-  IDProperty *operator_idproperties = nullptr;
-  WM_operator_properties_alloc(&operator_propptr_p, &operator_idproperties, "WM_OT_link");
-  RNA_string_set(operator_propptr_p, "filepath", filepath);
-
-  WM_operator_name_call(
-      C, "WM_OT_link", wm::OpCallContext::InvokeDefault, operator_propptr_p, nullptr);
-
-  WM_operator_properties_free(operator_propptr_p);
-  WM_generic_callback_free(callback);
+  drop_blend_callback_common(C, arg_block, arg_data, "WM_OT_link", false);
 }
 
 static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *region, void *arg_v)
 {
   wmGenericCallback *cb = static_cast<wmGenericCallback *>(arg_v);
+  PointerRNA *ptr = static_cast<PointerRNA *>(cb->user_data);
 
-  /* Temporary pointer so we can read the properties for the UI. */
-  PointerRNA props = {};
-  PointerRNA *props_p = &props;
-  IDProperty *idprops = static_cast<IDProperty *>(cb->user_data);
-  WM_operator_properties_alloc(&props_p, &idprops, "WM_OT_open_mainfile");
+  Main *bmain = CTX_data_main(C);
 
   char filepath[FILE_MAX];
-  RNA_string_get(props_p, "filepath", filepath);
-  const bool use_scripts = RNA_boolean_get(props_p, "use_scripts");
+  RNA_string_get(ptr, "filepath", filepath);
 
   ui::Block *block = ui::block_begin(
       C, region, drop_blendfile_dialog_name, ui::EmbossType::Emboss);
@@ -5539,31 +5498,15 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
 
     layout.separator();
 
+    const char *autoexec_text = IFACE_("Trusted Source");
     ui::Layout &col = layout.column(false);
     if (is_untrusted) {
       col.active_set(false);
       col.enabled_set(false);
+      autoexec_text = IFACE_("Trusted Source [Untrusted Path]");
     }
-
-    /* NOTE: the checkbox only affects the Open path; Append/Link ignore it. */
-    uiDefButBit(block,
-                ui::ButtonType::Checkbox,
-                1,
-                is_untrusted ? IFACE_("Trusted Source [Untrusted Path]") :
-                               IFACE_("Trusted Source"),
-                0,
-                0,
-                0,
-                UI_UNIT_Y,
-                /* We need a real bool* for the button. Store it in the IDProperty
-                 * via a small helper or just accept that the checkbox is visual
-                 * for now and the real value is already set in the properties. */
-                nullptr, /* see note below */
-                0,
-                0,
-                TIP_("Allow the .blend file to execute scripts automatically"));
+    col.prop(ptr, "use_scripts", UI_ITEM_NONE, autoexec_text, ICON_NONE);
   }
-
   layout.separator(2.0f);
 
   /* Buttons – same layout as the close dialog. */
@@ -5577,7 +5520,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
     ui::Layout &split = layout.split(0.0f, true);
     split.scale_y_set(1.2f);
 
-    /* Open (primary, left) */
+    /* Open. */
     {
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
@@ -5595,7 +5538,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       button_flag_enable(but, ui::BUT_ACTIVE_DEFAULT);
     }
 
-    /* Append */
+    /* Append. */
     {
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
@@ -5612,7 +5555,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
     }
 
-    /* Link */
+    /* Link. */
     {
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
@@ -5630,11 +5573,11 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
     }
   }
   else {
-    /* Non-Windows (macOS / Linux). */
+    /* Non-Windows (macOS / Linux): Append | spacer | Link | Open */
     ui::Layout &split = layout.split(0.3f, true);
     split.scale_y_set(1.2f);
 
-    /* Append (left, like "Don't Save") */
+    /* Append. */
     {
       split.column(false);
       ui::Button *but = uiDefIconTextBut(block,
@@ -5653,10 +5596,10 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
 
     ui::Layout &split_right = split.split(0.1f, true);
 
-    /* empty spacer */
+    /* Spacer. */
     split_right.column(false);
 
-    /* Link (middle, like "Cancel") */
+    /* Link. */
     {
       split_right.column(false);
       ui::Button *but = uiDefIconTextBut(block,
@@ -5673,7 +5616,7 @@ static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *regi
       button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
     }
 
-    /* Open (right / primary, like "Save") */
+    /* Open. */
     {
       split_right.column(false);
       ui::Button *but = uiDefIconTextBut(block,
@@ -5704,32 +5647,24 @@ void wm_drop_blend_file_dialog(bContext *C, const char *filepath)
     return;
   }
 
-  /* Build the operator properties that Open will use. */
-  PointerRNA props = {};
-  PointerRNA *props_p = &props;
-  IDProperty *idprops = nullptr;
-  WM_operator_properties_alloc(&props_p, &idprops, "WM_OT_open_mainfile");
+  PointerRNA *ptr = MEM_new<PointerRNA>(__func__);
+  *ptr = WM_operator_properties_create("WM_OT_open_mainfile");
+  RNA_string_set(ptr, "filepath", filepath);
 
-  RNA_string_set(props_p, "filepath", filepath);
-  RNA_boolean_set(props_p, "display_file_selector", false);
-
-  /* Default trusted-source value (same logic as wm_open_mainfile_check). */
   bool use_scripts = true;
   if (((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) && !G.autoexec_override.has_value()) {
     if (BKE_autoexec_match(filepath, true, true)) {
       use_scripts = false;
     }
   }
-  RNA_boolean_set(props_p, "use_scripts", use_scripts);
+  RNA_boolean_set(ptr, "use_scripts", use_scripts);
 
-  /* The IDProperty now owns the data; the PointerRNA is just a view. */
   wmGenericCallback *cb = MEM_new<wmGenericCallback>(__func__);
-  cb->user_data = idprops;
-  cb->free = [](void *user_data) { IDP_FreeProperty(static_cast<IDProperty *>(user_data)); };
+  cb->user_data = ptr;
+  cb->free_user_data = drop_blend_user_data_free;
 
-  ui::popup_block_invoke(C, block_create__drop_blendfile_dialog, cb, [](void *arg) {
-    WM_generic_callback_free(static_cast<wmGenericCallback *>(arg));
-  });
+  ui::popup_block_invoke(
+      C, block_create__drop_blendfile_dialog, cb, popup_block_wm_generic_callback_free);
 }
 
 // Operator
