@@ -5450,4 +5450,310 @@ bool wm_operator_close_file_dialog_if_needed(bContext *C,
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name BFA Drop Blendfile Dialog
+ * \{ */
+
+static const char *drop_blendfile_dialog_name = "drop_blendfile_dialog";
+
+static void drop_blend_user_data_free(void *user_data)
+{
+  PointerRNA *ptr = static_cast<PointerRNA *>(user_data);
+  WM_operator_properties_free(ptr);
+  MEM_delete(ptr);
+}
+
+static void drop_blend_callback_common(
+    bContext *C, void *arg_block, void *arg_data, const char *opname, const bool is_open)
+{
+  wmGenericCallback *callback = WM_generic_callback_steal(
+      static_cast<wmGenericCallback *>(arg_data));
+
+  popup_block_close(C, CTX_wm_window(C), static_cast<ui::Block *>(arg_block));
+
+  PointerRNA *src = static_cast<PointerRNA *>(callback->user_data);
+  char filepath[FILE_MAX];
+  RNA_string_get(src, "filepath", filepath);
+
+  PointerRNA ptr = WM_operator_properties_create(opname);
+  RNA_string_set(&ptr, "filepath", filepath);
+  if (is_open) {
+    RNA_boolean_set(&ptr, "display_file_selector", false);
+    RNA_boolean_set(&ptr, "use_scripts", RNA_boolean_get(src, "use_scripts"));
+  }
+  WM_operator_name_call(C, opname, wm::OpCallContext::InvokeDefault, &ptr, nullptr);
+  WM_operator_properties_free(&ptr);
+
+  WM_generic_callback_free(callback); /* frees user_data via free_user_data */
+}
+
+static void drop_blend_open_cb(bContext *C, void *arg_block, void *arg_data)
+{
+  drop_blend_callback_common(C, arg_block, arg_data, "WM_OT_open_mainfile", true);
+}
+static void drop_blend_append_cb(bContext *C, void *arg_block, void *arg_data)
+{
+  drop_blend_callback_common(C, arg_block, arg_data, "WM_OT_append", false);
+}
+static void drop_blend_link_cb(bContext *C, void *arg_block, void *arg_data)
+{
+  drop_blend_callback_common(C, arg_block, arg_data, "WM_OT_link", false);
+}
+
+static ui::Block *block_create__drop_blendfile_dialog(bContext *C, ARegion *region, void *arg_v)
+{
+  wmGenericCallback *cb = static_cast<wmGenericCallback *>(arg_v);
+  PointerRNA *ptr = static_cast<PointerRNA *>(cb->user_data);
+
+  Main *bmain = CTX_data_main(C);
+
+  char filepath[FILE_MAX];
+  RNA_string_get(ptr, "filepath", filepath);
+
+  ui::Block *block = ui::block_begin(
+      C, region, drop_blendfile_dialog_name, ui::EmbossType::Emboss);
+  ui::block_flag_enable(
+      block, ui::BLOCK_KEEP_OPEN | ui::BLOCK_LOOP | ui::BLOCK_NO_WIN_CLIP | ui::BLOCK_NUMSELECT);
+  ui::block_theme_style_set(block, ui::BLOCK_THEME_STYLE_POPUP);
+
+  ui::Layout &layout = *uiItemsAlertBox(
+      block, (bmain->colorspace.is_missing_opencolorio_config) ? 44 : 34, ui::AlertIcon::Question);
+
+  /* Title. */
+  uiItemL_ex(&layout, IFACE_("Open dragged blend file?"), ICON_NONE, true, false);
+
+  /* Filename. */
+  char filename[FILE_MAX];
+  BLI_path_split_file_part(filepath, filename);
+  layout.label(filename, ICON_NONE);
+
+  /* Trusted Source checkbox. */
+  {
+    bool is_untrusted = false;
+    if (((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) && !G.autoexec_override.has_value()) {
+      if (BKE_autoexec_match(filepath, true, true)) {
+        is_untrusted = true;
+      }
+    }
+
+    layout.separator();
+
+    const char *autoexec_text = IFACE_("Trusted Source");
+    ui::Layout &col = layout.column(false);
+    if (is_untrusted) {
+      col.active_set(false);
+      col.enabled_set(false);
+      autoexec_text = IFACE_("Trusted Source [Untrusted Path]");
+    }
+    col.prop(ptr, "use_scripts", UI_ITEM_NONE, autoexec_text, ICON_NONE);
+  }
+  layout.separator(2.0f);
+
+  /* Buttons – same layout as the close dialog. */
+#ifdef _WIN32
+  const bool windows_layout = true;
+#else
+  const bool windows_layout = false;
+#endif
+
+  if (windows_layout) {
+    ui::Layout &split = layout.split(0.0f, true);
+    split.scale_y_set(1.2f);
+
+    /* Open. */
+    {
+      split.column(false);
+      ui::Button *but = uiDefIconTextBut(block,
+                                         ui::ButtonType::But,
+                                         ICON_FILE_FOLDER,
+                                         IFACE_("Open"),
+                                         0,
+                                         0,
+                                         0,
+                                         UI_UNIT_Y + UI_UNIT_Y / 2,
+                                         nullptr,
+                                         "");
+      button_func_set(but, drop_blend_open_cb, block, cb);
+      button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
+      button_flag_enable(but, ui::BUT_ACTIVE_DEFAULT);
+    }
+
+    /* Append. */
+    {
+      split.column(false);
+      ui::Button *but = uiDefIconTextBut(block,
+                                         ui::ButtonType::But,
+                                         ICON_APPEND_BLEND,
+                                         IFACE_("Append"),
+                                         0,
+                                         0,
+                                         0,
+                                         UI_UNIT_Y + UI_UNIT_Y / 2,
+                                         nullptr,
+                                         "");
+      button_func_set(but, drop_blend_append_cb, block, cb);
+      button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
+    }
+
+    /* Link. */
+    {
+      split.column(false);
+      ui::Button *but = uiDefIconTextBut(block,
+                                         ui::ButtonType::But,
+                                         ICON_LINK_BLEND,
+                                         IFACE_("Link"),
+                                         0,
+                                         0,
+                                         0,
+                                         UI_UNIT_Y + UI_UNIT_Y / 2,
+                                         nullptr,
+                                         "");
+      button_func_set(but, drop_blend_link_cb, block, cb);
+      button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
+    }
+  }
+  else {
+    /* Non-Windows (macOS / Linux): Append | spacer | Link | Open */
+    ui::Layout &split = layout.split(0.3f, true);
+    split.scale_y_set(1.2f);
+
+    /* Append. */
+    {
+      split.column(false);
+      ui::Button *but = uiDefIconTextBut(block,
+                                         ui::ButtonType::But,
+                                         ICON_APPEND_BLEND,
+                                         IFACE_("Append"),
+                                         0,
+                                         0,
+                                         0,
+                                         UI_UNIT_Y + UI_UNIT_Y / 2,
+                                         nullptr,
+                                         "");
+      button_func_set(but, drop_blend_append_cb, block, cb);
+      button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
+    }
+
+    ui::Layout &split_right = split.split(0.1f, true);
+
+    /* Spacer. */
+    split_right.column(false);
+
+    /* Link. */
+    {
+      split_right.column(false);
+      ui::Button *but = uiDefIconTextBut(block,
+                                         ui::ButtonType::But,
+                                         ICON_LINK_BLEND,
+                                         IFACE_("Link"),
+                                         0,
+                                         0,
+                                         0,
+                                         UI_UNIT_Y + UI_UNIT_Y / 2,
+                                         nullptr,
+                                         "");
+      button_func_set(but, drop_blend_link_cb, block, cb);
+      button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
+    }
+
+    /* Open. */
+    {
+      split_right.column(false);
+      ui::Button *but = uiDefIconTextBut(block,
+                                         ui::ButtonType::But,
+                                         ICON_FILE_FOLDER,
+                                         IFACE_("Open"),
+                                         0,
+                                         0,
+                                         0,
+                                         UI_UNIT_Y + UI_UNIT_Y / 2,
+                                         nullptr,
+                                         "");
+      button_func_set(but, drop_blend_open_cb, block, cb);
+      button_drawflag_disable(but, ui::BUT_TEXT_LEFT);
+      button_flag_enable(but, ui::BUT_ACTIVE_DEFAULT);
+    }
+  }
+
+  ui::block_bounds_set_centered(block, 14 * UI_SCALE_FAC);
+  return block;
+}
+
+/* ---- public entry point ---- */
+
+void wm_drop_blend_file_dialog(bContext *C, const char *filepath)
+{
+  if (ui::popup_block_name_exists(CTX_wm_screen(C), drop_blendfile_dialog_name)) {
+    return;
+  }
+
+  PointerRNA *ptr = MEM_new<PointerRNA>(__func__);
+  *ptr = WM_operator_properties_create("WM_OT_open_mainfile");
+  RNA_string_set(ptr, "filepath", filepath);
+
+  bool use_scripts = true;
+  if (((U.flag & USER_SCRIPT_AUTOEXEC_DISABLE) == 0) && !G.autoexec_override.has_value()) {
+    if (BKE_autoexec_match(filepath, true, true)) {
+      use_scripts = false;
+    }
+  }
+  RNA_boolean_set(ptr, "use_scripts", use_scripts);
+
+  wmGenericCallback *cb = MEM_new<wmGenericCallback>(__func__);
+  cb->user_data = ptr;
+  cb->free_user_data = drop_blend_user_data_free;
+
+  ui::popup_block_invoke(
+      C, block_create__drop_blendfile_dialog, cb, popup_block_wm_generic_callback_free);
+}
+
+// Operator
+static wmOperatorStatus wm_drop_blend_file_invoke(bContext *C,
+                                                  wmOperator *op,
+                                                  const wmEvent * /*event*/)
+{
+  char filepath[FILE_MAX];
+  RNA_string_get(op->ptr, "filepath", filepath);
+
+  wm_drop_blend_file_dialog(C, filepath);
+
+  return OPERATOR_INTERFACE;
+}
+
+static wmOperatorStatus wm_drop_blend_file_exec(bContext * /*C*/, wmOperator * /*op*/)
+{
+  /* Needed so the popup can draw this operator's UI. */
+  return OPERATOR_CANCELLED;
+}
+
+void WM_OT_drop_blend_file(wmOperatorType *ot)
+{
+  ot->name = "Handle Dropped .blend File";
+  ot->idname = "WM_OT_drop_blend_file";
+  ot->description = "Handle a dropped .blend file (Open, Link or Append)";
+
+  ot->invoke = wm_drop_blend_file_invoke;
+  ot->exec = wm_drop_blend_file_exec;
+
+  ot->flag = OPTYPE_INTERNAL;
+
+  PropertyRNA *prop;
+
+  prop = RNA_def_string_file_path(ot->srna, "filepath", nullptr, FILE_MAX, "File Path", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+
+  prop = RNA_def_boolean(ot->srna,
+                         "use_scripts",
+                         true,
+                         "Trusted Source",
+                         "Allow .blend file to execute scripts automatically "
+                         "(default taken from system preferences / auto-execution rules)");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+  /* Keep for API compatibility with the old Python operator. */
+  wm_open_mainfile_def_property_use_scripts(ot);
+}
+
+/** \} */
+
 }  // namespace blender

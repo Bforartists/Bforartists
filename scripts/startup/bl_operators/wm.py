@@ -3865,7 +3865,7 @@ class WM_MT_region_toggle_pie(Menu):
         pie = layout.menu_pie()
         self._draw_pie_regions_from_alignment(context, pie)
 
-
+# BFA drop blendfile - moved to source wm_files.cc for uiItemsAlertBox 
 class WM_OT_drop_blend_file(Operator):
     bl_idname = "wm.drop_blend_file"
     bl_label = "Handle dropped .blend file"
@@ -3969,7 +3969,7 @@ classes = (
     WM_OT_context_toggle_enum,
     WM_OT_doc_view,
     WM_OT_doc_view_manual,
-    WM_OT_drop_blend_file,
+    # WM_OT_drop_blend_file, # BFA drop blendfile remove from register
     WM_OT_operator_cheat_sheet,
     WM_OT_operator_pie_enum,
     WM_OT_path_open,
