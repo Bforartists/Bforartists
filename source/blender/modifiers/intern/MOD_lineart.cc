@@ -471,14 +471,28 @@ static void options_panel_draw(const bContext * /*C*/, Panel *panel)
     return;
   }
 
-  ui::Layout *row = &layout.row(false, IFACE_("Custom Camera"));
-  row->prop(ptr, "use_custom_camera", UI_ITEM_NONE, "", ICON_NONE);
-  ui::Layout &subrow = row->row(true);
-  subrow.active_set(RNA_boolean_get(ptr, "use_custom_camera"));
-  subrow.use_property_split_set(true);
-  subrow.prop(ptr, "source_camera", UI_ITEM_NONE, "", ICON_OBJECT_DATA);
-
   ui::Layout *col = &layout.column(true);
+
+  /* bfa - our layout, like Wave > Along Normals: checkbox left, camera field or a triangle while
+   * off, and the checkbox decorator at the right edge like the rows below */
+  /* NOTE: split amount here needs to be synced with normal labels */
+  ui::Layout *split = &col->split(0.385f, true);
+
+  ui::Layout *row = &split->row(true); /* bfa - our layout */
+  row->use_property_split_set(false);  /* bfa - use_property_split = False */
+  row->separator();                    /* bfa - Indent */
+  row->prop(ptr, "use_custom_camera", UI_ITEM_NONE, IFACE_("Custom Camera"), ICON_NONE);
+
+  row = &split->row(true);            /* bfa - our layout */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
+  if (RNA_boolean_get(ptr, "use_custom_camera")) {
+    row->prop(ptr, "source_camera", UI_ITEM_NONE, "", ICON_OBJECT_DATA);
+  }
+  else {
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    row->label(TIP_(""), ICON_NONE); /* bfa - aligns the decorator right */
+  }
+  row->decorator(ptr, "use_custom_camera", 0); /* bfa - decorator */
 
   row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
