@@ -809,10 +809,16 @@ class USERPREF_PT_animation_timeline_advanced(AnimationPanel, CenterAlignMixIn, 
         edit = prefs.edit
 
         layout.prop(edit, "use_negative_frames")
-        split = layout.split(factor=layout.property_split_factor)
-        split.active = edit.use_negative_frames
-        split.separator()
-        split.label_multiline(
+        # BFA - our checkbox floats left, so the split's value column left the warning floating right.
+        # Indent it under its checkbox instead, and keep it readable while the option is off,
+        # since that is when the warning is useful.
+        # split = layout.split(factor=layout.property_split_factor)
+        # split.active = edit.use_negative_frames
+        # split.separator()
+        # split.label_multiline(
+        row = layout.row()
+        row.separator(factor=2.0)
+        row.label_multiline(
             icon='STATUS_WARNING_FILLED',
             text="Negative frames can cause issues with audio playback and exporters.",
             alignment='LEFT')
