@@ -53,6 +53,7 @@
 #include "ED_asset.hh"
 #include "ED_asset_import.hh"
 #include "ED_asset_menu_utils.hh"
+#include "ED_node_c.hh" // bfa
 #include "ED_object.hh"
 #include "ED_scene.hh"
 
@@ -574,6 +575,56 @@ static void SCENE_OT_add_compositor_effect_node_group_asset(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name BFA - Open Scene Effect Editor Operator
+ * \{ */
+static bool scene_effect_editable_poll(bContext *C)
+{
+  SceneCompositorEffect *effect = static_cast<SceneCompositorEffect *>(
+        CTX_data_pointer_get_type(C, "effect", RNA_SceneCompositorEffect).data);
+  return effect != nullptr && effect->node_group != nullptr;
+}
+
+static wmOperatorStatus scene_effect_open_editor_exec(bContext *C, wmOperator *op)
+{
+  Scene *scene = CTX_data_scene(C);
+  SceneCompositorEffect *effect = nullptr;
+  if (PointerRNA ctx_ptr = CTX_data_pointer_get_type(C, "effect", RNA_SceneCompositorEffect)) {
+    effect = static_cast<SceneCompositorEffect *>(ctx_ptr.data);
+  }
+  else {
+    effect = bke::compositor::get_active_effect(*scene);
+  }
+  if (!effect) {
+    return OPERATOR_CANCELLED;
+  }
+
+  const bool result = ED_node_tree_open_temp(C,
+                                             op->reports,
+                                             effect->node_group,
+                                             &scene->id,
+                                             "Scene Effect Editor",
+                                             NC_SCENE | ND_NODES,
+                                             0);  // SNODE_COMPOSITOR_SCENE
+  return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
+/* BFA - operator registration for Open Compositor Modifier Editor */
+void SEQUENCER_OT_scene_effect_compositor_open_editor(wmOperatorType *ot)
+{
+  ot->name = "Open Scene Effect Compositor Editor";
+  ot->idname = "SCENE_OT_effect_compositor_open_editor";
+  ot->description = "Open a Compositor Editor window for this scene effect's node group";
+
+  ot->exec = scene_effect_open_editor_exec;
+  ot->poll = scene_effect_editable_poll;
+
+  ot->flag = OPTYPE_REGISTER;
+}
+
+/** \} */
+/* BFA - end Open Compositor Modifier Editor Operator */
+
+/* -------------------------------------------------------------------- */
 /** \name Root Asset Catalogs Menu
  * \{ */
 
@@ -795,6 +846,7 @@ void ED_operatortypes_scene_compositor()
   WM_operatortype_append(SCENE_OT_new_compositor_effect_node_group);
   WM_operatortype_append(SCENE_OT_duplicate_compositor_effect_node_group);
   WM_operatortype_append(SCENE_OT_add_compositor_effect_node_group_asset);
+  WM_operatortype_append(SEQUENCER_OT_scene_effect_compositor_open_editor);
 }
 
 /** \} */
