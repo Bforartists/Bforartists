@@ -4100,41 +4100,22 @@ static wmOperatorStatus geometry_nodes_open_editor_exec(bContext *C, wmOperator 
     return OPERATOR_CANCELLED;
   }
 
-  /* BFA - resolve modifier from operator property */
   std::string modifier_name = RNA_string_get(op->ptr, "modifier");
   ModifierData *md = BKE_modifiers_findby_name(ob, modifier_name.c_str());
   if (!md || md->type != eModifierType_Nodes) {
     return OPERATOR_CANCELLED;
   }
 
-  NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(md);
-  if (!nmd->node_group || ID_MISSING(nmd->node_group)) {
-    BKE_report(op->reports, RPT_ERROR, "Geometry Nodes modifier has no node group assigned");
-    return OPERATOR_CANCELLED;
-  }
+  auto *nmd = reinterpret_cast<NodesModifierData *>(md);
 
-  ScrArea *area = ED_screen_temp_space_open(
-      C, IFACE_("Geometry Nodes Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
-  if (!area) {
-    BKE_report(op->reports, RPT_ERROR, "Failed to open Geometry Nodes Editor");
-    return OPERATOR_CANCELLED;
-  }
-
-  /* BFA - configure SpaceNode for geometry nodes editing */
-  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
-  STRNCPY(snode->tree_idname, "GeometryNodeTree");
-  snode->node_tree_sub_type = SNODE_GEOMETRY_MODIFIER;
-  snode->selected_node_group = nullptr;
-
-  /* BFA - push the modifier's node group into the node editor stack */
-  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
-  ED_node_tree_start(region, snode, nmd->node_group, &ob->id, nullptr);
-  blender::ed::space_node::tree_update(C);
-
-  /* BFA - refresh UI after node tree context change */
-  WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER | ND_NODES, nullptr);
-
-  return OPERATOR_FINISHED;
+  const bool result = ED_node_tree_open_temp(C,
+                                             op->reports,
+                                             nmd->node_group,
+                                             &ob->id,
+                                             "Geometry Nodes Editor",
+                                             NC_OBJECT | ND_MODIFIER | ND_NODES,
+                                             0); // for SNODE_GEOMETRY_MODIFIER
+  return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 static bool geometry_nodes_open_editor_poll(bContext *C)
@@ -4163,7 +4144,7 @@ void OBJECT_OT_geometry_nodes_open_editor(wmOperatorType *ot)
   ot->exec = geometry_nodes_open_editor_exec;
   ot->poll = geometry_nodes_open_editor_poll;
 
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER;
 
   /* BFA - hidden property so the UI button knows which modifier to target */
   ot->prop = RNA_def_string(

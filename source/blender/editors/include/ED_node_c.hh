@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "DNA_windowmanager_types.h" // bfa
+
 namespace blender {
 
 struct ARegion;
@@ -53,6 +55,17 @@ void ED_node_tree_push(ARegion *region, SpaceNode *snode, bNodeTree *ntree, bNod
 void ED_node_tree_pop(ARegion *region, SpaceNode *snode);
 int ED_node_tree_depth(SpaceNode *snode);
 bNodeTree *ED_node_tree_get(SpaceNode *snode, int level);
+/**
+ * BFA - Node Editor Common
+ * Open a temporary Node Editor and start editing the given node tree.
+**/
+bool ED_node_tree_open_temp(bContext *C,
+                            ReportList *reports,
+                            bNodeTree *ntree,
+                            ID *owner_id,
+                            const char *window_title,
+                            int notifier,
+                            int context = 0);
 
 void ED_node_set_active_viewer_key(SpaceNode *snode);
 

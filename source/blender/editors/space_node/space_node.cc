@@ -230,6 +230,64 @@ int ED_node_tree_path_length(SpaceNode *snode)
   return length;
 }
 
+/**
+ * Open a temporary Node Editor.
+ *
+ * \param context  Meaning depends on ntree->type:
+ *                 - NTREE_GEOMETRY   → SpaceNodeGeometryNodesType
+ *                 - NTREE_COMPOSIT   → SpaceNodeCompositorNodesType
+ *                 - NTREE_SHADER     → eSpaceNode_ShaderFrom
+ *                 - NTREE_TEXTURE    → eSpaceNode_TexFrom
+ *                 - others           → ignored
+ */
+bool ED_node_tree_open_temp(bContext *C,
+                            ReportList *reports,
+                            bNodeTree *ntree,
+                            ID *owner_id,
+                            const char *window_title,
+                            int notifier,
+                            int context)
+{
+  if (!ntree || ID_MISSING(ntree)) {
+    BKE_report(reports, RPT_ERROR, "No node tree assigned");
+    return false;
+  }
+
+  ScrArea *area = ED_screen_temp_space_open(
+      C, IFACE_(window_title), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
+  if (!area) {
+    BKE_report(reports, RPT_ERROR, "Failed to open Node Editor");
+    return false;
+  }
+
+  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
+  STRNCPY(snode->tree_idname, ntree->idname);
+  snode->selected_node_group = nullptr;
+
+  /* Write the correct field according to tree type */
+  switch (ntree->type) {
+    case NTREE_GEOMETRY:
+    case NTREE_COMPOSIT:
+      snode->node_tree_sub_type = context;
+      break;
+    case NTREE_SHADER:
+      snode->shaderfrom = eSpaceNode_ShaderFrom(context);
+      break;
+    case NTREE_TEXTURE:
+      snode->texfrom = eSpaceNode_TexFrom(context);
+      break;
+    default:
+      break;
+  }
+
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
+  ED_node_tree_start(region, snode, ntree, owner_id, nullptr);
+  blender::ed::space_node::tree_update(C);
+
+  WM_event_add_notifier(C, notifier, nullptr);
+  return true;
+}
+
 void ED_node_tree_path_get(SpaceNode *snode, char *value)
 {
 

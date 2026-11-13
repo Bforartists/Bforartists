@@ -19,6 +19,8 @@
 
 #include "BKE_compute_context_cache_fwd.hh"
 
+#include "DNA_windowmanager_types.h" // bfa
+
 #include "NOD_geometry_nodes_closure_location.hh"
 #include "NOD_nested_node_id.hh"
 

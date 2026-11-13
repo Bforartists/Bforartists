@@ -406,6 +406,13 @@ static void draw_effect_panel(const bContext *C, Panel *panel)
   }
 
   draw_warnings(C, layout, *effect_ptr);
+
+  if (effect.node_group != nullptr && !ID_MISSING(effect.node_group)) {
+    layout.separator();
+    layout.op("SCENE_OT_effect_compositor_open_editor",
+              IFACE_("Open Scene Effect Compositor Editor"),
+              ICON_NODETREE);
+  }
 }
 
 static constexpr char SCENE_COMPOSITOR_EFFECT_PANEL_IDNAME[] = "SCENE_COMPOSITOR_EFFECT_PT";

@@ -17,7 +17,7 @@
 
 #include "BKE_context.hh"
 #include "BKE_report.hh" /* BFA */
-#include "BKE_screen.hh" /* BFA */  
+#include "BKE_screen.hh" /* BFA */
 
 #include "DNA_space_types.h" /* BFA */
 
@@ -685,51 +685,28 @@ static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOper
     return OPERATOR_CANCELLED;
   }
 
-  /* BFA - resolve modifier from operator property or active state */
+/* BFA - resolve modifier from operator property or active state */
   std::string modifier_name = RNA_string_get(op->ptr, "modifier");
-  StripModifierData *smd = [&]() {
-    if (modifier_name.empty()) {
-      return seq::modifier_get_active(strip);
-    }
-    return seq::modifier_find_by_name(strip, modifier_name.c_str());
-  }();
+  StripModifierData *smd = modifier_name.empty() ?
+                               seq::modifier_get_active(strip) :
+                               seq::modifier_find_by_name(strip, modifier_name.c_str());
 
   if (!smd || smd->type != eSeqModifierType_Compositor) {
     return OPERATOR_CANCELLED;
   }
 
+  seq::modifier_set_active(strip, smd); /* so header context resolves */
+
   SequencerCompositorModifierData *cmd = reinterpret_cast<SequencerCompositorModifierData *>(smd);
-  if (!cmd->node_group || ID_MISSING(cmd->node_group)) {
-    BKE_report(op->reports, RPT_ERROR, "Compositor modifier has no node group assigned");
-    return OPERATOR_CANCELLED;
-  }
 
-  /* BFA - mark modifier active so the node editor header context resolves */
-  seq::modifier_set_active(strip, smd);
-
-  ScrArea *area = ED_screen_temp_space_open(
-      C, IFACE_("Compositor Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
-  if (!area) {
-    BKE_report(op->reports, RPT_ERROR, "Failed to open Compositor Editor");
-    return OPERATOR_CANCELLED;
-  }
-
-  /* BFA - configure SpaceNode for compositor node tree editing */
-  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
-  STRNCPY(snode->tree_idname, "CompositorNodeTree");
-  /* BFA - set subtype so the header shows the sequencer compositor NODETREE dropdown */
-  snode->node_tree_sub_type = SNODE_COMPOSITOR_SEQUENCER;
-  snode->selected_node_group = nullptr;
-
-  /* BFA - push the modifier's node group into the node editor stack */
-  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
-  ED_node_tree_start(region, snode, cmd->node_group, &scene->id, nullptr);
-  blender::ed::space_node::tree_update(C);
-
-  /* BFA - refresh UI after node tree context change */
-  WM_event_add_notifier(C, NC_SCENE | ND_NODES, nullptr);
-
-  return OPERATOR_FINISHED;
+  const bool result = ED_node_tree_open_temp(C,
+                                             op->reports,
+                                             cmd->node_group,
+                                             &scene->id,
+                                             "Compositor Editor",
+                                             NC_SCENE | ND_NODES,
+                                             1);  // SNODE_COMPOSITOR_SEQUENCER
+  return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 /* BFA - operator registration for Open Compositor Modifier Editor */
@@ -742,7 +719,7 @@ void SEQUENCER_OT_strip_modifier_compositor_open_editor(wmOperatorType *ot)
   ot->exec = compositor_modifier_open_editor_exec;
   ot->poll = sequencer_strip_editable_poll;
 
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER;
 
   /* BFA - hidden property so the UI button knows which modifier to target */
   ot->prop = RNA_def_string(
