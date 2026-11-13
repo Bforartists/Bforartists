@@ -473,20 +473,26 @@ static void options_panel_draw(const bContext * /*C*/, Panel *panel)
 
   ui::Layout *col = &layout.column(true);
 
-  /* bfa - checkbox left like the rest of the panel, the camera field shows indented when enabled */
-  ui::Layout *row = &col->row(true);  /* bfa - our layout */
-  row->use_property_split_set(false); /* bfa - use_property_split = False */
-  row->separator();                   /* bfa - Indent */
-  row->prop(ptr, "use_custom_camera", UI_ITEM_NONE, IFACE_("Custom Camera"), ICON_NONE);
-  row->decorator(ptr, "use_custom_camera", 0); /* bfa - decorator */
+  /* bfa - our layout, like Wave > Along Normals: checkbox left, camera field or a triangle while
+   * off, and the checkbox decorator at the right edge like the rows below */
+  /* NOTE: split amount here needs to be synced with normal labels */
+  ui::Layout *split = &col->split(0.385f, true);
 
+  ui::Layout *row = &split->row(true); /* bfa - our layout */
+  row->use_property_split_set(false);  /* bfa - use_property_split = False */
+  row->separator();                    /* bfa - Indent */
+  row->prop(ptr, "use_custom_camera", UI_ITEM_NONE, IFACE_("Custom Camera"), ICON_NONE);
+
+  row = &split->row(true);            /* bfa - our layout */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
   if (RNA_boolean_get(ptr, "use_custom_camera")) {
-    row = &col->row(true);              /* bfa - our layout */
-    row->use_property_split_set(false); /* bfa - use_property_split = False */
-    row->separator(3.0);                /* bfa - indent */
     row->prop(ptr, "source_camera", UI_ITEM_NONE, "", ICON_OBJECT_DATA);
-    row->decorator(ptr, "source_camera", 0); /* bfa - decorator */
   }
+  else {
+    row->label(TIP_(""), ICON_DISCLOSURE_TRI_RIGHT);
+    row->label(TIP_(""), ICON_NONE); /* bfa - aligns the decorator right */
+  }
+  row->decorator(ptr, "use_custom_camera", 0); /* bfa - decorator */
 
   row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
