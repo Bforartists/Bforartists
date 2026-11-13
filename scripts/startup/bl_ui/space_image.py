@@ -2067,8 +2067,9 @@ class IMAGE_PT_gizmo_display(Panel):
         colsub.prop(view, "show_gizmo_navigate", text="Navigate")
 
         image = view.image
+        # BFA - read `mode`, `ui_mode` has no UV item and warns when read in the UV Editor.
         show_compositor_gizmos = (image is not None and image.type == 'COMPOSITING' and
-                                  view.ui_mode in ('VIEW', 'MASK'))
+                                  view.mode in ('VIEW', 'MASK'))
         if show_compositor_gizmos:
             colsub = col.column()
             colsub.prop(view, "show_gizmo_active_node")

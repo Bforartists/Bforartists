@@ -79,7 +79,8 @@ def panel_factory_image_editor(
 ):
     @classmethod
     def poll(cls, context):
-        return context.space_data.ui_mode == "PAINT"
+        # `ui_mode` has no UV item and warns when read in the UV Editor.
+        return context.space_data.mode == "PAINT"
 
     yield from panel_factory(
         tools,
