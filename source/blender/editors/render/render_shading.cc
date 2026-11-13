@@ -3298,6 +3298,12 @@ void WORLD_OT_open_node_editor(wmOperatorType *ot)
 /** \name BFA - Open Texture Node Editor Operator
  * \{ */
 
+static bool texture_is_brush_user(bContext *C)
+{
+  const ID *user_id = static_cast<const ID *>(CTX_data_pointer_get(C, "texture_user").data);
+  return user_id && GS(user_id->name) == ID_BR;
+}
+
 static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *op)
 {
   Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
@@ -3325,8 +3331,11 @@ static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *o
 
 static bool texture_open_node_editor_poll(bContext *C)
 {
-  Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
-  return tex != nullptr;
+  if (!texture_is_brush_user(C, nullptr)) {
+    CTX_wm_operator_poll_msg_set(C, "Texture nodes are only supported for brush textures");
+    return false;
+  }
+  return true;
 }
 
 void TEXTURE_OT_open_node_editor(wmOperatorType *ot)
