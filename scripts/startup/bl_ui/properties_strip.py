@@ -409,12 +409,13 @@ class STRIP_PT_effect_text_style(StripButtonsPanel, Panel):
         col2.prop(strip, "font_size", text="")
 
         col1.label(text="Line Spacing")
+        # BFA - the toggle shares the field's row like in Blender; on its own row it shifted every label below by one.
+        row = col2.row(align=True)
         if strip.use_absolute_line_spacing:
-            col2.prop(strip, "abs_space_line", text="Line Spacing")
+            row.prop(strip, "abs_space_line", text="")
         else:
-            col2.prop(strip, "space_line", text="Line Spacing")
-
-        col2.prop(strip, "use_absolute_line_spacing", text="", icon='FIXED_SIZE') #BFA - WIP
+            row.prop(strip, "space_line", text="")
+        row.prop(strip, "use_absolute_line_spacing", text="", icon='FIXED_SIZE')
 
         col1.label(text="Color")
         col2.prop(strip, "color", text="")
