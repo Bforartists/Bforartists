@@ -471,14 +471,22 @@ static void options_panel_draw(const bContext * /*C*/, Panel *panel)
     return;
   }
 
-  ui::Layout *row = &layout.row(false, IFACE_("Custom Camera"));
-  row->prop(ptr, "use_custom_camera", UI_ITEM_NONE, "", ICON_NONE);
-  ui::Layout &subrow = row->row(true);
-  subrow.active_set(RNA_boolean_get(ptr, "use_custom_camera"));
-  subrow.use_property_split_set(true);
-  subrow.prop(ptr, "source_camera", UI_ITEM_NONE, "", ICON_OBJECT_DATA);
-
   ui::Layout *col = &layout.column(true);
+
+  /* bfa - checkbox left like the rest of the panel, the camera field shows indented when enabled */
+  ui::Layout *row = &col->row(true);  /* bfa - our layout */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
+  row->separator();                   /* bfa - Indent */
+  row->prop(ptr, "use_custom_camera", UI_ITEM_NONE, IFACE_("Custom Camera"), ICON_NONE);
+  row->decorator(ptr, "use_custom_camera", 0); /* bfa - decorator */
+
+  if (RNA_boolean_get(ptr, "use_custom_camera")) {
+    row = &col->row(true);              /* bfa - our layout */
+    row->use_property_split_set(false); /* bfa - use_property_split = False */
+    row->separator(3.0);                /* bfa - indent */
+    row->prop(ptr, "source_camera", UI_ITEM_NONE, "", ICON_OBJECT_DATA);
+    row->decorator(ptr, "source_camera", 0); /* bfa - decorator */
+  }
 
   row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
