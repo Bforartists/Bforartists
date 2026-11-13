@@ -3331,7 +3331,7 @@ static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *o
 
 static bool texture_open_node_editor_poll(bContext *C)
 {
-  if (!texture_is_brush_user(C, nullptr)) {
+  if (!texture_is_brush_user(C)) {
     CTX_wm_operator_poll_msg_set(C, "Texture nodes are only supported for brush textures");
     return false;
   }
