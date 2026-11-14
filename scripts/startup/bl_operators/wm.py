@@ -3607,11 +3607,11 @@ class WM_MT_splash(Menu):
             col2_title.label(text="Getting Started")
 
             col2.operator("wm.url_open", text="Manual",
-                          icon='URL').url = "https://www.bforartists.de/bforartists-2-reference-manual/"
+                          icon='URL').url = "https://www.bforartists.co/docs/home"
             col2.operator("wm.url_open", text="Release Notes",
-                          icon='URL').url = "https://www.bforartists.de/release-notes/"
+                          icon='URL').url = "https://www.bforartists.co/support/release-notes"
             col2.operator("wm.url_open", text="Credits",
-                          icon='URL').url = "https://www.bforartists.de/credits-page-bforartists/"
+                          icon='URL').url = "https://www.bforartists.co/about/people"
 
         col_sep = layout.column()
         col_sep.separator()
@@ -3628,7 +3628,7 @@ class WM_MT_splash(Menu):
 
         col2 = split.column()
 
-        col2.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de/"
+        col2.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.co/"
         col2.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)",
                       icon='URL').url = "https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB/"
 

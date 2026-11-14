@@ -957,14 +957,14 @@ class TOPBAR_MT_help(Menu):
 
         layout.operator(
             "wm.url_open", text="Manual", icon="HELP"
-        ).url = "https://www.bforartists.de/bforartists-2-reference-manual/"
+        ).url = "https://www.bforartists.co/docs/home"
         layout.operator(
             "wm.url_open", text="Release notes", icon="URL"
-        ).url = "https://www.bforartists.de/release-notes/"
+        ).url = "https://www.bforartists.co/support/release-notes"
 
         layout.separator()
 
-        layout.operator("wm.url_open", text="Bforartists Website", icon="URL").url = "https://www.bforartists.de"
+        layout.operator("wm.url_open", text="Bforartists Website", icon="URL").url = "https://www.bforartists.co"
         layout.operator(
             "wm.url_open", text="Quickstart Learning Videos (Youtube)", icon="URL"
         ).url = "https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB"
