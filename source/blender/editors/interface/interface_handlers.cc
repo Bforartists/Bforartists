@@ -5780,6 +5780,33 @@ static int do_but_VIEW_ITEM(bContext *C, Button *but, HandleButtonData *data, co
           }
 
           if (block_is_popup_any(but->block)) {
+            /* BFA - Tear-Off Menu/Panel: a pinned panel should behave like a window region,
+             * but the "User Interface" keymap that dispatches ui.view_item_select doesn't
+             * reach popup regions, so do the drag wait and call the operator directly. */
+            if (but->block->flag & BLOCK_TEAR_OFF) {
+              const bool supports_drag = view_item_supports_drag(*view_item_but->view_item);
+              if (supports_drag) {
+                button_activate_state(C, but, BUTTON_STATE_WAIT_DRAG);
+                data->dragstartx = event->xy[0];
+                data->dragstarty = event->xy[1];
+              }
+
+              wmOperatorType *ot = WM_operatortype_find("UI_OT_view_item_select", true);
+              PointerRNA op_props = WM_operator_properties_create_ptr(ot);
+              /* Same properties as the "User Interface" keymap items. */
+              RNA_boolean_set(&op_props,
+                              "extend",
+                              (event->modifier & (KM_CTRL | KM_OSKEY | KM_SHIFT)) != 0);
+              RNA_boolean_set(&op_props, "range_select", (event->modifier & KM_SHIFT) != 0);
+
+              ARegion *region_prev = CTX_wm_region(C);
+              CTX_wm_region_set(C, data->region);
+              WM_operator_name_call_ptr(
+                  C, ot, wm::OpCallContext::InvokeDefault, &op_props, event);
+              CTX_wm_region_set(C, region_prev);
+              WM_operator_properties_free(&op_props);
+              return WM_UI_HANDLER_BREAK;
+            }
             /* TODO(!147047): This should be handled in selection operator. */
             force_activate_view_item_but(C, data->region, view_item_but, false);
             return WM_UI_HANDLER_BREAK;
@@ -11066,6 +11093,20 @@ static int handle_view_item_event(bContext *C,
       }
       break;
     case LEFTMOUSE:
+      /* BFA - Tear-Off Menu/Panel: pinned panels should behave like a window region, so
+       * activate view item buttons the regular way. That lets do_but_VIEW_ITEM start the
+       * drag wait and run the selection operator, where the popup path below only calls
+       * activate() and can neither select nor drag. Modifier clicks must pass for
+       * extend/range select. */
+      if (event->val == KM_PRESS) {
+        if (auto *view_but = static_cast<ButtonViewItem *>(
+                view_item_find_mouse_over(region, event->xy));
+            view_but && view_but != active_but && (view_but->block->flag & BLOCK_TEAR_OFF))
+        {
+          handle_button_activate(C, region, view_but, BUTTON_ACTIVATE);
+          return WM_UI_HANDLER_BREAK;
+        }
+      }
       if (event->modifier == 0) {
         /* Only bother finding the active view item button if the active button isn't already a
          * view item. */
@@ -13021,6 +13062,22 @@ static int handle_menus_recursive(bContext *C,
           }
         }
 
+        /* BFA - Tear-Off Menu/Panel: ui.view_scroll only runs through the "User Interface"
+         * keymap, which doesn't reach popup regions. Scroll the view under the cursor. */
+        if (menu->is_tear_off && handled == false && !is_actbut_in_modal_state &&
+            ELEM(event->type, WHEELUPMOUSE, WHEELDOWNMOUSE))
+        {
+          if (AbstractView *view = region_view_find_at(menu->region, event->xy, 0);
+              view && view->supports_scrolling() && !view->is_fully_visible())
+          {
+            view->scroll(event->type == WHEELUPMOUSE ? ViewScrollDirection::UP :
+                                                       ViewScrollDirection::DOWN);
+            ED_region_tag_redraw(menu->region);
+            retval = WM_UI_HANDLER_BREAK;
+            handled = true;
+          }
+        }
+
         if (handled == false) {
           retval = handle_menu_event(
               C, event, menu, level, is_parent_inside, is_parent_menu, is_floating);
@@ -14072,6 +14129,49 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
      */
 
     retval = WM_UI_HANDLER_CONTINUE;
+  }
+
+  /* BFA - Tear-Off Menu/Panel: drags started inside the popup end with this release, which
+   * wm_event_drag_and_drop_test only converts to EVT_DROP after modal handlers ran, so this
+   * handler never sees it as a drop. Apply view drops directly on the release instead. */
+  if (menu->is_tear_off && event->type == LEFTMOUSE && event->val == KM_RELEASE) {
+    wmWindowManager *wm = CTX_wm_manager(C);
+    if (!wm->runtime->drags.is_empty()) {
+      if (std::unique_ptr<DropTargetInterface> drop_target =
+              region_views_find_drop_target_at(menu->region, event->xy))
+      {
+        drop_target_apply_drop(*C, *menu->region, *event, *drop_target, wm->runtime->drags);
+        wm_drags_exit(wm, CTX_wm_window(C));
+        WM_drag_free_list(&wm->runtime->drags);
+        ED_region_tag_redraw(menu->region);
+        CTX_wm_region_popup_set(C, region_popup);
+        return WM_UI_HANDLER_BREAK;
+      }
+    }
+  }
+  /* BFA - Tear-Off Menu/Panel: drags update their active dropbox and tooltip in
+   * #wm_drags_handle_events, called from region dispatch, which this modal handler runs before.
+   * A mouse move swallowed by the tear-off would never update the drop feedback. */
+  if (menu->is_tear_off && ELEM(event->type, MOUSEMOVE, TIMER) &&
+      !CTX_wm_manager(C)->runtime->drags.is_empty())
+  {
+    ARegion *region_prev = CTX_wm_region(C);
+    CTX_wm_region_set(C, menu->region);
+    wm_drags_handle_events(C, event);
+    CTX_wm_region_set(C, region_prev);
+  }
+
+  /* External drops (OS drags) arrive as EVT_DROP natively and do reach this handler. */
+  if (event->type == EVT_DROP && menu->is_tear_off && event->custom == EVT_DATA_DRAGDROP &&
+      region_views_find_drop_target_at(menu->region, event->xy))
+  {
+    ARegion *region_prev = CTX_wm_region(C);
+    CTX_wm_region_set(C, menu->region);
+    WM_operator_name_call(
+        C, "UI_OT_view_drop", wm::OpCallContext::InvokeDefault, nullptr, event);
+    CTX_wm_region_set(C, region_prev);
+    CTX_wm_region_popup_set(C, region_popup);
+    return WM_UI_HANDLER_BREAK;
   }
 
   /* BFA - Tear-Off Menu/Panel: the preference is off, whether it was just unchecked or loaded

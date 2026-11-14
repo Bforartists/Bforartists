@@ -26,6 +26,7 @@
 #include "BLI_listbase.hh"
 #include "BLI_math_color_c.hh"
 #include "BLI_path_utils.hh"
+#include "BLI_rect.hh"
 #include "BLI_string.hh"
 #include "BLI_string_utf8.hh"
 
@@ -616,7 +617,21 @@ static wmDropBox *wm_dropbox_active(bContext *C, wmDrag *drag, const wmEvent *ev
   ScrArea *area = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, event->xy);
   wmDropBox *drop = nullptr;
 
-  if (area) {
+  /* BFA - Tear-Off Menu/Panel: popup regions are screen-level, so they are never found by
+   * #ED_area_find_region_xy_visual. Check them first so pinned panels show drop feedback. */
+  for (ARegion &region : screen->regionbase) {
+    if (BLI_rcti_isect_pt_v(&region.winrct, event->xy)) {
+      ARegion *region_prev = CTX_wm_region(C);
+      CTX_wm_region_set(C, &region);
+      drop = dropbox_active(C, &region.runtime->handlers, drag, event);
+      CTX_wm_region_set(C, region_prev);
+      if (drop) {
+        break;
+      }
+    }
+  }
+
+  if (area && !drop) {
     ARegion *region = ED_area_find_region_xy_visual(area, RGN_TYPE_ANY, event->xy);
     if (region) {
       drop = dropbox_active(C, &region->runtime->handlers, drag, event);

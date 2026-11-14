@@ -2348,7 +2348,12 @@ static void wm_handler_op_context_get_if_valid(bContext *C,
       }
 
       if ((region == nullptr) && handler->context.region) {
-        if (BLI_findindex(&area->regionbase, handler->context.region) != -1) {
+        if (BLI_findindex(&area->regionbase, handler->context.region) != -1 ||
+            /* BFA - Tear-Off Menu/Panel: popup regions live in the screen's region base, so
+             * operators that went modal with a tear-off region in context (like the view
+             * item select invoked from a pinned panel) must accept it as valid context. */
+            BLI_findindex(&screen->regionbase, handler->context.region) != -1)
+        {
           region = handler->context.region;
         }
       }
