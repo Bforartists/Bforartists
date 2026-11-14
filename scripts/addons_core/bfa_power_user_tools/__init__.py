@@ -24,7 +24,7 @@ bl_info = {
         "blender": (4, 4, 0),
         "location": "Varios consistent locations for the power user - customize as you need! ",
         "warning": "This is a Bforartists exclusive addon for the time being", # used for warning icon and text in add-ons panel
-        "doc_url": "https://www.bforartists.de/data/manualbfa4/35.4_Addon_-_Power_User_Tools.pdf",
+        "doc_url": "https://www.bforartists.co/docs/extensions-bforartists-extensions-core-extension-power-user-tools",
         "tracker_url": "https://github.com/Bforartists/Bforartists",
         "support": "OFFICIAL",
         "category": "Bforartists"

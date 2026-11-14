@@ -2,7 +2,7 @@
 import blf
 
 # Author: Reiner "Tiles" Prokein
-# Homepage: https://www.bforartists.de
+# Homepage: https://www.bforartists.co
 # Name: Important Hotkeys BFA
 
 # This is the Bforartists version of the Important Hotkeys addon.

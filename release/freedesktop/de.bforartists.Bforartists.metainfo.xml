@@ -21,16 +21,16 @@
             the list goes on.
         </p>
     </description>
-    <url type="homepage">https://www.bforartists.de</url>
+    <url type="homepage">https://www.bforartists.co</url>
     <!-- <url type="help">https://www.blender.org/support/</url>
     <url type="bugtracker">https://developer.blender.org</url>
     <url type="donation">https://www.blender.org/foundation/donation-payment/</url> -->
     <screenshots>
         <screenshot type="default">
-            <image>https://www.bforartists.de/wp-content/uploads/2020/04/modelingbfa2.jpg</image>
+            <image>https://raw.githubusercontent.com/Bforartists/Manual/master/docs2/images/editors/3d-viewport/header/introduction.png</image>
         </screenshot>
         <screenshot>
-            <image>https://www.bforartists.de/wp-content/uploads/2020/04/weightingbfa2.jpg</image>
+            <image>https://raw.githubusercontent.com/Bforartists/Manual/master/docs2/images/editors/asset-browser/asset-browser-default-asset-library/introduction.png</image>
         </screenshot>
     </screenshots>
     <releases>
