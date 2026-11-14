@@ -295,6 +295,18 @@ AbstractView *region_view_find_at(const ARegion *region,
     }
   }
 
+  /* BFA - Tear-Off Menu/Panel: in tear-off blocks the view-item rects can sit in a different
+   * coordinate space than #window_to_block_fl produces, so the bounds test above misses.
+   * Fall back to the view item under the cursor, which is located correctly. */
+  if (auto *item_but = static_cast<ButtonViewItem *>(view_item_find_mouse_over(region, xy));
+      item_but && item_but->view_item)
+  {
+    if (r_block != nullptr) {
+      *r_block = item_but->block;
+    }
+    return &item_but->view_item->get_view();
+  }
+
   return nullptr;
 }
 
@@ -324,13 +336,17 @@ void region_view_scroll_at_borders(bContext *C, wmDropBox &dropbox, const wmEven
     return;
   }
 
+  /* BFA - Tear-Off Menu/Panel: view bounds in tear-off blocks are in window space, which the
+   * #window_to_block_fl result above can't reach. */
+  const float scroll_y = BLI_rcti_isect_pt(&bounds.value(), x, y) ? y : event->xy[1];
+
   const float margin = UI_UNIT_Y * 1 / 3;
   const std::optional<ViewScrollDirection> scroll_dir =
       [&]() -> std::optional<ViewScrollDirection> {
-    if (y > bounds->ymax - margin) {
+    if (scroll_y > bounds->ymax - margin) {
       return ViewScrollDirection::UP;
     }
-    if (y < bounds->ymin + margin) {
+    if (scroll_y < bounds->ymin + margin) {
       return ViewScrollDirection::DOWN;
     }
     return std::nullopt;

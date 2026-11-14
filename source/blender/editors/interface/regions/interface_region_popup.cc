@@ -1505,6 +1505,13 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
                  handle->popup_create_vars.event_xy);
   }
 
+  /* BFA - Tear-Off Menu/Panel: panel blocks get their view bounds from #panels_end, which
+   * doesn't run for popup regions, leaving views without bounds so hit-tests for scrolling,
+   * selection and drops can't find them. Compute them here for tear-offs. */
+  if (handle->is_tear_off) {
+    block_views_end(region, block);
+  }
+
   /* if this is being created from a button */
   if (but) {
     block->aspect = but->block->aspect;
@@ -1827,6 +1834,11 @@ PopupBlockHandle *popup_block_create(bContext *C,
   }
 
   region_handlers_add(&region->runtime->handlers);
+  if (is_tear_off) { /* BFA - Tear-Off Menu/Panel: for wm_dropbox_active (drag feedback). */
+    WM_event_add_dropbox_handler(
+        &region->runtime->handlers,
+        WM_dropboxmap_find("User Interface", SPACE_EMPTY, RGN_TYPE_WINDOW));
+  }
 
   /* Note that this will be set in the code-path that typically calls refreshing
    * (that loops over #Screen::regionbase and refreshes regions tagged with #RGN_REFRESH_UI).
