@@ -17,7 +17,7 @@ repository = "https://github.com/Bforartists/Bforartists"
 warning = "This is automatically copied to the user preferences when the Default Asset Library addon is installed or updated."
 
 # # Optional: link to documentation, support, source files, etc
-website = "https://www.bforartists.de/data/manualbfa4/28.1_Asset_Browser_-_Default_Asset_LIbrary.pdf"
+website = "https://www.bforartists.co/docs/editors-asset-browser-asset-browser-default-asset-library"
 
 # # Optional: Blender version that the extension does not support, earlier versions are supported.
 # # This can be omitted and defined later on the extensions platform if an issue is found.
