@@ -26,6 +26,7 @@
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_report.hh"
+#include "BKE_scene.hh"
 
 #include "DEG_depsgraph.hh"
 #include "DEG_depsgraph_build.hh"
@@ -261,6 +262,33 @@ static wmOperatorStatus collection_new_exec(bContext *C, wmOperator *op)
 
   Collection *new_collection = BKE_collection_add(bmain, collection, nullptr);
   new_collection->color_tag = collection->color_tag;
+  /* BFA - when "move_selected" is set (Outliner header button and the context menu entries
+   * "New Collection from Selection"), the selected Outliner objects are moved into the new
+   * collection. The shortcuts and the other entries do not set it, so they keep the upstream
+   * behavior. */
+  if (RNA_boolean_get(op->ptr, "move_selected")) {
+    /* Read the Outliner selection before rebuilding the tree. It can differ from the
+     * viewport selection when selection synchronization is disabled. */
+    ListBaseT<LinkData> objects = {nullptr};
+    ED_outliner_selected_objects_get(C, &objects);
+    Set<Object *> moved_objects;
+    for (LinkData &link : objects) {
+      Object *object = static_cast<Object *>(link.data);
+      if (!moved_objects.add(object) || !BKE_scene_object_find(*bmain, scene, object)) {
+        continue;
+      }
+      /* Only unlink the original memberships once adding the object has succeeded. */
+      if (!BKE_collection_object_add(bmain, new_collection, object)) {
+        BKE_report(op->reports, RPT_WARNING, "Cannot move an object into the new collection");
+        continue;
+      }
+      BKE_collection_object_move(bmain, scene, new_collection, nullptr, object);
+    }
+    objects.free_no_destruct();
+    DEG_id_tag_update(&scene->id, ID_RECALC_SYNC_TO_EVAL | ID_RECALC_SELECT);
+    WM_event_add_notifier(C, NC_SCENE | ND_LAYER_CONTENT, scene);
+    WM_event_add_notifier(C, NC_SCENE | ND_OB_ACTIVE, scene);
+  }
   BKE_view_layer_synced_ensure(*bmain, scene, view_layer);
   if (LayerCollection *layer_collection = BKE_layer_collection_first_from_scene_collection(
           view_layer, new_collection))
@@ -300,6 +328,13 @@ void OUTLINER_OT_collection_new(wmOperatorType *ot)
   /* API callbacks. */
   ot->exec = collection_new_exec;
   ot->poll = collection_new_poll;
+  /* BFA - tooltip: only mentions the move when "move_selected" is set. */
+  ot->get_description = [](bContext *, wmOperatorType *, PointerRNA *ptr) -> std::string {
+    if (RNA_boolean_get(ptr, "move_selected")) {
+      return "Add a new collection and move selected Outliner objects into it";
+    }
+    return "Add a new collection";
+  };
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -307,6 +342,14 @@ void OUTLINER_OT_collection_new(wmOperatorType *ot)
   /* properties */
   PropertyRNA *prop = RNA_def_boolean(
       ot->srna, "nested", false, "Nested", "Add as child of selected collection");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+  /* BFA - off by default, enabled by the header button and the menu entries
+   * "New Collection from Selection". */
+  prop = RNA_def_boolean(ot->srna,
+                        "move_selected",
+                        false,
+                        "Move Selected Objects",
+                        "Move selected Outliner objects into the new collection");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 

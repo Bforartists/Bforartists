@@ -1926,6 +1926,11 @@ if(WITH_UI_TESTS)
     test_info_reports.test_info_report_selection_modes
     test_info_reports.test_info_report_delete
     test_info_reports.test_info_report_operator_poll
+    test_outliner_collection.move_outliner_selection_without_viewport_sync
+    test_outliner_collection.move_selection_with_viewport_sync
+    test_outliner_collection.move_single_object
+    test_outliner_collection.no_outliner_selection_creates_empty_collection
+    test_outliner_collection.default_operator_keeps_selected_objects_in_place
     test_object_type_visibility.visibility_by_own_type
     test_object_type_visibility.selectability_by_instancer_type
     test_object_type_visibility.pose_bone_select_with_armature_unselectable
