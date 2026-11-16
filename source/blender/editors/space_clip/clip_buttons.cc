@@ -515,7 +515,7 @@ void uiTemplateMarker(ui::Layout *layout,
     button_retval_set(but, B_MARKER_FLAG);
 
     /* bfa - new expanded prop UI style */
-    ui::Layout *row, *col, *lcol, *vcol;
+    ui::Layout *row, *col, *vcol;
     col = &layout->column(true);
     col->active_set((cb->marker_flag & MARKER_DISABLED) == 0);
 
@@ -523,16 +523,7 @@ void uiTemplateMarker(ui::Layout *layout,
 
     /*bfa */
     row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);  // labels column
-    lcol->ui_units_x_set(.75f);
-    lcol->fixed_size_set(true);
-    row->label(IFACE_("X"), ICON_NONE);
-    row->label(IFACE_("Y"), ICON_NONE);
+    row->separator(); /* indent under the group label */
 
     vcol = &row->column(true);  // values column
     block = vcol->block();
@@ -542,7 +533,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     ui::Button *bt = uiDefButV(block,
                                ui::ButtonType::Num,
-                               "",
+                               IFACE_("X"),
                                0.5 * UI_UNIT_X,
                                9 * UI_UNIT_Y,
                                7.25 * UI_UNIT_X,
@@ -557,9 +548,9 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "", /* bfa removed label */
-                   8.25 * UI_UNIT_X,
-                   9 * UI_UNIT_Y,
+                   IFACE_("Y"),
+                   0.5 * UI_UNIT_X,
+                   8 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
                    UI_UNIT_Y,
                    &cb->marker_pos[1],
@@ -574,16 +565,7 @@ void uiTemplateMarker(ui::Layout *layout,
     layout->separator();
     col->label(IFACE_("Offset"), ICON_NONE);
     row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    lcol->ui_units_x_set(.75f);
-    lcol->fixed_size_set(true);
-    row->label(IFACE_("X"), ICON_NONE);
-    row->label(IFACE_("Y"), ICON_NONE);
+    row->separator(); /* indent under the group label */
 
     vcol = &row->column(true);
     block = vcol->block();
@@ -593,7 +575,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "",
+                   IFACE_("X"),
                    0.5 * UI_UNIT_X,
                    7 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -608,9 +590,9 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "", /* bfa removed label */
-                   8.25 * UI_UNIT_X,
-                   7 * UI_UNIT_Y,
+                   IFACE_("Y"),
+                   0.5 * UI_UNIT_X,
+                   6 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
                    UI_UNIT_Y,
                    &cb->track_offset[1],
@@ -624,16 +606,7 @@ void uiTemplateMarker(ui::Layout *layout,
     layout->separator();
     col->label(IFACE_("Pattern Area"), ICON_NONE);
     row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    lcol->ui_units_x_set(2.f);
-    lcol->fixed_size_set(true);
-    row->label(IFACE_("Width"), ICON_NONE);
-    row->label(IFACE_("Height"), ICON_NONE);
+    row->separator(); /* indent under the group label */
 
     vcol = &row->column(true);
     block = vcol->block();
@@ -643,7 +616,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "",
+                   IFACE_("Width"),
                    0.5 * UI_UNIT_X,
                    5 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -658,7 +631,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "", /* bfa removed label */
+                   IFACE_("Height"),
                    0.5 * UI_UNIT_X,
                    4 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -675,16 +648,7 @@ void uiTemplateMarker(ui::Layout *layout,
     layout->separator();
     col->label(IFACE_("Search Area"), ICON_NONE);
     row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    lcol->ui_units_x_set(.75f);
-    lcol->fixed_size_set(true);
-    row->label(IFACE_("X"), ICON_NONE);
-    row->label(IFACE_("Y"), ICON_NONE);
+    row->separator(); /* indent under the group label */
 
     vcol = &row->column(true);
     block = vcol->block();
@@ -694,7 +658,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "",
+                   IFACE_("X"),
                    0.5 * UI_UNIT_X,
                    2 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -709,9 +673,9 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "", /* bfa removed label */
-                   8.25 * UI_UNIT_X,
-                   2 * UI_UNIT_Y,
+                   IFACE_("Y"),
+                   0.5 * UI_UNIT_X,
+                   1 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
                    UI_UNIT_Y,
                    &cb->marker_search_pos[1],
@@ -725,16 +689,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa -  left aligned*/
     layout->separator();
     row = &col->row(true);
-
-    /* indent */
-    layout->separator();
-    layout->separator();
-
-    lcol = &row->column(true);
-    lcol->ui_units_x_set(2.f);
-    lcol->fixed_size_set(true);
-    row->label(IFACE_("Width"), ICON_NONE);
-    row->label(IFACE_("Height"), ICON_NONE);
+    row->separator(); /* indent under the group label */
 
     vcol = &row->column(true);
     block = vcol->block();
@@ -744,7 +699,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "", /* bfa removed label */
+                   IFACE_("Width"),
                    0.5 * UI_UNIT_X,
                    1 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -759,7 +714,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   "", /* bfa removed label */
+                   IFACE_("Height"),
                    0.5 * UI_UNIT_X,
                    0 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
