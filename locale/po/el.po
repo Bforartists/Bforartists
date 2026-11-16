@@ -2662,3 +2662,7 @@ msgstr "Διαγραφή"
 # BFA - reworded, Blender: "Type"
 msgid "Type:"
 msgstr "Τύπος"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Εμφάνιση ή απόκρυψη των περιοχών του επεξεργαστή (γραμμή εργαλείων, πλαϊνή γραμμή, κανάλια)"

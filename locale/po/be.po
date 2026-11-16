@@ -385,3 +385,7 @@ msgstr "Паведамленне аб памылцы"
 # BFA - reworded, Blender: "Type"
 msgid "Type:"
 msgstr "Тып"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Паказаць або схаваць вобласці рэдактара (панэль інструментаў, бакавая панэль, каналы)"

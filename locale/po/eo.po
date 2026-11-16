@@ -125,3 +125,7 @@ msgstr "Restaŭri lasta kunsido"
 msgid "Recent"
 msgstr "Freŝaj"
 
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Montri aŭ kaŝi la redaktajn regionojn (ilaro, flankobreto, kanaloj)"

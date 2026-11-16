@@ -3697,6 +3697,9 @@ class WM_MT_splash_about(Menu):
 
 class WM_MT_region_toggle_pie(Menu):
     bl_label = "Region Toggle"
+    # BFA - #6228: tooltip shown by the View-menu entry; the UI appends the
+    # bound hotkey automatically.
+    bl_description = "Show or hide the editor regions (toolbar, sidebar, channels)"
 
     # Map the `region.type` to the `space_data` attribute & text label.
     # The order of items defines priority, so for example in the sequencer

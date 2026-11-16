@@ -2315,6 +2315,9 @@ static void WM_OT_call_menu_pie(wmOperatorType *ot)
   ot->exec = wm_call_pie_menu_exec;
   ot->poll = WM_operator_winactive;
   ot->get_name = wm_call_menu_get_name;
+  /* BFA - #6228: resolve the named menu's description like WM_OT_call_menu does,
+   * so View-menu entries show a proper tooltip. */
+  ot->get_description = wm_call_menu_get_description;
 
   ot->flag = OPTYPE_INTERNAL;
 

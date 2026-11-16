@@ -42928,3 +42928,7 @@ msgstr "Otevřít okno s informacemi o Bforartistsu"
 # BFA - reworded Blender string
 msgid "Bforartists Render"
 msgstr "Bforartists render"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Zobrazit nebo skrýt oblasti editoru (panel nástrojů, postranní panel, kanály)"

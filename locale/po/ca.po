@@ -168688,3 +168688,7 @@ msgstr "Poden estar disponibles controladors de gràfics més recents de millor 
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "L'actualització a la darrera versió d'SO de pot millorar la compatibilitat de Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Mostra o amaga les regions de l'editor (barra d'eines, barra lateral, canals)"

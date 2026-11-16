@@ -154770,3 +154770,7 @@ msgstr "Newer graphics drivers might be available with better Bforartists compat
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Upgrading to the latest macOS version may improve Bforartists support"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Show or hide the editor regions (toolbar, sidebar, channels)"

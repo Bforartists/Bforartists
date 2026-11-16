@@ -4059,3 +4059,7 @@ msgstr "Type"
 # BFA - reworded Blender string
 msgid "Show the assets currently available in this Bforartists session"
 msgstr "Vis de aktiver, der i øjeblikket er tilgængelige i denne Bforartists-session"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Vis eller skjul editorområderne (værktøjslinje, sidepanel, kanaler)"

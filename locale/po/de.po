@@ -73346,3 +73346,7 @@ msgstr ""
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"
 msgstr "Mausoperator, bitte die Maus verwenden"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Editorbereiche ein- oder ausblenden (Werkzeugleiste, Seitenleiste, Kanäle)"

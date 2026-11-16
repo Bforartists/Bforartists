@@ -4815,3 +4815,7 @@ msgstr "„Bforartists“"
 # BFA - reworded Blender string
 msgid "Bforartists Info Log"
 msgstr "„Bforartists“ informacijos žurnalas"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Rodyti arba slėpti redaktoriaus sritis (įrankių juosta, šoninė juosta, kanalai)"

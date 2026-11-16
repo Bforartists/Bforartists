@@ -180026,3 +180026,7 @@ msgstr ""
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"
 msgstr "Thao tác chuột, vui lòng dùng chuột"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Hiện hoặc ẩn các vùng của trình chỉnh sửa (thanh công cụ, thanh bên, kênh)"

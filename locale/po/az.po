@@ -167907,3 +167907,7 @@ msgstr "Hədəf uzunluğa çatmaq üçün hər əyrini bərabər şəkildə miqy
 msgid "Distance from the ground plane"
 msgstr "Zəmin müstəvisindən məsafə"
 
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Redaktor regionlarını göstər və ya gizlət (alət çubuğu, yan panel, kanallar)"

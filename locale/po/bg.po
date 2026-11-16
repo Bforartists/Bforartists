@@ -2360,3 +2360,7 @@ msgstr "Излез от Bforartists"
 # BFA - reworded Blender string
 msgid "Quit Bforartists"
 msgstr "Излез от Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Показване или скриване на областите на редактора (лента с инструменти, странична лента, канали)"
