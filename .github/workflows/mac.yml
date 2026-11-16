@@ -16,7 +16,7 @@ on:
         type: string
         required: false
         default: "false"
-      test_python:                # added: input
+      test_python:
         type: string
         required: false
         default: "false"

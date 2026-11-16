@@ -37,7 +37,7 @@ jobs:
   build:
     uses: ./.github/workflows/nightly-build.yml
     with:
-      os: "windows-2022"
+      os: "windows-latest"
       c_compiler: "cl"
       cpp_compiler: "cl"
       ref: ${{ inputs.ref }}

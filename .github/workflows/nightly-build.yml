@@ -51,8 +51,6 @@ jobs:
       with:
         ref: ${{ inputs.ref }}
 
-    # Windows full build uses the runner's default Python (as in the original).
-    # Minimal build uses plain CMake, so it sets up Python 3.13 like the old shared file.
     - name: Use Python 3.13
       if: ${{ runner.os != 'Windows'}}
       uses: actions/setup-python@v6
@@ -80,7 +78,7 @@ jobs:
           --slave /usr/bin/g++ g++ /usr/bin/g++-14
         gcc --version
 
-    # Safeguard so `make ninja` always finds ninja. Remove if your runners already have it.
+    # Safeguard so `make ninja` always finds ninja.
     - name: Install ninja
       run: python -m pip install ninja
 
@@ -129,6 +127,7 @@ jobs:
         retention-days: 14
 
     # ---------------- Python startup test ----------------
+    # Runs Bforartists executable with a little bpy script that adds a cube
     - name: Test Python startup
       id: pytest
       if: ${{ inputs.test_python}}
