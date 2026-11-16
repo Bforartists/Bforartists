@@ -329,8 +329,10 @@ class CLIP_MT_tracking_editor_menus(Menu):
                 layout.menu("CLIP_MT_track")
             else:
                 layout.menu("CLIP_MT_clip")
-        elif sc.view == "GRAPH":
-            layout.menu("CLIP_MT_select_graph")
+        # BFA - #6110: CLIP_GRAPH_MT_select below covers this menu and adds
+        # Box Select; two Select menus is one too many.
+        # elif sc.view == "GRAPH":
+        #    layout.menu("CLIP_MT_select_graph")
 
         if sc.view == "GRAPH":
             if clip:
