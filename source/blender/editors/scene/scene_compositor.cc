@@ -609,7 +609,7 @@ static wmOperatorStatus scene_effect_open_editor_exec(bContext *C, wmOperator *o
 }
 
 /* BFA - operator registration for Open Compositor Scene Effect Editor */
-void SEQUENCER_OT_scene_effect_compositor_open_editor(wmOperatorType *ot)
+void SCENE_OT_effect_compositor_open_editor(wmOperatorType *ot)
 {
   ot->name = "Open Scene Effect Compositor Editor";
   ot->idname = "SCENE_OT_effect_compositor_open_editor";
@@ -846,7 +846,7 @@ void ED_operatortypes_scene_compositor()
   WM_operatortype_append(SCENE_OT_new_compositor_effect_node_group);
   WM_operatortype_append(SCENE_OT_duplicate_compositor_effect_node_group);
   WM_operatortype_append(SCENE_OT_add_compositor_effect_node_group_asset);
-  WM_operatortype_append(SEQUENCER_OT_scene_effect_compositor_open_editor);
+  WM_operatortype_append(SCENE_OT_effect_compositor_open_editor); // bfa node editor window compositor
 }
 
 /** \} */

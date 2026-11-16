@@ -709,7 +709,7 @@ static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOper
   return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
-/* BFA - operator registration for Open Compositor Modifier Editor */
+/* BFA - operator registration for Open Compositor Modifier Node Editor Window */
 void SEQUENCER_OT_strip_modifier_compositor_open_editor(wmOperatorType *ot)
 {
   ot->name = "Open Compositor Editor";

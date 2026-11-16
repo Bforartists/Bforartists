@@ -997,7 +997,7 @@ void draw_geometry_nodes_modifier_ui(const bContext &C,
     }
   }
 
-  /* BFA - Open Geometry Nodes Editor Operator */
+  /* BFA - Open Geometry Nodes Node Editor Window Operator */
   if (nmd.node_group != nullptr && !ID_MISSING(nmd.node_group)) {
     layout.separator();
     PointerRNA op_ptr = layout.op("OBJECT_OT_geometry_nodes_open_editor",

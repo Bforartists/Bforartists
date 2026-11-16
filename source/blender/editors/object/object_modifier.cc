@@ -4100,6 +4100,7 @@ static wmOperatorStatus geometry_nodes_open_editor_exec(bContext *C, wmOperator 
     return OPERATOR_CANCELLED;
   }
 
+  /* BFA - resolve modifier from operator property */
   std::string modifier_name = RNA_string_get(op->ptr, "modifier");
   ModifierData *md = BKE_modifiers_findby_name(ob, modifier_name.c_str());
   if (!md || md->type != eModifierType_Nodes) {
