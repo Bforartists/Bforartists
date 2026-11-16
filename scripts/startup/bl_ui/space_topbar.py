@@ -1204,6 +1204,10 @@ class TOPBAR_PT_grease_pencil_layers(Panel):
         layout = self.layout
         grease_pencil = context.object.data
 
+        # BFA - #6298: the header button shows the active layer name, so the
+        # popover carries the panel title for consistency with Properties.
+        layout.label(text="Layers", icon='OUTLINER_DATA_GP_LAYER')
+
         DATA_PT_grease_pencil_layers.draw_settings(layout, grease_pencil)
 
 
