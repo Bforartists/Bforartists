@@ -4106,7 +4106,7 @@ static wmOperatorStatus geometry_nodes_open_editor_exec(bContext *C, wmOperator 
     return OPERATOR_CANCELLED;
   }
 
-  auto *nmd = reinterpret_cast<NodesModifierData *>(md);
+  NodesModifierData *nmd = reinterpret_cast<NodesModifierData *>(md);
 
   const bool result = ED_node_tree_open_temp(C,
                                              op->reports,

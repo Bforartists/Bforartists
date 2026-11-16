@@ -53,7 +53,7 @@
 #include "ED_asset.hh"
 #include "ED_asset_import.hh"
 #include "ED_asset_menu_utils.hh"
-#include "ED_node_c.hh" // bfa
+#include "ED_node_c.hh" // bfa node editor window
 #include "ED_object.hh"
 #include "ED_scene.hh"
 
@@ -608,7 +608,7 @@ static wmOperatorStatus scene_effect_open_editor_exec(bContext *C, wmOperator *o
   return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
-/* BFA - operator registration for Open Compositor Modifier Editor */
+/* BFA - operator registration for Open Compositor Scene Effect Editor */
 void SEQUENCER_OT_scene_effect_compositor_open_editor(wmOperatorType *ot)
 {
   ot->name = "Open Scene Effect Compositor Editor";
@@ -622,7 +622,7 @@ void SEQUENCER_OT_scene_effect_compositor_open_editor(wmOperatorType *ot)
 }
 
 /** \} */
-/* BFA - end Open Compositor Modifier Editor Operator */
+/* BFA - end Open Compositor Scene Effect Editor Operator */
 
 /* -------------------------------------------------------------------- */
 /** \name Root Asset Catalogs Menu

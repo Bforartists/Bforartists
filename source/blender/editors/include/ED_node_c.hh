@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "DNA_windowmanager_types.h" // bfa
+#include "DNA_windowmanager_types.h" // bfa node editor window 
 
 namespace blender {
 
@@ -56,7 +56,7 @@ void ED_node_tree_pop(ARegion *region, SpaceNode *snode);
 int ED_node_tree_depth(SpaceNode *snode);
 bNodeTree *ED_node_tree_get(SpaceNode *snode, int level);
 /**
- * BFA - Node Editor Common
+ * BFA - Node Editor Window Common
  * Open a temporary Node Editor and start editing the given node tree.
 **/
 bool ED_node_tree_open_temp(bContext *C,

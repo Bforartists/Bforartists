@@ -231,14 +231,9 @@ int ED_node_tree_path_length(SpaceNode *snode)
 }
 
 /**
- * Open a temporary Node Editor.
- *
- * \param context  Meaning depends on ntree->type:
- *                 - NTREE_GEOMETRY   → SpaceNodeGeometryNodesType
- *                 - NTREE_COMPOSIT   → SpaceNodeCompositorNodesType
- *                 - NTREE_SHADER     → eSpaceNode_ShaderFrom
- *                 - NTREE_TEXTURE    → eSpaceNode_TexFrom
- *                 - others           → ignored
+ * BFA node editor window 
+ * Open a Node Editor.
+ * Shared code between nodetree type.
  */
 bool ED_node_tree_open_temp(bContext *C,
                             ReportList *reports,
