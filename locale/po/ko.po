@@ -106083,7 +106083,8 @@ msgid "Show Scene Strip Range"
 msgstr "씬 스트립 범위 표시"
 
 
-msgid "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+# BFA - reworded, Blender: "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+msgid "Display the range of the current scene strip, with or without scene time synchronization"
 msgstr "시퀀스 에디터에서 씬 시간 동기화를 사용하는 경우 현재 씬 스트립의 범위를 표시함"
 
 

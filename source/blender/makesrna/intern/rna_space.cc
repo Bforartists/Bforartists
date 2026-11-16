@@ -7694,10 +7694,12 @@ static void rna_def_space_dopesheet_overlays(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_scene_strip_range", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "overlays.flag", ADS_SHOW_SCENE_STRIP_FRAME_RANGE);
+  /* BFA - #7003 reworded: the shading also works without scene time
+   * synchronization enabled. */
   RNA_def_property_ui_text(prop,
                            "Show Scene Strip Range",
-                           "When using scene time synchronization in the sequence editor, display "
-                           "the range of the current scene strip");
+                           "Display the range of the current scene strip, with or without scene "
+                           "time synchronization");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, nullptr);
 
   /* bfa 3d sequencer interactive scene strip gizmos */

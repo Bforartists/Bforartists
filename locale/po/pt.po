@@ -113438,7 +113438,8 @@ msgid "Show Scene Strip Range"
 msgstr "Mostrar intervalo de faixas da cena"
 
 
-msgid "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+# BFA - reworded, Blender: "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+msgid "Display the range of the current scene strip, with or without scene time synchronization"
 msgstr "Ao utilizar sincronização de tempo de cena no editor de sequências, mostrar limite da actual faixa de cena"
 
 
