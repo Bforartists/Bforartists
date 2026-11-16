@@ -2693,6 +2693,14 @@ static void rna_def_strip(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Lock", "Lock strip so that it cannot be transformed");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, nullptr);
 
+  /* BFA - #6088: read-only text editing state, so the UI can hide the text
+   * selection operators instead of drawing them greyed out. */
+  prop = RNA_def_property(srna, "is_text_editing_active", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_FLAG_TEXT_EDITING_ACTIVE);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(
+      prop, "Text Editing Active", "Whether the text strip is in text editing mode");
+
   /* Strip positioning. */
   /* Cache has to be invalidated before and after transformation. */
   prop = RNA_def_property(srna, "frame_final_duration", PROP_INT, PROP_TIME);
