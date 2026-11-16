@@ -1,0 +1,223 @@
+name: PR Build
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    if: >
+      github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, 'build') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'),
+               github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      statuses: write
+    outputs:
+      valid:   ${{ steps.parse.outputs.valid }}
+      sha:     ${{ steps.parse.outputs.sha }}
+      windows: ${{ steps.parse.outputs.windows }}
+      linux:   ${{ steps.parse.outputs.linux }}
+      macos:   ${{ steps.parse.outputs.macos }}
+      lite:    ${{ steps.parse.outputs.lite }}
+      upload:  ${{ steps.parse.outputs.upload }}
+      report:  ${{ steps.parse.outputs.report }}
+      test:    ${{ steps.parse.outputs.test }}
+    steps:
+      - id: parse
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const tokens = context.payload.comment.body.trim().toLowerCase().split(/\s+/);
+            // "+ test_python" and "+test_python" both reduce to "test_python"
+            const args = tokens.slice(1).map(t => t.replace(/^\+/, '')).filter(Boolean);
+            const flags = new Set(args);
+
+            const known = new Set(['windows', 'linux', 'macos', 'all', 'lite', 'upload', 'no-report', 'test_python']);
+            const platforms = ['windows', 'linux', 'macos', 'all'].filter(t => flags.has(t));
+
+            const lite      = flags.has('lite');
+            const upload    = flags.has('upload');
+            const bare     = args.length === 0; 
+            const noReport  = flags.has('no-report') || args.length === 0;
+            const test      = flags.has('test_python');
+
+            const valid =
+              tokens[0] === 'build' &&
+              args.every(t => known.has(t)) &&
+              args.length === flags.size &&
+              platforms.length <= 1;
+
+            if (!valid) {
+              core.setOutput('valid', 'false');
+              return;
+            }
+
+            const target = platforms[0] || 'all';
+            const want = (p) => target === 'all' || target === p;
+            const selected = {
+              windows: want('windows'),
+              linux:   want('linux'),
+              macos:   want('macos'),
+            };
+
+            const { owner, repo } = context.repo;
+            const { data: pr } = await github.rest.pulls.get({
+              owner, repo, pull_number: context.issue.number,
+            });
+
+            core.setOutput('valid', 'true');
+            core.setOutput('sha', pr.head.sha);
+            core.setOutput('upload', String(upload));
+            core.setOutput('lite', String(lite));
+            core.setOutput('report', String(!noReport));
+            core.setOutput('test', String(test));
+
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            for (const [p, on] of Object.entries(selected)) {
+              core.setOutput(p, String(on));
+              if (!on) continue;
+              await github.rest.repos.createCommitStatus({
+                owner, repo,
+                sha: pr.head.sha,
+                state: 'pending',
+                context: `Build ${p}`,
+                description: `Building${lite ? ' (lite)' : ''}${upload ? ' + upload' : ''}`,
+                target_url: runUrl,
+              });
+            }
+
+  build-windows:
+    needs: gate
+    if: needs.gate.outputs.valid == 'true' && needs.gate.outputs.windows == 'true'
+    uses: ./.github/workflows/windows.yml
+    with:
+      ref: ${{ needs.gate.outputs.sha }}
+      upload: ${{ needs.gate.outputs.upload }}
+      lite: ${{ needs.gate.outputs.lite }}
+      test_python: ${{ needs.gate.outputs.test }}
+      artifact_suffix: "${{ needs.gate.outputs.lite == 'true' && '-lite' || '' }}-PR${{ github.event.issue.number }}"
+
+  build-linux:
+    needs: gate
+    if: needs.gate.outputs.valid == 'true' && needs.gate.outputs.linux == 'true'
+    uses: ./.github/workflows/linux.yml
+    with:
+      ref: ${{ needs.gate.outputs.sha }}
+      upload: ${{ needs.gate.outputs.upload }}
+      lite: ${{ needs.gate.outputs.lite }}
+      test_python: ${{ needs.gate.outputs.test }}
+      artifact_suffix: "${{ needs.gate.outputs.lite == 'true' && '-lite' || '' }}-PR${{ github.event.issue.number }}"
+
+  build-macos:
+    needs: gate
+    if: needs.gate.outputs.valid == 'true' && needs.gate.outputs.macos == 'true'
+    uses: ./.github/workflows/mac.yml
+    with:
+      ref: ${{ needs.gate.outputs.sha }}
+      upload: ${{ needs.gate.outputs.upload }}
+      lite: ${{ needs.gate.outputs.lite }}
+      test_python: ${{ needs.gate.outputs.test }}
+      artifact_suffix: "${{ needs.gate.outputs.lite == 'true' && '-lite' || '' }}-PR${{ github.event.issue.number }}"
+
+  report:
+    needs: [gate, build-windows, build-linux, build-macos]
+    if: always() && needs.gate.outputs.valid == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+      pull-requests: write
+      actions: read
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        with:
+          script: |
+            const needs = JSON.parse(process.env.NEEDS);
+            const { owner, repo } = context.repo;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const sha = needs.gate.outputs.sha;
+            const upload = needs.gate.outputs.upload === 'true';
+            const report = needs.gate.outputs.report === 'true';
+            const lite = needs.gate.outputs.lite === 'true';
+            const suffix = `-PR${context.issue.number}`;
+
+            let artifacts = [];
+            if (upload && report) {
+              const res = await github.rest.actions.listWorkflowRunArtifacts({
+                owner, repo, run_id: context.runId, per_page: 100,
+              });
+              artifacts = res.data.artifacts.filter(a => a.name.endsWith(suffix));
+            }
+            
+            const details = [];
+            const rows = [];
+            for (const p of ['windows', 'linux', 'macos']) {
+              const result = needs[`build-${p}`].result;
+              if (result === 'skipped') continue;
+              const ok = result === 'success';
+              
+              await github.rest.repos.createCommitStatus({
+                owner, repo, sha,
+                state: ok ? 'success' : (result === 'cancelled' ? 'error' : 'failure'),
+                context: `Build ${p}`,
+                description: ok ? 'Build passed' : `Build ${result}`,
+                target_url: runUrl,
+              });
+
+              const label = lite ? `${p} (lite)` : p;
+              const status = ok ? '✅ passed' : '❌ ' + result;
+
+              if (upload) {
+                const art = artifacts.find(a => a.name.toLowerCase().includes(p));
+                const dl = art
+                  ? `[${art.name}](${runUrl}/artifacts/${art.id})`
+                  : (ok ? 'artifact not found' : '-');
+                rows.push(`| ${label} | ${status} | ${dl} |`);
+              } else {
+                rows.push(`| ${label} | ${status} |`);
+              }
+
+              const out = needs[`build-${p}`].outputs || {};
+              if (out.test_verdict) {
+                const passed = out.test_verdict.startsWith('PASS');
+                details.push([
+                  `<details><summary>${passed ? '✅' : '❌'} test_python (${label})</summary>`,
+                  '',
+                  `**${out.test_verdict}**`,
+                  '',
+                  '~~~~',
+                  out.test_log || '(no log captured)',
+                  '~~~~',
+                  '',
+                  '</details>',
+                ].join('\n'));
+              }
+            }
+
+            const header = upload
+              ? ['| Platform | Result | Download |', '|---|---|---|']
+              : ['| Platform | Result |', '|---|---|'];
+
+            const body = [
+              `**Build finished** for \`${sha.slice(0, 7)}\``,
+              '',
+              ...header,
+              ...rows,
+              '',
+              ...details,
+              '',
+              `[Workflow run](${runUrl})`,
+            ].join('\n');
+
+            if (report) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: context.issue.number, body,
+              });
+            }

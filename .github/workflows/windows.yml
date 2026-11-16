@@ -1,9 +1,37 @@
 name: Windows
+
 on:
-  push:
-      branches: [ "master" ]
-  pull_request:
-      branches: [ "master" ]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+        default: ""
+      upload:
+        type: string
+        required: false
+        default: "true"
+      lite:
+        type: string
+        required: false
+        default: "false"
+      test_python:
+        type: string
+        required: false
+        default: "false"
+      artifact_suffix:
+        type: string
+        required: false
+        default: ""
+    outputs:
+      test_verdict:
+        value: ${{ jobs.build.outputs.test_verdict }}
+      test_log:
+        value: ${{ jobs.build.outputs.test_log }}
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -12,3 +40,8 @@ jobs:
       os: "windows-latest"
       c_compiler: "cl"
       cpp_compiler: "cl"
+      ref: ${{ inputs.ref }}
+      upload: ${{ inputs.upload != 'false' }}
+      lite: ${{ inputs.lite == 'true' }}
+      test_python: ${{ inputs.test_python == 'true' }}
+      artifact_suffix: ${{ inputs.artifact_suffix }}
