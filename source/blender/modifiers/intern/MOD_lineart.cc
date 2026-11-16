@@ -329,10 +329,19 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
 
   ui::Layout *col = &layout.column(true);
 
-  sub = &col->row(false, IFACE_("Create"));
-  sub->prop(ptr, "use_contour", UI_ITEM_NONE, "", ICON_NONE);
+  col->label(IFACE_("Create"), ICON_NONE); /* bfa - section label */
 
-  ui::Layout *entry = &sub->row(true);
+  ui::Layout *row = &col->row(true);  /* bfa - our layout */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
+  row->separator();                   /* bfa - Indent */
+  row->prop(ptr, "use_contour", UI_ITEM_NONE, IFACE_("Contour"), ICON_NONE);
+  row->decorator(ptr, "use_contour", 0); /* bfa - Add the decorator */
+
+  row = &col->row(true);              /* bfa - our layout */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
+  row->separator();                   /* bfa - Indent */
+  row->separator();                   /* bfa - Indent under Contour */
+  ui::Layout *entry = &row->row(true);
   entry->active_set(RNA_boolean_get(ptr, "use_contour"));
   entry->prop(ptr, "silhouette_filtering", UI_ITEM_NONE, "", ICON_NONE);
 
@@ -341,20 +350,30 @@ static void edge_types_panel_draw(const bContext * /*C*/, Panel *panel)
     entry->prop(ptr, "use_invert_silhouette", UI_ITEM_NONE, "", ICON_ARROW_LEFTRIGHT);
   }
 
-  sub = &col->row(false);
+  row = &col->row(true);              /* bfa - our layout */
+  row->use_property_split_set(false); /* bfa - use_property_split = False */
+  row->separator();                   /* bfa - Indent */
   if (use_cache && !is_first) {
-    sub->prop(ptr, "use_crease", UI_ITEM_NONE, IFACE_("Crease (Angle Cached)"), ICON_NONE);
+    row->prop(ptr, "use_crease", UI_ITEM_NONE, IFACE_("Crease (Angle Cached)"), ICON_NONE);
   }
   else {
-    sub->prop(ptr, "use_crease", UI_ITEM_NONE, "", ICON_NONE);
-    sub->prop(ptr,
+    row->prop(ptr, "use_crease", UI_ITEM_NONE, IFACE_("Crease"), ICON_NONE);
+  }
+  row->decorator(ptr, "use_crease", 0); /* bfa - Add the decorator */
+
+  if (!(use_cache && !is_first)) { /* bfa - threshold indented under Crease */
+    row = &col->row(true);
+    row->use_property_split_set(false);
+    row->separator();
+    row->separator();
+    row->prop(ptr,
               "crease_threshold",
               ui::ITEM_R_SLIDER | ui::ITEM_R_FORCE_BLANK_DECORATE,
               std::nullopt,
               ICON_NONE);
   }
 
-  ui::Layout *row = &col->row(true);  /* bfa - our layout */
+  row = &col->row(true);              /* bfa - our layout */
   row->use_property_split_set(false); /* bfa - use_property_split = False */
   row->separator();                   /* bfa - Indent */
   row->prop(ptr,
