@@ -5416,6 +5416,24 @@ keyconfig_data = \
        ],
       },
      ),
+    # BFA - #5914: SHIFT+DOUBLE LMB selects the linked island, like
+    # SHIFT+DOUBLE LMB selects the collection in Object mode.
+    ("mesh.select_linked_pick",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
+     {"properties":
+      [("deselect", False),
+       ("extend", False),
+       ],
+      },
+     ),
+    ("mesh.select_linked_pick",
+     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True, "ctrl": True},
+     {"properties":
+      [("deselect", False),
+       ("extend", True),
+       ],
+      },
+     ),
     ("mesh.hide",
      {"type": 'H', "value": 'PRESS'},
      {"properties":
