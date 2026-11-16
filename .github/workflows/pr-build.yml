@@ -43,7 +43,8 @@ jobs:
 
             const lite      = flags.has('lite');
             const upload    = flags.has('upload');
-            const noReport  = flags.has('no-report');
+            const bare     = args.length === 0; 
+            const noReport  = flags.has('no-report') || bare;
             const test      = flags.has('test_python');
 
             let valid =
