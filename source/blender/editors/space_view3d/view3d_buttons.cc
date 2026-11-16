@@ -3550,8 +3550,20 @@ static void view3d_panel_curve_data(const bContext *C, Panel *panel)
       IFACE_("Cyclic"),
       status.cyclic_count == 0 || status.cyclic_count == status.curve_count,
       [&]() {
-        ui::Button *but = uiDefButV(
-            block, ui::ButtonType::Checkbox, "", 0, 0, butw, buth, &modified.cyclic, 0, 1, "");
+        /* BFA - #5818: label the checkbox like the Active Spline panel ("U"), with a tooltip. */
+        ui::Button *but = uiDefButV(block,
+                                    ui::ButtonType::Checkbox,
+                                    IFACE_("U"),
+                                    0,
+                                    0,
+                                    butw,
+                                    buth,
+                                    &modified.cyclic,
+                                    0,
+                                    1,
+                                    ob->type == OB_GREASE_PENCIL ?
+                                        TIP_("Make the stroke a closed loop") :
+                                        TIP_("Make the curve a closed loop"));
         button_func_set(but, handle_curves_cyclic, nullptr, nullptr);
         return but;
       });
