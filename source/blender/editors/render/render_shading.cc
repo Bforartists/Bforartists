@@ -3223,30 +3223,14 @@ static wmOperatorStatus material_open_node_editor_exec(bContext *C, wmOperator *
     return OPERATOR_CANCELLED;
   }
 
-  if (!ma->nodetree) {
-    BKE_report(op->reports, RPT_ERROR, "Material has no node tree");
-    return OPERATOR_CANCELLED;
-  }
-
-  ScrArea *area = ED_screen_temp_space_open(
-      C, IFACE_("Shader Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
-  if (!area) {
-    BKE_report(op->reports, RPT_ERROR, "Failed to open Shader Editor");
-    return OPERATOR_CANCELLED;
-  }
-
-  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
-  STRNCPY(snode->tree_idname, "ShaderNodeTree");
-  snode->shaderfrom = SNODE_SHADER_OBJECT;
-  snode->selected_node_group = nullptr;
-
-  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
-  ED_node_tree_start(region, snode, ma->nodetree, &ma->id, nullptr);
-  blender::ed::space_node::tree_update(C);
-
-  WM_event_add_notifier(C, NC_MATERIAL | ND_NODES, nullptr);
-
-  return OPERATOR_FINISHED;
+  const bool result = ED_node_tree_open_temp(C,
+                                             op->reports,
+                                             ma->nodetree,
+                                             &ma->id,
+                                             "Shader Editor",
+                                             NC_MATERIAL | ND_NODES,
+                                             0);  // for SNODE_SHADER_OBJECT
+  return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 static bool material_open_node_editor_poll(bContext *C)
@@ -3263,7 +3247,7 @@ void MATERIAL_OT_open_node_editor(wmOperatorType *ot)
   ot->description = "Open a Shader Editor window for this material";
   ot->exec = material_open_node_editor_exec;
   ot->poll = material_open_node_editor_poll;
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER;
 }
 
 /** \} */
@@ -3281,30 +3265,14 @@ static wmOperatorStatus world_open_node_editor_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (!wo->nodetree) {
-    BKE_report(op->reports, RPT_ERROR, "World has no node tree");
-    return OPERATOR_CANCELLED;
-  }
-
-  ScrArea *area = ED_screen_temp_space_open(
-      C, IFACE_("Shader Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
-  if (!area) {
-    BKE_report(op->reports, RPT_ERROR, "Failed to open Shader Editor");
-    return OPERATOR_CANCELLED;
-  }
-
-  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
-  STRNCPY(snode->tree_idname, "ShaderNodeTree");
-  snode->shaderfrom = SNODE_SHADER_WORLD;
-  snode->selected_node_group = nullptr;
-
-  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
-  ED_node_tree_start(region, snode, wo->nodetree, &wo->id, nullptr);
-  blender::ed::space_node::tree_update(C);
-
-  WM_event_add_notifier(C, NC_WORLD | ND_NODES, nullptr);
-
-  return OPERATOR_FINISHED;
+  const bool result = ED_node_tree_open_temp(C,
+                                             op->reports,
+                                             wo->nodetree,
+                                             &wo->id,
+                                             "Shader Editor",
+                                             NC_MATERIAL | ND_NODES,
+                                             1);  // for SNODE_SHADER_WORLD
+  return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 static bool world_open_node_editor_poll(bContext *C)
@@ -3321,7 +3289,7 @@ void WORLD_OT_open_node_editor(wmOperatorType *ot)
   ot->description = "Open a Shader Editor window for this world";
   ot->exec = world_open_node_editor_exec;
   ot->poll = world_open_node_editor_poll;
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER;
 }
 
 /** \} */
@@ -3329,6 +3297,12 @@ void WORLD_OT_open_node_editor(wmOperatorType *ot)
 /* -------------------------------------------------------------------- */
 /** \name BFA - Open Texture Node Editor Operator
  * \{ */
+
+static bool texture_is_brush_user(bContext *C)
+{
+  const ID *user_id = static_cast<const ID *>(CTX_data_pointer_get(C, "texture_user").data);
+  return user_id && GS(user_id->name) == ID_BR;
+}
 
 static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *op)
 {
@@ -3345,36 +3319,23 @@ static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *o
     }
   }
 
-  if (!tex->nodetree) {
-    BKE_report(op->reports, RPT_ERROR, "Texture has no node tree");
-    return OPERATOR_CANCELLED;
-  }
-
-  ScrArea *area = ED_screen_temp_space_open(
-      C, IFACE_("Texture Node Editor"), SPACE_NODE, USER_TEMP_SPACE_DISPLAY_WINDOW, false);
-  if (!area) {
-    BKE_report(op->reports, RPT_ERROR, "Failed to open Texture Node Editor");
-    return OPERATOR_CANCELLED;
-  }
-
-  SpaceNode *snode = area->spacedata.first_as<SpaceNode>();
-  STRNCPY(snode->tree_idname, "TextureNodeTree");
-  snode->texfrom = SNODE_TEX_BRUSH;
-  snode->selected_node_group = nullptr;
-
-  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
-  ED_node_tree_start(region, snode, tex->nodetree, &tex->id, nullptr);
-  blender::ed::space_node::tree_update(C);
-
-  WM_event_add_notifier(C, NC_TEXTURE | ND_NODES, nullptr);
-
-  return OPERATOR_FINISHED;
+  const bool result = ED_node_tree_open_temp(C,
+                                             op->reports,
+                                             tex->nodetree,
+                                             &tex->id,
+                                             "Texture Node Editor",
+                                             NC_MATERIAL | ND_NODES,
+                                             2);  // for SNODE_TEX_BRUSH
+  return result ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 static bool texture_open_node_editor_poll(bContext *C)
 {
-  Tex *tex = static_cast<Tex *>(CTX_data_pointer_get_type(C, "texture", RNA_Texture).data);
-  return tex != nullptr;
+  if (!texture_is_brush_user(C)) {
+    CTX_wm_operator_poll_msg_set(C, "Texture nodes are only supported for brush textures");
+    return false;
+  }
+  return true;
 }
 
 void TEXTURE_OT_open_node_editor(wmOperatorType *ot)
@@ -3384,7 +3345,7 @@ void TEXTURE_OT_open_node_editor(wmOperatorType *ot)
   ot->description = "Open a Texture Node Editor window for this texture";
   ot->exec = texture_open_node_editor_exec;
   ot->poll = texture_open_node_editor_poll;
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER;
 }
 
 /** \} */

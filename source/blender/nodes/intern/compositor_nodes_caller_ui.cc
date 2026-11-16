@@ -352,7 +352,7 @@ void draw_compositor_nodes_modifier_ui(const bContext &C,
     draw_mask_input_type_settings(C, *mask_input_layout, modifier_ptr);
   }
 
-  /* BFA - Open Compositor Modifier Editor Operator */
+  /* BFA - Open Compositor Modifier Node Editor Window Operator */
   if (cmd.node_group != nullptr && !ID_MISSING(cmd.node_group)) {
     layout.separator();
     PointerRNA op_ptr = layout.op("SEQUENCER_OT_strip_modifier_compositor_open_editor",
