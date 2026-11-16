@@ -19261,7 +19261,7 @@ msgid "Display As"
 msgstr "Показ Як"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "Як показувати об'єкт у вікні огляду"
 
 

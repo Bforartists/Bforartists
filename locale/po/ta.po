@@ -25790,7 +25790,7 @@ msgid "Display As"
 msgstr "எனக் காண்பி"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "வியூபோர்ட்டில் பொருளை எவ்வாறு காண்பிப்பது"
 
 

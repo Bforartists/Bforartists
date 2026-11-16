@@ -27369,7 +27369,7 @@ msgid "Display As"
 msgstr "Mostrar Como"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "Como mostrar objecto na janela de visualização"
 
 

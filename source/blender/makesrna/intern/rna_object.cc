@@ -3664,7 +3664,11 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "display_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, nullptr, "dt");
   RNA_def_property_enum_items(prop, drawtype_items);
-  RNA_def_property_ui_text(prop, "Display As", "How to display object in viewport");
+  /* BFA - reworded, Blender: "How to display object in viewport" */
+  RNA_def_property_ui_text(
+      prop,
+      "Display As",
+      "How to display object in the viewport (has no effect in Rendered shading)");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update");
 
   prop = RNA_def_property(srna, "show_bounds", PROP_BOOLEAN, PROP_NONE);

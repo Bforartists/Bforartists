@@ -20745,7 +20745,7 @@ msgid "Display As"
 msgstr "Olarak Görüntüle"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "Nesneyi görünüm alanında nasıl görüntüleyebilirim"
 
 

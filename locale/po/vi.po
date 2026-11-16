@@ -26969,7 +26969,7 @@ msgid "Display As"
 msgstr "Hiển Thị là"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "Hình thức biểu hiện đối tượng trong cổng nhìn"
 
 
