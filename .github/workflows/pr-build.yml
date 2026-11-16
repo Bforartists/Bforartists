@@ -44,18 +44,14 @@ jobs:
             const lite      = flags.has('lite');
             const upload    = flags.has('upload');
             const bare     = args.length === 0; 
-            const noReport  = flags.has('no-report') || bare;
+            const noReport  = flags.has('no-report') || args.length === 0;
             const test      = flags.has('test_python');
 
-            let valid =
+            const valid =
               tokens[0] === 'build' &&
               args.every(t => known.has(t)) &&
               args.length === flags.size &&
               platforms.length <= 1;
-
-            
-            valid = valid && (platforms.length === 1 || lite);
-            
 
             if (!valid) {
               core.setOutput('valid', 'false');
@@ -209,13 +205,12 @@ jobs:
               ? ['| Platform | Result | Download |', '|---|---|---|']
               : ['| Platform | Result |', '|---|---|'];
 
-            const anyUploadable = ['windows', 'linux', 'macos']
-              .some(p => needs[`build-${p}`].result !== 'skipped');
             const body = [
               `**Build finished** for \`${sha.slice(0, 7)}\``,
               '',
               ...header,
               ...rows,
+              '',
               ...details,
               '',
               `[Workflow run](${runUrl})`,
