@@ -26026,7 +26026,7 @@ msgid "Display As"
 msgstr "다음으로 표시"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "뷰포트에 오브젝트를 표시하는 방법"
 
 

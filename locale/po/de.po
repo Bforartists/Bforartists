@@ -14815,7 +14815,7 @@ msgid "Display As"
 msgstr "Anzeigen als"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "Wie die Masche im Ansichtsfenster angezeigt werden soll"
 
 

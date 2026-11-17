@@ -318,6 +318,12 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         # wire objects only use the max. display type for duplis
         # and empties with geometry nodes modifier
         sub.active = obj_type != 'CAMERA'
+        # BFA - #5912: Display As does nothing under Rendered shading; grey it out
+        # when every 3D viewport in the window is rendered.
+        view3ds = [area.spaces.active for area in context.window.screen.areas
+                   if area.type == 'VIEW_3D']
+        if view3ds and all(v3d.shading.type == 'RENDERED' for v3d in view3ds):
+            sub.active = False
         sub.prop(obj, "display_type", text="Display As")
 
         if is_geometry or is_dupli or is_empty_image or is_gpencil:

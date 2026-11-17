@@ -21176,7 +21176,7 @@ msgid "Display As"
 msgstr "Onyesha Kama"
 
 
-msgid "How to display object in viewport"
+msgid "How to display object in the viewport (has no effect in Rendered shading)"
 msgstr "Jinsi ya kuonyesha kitu kwenye kituo cha kutazama"
 
 
