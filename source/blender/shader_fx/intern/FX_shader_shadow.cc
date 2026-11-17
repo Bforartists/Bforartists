@@ -84,7 +84,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = shaderfx_panel_get_property_pointers(panel, nullptr);
 
-  layout.use_property_split_set(true);
+  layout.use_property_split_set(false); /* BFA - align props left */
 
   layout.prop(ptr, "shadow_color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -104,7 +104,7 @@ static void blur_panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = shaderfx_panel_get_property_pointers(panel, nullptr);
 
-  layout.use_property_split_set(true);
+  layout.use_property_split_set(false); /* BFA - align props left */
 
   layout.prop(ptr, "blur", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "samples", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -125,7 +125,7 @@ static void wave_panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = shaderfx_panel_get_property_pointers(panel, nullptr);
 
-  layout.use_property_split_set(true);
+  layout.use_property_split_set(false); /* BFA - align props left */
 
   layout.active_set(RNA_boolean_get(ptr, "use_wave"));
 
