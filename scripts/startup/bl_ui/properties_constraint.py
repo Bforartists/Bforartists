@@ -438,15 +438,20 @@ class ConstraintButtonsPanel:
         layout.use_property_decorate = True
 
         #########################################
-        # BFA - same layout as Limit Location: checkboxes left,
-        # value field right or a triangle button when disabled.
+        # BFA - same layout as Limit Location, plus a group label:
+        # label on top, checkboxes left, value field right or a
+        # triangle button when disabled.
 
         col = layout.column(align = True)
+        col.label(text = "Minimum")
+        row = col.row(align = True)
+        row.separator()  # BFA - indent under the group label
+        col = row.column(align = True)
         split = col.split(factor = 0.38)
 
         col = split.column(align = True)
         col.use_property_split = False
-        col.prop(con, "use_min_x", text = "Minimum X")
+        col.prop(con, "use_min_x", text = "X")
         col.prop(con, "use_min_y", text = "Y")
         col.prop(con, "use_min_z", text = "Z")
 
@@ -470,11 +475,15 @@ class ConstraintButtonsPanel:
         ###########################################
 
         col = layout.column(align = True)
+        col.label(text = "Maximum")
+        row = col.row(align = True)
+        row.separator()  # BFA - indent under the group label
+        col = row.column(align = True)
         split = col.split(factor = 0.38)
 
         col = split.column(align = True)
         col.use_property_split = False
-        col.prop(con, "use_max_x", text = "Maximum X")
+        col.prop(con, "use_max_x", text = "X")
         col.prop(con, "use_max_y", text = "Y")
         col.prop(con, "use_max_z", text = "Z")
 
