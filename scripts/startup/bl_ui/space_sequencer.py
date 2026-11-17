@@ -629,7 +629,8 @@ class SEQUENCER_MT_view(Menu):
             layout.operator("sequencer.view_selected", text="Frame Selected", icon="VIEW_SELECTED")
 
             layout.separator()
-            layout.menu("SEQUENCER_MT_proxy")
+            # BFA - not used, the sidebar Proxy tab covers it
+            # layout.menu("SEQUENCER_MT_proxy")
             layout.operator_context = "INVOKE_DEFAULT"
 
         layout.separator()
