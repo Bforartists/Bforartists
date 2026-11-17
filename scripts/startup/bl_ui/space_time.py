@@ -45,7 +45,6 @@ def playback_controls(layout, context):
     st = context.space_data
     is_sequencer = st.type == 'SEQUENCE_EDITOR'
     is_timeline = st.type == 'DOPESHEET_EDITOR' and st.mode == 'TIMELINE'  # BFA
-    is_nla = st.type == 'NLA_EDITOR'  # BFA
 
     scene = context.scene if not is_sequencer else context.sequencer_scene
     tool_settings = scene.tool_settings if scene else None
@@ -150,11 +149,9 @@ def playback_controls(layout, context):
 
         # BFA - Keyframing controls
         row = layout.row(align=True)
-        # BFA - NLA uses action.keyframe_insert instead of anim.keyframe_insert
-        if is_nla:
-            row.operator("action.keyframe_insert", text="", icon="KEYFRAMES_INSERT")
-        else:
-            row.operator("anim.keyframe_insert", text="", icon="KEYFRAMES_INSERT")
+        # BFA - #6724: anim.keyframe_insert also in the NLA; action.keyframe_insert
+        # only polls in the Action Editor, leaving the NLA footer button dead.
+        row.operator("anim.keyframe_insert", text="", icon="KEYFRAMES_INSERT")
         row.operator(
             "anim.keyframe_delete_v3d", text="", icon="KEYFRAMES_REMOVE"
         )  # BFA - updated to work like it would in the 3D View (as expected)
