@@ -210,6 +210,12 @@ PropertyRNA *RNA_struct_find_property(PointerRNA *ptr, const char *identifier);
 PropertyRNA *RNA_struct_find_property(PointerRNA *ptr, UString identifier);
 
 /**
+ * Sometimes there are shadowed properties (e.g. PropertyGroup has a built-in readonly "name"
+ * property that can be overridden from Python with an editable one).
+ */
+bool RNA_property_is_shadowed(PointerRNA &ptr, PropertyRNA &prop);
+
+/**
  * Same as `RNA_struct_find_property` but returns `nullptr` if the property type is no same to
  * `property_type_check`.
  */
@@ -738,6 +744,11 @@ eRNAStatus RNA_property_collection_move(PointerRNA *ptr,
 
 /**
  * Copy the given property value from `fromtptr` to `ptr` data.
+ *
+ * \param bmain Main database containing the owner of the _destination_ `ptr` PointerRNA. May be
+ * null (e.g. in evaluated data case, no-main IDs, etc.), in which case some features may not work
+ * (e.g. default apply callback will skip calling the 'update' callback on the destination
+ * property).
  *
  * \return True if copy was successful, false otherwise.
  */

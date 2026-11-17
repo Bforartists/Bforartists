@@ -21,6 +21,7 @@
 #include "ED_select_utils.hh"
 
 #include "WM_api.hh"
+#include <cfloat> /* For FLT_MAX */
 
 namespace blender {
 
@@ -217,6 +218,27 @@ class DrawingPlacement {
   float3 try_project_depth(float2 co) const;
 };
 
+struct ClosestGreasePencilDrawing {
+  bke::greasepencil::Drawing *drawing = nullptr;
+  int active_defgroup_index = -1;
+  int stroke_index = -1;
+  float distance_sq = FLT_MAX;
+};
+
+const ClosestGreasePencilDrawing find_closest_greasepencil_drawing_screen_space(
+    const ViewContext &vc,
+    Object *obj,
+    int2 screen_pos,
+    const std::optional<StringRefNull> vertex_group_name,
+    bke::AttrDomain domain);
+
+ClosestGreasePencilDrawing find_closest_editable_greasepencil_drawing_screen_space(
+    const ViewContext &vc,
+    Object *obj,
+    int2 screen_pos,
+    const std::optional<StringRefNull> vertex_group_name,
+    bke::AttrDomain domain);
+
 void set_selected_frames_type(bke::greasepencil::Layer &layer,
                               const eBezTriple_KeyframeType key_type);
 
@@ -298,23 +320,23 @@ bool grease_pencil_paste_keyframes(bAnimContext *ac,
  */
 bool select_frame_at(bke::greasepencil::Layer &layer,
                      const int frame_number,
-                     const short select_mode);
+                     const eEditKeyframes_Select select_mode);
 
 void select_frames_at(bke::greasepencil::LayerGroup &layer_group,
                       const int frame_number,
-                      const short select_mode);
+                      const eEditKeyframes_Select select_mode);
 
-void select_all_frames(bke::greasepencil::Layer &layer, const short select_mode);
+void select_all_frames(bke::greasepencil::Layer &layer, const eEditKeyframes_Select select_mode);
 
 void select_frames_region(KeyframeEditData *ked,
                           bke::greasepencil::TreeNode &node,
-                          const short tool,
-                          const short select_mode);
+                          const eEditKeyframes_Validate tool,
+                          const eEditKeyframes_Select select_mode);
 
 void select_frames_range(bke::greasepencil::TreeNode &node,
                          const float min,
                          const float max,
-                         const short select_mode);
+                         const eEditKeyframes_Select select_mode);
 
 /**
  * Returns true if any frame of the \a layer is selected.
@@ -1020,6 +1042,7 @@ struct CurveBooleanResult {
   bke::CurvesGeometry curves;
   Array<bool> unchanged_curves;
   Array<int> dst_to_src_curves;
+  Array<bool> is_clipping_point;
 };
 
 /* Project the point from local space to the clipping 2d space. */
@@ -1032,15 +1055,15 @@ CurveBooleanResult curve_boolean(const CurveBooleanOpParameters op_params,
                                  const IndexMask &editable_shapes,
                                  const IndexMask &clipping_shapes);
 
-CurveBooleanResult curve_boolean_with_planes(const CurveBooleanOpParameters op_params,
-                                             const bke::CurvesGeometry &curves,
-                                             ProjectionFunc project_fn,
-                                             GroupedSpan<int> shapes,
-                                             Span<float4> curve_planes,
-                                             const IndexMask &editable_shapes,
-                                             const IndexMask &clipping_shapes,
+/**
+ * Post step of the boolean operation: move all the points that come from the clipping shape onto
+ * the plane of the source curve they were merged into, so the carved strokes stay planar.
+ */
+void project_clipping_points_to_curve_planes(boolean::CurveBooleanResult &result,
+                                             const Span<float4> curve_planes,
                                              const float4x4 &layer_to_world,
-                                             const ARegion &region);
+                                             const ARegion &region,
+                                             const boolean::ProjectionFunc project_fn);
 
 }  // namespace boolean
 

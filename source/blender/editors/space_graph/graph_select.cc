@@ -187,8 +187,7 @@ static void get_nearest_fcurve_verts_list(bAnimContext *ac,
 
   for (bAnimListElem &ale : anim_data) {
     FCurve *fcu = static_cast<FCurve *>(ale.key_data);
-    float offset;
-    float unit_scale = ANIM_unit_mapping_get_factor(ac->scene, ale.id, fcu, mapping_flag, &offset);
+    const UnitMapping unit_mapping = ANIM_unit_mapping_get(ac->scene, ale.id, fcu, mapping_flag);
 
     /* apply NLA mapping to all the keyframes */
     ANIM_nla_mapping_apply_if_needed_fcurve(
@@ -208,8 +207,8 @@ static void get_nearest_fcurve_verts_list(bAnimContext *ac,
                                   nullptr,
                                   NEAREST_HANDLE_KEY,
                                   mval,
-                                  unit_scale,
-                                  offset);
+                                  unit_mapping.scale,
+                                  unit_mapping.offset);
 
         /* Handles. */
         if (fcurve_handle_sel_check(sipo, bezt1)) {
@@ -225,8 +224,8 @@ static void get_nearest_fcurve_verts_list(bAnimContext *ac,
                                       nullptr,
                                       NEAREST_HANDLE_LEFT,
                                       mval,
-                                      unit_scale,
-                                      offset);
+                                      unit_mapping.scale,
+                                      unit_mapping.offset);
           }
 
           /* second handle only visible if this segment is bezier */
@@ -239,8 +238,8 @@ static void get_nearest_fcurve_verts_list(bAnimContext *ac,
                                       nullptr,
                                       NEAREST_HANDLE_RIGHT,
                                       mval,
-                                      unit_scale,
-                                      offset);
+                                      unit_mapping.scale,
+                                      unit_mapping.offset);
           }
         }
       }
@@ -357,7 +356,7 @@ void deselect_graph_keys(bAnimContext *ac, bool test, eEditKeyframes_Select sel,
   ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
   int filter;
 
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   KeyframeEditFunc test_cb, sel_cb;
 
   /* determine type-based settings */
@@ -560,14 +559,14 @@ static ListBaseT<bAnimListElem> initialize_box_select_anim_data(const int filter
 }
 
 static void initialize_box_select_key_editing_data(const bool incl_handles,
-                                                   const short mode,
+                                                   const eEditKeyframes_Validate mode,
                                                    bAnimContext *ac,
                                                    void *data,
                                                    rctf *scaled_rectf,
                                                    KeyframeEditData *r_ked,
                                                    int *r_mapping_flag)
 {
-  memset(r_ked, 0, sizeof(KeyframeEditData));
+  *r_ked = {};
   switch (mode) {
     case BEZT_OK_REGION_LASSO: {
       KeyframeEdit_LassoData *data_lasso = static_cast<KeyframeEdit_LassoData *>(data);
@@ -619,16 +618,16 @@ static void initialize_box_select_key_editing_data(const bool incl_handles,
  */
 static bool box_select_graphkeys(bAnimContext *ac,
                                  const rctf *rectf_view,
-                                 short mode,
-                                 eEditKeyframes_Select selectmode,
-                                 bool incl_handles,
+                                 const eEditKeyframes_Validate mode,
+                                 const eEditKeyframes_Select selectmode,
+                                 const bool incl_handles,
                                  void *data)
 {
   const rctf rectf = initialize_box_select_coords(ac, rectf_view);
   const int filter = initialize_animdata_selection_filter();
   ListBaseT<bAnimListElem> anim_data = initialize_box_select_anim_data(filter, ac);
   rctf scaled_rectf;
-  KeyframeEditData ked;
+  KeyframeEditData ked{};
   int mapping_flag;
   initialize_box_select_key_editing_data(
       incl_handles, mode, ac, data, &scaled_rectf, &ked, &mapping_flag);
@@ -643,9 +642,7 @@ static bool box_select_graphkeys(bAnimContext *ac,
   /* First loop over data, doing box select. try selecting keys only. */
   for (bAnimListElem &ale : anim_data) {
     FCurve *fcu = static_cast<FCurve *>(ale.key_data);
-    float offset;
-    const float unit_scale = ANIM_unit_mapping_get_factor(
-        ac->scene, ale.id, fcu, mapping_flag, &offset);
+    const UnitMapping unit_mapping = ANIM_unit_mapping_get(ac->scene, ale.id, fcu, mapping_flag);
 
     /* Apply NLA mapping to all the keyframes, since it's easier than trying to
      * guess when a callback might use something different.
@@ -655,8 +652,8 @@ static bool box_select_graphkeys(bAnimContext *ac,
 
     scaled_rectf.xmin = rectf.xmin;
     scaled_rectf.xmax = rectf.xmax;
-    scaled_rectf.ymin = rectf.ymin / unit_scale - offset;
-    scaled_rectf.ymax = rectf.ymax / unit_scale - offset;
+    scaled_rectf.ymin = unit_mapping.unmap(rectf.ymin);
+    scaled_rectf.ymax = unit_mapping.unmap(rectf.ymax);
 
     /* Set horizontal range (if applicable).
      * NOTE: these values are only used for x-range and y-range but not region
@@ -778,7 +775,7 @@ static bool rectf_curve_intersection(const float offset,
  */
 static void box_select_graphcurves(bAnimContext *ac,
                                    const rctf *rectf_view,
-                                   const short mode,
+                                   const eEditKeyframes_Validate mode,
                                    const eEditKeyframes_Select selectmode,
                                    const bool incl_handles,
                                    void *data)
@@ -786,7 +783,7 @@ static void box_select_graphcurves(bAnimContext *ac,
   const int filter = initialize_animdata_selection_filter();
   ListBaseT<bAnimListElem> anim_data = initialize_box_select_anim_data(filter, ac);
   rctf scaled_rectf;
-  KeyframeEditData ked;
+  KeyframeEditData ked{};
   int mapping_flag;
   initialize_box_select_key_editing_data(
       incl_handles, mode, ac, data, &scaled_rectf, &ked, &mapping_flag);
@@ -800,9 +797,7 @@ static void box_select_graphcurves(bAnimContext *ac,
 
   for (bAnimListElem &ale : anim_data) {
     FCurve *fcu = static_cast<FCurve *>(ale.key_data);
-    float offset;
-    const float unit_scale = ANIM_unit_mapping_get_factor(
-        ac->scene, ale.id, fcu, mapping_flag, &offset);
+    const UnitMapping unit_mapping = ANIM_unit_mapping_get(ac->scene, ale.id, fcu, mapping_flag);
 
     const rctf rectf = initialize_box_select_coords(ac, rectf_view);
 
@@ -813,11 +808,11 @@ static void box_select_graphcurves(bAnimContext *ac,
      */
     scaled_rectf.xmin = rectf.xmin;
     scaled_rectf.xmax = rectf.xmax;
-    scaled_rectf.ymin = rectf.ymin / unit_scale - offset;
-    scaled_rectf.ymax = rectf.ymax / unit_scale - offset;
+    scaled_rectf.ymin = unit_mapping.unmap(rectf.ymin);
+    scaled_rectf.ymax = unit_mapping.unmap(rectf.ymax);
 
     const KeyframeEditFunc select_cb = ANIM_editkeyframes_select(selectmode);
-    if (rectf_curve_intersection(offset, unit_scale, &rectf, &ale, fcu)) {
+    if (rectf_curve_intersection(unit_mapping.offset, unit_mapping.scale, &rectf, &ale, fcu)) {
       if ((selectmode & SELECT_ADD) || (selectmode & SELECT_REPLACE)) {
         fcu->flag |= FCURVE_SELECTED;
         last_selected_curve = fcu;
@@ -875,7 +870,7 @@ static wmOperatorStatus graphkeys_box_select_exec(bContext *C, wmOperator *op)
   bAnimContext ac;
   rcti rect;
   rctf rect_fl;
-  short mode = 0;
+  eEditKeyframes_Validate mode = BEZT_NOT_OK;
 
   /* get editor data */
   if (ANIM_animdata_get_context(C, &ac) == 0) {
@@ -1200,7 +1195,7 @@ static void markers_selectkeys_between(bAnimContext *ac)
   int filter;
 
   KeyframeEditFunc ok_cb, select_cb;
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   float min, max;
 
   /* get extreme markers */
@@ -1243,10 +1238,7 @@ static void columnselect_graph_keys(bAnimContext *ac, short mode)
   Scene *scene = ac->scene;
   CfraElem *ce;
   KeyframeEditFunc select_cb, ok_cb;
-  KeyframeEditData ked;
-
-  /* initialize keyframe editing data */
-  memset(&ked, 0, sizeof(KeyframeEditData));
+  KeyframeEditData ked{};
 
   /* build list of columns */
   switch (mode) {
@@ -1433,12 +1425,11 @@ static void select_moreless_graph_keys(bAnimContext *ac, short mode)
   ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
   int filter;
 
-  KeyframeEditData ked;
+  KeyframeEditData ked{};
   KeyframeEditFunc build_cb;
 
   /* init selmap building data */
   build_cb = ANIM_editkeyframes_buildselmap(mode);
-  memset(&ked, 0, sizeof(KeyframeEditData));
 
   /* loop through all of the keys and select additional keyframes based on these */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FCURVESONLY |
@@ -1564,7 +1555,7 @@ static void graphkeys_select_leftright(bAnimContext *ac,
   int filter;
 
   KeyframeEditFunc ok_cb, select_cb;
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   Scene *scene = ac->scene;
 
   /* if select mode is replace, deselect all keyframes (and channels) first */
@@ -1835,10 +1826,7 @@ static wmOperatorStatus mouse_graph_keys(bAnimContext *ac,
   }
   else {
     KeyframeEditFunc select_cb;
-    KeyframeEditData ked;
-
-    /* initialize keyframe editing data */
-    memset(&ked, 0, sizeof(KeyframeEditData));
+    KeyframeEditData ked{};
 
     /* set up BezTriple edit callbacks */
     select_cb = ANIM_editkeyframes_select(select_mode);
@@ -1917,7 +1905,7 @@ static wmOperatorStatus graphkeys_mselect_column(bAnimContext *ac,
   bool run_modal = false;
 
   KeyframeEditFunc select_cb, ok_cb;
-  KeyframeEditData ked;
+  KeyframeEditData ked{};
   tNearestVertInfo *nvi;
 
   /* find the beztriple that we're selecting, and the handle that was clicked on */
@@ -1949,9 +1937,6 @@ static wmOperatorStatus graphkeys_mselect_column(bAnimContext *ac,
      */
     deselect_graph_keys(ac, false, SELECT_SUBTRACT, false);
   }
-
-  /* initialize keyframe editing data */
-  memset(&ked, 0, sizeof(KeyframeEditData));
 
   /* set up BezTriple edit callbacks */
   select_cb = ANIM_editkeyframes_select(select_mode);

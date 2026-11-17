@@ -71,7 +71,7 @@ struct wmJob;
 struct wmJobWorkerStatus;
 struct wmOperator;
 struct wmOperatorType;
-struct wmPaintCursor;
+struct wmCursorOverlay;
 struct wmTabletData;
 
 #ifdef WITH_INPUT_NDOF
@@ -676,17 +676,17 @@ void WM_cursor_time(wmWindow *win, int nr);
  */
 void WM_cursor_progress(wmWindow *win, float progress_factor);
 
-wmPaintCursor *WM_paint_cursor_activate(short space_type,
-                                        short region_type,
-                                        wmPaintCursorPoll poll,
-                                        wmPaintCursorDraw draw,
-                                        void *customdata);
+wmCursorOverlay *WM_cursor_overlay_activate(short space_type,
+                                            short region_type,
+                                            wmCursorOverlayPoll poll,
+                                            wmCursorOverlayDraw draw,
+                                            void *customdata);
 
-bool WM_paint_cursor_end(wmPaintCursor *handle);
-void WM_paint_cursor_remove_by_type(wmWindowManager *wm,
-                                    wmPaintCursorDraw draw_fn,
-                                    void (*free)(void *));
-void WM_paint_cursor_tag_redraw(wmWindow *win, ARegion *region);
+bool WM_cursor_overlay_end(wmCursorOverlay *handle);
+void WM_cursor_overlay_remove_by_type(wmWindowManager *wm,
+                                      wmCursorOverlayDraw draw_fn,
+                                      void (*free)(void *));
+void WM_cursor_overlay_tag_redraw(wmWindow *win, ARegion *region);
 
 /**
  * Set the cursor location in window coordinates (compatible with #wmEvent.xy).
@@ -927,6 +927,7 @@ void WM_event_add_notifier_ex(wmWindowManager *wm,
                               void *reference);
 void WM_event_add_notifier(const bContext *C, unsigned int type, void *reference);
 void WM_main_add_notifier(unsigned int type, void *reference);
+void WM_main_add_notifier(Main *bmain, unsigned int type, void *reference);
 /**
  * Clear notifiers by reference, Used so listeners don't act on freed data.
  */

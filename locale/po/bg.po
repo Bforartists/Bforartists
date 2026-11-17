@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.3.0 Release Candidate (b'f78a5e153839')\n"
+"Project-Id-Version: Blender 5.4.0 Alpha (b'023dcaed86e9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 09:34+0000\n"
+"POT-Creation-Date: 2026-11-16 11:03+0000\n"
 "PO-Revision-Date: 2025-07-23 15:34+0000\n"
 "Last-Translator: Just Adam <adam.abbas2009@gmail.com>\n"
 "Language-Team: Bulgarian <https://translate.blender.org/projects/blender-ui/ui/bg/>\n"
@@ -611,14 +611,6 @@ msgid "Active Layer"
 msgstr "Активен Слой"
 
 
-msgid "Fill"
-msgstr "Запълни"
-
-
-msgid "Both"
-msgstr "Двете"
-
-
 msgid "Crop"
 msgstr "Отрязване"
 
@@ -887,6 +879,10 @@ msgid "Sound"
 msgstr "Звук"
 
 
+msgid "Dynamic"
+msgstr "Динамика"
+
+
 msgid "Exclusive"
 msgstr "Изключващ"
 
@@ -897,10 +893,6 @@ msgstr "Стил на линията"
 
 msgid "Grid"
 msgstr "Мрежа"
-
-
-msgid "Dynamic"
-msgstr "Динамика"
 
 
 msgid "Region Type"
@@ -1151,14 +1143,6 @@ msgid "ID Type"
 msgstr "ID тип"
 
 
-msgid "Merge"
-msgstr "Слей"
-
-
-msgid "UV Mapping"
-msgstr "UV Картиране"
-
-
 msgid "Import"
 msgstr "Внеси"
 
@@ -1185,6 +1169,14 @@ msgstr "Куки"
 
 msgid "In-Betweens"
 msgstr "Междинни Кадри"
+
+
+msgid "Merge"
+msgstr "Слей"
+
+
+msgid "UV Mapping"
+msgstr "UV Картиране"
 
 
 msgid "Cache"
@@ -1247,6 +1239,10 @@ msgid "Protect"
 msgstr "Предпази"
 
 
+msgid "Fill"
+msgstr "Запълни"
+
+
 msgid "Overwrite"
 msgstr "Презаписване"
 
@@ -1285,6 +1281,10 @@ msgstr "Изпечи"
 
 msgid "Star"
 msgstr "Звезда"
+
+
+msgid "Both"
+msgstr "Двете"
 
 
 msgid "Ambient Occlusion"

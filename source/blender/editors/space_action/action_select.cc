@@ -296,7 +296,7 @@ static void deselect_action_keys(bAnimContext *ac, short test, eEditKeyframes_Se
   ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
   eAnimFilter_Flags filter;
 
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   KeyframeEditFunc test_cb, sel_cb;
 
   /* determine type-based settings */
@@ -468,11 +468,11 @@ enum {
 } /*eActKeys_BoxSelect_Mode*/;
 
 struct BoxSelectData {
-  bAnimContext *ac;
-  short selectmode;
+  bAnimContext *ac = nullptr;
+  eEditKeyframes_Select selectmode = SELECT_REPLACE;
 
-  KeyframeEditData ked;
-  KeyframeEditFunc ok_cb, select_cb;
+  KeyframeEditData ked{};
+  KeyframeEditFunc ok_cb = nullptr, select_cb = nullptr;
 };
 
 static void box_select_elem(
@@ -580,7 +580,7 @@ static void box_select_action(bAnimContext *ac,
   }
 
   /* init editing data */
-  memset(&sel_data.ked, 0, sizeof(KeyframeEditData));
+  sel_data.ked = {};
 
   float ymax = ANIM_UI_get_first_channel_top(v2d);
   const float channel_step = ANIM_UI_get_channel_step();
@@ -745,12 +745,12 @@ void ACTION_OT_select_box(wmOperatorType *ot)
  * \{ */
 
 struct RegionSelectData {
-  bAnimContext *ac;
-  short mode;
-  short selectmode;
+  bAnimContext *ac = nullptr;
+  eEditKeyframes_Validate mode = BEZT_NOT_OK;
+  eEditKeyframes_Select selectmode = SELECT_REPLACE;
 
-  KeyframeEditData ked;
-  KeyframeEditFunc ok_cb, select_cb;
+  KeyframeEditData ked{};
+  KeyframeEditFunc ok_cb = nullptr, select_cb = nullptr;
 };
 
 static void region_select_elem(RegionSelectData *sel_data, bAnimListElem *ale, bool summary)
@@ -835,7 +835,7 @@ static void region_select_elem(RegionSelectData *sel_data, bAnimListElem *ale, b
 
 static void region_select_action_keys(bAnimContext *ac,
                                       const rctf *rectf_view,
-                                      short mode,
+                                      const eEditKeyframes_Validate mode,
                                       eEditKeyframes_Select selectmode,
                                       void *data)
 {
@@ -863,7 +863,7 @@ static void region_select_action_keys(bAnimContext *ac,
   sel_data.ok_cb = ANIM_editkeyframes_ok(mode);
 
   /* init editing data */
-  memset(&sel_data.ked, 0, sizeof(KeyframeEditData));
+  sel_data.ked = {};
   if (mode == BEZT_OK_CHANNEL_LASSO) {
     KeyframeEdit_LassoData *data_lasso = static_cast<KeyframeEdit_LassoData *>(data);
     data_lasso->rectf_scaled = &scaled_rectf;
@@ -921,7 +921,7 @@ static void region_select_action_keys(bAnimContext *ac,
     scaled_rectf.ymax = ymax;
 
     /* perform vertical suitability check (if applicable) */
-    if ((mode == ACTKEYS_BORDERSEL_FRAMERANGE) || !((ymax < rectf.ymin) || (ymin > rectf.ymax))) {
+    if ((mode == BEZT_OK_FRAME) || !((ymax < rectf.ymin) || (ymin > rectf.ymax))) {
       region_select_elem(&sel_data, ale, false);
     }
   }
@@ -1099,7 +1099,7 @@ static void markers_selectkeys_between(bAnimContext *ac)
   eAnimFilter_Flags filter;
 
   KeyframeEditFunc ok_cb, select_cb;
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   float min, max;
 
   /* get extreme markers */
@@ -1164,7 +1164,7 @@ static void columnselect_action_keys(bAnimContext *ac, short mode)
   Scene *scene = ac->scene;
   CfraElem *ce;
   KeyframeEditFunc select_cb, ok_cb;
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
 
   /* build list of columns */
   switch (mode) {
@@ -1393,7 +1393,7 @@ static void select_moreless_action_keys(bAnimContext *ac, short mode)
   ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
   eAnimFilter_Flags filter;
 
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   KeyframeEditFunc build_cb;
 
   /* init selmap building data */
@@ -1531,7 +1531,7 @@ static void actkeys_select_leftright(bAnimContext *ac,
   eAnimFilter_Flags filter;
 
   KeyframeEditFunc ok_cb, select_cb;
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   Scene *scene = ac->scene;
 
   /* if select mode is replace, deselect all keyframes (and channels) first */
@@ -1748,7 +1748,7 @@ static void actkeys_mselect_single(bAnimContext *ac,
                                    const eEditKeyframes_Select select_mode,
                                    float selx)
 {
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
   KeyframeEditFunc select_cb, ok_cb;
 
   /* get functions for selecting keyframes */
@@ -1843,7 +1843,7 @@ static void actkeys_mselect_column(bAnimContext *ac, eEditKeyframes_Select selec
   eAnimFilter_Flags filter;
 
   KeyframeEditFunc select_cb, ok_cb;
-  KeyframeEditData ked = {{nullptr}};
+  KeyframeEditData ked{};
 
   /* set up BezTriple edit callbacks */
   select_cb = ANIM_editkeyframes_select(select_mode);

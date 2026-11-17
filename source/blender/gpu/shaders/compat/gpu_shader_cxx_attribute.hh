@@ -35,6 +35,9 @@
 /* Enable texture atomics on older versions of metal. */
 #  define texture_atomic maybe_unused
 
+/* Disable the use of fast math when compiling this entry point (backend compilation). */
+#  define no_fast_math maybe_unused
+
 /* In a compute function, specify an input variable containing the 3-dimensional index of the local
  * work invocation within the work group that the current shader is executing in. */
 #  define local_invocation_id maybe_unused
@@ -150,7 +153,9 @@
  * IMPORTANT: Will discard any iteration above N.
  */
 #  define unroll_n(N) likely
-/* Force a function to be inlined during BSL compilation. */
+/* Force a function to be inlined during BSL compilation. *
+ * IMPORTANT: Return statement in the function body generates a dummy loop which can increase
+ * compilation time (see #166511). */
 #  define force_inline maybe_unused
 #else
 /* This path checks for unused variables. Disable warning about unknown attributes. */

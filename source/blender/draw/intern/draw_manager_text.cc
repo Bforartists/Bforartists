@@ -299,8 +299,9 @@ static void edge_angle_text_add(
     return;
   }
   if (ctx.do_global) {
-    no_a = math::normalize(ctx.ob->world_to_object().view<3, 3>() * no_a);
-    no_b = math::normalize(ctx.ob->world_to_object().view<3, 3>() * no_b);
+    const float3x3 normal_matrix = math::transpose(float3x3(ctx.ob->world_to_object()));
+    no_a = math::normalize(normal_matrix * no_a);
+    no_b = math::normalize(normal_matrix * no_b);
   }
   const float angle = angle_normalized_v3v3(no_a, no_b);
   char numstr[32];
@@ -404,8 +405,12 @@ static void edit_mesh_measure_stats_bmesh(const MeasureStatsContext &ctx,
 {
   const eView3DOverlay_EditFlag edit_flag = ctx.v3d->overlay.edit_flag;
   const bool do_moving = ctx.do_moving;
-  /* Allow for displaying shape keys and deform modifiers. */
-  const Span<float3> vert_positions = BKE_mesh_wrapper_vert_coords(&cage);
+  /* Allow for displaying shape keys and deform modifiers. The cage is indexed with BMesh indices,
+   * so it needs at least as many elements. Modifiers like Mirror append after the originals. */
+  const bool cage_covers_bmesh = BKE_mesh_wrapper_vert_len(&cage) >= bm.totvert &&
+                                 BKE_mesh_wrapper_face_len(&cage) >= bm.totface;
+  const Span<float3> vert_positions = cage_covers_bmesh ? BKE_mesh_wrapper_vert_coords(&cage) :
+                                                          Span<float3>();
   const bool use_coords = !vert_positions.is_empty();
   if (use_coords) {
     BM_mesh_elem_index_ensure(&bm, BM_VERT);

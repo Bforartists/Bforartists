@@ -1016,7 +1016,7 @@ static void PE_update_mirror_cache(Object *ob, ParticleSystem *psys)
     co[0] = -co[0];
 
     float distance_sq;
-    index = tree.find_nearest(co, &distance_sq);
+    index = tree.find_nearest(co, std::numeric_limits<float>::max(), &distance_sq);
 
     /* this needs a custom threshold still, duplicated for editmode mirror */
     if (index != -1 && index != p && (distance_sq <= math::square(0.0002f))) {
@@ -3276,7 +3276,7 @@ static wmOperatorStatus remove_doubles_exec(bContext *C, wmOperator *op)
 
     /* tag particles to be removed */
     LOOP_SELECTED_POINTS {
-      totn = tree.find_nearest_n(positions[p], nearest);
+      totn = tree.find_nearest_n(positions[p], std::numeric_limits<float>::max(), nearest);
 
       for (n = 0; n < totn; n++) {
         /* this needs a custom threshold still */
@@ -3434,11 +3434,11 @@ static void toggle_particle_cursor(Scene *scene, bool enable)
   ParticleEditSettings *pset = PE_settings(scene);
 
   if (pset->paintcursor && !enable) {
-    WM_paint_cursor_end(static_cast<wmPaintCursor *>(pset->paintcursor));
+    WM_cursor_overlay_end(static_cast<wmCursorOverlay *>(pset->paintcursor));
     pset->paintcursor = nullptr;
   }
   else if (enable) {
-    pset->paintcursor = WM_paint_cursor_activate(
+    pset->paintcursor = WM_cursor_overlay_activate(
         SPACE_VIEW3D, RGN_TYPE_WINDOW, PE_poll_view3d, brush_drawcursor, nullptr);
   }
 }
@@ -4607,7 +4607,7 @@ static int brush_add(const bContext *C, PEData *data, short number)
                             nullptr,
                             nullptr,
                             nullptr);
-        maxw = tree->find_nearest_n(co1, ptn);
+        maxw = tree->find_nearest_n(co1, std::numeric_limits<float>::max(), ptn);
 
         maxd = std::sqrt(ptn[maxw - 1].distance_sq);
 
