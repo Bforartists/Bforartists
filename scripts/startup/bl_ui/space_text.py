@@ -318,6 +318,7 @@ class TEXT_MT_templates_py(Menu):
             filter_ext=lambda ext: (ext.lower() == ".py"),
             translate=False,
             recursive_paths=True,
+            icon='FILE_SCRIPT',  # BFA - icon added
         )
 
 
@@ -330,6 +331,7 @@ class TEXT_MT_templates_osl(Menu):
             "text.open",
             props_default={"internal": True},
             filter_ext=lambda ext: (ext.lower() == ".osl"),
+            icon='FILE_SCRIPT',  # BFA - icon added
         )
 
 
@@ -338,8 +340,8 @@ class TEXT_MT_templates(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.menu("TEXT_MT_templates_py")
-        layout.menu("TEXT_MT_templates_osl")
+        layout.menu("TEXT_MT_templates_py", icon='FILE_SCRIPT')  # BFA - icon added
+        layout.menu("TEXT_MT_templates_osl", icon='FILE_SCRIPT')  # BFA - icon added
         # BFA - renamed to Addon Manifest.
         # We only have one manifest template for now,
         # better to show it on the top level.
@@ -349,6 +351,7 @@ class TEXT_MT_templates(Menu):
             "text.open",
             props_default={"internal": True},
             filter_ext=lambda ext: (ext.lower() == ".toml"),
+            icon='FILE_TEXT',  # BFA - icon added
         )
 
 
