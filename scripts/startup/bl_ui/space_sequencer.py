@@ -814,7 +814,9 @@ class SEQUENCER_MT_select(Menu):
         strip = context.active_strip
 
         if has_preview:
-            if strip and strip.type == "TEXT":
+            # BFA - #6088: only show the text selection operators while text
+            # editing is active, otherwise they draw greyed out.
+            if strip and strip.type == "TEXT" and strip.is_text_editing_active:
                 col.separator()
 
                 col.operator(
