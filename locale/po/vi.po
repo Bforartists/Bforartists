@@ -112004,7 +112004,8 @@ msgid "Show Scene Strip Range"
 msgstr "Hiển Thị Phạm Vi Dải Cảnh"
 
 
-msgid "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+# BFA - reworded, Blender: "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+msgid "Display the range of the current scene strip, with or without scene time synchronization"
 msgstr "Khi sử dụng tính năng đồng bộ hóa thời gian cảnh trong trình phối hình thì hiển thị phạm vi của dải cảnh hiện tại"
 
 

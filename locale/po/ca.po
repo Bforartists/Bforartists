@@ -113431,7 +113431,8 @@ msgid "Show Scene Strip Range"
 msgstr "Mostrar l'interval de segments de l'escena"
 
 
-msgid "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+# BFA - reworded, Blender: "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+msgid "Display the range of the current scene strip, with or without scene time synchronization"
 msgstr "[Show Scene Strip Range]: En el context de la sincronització del temps d'escena a l'editor de seqüències, mostra l'interval del segment d'escena en curs"
 
 

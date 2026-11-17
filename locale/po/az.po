@@ -113186,7 +113186,8 @@ msgid "Show Scene Strip Range"
 msgstr "Səhnə zolağı diapazonunu göstər"
 
 
-msgid "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+# BFA - reworded, Blender: "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+msgid "Display the range of the current scene strip, with or without scene time synchronization"
 msgstr "Ardıcıllıq redaktorunda səhnə vaxtının sinxronlaşdırılması istifadə olunduqda, cari səhnə zolağının diapazonunu göstərir"
 
 

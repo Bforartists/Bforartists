@@ -107332,7 +107332,8 @@ msgid "Show Scene Strip Range"
 msgstr "காட்சி பட்டை வரம்பைக் காட்டு"
 
 
-msgid "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+# BFA - reworded, Blender: "When using scene time synchronization in the sequence editor, display the range of the current scene strip"
+msgid "Display the range of the current scene strip, with or without scene time synchronization"
 msgstr "சீக்வென்ச் எடிட்டரில் காட்சி நேர ஒத்திசைவைப் பயன்படுத்தும் போது, தற்போதைய காட்சிப் பட்டையின் வரம்பைக் காட்டவும்"
 
 
