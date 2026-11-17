@@ -8359,3 +8359,7 @@ msgstr "Bforartists"
 # BFA - reworded Blender string
 msgid "Bforartists Render"
 msgstr "ตัวเรนเดอร์ของ Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "แสดงหรือซ่อนบริเวณของตัวแก้ไข (แถบเครื่องมือ แถบด้านข้าง ช่อง)"

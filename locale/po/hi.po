@@ -6548,3 +6548,7 @@ msgstr "इसी प्रकार का चयन करें"
 # BFA - reworded, Blender: "Type"
 msgid "Type:"
 msgstr "प्रकार"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "संपादक क्षेत्रों को दिखाएँ या छिपाएँ (टूलबार, साइडबार, चैनल)"

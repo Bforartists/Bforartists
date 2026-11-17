@@ -3455,3 +3455,7 @@ msgstr "גוס"
 # BFA - reworded Blender string
 msgid "Bforartists"
 msgstr "Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "הצגה או הסתרה של אזורי העורך (סרגל כלים, סרגל צד, ערוצים)"

@@ -166292,3 +166292,7 @@ msgstr "შესაძლოა, ხელმისაწვდომი იყ
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "macOS-ის უახლეს ვერსიაზე გადასვლამ შეიძლება, Bforartists-ის მხარდაჭერა გააუმჯობესოს"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "რედაქტორის რეგიონების ჩვენება ან დამალვა (ხელსაწყოთა ზოლი, გვერდითი ზოლი, არხები)"

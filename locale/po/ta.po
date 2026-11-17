@@ -155646,3 +155646,7 @@ msgstr "பயன்பாட்டு வார்ப்புருவை ந�
 msgctxt "Operator"
 msgid "Edit Preview Image"
 msgstr "முன்னோட்ட படத்தைத் திருத்து "
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "தொகுப்பாளர் பகுதிகளைக் காட்டு அல்லது மறை (கருவிப்பட்டை, பக்கப்பட்டை, சேனல்கள்)"

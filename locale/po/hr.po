@@ -2697,3 +2697,7 @@ msgstr "Bforartists softver je besplatan"
 msgctxt "Operator"
 msgid "Bforartists Website"
 msgstr "Bforartists web stranica"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Prikaži ili sakrij područja uređivača (alatna traka, bočna traka, kanali)"

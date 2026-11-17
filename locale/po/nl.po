@@ -12680,3 +12680,7 @@ msgstr "Bforartists"
 # BFA - reworded Blender string
 msgid "Bforartists Render"
 msgstr "Bforartists Render"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Editorgebieden tonen of verbergen (werkbalk, zijbalk, kanalen)"

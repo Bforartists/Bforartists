@@ -25389,3 +25389,7 @@ msgstr "Bforartists рендеринг"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Bforartists-ов преглед датотека"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Прикажи или сакриј области уређивача (алатна трака, бочна трака, канали)"

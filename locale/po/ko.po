@@ -166847,3 +166847,7 @@ msgstr ""
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"
 msgstr "마우스 연산자입니다. 마우스를 사용하세요"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "편집기 영역 표시 또는 숨기기 (툴바, 사이드바, 채널)"

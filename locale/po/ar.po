@@ -36956,3 +36956,7 @@ msgstr "ﺔﻴﻠﺧﺍﺩ ﺺﻧ ﺕﺎﻧﺎﻴﺑ ﺔﻠﺘﻛ ﻡﺪﺨﺘ�
 msgctxt "Operator"
 msgid "Zoom Border"
 msgstr "ﺩﻭﺪﺤﻟﺍ ﻰﺘﺣ ﻢﺠّﺣ"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "إظهار أو إخفاء مناطق المحرر (شريط الأدوات، الشريط الجانبي، القنوات)"

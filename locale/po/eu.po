@@ -2293,3 +2293,7 @@ msgstr "Mota"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Bforartists Fitxategi Bista"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Erakutsi edo ezkutatu editorearen eskualdeak (tresna-barra, alboko barra, kanalak)"

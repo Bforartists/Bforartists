@@ -168689,3 +168689,7 @@ msgstr "Det kan finnas nyare grafikdrivrutiner med bättre Bforartists-kompatibi
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "En uppgradering till den senaste versionen av macOS kan förbättra Bforartists-stödet"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Visa eller dölj redigerarens områden (verktygsfält, sidopanel, kanaler)"

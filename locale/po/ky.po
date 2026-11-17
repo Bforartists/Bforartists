@@ -3723,3 +3723,7 @@ msgstr "Bforartists'ден чыгуу"
 # BFA - reworded Blender string
 msgid "Quit Bforartists"
 msgstr "Bforartists'ден чыгуу"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Редактордун аймактарын көрсөтүү же жашыруу (куралдар тилкеси, каптал панел, каналдар)"

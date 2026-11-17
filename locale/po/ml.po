@@ -333,3 +333,7 @@ msgstr "ഈ ആക്ഷനിലെ ഒരു സെറ്റ് ചാനല�
 # BFA - reworded, Blender: "Type"
 msgid "Type:"
 msgstr "തരം"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "എഡിറ്റർ മേഖലകൾ കാണിക്കുകയോ മറയ്ക്കുകയോ ചെയ്യുക (ടൂൾബാർ, സൈഡ്‌ബാർ, ചാനലുകൾ)"

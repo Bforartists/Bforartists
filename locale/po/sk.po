@@ -168689,3 +168689,7 @@ msgstr "Môžu byť k dispozícii novšie grafické ovládače s lepšou kompati
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Aktualizácia na najnovšiu verziu systému macOS môže zlepšiť podporu Bforartistsu"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Zobraziť alebo skryť oblasti editora (panel nástrojov, bočný panel, kanály)"

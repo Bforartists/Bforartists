@@ -113467,3 +113467,7 @@ msgstr ""
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"
 msgstr "滑鼠操作，請使用滑鼠"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "顯示或隱藏編輯器區域（工具列、側邊欄、通道）"

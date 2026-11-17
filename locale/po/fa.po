@@ -5423,3 +5423,7 @@ msgstr "ﻉﻮﻧ"
 # BFA - reworded, Blender: "Unassigned"
 msgid "Unassigned (Catalogue)"
 msgstr "ﻩﺪﺸﻧ ﺭﺍﺬﮔﺍﻭ (Catalogue)"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "نمایش یا پنهان کردن ناحیه‌های ویرایشگر (نوار ابزار، نوار کناری، کانال‌ها)"

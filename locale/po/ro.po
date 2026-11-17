@@ -3965,3 +3965,7 @@ msgstr "Render Bforartists"
 # BFA - reworded Blender string
 msgid "Bforartists File View"
 msgstr "Vizualizatorul de Fișiere Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Afișează sau ascunde regiunile editorului (bara de unelte, bara laterală, canale)"

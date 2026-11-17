@@ -136271,3 +136271,7 @@ msgstr ""
 # BFA - machine translated, please review
 msgid "Mouse Operator, please use the mouse"
 msgstr "Fare operatörü, lütfen fareyi kullanın"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Düzenleyici bölgelerini göster veya gizle (araç çubuğu, kenar çubuğu, kanallar)"

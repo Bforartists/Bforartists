@@ -112795,3 +112795,7 @@ msgstr "Proksi zimeondolewa kutoka kwa Bforartists (proksi %d zilibadilishwa kio
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Kusasisha hadi toleo la hivi karibuni la macOS kunaweza kuboresha usaidizi wa Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Onyesha au ficha maeneo ya kihariri (upau wa zana, upau wa pembeni, njia)"

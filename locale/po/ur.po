@@ -134268,3 +134268,7 @@ msgstr "...ﺮﯾﻮﺼﺗ ﻮﯾﻮﯾﺮﭘ ﮟﯾﺮﮐ ﻢﯿﻣﺮﺗ"
 # BFA - reworded Blender string
 msgid "Bforartists"
 msgstr "Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "ایڈیٹر کے علاقے دکھائیں یا چھپائیں (ٹول بار، سائیڈ بار، چینلز)"

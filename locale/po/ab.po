@@ -702,3 +702,7 @@ msgstr "Аԥшра"
 msgid "cursor"
 msgstr "Ахырхага"
 
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Ахаҿкагара регио́ны ааргәа ма аԥɣра (хеԥхьаӡара, аганахь аҡыԥ, аканалу)"

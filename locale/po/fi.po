@@ -17292,3 +17292,7 @@ msgstr "Bforartists renderöinti"
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Päivittäminen viimeisimpään macOS-versioon saattaa parantaa Bforartists-tukea"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Näytä tai piilota editorin alueet (työkalupalkki, sivupalkki, kanavat)"

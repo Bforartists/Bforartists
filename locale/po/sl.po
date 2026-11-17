@@ -89788,3 +89788,7 @@ msgstr "Datotečni pogled Bforartists"
 msgctxt "WindowManager"
 msgid "Upgrading to the latest macOS version may improve Bforartists support"
 msgstr "Posodobitev na najnovejšo različico sistema macOS bo morda nudila boljšo podporo za Bforartists"
+
+# BFA - machine translated, please review
+msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
+msgstr "Prikaži ali skrij območja urejevalnika (orodna vrstica, stranska vrstica, kanali)"
