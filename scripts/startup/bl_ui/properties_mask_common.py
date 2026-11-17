@@ -270,7 +270,12 @@ class MASK_PT_display:
 
         space_data = context.space_data
 
-        row = layout.row(align=True)
+        # BFA - #6105: indent the props under the section header.
+        row = layout.row()
+        row.separator()
+        col = row.column()
+
+        row = col.row(align=True)
         row.prop(space_data, "show_mask_spline", text="Spline")
         sub = row.row()
         if space_data.show_mask_spline:
@@ -279,14 +284,14 @@ class MASK_PT_display:
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        row = layout.row(align=True)
+        row = col.row(align=True)
         row.prop(space_data, "show_mask_overlay", text="Overlay")
         if space_data.show_mask_overlay:
             sub = row.row()
             sub.active = space_data.show_mask_overlay
             sub.prop(space_data, "mask_overlay_mode", text="")
 
-            row = layout.row()
+            row = col.row()
             row.active = space_data.show_mask_overlay and (space_data.mask_overlay_mode == 'COMBINED')
             row.prop(space_data, "blend_factor", text="Blending Factor")
         else:

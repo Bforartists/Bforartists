@@ -2277,7 +2277,12 @@ class CLIP_PT_overlay_display(Panel):
 
         view = context.space_data
 
+        # BFA - #6105: indent the props under the section header.
         row = layout.row()
+        row.separator()
+        col_indent = row.column()
+
+        row = col_indent.row()
 
         col = row.column()
         col.prop(view, "show_marker_pattern", text="Pattern")
@@ -2320,7 +2325,10 @@ class CLIP_PT_overlay_guides(Panel):
         sc = context.space_data
         overlay = sc.overlay
 
-        col = layout.column()
+        # BFA - #6105: indent the props under the section header.
+        row = layout.row()
+        row.separator()
+        col = row.column()
         col.prop(sc, "show_grid", text="Distortion Grid")
         col.prop(overlay, "show_cursor", text="Cursor")
         col.prop(sc, "show_annotation", text="Annotations")
