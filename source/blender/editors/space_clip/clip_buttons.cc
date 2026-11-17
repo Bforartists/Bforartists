@@ -515,7 +515,7 @@ void uiTemplateMarker(ui::Layout *layout,
     button_retval_set(but, B_MARKER_FLAG);
 
     /* bfa - new expanded prop UI style */
-    ui::Layout *row, *col, *vcol;
+    ui::Layout *row, *col, *lcol, *vcol;
     col = &layout->column(true);
     col->active_set((cb->marker_flag & MARKER_DISABLED) == 0);
 
@@ -525,6 +525,12 @@ void uiTemplateMarker(ui::Layout *layout,
     row = &col->row(true);
     row->separator(); /* indent under the group label */
 
+    lcol = &row->column(true);  // labels column
+    lcol->ui_units_x_set(4.5f);
+    lcol->fixed_size_set(true);
+    lcol->label(IFACE_("X"), ICON_NONE);
+    lcol->label(IFACE_("Y"), ICON_NONE);
+
     vcol = &row->column(true);  // values column
     block = vcol->block();
     /*end bfa */
@@ -533,7 +539,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     ui::Button *bt = uiDefButV(block,
                                ui::ButtonType::Num,
-                               IFACE_("X"),
+                               "", /* bfa - label lives in the labels column */
                                0.5 * UI_UNIT_X,
                                9 * UI_UNIT_Y,
                                7.25 * UI_UNIT_X,
@@ -548,7 +554,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("Y"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    8 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -567,6 +573,12 @@ void uiTemplateMarker(ui::Layout *layout,
     row = &col->row(true);
     row->separator(); /* indent under the group label */
 
+    lcol = &row->column(true);  // labels column
+    lcol->ui_units_x_set(4.5f);
+    lcol->fixed_size_set(true);
+    lcol->label(IFACE_("X"), ICON_NONE);
+    lcol->label(IFACE_("Y"), ICON_NONE);
+
     vcol = &row->column(true);
     block = vcol->block();
     block_align_begin(block);
@@ -575,7 +587,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("X"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    7 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -590,7 +602,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("Y"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    6 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -608,6 +620,12 @@ void uiTemplateMarker(ui::Layout *layout,
     row = &col->row(true);
     row->separator(); /* indent under the group label */
 
+    lcol = &row->column(true);  // labels column
+    lcol->ui_units_x_set(4.5f);
+    lcol->fixed_size_set(true);
+    lcol->label(IFACE_("Width"), ICON_NONE);
+    lcol->label(IFACE_("Height"), ICON_NONE);
+
     vcol = &row->column(true);
     block = vcol->block();
     block_align_begin(block);
@@ -616,7 +634,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("Width"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    5 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -631,7 +649,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("Height"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    4 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -650,6 +668,12 @@ void uiTemplateMarker(ui::Layout *layout,
     row = &col->row(true);
     row->separator(); /* indent under the group label */
 
+    lcol = &row->column(true);  // labels column
+    lcol->ui_units_x_set(4.5f);
+    lcol->fixed_size_set(true);
+    lcol->label(IFACE_("X"), ICON_NONE);
+    lcol->label(IFACE_("Y"), ICON_NONE);
+
     vcol = &row->column(true);
     block = vcol->block();
     block_align_begin(block);
@@ -658,7 +682,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("X"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    2 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -673,7 +697,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("Y"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    1 * UI_UNIT_Y,
                    7.25 * UI_UNIT_X,
@@ -691,6 +715,12 @@ void uiTemplateMarker(ui::Layout *layout,
     row = &col->row(true);
     row->separator(); /* indent under the group label */
 
+    lcol = &row->column(true);  // labels column
+    lcol->ui_units_x_set(4.5f);
+    lcol->fixed_size_set(true);
+    lcol->label(IFACE_("Width"), ICON_NONE);
+    lcol->label(IFACE_("Height"), ICON_NONE);
+
     vcol = &row->column(true);
     block = vcol->block();
     block_align_begin(block);
@@ -699,7 +729,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("Width"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    1 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
@@ -714,7 +744,7 @@ void uiTemplateMarker(ui::Layout *layout,
     /*bfa */
     bt = uiDefButV(block,
                    ui::ButtonType::Num,
-                   IFACE_("Height"),
+                   "", /* bfa - label lives in the labels column */
                    0.5 * UI_UNIT_X,
                    0 * UI_UNIT_Y,
                    15 * UI_UNIT_X,
