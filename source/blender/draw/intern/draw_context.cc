@@ -7,6 +7,7 @@
  */
 
 #include <cstdio>
+#include <optional>
 
 #include "CLG_log.h"
 
@@ -18,6 +19,7 @@
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
+#include "BLI_set.hh"
 #include "BLI_string.hh"
 #include "BLI_sys_types.hh"
 #include "BLI_task_c.hh"
@@ -832,6 +834,12 @@ enum class DrawFilter {
    */
   Draw,
   /**
+   * Draw this object, but skip its duplis, #object_duplilist is never called for them.
+   *
+   * Equivalent to #Draw when there are no duplis to cull (a dupli or an object without instances).
+   */
+  DrawNonRecursive,
+  /**
    * Skip drawing this object, but still generate and iterate its duplis (if any).
    * A dupli may be visible when its instancer is not.
    */
@@ -987,6 +995,7 @@ static void foreach_obref_in_scene(
 {
   DupliList duplilist;
   Map<InstancesKey, VectorList<DupliObject *>> dupli_map;
+  Set<InstancesKey> dupli_set_2d;
 
   Object tmp_object;
   bke::ObjectRuntime tmp_runtime;
@@ -994,6 +1003,8 @@ static void foreach_obref_in_scene(
   Depsgraph *depsgraph = draw_ctx.depsgraph;
   eEvaluationMode eval_mode = DEG_get_mode(depsgraph);
   View3D *v3d = draw_ctx.v3d;
+
+  const bool is_2d_view = draw_ctx.space_data && draw_ctx.space_data->spacetype == SPACE_IMAGE;
 
   DEGObjectIterSettings deg_iter_settings = {nullptr};
   deg_iter_settings.depsgraph = depsgraph;
@@ -1026,7 +1037,7 @@ static void foreach_obref_in_scene(
     /* Decide drawability for the top-level object, then fall through to the dupli path. */
     const DrawFilter parent_filter = should_draw_object_cb(*ob, data_.dupli_object_current);
 
-    if (parent_filter == DrawFilter::Draw && ob_visible) {
+    if (ELEM(parent_filter, DrawFilter::Draw, DrawFilter::DrawNonRecursive) && ob_visible) {
       /* NOTE: object_duplilist_preview is still handled by DEG_OBJECT_ITER,
        * dupli_parent and dupli_object_current won't be null for these. */
       ObjectRef ob_ref(ob, data_.dupli_parent, data_.dupli_object_current);
@@ -1037,8 +1048,8 @@ static void foreach_obref_in_scene(
       continue;
     }
 
-    if (parent_filter == DrawFilter::SkipRecursive) {
-      /* Filter rejected this instancer; skip its duplis entirely. */
+    if (ELEM(parent_filter, DrawFilter::SkipRecursive, DrawFilter::DrawNonRecursive)) {
+      /* Filter rejected this instancer's duplis; skip them entirely. */
       continue;
     }
 
@@ -1051,6 +1062,7 @@ static void foreach_obref_in_scene(
     }
 
     dupli_map.clear();
+    dupli_set_2d.clear();
     for (DupliObject &dupli : duplilist) {
 
       if (!DEG_iterator_dupli_is_visible(&dupli, eval_mode)) {
@@ -1066,46 +1078,58 @@ static void foreach_obref_in_scene(
       }
 #endif
 
-      if (!supports_handle_ranges(&dupli, ob, draw_ctx)) {
-        /* Sync the dupli as a single object. */
-        if (!evil::DEG_iterator_temp_object_from_dupli(
-                ob, &dupli, eval_mode, false, &tmp_object, &tmp_runtime) ||
-            should_draw_object_cb(tmp_object, &dupli) != DrawFilter::Draw)
-        {
-          evil::DEG_iterator_temp_object_free_properties(&dupli, &tmp_object);
-          continue;
+      const bool is_negative_scale = is_negative_m4(dupli.mat);
+      std::optional<InstancesKey> key;
+      auto get_key = [&]() -> const InstancesKey & {
+        if (!key) {
+          key.emplace(dupli.ob,
+                      dupli.ob_data,
+                      is_negative_scale ? InstancesFlags::IsNegativeScale : InstancesFlags(0),
+                      dupli.preview_base_geometry,
+                      dupli.preview_instance_index);
         }
+        return *key;
+      };
 
-        tmp_object.light_linking = dupli.ob->light_linking;
-        SET_FLAG_FROM_TEST(tmp_object.transflag, is_negative_m4(dupli.mat), OB_NEG_SCALE);
-        tmp_object.runtime->object_to_world = float4x4(dupli.mat);
-        tmp_object.runtime->world_to_object = invert(tmp_object.runtime->object_to_world);
+      if (is_2d_view && !dupli_set_2d.add(get_key())) {
+        /* For 2d views (UVs), draw each instanced object only once. */
+        continue;
+      }
 
-        draw::ObjectRef ob_ref(&tmp_object, ob, &dupli);
-        draw_object_cb(ob_ref);
+      if (supports_handle_ranges(&dupli, ob, draw_ctx)) {
+        dupli_map.lookup_or_add_default(get_key()).append(&dupli);
+        continue;
+      }
 
+      /* Otherwise, sync the dupli as a single object. */
+      if (!evil::DEG_iterator_temp_object_from_dupli(
+              ob, &dupli, eval_mode, false, &tmp_object, &tmp_runtime) ||
+          !ELEM(should_draw_object_cb(tmp_object, &dupli),
+                DrawFilter::Draw,
+                DrawFilter::DrawNonRecursive))
+      {
         evil::DEG_iterator_temp_object_free_properties(&dupli, &tmp_object);
         continue;
       }
 
-      InstancesFlags flags = InstancesFlags(0);
-      {
-        SET_FLAG_FROM_TEST(flags, is_negative_m4(dupli.mat), InstancesFlags::IsNegativeScale);
-      }
-      InstancesKey key(dupli.ob,
-                       dupli.ob_data,
-                       flags,
-                       dupli.preview_base_geometry,
-                       dupli.preview_instance_index);
+      tmp_object.light_linking = dupli.ob->light_linking;
+      SET_FLAG_FROM_TEST(tmp_object.transflag, is_negative_scale, OB_NEG_SCALE);
+      tmp_object.runtime->object_to_world = float4x4(dupli.mat);
+      tmp_object.runtime->world_to_object = invert(tmp_object.runtime->object_to_world);
 
-      dupli_map.lookup_or_add_default(key).append(&dupli);
+      draw::ObjectRef ob_ref(&tmp_object, ob, &dupli);
+      draw_object_cb(ob_ref);
+
+      evil::DEG_iterator_temp_object_free_properties(&dupli, &tmp_object);
     }
 
     for (const auto &[key, instances] : dupli_map.items()) {
       DupliObject *first_dupli = instances.first();
       if (!evil::DEG_iterator_temp_object_from_dupli(
               ob, first_dupli, eval_mode, false, &tmp_object, &tmp_runtime) ||
-          should_draw_object_cb(tmp_object, first_dupli) != DrawFilter::Draw)
+          !ELEM(should_draw_object_cb(tmp_object, first_dupli),
+                DrawFilter::Draw,
+                DrawFilter::DrawNonRecursive))
       {
         evil::DEG_iterator_temp_object_free_properties(first_dupli, &tmp_object);
         continue;
@@ -1159,8 +1183,9 @@ void DRW_cache_free_old_batches(Main *bmain)
         continue;
       }
       /* Skip depsgraphs that may still hold dangling IDs from before their last rebuild
-       * (e.g. an inactive view layer), to avoid dereferencing freed data below. */
-      if (!DEG_is_fully_evaluated(depsgraph)) {
+       * (e.g. an inactive view layer), to avoid dereferencing freed data below. Pending ID
+       * updates are fine, the evaluated copies stay valid until the next evaluation. */
+      if (DEG_relations_need_update(depsgraph)) {
         continue;
       }
 
@@ -1865,27 +1890,43 @@ static void drw_draw_render_loop_3d(DRWContext &draw_ctx, RenderEngineType *engi
 
 static void drw_draw_render_loop_2d(DRWContext &draw_ctx)
 {
-  Depsgraph *depsgraph = draw_ctx.depsgraph;
+  using namespace blender::draw;
+
   ARegion *region = draw_ctx.region;
 
-  /* TODO(jbakker): Only populate when editor needs to draw object.
-   * for the image editor this is when showing UVs. */
-  const bool do_populate_loop = (draw_ctx.space_data->spacetype == SPACE_IMAGE);
+  bool do_populate_loop = false;
+  if (draw_ctx.space_data->spacetype == SPACE_IMAGE) {
+    const SpaceImage *space_image = reinterpret_cast<const SpaceImage *>(draw_ctx.space_data);
+    const bool show_overlays = space_image->overlay.flag & SI_OVERLAY_SHOW_OVERLAYS;
+    const bool space_mode_is_uv = space_image->mode == SI_MODE_UV;
+    const bool space_mode_is_paint = space_image->mode == SI_MODE_PAINT;
+    const bool show_paint_uv_guide = space_mode_is_paint &&
+                                     !(space_image->flag & SI_NO_DRAW_UV_GUIDE);
+    do_populate_loop = show_overlays && (space_mode_is_uv || show_paint_uv_guide);
+  }
 
   draw_ctx.enable_engines();
   draw_ctx.engines_data_validate();
   draw_ctx.engines_init_and_sync([&](DupliCacheManager &duplis, ExtractionGraph &extraction) {
     /* Only iterate over objects when overlay uses object data. */
-    if (do_populate_loop) {
-      DEGObjectIterSettings deg_iter_settings = {nullptr};
-      deg_iter_settings.depsgraph = depsgraph;
-      deg_iter_settings.flags = DEG_OBJECT_ITER_FOR_RENDER_ENGINE_FLAGS;
-      DEG_OBJECT_ITER_BEGIN (&deg_iter_settings, ob) {
-        draw::ObjectRef ob_ref(ob);
-        drw_engines_cache_populate(ob_ref, duplis, extraction);
-      }
-      DEG_OBJECT_ITER_END;
+    if (!do_populate_loop) {
+      return;
     }
+
+    /* Only selected and/or active objects can ever be drawn to 2D editors. */
+    auto should_draw_object = [&](Object &ob, const DupliObject * /*dupli*/) -> DrawFilter {
+      if (ob.base_flag & BASE_SELECTED) {
+        return DrawFilter::Draw;
+      }
+      if (&ob == draw_ctx.obact) {
+        return DrawFilter::DrawNonRecursive;
+      }
+      return DrawFilter::SkipRecursive;
+    };
+
+    foreach_obref_in_scene(draw_ctx, should_draw_object, [&](ObjectRef &ob_ref) {
+      drw_engines_cache_populate(ob_ref, duplis, extraction);
+    });
   });
 
   /* No frame-buffer allowed before drawing. */

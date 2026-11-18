@@ -112,7 +112,7 @@ struct ImagePaintStroke final : public PaintStroke {
 
  private:
   void *stroke_handle_ = nullptr;
-  wmPaintCursor *cursor_ = nullptr;
+  wmCursorOverlay *cursor_ = nullptr;
 
  public:
   ImagePaintStroke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -263,11 +263,11 @@ bool ImagePaintStroke::test_start(wmOperator *op, const float2 mouse)
   if ((brush->image_brush_type == IMAGE_PAINT_BRUSH_TYPE_FILL) &&
       (brush->flag & BRUSH_USE_GRADIENT))
   {
-    this->cursor_ = WM_paint_cursor_activate(SPACE_TYPE_ANY,
-                                             RGN_TYPE_ANY,
-                                             ED_image_tools_paint_poll,
-                                             gradient_draw_line,
-                                             &this->gradient_data);
+    this->cursor_ = WM_cursor_overlay_activate(SPACE_TYPE_ANY,
+                                               RGN_TYPE_ANY,
+                                               ED_image_tools_paint_poll,
+                                               gradient_draw_line,
+                                               &this->gradient_data);
   }
 
   settings->imapaint.flag |= IMAGEPAINT_DRAWING;
@@ -286,7 +286,7 @@ struct TexturePaintStroke final : public PaintStroke {
 
  private:
   void *stroke_handle_ = nullptr;
-  wmPaintCursor *cursor_ = nullptr;
+  wmCursorOverlay *cursor_ = nullptr;
 
  public:
   TexturePaintStroke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -445,11 +445,11 @@ bool TexturePaintStroke::test_start(wmOperator *op, const float2 mouse)
   if ((brush->image_brush_type == IMAGE_PAINT_BRUSH_TYPE_FILL) &&
       (brush->flag & BRUSH_USE_GRADIENT))
   {
-    cursor_ = WM_paint_cursor_activate(SPACE_TYPE_ANY,
-                                       RGN_TYPE_ANY,
-                                       ED_image_tools_paint_poll,
-                                       gradient_draw_line,
-                                       &this->gradient_data);
+    cursor_ = WM_cursor_overlay_activate(SPACE_TYPE_ANY,
+                                         RGN_TYPE_ANY,
+                                         ED_image_tools_paint_poll,
+                                         gradient_draw_line,
+                                         &this->gradient_data);
   }
 
   settings->imapaint.flag |= IMAGEPAINT_DRAWING;
@@ -693,9 +693,19 @@ static void do_brush_action(const Depsgraph &depsgraph,
                               node_mask);
       break;
     case IMAGE_PAINT_BRUSH_TYPE_MASK:
-      do_3d_image_paint_brush(
-          depsgraph, image_paint_settings, brush, ob, *mode_data->mask_data, nullptr, node_mask);
+      do_3d_image_mask_brush(
+          depsgraph, image_paint_settings, brush, ob, *mode_data->mask_data, node_mask);
       break;
+    case IMAGE_PAINT_BRUSH_TYPE_SMEAR: {
+      do_3d_image_smear_brush(depsgraph,
+                              image_paint_settings,
+                              brush,
+                              ob,
+                              *mode_data->image_data,
+                              mask_data,
+                              node_mask);
+      break;
+    }
     default:
       /* TODO: Implement the rest of them... */
       BLI_assert(0);
@@ -731,6 +741,7 @@ void ExperimentalTexturePaintStroke::update_step(wmOperator * /*op*/, const Stro
   do_symmetrical_brush_actions_with_tiling_and_feathering(
       *this->depsgraph, *this->scene, *this->paint, object, do_brush_action, &mode_data);
   cache.first_time = false;
+  copy_v3_v3(ss.cache->last_location, ss.cache->location);
 
   if (this->vc.rv3d) {
     /* Mark for faster 3D viewport redraws. */

@@ -607,7 +607,7 @@ void rna_Attribute_data_begin(CollectionPropertyIterator *iter, PointerRNA *ptr)
   AttributeOwner owner = owner_from_attribute_pointer_rna(ptr);
   if (owner.type() == AttributeOwnerType::Mesh) {
     const Mesh *mesh = owner.get_mesh();
-    if (mesh->runtime->edit_mesh) {
+    if (BKE_editmesh_bmesh_get(mesh)) {
       iter->valid = false;
       return;
     }
@@ -634,7 +634,7 @@ int rna_Attribute_data_length(PointerRNA *ptr)
   AttributeOwner owner = owner_from_attribute_pointer_rna(ptr);
   if (owner.type() == AttributeOwnerType::Mesh) {
     const Mesh *mesh = owner.get_mesh();
-    if (mesh->runtime->edit_mesh) {
+    if (BKE_editmesh_bmesh_get(mesh)) {
       return 0;
     }
   }

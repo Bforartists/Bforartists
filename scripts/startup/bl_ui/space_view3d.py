@@ -2384,9 +2384,14 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.operator(
             "pose.select_constraint_target",
-            text="Constraint Target",
+            text="Constraint Targets",
             icon="CONSTRAINT_BONE",
         )
+
+        # BFA - WIP, new in Blender (0feb38d08bf): icons to do (bone theme)
+        layout.operator("pose.select_constrained_by_selection", text="Constraint Owners")
+        layout.operator("pose.select_scaled", text="Scaled")
+        layout.operator("pose.select_deform", text="Deform")
 
         layout.separator()
 
@@ -2932,6 +2937,11 @@ class VIEW3D_MT_select_edit_armature(Menu):
         props = layout.operator("armature.select_hierarchy", text="Extend Child", icon="CHILD")
         props.extend = True
         props.direction = "CHILD"
+
+        layout.separator()
+
+        # BFA - WIP, new in Blender (0feb38d08bf): icon to do (bone theme). Separator: own group, like in the Pose menu
+        layout.operator("armature.select_deform", text="Deform")
 
         layout.separator()
         layout.menu("VIEW3D_MT_select_edit_armature_more_less")  # bfa menu

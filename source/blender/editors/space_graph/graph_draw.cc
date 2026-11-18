@@ -7,10 +7,7 @@
  */
 
 #include <algorithm>
-#include <cfloat>
 #include <cmath>
-#include <cstdio>
-#include <cstring>
 
 #include "BLI_listbase.hh"
 #include "BLI_math_vector_types.hh"
@@ -25,7 +22,6 @@
 #include "BKE_anim_data.hh"
 #include "BKE_curve.hh"
 #include "BKE_fcurve.hh"
-#include "BKE_nla.hh"
 
 #include "GPU_immediate.hh"
 #include "GPU_matrix.hh"
@@ -41,7 +37,40 @@
 
 namespace blender {
 
-static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu);
+/**
+ * Simple range bound by floats. Ensures that the start is always lower or equal than the end.
+ * It is up to the user to interpret the values as inclusive/exclusive.
+ */
+struct TimeRange {
+  float start;
+  float end;
+
+  TimeRange(const float s, const float e) : start(s), end(e)
+  {
+    if (end < start) {
+      std::swap(start, end);
+    }
+  }
+
+  TimeRange map_with(const TimeMapping mapping) const
+  {
+    const float new_start = mapping.map(start);
+    const float new_end = mapping.map(end);
+    return {new_start, new_end};
+  }
+
+  TimeRange unmap_with(const TimeMapping mapping) const
+  {
+    const float new_start = mapping.unmap(start);
+    const float new_end = mapping.unmap(end);
+    return {new_start, new_end};
+  }
+};
+
+static void graph_draw_driver_debug(const FCurve &fcu,
+                                    const View2D &v2d,
+                                    const TimeMapping &fcu_to_scene_time,
+                                    const UnitMapping &fcu_to_scene_units);
 
 /* -------------------------------------------------------------------- */
 /** \name Utility Drawing Defines
@@ -51,27 +80,40 @@ static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu);
  * drawing components for some F-Curve (fcu)
  * - selected F-Curves should be more visible than partially visible ones
  */
-static float fcurve_display_alpha(const FCurve *fcu)
+static float fcurve_display_alpha(const FCurve &fcu)
 {
-  return (fcu->flag & FCURVE_SELECTED) ? 1.0f : U.fcu_inactive_alpha;
+  return (fcu.flag & FCURVE_SELECTED) ? 1.0f : U.fcu_inactive_alpha;
 }
 
 /** Get the first and last index to the bezt array that are just outside min and max. */
-static IndexRange get_bounding_bezt_index_range(const FCurve *fcu,
+static IndexRange get_bounding_bezt_index_range(const FCurve &fcu,
                                                 const float min,
                                                 const float max)
 {
+  BLI_assert(min <= max);
   bool replace;
   int first, last;
-  first = BKE_fcurve_bezt_binarysearch_index(fcu->bezt, min, fcu->totvert, &replace);
-  first = clamp_i(first - 1, 0, fcu->totvert - 1);
+  first = BKE_fcurve_bezt_binarysearch_index(fcu.bezt, min, fcu.totvert, &replace);
+  first = clamp_i(first - 1, 0, fcu.totvert - 1);
 
-  last = BKE_fcurve_bezt_binarysearch_index(fcu->bezt, max, fcu->totvert, &replace);
+  last = BKE_fcurve_bezt_binarysearch_index(fcu.bezt, max, fcu.totvert, &replace);
   last = replace ? last + 1 : last;
-  last = clamp_i(last, 0, fcu->totvert - 1);
+  last = clamp_i(last, 0, fcu.totvert - 1);
   /* Iterating over index range is exclusive of the last index.
    * But we need `last` to be visited. */
   return IndexRange(first, (last - first) + 1);
+}
+
+static float2 calculate_pixels_per_unit(const View2D &v2d, const float2 unit_scale)
+{
+  const int window_width = BLI_rcti_size_x(&v2d.mask);
+  const int window_height = BLI_rcti_size_y(&v2d.mask);
+
+  const float v2d_frame_range = BLI_rctf_size_x(&v2d.cur);
+  const float v2d_value_range = BLI_rctf_size_y(&v2d.cur);
+  const float2 pixels_per_unit = {(window_width / v2d_frame_range) * fabsf(unit_scale[0]),
+                                  (window_height / v2d_value_range) * fabsf(unit_scale[1])};
+  return pixels_per_unit;
 }
 
 /** \} */
@@ -82,16 +124,16 @@ static IndexRange get_bounding_bezt_index_range(const FCurve *fcu,
 
 /* TODO: draw a shaded poly showing the region of influence too!!! */
 /**
- * \param ale_nla_remap: the anim list element of the fcurve that this modifier
- * is on. This is used to do NLA time remapping, as appropriate.
+ * \param fcu_to_scene_time is used to convert from FCurve time to Scene time for drawing.
  */
-static void draw_fcurve_modifier_controls_envelope(FModifier *fcm,
-                                                   View2D *v2d,
-                                                   bAnimListElem *ale_nla_remap)
+static void draw_fcurve_modifier_controls_envelope(const FModifier *fcm,
+                                                   const View2D &v2d,
+                                                   const TimeMapping &fcu_to_scene_time,
+                                                   const UnitMapping &fcu_to_scene_units)
 {
-  FMod_Envelope *env = static_cast<FMod_Envelope *>(fcm->data);
+  const FMod_Envelope *env = static_cast<FMod_Envelope *>(fcm->data);
   FCM_EnvelopeData *fed;
-  const float fac = 0.05f * BLI_rctf_size_x(&v2d->cur);
+  const float fac = 0.05f * BLI_rctf_size_x(&v2d.cur);
   int i;
 
   const uint shdr_pos = GPU_vertformat_attr_add(
@@ -110,14 +152,21 @@ static void draw_fcurve_modifier_controls_envelope(FModifier *fcm,
   immUniform1f("dash_width", 10.0f);
   immUniform1f("udash_factor", 0.5f);
 
+  const TimeRange v2d_range(v2d.cur.xmin, v2d.cur.xmax);
+  /* The View2D range in FCurve time. */
+  const TimeRange draw_range = v2d_range.unmap_with(fcu_to_scene_time);
+  /* The values for the envelope modifier seem to be already stored in Scene space, not FCurve
+   * space. */
+  const float line_min = fcu_to_scene_units.unmap(env->midval + env->min);
+  const float line_max = fcu_to_scene_units.unmap(env->midval + env->max);
+
   /* draw two black lines showing the standard reference levels */
-
   immBegin(GPU_PRIM_LINES, 4);
-  immVertex2f(shdr_pos, v2d->cur.xmin, env->midval + env->min);
-  immVertex2f(shdr_pos, v2d->cur.xmax, env->midval + env->min);
+  immVertex2f(shdr_pos, draw_range.start, line_min);
+  immVertex2f(shdr_pos, draw_range.end, line_min);
 
-  immVertex2f(shdr_pos, v2d->cur.xmin, env->midval + env->max);
-  immVertex2f(shdr_pos, v2d->cur.xmax, env->midval + env->max);
+  immVertex2f(shdr_pos, draw_range.start, line_max);
+  immVertex2f(shdr_pos, draw_range.end, line_max);
   immEnd();
 
   immUnbindProgram();
@@ -134,15 +183,12 @@ static void draw_fcurve_modifier_controls_envelope(FModifier *fcm,
     immBeginAtMost(GPU_PRIM_POINTS, env->totvert * 2);
 
     for (i = 0, fed = env->data; i < env->totvert; i++, fed++) {
-      const float env_scene_time = ANIM_nla_tweakedit_remap(
-          ale_nla_remap, fed->time, NLATIME_CONVERT_MAP);
-
       /* only draw if visible
        * - min/max here are fixed, not relative
        */
-      if (IN_RANGE(env_scene_time, (v2d->cur.xmin - fac), (v2d->cur.xmax + fac))) {
-        immVertex2f(shdr_pos, env_scene_time, fed->min);
-        immVertex2f(shdr_pos, env_scene_time, fed->max);
+      if (IN_RANGE(fcu_to_scene_time.map(fed->time), (v2d.cur.xmin - fac), (v2d.cur.xmax + fac))) {
+        immVertex2f(shdr_pos, fed->time, fcu_to_scene_units.unmap(fed->min));
+        immVertex2f(shdr_pos, fed->time, fcu_to_scene_units.unmap(fed->max));
       }
     }
 
@@ -159,13 +205,13 @@ static void draw_fcurve_modifier_controls_envelope(FModifier *fcm,
  * \{ */
 
 /* helper func - set color to draw F-Curve data with */
-static void set_fcurve_vertex_color(FCurve *fcu, bool sel)
+static void set_fcurve_vertex_color(const FCurve &fcu, const bool sel)
 {
   float color[4];
   float diff;
 
   /* Set color of curve vertex based on state of curve (i.e. 'Edit' Mode) */
-  if ((fcu->flag & FCURVE_PROTECTED) == 0) {
+  if ((fcu.flag & FCURVE_PROTECTED) == 0) {
     /* Curve's points ARE BEING edited */
     ui::theme::get_color_3fv(sel ? TH_VERTEX_SELECT : TH_VERTEX, color);
   }
@@ -189,7 +235,7 @@ static void set_fcurve_vertex_color(FCurve *fcu, bool sel)
  * NOTE: the caller MUST HAVE GL_LINE_SMOOTH & GL_BLEND ENABLED, otherwise the controls don't
  * have a consistent appearance (due to off-pixel alignments).
  */
-static void draw_cross(float position[2], const float scale[2], uint attr_id)
+static void draw_cross(const float position[2], const float scale[2], const uint attr_id)
 {
   GPU_matrix_push();
   GPU_matrix_translate_2fv(position);
@@ -208,17 +254,17 @@ static void draw_cross(float position[2], const float scale[2], uint attr_id)
   GPU_matrix_pop();
 }
 
-static void draw_fcurve_selected_keyframe_vertices(FCurve *fcu,
-                                                   bool sel,
-                                                   uint pos,
+static void draw_fcurve_selected_keyframe_vertices(const FCurve &fcu,
+                                                   const bool sel,
+                                                   const uint pos,
                                                    const IndexRange index_range)
 {
   set_fcurve_vertex_color(fcu, sel);
 
-  immBeginAtMost(GPU_PRIM_POINTS, fcu->totvert);
+  immBeginAtMost(GPU_PRIM_POINTS, fcu.totvert);
 
   for (const int i : index_range) {
-    BezTriple *bezt = &fcu->bezt[i];
+    BezTriple *bezt = &fcu.bezt[i];
     /* 'Keyframe' vertex only, as handle lines and handles have already been drawn
      * - only draw those with correct selection state for the current drawing color
      * -
@@ -234,17 +280,23 @@ static void draw_fcurve_selected_keyframe_vertices(FCurve *fcu,
 /**
  * Draw the extra indicator for the active point.
  */
-static void draw_fcurve_active_vertex(const FCurve *fcu, const View2D *v2d, const uint pos)
+static void draw_fcurve_active_vertex(const FCurve &fcu,
+                                      const View2D &v2d,
+                                      const TimeMapping &fcu_to_scene_time,
+                                      const uint pos)
 {
-  const int active_keyframe_index = BKE_fcurve_active_keyframe_index(fcu);
-  if (!(fcu->flag & FCURVE_ACTIVE) || active_keyframe_index == FCURVE_ACTIVE_KEYFRAME_NONE) {
+  const int active_keyframe_index = BKE_fcurve_active_keyframe_index(&fcu);
+  if (!(fcu.flag & FCURVE_ACTIVE) || active_keyframe_index == FCURVE_ACTIVE_KEYFRAME_NONE) {
     return;
   }
 
-  const float fac = 0.05f * BLI_rctf_size_x(&v2d->cur);
-  const BezTriple *bezt = &fcu->bezt[active_keyframe_index];
+  const float fac = 0.05f * BLI_rctf_size_x(&v2d.cur);
+  const BezTriple *bezt = &fcu.bezt[active_keyframe_index];
 
-  if (!IN_RANGE(bezt->vec[1][0], (v2d->cur.xmin - fac), (v2d->cur.xmax + fac))) {
+  if (!IN_RANGE(bezt->vec[1][0],
+                fcu_to_scene_time.unmap(v2d.cur.xmin - fac),
+                fcu_to_scene_time.unmap(v2d.cur.xmax + fac)))
+  {
     return;
   }
   if (!(bezt->f2 & SELECT)) {
@@ -258,11 +310,15 @@ static void draw_fcurve_active_vertex(const FCurve *fcu, const View2D *v2d, cons
 }
 
 /* helper func - draw keyframe vertices only for an F-Curve */
-static void draw_fcurve_keyframe_vertices(FCurve *fcu, View2D *v2d, const uint pos)
+static void draw_fcurve_keyframe_vertices(const FCurve &fcu,
+                                          const View2D &v2d,
+                                          const IndexRange index_range,
+                                          const TimeMapping &fcu_to_scene_time,
+                                          const uint pos)
 {
   immBindBuiltinProgram(GPU_SHADER_2D_POINT_UNIFORM_SIZE_UNIFORM_COLOR_AA);
 
-  if ((fcu->flag & FCURVE_PROTECTED) == 0) {
+  if ((fcu.flag & FCURVE_PROTECTED) == 0) {
     immUniform1f("size", ui::theme::get_value_f(TH_VERTEX_SIZE) * UI_SCALE_FAC);
   }
   else {
@@ -270,31 +326,31 @@ static void draw_fcurve_keyframe_vertices(FCurve *fcu, View2D *v2d, const uint p
     immUniform1f("size", (ui::theme::get_value_f(TH_VERTEX_SIZE) * UI_SCALE_FAC) * 0.8f);
   }
 
-  const IndexRange index_range = get_bounding_bezt_index_range(fcu, v2d->cur.xmin, v2d->cur.xmax);
   draw_fcurve_selected_keyframe_vertices(fcu, false, pos, index_range);
   draw_fcurve_selected_keyframe_vertices(fcu, true, pos, index_range);
-  draw_fcurve_active_vertex(fcu, v2d, pos);
+  draw_fcurve_active_vertex(fcu, v2d, fcu_to_scene_time, pos);
 
   immUnbindProgram();
 }
 
 /* helper func - draw handle vertices only for an F-Curve (if it is not protected) */
-static void draw_fcurve_selected_handle_vertices(
-    FCurve *fcu, View2D *v2d, bool sel, bool sel_handle_only, uint pos)
+static void draw_fcurve_selected_handle_vertices(const FCurve &fcu,
+                                                 const IndexRange bezt_index_range,
+                                                 const bool sel,
+                                                 const bool sel_handle_only,
+                                                 const uint pos)
 {
-  const IndexRange index_range = get_bounding_bezt_index_range(fcu, v2d->cur.xmin, v2d->cur.xmax);
-
   /* set handle color */
   float hcolor[3];
   ui::theme::get_color_3fv(sel ? TH_HANDLE_VERTEX_SELECT : TH_HANDLE_VERTEX, hcolor);
   immUniform4f("outlineColor", hcolor[0], hcolor[1], hcolor[2], 1.0f);
   immUniformColor3fvAlpha(hcolor, 0.01f); /* almost invisible - only keep for smoothness */
 
-  immBeginAtMost(GPU_PRIM_POINTS, fcu->totvert * 2);
+  immBeginAtMost(GPU_PRIM_POINTS, fcu.totvert * 2);
 
   BezTriple *prevbezt = nullptr;
-  for (const int i : index_range) {
-    BezTriple *bezt = &fcu->bezt[i];
+  for (const int i : bezt_index_range) {
+    BezTriple *bezt = &fcu.bezt[i];
     /* Draw the editmode handles for a bezier curve (others don't have handles)
      * if their selection status matches the selection status we're drawing for
      * - first handle only if previous beztriple was bezier-mode
@@ -331,16 +387,16 @@ static void draw_fcurve_selected_handle_vertices(
 /**
  * Draw the extra handles for the active point.
  */
-static void draw_fcurve_active_handle_vertices(const FCurve *fcu,
+static void draw_fcurve_active_handle_vertices(const FCurve &fcu,
                                                const bool sel_handle_only,
                                                const uint pos)
 {
-  const int active_keyframe_index = BKE_fcurve_active_keyframe_index(fcu);
-  if (!(fcu->flag & FCURVE_ACTIVE) || active_keyframe_index == FCURVE_ACTIVE_KEYFRAME_NONE) {
+  const int active_keyframe_index = BKE_fcurve_active_keyframe_index(&fcu);
+  if (!(fcu.flag & FCURVE_ACTIVE) || active_keyframe_index == FCURVE_ACTIVE_KEYFRAME_NONE) {
     return;
   }
 
-  const BezTriple *bezt = &fcu->bezt[active_keyframe_index];
+  const BezTriple *bezt = &fcu.bezt[active_keyframe_index];
 
   if (sel_handle_only && !BEZT_ISSEL_ANY(bezt)) {
     return;
@@ -352,7 +408,7 @@ static void draw_fcurve_active_handle_vertices(const FCurve *fcu,
   immUniformColor3fvAlpha(active_col, 0.01f); /* Almost invisible - only keep for smoothness. */
   immBeginAtMost(GPU_PRIM_POINTS, 2);
 
-  const BezTriple *left_bezt = active_keyframe_index > 0 ? &fcu->bezt[active_keyframe_index - 1] :
+  const BezTriple *left_bezt = active_keyframe_index > 0 ? &fcu.bezt[active_keyframe_index - 1] :
                                                            bezt;
   if (left_bezt->ipo == BEZT_IPO_BEZ && (bezt->f1 & SELECT)) {
     immVertex2fv(pos, bezt->vec[0]);
@@ -363,8 +419,15 @@ static void draw_fcurve_active_handle_vertices(const FCurve *fcu,
   immEnd();
 }
 
-/* helper func - draw handle vertices only for an F-Curve (if it is not protected) */
-static void draw_fcurve_handle_vertices(FCurve *fcu, View2D *v2d, bool sel_handle_only, uint pos)
+/**
+ * Draw handle vertices only for an F-Curve (if it is not protected).
+ * \param bezt_index_range the indices of the FCurve keys to draw. This should coincide with the
+ * visible range in the graph editor.
+ */
+static void draw_fcurve_handle_vertices(const FCurve &fcu,
+                                        const IndexRange bezt_index_range,
+                                        const bool sel_handle_only,
+                                        const uint pos)
 {
   /* smooth outlines for more consistent appearance */
   immBindBuiltinProgram(GPU_SHADER_2D_POINT_UNIFORM_SIZE_UNIFORM_COLOR_OUTLINE_AA);
@@ -373,20 +436,19 @@ static void draw_fcurve_handle_vertices(FCurve *fcu, View2D *v2d, bool sel_handl
   immUniform1f("size", (1.4f * ui::theme::get_value_f(TH_HANDLE_VERTEX_SIZE)) * UI_SCALE_FAC);
   immUniform1f("outlineWidth", 1.5f * UI_SCALE_FAC);
 
-  draw_fcurve_selected_handle_vertices(fcu, v2d, false, sel_handle_only, pos);
-  draw_fcurve_selected_handle_vertices(fcu, v2d, true, sel_handle_only, pos);
+  draw_fcurve_selected_handle_vertices(fcu, bezt_index_range, false, sel_handle_only, pos);
+  draw_fcurve_selected_handle_vertices(fcu, bezt_index_range, true, sel_handle_only, pos);
   draw_fcurve_active_handle_vertices(fcu, sel_handle_only, pos);
 
   immUnbindProgram();
 }
 
-static void draw_fcurve_vertices(ARegion *region,
-                                 FCurve *fcu,
-                                 bool do_handles,
-                                 bool sel_handle_only)
+static void draw_fcurve_vertices(const View2D &v2d,
+                                 const FCurve &fcu,
+                                 const TimeMapping &fcu_to_scene_time,
+                                 const bool do_handles,
+                                 const bool sel_handle_only)
 {
-  View2D *v2d = &region->v2d;
-
   /* only draw points if curve is visible
    * - Draw unselected points before selected points as separate passes
    *    to make sure in the case of overlapping points that the selected is always visible
@@ -399,14 +461,20 @@ static void draw_fcurve_vertices(ARegion *region,
   GPU_blend(GPU_BLEND_ALPHA);
   GPU_program_point_size(true);
 
+  const TimeRange v2d_range(v2d.cur.xmin, v2d.cur.xmax);
+  /* The View2D range in FCurve time. */
+  const TimeRange draw_range = v2d_range.unmap_with(fcu_to_scene_time);
+  const IndexRange index_range = get_bounding_bezt_index_range(
+      fcu, draw_range.start, draw_range.end);
+
   /* draw the two handles first (if they're shown, the curve doesn't
    * have just a single keyframe, and the curve is being edited) */
   if (do_handles) {
-    draw_fcurve_handle_vertices(fcu, v2d, sel_handle_only, pos);
+    draw_fcurve_handle_vertices(fcu, index_range, sel_handle_only, pos);
   }
 
   /* draw keyframes over the handles */
-  draw_fcurve_keyframe_vertices(fcu, v2d, pos);
+  draw_fcurve_keyframe_vertices(fcu, v2d, index_range, fcu_to_scene_time, pos);
 
   GPU_program_point_size(false);
   GPU_blend(GPU_BLEND_NONE);
@@ -440,7 +508,10 @@ static bool draw_fcurve_handles_check(const SpaceGraph *sipo, const FCurve *fcu)
 
 /* draw lines for F-Curve handles only (this is only done in EditMode)
  * NOTE: draw_fcurve_handles_check must be checked before running this. */
-static void draw_fcurve_handles(SpaceGraph *sipo, ARegion *region, const FCurve *fcu)
+static void draw_fcurve_handles(const SpaceGraph *sipo,
+                                const View2D &v2d,
+                                const FCurve &fcu,
+                                const TimeMapping &fcu_to_scene_time)
 {
   GPUVertFormat *format = immVertexFormat();
   uint pos = GPU_vertformat_attr_add(format, "pos", gpu::VertAttrType::SFLOAT_32_32);
@@ -451,10 +522,13 @@ static void draw_fcurve_handles(SpaceGraph *sipo, ARegion *region, const FCurve 
   }
   GPU_blend(GPU_BLEND_ALPHA);
 
-  immBeginAtMost(GPU_PRIM_LINES, 4 * 2 * fcu->totvert);
+  immBeginAtMost(GPU_PRIM_LINES, 4 * 2 * fcu.totvert);
 
+  const TimeRange v2d_range(v2d.cur.xmin, v2d.cur.xmax);
+  /* The View2D range in FCurve time. */
+  const TimeRange draw_range = v2d_range.unmap_with(fcu_to_scene_time);
   const IndexRange index_range = get_bounding_bezt_index_range(
-      fcu, region->v2d.cur.xmin, region->v2d.cur.xmax);
+      fcu, draw_range.start, draw_range.end);
 
   /* slightly hacky, but we want to draw unselected points before selected ones
    * so that selected points are clearly visible
@@ -465,7 +539,7 @@ static void draw_fcurve_handles(SpaceGraph *sipo, ARegion *region, const FCurve 
 
     BezTriple *prevbezt = nullptr;
     for (const int i : index_range) {
-      BezTriple *bezt = &fcu->bezt[i];
+      BezTriple *bezt = &fcu.bezt[i];
       /* if only selected keyframes can get their handles shown,
        * check that keyframe is selected
        */
@@ -541,17 +615,20 @@ static void draw_fcurve_handles(SpaceGraph *sipo, ARegion *region, const FCurve 
 /** \name F-Curve Samples
  * \{ */
 
-/* helper func - draw keyframe vertices only for an F-Curve */
-static void draw_fcurve_samples(ARegion *region, const FCurve *fcu, const float unit_scale)
+/* Draw indicators for the first and last point of a sampled FCurve. */
+static void draw_fcurve_samples(const View2D &v2d,
+                                const FCurve *fcu,
+                                const float time_scale,
+                                const float unit_scale)
 {
   FPoint *first, *last;
   float scale[2];
 
   /* get view settings */
   const float hsize = ui::theme::get_value_f(TH_VERTEX_SIZE);
-  ui::view2d_scale_get(&region->v2d, &scale[0], &scale[1]);
+  ui::view2d_scale_get(&v2d, &scale[0], &scale[1]);
 
-  scale[0] /= hsize;
+  scale[0] /= hsize / time_scale;
   scale[1] /= hsize / unit_scale;
 
   /* get verts */
@@ -589,32 +666,21 @@ static void draw_fcurve_samples(ARegion *region, const FCurve *fcu, const float 
 /** \name F-Curve Drawing
  * \{ */
 
-/* Helper func - just draw the F-Curve by sampling the visible region
- * (for drawing curves with modifiers). */
-static void draw_fcurve_curve(bAnimContext *ac,
-                              ID *id,
-                              const FCurve *fcu_,
-                              View2D *v2d,
-                              uint pos,
-                              const bool use_nla_remap,
+/**
+ * Helper func - just draw the F-Curve by sampling the visible region
+ * (for drawing curves with modifiers).
+ */
+static void draw_fcurve_curve(const FCurve *fcu,
+                              const View2D *v2d,
+                              const uint pos,
+                              const TimeMapping &fcu_to_scene_time,
                               const bool draw_extrapolation)
 {
-  short mapping_flag = ANIM_get_normalization_flags(ac->sl);
-
   /* when opening a blend file on a different sized screen or while dragging the toolbar this can
    * happen best just bail out in this case. */
   if (ui::view2d_scale_get_x(v2d) <= 0.0f) {
     return;
   }
-
-  /* disable any drivers */
-  FCurve fcurve_for_draw = *fcu_;
-  fcurve_for_draw.driver = nullptr;
-
-  /* compute unit correction factor */
-  float offset;
-  float unitFac = ANIM_unit_mapping_get_factor(
-      ac->scene, id, &fcurve_for_draw, mapping_flag, &offset);
 
   /* Note about sampling frequency:
    * Ideally, this is chosen such that we have 1-2 pixels = 1 segment
@@ -632,7 +698,10 @@ static void draw_fcurve_curve(bAnimContext *ac,
   /* TODO: perhaps we should have 1.0 frames
    * as upper limit so that curves don't get too distorted? */
   float pixels_per_sample = 1.5f;
-  float samplefreq = pixels_per_sample / ui::view2d_scale_get_x(v2d);
+  /* Not passing time scale here so we clamp below. */
+  const float2 pixels_per_unit = calculate_pixels_per_unit(*v2d, {1.0f, 1.0f});
+  /* The distance between samples in FCurve frames. */
+  float sample_frequency = pixels_per_sample / pixels_per_unit.x;
 
   if (!(U.animation_flag & USER_ANIM_HIGH_QUALITY_DRAWING)) {
     /* Low Precision = coarse lower-bound clamping
@@ -644,49 +713,37 @@ static void draw_fcurve_curve(bAnimContext *ac,
      * This one still amounts to 10 sample-frames for each 1-frame interval
      * which should be quite a decent approximation in many situations.
      */
-    samplefreq = std::max(samplefreq, 0.1f);
+    sample_frequency = std::max(sample_frequency, 0.1f);
   }
   else {
     /* "Higher Precision" but slower - especially on larger windows (e.g. #40372) */
-    samplefreq = std::max(samplefreq, 0.00001f);
+    sample_frequency = std::max(sample_frequency, 0.00001f);
+  }
+  /* Now the sample frequency is converted to FCurve units. */
+  if (fabsf(fcu_to_scene_time.scale) != 0.0f) {
+    sample_frequency = sample_frequency / fabsf(fcu_to_scene_time.scale);
   }
 
-  /* the start/end times are simply the horizontal extents of the 'cur' rect */
-  float stime = v2d->cur.xmin;
-  float etime = v2d->cur.xmax;
-
-  AnimData *adt = use_nla_remap ? BKE_animdata_from_id(id) : nullptr;
+  /* Start and end frame in FCurve time between which we sample. */
+  const TimeRange v2d_range(v2d->cur.xmin, v2d->cur.xmax);
+  TimeRange draw_range = v2d_range.unmap_with(fcu_to_scene_time);
 
   /* If not drawing extrapolation, then change fcurve drawing bounds to its keyframe bounds clamped
    * by graph editor bounds. */
   if (!draw_extrapolation) {
     float fcu_start = 0;
     float fcu_end = 0;
-    BKE_fcurve_calc_range(fcu_, &fcu_start, &fcu_end, false);
-
-    fcu_start = BKE_nla_tweakedit_remap(adt, fcu_start, NLATIME_CONVERT_MAP);
-    fcu_end = BKE_nla_tweakedit_remap(adt, fcu_end, NLATIME_CONVERT_MAP);
-
-    /* Account for reversed NLA strip effect. */
-    if (fcu_end < fcu_start) {
-      std::swap(fcu_start, fcu_end);
-    }
-
+    BKE_fcurve_calc_range(fcu, &fcu_start, &fcu_end, false);
     /* Clamp to graph editor rendering bounds. */
-    stime = max_ff(stime, fcu_start);
-    etime = min_ff(etime, fcu_end);
+    draw_range.start = max_ff(draw_range.start, fcu_start);
+    draw_range.end = min_ff(draw_range.end, fcu_end);
+    BLI_assert(draw_range.start <= draw_range.end);
   }
 
-  const int total_samples = roundf((etime - stime) / samplefreq);
+  const int total_samples = roundf((draw_range.end - draw_range.start) / sample_frequency);
   if (total_samples <= 0) {
     return;
   }
-
-  /* NLA remapping is linear so we don't have to remap per iteration. */
-  const float eval_start = BKE_nla_tweakedit_remap(adt, stime, NLATIME_CONVERT_UNMAP);
-  const float eval_freq = BKE_nla_tweakedit_remap(adt, stime + samplefreq, NLATIME_CONVERT_UNMAP) -
-                          eval_start;
-  const float eval_end = BKE_nla_tweakedit_remap(adt, etime, NLATIME_CONVERT_UNMAP);
 
   immBegin(GPU_PRIM_LINE_STRIP, (total_samples + 1));
 
@@ -696,8 +753,7 @@ static void draw_fcurve_curve(bAnimContext *ac,
    * correctly in the viewport.
    */
   for (int i = 0; i < total_samples; i++) {
-    const float ctime = stime + i * samplefreq;
-    float eval_time = eval_start + i * eval_freq;
+    float eval_time = draw_range.start + i * sample_frequency;
 
     /* Prevent drawing past bounds, due to floating point problems.
      * User-wise, prevent visual flickering.
@@ -706,9 +762,9 @@ static void draw_fcurve_curve(bAnimContext *ac,
      * eval_start + total_samples * eval_freq > eval_end
      * due to floating point problems.
      */
-    eval_time = std::min(eval_time, eval_end);
+    eval_time = std::min(eval_time, draw_range.end);
 
-    immVertex2f(pos, ctime, (evaluate_fcurve(&fcurve_for_draw, eval_time) + offset) * unitFac);
+    immVertex2f(pos, eval_time, evaluate_fcurve_only_curve(fcu, eval_time));
   }
 
   /* Ensure we include end boundary point.
@@ -718,56 +774,51 @@ static void draw_fcurve_curve(bAnimContext *ac,
    * eval_start + total_samples * eval_freq < eval_end
    * due to floating point problems.
    */
-  immVertex2f(pos, etime, (evaluate_fcurve(&fcurve_for_draw, eval_end) + offset) * unitFac);
+  immVertex2f(pos, draw_range.end, evaluate_fcurve_only_curve(fcu, draw_range.end));
 
   immEnd();
 }
 
 /* helper func - draw a samples-based F-Curve */
-static void draw_fcurve_curve_samples(bAnimContext *ac,
-                                      ID *id,
-                                      FCurve *fcu,
-                                      View2D *v2d,
+static void draw_fcurve_curve_samples(FCurve &fcu,
+                                      const View2D &v2d,
+                                      const TimeMapping &fcu_to_scene_time,
                                       const uint shdr_pos,
                                       const bool draw_extrapolation)
 {
-  if (!draw_extrapolation && fcu->totvert == 1) {
+  if (!draw_extrapolation && fcu.totvert == 1) {
     return;
   }
 
-  FPoint *prevfpt = fcu->fpt;
+  FPoint *prevfpt = fcu.fpt;
   FPoint *fpt = prevfpt + 1;
   float fac, v[2];
-  int b = fcu->totvert;
-  float unit_scale, offset;
-  short mapping_flag = ANIM_get_normalization_flags(ac->sl);
-  int count = fcu->totvert;
+  int b = fcu.totvert;
+  int count = fcu.totvert;
 
-  const bool extrap_left = draw_extrapolation && prevfpt->vec[0] > v2d->cur.xmin;
+  const TimeRange v2d_range(v2d.cur.xmin, v2d.cur.xmax);
+  /* The View2D range in FCurve time. */
+  const TimeRange draw_range = v2d_range.unmap_with(fcu_to_scene_time);
+
+  const bool extrap_left = draw_extrapolation && prevfpt->vec[0] > draw_range.start;
   if (extrap_left) {
     count++;
   }
 
-  const bool extrap_right = draw_extrapolation && (prevfpt + b - 1)->vec[0] < v2d->cur.xmax;
+  const bool extrap_right = draw_extrapolation && (prevfpt + b - 1)->vec[0] < draw_range.end;
   if (extrap_right) {
     count++;
   }
-
-  /* apply unit mapping */
-  GPU_matrix_push();
-  unit_scale = ANIM_unit_mapping_get_factor(ac->scene, id, fcu, mapping_flag, &offset);
-  GPU_matrix_scale_2f(1.0f, unit_scale);
-  GPU_matrix_translate_2f(0.0f, offset);
 
   immBegin(GPU_PRIM_LINE_STRIP, count);
 
   /* extrapolate to left? - left-side of view comes before first keyframe? */
   if (extrap_left) {
-    v[0] = v2d->cur.xmin;
+    v[0] = draw_range.start;
 
     /* y-value depends on the interpolation */
-    if ((fcu->extend == FCURVE_EXTRAPOLATE_CONSTANT) || (fcu->flag & FCURVE_INT_VALUES) ||
-        (fcu->totvert == 1))
+    if ((fcu.extend == FCURVE_EXTRAPOLATE_CONSTANT) || (fcu.flag & FCURVE_INT_VALUES) ||
+        (fcu.totvert == 1))
     {
       /* just extend across the first keyframe's value */
       v[1] = prevfpt->vec[1];
@@ -798,11 +849,11 @@ static void draw_fcurve_curve_samples(bAnimContext *ac,
 
   /* extrapolate to right? (see code for left-extrapolation above too) */
   if (extrap_right) {
-    v[0] = v2d->cur.xmax;
+    v[0] = draw_range.end;
 
     /* y-value depends on the interpolation */
-    if ((fcu->extend == FCURVE_EXTRAPOLATE_CONSTANT) || (fcu->flag & FCURVE_INT_VALUES) ||
-        (fcu->totvert == 1))
+    if ((fcu.extend == FCURVE_EXTRAPOLATE_CONSTANT) || (fcu.flag & FCURVE_INT_VALUES) ||
+        (fcu.totvert == 1))
     {
       /* based on last keyframe's value */
       v[1] = prevfpt->vec[1];
@@ -821,12 +872,10 @@ static void draw_fcurve_curve_samples(bAnimContext *ac,
   }
 
   immEnd();
-
-  GPU_matrix_pop();
 }
 
-static int calculate_bezt_draw_resolution(BezTriple *bezt,
-                                          BezTriple *prevbezt,
+static int calculate_bezt_draw_resolution(const BezTriple *bezt,
+                                          const BezTriple *prevbezt,
                                           const float2 pixels_per_unit)
 {
   const float points_per_pixel = 0.25f;
@@ -850,8 +899,8 @@ static int calculate_bezt_draw_resolution(BezTriple *bezt,
  * Add points on the bezier between `prevbezt` and `bezt` to `curve_vertices`.
  * The amount of points added is based on the given `resolution`.
  */
-static void add_bezt_vertices(BezTriple *bezt,
-                              BezTriple *prevbezt,
+static void add_bezt_vertices(const BezTriple *bezt,
+                              const BezTriple *prevbezt,
                               int resolution,
                               Vector<float2> &curve_vertices)
 {
@@ -905,18 +954,18 @@ static void add_bezt_vertices(BezTriple *bezt,
   MEM_delete(bezier_diff_points);
 }
 
-static void add_extrapolation_point_left(const FCurve *fcu,
+static void add_extrapolation_point_left(const FCurve &fcu,
                                          const float v2d_xmin,
                                          Vector<float2> &curve_vertices)
 {
   /* left-side of view comes before first keyframe, so need to extend as not cyclic */
   float vertex_position[2];
   vertex_position[0] = v2d_xmin;
-  BezTriple *bezt = &fcu->bezt[0];
+  BezTriple *bezt = &fcu.bezt[0];
 
   /* y-value depends on the interpolation */
-  if ((fcu->extend == FCURVE_EXTRAPOLATE_CONSTANT) || (bezt->ipo == BEZT_IPO_CONST) ||
-      (bezt->ipo == BEZT_IPO_LIN && fcu->totvert == 1))
+  if ((fcu.extend == FCURVE_EXTRAPOLATE_CONSTANT) || (bezt->ipo == BEZT_IPO_CONST) ||
+      (bezt->ipo == BEZT_IPO_LIN && fcu.totvert == 1))
   {
     /* just extend across the first keyframe's value */
     vertex_position[1] = bezt->vec[1][1];
@@ -942,17 +991,17 @@ static void add_extrapolation_point_left(const FCurve *fcu,
   curve_vertices.append(vertex_position);
 }
 
-static void add_extrapolation_point_right(const FCurve *fcu,
+static void add_extrapolation_point_right(const FCurve &fcu,
                                           const float v2d_xmax,
                                           Vector<float2> &curve_vertices)
 {
   float vertex_position[2];
   vertex_position[0] = v2d_xmax;
-  BezTriple *bezt = &fcu->bezt[fcu->totvert - 1];
+  BezTriple *bezt = &fcu.bezt[fcu.totvert - 1];
 
   /* y-value depends on the interpolation. */
-  if ((fcu->extend == FCURVE_EXTRAPOLATE_CONSTANT) || (fcu->flag & FCURVE_INT_VALUES) ||
-      (bezt->ipo == BEZT_IPO_CONST) || (bezt->ipo == BEZT_IPO_LIN && fcu->totvert == 1))
+  if ((fcu.extend == FCURVE_EXTRAPOLATE_CONSTANT) || (fcu.flag & FCURVE_INT_VALUES) ||
+      (bezt->ipo == BEZT_IPO_CONST) || (bezt->ipo == BEZT_IPO_LIN && fcu.totvert == 1))
   {
     /* based on last keyframe's value */
     vertex_position[1] = bezt->vec[1][1];
@@ -978,18 +1027,6 @@ static void add_extrapolation_point_right(const FCurve *fcu,
   curve_vertices.append(vertex_position);
 }
 
-static float2 calculate_pixels_per_unit(View2D *v2d, const float unit_scale)
-{
-  const int window_width = BLI_rcti_size_x(&v2d->mask);
-  const int window_height = BLI_rcti_size_y(&v2d->mask);
-
-  const float v2d_frame_range = BLI_rctf_size_x(&v2d->cur);
-  const float v2d_value_range = BLI_rctf_size_y(&v2d->cur);
-  const float2 pixels_per_unit = {window_width / v2d_frame_range,
-                                  (window_height / v2d_value_range) * unit_scale};
-  return pixels_per_unit;
-}
-
 static float calculate_pixel_distance(const rctf &bounds, const float2 pixels_per_unit)
 {
   return BLI_rctf_size_x(&bounds) * pixels_per_unit[0] +
@@ -1013,42 +1050,43 @@ static void expand_key_bounds(const BezTriple *left_key, const BezTriple *right_
 }
 
 /* Helper function - draw one repeat of an F-Curve (using Bezier curve approximations). */
-static void draw_fcurve_curve_keys(
-    bAnimContext *ac, ID *id, FCurve *fcu, View2D *v2d, uint pos, const bool draw_extrapolation)
+static void draw_fcurve_curve_keys(FCurve &fcu,
+                                   const View2D &v2d,
+                                   const UnitMapping &fcu_to_scene_units,
+                                   const TimeMapping &fcu_to_scene_time,
+                                   const uint pos,
+                                   const bool draw_extrapolation)
 {
-  if (!draw_extrapolation && fcu->totvert == 1) {
+  if (!draw_extrapolation && fcu.totvert == 1) {
     return;
   }
 
-  /* Apply unit mapping. */
-  GPU_matrix_push();
-  float offset;
-  short mapping_flag = ANIM_get_normalization_flags(ac->sl);
-  const float unit_scale = ANIM_unit_mapping_get_factor(ac->scene, id, fcu, mapping_flag, &offset);
-  GPU_matrix_scale_2f(1.0f, unit_scale);
-  GPU_matrix_translate_2f(0.0f, offset);
-
   Vector<float2> curve_vertices;
 
+  const TimeRange v2d_range(v2d.cur.xmin, v2d.cur.xmax);
+  /* The View2D range in FCurve time. */
+  const TimeRange draw_range = v2d_range.unmap_with(fcu_to_scene_time);
+
   /* Extrapolate to the left? */
-  if (draw_extrapolation && fcu->bezt[0].vec[1][0] > v2d->cur.xmin) {
-    add_extrapolation_point_left(fcu, v2d->cur.xmin, curve_vertices);
+  if (draw_extrapolation && fcu.bezt[0].vec[1][0] > draw_range.start) {
+    add_extrapolation_point_left(fcu, draw_range.start, curve_vertices);
   }
 
-  const IndexRange index_range = get_bounding_bezt_index_range(fcu, v2d->cur.xmin, v2d->cur.xmax);
+  const IndexRange index_range = get_bounding_bezt_index_range(
+      fcu, draw_range.start, draw_range.end);
 
   /* Always add the first point so the extrapolation line doesn't jump. */
   curve_vertices.append(
-      {fcu->bezt[index_range.first()].vec[1][0], fcu->bezt[index_range.first()].vec[1][1]});
+      {fcu.bezt[index_range.first()].vec[1][0], fcu.bezt[index_range.first()].vec[1][1]});
 
-  const float2 pixels_per_unit = calculate_pixels_per_unit(v2d, unit_scale);
-  const int window_width = BLI_rcti_size_x(&v2d->mask);
-  const float v2d_frame_range = BLI_rctf_size_x(&v2d->cur);
-  const float pixel_width = v2d_frame_range / window_width;
+  float2 pixels_per_unit = calculate_pixels_per_unit(
+      v2d, {fcu_to_scene_time.scale, fcu_to_scene_units.scale});
+  pixels_per_unit[0] = max_ff(pixels_per_unit[0], 0.0001f);
+  const float pixel_width = 1 / pixels_per_unit[0];
   const float samples_per_pixel = 0.66f;
   const float evaluation_step = pixel_width / samples_per_pixel;
 
-  BezTriple *first_key = &fcu->bezt[index_range.first()];
+  BezTriple *first_key = &fcu.bezt[index_range.first()];
   rctf key_bounds = {
       first_key->vec[1][0], first_key->vec[1][0], first_key->vec[1][1], first_key->vec[1][1]};
   /* Used when skipping keys. */
@@ -1057,8 +1095,8 @@ static void draw_fcurve_curve_keys(
 
   /* Draw curve between first and last keyframe (if there are enough to do so). */
   for (const int i : index_range.drop_front(1)) {
-    BezTriple *prevbezt = &fcu->bezt[i - 1];
-    BezTriple *bezt = &fcu->bezt[i];
+    BezTriple *prevbezt = &fcu.bezt[i - 1];
+    BezTriple *bezt = &fcu.bezt[i];
     expand_key_bounds(prevbezt, bezt, key_bounds);
     float pixel_distance = calculate_pixel_distance(key_bounds, pixels_per_unit);
 
@@ -1107,7 +1145,7 @@ static void draw_fcurve_curve_keys(
         curve_vertices.append(prevbezt->vec[1]);
         float current_frame = prevbezt->vec[1][0] + evaluation_step;
         while (current_frame < bezt->vec[1][0]) {
-          curve_vertices.append({current_frame, evaluate_fcurve(fcu, current_frame)});
+          curve_vertices.append({current_frame, evaluate_fcurve(&fcu, current_frame)});
           current_frame += evaluation_step;
         }
         break;
@@ -1119,15 +1157,14 @@ static void draw_fcurve_curve_keys(
 
   /* Always add the last point so the extrapolation line doesn't jump. */
   curve_vertices.append(
-      {fcu->bezt[index_range.last()].vec[1][0], fcu->bezt[index_range.last()].vec[1][1]});
+      {fcu.bezt[index_range.last()].vec[1][0], fcu.bezt[index_range.last()].vec[1][1]});
 
   /* Extrapolate to the right? (see code for left-extrapolation above too) */
-  if (draw_extrapolation && fcu->bezt[fcu->totvert - 1].vec[1][0] < v2d->cur.xmax) {
-    add_extrapolation_point_right(fcu, v2d->cur.xmax, curve_vertices);
+  if (draw_extrapolation && fcu.bezt[fcu.totvert - 1].vec[1][0] < draw_range.end) {
+    add_extrapolation_point_right(fcu, draw_range.end, curve_vertices);
   }
 
   if (curve_vertices.size() < 2) {
-    GPU_matrix_pop();
     return;
   }
 
@@ -1136,17 +1173,19 @@ static void draw_fcurve_curve_keys(
     immVertex2fv(pos, vertex);
   }
   immEnd();
-
-  GPU_matrix_pop();
 }
 
-static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAnimListElem *ale)
+static void draw_fcurve(bAnimContext *ac,
+                        const SpaceGraph *sipo,
+                        const View2D &v2d,
+                        FCurve *fcu,
+                        const TimeMapping &fcu_to_scene_time,
+                        const UnitMapping &fcu_to_scene_units)
 {
-  FCurve *fcu = static_cast<FCurve *>(ale->key_data);
-  FModifier *fcm = find_active_fmodifier(&fcu->modifiers);
-
-  /* map keyframes for drawing if scaled F-Curve */
-  ANIM_nla_mapping_apply_if_needed_fcurve(ale, static_cast<FCurve *>(ale->key_data), false, false);
+  GPU_matrix_push();
+  GPU_matrix_translate_2f(fcu_to_scene_time.offset, 0.0f);
+  GPU_matrix_scale_2f(fcu_to_scene_time.scale, fcu_to_scene_units.scale);
+  GPU_matrix_translate_2f(-fcu_to_scene_time.scale_offset, fcu_to_scene_units.offset);
 
   /* draw curve:
    * - curve line may be result of one or more destructive modifiers or just the raw data,
@@ -1204,40 +1243,25 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
       /* set whatever color the curve has set
        * - unselected curves draw less opaque to help distinguish the selected ones
        */
-      immUniformColor3fvAlpha(fcu->color, fcurve_display_alpha(fcu));
+      immUniformColor3fvAlpha(fcu->color, fcurve_display_alpha(*fcu));
     }
 
     const bool draw_extrapolation = (sipo->flag & SIPO_NO_DRAW_EXTRAPOLATION) == 0;
     /* draw F-Curve */
     if ((fcu->modifiers.first_) || (fcu->flag & FCURVE_INT_VALUES)) {
-      /* draw a curve affected by modifiers or only allowed to have integer values
-       * by sampling it at various small-intervals over the visible region
+      /* Draw a curve affected by modifiers or only allowed to have integer values
+       * by sampling it at various small-intervals over the visible region.
        */
-      /* We have to do this mapping dance since the keyframes were remapped but the F-modifier
-       * evaluations are not.
-       *
-       * So we undo the keyframe remapping and instead remap the evaluation time when drawing
-       * the curve itself. Afterward, we go back and redo the keyframe remapping so the controls
-       * are drawn properly. */
-      ANIM_nla_mapping_apply_if_needed_fcurve(
-          ale, static_cast<FCurve *>(ale->key_data), true, false);
-      draw_fcurve_curve(ac,
-                        ale->id,
-                        fcu,
-                        &region->v2d,
-                        shdr_pos,
-                        ANIM_nla_mapping_allowed(ale),
-                        draw_extrapolation);
-      ANIM_nla_mapping_apply_if_needed_fcurve(
-          ale, static_cast<FCurve *>(ale->key_data), false, false);
+      draw_fcurve_curve(fcu, &v2d, shdr_pos, fcu_to_scene_time, draw_extrapolation);
     }
     else if (((fcu->bezt) || (fcu->fpt)) && (fcu->totvert)) {
       /* just draw curve based on defined data (i.e. no modifiers) */
       if (fcu->bezt) {
-        draw_fcurve_curve_keys(ac, ale->id, fcu, &region->v2d, shdr_pos, draw_extrapolation);
+        draw_fcurve_curve_keys(
+            *fcu, v2d, fcu_to_scene_units, fcu_to_scene_time, shdr_pos, draw_extrapolation);
       }
       else if (fcu->fpt) {
-        draw_fcurve_curve_samples(ac, ale->id, fcu, &region->v2d, shdr_pos, draw_extrapolation);
+        draw_fcurve_curve_samples(*fcu, v2d, fcu_to_scene_time, shdr_pos, draw_extrapolation);
       }
     }
 
@@ -1258,10 +1282,12 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
   {
     if (!BKE_fcurve_are_keyframes_usable(*fcu) && !(fcu->fpt && fcu->totvert)) {
       /* only draw controls if this is the active modifier */
+      FModifier *fcm = find_active_fmodifier(&fcu->modifiers);
       if ((fcu->flag & FCURVE_ACTIVE) && (fcm)) {
         switch (fcm->type) {
           case FMODIFIER_TYPE_ENVELOPE: /* envelope */
-            draw_fcurve_modifier_controls_envelope(fcm, &region->v2d, ale);
+            draw_fcurve_modifier_controls_envelope(
+                fcm, v2d, fcu_to_scene_time, fcu_to_scene_units);
             break;
           default:
             break;
@@ -1269,16 +1295,6 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
       }
     }
     else if (((fcu->bezt) || (fcu->fpt)) && (fcu->totvert)) {
-      short mapping_flag = ANIM_get_normalization_flags(ac->sl);
-      float offset;
-      const float unit_scale = ANIM_unit_mapping_get_factor(
-          ac->scene, ale->id, fcu, mapping_flag, &offset);
-
-      /* apply unit-scaling to all values via OpenGL */
-      GPU_matrix_push();
-      GPU_matrix_scale_2f(1.0f, unit_scale);
-      GPU_matrix_translate_2f(0.0f, offset);
-
       /* Set this once and for all -
        * all handles and handle-verts should use the same thickness. */
       GPU_line_width(1.0);
@@ -1288,27 +1304,25 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
 
         if (do_handles) {
           /* only draw handles/vertices on keyframes */
-          draw_fcurve_handles(sipo, region, fcu);
+          draw_fcurve_handles(sipo, v2d, *fcu, fcu_to_scene_time);
         }
 
-        draw_fcurve_vertices(region, fcu, do_handles, (sipo->flag & SIPO_SELVHANDLESONLY));
+        draw_fcurve_vertices(
+            v2d, *fcu, fcu_to_scene_time, do_handles, (sipo->flag & SIPO_SELVHANDLESONLY));
       }
       else {
         /* samples: only draw two indicators at either end as indicators */
-        draw_fcurve_samples(region, fcu, unit_scale);
+        draw_fcurve_samples(v2d, fcu, fcu_to_scene_time.scale, fcu_to_scene_units.scale);
       }
-
-      GPU_matrix_pop();
     }
   }
 
   /* 3) draw driver debugging stuff */
   if ((ac->datatype == ANIMCONT_DRIVERS) && (fcu->flag & FCURVE_ACTIVE)) {
-    graph_draw_driver_debug(ac, ale->id, fcu);
+    graph_draw_driver_debug(*fcu, v2d, fcu_to_scene_time, fcu_to_scene_units);
   }
 
-  /* undo mapping of keyframes for drawing if scaled F-Curve */
-  ANIM_nla_mapping_apply_if_needed_fcurve(ale, static_cast<FCurve *>(ale->key_data), true, false);
+  GPU_matrix_pop();
 }
 
 /** \} */
@@ -1322,13 +1336,12 @@ static void draw_fcurve(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, bAn
  * is handy for helping users better understand how to interpret
  * the graphs, and also facilitates debugging.
  */
-static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu)
+static void graph_draw_driver_debug(const FCurve &fcu,
+                                    const View2D &v2d,
+                                    const TimeMapping &fcu_to_scene_time,
+                                    const UnitMapping &fcu_to_scene_units)
 {
-  ChannelDriver *driver = fcu->driver;
-  View2D *v2d = &ac->region->v2d;
-  short mapping_flag = ANIM_get_normalization_flags(ac->sl);
-  float offset;
-  float unitfac = ANIM_unit_mapping_get_factor(ac->scene, id, fcu, mapping_flag, &offset);
+  const ChannelDriver *driver = fcu.driver;
 
   const uint shdr_pos = GPU_vertformat_attr_add(
       immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
@@ -1340,14 +1353,19 @@ static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu)
 
   immUniform1i("colors_len", 0); /* Simple dashes. */
 
+  /* The View2D range in FCurve time. */
+  const float2 draw_range(fcu_to_scene_time.unmap(v2d.cur.xmin),
+                          fcu_to_scene_time.unmap(v2d.cur.xmax));
+  const float2 value_range(fcu_to_scene_units.unmap(v2d.cur.ymin),
+                           fcu_to_scene_units.unmap(v2d.cur.ymax));
   /* No curve to modify/visualize the result?
    * => We still want to show the 1-1 default...
    */
-  if ((fcu->totvert == 0) && fcu->modifiers.is_empty()) {
+  if ((fcu.totvert == 0) && fcu.modifiers.is_empty()) {
     float t;
 
     /* draw with thin dotted lines in style of what curve would have been */
-    immUniformColor3fv(fcu->color);
+    immUniformColor3fv(fcu.color);
 
     immUniform1f("dash_width", 40.0f);
     immUniform1f("udash_factor", 0.5f);
@@ -1358,11 +1376,11 @@ static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu)
      */
     immBegin(GPU_PRIM_LINES, 2);
 
-    t = v2d->cur.xmin;
-    immVertex2f(shdr_pos, t, (t + offset) * unitfac);
+    t = draw_range[0];
+    immVertex2f(shdr_pos, t, t);
 
-    t = v2d->cur.xmax;
-    immVertex2f(shdr_pos, t, (t + offset) * unitfac);
+    t = draw_range[1];
+    immVertex2f(shdr_pos, t, t);
 
     immEnd();
   }
@@ -1370,11 +1388,11 @@ static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu)
   /* draw driver only if actually functional */
   if ((driver->flag & DRIVER_FLAG_INVALID) == 0) {
     /* grab "coordinates" for driver outputs */
-    float x = driver->curval;
-    float y = fcu->runtime->curval * unitfac;
+    const float x = driver->curval;
+    const float y = fcu.runtime->curval;
 
     /* Only draw indicators if the point is in range. */
-    if (x >= v2d->cur.xmin) {
+    if (x >= draw_range[0]) {
       float co[2];
 
       /* draw dotted lines leading towards this point from both axes ....... */
@@ -1383,13 +1401,13 @@ static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu)
       immUniform1f("udash_factor", 0.5f);
       GPU_line_width(1.0f);
 
-      immBegin(GPU_PRIM_LINES, (y <= v2d->cur.ymax) ? 4 : 2);
+      immBegin(GPU_PRIM_LINES, (y <= value_range[1]) ? 4 : 2);
 
       /* x-axis lookup */
       co[0] = x;
 
-      if (y <= v2d->cur.ymax) {
-        co[1] = v2d->cur.ymax + 1.0f;
+      if (y <= value_range[1]) {
+        co[1] = value_range[1] + 1.0f;
         immVertex2fv(shdr_pos, co);
 
         co[1] = y;
@@ -1399,7 +1417,7 @@ static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu)
       /* y-axis lookup */
       co[1] = y;
 
-      co[0] = v2d->cur.xmin - 1.0f;
+      co[0] = draw_range[0] - 1.0f;
       immVertex2fv(shdr_pos, co);
 
       co[0] = x;
@@ -1440,7 +1458,7 @@ static void graph_draw_driver_debug(bAnimContext *ac, ID *id, FCurve *fcu)
 /** \name Public Curve-Drawing API
  * \{ */
 
-void graph_draw_ghost_curves(bAnimContext *ac, SpaceGraph *sipo, ARegion *region)
+void graph_draw_ghost_curves(bAnimContext *ac, const SpaceGraph *sipo, const View2D &v2d)
 {
   /* draw with thick dotted lines */
   GPU_line_width(3.0f);
@@ -1475,9 +1493,15 @@ void graph_draw_ghost_curves(bAnimContext *ac, SpaceGraph *sipo, ARegion *region
      * - draw with a fixed opacity of 2
      */
     immUniformColor3fvAlpha(fcu.color, 0.5f);
-
-    /* simply draw the stored samples */
-    draw_fcurve_curve_samples(ac, nullptr, &fcu, &region->v2d, shdr_pos, draw_extrapolation);
+    const UnitMapping fcu_to_scene_units = ANIM_unit_mapping_get(
+        ac->scene, nullptr, &fcu, ANIM_get_normalization_flags(ac->sl));
+    GPU_matrix_push();
+    GPU_matrix_scale_2f(1.0f, fcu_to_scene_units.scale);
+    GPU_matrix_translate_2f(0.0f, fcu_to_scene_units.offset);
+    /* We cannot pass a TimeMapping here since we no longer know which Strip this FCurve belongs
+     * to. The offset and scale needs to be baked in at the time of ghost creation. */
+    draw_fcurve_curve_samples(fcu, v2d, {}, shdr_pos, draw_extrapolation);
+    GPU_matrix_pop();
   }
 
   immUnbindProgram();
@@ -1488,7 +1512,10 @@ void graph_draw_ghost_curves(bAnimContext *ac, SpaceGraph *sipo, ARegion *region
   GPU_blend(GPU_BLEND_NONE);
 }
 
-void graph_draw_curves(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, short sel)
+void graph_draw_curves(bAnimContext *ac,
+                       const SpaceGraph *sipo,
+                       const View2D &v2d,
+                       const short sel)
 {
   ListBaseT<bAnimListElem> anim_data = {nullptr, nullptr};
   int filter;
@@ -1505,18 +1532,25 @@ void graph_draw_curves(bAnimContext *ac, SpaceGraph *sipo, ARegion *region, shor
    */
   bAnimListElem *ale_active_fcurve = nullptr;
   for (bAnimListElem &ale : anim_data) {
-    const FCurve *fcu = static_cast<FCurve *>(ale.key_data);
+    FCurve *fcu = static_cast<FCurve *>(ale.key_data);
     if ((fcu->flag & FCURVE_ACTIVE) && !ale_active_fcurve) {
       ale_active_fcurve = &ale;
       continue;
     }
-    draw_fcurve(ac, sipo, region, &ale);
+    const TimeMapping fcu_to_scene_time = ANIM_nla_time_mapping_get(ale);
+    const UnitMapping fcu_to_scene_units = ANIM_unit_mapping_get(
+        ac->scene, ale.id, fcu, ANIM_get_normalization_flags(ac->sl));
+    draw_fcurve(ac, sipo, v2d, fcu, fcu_to_scene_time, fcu_to_scene_units);
   }
 
   /* Draw the active FCurve last so that it (especially the active keyframe)
    * shows on top of the other curves. */
   if (ale_active_fcurve != nullptr) {
-    draw_fcurve(ac, sipo, region, ale_active_fcurve);
+    FCurve *fcu = static_cast<FCurve *>(ale_active_fcurve->key_data);
+    const TimeMapping fcu_to_scene_time = ANIM_nla_time_mapping_get(*ale_active_fcurve);
+    const UnitMapping fcu_to_scene_units = ANIM_unit_mapping_get(
+        ac->scene, ale_active_fcurve->id, fcu, ANIM_get_normalization_flags(ac->sl));
+    draw_fcurve(ac, sipo, v2d, fcu, fcu_to_scene_time, fcu_to_scene_units);
   }
 
   /* free list of curves */

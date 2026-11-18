@@ -455,24 +455,15 @@ struct LTCFitter {
     update();
   }
 
-  BsdfEval eval(const float3 &L) const
+  BsdfEval eval(const float3 &N, const float3 &V, const float3 &L) const
   {
-    const float3 Loriginal = normalize(invM * L);
-    const float3 L_ = M * Loriginal;
-
-    const float l = length(L_);
-    const float Jacobian = l * l * l;
-
-    const float D = M_1_PI * max(0.0f, Loriginal.z);
-
-    const float throughput = D * Jacobian;
-
-    return {.throughput = throughput, .pdf = throughput, .weight = 1.0f};
+    const float pdf = ltc::pdf(L, N, V, M, invM, 1.0f);
+    return {.throughput = pdf, .pdf = pdf, .weight = 1.0f};
   }
 
-  float3 sample_light(const float2 rand) const
+  float3 sample(const float2 rand) const
   {
-    return normalize(M * sample_cos_hemisphere(rand));
+    return ltc::sample(M, rand);
   }
 };
 
@@ -528,7 +519,7 @@ template<typename BSDF> float error_(const LTCFitter &fitter, const BSDF &bsdf, 
   constexpr float3 N = float3(0.0f, 0.0f, 1.0f);
 
   const BsdfEval eval_closure = bsdf.closure.bsdf_eval(N, bsdf.V, L);
-  const BsdfEval eval_ltc = fitter.eval(L);
+  const BsdfEval eval_ltc = fitter.eval(N, bsdf.V, L);
   const float error = abs(eval_closure.throughput - eval_ltc.throughput);
 
   /* L3 error with MIS weight. */
@@ -547,7 +538,7 @@ float compute_error(LTCFitter &fitter, const float4 params, const BSDF &bsdf)
   /* Importance sample LTC. */
   for (float i = 0.5f; i < sample_count; i++) {
     const float2 rand = random::hammersley_2d(i, sample_count);
-    const float3 L = fitter.sample_light(rand);
+    const float3 L = fitter.sample(rand);
     sum.add(error_(fitter, bsdf, L));
   }
 
@@ -699,7 +690,7 @@ template<typename BSDF> float4 fit_ltc(const float3 coords, const float epsilon 
 }
 template float4 fit_ltc<OrenNayarClosure>(const float3, const float);
 
-[[compute]] [[local_size(LUT_WORKGROUP_SIZE, LUT_WORKGROUP_SIZE)]]
+[[compute]] [[local_size(LUT_WORKGROUP_SIZE, LUT_WORKGROUP_SIZE)]] [[no_fast_math]]
 void comp_main([[global_invocation_id]] const uint3 global_id, [[resource_table]] LUT &lut)
 {
   /* Make sure coordinates are covering the whole [0..1] range at texel center. */

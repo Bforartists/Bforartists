@@ -7550,7 +7550,35 @@ static bool numedit_but_HSVCUBE(Button *but,
     const float fac = mouse_scale_warp_factor(shift);
     data->relative_drag.x += float(mx - data->draglastx) * fac;
     data->relative_drag.y += float(my - data->draglasty) * fac;
-    BLI_rctf_clamp_pt_v(&but->rect, data->relative_drag);
+
+    switch (hsv_but->gradient_type) {
+      case GRAD_HV:
+      case GRAD_HS:
+      case GRAD_H:
+        /* Disable hue wrapping when snapping. */
+        if (snap != SNAP_OFF) {
+          BLI_rctf_clamp_pt_v(&but->rect, data->relative_drag);
+        }
+        else {
+          /* Wrap the hue around. */
+          data->relative_drag[0] = math::mod_periodic(data->relative_drag[0] - but->rect.xmin,
+                                                      but->rect.xmax - but->rect.xmin) +
+                                   but->rect.xmin;
+          data->relative_drag[1] = math::clamp(
+              data->relative_drag[1], but->rect.ymin, but->rect.ymax);
+        }
+        break;
+      case GRAD_SV:
+      case GRAD_V:
+      case GRAD_S:
+      case GRAD_L_ALT:
+      case GRAD_V_ALT:
+        BLI_rctf_clamp_pt_v(&but->rect, data->relative_drag);
+        break;
+      default:
+        BLI_assert_unreachable();
+        break;
+    }
   }
   else {
     data->relative_drag.x = mx;
@@ -8105,7 +8133,8 @@ static int do_but_HSVCIRCLE(
   return WM_UI_HANDLER_CONTINUE;
 }
 
-static bool numedit_but_COLORBAND(Button *but, HandleButtonData *data, int mx, bool shift)
+static bool numedit_but_COLORBAND(
+    Button *but, HandleButtonData *data, int mx, bool shift, const eSnapType snap)
 {
   bool changed = false;
 
@@ -8118,7 +8147,8 @@ static bool numedit_but_COLORBAND(Button *but, HandleButtonData *data, int mx, b
   }
 
   const float dx = float(mx - data->draglastx) / BLI_rctf_size_x(&but->rect);
-  data->dragcbd->pos += dx * mouse_scale_warp_factor(shift);
+  data->value += dx * mouse_scale_warp_factor(shift);
+  data->dragcbd->pos = numedit_apply_snapf(but, data->value, 0.0f, 1.0f, snap);
   CLAMP(data->dragcbd->pos, 0.0f, 1.0f);
 
   BKE_colorband_update_sort(data->coba);
@@ -8182,6 +8212,7 @@ static int do_but_COLORBAND(
 
         data->dragcbd = coba->data + coba->cur;
         data->dragfstart = data->dragcbd->pos;
+        data->value = data->dragfstart;
         button_activate_state(C, but, BUTTON_STATE_NUM_EDITING);
       }
 
@@ -8191,7 +8222,9 @@ static int do_but_COLORBAND(
   else if (data->state == BUTTON_STATE_NUM_EDITING) {
     if (event->type == MOUSEMOVE) {
       if (mx != data->draglastx || my != data->draglasty) {
-        if (numedit_but_COLORBAND(but, data, mx, (event->modifier & KM_SHIFT))) {
+        if (numedit_but_COLORBAND(
+                but, data, mx, (event->modifier & KM_SHIFT), event_to_snap(event)))
+        {
           numedit_apply(C, block, but, data);
         }
       }
@@ -9588,13 +9621,7 @@ static void button_activate_state(bContext *C, Button *but, HandleButtonState st
       }
       WorkspaceStatus status(C);
       status.item(IFACE_("Cancel"), ICON_EVENT_ESC);
-      if (but->type != ButtonType::ColorBand) {
-#if defined(__APPLE__)
-        status.item(IFACE_("Snap"), ICON_KEY_COMMAND);
-#else
-        status.item(IFACE_("Snap"), ICON_EVENT_CTRL);
-#endif
-      }
+      status.item(IFACE_("Snap"), ICON_EVENT_CTRL);
       if (button_is_float(but) || but->type == ButtonType::ColorBand) {
         status.item(IFACE_("Precision"), ICON_EVENT_SHIFT);
       }

@@ -948,7 +948,7 @@ static bool paint_use_2d_cursor(PaintMode mode, const Brush &brush)
 static bool paint_cursor_context_init(bContext *C,
                                       const int2 &xy,
                                       const float2 &tilt,
-                                      PaintCursorContext &pcontext)
+                                      PaintCursorOverlayContext &pcontext)
 {
   PRF_scope(ProfileCategory::Editor);
   ARegion *region = CTX_wm_region(C);
@@ -1041,7 +1041,7 @@ static bool paint_cursor_context_init(bContext *C,
   return true;
 }
 
-static void paint_update_mouse_cursor(PaintCursorContext &pcontext)
+static void paint_update_mouse_cursor(PaintCursorOverlayContext &pcontext)
 {
   if (pcontext.win->grabcursor != 0 || pcontext.win->modalcursor != 0) {
     /* Don't set the cursor while it's grabbed, since this will show the cursor when interacting
@@ -1069,7 +1069,7 @@ static void paint_update_mouse_cursor(PaintCursorContext &pcontext)
   }
 }
 
-static void paint_draw_2D_view_brush_cursor_default(PaintCursorContext &pcontext)
+static void paint_draw_2D_view_brush_cursor_default(PaintCursorOverlayContext &pcontext)
 {
   immUniformColor3fvAlpha(pcontext.outline_col, pcontext.outline_alpha);
   const bke::PaintRuntime *paint_runtime = pcontext.paint->runtime;
@@ -1090,7 +1090,7 @@ static void paint_draw_2D_view_brush_cursor_default(PaintCursorContext &pcontext
       pcontext.pos, pcontext.translation[0], pcontext.translation[1], pcontext.final_radius, 40);
 }
 
-static void paint_draw_2D_view_brush_cursor(PaintCursorContext &pcontext)
+static void paint_draw_2D_view_brush_cursor(PaintCursorOverlayContext &pcontext)
 {
   PRF_scope(ProfileCategory::Draw);
   switch (pcontext.mode) {
@@ -1103,7 +1103,7 @@ static void paint_draw_2D_view_brush_cursor(PaintCursorContext &pcontext)
   }
 }
 
-static void paint_draw_legacy_3D_view_brush_cursor(PaintCursorContext &pcontext)
+static void paint_draw_legacy_3D_view_brush_cursor(PaintCursorOverlayContext &pcontext)
 {
   PRF_scope(ProfileCategory::Draw);
   GPU_line_width(1.0f);
@@ -1112,7 +1112,7 @@ static void paint_draw_legacy_3D_view_brush_cursor(PaintCursorContext &pcontext)
       pcontext.pos, pcontext.translation[0], pcontext.translation[1], pcontext.final_radius, 40);
 }
 
-static void paint_cursor_draw_3D_view_brush_cursor(PaintCursorContext &pcontext)
+static void paint_cursor_draw_3D_view_brush_cursor(PaintCursorOverlayContext &pcontext)
 {
   BLI_assert(ELEM(pcontext.mode,
                   PaintMode::Sculpt,
@@ -1150,13 +1150,13 @@ static void paint_cursor_draw_3D_view_brush_cursor(PaintCursorContext &pcontext)
   }
 }
 
-static bool paint_cursor_is_3d_view_navigating(const PaintCursorContext &pcontext)
+static bool paint_cursor_is_3d_view_navigating(const PaintCursorOverlayContext &pcontext)
 {
   const ViewContext *vc = &pcontext.vc;
   return vc->rv3d && (vc->rv3d->runtime->tags & bke::RV3D_TAG_NAVIGATING);
 }
 
-static bool paint_cursor_is_brush_cursor_enabled(const PaintCursorContext &pcontext)
+static bool paint_cursor_is_brush_cursor_enabled(const PaintCursorOverlayContext &pcontext)
 {
   if (pcontext.paint->flags & PAINT_SHOW_BRUSH) {
     if (ELEM(pcontext.mode, PaintMode::Texture2D, PaintMode::Texture3D) &&
@@ -1169,7 +1169,7 @@ static bool paint_cursor_is_brush_cursor_enabled(const PaintCursorContext &pcont
   return false;
 }
 
-static void paint_cursor_update_rake_rotation(PaintCursorContext &pcontext)
+static void paint_cursor_update_rake_rotation(PaintCursorOverlayContext &pcontext)
 {
   PRF_scope(ProfileCategory::Editor);
   /* Don't calculate rake angles while a stroke is active because the rake variables are global
@@ -1187,7 +1187,7 @@ static void paint_cursor_update_rake_rotation(PaintCursorContext &pcontext)
   }
 }
 
-static void paint_cursor_check_and_draw_alpha_overlays(PaintCursorContext &pcontext)
+static void paint_cursor_check_and_draw_alpha_overlays(PaintCursorOverlayContext &pcontext)
 {
   PRF_scope(ProfileCategory::Draw);
   pcontext.alpha_overlay_drawn = pcontext.is_brush_active &&
@@ -1200,7 +1200,7 @@ static void paint_cursor_check_and_draw_alpha_overlays(PaintCursorContext &pcont
                                                           pcontext.mode);
 }
 
-static void paint_cursor_update_anchored_location(PaintCursorContext &pcontext)
+static void paint_cursor_update_anchored_location(PaintCursorOverlayContext &pcontext)
 {
   bke::PaintRuntime *paint_runtime = pcontext.paint->runtime;
   if (paint_runtime->draw_anchored) {
@@ -1211,7 +1211,7 @@ static void paint_cursor_update_anchored_location(PaintCursorContext &pcontext)
   }
 }
 
-static void paint_cursor_setup_2D_drawing(PaintCursorContext &pcontext)
+static void paint_cursor_setup_2D_drawing(PaintCursorOverlayContext &pcontext)
 {
   GPU_line_width(2.0f);
   GPU_blend(GPU_BLEND_ALPHA);
@@ -1221,7 +1221,7 @@ static void paint_cursor_setup_2D_drawing(PaintCursorContext &pcontext)
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 }
 
-static void paint_cursor_setup_3D_drawing(PaintCursorContext &pcontext)
+static void paint_cursor_setup_3D_drawing(PaintCursorOverlayContext &pcontext)
 {
   GPU_line_width(2.0f);
   GPU_blend(GPU_BLEND_ALPHA);
@@ -1241,7 +1241,7 @@ static void paint_cursor_restore_drawing_state()
 static void paint_draw_cursor(bContext *C, const int2 &xy, const float2 &tilt, void * /*unused*/)
 {
   PRF_scope(ProfileCategory::Default);
-  PaintCursorContext pcontext;
+  PaintCursorOverlayContext pcontext;
   if (!paint_cursor_context_init(C, xy, tilt, pcontext)) {
     return;
   }
@@ -1300,7 +1300,7 @@ static void paint_draw_cursor(bContext *C, const int2 &xy, const float2 &tilt, v
 void ED_paint_cursor_start(Paint *paint, bool (*poll)(bContext *C))
 {
   if (paint && paint->runtime && !paint->runtime->paint_cursor) {
-    paint->runtime->paint_cursor = WM_paint_cursor_activate(
+    paint->runtime->paint_cursor = WM_cursor_overlay_activate(
         SPACE_TYPE_ANY, RGN_TYPE_ANY, poll, ed::sculpt_paint::paint_draw_cursor, nullptr);
   }
 

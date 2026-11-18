@@ -695,7 +695,7 @@ struct ARegionRuntime {
   short do_draw = 0;
 
   /** Private, cached notifier events. */
-  short do_draw_paintcursor;
+  short do_draw_cursor_overlay;
 
   /** Tag for IME cursor position refresh on next draw. */
   bool do_ime = false;
@@ -796,6 +796,10 @@ enum class MenuTypeFlag {
    * Automatically start searching in the menu when pressing a key.
    */
   SearchOnKeyPress = (1 << 1),
+  /**
+   * Don't sort menu items alphabetically when flag is set.
+   */
+  KeepOrder = (1 << 2),
 };
 ENUM_OPERATORS(MenuTypeFlag)
 

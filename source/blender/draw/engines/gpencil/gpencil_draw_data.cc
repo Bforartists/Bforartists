@@ -16,6 +16,7 @@
 #include "BKE_image_gpu.hh"
 #include "BKE_material.hh"
 
+#include "BLI_hash_c.hh"
 #include "BLI_math_color_c.hh"
 #include "BLI_math_matrix_c.hh"
 #include "BLI_math_vector_c.hh"
@@ -45,12 +46,15 @@ static MaterialPool *gpencil_material_pool_add(Instance *inst)
   return matpool;
 }
 
-static gpu::Texture *gpencil_image_texture_get(blender::Image *image, bool *r_alpha_premult)
+static gpu::Texture *gpencil_image_texture_get(blender::Image *image,
+                                               ImageUser *iuser,
+                                               const int cfra,
+                                               bool *r_alpha_premult)
 {
-  ImageUser iuser = {nullptr};
   gpu::Texture *gpu_tex = nullptr;
 
-  gpu_tex = BKE_image_acquire_gpu_texture(image, &iuser);
+  BKE_image_user_frame_calc(image, iuser, cfra);
+  gpu_tex = BKE_image_acquire_gpu_texture(image, iuser);
   DRW_manager_get()->hold_texture(gpu_tex);
   *r_alpha_premult = (gpu_tex) ? (image->alpha_mode == IMA_ALPHA_PREMUL) : false;
 
@@ -310,14 +314,22 @@ MaterialPool *gpencil_material_pool_create(Instance *inst,
       mat_data->random_packed.x |= (unit_float_to_ushort_clamp(gp_style->random_strength_factor))
                                    << 16;
 
-      mat_data->random_packed.y = (unit_float_to_ushort_clamp(gp_style->random_rotation_factor));
-      mat_data->random_packed.y |= (unit_float_to_ushort_clamp(gp_style->random_hue_factor)) << 16;
-
-      mat_data->random_packed.z = (unit_float_to_ushort_clamp(gp_style->random_saturation_factor));
-      mat_data->random_packed.z |= (unit_float_to_ushort_clamp(gp_style->random_value_factor))
+      mat_data->random_packed.y = (unit_float_to_uchar_clamp(gp_style->random_rotation_factor));
+      mat_data->random_packed.y |= (unit_float_to_uchar_clamp(gp_style->random_hue_factor)) << 8;
+      mat_data->random_packed.y |= (unit_float_to_uchar_clamp(gp_style->random_saturation_factor))
                                    << 16;
+      mat_data->random_packed.y |= (unit_float_to_uchar_clamp(gp_style->random_value_factor))
+                                   << 24;
 
-      mat_data->random_packed.w = float_as_uint(gp_style->random_noise_scale);
+      /* For backwards compatibility use 0 as the default offset. */
+      const uint hashed_seed = gp_style->random_noise_seed == 0 ?
+                                   0 :
+                                   blender::BLI_hash_int(uint(gp_style->random_noise_seed));
+      mat_data->random_packed.z = (unit_float_to_ushort_clamp(gp_style->random_noise_scale /
+                                                              GP_RANDOM_NOISE_SCALE_MAX));
+      mat_data->random_packed.z |= (hashed_seed & 0xFFFFu) << 16;
+
+      mat_data->random_packed.w = 0;
     }
     else {
       mat_data->random_packed = uint4(0);
@@ -328,7 +340,8 @@ MaterialPool *gpencil_material_pool_create(Instance *inst,
     /* Stroke Style */
     if ((gp_style->stroke_style == GP_MATERIAL_STROKE_STYLE_TEXTURE) && (gp_style->sima)) {
       bool premul;
-      pool->tex_stroke[mat_id] = gpencil_image_texture_get(gp_style->sima, &premul);
+      pool->tex_stroke[mat_id] = gpencil_image_texture_get(
+          gp_style->sima, gp_style->stroke_iuser, inst->cfra, &premul);
       mat_data->flag |= pool->tex_stroke[mat_id] ? GP_STROKE_TEXTURE_USE : GP_FLAG_NONE;
       mat_data->flag |= premul ? GP_STROKE_TEXTURE_PREMUL : GP_FLAG_NONE;
       copy_v4_v4(mat_data->stroke_color, gp_style->stroke_rgba);
@@ -345,7 +358,8 @@ MaterialPool *gpencil_material_pool_create(Instance *inst,
     if ((gp_style->fill_style == GP_MATERIAL_FILL_STYLE_TEXTURE) && (gp_style->ima)) {
       bool use_clip = (gp_style->flag & GP_MATERIAL_TEX_CLAMP) != 0;
       bool premul;
-      pool->tex_fill[mat_id] = gpencil_image_texture_get(gp_style->ima, &premul);
+      pool->tex_fill[mat_id] = gpencil_image_texture_get(
+          gp_style->ima, gp_style->fill_iuser, inst->cfra, &premul);
       mat_data->flag |= pool->tex_fill[mat_id] ? GP_FILL_TEXTURE_USE : GP_FLAG_NONE;
       mat_data->flag |= premul ? GP_FILL_TEXTURE_PREMUL : GP_FLAG_NONE;
       mat_data->flag |= use_clip ? GP_FILL_TEXTURE_CLIP : GP_FLAG_NONE;

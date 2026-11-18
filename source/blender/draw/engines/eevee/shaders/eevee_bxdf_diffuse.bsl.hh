@@ -26,11 +26,6 @@ struct BsdfDiffuse : BsdfClosure::Interface {
     return bsdf;
   }
 
-  BsdfClosure pack() const final
-  {
-    return {.color = color, .N = N, .type = CLOSURE_BSDF_DIFFUSE_ID};
-  }
-
   /**
    * Returns a tangent space diffuse direction following the Lambertian distribution.
    *
@@ -43,8 +38,7 @@ struct BsdfDiffuse : BsdfClosure::Interface {
                     Thickness /*thickness*/) const final
   {
     BsdfSample samp;
-    samp.direction = sample_cos_hemisphere(rand_cylinder);
-    samp.pdf = samp.direction.z * M_1_PI;
+    samp.direction = sample_cos_hemisphere(rand_cylinder, samp.pdf);
     return samp;
   }
 
@@ -96,11 +90,6 @@ struct BsdfTranslucent : BsdfClosure::Interface {
     return bsdf;
   }
 
-  BsdfClosure pack() const final
-  {
-    return {.color = color, .N = N, .type = CLOSURE_BSDF_TRANSLUCENT_ID};
-  }
-
   /**
    * Returns a tangent space diffuse direction following the Lambertian distribution.
    *
@@ -123,8 +112,7 @@ struct BsdfTranslucent : BsdfClosure::Interface {
 
     /* Inverted cosine distribution. */
     BsdfSample samp;
-    samp.direction = -sample_cos_hemisphere(rand_cylinder);
-    samp.pdf = -samp.direction.z * M_1_PI;
+    samp.direction = -sample_cos_hemisphere(rand_cylinder, samp.pdf);
     return samp;
   }
 
@@ -176,7 +164,7 @@ struct BsdfTranslucent : BsdfClosure::Interface {
     return 1.0f;
   }
 
-  Ray ray_amend(float3 /*V*/, Ray ray, const Thickness thickness) const final
+  Ray ray_amend(float3 /*V*/, Ray ray, const Thickness thickness) const
   {
     if (thickness.is_sphere()) {
       /* Ray direction is distributed on the whole sphere.
@@ -241,8 +229,7 @@ struct OrenNayar {
   BsdfSample bsdf_sample(float3 rand, float3 /*V*/) const
   {
     BsdfSample samp;
-    samp.direction = sample_cos_hemisphere(rand);
-    samp.pdf = samp.direction.z * M_1_PI;
+    samp.direction = sample_cos_hemisphere(rand, samp.pdf);
     return samp;
   }
 
@@ -277,16 +264,6 @@ struct BsdfOrenNayar : BsdfClosure::Interface {
     bsdf.N = cl.N;
     bsdf.roughness = cl.data.x;
     return bsdf;
-  }
-
-  BsdfClosure pack() const final
-  {
-    return {
-        .color = color,
-        .N = N,
-        .type = CLOSURE_BSDF_OREN_NAYAR_ID,
-        .data = float4(roughness),
-    };
   }
 
   BsdfSample sample(const float3 rand, const float3 Vt, Thickness /*thickness*/) const final

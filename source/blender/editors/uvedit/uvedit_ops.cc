@@ -1233,7 +1233,7 @@ static wmOperatorStatus uv_remove_doubles_to_unselected(bContext *C, wmOperator 
     BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
     ED_uvedit_foreach_uv(scene, bm, true, true, [&](float luv[2]) {
       float distance_sq;
-      const int i = tree.find_nearest(luv, &distance_sq);
+      const int i = tree.find_nearest(luv, std::numeric_limits<float>::max(), &distance_sq);
 
       if (i != -1 && distance_sq < math::square(threshold)) {
         copy_v2_v2(luv, uv_positions[i]);
@@ -2712,7 +2712,6 @@ static bool uv_copy_mirrored_faces(const Scene *scene,
 {
   *r_double_warn = 0;
   const float precision_scale = powf(10.0f, precision);
-  /* TODO: replace mirror look-ups with #EditMeshSymmetryHelper. */
   Map<float3, BMVert *> mirror_gt, mirror_lt;
   Map<BMVert *, BMVert *> vmap;
 
