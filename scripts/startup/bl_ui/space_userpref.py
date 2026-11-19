@@ -368,6 +368,8 @@ class USERPREF_PT_interface_accessibility(InterfacePanel, CenterAlignMixIn, Pane
 
         flow.use_property_split = False  # BFA - Align bool property left
         flow.prop(view, "use_reduce_motion")
+        flow.prop(view, "use_tooltip_cursor_offset")
+        flow.prop(view, "tooltip_offset")
 
 
 class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):

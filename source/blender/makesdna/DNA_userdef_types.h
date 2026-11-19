@@ -598,6 +598,7 @@ enum eUserpref_OutlinerEditorFlags : int {
  * preference files keep the options on with no versioning. */
 enum eUserpref_BFA_UI_Flag : char {
   USER_BFA_TEAR_OFF_DISABLED = (1 << 0), /* BFA - Tear-Off Menu/Panel */
+  USER_TOOLTIP_CURSOR_OFFSET = (1 << 1),
 };
 
 enum eUserpref_ShaderCompileMethod : short {
@@ -1384,6 +1385,7 @@ struct UserDef {
   int outliner_editor_flag =
       USER_OUTLINER_COL_COLLECTION_ROWS; /* BFA - eUserpref_OutlinerEditorFlags */
   float node_color_blend = 0.2f;         /* BFA - Node Color Blend */
+  float tooltip_offset[2] = {0.0f, 0.0f};
   char bfa_ui_flag = 0;                  /* BFA - #eUserpref_BFA_UI_Flag */
   char _pad_custom[3] = {};              /* BFA - for future alignment/padding if needed */
 
