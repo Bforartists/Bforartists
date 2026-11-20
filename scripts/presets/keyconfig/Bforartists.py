@@ -8362,7 +8362,7 @@ keyconfig_data = \
     ("ui.view_start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ("ui.view_item_select", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ("ui.view_item_select",
-     {"type": 'LEFTMOUSE', "value": 'PRESS', "oskey": True},
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
      {"properties":
       [("extend", True),
        ],
