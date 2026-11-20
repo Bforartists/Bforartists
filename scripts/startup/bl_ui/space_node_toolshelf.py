@@ -654,9 +654,6 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
             entries = (
                 OperatorEntry(operator="node.add_repeat_zone", pad=24, text="Repeat Zone", icon="REPEAT"),
                 Separator,
-                OperatorEntry("NodeCombineBundle", pad=17),
-                OperatorEntry("NodeSeparateBundle", pad=17),
-                Separator,
                 OperatorEntry("GeometryNodeIndexSwitch", pad=23),  # BFA - new in Shader nodes
                 OperatorEntry("GeometryNodeMenuSwitch", pad=23),
                 OperatorEntry("GeometryNodeSwitch", pad=35),  # BFA - new in Shader nodes
@@ -667,11 +664,6 @@ class NODES_PT_toolshelf_shader_add_utilities(bpy.types.Panel, NodePanel):
                 OperatorEntry(operator="node.add_repeat_zone", pad=24, text="Repeat Zone", icon="REPEAT"),
                 Separator,
                 OperatorEntry("NodeImplicitConversion", pad=11),
-                OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=32),
-                OperatorEntry("NodeEvaluateClosure", pad=16),
-                OperatorEntry("NodeCombineBundle", pad=17),
-                OperatorEntry("NodeSeparateBundle", pad=17),
-                OperatorEntry("NodeJoinBundle", pad=25),
                 Separator,
                 OperatorEntry("GeometryNodeIndexSwitch", pad=23),  # BFA - new in Shader nodes
                 OperatorEntry("GeometryNodeMenuSwitch", pad=23),
@@ -770,6 +762,74 @@ class NODES_PT_toolshelf_shader_add_vector(bpy.types.Panel, NodePanel):
                 OperatorEntry("ShaderNodeVectorRotate", pad=15),
                 OperatorEntry("ShaderNodeVectorTransform", pad=8),
             )
+
+        self.draw_entries(context, layout, entries)
+
+
+# BFA - Bundle nodes have their own subpanel like in Geometry Nodes and the Add > Utilities > Bundle menu
+class NODES_PT_toolshelf_shader_add_utilities_bundle(bpy.types.Panel, NodePanel):
+    bl_label = "Bundle"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'ShaderNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        use_common = addon_prefs.Node_shader_add_common
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        if use_common:
+            entries = (
+                OperatorEntry("NodeCombineBundle", pad=14),
+                OperatorEntry("NodeSeparateBundle", pad=15),
+            )
+        else:
+            entries = (
+                OperatorEntry("NodeCombineBundle", pad=14),
+                OperatorEntry("NodeJoinBundle", pad=22),  # BFA - Add menu order
+                OperatorEntry("NodeSeparateBundle", pad=15),
+            )
+
+        self.draw_entries(context, layout, entries)
+
+
+# BFA - Closure nodes have their own subpanel like in Geometry Nodes and the Add > Utilities > Closure menu
+class NODES_PT_toolshelf_shader_add_utilities_closure(bpy.types.Panel, NodePanel):
+    bl_label = "Closure"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "NODES_PT_toolshelf_shader_add_utilities"
+
+    @classmethod
+    def poll(cls, context):
+        # BFA - the common list never had the closure nodes, so the subpanel is hidden there too
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+        return (context.space_data.tree_type == 'ShaderNodeTree') and not addon_prefs.Node_shader_add_common
+
+    def draw(self, context):
+        layout = self.layout
+
+        # BFA - NOTE: The padding must be manually updated if a new node item is added to the panel.
+        # There is currently no way to determine the correct padding length other than trial-and-error.
+        # When adding a new node, test different padding amounts until the button text is left-aligned with the rest of the panel items.
+        entries = (
+            OperatorEntry(operator="node.add_closure_zone", text="Closure", icon="NODE_CLOSURE", pad=24),
+            OperatorEntry("NodeEvaluateClosure", pad=8),
+        )
 
         self.draw_entries(context, layout, entries)
 
@@ -3350,6 +3410,8 @@ classes = (
     NODES_PT_toolshelf_shader_add_utilities,
     NODES_PT_toolshelf_shader_add_math,
     NODES_PT_toolshelf_shader_add_vector,
+    NODES_PT_toolshelf_shader_add_utilities_bundle,  # BFA - own subpanel like Add menu
+    NODES_PT_toolshelf_shader_add_utilities_closure,  # BFA - own subpanel like Add menu
     NODES_PT_toolshelf_shader_add_script,
     #-----------------------
 
