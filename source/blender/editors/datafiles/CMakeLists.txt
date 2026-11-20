@@ -732,6 +732,7 @@ if(WITH_BLENDER)
       fillbetween
       filter
       filter_off
+      fit_edge_loops_to_annotation
       fixed_size
       flatten
       flatten_handler

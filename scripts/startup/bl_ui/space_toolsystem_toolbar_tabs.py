@@ -93,6 +93,7 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
                 OperatorEntry("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon='SPACE_LOOPS_EVENLY'),
                 OperatorEntry("mesh.relax_edge_loops", text="Relax Edge Loops", icon='RELAX_EDGE_LOOPS'),
                 OperatorEntry("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected", icon='CURVE_EDGE_LOOPS'),
+                OperatorEntry("mesh.fit_edge_loops_to_annotation", text="Fit Edge Loops To Annotation", icon='FIT_EDGE_LOOPS_TO_ANNOTATION'),
             ])
 
         entries.extend([
