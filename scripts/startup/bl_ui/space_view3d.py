@@ -1471,7 +1471,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
             layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
             layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops", icon="RELAX_EDGE_LOOPS")
             layout.operator("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected", icon="CURVE_EDGE_LOOPS")
-            layout.operator("mesh.fit_edge_loops_to_annotation", text="Fit Edge Loops To Annotation")  # BFA - TODO: needs icon, new in Blender 5.3
+            layout.operator("mesh.fit_edge_loops_to_annotation", text="Fit Edge Loops To Annotation", icon="FIT_EDGE_LOOPS_TO_ANNOTATION")  # BFA - icon added, new in Blender 5.3
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
         elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES', 'EDIT_POINTCLOUD'}:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
