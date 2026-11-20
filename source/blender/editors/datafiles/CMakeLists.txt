@@ -1884,8 +1884,11 @@ if(WITH_BLENDER)
       seamsfromisland
       search_menu
       select_all
+      select_bone_deform
+      select_bone_scaled
       select_boundary
       select_by_material
+      select_constraint_owners
       select_difference
       select_edgeloop
       select_edgering
