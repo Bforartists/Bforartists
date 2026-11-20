@@ -614,9 +614,10 @@ void OBJECT_OT_transfer_mode(wmOperatorType *ot)
   ot->name = "Transfer Mode";
   ot->idname = "OBJECT_OT_transfer_mode";
   ot->description =
-      "Switch to another object without leaving the mode\nHotkey in the default keymap: D\nThe "
-      "menu operator calls an object picker\nThe hotkey switches directly to the object under the "
-      "mouse"; /* BFA - more explicit*/
+      "Switch to another object and keep the current mode. The object you leave returns to "
+      "Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: "
+      "Z with the mouse over the object (also D in Sculpt Mode)";
+  /* BFA - reworded, the hotkey is now Z in every non-Object mode, menu entries exposed */
 
   /* API callbacks. */
   ot->invoke = object_transfer_mode_invoke;

@@ -168352,8 +168352,8 @@ msgid "Set the object's origin by the following method"
 msgstr "Đặt tọa độ gốc của đối tượng bằng phương pháp sau"
 
 # BFA - machine translated, please review
-msgid "Switch to another object without leaving the mode\nHotkey in the default keymap: D\nThe menu operator calls an object picker\nThe hotkey switches directly to the object under the mouse"
-msgstr "Chuyển sang đối tượng khác mà không rời chế độ\nPhím tắt trong bố trí phím mặc định: D\nThao tác trình đơn gọi một bộ chọn đối tượng\nPhím tắt chuyển trực tiếp sang đối tượng nằm dưới chuột"
+msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Z with the mouse over the object (also D in Sculpt Mode)"
+msgstr "Chuyển sang đối tượng khác và giữ nguyên chế độ hiện tại. Đối tượng bị rời đi trở về Chế Độ Đối Tượng\nTừ trình đơn: nhấp vào đối tượng cần chuyển sang\nPhím tắt trong bố trí phím mặc định: Z khi chuột ở trên đối tượng (trong Chế Độ Điêu Khắc cũng dùng được D)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

@@ -6995,6 +6995,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("object.transfer_mode", {"type": 'Z', "value": 'PRESS'}, None),
     ],
    },
   ),

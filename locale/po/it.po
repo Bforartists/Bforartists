@@ -72479,8 +72479,8 @@ msgid "Paste transform onto all frames between the first and last selected key, 
 msgstr "Incolla la trasformazione su tutti i fotogrammi tra la prima e l'ultima chiave selezionata, creando nuovi keyframe se necessario"
 
 # BFA - machine translated, please review
-msgid "Switch to another object without leaving the mode\nHotkey in the default keymap: D\nThe menu operator calls an object picker\nThe hotkey switches directly to the object under the mouse"
-msgstr "Passa a un altro oggetto senza uscire dalla modalità\nTasto rapido nella mappa tasti predefinita: D\nL'operatore del menu richiama un selettore di oggetti\nIl tasto rapido passa direttamente all'oggetto sotto il mouse"
+msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Z with the mouse over the object (also D in Sculpt Mode)"
+msgstr "Passa a un altro oggetto mantenendo la modalità corrente. L'oggetto lasciato torna in Modalità Oggetto\nDal menu: fai clic sull'oggetto a cui passare\nTasto rapido nella mappa tasti predefinita: Z con il mouse sopra l'oggetto (anche D in Modalità Scultura)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
