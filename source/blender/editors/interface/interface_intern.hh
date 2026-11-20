@@ -54,6 +54,7 @@ struct wmKeyConfig;
 struct wmOperatorType;
 struct wmTimer;
 struct wmWindow; /* BFA - Tear-Off Menu/Panel */
+struct SpaceProperties; /* BFA - Tear-Off Menu/Panel */
 struct WorkSpace; /*BFA - Tear-Off Menu/Panel*/
 
 namespace gpu {
@@ -1230,6 +1231,10 @@ struct PopupBlockHandle {
   /** BFA - Tear-Off Menu/Panel: torn off a region's panel, not a popover's row. Set at creation,
    * because the first layout reads it. */
   bool tear_off_from_region = false;
+  /** BFA - Tear-Off Menu/Panel: the Properties editor tab this panel was torn off, an
+   * #eSpaceButtons_Context, or -1. The panel stays when the editor changes tab, see
+   * #TearOffPropertiesTabScope. */
+  int tear_off_properties_tab = -1;
 
   /** BFA - Tear-Off Menu/Panel: the panel's current width, without View2D zoom or UI scale, 0 for
    * the width it was designed with. For a shelf panel this starts as the shelf's width, as
@@ -1356,6 +1361,8 @@ Block *popup_block_refresh(bContext *C, PopupBlockHandle *handle, ARegion *butre
 /* BFA - Tear-Off Menu/Panel: known before the first layout, like is_tear_off. */
 struct TearOffInit {
   bool from_region = false;
+  /** See #PopupBlockHandle::tear_off_properties_tab. */
+  int properties_tab = -1;
   /** See #PopupBlockHandle::tear_off_width. */
   float width = 0.0f;
   float width_chrome = 0.0f;
@@ -1479,6 +1486,28 @@ bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle);
  * the same space type. No-op for other popups and for tear-offs on another workspace.
  */
 void tear_off_context_ensure(bContext *C, PopupBlockHandle *handle);
+
+/**
+ * BFA - Tear-Off Menu/Panel: a panel torn off the Properties editor stays when the editor changes
+ * tab. The editor only resolves "light", "material" and the like for its current tab, so while
+ * this object lives the editor answers for the tab the panel came from. Used around everything
+ * that polls, draws or runs the buttons of a tear-off. Does nothing for other popups, for a hidden
+ * tear-off, and when the editor is on the panel's tab.
+ */
+class TearOffPropertiesTabScope {
+ public:
+  TearOffPropertiesTabScope(bContext *C, PopupBlockHandle *handle);
+  ~TearOffPropertiesTabScope();
+  TearOffPropertiesTabScope(const TearOffPropertiesTabScope &) = delete;
+  TearOffPropertiesTabScope &operator=(const TearOffPropertiesTabScope &) = delete;
+
+ private:
+  bContext *C_ = nullptr;
+  /** Null when nothing was changed. May be freed while this lives, so the end checks it. */
+  SpaceProperties *sbuts_ = nullptr;
+  int tab_ = -1;
+  int tab_prev_ = -1;
+};
 
 /**
  * BFA - Tear-Off Menu/Panel: tag the popup a panel was torn off from for closing. Starts at the

@@ -24,6 +24,7 @@
 #include "DNA_material_types.h"
 #include "DNA_node_types.h"
 #include "DNA_scene_types.h"
+#include "DNA_screen_types.h" /* BFA - Tear-Off Menu/Panel: the areas of a screen. */
 #include "DNA_sequence_types.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_world_types.h"
@@ -33,6 +34,7 @@
 #include "BKE_context.hh"
 #include "BKE_layer.hh"
 #include "BKE_linestyle.h"
+#include "BKE_main.hh" /* BFA - Tear-Off Menu/Panel: Main::screens. */
 #include "BKE_material.hh"
 #include "BKE_modifier.hh"
 #include "BKE_object.hh"
@@ -880,6 +882,75 @@ void buttons_context_compute(const bContext *C, SpaceProperties *sbuts)
   }
 
   sbuts->pathflag = flag;
+}
+
+/* BFA - Tear-Off Menu/Panel: see ED_buttons.hh. The path is rebuilt in place both ways, with the
+ * same call #buttons_context_compute ends on. Keeping the old path aside instead would leave it
+ * out of the ID remapping, and an operator run in between can delete what it points to. */
+bool ED_buttons_tab_override_begin(const bContext *C,
+                                   SpaceProperties *sbuts,
+                                   const int tab,
+                                   int *r_tab_prev)
+{
+  if (sbuts == nullptr || tab < 0 || tab >= BCONTEXT_TOT || tab == BCONTEXT_TOOL ||
+      CTX_wm_window(C) == nullptr)
+  {
+    return false;
+  }
+  if (sbuts->path == nullptr) {
+    buttons_context_compute(C, sbuts);
+  }
+  if (sbuts->mainb == tab) {
+    return false;
+  }
+  ButsContextPath *path = static_cast<ButsContextPath *>(sbuts->path);
+  if (!buttons_context_path(C, sbuts, path, tab, 0)) {
+    /* Nothing to show on that tab. Put the path of the current tab back. */
+    buttons_context_path(C, sbuts, path, sbuts->mainb, 0);
+    return false;
+  }
+  *r_tab_prev = sbuts->mainb;
+  sbuts->mainb = eSpaceButtons_Context(tab);
+  return true;
+}
+
+void ED_buttons_tab_override_end(const bContext *C,
+                                 SpaceProperties *sbuts,
+                                 const int tab,
+                                 const int tab_prev)
+{
+  /* Only compare the pointer until it's known to be alive. */
+  bool found = false;
+  if (Main *bmain = CTX_data_main(C)) {
+    for (bScreen &screen : bmain->screens) {
+      for (ScrArea &area : screen.areabase) {
+        for (SpaceLink &sl : area.spacedata) {
+          if (reinterpret_cast<SpaceProperties *>(&sl) == sbuts) {
+            found = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+  if (!found) {
+    return;
+  }
+  /* Anything else means the editor computed its context again in between, and is right. */
+  if (sbuts->mainb != tab) {
+    return;
+  }
+  sbuts->mainb = eSpaceButtons_Context(tab_prev);
+  if (sbuts->path == nullptr) {
+    /* Freed by a remap or an undo, #buttons_context computes it when it's needed. */
+    return;
+  }
+  ButsContextPath *path = static_cast<ButsContextPath *>(sbuts->path);
+  if (CTX_wm_window(C) == nullptr || !buttons_context_path(C, sbuts, path, tab_prev, 0)) {
+    /* The tab the editor was on has nothing to show any more. Let it choose again. */
+    MEM_delete(path);
+    sbuts->path = nullptr;
+  }
 }
 
 static bool is_pointer_in_path(ButsContextPath *path, PointerRNA *ptr)
