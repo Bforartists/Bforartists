@@ -40,6 +40,7 @@
 #include "WM_message.hh" /* BFA - Tear-Off Menu/Panel */
 #include "WM_types.hh"
 
+#include "ED_buttons.hh" /* BFA - Tear-Off Menu/Panel: #TearOffPropertiesTabScope. */
 #include "ED_screen.hh"
 
 /* BFA - Tear-Off Menu/Panel: used to draw the collapsed pin widget. */
@@ -579,6 +580,8 @@ static void block_region_refresh(const bContext *C, ARegion *region)
 
         Button *but = handle->popup_create_vars.but;
         ARegion *butregion = handle->popup_create_vars.butregion;
+        /* BFA - Tear-Off Menu/Panel: a Properties panel draws with its own tab's context. */
+        TearOffPropertiesTabScope tab_scope(const_cast<bContext *>(C), handle);
         popup_block_refresh(const_cast<bContext *>(C), handle, butregion, but);
       }
     }
@@ -1803,6 +1806,7 @@ PopupBlockHandle *popup_block_create(bContext *C,
     handle->tear_off_ctx_region_type = handle->ctx_region ? handle->ctx_region->regiontype : -1;
     handle->tear_off_scale_fac = UI_SCALE_FAC;
     handle->tear_off_from_region = tear_off_init.from_region;
+    handle->tear_off_properties_tab = tear_off_init.properties_tab;
     /* Known before the first layout, so the popup is placed with its real width and Python never
      * measures the source region. */
     handle->tear_off_width = tear_off_init.width;
@@ -1864,7 +1868,13 @@ PopupBlockHandle *popup_block_create(bContext *C,
     CTX_wm_region_popup_set(C, region);
   }
 
-  Block *block = popup_block_refresh(C, handle, butregion, but);
+  Block *block;
+  {
+    /* BFA - Tear-Off Menu/Panel: a tear-off restored from a file can open while the Properties
+     * editor is on another tab. */
+    TearOffPropertiesTabScope tab_scope(C, handle);
+    block = popup_block_refresh(C, handle, butregion, but);
+  }
   handle = block->handle;
 
   /* Wait with tooltips until the mouse is moved, button handling will re-enable them on the first
@@ -1925,6 +1935,34 @@ void tear_off_context_ensure(bContext *C, PopupBlockHandle *handle)
                            BKE_area_find_region_type(area_valid,
                                                      handle->tear_off_ctx_region_type) :
                            nullptr;
+}
+
+TearOffPropertiesTabScope::TearOffPropertiesTabScope(bContext *C, PopupBlockHandle *handle)
+{
+  if (handle == nullptr || !handle->is_tear_off || handle->tear_off_properties_tab < 0 ||
+      !tear_off_is_visible(C, handle))
+  {
+    return;
+  }
+  /* The area stored at creation may be gone. */
+  tear_off_context_ensure(C, handle);
+  ScrArea *area = handle->ctx_area;
+  if (area == nullptr || area->spacetype != SPACE_PROPERTIES) {
+    return;
+  }
+  SpaceProperties *sbuts = area->spacedata.first_as<SpaceProperties>();
+  if (ED_buttons_tab_override_begin(C, sbuts, handle->tear_off_properties_tab, &tab_prev_)) {
+    C_ = C;
+    sbuts_ = sbuts;
+    tab_ = handle->tear_off_properties_tab;
+  }
+}
+
+TearOffPropertiesTabScope::~TearOffPropertiesTabScope()
+{
+  if (sbuts_) {
+    ED_buttons_tab_override_end(C_, sbuts_, tab_, tab_prev_);
+  }
 }
 
 bool tear_off_is_visible(const bContext *C, const PopupBlockHandle *handle)

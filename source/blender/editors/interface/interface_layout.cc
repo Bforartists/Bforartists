@@ -6732,7 +6732,9 @@ static bool tear_off_panel_available(const bContext *C,
     root = root->parent;
   }
   /* Only a region's panels were filtered by tab. A popover row can show a panel of any context,
-   * such as STRIP_PT_color_tag_picker with its "none". */
+   * such as STRIP_PT_color_tag_picker with its "none".
+   * A Properties panel is on its own tab here whatever the editor shows, through
+   * #TearOffPropertiesTabScope. This still fails when that tab has nothing to show. */
   if (handle->tear_off_from_region) {
     if (const SpaceProperties *sbuts = CTX_wm_space_properties(C)) {
       /* The Tool tab shows 3D View panels, and hide by mode already filters those. */

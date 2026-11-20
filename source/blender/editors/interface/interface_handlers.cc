@@ -14132,6 +14132,12 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   ARegion *region_popup = CTX_wm_region_popup(C);
   CTX_wm_region_popup_set(C, menu->region);
 
+  /* BFA - Tear-Off Menu/Panel: a panel torn off the Properties editor stays when the editor
+   * changes tab. For the whole handler, so button polls, tooltips, submenus and the delayed
+   * operator calls at the end all read the context of the panel's own tab. It only keeps the
+   * space, and checks that it's still there at the end, because `menu` can be freed below. */
+  TearOffPropertiesTabScope tear_off_tab_scope(C, menu);
+
   /* BFA - Tear-Off Menu/Panel: before anything that can return, and for any popup, because the
    * first handler called may not be the pin's. */
   if (ELEM(event->type, MOUSEMOVE, WINDEACTIVATE)) {

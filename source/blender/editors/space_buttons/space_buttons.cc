@@ -325,6 +325,24 @@ const char *ED_buttons_tab_context_string(const short mainb)
   return buttons_main_region_context_string(mainb);
 }
 
+/* BFA - Tear-Off Menu/Panel */
+int ED_buttons_tab_from_context_string(const char *context)
+{
+  if (context == nullptr || context[0] == '\0') {
+    return -1;
+  }
+  for (int tab = 0; tab < BCONTEXT_TOT; tab++) {
+    /* The Tool tab has no context string, see #buttons_main_region_context_string. */
+    if (tab == BCONTEXT_TOOL) {
+      continue;
+    }
+    if (STREQ(context, buttons_main_region_context_string(short(tab)))) {
+      return tab;
+    }
+  }
+  return -1;
+}
+
 static void buttons_main_region_layout_properties(const bContext *C,
                                                   SpaceProperties *sbuts,
                                                   ARegion *region)

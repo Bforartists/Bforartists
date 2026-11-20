@@ -47,6 +47,7 @@
 #include "BKE_report.hh"
 #include "BKE_screen.hh"
 
+#include "ED_buttons.hh" /* BFA - Tear-Off Menu/Panel: the tab of a Properties panel. */
 #include "ED_screen.hh"
 
 #include "WM_api.hh"
@@ -299,6 +300,14 @@ TearOffInit tear_off_init_from_region(const bContext *C, const PanelType *pt)
 {
   TearOffInit init;
   init.from_region = true;
+  /* BFA - Tear-Off Menu/Panel: a subpanel is on its parent's tab. */
+  const PanelType *root = pt;
+  while (root->parent) {
+    root = root->parent;
+  }
+  if (root->space_type == SPACE_PROPERTIES) {
+    init.properties_tab = ED_buttons_tab_from_context_string(root->context);
+  }
   const ScrArea *area = CTX_wm_area(C);
   const ARegion *region = CTX_wm_region(C);
   if (area && region && region->regiontype == RGN_TYPE_TOOLS &&
