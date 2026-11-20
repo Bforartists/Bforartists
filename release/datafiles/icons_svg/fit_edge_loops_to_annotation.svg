@@ -78,7 +78,7 @@
        width="12.091249"
        height="1.02"
        x="1.9400001"
-       y="10.4"
+       y="8"
        rx="0"
        ry="0" /><g
        id="path3-6-4"
@@ -88,4 +88,4 @@
          id="path4" /><path
          style="baseline-shift:baseline;display:inline;overflow:visible;vector-effect:none;fill:#cbfefe;stroke-linecap:round;stroke-linejoin:round;paint-order:markers stroke fill;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="M 8,2.0332031 C 5.1958272,2.0332031 3.4014444,3.5023807 2.3769531,4.9375 1.3524619,6.3726193 1.03125,7.8125 1.03125,7.8125 A 0.5,0.5 0 0 0 1.4101562,8.4101563 0.5,0.5 0 0 0 2.0078125,8.03125 c 0,0 0.2844933,-1.2542015 1.1835938,-2.5136719 C 4.0905067,4.2581078 5.5368735,3.0332031 8,3.0332031 c 2.463126,0 3.91925,1.2261373 4.826172,2.4863281 0.906922,1.2601909 1.199219,2.5156251 1.199219,2.5156251 A 0.5,0.5 0 0 0 14.625,8.4082031 0.5,0.5 0 0 0 15,7.8085937 c 0,0 -0.330987,-1.4386479 -1.363281,-2.8730468 C 12.604424,3.501148 10.804173,2.0332031 8,2.0332031 Z"
-         id="path5" /></g><g id="fit_arrow"><path id="fit_arrow_outline" style="fill:#323232;stroke:#323232;stroke-width:1;stroke-linejoin:round;stroke-linecap:round" d="M 8,4.3 10.4,7.1 H 8.8 V 9.3 H 7.2 V 7.1 H 5.6 Z" /><path id="fit_arrow_fill" style="fill:#ffffff" d="M 8,4.3 10.4,7.1 H 8.8 V 9.3 H 7.2 V 7.1 H 5.6 Z" /></g><g id="annotation_pen" transform="translate(7.6,14.9) rotate(-45)"><path id="pen_outline" style="fill:#1a1a1a;stroke:#1a1a1a;stroke-width:1;stroke-linejoin:round" d="M 0,0 2,-1.5 H 9 V 1.5 H 2 Z" /><path id="pen_tip" style="fill:#d6d6d6" d="M 0,0 2,-1.5 V 1.5 Z" /><path id="pen_body" style="fill:#1597d5" d="M 2,-1.5 H 6.8 V 1.5 H 2 Z" /><path id="pen_cap" style="fill:#d50000" d="M 6.8,-1.5 H 9 V 1.5 H 6.8 Z" /></g></g></svg>
+         id="path5" /></g><g id="annotation_pen" transform="translate(7.6,14.9) rotate(-45)"><path id="pen_outline" style="fill:#1a1a1a;stroke:#1a1a1a;stroke-width:1;stroke-linejoin:round" d="M 0,0 2,-1.5 H 9 V 1.5 H 2 Z" /><path id="pen_tip" style="fill:#d6d6d6" d="M 0,0 2,-1.5 V 1.5 Z" /><path id="pen_body" style="fill:#1597d5" d="M 2,-1.5 H 6.8 V 1.5 H 2 Z" /><path id="pen_cap" style="fill:#d50000" d="M 6.8,-1.5 H 9 V 1.5 H 6.8 Z" /></g></g></svg>
