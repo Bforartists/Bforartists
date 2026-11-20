@@ -5934,19 +5934,20 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, nullptr, "statusbar_flag", STATUSBAR_SHOW_BLENDER_VERSION);
   RNA_def_property_ui_text(prop, "Show Blender version", "Show Blender version");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_INFO, "rna_userdef_update");
-  /* bfa end */
-  prop = RNA_def_property(srna, "use_tooltip_cursor_offset", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, nullptr, "bfa_ui_flag", USER_TOOLTIP_CURSOR_OFFSET);
-  RNA_def_property_ui_text(prop, "Offset by Cursor Size",
-      "Shift tooltips so they clear the mouse cursor image");
+  /* bfa start tooltip cursor */
+  prop = RNA_def_property(srna, "use_tooltip_cursor_size", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "bfa_ui_flag", USER_TOOLTIP_CURSOR_SIZE);
+  RNA_def_property_ui_text(prop, "Tooltip Align Cursor Size",
+      "Align tooltip based on mouse cursor size for clearance");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   prop = RNA_def_property(srna, "tooltip_offset", PROP_FLOAT, PROP_PIXEL);
   RNA_def_property_array(prop, 2);
   RNA_def_property_float_sdna(prop, nullptr, "tooltip_offset");
   RNA_def_property_range(prop, -500.0f, 500.0f);
-  RNA_def_property_ui_text(prop, "Tooltip Offset", "Extra offset applied to tooltips");
+  RNA_def_property_ui_text(prop, "Tooltip Offset", "Extra offset applied to tooltip\n Good for slight adjustment");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
+  /* bfa end */
 }
 
 static void rna_def_userdef_edit(BlenderRNA *brna)
