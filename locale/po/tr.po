@@ -136186,3 +136186,74 @@ msgstr "Fare operatörü, lütfen fareyi kullanın"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "Düzenleyici bölgelerini göster veya gizle (araç çubuğu, kenar çubuğu, kanallar)"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "Alan Kenarını Böl"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Sahne Efekti Dizgici Düzenleyicisini Aç"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "Bırakılan .blend Dosyasını İşle"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "Felci kapalı bir döngü yap"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "Eğriyi kapalı bir döngü yap"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "Metin Düzenleme Etkin"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "Metin şeridinin metin düzenleme modunda olup olmadığı"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "Alan kenarını imleç konumunda böler ve bitişik her iki alanı da böler"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "Kenarı Böl"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "Sürüklenen Harman dosyası açılsın mı?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "Bırakılan bir .blend dosyasını işler (Aç, Bağla veya İliştir)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr ".blend dosyasının betikleri otomatik çalıştırmasına izin ver (varsayılan değer sistem tercihlerinden / otomatik çalıştırma kurallarından alınır)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Sahne Efekti Dizgici Düzenleyicisini Aç"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "Bu sahne efektinin düğüm grubu için bir Dizgici Düzenleyicisi penceresi açar"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "Seçimden Yeni Koleksiyon"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "Seçili Nesneleri Taşı"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "Seçili Başlıklar nesnelerini yeni koleksiyona taşır"

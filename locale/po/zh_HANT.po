@@ -113378,3 +113378,74 @@ msgstr "滑鼠操作，請使用滑鼠"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "顯示或隱藏編輯器區域（工具列、側邊欄、通道）"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "切割區域邊緣"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "開啟場景特效合成器編輯器"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "處理拖放的 .blend 檔案"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "將筆觸設為封閉迴圈"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "將曲線設為封閉迴圈"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "文字編輯已啟用"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "文字片段是否處於文字編輯模式"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "在游標處切割區域邊緣，同時切割相鄰的兩個區域"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "切割邊緣"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "開啟拖入的 Blend 檔案?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "處理拖放的 .blend 檔案 (開啟、連結或附加)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr "允許 .blend 檔案自動執行命令稿 (預設取自系統偏好設定 / 自動執行規則)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "開啟場景特效合成器編輯器"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "為此場景特效的節點群組開啟合成器編輯器視窗"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "從選取項新增集盒"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "移動選取的物件"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "將選取的大綱編輯器物件移動至新集盒"

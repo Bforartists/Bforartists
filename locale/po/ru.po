@@ -182218,3 +182218,74 @@ msgstr "Операция мышью, используйте мышь"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "Показать или скрыть области редактора (панель инструментов, боковая панель, каналы)"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "Разделить границу области"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Открыть редактор композитинга эффекта сцены"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "Обработать перетащенный .blend-файл"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "Сделать штрих замкнутым контуром"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "Сделать кривую замкнутой"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "Редактирование текста активно"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "Находится ли текстовая дорожка в режиме редактирования текста"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "Разделить границу области в позиции курсора, разделяя обе соседние области"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "Разделить границу"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "Открыть перетащенный blend-файл?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "Обработать перетащенный .blend-файл (Открыть, Связать или Добавить)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr "Разрешить .blend-файлу автоматически выполнять скрипты (по умолчанию берётся из системных настроек / правил автозапуска)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Открыть редактор композитинга эффекта сцены"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "Открыть окно редактора композитинга для группы нод этого эффекта сцены"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "Новая коллекция из выделенного"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "Переместить выделенные объекты"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "Переместить выделенные объекты Аутлайнера в новую коллекцию"

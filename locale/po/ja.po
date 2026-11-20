@@ -184279,3 +184279,74 @@ msgstr "マウス操作の機能です．マウスを使ってください"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "エディターの領域を表示または非表示にする（ツールバー、サイドバー、チャンネル）"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "エリア境界を分割"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "シーンエフェクトのコンポジターエディターを開く"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "ドロップされた.blendファイルを処理"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "ストロークを閉じたループにする"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "カーブを閉じたループにする"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "テキスト編集がアクティブ"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "テキストストリップがテキスト編集モードかどうか"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "カーソル位置のエリア境界を分割し、隣接する両方のエリアを分割します"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "境界を分割"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "ドラッグした Blend ファイルを開きますか?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "ドロップされた.blendファイルを処理します (開く、リンク、アペンド)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr ".blendファイルがスクリプトを自動的に実行することを許可します (デフォルトはシステム環境設定 / 自動実行ルールから取得)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "シーンエフェクトのコンポジターエディターを開く"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "このシーンエフェクトのノードグループ用のコンポジターエディターウィンドウを開きます"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "選択から新規コレクション"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "選択したオブジェクトを移動"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "選択したアウトライナーのオブジェクトを新しいコレクションに移動します"
