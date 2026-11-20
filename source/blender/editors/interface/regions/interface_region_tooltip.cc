@@ -1525,7 +1525,7 @@ static void tooltip_adjust_position(const wmWindow *win,
                                     const int2 &pad,
                                     rcti *r_rect)
 {
-  if (U.bfa_ui_flag & USER_TOOLTIP_CURSOR_OFFSET) {
+  if (U.bfa_ui_flag & USER_TOOLTIP_CURSOR_SIZE) {
     tooltip_avoid_cursor(win, win_size, pad, r_rect);
   }
   // manual offset with values
