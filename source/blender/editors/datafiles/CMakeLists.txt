@@ -1323,6 +1323,7 @@ if(WITH_BLENDER)
       node_curve_time
       node_deactivate_voxel
       node_defocus
+      node_delaunay_triangulation
       node_denoise
       node_despeckle
       node_diffuseshader
