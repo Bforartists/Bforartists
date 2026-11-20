@@ -2192,6 +2192,7 @@ if(WITH_BLENDER)
       trademark
       transfer_data
       transfer_data_layout
+      transfer_mode
       transfer_sculpt
       transfer_uv
       transform_direction
