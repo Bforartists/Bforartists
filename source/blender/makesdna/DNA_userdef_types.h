@@ -598,7 +598,7 @@ enum eUserpref_OutlinerEditorFlags : int {
  * preference files keep the options on with no versioning. */
 enum eUserpref_BFA_UI_Flag : int {
   USER_BFA_TEAR_OFF_DISABLED = (1 << 0), /* BFA - Tear-Off Menu/Panel */
-  USER_TOOLTIP_CURSOR_OFFSET = (1 << 1), 
+  USER_TOOLTIP_CURSOR_SIZE = (1 << 1), 
 };
 
 enum eUserpref_ShaderCompileMethod : short {
