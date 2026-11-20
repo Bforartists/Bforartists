@@ -1324,6 +1324,7 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
         add_operator_props=None,
         translate=True,
         recursive_paths=False,
+        icon='NONE',  # BFA - icon support for generated entries
     ):
         """
         Populate a menu from a list of paths.
@@ -1353,6 +1354,8 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
         :type translate: bool
         :param recursive_paths: Add submenus for sub-directories instead of listing their contents.
         :type recursive_paths: bool
+        :param icon: Icon for the generated file entries.  # BFA
+        :type icon: str
         """
 
         import os
@@ -1415,6 +1418,7 @@ class Menu(_StructRNA, _GenericUI, metaclass=_RNAMeta):
                 operator,
                 text=(iface_(name) if translate else name),
                 translate=False,
+                icon=icon,  # BFA
             )
 
             if props_default is not None:

@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 
-# Example of manifest file for a Blender extension
+# Example of manifest file for a Bforartists extension
 # Change the values according to your extension
 id = "my_example_extension"
 version = "1.0.0"
