@@ -6982,7 +6982,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("object.transfer_mode", {"type": 'Q', "value": 'PRESS', "alt": True}, None),
+    ("object.transfer_mode", {"type": 'Z', "value": 'PRESS'}, None),
     ],
    },
   ),

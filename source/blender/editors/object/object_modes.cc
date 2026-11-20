@@ -616,8 +616,8 @@ void OBJECT_OT_transfer_mode(wmOperatorType *ot)
   ot->description =
       "Switch to another object and keep the current mode. The object you leave returns to "
       "Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: "
-      "Alt Q with the mouse over the object (also D in Sculpt Mode)";
-  /* BFA - reworded, the hotkey is now Alt Q in every non-Object mode, menu entries exposed */
+      "Z with the mouse over the object (also D in Sculpt Mode)";
+  /* BFA - reworded, the hotkey is now Z in every non-Object mode, menu entries exposed */
 
   /* API callbacks. */
   ot->invoke = object_transfer_mode_invoke;

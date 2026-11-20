@@ -172837,8 +172837,8 @@ msgid "Set the object's origin by the following method"
 msgstr "次の方法でオブジェクトの原点を設定します"
 
 # BFA - machine translated, please review
-msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Alt Q with the mouse over the object (also D in Sculpt Mode)"
-msgstr "別のオブジェクトに切り替え、現在のモードを維持します。元のオブジェクトはオブジェクトモードに戻ります\nメニューから：切り替え先のオブジェクトをクリックします\nデフォルトキーマップのホットキー：マウスをオブジェクトの上に置いて Alt Q（スカルプトモードでは D も使用可）"
+msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Z with the mouse over the object (also D in Sculpt Mode)"
+msgstr "別のオブジェクトに切り替え、現在のモードを維持します。元のオブジェクトはオブジェクトモードに戻ります\nメニューから：切り替え先のオブジェクトをクリックします\nデフォルトキーマップのホットキー：マウスをオブジェクトの上に置いて Z（スカルプトモードでは D も使用可）"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

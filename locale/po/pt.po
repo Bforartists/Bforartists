@@ -141478,8 +141478,8 @@ msgid "Set the object's origin by the following method"
 msgstr "Definir a origem do objecto pelo seguinte método"
 
 # BFA - machine translated, please review
-msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Alt Q with the mouse over the object (also D in Sculpt Mode)"
-msgstr "Mudar para outro objecto e manter o modo actual. O objecto que se abandona volta ao Modo de objecto\nA partir do menu: clique no objecto para o qual mudar\nTecla de atalho no mapa de teclas predefinido: Alt Q com o rato sobre o objecto (também D no Modo de escultura)"
+msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Z with the mouse over the object (also D in Sculpt Mode)"
+msgstr "Mudar para outro objecto e manter o modo actual. O objecto que se abandona volta ao Modo de objecto\nA partir do menu: clique no objecto para o qual mudar\nTecla de atalho no mapa de teclas predefinido: Z com o rato sobre o objecto (também D no Modo de escultura)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

@@ -170727,8 +170727,8 @@ msgid "Set the object's origin by the following method"
 msgstr "按以下方式设置物体原点"
 
 # BFA - machine translated, please review
-msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Alt Q with the mouse over the object (also D in Sculpt Mode)"
-msgstr "切换到另一个物体并保持当前模式。离开的物体将返回物体模式\n从菜单使用: 点击要切换到的物体\n默认键位映射中的快捷键: 鼠标悬停在物体上按 Alt Q (雕刻模式下也可使用 D)"
+msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Z with the mouse over the object (also D in Sculpt Mode)"
+msgstr "切换到另一个物体并保持当前模式。离开的物体将返回物体模式\n从菜单使用: 点击要切换到的物体\n默认键位映射中的快捷键: 鼠标悬停在物体上按 Z (雕刻模式下也可使用 D)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
