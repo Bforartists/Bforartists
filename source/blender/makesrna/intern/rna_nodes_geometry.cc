@@ -1839,7 +1839,7 @@ void RNA_def_nodes_geometry(BlenderRNA *brna)
   define("GeometryNode", "GeometryNodeGreasePencilDrawTime", nullptr, ICON_NODE_GP_DRAWTIME);
   define("GeometryNode", "GeometryNodeGreasePencilFillID", nullptr, ICON_NODE_GP_FILLID);
   define("GeometryNode", "GeometryNodeGreasePencilOpacity", nullptr, ICON_GP_OPACITY);
-  define("GeometryNode", "GeometryNodeGreasePencilMaterialInfo", nullptr, ICON_NONE); /*BFA - WIP, icon to do*/
+  define("GeometryNode", "GeometryNodeGreasePencilMaterialInfo", nullptr, ICON_NODE_GP_MATERIALINFO); /*BFA - icon*/
   define("GeometryNode", "GeometryNodeGreasePencilStrokeSoftness", nullptr, ICON_NODE_GP_STROKESOFTNESS);
   define("GeometryNode", "GeometryNodeGreasePencilStrokeVisibility", nullptr, ICON_NODE_GP_STROKEVISIBILITY);
   define("GeometryNode", "GeometryNodeGreasePencilToCurves", nullptr, ICON_OUTLINER_OB_CURVES);
