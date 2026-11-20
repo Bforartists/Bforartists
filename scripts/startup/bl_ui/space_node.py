@@ -1340,9 +1340,9 @@ class NODE_PT_quality(Panel):
             # BFA - same layout as Cache: plain label, entries indented under it, checkboxes float left
             col = layout.column(align=True)
             col.label(text="Proxy")
-            row = col.row(align=True)
+            row = col.row()
             row.separator()
-            sub = row.row(align=True)
+            sub = row.row()
             sub.use_property_split = False
             sub.prop(rd, "compositor_proxy_use_preview_scale", text="Scale")
             # BFA - scale value greyed out while the checkbox is off
