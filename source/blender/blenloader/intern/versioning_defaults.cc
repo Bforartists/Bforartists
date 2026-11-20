@@ -636,6 +636,21 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
     BLO_update_defaults_workspace(&workspace, app_template);
   }
 
+  /* BFA - The factory startup workspaces were saved with a larger node editor minimap. The code
+   * default is scale 1.5 / aspect 2.0, so reset all node editors (including inactive spaces) to
+   * it, otherwise a fresh install shows a too big minimap (#6797). */
+  for (bScreen &screen : bmain->screens) {
+    for (ScrArea &area : screen.areabase) {
+      for (SpaceLink &sl : area.spacedata) {
+        if (sl.spacetype == SPACE_NODE) {
+          SpaceNode *snode = reinterpret_cast<SpaceNode *>(&sl);
+          snode->minimap_scale = 1.5f;
+          snode->minimap_aspect_ratio = 2.0f;
+        }
+      }
+    }
+  }
+
   /* Grease pencil materials and paint modes setup. */
   {
     /* Rename and fix materials and enable default object lights on. */
