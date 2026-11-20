@@ -1337,13 +1337,22 @@ class NODE_PT_quality(Panel):
             row.separator()
             row.prop(rd, "use_compositor_frames_cache", text="Frames")
 
-            heading = layout.column(heading="Proxy", align=True)
-            row = heading.row(align=True)
-            row.prop(rd, "compositor_proxy_use_preview_scale", text="")
+            # BFA - same layout as Cache: plain label, entries indented under it, checkboxes float left
+            col = layout.column(align=True)
+            col.label(text="Proxy")
+            row = col.row()
+            row.separator()
             sub = row.row()
+            sub.use_property_split = False
+            sub.prop(rd, "compositor_proxy_use_preview_scale", text="Scale")
+            # BFA - scale value greyed out while the checkbox is off
+            sub = row.row(align=True)
             sub.active = rd.compositor_proxy_use_preview_scale
             sub.prop(rd, "compositor_proxy_preview_scale", text="")
-            heading.prop(rd, "compositor_proxy_adapt_to_render_scale", text="Adapt To Render Scale")
+            row = col.row()
+            row.separator()
+            row.use_property_split = False
+            row.prop(rd, "compositor_proxy_adapt_to_render_scale", text="Adapt To Render Scale")
 
 
 class NODE_PT_overlay(Panel):
