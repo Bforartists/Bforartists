@@ -6989,6 +6989,9 @@ static void layout_introspect_items(fmt::appender ds, Span<const Item *> items)
       CASE_ITEM(ItemType::LayoutSplit, "LAYOUT_SPLIT");
       CASE_ITEM(ItemType::LayoutOverlap, "LAYOUT_OVERLAP");
       CASE_ITEM(ItemType::LayoutRoot, "LAYOUT_ROOT");
+      /* BFA - Tear-Off Menu/Panel: the tear-off body stands in for the root a panel draws in,
+       * so scripts get the type they get in a region. Without a case the entry had no type. */
+      CASE_ITEM(ItemType::LayoutTearOffBody, "LAYOUT_ROOT");
       CASE_ITEM(ItemType::LayoutGridFlow, "LAYOUT_GRID_FLOW");
       CASE_ITEM(ItemType::LayoutRadial, "LAYOUT_RADIAL");
     }
