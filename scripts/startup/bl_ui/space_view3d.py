@@ -2420,6 +2420,8 @@ class VIEW3D_MT_select_pose(Menu):
         props = layout.operator("pose.select_hierarchy", text="Extend Child", icon="CHILD")
         props.extend = True
         props.direction = "CHILD"
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed, switch to the object under the mouse and keep the mode
 
 
 # bfa menu
@@ -2461,6 +2463,8 @@ class VIEW3D_MT_select_particle(Menu):
         layout.operator("particle.select_roots", text="Roots", icon="SELECT_ROOT")
         layout.operator("particle.select_tips", text="Tips", icon="SELECT_TIP")
 
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
         layout.separator()
 
         layout.menu("VIEW3D_MT_select_particle_more_less")
@@ -2618,6 +2622,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.separator()
         layout.operator("mesh.select_by_attribute", text="By Attribute", icon="NODE_ATTRIBUTE")
 
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
         # more/less
         layout.separator()
         layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
@@ -2677,6 +2683,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_previous", text="Previous", icon="PREVIOUSACTIVE")
 
         layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
+        layout.separator()
 
         layout.menu("VIEW3D_MT_select_edit_curve_more_less")
 
@@ -2734,6 +2742,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.operator("curve.select_row", text="Control Point row", icon="CONTROLPOINTROW")
 
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
         layout.separator()
 
         layout.menu("VIEW3D_MT_select_edit_surface_more_less")
@@ -2800,6 +2810,8 @@ class VIEW3D_MT_select_edit_metaball(Menu):
         layout.separator()
 
         layout.operator("mball.select_random_metaelems", text="Random", icon="RANDOMIZE")
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
 
 
 # bfa menu
@@ -2869,6 +2881,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
             icon="SELECT_UNGROUPED_VERTS",
         )
 
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
         layout.separator()
 
         layout.menu("VIEW3D_MT_select_edit_lattice_more_less")  # bfa menu
@@ -2943,6 +2957,8 @@ class VIEW3D_MT_select_edit_armature(Menu):
         # BFA - new in Blender (0feb38d08bf), icon added (bone theme). Separator: own group, like in the Pose menu
         layout.operator("armature.select_deform", text="Deform", icon="SELECT_BONE_DEFORM")
 
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
         layout.separator()
         layout.menu("VIEW3D_MT_select_edit_armature_more_less")  # bfa menu
 
@@ -3040,6 +3056,8 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
             props.amount_start = 0
             props.amount_end = 1
 
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
         # BFA - moved below
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.separator()
@@ -3175,6 +3193,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
         myvar.extend = True
 
         layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
+        layout.separator()
 
         layout.menu("VIEW3D_MT_select_paint_mask_face_more_less")  # bfa menu
 
@@ -3222,6 +3242,8 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.operator("paint.vert_select_linked", text="Linked", icon="LINKED")
 
         layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
+        layout.separator()
 
         layout.menu("VIEW3D_MT_select_paint_mask_vertex_more_less")  # bfa menu
 
@@ -3250,6 +3272,8 @@ class VIEW3D_MT_select_edit_pointcloud(Menu):
         layout.separator()
 
         layout.operator("pointcloud.select_random", text="Random", icon="RANDOMIZE")
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -3284,6 +3308,8 @@ class VIEW3D_MT_select_edit_curves(Menu):
         layout.operator("curves.select_ends", text="Endpoints", icon="SELECT_TIP")
         layout.operator("curves.select_linked", text="Linked", icon="LINKED")
 
+        layout.separator()
+        layout.operator("object.transfer_mode", icon="TRANSFER_SCULPT")  # BFA - exposed
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_curves_select_more_less")

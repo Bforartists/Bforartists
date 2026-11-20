@@ -5610,6 +5610,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("object.transfer_mode", {"type": 'Q', "value": 'PRESS', "alt": True}, None),
     ],
    },
   ),

@@ -155077,8 +155077,8 @@ msgid "Set the object's origin by the following method"
 msgstr "다음 방법으로 오브젝트의 오리진을 설정"
 
 # BFA - machine translated, please review
-msgid "Switch to another object without leaving the mode\nHotkey in the default keymap: D\nThe menu operator calls an object picker\nThe hotkey switches directly to the object under the mouse"
-msgstr "모드를 종료하지 않고 다른 오브젝트로 전환\n기본 키맵의 단축키: D\n메뉴 작업자는 오브젝트 선택기를 호출합니다\n단축키는 마우스 아래의 오브젝트로 직접 전환합니다"
+msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Alt Q with the mouse over the object (also D in Sculpt Mode)"
+msgstr "다른 오브젝트로 전환하고 현재 모드를 유지합니다. 떠난 오브젝트는 오브젝트 모드로 돌아갑니다\n메뉴에서: 전환할 오브젝트를 클릭합니다\n기본 키맵의 단축키: 마우스를 오브젝트 위에 두고 Alt Q (스컬프트 모드에서는 D도 가능)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

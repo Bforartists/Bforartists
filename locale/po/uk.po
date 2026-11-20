@@ -91307,8 +91307,8 @@ msgid "Paste transform onto all frames between the first and last selected key, 
 msgstr "Вставити трансформацію в усі кадри між першим і останнім вибраним ключем, створюючи нові ключкадри за потреби"
 
 # BFA - machine translated, please review
-msgid "Switch to another object without leaving the mode\nHotkey in the default keymap: D\nThe menu operator calls an object picker\nThe hotkey switches directly to the object under the mouse"
-msgstr "Перейти до іншого об'єкта, не виходячи з режиму\nГаряча клавіша у стандартній розкладці клавіш: D\nОператор меню викликає вибирач об'єктів\nГаряча клавіша перемикає безпосередньо на об'єкт під мишею"
+msgid "Switch to another object and keep the current mode. The object you leave returns to Object Mode\nFrom the menu: click the object to switch to\nHotkey in the default keymap: Alt Q with the mouse over the object (also D in Sculpt Mode)"
+msgstr "Перейти до іншого об'єкта та зберегти поточний режим. Об'єкт, який ви залишаєте, повертається в Режим Об'єкта\nЗ меню: клацніть об'єкт, до якого потрібно перейти\nГаряча клавіша у стандартній розкладці клавіш: Alt Q, коли миша над об'єктом (у Режимі Ліплення також D)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
