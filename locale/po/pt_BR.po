@@ -82001,3 +82001,74 @@ msgstr "Operador de mouse, por favor use o mouse"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "Mostrar ou ocultar as regiões do editor (barra de ferramentas, barra lateral, canais)"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "Dividir Margem de Área"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Abrir Editor de Composição do Efeito de Cena"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "Tratar Arquivo .blend Solto"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "Tornar o traço um laço fechado"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "Tornar a curva um laço fechado"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "Edição de Texto Ativa"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "Se a faixa de texto está em modo de edição de texto"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "Divide a margem da área no cursor, dividindo ambas as áreas adjacentes"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "Dividir Margem"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "Abrir o arquivo Blender arrastado?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "Trata um arquivo .blend solto (Abrir, Vincular ou Anexar)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr "Permite que o arquivo .blend execute scripts automaticamente (valor padrão obtido das preferências do sistema / regras de execução automática)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Abrir Editor de Composição do Efeito de Cena"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "Abre uma janela do Editor de composição para o grupo de nós deste efeito de cena"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "Nova Coleção a partir da Seleção"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "Mover Objetos Selecionados"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "Move os objetos selecionados do Esquematizador para a nova coleção"

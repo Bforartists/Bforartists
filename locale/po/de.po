@@ -73281,3 +73281,74 @@ msgstr "Mausoperator, bitte die Maus verwenden"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "Editorbereiche ein- oder ausblenden (Werkzeugleiste, Seitenleiste, Kanäle)"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "Bereichskante teilen"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Compositor-Editor des Szeneneffekts öffnen"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "Abgelegte .blend-Datei verarbeiten"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "Den Pinselstrich zu einer geschlossenen Schleife machen"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "Die Kurve zu einer geschlossenen Schleife machen"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "Texteingabe aktiv"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "Ob der Textstreifen im Textbearbeitungsmodus ist"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "Teilt die Bereichskante am Mauszeiger und teilt dabei beide angrenzenden Bereiche"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "Kante teilen"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "Gezogene Blend-Datei öffnen?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "Verarbeitet eine abgelegte .blend-Datei (Öffnen, Verknüpfen oder Anfügen)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr "Erlaubt der .blend-Datei, Skripte automatisch auszuführen (Standardwert stammt aus den Systemeinstellungen / Regeln zur automatischen Ausführung)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Compositor-Editor des Szeneneffekts öffnen"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "Öffnet ein Compositor-Editor-Fenster für die Knotengruppe dieses Szeneneffekts"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "Neue Sammlung aus Auswahl"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "Ausgewählte Objekte verschieben"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "Verschiebt die ausgewählten Outliner-Objekte in die neue Sammlung"

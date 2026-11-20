@@ -182116,3 +182116,74 @@ msgstr "Operator myszy, użyj myszy"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "Pokaż lub ukryj obszary edytora (pasek narzędzi, pasek boczny, kanały)"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "Podziel krawędź obszaru"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Otwórz edytor kompozytora efektu sceny"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "Obsłuż upuszczony plik .blend"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "Zamknij obrys w pętlę"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "Zamknij krzywą w pętlę"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "Edycja tekstu aktywna"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "Czy pasek tekstowy jest w trybie edycji tekstu"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "Dzieli krawędź obszaru w miejscu kursora, dzieląc oba sąsiednie obszary"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "Podziel krawędź"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "Otworzyć przeciągnięty plik blend?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "Obsługuje upuszczony plik .blend (Otwórz, Połącz lub Dołącz)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr "Zezwala plikowi .blend na automatyczne wykonywanie skryptów (wartość domyślna pobierana z preferencji systemowych / reguł automatycznego wykonywania)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Otwórz edytor kompozytora efektu sceny"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "Otwiera okno edytora kompozytora dla grupy węzła tego efektu sceny"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "Nowa kolekcja z zaznaczenia"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "Przenieś wybrane obiekty"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "Przenosi wybrane obiekty z Konspektu do nowej kolekcji"

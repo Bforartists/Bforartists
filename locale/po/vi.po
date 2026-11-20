@@ -179918,3 +179918,74 @@ msgstr "Thao tác chuột, vui lòng dùng chuột"
 # BFA - machine translated, please review
 msgid "Show or hide the editor regions (toolbar, sidebar, channels)"
 msgstr "Hiện hoặc ẩn các vùng của trình chỉnh sửa (thanh công cụ, thanh bên, kênh)"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Split Area Edge"
+msgstr "Tách Cạnh Khu Vực"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Mở Trình Biên Soạn Tổng Hợp của Hiệu ứng cảnh"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Handle Dropped .blend File"
+msgstr "Xử Lý Tập Tin .blend Được Thả"
+
+# BFA - machine translated, please review
+msgid "Make the stroke a closed loop"
+msgstr "Biến nét vẽ thành vòng kín"
+
+# BFA - machine translated, please review
+msgid "Make the curve a closed loop"
+msgstr "Biến đường cong thành vòng kín"
+
+# BFA - machine translated, please review
+msgid "Text Editing Active"
+msgstr "Đang Biên Soạn Văn Bản"
+
+# BFA - machine translated, please review
+msgid "Whether the text strip is in text editing mode"
+msgstr "Dải văn bản có đang ở chế độ biên soạn văn bản hay không"
+
+# BFA - machine translated, please review
+msgid "Split the area edge at the cursor, splitting both adjacent areas"
+msgstr "Tách cạnh khu vực tại vị trí con trỏ, tách cả hai khu vực liền kề"
+
+# BFA - machine translated, please review
+msgid "Split Edge"
+msgstr "Tách Cạnh"
+
+# BFA - machine translated, please review
+msgid "Open dragged blend file?"
+msgstr "Mở tập tin Blend đã kéo?"
+
+# BFA - machine translated, please review
+msgid "Handle a dropped .blend file (Open, Link or Append)"
+msgstr "Xử lý tập tin .blend được thả (Mở, Kết Nối hoặc Bổ Sung)"
+
+# BFA - machine translated, please review
+msgid "Allow .blend file to execute scripts automatically (default taken from system preferences / auto-execution rules)"
+msgstr "Cho phép tập tin .blend tự động thi hành tập lệnh (mặc định lấy từ tùy chọn hệ thống / quy tắc tự động thi hành)"
+
+# BFA - machine translated, please review
+msgid "Open Scene Effect Compositor Editor"
+msgstr "Mở Trình Biên Soạn Tổng Hợp của Hiệu ứng cảnh"
+
+# BFA - machine translated, please review
+msgid "Open a Compositor Editor window for this scene effect's node group"
+msgstr "Mở cửa sổ Trình Biên Soạn Tổng Hợp cho nhóm nút của hiệu ứng cảnh này"
+
+# BFA - machine translated, please review
+msgid "New Collection from Selection"
+msgstr "Bộ Sưu Tập Mới từ Lựa Chọn"
+
+# BFA - machine translated, please review
+msgid "Move Selected Objects"
+msgstr "Chuyển Đối Tượng được Chọn"
+
+# BFA - machine translated, please review
+msgid "Move selected Outliner objects into the new collection"
+msgstr "Chuyển các đối tượng được chọn trong Mục Lục vào bộ sưu tập mới"
