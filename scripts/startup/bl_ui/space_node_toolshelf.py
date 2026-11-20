@@ -2288,6 +2288,7 @@ class NODES_PT_toolshelf_gn_add_grease_pencil_read(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeGreasePencilColor", pad=17),
             OperatorEntry("GeometryNodeGreasePencilDrawTime", pad=12),
             OperatorEntry("GeometryNodeGreasePencilFillID", pad=16),
+            OperatorEntry("GeometryNodeGreasePencilMaterialInfo", pad=7),  # BFA - new node
             OperatorEntry("GeometryNodeGreasePencilOpacity", pad=14),
             OperatorEntry("GeometryNodeGreasePencilStrokeSoftness", pad=4),
             OperatorEntry("GeometryNodeGreasePencilStrokeVisibility", pad=1),
