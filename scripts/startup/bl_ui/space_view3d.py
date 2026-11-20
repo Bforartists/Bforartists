@@ -3023,6 +3023,9 @@ class VIEW3D_MT_select_edit_grease_pencil(Menu):
         if context.scene.tool_settings.gpencil_selectmode_edit != "STROKE":
             layout.operator("grease_pencil.select_linked", text="Linked", icon="LINKED")
         layout.operator("grease_pencil.select_linked", text="Deselect Linked", icon="LINKED_DESELECT").deselect = True
+        # BFA - pick versions under the mouse (L / Shift L), same as the curve and mesh menus
+        layout.operator("grease_pencil.select_linked_pick", text="Linked Pick", icon="LINKED_PICK").deselect = False
+        layout.operator("grease_pencil.select_linked_pick", text="Linked Pick Deselect", icon="LINKED_PICK").deselect = True
 
         layout.separator()
 
