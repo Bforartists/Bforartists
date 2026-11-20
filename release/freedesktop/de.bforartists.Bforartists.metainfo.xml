@@ -22,9 +22,9 @@
         </p>
     </description>
     <url type="homepage">https://www.bforartists.co</url>
-    <!-- <url type="help">https://www.blender.org/support/</url>
-    <url type="bugtracker">https://developer.blender.org</url>
-    <url type="donation">https://www.blender.org/foundation/donation-payment/</url> -->
+    <url type="help">https://www.bforartists.co/docs/home</url>
+    <url type="bugtracker">https://github.com/Bforartists/Bforartists/issues</url>
+    <url type="donation">https://www.bforartists.co/about/sponsors</url>
     <screenshots>
         <screenshot type="default">
             <image>https://raw.githubusercontent.com/Bforartists/Manual/master/docs2/images/editors/3d-viewport/header/introduction.png</image>
