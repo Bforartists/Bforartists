@@ -182279,6 +182279,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "Открыть окно редактора композитинга для группы нод этого эффекта сцены"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "Новая коллекция из выделенного"
 
@@ -182289,3 +182290,25 @@ msgstr "Переместить выделенные объекты"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "Переместить выделенные объекты Аутлайнера в новую коллекцию"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "Новая из выделенного"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "Новая вложенная из выделенного"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "Добавить новую коллекцию и переместить в неё выделенные объекты Аутлайнера"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "Добавить новую коллекцию внутри активной коллекции"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "Добавить новую коллекцию внутри активной коллекции и переместить в неё выделенные объекты Аутлайнера"

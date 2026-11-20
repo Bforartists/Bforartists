@@ -182277,6 +182277,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "为此场景效果的节点组打开合成器编辑器窗口"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "从选中项新建集合"
 
@@ -182287,3 +182288,25 @@ msgstr "移动选定的物体"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "将选定的大纲视图物体移动到新集合中"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "从选中项新建"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "从选中项新建嵌套"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "添加一个新集合并将选定的大纲视图物体移动到其中"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "在活动集合内添加一个新集合"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "在活动集合内添加一个新集合并将选定的大纲视图物体移动到其中"

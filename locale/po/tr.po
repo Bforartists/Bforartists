@@ -136247,6 +136247,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "Bu sahne efektinin düğüm grubu için bir Dizgici Düzenleyicisi penceresi açar"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "Seçimden Yeni Koleksiyon"
 
@@ -136257,3 +136258,25 @@ msgstr "Seçili Nesneleri Taşı"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "Seçili Başlıklar nesnelerini yeni koleksiyona taşır"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "Seçimden Yeni"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "Seçimden Yeni İç İçe"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "Yeni bir koleksiyon ekler ve seçili Başlıklar nesnelerini içine taşır"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "Etkin koleksiyonun içine yeni bir koleksiyon ekler"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "Etkin koleksiyonun içine yeni bir koleksiyon ekler ve seçili Başlıklar nesnelerini içine taşır"

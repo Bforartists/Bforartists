@@ -179979,6 +179979,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "Mở cửa sổ Trình Biên Soạn Tổng Hợp cho nhóm nút của hiệu ứng cảnh này"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "Bộ Sưu Tập Mới từ Lựa Chọn"
 
@@ -179989,3 +179990,25 @@ msgstr "Chuyển Đối Tượng được Chọn"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "Chuyển các đối tượng được chọn trong Mục Lục vào bộ sưu tập mới"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "Mới từ Lựa Chọn"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "Lồng Mới từ Lựa Chọn"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "Thêm một bộ sưu tập mới và chuyển các đối tượng được chọn trong Mục Lục vào đó"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "Thêm một bộ sưu tập mới vào bên trong bộ sưu tập đang hoạt động"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "Thêm một bộ sưu tập mới vào bên trong bộ sưu tập đang hoạt động và chuyển các đối tượng được chọn trong Mục Lục vào đó"

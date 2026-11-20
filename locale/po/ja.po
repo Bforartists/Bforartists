@@ -184340,6 +184340,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "このシーンエフェクトのノードグループ用のコンポジターエディターウィンドウを開きます"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "選択から新規コレクション"
 
@@ -184350,3 +184351,25 @@ msgstr "選択したオブジェクトを移動"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "選択したアウトライナーのオブジェクトを新しいコレクションに移動します"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "選択から新規"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "選択から新規ネスト"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "新しいコレクションを追加し、選択したアウトライナーのオブジェクトをそこに移動します"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "アクティブなコレクションの中に新しいコレクションを追加します"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "アクティブなコレクションの中に新しいコレクションを追加し、選択したアウトライナーのオブジェクトをそこに移動します"

@@ -7206,7 +7206,9 @@ keyconfig_data = \
     ("anim.keyframe_delete", {"type": 'I', "value": 'PRESS', "alt": True}, None),
     ("outliner.drivers_add_selected", {"type": 'D', "value": 'PRESS', "oskey": True}, None),
     ("outliner.drivers_delete_selected", {"type": 'D', "value": 'PRESS', "alt": True, "oskey": True}, None),
-    ("outliner.collection_new", {"type": 'C', "value": 'PRESS'}, None),
+    # BFA - nested: the new collection is made where the user is working, not at the scene root.
+    ("outliner.collection_new", {"type": 'C', "value": 'PRESS'},
+     {"properties": [("nested", True)]}),
     ("outliner.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("object.move_to_collection", {"type": 'M', "value": 'PRESS'}, None),
     ("object.link_to_collection", {"type": 'M', "value": 'PRESS', "shift": True}, None),

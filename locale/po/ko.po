@@ -166807,6 +166807,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "이 씬 이펙트의 노드 그룹을 위한 컴포지터 에디터 창을 엽니다"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "선택 항목으로 새로운 컬렉션"
 
@@ -166817,3 +166818,25 @@ msgstr "선택된 오브젝트 이동"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "선택된 아웃라이너 오브젝트를 새로운 컬렉션으로 이동합니다"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "선택 항목으로 새로 만들기"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "선택 항목으로 새로운 중첩"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "새로운 컬렉션을 추가하고 선택된 아웃라이너 오브젝트를 그 안으로 이동합니다"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가합니다"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가하고 선택된 아웃라이너 오브젝트를 그 안으로 이동합니다"
