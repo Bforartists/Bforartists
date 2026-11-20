@@ -4512,6 +4512,18 @@ static wmOperatorStatus edbm_select_linked_pick_invoke(bContext *C,
 
   BMElem *ele = EDBM_elem_from_selectmode(em, eve, eed, efa);
 
+  /* BFA - #5914: replace the selection unless extending, like select-grouped in
+   * Object mode. */
+  if (sel && !RNA_boolean_get(op->ptr, "extend")) {
+    for (Base *base : bases) {
+      if (BMesh *bm_iter = BKE_editmesh_bmesh_ensure(base->object)) {
+        EDBM_flag_disable_all(bm_iter, BM_ELEM_SELECT);
+        DEG_id_tag_update(base->object->data, ID_RECALC_SELECT);
+        WM_event_add_notifier(C, NC_GEOM | ND_SELECT, base->object->data);
+      }
+    }
+  }
+
   edbm_select_linked_pick_ex(bm, em->selectmode, ele, sel, delimit);
 
   /* To support redo. */
@@ -4556,6 +4568,23 @@ static wmOperatorStatus edbm_select_linked_pick_exec(bContext *C, wmOperator *op
   BMesh *bm = BKE_editmesh_bmesh_ensure(obedit);
   const bool sel = !RNA_boolean_get(op->ptr, "deselect");
 
+  /* BFA - #5914: replace the selection unless extending, like select-grouped in
+   * Object mode. */
+  if (sel && !RNA_boolean_get(op->ptr, "extend")) {
+    const Main *bmain = CTX_data_main(C);
+    Scene *scene = CTX_data_scene(C);
+    ViewLayer *view_layer = CTX_data_view_layer(C);
+    Vector<Base *> bases = BKE_view_layer_array_from_bases_in_edit_mode(
+        *bmain, scene, view_layer, nullptr);
+    for (Base *base : bases) {
+      if (BMesh *bm_iter = BKE_editmesh_bmesh_ensure(base->object)) {
+        EDBM_flag_disable_all(bm_iter, BM_ELEM_SELECT);
+        DEG_id_tag_update(base->object->data, ID_RECALC_SELECT);
+        WM_event_add_notifier(C, NC_GEOM | ND_SELECT, base->object->data);
+      }
+    }
+  }
+
 #ifdef USE_LINKED_SELECT_DEFAULT_HACK
   int delimit = select_linked_delimit_default_from_op(op, em->selectmode);
 #else
@@ -4588,6 +4617,8 @@ void MESH_OT_select_linked_pick(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   RNA_def_boolean(ot->srna, "deselect", false, "Deselect", "");
+  /* BFA - #5914: added, matches select-grouped in Object mode */
+  RNA_def_boolean(ot->srna, "extend", true, "Extend", "Extend the existing selection");
   prop = RNA_def_enum_flag(ot->srna,
                            "delimit",
                            rna_enum_mesh_delimit_mode_items,
