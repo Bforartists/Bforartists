@@ -457,6 +457,7 @@ if(WITH_BLENDER)
       collection_color_08
       collection_info
       collection_new
+      collection_new_selected
       color # see color_red/green/blue */
       color_blue
       color_green

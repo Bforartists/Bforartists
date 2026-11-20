@@ -170,8 +170,13 @@ class OUTLINER_MT_editor_menus(Menu):
 
             layout.separator()
 
-            # BFA - move_selected: also move the selected Outliner objects into the new collection
-            layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').move_selected = True
+            # BFA - two buttons, both make the collection inside the active one so it appears where
+            # the user is working. The second also moves the selected Outliner objects into it.
+            row = layout.row(align=True)
+            row.operator("outliner.collection_new", text="", icon='COLLECTION_NEW').nested = True
+            props = row.operator("outliner.collection_new", text="", icon='COLLECTION_NEW_SELECTED')
+            props.nested = True
+            props.move_selected = True
 
             if display_mode == 'SCENES':
                 # BFA - Outliner - Scene View - Add Scene creation operator to header
@@ -404,8 +409,12 @@ class OUTLINER_MT_collection(Menu):
 
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection)
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW', text_ctxt=i18n_contexts.id_collection).nested = True
-        # BFA - move_selected: new collection that also receives the selected Outliner objects
-        layout.operator("outliner.collection_new", text="New Collection from Selection", icon='COLLECTION_NEW').move_selected = True
+        # BFA - move_selected: new collection that also receives the selected Outliner objects.
+        # No "Collection" in the labels, the menu title already says it.
+        layout.operator("outliner.collection_new", text="New from Selection", icon='COLLECTION_NEW_SELECTED').move_selected = True
+        props = layout.operator("outliner.collection_new", text="New Nested from Selection", icon='COLLECTION_NEW_SELECTED')
+        props.nested = True
+        props.move_selected = True
         layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon="DUPLICATE")
         layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon="DUPLICATE") # BFA - WIP - Make a Duplicate Linked icon #BFA - exposed hidden operator
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
@@ -463,7 +472,7 @@ class OUTLINER_MT_collection_new(Menu):
     def draw_without_context_menu(_context, layout):
         layout.operator("outliner.collection_new", text="New Collection", icon = "GROUP").nested = False
         # BFA - move_selected: new collection that also receives the selected Outliner objects
-        layout.operator("outliner.collection_new", text="New Collection from Selection", icon="GROUP").move_selected = True
+        layout.operator("outliner.collection_new", text="New Collection from Selection", icon='COLLECTION_NEW_SELECTED').move_selected = True
         layout.operator("outliner.id_paste", text="Paste Data-Blocks", icon='PASTEDOWN')
 
     def draw(self, context):
@@ -471,8 +480,12 @@ class OUTLINER_MT_collection_new(Menu):
 		# BFA - exposed hidden operators
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW').nested = True
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW')
-        # BFA - move_selected: new collection that also receives the selected Outliner objects
-        layout.operator("outliner.collection_new", text="New Collection from Selection", icon='COLLECTION_NEW').move_selected = True
+        # BFA - move_selected: new collection that also receives the selected Outliner objects.
+        # No "Collection" in the labels, the menu title already says it.
+        layout.operator("outliner.collection_new", text="New from Selection", icon='COLLECTION_NEW_SELECTED').move_selected = True
+        props = layout.operator("outliner.collection_new", text="New Nested from Selection", icon='COLLECTION_NEW_SELECTED')
+        props.nested = True
+        props.move_selected = True
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()

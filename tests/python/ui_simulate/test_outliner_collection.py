@@ -92,3 +92,18 @@ def default_operator_keeps_selected_objects_in_place():
     t.assertEqual(len(created.objects), 0)
     t.assertEqual(set(source.objects), objects)
     t.assertEqual(set(duplicate.objects), objects)
+
+
+def nested_move_selection_stays_in_the_active_collection():
+    """Nested with move_selected: the new collection is made inside the active one."""
+    t, window, area, source, duplicate = yield from _setup()
+    objects = set(window.scene.objects)
+    layer_collection = window.view_layer.layer_collection.children[source.name]
+    window.view_layer.active_layer_collection = layer_collection
+    yield
+    created = _create(area, t, nested=True, move_selected=True)
+    t.assertIn(created, set(source.children))
+    t.assertNotIn(created, set(window.scene.collection.children))
+    t.assertEqual(set(created.objects), objects)
+    for obj in objects:
+        t.assertEqual(tuple(obj.users_collection), (created,))

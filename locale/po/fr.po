@@ -182019,6 +182019,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "Ouvre une fenêtre d’éditeur de compositing pour le groupe de nœuds de cet effet de scène"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "Nouvelle collection depuis la sélection"
 
@@ -182029,3 +182030,25 @@ msgstr "Déplacer les objets sélectionnés"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "Déplace les objets sélectionnés du Synoptique dans la nouvelle collection"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "Nouvelle depuis la sélection"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "Nouvelle imbriquée depuis la sélection"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "Ajoute une nouvelle collection et y déplace les objets sélectionnés du Synoptique"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "Ajoute une nouvelle collection dans la collection active"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "Ajoute une nouvelle collection dans la collection active et y déplace les objets sélectionnés du Synoptique"

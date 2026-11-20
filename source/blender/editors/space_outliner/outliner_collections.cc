@@ -263,9 +263,9 @@ static wmOperatorStatus collection_new_exec(bContext *C, wmOperator *op)
   Collection *new_collection = BKE_collection_add(bmain, collection, nullptr);
   new_collection->color_tag = collection->color_tag;
   /* BFA - when "move_selected" is set (Outliner header button and the context menu entries
-   * "New Collection from Selection"), the selected Outliner objects are moved into the new
-   * collection. The shortcuts and the other entries do not set it, so they keep the upstream
-   * behavior. */
+   * "New from Selection" and "New Nested from Selection"), the selected Outliner objects are
+   * moved into the new collection. The shortcut and the other entries do not set it, so they
+   * leave the selection where it is, as upstream does. */
   if (RNA_boolean_get(op->ptr, "move_selected")) {
     /* Read the Outliner selection before rebuilding the tree. It can differ from the
      * viewport selection when selection synchronization is disabled. */
@@ -328,12 +328,17 @@ void OUTLINER_OT_collection_new(wmOperatorType *ot)
   /* API callbacks. */
   ot->exec = collection_new_exec;
   ot->poll = collection_new_poll;
-  /* BFA - tooltip: only mentions the move when "move_selected" is set. */
+  /* BFA - tooltip: says where the collection goes ("nested") and whether the selection moves
+   * into it ("move_selected"), since the header shows these as icon only buttons. */
   ot->get_description = [](bContext *, wmOperatorType *, PointerRNA *ptr) -> std::string {
+    const bool nested = RNA_boolean_get(ptr, "nested");
     if (RNA_boolean_get(ptr, "move_selected")) {
-      return "Add a new collection and move selected Outliner objects into it";
+      return nested ? TIP_("Add a new collection inside the active collection and move selected "
+                           "Outliner objects into it") :
+                      TIP_("Add a new collection and move selected Outliner objects into it");
     }
-    return "Add a new collection";
+    return nested ? TIP_("Add a new collection inside the active collection") :
+                    TIP_("Add a new collection");
   };
 
   /* flags */
@@ -344,7 +349,7 @@ void OUTLINER_OT_collection_new(wmOperatorType *ot)
       ot->srna, "nested", false, "Nested", "Add as child of selected collection");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
   /* BFA - off by default, enabled by the header button and the menu entries
-   * "New Collection from Selection". */
+   * "New from Selection" and "New Nested from Selection". */
   prop = RNA_def_boolean(ot->srna,
                         "move_selected",
                         false,
