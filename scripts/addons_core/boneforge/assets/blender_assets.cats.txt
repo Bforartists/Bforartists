@@ -1,0 +1,4 @@
+# BoneCraft starter rig catalog
+VERSION 1
+
+3f6a0d2e-6b8e-4c1a-9a57-2f0c1b7d4e11:Starter Rigs:Starter Rigs

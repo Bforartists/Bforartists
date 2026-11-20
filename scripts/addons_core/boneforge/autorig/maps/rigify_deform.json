@@ -1,0 +1,25 @@
+{
+  "name": "Rigify Deform",
+  "description": "Blender Rigify deform-bone naming (DEF-*).",
+  "bones": {
+    "DEF-spine": "spine.01",
+    "DEF-spine.001": "spine.02",
+    "DEF-spine.002": "chest",
+    "DEF-neck": "neck",
+    "DEF-head": "head",
+    "DEF-shoulder.L": "clavicle.fk-L",
+    "DEF-upper_arm.L": "upperarm.fk-L",
+    "DEF-forearm.L": "forearm.fk-L",
+    "DEF-hand.L": "hand.fk-L",
+    "DEF-shoulder.R": "clavicle.fk-R",
+    "DEF-upper_arm.R": "upperarm.fk-R",
+    "DEF-forearm.R": "forearm.fk-R",
+    "DEF-hand.R": "hand.fk-R",
+    "DEF-thigh.L": "thigh.fk-L",
+    "DEF-shin.L": "shin.fk-L",
+    "DEF-foot.L": "foot.fk-L",
+    "DEF-thigh.R": "thigh.fk-R",
+    "DEF-shin.R": "shin.fk-R",
+    "DEF-foot.R": "foot.fk-R"
+  }
+}

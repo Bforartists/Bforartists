@@ -1959,6 +1959,13 @@ void blo_do_versions_userdef(UserDef *userdef)
     }
   }
 
+  if (!USER_VERSION_ATLEAST(504, 7)) {
+    /* BFA - Offer the new built-in tools once, preserving existing settings and later choices. */
+    BKE_addon_ensure(&userdef->addons, "B4_anim_assist");
+    BKE_addon_ensure(&userdef->addons, "ghost_tool");
+    BKE_addon_ensure(&userdef->addons, "boneforge");
+  }
+
   /**
    * Always bump subversion in BKE_blender_version.h when adding versioning
    * code here, and wrap it inside a USER_VERSION_ATLEAST check.
