@@ -2023,6 +2023,7 @@ class NODES_PT_toolshelf_gn_add_geometry_operations(bpy.types.Panel, NodePanel):
             OperatorEntry("GeometryNodeBoundBox", pad=21),
             OperatorEntry("GeometryNodeConvexHull", pad=24),
             OperatorEntry("GeometryNodeDeleteGeometry", pad=16),
+            OperatorEntry("GeometryNodeDelaunayTriangulation", pad=8),  # BFA - new node, pad is an estimate
             OperatorEntry("GeometryNodeDuplicateElements", pad=12),
             OperatorEntry("GeometryNodeMergeByDistance", pad=12),  # BFA - moved here upstream from Mesh > Operations
             OperatorEntry("GeometryNodeMergePoints", pad=22),

@@ -1799,7 +1799,7 @@ void RNA_def_nodes_geometry(BlenderRNA *brna)
   define("GeometryNode", "GeometryNodeCurveToMesh", nullptr, ICON_OUTLINER_OB_MESH);
   define("GeometryNode", "GeometryNodeCurveToPoints", nullptr, ICON_POINTCLOUD_DATA);
   define("GeometryNode", "GeometryNodeDeformCurvesOnSurface", nullptr, ICON_DEFORM_CURVES);
-  define("GeometryNode", "GeometryNodeDelaunayTriangulation");
+  define("GeometryNode", "GeometryNodeDelaunayTriangulation", nullptr, ICON_NODE_DELAUNAY_TRIANGULATION); /*BFA - icon*/
   define("GeometryNode", "GeometryNodeDeleteGeometry", nullptr, ICON_DELETE);
   define("GeometryNode", "GeometryNodeDistributePointsInGrid", nullptr, ICON_NODE_DISTRIBUTEPOINTSINGRID);
   define("GeometryNode", "GeometryNodeDistributePointsInVolume", nullptr, ICON_VOLUME_DISTRIBUTE);
