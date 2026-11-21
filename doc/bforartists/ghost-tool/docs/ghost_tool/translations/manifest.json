@@ -1,0 +1,485 @@
+{
+  "schema": "toolkit.illustrated-translations.v2",
+  "owner": "TOOLKIT-MANUALS-20261119",
+  "version": "4.3.3",
+  "status": "LOCAL_REVIEWED_ILLUSTRATED_LOCALIZATION_CANDIDATE",
+  "source": "../GhostTool_User_Manual.md",
+  "source_sha256": "066d30ca5c9d616e0aff10d42cf09bea55d92e1169b8d45bf6cf43989ea27bdd",
+  "source_sha256_lf": "066d30ca5c9d616e0aff10d42cf09bea55d92e1169b8d45bf6cf43989ea27bdd",
+  "source_structure": {
+    "headings": 15,
+    "numbered_steps": 86,
+    "tables": 4,
+    "figures": 14
+  },
+  "native_host": {
+    "distribution": "Bforartists 5.2.3",
+    "api_version": "5.3.0 Alpha",
+    "build": "746e15e13b04"
+  },
+  "review_scope": "Independent AI-assisted language, genuine screenshot and PDF visual reviews. No professional certification or universal workflow/host certification.",
+  "languages": {
+    "ja": {
+      "language": "Japanese",
+      "markdown": "GhostTool_User_Manual_ja.md",
+      "markdown_sha256": "2c95d7fc7c94b3b2b53391ea20fda0a30563738c4a30699e32336456d2ecfa6c",
+      "markdown_sha256_lf": "2c95d7fc7c94b3b2b53391ea20fda0a30563738c4a30699e32336456d2ecfa6c",
+      "pdf": "GhostTool_User_Manual_ja.pdf",
+      "pdf_sha256": "667d53de501616af8b47736451eb9b1422def3b20ca7f669050fae08632cf373",
+      "pdf_bytes": 974052,
+      "pdf_pages": 18,
+      "pdf_title": "Ghost Tool 4.3.3 \u30e6\u30fc\u30b6\u30fc\u30ac\u30a4\u30c9",
+      "figure_placements": 14,
+      "source_structure": {
+        "headings": 15,
+        "numbered_steps": 86,
+        "tables": 4,
+        "figures": 14
+      },
+      "images": [
+        {
+          "path": "images/ja/4.3.3-preferences.png",
+          "sha256": "f76c27a782c240e06dd7146dcb504be05ef1304a04c874a592b3015cef05a24c"
+        },
+        {
+          "path": "images/ja/4.3.3-overview.png",
+          "sha256": "1f9fcae17b74b45ef436c204be090b5e234040954fbed8bd03c80c0a6c4fffdb"
+        },
+        {
+          "path": "images/ja/4.3.3-toolbar-wide.png",
+          "sha256": "7b7433abb55baa0b8bae8d17ab5fafc9dea78fed5f4e5942b4b9ad34cbc7cb3a"
+        },
+        {
+          "path": "images/ja/4.3.3-skin-options.png",
+          "sha256": "7df39f9bf617989cad5c06185ca8153bc998a596b1b0871675770b98c77805ba"
+        },
+        {
+          "path": "images/ja/4.3.3-timeline-enabled.png",
+          "sha256": "00d4049a111ad90fba039a94ea889eaee1ecc4a56da27023bf90ec444b5d5219"
+        },
+        {
+          "path": "images/ja/4.3.3-timeline-collapsed.png",
+          "sha256": "c140a36d7f8d429563fe0f4a4dcbc0a157db9350589131eebff526aa8b1445e4"
+        },
+        {
+          "path": "images/ja/4.3.3-path-targets.png",
+          "sha256": "1e7540764bd42cf0ecb377a629a2cfefd50e8c0c329de9fe6e1b9e76e5f926fd"
+        },
+        {
+          "path": "images/ja/4.3.3-reshape-options.png",
+          "sha256": "06402cdfdbf1df2d0fe634585855de661460b65e6db812eec55050c666766571"
+        },
+        {
+          "path": "images/ja/4.3.3-edit-motion.png",
+          "sha256": "0e76316284d2efa123aa9e95396686b5ffa337c059892cb7ad423d3b9236ed7f"
+        },
+        {
+          "path": "images/ja/4.3.3-marker-options.png",
+          "sha256": "792a58fe073929c108ba5c947806597b8ce8285c31cadaa781864bb728c9688d"
+        },
+        {
+          "path": "images/ja/4.3.3-compare.png",
+          "sha256": "893031f970c41d7f602f538a0cce864a586f050b353e9c14ba1b54888000f7a6"
+        },
+        {
+          "path": "images/ja/4.3.3-transfer-settings.png",
+          "sha256": "873c9204352d604970c388067ccac56881d3fe46c768b20fe165e603e7e4b3ae"
+        },
+        {
+          "path": "images/ja/4.3.3-physics.png",
+          "sha256": "8c5eb5c29e42933819a85d8acf374dc90befba4bea8447af4f02386863651ae9"
+        },
+        {
+          "path": "images/ja/4.3.3-look.png",
+          "sha256": "c5ccf816fbbfc3e28a6d88e00c214db1ec47e8028314b6b24d2211be3f21e62d"
+        }
+      ],
+      "independent_pdf_review_sha256": "73ad251ddc70b4425e0a76bbb6661747d8e1e2f6c0aee85f839a66c606cb426c"
+    },
+    "ko": {
+      "language": "Korean",
+      "markdown": "GhostTool_User_Manual_ko.md",
+      "markdown_sha256": "a052bb5bbe9953b9c65e0364171a0e1f4123d73940b3468a138b7102a4ff7974",
+      "markdown_sha256_lf": "a052bb5bbe9953b9c65e0364171a0e1f4123d73940b3468a138b7102a4ff7974",
+      "pdf": "GhostTool_User_Manual_ko.pdf",
+      "pdf_sha256": "017b747cbccab9c790ba7af3f1da9eaad00feb6495e2606633a17a05f2648d40",
+      "pdf_bytes": 768231,
+      "pdf_pages": 18,
+      "pdf_title": "Ghost Tool 4.3.3",
+      "figure_placements": 14,
+      "source_structure": {
+        "headings": 15,
+        "numbered_steps": 86,
+        "tables": 4,
+        "figures": 14
+      },
+      "images": [
+        {
+          "path": "images/ko/4.3.3-preferences.png",
+          "sha256": "bc8e8ebae5aab75012ae830fc2f6a2679bdc37ce2677e27ddfdf064cfc452e2a"
+        },
+        {
+          "path": "images/ko/4.3.3-overview.png",
+          "sha256": "23f556d3320c8078712dee6e9a77837e22108a8598ca42ffb145cb2bfbb73273"
+        },
+        {
+          "path": "images/ko/4.3.3-toolbar-wide.png",
+          "sha256": "44f46422c1d04e378e9cbe83cabbbe239ca787caf50bd0293a7a152cbb0988ef"
+        },
+        {
+          "path": "images/ko/4.3.3-skin-options.png",
+          "sha256": "0f8039b9e5119805d57d3c400d3c3b681511ac88942164740b54ec7f092edcd2"
+        },
+        {
+          "path": "images/ko/4.3.3-timeline-enabled.png",
+          "sha256": "cfa80ca3412b0a6d89f4fa73a1400af2d13a7b93bfcb8683cab9a0f925e8fda3"
+        },
+        {
+          "path": "images/ko/4.3.3-timeline-collapsed.png",
+          "sha256": "68f0cb6af96f05032a5f13c996a2bbd98cdbdf4fca75a9ffcbd5bb1eaa08f60c"
+        },
+        {
+          "path": "images/ko/4.3.3-path-targets.png",
+          "sha256": "51c2c1dd9c53f0b0af923ed39042fb1843e9ddc94deaa63f64ebdbbe738e3551"
+        },
+        {
+          "path": "images/ko/4.3.3-reshape-options.png",
+          "sha256": "dcb396e3f89e4cb1a5d85d1b0ed64b434fe7baebd402927af455049312af4f7c"
+        },
+        {
+          "path": "images/ko/4.3.3-edit-motion.png",
+          "sha256": "4e35e79d2ff0f8a4f57fa2acca08f7b9f9f9a1f53bbc86aa2cff39f2d82be0f9"
+        },
+        {
+          "path": "images/ko/4.3.3-marker-options.png",
+          "sha256": "544e799de0492dcb610945d57fa73fe987bae31d7c57e4d33e82f180e807a436"
+        },
+        {
+          "path": "images/ko/4.3.3-compare.png",
+          "sha256": "f662948d098e57623496661b985d2fc6546f36bf1dafe137eb38ade3674bbbe7"
+        },
+        {
+          "path": "images/ko/4.3.3-transfer-settings.png",
+          "sha256": "68ba2ea7abe207a2b97952c900e56f2a18216b897b74d8dfbb4f5400a9ef238e"
+        },
+        {
+          "path": "images/ko/4.3.3-physics.png",
+          "sha256": "2371485b0cb907b6bc301481f064c102f506848caa5c8f80d62b1d6fdbe00a81"
+        },
+        {
+          "path": "images/ko/4.3.3-look.png",
+          "sha256": "61346dbb2559d7145ef0af56557b20d820888cf93bfb0fd4bca13d19570ede7b"
+        }
+      ],
+      "independent_pdf_review_sha256": "247f06bf2175bd9231dab7d6d78a8f9b78d85716e2d06d822b5b89e2caebf6fb"
+    },
+    "zh": {
+      "language": "Simplified Chinese",
+      "markdown": "GhostTool_User_Manual_zh.md",
+      "markdown_sha256": "f36d746a7912bc13453ab694fbd45f63ab920a69a7216f35212e34b8b8cfb13a",
+      "markdown_sha256_lf": "f36d746a7912bc13453ab694fbd45f63ab920a69a7216f35212e34b8b8cfb13a",
+      "pdf": "GhostTool_User_Manual_zh.pdf",
+      "pdf_sha256": "8213955335fe647aa50839146729b3073d4faed58277fd37d9505f7f5513ebdd",
+      "pdf_bytes": 1034612,
+      "pdf_pages": 17,
+      "pdf_title": "Ghost Tool 4.3.3",
+      "figure_placements": 14,
+      "source_structure": {
+        "headings": 15,
+        "numbered_steps": 86,
+        "tables": 4,
+        "figures": 14
+      },
+      "images": [
+        {
+          "path": "images/zh/4.3.3-preferences.png",
+          "sha256": "8ce17e181cf33cfd26928b08116d136bfbd92f59b7647106cf64e1c0ba9c223a"
+        },
+        {
+          "path": "images/zh/4.3.3-overview.png",
+          "sha256": "baa22a1aa067f6f13931457b39fa0f0a63187e371aeb45e310192bc4cb63b3d0"
+        },
+        {
+          "path": "images/zh/4.3.3-toolbar-wide.png",
+          "sha256": "48a17c0b1956caaef6643709d2e1e6b1cf2ddfdd49215c060160997581c5cbc5"
+        },
+        {
+          "path": "images/zh/4.3.3-skin-options.png",
+          "sha256": "105af137c0a99a079e69e3d959fa6bfc7d755b4d5032bb553b9325e4e1e36bc4"
+        },
+        {
+          "path": "images/zh/4.3.3-timeline-enabled.png",
+          "sha256": "cfa80ca3412b0a6d89f4fa73a1400af2d13a7b93bfcb8683cab9a0f925e8fda3"
+        },
+        {
+          "path": "images/zh/4.3.3-timeline-collapsed.png",
+          "sha256": "2909756497949321cb2ffcd64ac971d7a8878e32dac035813958a11e79dea77e"
+        },
+        {
+          "path": "images/zh/4.3.3-path-targets.png",
+          "sha256": "41693a2e7c54e0f7ce6bf88fce809dc6ff754414d1ae18d4bdeb9ef764592fd2"
+        },
+        {
+          "path": "images/zh/4.3.3-reshape-options.png",
+          "sha256": "9d41c296f8ae0d6cbaeaca39cda02bcd56daa10b56465a3261081003457e8554"
+        },
+        {
+          "path": "images/zh/4.3.3-edit-motion.png",
+          "sha256": "4dc569dc49fc1681aee1a6ee2f94a6ba3e2259d1bf0ce4c78ad3e364096e9807"
+        },
+        {
+          "path": "images/zh/4.3.3-marker-options.png",
+          "sha256": "733c2f95e8834b96a3475ede434e07c5eca94d2151f0d5e8ad5596fd0c8c66d5"
+        },
+        {
+          "path": "images/zh/4.3.3-compare.png",
+          "sha256": "c29b278245fb384f18dbdaca3aed64b966172d389659c1cc38784e163b97c0f9"
+        },
+        {
+          "path": "images/zh/4.3.3-transfer-settings.png",
+          "sha256": "ee09dd043a0134f11151edaea5baaf5aa68a70199e73c2047876e4e677301acd"
+        },
+        {
+          "path": "images/zh/4.3.3-physics.png",
+          "sha256": "a1c6e9671ae86abe038b4ec2a68486d8145d66c8bdba63c12bec4c8966d70425"
+        },
+        {
+          "path": "images/zh/4.3.3-look.png",
+          "sha256": "5daa873252196b4bad62aa8d9b6e41e473992569989466e265909ac7b857b96f"
+        }
+      ],
+      "independent_pdf_review_sha256": "e88c8219b82ecc50eeef9cbd47cd041a2e89455a89e9adcfb8fa1a8ebf1e3cfb"
+    },
+    "pt": {
+      "language": "Brazilian Portuguese",
+      "markdown": "GhostTool_User_Manual_pt.md",
+      "markdown_sha256": "639f716be5a59d187b0c7905375a4fca44e37b1e38ea2f0f06dc526b35a84f5b",
+      "markdown_sha256_lf": "639f716be5a59d187b0c7905375a4fca44e37b1e38ea2f0f06dc526b35a84f5b",
+      "pdf": "GhostTool_User_Manual_pt.pdf",
+      "pdf_sha256": "e215a66f39385fa507c11c8a3b1f2564e2d13b0ad30df234798e20008bdbc80c",
+      "pdf_bytes": 849990,
+      "pdf_pages": 19,
+      "pdf_title": "Guia do usu\u00e1rio do Ghost Tool 4.3.3",
+      "figure_placements": 14,
+      "source_structure": {
+        "headings": 15,
+        "numbered_steps": 86,
+        "tables": 4,
+        "figures": 14
+      },
+      "images": [
+        {
+          "path": "images/pt/4.3.3-preferences.png",
+          "sha256": "3e60a5c899e3f19feeb1f2399d753eddd0ff130bf60a508e3aea71c7e71db779"
+        },
+        {
+          "path": "images/pt/4.3.3-overview.png",
+          "sha256": "6de1893168d7681a422b4bf5fea118a76000ac6505af500a1cbff9ea4adafcda"
+        },
+        {
+          "path": "images/pt/4.3.3-toolbar-wide.png",
+          "sha256": "e26e5d1a4b235ae4009f1798d37873fa1f41aa4335da0a7d5c02133a948fa309"
+        },
+        {
+          "path": "images/pt/4.3.3-skin-options.png",
+          "sha256": "587bbffe61109d65a711d66f66dcb5398b10714bcf641c723ca79f33c321b156"
+        },
+        {
+          "path": "images/pt/4.3.3-timeline-enabled.png",
+          "sha256": "ff1bee6d779c9892e27b5ad8aa950ad5e1c5c73589b44e695b6d28dd4f3155ec"
+        },
+        {
+          "path": "images/pt/4.3.3-timeline-collapsed.png",
+          "sha256": "88e52add4f50bdb4dc9270a1770fa55e40127c0583ea233ca61c1169454e324d"
+        },
+        {
+          "path": "images/pt/4.3.3-path-targets.png",
+          "sha256": "ca06ea47edf587d63d1b4dba66de7d2e26a76be7e434ba244f0622b01cbe8e18"
+        },
+        {
+          "path": "images/pt/4.3.3-reshape-options.png",
+          "sha256": "81721b70f7db0ba353f614e8358da97f81bbad5c00d99505fd21631477ee87dd"
+        },
+        {
+          "path": "images/pt/4.3.3-edit-motion.png",
+          "sha256": "a35db494eec0a7a638df6afaf66b84f15c85454fbca48757523eabb6ec60d448"
+        },
+        {
+          "path": "images/pt/4.3.3-marker-options.png",
+          "sha256": "63393381f253d2cfdaf45213e5ec8c2166ebe35ed2614a7412289241eef72a1d"
+        },
+        {
+          "path": "images/pt/4.3.3-compare.png",
+          "sha256": "bf5ba2c94d7b93b6f9589bf3e056d1a6ade2b9b44a7a9fd2416db5d89ce343ee"
+        },
+        {
+          "path": "images/pt/4.3.3-transfer-settings.png",
+          "sha256": "fdc8b68d26f09ab09902bb90ffa27d0e3e06c98deffd3116b6cb7a998168e62f"
+        },
+        {
+          "path": "images/pt/4.3.3-physics.png",
+          "sha256": "e186b9e97fbaf1efa852a010ec2c4fb44eaf029e72c3b0944976728372dae6c1"
+        },
+        {
+          "path": "images/pt/4.3.3-look.png",
+          "sha256": "06bb7f438e6d4131138aa9cc451083150e52ebadef5b6c4b4cbe274d093ecfb0"
+        }
+      ],
+      "independent_pdf_review_sha256": "2c0373637015fbdadfb11fce5d7002b67ecaf3bd053543c012e081d42cbcfb3e"
+    },
+    "es": {
+      "language": "Spanish",
+      "markdown": "GhostTool_User_Manual_es.md",
+      "markdown_sha256": "09ca2d5155cb5bc0e695bc3eb5f8bd09d51aee07df97c608c8146f9d3022c6f7",
+      "markdown_sha256_lf": "09ca2d5155cb5bc0e695bc3eb5f8bd09d51aee07df97c608c8146f9d3022c6f7",
+      "pdf": "GhostTool_User_Manual_es.pdf",
+      "pdf_sha256": "8ff6a9823a381e52b19d3b56aabc949e661fb2191c26c1823a7bcf61e34bfc67",
+      "pdf_bytes": 830155,
+      "pdf_pages": 19,
+      "pdf_title": "Gu\u00eda del usuario de Ghost Tool 4.3.3",
+      "figure_placements": 14,
+      "source_structure": {
+        "headings": 15,
+        "numbered_steps": 86,
+        "tables": 4,
+        "figures": 14
+      },
+      "images": [
+        {
+          "path": "images/es/4.3.3-preferences.png",
+          "sha256": "2c0644269ac0521c032d7edc12cc09cc69f952b54c8cfaee1728a995864be572"
+        },
+        {
+          "path": "images/es/4.3.3-overview.png",
+          "sha256": "1f17026613bed2affd1b9ac207e8f462744688a9fe51ce1bd3df38b251cea2f6"
+        },
+        {
+          "path": "images/es/4.3.3-toolbar-wide.png",
+          "sha256": "578cd4934353b06ceaf6c074c8ad990a55dd60d553542bd34e1697bb574dc26a"
+        },
+        {
+          "path": "images/es/4.3.3-skin-options.png",
+          "sha256": "52eecaa513f2a84f3e990d9532520a859e70b0e77f5f08516947773c0cd5ffbd"
+        },
+        {
+          "path": "images/es/4.3.3-timeline-enabled.png",
+          "sha256": "f80288af5c4ba17e76c2b54e3e76e0199526838f7433139e43a83778369ba510"
+        },
+        {
+          "path": "images/es/4.3.3-timeline-collapsed.png",
+          "sha256": "d10d629b41cdcb8c511c011d30cfdea9909f97398d10426f9b6fafd2d54c07a2"
+        },
+        {
+          "path": "images/es/4.3.3-path-targets.png",
+          "sha256": "7b757790ae2bec7289b8155ecd9227a843c99bde546184db82327a165fe272c4"
+        },
+        {
+          "path": "images/es/4.3.3-reshape-options.png",
+          "sha256": "663d2e3f302cae2c82d165f3c033f0e56ade349412f592cc8c26bb32cadd876a"
+        },
+        {
+          "path": "images/es/4.3.3-edit-motion.png",
+          "sha256": "2bccae5ac59ae500147c0f2ebead70c033c5aebb24e2d03ecc17e6af528def47"
+        },
+        {
+          "path": "images/es/4.3.3-marker-options.png",
+          "sha256": "00ffb417288daa310fc7013655182dba3e025e28ce494dbf53355df62a238e28"
+        },
+        {
+          "path": "images/es/4.3.3-compare.png",
+          "sha256": "00e876533a15ac9153391f46ec69a3c84eefe8ab950f4190142422172075d76b"
+        },
+        {
+          "path": "images/es/4.3.3-transfer-settings.png",
+          "sha256": "e7c5398f36aab7badfd0d7995e74e23afcd7f79a9f3e9a22db189322c74a128e"
+        },
+        {
+          "path": "images/es/4.3.3-physics.png",
+          "sha256": "4b32ba4f6ef7bfebfbf9739f4e08b0d1896d3d4b0d406a89b42d898e513b3e34"
+        },
+        {
+          "path": "images/es/4.3.3-look.png",
+          "sha256": "8059daff58accb79256ccb2613ec77c14d1c5c0b4f6660c129f28338a577e5a1"
+        }
+      ],
+      "independent_pdf_review_sha256": "81016c4689625e30765d5e7df63500227e767e85b78410fe1e44dbad72daf5cb"
+    },
+    "fr": {
+      "language": "French",
+      "markdown": "GhostTool_User_Manual_fr.md",
+      "markdown_sha256": "e3f52c288a1deaa78d42354c4e7d8362c62d53c4b9f192fbecf649e2717003a3",
+      "markdown_sha256_lf": "6fbc4919f67518c8f5d392f15e93bb63a20fa2a97259d812460fbaa36e4757e4",
+      "pdf": "GhostTool_User_Manual_fr.pdf",
+      "pdf_sha256": "654bd1f5d267007a335a9b942791ca27e188b1197372a90243ff47a40ef36131",
+      "pdf_bytes": 658310,
+      "pdf_pages": 19,
+      "pdf_title": "Ghost Tool 4.3.3 - Guide d'utilisation (fran\u00e7ais)",
+      "figure_placements": 14,
+      "source_structure": {
+        "headings": 15,
+        "numbered_steps": 86,
+        "tables": 4,
+        "figures": 14
+      },
+      "images": [
+        {
+          "path": "images/fr/4.3.3-preferences.png",
+          "sha256": "f10420d495bff96154cdc0d7c8d8580e10e0db203c991df76a7a380e62d6fcd1"
+        },
+        {
+          "path": "images/fr/4.3.3-overview.png",
+          "sha256": "ff2eb054c02cf8534d06eb02fd9b637b2dda863a69ff572d99c0efe6b5548760"
+        },
+        {
+          "path": "images/fr/4.3.3-toolbar-wide.png",
+          "sha256": "3648b5985bfd63426b6fa2bd61f9a7e5a31154cd73a9d79390d6130fc7cb4be3"
+        },
+        {
+          "path": "images/fr/4.3.3-skin-options.png",
+          "sha256": "966876d7c33d820b74f2512e9e146123d5f690bb3694e0d2a7ec796cc1cc037a"
+        },
+        {
+          "path": "images/fr/4.3.3-timeline-enabled.png",
+          "sha256": "8130f05051e4af0aea4b66e036cadf7489b9ad8ea6be454382e081cd2e3588b3"
+        },
+        {
+          "path": "images/fr/4.3.3-timeline-collapsed.png",
+          "sha256": "63bdd39d981b08142505cce5f5f9f7d7cbd609690fc3aeabf57287cd2da793a0"
+        },
+        {
+          "path": "images/fr/4.3.3-path-targets.png",
+          "sha256": "05d996aa29d81cce52bd4dc72a9552e98def35d14c2ba53f08db042305c7c335"
+        },
+        {
+          "path": "images/fr/4.3.3-reshape-options.png",
+          "sha256": "83b10ba3ab03af0cfe733a29a74c8bd1aa819731ae87e2ee0867fc485878b994"
+        },
+        {
+          "path": "images/fr/4.3.3-edit-motion.png",
+          "sha256": "c0764737bec6b7a6f5073427eb9c9c1f8682263c302f110bff51b77d3109cfcc"
+        },
+        {
+          "path": "images/fr/4.3.3-marker-options.png",
+          "sha256": "1ffd64a3ef0a7c645bf4ceb081e7618bd98886f585a0703c401ea00aa4d20768"
+        },
+        {
+          "path": "images/fr/4.3.3-compare.png",
+          "sha256": "e723ea224bf86075c15525dae8516e36367613c2f5b71d7d91b28e177743d96a"
+        },
+        {
+          "path": "images/fr/4.3.3-transfer-settings.png",
+          "sha256": "34e0bfa0052b81169132ded4426c33d13fb4d445ae6280f968a9549c7ae20d06"
+        },
+        {
+          "path": "images/fr/4.3.3-physics.png",
+          "sha256": "3b3661f6bafab2f470068223615f567f7916a159151e9f4771221648dabb71c7"
+        },
+        {
+          "path": "images/fr/4.3.3-look.png",
+          "sha256": "47f20b9e493b2d724b0e407d8cae32c0a4095b0f98b05bde9b4749ddd88a179f"
+        }
+      ],
+      "independent_pdf_review_sha256": "7bdc6936ae13efb8ca575f3fde86693591aa1bc945efedbe317c4482f859d889"
+    }
+  }
+}
