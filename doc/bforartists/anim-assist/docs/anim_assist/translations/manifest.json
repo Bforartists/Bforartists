@@ -1,0 +1,2597 @@
+{
+  "schema": "toolkit.illustrated-translations.v3",
+  "owner": "TOOLKIT-MANUALS-20261119",
+  "version": "12.11.2 local unpublished candidate",
+  "status": "LOCAL_REVIEWED_ILLUSTRATED_MANUAL_ARTIFACTS",
+  "source": "../AnimAssist_User_Manual.md",
+  "source_sha256": "0b3d18db514f317bfeafe1bb6382da50a40a1a9f9ec712136c85aea88af6b9d9",
+  "source_structure": {
+    "headings": 36,
+    "numbered_steps": 180,
+    "bullet_items": 28,
+    "tables": 7,
+    "inline_figures": 46,
+    "explicit_anchors": 36
+  },
+  "native_host": {
+    "distribution": "Bforartists 5.2.3",
+    "api_version": "5.3.0 Alpha",
+    "build": "746e15e13b04"
+  },
+  "review_scope": "Exact-hash translated text, genuine capture provenance, every PDF page, fonts, image pixels, links and reader usability. Local candidate artifacts; original source/UI/release holds remain separate.",
+  "capture_limits": "Figures8,33,34 in each language retain English-source helper fallback text with translated explanations. Captions state actual examples and limits.",
+  "pdf_references": "Two original historical reference images are appendix pages with internal GoTo links, alongside46 localized inline figures.",
+  "languages": {
+    "ja": {
+      "language": "Japanese",
+      "markdown": "AnimAssist_User_Manual_ja.md",
+      "markdown_sha256": "1735b66fc3e2096caf204cf33b095e6a2c8fe60a405f8a702a551d3a5964e518",
+      "pdf": "AnimAssist_User_Manual_ja.pdf",
+      "pdf_sha256": "99fa346a444cedea53eb929714554a729578eb616c9c4e66a446428af0384ff7",
+      "pdf_bytes": 2232631,
+      "pdf_pages": 42,
+      "pdf_title": "Anim Assist 12.11.2 候補版ユーザーガイド",
+      "inline_figure_placements": 46,
+      "historical_reference_placements": 2,
+      "images": [
+        {
+          "figure": 1,
+          "path": "images/ja/12.11.1-preferences.png",
+          "sha256": "03443e2bfa9193255dfd81e7b2c288b9bb442379417bfbe87c4b862047f76155",
+          "dimensions": [
+            782,
+            446
+          ]
+        },
+        {
+          "figure": 2,
+          "path": "images/ja/12.11.1-scene-home.png",
+          "sha256": "daf7beaa85e35dfacec87dc7852100ea551d01cf63d29d367b3fb4cc2222d60b",
+          "dimensions": [
+            740,
+            471
+          ]
+        },
+        {
+          "figure": 3,
+          "path": "images/ja/12.11.1-scene-setup.png",
+          "sha256": "46f32058aa05caf212edd7b66f937c2b05a169dc550329363fac1a526309714d",
+          "dimensions": [
+            741,
+            214
+          ]
+        },
+        {
+          "figure": 4,
+          "path": "images/ja/stage-all.png",
+          "sha256": "215a9734d4a84a3f6c25495790677ff9bf0e19b9c6c26e9345c5fdc6a6c4bff0",
+          "dimensions": [
+            1720,
+            70
+          ]
+        },
+        {
+          "figure": 5,
+          "path": "images/ja/12.10.0-pose-family-left.png",
+          "sha256": "02c2bdf787cfdf1fb5cb3c1d06aabe097963377c75920ab3c95c06dd088db8eb",
+          "dimensions": [
+            329,
+            203
+          ]
+        },
+        {
+          "figure": 6,
+          "path": "images/ja/12.10.0-pose-family-right.png",
+          "sha256": "07e1b5ef200209aca9221c6ebe74c76bb3eb07563dc7bd3690d5c8478d84425b",
+          "dimensions": [
+            329,
+            343
+          ]
+        },
+        {
+          "figure": 7,
+          "path": "images/ja/12.10.0-stage-choices.png",
+          "sha256": "264fdb61bcba8f709c373465c592115a271d2416ac51fe7c32087c02adb5e183",
+          "dimensions": [
+            112,
+            222
+          ]
+        },
+        {
+          "figure": 8,
+          "path": "images/ja/12.10.0-timing-popout.png",
+          "sha256": "1911879d6ca07cfba4906fb481fb3e7763466d6d7ea91b6513500affe6e8942f",
+          "dimensions": [
+            387,
+            113
+          ]
+        },
+        {
+          "figure": 9,
+          "path": "images/ja/12.10.0-all-row-left.png",
+          "sha256": "2df6282f7637a36519e4c070777a346882a2555414176e11036061e7f6f92011",
+          "dimensions": [
+            883,
+            70
+          ]
+        },
+        {
+          "figure": 10,
+          "path": "images/ja/12.10.0-all-row-right.png",
+          "sha256": "3a45ba8ccee1d9eaa798d1082577bdd82a31bece797518f9b3a0645bdc1ff17e",
+          "dimensions": [
+            1124,
+            70
+          ]
+        },
+        {
+          "figure": 11,
+          "path": "images/ja/12.10.0-block-row-left.png",
+          "sha256": "01ade7e4288e91ab4ce150c1b083b06dec85d2b2c2411ab20d3fdecff07fe1e0",
+          "dimensions": [
+            870,
+            70
+          ]
+        },
+        {
+          "figure": 12,
+          "path": "images/ja/12.10.0-block-row-right.png",
+          "sha256": "0dffa2ef7d8fab803d920bdee39c450d75305df2ff26e841a4966fd35f2a0063",
+          "dimensions": [
+            1245,
+            70
+          ]
+        },
+        {
+          "figure": 13,
+          "path": "images/ja/12.10.0-spline-row-left.png",
+          "sha256": "de0652d9497678ee5dd0f975e88786810cb689e16f4a596449c17b652a7253b2",
+          "dimensions": [
+            831,
+            70
+          ]
+        },
+        {
+          "figure": 14,
+          "path": "images/ja/12.10.0-spline-row-right.png",
+          "sha256": "91abb3ed80a610e64f4ac12ed3d034d87730132ba2fab9e6f48a16e4dbd89dd4",
+          "dimensions": [
+            1135,
+            70
+          ]
+        },
+        {
+          "figure": 15,
+          "path": "images/ja/12.10.0-polish-row-left.png",
+          "sha256": "9d8f54842f8b775eea940753011d32b1c5abde7b820244d2c747099f2aa46d00",
+          "dimensions": [
+            982,
+            70
+          ]
+        },
+        {
+          "figure": 16,
+          "path": "images/ja/12.10.0-polish-row-right.png",
+          "sha256": "77d7c921ce8ed2033b4b6ecebd503b271de9cd3906ef0fc81ee838afb6a29c92",
+          "dimensions": [
+            978,
+            70
+          ]
+        },
+        {
+          "figure": 17,
+          "path": "images/ja/12.10.0-deliver-row-left.png",
+          "sha256": "e2a7e66cd28e2b72d9b6ed7faf465308988f36d8f317ed3f8752ffe0eda629c1",
+          "dimensions": [
+            849,
+            70
+          ]
+        },
+        {
+          "figure": 18,
+          "path": "images/ja/12.10.0-deliver-row-right.png",
+          "sha256": "ddd74bc18e2424b9f42388cca92812a1a0d1ab7c7abd4ba4b6d68ab679f6e27d",
+          "dimensions": [
+            1077,
+            70
+          ]
+        },
+        {
+          "figure": 19,
+          "path": "images/ja/12.10.0-find-tools.png",
+          "sha256": "cb8cd685e829fe44e737b6913698c96729b84d07ed0dcf141ecf0fe744e5c1d7",
+          "dimensions": [
+            641,
+            340
+          ]
+        },
+        {
+          "figure": 20,
+          "path": "images/ja/12.10.0-more-left.png",
+          "sha256": "0fd5d78ba6197c4bedb11581092c24a32e63af5df6a08372759e5ee9e55e9932",
+          "dimensions": [
+            290,
+            105
+          ]
+        },
+        {
+          "figure": 21,
+          "path": "images/ja/12.10.0-more-middle.png",
+          "sha256": "dcf7d6289817189144377813c43029e37cefd70f616a7af23e43cb3fdb240920",
+          "dimensions": [
+            290,
+            90
+          ]
+        },
+        {
+          "figure": 22,
+          "path": "images/ja/12.10.0-more-right.png",
+          "sha256": "8752e3c221cbaf210cfcf599a640839cfa4fc8f81e62e2190e9b74603de7e06a",
+          "dimensions": [
+            290,
+            195
+          ]
+        },
+        {
+          "figure": 23,
+          "path": "images/ja/5.2.3-native-undo-menu.png",
+          "sha256": "ab40d049ee08267498b366c42a2fcb04e1679727ed6f9723c76594af85dd27f0",
+          "dimensions": [
+            213,
+            110
+          ]
+        },
+        {
+          "figure": 24,
+          "path": "images/ja/12.10.0-toolbar-settings.png",
+          "sha256": "6760b9f757e4faacec890a3b15e1adbdf6605ece8079eee03ebe5d3db03ec3ad",
+          "dimensions": [
+            662,
+            557
+          ]
+        },
+        {
+          "figure": 25,
+          "path": "images/ja/12.11.1-tool-settings.png",
+          "sha256": "fe0abb9d2a20dd3d2e15d566e2fa25a704fc02262d8a02028b21d539bdbd6e70",
+          "dimensions": [
+            455,
+            500
+          ]
+        },
+        {
+          "figure": 26,
+          "path": "images/ja/12.10.0-hover-explanation.png",
+          "sha256": "16137f7e732ae9fb38c31e7d189876ecd72cbf283b6195ade8a6d26d667deee8",
+          "dimensions": [
+            494,
+            173
+          ]
+        },
+        {
+          "figure": 27,
+          "path": "images/ja/12.8.0-dopesheet-tools.png",
+          "sha256": "5aaeeedfb8cf9282a4e4d613a06370fea242a761dd34ec2371d2f892bbcb500c",
+          "dimensions": [
+            1920,
+            758
+          ]
+        },
+        {
+          "figure": 28,
+          "path": "images/ja/12.8.0-graph-tools.png",
+          "sha256": "c3d1787a6fafb998f5d42025dfc74d6252978d99e28d15bb5b2ea2756edd2795",
+          "dimensions": [
+            1920,
+            746
+          ]
+        },
+        {
+          "figure": 29,
+          "path": "images/ja/12.11.0-selected-driver.png",
+          "sha256": "833e0e3e91b6220b713dc40800440bb0bba74b4f6b2533e828ccfd06f0855bf4",
+          "dimensions": [
+            520,
+            617
+          ]
+        },
+        {
+          "figure": 30,
+          "path": "images/ja/12.11.0-native-driver-settings.png",
+          "sha256": "9ea9c94e6f441fe2da537330cd4732b7e59f218b2d2de0ea3923bfcfe1e7bb95",
+          "dimensions": [
+            490,
+            473
+          ]
+        },
+        {
+          "figure": 31,
+          "path": "images/ja/12.11.0-native-modifier-settings.png",
+          "sha256": "be31949a4d7bb85b84155c39500048c037feab8a87eed443ce55450b9cc24d18",
+          "dimensions": [
+            490,
+            392
+          ]
+        },
+        {
+          "figure": 32,
+          "path": "images/ja/12.11.0-driver-diagnostics.png",
+          "sha256": "b02710fed7e29fb93a6bb3f2ed2936886c9f03d906e0d8b70f27f649031712a4",
+          "dimensions": [
+            402,
+            175
+          ]
+        },
+        {
+          "figure": 33,
+          "path": "images/ja/12.8.0-nla-arrange.png",
+          "sha256": "0576df26bfad11d6f448ea5d32e7ec7acd52a8b77ad81862f285dcecb1fc7a60",
+          "dimensions": [
+            750,
+            210
+          ]
+        },
+        {
+          "figure": 34,
+          "path": "images/ja/12.11.1-nla-actions.png",
+          "sha256": "7b79e14ce9d3585ee36045513ce23f8227e03622c83b80e003a3ff210ce1889f",
+          "dimensions": [
+            750,
+            285
+          ]
+        },
+        {
+          "figure": 35,
+          "path": "images/ja/12.11.1-nla-retained-bake.png",
+          "sha256": "fe3bf88ea521e6898b172f8944d12235f4380b173e32cd393b2f539061e57313",
+          "dimensions": [
+            750,
+            210
+          ]
+        },
+        {
+          "figure": 36,
+          "path": "images/ja/12.11.1-settings.png",
+          "sha256": "2d0b61857e6ad3b101ad29fe76c3ee7dc23e2b39245095c110db084588b1c705",
+          "dimensions": [
+            742,
+            338
+          ]
+        },
+        {
+          "figure": 37,
+          "path": "images/ja/12.11.1-macros.png",
+          "sha256": "49c6e5bcee281a449602c2615df2f64ace4e79c1e6f35eb7d78b55045cd31a0f",
+          "dimensions": [
+            741,
+            373
+          ]
+        },
+        {
+          "figure": 38,
+          "path": "images/ja/12.11.1-transform-offset.png",
+          "sha256": "fd149ff49d273f41f40d5fd9ea0e253bc1365098546ed8cdcd709936ae24eb8e",
+          "dimensions": [
+            742,
+            865
+          ]
+        },
+        {
+          "figure": 39,
+          "path": "images/ja/12.11.1-transform-match.png",
+          "sha256": "e1890cc24e2e9b4363e89f080c441c308a6353c9e900e3da9d3ed3bf34f54638",
+          "dimensions": [
+            741,
+            275
+          ]
+        },
+        {
+          "figure": 40,
+          "path": "images/ja/12.11.1-pose-offset.png",
+          "sha256": "9aea62cfcbf38f9b3f838e0d7aae7cfd6dd1be2167256b53067c898462035214",
+          "dimensions": [
+            742,
+            323
+          ]
+        },
+        {
+          "figure": 41,
+          "path": "images/ja/12.11.1-pose-mirror.png",
+          "sha256": "f93c06f79126c2e649c7a6206ab38fc063f34689c69704ee2f892ea88c064f50",
+          "dimensions": [
+            742,
+            204
+          ]
+        },
+        {
+          "figure": 42,
+          "path": "images/ja/12.11.1-action-offset.png",
+          "sha256": "a1ab1c47bfc7cf69a726894a1472ba92d22732eea007ec533887bd2e44923250",
+          "dimensions": [
+            741,
+            209
+          ]
+        },
+        {
+          "figure": 43,
+          "path": "images/ja/12.11.1-motion-trails.png",
+          "sha256": "9e540c6be3d763eb55fb099672484e873c7a5f4b9f122b3fcba272560e978351",
+          "dimensions": [
+            742,
+            686
+          ]
+        },
+        {
+          "figure": 44,
+          "path": "images/ja/12.11.1-proxy-bake.png",
+          "sha256": "38810d9db80e27fbc6ff65a3d7da872b618b6e9fdab571e121a3a95a3c1385ac",
+          "dimensions": [
+            743,
+            897
+          ]
+        },
+        {
+          "figure": 45,
+          "path": "images/ja/12.11.1-animation-layers.png",
+          "sha256": "fe3262fed8c445298a5f8676cb3cbcec03afcd8c33065a7302d0287ecd87adff",
+          "dimensions": [
+            750,
+            223
+          ]
+        },
+        {
+          "figure": 46,
+          "path": "images/ja/12.11.2-lipsync-setup.png",
+          "sha256": "251c799d50e66272b908efdb525a12adb28cfaf7226f32715e04fbdf15012f54",
+          "dimensions": [
+            750,
+            686
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "language": "Korean",
+      "markdown": "AnimAssist_User_Manual_ko.md",
+      "markdown_sha256": "3944e3070d2ca21632345db40271beca2479fc7d3a33d9627afb1b69272de1aa",
+      "pdf": "AnimAssist_User_Manual_ko.pdf",
+      "pdf_sha256": "35c1f9985b721d4dface5753b5cc0de99205873fd332ad96bb03c09e74f907a5",
+      "pdf_bytes": 1852588,
+      "pdf_pages": 43,
+      "pdf_title": "Anim Assist 12.11.2 후보 버전 사용 안내서",
+      "inline_figure_placements": 46,
+      "historical_reference_placements": 2,
+      "images": [
+        {
+          "figure": 1,
+          "path": "images/ko/12.11.1-preferences.png",
+          "sha256": "8d5e8e794c7fdbaeb6724bc145afeefc474fb5aa3b8f5a29a0b0448a1964b4a2",
+          "dimensions": [
+            782,
+            446
+          ]
+        },
+        {
+          "figure": 2,
+          "path": "images/ko/12.11.1-scene-home.png",
+          "sha256": "2f479365d1c2ed8fbcfea08ec21dc395c79f24e2bee233c4b76a1bdb825e5fbd",
+          "dimensions": [
+            740,
+            471
+          ]
+        },
+        {
+          "figure": 3,
+          "path": "images/ko/12.11.1-scene-setup.png",
+          "sha256": "494507311083ae576d2f0322c3de2f72e6c915b2fb58b2684e706ef17f433686",
+          "dimensions": [
+            740,
+            211
+          ]
+        },
+        {
+          "figure": 4,
+          "path": "images/ko/stage-all.png",
+          "sha256": "bbe6e3959f3ace01fe2fe81f42214860ff841b30480bec83f9cb60297205bf55",
+          "dimensions": [
+            1711,
+            71
+          ]
+        },
+        {
+          "figure": 5,
+          "path": "images/ko/12.10.0-pose-family-left.png",
+          "sha256": "6df095acf7003a4d3df71393b7d15a1775a8dcc8cc891067e3f02db798b9fccf",
+          "dimensions": [
+            336,
+            265
+          ]
+        },
+        {
+          "figure": 6,
+          "path": "images/ko/12.10.0-pose-family-right.png",
+          "sha256": "c9b11b061b4e05fbb48b4b0f028abcbed299b969358ec34de9b34ab838654933",
+          "dimensions": [
+            336,
+            455
+          ]
+        },
+        {
+          "figure": 7,
+          "path": "images/ko/12.10.0-stage-choices.png",
+          "sha256": "8c75989068e622f91bd079cda9e5f55ed69530139e8198dfe03bf99a64b38a4e",
+          "dimensions": [
+            79,
+            222
+          ]
+        },
+        {
+          "figure": 8,
+          "path": "images/ko/12.10.0-timing-popout.png",
+          "sha256": "028a489b192804f3e528e287ed756897732914fe71303605e769b80ecaa2e116",
+          "dimensions": [
+            296,
+            113
+          ]
+        },
+        {
+          "figure": 9,
+          "path": "images/ko/12.10.0-all-row-left.png",
+          "sha256": "03aadf46aa29bfccab84ea1846b153e3be710fb0f71e85f297f5da877f3f638c",
+          "dimensions": [
+            894,
+            54
+          ]
+        },
+        {
+          "figure": 10,
+          "path": "images/ko/12.10.0-all-row-right.png",
+          "sha256": "8c090c4a678ab257590f0689bc36bc7558016732104b742adb258da844281daa",
+          "dimensions": [
+            1204,
+            54
+          ]
+        },
+        {
+          "figure": 11,
+          "path": "images/ko/12.10.0-block-row-left.png",
+          "sha256": "cdc25b3266eddfa0be63ebe3301a88ea61a42512d1f5184c2c955d0444cc9866",
+          "dimensions": [
+            591,
+            54
+          ]
+        },
+        {
+          "figure": 12,
+          "path": "images/ko/12.10.0-block-row-right.png",
+          "sha256": "7d8ecf2935c70643cc928aa273ed1bfef1e937d22bd3dcfe91b247fcc7f7906d",
+          "dimensions": [
+            1311,
+            54
+          ]
+        },
+        {
+          "figure": 13,
+          "path": "images/ko/12.10.0-spline-row-left.png",
+          "sha256": "63c9440998692ae6afdd565053ce3cfd268e0fb7209daafba40f2130d8b50928",
+          "dimensions": [
+            1013,
+            54
+          ]
+        },
+        {
+          "figure": 14,
+          "path": "images/ko/12.10.0-spline-row-right.png",
+          "sha256": "46eb0c0a15f151072c77483c9c072770feae2d6edb8586d51283222ab52e9aaa",
+          "dimensions": [
+            954,
+            54
+          ]
+        },
+        {
+          "figure": 15,
+          "path": "images/ko/12.10.0-polish-row-left.png",
+          "sha256": "f3e40d341ba0437927e3a558bda2a2dcc7308a0830f06448f43b66081d4c3b90",
+          "dimensions": [
+            869,
+            54
+          ]
+        },
+        {
+          "figure": 16,
+          "path": "images/ko/12.10.0-polish-row-right.png",
+          "sha256": "44376599d486083c9b740497e3227d7ef01219966e3d3e5cdb49c6c3ca865f3f",
+          "dimensions": [
+            1301,
+            54
+          ]
+        },
+        {
+          "figure": 17,
+          "path": "images/ko/12.10.0-deliver-row-left.png",
+          "sha256": "c3931d90519ec0ac84156038832a615ece682e8cd7aa27c0a542f47ee6c17e75",
+          "dimensions": [
+            804,
+            54
+          ]
+        },
+        {
+          "figure": 18,
+          "path": "images/ko/12.10.0-deliver-row-right.png",
+          "sha256": "c61f2b02fb18e193c28967cb6c2af00258eeb40e67155caf8ec1e469cea19f8e",
+          "dimensions": [
+            1171,
+            54
+          ]
+        },
+        {
+          "figure": 19,
+          "path": "images/ko/12.10.0-find-tools.png",
+          "sha256": "cfafa486a8d5843d4a036bf966edbb474e3bce446d730cb22e7067ec75ba365a",
+          "dimensions": [
+            632,
+            332
+          ]
+        },
+        {
+          "figure": 20,
+          "path": "images/ko/12.10.0-more-left.png",
+          "sha256": "d3b45d1002b4e98fe3f13f6740981cf00b89ec051dd18d3831d52ff6f938537e",
+          "dimensions": [
+            165,
+            82
+          ]
+        },
+        {
+          "figure": 21,
+          "path": "images/ko/12.10.0-more-middle.png",
+          "sha256": "7646036d0f11a36026d9deac4faa20684ef922ee7eebaf5fd29e924c387476e4",
+          "dimensions": [
+            165,
+            65
+          ]
+        },
+        {
+          "figure": 22,
+          "path": "images/ko/12.10.0-more-right.png",
+          "sha256": "e41ddf895c0211e4fe520b73faf26d6711e8e08213fc09e472f6b6605dd07811",
+          "dimensions": [
+            172,
+            176
+          ]
+        },
+        {
+          "figure": 23,
+          "path": "images/ko/5.2.3-native-undo-menu.png",
+          "sha256": "95d72f79a3a5192919dae276659052e7e2e699edf11358247802840265ae196b",
+          "dimensions": [
+            216,
+            109
+          ]
+        },
+        {
+          "figure": 24,
+          "path": "images/ko/12.10.0-toolbar-settings.png",
+          "sha256": "163088da8eb1b037934b382c0e6b304001a4491a22bbf1328bbabac6ca5cf5e7",
+          "dimensions": [
+            653,
+            550
+          ]
+        },
+        {
+          "figure": 25,
+          "path": "images/ko/12.11.1-tool-settings.png",
+          "sha256": "5e733a2bd41b4e153e46ae88d353d4ad35ed5eed2b8519fc5c223b3c406bae96",
+          "dimensions": [
+            446,
+            489
+          ]
+        },
+        {
+          "figure": 26,
+          "path": "images/ko/12.10.0-hover-explanation.png",
+          "sha256": "9bee0c0fcfdda8525dcc4aa8b957c93b3c1f46b92c1ce3f96b592373bcf53df9",
+          "dimensions": [
+            435,
+            159
+          ]
+        },
+        {
+          "figure": 27,
+          "path": "images/ko/12.8.0-dopesheet-tools.png",
+          "sha256": "d89b03a1b622ad35d205ba0ec77bb024a6ed85ec22959f3c60df84b0fb86bf3b",
+          "dimensions": [
+            1920,
+            750
+          ]
+        },
+        {
+          "figure": 28,
+          "path": "images/ko/12.8.0-graph-tools.png",
+          "sha256": "56e2df6d109f1c5e5a935d53c7658ffd9bc899d8e8c4e3a19e6293acaf80bca7",
+          "dimensions": [
+            1920,
+            740
+          ]
+        },
+        {
+          "figure": 29,
+          "path": "images/ko/12.11.0-selected-driver.png",
+          "sha256": "52558140dd3e1d35557f87bd0995bdbcdcf1bf01de78a94d85e0ee3f368927ae",
+          "dimensions": [
+            281,
+            754
+          ]
+        },
+        {
+          "figure": 30,
+          "path": "images/ko/12.11.0-native-driver-settings.png",
+          "sha256": "601207b63df5feee3bd5d16325b1a43735eb9f161d0817c9982d609f0b2927ff",
+          "dimensions": [
+            281,
+            468
+          ]
+        },
+        {
+          "figure": 31,
+          "path": "images/ko/12.11.0-native-modifier-settings.png",
+          "sha256": "976236c9082407c5831ec34461fa538d58b226179288fd39b598321a5682a3de",
+          "dimensions": [
+            710,
+            505
+          ]
+        },
+        {
+          "figure": 32,
+          "path": "images/ko/12.11.0-driver-diagnostics.png",
+          "sha256": "c8709cadac7904305e1e985c03cbf4535871045045059c6c399b313c44554826",
+          "dimensions": [
+            384,
+            70
+          ]
+        },
+        {
+          "figure": 33,
+          "path": "images/ko/12.8.0-nla-arrange.png",
+          "sha256": "9cc823462e47df2ce7adf820863f18ed2387d6b711f3e1f10d5ff1b25cff186a",
+          "dimensions": [
+            741,
+            201
+          ]
+        },
+        {
+          "figure": 34,
+          "path": "images/ko/12.11.1-nla-actions.png",
+          "sha256": "b213e77f721dd23c05320d76190d75e4f6b22818f1397ee8da2d101ecfd74f36",
+          "dimensions": [
+            740,
+            276
+          ]
+        },
+        {
+          "figure": 35,
+          "path": "images/ko/12.11.1-nla-retained-bake.png",
+          "sha256": "c15d3cb30e2997c67c67a670515d32ef4042318dc4a9050a928d9c598e06f3a0",
+          "dimensions": [
+            741,
+            201
+          ]
+        },
+        {
+          "figure": 36,
+          "path": "images/ko/12.11.1-settings.png",
+          "sha256": "6c2ae3cf9b847d83517a131313ada414fe82c3033d7fc436f379907191d87975",
+          "dimensions": [
+            739,
+            336
+          ]
+        },
+        {
+          "figure": 37,
+          "path": "images/ko/12.11.1-macros.png",
+          "sha256": "aab52f347cc7433f67a95a74891691ef3003ef557cebe7fb12e2a85f0478ea85",
+          "dimensions": [
+            740,
+            375
+          ]
+        },
+        {
+          "figure": 38,
+          "path": "images/ko/12.11.1-transform-offset.png",
+          "sha256": "acb801e5814b366365669d84f848625dbc96d1bb08d518be8f0a65e02d1b78d1",
+          "dimensions": [
+            740,
+            864
+          ]
+        },
+        {
+          "figure": 39,
+          "path": "images/ko/12.11.1-transform-match.png",
+          "sha256": "5f78f23c1307da50dd8be329c67be0ebbbd0836962bc16a6000e3eae59377a16",
+          "dimensions": [
+            740,
+            274
+          ]
+        },
+        {
+          "figure": 40,
+          "path": "images/ko/12.11.1-pose-offset.png",
+          "sha256": "93d160ab0a6cdac94a2ad0e7e4a90131bcfa42b26d62d61e7adb7bd98d558d87",
+          "dimensions": [
+            740,
+            320
+          ]
+        },
+        {
+          "figure": 41,
+          "path": "images/ko/12.11.1-pose-mirror.png",
+          "sha256": "3cfb81d27088317cb998c8496c072d884a6030a5a09a1f0a066a315cc1739eb2",
+          "dimensions": [
+            740,
+            201
+          ]
+        },
+        {
+          "figure": 42,
+          "path": "images/ko/12.11.1-action-offset.png",
+          "sha256": "690cb986353ac0559809a2adb054bd4c4160a76b8f5407333e57d4b1393365ca",
+          "dimensions": [
+            739,
+            208
+          ]
+        },
+        {
+          "figure": 43,
+          "path": "images/ko/12.11.1-motion-trails.png",
+          "sha256": "2d8c600fea16285b837b9908f735c44f5a81e68cace7ef317126ae91c1dde13d",
+          "dimensions": [
+            739,
+            685
+          ]
+        },
+        {
+          "figure": 44,
+          "path": "images/ko/12.11.1-proxy-bake.png",
+          "sha256": "b56f090f7735f90c3296daafdc4eb26805619f0da7fb50a89352a6c325b4fae9",
+          "dimensions": [
+            740,
+            896
+          ]
+        },
+        {
+          "figure": 45,
+          "path": "images/ko/12.11.1-animation-layers.png",
+          "sha256": "ef37b72d671f8287f19148a14ff969fe4f07c97252b87d4517cf587d19d34291",
+          "dimensions": [
+            741,
+            214
+          ]
+        },
+        {
+          "figure": 46,
+          "path": "images/ko/12.11.2-lipsync-setup.png",
+          "sha256": "92950a42ddaccfcb07997a29f0c9fde7e7a40bdef8ceef37efbd8afee1f192c5",
+          "dimensions": [
+            741,
+            677
+          ]
+        }
+      ]
+    },
+    "zh": {
+      "language": "Simplified Chinese",
+      "markdown": "AnimAssist_User_Manual_zh.md",
+      "markdown_sha256": "67418edce86a2c1ce95cfc78d98ec0bb7d6255b925b67292d325bc9b95b277d6",
+      "pdf": "AnimAssist_User_Manual_zh.pdf",
+      "pdf_sha256": "89b0cc34efe828c7531682351fbb9142170d35c4ac8026335e6e604f3bdaa809",
+      "pdf_bytes": 2285775,
+      "pdf_pages": 43,
+      "pdf_title": "Anim Assist 12.11.2 候选版用户指南",
+      "inline_figure_placements": 46,
+      "historical_reference_placements": 2,
+      "images": [
+        {
+          "figure": 1,
+          "path": "images/zh/12.11.1-preferences.png",
+          "sha256": "0306e802a83907ca01c7a0c7be9b43f53de4edc33e6767fd2f47d9b1451d8dd7",
+          "dimensions": [
+            782,
+            446
+          ]
+        },
+        {
+          "figure": 2,
+          "path": "images/zh/12.11.1-scene-home.png",
+          "sha256": "0ff3837b9d4d06d223f42853f7751ef5ea06df69c4441c30a864f37060f4835f",
+          "dimensions": [
+            740,
+            471
+          ]
+        },
+        {
+          "figure": 3,
+          "path": "images/zh/12.11.1-scene-setup.png",
+          "sha256": "69f2d26c5f58c097cf663d9f92ebe9a49ea580850d06df28aaddf99c375091e1",
+          "dimensions": [
+            748,
+            220
+          ]
+        },
+        {
+          "figure": 4,
+          "path": "images/zh/stage-all.png",
+          "sha256": "72daa8ae16a7b5c0dacd3b7e14409eb90f09fa7c566e0dc15f3aa4f37b0c7924",
+          "dimensions": [
+            1718,
+            65
+          ]
+        },
+        {
+          "figure": 5,
+          "path": "images/zh/12.10.0-pose-family-left.png",
+          "sha256": "4b49e54f40b27c168d0a357fd8a90a15442b857b1d4268bc0ba2bde36f3a416e",
+          "dimensions": [
+            200,
+            197
+          ]
+        },
+        {
+          "figure": 6,
+          "path": "images/zh/12.10.0-pose-family-right.png",
+          "sha256": "aeee118da2ecdce278697182fe2dbac7604fe8e3eb11c4b857b07611abe68d89",
+          "dimensions": [
+            200,
+            339
+          ]
+        },
+        {
+          "figure": 7,
+          "path": "images/zh/12.10.0-stage-choices.png",
+          "sha256": "ce46b2b126153b70a338e0581bf285b06d239c169d0f4ca984436fbeda9bd9bd",
+          "dimensions": [
+            153,
+            228
+          ]
+        },
+        {
+          "figure": 8,
+          "path": "images/zh/12.10.0-timing-popout.png",
+          "sha256": "6f97324551b4b249a3f5286360c8a1890c0573f1188621639153cca175844b4f",
+          "dimensions": [
+            302,
+            118
+          ]
+        },
+        {
+          "figure": 9,
+          "path": "images/zh/12.10.0-all-row-left.png",
+          "sha256": "90e5fa2bbf0cf8e2a6a07f0f4b19b383d6db28f2a0e453095b63b2b8fd66b032",
+          "dimensions": [
+            987,
+            65
+          ]
+        },
+        {
+          "figure": 10,
+          "path": "images/zh/12.10.0-all-row-right.png",
+          "sha256": "439e611181691250b8053770485b8cc2ae6c8891820f24c375dc7708ba1bd64a",
+          "dimensions": [
+            1020,
+            65
+          ]
+        },
+        {
+          "figure": 11,
+          "path": "images/zh/12.10.0-block-row-left.png",
+          "sha256": "1e0048fead3741cc49003aa494954a72a346e2a45a2db8c6444d2ac8c62f1454",
+          "dimensions": [
+            809,
+            65
+          ]
+        },
+        {
+          "figure": 12,
+          "path": "images/zh/12.10.0-block-row-right.png",
+          "sha256": "f0511ba619a6e5d460070de3ffbaa199fa4b3bae66dffd7630a2eaad6867b314",
+          "dimensions": [
+            1122,
+            65
+          ]
+        },
+        {
+          "figure": 13,
+          "path": "images/zh/12.10.0-spline-row-left.png",
+          "sha256": "c4a0457ff1e48454a7037da9d03fae2d557dba776457f1072d4e0b3af1d5ad28",
+          "dimensions": [
+            976,
+            65
+          ]
+        },
+        {
+          "figure": 14,
+          "path": "images/zh/12.10.0-spline-row-right.png",
+          "sha256": "d8802a556ec54d9e94fa251b9fcc2533cf021759b649eba963e1f7300d312371",
+          "dimensions": [
+            989,
+            65
+          ]
+        },
+        {
+          "figure": 15,
+          "path": "images/zh/12.10.0-polish-row-left.png",
+          "sha256": "8fffb961f2f9e5d92d9ea87b9d1d0d84bf283124c25e0bf96164da7af52ab080",
+          "dimensions": [
+            815,
+            65
+          ]
+        },
+        {
+          "figure": 16,
+          "path": "images/zh/12.10.0-polish-row-right.png",
+          "sha256": "a20aae2e3240be0582c216e33de29b9e1afb5e28a701fbf3dd5b211e82dc4076",
+          "dimensions": [
+            1123,
+            65
+          ]
+        },
+        {
+          "figure": 17,
+          "path": "images/zh/12.10.0-deliver-row-left.png",
+          "sha256": "7ff661d0d676f87d3f37c787db9313fae8c7bd88cf254b1a79bbadb978995db3",
+          "dimensions": [
+            801,
+            65
+          ]
+        },
+        {
+          "figure": 18,
+          "path": "images/zh/12.10.0-deliver-row-right.png",
+          "sha256": "5c6da98a13daeb7127021505c4af7ad391683a604dfd075c1650fc4c1991c8d4",
+          "dimensions": [
+            1164,
+            65
+          ]
+        },
+        {
+          "figure": 19,
+          "path": "images/zh/12.10.0-find-tools.png",
+          "sha256": "297441722fff16935dad84d5d6c7766e8bad6c15c1b62c1e9d242508f24e3ab5",
+          "dimensions": [
+            639,
+            339
+          ]
+        },
+        {
+          "figure": 20,
+          "path": "images/zh/12.10.0-more-left.png",
+          "sha256": "460c51172296a3de79d5a591ca18105d1d49d2b6dc8ed0cb9babc741eb957251",
+          "dimensions": [
+            148,
+            68
+          ]
+        },
+        {
+          "figure": 21,
+          "path": "images/zh/12.10.0-more-middle.png",
+          "sha256": "1797e9f94cddd01100aa1d3e3aecd580798ac0eb5114ea594a27b3faf9036f1d",
+          "dimensions": [
+            148,
+            44
+          ]
+        },
+        {
+          "figure": 22,
+          "path": "images/zh/12.10.0-more-right.png",
+          "sha256": "1d8c465cd3eb1d5a4b264bf0329e2c58773857314ce2a23eeb65b24228b1c8dd",
+          "dimensions": [
+            148,
+            129
+          ]
+        },
+        {
+          "figure": 23,
+          "path": "images/zh/5.2.3-native-undo-menu.png",
+          "sha256": "e1c20aba578560c147f5bf73af1e33c5184f8a8ede271fec72bf189ff1a72080",
+          "dimensions": [
+            209,
+            108
+          ]
+        },
+        {
+          "figure": 24,
+          "path": "images/zh/12.10.0-toolbar-settings.png",
+          "sha256": "fc2c69e8abe54522b89c2450ec0ee96c1d80bfc1178e92be0c48c1ca76ce0e37",
+          "dimensions": [
+            658,
+            553
+          ]
+        },
+        {
+          "figure": 25,
+          "path": "images/zh/12.11.1-tool-settings.png",
+          "sha256": "a0e3077a3937c0cbcd4d61c1dbcb05e03c6af9bad03011e8d87252fa665cc62b",
+          "dimensions": [
+            450,
+            498
+          ]
+        },
+        {
+          "figure": 26,
+          "path": "images/zh/12.10.0-hover-explanation.png",
+          "sha256": "ebde35aec0387c5c1b0de5a5f884979a2baf6d14419d538defe9d354ea9d4065",
+          "dimensions": [
+            429,
+            148
+          ]
+        },
+        {
+          "figure": 27,
+          "path": "images/zh/12.8.0-dopesheet-tools.png",
+          "sha256": "3bd7f8ab55df86c5cf4f1d6c359e5c46e959d9886526b27702f629fbeea7cc7f",
+          "dimensions": [
+            1920,
+            754
+          ]
+        },
+        {
+          "figure": 28,
+          "path": "images/zh/12.8.0-graph-tools.png",
+          "sha256": "9c02055702cd3186b77184b377c1436571b46e07e3b0cf23714a685802bd580e",
+          "dimensions": [
+            1920,
+            747
+          ]
+        },
+        {
+          "figure": 29,
+          "path": "images/zh/12.11.0-selected-driver.png",
+          "sha256": "abeb0097b9df1b863aeaa18702039a0f963ec7a3c3020c1724d4f5de67235f7a",
+          "dimensions": [
+            690,
+            726
+          ]
+        },
+        {
+          "figure": 30,
+          "path": "images/zh/12.11.0-native-driver-settings.png",
+          "sha256": "97967a692c3df6ad933f27f62632426ec70e3fa24f7dae15d496aa9d927c1d51",
+          "dimensions": [
+            690,
+            468
+          ]
+        },
+        {
+          "figure": 31,
+          "path": "images/zh/12.11.0-native-modifier-settings.png",
+          "sha256": "64c0c56b1365913b6d98c297b7dd3a34c79f7a7185c6957b47b578ee482de66c",
+          "dimensions": [
+            710,
+            929
+          ]
+        },
+        {
+          "figure": 32,
+          "path": "images/zh/12.11.0-driver-diagnostics.png",
+          "sha256": "7f6844b69a539dee80d2cb8996ba44e973f0cdb76da818bdc4ab64d81d55b08d",
+          "dimensions": [
+            380,
+            66
+          ]
+        },
+        {
+          "figure": 33,
+          "path": "images/zh/12.8.0-nla-arrange.png",
+          "sha256": "9dcb159ffe7c321eeee22effd7c781a0aa389a0f486bab1cbf13a3aae35c9980",
+          "dimensions": [
+            748,
+            208
+          ]
+        },
+        {
+          "figure": 34,
+          "path": "images/zh/12.11.1-nla-actions.png",
+          "sha256": "22484f6257385fed4a3e3b1884e658dca4bdcf7d429fbf7c6230fab0ad7ef70a",
+          "dimensions": [
+            748,
+            284
+          ]
+        },
+        {
+          "figure": 35,
+          "path": "images/zh/12.11.1-nla-retained-bake.png",
+          "sha256": "d107ea95ac54a932cdf8cdec717b22f2c9e2cd45c19c8dd16168b2bc73c7a24e",
+          "dimensions": [
+            748,
+            208
+          ]
+        },
+        {
+          "figure": 36,
+          "path": "images/zh/12.11.1-settings.png",
+          "sha256": "604d0bfa7a3c314b547e07e19d32a2ad2f1c87b204310146cddac67319ca64cc",
+          "dimensions": [
+            748,
+            345
+          ]
+        },
+        {
+          "figure": 37,
+          "path": "images/zh/12.11.1-macros.png",
+          "sha256": "5fe3946316a03c49950e348bac71da7b4b4a177223576967016f4e9105a8c59a",
+          "dimensions": [
+            748,
+            381
+          ]
+        },
+        {
+          "figure": 38,
+          "path": "images/zh/12.11.1-transform-offset.png",
+          "sha256": "59290232b1dd12595b34f20dee50a88ff0122e8fd267ed9849679a41cb6b6a19",
+          "dimensions": [
+            748,
+            873
+          ]
+        },
+        {
+          "figure": 39,
+          "path": "images/zh/12.11.1-transform-match.png",
+          "sha256": "953ef59cdb82a9a4e543e6de4d88edaa01cc494a0e289bcac4cefbb45868a186",
+          "dimensions": [
+            748,
+            282
+          ]
+        },
+        {
+          "figure": 40,
+          "path": "images/zh/12.11.1-pose-offset.png",
+          "sha256": "abf5725d4fac22ac74bb9f726ca42f4b2a04e9b3af6fd023b5c18884891c2edc",
+          "dimensions": [
+            748,
+            328
+          ]
+        },
+        {
+          "figure": 41,
+          "path": "images/zh/12.11.1-pose-mirror.png",
+          "sha256": "4d56bb587fba1d7601c3ca3d88411a2c28ef4f04293df60a9646616d5215cea0",
+          "dimensions": [
+            748,
+            209
+          ]
+        },
+        {
+          "figure": 42,
+          "path": "images/zh/12.11.1-action-offset.png",
+          "sha256": "660f23517d25c7c4c439ad4727f040f1aebccb641a8caa7fd1a4061a5e72d08e",
+          "dimensions": [
+            748,
+            216
+          ]
+        },
+        {
+          "figure": 43,
+          "path": "images/zh/12.11.1-motion-trails.png",
+          "sha256": "dad123a4e76147d7a38c341a10d779a8af8073d013b68eed58a7c1fe69a7686e",
+          "dimensions": [
+            748,
+            693
+          ]
+        },
+        {
+          "figure": 44,
+          "path": "images/zh/12.11.1-proxy-bake.png",
+          "sha256": "936c413c648f4a658c3b1577087e3a81eebb14f76cd73ebf3b09fba2ebf4c08e",
+          "dimensions": [
+            748,
+            904
+          ]
+        },
+        {
+          "figure": 45,
+          "path": "images/zh/12.11.1-animation-layers.png",
+          "sha256": "c7fd7b23fab9f98232669e984b55ddda4d46717887f4a0c9b553f4a9866daf0a",
+          "dimensions": [
+            748,
+            221
+          ]
+        },
+        {
+          "figure": 46,
+          "path": "images/zh/12.11.2-lipsync-setup.png",
+          "sha256": "2e533af1199fe6b56f369a8883faa7453e730b9da69a9ca63b4854c1cb05dab3",
+          "dimensions": [
+            748,
+            684
+          ]
+        }
+      ]
+    },
+    "pt": {
+      "language": "Brazilian Portuguese",
+      "markdown": "AnimAssist_User_Manual_pt.md",
+      "markdown_sha256": "4c7590ac8ddeb07af73874623eaf9ffbaa0908e226c9cc27cc3aec38f040e113",
+      "pdf": "AnimAssist_User_Manual_pt.pdf",
+      "pdf_sha256": "ab9d8250e958b61d9c0abec8fb118557b5d43c2162ad16fadb389f989ef34073",
+      "pdf_bytes": 1791821,
+      "pdf_pages": 46,
+      "pdf_title": "Guia do usuário da versão candidata Anim Assist 12.11.2",
+      "inline_figure_placements": 46,
+      "historical_reference_placements": 2,
+      "images": [
+        {
+          "figure": 1,
+          "path": "images/pt/12.11.1-preferences.png",
+          "sha256": "a764d05d403ba3b665fba31156f8d78982302ab6bbbcb8f1b6edfc4b6b608605",
+          "dimensions": [
+            782,
+            446
+          ]
+        },
+        {
+          "figure": 2,
+          "path": "images/pt/12.11.1-scene-home.png",
+          "sha256": "5e98b33bf0044425d355d8dd13dbb46b2c94259f520dcb224b8aed5d7da70bd4",
+          "dimensions": [
+            740,
+            471
+          ]
+        },
+        {
+          "figure": 3,
+          "path": "images/pt/12.11.1-scene-setup.png",
+          "sha256": "3ea2f1bedbc1475d79de27001711dbe5352b9fc8f3c22cc2c836314522ff3287",
+          "dimensions": [
+            746,
+            217
+          ]
+        },
+        {
+          "figure": 4,
+          "path": "images/pt/stage-all.png",
+          "sha256": "84c91c003b74e7bf1556b0b07e7f6adada6f2b8606daff16e66f6c20e9a61b76",
+          "dimensions": [
+            1719,
+            50
+          ]
+        },
+        {
+          "figure": 5,
+          "path": "images/pt/12.10.0-pose-family-left.png",
+          "sha256": "3417434d90ad4b19816d0583db0162197d9890b329d4b878b4144a9ecfbbe481",
+          "dimensions": [
+            392,
+            198
+          ]
+        },
+        {
+          "figure": 6,
+          "path": "images/pt/12.10.0-pose-family-right.png",
+          "sha256": "bb3bd3aee1b96811e7a9dbf3e5b15ae149e8475af8ee2f518a82d59295313188",
+          "dimensions": [
+            392,
+            341
+          ]
+        },
+        {
+          "figure": 7,
+          "path": "images/pt/12.10.0-stage-choices.png",
+          "sha256": "9d055659f067f263ad004033ecc7fba1e1c9ad4e025830e1f1ad24a5edf28663",
+          "dimensions": [
+            198,
+            219
+          ]
+        },
+        {
+          "figure": 8,
+          "path": "images/pt/12.10.0-timing-popout.png",
+          "sha256": "a4794a2e07bfebe52b6d9a4a302003dd3089b464612080860b21c5a80eae8040",
+          "dimensions": [
+            478,
+            109
+          ]
+        },
+        {
+          "figure": 9,
+          "path": "images/pt/12.10.0-all-row-left.png",
+          "sha256": "bd00c0facf5fb09e77b94af004f0f478ba2120f976c448c24c90b4f206ed013f",
+          "dimensions": [
+            964,
+            50
+          ]
+        },
+        {
+          "figure": 10,
+          "path": "images/pt/12.10.0-all-row-right.png",
+          "sha256": "bae266cf5d231f6ac49ed89e070b1e9f9ec4180f83ab098d0f22a7e150a3e4f1",
+          "dimensions": [
+            1035,
+            50
+          ]
+        },
+        {
+          "figure": 11,
+          "path": "images/pt/12.10.0-block-row-left.png",
+          "sha256": "3ea3969467d715f375f9c801aca98ccaa6c5a3afdf3dc153c787ae11ed8f55a1",
+          "dimensions": [
+            1060,
+            50
+          ]
+        },
+        {
+          "figure": 12,
+          "path": "images/pt/12.10.0-block-row-right.png",
+          "sha256": "8ad5cd908ee5e882330e0bb95887af36769dec1002971570589f574e6140004b",
+          "dimensions": [
+            1165,
+            50
+          ]
+        },
+        {
+          "figure": 13,
+          "path": "images/pt/12.10.0-spline-row-left.png",
+          "sha256": "56743718c4d911acd87483c99898185031be2891a2425a688c735d67871ea90e",
+          "dimensions": [
+            1100,
+            50
+          ]
+        },
+        {
+          "figure": 14,
+          "path": "images/pt/12.10.0-spline-row-right.png",
+          "sha256": "31846fd1f08a78f5cb85aa9d8461044abefe4b3ffc609f7f1015b90e2b04470b",
+          "dimensions": [
+            902,
+            50
+          ]
+        },
+        {
+          "figure": 15,
+          "path": "images/pt/12.10.0-polish-row-left.png",
+          "sha256": "69cdb38ddde57a17ad2cccdde29a33fbad15ef794146d713ddb48f4fc444e3f0",
+          "dimensions": [
+            1120,
+            50
+          ]
+        },
+        {
+          "figure": 16,
+          "path": "images/pt/12.10.0-polish-row-right.png",
+          "sha256": "cbeedc9999343242fa0d5d19d10849a457020b3f6903005cf613233b34571a00",
+          "dimensions": [
+            935,
+            50
+          ]
+        },
+        {
+          "figure": 17,
+          "path": "images/pt/12.10.0-deliver-row-left.png",
+          "sha256": "6fb951981ff40a9703919aad0b164cea2838b86508e1569a924c814c5811bfec",
+          "dimensions": [
+            853,
+            50
+          ]
+        },
+        {
+          "figure": 18,
+          "path": "images/pt/12.10.0-deliver-row-right.png",
+          "sha256": "7cea8bca7223ca252760beebf893fb96d14c34040b3e64672e1c2aebabf445ee",
+          "dimensions": [
+            967,
+            50
+          ]
+        },
+        {
+          "figure": 19,
+          "path": "images/pt/12.10.0-find-tools.png",
+          "sha256": "7ade4711839ac8ca9a81ac2a3046aa97dae7d63fe95404cf56d22580c744a8e5",
+          "dimensions": [
+            638,
+            336
+          ]
+        },
+        {
+          "figure": 20,
+          "path": "images/pt/12.10.0-more-left.png",
+          "sha256": "1b63c0e1b3771af583123f3ca2e9ccd55b3538b1c8a5b817cc29fbf8d3fd4d65",
+          "dimensions": [
+            292,
+            103
+          ]
+        },
+        {
+          "figure": 21,
+          "path": "images/pt/12.10.0-more-middle.png",
+          "sha256": "82dd1c1b5f5323dccd7e223335748293e6002ee666f1b6b753128366a5431dc6",
+          "dimensions": [
+            292,
+            88
+          ]
+        },
+        {
+          "figure": 22,
+          "path": "images/pt/12.10.0-more-right.png",
+          "sha256": "86b4fc86f569def83055989ea8572d3661c457d30a7094b9b737ca826f1f8a4d",
+          "dimensions": [
+            292,
+            188
+          ]
+        },
+        {
+          "figure": 23,
+          "path": "images/pt/5.2.3-native-undo-menu.png",
+          "sha256": "e27dcc39139bac5b09b8bacaf82d987a7913599295a30f62230f79c6ac9bd215",
+          "dimensions": [
+            250,
+            106
+          ]
+        },
+        {
+          "figure": 24,
+          "path": "images/pt/12.10.0-toolbar-settings.png",
+          "sha256": "01c9f2b27311676b6458edd57467274596da73a335a6b9ae313f288e07745a3c",
+          "dimensions": [
+            653,
+            553
+          ]
+        },
+        {
+          "figure": 25,
+          "path": "images/pt/12.11.1-tool-settings.png",
+          "sha256": "5a6a9cdb31a7a01ecca2f56a77858b03026f755dae67d6ffbb3110c663c33668",
+          "dimensions": [
+            450,
+            496
+          ]
+        },
+        {
+          "figure": 26,
+          "path": "images/pt/12.10.0-hover-explanation.png",
+          "sha256": "6a7d26c0753ea5a063d7a6621817de04a52bcd98e877e76ae366a1d5b2708389",
+          "dimensions": [
+            595,
+            170
+          ]
+        },
+        {
+          "figure": 27,
+          "path": "images/pt/12.8.0-dopesheet-tools.png",
+          "sha256": "bc8203d5d9a279e7e0fe2a3a471e9cc9d4dae791449dc8e660518901cf4fd18a",
+          "dimensions": [
+            1920,
+            926
+          ]
+        },
+        {
+          "figure": 28,
+          "path": "images/pt/12.8.0-graph-tools.png",
+          "sha256": "d47760581581fc15bc810b4d6227025c0146cf11fd11138882fa208f42aecc92",
+          "dimensions": [
+            1920,
+            926
+          ]
+        },
+        {
+          "figure": 29,
+          "path": "images/pt/12.11.0-selected-driver.png",
+          "sha256": "745a451d2ef712e93586e1dd681c95670473d940dbf895bf276dc6b2ac4b2a67",
+          "dimensions": [
+            281,
+            748
+          ]
+        },
+        {
+          "figure": 30,
+          "path": "images/pt/12.11.0-native-driver-settings.png",
+          "sha256": "f5e4bdfe30d3e25f99fc3d4a83f2e586322cc3d7b7e99a23b36495eacf42324e",
+          "dimensions": [
+            281,
+            461
+          ]
+        },
+        {
+          "figure": 31,
+          "path": "images/pt/12.11.0-native-modifier-settings.png",
+          "sha256": "09d87fecfbad37826081372c3469cc34c51681180961246cc46c27ccfc8b22f9",
+          "dimensions": [
+            710,
+            927
+          ]
+        },
+        {
+          "figure": 32,
+          "path": "images/pt/12.11.0-driver-diagnostics.png",
+          "sha256": "26439ff95d548dbfa5de02738bd0a9d91d041721245bf05257d1325d6bedb5f8",
+          "dimensions": [
+            380,
+            65
+          ]
+        },
+        {
+          "figure": 33,
+          "path": "images/pt/12.8.0-nla-arrange.png",
+          "sha256": "ca284b582103ccdd5735ed3a0abc4314f5305dd0a8838d591be658fdda87fd89",
+          "dimensions": [
+            746,
+            206
+          ]
+        },
+        {
+          "figure": 34,
+          "path": "images/pt/12.11.1-nla-actions.png",
+          "sha256": "45b79d2d063891e2dedbb609d4e9cfc6ae1adb3924cdd05bd9ea2e87b39dbbe1",
+          "dimensions": [
+            746,
+            281
+          ]
+        },
+        {
+          "figure": 35,
+          "path": "images/pt/12.11.1-nla-retained-bake.png",
+          "sha256": "6e18b146fad02ce2f983d217be3978169ebcf706ccde22a0a136d11d5199b5ea",
+          "dimensions": [
+            746,
+            206
+          ]
+        },
+        {
+          "figure": 36,
+          "path": "images/pt/12.11.1-settings.png",
+          "sha256": "ede7e985a2f4e3fafd0da7b7fbd716f6c1f6cca4ac818479fecefe2dddbf1ff0",
+          "dimensions": [
+            746,
+            342
+          ]
+        },
+        {
+          "figure": 37,
+          "path": "images/pt/12.11.1-macros.png",
+          "sha256": "a561a20f2b21931672ca6c17550efee90f8f74ddb2d215e87ed6d41edbf01d06",
+          "dimensions": [
+            746,
+            378
+          ]
+        },
+        {
+          "figure": 38,
+          "path": "images/pt/12.11.1-transform-offset.png",
+          "sha256": "e134a46db94507d1aee5e304209096b3a7e8ae3b9fd9b94381c724f44af92577",
+          "dimensions": [
+            746,
+            869
+          ]
+        },
+        {
+          "figure": 39,
+          "path": "images/pt/12.11.1-transform-match.png",
+          "sha256": "95b884b8a9419fab9bd314220a64aca985c6eb7abb0b1f8c0ba351ada91d5172",
+          "dimensions": [
+            746,
+            280
+          ]
+        },
+        {
+          "figure": 40,
+          "path": "images/pt/12.11.1-pose-offset.png",
+          "sha256": "56a63bcdaf3e18ed90fde015a5b50e2013e3b76cb5d37371395e3f47bfb63586",
+          "dimensions": [
+            746,
+            325
+          ]
+        },
+        {
+          "figure": 41,
+          "path": "images/pt/12.11.1-pose-mirror.png",
+          "sha256": "11f55eab5d58c2aa9dd87e15ce9159b28049348d7f2c2f6249c233963e7cacec",
+          "dimensions": [
+            746,
+            206
+          ]
+        },
+        {
+          "figure": 42,
+          "path": "images/pt/12.11.1-action-offset.png",
+          "sha256": "9860d4d49c409b53ebc499219363575823c86c7f3b16a63cb4bc488aaafadee5",
+          "dimensions": [
+            746,
+            212
+          ]
+        },
+        {
+          "figure": 43,
+          "path": "images/pt/12.11.1-motion-trails.png",
+          "sha256": "b3f20e84cc4c84d3535724cfb2e4ba24caf69aa8090c8d8a8209c98ddc7a12f2",
+          "dimensions": [
+            746,
+            689
+          ]
+        },
+        {
+          "figure": 44,
+          "path": "images/pt/12.11.1-proxy-bake.png",
+          "sha256": "c12941c1392a8e5164fabf44563f0782edb7ed515cdb1ccf91b4b9b4ba63c88e",
+          "dimensions": [
+            746,
+            901
+          ]
+        },
+        {
+          "figure": 45,
+          "path": "images/pt/12.11.1-animation-layers.png",
+          "sha256": "2a84ef06358c15d9d4781d8c169a8029d1326fffc14fba79283ee95e469ffca4",
+          "dimensions": [
+            746,
+            219
+          ]
+        },
+        {
+          "figure": 46,
+          "path": "images/pt/12.11.2-lipsync-setup.png",
+          "sha256": "9ac26bb40e3eaa63045c91947a8110b0e25fd4529e20139a93ef7f8f21fdbe35",
+          "dimensions": [
+            746,
+            681
+          ]
+        }
+      ]
+    },
+    "es": {
+      "language": "Spanish",
+      "markdown": "AnimAssist_User_Manual_es.md",
+      "markdown_sha256": "29e9a371370605a692d37ee6ec329e350a82a1b500de6d91dc78d49515fef967",
+      "pdf": "AnimAssist_User_Manual_es.pdf",
+      "pdf_sha256": "e98158c0f9bf097d275f97c6f44ed71829d5b109eb78bcdcd16cdea1abd0186f",
+      "pdf_bytes": 1749767,
+      "pdf_pages": 47,
+      "pdf_title": "Guía de usuario de la versión candidata Anim Assist 12.11.2",
+      "inline_figure_placements": 46,
+      "historical_reference_placements": 2,
+      "images": [
+        {
+          "figure": 1,
+          "path": "images/es/12.11.1-preferences.png",
+          "sha256": "e0130f45567a4f5b95c18bcd9277cab8a285d829e0ff7ac671fda4a5c71ef244",
+          "dimensions": [
+            782,
+            446
+          ]
+        },
+        {
+          "figure": 2,
+          "path": "images/es/12.11.1-scene-home.png",
+          "sha256": "b51ad4cc9540a660bd879d6b70759d6ba7aa9c4b805c1951dc61f30512947ae8",
+          "dimensions": [
+            740,
+            471
+          ]
+        },
+        {
+          "figure": 3,
+          "path": "images/es/12.11.1-scene-setup.png",
+          "sha256": "9f881805a33b9e2563ddcf7801404f32a64ed8e8163e0f8f5f9dd1446f106232",
+          "dimensions": [
+            740,
+            212
+          ]
+        },
+        {
+          "figure": 4,
+          "path": "images/es/stage-all.png",
+          "sha256": "d6e3be31eaa8dcb186e734f404c68f0deda85a767fd51a2a5e885c0852b8a58d",
+          "dimensions": [
+            1705,
+            46
+          ]
+        },
+        {
+          "figure": 5,
+          "path": "images/es/12.10.0-pose-family-left.png",
+          "sha256": "802e5b1cdedcdf67bbb83e3fdbc11d3d2eb5f89faf3cc78ca9317249867df6be",
+          "dimensions": [
+            430,
+            199
+          ]
+        },
+        {
+          "figure": 6,
+          "path": "images/es/12.10.0-pose-family-right.png",
+          "sha256": "cb810f94addb4b613f1ee5133f3ca217302cfd328cf358e6a374f3f71f6bb502",
+          "dimensions": [
+            430,
+            341
+          ]
+        },
+        {
+          "figure": 7,
+          "path": "images/es/12.10.0-stage-choices.png",
+          "sha256": "8561df7a7817d66eb3b831bdce0a53f3e1a5c46926cf01fbf28f9cac9e037343",
+          "dimensions": [
+            422,
+            214
+          ]
+        },
+        {
+          "figure": 8,
+          "path": "images/es/12.10.0-timing-popout.png",
+          "sha256": "371289315439524c3c6447198655af5833fdcf9d4892ede09562ad38158655f0",
+          "dimensions": [
+            378,
+            107
+          ]
+        },
+        {
+          "figure": 9,
+          "path": "images/es/12.10.0-all-row-left.png",
+          "sha256": "972b0c03641a0f15270f7d70d80c7623cb6cab523f4e2ad8ffaf6175ebdbc458",
+          "dimensions": [
+            1035,
+            46
+          ]
+        },
+        {
+          "figure": 10,
+          "path": "images/es/12.10.0-all-row-right.png",
+          "sha256": "ff9e5fbfa95cab57de4448d49205860c523cdba51df282bd9e79f535960d44ea",
+          "dimensions": [
+            1043,
+            46
+          ]
+        },
+        {
+          "figure": 11,
+          "path": "images/es/12.10.0-block-row-left.png",
+          "sha256": "418198c6993796fa2e444b5fc00cb4ca56fd618cd4e52131e9efb35f089709e6",
+          "dimensions": [
+            953,
+            46
+          ]
+        },
+        {
+          "figure": 12,
+          "path": "images/es/12.10.0-block-row-right.png",
+          "sha256": "444e6938f1d0867798c7514999a2c243dae270a4ba6e7c38a74770ac7c5631ea",
+          "dimensions": [
+            1166,
+            46
+          ]
+        },
+        {
+          "figure": 13,
+          "path": "images/es/12.10.0-spline-row-left.png",
+          "sha256": "62f4e09e15726867c86c444111809bfc5fa5d4dc463da59508bea6519f4935be",
+          "dimensions": [
+            840,
+            46
+          ]
+        },
+        {
+          "figure": 14,
+          "path": "images/es/12.10.0-spline-row-right.png",
+          "sha256": "0a8bc6b2b3dc9994479f2d6a8dd4cd8a3b3fe86d9619ac0dcc58c1f0252fc9c3",
+          "dimensions": [
+            1123,
+            46
+          ]
+        },
+        {
+          "figure": 15,
+          "path": "images/es/12.10.0-polish-row-left.png",
+          "sha256": "d602eb74ee7a08ba93e60bba164ddfad3a675d58077f7c4a8e918a34913505ca",
+          "dimensions": [
+            1129,
+            46
+          ]
+        },
+        {
+          "figure": 16,
+          "path": "images/es/12.10.0-polish-row-right.png",
+          "sha256": "595500145e00ea10554245c9807c9f3b69df4d24fae83914fd2567071279ad56",
+          "dimensions": [
+            907,
+            46
+          ]
+        },
+        {
+          "figure": 17,
+          "path": "images/es/12.10.0-deliver-row-left.png",
+          "sha256": "2bb7fecfaef843c813bb2273919106f76068acf8d5a388afb7fc27da2b079a36",
+          "dimensions": [
+            904,
+            46
+          ]
+        },
+        {
+          "figure": 18,
+          "path": "images/es/12.10.0-deliver-row-right.png",
+          "sha256": "43758f4c00bfbce329970bb2700c171fa661a609adb7017e7f2c1d680fcfc1f1",
+          "dimensions": [
+            1160,
+            46
+          ]
+        },
+        {
+          "figure": 19,
+          "path": "images/es/12.10.0-find-tools.png",
+          "sha256": "8558d8208bdbb5671fcbcb418d39ef7b608447a914d66f4d759ec3129684e9d5",
+          "dimensions": [
+            635,
+            335
+          ]
+        },
+        {
+          "figure": 20,
+          "path": "images/es/12.10.0-more-left.png",
+          "sha256": "ae8b3cbaf99ece7fb36f10d844995cdd12c14f2567e9e948ec72a9ba5ea6d670",
+          "dimensions": [
+            271,
+            85
+          ]
+        },
+        {
+          "figure": 21,
+          "path": "images/es/12.10.0-more-middle.png",
+          "sha256": "cfdbd04d974a7fc06efd5c14fd0de075bb5a7afd54ae0006174a015ba9862c91",
+          "dimensions": [
+            271,
+            66
+          ]
+        },
+        {
+          "figure": 22,
+          "path": "images/es/12.10.0-more-right.png",
+          "sha256": "3c333466e5750657564ee3b62be770efda542e91451c340bc58c5108f2468a22",
+          "dimensions": [
+            271,
+            166
+          ]
+        },
+        {
+          "figure": 23,
+          "path": "images/es/5.2.3-native-undo-menu.png",
+          "sha256": "be1633d0d4541398be6d2971ab064c527fd993aec5ca3ec8d00022117d36b21b",
+          "dimensions": [
+            205,
+            104
+          ]
+        },
+        {
+          "figure": 24,
+          "path": "images/es/12.10.0-toolbar-settings.png",
+          "sha256": "213d34a516d2af431d84a31cd60fa9ca08c3d2ae470af3ff83c0d1d25f24a7d7",
+          "dimensions": [
+            655,
+            553
+          ]
+        },
+        {
+          "figure": 25,
+          "path": "images/es/12.11.1-tool-settings.png",
+          "sha256": "13d723e7c67866b6c670f13f9379b0ba398d53fea7f602a33581014b18e2fa9c",
+          "dimensions": [
+            446,
+            491
+          ]
+        },
+        {
+          "figure": 26,
+          "path": "images/es/12.10.0-hover-explanation.png",
+          "sha256": "9a589954c6060b9a09bdfcf0102c27d6692267a30a9d1d98c643fd6bb4aa1796",
+          "dimensions": [
+            475,
+            168
+          ]
+        },
+        {
+          "figure": 27,
+          "path": "images/es/12.8.0-dopesheet-tools.png",
+          "sha256": "51f0d5ce3df22b96b72ee4cf7e3a9c57d4437b43fe4e63bf4764df44b31318d7",
+          "dimensions": [
+            1920,
+            752
+          ]
+        },
+        {
+          "figure": 28,
+          "path": "images/es/12.8.0-graph-tools.png",
+          "sha256": "248a6040dbc09780a787bc5192871813cb2e591f9a21e2a5e674e42030d66e67",
+          "dimensions": [
+            1920,
+            740
+          ]
+        },
+        {
+          "figure": 29,
+          "path": "images/es/12.11.0-selected-driver.png",
+          "sha256": "f940a8d99bc5330a4d8b495ca27eee7a9017164889be163b6e1e42b49145053a",
+          "dimensions": [
+            279,
+            799
+          ]
+        },
+        {
+          "figure": 30,
+          "path": "images/es/12.11.0-native-driver-settings.png",
+          "sha256": "78035b494e98aeef7e7e5690bc8a1c428deadeb55bfd3a8c94a9e34fb5b3beed",
+          "dimensions": [
+            279,
+            461
+          ]
+        },
+        {
+          "figure": 31,
+          "path": "images/es/12.11.0-native-modifier-settings.png",
+          "sha256": "3660aef792e23035246cd1cb8ec35850d80009447840200c70a41814449646e7",
+          "dimensions": [
+            710,
+            928
+          ]
+        },
+        {
+          "figure": 32,
+          "path": "images/es/12.11.0-driver-diagnostics.png",
+          "sha256": "6c25f179cbd121fde713ca1a396613c78db6f9c0465ba4004ba2068b82c16b31",
+          "dimensions": [
+            376,
+            62
+          ]
+        },
+        {
+          "figure": 33,
+          "path": "images/es/12.8.0-nla-arrange.png",
+          "sha256": "28617bbb5c3de8b3b09c0fee4b2e28b77e4996357a971f90dcec60208af8d731",
+          "dimensions": [
+            744,
+            205
+          ]
+        },
+        {
+          "figure": 34,
+          "path": "images/es/12.11.1-nla-actions.png",
+          "sha256": "3c2a34aa2ee9418998c23cd2b37d29957c60fe0104554e4a98819d42e6619017",
+          "dimensions": [
+            744,
+            279
+          ]
+        },
+        {
+          "figure": 35,
+          "path": "images/es/12.11.1-nla-retained-bake.png",
+          "sha256": "86df006f42eebe430eb0a81ddb6112d72968f80b5ddb2c8079df727bd234fedf",
+          "dimensions": [
+            745,
+            205
+          ]
+        },
+        {
+          "figure": 36,
+          "path": "images/es/12.11.1-settings.png",
+          "sha256": "95373d744674ca5e498346e39aaa8004dbca1cb2c60ec36ac99be7ff50d994f9",
+          "dimensions": [
+            744,
+            341
+          ]
+        },
+        {
+          "figure": 37,
+          "path": "images/es/12.11.1-macros.png",
+          "sha256": "116567176ce7e3614062ef0a299b46f41c31b49f7a151b0d67b0f9f6642eb9f5",
+          "dimensions": [
+            744,
+            377
+          ]
+        },
+        {
+          "figure": 38,
+          "path": "images/es/12.11.1-transform-offset.png",
+          "sha256": "f5773a9ca9e22705c89fb742c1292dbaa27f2045f263d61a664c67f88773256b",
+          "dimensions": [
+            744,
+            868
+          ]
+        },
+        {
+          "figure": 39,
+          "path": "images/es/12.11.1-transform-match.png",
+          "sha256": "066269ed67ef59c882650c3c827c1919bc6b692d4d44f8c6de857d91a4421c90",
+          "dimensions": [
+            744,
+            279
+          ]
+        },
+        {
+          "figure": 40,
+          "path": "images/es/12.11.1-pose-offset.png",
+          "sha256": "38e6b2757e1886291b10b8a5625f9332f0fc69fdb5e4a7b3e2b2151a225caec5",
+          "dimensions": [
+            744,
+            324
+          ]
+        },
+        {
+          "figure": 41,
+          "path": "images/es/12.11.1-pose-mirror.png",
+          "sha256": "f95ca355befd3b7e2fa3ac96c4a2470d99fef6f2b33608efb73cd09d4ac11872",
+          "dimensions": [
+            744,
+            205
+          ]
+        },
+        {
+          "figure": 42,
+          "path": "images/es/12.11.1-action-offset.png",
+          "sha256": "c549058abcab6ea961f215af14acd059e69a7305301ce867fd84a17650f2a264",
+          "dimensions": [
+            744,
+            211
+          ]
+        },
+        {
+          "figure": 43,
+          "path": "images/es/12.11.1-motion-trails.png",
+          "sha256": "e06d79c8a9d89eeea5eb0a307e653ddbe2c7b67455a827f53e7b4eeb35666796",
+          "dimensions": [
+            744,
+            689
+          ]
+        },
+        {
+          "figure": 44,
+          "path": "images/es/12.11.1-proxy-bake.png",
+          "sha256": "15a3481e071a5c4bc780785c8ef71b0fbed4b687b234441940ac000a6889bae4",
+          "dimensions": [
+            744,
+            900
+          ]
+        },
+        {
+          "figure": 45,
+          "path": "images/es/12.11.1-animation-layers.png",
+          "sha256": "05be41a7cf847eeefe685402f7b631680236fc420af5cb1e38ba09a331e92fba",
+          "dimensions": [
+            745,
+            218
+          ]
+        },
+        {
+          "figure": 46,
+          "path": "images/es/12.11.2-lipsync-setup.png",
+          "sha256": "32bac204ea2a40d9097bf46689ec5294182e42ffb527ccb4c0d1669ad9364268",
+          "dimensions": [
+            744,
+            679
+          ]
+        }
+      ]
+    },
+    "fr": {
+      "language": "French",
+      "markdown": "AnimAssist_User_Manual_fr.md",
+      "markdown_sha256": "77236eb3177a834041e523ff18ae623301bf9240be5538f6807c1cc22e6ebd88",
+      "pdf": "AnimAssist_User_Manual_fr.pdf",
+      "pdf_sha256": "ef6a1268e8cbabc8b3716a6e1835d293baa533e2027e7e38daeffb6445653d6e",
+      "pdf_bytes": 1799021,
+      "pdf_pages": 46,
+      "pdf_title": "Guide d'utilisation de la version candidate d'Anim Assist 12.11.2",
+      "inline_figure_placements": 46,
+      "historical_reference_placements": 2,
+      "images": [
+        {
+          "figure": 1,
+          "path": "images/fr/12.11.1-preferences.png",
+          "sha256": "0e52fe6ce3f58007855bf5fd1bc48844ab96203c9eeeccb2f97ba8ca0b1909dd",
+          "dimensions": [
+            782,
+            446
+          ]
+        },
+        {
+          "figure": 2,
+          "path": "images/fr/12.11.1-scene-home.png",
+          "sha256": "58734afad3dfcad5ab8dc461ab41f2e1907c37a0d5ec9ca4badcd44d51bbad3d",
+          "dimensions": [
+            740,
+            471
+          ]
+        },
+        {
+          "figure": 3,
+          "path": "images/fr/12.11.1-scene-setup.png",
+          "sha256": "97be05df4471be76902a7017a81d599a75bda75760cf0653a1d8a43e7b186769",
+          "dimensions": [
+            749,
+            222
+          ]
+        },
+        {
+          "figure": 4,
+          "path": "images/fr/stage-all.png",
+          "sha256": "b6bf04a3afa973c67e2d4156983de431fd39fb288044fc1bf77fc71619e63851",
+          "dimensions": [
+            1720,
+            37
+          ]
+        },
+        {
+          "figure": 5,
+          "path": "images/fr/12.10.0-pose-family-left.png",
+          "sha256": "2eac4fa6c5e1cf220541941fea7a4b55bf27d1768c118db424d4716fec14ab8e",
+          "dimensions": [
+            400,
+            236
+          ]
+        },
+        {
+          "figure": 6,
+          "path": "images/fr/12.10.0-pose-family-right.png",
+          "sha256": "9cee78965b15f9a250b9c9a2ddac4f3208b5b8d1a1b1980751e2a706986efb87",
+          "dimensions": [
+            400,
+            342
+          ]
+        },
+        {
+          "figure": 7,
+          "path": "images/fr/12.10.0-stage-choices.png",
+          "sha256": "71fd4ec44a54c78d58a300aeaa65dffe5124894806087345c5cd05d0d0e3d79e",
+          "dimensions": [
+            461,
+            225
+          ]
+        },
+        {
+          "figure": 8,
+          "path": "images/fr/12.10.0-timing-popout.png",
+          "sha256": "7e86840d22ed988aa29564b6a6afff4869572b6a0bb5ca96b39285bd4d1978f3",
+          "dimensions": [
+            483,
+            117
+          ]
+        },
+        {
+          "figure": 9,
+          "path": "images/fr/12.10.0-all-row-left.png",
+          "sha256": "5c56af3a3932a6810d6006f03db91af750235feb2ff0a4c6099f65b41268fb2a",
+          "dimensions": [
+            937,
+            37
+          ]
+        },
+        {
+          "figure": 10,
+          "path": "images/fr/12.10.0-all-row-right.png",
+          "sha256": "b9f510d00f2cdc4f122b626ec266da13965e4d23ec92e4e36c6d3f1c35e0b3ed",
+          "dimensions": [
+            1052,
+            37
+          ]
+        },
+        {
+          "figure": 11,
+          "path": "images/fr/12.10.0-block-row-left.png",
+          "sha256": "0abe6e06cd35526873c7aae4213d86ec573151a1946ae75e82a4900bc58ea978",
+          "dimensions": [
+            735,
+            37
+          ]
+        },
+        {
+          "figure": 12,
+          "path": "images/fr/12.10.0-block-row-right.png",
+          "sha256": "469a71b6500858bd6323e72dfc514f59e4f01e3da1285f142eb8d867ea632480",
+          "dimensions": [
+            1184,
+            37
+          ]
+        },
+        {
+          "figure": 13,
+          "path": "images/fr/12.10.0-spline-row-left.png",
+          "sha256": "5987f0daa2819c432ffd5cc65e047e839b9f989539db23202b8920912c16e06e",
+          "dimensions": [
+            830,
+            37
+          ]
+        },
+        {
+          "figure": 14,
+          "path": "images/fr/12.10.0-spline-row-right.png",
+          "sha256": "c9dcc89ebf373d48cf2e0a25e1e3146dce194760f90891a7509844794e384a2b",
+          "dimensions": [
+            1125,
+            37
+          ]
+        },
+        {
+          "figure": 15,
+          "path": "images/fr/12.10.0-polish-row-left.png",
+          "sha256": "c78e21a68dcf6d9d3453b909596c4b3ad8e132a9f3342cc34a1c48e2a8fa8ae2",
+          "dimensions": [
+            744,
+            37
+          ]
+        },
+        {
+          "figure": 16,
+          "path": "images/fr/12.10.0-polish-row-right.png",
+          "sha256": "c2c03daed0aa7c5637f3b4a8daefda5b671f6475ace37910e50db46deece9426",
+          "dimensions": [
+            1256,
+            37
+          ]
+        },
+        {
+          "figure": 17,
+          "path": "images/fr/12.10.0-deliver-row-left.png",
+          "sha256": "7713b395a2de5da0e24c0752e955f6d8f4028f1ada483cbf738c95fcbae62c86",
+          "dimensions": [
+            648,
+            37
+          ]
+        },
+        {
+          "figure": 18,
+          "path": "images/fr/12.10.0-deliver-row-right.png",
+          "sha256": "83fa10e1f76843c25445c4f35a8be6536be4274785e3bb7f7cd12a083e873b12",
+          "dimensions": [
+            1314,
+            37
+          ]
+        },
+        {
+          "figure": 19,
+          "path": "images/fr/12.10.0-find-tools.png",
+          "sha256": "796a06e791a44a562e40a1ca1fa65e6bfd7f4cd6b786541bce2eb52b48d90a71",
+          "dimensions": [
+            641,
+            341
+          ]
+        },
+        {
+          "figure": 20,
+          "path": "images/fr/12.10.0-more-left.png",
+          "sha256": "8ce8394ee69e8fb6f8141364687be8301c620e8fbcb093d522fe2b236e9e8a19",
+          "dimensions": [
+            374,
+            87
+          ]
+        },
+        {
+          "figure": 21,
+          "path": "images/fr/12.10.0-more-middle.png",
+          "sha256": "5c1f436ec535769e9645a8860269ca438b806226d4d9a964b3ded7348a6d8e85",
+          "dimensions": [
+            374,
+            68
+          ]
+        },
+        {
+          "figure": 22,
+          "path": "images/fr/12.10.0-more-right.png",
+          "sha256": "bdae27abd25c0d8a424563ec1a7f43c472b3dca8414456bca402c25e0c71c460",
+          "dimensions": [
+            374,
+            172
+          ]
+        },
+        {
+          "figure": 23,
+          "path": "images/fr/5.2.3-native-undo-menu.png",
+          "sha256": "9b601ca1ce956a2b23815fa9b2c79dbade91b1c389998726def918f29fb2f7a2",
+          "dimensions": [
+            242,
+            110
+          ]
+        },
+        {
+          "figure": 24,
+          "path": "images/fr/12.10.0-toolbar-settings.png",
+          "sha256": "fa194243431c03c3d721365f5d8498080e33da103e25945ca1f2677730a7c029",
+          "dimensions": [
+            653,
+            552
+          ]
+        },
+        {
+          "figure": 25,
+          "path": "images/fr/12.11.1-tool-settings.png",
+          "sha256": "87afe7f2ec143be95df530faf34b5c51fb58bf0e6489dbaae6aadf4dcb73ef27",
+          "dimensions": [
+            453,
+            501
+          ]
+        },
+        {
+          "figure": 26,
+          "path": "images/fr/12.10.0-hover-explanation.png",
+          "sha256": "bae080f9780fdd12e1616a8c5aced6b32a6b74b07d83a4bbeb0fa92e292032c0",
+          "dimensions": [
+            524,
+            174
+          ]
+        },
+        {
+          "figure": 27,
+          "path": "images/fr/12.8.0-dopesheet-tools.png",
+          "sha256": "90c5d5b34e43944ac47b6ddd776d050c766fc6a2facb82d854b56558eaacf158",
+          "dimensions": [
+            1920,
+            752
+          ]
+        },
+        {
+          "figure": 28,
+          "path": "images/fr/12.8.0-graph-tools.png",
+          "sha256": "9ede4f7c0f7cfa605ee072e6fb36426ec90fc41c245c8a79f16d44ecf9d7798b",
+          "dimensions": [
+            1920,
+            740
+          ]
+        },
+        {
+          "figure": 29,
+          "path": "images/fr/12.11.0-selected-driver.png",
+          "sha256": "bce8e89881d6dae64d5dcddea214caaa4b592c1a6194d884cd57c753a4d24225",
+          "dimensions": [
+            740,
+            755
+          ]
+        },
+        {
+          "figure": 30,
+          "path": "images/fr/12.11.0-native-driver-settings.png",
+          "sha256": "0ee91da67e515e26b67935f772edc4e6a435f3f6f55e183b2c72d4f655833945",
+          "dimensions": [
+            740,
+            471
+          ]
+        },
+        {
+          "figure": 31,
+          "path": "images/fr/12.11.0-native-modifier-settings.png",
+          "sha256": "eb2138c45bad04f2c3910797b83b90e253ab4f58b730b2ba7b81c0ff3448fa9b",
+          "dimensions": [
+            710,
+            926
+          ]
+        },
+        {
+          "figure": 32,
+          "path": "images/fr/12.11.0-driver-diagnostics.png",
+          "sha256": "22bebd3cbce01810555acf3583a025764a31e5b1bc7cded2d063f6e8a6eb8779",
+          "dimensions": [
+            382,
+            69
+          ]
+        },
+        {
+          "figure": 33,
+          "path": "images/fr/12.8.0-nla-arrange.png",
+          "sha256": "11e33c78ffbb7d2d73cae8eac38ca4a603961095c132ab909ae52dccc45de74c",
+          "dimensions": [
+            750,
+            211
+          ]
+        },
+        {
+          "figure": 34,
+          "path": "images/fr/12.11.1-nla-actions.png",
+          "sha256": "9eba29d477c52009305a7cad88eb82e59df615a5731a9ba383b79021a32da2a1",
+          "dimensions": [
+            750,
+            285
+          ]
+        },
+        {
+          "figure": 35,
+          "path": "images/fr/12.11.1-nla-retained-bake.png",
+          "sha256": "d1be1abd7d4e6f0aa2b1f4f0fca2238ee20b4d7b036eb91a5c36ac72d1fc640c",
+          "dimensions": [
+            750,
+            210
+          ]
+        },
+        {
+          "figure": 36,
+          "path": "images/fr/12.11.1-settings.png",
+          "sha256": "8cda3b33155a37f86447a64684f057fad8cb7d7a8acfe4255dc15fc886ecaa62",
+          "dimensions": [
+            750,
+            347
+          ]
+        },
+        {
+          "figure": 37,
+          "path": "images/fr/12.11.1-macros.png",
+          "sha256": "b580791416729359c95f7aa77a64405523dbb20ee4a8a5932ae85868c33a334e",
+          "dimensions": [
+            749,
+            383
+          ]
+        },
+        {
+          "figure": 38,
+          "path": "images/fr/12.11.1-transform-offset.png",
+          "sha256": "b69af3487ae75277705beb4c5eb607ae8068fe1678fb376bbefd985b77afc175",
+          "dimensions": [
+            750,
+            874
+          ]
+        },
+        {
+          "figure": 39,
+          "path": "images/fr/12.11.1-transform-match.png",
+          "sha256": "44066c10bd95c3bafeb293eedfe82882fcc05ac916a66bbda9d3432a12dabf26",
+          "dimensions": [
+            749,
+            284
+          ]
+        },
+        {
+          "figure": 40,
+          "path": "images/fr/12.11.1-pose-offset.png",
+          "sha256": "abb1138f681cd7121057887c7d553918434f7bca96c5112cfc8881d46328acf7",
+          "dimensions": [
+            749,
+            330
+          ]
+        },
+        {
+          "figure": 41,
+          "path": "images/fr/12.11.1-pose-mirror.png",
+          "sha256": "1047474dae2c5d65f1597a29eb43c9cdbdbe1f41d8c79497c9532eaa455098e7",
+          "dimensions": [
+            749,
+            211
+          ]
+        },
+        {
+          "figure": 42,
+          "path": "images/fr/12.11.1-action-offset.png",
+          "sha256": "6582fed59c04b6be9485a009af4edc2620b6d84ffd0fe1605b18834f966196f3",
+          "dimensions": [
+            750,
+            218
+          ]
+        },
+        {
+          "figure": 43,
+          "path": "images/fr/12.11.1-motion-trails.png",
+          "sha256": "cbca63e7cd19c482bdfae2f27311b7deed20016fa6d5b4f2e62f60caeae7ec2f",
+          "dimensions": [
+            750,
+            696
+          ]
+        },
+        {
+          "figure": 44,
+          "path": "images/fr/12.11.1-proxy-bake.png",
+          "sha256": "e55ba0545ba4a13e7a18d34ec3842a5814644671de75ddcee584c3902550d8c2",
+          "dimensions": [
+            749,
+            906
+          ]
+        },
+        {
+          "figure": 45,
+          "path": "images/fr/12.11.1-animation-layers.png",
+          "sha256": "a66a8e35266d776a7ff7249bb0cdd1631b7a8d8a5adc2ba379066449b28b2734",
+          "dimensions": [
+            750,
+            224
+          ]
+        },
+        {
+          "figure": 46,
+          "path": "images/fr/12.11.2-lipsync-setup.png",
+          "sha256": "1d9479550dc3733079f970f074efe1191860a8bb05844a015930703d9bce38d4",
+          "dimensions": [
+            750,
+            686
+          ]
+        }
+      ]
+    }
+  },
+  "total_pdf_pages": 267,
+  "total_genuine_inline_figures": 276,
+  "total_historical_reference_placements": 12
+}
