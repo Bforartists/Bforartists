@@ -1,0 +1,26 @@
+{
+  "name": "Unity Humanoid",
+  "description": "Unity Mecanim / common humanoid naming.",
+  "bones": {
+    "Hips": "hips",
+    "Spine": "spine.01",
+    "Chest": "spine.02",
+    "UpperChest": "chest",
+    "Neck": "neck",
+    "Head": "head",
+    "LeftShoulder": "clavicle.fk-L",
+    "LeftUpperArm": "upperarm.fk-L",
+    "LeftLowerArm": "forearm.fk-L",
+    "LeftHand": "hand.fk-L",
+    "RightShoulder": "clavicle.fk-R",
+    "RightUpperArm": "upperarm.fk-R",
+    "RightLowerArm": "forearm.fk-R",
+    "RightHand": "hand.fk-R",
+    "LeftUpperLeg": "thigh.fk-L",
+    "LeftLowerLeg": "shin.fk-L",
+    "LeftFoot": "foot.fk-L",
+    "RightUpperLeg": "thigh.fk-R",
+    "RightLowerLeg": "shin.fk-R",
+    "RightFoot": "foot.fk-R"
+  }
+}

@@ -1,0 +1,691 @@
+{
+  "schema": "toolkit.text-only-translations.v1",
+  "owner": "TOOLKIT-MANUALS-20261119",
+  "status": "LOCAL_REVIEWED_TEXT_ONLY_MANUAL_ARTIFACTS",
+  "version": "BoneCraft9.2.19 unpublished candidate",
+  "source_projection_sha256": "62f2401f3719fd9ec61ec02d1207a27adc2b2a24afc6b0022b6ebde37f318a69",
+  "root_combined_staging_approval_sha256": "be2f4400b746bdcd6b7fd86474d1ff60b46353d060e8c4864f3e3323fb3bb90d",
+  "accepted_utc": "2026-11-21T03:37:53.046979+00:00",
+  "editions": {
+    "ja": {
+      "pdf": {
+        "operation": "copy_exact_file_after_root_acceptance",
+        "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\BoneCraft_Manual_ja.pdf",
+        "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\BoneCraft_Manual_ja.pdf",
+        "sha256": "8fb1513b685896936933a7e042334e30fa47b9f64305e94173d9682c000c6275",
+        "bytes": 2851760
+      },
+      "pdf_pages": 187,
+      "PDF_title": "BoneCraft マニュアル",
+      "markdown_files": [
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\index.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\index.md",
+          "sha256": "e1c93f576cf8cade72f57fbf2b92fb396286713f3fd22d916c4ebcec137d4d9f",
+          "bytes": 5840
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\01-start.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\01-start.md",
+          "sha256": "1199d2f4536694c55b799ab70387a57ba909f9ce7860dd208097dddb0c84c7fb",
+          "bytes": 17136
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\02-guides-a.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\02-guides-a.md",
+          "sha256": "40f0b440de860d7b921522830d1ca085b63119c9538c78829b53daf7fb8cec9a",
+          "bytes": 32276
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\03-guides-b.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\03-guides-b.md",
+          "sha256": "6bce2d00cd22f6dda10665de15810a6775b16f053219bc4e5a9a6c236f089bee",
+          "bytes": 29837
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\04-cats-pipeline.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\04-cats-pipeline.md",
+          "sha256": "4e0a3034822fe5e203b2a8cf1cdbe2ffb542a32147c05dc6e443701107f8636e",
+          "bytes": 7062
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\05-rig-tools.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\05-rig-tools.md",
+          "sha256": "8a5578088b7fdd0cb4dcaa349c3c6a8a2e94d00b57739807e91307a19c019a83",
+          "bytes": 37573
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\06-rig-builder.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\06-rig-builder.md",
+          "sha256": "a85caaa1ff10da46b713451ca1cc59db16ee7cfc483d29551798b94b08a5545e",
+          "bytes": 51022
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\07-mechanisms.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\07-mechanisms.md",
+          "sha256": "06de7583f3741008439209c56b79bfdcf995d1803a9dc49333469afc080596a8",
+          "bytes": 29132
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\08-vrchat.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\08-vrchat.md",
+          "sha256": "1ab61eeb52bfc9d100a53865e9c098580a775d90329734340c1ce27afbb4b607",
+          "bytes": 25642
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\09-cats.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\09-cats.md",
+          "sha256": "33edfd4ab7f341debb997d225d4cae67eb82b6a6ae05cf83f340f535ac574b62",
+          "bytes": 29251
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\10-reference.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\10-reference.md",
+          "sha256": "6ab1f9025cae008e1095b21e2951376d56e00d496abf25773b858e7113eba707",
+          "bytes": 18496
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\11-whats-new.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\11-whats-new.md",
+          "sha256": "bc0149461b1adcc05bebe75721ba25daacc2cc99ce8ca2668a648d29cd1e0c64",
+          "bytes": 24137
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\final-edition-r2\\bonecraft\\docs\\manual\\ja\\12-crescent-rose.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ja\\12-crescent-rose.md",
+          "sha256": "ea7758656d689fe24953f6ba506cf1dc32dccb2ed2ee9e39b072b3cbeb6dbd3e",
+          "bytes": 54716
+        }
+      ],
+      "independent_review": {
+        "path": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ja\\independent-pdf-review-r2\\INDEPENDENT-PDF-REVIEW-R2.json",
+        "sha256": "86c7fd45a62817da5cd314bf79e1e3fe6ae5b94c1da5d853bbe55fcb0c93973f",
+        "verdict": "PASS_INDEPENDENT_ALL_PAGE_JAPANESE_R2_PDF_REVIEW"
+      },
+      "images": 0,
+      "written_omission_notes": 174,
+      "required_findings_open": 0
+    },
+    "ko": {
+      "pdf": {
+        "operation": "copy_exact_file_after_root_acceptance",
+        "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\BoneCraft_Manual_ko.pdf",
+        "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\BoneCraft_Manual_ko.pdf",
+        "sha256": "237396f4263a0a5a5bffa695be6cefc1dfd9d30e489c6ed89f5c91c361cd97b4",
+        "bytes": 2481341
+      },
+      "pdf_pages": 185,
+      "PDF_title": "BoneCraft 설명서",
+      "markdown_files": [
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\index.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\index.md",
+          "sha256": "d828abd39b21b18898bf308ad1f17ebac815baac4a16c820607e2be911678000",
+          "bytes": 5001
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\01-start.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\01-start.md",
+          "sha256": "d9fb99448c2a65bee7d49b8b7a80bde458dedda090ebdf81d47ff3574ae8f1e0",
+          "bytes": 14520
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\02-guides-a.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\02-guides-a.md",
+          "sha256": "4abc4e0c184102eb7e08c1d6960bc30d449fca2cf210babe6a489525dc0e1c7a",
+          "bytes": 27290
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\03-guides-b.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\03-guides-b.md",
+          "sha256": "dee05083418d19d2671eb9a1834b81db447ffa17ac4e15c3016559a16fde0e0d",
+          "bytes": 24959
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\04-cats-pipeline.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\04-cats-pipeline.md",
+          "sha256": "4ddb48260c54cf6c45dc8d72f4f70d6db9445706389b076ac710c074845638ca",
+          "bytes": 6016
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\05-rig-tools.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\05-rig-tools.md",
+          "sha256": "298355fe78aaad359b1cbb70afbb7729d5e17006a79b1967f97d10d95af53f6c",
+          "bytes": 31697
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\06-rig-builder.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\06-rig-builder.md",
+          "sha256": "098a4b854e3cf07e40284a7093eb68b1a6365c67322262d2ae1ca7f74bb77c1f",
+          "bytes": 43293
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\07-mechanisms.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\07-mechanisms.md",
+          "sha256": "6fbf7a9477a863aca95e186476f8374699d0678d042f2517e73ceb19cce6c9b8",
+          "bytes": 25003
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\08-vrchat.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\08-vrchat.md",
+          "sha256": "74da1dd479eaeb10ad8a78a0650a52b30b261d605e8cd8e2de8dce2c29d9038e",
+          "bytes": 22210
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\09-cats.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\09-cats.md",
+          "sha256": "6a3fed16b98514834446ef93ed6f4dda4282d1702d461a31084e4af536c875c8",
+          "bytes": 24538
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\10-reference.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\10-reference.md",
+          "sha256": "56e955348f6eda5eadd736912a0e41da1d9292c4793d1b7e398c28be903ca816",
+          "bytes": 15978
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\11-whats-new.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\11-whats-new.md",
+          "sha256": "9b4d96b240815efd44b572cecb9f00e39b8e95080fc9dae12beba5e392ee6b44",
+          "bytes": 21687
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\final-edition-r2\\bonecraft\\docs\\manual\\ko\\12-crescent-rose.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\ko\\12-crescent-rose.md",
+          "sha256": "8ed3432e0dba135c72b89d6f8397826844f323f49cfca0320cf04c3c176902f6",
+          "bytes": 51966
+        }
+      ],
+      "independent_review": {
+        "path": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\ko\\independent-pdf-review\\r2-review\\INDEPENDENT-R2-PDF-REVIEW.json",
+        "sha256": "50928739b3c5492e250f451e3efb4eb1fd8a2987630bd98b8f02c152c7af34dc",
+        "verdict": "PASS_INDEPENDENT_KOREAN_MANUAL_PDF_ARTIFACT_ONLY"
+      },
+      "images": 0,
+      "written_omission_notes": 174,
+      "required_findings_open": 0
+    },
+    "zh": {
+      "pdf": {
+        "operation": "copy_exact_file_after_root_acceptance",
+        "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\BoneCraft_Manual_zh.pdf",
+        "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\BoneCraft_Manual_zh.pdf",
+        "sha256": "a9571f364c33768abbf6e2e880a2735cba75258436d1d4a851f114a828b6fb8c",
+        "bytes": 3115995
+      },
+      "pdf_pages": 184,
+      "PDF_title": "BoneCraft 手册",
+      "markdown_files": [
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\index.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\index.md",
+          "sha256": "26005150bb1fc33c2802204ff48f98c27c75e4f3f440b1801a2011d5716115e4",
+          "bytes": 4288
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\01-start.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\01-start.md",
+          "sha256": "ed68cd47eeb2e0844ba78eebc7b9db5d7d5060286dcadaf52d72f85cfeeb6622",
+          "bytes": 12285
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\02-guides-a.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\02-guides-a.md",
+          "sha256": "7a929e3acf19ba988cbf710fb37152175acb46ec8306161b3a0376d07fd61fd7",
+          "bytes": 22991
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\03-guides-b.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\03-guides-b.md",
+          "sha256": "f71952e3c47e76a2af793f8e8889877ad2fee9eb7afdfbe36602915c13950b13",
+          "bytes": 20902
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\04-cats-pipeline.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\04-cats-pipeline.md",
+          "sha256": "43f3394233dbe158de20030a56452913f2f5e50bc3cf1c2c9244d4d3ebaa4bf9",
+          "bytes": 4803
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\05-rig-tools.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\05-rig-tools.md",
+          "sha256": "318e202242bd71a5727adc207d9811de337bcaef4f90cb82fa81d65281d50186",
+          "bytes": 27569
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\06-rig-builder.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\06-rig-builder.md",
+          "sha256": "10f9dd0802d03c905c5016a68278391ea88f7b15c7960e1bec2d9631dac824af",
+          "bytes": 34459
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\07-mechanisms.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\07-mechanisms.md",
+          "sha256": "4334eefcf7a8aa3c00ad0625c147fa309f3ace1eec673e4093f07867b9fb27b3",
+          "bytes": 20380
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\08-vrchat.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\08-vrchat.md",
+          "sha256": "bbf1fa404523dfcbd121f9260313413e435f125135b35c5061a721ac0963f077",
+          "bytes": 18529
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\09-cats.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\09-cats.md",
+          "sha256": "f322c3e0c89bd853bd6f804f33e7ce8ad2029822ff557a20d95553804ac06826",
+          "bytes": 20241
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\10-reference.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\10-reference.md",
+          "sha256": "276e5220833e7ab2f60967fa28d9ae7dd31bc4a62799e02a0223b179b0bd992e",
+          "bytes": 13992
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\11-whats-new.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\11-whats-new.md",
+          "sha256": "72bdd0c9398a492263db3d058c0235e023c1ff387241b3888e5cc20592432bf1",
+          "bytes": 17805
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\final-edition-r2\\bonecraft\\docs\\manual\\zh\\12-crescent-rose.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\zh\\12-crescent-rose.md",
+          "sha256": "55d79b9cdb9209f67200b3a01d75ab9009d69b674c942dbf3cfd781cfe885c9a",
+          "bytes": 39326
+        }
+      ],
+      "independent_review": {
+        "path": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\zh\\independent-pdf-review-r2\\INDEPENDENT-PDF-REVIEW-R2-FINAL.json",
+        "sha256": "044cfb2a8b81091401991e9b3b76b67ff870ffd306d568d15d761cc543468e72",
+        "verdict": "PASS_CURRENT_R2_PDF_ARTIFACT_WITH_EXPLICIT_RAW_VALIDATOR_QUALIFICATION"
+      },
+      "images": 0,
+      "written_omission_notes": 174,
+      "required_findings_open": 0
+    },
+    "pt": {
+      "pdf": {
+        "operation": "copy_exact_file_after_root_acceptance",
+        "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\BoneCraft_Manual_pt.pdf",
+        "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\BoneCraft_Manual_pt.pdf",
+        "sha256": "169627bbd9f344df5ac7342b49d74d760b39cfaca955bb4bfa0042f8f283a5d4",
+        "bytes": 2305386
+      },
+      "pdf_pages": 192,
+      "PDF_title": "Manual do BoneCraft",
+      "markdown_files": [
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\index.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\index.md",
+          "sha256": "43ad3df2cf1db7d8a9e2112475d93530fa8ef37d2887fd350d849b05199ea299",
+          "bytes": 5140
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\01-start.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\01-start.md",
+          "sha256": "a2cb38a41b503e8451455a93ba589397fea906ec2f181de8bb8c627a9f9cba14",
+          "bytes": 14188
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\02-guides-a.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\02-guides-a.md",
+          "sha256": "b73c308b132221f7d1cf0b02abfbb1aecbb4e598a878373d3e876b96368d5dd7",
+          "bytes": 26570
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\03-guides-b.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\03-guides-b.md",
+          "sha256": "b051da550abc321cc9ebf5f9ecb1389b9d9d424f67a731b6832379febef44caa",
+          "bytes": 24892
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\04-cats-pipeline.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\04-cats-pipeline.md",
+          "sha256": "e179a4db18c46758d59fc60f1743ff99660383e44673e839d3b44a3ec7351b49",
+          "bytes": 5688
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\05-rig-tools.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\05-rig-tools.md",
+          "sha256": "cc8199e6c25c3651a7c336393034de9790a78d6e26cbe5697cc79cd043084621",
+          "bytes": 34020
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\06-rig-builder.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\06-rig-builder.md",
+          "sha256": "4e05108b41542f854fb693d2ad279fc9100e905c15f553b4f9e11ece1c115790",
+          "bytes": 39171
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\07-mechanisms.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\07-mechanisms.md",
+          "sha256": "ca3121b7d4e7b2617a466f0876ae3d0a01847d30e53e03438c2e11c3afbc0e2b",
+          "bytes": 24469
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\08-vrchat.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\08-vrchat.md",
+          "sha256": "7657ceb0cd59016693564774d9148875955b31d8dd94809bdbc5b3e39639e31e",
+          "bytes": 22238
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\09-cats.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\09-cats.md",
+          "sha256": "a050ade04aab09a92abe14ec9f471ebf522e669ead5acd115df431b2032e09b8",
+          "bytes": 25159
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\10-reference.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\10-reference.md",
+          "sha256": "54592a75a3e02bbf8742105609f4ab230561376ef7d0cd665b158a172953f031",
+          "bytes": 15350
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\11-whats-new.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\11-whats-new.md",
+          "sha256": "44f421681cf8c0b0f105d740ecbdd2a6bfffc5f1aeff63b9b637dd50bd19c902",
+          "bytes": 21768
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\final-edition-r2\\bonecraft\\docs\\manual\\pt\\12-crescent-rose.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\pt\\12-crescent-rose.md",
+          "sha256": "3bba020008623b469a9ffb969f1c8b7958e810a245484b4edb92edc33d2677b2",
+          "bytes": 45056
+        }
+      ],
+      "independent_review": {
+        "path": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\pt\\independent-pdf-review-r2\\INDEPENDENT-ALL192-PAGE-R2-REVIEW.json",
+        "sha256": "3ed3577bda44529a8b0c0ede25a184e281191e56baf45f216c263ee0f9677762",
+        "verdict": "PASS_CURRENT_PT_R2_TEXT_ONLY_PDF_WITH_APPROVED_PRESENTATION_QUALIFICATION"
+      },
+      "images": 0,
+      "written_omission_notes": 174,
+      "required_findings_open": 0
+    },
+    "es": {
+      "pdf": {
+        "operation": "copy_exact_file_after_root_acceptance",
+        "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\BoneCraft_Manual_es.pdf",
+        "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\BoneCraft_Manual_es.pdf",
+        "sha256": "6360eeba712ec2cb6778f4bc397fc367d19cdc33ccdff0906a79049ebf6b059c",
+        "bytes": 2300082
+      },
+      "pdf_pages": 192,
+      "PDF_title": "Manual de BoneCraft",
+      "markdown_files": [
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\index.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\index.md",
+          "sha256": "3e71f99ff68425a30d9dcd57ef33342e961a245c29f5cd568d4e12e303cb325a",
+          "bytes": 5117
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\01-start.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\01-start.md",
+          "sha256": "06cea28d4247b0e1c0d8ab01c8e582fc3ec9a7c8c340584ff4e4359e8b635763",
+          "bytes": 14238
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\02-guides-a.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\02-guides-a.md",
+          "sha256": "393a8eab74b36f9bf68e90766813ffdbbfc2bbe8845adafbdecdd3dffb13cc99",
+          "bytes": 26736
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\03-guides-b.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\03-guides-b.md",
+          "sha256": "65b001e62bbc49762df306bfedc473387b4833433850d956cf1da64981d3e2dd",
+          "bytes": 24559
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\04-cats-pipeline.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\04-cats-pipeline.md",
+          "sha256": "86dc9d4475398c48c5be4344227922497d14d82ee622e50ddb05fc5b46086165",
+          "bytes": 5463
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\05-rig-tools.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\05-rig-tools.md",
+          "sha256": "5ca56ccd678e7e2b276d87ba4adbbfb10153388f8339dedc4f511bac4238eefe",
+          "bytes": 32700
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\06-rig-builder.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\06-rig-builder.md",
+          "sha256": "fb1682e812056e0b63ec793d401a01b21b3387fef603469d5e0c25df71a57069",
+          "bytes": 40261
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\07-mechanisms.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\07-mechanisms.md",
+          "sha256": "e13392ebf664ecbad3ad47c0d53b79af8ac9698405a98f258e4192a1f892ba71",
+          "bytes": 22952
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\08-vrchat.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\08-vrchat.md",
+          "sha256": "e88f6b41b5b3a4a81dea5e28b75bcc2a19cbac96eb2f42a04066c7e8e6f85858",
+          "bytes": 21443
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\09-cats.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\09-cats.md",
+          "sha256": "821c9d9549fd882c151f67f31419f4759ceb14e8affde9a33ad904179ea23d6f",
+          "bytes": 23911
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\10-reference.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\10-reference.md",
+          "sha256": "d6ee1f96cc05cded6b66d0281c651faa4fb08c4e4b78c9cdef740e53a92c8f7e",
+          "bytes": 15516
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\11-whats-new.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\11-whats-new.md",
+          "sha256": "dc967c8306e85d3cb5d98c4a1776777c2fbc45ccf165d543fcf6b0df78feaa67",
+          "bytes": 22511
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\final-edition-r2\\bonecraft\\docs\\manual\\es\\12-crescent-rose.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\es\\12-crescent-rose.md",
+          "sha256": "9fe4a95b0b82d84db5dbe9588bfdbc69f5a462823828e737ee5c4819020392c2",
+          "bytes": 46636
+        }
+      ],
+      "independent_review": {
+        "path": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\es\\independent-r2-pdf-review\\INDEPENDENT-R2-ALL192-PAGE-REVIEW.json",
+        "sha256": "cb751302c57b17924b200e013e8582216345c14f14a9de0d1460efd3dfd6072f",
+        "verdict": "PASS_INDEPENDENT_ALL192_PAGE_R2_PDF_REVIEW_WITH_NONBLOCKING_TABLE_ADVISORY"
+      },
+      "images": 0,
+      "written_omission_notes": 174,
+      "required_findings_open": 0
+    },
+    "fr": {
+      "pdf": {
+        "operation": "copy_exact_file_after_root_acceptance",
+        "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\BoneCraft_Manual_fr.pdf",
+        "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\BoneCraft_Manual_fr.pdf",
+        "sha256": "1e372bf197f9e65eb81a80e21681fe8f10fcf4fb1d2311222c6c3f197730e708",
+        "bytes": 2304670
+      },
+      "pdf_pages": 191,
+      "PDF_title": "Manuel de BoneCraft",
+      "markdown_files": [
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\index.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\index.md",
+          "sha256": "b32f34664b68df57b361037763e7a234f5fea5e73ecdd0a117ad4b6173328633",
+          "bytes": 5363
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\01-start.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\01-start.md",
+          "sha256": "ee9eb67880b3dff8db434fee84a54098c79707898ca6fc5a7fd840c1102a4e4a",
+          "bytes": 14753
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\02-guides-a.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\02-guides-a.md",
+          "sha256": "08bf8f35ff87a285a979126c3f6b187a0af09ee1b46e8070c43e85905c99a56c",
+          "bytes": 27525
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\03-guides-b.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\03-guides-b.md",
+          "sha256": "1dd435ba698340a294c61d68713b3b8558e5a5b415d591143c5b42d3a1774bdd",
+          "bytes": 27106
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\04-cats-pipeline.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\04-cats-pipeline.md",
+          "sha256": "29096cdaee5fe26395f9df7d0babb1731b600386e1de5cdaf8ccd3505055b8b7",
+          "bytes": 5826
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\05-rig-tools.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\05-rig-tools.md",
+          "sha256": "3d6d1f79a48a5361627ca6e87d7375de89e0d5ca00616f85ccfda2a5bafc1dcb",
+          "bytes": 35310
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\06-rig-builder.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\06-rig-builder.md",
+          "sha256": "3dd7895fa020753bfce7440e20ab9cde05be6cbd6b1f3219156fe9e561585a6f",
+          "bytes": 40616
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\07-mechanisms.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\07-mechanisms.md",
+          "sha256": "d3d1680bad8ff03cc5b6aff5433c9500e11cc07c405f6735908c3400ae020f89",
+          "bytes": 25135
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\08-vrchat.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\08-vrchat.md",
+          "sha256": "93cb5b6d855732240d16a64f06bb6a9c7340a591e33636464223826ce84d6b88",
+          "bytes": 22316
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\09-cats.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\09-cats.md",
+          "sha256": "3d778c2b152584af8ddf76efc33ab401d08e985c0ef64d8768d31cb9e006fb65",
+          "bytes": 25265
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\10-reference.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\10-reference.md",
+          "sha256": "550faaf43df554d065799f1dd24e75cbec0b69d118e5264d7b9a9f1405a85397",
+          "bytes": 15487
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\11-whats-new.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\11-whats-new.md",
+          "sha256": "37926028032b57f025c3ec96b0a143f959598710d8d70650c97f7136c14396ac",
+          "bytes": 22092
+        },
+        {
+          "operation": "copy_exact_file_after_root_acceptance",
+          "source": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\final-edition-r2\\bonecraft\\docs\\manual\\fr\\12-crescent-rose.md",
+          "destination": "G:\\LapArt\\Projects\\Blender_Addons\\release-prep\\manuals-current-20261119\\B4Artists_Toolkit\\docs\\bonecraft\\translations\\fr\\12-crescent-rose.md",
+          "sha256": "1eb990e3253eb85493683db92e1608a48054bf003371f54b3397b53886b17aaa",
+          "bytes": 45655
+        }
+      ],
+      "independent_review": {
+        "path": "G:\\LapArt\\output\\bforartists-toolkit-offer\\20261119\\manual-update\\localization\\bonecraft\\fr\\independent-pdf-review-r2\\INDEPENDENT-PDF-REVIEW.json",
+        "sha256": "472a2e048c7167a5da9124cb52e07c64301c76a001e378d798356633949d168f",
+        "verdict": "PASS_INDEPENDENT_FRENCH_R2_PDF"
+      },
+      "images": 0,
+      "written_omission_notes": 174,
+      "required_findings_open": 0
+    }
+  },
+  "total_pdf_pages": 1131,
+  "total_images": 0,
+  "written_omission_notes_per_edition": 174,
+  "review_scope": "All actual PDF pages, paired full text, actual fonts/glyphs/footers/bounds/links/heading destinations; exact finite reversible presentation bridges.",
+  "rendering_qualification": "PDF physical navigation verified. Markdown section IDs use the project attr_list renderer; no claim of GitHub custom-ID rendering equivalence.",
+  "raw_validator_qualification": "Exactly18 staging list_items indentation errors remain under the finite approved adapter contract;60other stage files and78original raw-source comparisons pass. No source/validator change or unqualified stage CLI PASS.",
+  "preservation": "All original drafts, R1 PDFs, findings, reviews and checkpoints retained.1466 existing product files rehashed unchanged during copy.",
+  "separate_holds": "Software source, interface, resource, release and protected merge holds remain separate; none cleared by this manual artifact acceptance."
+}
