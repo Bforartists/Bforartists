@@ -182177,6 +182177,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "Otwiera okno edytora kompozytora dla grupy węzła tego efektu sceny"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "Nowa kolekcja z zaznaczenia"
 
@@ -182187,3 +182188,25 @@ msgstr "Przenieś wybrane obiekty"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "Przenosi wybrane obiekty z Konspektu do nowej kolekcji"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "Nowa z zaznaczenia"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "Nowa zagnieżdżona z zaznaczenia"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "Dodaje nową kolekcję i przenosi do niej wybrane obiekty z Konspektu"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "Dodaje nową kolekcję wewnątrz aktywnej kolekcji"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "Dodaje nową kolekcję wewnątrz aktywnej kolekcji i przenosi do niej wybrane obiekty z Konspektu"

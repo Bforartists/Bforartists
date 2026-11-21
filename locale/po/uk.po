@@ -103089,6 +103089,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "Відкрити вікно редактора компонування для групи вузлів цього ефекту сцени"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "Нова Колекція з вибраного"
 
@@ -103099,3 +103100,25 @@ msgstr "Перемістити вибрані об'єкти"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "Перемістити вибрані об'єкти Структуратора у нову колекцію"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "Нова з вибраного"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "Нова вкладена з вибраного"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "Додати нову колекцію та перемістити в неї вибрані об'єкти Структуратора"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "Додати нову колекцію всередині активної колекції"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "Додати нову колекцію всередині активної колекції та перемістити в неї вибрані об'єкти Структуратора"

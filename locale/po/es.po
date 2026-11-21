@@ -182177,6 +182177,7 @@ msgid "Open a Compositor Editor window for this scene effect's node group"
 msgstr "Abre una ventana del editor de nodos de composición para el grupo de nodos de este efecto de escena"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
 msgid "New Collection from Selection"
 msgstr "Nueva colección desde la selección"
 
@@ -182187,3 +182188,25 @@ msgstr "Mover objetos seleccionados"
 # BFA - machine translated, please review
 msgid "Move selected Outliner objects into the new collection"
 msgstr "Mueve los objetos seleccionados del Listado a la nueva colección"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New from Selection"
+msgstr "Nueva desde la selección"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "New Nested from Selection"
+msgstr "Nueva anidada desde la selección"
+
+# BFA - machine translated, please review
+msgid "Add a new collection and move selected Outliner objects into it"
+msgstr "Agrega una nueva colección y mueve a ella los objetos seleccionados del Listado"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection"
+msgstr "Agrega una nueva colección dentro de la colección activa"
+
+# BFA - machine translated, please review
+msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
+msgstr "Agrega una nueva colección dentro de la colección activa y mueve a ella los objetos seleccionados del Listado"
