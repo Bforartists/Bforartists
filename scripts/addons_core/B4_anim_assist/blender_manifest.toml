@@ -1,0 +1,16 @@
+schema_version = "1.0.0"
+
+id = "anim_assist"
+version = "12.11.2"
+name = "Anim Assist"
+tagline = "Production animation workflow tools for Bforartists (not compatible with standard Blender)"
+maintainer = "Developer <dev@example.com>"
+type = "add-on"
+tags = ["Animation"]
+license = ["SPDX:GPL-2.0-or-later"]
+
+# Blender 4.x.
+blender_version_min = "4.2.0"
+
+[permissions]
+files = "Import and export addon settings to JSON files"
