@@ -1,0 +1,26 @@
+{
+ "name": "Suffix Humanoid",
+ "description": "Humanoid naming with _L/_R suffixes (Hips, UpperArm_L, LowerLeg_R ...), common in motion-capture BVH exports.",
+ "bones": {
+  "Hips": "hips",
+  "Spine": "spine.01",
+  "Chest": "spine.02",
+  "UpperChest": "chest",
+  "Neck": "neck",
+  "Head": "head",
+  "Shoulder_L": "clavicle.fk-L",
+  "UpperArm_L": "upperarm.fk-L",
+  "LowerArm_L": "forearm.fk-L",
+  "Hand_L": "hand.fk-L",
+  "UpperLeg_L": "thigh.fk-L",
+  "LowerLeg_L": "shin.fk-L",
+  "Foot_L": "foot.fk-L",
+  "Shoulder_R": "clavicle.fk-R",
+  "UpperArm_R": "upperarm.fk-R",
+  "LowerArm_R": "forearm.fk-R",
+  "Hand_R": "hand.fk-R",
+  "UpperLeg_R": "thigh.fk-R",
+  "LowerLeg_R": "shin.fk-R",
+  "Foot_R": "foot.fk-R"
+ }
+}

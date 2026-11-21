@@ -1,0 +1,74 @@
+[
+  {
+    "rig_name": "fallback",
+    "op_id": "boneforge.fallback_humanoid",
+    "label": "Basic Humanoid",
+    "asset_name": "Basic Humanoid",
+    "group": "humans",
+    "requires_rigify": false
+  },
+  {
+    "rig_name": "basic_human",
+    "op_id": "object.armature_basic_human_metarig_add",
+    "label": "Simple Human",
+    "group": "humans",
+    "asset_name": "Simple Human",
+    "requires_rigify": true
+  },
+  {
+    "rig_name": "human",
+    "op_id": "object.armature_human_metarig_add",
+    "label": "Full Human",
+    "group": "humans",
+    "asset_name": "Full Human",
+    "requires_rigify": true
+  },
+  {
+    "rig_name": "basic_quadruped",
+    "op_id": "object.armature_basic_quadruped_metarig_add",
+    "label": "Basic Quadruped",
+    "group": "quadrupeds",
+    "asset_name": "Basic Quadruped",
+    "requires_rigify": true
+  },
+  {
+    "rig_name": "cat",
+    "op_id": "object.armature_cat_metarig_add",
+    "label": "Cat",
+    "group": "quadrupeds",
+    "asset_name": "Cat",
+    "requires_rigify": true
+  },
+  {
+    "rig_name": "horse",
+    "op_id": "object.armature_horse_metarig_add",
+    "label": "Horse",
+    "group": "quadrupeds",
+    "asset_name": "Horse",
+    "requires_rigify": true
+  },
+  {
+    "rig_name": "wolf",
+    "op_id": "object.armature_wolf_metarig_add",
+    "label": "Wolf",
+    "group": "quadrupeds",
+    "asset_name": "Wolf",
+    "requires_rigify": true
+  },
+  {
+    "rig_name": "bird",
+    "op_id": "object.armature_bird_metarig_add",
+    "label": "Bird",
+    "group": "other",
+    "asset_name": "Bird",
+    "requires_rigify": true
+  },
+  {
+    "rig_name": "shark",
+    "op_id": "object.armature_shark_metarig_add",
+    "label": "Shark",
+    "group": "other",
+    "asset_name": "Shark",
+    "requires_rigify": true
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "name": "Mocap Humanoid",
+  "description": "Common motion-capture humanoid naming (mixamorig:* family).",
+  "bones": {
+    "mixamorig:Hips": "hips",
+    "mixamorig:Spine": "spine.01",
+    "mixamorig:Spine1": "spine.02",
+    "mixamorig:Spine2": "chest",
+    "mixamorig:Neck": "neck",
+    "mixamorig:Head": "head",
+    "mixamorig:LeftShoulder": "clavicle.fk-L",
+    "mixamorig:LeftArm": "upperarm.fk-L",
+    "mixamorig:LeftForeArm": "forearm.fk-L",
+    "mixamorig:LeftHand": "hand.fk-L",
+    "mixamorig:RightShoulder": "clavicle.fk-R",
+    "mixamorig:RightArm": "upperarm.fk-R",
+    "mixamorig:RightForeArm": "forearm.fk-R",
+    "mixamorig:RightHand": "hand.fk-R",
+    "mixamorig:LeftUpLeg": "thigh.fk-L",
+    "mixamorig:LeftLeg": "shin.fk-L",
+    "mixamorig:LeftFoot": "foot.fk-L",
+    "mixamorig:RightUpLeg": "thigh.fk-R",
+    "mixamorig:RightLeg": "shin.fk-R",
+    "mixamorig:RightFoot": "foot.fk-R"
+  }
+}
