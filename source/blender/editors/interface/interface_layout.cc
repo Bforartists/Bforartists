@@ -6575,13 +6575,18 @@ void tear_off_header_draw(Layout *layout,
 static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt)
 {
   Block *block = layout->block();
-  const bool is_context_menu = BLI_strcasestr(mt->idname, "_context_menu") != nullptr;
   const bool is_tear_off = block->handle && block->handle->is_tear_off;
   /* BFA - Tear-Off Menu/Panel: a menu opened from a button bound to a property or carrying context
    * pointers reads them while drawing. A tear-off has no source button and can't store them, so it
    * would redraw empty (for example the color space menu). */
   const Button *source_but = block->handle ? block->handle->popup_create_vars.but : nullptr;
   const bool menu_needs_source_but = source_but && (source_but->rnaprop || source_but->context);
+  /* BFA - Tear-Off Menu/Panel: a right-click context menu gets no row, it opens under the cursor
+   * for one quick pick. The specials menus next to UI lists are named the same way (for example
+   * `MATERIAL_MT_context_menu`) but open from a dropdown button like any other menu, so the
+   * button is what tells them apart. A tear-off has no button and always gets its header. */
+  const bool is_context_menu = !is_tear_off && source_but == nullptr &&
+                               BLI_strcasestr(mt->idname, "_context_menu") != nullptr;
   if (!STREQ(mt->idname, "WM_MT_tear_off_menu") && block->handle && !is_context_menu)
   {
     if (is_tear_off) {
