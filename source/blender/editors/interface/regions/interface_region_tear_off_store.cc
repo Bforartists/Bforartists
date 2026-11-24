@@ -621,12 +621,10 @@ static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, 
   const char *ot_name = nullptr;
   const char *idname_prop = nullptr;
   if (data.kind == "MENU") {
-    /* No poll guard in a menu's first layout, unlike a panel's. A context menu has no Tear Off row
-     * and gets no header, so it could never be closed. */
+    /* No poll guard in a menu's first layout, unlike a panel's. A menu named `_context_menu` can
+     * be the torn off specials menu of a UI list, and a tear-off always gets its header. */
     MenuType *mt = WM_menutype_find(data.idname.c_str(), true);
-    if (mt == nullptr || !WM_menutype_poll(C, mt) ||
-        BLI_strcasestr(data.idname.c_str(), "_context_menu"))
-    {
+    if (mt == nullptr || !WM_menutype_poll(C, mt)) {
       return false;
     }
     ot_name = "WM_OT_menu_tear_off";
