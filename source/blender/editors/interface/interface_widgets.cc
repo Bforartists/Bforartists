@@ -5756,6 +5756,43 @@ static WidgetType *popover_widget_type(Button *but, rcti *rect)
 /** \name Public API
  * \{ */
 
+/* BFA - Tear-Off Menu/Panel: two rows of grip dots across the Tear Off row, see
+ * #tear_off_row_draw. In the text color, so they follow the hover highlight like a label. */
+static void tear_off_row_dots_draw(const uiWidgetColors *wcol, const rcti *rect, const float zoom)
+{
+  const float dot = std::max(1.0f, roundf(UI_SCALE_FAC * zoom));
+  const float pitch = 3.0f * dot;
+  const float pad = 0.3f * U.widget_unit * zoom;
+  const float width = BLI_rcti_size_x(rect) - 2.0f * pad;
+  const int count = int((width + pitch - dot) / pitch);
+  if (count < 1) {
+    return;
+  }
+  /* On whole pixels, or the dots blur. */
+  const float xmin = roundf(BLI_rcti_cent_x_fl(rect) - 0.5f * (count * pitch - (pitch - dot)));
+  const float ymin = roundf(BLI_rcti_cent_y_fl(rect) - 0.5f * (pitch + dot));
+
+  /* The hover highlight is still in the widget batch, and would be drawn over the dots. */
+  widgetbase_draw_cache_flush();
+
+  const uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  immUniformColor3ubvAlpha(wcol->text, 190);
+  GPU_blend(GPU_BLEND_ALPHA);
+  immBegin(GPU_PRIM_TRIS, count * 2 * 6);
+  for (int row = 0; row < 2; row++) {
+    const float y = ymin + row * pitch;
+    for (int i = 0; i < count; i++) {
+      const float x = xmin + i * pitch;
+      immRectf_fast(pos, x, y, x + dot, y + dot);
+    }
+  }
+  immEnd();
+  GPU_blend(GPU_BLEND_NONE);
+  immUnbindProgram();
+}
+
 void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but, rcti *rect)
 {
   const bTheme *btheme = theme::theme_get();
@@ -6120,7 +6157,12 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
     wt->draw(&wt->wcol, rect, &state, roundboxalign, zoom);
   }
 
-  if (wt->text) {
+  /* BFA - Tear-Off Menu/Panel: the Tear Off row has no label, grip dots fill it. The entry in a
+   * panel's context menu runs the same operator, but it has a label and draws like any item. */
+  if (but->drawstr.empty() && but->optype && button_is_tear_off_row(but)) {
+    tear_off_row_dots_draw(&wt->wcol, rect, zoom);
+  }
+  else if (wt->text) {
     if (use_alpha_blend) {
       GPU_blend(GPU_BLEND_ALPHA);
     }
