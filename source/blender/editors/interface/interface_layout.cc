@@ -6577,7 +6577,8 @@ PointerRNA tear_off_row_draw(Layout *layout, const char *opname)
   const EmbossType prev_emboss = layout->emboss_or_undefined();
   layout->emboss_set(EmbossType::Pulldown);
   Layout *row = &layout->row(false);
-  row->scale_y_set(0.4f);
+  /* Half a row: lower than that is hard to hit. */
+  row->scale_y_set(0.5f);
   PointerRNA opptr = row->op(opname, "", ICON_NONE);
   layout->emboss_set(prev_emboss);
   return opptr;
