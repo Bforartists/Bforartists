@@ -1599,6 +1599,8 @@ void tear_off_header_draw(Layout *layout,
                           const char *label,
                           const char *collapse_op,
                           const char *close_op);
+/* BFA - Tear-Off Menu/Panel: the thin dotted row that tears a menu, popover or dropdown off. */
+PointerRNA tear_off_row_draw(Layout *layout, const char *opname);
 PopupBlockHandle *popup_menu_tear_off_create(bContext *C,
                                              std::function<void(bContext *, Layout *)> menu_func);
 

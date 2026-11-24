@@ -5756,6 +5756,56 @@ static WidgetType *popover_widget_type(Button *but, rcti *rect)
 /** \name Public API
  * \{ */
 
+/* BFA - Tear-Off Menu/Panel: the Tear Off row, a line of grip dots, see #tear_off_row_draw. It
+ * draws its own hover highlight: the row is too low for the rounded menu item box, whose corners
+ * and outline smeared into the menu's edge. A plain bar on whole pixels stays crisp at any scale.
+ * The dots are in the text color, so they follow the highlight like a label. */
+static void tear_off_row_widget_draw(const uiWidgetColors *wcol,
+                                     const rcti *rect,
+                                     const float zoom)
+{
+  const float dot = std::max(1.0f, roundf(UI_SCALE_FAC * zoom));
+  const float pitch = 3.0f * dot;
+  /* The bar: the side padding of a menu item, and clear of the items above and below. */
+  const float bar_pad = roundf(0.125f * U.widget_unit * zoom);
+  const float bar_xmin = rect->xmin + bar_pad;
+  const float bar_xmax = rect->xmax - bar_pad;
+  float bar_ymin = rect->ymin + dot;
+  const float bar_ymax = rect->ymax - dot;
+  /* A pixel lower when the dots can't be centered in it otherwise. */
+  if (int(bar_ymax - bar_ymin - dot) % 2 != 0) {
+    bar_ymin += 1.0f;
+  }
+  /* The dots, on whole pixels or they blur. */
+  const float width = (bar_xmax - bar_xmin) - 2.0f * pitch;
+  const int count = int((width + pitch - dot) / pitch);
+  if (count < 1 || bar_ymax - bar_ymin < dot) {
+    return;
+  }
+  const float xmin = roundf(0.5f * (bar_xmin + bar_xmax) - 0.5f * (count * pitch - (pitch - dot)));
+  const float ymin = bar_ymin + 0.5f * (bar_ymax - bar_ymin - dot);
+
+  /* Widgets still in the batch would be drawn over this. */
+  widgetbase_draw_cache_flush();
+
+  const uint pos = GPU_vertformat_attr_add(
+      immVertexFormat(), "pos", gpu::VertAttrType::SFLOAT_32_32);
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+  /* Only a hovered menu item has an inner color. */
+  if (wcol->inner[3] != 0) {
+    immUniformColor3ubv(wcol->inner);
+    immRectf(pos, bar_xmin, bar_ymin, bar_xmax, bar_ymax);
+  }
+  immUniformColor3ubv(wcol->text);
+  immBegin(GPU_PRIM_TRIS, count * 6);
+  for (int i = 0; i < count; i++) {
+    const float x = xmin + i * pitch;
+    immRectf_fast(pos, x, ymin, x + dot, ymin + dot);
+  }
+  immEnd();
+  immUnbindProgram();
+}
+
 void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but, rcti *rect)
 {
   const bTheme *btheme = theme::theme_get();
@@ -6113,6 +6163,13 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
   {
     copy_v3_v3_uchar(wt->wcol.text, tui->panel_title);
   }
+  /* BFA - Tear-Off Menu/Panel: the Tear Off row has no label and draws itself. The entry in a
+   * panel's context menu runs the same operator, but it has a label and draws like any item. */
+  if (but->drawstr.empty() && but->optype && button_is_tear_off_row(but)) {
+    tear_off_row_widget_draw(&wt->wcol, rect, zoom);
+    return;
+  }
+
   if (wt->custom) {
     wt->custom(but, &wt->wcol, rect, &state, roundboxalign, zoom);
   }

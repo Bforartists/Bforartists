@@ -138,7 +138,7 @@ static bool enum_tear_off_source_from_property(bContext *C,
 
 static void enum_tear_off_row_draw(Layout *layout, const EnumTearOffSource &source)
 {
-  PointerRNA opptr = layout->op("WM_OT_enum_tear_off", IFACE_("Tear Off Menu"), ICON_GRIP);
+  PointerRNA opptr = tear_off_row_draw(layout, "WM_OT_enum_tear_off");
   if (opptr.data) {
     RNA_string_set(&opptr, "data_path", source.data_path.c_str());
     RNA_boolean_set(&opptr, "use_context", source.use_context);
@@ -148,7 +148,6 @@ static void enum_tear_off_row_draw(Layout *layout, const EnumTearOffSource &sour
     RNA_string_set(&opptr, "op_propname", source.op_propname.c_str());
     RNA_int_set(&opptr, "op_context", int(source.op_context));
   }
-  layout->separator(1.0f, LayoutSeparatorType::Line);
 }
 
 void enum_tear_off_row_draw_property(bContext *C, Layout *layout, const Button *but)

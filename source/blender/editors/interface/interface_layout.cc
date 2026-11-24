@@ -6569,6 +6569,21 @@ void tear_off_header_draw(Layout *layout,
   block_tear_off_header_tag(layout->block());
 }
 
+/* BFA - Tear-Off Menu/Panel: the row that tears a menu, popover or dropdown off. It's a thin strip
+ * of grip dots without a label, so it doesn't push the real entries down by a whole row. The
+ * tooltip of the operator still says what it does. #draw_button draws the dots. */
+PointerRNA tear_off_row_draw(Layout *layout, const char *opname)
+{
+  const EmbossType prev_emboss = layout->emboss_or_undefined();
+  layout->emboss_set(EmbossType::Pulldown);
+  Layout *row = &layout->row(false);
+  /* Half a row: lower than that is hard to hit. */
+  row->scale_y_set(0.5f);
+  PointerRNA opptr = row->op(opname, "", ICON_NONE);
+  layout->emboss_set(prev_emboss);
+  return opptr;
+}
+
 /* BFA - Tear-Off Menu/Panel: called only from #item_menutype_func, the root and submenu entry.
  * #Layout::menu_contents also goes through #menutype_draw on the same block, and it must not
  * add a row or a second header in the middle of its parent menu. */
@@ -6597,11 +6612,10 @@ static void menutype_tear_off_affordance_draw(Layout *layout, MenuType *mt)
                            "WM_OT_menu_tear_off_close");
     }
     else if (tear_off_enabled() && !menu_needs_source_but) { /* BFA - No row when turned off. */
-      PointerRNA opptr = layout->op("WM_OT_menu_tear_off", "Tear Off Menu", ICON_GRIP);
+      PointerRNA opptr = tear_off_row_draw(layout, "WM_OT_menu_tear_off");
       if (opptr.data) {
         RNA_string_set(&opptr, "menu_idname", mt->idname);
       }
-      layout->separator(1.0f, LayoutSeparatorType::Line);
     }
   }
 }
@@ -6856,14 +6870,10 @@ static void paneltype_draw_impl(bContext *C, PanelType *pt, Layout *layout, bool
        * property on the button doesn't count: panels opened with #Layout::prop_with_popover read
        * their own data. */
       else if (tear_off_enabled() && !body->context()) {
-        const EmbossType prev_emboss = body->emboss_or_undefined();
-        body->emboss_set(EmbossType::Pulldown);
-        PointerRNA opptr = body->op("WM_OT_panel_tear_off", "Tear Off Panel", ICON_GRIP);
+        PointerRNA opptr = tear_off_row_draw(body, "WM_OT_panel_tear_off");
         if (opptr.data) {
           RNA_string_set(&opptr, "panel_idname", pt->idname);
         }
-        body->emboss_set(prev_emboss);
-        body->separator(1.0f, LayoutSeparatorType::Line);
       }
     }
 
