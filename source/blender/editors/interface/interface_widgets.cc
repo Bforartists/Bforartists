@@ -5756,7 +5756,7 @@ static WidgetType *popover_widget_type(Button *but, rcti *rect)
 /** \name Public API
  * \{ */
 
-/* BFA - Tear-Off Menu/Panel: two rows of grip dots across the Tear Off row, see
+/* BFA - Tear-Off Menu/Panel: a line of grip dots across the Tear Off row, see
  * #tear_off_row_draw. In the text color, so they follow the hover highlight like a label. */
 static void tear_off_row_dots_draw(const uiWidgetColors *wcol, const rcti *rect, const float zoom)
 {
@@ -5770,7 +5770,7 @@ static void tear_off_row_dots_draw(const uiWidgetColors *wcol, const rcti *rect,
   }
   /* On whole pixels, or the dots blur. */
   const float xmin = roundf(BLI_rcti_cent_x_fl(rect) - 0.5f * (count * pitch - (pitch - dot)));
-  const float ymin = roundf(BLI_rcti_cent_y_fl(rect) - 0.5f * (pitch + dot));
+  const float ymin = roundf(BLI_rcti_cent_y_fl(rect) - 0.5f * dot);
 
   /* The hover highlight is still in the widget batch, and would be drawn over the dots. */
   widgetbase_draw_cache_flush();
@@ -5780,13 +5780,10 @@ static void tear_off_row_dots_draw(const uiWidgetColors *wcol, const rcti *rect,
   immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformColor3ubvAlpha(wcol->text, 190);
   GPU_blend(GPU_BLEND_ALPHA);
-  immBegin(GPU_PRIM_TRIS, count * 2 * 6);
-  for (int row = 0; row < 2; row++) {
-    const float y = ymin + row * pitch;
-    for (int i = 0; i < count; i++) {
-      const float x = xmin + i * pitch;
-      immRectf_fast(pos, x, y, x + dot, y + dot);
-    }
+  immBegin(GPU_PRIM_TRIS, count * 6);
+  for (int i = 0; i < count; i++) {
+    const float x = xmin + i * pitch;
+    immRectf_fast(pos, x, ymin, x + dot, ymin + dot);
   }
   immEnd();
   GPU_blend(GPU_BLEND_NONE);
