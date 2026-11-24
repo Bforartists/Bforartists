@@ -315,7 +315,14 @@ void context_active_but_prop_get_templateID(const bContext *C,
                                             PointerRNA *r_ptr,
                                             PropertyRNA **r_prop)
 {
-  Button *but = context_active_but_get(C);
+  /* BFA - Tear-Off Menu/Panel: look in the popup first. A tear-off runs its operators with the
+   * editor it came from as the context region, so the New and Open buttons of a data selector
+   * found no field there, or the editor's last used one, and the new data was never assigned.
+   * Without a data selector in the popup the context region is used, as in Blender. */
+  Button *but = context_active_but_get_respect_popup(C);
+  if (!but || !but->context || !CTX_store_ptr_lookup(but->context, "template_id_ptr")) {
+    but = context_active_but_get(C);
+  }
 
   *r_ptr = {};
   *r_prop = nullptr;
