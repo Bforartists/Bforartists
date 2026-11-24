@@ -5770,8 +5770,12 @@ static void tear_off_row_widget_draw(const uiWidgetColors *wcol,
   const float bar_pad = roundf(0.125f * U.widget_unit * zoom);
   const float bar_xmin = rect->xmin + bar_pad;
   const float bar_xmax = rect->xmax - bar_pad;
-  const float bar_ymin = rect->ymin + dot;
+  float bar_ymin = rect->ymin + dot;
   const float bar_ymax = rect->ymax - dot;
+  /* A pixel lower when the dots can't be centered in it otherwise. */
+  if (int(bar_ymax - bar_ymin - dot) % 2 != 0) {
+    bar_ymin += 1.0f;
+  }
   /* The dots, on whole pixels or they blur. */
   const float width = (bar_xmax - bar_xmin) - 2.0f * pitch;
   const int count = int((width + pitch - dot) / pitch);
@@ -5779,7 +5783,7 @@ static void tear_off_row_widget_draw(const uiWidgetColors *wcol,
     return;
   }
   const float xmin = roundf(0.5f * (bar_xmin + bar_xmax) - 0.5f * (count * pitch - (pitch - dot)));
-  const float ymin = roundf(0.5f * (bar_ymin + bar_ymax) - 0.5f * dot);
+  const float ymin = bar_ymin + 0.5f * (bar_ymax - bar_ymin - dot);
 
   /* Widgets still in the batch would be drawn over this. */
   widgetbase_draw_cache_flush();
