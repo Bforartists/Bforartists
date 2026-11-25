@@ -5,9 +5,14 @@
 
 # bforartists_linux_builder.sh
 #
-# Linux builds of Bforartists from WSL (or any Ubuntu/Debian machine), inside the same
-# Rocky Linux 8 environment Blender uses for its official builds, so the result runs on
-# old and new distros and includes the Cycles GPU kernels (CUDA 12.8 + HIP/ROCm 7.2.1).
+# Linux builds of Bforartists from WSL, in the same Rocky Linux 8 environment Blender uses
+# for its official builds, so the result runs on old and new distros and includes the
+# Cycles GPU kernels (CUDA 12.8 + HIP/ROCm 7.2.1).
+#
+# Two modes, picked automatically:
+#   native     the WSL distro IS Rocky Linux 8 (recommended, the official way): Blender's
+#              build_files/build_environment/linux/linux_rocky8_setup.sh runs directly on it.
+#   container  any other distro (Ubuntu/Debian): the same setup runs in a Podman container.
 #
 # The source and the build live in the Linux file system ($BFA_HOME, default ~/bfa), never
 # under /mnt/c: builds there are many times slower.
@@ -19,9 +24,11 @@
 #   ~/bfa/bin                         a copy of this script (what the weekly task runs)
 #
 # Usage:
-#   bforartists_linux_builder.sh setup     once: host tools (podman, git-lfs, rclone ...) + clone
+#   bforartists_linux_builder.sh setup     once: tools (git, git-lfs ...) + clone the source
 #   bforartists_linux_builder.sh image     once (and when Blender changes its Rocky 8 setup):
-#                                          build the container image (about 25 GB, 30-60 min)
+#                                          install the Rocky 8 toolchain: gcc-toolset-14, CUDA,
+#                                          ROCm (native) or build the container image (about
+#                                          25 GB, 30-60 min)
 #   bforartists_linux_builder.sh weekly    update + build + package + upload: the scheduled run
 #
 #   Single steps: update, build, package, upload, shell, status
@@ -31,7 +38,8 @@
 #   BFA_BRANCH            master
 #   BFA_PACKAGE           devbuild      devbuild = linux-devbuild-DD-MM-YYYY.tar.xz
 #                                       release  = Bforartists-X.Y.Z-Linux.tar.xz (Flathub's input)
-#   BFA_IMAGE             bforartists-rocky8
+#   BFA_MODE              auto          native (on Rocky 8) or container (elsewhere)
+#   BFA_IMAGE             bforartists-rocky8   container mode only
 #   BFA_JOBS              auto          parallel compile jobs (auto: fits the WSL memory)
 #   BFA_DEVBUILDS_REMOTE  (unset)       rclone destination, e.g. "bfa-devbuilds:bforartists-devbuilds"
 #                                       unset = no upload. The rclone remote and its R2 key are set
@@ -49,6 +57,11 @@ REPO="$BFA_HOME/Bforartists"
 BUILD_DIR="$BFA_HOME/bfa_build_linux_release"
 OUTPUT_DIR="$BFA_HOME/build_output"
 LOG_DIR="$BFA_HOME/logs"
+SUDO=""
+[ "$(id -u)" -ne 0 ] && SUDO="sudo"
+if [ -z "${BFA_MODE:-}" ]; then
+  if grep -qs 'release 8' /etc/rocky-release; then BFA_MODE=native; else BFA_MODE=container; fi
+fi
 REPO_URL="https://github.com/Bforartists/Bforartists.git"
 BLENDER_URL="https://projects.blender.org/blender/blender.git"
 
@@ -85,8 +98,16 @@ auto_jobs() {
   [ "$by_mem" -lt "$cpus" ] && echo "$by_mem" || echo "$cpus"
 }
 
-# Run a command inside the Rocky 8 build container, with $BFA_HOME mounted at the same path.
+TOOLCHAIN='source scl_source enable gcc-toolset-14 && export PATH=/usr/local/cuda/bin:/opt/rocm/bin:$PATH && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}'
+
+# Run a command with the Rocky 8 toolchain: directly (native) or in the build container,
+# with $BFA_HOME mounted at the same path.
 in_container() {
+  if [ "$BFA_MODE" = native ]; then
+    (cd "$REPO" && NPROCS="${BFA_JOBS:-$(auto_jobs)}" BFA_BUILD_DIR="$BUILD_DIR" OUTPUT_DIR="$OUTPUT_DIR" \
+      bash -lc "$TOOLCHAIN && $1")
+    return
+  fi
   mkdir -p "$BFA_HOME/.container-home"
   # Rootless: keep your user id inside, so the build files stay yours. As root it isn't needed.
   local userns=()
@@ -100,10 +121,7 @@ in_container() {
     -e OUTPUT_DIR="$OUTPUT_DIR" \
     -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*' \
     "$BFA_IMAGE" \
-    bash -lc "source scl_source enable gcc-toolset-14 \
-      && export PATH=/usr/local/cuda/bin:/opt/rocm/bin:\$PATH \
-      && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:\${LD_LIBRARY_PATH:-} \
-      && $1"
+    bash -lc "$TOOLCHAIN && $1"
 }
 
 need_repo() {
@@ -111,22 +129,33 @@ need_repo() {
 }
 
 need_image() {
-  podman_cmd image exists "$BFA_IMAGE" || die "No build image '$BFA_IMAGE'. Run: $0 image"
+  if [ "$BFA_MODE" = native ]; then
+    [ -d /opt/rh/gcc-toolset-14 ] || die "Rocky 8 toolchain not installed. Run: $0 image"
+  else
+    podman_cmd image exists "$BFA_IMAGE" || die "No build image '$BFA_IMAGE'. Run: $0 image"
+  fi
 }
 
 # ---------------- Commands ---------------- #
 
 cmd_setup() {
-  command -v apt-get >/dev/null || die "This setup expects Ubuntu/Debian (apt). Install podman, git, git-lfs, python3, make, xz-utils and rclone by hand."
-  local sudo=""
-  [ "$(id -u)" -ne 0 ] && sudo="sudo"
-  info "Installing host tools (asks for your password once)"
-  $sudo apt-get update
-  $sudo apt-get install -y podman uidmap slirp4netns fuse-overlayfs git git-lfs python3 make \
-    xz-utils rclone ca-certificates
+  local sudo="$SUDO"
+  info "Mode: $BFA_MODE"
+  if [ "$BFA_MODE" = native ]; then
+    info "Installing the basic tools (git, git-lfs from EPEL, Python 3.9 ...)"
+    $sudo dnf -y install epel-release
+    $sudo dnf -y install git git-lfs python39 make xz tar util-linux gawk which procps-ng findutils \
+      diffutils ca-certificates
+  else
+    command -v apt-get >/dev/null || die "Container mode expects Ubuntu/Debian (apt). Use a Rocky 8 distro for native mode."
+    info "Installing host tools (asks for your password once)"
+    $sudo apt-get update
+    $sudo apt-get install -y podman uidmap slirp4netns fuse-overlayfs git git-lfs python3 make \
+      xz-utils rclone ca-certificates
+  fi
   git lfs install --skip-repo
   # Rootless Podman needs a range of sub-user ids for this user.
-  if [ "$(id -u)" -ne 0 ] && ! grep -q "^$(id -un):" /etc/subuid 2>/dev/null; then
+  if [ "$BFA_MODE" = container ] && [ "$(id -u)" -ne 0 ] && ! grep -q "^$(id -un):" /etc/subuid 2>/dev/null; then
     $sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 "$(id -un)"
     ok "Added sub-user ids for $(id -un) (rootless Podman)"
   fi
@@ -161,6 +190,14 @@ cmd_image() {
   # Blender's script reads the architecture with `uname -i`, which can print "unknown";
   # `uname -m` is always set.
   sed 's/uname -i/uname -m/' "$script" > "$ctx/linux_rocky8_setup.sh"
+  if [ "$BFA_MODE" = native ]; then
+    info "Installing Blender's Rocky 8 toolchain on this distro (gcc-toolset-14, CUDA 12.8, ROCm 7.2.1)"
+    $SUDO bash "$ctx/linux_rocky8_setup.sh"
+    $SUDO dnf -y install rclone || warn "rclone not installed (only needed for uploads)"
+    rm -rf "$ctx"
+    ok "Rocky 8 toolchain installed"
+    return
+  fi
   cat > "$ctx/Containerfile" <<'EOF'
 FROM docker.io/rockylinux/rockylinux:8
 COPY linux_rocky8_setup.sh /tmp/linux_rocky8_setup.sh
@@ -182,7 +219,8 @@ cmd_update() {
   git fetch origin --prune
   git checkout "$BFA_BRANCH"
   git pull --rebase origin "$BFA_BRANCH"
-  make update
+  # Rocky 8's default Python is 3.6; use 3.9 for Blender's update script.
+  if [ "$BFA_MODE" = native ]; then make update PYTHON=python3.9; else make update; fi
   ok "Source at $(git rev-parse --short HEAD) ($(git log -1 --format=%s | cut -c1-70))"
 }
 
@@ -241,7 +279,12 @@ cmd_status() {
   echo "Branch     : $BFA_BRANCH  (package: $BFA_PACKAGE, upload: ${BFA_DEVBUILDS_REMOTE:-off})"
   [ -d "$REPO/.git" ] && echo "Source     : $(git -C "$REPO" rev-parse --short HEAD) on $(git -C "$REPO" branch --show-current)" \
                       || echo "Source     : missing (run setup)"
-  podman_cmd image exists "$BFA_IMAGE" 2>/dev/null && echo "Image      : $BFA_IMAGE ready" || echo "Image      : missing (run image)"
+  echo "Mode       : $BFA_MODE"
+  if [ "$BFA_MODE" = native ]; then
+    [ -d /opt/rh/gcc-toolset-14 ] && echo "Toolchain  : Rocky 8 toolchain ready" || echo "Toolchain  : missing (run image)"
+  else
+    podman_cmd image exists "$BFA_IMAGE" 2>/dev/null && echo "Image      : $BFA_IMAGE ready" || echo "Image      : missing (run image)"
+  fi
   [ -x "$BUILD_DIR/bin/bforartists" ] && echo "Build      : $("$BUILD_DIR/bin/bforartists" -v 2>/dev/null | grep -m1 '^Bforartists')" \
                                       || echo "Build      : none yet"
   echo "Jobs       : ${BFA_JOBS:-$(auto_jobs) (auto)}  ·  memory: $(( $(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024 / 1024 )) GB"
@@ -266,8 +309,10 @@ main() {
   mkdir -p "$LOG_DIR"
   local log="$LOG_DIR/$(date +%Y-%m-%d_%H%M%S)-$cmd.log"
   # One run at a time (a scheduled run and a manual one must not build together).
-  exec 9>"$BFA_HOME/.builder.lock"
-  flock -n 9 || die "Another builder run is in progress"
+  if command -v flock >/dev/null; then
+    exec 9>"$BFA_HOME/.builder.lock"
+    flock -n 9 || die "Another builder run is in progress"
+  fi
   info "Log: $log"
   { "cmd_$cmd"; } 2>&1 | tee "$log"
   exit "${PIPESTATUS[0]}"

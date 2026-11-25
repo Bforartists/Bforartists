@@ -11,7 +11,7 @@
 
     setup       Sizes WSL for Bforartists builds (.wslconfig: memory + swap), then runs the
                 builder's `setup` in your WSL distro (installs tools, clones the source).
-    image       Builds the Rocky 8 build image in WSL (once, about 30-60 minutes).
+    image       Installs the Rocky 8 build toolchain in WSL (once, about 30-60 minutes).
     run         Runs one weekly build now (update + build + package + upload).
     schedule    Registers the weekly Windows task "Bforartists Linux devbuild".
     unschedule  Removes that task.
@@ -26,7 +26,7 @@ param(
   [Parameter(Position = 0)]
   [ValidateSet('setup', 'image', 'run', 'schedule', 'unschedule', 'status')]
   [string]$Action = 'status',
-  [string]$Distro = '',                 # default: the first Ubuntu/Debian distro found
+  [string]$Distro = '',                 # default: the first Rocky/Ubuntu/Debian distro found
   [string]$Day = 'Saturday',
   [string]$Time = '18:00',
   [int]$MemoryGB = 0,                   # default: 75% of the PC's RAM
@@ -45,8 +45,8 @@ function Get-BuilderDistro {
   if ($Distro) { return $Distro }
   # wsl.exe prints UTF-16; strip the NUL characters.
   $names = (wsl.exe --list --quiet) -replace "`0", '' | Where-Object { $_.Trim() }
-  $pick = $names | Where-Object { $_ -match 'Ubuntu|Debian' } | Select-Object -First 1
-  if (-not $pick) { throw "No Ubuntu/Debian WSL distro found. Install one with: wsl --install -d Ubuntu-24.04" }
+  $pick = $names | Where-Object { $_ -match 'Rocky|Ubuntu|Debian' } | Select-Object -First 1
+  if (-not $pick) { throw "No Rocky/Ubuntu/Debian WSL distro found. Pass -Distro <name>." }
   return $pick.Trim()
 }
 

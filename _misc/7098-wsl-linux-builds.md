@@ -1,16 +1,20 @@
 # 🐧 Weekly Linux devbuilds from WSL · #7098
 
-> 🧪 **Experimental** · Builds on the maintainer's Windows 11 PC, in WSL, inside Blender's official
-> **Rocky Linux 8** build environment, with the Cycles GPU kernels (CUDA 12.8 + HIP/ROCm 7.2.1).
+> 🧪 **Experimental** · Builds on the maintainer's Windows 11 PC in a **Rocky Linux 8** WSL distro, the same
+> environment Blender uses for its official Linux builds (gcc-toolset-14, CUDA 12.8, ROCm/HIP 7.2.1).
+> The tarball runs on old and new distros and includes the Cycles GPU kernels.
 
 ## 🧭 How it fits together
 
 | Where | What | File |
 |---|---|---|
 | 🪟 Windows | WSL memory + swap, first setup, weekly task | `tools/utils/bforartists_wsl_builder.ps1` |
-| 🐧 WSL (Ubuntu/Debian) | Source clone, Podman, tarballs, logs in `~/bfa` | `tools/utils/bforartists_linux_builder.sh` |
-| 📦 Rocky 8 container | `make release` + packaging, same toolchain as Blender's builds | built from `build_files/build_environment/linux/linux_rocky8_setup.sh` |
+| 🐧 WSL: Rocky Linux 8 (`BfaBuild`) | Toolchain, source clone, build, tarballs, logs in `~/bfa` | `tools/utils/bforartists_linux_builder.sh` |
+| 🧰 Toolchain | Blender's own setup script, run as-is | `build_files/build_environment/linux/linux_rocky8_setup.sh` |
 | 🗂️ Packaging | `.tar.xz` (and `.deb` / `.AppImage` by hand) | `tools/utils/bforartists_package_linux.sh` (#7047) |
+
+The builder picks **native** mode on Rocky 8. On any other distro it falls back to **container** mode
+(the same Rocky 8 setup inside Podman).
 
 ```
 ~/bfa/Bforartists               source (its own clone, in the Linux file system: never /mnt/c)
@@ -20,48 +24,66 @@
 ~/bfa/bin                       the copy of the builder the weekly task runs
 ```
 
-## ▶️ First time (about 1 hour of your time, plus waiting)
+## ▶️ First time (everything on Z:)
 
-Run in **PowerShell** from the repo (`C:\3D_Stuff\Bforartists_sync`), on this branch:
+In **PowerShell** (not admin). About 120 GB free on Z: is needed.
 
-1. 🧠 **Setup:** sizes WSL (memory = 75% of RAM, 32 GB swap, existing `.wslconfig` backed up), restarts WSL,
-   installs the tools in WSL (asks for your Linux password) and clones the source into `~/bfa`.
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File tools\utils\bforartists_wsl_builder.ps1 setup
-   ```
-2. 📦 **Build image** (once, about 30–60 min, ~25 GB: gcc-toolset-14, CUDA, ROCm):
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File tools\utils\bforartists_wsl_builder.ps1 image
-   ```
-3. 🔨 **First build** (hours the first time; GPU kernels are the slow part):
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File tools\utils\bforartists_wsl_builder.ps1 run
-   ```
-4. ⏰ **Weekly task** (runs while you're signed in; default Saturday 18:00):
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File tools\utils\bforartists_wsl_builder.ps1 schedule -Day Saturday -Time 18:00
-   ```
-5. ☁️ **Optional upload to devbuilds:** in WSL run `rclone config` once and add an R2 remote with a key limited
-   to `bforartists-devbuilds` (never in Git or chat). Then add `-DevbuildsRemote "bfa-devbuilds:bforartists-devbuilds"`
-   to `run` / `schedule`. Uploads use `rclone copy`, never `sync`, so nothing on the server gets deleted.
+```powershell
+# 1. WSL up to date
+wsl --update
 
-Check anytime: `powershell -ExecutionPolicy Bypass -File tools\utils\bforartists_wsl_builder.ps1 status`
+# 2. Rocky Linux 8 image (official Container Base, ~40 MB)
+New-Item -ItemType Directory -Force Z:\WSL\BfaBuild, Z:\WSL\tools | Out-Null
+$ProgressPreference = 'SilentlyContinue'
+Invoke-WebRequest https://dl.rockylinux.org/pub/rocky/8/images/x86_64/Rocky-8-Container-Base.latest.x86_64.tar.xz -OutFile Z:\WSL\rocky8.tar.xz
+
+# 3. Create the build distro on Z: (it runs as root: it's only for builds)
+wsl --import BfaBuild Z:\WSL\BfaBuild Z:\WSL\rocky8.tar.xz --version 2
+wsl -d BfaBuild -- cat /etc/rocky-release
+
+# 4. The two scripts (from this branch)
+$b = 'https://raw.githubusercontent.com/Bforartists/Bforartists/7098-development---tools---linux---weekly-linux-devbuilds-from-wsl-in-the-rocky-8-build-environment/tools/utils'
+Invoke-WebRequest "$b/bforartists_wsl_builder.ps1" -OutFile Z:\WSL\tools\bforartists_wsl_builder.ps1
+Invoke-WebRequest "$b/bforartists_linux_builder.sh" -OutFile Z:\WSL\tools\bforartists_linux_builder.sh
+
+# 5. Setup: WSL memory (75% RAM) + 32 GB swap on Z:, basic tools, clone the source
+powershell -ExecutionPolicy Bypass -File Z:\WSL\tools\bforartists_wsl_builder.ps1 setup -Distro BfaBuild -SwapFile Z:\WSL\swap.vhdx
+
+# 6. Blender's Rocky 8 toolchain (once, 30-60 min, ~25 GB)
+powershell -ExecutionPolicy Bypass -File Z:\WSL\tools\bforartists_wsl_builder.ps1 image -Distro BfaBuild
+
+# 7. First build (hours: GPU kernels)
+powershell -ExecutionPolicy Bypass -File Z:\WSL\tools\bforartists_wsl_builder.ps1 run -Distro BfaBuild
+
+# 8. Weekly task
+powershell -ExecutionPolicy Bypass -File Z:\WSL\tools\bforartists_wsl_builder.ps1 schedule -Distro BfaBuild -Day Saturday -Time 18:00
+```
+
+If step 3 refuses the `.tar.xz`, unpack it first with your other WSL distro:
+`wsl -- xz -dk /mnt/z/WSL/rocky8.tar.xz`, then import `Z:\WSL\rocky8.tar`.
+
+Check anytime: `... bforartists_wsl_builder.ps1 status -Distro BfaBuild`.
+Tarballs in File Explorer: `\\wsl$\BfaBuild\root\bfa\build_output\tar`.
+
+☁️ **Optional upload to devbuilds:** `wsl -d BfaBuild -- rclone config` once (R2 remote, key limited to
+`bforartists-devbuilds`, never in Git or chat), then add `-DevbuildsRemote "remote:bforartists-devbuilds"` to
+`run` / `schedule`. Uploads use `rclone copy`, never `sync`.
 
 ## 🔁 What the weekly run does
 
-`update` (pull `master`, `make update`) → `build` (`make release` in the container) →
-`package` (`linux-devbuild-DD-MM-YYYY.tar.xz`) → `upload` (only if a remote is set).
-One run at a time (lock file). A failure stops the chain and the log says where.
+`update` (pull `master`, `make update`, with Python 3.9 because Rocky 8's default is 3.6) →
+`build` (`make release` with gcc-toolset-14, CUDA and ROCm on the PATH) → `package`
+(`linux-devbuild-DD-MM-YYYY.tar.xz`) → `upload` (only if a remote is set). One run at a time.
+A failure stops the chain and the log in `~/bfa/logs` says where.
 
 ## 📦 Releases and Flathub
 
 Flathub's [`de.bforartists.Bforartists`](https://github.com/flathub/de.bforartists.Bforartists) does not compile:
 it repackages `Bforartists-X.Y.Z-Linux.tar.xz` from the GitHub release, and its bot opens an update PR when a new
-release appears. For a release, in WSL:
+release appears.
 
-```sh
-BFA_BRANCH=master BFA_PACKAGE=release ~/bfa/bin/bforartists_linux_builder.sh weekly
-# -> ~/bfa/build_output/tar/Bforartists-X.Y.Z-Linux.tar.xz : attach it to the GitHub release
+```powershell
+wsl -d BfaBuild -- bash -lc "BFA_PACKAGE=release ~/bfa/bin/bforartists_linux_builder.sh weekly"
 ```
 
 The Flathub manifest expects, inside the tarball: a top folder `Bforartists*Linux*`, `bforartists.desktop`,
@@ -69,15 +91,15 @@ The Flathub manifest expects, inside the tarball: a top folder `Bforartists*Linu
 
 ## 💾 Disk and memory
 
-- About **80–100 GB** in WSL: image ~25 GB, source + libraries ~25 GB, build ~20–30 GB.
-  WSL lives on C: by default; to move it to D: use `wsl --export` / `wsl --import`.
+- About **80–100 GB** inside `BfaBuild` (toolchain ~25 GB, source + libraries ~25 GB, build ~20–30 GB),
+  all in `Z:\WSL\BfaBuild\ext4.vhdx`. Swap file: `Z:\WSL\swap.vhdx`.
 - Jobs are capped by memory (2 GB per job). Override with `BFA_JOBS=8`.
 
 ## ✅ Test checklist
 
 - [ ] `setup` and `image` finish
 - [ ] First `run`: log ends with "Weekly Linux build done"
-- [ ] CMake summary shows CUDA, HIP (and OptiX/oneAPI) kernels enabled; adjust if the first build reports missing SDKs
-- [ ] The tarball starts on a real Linux machine (and in WSLg: `~/bfa/bfa_build_linux_release/bin/bforartists`)
+- [ ] CMake summary shows CUDA and HIP kernels enabled (OptiX / oneAPI may need extra SDKs)
+- [ ] The tarball starts on a real Linux machine
 - [ ] The weekly task ran on its own
 - [ ] Optional: upload to devbuilds works
