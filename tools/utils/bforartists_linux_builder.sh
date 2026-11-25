@@ -205,7 +205,10 @@ cmd_image() {
   if [ "$BFA_MODE" = native ]; then
     info "Installing Blender's Rocky 8 toolchain on this distro (gcc-toolset-14, CUDA 12.8, ROCm 7.2.1)"
     $SUDO bash "$ctx/linux_rocky8_setup.sh"
-    $SUDO dnf -y install rclone || warn "rclone not installed (only needed for uploads)"
+    # Window libraries (Wayland/X11), so a build can also be opened on the Windows desktop (WSLg).
+    $SUDO dnf -y install libwayland-client libwayland-cursor libwayland-egl libxkbcommon libX11 libXi \
+      libXxf86vm libXcursor libXrandr libXinerama libXfixes mesa-libGL mesa-libEGL mesa-dri-drivers \
+      || warn "Window libraries not installed (only needed to open builds on the Windows desktop)"
     rm -rf "$ctx"
     ok "Rocky 8 toolchain installed"
     return
