@@ -108,7 +108,9 @@ auto_jobs() {
   [ "$by_mem" -lt "$cpus" ] && echo "$by_mem" || echo "$cpus"
 }
 
-TOOLCHAIN='source scl_source enable gcc-toolset-14 && export PATH=/usr/local/cuda/bin:/opt/rocm/bin:$PATH && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}'
+# WSL appends the Windows PATH ("/mnt/c/Program Files (x86)/..."); CMake copies PATH into some build
+# commands (oneAPI kernels) where the "(" breaks the shell. Keep only Linux folders.
+TOOLCHAIN='export PATH="$(printf %s "$PATH" | tr ":" "\n" | grep -v "^/mnt/" | paste -sd:)" && source scl_source enable gcc-toolset-14 && export PATH=/usr/local/cuda/bin:/opt/rocm/bin:$PATH && export LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}'
 
 # Run a command with the Rocky 8 toolchain: directly (native) or in the build container,
 # with $BFA_HOME mounted at the same path.
@@ -166,6 +168,10 @@ cmd_setup() {
       xz-utils rclone ca-certificates
   fi
   git lfs install --skip-repo
+  if grep -qi microsoft /proc/version 2>/dev/null && ! grep -qs '^appendWindowsPath *= *false' /etc/wsl.conf; then
+    printf '\n[interop]\nappendWindowsPath=false\n' | $sudo tee -a /etc/wsl.conf >/dev/null
+    warn "Windows folders removed from this distro's PATH: run 'wsl --terminate <distro>' once"
+  fi
   # Rootless Podman needs a range of sub-user ids for this user.
   if [ "$BFA_MODE" = container ] && [ "$(id -u)" -ne 0 ] && ! grep -q "^$(id -un):" /etc/subuid 2>/dev/null; then
     $sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 "$(id -un)"
@@ -255,6 +261,11 @@ cmd_build() {
     ok "OptiX SDK found: $BFA_HOME/optix"
   elif [ "$BFA_TARGET" = release ]; then
     warn "No OptiX SDK in $BFA_HOME/optix: the build has CUDA and HIP, but no OptiX"
+  fi
+  if grep -rqs --include=build.make '/mnt/c/' "$BUILD_DIR/intern/cycles/kernel/device" \
+     || grep -qs 'Program Files' "$BUILD_DIR/CMakeCache.txt"; then
+    warn "The build files captured Windows folders from PATH: reconfiguring"
+    mv -f "$BUILD_DIR/CMakeCache.txt" "$BUILD_DIR/CMakeCache.txt.old"
   fi
   info "Building (make $BFA_TARGET) with ${BFA_JOBS:-$(auto_jobs)} jobs"
   in_container "make $BFA_TARGET $cmake_args"
