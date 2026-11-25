@@ -254,14 +254,22 @@ cmd_update() {
 
 cmd_build() {
   need_repo; need_image
-  # OptiX (NVIDIA ray tracing) needs NVIDIA's SDK, a login-only download: used when unpacked in ~/bfa/optix.
-  local cmake_args=""
+  # NVIDIA SDKs that can't be installed automatically, used when unpacked in ~/bfa:
+  #   ~/bfa/optix  OptiX SDK 8+ (login-only download)   ~/bfa/dlss  DLSS SDK (Ray Reconstruction denoiser)
+  local defs="" cmake_args=""
   if [ -f "$BFA_HOME/optix/include/optix.h" ]; then
-    cmake_args="BUILD_CMAKE_ARGS='-DOPTIX_ROOT_DIR=$BFA_HOME/optix'"
+    defs="$defs -DOPTIX_ROOT_DIR=$BFA_HOME/optix"
     ok "OptiX SDK found: $BFA_HOME/optix"
   elif [ "$BFA_TARGET" = release ]; then
     warn "No OptiX SDK in $BFA_HOME/optix: the build has CUDA and HIP, but no OptiX"
   fi
+  if [ -f "$BFA_HOME/dlss/include/nvsdk_ngx.h" ]; then
+    defs="$defs -DDLSS_SDK_ROOT=$BFA_HOME/dlss"
+    ok "DLSS SDK found: $BFA_HOME/dlss"
+  elif [ "$BFA_TARGET" = release ]; then
+    warn "No DLSS SDK in $BFA_HOME/dlss: the build has no DLSS denoiser"
+  fi
+  [ -n "$defs" ] && cmake_args="BUILD_CMAKE_ARGS='${defs# }'"
   if grep -rqs --include=build.make '/mnt/c/' "$BUILD_DIR/intern/cycles/kernel/device" \
      || grep -qs 'Program Files' "$BUILD_DIR/CMakeCache.txt"; then
     warn "The build files captured Windows folders from PATH: reconfiguring"
