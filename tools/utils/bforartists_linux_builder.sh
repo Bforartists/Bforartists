@@ -248,8 +248,16 @@ cmd_update() {
 
 cmd_build() {
   need_repo; need_image
+  # OptiX (NVIDIA ray tracing) needs NVIDIA's SDK, a login-only download: used when unpacked in ~/bfa/optix.
+  local cmake_args=""
+  if [ -f "$BFA_HOME/optix/include/optix.h" ]; then
+    cmake_args="BUILD_CMAKE_ARGS='-DOPTIX_ROOT_DIR=$BFA_HOME/optix'"
+    ok "OptiX SDK found: $BFA_HOME/optix"
+  elif [ "$BFA_TARGET" = release ]; then
+    warn "No OptiX SDK in $BFA_HOME/optix: the build has CUDA and HIP, but no OptiX"
+  fi
   info "Building (make $BFA_TARGET) with ${BFA_JOBS:-$(auto_jobs)} jobs"
-  in_container "make $BFA_TARGET"
+  in_container "make $BFA_TARGET $cmake_args"
   [ -x "$BUILD_DIR/bin/bforartists" ] || die "Build finished but $BUILD_DIR/bin/bforartists is missing"
   ok "Built: $("$BUILD_DIR/bin/bforartists" -v 2>/dev/null | grep -m1 '^Bforartists' || echo "$BUILD_DIR/bin/bforartists")"
 }
