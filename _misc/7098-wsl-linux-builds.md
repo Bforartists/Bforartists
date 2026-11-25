@@ -83,8 +83,19 @@ it repackages `Bforartists-X.Y.Z-Linux.tar.xz` from the GitHub release, and its 
 release appears.
 
 ```powershell
-wsl -d BfaBuild -- bash -lc "BFA_PACKAGE=release ~/bfa/bin/bforartists_linux_builder.sh weekly"
+powershell -ExecutionPolicy Bypass -File Z:\WSL\tools\bforartists_wsl_builder.ps1 release -Distro BfaBuild
 ```
+
+One command builds and makes **all three release packages** with `bforartists_package_linux.sh all` (#7047):
+
+| Package | Folder in `~/bfa/build_output` |
+|---|---|
+| `Bforartists-X.Y.Z-Linux.tar.xz` (also Flathub's input) | `tar/` |
+| `bforartists_X.Y.Z.deb` | `deb/` |
+| `Bforartists-X.Y.Z-x86_64.AppImage` | `appimage/` |
+
+The first release run installs `dpkg` (EPEL) and downloads `appimagetool`; WSL has no FUSE, so AppImages run with
+`APPIMAGE_EXTRACT_AND_RUN=1`. `BFA_RELEASE_FORMATS=tar` makes the tarball only.
 
 The Flathub manifest expects, inside the tarball: a top folder `Bforartists*Linux*`, `bforartists.desktop`,
 `bforartists-symbolic.svg` and `<version>/datafiles/locale`. Check those on the first release tarball.
@@ -100,6 +111,6 @@ The Flathub manifest expects, inside the tarball: a top folder `Bforartists*Linu
 - [ ] `setup` and `image` finish
 - [ ] First `run`: log ends with "Weekly Linux build done"
 - [ ] CMake summary shows CUDA and HIP kernels enabled (OptiX / oneAPI may need extra SDKs)
-- [ ] The tarball starts on a real Linux machine
+- [ ] The tarball, .deb and AppImage start on a real Linux machine
 - [ ] The weekly task ran on its own
 - [ ] Optional: upload to devbuilds works

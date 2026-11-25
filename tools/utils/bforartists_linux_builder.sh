@@ -32,7 +32,9 @@
 #   bforartists_linux_builder.sh test      update + quick `make lite` build + start it once:
 #                                          proves the toolchain works before a release build
 #   bforartists_linux_builder.sh weekly    update + build + package + upload: the scheduled run
-#   bforartists_linux_builder.sh release   update + build + Bforartists-X.Y.Z-Linux.tar.xz (no upload)
+#   bforartists_linux_builder.sh release   update + build + all release packages (no upload):
+#                                          Bforartists-X.Y.Z-Linux.tar.xz, bforartists_X.Y.Z.deb,
+#                                          Bforartists-X.Y.Z-x86_64.AppImage
 #
 #   Single steps: update, build, launch, package, upload, shell, status
 #
@@ -42,6 +44,7 @@
 #   BFA_TARGET            release       make target for build: release or lite
 #   BFA_PACKAGE           devbuild      devbuild = linux-devbuild-DD-MM-YYYY.tar.xz
 #                                       release  = Bforartists-X.Y.Z-Linux.tar.xz (Flathub's input)
+#   BFA_RELEASE_FORMATS   all           release packages: all (AppImage + deb + tar) or tar
 #   BFA_MODE              auto          native (on Rocky 8) or container (elsewhere)
 #   BFA_IMAGE             bforartists-rocky8   container mode only
 #   BFA_JOBS              auto          parallel compile jobs (auto: fits the WSL memory)
@@ -67,6 +70,8 @@ SUDO=""
 if [ -z "${BFA_MODE:-}" ]; then
   if grep -qs 'release 8' /etc/rocky-release; then BFA_MODE=native; else BFA_MODE=container; fi
 fi
+APPIMAGETOOL="${APPIMAGETOOL:-$BFA_HOME/appimagetool-x86_64.AppImage}"
+APPIMAGETOOL_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
 REPO_URL="https://github.com/Bforartists/Bforartists.git"
 BLENDER_URL="https://projects.blender.org/blender/blender.git"
 
@@ -109,7 +114,9 @@ TOOLCHAIN='source scl_source enable gcc-toolset-14 && export PATH=/usr/local/cud
 # with $BFA_HOME mounted at the same path.
 in_container() {
   if [ "$BFA_MODE" = native ]; then
+    # WSL has no FUSE, so AppImages (appimagetool itself) run by extracting themselves first.
     (cd "$REPO" && NPROCS="${BFA_JOBS:-$(auto_jobs)}" BFA_BUILD_DIR="$BUILD_DIR" OUTPUT_DIR="$OUTPUT_DIR" \
+      APPIMAGETOOL="$APPIMAGETOOL" APPIMAGE_EXTRACT_AND_RUN=1 \
       bash -lc "$TOOLCHAIN && $1")
     return
   fi
@@ -239,14 +246,23 @@ cmd_build() {
 
 cmd_package() {
   need_repo; need_image
-  local mode=""
-  [ "$BFA_PACKAGE" = "devbuild" ] && mode="devbuild"
-  info "Packaging the tarball ($BFA_PACKAGE)"
-  in_container "./tools/utils/bforartists_package_linux.sh tar $mode"
+  local what="tar devbuild"
+  if [ "$BFA_PACKAGE" != "devbuild" ]; then
+    what="${BFA_RELEASE_FORMATS:-all}"
+    [ "$BFA_MODE" = native ] || { warn "Container mode packages the tarball only"; what="tar"; }
+  fi
+  info "Packaging: $what"
+  in_container "./tools/utils/bforartists_package_linux.sh $what"
   local newest
   newest=$(ls -t "$OUTPUT_DIR"/tar/*.tar.xz 2>/dev/null | head -1)
   [ -n "$newest" ] || die "No tarball in $OUTPUT_DIR/tar"
   ok "Package: $newest ($(du -h "$newest" | cut -f1))"
+  if [ "$BFA_PACKAGE" != "devbuild" ]; then
+    local f
+    for f in "$OUTPUT_DIR"/deb/*.deb "$OUTPUT_DIR"/appimage/*.AppImage; do
+      [ -f "$f" ] && ok "Package: $f ($(du -h "$f" | cut -f1))"
+    done
+  fi
   # Keep only the newest devbuilds locally.
   ls -t "$OUTPUT_DIR"/tar/linux-devbuild-*.tar.xz 2>/dev/null | tail -n +"$((BFA_KEEP + 1))" | xargs -r rm -f
 }
@@ -266,14 +282,32 @@ cmd_upload() {
   ok "Uploaded $(basename "$newest")"
 }
 
-# Release: the official Bforartists-X.Y.Z-Linux.tar.xz (the file Flathub repackages).
+# Tools for the .deb (dpkg, from EPEL) and the AppImage (appimagetool), installed when missing.
+ensure_release_tools() {
+  [ "$BFA_MODE" = native ] || return 0
+  [ "${BFA_RELEASE_FORMATS:-all}" = tar ] && return 0
+  if ! command -v dpkg >/dev/null; then
+    info "Installing dpkg (for the .deb) and file (for appimagetool)"
+    $SUDO dnf -y install dpkg file || die "Could not install dpkg"
+  fi
+  if [ ! -s "$APPIMAGETOOL" ]; then
+    info "Downloading appimagetool"
+    curl -fL -o "$APPIMAGETOOL" "$APPIMAGETOOL_URL" || die "Could not download appimagetool"
+    chmod +x "$APPIMAGETOOL"
+  fi
+  ok "Release packaging tools ready (dpkg, appimagetool)"
+}
+
+# Release: all release packages. The .tar.xz is the file Flathub repackages.
 cmd_release() {
   BFA_PACKAGE=release
+  ensure_release_tools
   cmd_update
   cmd_build
   cmd_launch
   cmd_package
-  ok "Release tarball ready: attach it to the GitHub release (Flathub's bot then opens its update PR)"
+  ok "Release packages ready in $OUTPUT_DIR (tar/, deb/, appimage/). Attach them to the GitHub release;"
+  ok "Flathub's bot then opens its update PR from the .tar.xz"
 }
 
 # Start the build once without a window and check that it runs Python and reports its version.
