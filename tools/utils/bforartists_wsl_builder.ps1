@@ -12,7 +12,9 @@
     setup       Sizes WSL for Bforartists builds (.wslconfig: memory + swap), then runs the
                 builder's `setup` in your WSL distro (installs tools, clones the source).
     image       Installs the Rocky 8 build toolchain in WSL (once, about 30-60 minutes).
+    test        Quick lite build + start it once, to prove the toolchain works.
     run         Runs one weekly build now (update + build + package + upload).
+    release     Builds the release tarball Bforartists-X.Y.Z-Linux.tar.xz (no upload).
     schedule    Registers the weekly Windows task "Bforartists Linux devbuild".
     unschedule  Removes that task.
     status      Shows the WSL distro, the task and the builder status.
@@ -24,7 +26,7 @@
 
 param(
   [Parameter(Position = 0)]
-  [ValidateSet('setup', 'image', 'run', 'schedule', 'unschedule', 'status')]
+  [ValidateSet('setup', 'image', 'test', 'run', 'release', 'schedule', 'unschedule', 'status')]
   [string]$Action = 'status',
   [string]$Distro = '',                 # default: the first Rocky/Ubuntu/Debian distro found
   [string]$Day = 'Saturday',
@@ -80,6 +82,14 @@ function Set-WslConfig {
 $d = Get-BuilderDistro
 Say '🐧' "WSL distro: $d"
 
+# Keep the builder inside WSL (~/bfa/bin) in step with the copy next to this script, so updating
+# the two downloaded files is all an update takes.
+$winScript = Join-Path $PSScriptRoot 'bforartists_linux_builder.sh'
+if ($Action -ne 'setup' -and (Test-Path $winScript)) {
+  $wslScript = ((wsl.exe -d $d -- wslpath -a ($winScript -replace '\\', '/')) -replace "`0", '').Trim()
+  wsl.exe -d $d -- bash -lc "[ -d ~/bfa/bin ] && sed 's/\r`$//' '$wslScript' > ~/bfa/bin/bforartists_linux_builder.sh && chmod +x ~/bfa/bin/bforartists_linux_builder.sh"
+}
+
 switch ($Action) {
   'setup' {
     $changed = Set-WslConfig
@@ -89,12 +99,13 @@ switch ($Action) {
     }
     # Run the builder straight from this checkout; its setup copies itself into ~/bfa/bin.
     # (Line endings are normalised first, in case Git checked the file out with CRLF.)
-    $winScript = Join-Path $PSScriptRoot 'bforartists_linux_builder.sh'
     $wslScript = ((wsl.exe -d $d -- wslpath -a ($winScript -replace '\\', '/')) -replace "`0", '').Trim()
     Invoke-InWsl $d "sed 's/\r`$//' '$wslScript' > /tmp/bforartists_linux_builder.sh && bash /tmp/bforartists_linux_builder.sh setup"
     Say '✅' 'Setup done. Next: build the image (once):  .\tools\utils\bforartists_wsl_builder.ps1 image'
   }
   'image' { Invoke-InWsl $d "$Builder image" }
+  'test' { Invoke-InWsl $d "$Builder test" }
+  'release' { Invoke-InWsl $d "$Builder release" }
   'run' {
     $envs = if ($DevbuildsRemote) { "BFA_DEVBUILDS_REMOTE='$DevbuildsRemote' " } else { '' }
     Invoke-InWsl $d "$envs$Builder weekly"

@@ -29,13 +29,17 @@
 #                                          install the Rocky 8 toolchain: gcc-toolset-14, CUDA,
 #                                          ROCm (native) or build the container image (about
 #                                          25 GB, 30-60 min)
+#   bforartists_linux_builder.sh test      update + quick `make lite` build + start it once:
+#                                          proves the toolchain works before a release build
 #   bforartists_linux_builder.sh weekly    update + build + package + upload: the scheduled run
+#   bforartists_linux_builder.sh release   update + build + Bforartists-X.Y.Z-Linux.tar.xz (no upload)
 #
-#   Single steps: update, build, package, upload, shell, status
+#   Single steps: update, build, launch, package, upload, shell, status
 #
 # Environment (defaults):
 #   BFA_HOME              ~/bfa
 #   BFA_BRANCH            master
+#   BFA_TARGET            release       make target for build: release or lite
 #   BFA_PACKAGE           devbuild      devbuild = linux-devbuild-DD-MM-YYYY.tar.xz
 #                                       release  = Bforartists-X.Y.Z-Linux.tar.xz (Flathub's input)
 #   BFA_MODE              auto          native (on Rocky 8) or container (elsewhere)
@@ -54,7 +58,8 @@ BFA_PACKAGE="${BFA_PACKAGE:-devbuild}"
 BFA_IMAGE="${BFA_IMAGE:-bforartists-rocky8}"
 BFA_KEEP="${BFA_KEEP:-4}"
 REPO="$BFA_HOME/Bforartists"
-BUILD_DIR="$BFA_HOME/bfa_build_linux_release"
+BFA_TARGET="${BFA_TARGET:-release}"
+BUILD_DIR="$BFA_HOME/bfa_build_linux_${BFA_TARGET}"
 OUTPUT_DIR="$BFA_HOME/build_output"
 LOG_DIR="$BFA_HOME/logs"
 SUDO=""
@@ -226,8 +231,8 @@ cmd_update() {
 
 cmd_build() {
   need_repo; need_image
-  info "Building (make release) with ${BFA_JOBS:-$(auto_jobs)} jobs"
-  in_container "make release"
+  info "Building (make $BFA_TARGET) with ${BFA_JOBS:-$(auto_jobs)} jobs"
+  in_container "make $BFA_TARGET"
   [ -x "$BUILD_DIR/bin/bforartists" ] || die "Build finished but $BUILD_DIR/bin/bforartists is missing"
   ok "Built: $("$BUILD_DIR/bin/bforartists" -v 2>/dev/null | grep -m1 '^Bforartists' || echo "$BUILD_DIR/bin/bforartists")"
 }
@@ -261,9 +266,43 @@ cmd_upload() {
   ok "Uploaded $(basename "$newest")"
 }
 
+# Release: the official Bforartists-X.Y.Z-Linux.tar.xz (the file Flathub repackages).
+cmd_release() {
+  BFA_PACKAGE=release
+  cmd_update
+  cmd_build
+  cmd_launch
+  cmd_package
+  ok "Release tarball ready: attach it to the GitHub release (Flathub's bot then opens its update PR)"
+}
+
+# Start the build once without a window and check that it runs Python and reports its version.
+cmd_launch() {
+  [ -x "$BUILD_DIR/bin/bforartists" ] || die "No build in $BUILD_DIR"
+  local probe="$BFA_HOME/.launch_probe.py"
+  printf '%s\n' 'import bpy, sys' \
+    'print("BFA_LAUNCH_OK", bpy.app.version_string, "| Python", sys.version.split()[0])' > "$probe"
+  info "Starting $BUILD_DIR/bin/bforartists in background mode"
+  local out
+  out=$(in_container "'$BUILD_DIR/bin/bforartists' -b --factory-startup --python '$probe'" 2>&1 || true)
+  echo "$out" | tail -15
+  echo "$out" | grep -q BFA_LAUNCH_OK || die "Bforartists did not start correctly (see the lines above)"
+  ok "Bforartists starts: $(echo "$out" | grep BFA_LAUNCH_OK | sed 's/BFA_LAUNCH_OK //')"
+}
+
+cmd_test() {
+  BFA_TARGET=lite
+  BUILD_DIR="$BFA_HOME/bfa_build_linux_lite"
+  cmd_update
+  cmd_build
+  cmd_launch
+  ok "Test build works. Next: the full release build (run / weekly)"
+}
+
 cmd_weekly() {
   cmd_update
   cmd_build
+  cmd_launch
   cmd_package
   cmd_upload
   ok "Weekly Linux build done"
@@ -300,7 +339,7 @@ usage() { sed -n '2,/^set -euo/p' "$0" | head -n -1 | sed 's/^# \{0,1\}//'; }
 main() {
   local cmd="${1:-help}"
   case "$cmd" in
-    setup|image|update|build|package|upload|weekly|shell|status) ;;
+    setup|image|update|build|launch|test|release|package|upload|weekly|shell|status) ;;
     -h|--help|help) usage; exit 0 ;;
     *) die "Unknown command '$cmd'. Run '$0 help'." ;;
   esac
