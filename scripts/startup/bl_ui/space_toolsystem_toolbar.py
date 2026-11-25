@@ -112,6 +112,13 @@ class _template_widget:
             layout.prop(orient_slot, "type")
 
 
+def _property_split_outside_header(layout):
+    # BFA - split the label from the field in the sidebar and Properties editor only. In the tool
+    # header a split property takes a wide fixed column each, which stretched the tool settings
+    # across the whole header and pushed the last ones out of view.
+    layout.use_property_split = bpy.context.region.type != 'TOOL_HEADER'
+
+
 class _defs_view3d_generic:
     @ToolDef.from_fn
     def cursor():
@@ -119,7 +126,7 @@ class _defs_view3d_generic:
             props = tool.operator_properties("view3d.cursor3d")
             layout.use_property_split = False # BFA
             layout.prop(props, "use_depth")
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             layout.prop(props, "orientation")
             layout.use_property_split = False # BFA
         return dict(
@@ -956,7 +963,7 @@ class _defs_edit_mesh:
             layout.prop(props, "steps")
             layout.use_property_split = False
             layout.prop(props, "dupli")
-            layout.use_property_split = True
+            _property_split_outside_header(layout)  # BFA
             props = tool.gizmo_group_properties("MESH_GGT_spin")
             layout.prop(props, "axis")
 
@@ -1919,7 +1926,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def trim_box():
         def draw_settings(_context, layout, tool):
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             props = tool.operator_properties("sculpt.trim_box_gesture")
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
@@ -1943,7 +1950,7 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.trim_lasso_gesture")
 
             if not extra:
-                layout.use_property_split = True # BFA
+                _property_split_outside_header(layout)  # BFA
                 layout.prop(props, "trim_solver", expand=False)
                 layout.prop(props, "trim_mode", expand=False)
                 layout.prop(props, "trim_orientation", expand=False)
@@ -1971,7 +1978,7 @@ class _defs_sculpt:
     def trim_line():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_line_gesture")
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
             layout.prop(props, "trim_extrude_mode", expand=False)
@@ -1991,7 +1998,7 @@ class _defs_sculpt:
     def trim_polyline():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_polyline_gesture")
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             layout.prop(props, "trim_solver", expand=False)
             layout.prop(props, "trim_mode", expand=False)
             layout.prop(props, "trim_orientation", expand=False)
@@ -2028,7 +2035,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def mesh_filter():
         def draw_settings(_context, layout, tool):
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             props = tool.operator_properties("sculpt.mesh_filter")
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
@@ -2056,7 +2063,7 @@ class _defs_sculpt:
     def cloth_filter():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.cloth_filter")
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
             row = layout.row(align=True)
@@ -2080,7 +2087,7 @@ class _defs_sculpt:
     @ToolDef.from_fn
     def color_filter():
         def draw_settings(context, layout, tool):
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
 
             props = tool.operator_properties("sculpt.color_filter")
             settings = context.tool_settings.sculpt
@@ -2115,7 +2122,7 @@ class _defs_sculpt:
     def mask_by_color():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.mask_by_color")
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             layout.prop(props, "threshold")
             layout.use_property_split = False
             layout.prop(props, "contiguous")
@@ -2136,7 +2143,7 @@ class _defs_sculpt:
     def face_set_edit():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.face_set_edit")
-            layout.use_property_split = True # BFA
+            _property_split_outside_header(layout)  # BFA
             layout.prop(props, "mode", expand=False)
             layout.use_property_split = False
             layout.prop(props, "modify_hidden")
