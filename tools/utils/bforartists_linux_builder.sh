@@ -40,7 +40,7 @@
 #
 # Environment (defaults):
 #   BFA_HOME              ~/bfa
-#   BFA_BRANCH            master
+#   BFA_BRANCH            master        a branch or a release tag (e.g. v5.3.0)
 #   BFA_TARGET            release       make target for build: release or lite
 #   BFA_PACKAGE           devbuild      devbuild = linux-devbuild-DD-MM-YYYY.tar.xz
 #                                       release  = Bforartists-X.Y.Z-Linux.tar.xz (Flathub's input)
@@ -231,12 +231,19 @@ cmd_update() {
   if [ -n "$(git status --porcelain --untracked-files=no -- . ':(exclude)lib')" ]; then
     die "Local changes in $REPO; this clone is for builds only. Commit, stash or reset them."
   fi
-  git fetch origin --prune
-  git checkout "$BFA_BRANCH"
-  git pull --rebase origin "$BFA_BRANCH"
+  git fetch origin --prune --tags --force
+  if git show-ref --verify --quiet "refs/remotes/origin/$BFA_BRANCH"; then
+    git checkout "$BFA_BRANCH" 2>/dev/null || git checkout -b "$BFA_BRANCH" "origin/$BFA_BRANCH"
+    git pull --rebase origin "$BFA_BRANCH"
+  elif git show-ref --verify --quiet "refs/tags/$BFA_BRANCH"; then
+    # A release tag (e.g. v5.3.0): build exactly that commit.
+    git checkout --detach "refs/tags/$BFA_BRANCH"
+  else
+    die "No branch or tag '$BFA_BRANCH' on origin"
+  fi
   # Rocky 8's default Python is 3.6; use 3.9 for Blender's update script.
   if [ "$BFA_MODE" = native ]; then make update PYTHON=python3.9; else make update; fi
-  ok "Source at $(git rev-parse --short HEAD) ($(git log -1 --format=%s | cut -c1-70))"
+  ok "Source: $BFA_BRANCH at $(git rev-parse --short HEAD) ($(git log -1 --format=%s | cut -c1-70))"
 }
 
 cmd_build() {

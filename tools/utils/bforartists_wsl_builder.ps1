@@ -35,7 +35,8 @@ param(
   [int]$MemoryGB = 0,                   # default: 75% of the PC's RAM
   [int]$SwapGB = 32,
   [string]$SwapFile = '',               # e.g. Z:\WSL\swap.vhdx (default: WSL puts it on C:)
-  [string]$DevbuildsRemote = ''         # e.g. bfa-devbuilds:bforartists-devbuilds (rclone remote in WSL)
+  [string]$DevbuildsRemote = '',        # e.g. bfa-devbuilds:bforartists-devbuilds (rclone remote in WSL)
+  [string]$Branch = ''                  # branch or release tag to build (default: master)
 )
 
 $ErrorActionPreference = 'Stop'
@@ -81,6 +82,7 @@ function Set-WslConfig {
 }
 
 $d = Get-BuilderDistro
+$BranchEnv = if ($Branch) { "BFA_BRANCH='$Branch' " } else { '' }
 Say '🐧' "WSL distro: $d"
 
 # Keep the builder inside WSL (~/bfa/bin) in step with the copy next to this script, so updating
@@ -105,8 +107,8 @@ switch ($Action) {
     Say '✅' 'Setup done. Next: build the image (once):  .\tools\utils\bforartists_wsl_builder.ps1 image'
   }
   'image' { Invoke-InWsl $d "$Builder image" }
-  'test' { Invoke-InWsl $d "$Builder test" }
-  'release' { Invoke-InWsl $d "$Builder release" }
+  'test' { Invoke-InWsl $d "$BranchEnv$Builder test" }
+  'release' { Invoke-InWsl $d "$BranchEnv$Builder release" }
   'open' {
     # WSLg's GPU path (Mesa d3d12) is missing from Rocky 8, so draw in software over X11.
     Invoke-InWsl $d ("b=~/bfa/bfa_build_linux_release/bin/bforartists; [ -x `$b ] || b=~/bfa/bfa_build_linux_lite/bin/bforartists; " +
@@ -114,7 +116,7 @@ switch ($Action) {
   }
   'run' {
     $envs = if ($DevbuildsRemote) { "BFA_DEVBUILDS_REMOTE='$DevbuildsRemote' " } else { '' }
-    Invoke-InWsl $d "$envs$Builder weekly"
+    Invoke-InWsl $d "$BranchEnv$envs$Builder weekly"
   }
   'schedule' {
     $envs = if ($DevbuildsRemote) { "BFA_DEVBUILDS_REMOTE='$DevbuildsRemote' " } else { '' }

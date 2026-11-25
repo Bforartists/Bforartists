@@ -91,6 +91,9 @@ release appears.
 powershell -ExecutionPolicy Bypass -File Z:\WSL\tools\bforartists_wsl_builder.ps1 release -Distro BfaBuild
 ```
 
+It builds `master` by default (pulled fresh in `~/bfa/Bforartists`). For an exact release, add
+`-Branch v5.3.0` (a tag) or `-Branch <branch>`.
+
 One command builds and makes **all three release packages** with `bforartists_package_linux.sh all` (#7047):
 
 | Package | Folder in `~/bfa/build_output` |
