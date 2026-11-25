@@ -31,6 +31,7 @@ param(
   [string]$Time = '18:00',
   [int]$MemoryGB = 0,                   # default: 75% of the PC's RAM
   [int]$SwapGB = 32,
+  [string]$SwapFile = '',               # e.g. Z:\WSL\swap.vhdx (default: WSL puts it on C:)
   [string]$DevbuildsRemote = ''         # e.g. bfa-devbuilds:bforartists-devbuilds (rclone remote in WSL)
 )
 
@@ -59,7 +60,8 @@ function Set-WslConfig {
   $ramGB = [math]::Floor((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB)
   $mem = if ($MemoryGB -gt 0) { $MemoryGB } else { [math]::Floor($ramGB * 0.75) }
   $text = if (Test-Path $path) { Get-Content $path -Raw } else { '' }
-  if ($text -match '(?m)^\s*memory\s*=' -and $text -match '(?m)^\s*swap\s*=') {
+  if ($text -match '(?m)^\s*memory\s*=' -and $text -match '(?m)^\s*swap\s*=' -and
+      (-not $SwapFile -or $text -match '(?m)^\s*swapFile\s*=')) {
     Say '✅' "Keeping your existing .wslconfig memory/swap settings ($path)"
     return $false
   }
@@ -68,6 +70,7 @@ function Set-WslConfig {
   $add = @()
   if ($text -notmatch '(?m)^\s*memory\s*=') { $add += "memory=${mem}GB" }
   if ($text -notmatch '(?m)^\s*swap\s*=') { $add += "swap=${SwapGB}GB" }
+  if ($SwapFile -and $text -notmatch '(?m)^\s*swapFile\s*=') { $add += "swapFile=$($SwapFile -replace '\\', '\\')" }
   $text = $text -replace '(?m)^\[wsl2\]\s*$', ("[wsl2]`r`n" + ($add -join "`r`n"))
   Set-Content -Path $path -Value $text.TrimEnd() -Encoding ASCII
   Say '🧠' "WSL may now use ${mem} GB of your ${ramGB} GB RAM, plus ${SwapGB} GB swap ($path)"

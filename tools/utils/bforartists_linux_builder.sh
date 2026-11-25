@@ -88,7 +88,10 @@ auto_jobs() {
 # Run a command inside the Rocky 8 build container, with $BFA_HOME mounted at the same path.
 in_container() {
   mkdir -p "$BFA_HOME/.container-home"
-  podman_cmd run --rm --userns=keep-id \
+  # Rootless: keep your user id inside, so the build files stay yours. As root it isn't needed.
+  local userns=()
+  [ "$(id -u)" -ne 0 ] && userns=(--userns=keep-id)
+  podman_cmd run --rm "${userns[@]}" \
     -v "$BFA_HOME:$BFA_HOME" \
     -w "$REPO" \
     -e HOME="$BFA_HOME/.container-home" \
@@ -115,11 +118,18 @@ need_image() {
 
 cmd_setup() {
   command -v apt-get >/dev/null || die "This setup expects Ubuntu/Debian (apt). Install podman, git, git-lfs, python3, make, xz-utils and rclone by hand."
+  local sudo=""
+  [ "$(id -u)" -ne 0 ] && sudo="sudo"
   info "Installing host tools (asks for your password once)"
-  sudo apt-get update
-  sudo apt-get install -y podman uidmap slirp4netns fuse-overlayfs git git-lfs python3 make \
+  $sudo apt-get update
+  $sudo apt-get install -y podman uidmap slirp4netns fuse-overlayfs git git-lfs python3 make \
     xz-utils rclone ca-certificates
   git lfs install --skip-repo
+  # Rootless Podman needs a range of sub-user ids for this user.
+  if [ "$(id -u)" -ne 0 ] && ! grep -q "^$(id -un):" /etc/subuid 2>/dev/null; then
+    $sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 "$(id -un)"
+    ok "Added sub-user ids for $(id -un) (rootless Podman)"
+  fi
   ok "Host tools installed"
 
   mkdir -p "$BFA_HOME" "$LOG_DIR" "$BFA_HOME/bin" "$OUTPUT_DIR"
