@@ -14,6 +14,7 @@
     image       Installs the Rocky 8 build toolchain in WSL (once, about 30-60 minutes).
     test        Quick lite build + start it once, to prove the toolchain works.
     run         Runs one weekly build now (update + build + package + upload).
+    open        Opens the newest build on the Windows desktop (maximized, software drawing).
     release     Builds the release tarball Bforartists-X.Y.Z-Linux.tar.xz (no upload).
     schedule    Registers the weekly Windows task "Bforartists Linux devbuild".
     unschedule  Removes that task.
@@ -26,7 +27,7 @@
 
 param(
   [Parameter(Position = 0)]
-  [ValidateSet('setup', 'image', 'test', 'run', 'release', 'schedule', 'unschedule', 'status')]
+  [ValidateSet('setup', 'image', 'test', 'run', 'release', 'open', 'schedule', 'unschedule', 'status')]
   [string]$Action = 'status',
   [string]$Distro = '',                 # default: the first Rocky/Ubuntu/Debian distro found
   [string]$Day = 'Saturday',
@@ -106,6 +107,11 @@ switch ($Action) {
   'image' { Invoke-InWsl $d "$Builder image" }
   'test' { Invoke-InWsl $d "$Builder test" }
   'release' { Invoke-InWsl $d "$Builder release" }
+  'open' {
+    # WSLg's GPU path (Mesa d3d12) is missing from Rocky 8, so draw in software over X11.
+    Invoke-InWsl $d ("b=~/bfa/bfa_build_linux_release/bin/bforartists; [ -x `$b ] || b=~/bfa/bfa_build_linux_lite/bin/bforartists; " +
+      "echo Opening `$b; env -u WAYLAND_DISPLAY LIBGL_ALWAYS_SOFTWARE=1 `$b --window-maximized")
+  }
   'run' {
     $envs = if ($DevbuildsRemote) { "BFA_DEVBUILDS_REMOTE='$DevbuildsRemote' " } else { '' }
     Invoke-InWsl $d "$envs$Builder weekly"

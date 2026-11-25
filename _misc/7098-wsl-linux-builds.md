@@ -63,6 +63,11 @@ If step 3 refuses the `.tar.xz`, unpack it first with your other WSL distro:
 `wsl -- xz -dk /mnt/z/WSL/rocky8.tar.xz`, then import `Z:\WSL\rocky8.tar`.
 
 Check anytime: `... bforartists_wsl_builder.ps1 status -Distro BfaBuild`.
+
+🖥️ **Open a build on the Windows desktop:** `... bforartists_wsl_builder.ps1 open -Distro BfaBuild` (newest release
+build, else the lite test build). It draws in software over X11, because WSLg's GPU driver (Mesa d3d12) isn't in
+Rocky 8, so the viewport is slow: real GPU testing belongs on a real Linux machine. WSLg ignores Windows display
+scaling; set Preferences > Interface > Resolution Scale once (e.g. 1.5–2), it's saved inside BfaBuild.
 Tarballs in File Explorer: `\\wsl$\BfaBuild\root\bfa\build_output\tar`.
 
 ☁️ **Optional upload to devbuilds:** `wsl -d BfaBuild -- rclone config` once (R2 remote, key limited to
