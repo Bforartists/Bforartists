@@ -298,7 +298,7 @@ SkinKit is the closest match to "better weights" in the maintainer's notes, and 
 | Idea | Level | Where |
 |---|---|---|
 | **The rule list for guided weights.** Clothes follow body, chains own what hangs, small parts rigid, seams glued, sides apart. Our rig description already knows which part is which, so these rules cost us less | 🧩 | `anim-rig-02`, section 3.7 |
-| **"Every vertex gets weights"** as the pass mark for Tier 1 skinning | | `anim-rig-06`, Tier 1 |
+| **"Every vertex gets weights"** as the pass mark for Tier 2 skinning | | `anim-rig-06`, Tier 2 |
 | **Test Pose button.** Bend every joint through its range and back. This is the sweep check as something the artist presses and watches | 🖐️ | section 3.7, validator |
 | **Joint sharpness as a gizmo**: a ring at each joint, dragged wider for a softer bend | 🎛️ | section 7 |
 | **Skin Clothes to Body** as its own action, for clothing added after the rig is built | 🧩 | section 3.7 |
@@ -643,7 +643,7 @@ free to use commercially.
 | **A hidden scene, removed afterwards, for evaluating other frames.** If this works as described, onion skin and paths can be filled without moving the playhead **and without core C++ work** | Handling | | section 5.2, and the open decision on core work |
 | **Clips with sliders.** A walk asset with tempo, energy and mood, previewed live, baked to a plain action when dropped | Setup | 🎛️ | `anim-rig-05`, section 4 |
 
-**Two things to check before Tier 2 is built.**
+**Two things to check before Tier 1 is built.**
 
 1. Editable Motion Paths against the reduced Ghost Tool, as the base for our motion view. It is free,
    GPL and already does much of what PR #7087 was asked to become. What it lacks for us is the
@@ -737,7 +737,7 @@ those needs a button first.
 | **A short, opinionated check list** in place of an ignore system | Setup | 🧩 | `anim-rig-02`, validator |
 | **Control shape scale is its own gizmo**, apart from bone scale | Handling | 🎛️ | `anim-rig-02`, control shapes |
 | **Everyday repairs as native fixes**: bone numbering on duplicate, parent and delete from Pose Mode, symmetrize that carries settings | Handling | 🔬 | Bforartists core, outside both addons |
-| **Rebuild speed as a target**, measured per part and per full rig | Setup | 🎛️ | `anim-rig-06`, Tier 1 tests |
+| **Rebuild speed as a target**, measured per part and per full rig | Setup | 🎛️ | `anim-rig-06`, Tier 2 tests |
 
 ## T3. 👄 The Quest for the Ultimate Stylized Mouth Rig
 
@@ -857,7 +857,7 @@ What we would do differently:
 
 Where it pays off first: **the clip library.** A stock walk or a captured take is dense, plain
 skeleton animation, which is the case this method handles best. "Drop a clip, then reshape it by
-hand" joins Tier 2 to Tier 3 in one story.
+hand" joins Tier 1 to Tier 3 in one story.
 
 Risks: step 4 is a solve on every frame of the range for every mouse move, and may be slow on a
 heavy character. Ghosts bent on the graphics card ignore correctives, so they are a preview, not

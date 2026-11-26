@@ -14,7 +14,7 @@ Companion documents:
 
 ## At a glance
 
-> 🎭 **Rig by dragging. Animate by touching.**
+> 🎭 **Animate by touching. Rig by dragging.**
 > Two addons that turn the 3D View into a puppet workshop.
 
 **The goal:** make animation fun, to the point, and about storytelling, whoever or whatever the
@@ -244,6 +244,38 @@ and skin weights. The artist can correct the guess once and it is saved on the r
 This contract is what makes "drag the mesh to pose" and "full body IK" work on any rig, and it is the
 main thing to design carefully before any feature work.
 
+### 4.2.1 Self-contained rigs
+
+Maintainer direction, 25 November 2026. Rigify and CloudRig rigs carry a companion script in the
+blend file that draws their panel and runs their snap buttons. **Our rigs carry no script.** The rig
+is the armature, and its interface is made from what an armature already has.
+
+| The rig needs | Made from | In vanilla Blender |
+|---|---|---|
+| Switches and sliders (IK or FK, follow, stretch) | Custom properties on the pose bones | Shown in the native Custom Properties panel, and keyable |
+| Switches you can see in the viewport | Small control bones with a custom shape and a limited range | Work as they are |
+| The mechanism behind a switch | Constraints, and drivers that need no Python (plain variable types and simple expressions) | Works with script auto-run switched off |
+| Buttons (snap IK to FK, switch parent without a jump, reset a part) | **Generic Bforartists operators** that read the rig description. One set for every rig, shipped with Bforartists, not with the file | The button is absent. The switch still works, without the snap |
+| The rig panel and the picker | Drawn by Bforartists from the rig description | Absent. The properties stay reachable |
+| Rig description | Custom properties on the armature, its bones and bone collections | Kept and ignored |
+
+**One armature, one action.** Everything an animator keys sits on the armature object: bone
+transforms and pose bone properties. Nothing to key on the armature data, on the mesh or on helper
+objects, so a character's animation is one action with one slot and moves between files as one asset.
+
+Points to design, not yet solved:
+
+- **Fewer buttons by design.** With full body posing as a tool, a part may not need an IK and FK
+  pair at all. Each switch we leave out is a snap button nobody needs.
+- **Clickable bones.** A bone that acts as a button when clicked needs native support in Bforartists.
+  In vanilla Blender it would be an ordinary bone.
+- **Simple driver expressions.** Which expressions run without Python, and whether that is enough
+  for every part recipe, must be checked against the code.
+- **Rigify and CloudRig as engines.** Both write a script into the file. Using either as the build
+  engine means replacing that script with our generic operators, or not using them.
+- **Rigs we did not build.** Rigify and imported rigs keep their own scripts. Our tools read them
+  through a guessed description and never add a script.
+
 ### 4.3 Where the submitted code goes
 
 | Submitted | Goes to | Notes |
@@ -340,13 +372,13 @@ document; the rest is general knowledge and should be confirmed before anyone re
 ## 7. 🗺️ Roadmap
 
 **Superseded by `anim-rig-06-campaign-2027.md`.** The tier plan there reorders this roadmap after the
-maintainer's decisions of 24 November 2026: the rigging kit comes first, viewport posing comes before
+maintainer's decisions of 24 November 2026: the rigging kit comes first (changed on 25 November 2026: animation comes first, on existing rigs, then the rigging kit), viewport posing comes before
 any puppetry, character kits wait until the kit has proven itself, and learned features are opt-in
 through Coworker or optional downloads. The phases below are kept as the first draft.
 
 **Changed on 25 November 2026 (maintainer):** full body IK with pins moves forward, from Phase 4 to
 Phase 2, because it is what makes posing fun. Live recording with the mouse or a webcam moves to
-Phase 4. The campaign document carries the same change in its Tiers 2 and 4.
+Phase 4. The campaign document carries the same change in its Tiers 1 and 4.
 
 Phases are ordered so that each one ships something an artist can use, and so the riskiest
 foundations are tested early. No dates: each phase needs sizing once the open decisions are made.
