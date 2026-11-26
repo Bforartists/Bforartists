@@ -711,7 +711,8 @@ static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOper
     if (strip->type != STRIP_TYPE_COMPOSITOR) {
       return OPERATOR_CANCELLED;
     }
-    ntree = /* strip's own node group */;
+    CompositorEffectVars *data = static_cast<CompositorEffectVars *>(strip->effectdata);
+    ntree = data->node_group;
   }
   else {
     /* Old callers with neither (e.g. Python): keep the previous active-modifier behaviour. */

@@ -1093,16 +1093,31 @@ static void bfa_template_id_node_editor_button(Layout &layout,
 
     case ID_NT:
       if (RNA_struct_is_a(owner_ptr.type, RNA_NodesModifier)) {
-        opname = "OBJECT_OT_geometry_nodes_open_editor"; /* verify idname */
+        opname = "OBJECT_OT_geometry_nodes_open_editor";
         layout.context_ptr_set("modifier", &owner_ptr);
       }
       else if (RNA_struct_is_a(owner_ptr.type, RNA_SceneCompositorEffect)) {
         opname = "SCENE_OT_effect_compositor_open_editor";
         layout.context_ptr_set("effect", &owner_ptr);
       }
-      else if (RNA_struct_is_a(owner_ptr.type, RNA_StripModifier)) { /* verify struct name */
-        opname = "SEQUENCER_OT_compositor_modifier_open_editor";      /* verify idname */
+      else if (RNA_struct_is_a(owner_ptr.type, &RNA_StripModifier)) {
+        const StripModifierData *smd = static_cast<const StripModifierData *>(owner_ptr.data);
+        if (!smd || smd->type != eSeqModifierType_Compositor) {
+          return;
+        }
+        opname = "SEQUENCER_OT_compositor_modifier_open_editor";
         layout.context_ptr_set("modifier", &owner_ptr);
+      }
+      else if (RNA_struct_is_a(owner_ptr.type, &RNA_Strip)) {
+        const Strip *strip = static_cast<const Strip *>(owner_ptr.data);
+        if (!strip || strip->type != STRIP_TYPE_COMPOSITOR) {
+          return;
+        }
+        if (!strip || strip->type != STRIP_TYPE_COMPOSITOR || !strip->effectdata) {
+          return;
+        }
+        opname = "SEQUENCER_OT_compositor_modifier_open_editor"; 
+        layout.context_ptr_set("strip", &owner_ptr);
       }
       break;
 
