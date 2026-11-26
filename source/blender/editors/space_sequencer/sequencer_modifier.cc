@@ -680,7 +680,6 @@ void SEQUENCER_OT_strip_modifier_set_active(wmOperatorType *ot)
 static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_sequencer_scene(C);
-  Strip *strip = seq::select_active_get(scene);
   if (!strip) {
     return OPERATOR_CANCELLED;
   }
@@ -695,8 +694,8 @@ static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOper
   const std::string modifier_name = RNA_string_get(op->ptr, "modifier");
 
   if (!modifier_name.empty() || mod_ptr.data) {
-    /* Modifier button: node group comes from the compositor modifier. */
-    strip = /* active strip, or the strip that owns mod_ptr */;
+    /* Strip modifier: node group comes from the compositor modifier. */
+    strip = seq::select_active_get(scene);
     smd = !modifier_name.empty() ? seq::modifier_find_by_name(strip, modifier_name.c_str()) :
                                   static_cast<StripModifierData *>(mod_ptr.data);
     if (!smd || smd->type != eSeqModifierType_Compositor) {
@@ -706,7 +705,7 @@ static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOper
     seq::modifier_set_active(strip, smd);
   }
   else if (strip_ptr.data) {
-    /* Strip button: node group belongs to the compositor strip itself. */
+    /* Effect strip: node group belongs to the compositor strip itself. */
     strip = static_cast<Strip *>(strip_ptr.data);
     if (strip->type != STRIP_TYPE_COMPOSITOR) {
       return OPERATOR_CANCELLED;
@@ -714,23 +713,10 @@ static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOper
     CompositorEffectVars *data = static_cast<CompositorEffectVars *>(strip->effectdata);
     ntree = data->node_group;
   }
-  else {
-    /* Old callers with neither (e.g. Python): keep the previous active-modifier behaviour. */
-    strip = /* active strip */;
-    smd = strip ? seq::modifier_get_active(strip) : nullptr;
-    if (!smd || smd->type != eSeqModifierType_Compositor) {
-      return OPERATOR_CANCELLED;
-    }
-    ntree = reinterpret_cast<SequencerCompositorModifierData *>(smd)->node_group;
-  }
-
-  SequencerCompositorModifierData *cmd = reinterpret_cast<SequencerCompositorModifierData *>(smd);
-  /* BFA - mark modifier active so the node editor header context resolves */
-  seq::modifier_set_active(strip, smd);
 
   const bool result = ED_node_tree_open_temp(C,
                                              op->reports,
-                                             cmd->node_group,
+                                             ntree,
                                              &scene->id,
                                              "Compositor Editor",
                                              NC_SCENE | ND_NODES,
