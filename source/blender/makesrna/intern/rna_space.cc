@@ -8952,6 +8952,40 @@ static void rna_def_space_userpref(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_TEXTEDIT_UPDATE);
   RNA_def_property_ui_text(prop, "Filter", "Search term for filtering in the UI");
 
+  prop = RNA_def_property(srna, "use_filter_user_modified", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "filter_flag", USER_PREF_FILTER_USER_MODIFIED);
+  RNA_def_property_ui_text(prop,
+                           "Customized Only",
+                           "Only show key map items that differ from the defaults, "
+                           "including items added by the user");
+  /* Filters and key map tree draw in separate regions. */
+  RNA_def_property_update(prop, NC_WINDOW, nullptr);
+
+  prop = RNA_def_property(srna, "use_filter_addon", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "filter_flag", USER_PREF_FILTER_ADDON);
+  RNA_def_property_ui_text(prop,
+                           "Add-on Shortcuts Only",
+                           "Only show key map items an add-on added. Combine with Conflicts to "
+                           "narrow to the ones fighting another binding");
+  RNA_def_property_update(prop, NC_WINDOW, nullptr);
+
+  prop = RNA_def_property(srna, "use_filter_key_exact", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "filter_flag", USER_PREF_FILTER_KEY_EXACT);
+  RNA_def_property_ui_text(prop,
+                           "Exact Key Binding",
+                           "Match the whole key binding rather than any binding that contains "
+                           "the keys searched for, so \"V\" finds V alone and not Ctrl V");
+  RNA_def_property_update(prop, NC_WINDOW, nullptr);
+
+  prop = RNA_def_property(srna, "use_filter_conflicts", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "filter_flag", USER_PREF_FILTER_CONFLICTS);
+  RNA_def_property_ui_text(prop,
+                           "Conflicts Only",
+                           "Only show key map items whose key binding is also claimed by another "
+                           "item of the same key map, the marked ones being those an item above "
+                           "them takes the event from");
+  RNA_def_property_update(prop, NC_WINDOW, nullptr);
+
   prop = RNA_def_property(srna, "tab_search_results", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_array(prop, 0); /* Dynamic length, see next line. */
   RNA_def_property_flag(prop, PROP_DYNAMIC);

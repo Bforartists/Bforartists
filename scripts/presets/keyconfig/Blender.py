@@ -339,8 +339,7 @@ def load():
         prefs.inputs.mouse_emulate_3_button_modifier == 'ALT'
     )
 
-    keyconfig_data = blender_default.generate_keymaps(
-        blender_default.Params(
+    params = blender_default.Params(
             select_mouse=kc_prefs.select_mouse,
             use_mouse_emulate_3_button=use_mouse_emulate_3_button,
             spacebar_action=kc_prefs.spacebar_action,
@@ -369,14 +368,15 @@ def load():
             use_pie_click_drag=kc_prefs.use_pie_click_drag,
             use_file_single_click=kc_prefs.use_file_single_click,
             use_alt_navigation=kc_prefs.use_alt_navigation,
-        ),
     )
+    intents = blender_default.generate_intents(params)
+    keyconfig_data = blender_default.generate_keymaps(params)
 
     if platform == "darwin":
         from bl_keymap_utils.platform_helpers import keyconfig_data_oskey_from_ctrl_for_macos
-        keyconfig_data = keyconfig_data_oskey_from_ctrl_for_macos(keyconfig_data)
+        keyconfig_data = keyconfig_data_oskey_from_ctrl_for_macos(keyconfig_data, intents=intents)
 
-    keyconfig_init_from_data(kc, keyconfig_data)
+    keyconfig_init_from_data(kc, keyconfig_data, intents=intents)
 
 
 if __name__ == "__main__":

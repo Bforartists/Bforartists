@@ -1161,10 +1161,12 @@ static Button *item_with_label(Layout *layout,
 #endif
 
   const bool is_keymapitem_ptr = RNA_struct_is_a(ptr->type, RNA_KeyMapItem);
-  if ((flag & ITEM_R_FULL_EVENT) && !is_keymapitem_ptr) {
-    RNA_warning_bare("%s: Data is not a keymap item struct: %s. Ignoring 'full_event' option.",
-                     caller_fn_name,
-                     RNA_struct_identifier(ptr->type));
+  const bool is_keyintent_ptr = RNA_struct_is_a(ptr->type, RNA_KeyIntent);
+  if ((flag & ITEM_R_FULL_EVENT) && !(is_keymapitem_ptr || is_keyintent_ptr)) {
+    RNA_warning_bare(
+        "%s: Data is not a keymap item or intent struct: %s. Ignoring 'full_event' option.",
+        caller_fn_name,
+        RNA_struct_identifier(ptr->type));
   }
 
   block_layout_set_current(block, layout);
@@ -1263,9 +1265,13 @@ static Button *item_with_label(Layout *layout,
                          0,
                          std::nullopt);
   }
-  else if ((flag & ITEM_R_FULL_EVENT) && is_keymapitem_ptr) {
+  else if ((flag & ITEM_R_FULL_EVENT) && (is_keymapitem_ptr || is_keyintent_ptr)) {
     std::string kmi_str =
-        WM_keymap_item_to_string(static_cast<const wmKeyMapItem *>(ptr->data), false).value_or("");
+        is_keymapitem_ptr ?
+            WM_keymap_item_to_string(static_cast<const wmKeyMapItem *>(ptr->data), false)
+                .value_or("") :
+            WM_keyintent_to_string(static_cast<const wmKeyIntent *>(ptr->data), false)
+                .value_or("");
 
     but = uiDefButR_prop(block,
                          ButtonType::HotkeyEvent,
@@ -1480,6 +1486,12 @@ static Button *uiItemFullO_ptr_ex(Layout *layout,
 
   if (layout->red_alert()) {
     button_flag_enable(but, BUT_REDALERT);
+  }
+  if (layout->warning_alert()) {
+    button_flag_enable(but, BUT_WARNALERT);
+  }
+  if (layout->info_alert()) {
+    button_flag_enable(but, BUT_INFOALERT);
   }
 
   if (layout->active_default()) {
@@ -2380,6 +2392,12 @@ void Layout::prop(PointerRNA *ptr,
     if (layout->red_alert()) {
       button_flag_enable(but, BUT_REDALERT);
     }
+    if (layout->warning_alert()) {
+      button_flag_enable(but, BUT_WARNALERT);
+    }
+    if (layout->info_alert()) {
+      button_flag_enable(but, BUT_INFOALERT);
+    }
 
     if (layout->activate_init()) {
       button_flag_enable(but, BUT_ACTIVATE_ON_INIT);
@@ -2408,6 +2426,12 @@ void Layout::prop(PointerRNA *ptr,
 
     if (layout->red_alert()) {
       button_flag_enable(but, BUT_REDALERT);
+    }
+    if (layout->warning_alert()) {
+      button_flag_enable(but, BUT_WARNALERT);
+    }
+    if (layout->info_alert()) {
+      button_flag_enable(but, BUT_INFOALERT);
     }
 
     if (layout->activate_init()) {
@@ -3396,6 +3420,12 @@ static Button *uiItem_simple(Layout *layout,
 
   if (layout->red_alert()) {
     button_flag_enable(but, BUT_REDALERT);
+  }
+  if (layout->warning_alert()) {
+    button_flag_enable(but, BUT_WARNALERT);
+  }
+  if (layout->info_alert()) {
+    button_flag_enable(but, BUT_INFOALERT);
   }
 
   return but;
@@ -5208,6 +5238,8 @@ void LayoutInternal::init_from_parent(Layout *litem, Layout *layout, int align)
   litem->enabled_ = true;
   litem->context_ = layout->context_;
   litem->redalert_ = layout->redalert_;
+  litem->warning_alert_ = layout->warning_alert_;
+  litem->info_alert_ = layout->info_alert_;
   litem->w_ = layout->w_;
   litem->emboss_ = layout->emboss_;
   litem->flag_ = (layout->flag_ & (ItemInternalFlag::PropSep | ItemInternalFlag::PropDecorate |

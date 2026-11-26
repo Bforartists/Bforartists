@@ -1547,6 +1547,14 @@ bool WM_operator_idname_ok_or_report(ReportList *reports, const char *idname);
  */
 bool WM_operator_bl_idname_is_valid(const char *idname);
 
+/** Property values that distinguish usage variants of \a idname, joined into one string. */
+size_t WM_operator_usage_variant(const char *idname,
+                                 PointerRNA *properties,
+                                 char *r_variant,
+                                 size_t r_variant_maxncpy) ATTR_NONNULL(1, 3);
+/** Normalize equivalent context data paths to one spelling. */
+void WM_operator_usage_variant_canonicalize(std::string &variant);
+
 /**
  * Calculate the path to `ptr` from context `C`, or return NULL if it can't be calculated.
  */

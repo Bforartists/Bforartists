@@ -1486,6 +1486,26 @@ static void rna_UILayout_alert_set(PointerRNA *ptr, bool value)
   ptr->data_as<Layout>()->red_alert_set(value);
 }
 
+static bool rna_UILayout_warning_get(PointerRNA *ptr)
+{
+  return ptr->data_as<const Layout>()->warning_alert();
+}
+
+static void rna_UILayout_warning_set(PointerRNA *ptr, bool value)
+{
+  ptr->data_as<Layout>()->warning_alert_set(value);
+}
+
+static bool rna_UILayout_info_get(PointerRNA *ptr)
+{
+  return ptr->data_as<const Layout>()->info_alert();
+}
+
+static void rna_UILayout_info_set(PointerRNA *ptr, bool value)
+{
+  ptr->data_as<Layout>()->info_alert_set(value);
+}
+
 static void rna_UILayout_op_context_set(PointerRNA *ptr, int value)
 {
   ptr->data_as<Layout>()->operator_context_set(wm::OpCallContext(value));
@@ -1860,6 +1880,18 @@ static void rna_def_ui_layout(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "alert", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(prop, "rna_UILayout_alert_get", "rna_UILayout_alert_set");
+
+  prop = RNA_def_property(srna, "warning", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_funcs(prop, "rna_UILayout_warning_get", "rna_UILayout_warning_set");
+  RNA_def_property_ui_text(
+      prop, "Warning", "When true, items in this (sub)layout are highlighted with the warning "
+      "state color (orange counterpart to alert)");
+
+  prop = RNA_def_property(srna, "info", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_funcs(prop, "rna_UILayout_info_get", "rna_UILayout_info_set");
+  RNA_def_property_ui_text(
+      prop, "Info", "When true, items in this (sub)layout are highlighted with the info "
+      "state color (blue counterpart to alert)");
 
   prop = RNA_def_property(srna, "alignment", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, alignment_items);

@@ -70,6 +70,9 @@ enum eOperator_Flag : short {
    * (the region-type is maintained to prevent errors).
    */
   OP_IS_MODAL_CURSOR_REGION = (1 << 4),
+
+  /** Invoked from a key map item (not a menu, button, search or script). */
+  OP_IS_FROM_KEYMAP = (1 << 5),
 };
 ENUM_OPERATORS(eOperator_Flag)
 

@@ -153,7 +153,12 @@ def keymap_item_property_clean(value: Any) -> Any:
     return value
 
 
-def keymap_data_clean(keyconfig_data: KeyConfigData, *, relaxed: bool) -> None:
+def keymap_data_clean(
+        keyconfig_data: KeyConfigData,
+        *,
+        relaxed: bool,
+        intents: dict[str, tuple[str, dict[str, Any]]] | None = None,
+) -> None:
     """
     Order & sanitize keymap data so the result
     from the hand written Python script is comparable with data exported & imported.
@@ -162,6 +167,16 @@ def keymap_data_clean(keyconfig_data: KeyConfigData, *, relaxed: bool) -> None:
     for _, _, km_items_data in keyconfig_data:
         items = km_items_data["items"]
         for i, (item_op, item_event, item_prop) in enumerate(items):
+            # The source data references intents in place of the event,
+            # exported data writes the resolved event & stores the intent in the item data.
+            # Normalize to the exported form.
+            if (intent_id := item_event.get("intent")) is not None:
+                assert intents is not None, "intent used without an intents table"
+                item_event = {**intents[intent_id][1], **item_event}
+                del item_event["intent"]
+                item_prop = {**(item_prop or {}), "intent": intent_id}
+                items[i] = item_op, item_event, item_prop
+
             if relaxed:
                 # Prevent "alt": False from raising an error.
                 defaults = {"alt": False, "ctrl": False, "shift": False, "any": False}
@@ -173,7 +188,7 @@ def keymap_data_clean(keyconfig_data: KeyConfigData, *, relaxed: bool) -> None:
                 if properties:
                     properties[:] = keymap_item_property_clean(properties)
                 else:
-                    item_prop.pop("properties")
+                    item_prop.pop("properties", None)
 
             # Needed so: `{"properties": ()}` matches `None` as there is no meaningful difference.
             # Writing `None` makes the most sense when explicitly written, however generated properties
@@ -228,11 +243,11 @@ def keyconfig_activate_and_extract_data(
 
         # If called multiple times, something strange is happening.
         assert len(args_collected) == 1
-        args, _kw = args_collected[0]
+        args, kw = args_collected[0]
         # Ignore the type check as `temp_fn_argument_extractor` is a generic function
         # which doesn't contain type information of the function being wrapped.
         keyconfig_data: KeyConfigData = args[1]  # type: ignore
-        keymap_data_clean(keyconfig_data, relaxed=relaxed)
+        keymap_data_clean(keyconfig_data, relaxed=relaxed, intents=kw.get("intents"))  # type: ignore
         return keyconfig_data
 
 

@@ -234,6 +234,11 @@ add_blender_test(
 )
 
 add_blender_test(
+  script_keymap_intents
+  --python ${CMAKE_CURRENT_LIST_DIR}/bl_keymap_intents.py
+)
+
+add_blender_test(
   script_load_addons
   --python ${CMAKE_CURRENT_LIST_DIR}/bl_load_addons.py
 )

@@ -434,6 +434,7 @@ struct wmNotifier {
 #define ND_XR_DATA_CHANGED (7 << 16)
 #define ND_LIB_OVERRIDE_CHANGED (8 << 16)
 #define ND_PROJECT_CHANGED (9 << 16)
+#define ND_KEYMAP_ACTIVITY (10 << 16)
 
 /* NC_SCREEN. */
 #define ND_LAYOUTBROWSE (1 << 16)

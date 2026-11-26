@@ -499,6 +499,8 @@ void RNA_api_grease_pencil_layer_groups(StructRNA *srna);
 void RNA_api_grease_pencil_layer_masks(StructRNA *srna);
 void RNA_api_keyconfig(StructRNA *srna);
 void RNA_api_keyconfigs(StructRNA *srna);
+void RNA_api_keyintent(StructRNA *srna);
+void RNA_api_keyintents(StructRNA *srna);
 void RNA_api_keyingset(StructRNA *srna);
 void RNA_api_keymap(StructRNA *srna);
 void RNA_api_keymaps(StructRNA *srna);

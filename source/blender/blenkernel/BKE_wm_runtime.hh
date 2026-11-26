@@ -16,6 +16,7 @@
 
 #include "BLI_map.hh"
 #include "BLI_set.hh"
+#include "BLI_vector.hh"
 
 namespace blender {
 
@@ -47,6 +48,51 @@ using wmNotifierQueueSet = Set<const wmNotifier *,
                                DefaultProbingStrategy,
                                wmNotifierHashForQueue,
                                wmNotifierEqForQueue>;
+
+/** A recorded activation of a key map item, see #WindowManagerRuntime::keymap_activity. */
+struct KeymapActivityItem {
+  /** #wmKeyMap::idname. */
+  char keymap_idname[/*KMAP_MAX_NAME*/ 64] = "";
+  /** #wmKeyMapItem::idname (non-modal items). */
+  char op_idname[/*OP_MAX_TYPENAME*/ 64] = "";
+  /** Enum identifier of #wmKeyMapItem::propvalue (modal items, see #is_modal). */
+  char propvalue[/*OP_MAX_TYPENAME*/ 64] = "";
+  /** Distinguishes uses of #op_idname, see #WM_operator_usage_variant. */
+  char variant[/*OP_MAX_USAGE_VARIANT*/ 128] = "";
+  /** Human readable key combination, see #WM_keymap_item_to_string. */
+  char event_str[64] = "";
+  /**
+   * #eSpace_Type of the most recent activation, #SPACE_EMPTY when outside an editor.
+   * For operations without a key map item this is the only record of the editor.
+   */
+  int spaceid = 0;
+  /** Time of the most recent activation, see #BLI_time_now_seconds. */
+  double time = 0.0;
+  /** Number of consecutive activations collapsed into this entry. */
+  int repeat = 1;
+  /** False when the operator ran without a key map item (menu, button, search, script). */
+  bool is_shortcut = true;
+  /** Modal key map item. */
+  bool is_modal = false;
+  /** UI state: show the key map item expanded in the recently used list. */
+  bool show_expanded = false;
+};
+
+/** A key map item selected in the key map editor, by identifier (key maps may be rebuilt). */
+struct KeymapSelectionItem {
+  /** #wmKeyMap::idname, #wmKeyMap::spaceid, #wmKeyMap::regionid. */
+  char keymap_idname[/*KMAP_MAX_NAME*/ 64] = "";
+  int spaceid = 0;
+  int regionid = 0;
+  /** #wmKeyMapItem::id. */
+  int item_id = 0;
+};
+
+/** Snapshot of the user key configuration, see #WM_keymap_undo_checkpoint. */
+struct KeymapUndoStep {
+  ListBaseT<wmKeyMap> user_keymaps = {nullptr, nullptr};
+  ListBaseT<wmKeyIntent> user_keyintents = {nullptr, nullptr};
+};
 
 struct WindowManagerRuntime {
   /** Separate active from drawable. */
@@ -140,6 +186,27 @@ struct WindowManagerRuntime {
   UndoStack *undo_stack = nullptr;
 
   wmMsgBus *message_bus = nullptr;
+
+  /** Recently triggered key map items (oldest first), see #WM_keymap_activity_record. */
+  Vector<KeymapActivityItem> keymap_activity;
+  /** UI state: key map items selected in the key map editor. */
+  Vector<KeymapSelectionItem> keymap_selection;
+  /** Undo steps, oldest first, see #WM_keymap_undo_checkpoint. */
+  Vector<KeymapUndoStep *> keymap_undo;
+  /** Redo steps, newest first, cleared on any other change. */
+  Vector<KeymapUndoStep *> keymap_redo;
+  /** State at the last checkpoint, what undo restores. */
+  KeymapUndoStep *keymap_undo_baseline = nullptr;
+  /** Non-zero while undoing or redoing, suppresses recording. */
+  int keymap_undo_suspend = 0;
+  /** UI state: show the recently used key map item list in the key map editor. */
+  bool keymap_activity_show = true;
+  /** UI state: show the hidden key map item list expanded. */
+  bool keymap_activity_show_hidden = false;
+  /** UI state: usage region height while open, restored on reopening. */
+  int keymap_activity_region_sizey = 0;
+  /** UI state: usage region height when closed (a single row). */
+  int keymap_activity_region_closed_sizey = 0;
 
   WindowManagerRuntime();
   ~WindowManagerRuntime();

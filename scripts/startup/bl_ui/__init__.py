@@ -140,6 +140,7 @@ def register():
 
     space_filebrowser.register_props()
     properties_paint_common.register()
+    space_userpref.register()
 
     from bpy.props import (
         EnumProperty,
@@ -206,6 +207,7 @@ def unregister():
     from bpy.utils import unregister_class
 
     properties_paint_common.unregister()
+    space_userpref.unregister()
 
     for mod in reversed(_modules_loaded):
         for cls in reversed(mod.classes):

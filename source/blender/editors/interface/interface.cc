@@ -1085,7 +1085,8 @@ static void but_update_old_active_from_new(Button *oldbut, Button *but)
   BLI_assert(oldbut->active || oldbut->semi_modal_state);
 
   /* flags from the buttons we want to refresh, may want to add more here... */
-  const int64_t flag_copy = BUT_REDALERT | BUT_DISABLED | UI_HAS_ICON | UI_SELECT_DRAW;
+  const int64_t flag_copy = BUT_REDALERT | BUT_WARNALERT | BUT_INFOALERT | BUT_DISABLED |
+                            UI_HAS_ICON | UI_SELECT_DRAW;
   const int drawflag_copy = BUT_HAS_QUICK_TOOLTIP | BUT_NO_TOOLTIP;
 
   /* still stuff needs to be copied */

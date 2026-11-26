@@ -4289,6 +4289,7 @@ static BHead *read_userdef(BlendFileData *bfd, FileData *fd, BHead *bhead)
 
   BLO_read_struct_list(reader, bTheme, &user->themes);
   BLO_read_struct_list(reader, wmKeyMap, &user->user_keymaps);
+  BLO_read_struct_list(reader, wmKeyIntent, &user->user_keyintents);
   BLO_read_struct_list(reader, wmKeyConfigPref, &user->user_keyconfig_prefs);
   BLO_read_struct_list(reader, bUserMenu, &user->user_menus);
   BLO_read_struct_list(reader, bAddon, &user->addons);

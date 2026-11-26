@@ -421,6 +421,12 @@ enum ButtonFlag : int64_t {
   BUT_FORCE_SEMI_MODAL_ACTIVE = int64_t(1) << 33,
   /** On a full Tab auto-complete match, apply the value & keep editing (cursor at the end). */
   BUT_TEXTEDIT_AUTOCOMPLETE_KEEP_ACTIVE = int64_t(1) << 34,
+
+  /** Highlight with the warning state color #TH_WARNING, as #BUT_REDALERT. */
+  BUT_WARNALERT = int64_t(1) << 35,
+
+  /** Highlight with the info state color #TH_INFO, as #BUT_REDALERT. */
+  BUT_INFOALERT = int64_t(1) << 36,
 };
 
 /** #Button.dragflag */

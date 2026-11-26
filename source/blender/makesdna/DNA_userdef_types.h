@@ -1133,6 +1133,8 @@ struct UserDef {
   ListBaseT<uiFont> uifonts = {nullptr, nullptr};
   ListBaseT<uiStyle> uistyles = {nullptr, nullptr};
   ListBaseT<struct wmKeyMap> user_keymaps = {nullptr, nullptr};
+  /** User changed #wmKeyIntent's (keys only), applied on top of the active key configuration. */
+  ListBaseT<struct wmKeyIntent> user_keyintents = {nullptr, nullptr};
   ListBaseT<struct wmKeyConfigPref> user_keyconfig_prefs = {nullptr, nullptr};
   ListBaseT<bAddon> addons = {nullptr, nullptr};
   ListBaseT<bPathCompare> autoexec_paths = {nullptr, nullptr};

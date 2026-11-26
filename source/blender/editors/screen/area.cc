@@ -1402,6 +1402,11 @@ static bool region_azone_edge_poll(const ScrArea *area,
   {
     return false;
   }
+  /* The key-map header region sizes itself, so no resize handle. */
+  if (!is_hidden && region->regiontype == RGN_TYPE_TOOL_PROPS && area->spacetype == SPACE_USERPREF)
+  {
+    return false;
+  }
 
   if (is_hidden && (U.app_flag & USER_APP_HIDE_REGION_TOGGLE)) {
     return false;

@@ -26,6 +26,7 @@
 #include "wm_event_types.hh"
 
 #include "WM_api.hh"
+#include "WM_keymap.hh"
 #include "WM_types.hh"
 
 #include "rna_internal.hh" /* own include */
@@ -610,6 +611,62 @@ wmKeyConfig *rna_KeyConfig_new(wmWindowManager *wm, const char *idname)
   return WM_keyconfig_ensure(wm, idname, true);
 }
 
+static wmKeyIntent *rna_KeyIntents_new(wmKeyConfig *keyconf,
+                                       ReportList *reports,
+                                       const char *idname,
+                                       const char *label,
+                                       int type,
+                                       int value,
+                                       bool any,
+                                       int shift,
+                                       int ctrl,
+                                       int alt,
+                                       int oskey,
+                                       int hyper,
+                                       int keymodifier,
+                                       int direction,
+                                       const char *category)
+{
+  if (idname[0] == '\0') {
+    BKE_report(reports, RPT_ERROR, "Shared shortcut identifier must not be empty");
+    return nullptr;
+  }
+
+  KeyMapItem_Params params{};
+  params.type = type;
+  params.value = value;
+  params.modifier = keymap_item_modifier_flag_from_args(any, shift, ctrl, alt, oskey, hyper);
+  params.keymodifier = keymodifier;
+  params.direction = direction;
+
+  return WM_keyconfig_intent_ensure(keyconf, idname, label, category, &params);
+}
+
+static void rna_KeyIntents_remove(wmKeyConfig *keyconf, ReportList *reports, PointerRNA *ki_ptr)
+{
+  wmKeyIntent *ki = static_cast<wmKeyIntent *>(ki_ptr->data);
+  if (BLI_findindex(&keyconf->intents, ki) == -1) [[unlikely]] {
+    BKE_reportf(reports,
+                RPT_ERROR,
+                "KeyIntent '%s' not found in KeyConfig '%s'",
+                ki->idname,
+                keyconf->idname);
+    return;
+  }
+  WM_keyconfig_intent_remove(keyconf, ki);
+  ki_ptr->invalidate();
+}
+
+static wmKeyIntent *rna_KeyIntents_find(wmKeyConfig *keyconf, const char *idname)
+{
+  return WM_keyconfig_intent_find(keyconf, idname);
+}
+
+static void rna_KeyIntent_restore_to_default(wmKeyIntent *ki, bContext *C)
+{
+  WM_keyintent_restore_to_default(CTX_wm_manager(C), ki);
+}
+
 static void rna_KeyConfig_remove(wmWindowManager *wm, ReportList *reports, PointerRNA *keyconf_ptr)
 {
   wmKeyConfig *keyconf = static_cast<wmKeyConfig *>(keyconf_ptr->data);
@@ -1055,6 +1112,9 @@ void RNA_api_wm(StructRNA *srna)
 {
   FunctionRNA *func;
   PropertyRNA *parm;
+
+  func = RNA_def_function(srna, "keymap_activity_clear", "WM_keymap_activity_clear");
+  RNA_def_function_ui_description(func, "Clear the list of recently used key-map items");
 
   func = RNA_def_function(srna, "fileselect_add", "WM_event_add_fileselect");
   /* Note that a full description is located at:
@@ -1677,6 +1737,61 @@ void RNA_api_keymaps(StructRNA *srna)
   RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
   parm = RNA_def_pointer(func, "keymap", "KeyMap", "Key Map", "Corresponding key map");
   RNA_def_function_return(func, parm);
+}
+
+void RNA_api_keyintents(StructRNA *srna)
+{
+  FunctionRNA *func;
+  PropertyRNA *parm;
+
+  func = RNA_def_function(srna, "new", "rna_KeyIntents_new");
+  RNA_def_function_flag(func, FUNC_USE_REPORTS);
+  RNA_def_function_ui_description(
+      func,
+      "Ensure the shared shortcut exists. This will return the one with the given identifier, "
+      "updating its label and key, or create a new one if it does not exist yet.");
+  parm = RNA_def_string(func, "idname", nullptr, 0, "Identifier", "");
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  parm = RNA_def_string(func, "label", nullptr, 0, "Label", "The meaning of the shortcut");
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  parm = RNA_def_enum(func, "type", rna_enum_event_type_items, 0, "Type", "");
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  parm = RNA_def_enum(func, "value", rna_enum_event_value_items, 0, "Value", "");
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  RNA_def_boolean(func, "any", false, "Any", "");
+  RNA_def_int(func, "shift", KM_NOTHING, KM_ANY, KM_MOD_HELD, "Shift", "", KM_ANY, KM_MOD_HELD);
+  RNA_def_int(func, "ctrl", KM_NOTHING, KM_ANY, KM_MOD_HELD, "Ctrl", "", KM_ANY, KM_MOD_HELD);
+  RNA_def_int(func, "alt", KM_NOTHING, KM_ANY, KM_MOD_HELD, "Alt", "", KM_ANY, KM_MOD_HELD);
+  RNA_def_int(func, "oskey", KM_NOTHING, KM_ANY, KM_MOD_HELD, "OS Key", "", KM_ANY, KM_MOD_HELD);
+  RNA_def_int(func, "hyper", KM_NOTHING, KM_ANY, KM_MOD_HELD, "Hyper", "", KM_ANY, KM_MOD_HELD);
+  RNA_def_enum(func, "key_modifier", rna_enum_event_type_items, 0, "Key Modifier", "");
+  RNA_def_enum(func, "direction", rna_enum_event_direction_items, KM_ANY, "Direction", "");
+  RNA_def_string(
+      func, "category", nullptr, 0, "Category", "Groups the shared shortcut in the interface, may be empty");
+  parm = RNA_def_pointer(func, "intent", "KeyIntent", "Shared Shortcut", "Added shared shortcut");
+  RNA_def_function_return(func, parm);
+
+  func = RNA_def_function(srna, "remove", "rna_KeyIntents_remove");
+  RNA_def_function_flag(func, FUNC_USE_REPORTS);
+  parm = RNA_def_pointer(func, "intent", "KeyIntent", "Shared Shortcut", "Removed shared shortcut");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+  RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, ParameterFlag(0));
+
+  func = RNA_def_function(srna, "find", "rna_KeyIntents_find");
+  parm = RNA_def_string(func, "idname", nullptr, 0, "Identifier", "");
+  RNA_def_parameter_flags(parm, PropertyFlag(0), PARM_REQUIRED);
+  parm = RNA_def_pointer(func, "intent", "KeyIntent", "Shared Shortcut", "Corresponding shared shortcut");
+  RNA_def_function_return(func, parm);
+}
+
+void RNA_api_keyintent(StructRNA *srna)
+{
+  FunctionRNA *func;
+
+  func = RNA_def_function(srna, "restore_to_default", "rna_KeyIntent_restore_to_default");
+  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
+  RNA_def_function_ui_description(
+      func, "Restore the key of this shared shortcut to the active key configuration preset");
 }
 
 void RNA_api_keyconfigs(StructRNA *srna)

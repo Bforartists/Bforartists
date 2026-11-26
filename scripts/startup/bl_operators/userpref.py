@@ -353,6 +353,35 @@ class PREFERENCES_OT_keyconfig_export(Operator):
         return {'RUNNING_MODAL'}
 
 
+def _keyitem_selection_poll(context):
+    """Poll for row operators: a key map in the context, or a non-empty selection."""
+    import rna_keymap_ui
+    if getattr(context, "keymap", None) is not None:
+        return True
+    return bool(rna_keymap_ui.keymap_selection_count())
+
+
+def _keymap_filter_labels_clear(_context):
+    from bl_keymap_utils import editor_meta
+    for label_name, _use_filter in editor_meta.labels_list():
+        editor_meta.label_filter_set(label_name, False)
+
+
+def _keyitem_targets(op, context):
+    """(key map, item) pairs to act on: the selection, or the context row (and the selection if it is selected)."""
+    import rna_keymap_ui
+    if op.use_selection:
+        return rna_keymap_ui.keymap_selection_items()
+
+    km = getattr(context, "keymap", None)
+    if km is None:
+        return []
+    kmi = km.keymap_items.from_id(op.item_id)
+    if kmi is None:
+        return []
+    return rna_keymap_ui.keymap_selection_targets(km, kmi)
+
+
 class PREFERENCES_OT_keymap_restore(Operator):
     """Restore key map(s)"""
     bl_idname = "preferences.keymap_restore"
@@ -386,20 +415,155 @@ class PREFERENCES_OT_keyitem_restore(Operator):
         name="Item Identifier",
         description="Identifier of the item to restore",
     )
+    use_selection: BoolProperty(
+        name="Use Selection",
+        description="Act on every selected key map item rather than on one row",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return _keyitem_selection_poll(context)
+
+    def execute(self, context):
+        restored = 0
+        for km, kmi in _keyitem_targets(self, context):
+            if (not kmi.is_user_defined) and kmi.is_user_modified:
+                km.restore_item_to_default(kmi)
+                restored += 1
+
+        if restored:
+            context.preferences.is_dirty = True
+        elif self.use_selection:
+            self.report({'INFO'}, "No selected key map item was customized")
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_intent_detach(Operator):
+    """Detach the key map item from its shared shortcut, so it keeps a key of its own"""
+    bl_idname = "preferences.keyitem_intent_detach"
+    bl_label = "Detach from Shared Shortcut"
+
+    item_id: IntProperty(
+        name="Item Identifier",
+        description="Identifier of the item to detach",
+    )
 
     @classmethod
     def poll(cls, context):
         keymap = getattr(context, "keymap", None)
         return keymap
 
+    def invoke(self, context, event):
+        km = context.keymap
+        kmi = km.keymap_items.from_id(self.item_id)
+        if kmi is None or not kmi.intent:
+            return {'CANCELLED'}
+        intent = context.window_manager.keyconfigs.user.intents.get(kmi.intent)
+        label = intent.label if intent else kmi.intent
+        return context.window_manager.invoke_confirm(
+            self,
+            event,
+            title=self.bl_label,
+            message=rpt_("Detach \"{:s}\" from shared shortcut \"{:s}\"? "
+                         "The item keeps its current key but no longer follows the shared shortcut.").format(
+                kmi.name or kmi.idname, label),
+            confirm_text="Detach",
+            translate=False,
+        )
+
     def execute(self, context):
         km = context.keymap
         kmi = km.keymap_items.from_id(self.item_id)
+        if kmi is None:
+            return {'CANCELLED'}
+        kmi.intent = ""
+        context.preferences.is_dirty = True
+        return {'FINISHED'}
 
-        if (not kmi.is_user_defined) and kmi.is_user_modified:
-            km.restore_item_to_default(kmi)
+
+class PREFERENCES_OT_keyintent_category_toggle(Operator):
+    """Show or hide the shared shortcuts of this category"""
+    bl_idname = "preferences.keyintent_category_toggle"
+    bl_label = "Toggle Shared Shortcut Category"
+    bl_options = {'INTERNAL'}
+
+    category: StringProperty(
+        name="Category",
+        description="Category of shared shortcuts to show or hide",
+    )
+
+    def execute(self, context):
+        intents = [
+            intent for intent in context.window_manager.keyconfigs.user.intents
+            if intent.category == self.category
+        ]
+        if not intents:
+            return {'CANCELLED'}
+        expanded = not intents[0].show_category_expanded
+        for intent in intents:
+            intent.show_category_expanded = expanded
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyintent_restore(Operator):
+    """Restore the key of the shared shortcut to the key configuration preset"""
+    bl_idname = "preferences.keyintent_restore"
+    bl_label = "Restore Shared Shortcut"
+
+    intent: StringProperty(
+        name="Shared Shortcut",
+        description="Identifier of the shared shortcut to restore",
+    )
+
+    def execute(self, context):
+        intent = context.window_manager.keyconfigs.user.intents.get(self.intent)
+        if intent is None:
+            return {'CANCELLED'}
+        if intent.is_user_modified:
+            intent.restore_to_default()
             context.preferences.is_dirty = True
+        return {'FINISHED'}
 
+
+class PREFERENCES_OT_keyintent_reveal(Operator):
+    """Show this shared shortcut in the Shared Shortcuts column"""
+    bl_idname = "preferences.keyintent_reveal"
+    bl_label = "Show Shared Shortcut"
+    bl_options = {'INTERNAL'}
+
+    intent: StringProperty(
+        name="Shared Shortcut",
+        description="Identifier of the shared shortcut to show",
+    )
+
+    @classmethod
+    def description(cls, context, props):
+        intent = context.window_manager.keyconfigs.user.intents.get(props.intent)
+        if intent is None:
+            return None
+        return rpt_("Show \"{:s}\" in the Shared Shortcuts column").format(intent.label)
+
+    def execute(self, context):
+        import rna_keymap_ui
+        kc = context.window_manager.keyconfigs.user
+        intent = kc.intents.get(self.intent)
+        if intent is None:
+            return {'CANCELLED'}
+
+        # The column may be hidden, and the intent inside a collapsed category.
+        area = context.area
+        if area is not None and area.type == 'PREFERENCES':
+            if not rna_keymap_ui.keymap_intents_region_visible(area):
+                with context.temp_override(area=area):
+                    bpy.ops.screen.region_toggle(region_type='CHANNELS')
+        if intent.category and not intent.show_category_expanded:
+            for other in kc.intents:
+                if other.category == intent.category:
+                    other.show_category_expanded = True
+
+        rna_keymap_ui.set_intent_reveal_target(intent)
         return {'FINISHED'}
 
 
@@ -426,6 +590,326 @@ class PREFERENCES_OT_keyitem_add(Operator):
         return {'FINISHED'}
 
 
+class PREFERENCES_OT_keyitem_copy(Operator):
+    """Copy this key map item to the clipboard, to paste into another key map or """ \
+        """key configuration, or to share as text"""
+    bl_idname = "preferences.keyitem_copy"
+    bl_label = "Copy Key Map Item"
+
+    item_id: IntProperty(
+        name="Item Identifier",
+        description="Identifier of the item to copy",
+    )
+    use_selection: BoolProperty(
+        name="Use Selection",
+        description="Act on every selected key map item rather than on one row",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return _keyitem_selection_poll(context)
+
+    def execute(self, context):
+        import rna_keymap_ui
+        targets = _keyitem_targets(self, context)
+        if not targets:
+            self.report({'ERROR'}, "Key map item not found")
+            return {'CANCELLED'}
+
+        rna_keymap_ui.keymap_items_clipboard_set(targets)
+        if len(targets) == 1:
+            km, kmi = targets[0]
+            self.report(
+                {'INFO'},
+                rpt_("Copied \"{:s}\" to the clipboard").format(
+                    rna_keymap_ui.keymap_item_label(km, kmi)),
+            )
+        else:
+            self.report(
+                {'INFO'},
+                rpt_("Copied {:d} shortcuts to the clipboard").format(len(targets)),
+            )
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_paste(Operator):
+    """Add the key map items on the clipboard to this key map"""
+    bl_idname = "preferences.keyitem_paste"
+    bl_label = "Paste Key Map Item"
+
+    use_source_keymap: BoolProperty(
+        name="Back Where They Came From",
+        description="Put each copy into the key map it was copied from, for when no key map "
+                    "is being pointed at",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def poll(cls, context):
+        import rna_keymap_ui
+        clips = rna_keymap_ui.keymap_item_clipboard()
+        if clips is None:
+            cls.poll_message_set("The clipboard does not hold a copied key map item")
+            return False
+
+        km = getattr(context, "keymap", None)
+        if km is None:
+            # No key map in the context: paste back into the source key maps.
+            if rna_keymap_ui.keymap_clipboard_sources(clips):
+                return True
+            cls.poll_message_set(
+                "The copied text does not say which key map it came from")
+            return False
+
+        if rna_keymap_ui.keymap_clipboard_pasteable(km, clips):
+            return True
+
+        # Poll message based on the first item.
+        clip = clips[0]
+        if km.is_modal:
+            if clip["modal"] is None:
+                cls.poll_message_set(
+                    "A shortcut for an operator cannot be pasted into a modal key map")
+            else:
+                cls.poll_message_set(
+                    rpt_("This key map has no \"{:s}\" to bind, the copied item "
+                         "belongs to \"{:s}\"").format(clip["label"], clip["modal"]))
+        else:
+            cls.poll_message_set(
+                rpt_("The copied item belongs to the modal key map \"{:s}\", "
+                     "it can only be pasted into a modal key map").format(clip["modal"]))
+        return False
+
+    def execute(self, context):
+        import rna_keymap_ui
+        km = None if self.use_source_keymap else getattr(context, "keymap", None)
+
+        clips = rna_keymap_ui.keymap_item_clipboard(use_cache=False)
+        if clips is None:
+            self.report({'ERROR'}, "The clipboard does not hold a copied key map item")
+            return {'CANCELLED'}
+
+        if km is None:
+            sources = rna_keymap_ui.keymap_clipboard_sources(clips)
+            if not sources:
+                self.report({'ERROR'}, "The copied text does not say which key map it came from")
+                return {'CANCELLED'}
+            return self._paste_to_sources(context, sources, skipped=len(clips) - len(sources))
+
+        pasteable = rna_keymap_ui.keymap_clipboard_pasteable(km, clips)
+        if not pasteable:
+            self.report({'ERROR'}, "Nothing on the clipboard fits this key map")
+            return {'CANCELLED'}
+
+        if len(pasteable) > 1:
+            return self._paste_set(context, km, pasteable, skipped=len(clips) - len(pasteable))
+
+        clip = pasteable[0]
+        try:
+            kmi_new = rna_keymap_ui.keymap_item_clipboard_paste(km, clip)
+        except Exception as ex:
+            self.report({'ERROR'}, rpt_("Cannot paste this key map item: {:s}").format(str(ex)))
+            return {'CANCELLED'}
+        if kmi_new is None:
+            self.report({'ERROR'}, "Nothing to paste")
+            return {'CANCELLED'}
+        kmi_new.show_expanded = True
+
+        is_modal = km.is_modal
+        conflicts = [
+            kmi for kmi in km.keymap_items
+            if kmi.id != kmi_new.id and kmi.compare(kmi_new) and (
+                (kmi.propvalue != kmi_new.propvalue) if is_modal
+                else (kmi.idname != kmi_new.idname)
+            )
+        ]
+
+        self._reveal(context, km)
+        context.preferences.is_dirty = True
+
+        name = rna_keymap_ui.keymap_item_label(km, kmi_new)
+        if not clip["available"]:
+            self.report(
+                {'WARNING'},
+                rpt_("Pasted \"{:s}\", but this Blender has no such operator; "
+                     "the shortcut will not do anything").format(clip["idname"]),
+            )
+        elif kmi_new.is_user_duplicate:
+            self.report(
+                {'INFO'},
+                rpt_("Pasted \"{:s}\" beside the shortcut it copies, "
+                     "ready to be changed").format(name),
+            )
+        elif not conflicts:
+            self.report({'INFO'}, rpt_("Pasted \"{:s}\"").format(name))
+        else:
+            conflict_names = ", ".join(
+                "\"{:s}\"".format(rna_keymap_ui.keymap_item_label(km, kmi))
+                for kmi in conflicts
+            )
+            if is_modal:
+                self.report(
+                    {'WARNING'},
+                    rpt_("Pasted \"{:s}\", but this key is already used by {:s}; use "
+                         "\"Override Conflicts\" to give it priority").format(
+                        name, conflict_names),
+                )
+            else:
+                self.report(
+                    {'WARNING'},
+                    rpt_("Pasted \"{:s}\", but this key is already used by {:s}; use "
+                         "\"Override Conflicts\" once the preferences are reloaded").format(
+                        name, conflict_names),
+                )
+        return {'FINISHED'}
+
+    def _reveal(self, context, km):
+        """Clear the filter and expand the key map, so pasted items are visible."""
+        space_data = getattr(context, "space_data", None)
+        if space_data is not None and space_data.filter_text != "":
+            space_data.filter_text = ""
+        km.show_expanded_items = True
+        km.show_expanded_children = True
+
+    def _paste_set(self, context, km, clips, skipped):
+        """Paste several items into one key map and select them."""
+        import rna_keymap_ui
+        wm = context.window_manager
+
+        pasted = []
+        failed = 0
+        for clip in clips:
+            try:
+                kmi_new = rna_keymap_ui.keymap_item_clipboard_paste(km, clip)
+            except Exception:
+                kmi_new = None
+            if kmi_new is None:
+                failed += 1
+                continue
+            pasted.append(kmi_new)
+
+        if not pasted:
+            self.report({'ERROR'}, "None of the copied shortcuts could be pasted")
+            return {'CANCELLED'}
+
+        wm.keymap_selection_clear()
+        for kmi_new in pasted:
+            wm.keymap_selection_set(km, kmi_new, True)
+        rna_keymap_ui.keymap_selection_changed()
+
+        self._reveal(context, km)
+        context.preferences.is_dirty = True
+
+        message = rpt_("Pasted and selected {:d} shortcuts").format(len(pasted))
+        if skipped or failed:
+            self.report(
+                {'WARNING'},
+                rpt_("{:s} — {:d} did not fit this key map").format(message, skipped + failed),
+            )
+        else:
+            self.report({'INFO'}, message)
+        return {'FINISHED'}
+
+    def _paste_to_sources(self, context, sources, skipped):
+        """Paste each item back into its source key map (no key map in the context)."""
+        import rna_keymap_ui
+        wm = context.window_manager
+
+        pasted = []
+        failed = 0
+        for km, clip in sources:
+            try:
+                kmi_new = rna_keymap_ui.keymap_item_clipboard_paste(km, clip)
+            except Exception:
+                kmi_new = None
+            if kmi_new is None:
+                failed += 1
+                continue
+            pasted.append((km, kmi_new))
+
+        if not pasted:
+            self.report({'ERROR'}, "None of the copied shortcuts could be pasted")
+            return {'CANCELLED'}
+
+        # Selected so they can be found again through the filters.
+        wm.keymap_selection_clear()
+        for km, kmi_new in pasted:
+            wm.keymap_selection_set(km, kmi_new, True)
+            self._reveal(context, km)
+        rna_keymap_ui.keymap_selection_changed()
+        context.preferences.is_dirty = True
+
+        names = {km.name for km, _kmi_new in pasted}
+        if len(pasted) == 1:
+            km, kmi_new = pasted[0]
+            message = rpt_("Pasted \"{:s}\" into {:s}").format(
+                rna_keymap_ui.keymap_item_label(km, kmi_new), km.name)
+        elif len(names) == 1:
+            message = rpt_("Pasted {:d} shortcuts into {:s}").format(
+                len(pasted), next(iter(names)))
+        else:
+            message = rpt_("Pasted {:d} shortcuts into {:d} key maps").format(
+                len(pasted), len(names))
+
+        if skipped or failed:
+            self.report(
+                {'WARNING'},
+                rpt_("{:s} — {:d} could not be placed").format(message, skipped + failed),
+            )
+        else:
+            self.report({'INFO'}, message)
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_unshadow(Operator):
+    """Disable the earlier key map items that use this key, so this one runs"""
+    bl_idname = "preferences.keyitem_unshadow"
+    bl_label = "Disable Conflicting Key Map Items"
+
+    item_id: IntProperty(
+        name="Item Identifier",
+        description="Identifier of the item to give priority to",
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return getattr(context, "keymap", None) is not None
+
+    def execute(self, context):
+        import rna_keymap_ui
+        km = context.keymap
+        kmi = km.keymap_items.from_id(self.item_id)
+        if kmi is None:
+            self.report({'ERROR'}, "Key map item not found")
+            return {'CANCELLED'}
+
+        # Items are matched in order, so only earlier items shadow this one.
+        shadowing = []
+        for kmi_other in km.keymap_items:
+            if kmi_other.id == kmi.id:
+                break
+            if kmi_other.active and kmi_other.compare(kmi):
+                shadowing.append(kmi_other)
+
+        if not shadowing:
+            self.report({'INFO'}, "Nothing is overriding this item")
+            return {'CANCELLED'}
+
+        names = [rna_keymap_ui.keymap_item_label(km, kmi_other) for kmi_other in shadowing]
+        for kmi_other in shadowing:
+            kmi_other.active = False
+
+        context.preferences.is_dirty = True
+        self.report(
+            {'INFO'},
+            rpt_("Disabled {:s}").format(", ".join("\"{:s}\"".format(n) for n in names)),
+        )
+        return {'FINISHED'}
+
+
 class PREFERENCES_OT_keyitem_remove(Operator):
     """Remove key map item"""
     bl_idname = "preferences.keyitem_remove"
@@ -435,17 +919,1225 @@ class PREFERENCES_OT_keyitem_remove(Operator):
         name="Item Identifier",
         description="Identifier of the item to remove",
     )
+    use_selection: BoolProperty(
+        name="Use Selection",
+        description="Act on every selected key map item rather than on one row",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
 
     @classmethod
     def poll(cls, context):
-        return hasattr(context, "keymap")
+        return _keyitem_selection_poll(context)
 
     def execute(self, context):
-        km = context.keymap
-        kmi = km.keymap_items.from_id(self.item_id)
-        km.keymap_items.remove(kmi)
+        import rna_keymap_ui
+        targets = _keyitem_targets(self, context)
+        if not targets:
+            return {'CANCELLED'}
+
+        wm = context.window_manager
+        keymap_prefs = context.preferences.keymap
+        for km, kmi in targets:
+            # Deselect first: the selection stores the item id, which is about to be invalid.
+            wm.keymap_selection_set(km, kmi, False)
+            keymap_prefs.item_forget(km, kmi)
+            km.keymap_items.remove(kmi)
+        rna_keymap_ui.keymap_selection_changed()
+
+        if len(targets) > 1:
+            self.report({'INFO'}, rpt_("Removed {:d} shortcuts").format(len(targets)))
+        context.preferences.is_dirty = True
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_activity_clear(Operator):
+    """Clear the list of recently used key map items"""
+    bl_idname = "preferences.keymap_activity_clear"
+    bl_label = "Clear Recently Used Key Map Items"
+
+    def execute(self, context):
+        context.window_manager.keymap_activity_clear()
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_activity_find(Operator):
+    """Filter the key map editor to show matching items"""
+    bl_idname = "preferences.keymap_activity_find"
+    bl_label = "Find Key Map Item"
+
+    filter_type: EnumProperty(
+        name="Search Type",
+        items=(
+            ('NAME', "Name", "Search by operator name"),
+            ('KEY', "Key-Binding", "Search by key binding"),
+        ),
+    )
+    filter_text: StringProperty(
+        name="Filter Text",
+        description="Text to search for",
+    )
+    use_exact: BoolProperty(
+        name="Exact Key Binding",
+        description="Match the whole key binding rather than any binding containing it",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def description(cls, _context, props):
+        if props.filter_type != 'KEY':
+            return "Search the key map editor for this operator"
+        if props.use_exact:
+            return "Show everything else bound to this exact key binding"
+        return "Search the key map editor for this key binding"
+
+    def execute(self, context):
+        space = context.space_data
+        if space is None or space.type != 'PREFERENCES':
+            return {'CANCELLED'}
+        space.filter_type = self.filter_type
+        space.filter_text = self.filter_text
+        space.use_filter_key_exact = self.use_exact and self.filter_type == 'KEY'
+        space.use_filter_user_modified = False
+        _keymap_filter_labels_clear(context)
+        space.use_filter_addon = False
+        space.use_filter_conflicts = False
+        return {'FINISHED'}
+
+
+def _keymap_conflicts_check_show(context, targets):
+    """Set the conflict check group to `targets` and show their conflicts; False without a preferences editor."""
+    import rna_keymap_ui
+
+    space = _preferences_space(context)
+    if space is None:
+        return False
+
+    # Items are held by identity, not pushed through the search field:
+    # a key string does not reliably round-trip and cannot carry several bindings.
+    rna_keymap_ui.keymap_conflict_check_set(targets)
+
+    # Other filters would narrow the result.
+    space.filter_text = ""
+    space.use_filter_key_exact = False
+    space.use_filter_user_modified = False
+    _keymap_filter_labels_clear(context)
+    space.use_filter_addon = False
+    space.use_filter_conflicts = True
+    return True
+
+
+class PREFERENCES_OT_keymap_conflicts_check(Operator):
+    """Show every shortcut in conflict with these, in this and every key map active at the same time"""
+    bl_idname = "preferences.keymap_conflicts_check"
+    bl_label = "Check for Conflicts"
+
+    item_id: IntProperty(
+        name="Item Identifier",
+        description="Identifier of the item to check",
+    )
+    use_selection: BoolProperty(
+        name="Use Selection",
+        description="Check every selected key map item rather than one row",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return _keyitem_selection_poll(context)
+
+    def execute(self, context):
+        targets = _keyitem_targets(self, context)
+        if not targets:
+            self.report({'ERROR'}, "Key map item not found")
+            return {'CANCELLED'}
+        if not _keymap_conflicts_check_show(context, targets):
+            return {'CANCELLED'}
+        return {'FINISHED'}
+
+
+def _keyitem_add_keymap(context, name):
+    """The active user key map with this name, or None."""
+    km = context.window_manager.keyconfigs.user.keymaps.get(name)
+    return None if km is None else km.active()
+
+
+def _keyitem_add_keymap_for_space(space_type):
+    """Name of the editor's own key map (the outermost hierarchy entry with this space type), or None."""
+    if not space_type or space_type == 'EMPTY':
+        return None
+    from bl_keymap_utils import keymap_hierarchy
+    for name, entry_space_type, _region_type, _children in keymap_hierarchy.generate():
+        if entry_space_type == space_type:
+            return name
+    return None
+
+
+def _keyitem_add_live_item(props, context):
+    """The (key map, item) the dialog is editing, or (None, None)."""
+    km = _keyitem_add_keymap(context, props.live_keymap_name)
+    if km is None:
+        return None, None
+    return km, km.keymap_items.from_id(props.live_item_id)
+
+
+def _keyitem_add_create(props, km):
+    """Add an unbound item for the dialog's key capture field to fill in."""
+    kmi = km.keymap_items.new(props.idname, 'NONE', 'PRESS')
+    if props.variant:
+        import rna_keymap_ui
+        rna_keymap_ui.usage_variant_apply(kmi, props.variant)
+    props.live_keymap_name = km.name
+    props.live_item_id = kmi.id
+    return kmi
+
+
+def _keyitem_add_keymap_name_update(props, context):
+    """
+    Move the live item to the chosen key map, keeping the captured key.
+    Module level: property update callbacks receive the properties, not the operator.
+    """
+    km_old, kmi_old = _keyitem_add_live_item(props, context)
+    if km_old is None or km_old.name == props.keymap_name:
+        return
+    km_new = _keyitem_add_keymap(context, props.keymap_name)
+    if km_new is None or km_new.is_modal:
+        props.keymap_name = km_old.name
+        return
+    event = None
+    if kmi_old is not None:
+        event = (kmi_old.type, kmi_old.value, kmi_old.ctrl, kmi_old.alt,
+                 kmi_old.shift, kmi_old.oskey)
+        km_old.keymap_items.remove(kmi_old)
+    kmi_new = _keyitem_add_create(props, km_new)
+    if event is not None:
+        (kmi_new.type, kmi_new.value, kmi_new.ctrl, kmi_new.alt,
+         kmi_new.shift, kmi_new.oskey) = event
+
+
+class PREFERENCES_OT_keyitem_add_for_operator(Operator):
+    """Add a shortcut for this operator in a key map of your choosing"""
+    bl_idname = "preferences.keyitem_add_for_operator"
+    bl_label = "Add Shortcut"
+
+    idname: StringProperty(
+        name="Operator",
+        description="Identifier of the operator to bind",
+        options={'SKIP_SAVE'},
+    )
+    variant: StringProperty(
+        name="Variant",
+        description="Which use of the operator to bind, if it has several",
+        options={'SKIP_SAVE'},
+    )
+    name: StringProperty(
+        name="Name",
+        description=(
+            "What to call this shortcut in the key map editor. "
+            "Empty to use the operator's own name"
+        ),
+        options={'SKIP_SAVE'},
+    )
+
+    keymap_name: StringProperty(
+        name="Key Map",
+        description="Key map to add the shortcut to, which decides where it applies",
+        options={'SKIP_SAVE'},
+        update=_keyitem_add_keymap_name_update,
+    )
+    space_type: StringProperty(
+        name="Space Type",
+        description="Editor the operation was used in, which helps place the shortcut",
+        options={'SKIP_SAVE'},
+    )
+    live_keymap_name: StringProperty(options={'SKIP_SAVE', 'HIDDEN'})
+    live_item_id: IntProperty(default=0, options={'SKIP_SAVE', 'HIDDEN'})
+
+    _KEYMAP_BY_MODULE = {
+        "object": "Object Mode",
+        "mesh": "Mesh",
+        "curve": "Curve",
+        "armature": "Armature",
+        "pose": "Pose",
+        "sculpt": "Sculpt",
+        "paint": "Paint Curve",
+        "view3d": "3D View",
+        "node": "Node Editor",
+        "graph": "Graph Editor",
+        "action": "Dopesheet",
+        "nla": "NLA Editor",
+        "sequencer": "Sequencer",
+        "clip": "Clip Editor",
+        "image": "Image",
+        "uv": "UV Editor",
+        "text": "Text",
+        "console": "Console",
+        "file": "File Browser",
+        "outliner": "Outliner",
+        "transform": "3D View",
+        "gpencil": "Grease Pencil",
+        "screen": "Screen",
+        "wm": "Window",
+    }
+
+    def _keymap_name_default(self):
+        """
+        Default key map for the dialog: by operator module, or by the editor the operator was
+        last used in for editor-scoped operators (`wm.context_*`) and unknown modules.
+        """
+        import rna_keymap_ui
+
+        module = self.idname.partition(".")[0]
+        by_module = self._KEYMAP_BY_MODULE.get(module)
+        if by_module is None or rna_keymap_ui.usage_variant_is_editor_scoped(
+                self.idname, self.variant):
+            by_space = _keyitem_add_keymap_for_space(self.space_type)
+            if by_space is not None:
+                return by_space
+        return by_module or "Window"
+
+    def invoke(self, context, _event):
+        if not self.idname:
+            return {'CANCELLED'}
+        if not self.keymap_name:
+            self.keymap_name = self._keymap_name_default()
+        if not self.name:
+            import rna_keymap_ui
+            self.name = rna_keymap_ui.usage_suggested_name(context, self.idname, self.variant)
+
+        km = _keyitem_add_keymap(context, self.keymap_name)
+        if km is None or km.is_modal:
+            # Modal key maps bind modal actions, not operators.
+            self.report({'ERROR'}, "Cannot add a shortcut to \"{:s}\"".format(self.keymap_name))
+            return {'CANCELLED'}
+        _keyitem_add_create(self, km)
+        context.preferences.is_dirty = True
+        return context.window_manager.invoke_props_dialog(self, width=340)
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+        # Same icon as "Change Shortcut...".
+        col.label(text=self.idname, translate=False, icon='HAND')
+        if self.variant:
+            sub = col.row()
+            sub.active = False
+            sub.label(text=self.variant, translate=False)
+
+        col.separator()
+        col.prop(self, "name")
+
+        col.prop_search(
+            self, "keymap_name",
+            context.window_manager.keyconfigs.user, "keymaps",
+            text="Key Map",
+        )
+
+        km, kmi = _keyitem_add_live_item(self, context)
+
+        col.separator()
+        if kmi is None:
+            col.label(text="Key map item was removed", icon='ERROR')
+            return
+
+        col.prop(kmi, "type", text="Key", full_event=True)
+
+        import rna_keymap_ui
+        clashes = rna_keymap_ui.keymap_item_clashes(km, kmi)
+        if clashes:
+            key = kmi.to_string()
+
+            # Certain clashes block this shortcut; shared ones are the same key in key maps
+            # that need not both be active (same rule as the tree's conflict marker).
+            certain = []
+            shared = []
+            for keymap_name, item_id, label, is_here in clashes:
+                target = certain if rna_keymap_ui.keymap_clash_is_certain(
+                    km.name, keymap_name, is_here) else shared
+                target.append((keymap_name, item_id, label, is_here))
+
+            def draw_clash_line(layout, text, icon, keymap_name, item_id, is_outranked):
+                """One clash row, with a button to show it in the tree."""
+                row = layout.row(align=True)
+                row.label(text=text, translate=False, icon=icon)
+                sub_row = row.row(align=True)
+                sub_row.alignment = 'RIGHT'
+                sub_row.alert = False
+                props = sub_row.operator(
+                    "preferences.keyitem_flash_conflict",
+                    text="",
+                    icon='VIEWZOOM',
+                    emboss=False,
+                )
+                props.keymap_name = keymap_name
+                props.item_id = item_id
+                props.is_outranked = is_outranked
+
+            def draw_remaining(layout, count):
+                """Overflow line for lists capped at `_KMI_CLASH_MAX_KEYMAPS`."""
+                if count > 0:
+                    layout.label(
+                        text=iface_("and {:d} more").format(count),
+                        translate=False,
+                        icon='BLANK1',
+                    )
+
+            cap = rna_keymap_ui._KMI_CLASH_MAX_KEYMAPS
+
+            if certain:
+                col.separator()
+                sub = col.column(align=True)
+                sub.alert = True
+                for index, (keymap_name, item_id, label, is_here) in enumerate(certain[:cap]):
+                    if index:
+                        text = iface_("and {:s} in {:s}").format(label, keymap_name)
+                    elif is_here:
+                        text = iface_("{:s} already runs {:s} here").format(key, label)
+                    else:
+                        text = iface_("{:s} runs {:s} in {:s} first").format(
+                            key, label, keymap_name)
+                    # A certain clash in another key map means that key map is matched first.
+                    draw_clash_line(
+                        sub, text, 'ERROR' if index == 0 else 'BLANK1',
+                        keymap_name, item_id, not is_here,
+                    )
+                draw_remaining(sub, len(certain) - min(len(certain), cap))
+
+            if shared:
+                col.separator()
+                sub = col.column(align=True)
+                sub.label(
+                    text=iface_("{:s} is also used in other key maps").format(key),
+                    translate=False,
+                    icon='INFO',
+                )
+                for keymap_name, item_id, label, _is_here in shared[:cap]:
+                    draw_clash_line(
+                        sub,
+                        iface_("{:s} in {:s}").format(label, keymap_name),
+                        'BLANK1',
+                        keymap_name,
+                        item_id,
+                        False,
+                    )
+                draw_remaining(sub, len(shared) - min(len(shared), cap))
+
+    def cancel(self, context):
+        # Remove the temporary item created in `invoke`.
+        km, kmi = _keyitem_add_live_item(self, context)
+        if kmi is not None:
+            km.keymap_items.remove(kmi)
+            context.preferences.is_dirty = True
+
+    def execute(self, context):
+        km, kmi = _keyitem_add_live_item(self, context)
+        if kmi is None:
+            self.report({'ERROR'}, "Add Shortcut has to be invoked, not executed directly")
+            return {'CANCELLED'}
+        if kmi.type == 'NONE':
+            km.keymap_items.remove(kmi)
+            self.report({'WARNING'}, "No key was pressed, so no shortcut was added")
+            return {'CANCELLED'}
+
+        name = self.name.strip()
+        if name and name != kmi.name:
+            from bl_keymap_utils import editor_meta
+            editor_meta.custom_name_set(km, kmi, name)
 
         context.preferences.is_dirty = True
+
+        # Show the new item among the user modified items.
+        # The dialog is a popup, so the editor must be found rather than read from the context.
+        space = _preferences_space(context)
+        if space is not None:
+            import rna_keymap_ui
+
+            space.filter_text = ""
+            space.use_filter_key_exact = False
+            space.use_filter_user_modified = True
+            _keymap_filter_labels_clear(context)
+            space.use_filter_addon = False
+            space.use_filter_conflicts = False
+            rna_keymap_ui.keymap_conflict_check_clear()
+            # Collapse everything so only the revealed row is expanded.
+            rna_keymap_ui.keymap_filtered_collapse()
+            kmi.show_expanded = False
+            rna_keymap_ui.set_reveal_target(km, kmi)
+
+        self.report(
+            {'INFO'},
+            rpt_("Added \"{:s}\" to {:s} on {:s}").format(
+                "{:s} [{:s}]".format(self.idname, self.variant) if self.variant else self.idname,
+                km.name, kmi.to_string()),
+        )
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_hide_item(Operator):
+    """Keep this shortcut out of the usage lists, and stop counting it"""
+    bl_idname = "preferences.keymap_hide_item"
+    bl_label = "Hide Shortcut"
+
+    keymap_name: StringProperty(name="Key Map", options={'SKIP_SAVE'})
+    item_id: IntProperty(name="Item Identifier", default=0, options={'SKIP_SAVE'})
+    use_item_id: BoolProperty(name="By Identifier", default=False, options={'SKIP_SAVE'})
+    idname: StringProperty(name="Operator", options={'SKIP_SAVE'})
+    key_string: StringProperty(name="Key Binding", options={'SKIP_SAVE'})
+    is_modal: BoolProperty(name="Modal", options={'SKIP_SAVE'})
+    propvalue: StringProperty(name="Modal Action", options={'SKIP_SAVE'})
+    hide: BoolProperty(name="Hide", default=True, options={'SKIP_SAVE'})
+    use_selection: BoolProperty(
+        name="Use Selection",
+        description="Act on every selected key map item rather than on one row",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    def execute(self, context):
+        import rna_keymap_ui
+        from bl_keymap_utils import editor_meta
+        if self.use_selection:
+            targets = rna_keymap_ui.keymap_selection_items()
+            if not targets:
+                self.report({'ERROR'}, "No key map items are selected")
+                return {'CANCELLED'}
+            for km, kmi in targets:
+                editor_meta.hidden_set(km, kmi, self.hide)
+            self.report(
+                {'INFO'},
+                (rpt_("Hid {:d} shortcuts") if self.hide
+                 else rpt_("Unhid {:d} shortcuts")).format(len(targets)),
+            )
+            return {'FINISHED'}
+
+        kc = context.window_manager.keyconfigs.user
+        km = kc.keymaps.get(self.keymap_name)
+        if km is None:
+            self.report({'ERROR'}, "Key map not found")
+            return {'CANCELLED'}
+        km = km.active()
+
+        kmi = None
+        if self.use_item_id:
+            kmi = km.keymap_items.from_id(self.item_id)
+        else:
+            # Match the same way the recently used list does: key string plus idname/propvalue.
+            for candidate in km.keymap_items:
+                if candidate.to_string() != self.key_string:
+                    continue
+                if (candidate.propvalue == self.propvalue) if self.is_modal else (
+                        candidate.idname == self.idname):
+                    kmi = candidate
+                    break
+        if kmi is None:
+            self.report({'ERROR'}, "Key map item not found")
+            return {'CANCELLED'}
+
+        editor_meta.hidden_set(km, kmi, self.hide)
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_hide_operator(Operator):
+    """Keep this operation out of the usage lists, and stop counting it"""
+    bl_idname = "preferences.keymap_hide_operator"
+    bl_label = "Hide Operation"
+
+    idname: StringProperty(name="Operator", options={'SKIP_SAVE'})
+    variant: StringProperty(name="Variant", options={'SKIP_SAVE'})
+    hide: BoolProperty(name="Hide", default=True, options={'SKIP_SAVE'})
+
+    def execute(self, _context):
+        from bl_keymap_utils import editor_meta
+        if not self.idname:
+            return {'CANCELLED'}
+        editor_meta.operator_hidden_set(self.idname, self.variant, self.hide)
+        return {'FINISHED'}
+
+
+def _keymap_label_targets(op, context):
+    """Targets for the label operators: the selection, or the item named by the properties."""
+    import rna_keymap_ui
+    if op.use_selection:
+        return rna_keymap_ui.keymap_selection_items()
+    km, kmi = _keymap_item_by_id(context, op.keymap_name, op.item_id)
+    if kmi is None:
+        return []
+    return rna_keymap_ui.keymap_selection_targets(km, kmi)
+
+
+def _keymap_label_report(op, targets, name, assign):
+    if len(targets) > 1:
+        text = rpt_("Added {:d} shortcuts to \"{:s}\"") if assign else rpt_(
+            "Removed {:d} shortcuts from \"{:s}\"")
+        op.report({'INFO'}, text.format(len(targets), name))
+
+
+class PREFERENCES_OT_keymap_label_new(Operator):
+    """Create a label, a named group of shortcuts to filter the key map editor by"""
+    bl_idname = "preferences.keymap_label_new"
+    bl_label = "New Label"
+
+    name: StringProperty(
+        name="Name",
+        description="Name of the label",
+        options={'SKIP_SAVE'},
+    )
+    assign: BoolProperty(
+        name="Assign",
+        description="Add the shortcut, or the selection, to the new label",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+    keymap_name: StringProperty(name="Key Map", options={'SKIP_SAVE', 'HIDDEN'})
+    item_id: IntProperty(name="Item Identifier", options={'SKIP_SAVE', 'HIDDEN'})
+    use_selection: BoolProperty(name="Use Selection", options={'SKIP_SAVE', 'HIDDEN'})
+
+    def invoke(self, context, _event):
+        # The dialog's context does not hold the row, so remember it now.
+        km = getattr(context, "keymap", None)
+        if km is not None:
+            self.keymap_name = km.name
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.activate_init = True
+        layout.prop(self, "name")
+
+    def execute(self, context):
+        from bl_keymap_utils import editor_meta
+        name = self.name.strip()
+        if not name:
+            self.report({'ERROR'}, "The label needs a name")
+            return {'CANCELLED'}
+
+        editor_meta.label_add(name)
+        if self.assign:
+            targets = _keymap_label_targets(self, context)
+            for km, kmi in targets:
+                editor_meta.label_item_set(name, km, kmi, True)
+            _keymap_label_report(self, targets, name, True)
+
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_label_remove(Operator):
+    """Remove the label from every shortcut and forget it"""
+    bl_idname = "preferences.keymap_label_remove"
+    bl_label = "Remove Label"
+
+    name: StringProperty(name="Name", options={'SKIP_SAVE'})
+
+    def execute(self, _context):
+        from bl_keymap_utils import editor_meta
+        if not editor_meta.label_remove(self.name):
+            return {'CANCELLED'}
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_label_filter_toggle(Operator):
+    """Toggle filtering the key map editor by this label"""
+    bl_idname = "preferences.keymap_label_filter_toggle"
+    bl_label = "Toggle Label Filter"
+
+    name: StringProperty(name="Name", options={'SKIP_SAVE'})
+
+    def execute(self, _context):
+        from bl_keymap_utils import editor_meta
+        if not editor_meta.label_filter_toggle(self.name):
+            return {'CANCELLED'}
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_rename(Operator):
+    """Set a custom display name for this shortcut (empty to restore default)"""
+    bl_idname = "preferences.keyitem_rename"
+    bl_label = "Rename Shortcut"
+
+    item_id: IntProperty(name="Item Identifier", options={'SKIP_SAVE', 'HIDDEN'})
+    keymap_name: StringProperty(name="Key Map", options={'SKIP_SAVE', 'HIDDEN'})
+    name: StringProperty(name="Name", options={'SKIP_SAVE'})
+
+    def invoke(self, context, _event):
+        from bl_keymap_utils import editor_meta
+        km = getattr(context, "keymap", None)
+        if km is None:
+            return {'CANCELLED'}
+        kmi = km.keymap_items.from_id(self.item_id)
+        if kmi is None:
+            return {'CANCELLED'}
+        self.keymap_name = km.name
+        self.name = editor_meta.custom_name_get(km, kmi)
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.activate_init = True
+        layout.prop(self, "name")
+
+    def execute(self, context):
+        from bl_keymap_utils import editor_meta
+        km, kmi = _keymap_item_by_id(context, self.keymap_name, self.item_id)
+        if kmi is None:
+            return {'CANCELLED'}
+        editor_meta.custom_name_set(km, kmi, self.name)
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_label_assign(Operator):
+    """Add this shortcut to a label, or take it off one"""
+    bl_idname = "preferences.keymap_label_assign"
+    bl_label = "Assign Label"
+
+    name: StringProperty(name="Name", options={'SKIP_SAVE'})
+    assign: BoolProperty(
+        name="Assign",
+        description="Add the label rather than remove it",
+        default=True,
+        options={'SKIP_SAVE'},
+    )
+    keymap_name: StringProperty(name="Key Map", options={'SKIP_SAVE'})
+    item_id: IntProperty(name="Item Identifier", options={'SKIP_SAVE'})
+    use_selection: BoolProperty(
+        name="Use Selection",
+        description="Act on every selected key map item rather than on one row",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def description(cls, _context, props):
+        if props.assign:
+            return rpt_("Add to the \"{:s}\" label").format(props.name)
+        return rpt_("Remove from the \"{:s}\" label").format(props.name)
+
+    def execute(self, context):
+        from bl_keymap_utils import editor_meta
+        targets = _keymap_label_targets(self, context)
+        if not targets:
+            self.report({'ERROR'}, "Key map item not found")
+            return {'CANCELLED'}
+
+        for km, kmi in targets:
+            editor_meta.label_item_set(self.name, km, kmi, self.assign)
+        _keymap_label_report(self, targets, self.name, self.assign)
+
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_select(Operator):
+    """Select this shortcut, so edits apply to the whole selection. Double-click to expand it"""
+    bl_idname = "preferences.keyitem_select"
+    bl_label = "Key Map Item"
+
+    item_id: IntProperty(
+        name="Item Identifier",
+        description="Identifier of the item to select",
+        options={'SKIP_SAVE'},
+    )
+    idname: StringProperty(
+        name="Operator",
+        description="Identifier of the operator the item runs",
+        options={'SKIP_SAVE'},
+    )
+    use_local_expand: BoolProperty(
+        name="Local Expansion",
+        description="The row is in the search results, which keep their own expansion",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+    extend: BoolProperty(
+        name="Extend",
+        description="Select every row between the last one clicked and this one",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    # (row key, time) of the last click, for double-click detection.
+    _last_click = None
+
+    @classmethod
+    def description(cls, _context, props):
+        module, _, operator = props.idname.partition(".")
+        text = ""
+        if module and operator:
+            try:
+                op = getattr(getattr(bpy.ops, module), operator)
+                text = op.get_rna_type().description
+            except (AttributeError, KeyError):
+                text = ""
+        return "{:s}\n\n{:s}".format(
+            text or props.idname,
+            rpt_("Click to select, shift-click to select a range, double-click to expand"),
+        )
+
+    def invoke(self, context, event):
+        self.extend = event.shift
+        return self.execute(context)
+
+    def _is_double_click(self, context, km):
+        import time
+        cls = PREFERENCES_OT_keyitem_select
+        now = time.monotonic()
+        where = (km.name, km.space_type, km.region_type, self.item_id)
+        within = context.preferences.inputs.mouse_double_click_time / 1000.0
+
+        last = cls._last_click
+        if (last is not None) and (last[0] == where) and ((now - last[1]) <= within):
+            # Consumed, so a third click starts a new pair.
+            cls._last_click = None
+            return True
+        cls._last_click = (where, now)
+        return False
+
+    def execute(self, context):
+        import rna_keymap_ui
+        km = getattr(context, "keymap", None)
+        if km is None:
+            return {'CANCELLED'}
+        kmi = km.keymap_items.from_id(self.item_id)
+        if kmi is None:
+            return {'CANCELLED'}
+
+        wm = context.window_manager
+        if self.extend and rna_keymap_ui.keymap_select_range(context, km, kmi):
+            # Range selection only adds and keeps the anchor.
+            rna_keymap_ui.keymap_selection_changed()
+            return {'FINISHED'}
+
+        # A double-click toggles twice, leaving the selection unchanged.
+        wm.keymap_selection_set(km, kmi, not wm.keymap_selection_contains(km, kmi))
+        rna_keymap_ui.keymap_select_anchor_set(km, kmi)
+        if self._is_double_click(context, km):
+            if self.use_local_expand:
+                rna_keymap_ui.keymap_filtered_expand_toggle(km.name, self.item_id)
+            else:
+                kmi.show_expanded = not kmi.show_expanded
+        rna_keymap_ui.keymap_selection_changed()
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_select_all(Operator):
+    """Select or deselect every shortcut shown in the key map editor"""
+    bl_idname = "preferences.keymap_select_all"
+    bl_label = "(De)select All Shortcuts"
+
+    action: EnumProperty(
+        name="Action",
+        description="What to do to the shortcuts on show",
+        items=(
+            ('SELECT', "Select", "Select every listed key map item"),
+            ('DESELECT', "Deselect", "Deselect every key map item"),
+            ('INVERT', "Invert", "Invert the selection of the listed key map items"),
+        ),
+        default='SELECT',
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def poll(cls, context):
+        import rna_keymap_ui
+        if context.preferences.active_section != 'KEYMAP':
+            return False
+        # Also bound to a click on empty space: fail with no selection so the click passes through.
+        return bool(rna_keymap_ui.keymap_selection_count())
+
+    def execute(self, context):
+        import rna_keymap_ui
+        wm = context.window_manager
+
+        if self.action == 'DESELECT':
+            wm.keymap_selection_clear()
+            rna_keymap_ui.keymap_selection_changed()
+            return {'FINISHED'}
+
+        rows = rna_keymap_ui.keymap_visible_items(context)
+        if not rows:
+            self.report({'WARNING'}, "No shortcuts are on show to select")
+            return {'CANCELLED'}
+
+        for km, kmi in rows:
+            if self.action == 'SELECT':
+                wm.keymap_selection_set(km, kmi, True)
+            else:
+                wm.keymap_selection_set(km, kmi, not wm.keymap_selection_contains(km, kmi))
+        rna_keymap_ui.keymap_selection_changed()
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_expand(Operator):
+    """Show or hide the settings of this shortcut"""
+    bl_idname = "preferences.keyitem_expand"
+    bl_label = "Expand Key Map Item"
+
+    keymap_name: StringProperty(name="Key Map", options={'SKIP_SAVE'})
+    item_id: IntProperty(name="Item Identifier", default=0, options={'SKIP_SAVE'})
+
+    def execute(self, _context):
+        import rna_keymap_ui
+        rna_keymap_ui.keymap_filtered_expand_toggle(self.keymap_name, self.item_id)
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_filter_refresh(Operator):
+    """Drop the items the filter is still showing after they stopped matching"""
+    bl_idname = "preferences.keymap_filter_refresh"
+    bl_label = "Refresh Filtered Key Map List"
+
+    def execute(self, context):
+        import rna_keymap_ui
+        rna_keymap_ui.keymap_filter_refresh()
+        space = context.space_data
+        if space is not None and space.type == 'PREFERENCES':
+            # The tree is drawn in another region.
+            for region in context.area.regions:
+                region.tag_redraw()
+        return {'FINISHED'}
+
+
+def _keymap_hierarchy_path(entries, name):
+    """Hierarchy entries from the root down to the named key map, or None."""
+    for entry_name, space_type, region_type, children in entries:
+        here = (entry_name, space_type, region_type)
+        if entry_name == name:
+            return [here]
+        below = _keymap_hierarchy_path(children, name)
+        if below is not None:
+            return [here] + below
+    return None
+
+
+def _keymap_item_by_id(context, keymap_name, item_id):
+    """(key map, item) by name and id, either may be None."""
+    km = context.window_manager.keyconfigs.user.keymaps.get(keymap_name)
+    km = km.active() if km is not None else None
+    kmi = km.keymap_items.from_id(item_id) if km is not None else None
+    return km, kmi
+
+
+def _preferences_space(context):
+    """The preferences space from the context or the first open one (a popup's context does not hold the editor)."""
+    space = context.space_data
+    if space is not None and space.type == 'PREFERENCES':
+        return space
+    for window in context.window_manager.windows:
+        for area in window.screen.areas:
+            if area.type == 'PREFERENCES':
+                return area.spaces.active
+    return None
+
+
+def keymap_tree_expand_to(context, keymap_name):
+    """
+    Clear filters, collapse all key maps and expand only the named one.
+    Returns the key map, or None if it does not exist or no preferences editor is open.
+    """
+    space = _preferences_space(context)
+    if space is None:
+        return None
+
+    space.filter_text = ""
+    space.use_filter_user_modified = False
+    _keymap_filter_labels_clear(context)
+    space.use_filter_addon = False
+    space.use_filter_conflicts = False
+    context.preferences.keymap.show_ui_keyconfig = False
+
+    kc = context.window_manager.keyconfigs.user
+    for km in kc.keymaps:
+        akm = km.active()
+        if akm is not None:
+            akm.show_expanded_children = False
+            akm.show_expanded_items = False
+
+    from bl_keymap_utils import keymap_hierarchy
+    path = _keymap_hierarchy_path(keymap_hierarchy.generate(), keymap_name)
+    if path is None:
+        # Not in the hierarchy, no parents to expand.
+        km = kc.keymaps.get(keymap_name)
+        if km is None:
+            return None
+        km = km.active()
+        km.show_expanded_children = True
+        km.show_expanded_items = True
+        return km
+
+    target = None
+    last = len(path) - 1
+    for i, (name, space_type, region_type) in enumerate(path):
+        km = kc.keymaps.find(name, space_type=space_type, region_type=region_type)
+        if km is None:
+            continue
+        km = km.active()
+        km.show_expanded_children = True
+        km.show_expanded_items = (i == last)
+        if i == last:
+            target = km
+    return target
+
+
+class PREFERENCES_OT_keymap_activity_reveal(Operator):
+    """Show this item in the key map editor below"""
+    bl_idname = "preferences.keymap_activity_reveal"
+    bl_label = "Reveal Key Map Item"
+
+    keymap_name: StringProperty(
+        name="Key Map",
+        description="Name of the key map that contains the item",
+    )
+    idname: StringProperty(
+        name="Operator",
+        description="Operator identifier of the item",
+    )
+    key_string: StringProperty(
+        name="Key Binding",
+        description="Key binding of the item",
+    )
+    is_modal: BoolProperty(
+        name="Is Modal",
+        description="The item is a modal key map action, which has no operator identifier",
+        default=False,
+    )
+    propvalue: StringProperty(
+        name="Property Value",
+        description="Identifier of the modal action the item maps to, used instead of "
+        "the operator identifier when the item is modal",
+    )
+
+    def execute(self, context):
+        import rna_keymap_ui
+        if not self.keymap_name:
+            # Cancel before `keymap_tree_expand_to` clears the search, see `_wide_operator`.
+            return {'CANCELLED'}
+        target_km = keymap_tree_expand_to(context, self.keymap_name)
+        if target_km is None:
+            return {'CANCELLED'}
+
+        for kmi in target_km.keymap_items:
+            if kmi.to_string() != self.key_string:
+                continue
+            if (kmi.propvalue == self.propvalue) if self.is_modal else (kmi.idname == self.idname):
+                rna_keymap_ui.set_reveal_target(target_km, kmi)
+                return {'FINISHED'}
+
+        rna_keymap_ui.scroll_to_keymap(target_km)
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_undo(Operator):
+    """Take back the last change made to the key map"""
+    bl_idname = "preferences.keymap_undo"
+    bl_label = "Undo Key Map Change"
+
+    @classmethod
+    def poll(cls, context):
+        wm = context.window_manager
+        if not wm.keymap_undo_len:
+            cls.poll_message_set("Nothing has been changed about the key map yet")
+            return False
+        return True
+
+    def execute(self, context):
+        import rna_keymap_ui
+        wm = context.window_manager
+        if not wm.keymap_undo():
+            self.report({'INFO'}, "Nothing left to take back")
+            return {'CANCELLED'}
+        # Undo may have removed selected items.
+        wm.keymap_selection_clear()
+        rna_keymap_ui.keymap_selection_changed()
+        context.preferences.is_dirty = True
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_redo(Operator):
+    """Put back the last change to the key map that was taken back"""
+    bl_idname = "preferences.keymap_redo"
+    bl_label = "Redo Key Map Change"
+
+    @classmethod
+    def poll(cls, context):
+        wm = context.window_manager
+        if not wm.keymap_redo_len:
+            cls.poll_message_set("Nothing has been taken back to put back")
+            return False
+        return True
+
+    def execute(self, context):
+        import rna_keymap_ui
+        wm = context.window_manager
+        if not wm.keymap_redo():
+            self.report({'INFO'}, "Nothing left to put back")
+            return {'CANCELLED'}
+        wm.keymap_selection_clear()
+        rna_keymap_ui.keymap_selection_changed()
+        context.preferences.is_dirty = True
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_view_back(Operator):
+    """Go back to whatever the key map editor was showing before"""
+    bl_idname = "preferences.keymap_view_back"
+    bl_label = "Back"
+
+    @classmethod
+    def poll(cls, context):
+        import rna_keymap_ui
+        space = getattr(context, "space_data", None)
+        if (space is None) or (space.type != 'PREFERENCES'):
+            return False
+        if not rna_keymap_ui.keymap_view_history_depth():
+            cls.poll_message_set("The editor has not been shown anything else yet")
+            return False
+        return True
+
+    def execute(self, context):
+        import rna_keymap_ui
+        if not rna_keymap_ui.keymap_view_back(context):
+            return {'CANCELLED'}
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keymap_isolate(Operator):
+    """Clear the search and show only this key map, expanded, in the tree below"""
+    bl_idname = "preferences.keymap_isolate"
+    bl_label = "Show Key Map in Tree"
+
+    keymap_name: StringProperty(
+        name="Key Map",
+        description="Name of the key map to expand",
+    )
+
+    def execute(self, context):
+        import rna_keymap_ui
+        km = keymap_tree_expand_to(context, self.keymap_name)
+        if km is None:
+            return {'CANCELLED'}
+        rna_keymap_ui.scroll_to_keymap(km)
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_reveal(Operator):
+    """Clear the search and show this shortcut where it lives in the full tree"""
+    bl_idname = "preferences.keyitem_reveal"
+    bl_label = "View in Full Tree"
+
+    keymap_name: StringProperty(
+        name="Key Map",
+        description="Name of the key map that contains the item",
+    )
+    item_id: IntProperty(
+        name="Item Identifier",
+        description="Identifier of the key map item within its key map",
+        default=-1,
+    )
+
+    @classmethod
+    def description(cls, context, props):
+        import rna_keymap_ui
+        km, kmi = _keymap_item_by_id(context, props.keymap_name, props.item_id)
+        if kmi is None:
+            return None
+        return rpt_("Show {:s} [{:s}] in {:s}, clearing the search").format(
+            rna_keymap_ui.keymap_item_label(km, kmi),
+            kmi.to_string() or rpt_("no key"),
+            km.name,
+        )
+
+    def execute(self, context):
+        import rna_keymap_ui
+        km = keymap_tree_expand_to(context, self.keymap_name)
+        if km is None:
+            return {'CANCELLED'}
+        kmi = km.keymap_items.from_id(self.item_id)
+        if kmi is None:
+            # The item is gone, still show the key map.
+            rna_keymap_ui.scroll_to_keymap(km)
+            return {'FINISHED'}
+        rna_keymap_ui.set_reveal_target(km, kmi)
+        return {'FINISHED'}
+
+
+class PREFERENCES_OT_keyitem_flash_conflict(Operator):
+    """Point out the shortcut that claims this one's key binding"""
+    bl_idname = "preferences.keyitem_flash_conflict"
+    bl_label = "Show Conflicting Shortcut"
+
+    keymap_name: StringProperty(
+        name="Key Map",
+        description="Name of the key map that contains the item",
+    )
+    item_id: IntProperty(
+        name="Item Identifier",
+        description="Identifier of the key map item within its key map",
+        default=-1,
+    )
+    is_outranked: BoolProperty(
+        name="Answers First",
+        description="Whether that key map is offered the key before the one being looked at",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+    # The row the marker was pressed on, used for a conflict check when the target row is not
+    # drawn. Left empty by the Add Shortcut dialog, whose item has no row yet.
+    source_keymap_name: StringProperty(
+        name="From Key Map",
+        description="Name of the key map holding the shortcut the marker belongs to",
+        options={'SKIP_SAVE'},
+    )
+    source_item_id: IntProperty(
+        name="From Item Identifier",
+        description="Identifier of the shortcut the marker belongs to",
+        default=-1,
+        options={'SKIP_SAVE'},
+    )
+
+    @classmethod
+    def description(cls, context, props):
+        import rna_keymap_ui
+        km, kmi = _keymap_item_by_id(context, props.keymap_name, props.item_id)
+        if kmi is None:
+            return None
+        text = (
+            rpt_("{:s} [{:s}] in {:s} is offered this key first, so this shortcut only runs "
+                 "where that key map does not apply")
+            if props.is_outranked else
+            rpt_("{:s} [{:s}] in {:s} claims this key binding")
+        )
+        return text.format(
+            rna_keymap_ui.keymap_item_label(km, kmi),
+            kmi.to_string() or rpt_("no key"),
+            km.name,
+        )
+
+    def execute(self, context):
+        import rna_keymap_ui
+        km, kmi = _keymap_item_by_id(context, self.keymap_name, self.item_id)
+        if kmi is None:
+            self.report({'INFO'}, "The shortcut in the way is no longer there")
+            return {'CANCELLED'}
+
+        if rna_keymap_ui.keymap_row_is_drawn(km, kmi):
+            # Already drawn, flash in place.
+            rna_keymap_ui.set_conflict_flash(km, kmi)
+            return {'FINISHED'}
+
+        # Not drawn (filtered or collapsed): a conflict check on the source row shows this one
+        # along with the other conflicts. The flash is set for when the tree redraws.
+        km_from, kmi_from = _keymap_item_by_id(
+            context, self.source_keymap_name, self.source_item_id)
+        if kmi_from is not None and _keymap_conflicts_check_show(context, [(km_from, kmi_from)]):
+            rna_keymap_ui.set_conflict_flash(km, kmi)
+            rna_keymap_ui.set_reveal_target(km, kmi)
+            return {'FINISHED'}
+
+        # No source row, expand the tree to it instead.
+        if keymap_tree_expand_to(context, self.keymap_name) is None:
+            return {'CANCELLED'}
+        rna_keymap_ui.set_conflict_flash(km, kmi)
+        rna_keymap_ui.set_reveal_target(km, kmi)
         return {'FINISHED'}
 
 
@@ -1368,8 +3060,37 @@ classes = (
     PREFERENCES_OT_keyconfig_remove,
     PREFERENCES_OT_keyconfig_test,
     PREFERENCES_OT_keyitem_add,
+    PREFERENCES_OT_keyitem_intent_detach,
+    PREFERENCES_OT_keyintent_category_toggle,
+    PREFERENCES_OT_keyintent_restore,
+    PREFERENCES_OT_keyintent_reveal,
+    PREFERENCES_OT_keyitem_copy,
+    PREFERENCES_OT_keyitem_paste,
     PREFERENCES_OT_keyitem_remove,
     PREFERENCES_OT_keyitem_restore,
+    PREFERENCES_OT_keyitem_unshadow,
+    PREFERENCES_OT_keymap_activity_clear,
+    PREFERENCES_OT_keymap_activity_find,
+    PREFERENCES_OT_keymap_conflicts_check,
+    PREFERENCES_OT_keyitem_select,
+    PREFERENCES_OT_keymap_select_all,
+    PREFERENCES_OT_keymap_label_new,
+    PREFERENCES_OT_keymap_label_remove,
+    PREFERENCES_OT_keymap_label_filter_toggle,
+    PREFERENCES_OT_keymap_label_assign,
+    PREFERENCES_OT_keyitem_rename,
+    PREFERENCES_OT_keyitem_add_for_operator,
+    PREFERENCES_OT_keymap_hide_item,
+    PREFERENCES_OT_keymap_hide_operator,
+    PREFERENCES_OT_keyitem_expand,
+    PREFERENCES_OT_keymap_filter_refresh,
+    PREFERENCES_OT_keymap_activity_reveal,
+    PREFERENCES_OT_keymap_undo,
+    PREFERENCES_OT_keymap_redo,
+    PREFERENCES_OT_keymap_view_back,
+    PREFERENCES_OT_keymap_isolate,
+    PREFERENCES_OT_keyitem_reveal,
+    PREFERENCES_OT_keyitem_flash_conflict,
     PREFERENCES_OT_keymap_restore,
     PREFERENCES_OT_theme_install,
     PREFERENCES_OT_studiolight_install,
