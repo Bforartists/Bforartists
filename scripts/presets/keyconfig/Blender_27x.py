@@ -80,25 +80,25 @@ def load():
     kc = context.window_manager.keyconfigs.new(IDNAME)
     kc_prefs = kc.preferences
 
-    keyconfig_data = blender_default.generate_keymaps(
-        blender_default.Params(
-            select_mouse=kc_prefs.select_mouse,
-            use_mouse_emulate_3_button=(
-                prefs.inputs.use_mouse_emulate_3_button and
-                prefs.inputs.mouse_emulate_3_button_modifier == 'ALT'
-            ),
-            spacebar_action='SEARCH',
-            use_select_all_toggle=True,
-            use_gizmo_drag=False,
-            legacy=True,
+    params = blender_default.Params(
+        select_mouse=kc_prefs.select_mouse,
+        use_mouse_emulate_3_button=(
+            prefs.inputs.use_mouse_emulate_3_button and
+            prefs.inputs.mouse_emulate_3_button_modifier == 'ALT'
         ),
+        spacebar_action='SEARCH',
+        use_select_all_toggle=True,
+        use_gizmo_drag=False,
+        legacy=True,
     )
+    intents = blender_default.generate_intents(params)
+    keyconfig_data = blender_default.generate_keymaps(params)
 
     if platform == "darwin":
         from bl_keymap_utils.platform_helpers import keyconfig_data_oskey_from_ctrl_for_macos
-        keyconfig_data = keyconfig_data_oskey_from_ctrl_for_macos(keyconfig_data)
+        keyconfig_data = keyconfig_data_oskey_from_ctrl_for_macos(keyconfig_data, intents=intents)
 
-    keyconfig_init_from_data(kc, keyconfig_data)
+    keyconfig_init_from_data(kc, keyconfig_data, intents=intents)
 
 
 if __name__ == "__main__":

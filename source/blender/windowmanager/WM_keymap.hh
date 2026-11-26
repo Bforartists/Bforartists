@@ -52,6 +52,49 @@ void WM_keyconfig_update_suppress_end();
 void WM_keyconfig_update_postpone_begin();
 void WM_keyconfig_update_postpone_end();
 
+/* Key Intents. */
+
+/**
+ * Find an intent by `idname`, in a list or a key configuration.
+ */
+wmKeyIntent *WM_keyintent_list_find(ListBaseT<wmKeyIntent> *lb, const char *idname);
+wmKeyIntent *WM_keyconfig_intent_find(wmKeyConfig *keyconf, const char *idname);
+/**
+ * Add an intent, or update the label & event of the existing intent with this `idname`.
+ */
+wmKeyIntent *WM_keyconfig_intent_ensure(wmKeyConfig *keyconf,
+                                        const char *idname,
+                                        const char *label,
+                                        const char *category,
+                                        const struct KeyMapItem_Params *params);
+void WM_keyconfig_intent_remove(wmKeyConfig *keyconf, wmKeyIntent *ki);
+/**
+ * Tag the key configuration for update after editing its intents,
+ * edits to the user configuration are stored in the preferences.
+ */
+void WM_keyconfig_intent_update_tag(wmKeyConfig *keyconf);
+void WM_keyintent_update_tag(wmKeyIntent *ki);
+/**
+ * Restore an intent of the user configuration to the preset (and add-on) definition.
+ */
+void WM_keyintent_restore_to_default(wmWindowManager *wm, wmKeyIntent *ki);
+/**
+ * Number of key map items that take their key from `ki`, within the configuration owning it.
+ */
+int WM_keyintent_contexts_count(wmWindowManager *wm, const wmKeyIntent *ki);
+std::optional<std::string> WM_keyintent_to_string(const wmKeyIntent *ki, bool compact);
+
+/**
+ * Link `kmi` to the intent `idname` (an empty string detaches it),
+ * the key is taken from the intent when the key configuration is next updated.
+ */
+void WM_keymap_item_intent_set(wmKeyMapItem *kmi, const char *idname);
+/**
+ * Detach `kmi` from its intent when its event no longer matches the intent,
+ * call after the event of an item has been edited.
+ */
+void WM_keymap_item_intent_detach_if_changed(wmWindowManager *wm, wmKeyMapItem *kmi);
+
 /** Keymap. */
 
 /** Parameters for matching events, passed into functions that create key-map items. */
@@ -102,6 +145,65 @@ wmKeyMapItem *WM_keymap_add_item_copy(wmKeyMap *keymap, const wmKeyMapItem *kmi_
 
 void WM_keymap_remove_item(wmKeyMap *keymap, wmKeyMapItem *kmi);
 std::optional<std::string> WM_keymap_item_to_string(const wmKeyMapItem *kmi, bool compact);
+
+/** Record \a kmi in the usage history. */
+void WM_keymap_activity_record(wmWindowManager *wm,
+                               const wmKeyMap *keymap,
+                               const wmKeyMapItem *kmi);
+/** Record a modal key map item, named by its modal action. */
+void WM_keymap_activity_record_modal(wmWindowManager *wm,
+                                     const wmKeyMap *keymap,
+                                     const wmKeyMapItem *kmi);
+/**
+ * Record an operator run without a shortcut.
+ * \param spaceid: An #eSpace_Type or #SPACE_EMPTY, needed to offer a key map to bind it in.
+ */
+void WM_keymap_activity_record_unbound(wmWindowManager *wm,
+                                       const char *idname,
+                                       const char *variant,
+                                       int spaceid);
+/** Clear the usage history. */
+void WM_keymap_activity_clear(wmWindowManager *wm);
+
+/* -------------------------------------------------------------------- */
+/** \name Key-Map Editor Selection
+ * \{ */
+
+/** Whether \a kmi is selected. */
+bool WM_keymap_selection_contains(const wmWindowManager *wm,
+                                  const wmKeyMap *keymap,
+                                  const wmKeyMapItem *kmi);
+/** Select or deselect \a kmi. */
+void WM_keymap_selection_set(wmWindowManager *wm,
+                             const wmKeyMap *keymap,
+                             const wmKeyMapItem *kmi,
+                             bool value);
+/** Deselect all. */
+void WM_keymap_selection_clear(wmWindowManager *wm);
+/** Copy the event of \a kmi to the other selected items. */
+void WM_keymap_selection_propagate_event(wmKeyMapItem *kmi);
+/** Copy the active state of \a kmi to the other selected items. */
+void WM_keymap_selection_propagate_active(wmKeyMapItem *kmi);
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Key-Map Editor Undo
+ * \{ */
+
+/** Push an undo step if the key configuration changed since the last checkpoint. */
+void WM_keymap_undo_checkpoint(wmWindowManager *wm);
+/** Undo the last key configuration change, false when there is none. */
+bool WM_keymap_undo(wmWindowManager *wm);
+/** Redo the last undone change, false when there is none. */
+bool WM_keymap_redo(wmWindowManager *wm);
+/** Number of undo/redo steps available. */
+int WM_keymap_undo_len(const wmWindowManager *wm);
+int WM_keymap_redo_len(const wmWindowManager *wm);
+/** Free the undo history on window manager runtime teardown. */
+void wm_keymap_undo_runtime_free(bke::WindowManagerRuntime &runtime);
+
+/** \} */
 
 wmKeyMap *WM_keymap_list_find(ListBaseT<wmKeyMap> *lb,
                               const char *idname,
@@ -205,6 +307,8 @@ void WM_keymap_restore_to_default(wmKeyMap *keymap, wmWindowManager *wm);
 void WM_keymap_item_properties_reset(wmKeyMapItem *kmi, IDProperty *properties);
 void WM_keymap_item_restore_to_default(wmWindowManager *wm, wmKeyMap *keymap, wmKeyMapItem *kmi);
 int WM_keymap_item_map_type_get(const wmKeyMapItem *kmi);
+/** The #eKMI_MapType for an event type. */
+int WM_key_event_map_type_get(short type);
 
 /* Key Event. */
 

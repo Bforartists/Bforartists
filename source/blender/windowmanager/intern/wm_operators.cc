@@ -18,8 +18,10 @@
 #include <cfloat>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <sstream>
+#include <string>
 
 #include <fmt/format.h>
 
@@ -202,6 +204,119 @@ bool WM_operator_bl_idname_is_valid(const char *idname)
     return false;
   }
   return true;
+}
+
+/** An operator whose listed properties distinguish separate usage variants. */
+struct OperatorUsageVariant {
+  const char *idname;
+  /** Null terminated, in variant string order. */
+  const char *props[3];
+};
+
+static const OperatorUsageVariant operator_usage_variants[] = {
+    {"WM_OT_tool_set_by_id", {"name", nullptr}},
+    {"WM_OT_call_menu", {"name", nullptr}},
+    {"WM_OT_call_menu_pie", {"name", nullptr}},
+    {"WM_OT_call_panel", {"name", nullptr}},
+    {"WM_OT_call_asset_shelf_popover", {"name", nullptr}},
+    {"WM_OT_context_toggle", {"data_path", nullptr}},
+    {"WM_OT_context_toggle_enum", {"data_path", nullptr}},
+    {"WM_OT_context_cycle_enum", {"data_path", nullptr}},
+    {"WM_OT_context_menu_enum", {"data_path", nullptr}},
+    {"WM_OT_context_pie_enum", {"data_path", nullptr}},
+    {"WM_OT_context_scale_float", {"data_path", nullptr}},
+    {"WM_OT_context_modal_mouse", {"data_path", nullptr}},
+    {"WM_OT_context_set_enum", {"data_path", "value", nullptr}},
+    {"WM_OT_context_set_value", {"data_path", "value", nullptr}},
+    {"WM_OT_context_set_boolean", {"data_path", "value", nullptr}},
+    {"WM_OT_context_set_int", {"data_path", "value", nullptr}},
+    {"WM_OT_context_set_float", {"data_path", "value", nullptr}},
+    {"WM_OT_context_set_string", {"data_path", "value", nullptr}},
+    {"WM_OT_context_set_id", {"data_path", "value", nullptr}},
+    {"OBJECT_OT_mode_set", {"mode", nullptr}},
+};
+
+void WM_operator_usage_variant_canonicalize(std::string &variant)
+{
+  const StringRef long_form = "scene.tool_settings.";
+  if (StringRef(variant).startswith(long_form)) {
+    variant.erase(0, StringRef("scene.").size());
+  }
+}
+
+static const OperatorUsageVariant *operator_usage_variant_find(const char *idname)
+{
+  for (const OperatorUsageVariant &variant : operator_usage_variants) {
+    if (STREQ(variant.idname, idname)) {
+      return &variant;
+    }
+  }
+  return nullptr;
+}
+
+static bool operator_usage_variant_value_append(PointerRNA *ptr,
+                                                const char *identifier,
+                                                std::string &result)
+{
+  PropertyRNA *prop = RNA_struct_find_property(ptr, identifier);
+  if (prop == nullptr) {
+    return false;
+  }
+  switch (RNA_property_type(prop)) {
+    case PROP_STRING: {
+      result += RNA_property_string_get(ptr, prop);
+      return true;
+    }
+    case PROP_ENUM: {
+      const char *value = nullptr;
+      if (!RNA_property_enum_identifier(
+              nullptr, ptr, prop, RNA_property_enum_get(ptr, prop), &value))
+      {
+        return false;
+      }
+      result += value;
+      return true;
+    }
+    case PROP_BOOLEAN:
+      result += RNA_property_boolean_get(ptr, prop) ? "True" : "False";
+      return true;
+    case PROP_INT:
+      result += std::to_string(RNA_property_int_get(ptr, prop));
+      return true;
+    case PROP_FLOAT:
+      result += fmt::format("{}", RNA_property_float_get(ptr, prop));
+      return true;
+    default:
+      return false;
+  }
+}
+
+size_t WM_operator_usage_variant(const char *idname,
+                                 PointerRNA *properties,
+                                 char *r_variant,
+                                 const size_t r_variant_maxncpy)
+{
+  r_variant[0] = '\0';
+  const OperatorUsageVariant *variant = operator_usage_variant_find(idname);
+  if ((variant == nullptr) || (properties == nullptr)) {
+    return 0;
+  }
+
+  std::string result;
+  for (int i = 0; variant->props[i]; i++) {
+    if (i != 0) {
+      result += '=';
+    }
+    const size_t value_start = result.size();
+    if (!operator_usage_variant_value_append(properties, variant->props[i], result)) {
+      return 0;
+    }
+    if (result.size() == value_start) {
+      return 0;
+    }
+  }
+  WM_operator_usage_variant_canonicalize(result);
+  return BLI_strncpy_rlen(r_variant, result.c_str(), r_variant_maxncpy);
 }
 
 static bool operator_idname_ok_or_report_impl(ReportList *reports,

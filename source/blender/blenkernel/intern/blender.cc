@@ -420,6 +420,8 @@ static void userdef_free_keymaps(UserDef *userdef)
     MEM_delete(km);
   }
   userdef->user_keymaps.clear_no_delete();
+
+  BLI_freelistN(&userdef->user_keyintents);
 }
 
 static void userdef_free_keyconfig_prefs(UserDef *userdef)
@@ -539,6 +541,7 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
   VALUE_SWAP(themes);
   VALUE_SWAP(addons);
   VALUE_SWAP(user_keymaps);
+  VALUE_SWAP(user_keyintents);
   VALUE_SWAP(user_keyconfig_prefs);
 
   DATA_SWAP(font_path_ui);

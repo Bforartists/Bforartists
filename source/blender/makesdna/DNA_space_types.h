@@ -991,11 +991,25 @@ struct SpaceUserPref {
   char _pad0[6] = {};
   /* End 'SpaceLink' header. */
 
-  char _pad1[7] = {};
+  char _pad1[6] = {};
+  /** #eSpaceUserPref_FilterFlag */
+  char filter_flag = 0;
   char filter_type = 0;
   /** Search term for filtering in the UI. */
   char filter[64] = "";
   SpaceUserPref_Runtime *runtime = nullptr;
+};
+
+/** #SpaceUserPref.filter_flag */
+enum eSpaceUserPref_FilterFlag {
+  /** Only user added or edited items. */
+  USER_PREF_FILTER_USER_MODIFIED = (1 << 0),
+  /** Only items sharing a key binding within their key map. */
+  USER_PREF_FILTER_CONFLICTS = (1 << 1),
+  /** Only items added by add-ons, see #KMI_FROM_ADDON. */
+  USER_PREF_FILTER_ADDON = (1 << 2),
+  /** Match the whole key binding, not any binding containing it. */
+  USER_PREF_FILTER_KEY_EXACT = (1 << 3),
 };
 
 /** \} */

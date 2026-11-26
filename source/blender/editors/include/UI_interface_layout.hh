@@ -149,6 +149,8 @@ struct Layout : public Item, NonCopyable, NonMovable {
   bool activate_init_ = false;
   bool enabled_ = false;
   bool redalert_ = false;
+  bool warning_alert_ = false;
+  bool info_alert_ = false;
   /** For layouts inside grid-flow, they and their items shall never have a fixed maximal size. */
   bool variable_size_ = false;
   LayoutAlign alignment_ = {};
@@ -229,6 +231,14 @@ struct Layout : public Item, NonCopyable, NonMovable {
    * color #TH_REDALERT.
    */
   void red_alert_set(bool red_alert);
+
+  [[nodiscard]] bool warning_alert() const;
+  /** As #red_alert_set, with the warning state color #TH_WARNING. */
+  void warning_alert_set(bool warning_alert);
+
+  [[nodiscard]] bool info_alert() const;
+  /** As #red_alert_set, with the info state color #TH_INFO. */
+  void info_alert_set(bool info_alert);
 
   [[nodiscard]] Panel *root_panel() const;
 
@@ -857,6 +867,24 @@ inline bool Layout::red_alert() const
 inline void Layout::red_alert_set(bool red_alert)
 {
   redalert_ = red_alert;
+}
+
+inline bool Layout::warning_alert() const
+{
+  return warning_alert_;
+}
+inline void Layout::warning_alert_set(bool warning_alert)
+{
+  warning_alert_ = warning_alert;
+}
+
+inline bool Layout::info_alert() const
+{
+  return info_alert_;
+}
+inline void Layout::info_alert_set(bool info_alert)
+{
+  info_alert_ = info_alert;
 }
 
 inline float Layout::search_weight() const

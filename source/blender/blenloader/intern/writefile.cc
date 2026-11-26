@@ -1290,6 +1290,10 @@ static void write_userdef(BlendWriter *writer, const UserDef *userdef)
     }
   }
 
+  for (const wmKeyIntent &intent : userdef->user_keyintents) {
+    writer->write_struct(&intent);
+  }
+
   for (const wmKeyConfigPref &kpt : userdef->user_keyconfig_prefs) {
     writer->write_struct(&kpt);
     if (kpt.prop) {

@@ -10,6 +10,7 @@ __all__ = (
     "keyconfig_export_as_data",
     "keyconfig_import_from_data",
     "keyconfig_init_from_data",
+    "keyconfig_intents_init_from_data",
     "keyconfig_merge",
     "keymap_init_from_data",
 )
@@ -112,9 +113,33 @@ def _kmi_attrs_or_none(level, kmi):
     _kmi_properties_to_lines(level + 1, kmi.properties, lines)
     if kmi.active is False:
         lines.append(f"{indent(level)}\"active\":" "False,\n")
+    # The intent is stored here (not in the event arguments) so older Blender versions,
+    # which don't know intents but read the resolved key written into the arguments, ignore it.
+    if kmi.intent:
+        lines.append(f"{indent(level)}\"intent\": '{kmi.intent:s}',\n")
     if not lines:
         return None
     return "".join(lines)
+
+
+def intent_args_as_data(intent):
+    s = [
+        f"\"type\": '{intent.type}'",
+        f"\"value\": '{intent.value}'"
+    ]
+
+    if intent.any:
+        s.append("\"any\": True")
+    else:
+        for attr in ("shift", "ctrl", "alt", "oskey", "hyper"):
+            if mod := getattr(intent, attr):
+                s.append(f"\"{attr:s}\": " + ("-1" if mod == -1 else "True"))
+    if (mod := intent.key_modifier) and (mod != 'NONE'):
+        s.append(f"\"key_modifier\": '{mod:s}'")
+    if (direction := intent.direction) and (direction != 'ANY'):
+        s.append(f"\"direction\": '{direction:s}'")
+
+    return "{" + ", ".join(s) + "}"
 
 
 def keyconfig_export_as_data(wm, kc, filepath, *, all_keymaps=False):
@@ -156,6 +181,15 @@ def keyconfig_export_as_data(wm, kc, filepath, *, all_keymaps=False):
         from bpy.app import version_file
         fw(f"keyconfig_version = {version_file!r}\n")
         del version_file
+
+        # Intents (shared shortcuts), items reference them by identifier.
+        fw("keyconfig_intents = \\\n{")
+        for intent in wm.keyconfigs.user.intents:
+            fw(f"\n{indent(1)}\"{intent.name:s}\": (\"{intent.label:s}\", {intent_args_as_data(intent):s}")
+            if intent.category:
+                fw(f", \"{intent.category:s}\"")
+            fw("),")
+        fw("\n}\n" if len(wm.keyconfigs.user.intents) else "}\n")
 
         fw("keyconfig_data = \\\n[")
 
@@ -214,6 +248,8 @@ def keyconfig_export_as_data(wm, kc, filepath, *, all_keymaps=False):
         fw("    keywords = {}\n")
         fw("    if blender_version >= (2, 92, 0):\n")
         fw("        keywords[\"keyconfig_version\"] = keyconfig_version\n")
+        fw("    if blender_version >= (5, 3, 0):\n")
+        fw("        keywords[\"intents\"] = keyconfig_intents\n")
 
         fw("    import os\n")
         fw("    from bl_keymap_utils.io import keyconfig_import_from_data\n")
@@ -246,10 +282,49 @@ def _init_properties_from_data(base_props, base_value):
                 print(f"Warning: {ex!r}")
 
 
-def keymap_init_from_data(km, km_items, is_modal=False):
+def keymap_init_from_data(km, km_items, is_modal=False, intents=None):
+    """
+    :arg intents: Intents table ``{idname: (label, event_args)}``, see :func:`keyconfig_init_from_data`.
+       An item may take its key from an intent with ``{"intent": idname}`` as its event arguments
+       (the source form), or with ``"intent"`` in its data (the exported form, next to the resolved key).
+    """
     new_fn = getattr(km.keymap_items, "new_modal" if is_modal else "new")
     for (kmi_idname, kmi_args, kmi_data) in km_items:
+        kmi_intent = kmi_args.get("intent")
+        if kmi_intent is not None:
+            # Don't modify the callers data.
+            kmi_args = {key: value for key, value in kmi_args.items() if key != "intent"}
+            intent_data = intents.get(kmi_intent) if intents else None
+            if intent_data is not None:
+                kmi_args = {**intent_data[1], **kmi_args}
+            elif "type" in kmi_args:
+                print(f"Warning: unknown intent '{kmi_intent}' for item '{kmi_idname}' in '{km.name}', using its own key")
+                kmi_intent = None
+            else:
+                # No table (tool & add-on key maps), the user configuration has the final intents.
+                import bpy
+                intent = bpy.context.window_manager.keyconfigs.user.intents.get(kmi_intent)
+                if intent is None:
+                    print(f"Warning: unknown intent '{kmi_intent}' for item '{kmi_idname}' in '{km.name}', skipping")
+                    continue
+                intent_args = {"type": intent.type, "value": intent.value}
+                if intent.any:
+                    intent_args["any"] = True
+                else:
+                    for attr in ("shift", "ctrl", "alt", "oskey", "hyper"):
+                        if mod := getattr(intent, attr):
+                            intent_args[attr] = mod
+                if intent.key_modifier != 'NONE':
+                    intent_args["key_modifier"] = intent.key_modifier
+                if intent.direction != 'ANY':
+                    intent_args["direction"] = intent.direction
+                kmi_args = {**intent_args, **kmi_args}
+        elif kmi_data is not None:
+            kmi_intent = kmi_data.get("intent")
+
         kmi = new_fn(kmi_idname, **kmi_args)
+        if kmi_intent:
+            kmi.intent = kmi_intent
         if kmi_data is not None:
             if not kmi_data.get("active", True):
                 kmi.active = False
@@ -260,10 +335,23 @@ def keymap_init_from_data(km, km_items, is_modal=False):
                 _init_properties_from_data(kmi_props, kmi_props_data)
 
 
-def keyconfig_init_from_data(kc, keyconfig_data):
+def keyconfig_intents_init_from_data(kc, intents):
+    # Each entry is `(label, event_args)` or `(label, event_args, category)`.
+    for idname, intent_data in intents.items():
+        label, intent_args = intent_data[0], intent_data[1]
+        category = intent_data[2] if len(intent_data) > 2 else ""
+        kc.intents.new(idname, label, category=category, **intent_args)
+
+
+def keyconfig_init_from_data(kc, keyconfig_data, *, intents=None):
     # Load data in the format defined above.
     #
     # Runs at load time, keep this fast!
+    #
+    # `intents` is a table of shared shortcuts: `{"move": ("Move", {"type": 'G', "value": 'PRESS'}, "Transform")}`
+    # (the category is optional), items may reference them as `{"intent": "move"}` in place of their event arguments.
+    if intents:
+        keyconfig_intents_init_from_data(kc, intents)
     for (km_name, km_args, km_content) in keyconfig_data:
         km = kc.keymaps.new(km_name, **km_args)
         km_items = km_content["items"]
@@ -273,10 +361,10 @@ def keyconfig_init_from_data(kc, keyconfig_data):
         # For full keymaps, ensure these are always lists to allow for extending them
         # in a generic way that doesn't have to check for the type each time.
         assert type(km_items) is list
-        keymap_init_from_data(km, km_items, is_modal=km_args.get("modal", False))
+        keymap_init_from_data(km, km_items, is_modal=km_args.get("modal", False), intents=intents)
 
 
-def keyconfig_import_from_data(name, keyconfig_data, *, keyconfig_version=(0, 0, 0)):
+def keyconfig_import_from_data(name, keyconfig_data, *, keyconfig_version=(0, 0, 0), intents=None):
     # Load data in the format defined above.
     #
     # Runs at load time, keep this fast!
@@ -287,7 +375,7 @@ def keyconfig_import_from_data(name, keyconfig_data, *, keyconfig_version=(0, 0,
     if keyconfig_version is not None:
         from .versioning import keyconfig_update
         keyconfig_data = keyconfig_update(keyconfig_data, keyconfig_version)
-    keyconfig_init_from_data(kc, keyconfig_data)
+    keyconfig_init_from_data(kc, keyconfig_data, intents=intents)
     return kc
 
 

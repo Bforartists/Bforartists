@@ -20,6 +20,7 @@
 #include "DNA_listBase.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h"
 #include "DNA_userdef_types.h"
 #include "DNA_windowmanager_types.h"
 
@@ -1334,6 +1335,12 @@ static bool wm_operator_register_check(wmWindowManager *wm, wmOperatorType *ot)
 }
 
 /**
+ * Non-zero while a key map item invokes an operator, stored as #OP_IS_FROM_KEYMAP on invoke
+ * since modal operators finish in a later event.
+ */
+static int wm_op_keymap_depth = 0;
+
+/**
  * \param has_undo_step: True when an undo step was added,
  * needed when the operator doesn't use #OPTYPE_UNDO, #OPTYPE_UNDO_GROUPED but adds an undo step.
  * \param has_register: True when an operator was registered.
@@ -1354,6 +1361,16 @@ static void wm_operator_finished(bContext *C,
   const bool do_register = (repeat == false) && wm_operator_register_check(wm, op->type);
 
   op->customdata = nullptr;
+
+  if (!repeat && wm && (op->flag & OP_IS_FROM_KEYMAP) == 0) {
+    char idname_py[OP_MAX_TYPENAME];
+    WM_operator_py_idname(idname_py, op->type->idname);
+    char variant[OP_MAX_USAGE_VARIANT];
+    WM_operator_usage_variant(op->type->idname, op->ptr, variant, sizeof(variant));
+    const ScrArea *area = CTX_wm_area(C);
+    WM_keymap_activity_record_unbound(
+        wm, idname_py, variant, area ? area->spacetype : SPACE_EMPTY);
+  }
 
   if (store) {
     WM_operator_last_properties_store(op);
@@ -1705,7 +1722,8 @@ static wmOperatorStatus wm_operator_invoke(bContext *C,
                                            PointerRNA *properties,
                                            ReportList *reports,
                                            const bool poll_only,
-                                           bool use_last_properties)
+                                           bool use_last_properties,
+                                           bool *r_operator_ran = nullptr)
 {
   wmOperatorStatus retval = OPERATOR_PASS_THROUGH;
 
@@ -1737,6 +1755,10 @@ static wmOperatorStatus wm_operator_invoke(bContext *C,
       op->flag |= OP_IS_INVOKE;
     }
 
+    if (wm_op_keymap_depth != 0) {
+      op->flag |= OP_IS_FROM_KEYMAP;
+    }
+
     /* Initialize setting from previous run. */
     if (!is_nested_call && use_last_properties) { /* Not called by a Python script. */
       WM_operator_last_properties_init(op);
@@ -1748,6 +1770,10 @@ static wmOperatorStatus wm_operator_invoke(bContext *C,
                  event ? event->type : 0,
                  CTX_wm_screen(C)->active_region,
                  ot->idname);
+    }
+
+    if (r_operator_ran) {
+      *r_operator_ran = true;
     }
 
     if (op->type->invoke && event) {
@@ -2644,6 +2670,8 @@ static void wm_event_modalkeymap_begin(const bContext *C,
     }
 
     if (event_match != nullptr) {
+      WM_keymap_activity_record_modal(CTX_wm_manager(C), keymap, kmi);
+
       event_backup->prev_type = event->prev_type;
       event_backup->prev_val = event->prev_val;
 
@@ -2738,7 +2766,8 @@ static eHandlerActionFlag wm_handler_operator_call(bContext *C,
                                                    wmEventHandler *handler_base,
                                                    wmEvent *event,
                                                    PointerRNA *properties,
-                                                   const char *kmi_idname)
+                                                   const char *kmi_idname,
+                                                   bool *r_operator_ran = nullptr)
 {
   wmOperatorStatus retval = OPERATOR_PASS_THROUGH;
 
@@ -2879,7 +2908,11 @@ static eHandlerActionFlag wm_handler_operator_call(bContext *C,
         use_last_properties = false;
       }
 
-      retval = wm_operator_invoke(C, ot, event, properties, nullptr, false, use_last_properties);
+      /* See #wm_op_keymap_depth. */
+      wm_op_keymap_depth++;
+      retval = wm_operator_invoke(
+          C, ot, event, properties, nullptr, false, use_last_properties, r_operator_ran);
+      wm_op_keymap_depth--;
 
       if (use_tool_properties) {
         WM_operator_properties_free(&tool_properties);
@@ -3252,8 +3285,10 @@ static eHandlerActionFlag wm_handlers_do_keymap_with_keymap_handler(
         if (wm_eventmatch(event, &kmi)) {
           wmEventHandler_KeymapPost keymap_post = handler->post;
 
-          action |= wm_handler_operator_call(
-              C, handlers, &handler->head, event, kmi.ptr, kmi.idname);
+          bool operator_ran = false;
+          const eHandlerActionFlag action_iter = wm_handler_operator_call(
+              C, handlers, &handler->head, event, kmi.ptr, kmi.idname, &operator_ran);
+          action |= action_iter;
 
           CLOG_DEBUG(WM_LOG_EVENTS,
                      "Keymap '%s', %s, %s, event: %s",
@@ -3261,6 +3296,10 @@ static eHandlerActionFlag wm_handlers_do_keymap_with_keymap_handler(
                      keymap_handler_log_kmi_op_str(C, &kmi).c_str(),
                      keymap_handler_log_action_str(action),
                      keymap_handler_log_kmi_event_str(&kmi).value_or("").c_str());
+
+          if (operator_ran) {
+            WM_keymap_activity_record(CTX_wm_manager(C), keymap, &kmi);
+          }
 
           if (action & WM_HANDLER_BREAK) {
             /* Not always_pass here, it denotes removed handler_base. */
@@ -3307,10 +3346,16 @@ static eHandlerActionFlag wm_handlers_do_keymap_with_gizmo_handler(
         CTX_wm_gizmo_group_set(C, gzgroup);
 
         /* `handler->op` is called later, we want key-map op to be triggered here. */
-        action |= wm_handler_operator_call(
-            C, handlers, &handler->head, event, kmi.ptr, kmi.idname);
+        bool operator_ran = false;
+        const eHandlerActionFlag action_iter = wm_handler_operator_call(
+            C, handlers, &handler->head, event, kmi.ptr, kmi.idname, &operator_ran);
+        action |= action_iter;
 
         CTX_wm_gizmo_group_set(C, nullptr);
+
+        if (operator_ran) {
+          WM_keymap_activity_record(CTX_wm_manager(C), keymap, &kmi);
+        }
 
         if (action & WM_HANDLER_BREAK) {
           if (G.debug & (G_DEBUG_EVENTS | G_DEBUG_HANDLERS)) {

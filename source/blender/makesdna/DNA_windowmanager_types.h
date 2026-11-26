@@ -60,6 +60,8 @@ struct wmTimer;
 
 #define OP_MAX_TYPENAME 64
 #define KMAP_MAX_NAME 64
+/** Maximum length of an operator usage variant, see #WM_operator_usage_variant. */
+#define OP_MAX_USAGE_VARIANT 128
 
 /* Timer custom-data to control reports display. */
 /* These two lines with # tell `makesdna` this struct can be excluded. */
@@ -308,6 +310,10 @@ enum eKMI_Flag : uint8_t {
    * as mouse, 3d-mouse, timer... etc never repeat.
    */
   KMI_REPEAT_IGNORE = (1 << 4),
+  /** Added by an add-on, see #wmKeyMapItem::owner_id. */
+  KMI_FROM_ADDON = (1 << 5),
+  /** User added duplicate of an existing item. */
+  KMI_USER_DUPLICATE = (1 << 6),
 };
 ENUM_OPERATORS(eKMI_Flag)
 
@@ -348,6 +354,14 @@ struct wmKeyMapItem {
   /* operator */
   /** Used to retrieve operator type pointer. */
   char idname[64] = "";
+  /**
+   * Identifier of the #wmKeyIntent this item takes its key from, empty for a plain item.
+   * When set, the event fields are overwritten from the intent whenever the
+   * key configuration is rebuilt, see #WM_keyconfig_update.
+   */
+  char intent[64] = "";
+  /** The add-on that registered this item, empty otherwise. */
+  char owner_id[128] = "";
   /** Operator properties, assigned to ptr->data and can be written to a file. */
   IDProperty *properties = nullptr;
 
@@ -403,6 +417,52 @@ struct wmKeyMapItem {
    * when running property callbacks such as ENUM item functions.
    */
   struct PointerRNA *ptr = nullptr;
+};
+
+/** #wmKeyIntent.flag */
+enum eKeyIntent_Flag : short {
+  /** The key was changed by the user (stored in #UserDef.user_keyintents). */
+  KEYINTENT_USER_MODIFIED = (1 << 0),
+  /** Added by the user, not part of any preset (stored in #UserDef.user_keyintents). */
+  KEYINTENT_USER_DEFINED = (1 << 1),
+  /** Show the served key maps in the key map editor. */
+  KEYINTENT_EXPANDED = (1 << 2),
+  /** Show the intents of this category in the key map editor (kept in sync per category). */
+  KEYINTENT_CATEGORY_EXPANDED = (1 << 3),
+};
+ENUM_OPERATORS(eKeyIntent_Flag)
+
+/**
+ * A shortcut with a human meaning ("G" is "Move"), shared by key map items across contexts.
+ *
+ * Items reference an intent by #wmKeyMapItem::intent and take their event fields from it
+ * when the key configuration is rebuilt, so re-binding the intent re-binds every item at once.
+ * Intents are resolved into items ahead of time, event dispatch never looks at them.
+ */
+struct wmKeyIntent {
+  struct wmKeyIntent *next = nullptr, *prev = nullptr;
+
+  /** Stable identifier referenced by items, e.g. "move". */
+  char idname[64] = "";
+  /** Human meaning shown in the interface, e.g. "Move". */
+  char label[64] = "";
+  /** Groups intents in the interface, e.g. "Transform", may be empty. */
+  char category[64] = "";
+
+  /* Event, see #wmKeyMapItem for the meaning of each field. */
+  short type = 0;
+  int8_t val = 0;
+  int8_t direction = 0;
+  int8_t shift = 0;
+  int8_t ctrl = 0;
+  int8_t alt = 0;
+  int8_t oskey = 0;
+  int8_t hyper = 0;
+  char _pad0[1] = {};
+  short keymodifier = 0;
+
+  eKeyIntent_Flag flag = {};
+  char _pad1[2] = {};
 };
 
 /** Used instead of wmKeyMapItem for diff keymaps. */
@@ -475,6 +535,8 @@ struct wmKeyConfig {
   char basename[64] = "";
 
   ListBaseT<wmKeyMap> keymaps = {nullptr, nullptr};
+  /** Shared shortcuts referenced by #wmKeyMapItem::intent. */
+  ListBaseT<wmKeyIntent> intents = {nullptr, nullptr};
   int actkeymap = 0;
   eKeyConf_Flag flag = {};
   char _pad0[2] = {};

@@ -45,6 +45,9 @@ WindowManagerRuntime::~WindowManagerRuntime()
     MEM_delete(timer);
   }
 
+  /* Owns key map copies outside any key configuration. */
+  wm_keymap_undo_runtime_free(*this);
+
   while (wmKeyConfig *keyconf = static_cast<wmKeyConfig *>(BLI_pophead(&this->keyconfigs))) {
     WM_keyconfig_free(keyconf);
   }

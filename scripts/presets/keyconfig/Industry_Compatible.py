@@ -28,13 +28,14 @@ def load():
 
     kc = bpy.context.window_manager.keyconfigs.new(IDNAME)
     params = industry_compatible.Params(use_mouse_emulate_3_button=prefs.inputs.use_mouse_emulate_3_button)
+    intents = industry_compatible.generate_intents(params)
     keyconfig_data = industry_compatible.generate_keymaps(params)
 
     if platform == "darwin":
         from bl_keymap_utils.platform_helpers import keyconfig_data_oskey_from_ctrl_for_macos
-        keyconfig_data = keyconfig_data_oskey_from_ctrl_for_macos(keyconfig_data)
+        keyconfig_data = keyconfig_data_oskey_from_ctrl_for_macos(keyconfig_data, intents=intents)
 
-    keyconfig_init_from_data(kc, keyconfig_data)
+    keyconfig_init_from_data(kc, keyconfig_data, intents=intents)
 
 
 if __name__ == "__main__":

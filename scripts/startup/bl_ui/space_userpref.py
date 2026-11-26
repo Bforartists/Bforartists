@@ -2432,12 +2432,307 @@ class USERPREF_MT_keyconfigs(Menu):
         Menu.draw_preset(self, context)
 
 
+class USERPREF_PT_keymap_header(KeymapPanel, Panel):
+    bl_label = "Keymap Header"
+    bl_region_type = 'TOOL_PROPS'
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        from rna_keymap_ui import draw_keymaps_header
+
+        draw_keymaps_header(context, self.layout)
+
+
+def _keymap_label_menu_draw(layout, context, *, use_selection):
+    """Entries adding the row (or the selection) to a label, and a new one."""
+    kmi = getattr(context, "keymap_item", None)
+    km = getattr(context, "keymap", None)
+
+    def props_set(props):
+        props.use_selection = use_selection
+        if not use_selection and kmi is not None and km is not None:
+            props.keymap_name = km.name
+            props.item_id = kmi.id
+
+    from bl_keymap_utils import editor_meta
+    labels = editor_meta.labels_list()
+    for label_name, _use_filter in labels:
+        props = layout.operator(
+            "preferences.keymap_label_assign", text=label_name, translate=False)
+        props.name = label_name
+        props.assign = True
+        props_set(props)
+    if labels:
+        layout.separator()
+    props = layout.operator("preferences.keymap_label_new", text="New Label...", icon='ADD')
+    props.assign = True
+    props_set(props)
+
+
+def _keymap_label_remove_menu_draw(layout, context, *, use_selection):
+    """Entries removing the labels the row (or any selected item) carries."""
+    import rna_keymap_ui
+    kmi = getattr(context, "keymap_item", None)
+    km = getattr(context, "keymap", None)
+    if use_selection:
+        names = rna_keymap_ui.keymap_selection_labels()
+    elif km is not None and kmi is not None:
+        names = rna_keymap_ui.keymap_item_labels(km, kmi)
+    else:
+        names = []
+    if not names:
+        layout.label(text="No Labels")
+        return
+    for name in names:
+        props = layout.operator("preferences.keymap_label_assign", text=name, translate=False)
+        props.name = name
+        props.assign = False
+        props.use_selection = use_selection
+        if not use_selection:
+            props.keymap_name = km.name
+            props.item_id = kmi.id
+
+
+class USERPREF_MT_keymap_label_add(Menu):
+    bl_label = "Add to Label"
+
+    def draw(self, context):
+        import rna_keymap_ui
+        _keymap_label_menu_draw(
+            self.layout, context, use_selection=rna_keymap_ui.keymap_selection_count() > 1)
+
+
+class USERPREF_MT_keymap_label_remove(Menu):
+    bl_label = "Remove from Label"
+
+    def draw(self, context):
+        import rna_keymap_ui
+        _keymap_label_remove_menu_draw(
+            self.layout, context, use_selection=rna_keymap_ui.keymap_selection_count() > 1)
+
+
+class USERPREF_MT_keymap_labels(Menu):
+    """Labels of the selected shortcuts"""
+    bl_label = "Labels"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="Add to Label")
+        _keymap_label_menu_draw(layout, context, use_selection=True)
+        layout.separator()
+        layout.label(text="Remove from Label")
+        _keymap_label_remove_menu_draw(layout, context, use_selection=True)
+
+
+# Only a popover.
+class USERPREF_PT_keymap_filter(Panel):
+    bl_label = "Key Map Filter"
+
+    bl_space_type = 'TOPBAR'  # dummy.
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        from rna_keymap_ui import draw_keymaps_filter
+
+        draw_keymaps_filter(context, self.layout)
+
+
+def _keymap_list_name_match(uilist, text):
+    """Match `text` against the list's filter, respecting `use_filter_invert`."""
+    import fnmatch
+    import re
+
+    pattern = re.compile(fnmatch.translate("*" + uilist.filter_name + "*"), re.IGNORECASE)
+    # Logical XOR, as in #UI_UL_list.filter_items_by_name.
+    return bool(pattern.match(text)) is not bool(uilist.use_filter_invert)
+
+
+def _keymap_activity_search_text(item):
+    """Text a usage history row is filtered by (all of its visible text)."""
+    from rna_keymap_ui import usage_operation_label
+
+    label = usage_operation_label(item.idname, item.variant)
+    if item.is_shortcut:
+        return "{:s} {:s} {:s}".format(item.keymap_name, label, item.key_string)
+    return label
+
+
+class USERPREF_UL_keymap_activity(UIList):
+    """Usage history: shortcuts pressed and operators run without one."""
+
+    def filter_items(self, context, data, propname):
+        from rna_keymap_ui import (
+            _usage_hidden_activity_keys,
+            _usage_hidden_operators,
+        )
+        items = getattr(data, propname)
+        skip_items = _usage_hidden_activity_keys(context.window_manager.keyconfigs.user)
+        skip_ops = _usage_hidden_operators()
+
+        flt_flags = []
+        for item in items:
+            if item.is_shortcut:
+                key = (item.keymap_name, item.idname, item.key_string, item.propvalue)
+                # A hidden operator also hides its shortcuts (matches recording).
+                shown = key not in skip_items and (item.idname, item.variant) not in skip_ops
+            else:
+                shown = (item.idname, item.variant) not in skip_ops
+            if shown and self.filter_name:
+                shown = _keymap_list_name_match(self, _keymap_activity_search_text(item))
+            flt_flags.append(self.bitflag_filter_item if shown else 0)
+
+        count = len(flt_flags)
+        flt_neworder = [count - 1 - i for i in range(count)]
+        return flt_flags, flt_neworder
+
+    @staticmethod
+    def _wide_operator(layout, idname, text, *, alignment='LEFT', dimmed=False):
+        """
+        Draw an operator button twice (text + filler) so the whole column is clickable.
+
+        `dimmed` keeps the buttons active but inactive-looking: a disabled button would
+        let the list row behind it highlight. Returns both operator property sets.
+        """
+        row = layout.row(align=True)
+        row.active = not dimmed
+
+        def text_part():
+            sub = row.row(align=True)
+            sub.alignment = alignment
+            return sub.operator(idname, text=text, emboss=False, translate=False)
+
+        def fill_part():
+            # A single space: an empty text button is sized as an icon button.
+            return row.row(align=True).operator(idname, text=" ", emboss=False, translate=False)
+
+        if alignment == 'LEFT':
+            return (text_part(), fill_part())
+        return (fill_part(), text_part())
+
+    def draw_item(self, context, layout, _data, item, _icon, _active_data, _active_propname):
+        from rna_keymap_ui import usage_row_binding
+
+        kc = context.window_manager.keyconfigs.user
+        split = layout.split(factor=0.7)
+        if item.seconds_since < 1.0:
+            # Highlight recent activations, as the tree rows do.
+            split.warning = True
+
+        if item.is_shortcut:
+            self._draw_shortcut(split, item)
+        else:
+            self._draw_unbound(split, item, usage_row_binding(kc, item))
+
+    def _draw_shortcut(self, split, item):
+        from rna_keymap_ui import usage_operation_label
+
+        for props in self._wide_operator(
+                split,
+                "preferences.keymap_activity_reveal",
+                "{:s} > {:s}".format(
+                    iface_(item.keymap_name),
+                    usage_operation_label(item.idname, item.variant),
+                ),
+        ):
+            props.keymap_name = item.keymap_name
+            props.idname = item.idname
+            props.key_string = item.key_string
+            props.is_modal = item.is_modal
+            props.propvalue = item.propvalue
+
+        right = split.split(factor=0.65)
+        for props in self._wide_operator(
+                right, "preferences.keymap_activity_find", item.key_string, alignment='RIGHT'):
+            props.filter_type = 'KEY'
+            props.filter_text = item.key_string
+
+        sub = right.row(align=True)
+        sub.label(text="x{:d}".format(item.repeat) if item.repeat > 1 else "", translate=False)
+        props = sub.operator(
+            "preferences.keymap_hide_item", text="", icon='HIDE_OFF', emboss=False)
+        props.keymap_name = item.keymap_name
+        props.idname = item.idname
+        props.key_string = item.key_string
+        props.is_modal = item.is_modal
+        props.propvalue = item.propvalue
+
+    def _draw_unbound(self, split, item, binding):
+        from rna_keymap_ui import usage_operation_label
+
+        km, kmi = binding if binding else (None, None)
+        label = usage_operation_label(item.idname, item.variant)
+
+        # Same button for bound and unbound rows so the names align; dimmed when there is no
+        # key map item to reveal.
+        name_parts = self._wide_operator(
+            split, "preferences.keymap_activity_reveal", label, dimmed=kmi is None)
+        if kmi is not None:
+            for props in name_parts:
+                props.keymap_name = km.name
+                props.idname = kmi.idname
+                props.key_string = kmi.to_string()
+                props.is_modal = False
+                props.propvalue = ""
+
+        right = split.split(factor=0.65)
+        if kmi is not None:
+            sub = right.row(align=True)
+            sub.info = True
+            for props in self._wide_operator(
+                    sub,
+                    "preferences.keymap_activity_reveal",
+                    kmi.to_string(),
+                    alignment='RIGHT',
+            ):
+                props.keymap_name = km.name
+                props.idname = kmi.idname
+                props.key_string = kmi.to_string()
+                props.is_modal = False
+                props.propvalue = ""
+        else:
+            props = right.row(align=True).operator(
+                "preferences.keyitem_add_for_operator", text="Add Shortcut", icon='ADD')
+            props.idname = item.idname
+            props.variant = item.variant
+            props.space_type = item.space_type
+
+        sub = right.row(align=True)
+        sub.label(text="x{:d}".format(item.repeat) if item.repeat > 1 else "", translate=False)
+        props = sub.operator(
+            "preferences.keymap_hide_operator", text="", icon='HIDE_OFF', emboss=False)
+        props.idname = item.idname
+        props.variant = item.variant
+
+
+class USERPREF_PT_keymap_usage(KeymapPanel, Panel):
+    bl_label = "Keymap Usage"
+    bl_region_type = 'TOOLS'
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        from rna_keymap_ui import draw_keymaps_usage
+
+        draw_keymaps_usage(context, self.layout)
+
+
+class USERPREF_PT_keymap_intents(KeymapPanel, Panel):
+    bl_label = "Shared Shortcuts"
+    bl_region_type = 'CHANNELS'
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        from rna_keymap_ui import draw_intents
+
+        draw_intents(context, self.layout, context.window_manager.keyconfigs.user)
+
+
 class USERPREF_PT_keymap(KeymapPanel, Panel):
     bl_label = "Keymap"
     bl_options = {'HIDE_HEADER'}
 
     def draw(self, context):
-        from rna_keymap_ui import draw_keymaps
+        from rna_keymap_ui import draw_keymaps_tree
 
         layout = self.layout
 
@@ -2445,8 +2740,8 @@ class USERPREF_PT_keymap(KeymapPanel, Panel):
 
         # start = time.time()
 
-        # Keymap Settings
-        draw_keymaps(context, layout)
+        # Keymap tree (the header draws in its own region).
+        draw_keymaps_tree(context, layout)
 
         # print("runtime", time.time() - start)
 
@@ -3277,6 +3572,158 @@ class USERPREF_PT_experimental_tweaks(ExperimentalPanel, Panel):
 
 # Order of registration defines order in UI,
 # so dynamically generated classes are "injected" in the intended order.
+def keymap_context_menu(layout, context, km):
+    """Context menu entries for a key map row (Add, Paste)."""
+    import rna_keymap_ui
+
+    layout.separator()
+    layout.operator(
+        "preferences.keyitem_add",
+        text="Add New Shortcut",
+        text_ctxt=i18n_contexts.id_windowmanager,
+        icon='ADD',
+    )
+
+    pasteable = rna_keymap_ui.keymap_clipboard_pasteable(
+        km, rna_keymap_ui.keymap_item_clipboard())
+    sub = layout.row()
+    sub.enabled = bool(pasteable)
+    sub.operator(
+        "preferences.keyitem_paste",
+        text=(
+            iface_("Paste \"{:s}\"").format(rna_keymap_ui.keymap_clipboard_label(pasteable))
+            if pasteable else iface_("Paste")
+        ),
+        translate=False,
+        icon='PASTEDOWN',
+    )
+
+
+def keymap_item_context_menu(self, context):
+    """Context menu entries for a key map item row."""
+    import rna_keymap_ui
+
+    km = getattr(context, "keymap", None)
+    if km is None:
+        # Not a key map tree button.
+        return
+
+    kmi = getattr(context, "keymap_item", None)
+    if kmi is None:
+        keymap_context_menu(self.layout, context, km)
+        return
+
+    layout = self.layout
+    layout.separator()
+
+    # Conflicts check on the clicked item, or on the whole selection.
+    count = rna_keymap_ui.keymap_selection_count()
+    if count > 1:
+        props = layout.operator(
+            "preferences.keymap_conflicts_check",
+            text=iface_("Check {:d} for Conflicts").format(count),
+            translate=False,
+            icon='ERROR',
+        )
+        props.use_selection = True
+    else:
+        sub = layout.row()
+        # Unbound items can't conflict.
+        sub.enabled = bool(kmi.to_string())
+        sub.operator(
+            "preferences.keymap_conflicts_check",
+            text="Check for Conflicts",
+            icon='ERROR',
+        ).item_id = kmi.id
+
+    layout.separator()
+
+    # Only useful while a filter is active.
+    space = context.space_data
+    if space is not None and space.type == 'PREFERENCES' and (
+            space.filter_text.strip() or
+            space.use_filter_user_modified or
+            space.use_filter_starred or
+            space.use_filter_addon or
+            space.use_filter_conflicts
+    ):
+        props = layout.operator(
+            "preferences.keyitem_reveal", text="View in Full Tree", icon='ZOOM_SELECTED')
+        props.keymap_name = km.name
+        props.item_id = kmi.id
+        layout.separator()
+
+    if count > 1:
+        props = layout.operator(
+            "preferences.keyitem_copy",
+            text=iface_("Copy {:d} Shortcuts").format(count),
+            translate=False,
+            icon='COPYDOWN',
+        )
+        props.use_selection = True
+    else:
+        layout.operator(
+            "preferences.keyitem_copy", text="Copy Shortcut", icon='COPYDOWN',
+        ).item_id = kmi.id
+
+    pasteable = rna_keymap_ui.keymap_clipboard_pasteable(
+        km, rna_keymap_ui.keymap_item_clipboard())
+    sub = layout.row()
+    sub.enabled = bool(pasteable)
+    sub.operator(
+        "preferences.keyitem_paste",
+        text=(
+            iface_("Paste \"{:s}\"").format(rna_keymap_ui.keymap_clipboard_label(pasteable))
+            if pasteable else iface_("Paste")
+        ),
+        translate=False,
+        icon='PASTEDOWN',
+    )
+
+    layout.separator()
+
+    layout.menu("USERPREF_MT_keymap_label_add", icon='TAG')
+    layout.menu("USERPREF_MT_keymap_label_remove")
+
+    layout.separator()
+
+    # Restore only applies to modified default items.
+    if count > 1:
+        props = layout.operator(
+            "preferences.keyitem_restore",
+            text=iface_("Restore {:d} Shortcuts").format(count),
+            translate=False,
+            icon='BACK',
+        )
+        props.use_selection = True
+        props = layout.operator(
+            "preferences.keyitem_remove",
+            text=iface_("Delete {:d} Shortcuts").format(count),
+            translate=False,
+            icon='X',
+        )
+        props.use_selection = True
+    else:
+        sub = layout.row()
+        sub.enabled = (not kmi.is_user_defined) and kmi.is_user_modified
+        sub.operator(
+            "preferences.keyitem_restore", text="Restore Shortcut", icon='BACK',
+        ).item_id = kmi.id
+        layout.operator(
+            "preferences.keyitem_remove",
+            text="Delete Shortcut",
+            icon=('TRACKING_CLEAR_BACKWARDS' if kmi.is_user_defined else 'X'),
+        ).item_id = kmi.id
+
+
+def register():
+    bpy.types.UI_MT_button_context_menu.append(keymap_item_context_menu)
+
+
+def unregister():
+    bpy.types.UI_MT_button_context_menu.remove(keymap_item_context_menu)
+
+
 classes = (
     USERPREF_PT_theme_user_interface,
     *ThemeGenericClassGenerator.generate_panel_classes_for_wcols(),
@@ -3371,7 +3818,15 @@ classes = (
     USERPREF_PT_navigation_fly_walk_navigation,
     USERPREF_PT_navigation_fly_walk_gravity,
 
+    USERPREF_PT_keymap_header,
+    USERPREF_PT_keymap_filter,
+    USERPREF_MT_keymap_label_add,
+    USERPREF_MT_keymap_label_remove,
+    USERPREF_MT_keymap_labels,
     USERPREF_PT_keymap,
+    USERPREF_PT_keymap_intents,
+    USERPREF_UL_keymap_activity,
+    USERPREF_PT_keymap_usage,
 
     USERPREF_PT_extensions,
     USERPREF_PT_addons,

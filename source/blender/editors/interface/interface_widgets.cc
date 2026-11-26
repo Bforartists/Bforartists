@@ -3395,6 +3395,30 @@ static void widget_state(WidgetType *wt, const WidgetStateInfo *state, EmbossTyp
       color_blend_v3_v3(wt->wcol.text, red, red_alpha);
     }
   }
+  else if (state->but_flag & BUT_WARNALERT) {
+    if (wt->draw && !ELEM(emboss, EmbossType::None, EmbossType::NoneOrStatus)) {
+      theme::get_color_3ubv(TH_WARNING, wt->wcol.inner);
+    }
+    else {
+      /* Unlike #BUT_REDALERT, #EmbossType::NoneOrStatus buttons also tint the text only. */
+      uchar warning[4];
+      theme::get_color_3ubv(TH_WARNING, warning);
+      color_mul_hsl_v3(warning, 1.0f, 1.5f, 1.3f);
+      color_blend_v3_v3(wt->wcol.text, warning, 0.85f);
+    }
+  }
+  else if (state->but_flag & BUT_INFOALERT) {
+    if (wt->draw && !ELEM(emboss, EmbossType::None, EmbossType::NoneOrStatus)) {
+      theme::get_color_3ubv(TH_INFO, wt->wcol.inner);
+    }
+    else {
+      /* #TH_INFO is a dark blue by default, lightened more than the red to keep text legible. */
+      uchar info[4];
+      theme::get_color_3ubv(TH_INFO, info);
+      color_mul_hsl_v3(info, 1.0f, 1.5f, 2.2f);
+      color_blend_v3_v3(wt->wcol.text, info, 0.85f);
+    }
+  }
 
   if (state->but_flag & BUT_DRAG_MULTI) {
     /* the button isn't SELECT but we're editing this so draw with sel color */
@@ -5258,6 +5282,20 @@ static void widget_state_label(WidgetType *wt, const WidgetStateInfo *state, Emb
      * This ensures the text be always readable, lighter or darker depending on the theme. */
     float red_alpha = float(red[3]) / 255.0f;
     color_blend_v3_v3(wt->wcol.text, red, red_alpha);
+  }
+  else if (state->but_flag & BUT_WARNALERT) {
+    /* Same tint as #widget_state. */
+    uchar warning[4];
+    theme::get_color_3ubv(TH_WARNING, warning);
+    color_mul_hsl_v3(warning, 1.0f, 1.5f, 1.3f);
+    color_blend_v3_v3(wt->wcol.text, warning, 0.85f);
+  }
+  else if (state->but_flag & BUT_INFOALERT) {
+    /* Same tint as #widget_state. */
+    uchar info[4];
+    theme::get_color_3ubv(TH_INFO, info);
+    color_mul_hsl_v3(info, 1.0f, 1.5f, 2.2f);
+    color_blend_v3_v3(wt->wcol.text, info, 0.85f);
   }
 }
 

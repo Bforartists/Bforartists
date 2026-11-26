@@ -6,6 +6,7 @@
  * \ingroup spuserpref
  */
 
+#include <algorithm>
 #include <cstring>
 
 #include "AS_remote_library.hh"
@@ -22,6 +23,8 @@
 #include "BLI_string_utf8.hh"
 
 #include "BKE_context.hh"
+#include "BKE_global.hh"
+#include "BKE_main.hh"
 #include "BKE_preferences.h"
 #include "BKE_screen.hh"
 
@@ -102,6 +105,28 @@ static SpaceLink *userpref_create(const ScrArea *area, const Scene * /*scene*/)
   region->regiontype = RGN_TYPE_EXECUTE;
   region->alignment = RGN_ALIGN_BOTTOM | RGN_SPLIT_PREV;
   region->flag |= RGN_FLAG_DYNAMIC_SIZE | RGN_FLAG_NO_USER_RESIZE;
+
+  /* Key map intents column (Keymap section only). Listed before the key map header and usage
+   * regions so it runs the full height next to them. */
+  region = BKE_area_region_new();
+
+  BLI_addtail(&spref->regionbase, region);
+  region->regiontype = RGN_TYPE_CHANNELS;
+  region->alignment = RGN_ALIGN_RIGHT;
+
+  region = BKE_area_region_new();
+
+  BLI_addtail(&spref->regionbase, region);
+  region->regiontype = RGN_TYPE_TOOL_PROPS;
+  region->alignment = RGN_ALIGN_TOP;
+  /* Sized to its content, see #userpref_keymap_header_region_layout. */
+  region->flag |= RGN_FLAG_NO_USER_RESIZE;
+
+  region = BKE_area_region_new();
+
+  BLI_addtail(&spref->regionbase, region);
+  region->regiontype = RGN_TYPE_TOOLS;
+  region->alignment = RGN_ALIGN_BOTTOM;
 
   /* main region */
   region = BKE_area_region_new();
@@ -516,7 +541,161 @@ static void userpref_execute_region_init(wmWindowManager *wm, ARegion *region)
   region->v2d.keepzoom |= V2D_LOCKZOOM_X | V2D_LOCKZOOM_Y;
 }
 
-static void userpref_main_region_listener(const wmRegionListenerParams * /*params*/) {}
+static bool userpref_keymap_usage_region_is_hidden(const ScrArea *area)
+{
+  if (U.space_data.section_active != USER_SECTION_KEYMAP) {
+    return false;
+  }
+  const ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  return region && (region->flag & RGN_FLAG_HIDDEN);
+}
+
+/**
+ * Dragging a region below its minimum height hides it. The usage region's only reopen control
+ * (the "Show Recent" toggle) is inside it, so treat that as closing to the single toggle row.
+ */
+static void userpref_refresh(const bContext *C, ScrArea *area)
+{
+  if (!userpref_keymap_usage_region_is_hidden(area)) {
+    return;
+  }
+  ARegion *region = BKE_area_find_region_type(area, RGN_TYPE_TOOLS);
+  region->flag &= ~(RGN_FLAG_HIDDEN | RGN_FLAG_HIDDEN_BY_USER);
+  if (wmWindowManager *wm = CTX_wm_manager(C)) {
+    wm->runtime->keymap_activity_show = false;
+  }
+  ED_region_visibility_change_update(const_cast<bContext *>(C), area, region);
+}
+
+/* Shared by the main region and the two key map editor regions. */
+static void userpref_keymap_region_listener(const wmRegionListenerParams *params)
+{
+  const wmNotifier *wmn = params->notifier;
+  switch (wmn->category) {
+    case NC_WM:
+      /* Recently used list. */
+      if (wmn->data == ND_KEYMAP_ACTIVITY) {
+        ED_region_tag_redraw(params->region);
+      }
+      break;
+    case NC_SCREEN:
+      /* Region resizing, see #userpref_refresh. */
+      if ((wmn->action == NA_EDITED) && params->area &&
+          userpref_keymap_usage_region_is_hidden(params->area))
+      {
+        ED_area_tag_refresh(params->area);
+      }
+      break;
+  }
+}
+
+static bool userpref_keymap_region_poll(const RegionPollParams * /*params*/)
+{
+  return U.space_data.section_active == USER_SECTION_KEYMAP;
+}
+
+static void userpref_keymap_region_init(wmWindowManager *wm, ARegion *region)
+{
+  ED_region_panels_init(wm, region);
+  region->v2d.keepzoom |= V2D_LOCKZOOM_X | V2D_LOCKZOOM_Y;
+}
+
+static void userpref_keymap_header_region_layout(const bContext *C, ARegion *region)
+{
+  ED_region_panels_layout(C, region);
+
+  ScrArea *area = CTX_wm_area(C);
+
+  /* Sized to the panel like #RGN_FLAG_DYNAMIC_SIZE, but clamped to the area and rounded up
+   * (truncating leaves the region a fraction of a row short). */
+  const Panel *panel = region->panels.last();
+  const float content_y = panel ? float(ui::panel_size_y(panel)) :
+                                  (region->v2d.tot.ymax - region->v2d.tot.ymin);
+  int sizey = int(content_y / UI_SCALE_FAC) + 1;
+
+  bool is_clamped = false;
+  const int max_sizey = int((area->winy * 0.6f) / UI_SCALE_FAC);
+  if (max_sizey > 0 && sizey > max_sizey) {
+    sizey = max_sizey;
+    is_clamped = true;
+  }
+  const int min_sizey = int(HEADERY / UI_SCALE_FAC);
+  if (sizey < min_sizey) {
+    sizey = min_sizey;
+  }
+
+  if (!is_clamped) {
+    /* No scroll bar when the content fits. #ED_region_panels_layout adds one on the left since
+     * #RGN_ALIGN_TOP shares a bit with #RGN_ALIGN_LEFT. */
+    region->v2d.scroll &= ~V2D_SCROLL_VERTICAL;
+  }
+
+  if (region->sizey != sizey) {
+    region->sizey = sizey;
+    ED_area_tag_region_size_update(area, region);
+  }
+}
+
+/** Initial height when open: the controls row plus about four rows of history. */
+constexpr int keymap_usage_region_sizey = 20 * 7;
+
+/** Initial width of the intents column: an intent row with its label, key and count. */
+constexpr int keymap_intents_region_sizex = 300;
+
+/** Dragging past the closed height closes the usage region, dragging a closed one up opens it. */
+static void userpref_keymap_usage_region_on_user_resize(const ARegion *region)
+{
+  wmWindowManager *wm = G_MAIN->wm.first();
+  if (wm == nullptr) {
+    return;
+  }
+  bke::WindowManagerRuntime &runtime = *wm->runtime;
+  const int closed_sizey = runtime.keymap_activity_region_closed_sizey;
+  if (closed_sizey <= 0) {
+    return;
+  }
+  runtime.keymap_activity_show = region->sizey > closed_sizey;
+  if (runtime.keymap_activity_show) {
+    runtime.keymap_activity_region_sizey = region->sizey;
+  }
+}
+
+static void userpref_keymap_usage_region_layout(const bContext *C, ARegion *region)
+{
+  ED_region_panels_layout(C, region);
+
+  wmWindowManager *wm = CTX_wm_manager(C);
+  if (wm == nullptr) {
+    return;
+  }
+  bke::WindowManagerRuntime &runtime = *wm->runtime;
+  int sizey = region->sizey;
+
+  if (!runtime.keymap_activity_show) {
+    const float content_y = region->v2d.tot.ymax - region->v2d.tot.ymin;
+    const int closed_sizey = int(content_y / UI_SCALE_FAC) + 1;
+    if (closed_sizey > 0) {
+      /* Remember the closed height (the floor for the open state) and the user's open height. */
+      runtime.keymap_activity_region_closed_sizey = closed_sizey;
+      if (sizey > closed_sizey) {
+        runtime.keymap_activity_region_sizey = sizey;
+      }
+      sizey = closed_sizey;
+    }
+  }
+  else {
+    const int floor_sizey = runtime.keymap_activity_region_closed_sizey;
+    if (floor_sizey > 0 && sizey <= floor_sizey) {
+      /* Re-opened: restore the remembered open height. */
+      sizey = std::max(runtime.keymap_activity_region_sizey, keymap_usage_region_sizey);
+    }
+  }
+
+  if (region->sizey != sizey) {
+    region->sizey = sizey;
+    ED_area_tag_region_size_update(CTX_wm_area(C), region);
+  }
+}
 
 static void userpref_header_listener(const wmRegionListenerParams * /*params*/) {}
 
@@ -550,6 +729,7 @@ void ED_spacetype_userpref()
   st->create = userpref_create;
   st->free = userpref_free;
   st->init = userpref_init;
+  st->refresh = userpref_refresh;
   st->duplicate = userpref_duplicate;
   st->operatortypes = userpref_operatortypes;
   st->keymap = userpref_keymap;
@@ -562,7 +742,7 @@ void ED_spacetype_userpref()
   art->init = userpref_main_region_init;
   art->layout = userpref_main_region_layout;
   art->draw = ED_region_panels_draw;
-  art->listener = userpref_main_region_listener;
+  art->listener = userpref_keymap_region_listener;
   art->keymapflag = ED_KEYMAP_UI;
   userpref_panels_register(*art);
 
@@ -600,6 +780,45 @@ void ED_spacetype_userpref()
   art->layout = ED_region_panels_layout;
   art->draw = ED_region_panels_draw;
   art->listener = userpref_execute_region_listener;
+  art->keymapflag = ED_KEYMAP_UI;
+
+  BLI_addhead(&st->regiontypes, art);
+
+  /* regions: key-map header & usage (Keymap section only) */
+  art = MEM_new_zeroed<ARegionType>("spacetype userpref region");
+  art->regionid = RGN_TYPE_TOOL_PROPS;
+  art->prefsizey = HEADERY;
+  art->poll = userpref_keymap_region_poll;
+  art->init = userpref_keymap_region_init;
+  art->layout = userpref_keymap_header_region_layout;
+  art->draw = ED_region_panels_draw;
+  art->listener = userpref_keymap_region_listener;
+  art->keymapflag = ED_KEYMAP_UI;
+
+  BLI_addhead(&st->regiontypes, art);
+
+  art = MEM_new_zeroed<ARegionType>("spacetype userpref region");
+  art->regionid = RGN_TYPE_TOOLS;
+  art->prefsizey = keymap_usage_region_sizey;
+  art->poll = userpref_keymap_region_poll;
+  art->init = userpref_keymap_region_init;
+  art->layout = userpref_keymap_usage_region_layout;
+  art->on_user_resize = userpref_keymap_usage_region_on_user_resize;
+  art->draw = ED_region_panels_draw;
+  art->listener = userpref_keymap_region_listener;
+  art->keymapflag = ED_KEYMAP_UI;
+
+  BLI_addhead(&st->regiontypes, art);
+
+  /* regions: key map intents column (Keymap section only) */
+  art = MEM_new_zeroed<ARegionType>("spacetype userpref region");
+  art->regionid = RGN_TYPE_CHANNELS;
+  art->prefsizex = keymap_intents_region_sizex;
+  art->poll = userpref_keymap_region_poll;
+  art->init = userpref_keymap_region_init;
+  art->layout = ED_region_panels_layout;
+  art->draw = ED_region_panels_draw;
+  art->listener = userpref_keymap_region_listener;
   art->keymapflag = ED_KEYMAP_UI;
 
   BLI_addhead(&st->regiontypes, art);

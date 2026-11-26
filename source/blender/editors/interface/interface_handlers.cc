@@ -21,6 +21,8 @@
 #include "DNA_curveprofile_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_space_enums.h"
+#include "DNA_windowmanager_types.h"
 
 #include "BLI_array.hh"
 #include "BLI_array_utils_c.hh"
@@ -81,6 +83,7 @@
 #include "CLG_log.h"
 
 #include "WM_api.hh"
+#include "WM_keymap.hh"
 #include "WM_types.hh"
 #include "wm_event_system.hh"
 
@@ -773,6 +776,7 @@ static bool rna_is_userdef(PointerRNA *ptr, PropertyRNA *prop)
   if (ELEM(base,
            RNA_AddonPreferences,
            RNA_KeyConfigPreferences,
+           RNA_KeyIntent,
            RNA_KeyMapItem,
            RNA_UserAssetLibrary))
   {
@@ -1142,6 +1146,87 @@ static void apply_but_autokey(bContext *C, Button *but)
   }
   BKE_report(CTX_wm_reports(C), RPT_PROPERTY, str.value().c_str());
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_INFO_REPORT, nullptr);
+}
+
+/** Record a property edit in the usage history as the equivalent `WM_OT_context_*` operator. */
+static void apply_but_history_record(bContext *C, Button *but)
+{
+  /* Operator buttons are recorded in #wm_operator_finished. */
+  if (but->optype || (but->rnaprop == nullptr)) {
+    return;
+  }
+
+  const char *idname;
+  const bool is_enum = RNA_property_type(but->rnaprop) == PROP_ENUM;
+  const bool is_enum_flag = is_enum && (RNA_property_flag(but->rnaprop) & PROP_ENUM_FLAG);
+  switch (RNA_property_type(but->rnaprop)) {
+    case PROP_BOOLEAN:
+      idname = "WM_OT_context_toggle";
+      break;
+    case PROP_ENUM:
+      idname = is_enum_flag ? "WM_OT_context_set_value" : "WM_OT_context_set_enum";
+      break;
+    default:
+      return;
+  }
+
+  const std::optional<std::string> data_path = WM_context_path_resolve_property_full(
+      C, &but->rnapoin, but->rnaprop, but->rnaindex);
+  if (!data_path.has_value() || data_path->empty()) {
+    return;
+  }
+  if (StringRef(*data_path).startswith("preferences.")) {
+    return;
+  }
+
+  std::string variant = *data_path;
+  WM_operator_usage_variant_canonicalize(variant);
+  if (is_enum) {
+    const int value_enum = RNA_property_enum_get(&but->rnapoin, but->rnaprop);
+    if (is_enum_flag) {
+      const char *identifiers[RNA_ENUM_BITFLAG_SIZE + 1];
+      if (!RNA_property_enum_bitflag_identifiers(
+              C, &but->rnapoin, but->rnaprop, value_enum, identifiers))
+      {
+        return;
+      }
+      if (identifiers[0] == nullptr) {
+        return;
+      }
+      variant += "={";
+      for (int i = 0; identifiers[i]; i++) {
+        if (i != 0) {
+          variant += ", ";
+        }
+        variant += '\'';
+        variant += identifiers[i];
+        variant += '\'';
+      }
+      variant += '}';
+    }
+    else {
+      const char *value = nullptr;
+      if (!RNA_property_enum_identifier(C, &but->rnapoin, but->rnaprop, value_enum, &value)) {
+        return;
+      }
+      variant += '=';
+      variant += value;
+    }
+  }
+  if (variant.size() >= size_t(OP_MAX_USAGE_VARIANT)) {
+    /* Truncating would merge it with other properties sharing the prefix. */
+    return;
+  }
+
+  char idname_py[OP_MAX_TYPENAME];
+  WM_operator_py_idname(idname_py, idname);
+
+  if (wmWindowManager *wm = CTX_wm_manager(C)) {
+    /* Buttons in popups report the area they were opened from, where a shortcut would apply. */
+    const ScrArea *area = CTX_wm_area(C);
+    WM_keymap_activity_record_unbound(
+        wm, idname_py, variant.c_str(), area ? area->spacetype : SPACE_EMPTY);
+  }
 }
 
 static void apply_but_funcs_after(bContext *C)
@@ -2586,6 +2671,10 @@ static void apply_but(
   if (data->custom_interaction_handle != nullptr) {
     block_interaction_update(
         C, &block->custom_interaction_callbacks, data->custom_interaction_handle);
+  }
+
+  if (!data->cancel) {
+    apply_but_history_record(C, but);
   }
 }
 
