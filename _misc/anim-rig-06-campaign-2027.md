@@ -1,6 +1,6 @@
 # Animation and Rigging Campaign 2027: Tiers and Phases
 
-Draft 4, 2026-11-25. Status: proposal. Sizes and dates are estimates made without measuring the work.
+Draft 5, 2026-11-25. Status: proposal. Sizes and dates are estimates made without measuring the work.
 
 This is the build plan for the animation and rigging work. It turns the "shopping list" in the other
 documents into tiers that can be built, tested, documented and released one at a time.
@@ -19,11 +19,11 @@ documents into tiers that can be built, tested, documented and released one at a
 |---|---|---|
 | 0 🧱 | Foundations | (nothing yet: design and prototypes) |
 | 1 🦴 | Rigging Kit | rig a biped in five minutes by dragging parts |
-| 2 🎞️ | Clips and Motion View | drop a walk on it, see ghosts and arcs |
-| 3 🖐️ | Puppet Posing | pose by grabbing the mesh, with pinned feet |
-| 4 ✨ | Pose Assist and Tweening | get a jump from two poses |
+| 2 🎞️ | Clips, Motion View and Full Body Posing | drop a walk on it, see ghosts and arcs, pin the feet and pull a hand |
+| 3 🖐️ | Puppet Posing | pose by grabbing the mesh, with no controls showing |
+| 4 ✨ | Performance, Pose Assist and Tweening | perform a take with mouse or webcam, get a jump from two poses |
 | 5 🐙 | Creatures, Machines and Character Kits | rig a spider or an excavator, assemble a kit character |
-| 6 🎭 | Live Puppetry and Optional Intelligence | perform a take with mouse, phone or webcam |
+| 6 🎭 | More Puppetry Inputs and Optional Intelligence | perform with a phone or controller, use learned helpers |
 
 When each is built, counted in quarters from the start. **The start is in 2027, after the asset and
 product milestones that come first.** Releases follow about a quarter later, see section 6.
@@ -32,11 +32,11 @@ product milestones that come first.** Releases follow about a quarter later, see
                       Start      +1      +2      +3      +4     Later
 T0 Foundations        [=====]
 T1 Rigging Kit                 [=====]
-T2 Clips and Motion            [=====]
+T2 Clips, Motion, Full Body    [=====]
 T3 Puppet Posing                       [=====]
-T4 Assist and Tween                            [=====]
+T4 Perform, Assist, Tween                      [=====]
 T5 Creatures and Kits                          [.............]
-T6 Live Puppetry                                       [.............]
+T6 More Puppetry Inputs                                [.............]
 ```
 
 Each tier goes through six steps: 📝 design, 🔨 build, 🧪 tests, 📖 documentation, 🧑‍🎨 beta, 📣 release.
@@ -50,8 +50,9 @@ From the maintainer, 24 November 2026.
 | Use open CC0 rigs and animations? | Yes, as an opt-in library. Clips must become real assets that can be dragged onto rigs and into the NLA. Own document: `anim-rig-05` |
 | Character kits (body parts that arrive rigged)? | Later. First the rigging kit must be well integrated, easy, gizmo heavy, drag and drop, and foolproof. Characters are then built with it |
 | Learned (AI) features? | Opt-in only, through Coworker or a similar system of optional downloads, so Bforartists ships light |
-| Mouse puppetry and a phone web app? | Yes, later, in the animation stage |
-| Camera and controllers? | Webcam and phone first, because everyone has them. Controllers through the simple VR system. VR control without a headset would be welcome, later |
+| Mouse puppetry and a phone web app? | Yes. Mouse recording in Tier 4 (updated 25 November 2026). Phone web app later, Tier 6 |
+| Camera and controllers? | Webcam recording in Tier 4 (updated 25 November 2026). Webcam and phone first, because everyone has them. Controllers through the simple VR system. VR control without a headset would be welcome, later |
+| Full body IK with pins | Early, in Tier 2 (25 November 2026). It is what makes posing fun |
 | Order | Viewport posing comes before all puppetry: selection, manipulation, puppet-like posing (anchor and pull, smart collisions, physics), then pose assist, auto-pose and tweening |
 | Timeframe | Starts in 2027, after asset and product milestones (updated 25 November 2026). The later tiers run into 2028. On the roadmap, section 6 |
 | Native or addon (25 November 2026) | Ideas that need speed or a place inside the editors are built into Bforartists natively in C++. The addons hold setup and guidance. See section 4 |
@@ -89,11 +90,11 @@ Rules that hold across all tiers:
 | Tier | 🖐️ Touch | 🧩 Assemble | 🎛️ Tune | 🔬 Craft |
 |---|---|---|---|---|
 | 1 Rigging Kit | Drag parts, drag markers | Parts, sockets, Build Rig | Gizmos, asset wizard, Rebuild | Plain bones and weights |
-| 2 Clips and Motion View | Drag clips, drag path points | Shelf of fitting clips, Ghosts and Paths toggles | Apply modes, ghost range, falloff | Plain actions and keys |
+| 2 Clips, Motion View, Full Body Posing | Drag clips, drag path points, drag a bone with pins | Shelf of fitting clips, Ghosts and Paths toggles | Apply modes, ghost range, falloff | Plain actions and keys |
 | 3 Puppet Posing | Drag the mesh, click to pin | One Puppet tool, any rig | Stiffness, limits, correct a guessed part | Native controls stay usable |
-| 4 Pose Assist and Tweening | Drag arcs and guides | Tween and Auto-pose buttons | Timing, overlap, contacts | Keys in the Graph Editor |
+| 4 Performance, Assist and Tweening | Perform a take, drag arcs and guides | Tween and Auto-pose buttons | Timing, overlap, contacts | Keys in the Graph Editor |
 | 5 Creatures, Machines, Kits | Draw a stroke, drag kit parts | Full creature rigs, kits | Detail levels, blend width | Save your own parts |
-| 6 Live Puppetry | Perform a take | Puppet presets | Smoothing, takes, layers | Reduce to keys and edit |
+| 6 More Puppetry Inputs | Perform with a phone or controller | Puppet presets | Smoothing, takes, layers | Reduce to keys and edit |
 
 ## 3. 🪜 The tiers
 
@@ -171,7 +172,7 @@ From the survey:
 
 **Done when:** a new user rigs the light biped in under five minutes following only the guide panel, and the result passes the validator.
 
-### 🎞️ Tier 2. Clips and Motion View
+### 🎞️ Tier 2. Clips, Motion View and Full Body Posing
 
 *What an animator needs to see and reuse motion. Runs alongside Tier 1; good for contributors.*
 
@@ -188,6 +189,9 @@ From the survey:
 - Rotation paths. Path coloured by speed or jitter. Paths for objects and cameras.
 - One native pose cache for a frame range, shared by live paths and ghosts. Ghosts bent on the graphics card. (Motion sculpting, steps 1 and 2: `anim-rig-07`, T4.)
 - Travel on drop: Full, In Place, None.
+- **Full body IK with pins** (moved here from Tier 3, 25 November 2026): click to pin any part, drag
+  another, and the whole body follows. In this tier it is used on the bones and controls. Tier 3 adds
+  grabbing the mesh on top of the same solver. Writes plain keys on the rig's own controls.
 - **Retiming handles in the Dope Sheet and Timeline.** Drag over a frame range to get a bar with
   handles: the ends stretch or squash the keys inside, and the keys after the range ripple along or
   stay, by a checkbox. A middle handle slides the range. Built natively in C++ on the ripple and gap
@@ -196,7 +200,7 @@ From the survey:
 
 *For example:* a game developer drags Idle, Walk and Jump onto the new rig and watches the ghosts to check the stride.
 
-**Done when:** a clip dragged from the library plays on a Tier 1 rig, and ghosts show its motion on both graphics backends.
+**Done when:** a clip dragged from the library plays on a Tier 1 rig, ghosts show its motion on both graphics backends, and a pose with both feet pinned is made on the heavy biped at interactive speed.
 
 ### 🖐️ Tier 3. Puppet Posing
 
@@ -204,7 +208,7 @@ From the survey:
 
 - **Select and pose on the mesh**: hover highlights the part, drag poses it.
 - **Manipulation gizmos** for rotate, move and twist on the part, without grabbing controls.
-- **Anchor and pull**: pin any part, pull another, and the body follows. The "two hands" way of posing.
+- **Anchor and pull on the mesh**: the full body IK and pins from Tier 2, now driven by grabbing the mesh. The "two hands" way of posing.
 - Matching (IK/FK, world, parent) and mirror pairs, contributed from Anim Assist.
 - Works on kit rigs through the rig description, and on Rigify and imported rigs by guessing.
 
@@ -221,9 +225,12 @@ From the survey:
 
 **Done when:** an animator blocks a ten-pose sequence on the heavy biped without selecting a single control bone.
 
-### ✨ Tier 4. Pose Assist and Tweening
+### ✨ Tier 4. Performance, Pose Assist and Tweening
 
-*The computer helps. Rule-based and physics-based, no models.*
+*Perform it, and the computer helps. Rule-based and physics-based. The only model is the webcam detector, an optional download.*
+
+- **Mouse puppetry** (moved here from Tier 6, 25 November 2026): record a performance while the timeline plays. Takes and layers. Loop recording. Reduce Keys after each take.
+- **Webcam recording** (moved here from Tier 6): face first, then hands. Needs native camera input, and a detection model delivered as an optional download. Mouse recording works without it.
 
 - **Pose assist**: joint limits, balance and centre of mass shown while posing.
 - **Smart collisions**: parts stop at the floor and at the body instead of passing through.
@@ -247,7 +254,7 @@ From the survey:
 
 *For example:* a crouch and a landing become a jump. A tail gets its follow-through suggested and baked.
 
-**Done when:** two key poses of a jump produce an accepted in-between with a correct arc and planted feet, with no trip to the Graph Editor.
+**Done when:** two key poses of a jump produce an accepted in-between with a correct arc and planted feet, with no trip to the Graph Editor, and a user with only a mouse records a short gesturing take.
 
 ### 🐙 Tier 5. Creatures, Machines and Character Kits
 
@@ -274,13 +281,12 @@ From the survey:
 
 **Done when:** a six-legged creature and a machine with pistons are each built from parts alone, and a kit character is assembled and animated without opening Weight Paint.
 
-### 🎭 Tier 6. Live Puppetry and Optional Intelligence
+### 🎭 Tier 6. More Puppetry Inputs and Optional Intelligence
 
 *Perform it. Everything here is opt-in, and the model-based parts are optional downloads.*
 
-- **Mouse puppetry**: record a performance while the timeline plays. Takes and layers. Loop recording.
+- Mouse and webcam recording are now in Tier 4.
 - **Phone as controller**: a small web page served on the local network, with sticks, sliders and tilt.
-- **Webcam**: face first, then hands. Needs camera input and a detection model, delivered as an optional download.
 - **Markers to bones** from the Clip Editor, with bake to keys.
 - **Controllers** through the existing VR system. VR control without a headset: investigate. It may
   not be possible, since the VR system normally needs a headset connected. Not checked.
@@ -294,7 +300,7 @@ From the survey:
 
 *For example:* a teacher records a mascot greeting in three takes: head, hand, face.
 
-**Done when:** a user with only a mouse and a webcam records a short talking, gesturing character.
+**Done when:** a user records a short talking, gesturing character with a phone as the controller.
 
 ### 🔖 Bookmarked for later
 
@@ -335,17 +341,33 @@ Ideas noted on 25 November 2026. Not designed, not placed in a tier, not decided
   pan and zoom, what else a "rig editor" would hold (rig description, parts list, validator, part
   options), and how rigs without a description get a layout.
 
+- **Four outside projects, looked at on 25 November 2026.** All are optional downloads at most
+  (section 5), never bundled. Licences below come from READMEs and one news article, not from the
+  licence files.
+  - *RGB MoCap* (video to motion, runs locally, exports FBX, BVH or a Blender project). Use: a "bring
+    in a capture" path for the clip library. We build the import, retarget and clean-up side, not the
+    capture. Its pose models and body models have their own terms.
+  - *IBMM* (Disney Research: in-betweens generated as Bézier curves from sparse control points, with
+    ease in and out as an input). No code or weights found. Use: as the design target for Tier 4
+    tweening. Output must be sparse, editable curves, never a key on every frame.
+  - *HairDeck* (one image to hair cards plus spring-bone chains, Apache-2.0 per its README). Use:
+    its chain output is a ready test case for the secondary motion wizard. Hair generation itself is
+    outside this campaign.
+  - *anymove* (one generated video to a creature animation, Apache-2.0 code, paid video service, a
+    reader trained per creature). Use: watch only. Its own notes list foot sliding, failed
+    eight-legged walks and about seven clips per usable move.
+
 ## 4. 👥 Who builds what
 
 | Tier | Addon | Lead | Core C++ work | Contributor-friendly parts |
 |---|---|---|---|---|
 | 0 Foundations | Both | Maintainers | For the interface work only: Tool Shelf region and transform box in the animation editors | Prototypes, test characters |
 | 1 Rigging Kit | `bfa_rigging` | Maintainers | **Yes**: part and socket highlight while dragging from the asset shelf. Tool Shelf width setting | Part recipes, mechanisms, validator (from BoneCraft) |
-| 2 Clips and Motion View | `bfa_animation` | Shared | **Yes**: mesh onion skin, live and editable motion paths, action drop targets, ripple and gap retiming, retiming handles | Clip library, compatibility check, batch import |
-| 3 Puppet Posing | `bfa_animation` | Maintainers | **Yes**: highlight and picking on the mesh. The solver's inner loop if speed needs it | Matching, mirror pairs (from Anim Assist) |
-| 4 Pose Assist and Tweening | `bfa_animation` | Maintainers | **Yes**: key sculpting brushes in the Graph Editor. Possibly solver speed | Physics suggestions, proxy bake |
+| 2 Clips, Motion View, Full Body Posing | `bfa_animation` | Shared | **Yes**: the full body solver's inner loop if speed needs it, mesh onion skin, live and editable motion paths, action drop targets, ripple and gap retiming, retiming handles | Clip library, compatibility check, batch import |
+| 3 Puppet Posing | `bfa_animation` | Maintainers | **Yes**: highlight and picking on the mesh | Matching, mirror pairs (from Anim Assist) |
+| 4 Performance, Assist and Tweening | `bfa_animation` | Maintainers | **Yes**: camera input, key sculpting brushes in the Graph Editor | Physics suggestions, proxy bake |
 | 5 Creatures, Machines, Kits | `bfa_rigging`, `bfa_default_library` | Shared | None expected | Rig and part content, creature rigs |
-| 6 Puppetry and Intelligence | `bfa_animation`, Coworker, extensions | Shared | **Yes**: camera input | Phone web page, input mappings |
+| 6 Puppetry and Intelligence | `bfa_animation`, Coworker, extensions | Shared | None expected | Phone web page, input mappings |
 
 **Native first where it counts** (maintainer, 25 November 2026). A feature goes into C++ when it has
 to be fast on a heavy character or has to sit inside an editor: evaluating other frames, drawing in
@@ -410,9 +432,9 @@ the maintainer to fill in. Everything below counts from that start.
 | Before the start | Asset and product milestones (not part of this plan) | |
 | Start, in 2027 | Tier 0 | Design notes, tracker issues, call for contributors |
 | Start + 1 quarter | Tier 1, Tier 2 | |
-| Start + 2 quarters | Tier 3 | **Tier 1 Rigging Kit**, **Tier 2 Clips and Motion View** |
+| Start + 2 quarters | Tier 3 | **Tier 1 Rigging Kit**, **Tier 2 Clips, Motion View and Full Body Posing** |
 | Start + 3 quarters | Tier 4, start of Tier 5 | **Tier 3 Puppet Posing** |
-| Start + 4 quarters | Tier 5, start of Tier 6 | **Tier 4 Pose Assist and Tweening** |
+| Start + 4 quarters | Tier 5, start of Tier 6 | **Tier 4 Performance, Pose Assist and Tweening** |
 | After that | Tier 6 | **Tier 5**, then **Tier 6** |
 
 With a start in the first half of 2027, Tiers 1 and 2 can still release that year and Tiers 3 and 4
@@ -428,11 +450,11 @@ One story for the year: **"Puppetry: rig by dragging, animate by touching."** Ea
 | Release | Headline | Demo |
 |---|---|---|
 | Tier 1 | "Rig a character in five minutes" | Uncut screen recording, mesh to posed character |
-| Tier 2 | "See your motion. Drag and drop animation" | Clip library onto a kit rig, ghosts and path editing |
+| Tier 2 | "See your motion. Drag and drop animation. Pin and pull" | Clip library onto a kit rig, ghosts and path editing, a pose made with pinned feet |
 | Tier 3 | "Pose without controls" | Hands-on posing with every control hidden |
-| Tier 4 | "Two poses, one jump" | Before and after of a plain in-between and a smart one |
+| Tier 4 | "Perform your animation. Two poses, one jump" | A mouse and webcam take, then a plain in-between beside a smart one |
 | Tier 5 | "Rig anything" | A creature and a machine built from parts |
-| Tier 6 | "Perform your animation" | Mouse and webcam performance, start to finish |
+| Tier 6 | "Any controller" | A phone-driven performance, start to finish |
 
 For each: a demo file users can open, a video under two minutes, manual pages live on release day,
 a news post, and a short call for beta testers before it.

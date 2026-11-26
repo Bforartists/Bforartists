@@ -1,6 +1,6 @@
 # Animation and Rigging in Bforartists: Vision and Consolidation Plan
 
-Draft 6, 2026-11-25. Status: proposal for discussion, nothing decided.
+Draft 7, 2026-11-25. Status: proposal for discussion, nothing decided.
 
 Companion documents:
 
@@ -344,6 +344,10 @@ maintainer's decisions of 24 November 2026: the rigging kit comes first, viewpor
 any puppetry, character kits wait until the kit has proven itself, and learned features are opt-in
 through Coworker or optional downloads. The phases below are kept as the first draft.
 
+**Changed on 25 November 2026 (maintainer):** full body IK with pins moves forward, from Phase 4 to
+Phase 2, because it is what makes posing fun. Live recording with the mouse or a webcam moves to
+Phase 4. The campaign document carries the same change in its Tiers 2 and 4.
+
 Phases are ordered so that each one ships something an artist can use, and so the riskiest
 foundations are tested early. No dates: each phase needs sizing once the open decisions are made.
 
@@ -364,10 +368,10 @@ foundations are tested early. No dates: each phase needs sizing once the open de
 **Phase 2: Touch the character (Animation addon)**
 
 - Drag on the mesh to pose (idea 2), reading the rig description or guessing it.
-- Pins, and matching from Anim Assist folded in.
+- **Full body IK with pins** (idea 3): pin the feet, pull a hand, and the body follows.
+- Matching from Anim Assist folded in.
 - Mirror-pair tools.
 - Quick setup of tracked markers to bones, with bake to keys (first level of idea 14).
-- Live recording with the mouse: perform a part while the timeline plays (idea 18).
 
 **Phase 3: Build a puppet (Rigging addon, first release)**
 
@@ -378,9 +382,11 @@ foundations are tested early. No dates: each phase needs sizing once the open de
 - A second release adds drawing a stroke to make a part, face presets and the Edit Mode helpers (ideas 10 and 13).
 - Writes the rig description, so Phase 2 tools work at their best on these rigs.
 
-**Phase 4: Whole-body posing (Animation addon)**
+**Phase 4: Perform and tween (Animation addon)**
 
-- Full body IK with pins (idea 3).
+- Live recording with the mouse: perform a part while the timeline plays (idea 18).
+- Live recording with a webcam: face first, then hands (from ideas 14 and 19). The detection model
+  is an optional download.
 - Rule-based smart tweening: arcs, contact locking, overlap (first half of idea 6).
 
 **Phase 5: Beyond bipeds (Rigging addon)**
@@ -396,8 +402,8 @@ foundations are tested early. No dates: each phase needs sizing once the open de
 - Motion and pose suggestions (idea 5).
 - Learned in-betweening, if the data and licensing questions can be answered (second half of idea 6).
 - Face animation and lip sync.
-- Markerless capture from video or webcam (last level of idea 14).
-- Puppetry inputs as opt-in extensions: face-capture apps, webcam, phone, game controller (idea 19).
+- Markerless full body capture from video (last level of idea 14).
+- Further puppetry inputs as opt-in extensions: face-capture apps, phone, game controller (idea 19).
 - Learned rigging and tweening extensions (idea 20).
 
 ## 8. 🤝 Working with the contributor
@@ -450,6 +456,6 @@ These need a maintainer decision before Phase 1 starts. A recommendation is give
 6. **Three notes need a one-line definition** before design: Bounding Bone, Proxy Rig Maker, and the
    "low, mid, high" collections. See the rigging document, sections 1.2 and 3.8.
 7. **Five more decisions** from the research document are listed in `anim-rig-04`, part D: CC0 seed
-   content, character kits, learned features as extensions, mouse puppetry in Phase 2, and device input in the core.
+   content, character kits, learned features as extensions, mouse puppetry (now Phase 4), and device input in the core.
 8. **Who owns the rig description format?** It will be relied on by both addons and by user files.
    *Recommendation: Bforartists maintainers own it, documented in the manual, versioned from the start.*
