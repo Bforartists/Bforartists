@@ -685,14 +685,42 @@ static wmOperatorStatus compositor_modifier_open_editor_exec(bContext *C, wmOper
     return OPERATOR_CANCELLED;
   }
 
-/* BFA - resolve modifier from operator property or active state */
-  std::string modifier_name = RNA_string_get(op->ptr, "modifier");
-  StripModifierData *smd = modifier_name.empty() ?
-                               seq::modifier_get_active(strip) :
-                               seq::modifier_find_by_name(strip, modifier_name.c_str());
+  /* BFA - resolve modifier from operator property or active state */
+  Strip *strip = nullptr;
+  StripModifierData *smd = nullptr;
+  bNodeTree *ntree = nullptr;
 
-  if (!smd || smd->type != eSeqModifierType_Compositor) {
-    return OPERATOR_CANCELLED;
+  const PointerRNA mod_ptr = CTX_data_pointer_get_type(C, "modifier", RNA_StripModifier);
+  const PointerRNA strip_ptr = CTX_data_pointer_get_type(C, "strip", RNA_Strip);
+  const std::string modifier_name = RNA_string_get(op->ptr, "modifier");
+
+  if (!modifier_name.empty() || mod_ptr.data) {
+    /* Modifier button: node group comes from the compositor modifier. */
+    strip = /* active strip, or the strip that owns mod_ptr */;
+    smd = !modifier_name.empty() ? seq::modifier_find_by_name(strip, modifier_name.c_str()) :
+                                  static_cast<StripModifierData *>(mod_ptr.data);
+    if (!smd || smd->type != eSeqModifierType_Compositor) {
+      return OPERATOR_CANCELLED;
+    }
+    ntree = reinterpret_cast<SequencerCompositorModifierData *>(smd)->node_group;
+    seq::modifier_set_active(strip, smd);
+  }
+  else if (strip_ptr.data) {
+    /* Strip button: node group belongs to the compositor strip itself. */
+    strip = static_cast<Strip *>(strip_ptr.data);
+    if (strip->type != STRIP_TYPE_COMPOSITOR) {
+      return OPERATOR_CANCELLED;
+    }
+    ntree = /* strip's own node group */;
+  }
+  else {
+    /* Old callers with neither (e.g. Python): keep the previous active-modifier behaviour. */
+    strip = /* active strip */;
+    smd = strip ? seq::modifier_get_active(strip) : nullptr;
+    if (!smd || smd->type != eSeqModifierType_Compositor) {
+      return OPERATOR_CANCELLED;
+    }
+    ntree = reinterpret_cast<SequencerCompositorModifierData *>(smd)->node_group;
   }
 
   SequencerCompositorModifierData *cmd = reinterpret_cast<SequencerCompositorModifierData *>(smd);

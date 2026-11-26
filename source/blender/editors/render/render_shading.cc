@@ -3297,11 +3297,11 @@ void WORLD_OT_open_node_editor(wmOperatorType *ot)
 /* -------------------------------------------------------------------- */
 /** \name BFA - Open Texture Node Editor Operator
  * \{ */
-
+// Helper function to limit to brush datablock only
 static bool texture_is_brush_user(bContext *C)
 {
-  const ID *user_id = static_cast<const ID *>(CTX_data_pointer_get(C, "texture_user").data);
-  return user_id && GS(user_id->name) == ID_BR;
+  const PointerRNA user_ptr = CTX_data_pointer_get(C, "texture_user");
+  return user_ptr.owner_id && GS(user_ptr.owner_id->name) == ID_BR;
 }
 
 static wmOperatorStatus texture_open_node_editor_exec(bContext *C, wmOperator *op)
@@ -3347,8 +3347,6 @@ void TEXTURE_OT_open_node_editor(wmOperatorType *ot)
   ot->poll = texture_open_node_editor_poll;
   ot->flag = OPTYPE_REGISTER;
 }
-
-/** \} */
 
 /** \} */
 

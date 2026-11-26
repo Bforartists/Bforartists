@@ -4100,6 +4100,22 @@ void OBJECT_OT_grease_pencil_time_modifier_segment_move(wmOperatorType *ot)
 /** \name BFA - Open Geometry Nodes Editor Operator
  * \{ */
 
+static ModifierData *geometry_nodes_open_editor_modifier_get(bContext *C,
+                                                             wmOperator *op,
+                                                             Object *ob)
+{
+  const std::string modifier_name = RNA_string_get(op->ptr, "modifier");
+  if (!modifier_name.empty()) {
+    return BKE_modifiers_findby_name(ob, modifier_name.c_str());
+  }
+
+  const PointerRNA mod_ptr = CTX_data_pointer_get_type(C, "modifier", RNA_Modifier);
+  if (mod_ptr.data && mod_ptr.owner_id == &ob->id) {
+    return static_cast<ModifierData *>(mod_ptr.data);
+  }
+  return nullptr;
+}
+
 static wmOperatorStatus geometry_nodes_open_editor_exec(bContext *C, wmOperator *op)
 {
   Object *ob = CTX_data_active_object(C);
@@ -4107,9 +4123,7 @@ static wmOperatorStatus geometry_nodes_open_editor_exec(bContext *C, wmOperator 
     return OPERATOR_CANCELLED;
   }
 
-  /* BFA - resolve modifier from operator property */
-  std::string modifier_name = RNA_string_get(op->ptr, "modifier");
-  ModifierData *md = BKE_modifiers_findby_name(ob, modifier_name.c_str());
+  ModifierData *md = geometry_nodes_open_editor_modifier_get(C, op, ob);
   if (!md || md->type != eModifierType_Nodes) {
     return OPERATOR_CANCELLED;
   }

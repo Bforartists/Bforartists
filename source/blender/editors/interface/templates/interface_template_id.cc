@@ -28,6 +28,7 @@
 
 #include "DNA_collection_types.h"
 #include "DNA_scene_types.h"
+#include "DNA_space_types.h" // bfa node editor window
 #include "DNA_workspace_types.h"
 
 #include "ED_id_management.hh"
@@ -1054,6 +1055,80 @@ static Button *template_id_def_new_but(Block *block,
   return but;
 }
 
+/* BFA - pick the node editor operator from the data-block type and whoever owns the property. */
+static void bfa_template_id_node_editor_button(Layout &layout,
+                                           Block *block,
+                                           PointerRNA owner_ptr,
+                                           PointerRNA idptr,
+                                           const bool in_texture_tab,
+                                           const bool disabled)
+{
+  const ID *id = static_cast<const ID *>(idptr.data);
+  if (!id) {
+    return;
+  }
+
+  const char *opname = nullptr;
+
+  switch (GS(id->name)) {
+    case ID_MA:
+      opname = "MATERIAL_OT_open_node_editor"; /* verify idname */
+      layout.context_ptr_set("material", &idptr);
+      break;
+
+    case ID_WO:
+      opname = "WORLD_OT_open_node_editor"; /* verify idname */
+      layout.context_ptr_set("world", &idptr);
+      break;
+
+    case ID_TE: {
+      /* Brush and brush mask only; other texture users have no node editor context. */
+      if (!in_texture_tab || !owner_ptr.owner_id || GS(owner_ptr.owner_id->name) != ID_BR) {
+        return;
+      }
+      opname = "TEXTURE_OT_open_node_editor";
+      layout.context_ptr_set("texture", &idptr);
+      break;
+    }
+
+    case ID_NT:
+      if (RNA_struct_is_a(owner_ptr.type, RNA_NodesModifier)) {
+        opname = "OBJECT_OT_geometry_nodes_open_editor"; /* verify idname */
+        layout.context_ptr_set("modifier", &owner_ptr);
+      }
+      else if (RNA_struct_is_a(owner_ptr.type, RNA_SceneCompositorEffect)) {
+        opname = "SCENE_OT_effect_compositor_open_editor";
+        layout.context_ptr_set("effect", &owner_ptr);
+      }
+      else if (RNA_struct_is_a(owner_ptr.type, RNA_StripModifier)) { /* verify struct name */
+        opname = "SEQUENCER_OT_compositor_modifier_open_editor";      /* verify idname */
+        layout.context_ptr_set("modifier", &owner_ptr);
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  if (!opname) {
+    return;
+  }
+
+  Button *but = uiDefIconButO(block,
+                              ButtonType::But,
+                              opname,
+                              wm::OpCallContext::InvokeDefault,
+                              ICON_NODETREE,
+                              0,
+                              0,
+                              UI_UNIT_X,
+                              UI_UNIT_Y,
+                              std::nullopt);
+  if (disabled) {
+    button_flag_enable(but, BUT_DISABLED);
+  }
+}
+
 static void template_ID(const bContext *C,
                         Layout &layout,
                         TemplateID &template_ui,
@@ -1437,6 +1512,22 @@ static void template_ID(const bContext *C,
 
   if (template_ui.idcode == ID_TE) {
     uiTemplateTextureShow(&layout, C, &template_ui.ptr, template_ui.prop);
+  }
+
+  /* BFA - open the matching node editor; the helper decides which, or draws nothing. */
+  const SpaceProperties *sbuts_ctx = CTX_wm_space_properties(C);
+  const bool in_properties = (sbuts_ctx != nullptr);
+  const bool in_texture_tab = sbuts_ctx && sbuts_ctx->mainb == BCONTEXT_TEXTURE;
+
+   if (id && !hide_buttons && in_properties &&
+      ELEM(template_ui.idcode, ID_MA, ID_WO, ID_TE, ID_NT))
+  {
+    bfa_template_id_node_editor_button(layout,
+                                   block,
+                                   template_ui.ptr,
+                                   idptr,
+                                   in_texture_tab,
+                                   (idfrom && !ID_IS_EDITABLE(idfrom)) || !editable);
   }
   block_align_end(block);
 }
