@@ -1,0 +1,459 @@
+# Animation and Rigging Campaign 2027: Tiers and Phases
+
+Draft 4, 2026-11-25. Status: proposal. Sizes and dates are estimates made without measuring the work.
+
+This is the build plan for the animation and rigging work. It turns the "shopping list" in the other
+documents into tiers that can be built, tested, documented and released one at a time.
+
+- Vision and principles: `anim-rig-01-vision-and-consolidation.md`
+- Rigging addon: `anim-rig-02-rigging-addon.md`
+- Animation addon: `anim-rig-03-animation-addon.md`
+- Research, asset library, puppetry: `anim-rig-04-research-and-puppetry.md`
+- Animation clips in the asset library: `anim-rig-05-animation-clip-library.md`
+
+## At a glance
+
+> 🎭 **One story for 2027: rig by dragging, animate by touching.**
+
+| Tier | Name | The artist can now... |
+|---|---|---|
+| 0 🧱 | Foundations | (nothing yet: design and prototypes) |
+| 1 🦴 | Rigging Kit | rig a biped in five minutes by dragging parts |
+| 2 🎞️ | Clips and Motion View | drop a walk on it, see ghosts and arcs |
+| 3 🖐️ | Puppet Posing | pose by grabbing the mesh, with pinned feet |
+| 4 ✨ | Pose Assist and Tweening | get a jump from two poses |
+| 5 🐙 | Creatures, Machines and Character Kits | rig a spider or an excavator, assemble a kit character |
+| 6 🎭 | Live Puppetry and Optional Intelligence | perform a take with mouse, phone or webcam |
+
+When each is built, counted in quarters from the start. **The start is in 2027, after the asset and
+product milestones that come first.** Releases follow about a quarter later, see section 6.
+
+```
+                      Start      +1      +2      +3      +4     Later
+T0 Foundations        [=====]
+T1 Rigging Kit                 [=====]
+T2 Clips and Motion            [=====]
+T3 Puppet Posing                       [=====]
+T4 Assist and Tween                            [=====]
+T5 Creatures and Kits                          [.............]
+T6 Live Puppetry                                       [.............]
+```
+
+Each tier goes through six steps: 📝 design, 🔨 build, 🧪 tests, 📖 documentation, 🧑‍🎨 beta, 📣 release.
+
+## 1. ✅ Decisions recorded
+
+From the maintainer, 24 November 2026.
+
+| Question | Decision |
+|---|---|
+| Use open CC0 rigs and animations? | Yes, as an opt-in library. Clips must become real assets that can be dragged onto rigs and into the NLA. Own document: `anim-rig-05` |
+| Character kits (body parts that arrive rigged)? | Later. First the rigging kit must be well integrated, easy, gizmo heavy, drag and drop, and foolproof. Characters are then built with it |
+| Learned (AI) features? | Opt-in only, through Coworker or a similar system of optional downloads, so Bforartists ships light |
+| Mouse puppetry and a phone web app? | Yes, later, in the animation stage |
+| Camera and controllers? | Webcam and phone first, because everyone has them. Controllers through the simple VR system. VR control without a headset would be welcome, later |
+| Order | Viewport posing comes before all puppetry: selection, manipulation, puppet-like posing (anchor and pull, smart collisions, physics), then pose assist, auto-pose and tweening |
+| Timeframe | Starts in 2027, after asset and product milestones (updated 25 November 2026). The later tiers run into 2028. On the roadmap, section 6 |
+| Native or addon (25 November 2026) | Ideas that need speed or a place inside the editors are built into Bforartists natively in C++. The addons hold setup and guidance. See section 4 |
+| Goal | Make animation fun, to the point and about storytelling, whoever or whatever the character is. A beginner can work like a capable technical director and animator |
+| What we may add | Only handling and setup of what Blender already has. The result is compatible with vanilla Blender and renders there one to one |
+| Playback speed and caches (25 November 2026) | Allowed, in the addons or in Bforartists itself. Speed counts as handling. The condition: without the speed-up the file falls back and still renders one to one in vanilla Blender |
+| Ideas from existing add-ons | Document and use them. See `anim-rig-07-addon-survey.md` |
+
+## 2. 🔁 How every tier is run
+
+Each tier goes through the same six steps and is not called done until the last one.
+
+| Step | What happens | Exit check |
+|---|---|---|
+| 📝 **1. Design** | A short design note in `_misc`, a tracker issue per feature, mock-ups of the gestures | Maintainer signs off the note |
+| 🔨 **2. Build** | One branch per issue, compile to verify, PRs into `master` | Feature works on the test characters |
+| 🧪 **3. Tests** | Automated tests for the maths and data. A written manual test script for the gestures. Run on OpenGL and Vulkan, on a light and a heavy character | Test script passes on both backends. **Vanilla check passes**: the demo file renders the same in vanilla Blender with the addons absent, including when a speed-up was in use. Playback speed is not compared |
+| 📖 **4. Documentation** | Manual pages, tooltips reviewed, translations in `locale/po`, release notes | Pages written and linked from the addon |
+| 🧑‍🎨 **5. Beta** | Opt-in in a development build. A small group of animators and riggers try it on real work and report | Blocking reports fixed |
+| 📣 **6. Release and publicity** | Ships in a Bforartists release. Demo file, a short video, a news post, social posts | Published |
+
+Rules that hold across all tiers:
+
+- **Opt-in until it has passed a beta** with artists.
+- **Handling and setup only.** Everything added either builds native Blender data or helps the
+  artist work it. Files open and render one to one in vanilla Blender with the addons absent.
+  Speed-ups such as caches are allowed when the file gives the same result without them, only
+  slower. See the vision document, section 3.3.
+- **White box.** The nine habits in the vision document, section 3.4, apply to every operator.
+- **Light install.** Anything large or model-based is an optional download.
+- **A tier may ship without the next one.** Each has to be useful by itself.
+- **Four levels in every tier.** Each feature ships with all four levels from the vision document,
+  section 3.1, and the design note for the tier lists them.
+
+| Tier | 🖐️ Touch | 🧩 Assemble | 🎛️ Tune | 🔬 Craft |
+|---|---|---|---|---|
+| 1 Rigging Kit | Drag parts, drag markers | Parts, sockets, Build Rig | Gizmos, asset wizard, Rebuild | Plain bones and weights |
+| 2 Clips and Motion View | Drag clips, drag path points | Shelf of fitting clips, Ghosts and Paths toggles | Apply modes, ghost range, falloff | Plain actions and keys |
+| 3 Puppet Posing | Drag the mesh, click to pin | One Puppet tool, any rig | Stiffness, limits, correct a guessed part | Native controls stay usable |
+| 4 Pose Assist and Tweening | Drag arcs and guides | Tween and Auto-pose buttons | Timing, overlap, contacts | Keys in the Graph Editor |
+| 5 Creatures, Machines, Kits | Draw a stroke, drag kit parts | Full creature rigs, kits | Detail levels, blend width | Save your own parts |
+| 6 Live Puppetry | Perform a take | Puppet presets | Smoothing, takes, layers | Reduce to keys and edit |
+
+## 3. 🪜 The tiers
+
+Seven tiers. The first column is the name to use in issues and release notes.
+
+### 🧱 Tier 0. Foundations
+
+*Design and prototypes. Little shipped code.*
+
+- Agree the vision and principles.
+- Design the **rig description**: the data on an armature that both addons share.
+- Set the two addon folders, `bfa_rigging` and `bfa_animation`, with manifests, test setup and manual stubs.
+- Build the **test characters**: cube, sphere, a light biped, a heavy biped, a quadruped, one machine.
+- Prototypes, throwaway quality, to remove the biggest unknowns:
+  1. Drop a rig part from the asset shelf and fit it inside a mesh.
+  2. Highlight a mesh area and drag it to pose.
+  3. Draw ghosts in the viewport on OpenGL and Vulkan.
+  4. Build the same arm with our own recipe and with Rigify, and compare weight and speed.
+- Reply on the three open PRs (see the three review documents).
+
+From the survey of existing add-ons (`anim-rig-07`):
+
+- A fifth prototype: the full body solver on the heavy biped, with a speed target.
+- The highlight prototype is also tested in orthographic views and on subdivided meshes.
+- The engine trial is three-way: our recipe, Rigify and CloudRig.
+- Test the hidden-scene method for evaluating other frames. Onion skin is now planned as native C++ work, so this is a comparison and a possible interim version, not a replacement.
+- Hands-on comparisons, a day each: SkinKit against native weights. The free Retarget and Bulletproof
+  Retarget extensions, then RetargetKit, against BoneCraft's retargeter. Editable Motion Paths against the reduced Ghost Tool.
+
+Interface work that needs neither addon, so it can ship before the campaign starts:
+
+- **A tabbed Tool Shelf in the Dope Sheet, Graph Editor and NLA.** These editors have no Tool Shelf
+  today, so common operators sit in header menus. Built natively in C++ (a new region per editor, a
+  toggle in the View menu, the tabs on/off switch) with Python panels that mirror the header menus
+  one to one: Select, Marker, Channel, Key, plus Strip and Tracks in the NLA. No new tools in the
+  first version. Starts closed in short editors such as the Timeline. Files stay compatible: Blender
+  drops a region it does not know when it reads a file. That round trip still needs a hands-on test.
+  Later, `bfa_animation` puts its buttons here.
+- **A transform box in the Graph Editor and Dope Sheet.** A box around the selected keys with
+  handles to move, scale from any side and, in the Graph Editor, rotate. Built natively in C++ on the
+  2D transform box the Image Editor and Sequencer preview already use. It gets a tool button in the
+  new Tool Shelf, so scaling keys in time no longer needs a pivot and a hotkey. Nothing is stored in
+  the file.
+
+*For example:* a maintainer drops a prototype arm on the light biped and it lands inside the mesh, on OpenGL and on Vulkan.
+
+**Done when:** the rig description is written down, the four prototypes have answers, and the engine decision is made.
+
+### 🦴 Tier 1. Rigging Kit
+
+*The first release of the rigging addon. Maintainer priority.*
+
+- Rig parts as assets in the shelf: spine, arms with shoulder, legs with hips, feet, hands, two-joint and three-joint chains.
+- **Drag and drop** onto the model, **sockets** that snap and light up, placement inside the mesh.
+- **Gizmos** for markers, limb length and finger count. Mirror with one click.
+- Build, Rebuild, guided automatic weights.
+- Part options through the existing **asset wizard** system. A guide panel for new users.
+- One colour scheme, one set of control shapes, one collection layout on every rig.
+- Bipedal full rig. Light rigs: few or no drivers, four levels deep at most.
+- Validator with a sweep check.
+- Edit Mode helpers: Shapes Assignment, Objects to Bones.
+
+From the survey:
+
+- Build in three visible stages, with a report under Build Rig.
+- Validator as a log with Fix buttons. Nothing is fixed silently.
+- Guided weights by rule: clothes follow the body, chains own what hangs from them, small parts stay rigid, sides stay apart. Every vertex gets weights. Hand-painted areas are protected on Rebuild.
+- Test Pose button: bend every joint and back.
+- Rigid Bind for machines. Naming presets on build. Parts labelled "exports" or "Blender only".
+- Exact placement helpers: joint at the centre of a selected loop, push to centre of volume, Edges to Bones.
+- Make a control by posing: fist and finger curls from a native Action constraint.
+- A rig version, with Update through Rebuild.
+
+*For example:* a hobbyist with a finished character model and a game jam this weekend rigs it before lunch.
+
+**Done when:** a new user rigs the light biped in under five minutes following only the guide panel, and the result passes the validator.
+
+### 🎞️ Tier 2. Clips and Motion View
+
+*What an animator needs to see and reuse motion. Runs alongside Tier 1; good for contributors.*
+
+- **Onion skin and motion paths**, with editable paths. Built natively in C++, with Ghost Tool (PR #7087) as the reference for behaviour.
+- **Animation clips as assets**: animation shelf, drag onto rigs and objects, compatibility check, Create Animation Asset. See `anim-rig-05`.
+- Native work: action drop targets in the 3D View and the NLA. Ripple and gap retiming as native Dope Sheet operators.
+- **Test with Animation** in the rig builder, using stock clips.
+- Opt-in starter library of CC0 rigs and clips, if the content passes inspection.
+
+From the survey:
+
+- Ghosts on keys only as the default. Ghosts of one part.
+- Path editing with the standard move, rotate and scale keys and proportional editing. Shape and Timing locks.
+- Rotation paths. Path coloured by speed or jitter. Paths for objects and cameras.
+- One native pose cache for a frame range, shared by live paths and ghosts. Ghosts bent on the graphics card. (Motion sculpting, steps 1 and 2: `anim-rig-07`, T4.)
+- Travel on drop: Full, In Place, None.
+- **Retiming handles in the Dope Sheet and Timeline.** Drag over a frame range to get a bar with
+  handles: the ends stretch or squash the keys inside, and the keys after the range ripple along or
+  stay, by a checkbox. A middle handle slides the range. Built natively in C++ on the ripple and gap
+  operators, and on the gizmo group Bforartists already has in the Dope Sheet. Writes plain keys.
+- Batch import of clip folders through the rig description.
+
+*For example:* a game developer drags Idle, Walk and Jump onto the new rig and watches the ghosts to check the stride.
+
+**Done when:** a clip dragged from the library plays on a Tier 1 rig, and ghosts show its motion on both graphics backends.
+
+### 🖐️ Tier 3. Puppet Posing
+
+*Touch the character. The heart of the animation addon.*
+
+- **Select and pose on the mesh**: hover highlights the part, drag poses it.
+- **Manipulation gizmos** for rotate, move and twist on the part, without grabbing controls.
+- **Anchor and pull**: pin any part, pull another, and the body follows. The "two hands" way of posing.
+- Matching (IK/FK, world, parent) and mirror pairs, contributed from Anim Assist.
+- Works on kit rigs through the rig description, and on Rigify and imported rigs by guessing.
+
+From the survey:
+
+- Pose root: choose what the body hangs from while dragging.
+- Pins to other parts and to props, with baked hand-offs.
+- Posing modes: Even, Rope, Stretch.
+- One mesh area, several controls. Corrected areas saved as paintable vertex groups.
+- Temp Pivot. Snap and Bake over a range. Parent switching without a jump. Handles on bendy bones.
+- **Proportional editing through time**: a pose change spreads to the frames around it, with a range and a falloff. Locks that last one gesture. Sculpt into a copy of the action. (Motion sculpting, steps 3 and 4.)
+
+*For example:* an animator blocks a character sitting down at a table: feet pinned, hips pulled back, a hand pulled to the table edge.
+
+**Done when:** an animator blocks a ten-pose sequence on the heavy biped without selecting a single control bone.
+
+### ✨ Tier 4. Pose Assist and Tweening
+
+*The computer helps. Rule-based and physics-based, no models.*
+
+- **Pose assist**: joint limits, balance and centre of mass shown while posing.
+- **Smart collisions**: parts stop at the floor and at the body instead of passing through.
+- **Auto-pose**: move a few parts and the rest of the body settles into a natural pose.
+- **Tweening**: arcs, planted contacts, timing guides, overlap. Previewed as ghosts, written as keys.
+- **Physics suggestions**: ballistic arcs for jumps, follow-through for tails and loose parts.
+- Temporary working spaces with bake back to plain keys.
+
+From the survey:
+
+- Anchors with scope (feet fixed, arms free), shown with Blender's own key types.
+- Draw the travel path on the floor. Ground waypoints.
+- A short history of tween proposals to flip between.
+- Reduce Keys after every bake. Sculpt the path and reshape a section.
+- Motion brush on the path. Knots over dense keys. Time spread and colour by speed for ghosts. (Motion sculpting, steps 5 to 7.)
+- Clips with sliders (tempo, energy, mood), baked to plain actions.
+- **Key sculpting in the Graph Editor.** Brush tools with a visible circle, radius and strength:
+  Grab, Smooth, Flatten, Push and Relax, and Noise. Native C++, sharing the falloff and the Reduce
+  Keys step with the motion brush in the viewport, so both editors sculpt the same way. Works on
+  sparse keys. On dense keys it works through the knots.
+
+*For example:* a crouch and a landing become a jump. A tail gets its follow-through suggested and baked.
+
+**Done when:** two key poses of a jump produce an accepted in-between with a correct arc and planted feet, with no trip to the Graph Editor.
+
+### 🐙 Tier 5. Creatures, Machines and Character Kits
+
+*The rigging kit grows up. After the kit has proven itself.*
+
+- Full rigs: quadruped, bird, lizard, fish, dinosaur, insect, arachnid.
+- Animal parts: wings, tails, hind and fore legs, tentacle. Draw a stroke to make a part.
+- Utility parts: piston, four-joint, curve and simulated chains. Mechanical controls as 0 to 1 sliders.
+- Face presets in three detail levels. Shape-key faces.
+- Fit a full rig into a mesh by template fitting. Map a rig from an existing model.
+- **Character kits**: body-part assets that carry mesh, rig and weights, and blend together when dropped.
+- Remaining Edit Mode helpers: Bounding Bone, Proxy Rig Maker.
+
+From the survey:
+
+- Shrink to centre lines, for creatures that match no template. Adopt a skeleton: select a chain, press Make Arm.
+- Bendy parts for tails, spines and rubber-hose limbs. Simulated chain and secondary motion parts (cape, skirt, hair) set up on native cloth, with presets, baked.
+- Face part that authors the 52 standard shape keys, then can be removed. Bones or shape keys from the same landmarks.
+- Drivers by demonstration. Correctives by posing. A light bulge helper.
+- Edit control shapes on the rig. Joint sharpness gizmo.
+- Kits: live blended preview, combined on Build.
+
+*For example:* an illustrator rigs a dragon for a book cover, and a product artist rigs an excavator arm with three sliders.
+
+**Done when:** a six-legged creature and a machine with pistons are each built from parts alone, and a kit character is assembled and animated without opening Weight Paint.
+
+### 🎭 Tier 6. Live Puppetry and Optional Intelligence
+
+*Perform it. Everything here is opt-in, and the model-based parts are optional downloads.*
+
+- **Mouse puppetry**: record a performance while the timeline plays. Takes and layers. Loop recording.
+- **Phone as controller**: a small web page served on the local network, with sticks, sliders and tilt.
+- **Webcam**: face first, then hands. Needs camera input and a detection model, delivered as an optional download.
+- **Markers to bones** from the Clip Editor, with bake to keys.
+- **Controllers** through the existing VR system. VR control without a headset: investigate. It may
+  not be possible, since the VR system normally needs a headset connected. Not checked.
+- **Learned features through Coworker** (section 5): suggest a skeleton, learned in-betweens, find a clip by description.
+- Lip sync, one system.
+
+From the survey:
+
+- Face capture connects to the standard shape keys with nothing to map. Mix takes by face region.
+- Kimodo joins MotionBricks as a candidate for the learned in-between slot, after a licence check.
+
+*For example:* a teacher records a mascot greeting in three takes: head, hand, face.
+
+**Done when:** a user with only a mouse and a webcam records a short talking, gesturing character.
+
+### 🔖 Bookmarked for later
+
+Ideas noted on 25 November 2026. Not designed, not placed in a tier, not decided.
+
+- **Husk proxy mesh.** Cut the character's mesh into pieces by weight and parent each piece to its
+  bone, with no deformation, as a fast stand-in for animating. This is likely what "Proxy Rig Maker"
+  in Tier 5 means. It is a speed-up under the "speed is handling" rule: the real mesh stays in the
+  file and renders. It could also serve the click targets for posing on the mesh, and the ghosts.
+  To think about: where pieces are cut at a joint, how the stand-in is switched and kept up to date,
+  one object or many.
+- **Quick secondary motion.** Wiggle-bone style follow-through that stays stable, applied by a short
+  wizard from assets, possibly built on Geometry Nodes working on bones. Tier 5 currently says native
+  cloth, baked. To think about: what "stable" needs (same result on every playback, no drift after
+  scrubbing), whether Geometry Nodes can read and write bones well enough today (not checked), and
+  how it reaches plain keys so vanilla Blender renders the same.
+- **Rigged character presets.** Ready characters, rigged and weighted, to drop in and animate.
+  Close to the full rigs and character kits in Tier 5, and to the decision that characters come
+  after the rigging kit. To think about: whether a few simple presets earlier would help testing and
+  publicity, and that they are built with the kit so they prove it.
+
+- **Pose sculpting.** A modal brush tool for Pose Mode, like the Grab brush in Sculpt Mode: drag on
+  the character and every bone under the brush circle follows, fading out with the falloff. Further
+  brushes could follow the same pattern: Smooth or Relax (even out a chain), Straighten, Twist, Reset
+  towards rest. Close to posing on the mesh in Tier 3, which drags one part with the solver. The
+  brush is the many-bones version and suits tails, spines, fingers, hair chains and tentacles. With
+  the range and falloff through time from motion sculpting, the same brush edits several frames.
+  To think about: brush on the bones or on the mesh surface, FK only or through the solver, how it
+  treats control rigs through the rig description, and whether an Edit Mode version for fitting
+  joints into a mesh is wanted too.
+
+- **Synoptic control picker, possibly as a new editor.** A 2D view of the character's controls to
+  click, for what has no mesh to click on: IK and FK switches, fingers, face, props, selection
+  sets. The plan so far says posing on the mesh replaces the picker. A picker generated from the
+  rig description, with no layout to author per rig, would complement it. A new editor type is
+  possible: Bforartists already has one of its own (the Toolbar editor), and files stay loadable in
+  Blender. To think about: a tear-off panel first and an editor only if it needs its own canvas with
+  pan and zoom, what else a "rig editor" would hold (rig description, parts list, validator, part
+  options), and how rigs without a description get a layout.
+
+## 4. 👥 Who builds what
+
+| Tier | Addon | Lead | Core C++ work | Contributor-friendly parts |
+|---|---|---|---|---|
+| 0 Foundations | Both | Maintainers | For the interface work only: Tool Shelf region and transform box in the animation editors | Prototypes, test characters |
+| 1 Rigging Kit | `bfa_rigging` | Maintainers | **Yes**: part and socket highlight while dragging from the asset shelf. Tool Shelf width setting | Part recipes, mechanisms, validator (from BoneCraft) |
+| 2 Clips and Motion View | `bfa_animation` | Shared | **Yes**: mesh onion skin, live and editable motion paths, action drop targets, ripple and gap retiming, retiming handles | Clip library, compatibility check, batch import |
+| 3 Puppet Posing | `bfa_animation` | Maintainers | **Yes**: highlight and picking on the mesh. The solver's inner loop if speed needs it | Matching, mirror pairs (from Anim Assist) |
+| 4 Pose Assist and Tweening | `bfa_animation` | Maintainers | **Yes**: key sculpting brushes in the Graph Editor. Possibly solver speed | Physics suggestions, proxy bake |
+| 5 Creatures, Machines, Kits | `bfa_rigging`, `bfa_default_library` | Shared | None expected | Rig and part content, creature rigs |
+| 6 Puppetry and Intelligence | `bfa_animation`, Coworker, extensions | Shared | **Yes**: camera input | Phone web page, input mappings |
+
+**Native first where it counts** (maintainer, 25 November 2026). A feature goes into C++ when it has
+to be fast on a heavy character or has to sit inside an editor: evaluating other frames, drawing in
+the viewport, picking on the mesh, drop targets, menu operators. Everything else stays in the two
+Python addons, which keeps them small. Native features still follow the handling and setup rule and
+carry BFA marker comments, and each one adds to the weekly merge load.
+
+"Maintainers" is whoever the Bforartists team assigns. This plan does not assume how many people that is.
+
+## 5. 🤖 Coworker and optional downloads
+
+Coworker (`Draise14/bfa_coworker`, GPL 3 or later) is a separate add-on that puts an assistant in
+every editor. From its README, it already does two things this campaign needs:
+
+- **One-click optional downloads**: it fetches a local model runner and model presets on request, with nothing bundled.
+- **Tools the assistant can call**, with permissions, approvals and one undo step per turn.
+
+Only the README was read for this plan, not the code.
+
+**The rule:** not everyone wants AI. So the rigging and animation addons must be complete and useful
+with Coworker absent, and must contain no models and no model code.
+
+**The split:**
+
+| | In the core addons | In Coworker or an optional download |
+|---|---|---|
+| Rig placement | Stroke, centre of mesh, template fitting | "Suggest a skeleton" from a learned model |
+| In-betweens | Rule-based and physics-based tweening | Learned in-betweens |
+| Finding clips | Browse, search by name and tag | Find by description |
+| Capture | Tracked markers to bones | Markerless face, hand and body from a webcam |
+| Setup help | Guide panel, tooltips, validator messages | "Rig this for me", "why does this elbow bend wrong?" |
+
+**How they connect:** each core addon offers a small number of named slots, for example "skeleton
+suggestion" and "in-between source". Anything can fill a slot: a built-in method, or a provider
+registered by Coworker. If nothing extra is installed, the built-in method is used and no AI option
+is shown at all.
+
+**Coworker as a tool user:** the addons' operators are ordinary operators, so Coworker can drive
+them: build a rig, run the validator, drop a clip, record a take. That costs the core addons nothing.
+
+**Open point:** whether optional downloads should live in Coworker, or in a small shared "optional
+components" service that Coworker and other features both use. The second keeps model-free downloads
+(clip libraries, camera support) available to users who do not install Coworker.
+*Recommendation: a shared service, with Coworker as one user of it.*
+
+**The licence rule** for anything downloaded this way: code licence, model licence and training data
+terms are all read and allow commercial use; hardware needs and download size are shown before the download.
+
+## 6. 📅 Roadmap
+
+A sketch to show the order and the overlap, not a commitment. It assumes Tier 1 and Tier 2 run side
+by side, and each tier takes about one quarter from design to release. Whether that holds depends on
+how many people work on it, which this plan does not know.
+
+**The start is gated, not dated.** The campaign begins in 2027, once the asset and product
+milestones ahead of it are done. Which milestones those are, and the quarter they free up, is for
+the maintainer to fill in. Everything below counts from that start.
+
+| When | Building | Releasing |
+|---|---|---|
+| Now | Nothing | Replies on the three PRs |
+| Before the start | Asset and product milestones (not part of this plan) | |
+| Start, in 2027 | Tier 0 | Design notes, tracker issues, call for contributors |
+| Start + 1 quarter | Tier 1, Tier 2 | |
+| Start + 2 quarters | Tier 3 | **Tier 1 Rigging Kit**, **Tier 2 Clips and Motion View** |
+| Start + 3 quarters | Tier 4, start of Tier 5 | **Tier 3 Puppet Posing** |
+| Start + 4 quarters | Tier 5, start of Tier 6 | **Tier 4 Pose Assist and Tweening** |
+| After that | Tier 6 | **Tier 5**, then **Tier 6** |
+
+With a start in the first half of 2027, Tiers 1 and 2 can still release that year and Tiers 3 and 4
+follow into 2028. With a later start, 2027 delivers Tier 0 and the first builds only. More native C++
+work also makes each tier longer than the addon-only version of this plan assumed. If something has
+to give, Tier 5 and Tier 6 are the ones to move: Tiers 1 to 4 already deliver the promise of "rig by
+dragging, animate by touching".
+
+## 7. 📣 Publicity
+
+One story for the year: **"Puppetry: rig by dragging, animate by touching."** Each release adds a chapter.
+
+| Release | Headline | Demo |
+|---|---|---|
+| Tier 1 | "Rig a character in five minutes" | Uncut screen recording, mesh to posed character |
+| Tier 2 | "See your motion. Drag and drop animation" | Clip library onto a kit rig, ghosts and path editing |
+| Tier 3 | "Pose without controls" | Hands-on posing with every control hidden |
+| Tier 4 | "Two poses, one jump" | Before and after of a plain in-between and a smart one |
+| Tier 5 | "Rig anything" | A creature and a machine built from parts |
+| Tier 6 | "Perform your animation" | Mouse and webcam performance, start to finish |
+
+For each: a demo file users can open, a video under two minutes, manual pages live on release day,
+a news post, and a short call for beta testers before it.
+
+## 8. ⚠️ Risks to the campaign
+
+- **Size.** This is the largest feature effort in the plan documents so far. Without more hands,
+  hold the line at Tier 4.
+- **The start depends on other milestones.** If they slip, this slips with them.
+- **Native work in Tiers 1, 2, 3 and 6** must be carried through the weekly Blender merges. More of
+  the plan is native than before, so this risk is larger.
+- **The solver in Tiers 3 and 4** is the hardest single piece. If it is not good enough, Tier 4 slips.
+- **Content.** Rigs, parts, clips and demo characters all need an owner and a quality bar.
+- **Blender overlap.** If Blender ships onion skin, on-mesh posing or full body posing, ours must
+  adapt. Plain file results keep that painless for users.
+- **Contributor fit.** The three PRs must be reshaped a great deal. The plan works without them, but slower.
+
+## 9. ➡️ Next steps
+
+1. Maintainer review of this plan and the tier order.
+2. Post the replies on PRs #7086, #7087 and #7088.
+3. Open a tracker issue per tier, and one for the rig description.
+4. Add the campaign to the Bforartists roadmap, behind the asset and product milestones.
+5. Start the Tier 0 prototypes when those milestones are done.
