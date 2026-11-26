@@ -13,6 +13,10 @@
 
 #pragma once
 
+#include <array>
+#include <cstdint>
+#include <memory>
+
 #include "BLI_enum_flags.hh"
 #include "BLI_vector.hh"
 
@@ -230,6 +234,35 @@ struct wmGizmoOpElem {
   PointerRNA ptr = {};
 
   bool is_redo = false;
+
+  /**
+   * Optional #eWM_GizmoOpVariant (-1 if none) to delegate to when this variant has no operator of
+   * its own and that fallback variant has no active key-map item of its own.
+   */
+  int8_t fallback_variant = -1;
+
+  /**
+   * Optional description of an operator variant (see #wmGizmo.variant_op_data), a sentence
+   * whose "{}" is replaced by the keys, e.g. "{} to duplicate". When set, the gizmo's tooltip
+   * lists the variant with the keys that select it in the gizmo's key-map.
+   *
+   * A static string, marked for translation with #N_. It's a whole sentence so translators can
+   * phrase it and place the keys as their language needs.
+   */
+  const char *ui_description = nullptr;
+};
+
+/**
+ * Variants of a gizmo's operator (e.g. duplicate before transforming), selected by the
+ * "variant" property of #GIZMOGROUP_OT_gizmo_tweak, so a key-map item picks which one runs.
+ */
+enum eWM_GizmoOpVariant {
+  WM_GIZMO_OP_VARIANT_DUPLICATE = 0,
+  WM_GIZMO_OP_VARIANT_DUPLICATE_LINKED = 1,
+  WM_GIZMO_OP_VARIANT_CONSTRAIN_PLANE = 2,
+  WM_GIZMO_OP_VARIANT_PRECISION = 3,
+
+  WM_GIZMO_OP_VARIANT_LEN,
 };
 
 /** Gizmos are set per region by registering them on gizmo-maps. */
@@ -310,6 +343,12 @@ struct wmGizmo {
    * an array of items (aligned with #wmGizmo.highlight_part).
    */
   Vector<wmGizmoOpElem, 4> op_data;
+
+  /**
+   * Operator variants indexed by #eWM_GizmoOpVariant, allocated lazily by
+   * #WM_gizmo_variant_operator_set so gizmos without variants pay only a pointer.
+   */
+  std::unique_ptr<std::array<wmGizmoOpElem, WM_GIZMO_OP_VARIANT_LEN>> variant_op_data;
 
   IDProperty *properties;
 

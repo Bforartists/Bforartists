@@ -926,6 +926,12 @@ struct TransInfo {
    * (`launch_event` is set to the corresponding mouse button then.)
    */
   bool is_launch_event_drag;
+  /**
+   * Modifier flags held when transform started in precision mode via `use_accurate`
+   * (e.g. a gizmo's precision variant bound to a key other than #TFM_MODAL_PRECISION).
+   * Releasing a launching modifier key exits precision mode.
+   */
+  uint8_t launch_precision_modifier;
 
   bool is_orient_default_overwrite;
 

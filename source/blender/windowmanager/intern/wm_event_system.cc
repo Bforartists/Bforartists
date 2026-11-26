@@ -3530,6 +3530,9 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
 
           for (wmKeyMapItem &kmi : keymap->items) {
             if ((kmi.flag & KMI_INACTIVE) == 0) {
+              if (!wm_gizmo_keymap_item_is_supported(wm, gz, kmi)) {
+                continue;
+              }
               if (wm_eventmatch(&event_test_click, &kmi) ||
                   wm_eventmatch(&event_test_press_drag, &kmi))
               {

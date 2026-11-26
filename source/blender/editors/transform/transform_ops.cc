@@ -828,7 +828,9 @@ void properties_register(wmOperatorType *ot, int flags)
 
     prop = RNA_def_boolean(
         ot->srna, "use_accurate", false, "Accurate", "Use accurate transformation");
-    RNA_def_property_flag(prop, PROP_HIDDEN);
+    /* Skip save so starting in precision mode (e.g. from a gizmo's precision variant)
+     * doesn't carry over to the next transform that leaves this unset. */
+    RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
   }
 
   if (flags & P_POST_TRANSFORM) {

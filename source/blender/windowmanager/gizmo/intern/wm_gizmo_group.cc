@@ -28,8 +28,10 @@
 #include "BKE_workspace.hh"
 
 #include "RNA_access.hh"
+#include "RNA_define.hh"
 
 #include "WM_api.hh"
+#include "WM_gizmo_api.hh"
 #include "WM_keymap.hh"
 #include "WM_types.hh"
 #include "wm_event_system.hh"
@@ -162,28 +164,99 @@ int WM_gizmo_cmp_temp_fl_reverse(const void *gz_a_ptr, const void *gz_b_ptr)
   return 0;
 }
 
-static bool wm_gizmo_keymap_uses_event_modifier(wmWindowManager *wm,
-                                                const wmGizmoGroup *gzgroup,
-                                                const wmGizmo *gz,
-                                                const int event_modifier,
-                                                int *r_gzgroup_keymap_uses_modifier)
+static wmKeyMap *wm_gizmo_keymap_active(const wmWindowManager *wm, const wmGizmo *gz)
 {
-  if (gz->keymap) {
-    wmKeyMap *keymap = WM_keymap_active(wm, gz->keymap);
-    if (!WM_keymap_uses_event_modifier(keymap, event_modifier)) {
-      return false;
+  wmKeyMap *keymap = gz->keymap ? gz->keymap : gz->parent_gzgroup->type->keymap;
+  return keymap ? WM_keymap_active(wm, keymap) : nullptr;
+}
+
+static bool wm_gizmo_keymap_item_is_tweak(const wmKeyMapItem &kmi)
+{
+  return ((kmi.flag & KMI_INACTIVE) == 0) && STREQ(kmi.idname, "GIZMOGROUP_OT_gizmo_tweak");
+}
+
+static int wm_gizmo_keymap_item_variant(const wmKeyMapItem &kmi)
+{
+  return kmi.ptr ? RNA_enum_get(kmi.ptr, "variant") : GIZMO_TWEAK_VARIANT_DEFAULT;
+}
+
+wmGizmoOpElem *WM_gizmo_variant_operator_resolve(const wmWindowManager *wm,
+                                                 wmGizmo *gz,
+                                                 const int variant)
+{
+  wmGizmoOpElem *gzop = WM_gizmo_variant_operator_get(gz, variant);
+  if (gzop == nullptr) {
+    return nullptr;
+  }
+  if (gzop->type != nullptr) {
+    return gzop;
+  }
+  if (gzop->fallback_variant != -1 &&
+      WM_gizmo_variant_keymap_item_find(wm, gz, gzop->fallback_variant) == nullptr)
+  {
+    wmGizmoOpElem *gzop_fallback = WM_gizmo_variant_operator_get(gz, gzop->fallback_variant);
+    if (gzop_fallback != nullptr && gzop_fallback->type != nullptr) {
+      return gzop_fallback;
     }
   }
-  else if (gzgroup->type->keymap) {
-    if (*r_gzgroup_keymap_uses_modifier == -1) {
-      wmKeyMap *keymap = WM_keymap_active(wm, gzgroup->type->keymap);
-      *r_gzgroup_keymap_uses_modifier = WM_keymap_uses_event_modifier(keymap, event_modifier);
-    }
-    if (*r_gzgroup_keymap_uses_modifier == 0) {
-      return false;
+  return nullptr;
+}
+
+static bool wm_gizmo_variant_is_supported(const wmWindowManager *wm,
+                                          const wmGizmo *gz,
+                                          const int variant)
+{
+  const wmGizmoOpElem *gzop = WM_gizmo_variant_operator_resolve(
+      wm, const_cast<wmGizmo *>(gz), variant);
+  return (gzop != nullptr) && (gzop->type != nullptr);
+}
+
+bool wm_gizmo_keymap_item_is_supported(const wmWindowManager *wm,
+                                       const wmGizmo *gz,
+                                       const wmKeyMapItem &kmi)
+{
+  if (!wm_gizmo_keymap_item_is_tweak(kmi)) {
+    return true;
+  }
+  const int variant = wm_gizmo_keymap_item_variant(kmi);
+  if (variant == GIZMO_TWEAK_VARIANT_DEFAULT) {
+    return true;
+  }
+  return wm_gizmo_variant_is_supported(wm, gz, variant);
+}
+
+static bool wm_gizmo_keymap_uses_event_modifier(const wmWindowManager *wm,
+                                                const wmGizmo *gz,
+                                                const int event_modifier)
+{
+  const wmKeyMap *keymap = wm_gizmo_keymap_active(wm, gz);
+  if (keymap == nullptr) {
+    return true;
+  }
+  for (const wmKeyMapItem &kmi : keymap->items) {
+    if (((kmi.flag & KMI_INACTIVE) == 0) && wm_gizmo_keymap_item_is_supported(wm, gz, kmi) &&
+        WM_keymap_item_uses_event_modifier(&kmi, event_modifier))
+    {
+      return true;
     }
   }
-  return true;
+  return false;
+}
+
+const wmKeyMapItem *WM_gizmo_variant_keymap_item_find(const wmWindowManager *wm,
+                                                      const wmGizmo *gz,
+                                                      const int variant)
+{
+  const wmKeyMap *keymap = wm_gizmo_keymap_active(wm, gz);
+  if (keymap == nullptr) {
+    return nullptr;
+  }
+  for (const wmKeyMapItem &kmi : keymap->items) {
+    if (wm_gizmo_keymap_item_is_tweak(kmi) && (wm_gizmo_keymap_item_variant(kmi) == variant)) {
+      return &kmi;
+    }
+  }
+  return nullptr;
 }
 
 wmGizmo *wm_gizmogroup_find_intersected_gizmo(wmWindowManager *wm,
@@ -193,14 +266,10 @@ wmGizmo *wm_gizmogroup_find_intersected_gizmo(wmWindowManager *wm,
                                               const int mval[2],
                                               int *r_part)
 {
-  int gzgroup_keymap_uses_modifier = -1;
-
   for (wmGizmo &gz : gzgroup->gizmos) {
     if (gz.type->test_select && (gz.flag & (WM_GIZMO_HIDDEN | WM_GIZMO_HIDDEN_SELECT)) == 0) {
 
-      if (!wm_gizmo_keymap_uses_event_modifier(
-              wm, gzgroup, &gz, event_modifier, &gzgroup_keymap_uses_modifier))
-      {
+      if (!wm_gizmo_keymap_uses_event_modifier(wm, &gz, event_modifier)) {
         continue;
       }
 
@@ -218,7 +287,6 @@ void wm_gizmogroup_intersectable_gizmos_to_list(wmWindowManager *wm,
                                                 const int event_modifier,
                                                 Vector<wmGizmo *, 128> *r_visible_gizmos)
 {
-  int gzgroup_keymap_uses_modifier = -1;
   for (wmGizmo &gz : gzgroup->gizmos.items_reversed()) {
     if ((gz.flag & (WM_GIZMO_HIDDEN | WM_GIZMO_HIDDEN_SELECT)) == 0) {
       if (((gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) &&
@@ -226,9 +294,7 @@ void wm_gizmogroup_intersectable_gizmos_to_list(wmWindowManager *wm,
           ((gzgroup->type->flag & WM_GIZMOGROUPTYPE_3D) == 0 && gz.type->test_select))
       {
 
-        if (!wm_gizmo_keymap_uses_event_modifier(
-                wm, gzgroup, &gz, event_modifier, &gzgroup_keymap_uses_modifier))
-        {
+        if (!wm_gizmo_keymap_uses_event_modifier(wm, &gz, event_modifier)) {
           continue;
         }
 
@@ -408,18 +474,23 @@ struct GizmoTweakData {
   int flag;       /* Tweak flags. */
 };
 
-static bool gizmo_tweak_start(bContext *C, wmGizmoMap *gzmap, wmGizmo *gz, const wmEvent *event)
+static bool gizmo_tweak_start(
+    bContext *C, wmGizmoMap *gzmap, wmGizmo *gz, const wmEvent *event, const int variant)
 {
   /* Activate highlighted gizmo. */
-  wm_gizmomap_modal_set(gzmap, C, gz, event, true);
+  wm_gizmomap_modal_set(gzmap, C, gz, event, true, variant);
 
   return (gz->state & WM_GIZMO_STATE_MODAL);
 }
 
-static bool gizmo_tweak_start_and_finish(
-    bContext *C, wmGizmoMap *gzmap, wmGizmo *gz, const wmEvent *event, bool *r_is_modal)
+static bool gizmo_tweak_start_and_finish(bContext *C,
+                                         wmGizmoMap *gzmap,
+                                         wmGizmo *gz,
+                                         const wmEvent *event,
+                                         const int variant,
+                                         bool *r_is_modal)
 {
-  wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, gz->highlight_part);
+  wmGizmoOpElem *gzop = wm_gizmo_tweak_operator_get(CTX_wm_manager(C), gz, variant);
   if (r_is_modal) {
     *r_is_modal = false;
   }
@@ -443,7 +514,7 @@ static bool gizmo_tweak_start_and_finish(
      * conflicting with modal operator attached to gizmo. */
     if (gzop->type->modal) {
       /* Activate highlighted gizmo. */
-      wm_gizmomap_modal_set(gzmap, C, gz, event, true);
+      wm_gizmomap_modal_set(gzmap, C, gz, event, true, variant);
       if (r_is_modal) {
         *r_is_modal = true;
       }
@@ -598,11 +669,21 @@ static wmOperatorStatus gizmo_tweak_invoke(bContext *C, wmOperator *op, const wm
     }
   }
 
-  if (gizmo_tweak_start_and_finish(C, gzmap, gz, event, nullptr)) {
+  const int variant = RNA_enum_get(op->ptr, "variant");
+  if ((variant != GIZMO_TWEAK_VARIANT_DEFAULT) &&
+      !wm_gizmo_variant_is_supported(CTX_wm_manager(C), gz, variant))
+  {
+    /* Let other items in the same key-map (e.g. the default tweak item on Shift-drag) or
+     * underlying handlers (e.g. loop select / viewport pan on Shift-Alt / Shift-MMB) handle it. */
+    gz->highlight_part = highlight_part_init;
+    return OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH;
+  }
+
+  if (gizmo_tweak_start_and_finish(C, gzmap, gz, event, variant, nullptr)) {
     return OPERATOR_FINISHED;
   }
 
-  if (!gizmo_tweak_start(C, gzmap, gz, event)) {
+  if (!gizmo_tweak_start(C, gzmap, gz, event, variant)) {
     /* Failed to start. */
     gz->highlight_part = highlight_part_init;
     return OPERATOR_PASS_THROUGH;
@@ -642,6 +723,37 @@ static wmOperatorStatus gizmo_tweak_invoke(bContext *C, wmOperator *op, const wm
 
 void GIZMOGROUP_OT_gizmo_tweak(wmOperatorType *ot)
 {
+  static const EnumPropertyItem tweak_variant_items[] = {
+      {GIZMO_TWEAK_VARIANT_DEFAULT,
+       "DEFAULT",
+       0,
+       "Default",
+       "Run the gizmo's primary operator (transform)"},
+      {WM_GIZMO_OP_VARIANT_DUPLICATE,
+       "DUPLICATE",
+       0,
+       "Duplicate / Extrude",
+       "Duplicate the selection (object mode) or extrude it (edit modes) before transforming"},
+      {WM_GIZMO_OP_VARIANT_DUPLICATE_LINKED,
+       "DUPLICATE_LINKED",
+       0,
+       "Duplicate Linked / Duplicate",
+       "Make a linked duplicate (object mode) or a plain duplicate (edit modes) before "
+       "transforming"},
+      {WM_GIZMO_OP_VARIANT_CONSTRAIN_PLANE,
+       "CONSTRAIN_PLANE",
+       0,
+       "Constrain to Plane",
+       "Transform on the plane perpendicular to the axis handle, instead of along the axis"},
+      {WM_GIZMO_OP_VARIANT_PRECISION,
+       "PRECISION",
+       0,
+       "Precision",
+       "Start transforming in precision mode, so the key can be held before dragging the gizmo "
+       "instead of only after"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+
   /* Identifiers. */
   ot->name = "Gizmo Tweak";
   ot->description = "Tweak the active gizmo";
@@ -658,6 +770,16 @@ void GIZMOGROUP_OT_gizmo_tweak(wmOperatorType *ot)
   ot->flag = OPTYPE_UNDO;
 #endif
   ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY;
+
+  PropertyRNA *prop = RNA_def_enum(
+      ot->srna,
+      "variant",
+      tweak_variant_items,
+      GIZMO_TWEAK_VARIANT_DEFAULT,
+      "Variant",
+      "Variant of the gizmo's operator to run when tweaking it, allowing a key-map item to "
+      "invoke alternatives such as duplicate or extrude");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 wmKeyMap *wm_gizmogroup_tweak_modal_keymap(wmKeyConfig *keyconf)

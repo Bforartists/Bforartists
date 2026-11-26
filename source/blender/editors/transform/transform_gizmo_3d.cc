@@ -31,6 +31,7 @@
 #include "BKE_editmesh.hh"
 #include "BKE_global.hh"
 #include "BKE_grease_pencil.hh"
+#include "BKE_idprop.hh"
 #include "BKE_layer.hh"
 #include "BKE_library.hh"
 #include "BKE_object.hh"
@@ -53,6 +54,8 @@
 #include "ED_object.hh"
 #include "ED_particle.hh"
 #include "ED_screen.hh"
+
+#include "BLT_translation.hh"
 
 #include "UI_resources.hh"
 
@@ -159,6 +162,8 @@ struct GizmoGroup {
   int twtype_init;
   int twtype_prev;
   int use_twtype_refresh;
+
+  eContextObjectMode mode_prev;
 
   /* Only for view orientation. */
   struct {
@@ -1761,6 +1766,34 @@ static wmOperatorStatus gizmo_modal(bContext *C,
         break;
       }
     }
+    if (op == nullptr && widget->variant_op_data) {
+      for (const wmGizmoOpElem &gzop : *widget->variant_op_data) {
+        if (gzop.type == nullptr) {
+          continue;
+        }
+        op = WM_operator_find_modal_by_type(win, gzop.type);
+        if (op != nullptr) {
+          break;
+        }
+      }
+    }
+
+    if (op != nullptr && op->opm != nullptr) {
+      /* A macro (duplicate or extrude, then transform): only its transform member owns a
+       * #TransInfo. Skip the update while another member is still the active one, instead of
+       * relying on it always finishing inside invoke. */
+      op = op->opm;
+      bool is_transform = false;
+      for (const wmGizmoOpElem &gzop : widget->op_data) {
+        if (gzop.type != nullptr && gzop.type == op->type) {
+          is_transform = true;
+          break;
+        }
+      }
+      if (!is_transform) {
+        op = nullptr;
+      }
+    }
 
     if (op != nullptr) {
       GizmoGroup *ggd = static_cast<GizmoGroup *>(gzgroup->customdata);
@@ -1803,17 +1836,189 @@ static wmOperatorStatus gizmo_modal(bContext *C,
   return OPERATOR_RUNNING_MODAL;
 }
 
-static void gizmogroup_init_properties_from_twtype(wmGizmoGroup *gzgroup)
+static void gizmo_transform_operator_set_properties(PointerRNA *ptr, const bool constraint_axis[3])
+{
+  if (ELEM(true, UNPACK3(constraint_axis))) {
+    if (PropertyRNA *prop = RNA_struct_find_property(ptr, "constraint_axis")) {
+      RNA_property_boolean_set_array(ptr, prop, constraint_axis);
+    }
+  }
+  if (PropertyRNA *prop = RNA_struct_find_property(ptr, "release_confirm")) {
+    RNA_property_boolean_set(ptr, prop, true);
+  }
+}
+
+/**
+ * Set the properties a gizmo handle needs on its operator: either a transform operator,
+ * or a macro in which case they are set on the operators it contains.
+ */
+static void gizmo_operator_set_properties(PointerRNA *ptr, const bool constraint_axis[3])
+{
+  if (ptr == nullptr) {
+    return;
+  }
+
+  gizmo_transform_operator_set_properties(ptr, constraint_axis);
+
+  RNA_STRUCT_BEGIN (ptr, prop) {
+    if (RNA_property_type(prop) != PROP_POINTER) {
+      continue;
+    }
+    StructRNA *ptype = RNA_property_pointer_type(ptr, prop);
+    if (!RNA_struct_is_a(ptype, RNA_OperatorProperties)) {
+      continue;
+    }
+    if (RNA_struct_type_find_property(ptype, "constraint_axis") == nullptr &&
+        RNA_struct_type_find_property(ptype, "release_confirm") == nullptr)
+    {
+      continue;
+    }
+    PointerRNA propptr = RNA_property_pointer_get(ptr, prop);
+    if (!propptr.data) {
+      continue;
+    }
+    gizmo_transform_operator_set_properties(&propptr, constraint_axis);
+  }
+  RNA_STRUCT_END;
+}
+
+/**
+ * Assign a transform operator constrained to the plane perpendicular to the handle's axis.
+ */
+static void gizmo_variant_plane_operator_set(wmGizmo *axis,
+                                             const eWM_GizmoOpVariant variant,
+                                             wmOperatorType *ot,
+                                             const bool plane_axis[3])
+{
+  PointerRNA *ptr = WM_gizmo_variant_operator_set(axis, variant, ot, nullptr);
+  if (ptr == nullptr) {
+    return;
+  }
+  gizmo_operator_set_properties(ptr, plane_axis);
+
+  wmGizmoOpElem *gzop = WM_gizmo_variant_operator_get(axis, variant);
+  gzop->ui_description = N_("{} to constrain to plane");
+}
+
+/* -------------------------------------------------------------------- */
+/** \name Per-Mode Operator Variants
+ *
+ * Alternative operators the transform gizmos offer, selected by a key-map item through
+ * #GIZMOGROUP_OT_gizmo_tweak's "variant" property (e.g. Shift-drag to duplicate or extrude).
+ * Supporting another object mode is a matter of adding a row.
+ * \{ */
+
+enum eGizmoHandleTransform {
+  GIZMO_HANDLE_TRANSLATE = 0,
+  GIZMO_HANDLE_ROTATE,
+  GIZMO_HANDLE_TRACKBALL,
+  GIZMO_HANDLE_RESIZE,
+
+  GIZMO_HANDLE_TRANSFORM_LEN,
+};
+
+/** The variants the table columns are assigned to, in order. */
+static constexpr std::array gizmo_variant_table = {
+    WM_GIZMO_OP_VARIANT_DUPLICATE,
+    WM_GIZMO_OP_VARIANT_DUPLICATE_LINKED,
+};
+
+struct GizmoModeVariantOps {
+  eContextObjectMode mode;
+  /**
+   * Operator ID names indexed by #eGizmoHandleTransform, then by the column of
+   * #gizmo_variant_table. A nullptr leaves that variant empty, so the tweak falls back to the
+   * plain transform (or, for single-axis handles, the plane constraint).
+   */
+  const char *idnames[GIZMO_HANDLE_TRANSFORM_LEN][gizmo_variant_table.size()];
+  /** Description of each column's variant, see #wmGizmoOpElem.ui_description. */
+  const char *ui_descriptions[gizmo_variant_table.size()];
+};
+
+static const GizmoModeVariantOps gizmo_mode_variant_ops[] = {
+    {CTX_MODE_OBJECT,
+     {
+         {"OBJECT_OT_duplicate_move", "OBJECT_OT_duplicate_move_linked"},
+         {"OBJECT_OT_duplicate_rotate", "OBJECT_OT_duplicate_rotate_linked"},
+         {"OBJECT_OT_duplicate_trackball", "OBJECT_OT_duplicate_trackball_linked"},
+         {"OBJECT_OT_duplicate_resize", "OBJECT_OT_duplicate_resize_linked"},
+     },
+     {N_("{} to duplicate"), N_("{} to duplicate linked")}},
+    {CTX_MODE_EDIT_MESH,
+     {
+         {"MESH_OT_extrude_context_move", "MESH_OT_duplicate_move"},
+         {"MESH_OT_extrude_context_rotate", "MESH_OT_duplicate_rotate"},
+         {"MESH_OT_extrude_context_trackball", "MESH_OT_duplicate_trackball"},
+         {"MESH_OT_extrude_context_resize", "MESH_OT_duplicate_resize"},
+     },
+     {N_("{} to extrude"), N_("{} to duplicate")}},
+    /* Extruding a bone creates a zero-length child with only its tip selected, so extrude is
+     * only useful with the translate handles: rotating or scaling would act on a single point. */
+    {CTX_MODE_EDIT_ARMATURE,
+     {
+         {"ARMATURE_OT_extrude_move", "ARMATURE_OT_duplicate_move"},
+         {nullptr, "ARMATURE_OT_duplicate_rotate"},
+         {nullptr, "ARMATURE_OT_duplicate_trackball"},
+         {nullptr, "ARMATURE_OT_duplicate_resize"},
+     },
+     {N_("{} to extrude"), N_("{} to duplicate")}},
+    {CTX_MODE_EDIT_CURVE,
+     {
+         {"CURVE_OT_extrude_move", "CURVE_OT_duplicate_move"},
+         {"CURVE_OT_extrude_rotate", "CURVE_OT_duplicate_rotate"},
+         {"CURVE_OT_extrude_trackball", "CURVE_OT_duplicate_trackball"},
+         {"CURVE_OT_extrude_resize", "CURVE_OT_duplicate_resize"},
+     },
+     {N_("{} to extrude"), N_("{} to duplicate")}},
+    {CTX_MODE_EDIT_CURVES,
+     {
+         {"CURVES_OT_extrude_move", "CURVES_OT_duplicate_move"},
+         {"CURVES_OT_extrude_rotate", "CURVES_OT_duplicate_rotate"},
+         {"CURVES_OT_extrude_trackball", "CURVES_OT_duplicate_trackball"},
+         {"CURVES_OT_extrude_resize", "CURVES_OT_duplicate_resize"},
+     },
+     {N_("{} to extrude"), N_("{} to duplicate")}},
+};
+
+/** \} */
+
+static void gizmogroup_init_properties_from_twtype(const bContext *C, wmGizmoGroup *gzgroup)
 {
   struct {
     wmOperatorType *translate, *rotate, *trackball, *resize;
   } ot_store = {nullptr};
   GizmoGroup *ggd = static_cast<GizmoGroup *>(gzgroup->customdata);
 
+  const eContextObjectMode mode = CTX_data_mode_enum(C);
+  ggd->mode_prev = mode;
+
+  /* NURBS surfaces share the curve edit extrude and duplicate operators. */
+  const eContextObjectMode variant_mode = (mode == CTX_MODE_EDIT_SURFACE) ? CTX_MODE_EDIT_CURVE :
+                                                                            mode;
+
+  /* Resolve this mode's alternative operators once, up front. */
+  wmOperatorType *variant_ots[GIZMO_HANDLE_TRANSFORM_LEN][gizmo_variant_table.size()] = {};
+  const GizmoModeVariantOps *variant_row = nullptr;
+  for (const GizmoModeVariantOps &row : gizmo_mode_variant_ops) {
+    if (row.mode != variant_mode) {
+      continue;
+    }
+    for (const int t : IndexRange(GIZMO_HANDLE_TRANSFORM_LEN)) {
+      for (const int s : IndexRange(gizmo_variant_table.size())) {
+        if (row.idnames[t][s]) {
+          variant_ots[t][s] = WM_operatortype_find(row.idnames[t][s], true);
+        }
+      }
+    }
+    variant_row = &row;
+    break;
+  }
+
   MAN_ITER_AXES_BEGIN (axis, axis_idx) {
     const short axis_type = gizmo_get_axis_type(axis_idx);
     bool constraint_axis[3] = {true, false, false};
     PointerRNA *ptr = nullptr;
+    int handle_transform = -1;
 
     gizmo_get_axis_constraint(axis_idx, constraint_axis);
 
@@ -1822,12 +2027,15 @@ static void gizmogroup_init_properties_from_twtype(wmGizmoGroup *gzgroup)
 
     gizmo_3d_setup_draw_from_twtype(axis, axis_idx, ggd->twtype);
 
+    WM_gizmo_variant_operators_clear(axis);
+
     switch (axis_type) {
       case MAN_AXES_TRANSLATE:
         if (ot_store.translate == nullptr) {
           ot_store.translate = WM_operatortype_find("TRANSFORM_OT_translate", true);
         }
         ptr = WM_gizmo_operator_set(axis, 0, ot_store.translate, nullptr);
+        handle_transform = GIZMO_HANDLE_TRANSLATE;
         break;
       case MAN_AXES_ROTATE: {
         wmOperatorType *ot_rotate;
@@ -1836,12 +2044,14 @@ static void gizmogroup_init_properties_from_twtype(wmGizmoGroup *gzgroup)
             ot_store.trackball = WM_operatortype_find("TRANSFORM_OT_trackball", true);
           }
           ot_rotate = ot_store.trackball;
+          handle_transform = GIZMO_HANDLE_TRACKBALL;
         }
         else {
           if (ot_store.rotate == nullptr) {
             ot_store.rotate = WM_operatortype_find("TRANSFORM_OT_rotate", true);
           }
           ot_rotate = ot_store.rotate;
+          handle_transform = GIZMO_HANDLE_ROTATE;
         }
         ptr = WM_gizmo_operator_set(axis, 0, ot_rotate, nullptr);
         break;
@@ -1851,19 +2061,76 @@ static void gizmogroup_init_properties_from_twtype(wmGizmoGroup *gzgroup)
           ot_store.resize = WM_operatortype_find("TRANSFORM_OT_resize", true);
         }
         ptr = WM_gizmo_operator_set(axis, 0, ot_store.resize, nullptr);
+        handle_transform = GIZMO_HANDLE_RESIZE;
         break;
       }
     }
 
-    if (ptr) {
-      PropertyRNA *prop;
-      if (ELEM(true, UNPACK3(constraint_axis))) {
-        if ((prop = RNA_struct_find_property(ptr, "constraint_axis"))) {
-          RNA_property_boolean_set_array(ptr, prop, constraint_axis);
+    if (handle_transform != -1) {
+      for (const int s : IndexRange(gizmo_variant_table.size())) {
+        wmOperatorType *ot = variant_ots[handle_transform][s];
+        if (ot == nullptr) {
+          continue;
+        }
+        /* #wmGizmo.variant_op_data is a fixed array, so unlike #WM_gizmo_operator_set the returned
+         * pointer stays valid while the remaining variants are assigned. */
+        PointerRNA *ptr_variant = WM_gizmo_variant_operator_set(
+            axis, gizmo_variant_table[s], ot, nullptr);
+        gizmo_operator_set_properties(ptr_variant, constraint_axis);
+
+        wmGizmoOpElem *gzop_variant = WM_gizmo_variant_operator_get(axis, gizmo_variant_table[s]);
+        gzop_variant->ui_description = variant_row->ui_descriptions[s];
+      }
+    }
+
+    const bool is_single_axis = (int(constraint_axis[0]) + int(constraint_axis[1]) +
+                                 int(constraint_axis[2])) == 1;
+    if (is_single_axis) {
+      wmOperatorType *ot_plane = nullptr;
+      if (axis_type == MAN_AXES_TRANSLATE) {
+        ot_plane = ot_store.translate;
+      }
+      else if (axis_type == MAN_AXES_SCALE) {
+        ot_plane = ot_store.resize;
+      }
+      if (ot_plane) {
+        const bool plane_axis[3] = {!constraint_axis[0], !constraint_axis[1], !constraint_axis[2]};
+        gizmo_variant_plane_operator_set(
+            axis, WM_GIZMO_OP_VARIANT_CONSTRAIN_PLANE, ot_plane, plane_axis);
+
+        /* Handles with no duplicate/extrude variant (any handle in pose mode, the scale handles
+         * when editing an armature, ...) keep the long-standing behavior of Shift excluding the
+         * handle's axis by delegating DUPLICATE to CONSTRAIN_PLANE whenever CONSTRAIN_PLANE has
+         * no explicit key-map binding of its own. */
+        const wmGizmoOpElem *gzop_dup = WM_gizmo_variant_operator_get(
+            axis, WM_GIZMO_OP_VARIANT_DUPLICATE);
+        if (gzop_dup == nullptr || gzop_dup->type == nullptr) {
+          WM_gizmo_variant_operator_set_fallback(
+              axis, WM_GIZMO_OP_VARIANT_DUPLICATE, WM_GIZMO_OP_VARIANT_CONSTRAIN_PLANE);
         }
       }
+    }
 
-      RNA_boolean_set(ptr, "release_confirm", true);
+    if (ptr) {
+      gizmo_operator_set_properties(ptr, constraint_axis);
+
+      /* The handle's own transform, started in precision mode. */
+      IDProperty *precision_props = ptr->data ?
+                                        IDP_CopyProperty(static_cast<const IDProperty *>(
+                                            ptr->data)) :
+                                        nullptr;
+      PointerRNA *ptr_precision = WM_gizmo_variant_operator_set(
+          axis,
+          WM_GIZMO_OP_VARIANT_PRECISION,
+          WM_gizmo_operator_get(axis, 0)->type,
+          precision_props);
+      if (ptr_precision) {
+        RNA_boolean_set(ptr_precision, "use_accurate", true);
+
+        wmGizmoOpElem *gzop_precision = WM_gizmo_variant_operator_get(
+            axis, WM_GIZMO_OP_VARIANT_PRECISION);
+        gzop_precision->ui_description = N_("{} to use precision");
+      }
     }
   }
   MAN_ITER_AXES_END;
@@ -1905,7 +2172,7 @@ static void WIDGETGROUP_gizmo_setup(const bContext *C, wmGizmoGroup *gzgroup)
   }
 
   /* *** set properties for axes *** */
-  gizmogroup_init_properties_from_twtype(gzgroup);
+  gizmogroup_init_properties_from_twtype(C, gzgroup);
 }
 
 /**
@@ -2007,8 +2274,12 @@ static void WIDGETGROUP_gizmo_refresh(const bContext *C, wmGizmoGroup *gzgroup)
     ggd->twtype = v3d->gizmo_show_object & ggd->twtype_init;
     if (ggd->twtype != ggd->twtype_prev) {
       ggd->twtype_prev = ggd->twtype;
-      gizmogroup_init_properties_from_twtype(gzgroup);
+      gizmogroup_init_properties_from_twtype(C, gzgroup);
     }
+  }
+
+  if (ggd->mode_prev != CTX_data_mode_enum(C)) {
+    gizmogroup_init_properties_from_twtype(C, gzgroup);
   }
 
   const int orient_index = BKE_scene_orientation_get_index_from_flag(scene, ggd->twtype_init);
@@ -2175,6 +2446,42 @@ static void gizmo_3d_draw_invoke(wmGizmoGroup *gzgroup,
   }
 }
 
+/** Set (or unset) the "orient_type" of an operator's properties, macro members included. */
+static void gizmo_operator_orient_type_set(PointerRNA *ptr,
+                                           const int orient_index,
+                                           const bool use_default)
+{
+  PropertyRNA *prop_orient_type = RNA_struct_find_property(ptr, "orient_type");
+  if (prop_orient_type) {
+    if (use_default) {
+      RNA_property_unset(ptr, prop_orient_type);
+    }
+    else {
+      RNA_property_enum_set(ptr, prop_orient_type, orient_index);
+    }
+  }
+
+  RNA_STRUCT_BEGIN (ptr, prop) {
+    if (RNA_property_type(prop) != PROP_POINTER) {
+      continue;
+    }
+    StructRNA *ptype = RNA_property_pointer_type(ptr, prop);
+    if (!RNA_struct_is_a(ptype, RNA_OperatorProperties)) {
+      continue;
+    }
+    if (RNA_struct_type_find_property(ptype, "orient_type") == nullptr) {
+      continue;
+    }
+    PointerRNA propptr = use_default ? RNA_property_pointer_get_never_create(ptr, prop) :
+                                       RNA_property_pointer_get(ptr, prop);
+    if (!propptr.data) {
+      continue;
+    }
+    gizmo_operator_orient_type_set(&propptr, orient_index, use_default);
+  }
+  RNA_STRUCT_END;
+}
+
 static void WIDGETGROUP_gizmo_invoke_prepare(const bContext *C,
                                              wmGizmoGroup *gzgroup,
                                              wmGizmo *gz,
@@ -2189,59 +2496,23 @@ static void WIDGETGROUP_gizmo_invoke_prepare(const bContext *C,
   /* Support gizmo specific orientation. */
   if (gz != ggd->gizmos[MAN_AXIS_ROT_T]) {
     Scene *scene = CTX_data_scene(C);
-    wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
-    PointerRNA *ptr = &gzop->ptr;
-    PropertyRNA *prop_orient_type = RNA_struct_find_property(ptr, "orient_type");
     const TransformOrientationSlot *orient_slot = BKE_scene_orientation_slot_get_from_flag(
         scene, ggd->twtype_init);
-    if ((gz == ggd->gizmos[MAN_AXIS_ROT_C]) ||
-        (orient_slot == &scene->orientation_slots[SCE_ORIENT_DEFAULT]))
-    {
-      /* #MAN_AXIS_ROT_C always uses the #V3D_ORIENT_VIEW orientation,
-       * optionally we could set this orientation instead of unset the property. */
-      RNA_property_unset(ptr, prop_orient_type);
-    }
-    else {
-      /* TODO: API function. */
-      int index = BKE_scene_orientation_slot_get_index(orient_slot);
-      RNA_property_enum_set(ptr, prop_orient_type, index);
-    }
-  }
+    const bool use_default = (gz == ggd->gizmos[MAN_AXIS_ROT_C]) ||
+                             (orient_slot == &scene->orientation_slots[SCE_ORIENT_DEFAULT]);
 
-  /* Support shift click to constrain axis. */
-  int axis = -1;
-  switch (axis_idx) {
-    case MAN_AXIS_TRANS_X:
-    case MAN_AXIS_TRANS_Y:
-    case MAN_AXIS_TRANS_Z:
-      axis = axis_idx - MAN_AXIS_TRANS_X;
-      break;
-    case MAN_AXIS_SCALE_X:
-    case MAN_AXIS_SCALE_Y:
-    case MAN_AXIS_SCALE_Z:
-      axis = axis_idx - MAN_AXIS_SCALE_X;
-      break;
-  }
+    /* TODO: API function. */
+    const int orient_index = BKE_scene_orientation_slot_get_index(orient_slot);
 
-  if (axis != -1) {
-    /* Swap single axis for two-axis constraint. */
-    const bool flip = (event->modifier & KM_SHIFT) != 0;
-    BLI_assert(axis_idx != -1);
-    const short axis_type = gizmo_get_axis_type(axis_idx);
-    if (axis_type != MAN_AXES_ROTATE) {
-      wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
-      PointerRNA *ptr = &gzop->ptr;
-      PropertyRNA *prop_constraint_axis = RNA_struct_find_property(ptr, "constraint_axis");
-      if (prop_constraint_axis) {
-        bool constraint[3] = {false};
-        constraint[axis] = true;
-        if (flip) {
-          for (int i = 0; i < ARRAY_SIZE(constraint); i++) {
-            constraint[i] = !constraint[i];
-          }
-        }
-        RNA_property_boolean_set_array(ptr, prop_constraint_axis, constraint);
+    if (wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0); gzop && gzop->type) {
+      gizmo_operator_orient_type_set(&gzop->ptr, orient_index, use_default);
+    }
+    for (const int variant : IndexRange(WM_GIZMO_OP_VARIANT_LEN)) {
+      wmGizmoOpElem *gzop = WM_gizmo_variant_operator_get(gz, variant);
+      if (gzop == nullptr || gzop->type == nullptr) {
+        continue;
       }
+      gizmo_operator_orient_type_set(&gzop->ptr, orient_index, use_default);
     }
   }
 }

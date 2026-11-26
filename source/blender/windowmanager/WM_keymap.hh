@@ -172,6 +172,7 @@ wmKeyMap *WM_keymap_guess_from_context(const bContext *C);
  */
 wmKeyMap *WM_keymap_guess_opname(const bContext *C, const char *opname);
 
+bool WM_keymap_item_uses_event_modifier(const wmKeyMapItem *kmi, int event_modifier);
 bool WM_keymap_uses_event_modifier(const wmKeyMap *keymap, int event_modifier);
 
 void WM_keymap_fix_linking();

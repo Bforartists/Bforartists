@@ -165,6 +165,33 @@ void ED_operatormacros_armature()
   RNA_boolean_set(otmacro->ptr, "forked", true);
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
   RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+
+  ot = WM_operatortype_append_macro(
+      "ARMATURE_OT_duplicate_rotate",
+      "Duplicate and Rotate",
+      "Make copies of the selected bones within the same armature and rotate them",
+      OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "ARMATURE_OT_duplicate");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_rotate");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+
+  ot = WM_operatortype_append_macro("ARMATURE_OT_duplicate_trackball",
+                                    "Duplicate and Rotate (Trackball)",
+                                    "Make copies of the selected bones within the same armature "
+                                    "and rotate them using trackball",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "ARMATURE_OT_duplicate");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_trackball");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+
+  ot = WM_operatortype_append_macro(
+      "ARMATURE_OT_duplicate_resize",
+      "Duplicate and Resize",
+      "Make copies of the selected bones within the same armature and scale them",
+      OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "ARMATURE_OT_duplicate");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_resize");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
 }
 
 void ED_keymap_armature(wmKeyConfig *keyconf)

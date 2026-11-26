@@ -26,12 +26,26 @@ struct wmEventHandler_Op;
 struct wmGizmo;
 struct wmGizmoGroup;
 struct wmGizmoMap;
+struct wmGizmoOpElem;
 struct wmKeyConfig;
+struct wmKeyMapItem;
 struct wmOperatorType;
+struct wmWindowManager;
 
 /* -------------------------------------------------------------------- */
 /** \name #wmGizmo
  * \{ */
+
+constexpr int GIZMO_TWEAK_VARIANT_DEFAULT = -1;
+
+wmGizmoOpElem *wm_gizmo_tweak_operator_get(const wmWindowManager *wm, wmGizmo *gz, int variant);
+/**
+ * Return false when \a kmi invokes a non-default #GIZMOGROUP_OT_gizmo_tweak variant that \a gz
+ * does not define, so unrelated gizmos sharing the same key-map do not highlight or consume it.
+ */
+bool wm_gizmo_keymap_item_is_supported(const wmWindowManager *wm,
+                                       const wmGizmo *gz,
+                                       const wmKeyMapItem &kmi);
 
 /* `wm_gizmo_type.cc`, for init/exit. */
 
@@ -95,9 +109,17 @@ bool wm_gizmomap_highlight_set(wmGizmoMap *gzmap, const bContext *C, wmGizmo *gz
 wmGizmo *wm_gizmomap_highlight_get(wmGizmoMap *gzmap);
 /**
  * Caller should call exit when (enable == False).
+ *
+ * \param variant: Operator variant to invoke instead of the gizmo's highlighted part
+ * (resolved with #wm_gizmo_tweak_operator_get). Used by #GIZMOGROUP_OT_gizmo_tweak to run
+ * alternatives (e.g. duplicate/extrude) selected via a remappable key-map property.
  */
-void wm_gizmomap_modal_set(
-    wmGizmoMap *gzmap, bContext *C, wmGizmo *gz, const wmEvent *event, bool enable);
+void wm_gizmomap_modal_set(wmGizmoMap *gzmap,
+                           bContext *C,
+                           wmGizmo *gz,
+                           const wmEvent *event,
+                           bool enable,
+                           int variant = GIZMO_TWEAK_VARIANT_DEFAULT);
 
 wmGizmo *wm_gizmomap_modal_get(wmGizmoMap *gzmap);
 wmGizmo **wm_gizmomap_selected_get(wmGizmoMap *gzmap, int *r_selected_len);

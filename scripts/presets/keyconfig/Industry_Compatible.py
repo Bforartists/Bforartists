@@ -27,7 +27,12 @@ def load():
     prefs = bpy.context.preferences
 
     kc = bpy.context.window_manager.keyconfigs.new(IDNAME)
-    params = industry_compatible.Params(use_mouse_emulate_3_button=prefs.inputs.use_mouse_emulate_3_button)
+    params = industry_compatible.Params(
+        use_mouse_emulate_3_button=(
+            prefs.inputs.use_mouse_emulate_3_button and
+            prefs.inputs.mouse_emulate_3_button_modifier == 'ALT'
+        ),
+    )
     keyconfig_data = industry_compatible.generate_keymaps(params)
 
     if platform == "darwin":
