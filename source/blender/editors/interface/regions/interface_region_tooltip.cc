@@ -1380,6 +1380,64 @@ static std::unique_ptr<TooltipData> tooltip_data_from_button_or_extra_icon(
   return data->fields.is_empty() ? nullptr : std::move(data);
 }
 
+/**
+ * Bullet lines listing the operator variants of \a gz that have a description, for example
+ * "Shift to duplicate", each with the keys that select it in the gizmo's active key-map,
+ * so they follow the user's key-map edits.
+ */
+static std::string tooltip_gizmo_variants_text(const bContext *C, wmGizmo *gz)
+{
+  const wmWindowManager *wm = CTX_wm_manager(C);
+  std::string text;
+  for (int variant = 0; variant < WM_GIZMO_OP_VARIANT_LEN; variant++) {
+    const wmGizmoOpElem *gzop = WM_gizmo_variant_operator_resolve(wm, gz, variant);
+    if (gzop == nullptr || gzop->type == nullptr || gzop->ui_description == nullptr) {
+      continue;
+    }
+    const wmKeyMapItem *kmi = WM_gizmo_variant_keymap_item_find(wm, gz, variant);
+    if (kmi == nullptr) {
+      continue;
+    }
+    int8_t alt = kmi->alt;
+    int8_t oskey = kmi->oskey;
+    short type = kmi->type;
+    if ((U.flag & USER_TWOBUTTONMOUSE) && (type == MIDDLEMOUSE)) {
+      /* With 3-button mouse emulation, Middle Mouse is triggered by holding the emulation
+       * modifier with Left Mouse. Show the modifier the user actually holds. */
+#if !defined(WIN32)
+      if (U.mouse_emulate_3_button_modifier == USER_EMU_MMB_MOD_OSKEY) {
+        oskey = KM_MOD_HELD;
+      }
+      else
+#endif
+      {
+        alt = KM_MOD_HELD;
+      }
+      type = LEFTMOUSE;
+    }
+    /* Clicking/dragging the gizmo is implied, only show the keys held while doing so (and omit
+     * the "drag-" prefix even for non-LMB bindings). */
+    const bool is_click = type == LEFTMOUSE;
+    const short val = (kmi->val == KM_PRESS_DRAG) ? KM_PRESS : kmi->val;
+    const std::optional<std::string> keys = WM_keymap_item_raw_to_string(
+        kmi->shift,
+        kmi->ctrl,
+        alt,
+        oskey,
+        kmi->hyper,
+        kmi->keymodifier,
+        val,
+        is_click ? EVENT_NONE : type,
+        false);
+    if (!keys || keys->empty()) {
+      continue;
+    }
+    text += "\n \u2022 ";
+    text += fmt::format(fmt::runtime(TIP_(gzop->ui_description)), *keys);
+  }
+  return text;
+}
+
 static std::unique_ptr<TooltipData> tooltip_data_from_gizmo(bContext *C, wmGizmo *gz)
 {
   std::unique_ptr<TooltipData> data = std::make_unique<TooltipData>();
@@ -1411,6 +1469,11 @@ static std::unique_ptr<TooltipData> tooltip_data_from_gizmo(bContext *C, wmGizmo
       if (gzop != nullptr) {
         /* Description */
         std::string info = WM_operatortype_description_or_name(C, gzop->type, &gzop->ptr);
+
+        /* Operator variants, with the keys selecting them in the current key-map. */
+        if (gzop_actions[i].part == gz->highlight_part) {
+          info += tooltip_gizmo_variants_text(C, gz);
+        }
 
         if (!info.empty()) {
           tooltip_text_field_add(

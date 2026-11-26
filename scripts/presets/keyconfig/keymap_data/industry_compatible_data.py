@@ -104,6 +104,30 @@ def _template_items_animation():
     ]
 
 
+def _template_items_gizmo_tweak_variants(params):
+    # Items that run an operator variant of the gizmo, these must come before the default item.
+    items = []
+    if params.use_mouse_emulate_3_button:
+        # Alt-LMB is used for MMB emulation, so Shift-Alt-LMB is handled as Shift-MMB.
+        # Alt is cleared from the emulated event but must be allowed here,
+        # otherwise the gizmo isn't highlighted while Alt is held.
+        items.append(
+            ("gizmogroup.gizmo_tweak",
+             {"type": 'MIDDLEMOUSE', "value": 'CLICK_DRAG', "shift": True, "alt": -1},
+             {"properties": [("variant", 'DUPLICATE_LINKED')]}),
+        )
+    else:
+        items.append(
+            ("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True, "alt": True},
+             {"properties": [("variant", 'DUPLICATE_LINKED')]}),
+        )
+    items.append(
+        ("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "shift": True},
+         {"properties": [("variant", 'DUPLICATE')]}),
+    )
+    return items
+
+
 def _template_items_gizmo_tweak_value_drag():
     return [
         ("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
@@ -3798,9 +3822,11 @@ def km_generic_gizmo_maybe_drag(params):
     keymap = (
         "Generic Gizmo Maybe Drag",
         {"space_type": 'EMPTY', "region_type": 'WINDOW'},
-        {"items":
-         _template_items_gizmo_tweak_value_drag()
-         },
+        {"items": [
+            # Only this key-map runs operator variants, it's used by the transform gizmos.
+            *_template_items_gizmo_tweak_variants(params),
+            *_template_items_gizmo_tweak_value_drag(),
+        ]},
     )
 
     return keymap

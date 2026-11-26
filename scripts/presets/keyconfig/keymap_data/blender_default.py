@@ -491,6 +491,34 @@ def _template_items_object_subdivision_set():
     ]
 
 
+def _template_items_gizmo_tweak_variants(params):
+    # Items that run an operator variant of the gizmo, these must come before the default item.
+    # Always require CLICK_DRAG so an accidental Shift-click or Shift-Alt-click (e.g. extending
+    # selection behind a gizmo) does not silently duplicate or extrude in place at zero offset.
+    items = []
+    if params.use_mouse_emulate_3_button:
+        # Alt-LMB is used for MMB emulation, so Shift-Alt-LMB is handled as Shift-MMB.
+        # Alt is cleared from the emulated event but must be allowed here,
+        # otherwise the gizmo isn't highlighted while Alt is held.
+        items.append(
+            ("gizmogroup.gizmo_tweak",
+             {"type": 'MIDDLEMOUSE', "value": 'CLICK_DRAG', **any_except("shift"), "shift": True},
+             {"properties": [("variant", 'DUPLICATE_LINKED')]}),
+        )
+    else:
+        items.append(
+            ("gizmogroup.gizmo_tweak",
+             {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', **any_except("alt", "shift"), "shift": True, "alt": True},
+             {"properties": [("variant", 'DUPLICATE_LINKED')]}),
+        )
+    items.append(
+        ("gizmogroup.gizmo_tweak",
+         {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', **any_except("alt", "shift"), "shift": True},
+         {"properties": [("variant", 'DUPLICATE')]}),
+    )
+    return items
+
+
 def _template_items_gizmo_tweak_value():
     return [
         ("gizmogroup.gizmo_tweak",
@@ -7011,11 +7039,22 @@ def km_generic_gizmo_maybe_drag(params):
     keymap = (
         "Generic Gizmo Maybe Drag",
         {"space_type": 'EMPTY', "region_type": 'WINDOW'},
-        {"items":
-         _template_items_gizmo_tweak_value_drag()
-         if params.use_gizmo_drag else
-         _template_items_gizmo_tweak_value()
-         },
+        {"items": [
+            # Only this key-map runs operator variants, it's used by the transform gizmos.
+            *_template_items_gizmo_tweak_variants(params),
+            *(
+                _template_items_gizmo_tweak_value_drag()
+                if params.use_gizmo_drag else [
+                    # Keep instant PRESS for unmodified gizmo grabs, while letting Shift-drag
+                    # reach the CLICK_DRAG variant above (and fall back to a regular drag on
+                    # gizmos that do not define a DUPLICATE variant).
+                    ("gizmogroup.gizmo_tweak",
+                     {"type": 'LEFTMOUSE', "value": 'PRESS', **any_except("alt", "shift")}, None),
+                    ("gizmogroup.gizmo_tweak",
+                     {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', **any_except("alt", "shift"), "shift": True}, None),
+                ]
+            ),
+        ]},
     )
 
     return keymap

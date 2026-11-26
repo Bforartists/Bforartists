@@ -544,7 +544,7 @@ wmKeyMap *WM_keymap_guess_opname(const bContext *C, const char *opname)
   return km;
 }
 
-static bool wm_keymap_item_uses_modifier(const wmKeyMapItem *kmi, const int event_modifier)
+bool WM_keymap_item_uses_event_modifier(const wmKeyMapItem *kmi, const int event_modifier)
 {
   if (kmi->ctrl != KM_ANY) {
     if ((kmi->ctrl == KM_NOTHING) != ((event_modifier & KM_CTRL) == 0)) {
@@ -582,7 +582,7 @@ bool WM_keymap_uses_event_modifier(const wmKeyMap *keymap, const int event_modif
 {
   for (const wmKeyMapItem &kmi : keymap->items) {
     if ((kmi.flag & KMI_INACTIVE) == 0) {
-      if (wm_keymap_item_uses_modifier(&kmi, event_modifier)) {
+      if (WM_keymap_item_uses_event_modifier(&kmi, event_modifier)) {
         return true;
       }
     }

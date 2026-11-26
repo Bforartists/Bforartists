@@ -875,6 +875,25 @@ void WM_gizmomap_add_handlers(ARegion *region, wmGizmoMap *gzmap)
   BLI_addtail(&region->runtime->handlers, handler);
 }
 
+/**
+ * Check if \a ot is the operator of the highlighted part of \a gz or one of its variants.
+ */
+static bool gizmo_uses_operator_type(wmGizmo *gz, const wmOperatorType *ot)
+{
+  const wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, gz->highlight_part);
+  if (gzop && (gzop->type != nullptr) && (gzop->type == ot)) {
+    return true;
+  }
+  if (gz->variant_op_data) {
+    for (const wmGizmoOpElem &gzop_variant : *gz->variant_op_data) {
+      if ((gzop_variant.type != nullptr) && (gzop_variant.type == ot)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 void wm_gizmomaps_handled_modal_update(bContext *C, wmEvent *event, wmEventHandler_Op *handler)
 {
   const bool modal_running = (handler->op != nullptr);
@@ -893,8 +912,7 @@ void wm_gizmomaps_handled_modal_update(bContext *C, wmEvent *event, wmEventHandl
 
   /* Regular update for running operator. */
   if (modal_running) {
-    wmGizmoOpElem *gzop = gz ? WM_gizmo_operator_get(gz, gz->highlight_part) : nullptr;
-    if (gz && gzop && (gzop->type != nullptr) && (gzop->type == handler->op->type)) {
+    if (gz && gizmo_uses_operator_type(gz, handler->op->type)) {
       wmGizmoFnModal modal_fn = gz->custom_modal ? gz->custom_modal : gz->type->modal;
       if (modal_fn != nullptr) {
         const wmOperatorStatus retval = modal_fn(C, gz, event, eWM_GizmoFlagTweak(0));
@@ -1098,8 +1116,12 @@ wmGizmo *wm_gizmomap_highlight_get(wmGizmoMap *gzmap)
   return gzmap->gzmap_context.highlight;
 }
 
-void wm_gizmomap_modal_set(
-    wmGizmoMap *gzmap, bContext *C, wmGizmo *gz, const wmEvent *event, bool enable)
+void wm_gizmomap_modal_set(wmGizmoMap *gzmap,
+                           bContext *C,
+                           wmGizmo *gz,
+                           const wmEvent *event,
+                           bool enable,
+                           const int variant)
 {
   bool do_refresh = false;
 
@@ -1138,7 +1160,7 @@ void wm_gizmomap_modal_set(
       gzmap->gzmap_context.event_xy[0] = INT_MAX;
     }
 
-    wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, gz->highlight_part);
+    wmGizmoOpElem *gzop = wm_gizmo_tweak_operator_get(CTX_wm_manager(C), gz, variant);
     if (gzop && gzop->type) {
       const wmOperatorStatus retval = WM_gizmo_operator_invoke(C, gz, gzop, event);
       OPERATOR_RETVAL_CHECK(retval);

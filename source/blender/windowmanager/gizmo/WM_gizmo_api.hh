@@ -42,6 +42,7 @@ struct wmGizmoProperty;
 struct wmGizmoPropertyType;
 struct wmGizmoType;
 struct wmKeyConfig;
+struct wmKeyMapItem;
 struct wmMsgSubscribeKey;
 struct wmMsgSubscribeValue;
 struct wmOperatorType;
@@ -97,6 +98,36 @@ void WM_gizmo_modal_set_while_modal(wmGizmoMap *gzmap,
                                     const wmEvent *event);
 
 wmGizmoOpElem *WM_gizmo_operator_get(wmGizmo *gz, int part_index);
+
+wmGizmoOpElem *WM_gizmo_variant_operator_get(wmGizmo *gz, int variant);
+
+/**
+ * Resolve the operator for \a variant on \a gz, following #wmGizmoOpElem.fallback_variant when
+ * \a variant has no operator of its own and the fallback variant has no active key-map item.
+ */
+wmGizmoOpElem *WM_gizmo_variant_operator_resolve(const wmWindowManager *wm,
+                                                 wmGizmo *gz,
+                                                 int variant);
+
+PointerRNA *WM_gizmo_variant_operator_set(wmGizmo *gz,
+                                          eWM_GizmoOpVariant variant,
+                                          wmOperatorType *ot,
+                                          IDProperty *properties);
+
+void WM_gizmo_variant_operator_set_fallback(wmGizmo *gz,
+                                            eWM_GizmoOpVariant variant,
+                                            eWM_GizmoOpVariant fallback_variant);
+
+void WM_gizmo_variant_operators_clear(wmGizmo *gz);
+
+/**
+ * The first active #GIZMOGROUP_OT_gizmo_tweak item in the key-map of \a gz that runs \a variant
+ * (an #eWM_GizmoOpVariant), null when the variant has no key.
+ */
+const wmKeyMapItem *WM_gizmo_variant_keymap_item_find(const wmWindowManager *wm,
+                                                      const wmGizmo *gz,
+                                                      int variant);
+
 PointerRNA *WM_gizmo_operator_set(wmGizmo *gz,
                                   int part_index,
                                   wmOperatorType *ot,

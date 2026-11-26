@@ -1426,6 +1426,7 @@ wmOperatorStatus transformEvent(TransInfo *t, wmOperator *op, const wmEvent *eve
         }
         else if (event->prev_val == KM_PRESS) {
           t->modifiers |= MOD_PRECISION;
+          t->launch_precision_modifier = 0;
           /* Mouse position during Snap to Grid is not affected by precision. */
           if (!(transform_snap_is_active(t) && validSnap(t) &&
                 t->tsnap.target_type == SCE_SNAP_TO_GRID))
@@ -1438,6 +1439,7 @@ wmOperatorStatus transformEvent(TransInfo *t, wmOperator *op, const wmEvent *eve
         else if (event->prev_val == KM_RELEASE) {
           t->modifiers &= ~MOD_PRECISION;
           t->mouse.precision = false;
+          t->launch_precision_modifier = 0;
           t->redraw |= TREDRAW_HARD;
         }
         break;
@@ -1548,6 +1550,17 @@ wmOperatorStatus transformEvent(TransInfo *t, wmOperator *op, const wmEvent *eve
       default: {
         break;
       }
+    }
+
+    /* If precision was enabled at launch via a modifier other than #TFM_MODAL_PRECISION
+     * (e.g. a remapped gizmo precision variant), exit precision when that modifier is released. */
+    if ((t->launch_precision_modifier != 0) && ISKEYMODIFIER(event->type) &&
+        ((t->launch_precision_modifier & ~event->modifier) != 0))
+    {
+      t->modifiers &= ~MOD_PRECISION;
+      t->mouse.precision = false;
+      t->launch_precision_modifier = 0;
+      t->redraw |= TREDRAW_HARD;
     }
 
     /* Confirm transform if launch key is released after mouse move. */
@@ -2255,6 +2268,9 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
     {
       if (RNA_property_boolean_get(op->ptr, prop)) {
         use_accurate = true;
+        /* Match #TFM_MODAL_PRECISION being pressed, so increments and the header follow too. */
+        t->modifiers |= MOD_PRECISION;
+        t->launch_precision_modifier = event->modifier;
       }
     }
 

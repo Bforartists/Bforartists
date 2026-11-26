@@ -143,6 +143,60 @@ void ED_operatormacros_curve()
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
   RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
   RNA_boolean_set(otmacro->ptr, "mirror", false);
+
+  ot = WM_operatortype_append_macro("CURVE_OT_extrude_rotate",
+                                    "Extrude Curve and Rotate",
+                                    "Extrude curve and rotate result",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "CURVE_OT_extrude");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_rotate");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+  RNA_boolean_set(otmacro->ptr, "mirror", false);
+
+  ot = WM_operatortype_append_macro("CURVE_OT_extrude_trackball",
+                                    "Extrude Curve and Rotate (Trackball)",
+                                    "Extrude curve and rotate result using trackball",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "CURVE_OT_extrude");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_trackball");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+  RNA_boolean_set(otmacro->ptr, "mirror", false);
+
+  ot = WM_operatortype_append_macro("CURVE_OT_extrude_resize",
+                                    "Extrude Curve and Resize",
+                                    "Extrude curve and scale result",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "CURVE_OT_extrude");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_resize");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+  RNA_boolean_set(otmacro->ptr, "mirror", false);
+
+  ot = WM_operatortype_append_macro("CURVE_OT_duplicate_rotate",
+                                    "Duplicate and Rotate",
+                                    "Duplicate curve and rotate",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "CURVE_OT_duplicate");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_rotate");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+  RNA_boolean_set(otmacro->ptr, "mirror", false);
+
+  ot = WM_operatortype_append_macro("CURVE_OT_duplicate_trackball",
+                                    "Duplicate and Rotate (Trackball)",
+                                    "Duplicate curve and rotate using trackball",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "CURVE_OT_duplicate");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_trackball");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+  RNA_boolean_set(otmacro->ptr, "mirror", false);
+
+  ot = WM_operatortype_append_macro("CURVE_OT_duplicate_resize",
+                                    "Duplicate and Resize",
+                                    "Duplicate curve and scale",
+                                    OPTYPE_UNDO | OPTYPE_REGISTER);
+  WM_operatortype_macro_define(ot, "CURVE_OT_duplicate");
+  otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_resize");
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
+  RNA_boolean_set(otmacro->ptr, "mirror", false);
 }
 
 void ED_keymap_curve(wmKeyConfig *keyconf)
