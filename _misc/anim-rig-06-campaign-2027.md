@@ -52,6 +52,7 @@ From the maintainer, 24 November 2026.
 | Learned (AI) features? | Opt-in only, through Coworker or a similar system of optional downloads, so Bforartists ships light |
 | Mouse puppetry and a phone web app? | Yes. Mouse recording in Tier 4 (updated 25 November 2026). Phone web app later, Tier 6 |
 | Camera and controllers? | Webcam recording in Tier 4 (updated 25 November 2026). Webcam and phone first, because everyone has them. Controllers through the simple VR system. VR control without a headset would be welcome, later |
+| Modernise the NLA | A core feature: gestures and gizmos on the strips, built natively in C++ (26 November 2026). In Tier 1, where clips arrive |
 | Self-contained rigs | No script in the blend file. Switches are bone properties, buttons are generic Bforartists operators reading the rig description, and all keys sit on one armature (25 November 2026). Vision document, section 4.2.1 |
 | Order of the first two tiers | **Animation first, then rigging** (25 November 2026, replaces "the rigging kit comes first"). Tier 1 makes posing and animation fun on the rigs artists already have. Tier 2 then builds rigs. This is the best early win for an artist |
 | Full body IK with pins | First, in Tier 1 (25 November 2026). It is what makes posing fun |
@@ -165,6 +166,18 @@ From the survey:
 - Rotation paths. Path coloured by speed or jitter. Paths for objects and cameras.
 - One native pose cache for a frame range, shared by live paths and ghosts. Ghosts bent on the graphics card. (Motion sculpting, steps 1 and 2: `anim-rig-07`, T4.)
 - Travel on drop: Full, In Place, None.
+- **A modern NLA, with gestures and gizmos on the strips** (core feature, 26 November 2026). Clips
+  land in the NLA, so the NLA has to be pleasant to touch. Built natively in C++:
+  - Handles on each strip: drag an end to trim, drag the body to move it in time or to another track.
+  - A stretch handle to change speed, and dragging past the end to repeat the clip.
+  - Blend-in and blend-out handles on the strip corners, drawn as a visible ramp.
+  - Overlap two strips to make a transition. Snapping to strip ends, markers and the playhead.
+  - Slip: slide the action inside the strip without moving the strip.
+  - Drop a clip from the asset shelf straight onto a track, with a preview of where it lands.
+  - The same handle look and behaviour as the retiming handles and the transform box, and a button
+    for each gesture in the new Tool Shelf.
+  Every gizmo edits ordinary strip settings, so files stay plain Blender files. What the NLA already
+  does by hotkey today, and what the Sequencer's strip handles can lend, still needs a code check.
 - **Full body IK with pins** (moved here from Tier 3, 25 November 2026): click to pin any part, drag
   another, and the whole body follows. In this tier it is used on the bones and controls. Tier 3 adds
   grabbing the mesh on top of the same solver. Writes plain keys on the rig's own controls.
@@ -380,7 +393,7 @@ Ideas noted on 25 November 2026. Not designed, not placed in a tier, not decided
 | Tier | Addon | Lead | Core C++ work | Contributor-friendly parts |
 |---|---|---|---|---|
 | 0 Foundations | Both | Maintainers | For the interface work only: Tool Shelf region and transform box in the animation editors | Prototypes, test characters |
-| 1 Clips, Motion View, Full Body Posing | `bfa_animation` | Maintainers | **Yes**: the full body solver's inner loop if speed needs it, mesh onion skin, live and editable motion paths, action drop targets, ripple and gap retiming, retiming handles | Clip library, compatibility check, batch import |
+| 1 Clips, Motion View, Full Body Posing | `bfa_animation` | Maintainers | **Yes**: the full body solver's inner loop if speed needs it, mesh onion skin, live and editable motion paths, action drop targets, NLA strip gizmos, ripple and gap retiming, retiming handles | Clip library, compatibility check, batch import |
 | 2 Rigging Kit | `bfa_rigging` | Maintainers | **Yes**: part and socket highlight while dragging from the asset shelf. Tool Shelf width setting | Part recipes, mechanisms, validator (from BoneCraft) |
 | 3 Puppet Posing | `bfa_animation` | Maintainers | **Yes**: highlight and picking on the mesh | Matching, mirror pairs (from Anim Assist) |
 | 4 Performance, Assist and Tweening | `bfa_animation` | Maintainers | **Yes**: camera input, key sculpting brushes in the Graph Editor | Physics suggestions, proxy bake |
