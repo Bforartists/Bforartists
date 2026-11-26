@@ -192,6 +192,55 @@ def _get_mesh_center_x(session):
     return (min_x + max_x) * 0.5
 
 
+def _get_mesh_bounds_center(session):
+    """World-space centre of the target mesh's bounding box.
+
+    Used as the axis-lock reference for a marker that has not been placed
+    yet, so a midline marker locks to the body's centreline instead of to
+    the world origin (which can sit well outside the mesh).
+    """
+    mesh_obj = bpy.data.objects.get(session.mesh_object_name) if session else None
+    if mesh_obj is None:
+        return Vector((0.0, 0.0, 0.0))
+    bbox = [mesh_obj.matrix_world @ Vector(corner) for corner in mesh_obj.bound_box]
+    lo = Vector((min(v.x for v in bbox), min(v.y for v in bbox), min(v.z for v in bbox)))
+    hi = Vector((max(v.x for v in bbox), max(v.y for v in bbox), max(v.z for v in bbox)))
+    return (lo + hi) * 0.5
+
+
+def marker_for_type(session, marker_type, marker_name):
+    """Return the marker struct for *marker_type* (BODY / FACE / FINGER)."""
+    if marker_type == 'BODY':
+        return get_body_marker(session, marker_name)
+    if marker_type == 'FINGER':
+        return get_finger_marker(session, marker_name)
+    return get_face_marker(session, marker_name)
+
+
+def apply_axis_lock(session, marker, position, fallback=None):
+    """Hold the axes the user switched off at the marker's reference position.
+
+    The reference is the marker's current position once it has been placed;
+    for an unplaced marker it is *fallback* (the mesh bounds centre). Call
+    this **after** the surface snap, otherwise the snap drags the locked
+    axis to wherever the nearest surface point happens to be.
+    """
+    constrained = Vector(position)
+    if marker is not None and is_position_placed(marker.position):
+        ref = Vector(marker.position)
+    elif fallback is not None:
+        ref = Vector(fallback)
+    else:
+        return constrained
+    for axis, allowed in ((0, session.placement_axis_x),
+                          (1, session.placement_axis_y),
+                          (2, session.placement_axis_z)):
+        if not allowed:
+            constrained[axis] = ref[axis]
+    return constrained
+
+
+
 def _mirror_x_around_center(position, center_x):
     """Return a copy of *position* reflected across the given X center.
 
@@ -932,6 +981,12 @@ class BF_OT_WizardMoveMarker(bpy.types.Operator):
         description="Snap the marker onto the nearest mesh surface",
         default=True,
     )
+    respect_axis_lock: BoolProperty(
+        name="Respect Axis Lock",
+        description="Hold axes the user switched off at the marker's "
+                    "reference position, after the surface snap",
+        default=False,
+    )
 
     @classmethod
     def poll(cls, context):
@@ -965,6 +1020,16 @@ class BF_OT_WizardMoveMarker(bpy.types.Operator):
 
             target_position = _clamp_to_bounding_box(
                 target_position, mesh_obj,
+            )
+
+        # Axis lock runs last, so neither the surface snap nor the bounds
+        # clamp can move an axis the user switched off.
+        if self.respect_axis_lock:
+            target_position = apply_axis_lock(
+                session,
+                marker_for_type(session, self.marker_type, self.marker_name),
+                target_position,
+                fallback=_get_mesh_bounds_center(session),
             )
 
         # Dispatch to the correct marker type
@@ -1825,6 +1890,7 @@ class BF_OT_WizardPlaceMarker(bpy.types.Operator):
                     marker_name=self.marker_name,
                     marker_type=self.marker_type,
                     position=tuple(hit_position),
+                    respect_axis_lock=True,
                 )
 
                 # Auto-confirm the marker after placement.
@@ -1890,21 +1956,11 @@ class BF_OT_WizardPlaceMarker(bpy.types.Operator):
     def _apply_axis_constraints(self, context, position):
         """Lock axes the user disabled, keeping the marker's prior value."""
         session = context.scene.boneforge_autorig_session
-        if self.marker_type == 'BODY':
-            prev_marker = get_body_marker(session, self.marker_name)
-        else:
-            prev_marker = get_face_marker(session, self.marker_name)
-
-        constrained = Vector(position)
-        if prev_marker is not None:
-            prev = Vector(prev_marker.position)
-            if not session.placement_axis_x:
-                constrained.x = prev.x
-            if not session.placement_axis_y:
-                constrained.y = prev.y
-            if not session.placement_axis_z:
-                constrained.z = prev.z
-        return constrained
+        marker = marker_for_type(session, self.marker_type, self.marker_name)
+        return apply_axis_lock(
+            session, marker, position,
+            fallback=_get_mesh_bounds_center(session),
+        )
 
     def _get_mirror_info(self, context):
         """Return the symmetry pair marker name if mirroring is active.

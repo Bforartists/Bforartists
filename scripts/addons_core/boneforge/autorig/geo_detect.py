@@ -269,6 +269,11 @@ def guess_landmarks(points):
 # centroids, so they sit inside the limb rather than on its surface.
 
 _CELL_FRAC = 0.03          # voxel size as a fraction of body height
+# Arms are thinner than the torso: a 3%-of-height cell can lose connectivity
+# along a slim forearm, which collapses the whole arm trace onto one point.
+# The arm pass therefore uses a finer grid; the body pass keeps the coarse one
+# so it stays fast and does not leak through gaps between limbs.
+_ARM_CELL_FRAC = 0.015
 _OFFSETS = [(dx, dy, dz, math.sqrt(dx * dx + dy * dy + dz * dz))
             for dx in (-1, 0, 1) for dy in (-1, 0, 1) for dz in (-1, 0, 1)
             if (dx, dy, dz) != (0, 0, 0)]
@@ -364,6 +369,26 @@ def _trace_arm(grid, cell, tip, height):
     return wrist, elbow, shoulder, conf
 
 
+def _arm_proportional_joints(centre, sym, tip):
+    """Shoulder / elbow / wrist split along an outstretched arm, to its tip.
+
+    Fallback for when the voxel trace is unusable — a thin forearm can break
+    voxel connectivity so every ring centroid lands on the same point, which
+    would otherwise put shoulder, elbow and wrist on top of each other.
+    Proportions: the shoulder sits ~22% of the way from the midline to the
+    fingertip, the hand starts at ~72%, the elbow midway between the two.
+    """
+    sgn = 1.0 if tip[sym] >= centre[sym] else -1.0
+    span = abs(tip[sym] - centre[sym])
+
+    def at(frac):
+        p = list(tip)
+        p[sym] = centre[sym] + sgn * frac * span
+        return tuple(p)
+
+    return at(0.72), at(0.47), at(0.22)
+
+
 def _slice_centre(points, lo_z, hi_z, near=None, radius=None):
     band = [p for p in points if lo_z <= p[UP] <= hi_z]
     if near is not None and radius is not None:
@@ -390,6 +415,8 @@ def refine_joints(points, geo):
     floor_z = lo[UP]
     cell = _CELL_FRAC * height
     grid = _voxelize(points, cell)
+    arm_cell = _ARM_CELL_FRAC * height
+    arm_grid = _voxelize(points, arm_cell)
     out = {}
 
     def z_at(frac):
@@ -414,7 +441,22 @@ def refine_joints(points, geo):
                    for dx in (-1, 0, 1) for dy in (-1, 0, 1) for dz in (-1, 0, 1)):
                 tip = p
                 break
-        wrist, elbow, shoulder, conf = _trace_arm(grid, cell, tip, height)
+        try:
+            wrist, elbow, shoulder, conf = _trace_arm(
+                arm_grid, arm_cell, tip, height)
+        except ValueError:
+            wrist, elbow, shoulder = _arm_proportional_joints(c, sym, tip)
+            conf = 0.42
+        else:
+            span = max(math.dist(shoulder, elbow), math.dist(elbow, wrist),
+                       math.dist(shoulder, wrist))
+            if span < 0.02 * height:
+                # collapsed trace: thin arm broke voxel connectivity and every
+                # ring centroid landed on one point. Proportions beat three
+                # joints stacked on top of each other, and 0.42 keeps them in
+                # the review band instead of looking confident.
+                wrist, elbow, shoulder = _arm_proportional_joints(c, sym, tip)
+                conf = 0.42
         # sanity: a T/A-pose arm runs outward shoulder -> elbow -> wrist and
         # its wrist is well above the floor. Arms hanging down (walk / I-pose)
         # or a body facing sideways break that: say so with a low confidence
@@ -535,6 +577,7 @@ def refine_joints(points, geo):
         ankle = list(ank)
         ankle[UP] = z_at(0.075)
         toe = [ankle[a] + 0.7 * (tip[a] - ankle[a]) for a in range(3)]
+        toe[UP] = max(toe[UP], floor_z)     # never below the ground plane
         heel = list(ankle)
         heel[front] -= fdir * 0.035 * height
         heel[UP] = floor_z
@@ -621,8 +664,11 @@ def body_marker_proposals(geo):
             put("HIP_" + side, hip, 0.45, "derived")
             put("KNEE_" + side, _lerp(hip, ft[0], 0.5), 0.4, "derived")
         if ft:
-            toe = list(ft[0]); toe[front] += 0.08 * height; toe[up] -= 0.02 * height
-            heel = list(ft[0]); heel[front] -= 0.05 * height; heel[up] -= 0.02 * height
+            floor = ft[0][up]
+            toe = list(ft[0]); toe[front] += 0.08 * height
+            toe[up] = max(toe[up] - 0.02 * height, floor)
+            heel = list(ft[0]); heel[front] -= 0.05 * height
+            heel[up] = max(heel[up] - 0.02 * height, floor)
             put("TOE_" + side, toe, 0.35, "derived")
             put("HEEL_" + side, heel, 0.35, "derived")
     # limb-traced joint centres replace the coarse guesses where available
