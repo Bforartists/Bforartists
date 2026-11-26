@@ -1235,10 +1235,13 @@ void outliner_build_tree(Main *mainvar,
   }
   space_outliner->storeflag &= ~SO_TREESTORE_REBUILD;
 
-  if (region->runtime->do_draw & RGN_DRAW_NO_REBUILD) {
-    BLI_assert_msg(space_outliner->runtime->tree_display != nullptr,
-                   "Skipping rebuild before tree was built properly, a full redraw should be "
-                   "triggered instead");
+  /* BFA - only skip the rebuild when there is a tree to keep. An Outliner that was just split off
+   * or duplicated has none yet, and when its first draw came from a redraw without rebuild (for
+   * example while an area edge is dragged) Blender only asserts here and then crashes in
+   * #outliner_shows_mode_column on the missing tree display. Build the tree instead. */
+  if ((region->runtime->do_draw & RGN_DRAW_NO_REBUILD) &&
+      space_outliner->runtime->tree_display != nullptr)
+  {
     return;
   }
 
