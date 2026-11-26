@@ -121,6 +121,10 @@ class MATERIAL_PT_gpencil_surface(GPMaterialButtonsPanel, Panel):
 
 def draw_image_settings(layout, gpcolor, image, image_name, image_user):
     layout.template_ID(gpcolor, image_name, open="image.open")
+    # BFA - a Texture style without an image yet has no image settings to show. Reading them
+    # raised an error on every redraw and cut the rest of the panel off.
+    if image is None:
+        return
     layout.prop(image, "source")
 
     if image.source in ["SEQUENCE", "MOVIE"]:
