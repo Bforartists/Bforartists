@@ -180012,3 +180012,63 @@ msgstr "Thêm một bộ sưu tập mới vào bên trong bộ sưu tập đang 
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Thêm một bộ sưu tập mới vào bên trong bộ sưu tập đang hoạt động và chuyển các đối tượng được chọn trong Mục Lục vào đó"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "Cắt xén tự động"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "Điều chỉnh điểm bắt đầu và kết thúc cắt xén theo mức thu phóng, để nhìn các đối tượng đã chọn gần nhất có thể. Giá trị riêng của chúng được giữ lại và dùng lại khi tắt. Không dùng khi nhìn qua máy quay, xem cắt xén tự động của máy quay"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "Trong khung nhìn 3D, khi nhìn qua máy quay này, điều chỉnh cắt xén theo các đối tượng gần nhất và xa nhất mà nó thấy. Cắt xén của máy quay không bị thay đổi và vẫn được dùng để kết xuất"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "Bắt đầu cắt xén tự động"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Khoảng cách cắt xén gần do cắt xén tự động tính toán (bằng không nếu không áp dụng)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "Kết thúc cắt xén tự động"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Khoảng cách cắt xén xa do cắt xén tự động tính toán (bằng không nếu không áp dụng)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "Chế độ xem máy quay dùng cắt xén của máy quay"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "Áp dụng cắt tự động cho camera"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "Sao chép vùng cắt do cắt tự động tính trong Khung nhìn 3D vào Clip Near và Clip Far của camera, dùng để kết xuất"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "Toàn bộ hoạt ảnh"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "Dùng phạm vi được tính cho khung hình hiện tại"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "Dùng độ sâu gần nhất và xa nhất thấy được trên các khung hình của cảnh, để không có gì bị cắt khi kết xuất. Chậm: cảnh được đánh giá ở mọi khung hình"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "Các khung hình dùng để tính phạm vi"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "Nướng cắt xén"

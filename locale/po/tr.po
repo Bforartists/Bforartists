@@ -136280,3 +136280,63 @@ msgstr "Etkin koleksiyonun içine yeni bir koleksiyon ekler"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Etkin koleksiyonun içine yeni bir koleksiyon ekler ve seçili Başlıklar nesnelerini içine taşır"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "Otomatik Kırpma"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "Kırpma başlangıcını ve bitişini yakınlaştırmaya uyarlar, seçili nesneleri olabildiğince yakından görmek için. Kendi değerleri korunur ve devre dışı bırakıldığında yeniden kullanılır. Bir kameradan bakarken kullanılmaz, kameranın otomatik kırpmasına bakın"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "3B görünümde bu kameradan bakarken kırpmayı gördüğü en yakın ve en uzak nesnelere uyarlar. Kameranın kırpması değiştirilmez ve render için kullanılmaya devam eder"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "Otomatik Kırpma Başlangıcı"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Otomatik kırpma tarafından hesaplanan yakın kırpma mesafesi (uygulanmıyorsa sıfır)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "Otomatik Kırpma Bitişi"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Otomatik kırpma tarafından hesaplanan uzak kırpma mesafesi (uygulanmıyorsa sıfır)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "Kamera görünümü kameranın kırpmasını kullanır"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "Otomatik kırpmayı kameraya uygula"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "3B Görünümde otomatik kırpmanın hesapladığı kırpmayı, kameranın render için kullanılan Clip Near ve Clip Far değerlerine kopyalar"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "Tüm animasyon"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "Geçerli kare için hesaplanan aralığı kullan"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "Sahnenin kareleri boyunca görülen en yakın ve en uzak derinliği kullanır, böylece render sırasında hiçbir şey kırpılmaz. Yavaş: sahne her karede değerlendirilir"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "Aralığın hesaplandığı kareler"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "Kırpmayı pişmek"

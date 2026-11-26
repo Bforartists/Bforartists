@@ -2072,6 +2072,7 @@ enum eWM_JobType : uint8_t {
   WM_JOB_TYPE_UV_PACK,
   WM_JOB_TYPE_GENERATE_TEXTURE_CACHE,
   WM_JOB_TYPE_SOUND_MIXDOWN,
+  WM_JOB_TYPE_CAMERA_CLIP_FROM_AUTO, /* BFA - Auto Clipping */
   /* Add as needed, bake, seq proxy build
    * if having hard coded values is a problem. */
 };

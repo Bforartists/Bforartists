@@ -40,6 +40,7 @@
 #include "BKE_object.hh"
 #include "BKE_scene.hh"
 #include "BKE_screen.hh"
+#include "BKE_view3d_runtime.hh" /* BFA - Auto Clipping */
 
 #include "BLT_translation.hh"
 
@@ -421,6 +422,18 @@ void BKE_camera_params_from_object(CameraParams *params, const Object *cam_ob)
   params->clip_end = math::max(params->clip_end, params->clip_start + 1e-3f);
 }
 
+/**
+ * BFA - Auto Clipping: use the clipping computed for the region (see `view3d_auto_clip.cc`)
+ * instead of the one of the 3D view or of the camera, which stay untouched.
+ */
+static void camera_params_auto_clip_apply(CameraParams *params, const RegionView3D *rv3d)
+{
+  if (rv3d->runtime->auto_clip_valid) {
+    params->clip_start = rv3d->runtime->auto_clip_start;
+    params->clip_end = rv3d->runtime->auto_clip_end;
+  }
+}
+
 void BKE_camera_params_from_view3d(CameraParams *params,
                                    const Depsgraph *depsgraph,
                                    const View3D *v3d,
@@ -431,10 +444,15 @@ void BKE_camera_params_from_view3d(CameraParams *params,
   params->clip_start = v3d->clip_start;
   params->clip_end = v3d->clip_end;
 
+  if (rv3d->persp != RV3D_CAMOB) {
+    camera_params_auto_clip_apply(params, rv3d); /* BFA - Auto Clipping */
+  }
+
   if (rv3d->persp == RV3D_CAMOB) {
     /* camera view */
     const Object *ob_camera_eval = DEG_get_evaluated(depsgraph, v3d->camera);
     BKE_camera_params_from_object(params, ob_camera_eval);
+    camera_params_auto_clip_apply(params, rv3d); /* BFA - Auto Clipping */
 
     /* Override the aspect, so change in viewport framing is minimized when camera parameters
      * change. */
@@ -620,12 +638,17 @@ rctf BKE_camera_view_border(const Scene *scene,
   }
   BKE_camera_params_compute_viewplane(&params, winx, winy, 1.0f, 1.0f);
   rect_view = params.viewplane;
+  const float clip_start_view = params.clip_start;
 
   /* Get camera view plane. */
   BKE_camera_params_init(&params);
   params.clip_start = v3d->clip_start;
   params.clip_end = v3d->clip_end;
   BKE_camera_params_from_object(&params, camera_eval);
+  /* BFA - Auto Clipping: the view planes are at the near distance, so they only compare if it is
+   * the same for both. The viewport may not use the near distance of the camera. Without the
+   * option it is the same, and nothing changes. */
+  params.clip_start = clip_start_view;
   if (no_shift) {
     params.shiftx = 0.0f;
     params.shifty = 0.0f;

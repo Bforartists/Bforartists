@@ -1721,6 +1721,8 @@ void view3d_main_region_draw(const bContext *C, ARegion *region)
   View3D *v3d = CTX_wm_view3d(C);
 
   view3d_update_viewer_path(C);
+  /* BFA - Auto Clipping: update clip start/end before the projection matrix is computed. */
+  view3d_auto_clip_update(C, region);
   view3d_draw_view(C, region);
 
   DRW_cache_free_old_subdiv();

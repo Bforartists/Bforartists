@@ -182310,3 +182310,63 @@ msgstr "在活动集合内添加一个新集合"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "在活动集合内添加一个新集合并将选定的大纲视图物体移动到其中"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "自动裁剪"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "根据缩放调整裁剪起点和终点，以便尽可能近地查看所选物体。它们自身的值会被保留，禁用时将重新使用。透过摄像机观察时不使用，请参见摄像机的自动裁剪"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "在 3D 视图中透过此摄像机观察时，根据其可见的最近和最远物体调整裁剪。摄像机的裁剪不会被修改，仍用于渲染"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "自动裁剪起点"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "由自动裁剪计算出的近裁剪距离（不适用时为零）"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "自动裁剪终点"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "由自动裁剪计算出的远裁剪距离（不适用时为零）"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "摄像机视图使用摄像机的裁剪"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "将自动裁剪应用到摄像机"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "将3D视图中自动裁剪计算出的裁剪范围复制到摄像机用于渲染的裁剪起点和裁剪终点"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "整个动画"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "使用为当前帧计算出的范围"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "使用场景各帧中看到的最近和最远深度，这样渲染时不会裁剪任何内容。较慢：每一帧都要计算场景"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "用于计算范围的帧"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "烘焙裁剪"

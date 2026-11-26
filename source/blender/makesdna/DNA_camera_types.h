@@ -75,6 +75,20 @@ enum eCamera_Flag : short {
   CAM_SHOWSENSOR = (1 << 8),
   CAM_SHOW_SAFE_CENTER = (1 << 9),
   CAM_SHOW_BG_IMAGE = (1 << 10),
+  /**
+   * BFA - Auto Clipping: in the 3D viewport, looking through this camera, the clipping adapts to
+   * the objects the camera sees. The clip start/end of the camera, used to render, are only
+   * modified by the button that copies the computed range to them. A high bit (the field is a
+   * signed short) on purpose: upstream Blender allocates new bits in increasing order, a low bit
+   * would sooner or later collide with one of its flags. No versioning needed: files without it
+   * load with the option off.
+   */
+  CAM_AUTO_CLIP = (1 << 14),
+  /**
+   * BFA - Auto Clipping: the button of the camera that copies the computed range to its clipping
+   * uses the whole animation instead of the current frame.
+   */
+  CAM_AUTO_CLIP_ANIMATION = (1 << 13),
 };
 ENUM_OPERATORS(eCamera_Flag)
 

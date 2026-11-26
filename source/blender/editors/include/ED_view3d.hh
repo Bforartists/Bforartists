@@ -844,10 +844,15 @@ bool ED_view3d_unproject_v3(
  * it's often preferable for perspective views to calculate the minimum based on near-clipping,
  * unlike orthographic views.
  */
-Bounds<float> ED_view3d_dist_soft_range_get(const View3D *v3d, bool use_persp_range);
+Bounds<float> ED_view3d_dist_soft_range_get(const View3D *v3d,
+                                            bool use_persp_range,
+                                            const RegionView3D *rv3d = nullptr);
 
 /**
  * A version of #ED_view3d_dist_soft_range_get that only returns the minimum.
+ *
+ * \param rv3d: BFA - when given, the minimum of Auto Clipping also depends on the position
+ * of the view (float precision). Optional so existing callers keep working.
  *
  * For perspective-views where setting `dist` near or below the near clip-plane
  * is likely to cause the viewport content to be clipped out of the view.
@@ -856,7 +861,9 @@ Bounds<float> ED_view3d_dist_soft_range_get(const View3D *v3d, bool use_persp_ra
  * the exact value to use is more arbitrary, in practice users are less
  * likely to encounter problems from being zoomed out too far.
  */
-float ED_view3d_dist_soft_min_get(const View3D *v3d, bool use_persp_range);
+float ED_view3d_dist_soft_min_get(const View3D *v3d,
+                                  bool use_persp_range,
+                                  const RegionView3D *rv3d = nullptr);
 
 /**
  * \note copies logic of #ED_view3d_viewplane_get(), keep in sync.

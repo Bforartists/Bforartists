@@ -19,6 +19,7 @@ set(INC_SYS
 set(SRC
   drawobject.cc
   space_view3d.cc
+  view3d_auto_clip.cc
   view3d_buttons.cc
   view3d_camera_control.cc
   view3d_context.cc

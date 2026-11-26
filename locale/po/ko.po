@@ -166840,3 +166840,63 @@ msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가합니다"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가하고 선택된 아웃라이너 오브젝트를 그 안으로 이동합니다"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "자동 클리핑"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "확대/축소에 맞춰 클립 시작과 끝을 조정하여 선택한 오브젝트를 최대한 가까이 볼 수 있게 합니다. 원래 값은 유지되며 비활성화하면 다시 사용됩니다. 카메라를 통해 볼 때는 사용되지 않으며, 카메라의 자동 클리핑을 참조하세요"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "3D 뷰포트에서 이 카메라를 통해 볼 때, 카메라에 보이는 가장 가깝고 가장 먼 오브젝트에 맞춰 클리핑을 조정합니다. 카메라의 클리핑은 변경되지 않으며 렌더링에는 계속 사용됩니다"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "자동 클립 시작"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "자동 클리핑이 계산한 가까운 클리핑 거리(적용되지 않으면 0)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "자동 클립 끝"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "자동 클리핑이 계산한 먼 클리핑 거리(적용되지 않으면 0)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "카메라 뷰는 카메라의 클리핑을 사용합니다"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "자동 클리핑을 카메라에 적용"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "3D 뷰포트에서 자동 클리핑이 계산한 클리핑을 렌더링에 사용되는 카메라의 클립 시작과 클립 끝에 복사합니다"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "전체 애니메이션"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "현재 프레임에 대해 계산된 범위를 사용합니다"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "장면의 모든 프레임에서 보이는 가장 가까운 깊이와 가장 먼 깊이를 사용하여 렌더링 중 아무것도 잘리지 않게 합니다. 느림: 장면이 모든 프레임에서 평가됩니다"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "범위를 계산하는 데 사용하는 프레임"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "클리핑 베이크"

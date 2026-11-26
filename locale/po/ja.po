@@ -184373,3 +184373,63 @@ msgstr "アクティブなコレクションの中に新しいコレクション
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "アクティブなコレクションの中に新しいコレクションを追加し、選択したアウトライナーのオブジェクトをそこに移動します"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "自動クリッピング"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "ズームに合わせてクリップの開始と終了を調整し、選択したオブジェクトをできるだけ近くで見られるようにします。元の値は保持され、無効にすると再び使用されます。カメラを通して見ている間は使用されません。カメラの自動クリッピングを参照してください"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "3Dビューポートでこのカメラを通して見ているとき、カメラに映る最も近いオブジェクトと最も遠いオブジェクトに合わせてクリッピングを調整します。カメラのクリッピングは変更されず、レンダリングには引き続き使用されます"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "自動クリップ開始"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "自動クリッピングが計算した近クリップ距離(適用されない場合はゼロ)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "自動クリップ終了"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "自動クリッピングが計算した遠クリップ距離(適用されない場合はゼロ)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "カメラビューはカメラのクリッピングを使用します"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "自動クリッピングをカメラに適用"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "3Dビューポートで自動クリッピングが計算したクリッピングを、レンダリングに使われるカメラのクリップ開始とクリップ終了にコピーします"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "アニメーション全体"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "現在のフレームで計算された範囲を使用します"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "シーンのフレーム全体で見える最も近い深度と最も遠い深度を使用し、レンダリング中に何も切り取られないようにします。低速：シーンはフレームごとに評価されます"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "範囲の計算に使用するフレーム"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "クリッピングをベイク"

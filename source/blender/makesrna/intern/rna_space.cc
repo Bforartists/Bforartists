@@ -1589,6 +1589,20 @@ static void rna_RegionView3D_view_rotation_set(PointerRNA *ptr, const float *val
   rna_RegionView3D_view_rotation_set_validate_view_axis(rv3d);
 }
 
+/* BFA - Auto Clipping: clipping distances computed for this region (read-only). */
+static float rna_RegionView3D_auto_clip_start_get(PointerRNA *ptr)
+{
+  const RegionView3D *rv3d = static_cast<const RegionView3D *>(ptr->data);
+  return rv3d->runtime->auto_clip_valid ? rv3d->runtime->auto_clip_start : 0.0f;
+}
+
+static float rna_RegionView3D_auto_clip_end_get(PointerRNA *ptr)
+{
+  const RegionView3D *rv3d = static_cast<const RegionView3D *>(ptr->data);
+  return rv3d->runtime->auto_clip_valid ? rv3d->runtime->auto_clip_end : 0.0f;
+}
+/* BFA end */
+
 /* BFA - View Roll in the sidebar, the user view's counterpart of Camera Roll (#6839). */
 static float rna_RegionView3D_view_roll_get(PointerRNA *ptr)
 {
@@ -6181,6 +6195,19 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Clip End", "3D View far clipping distance");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
 
+  /* BFA - Auto Clipping: adapt the clipping range to the zoom, so zooming close to the selected
+   * objects does not clip them away. */
+  prop = RNA_def_property(srna, "use_auto_clip", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag2", V3D_AUTO_CLIP);
+  RNA_def_property_ui_text(
+      prop,
+      "Auto Clipping",
+      "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as "
+      "possible. Their own values are kept and used again when this is disabled. Not used when "
+      "looking through a camera, see the Auto Clipping of the camera");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+  /* BFA end */
+
   prop = RNA_def_property(srna, "lock_camera", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag2", V3D_LOCK_CAMERA);
   RNA_def_property_ui_text(
@@ -6575,6 +6602,28 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "View Roll", "Roll of the view relative to the horizon, zero is level");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, nullptr);
+
+  /* BFA - Auto Clipping: the clipping range used by this region while the option of the 3D view,
+   * or of the camera when looking through it, applies. The values set by the user in the 3D view
+   * and in the camera are never modified. */
+  prop = RNA_def_property(srna, "auto_clip_start", PROP_FLOAT, PROP_DISTANCE);
+  RNA_def_property_float_funcs(prop, "rna_RegionView3D_auto_clip_start_get", nullptr, nullptr);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_range(prop, 0.001f, FLT_MAX, 10, 3);
+  RNA_def_property_ui_text(
+      prop,
+      "Auto Clip Start",
+      "Near clipping distance computed by Auto Clipping (zero when it does not apply)");
+
+  prop = RNA_def_property(srna, "auto_clip_end", PROP_FLOAT, PROP_DISTANCE);
+  RNA_def_property_float_funcs(prop, "rna_RegionView3D_auto_clip_end_get", nullptr, nullptr);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_range(prop, 0.001f, FLT_MAX, 10, 3);
+  RNA_def_property_ui_text(
+      prop,
+      "Auto Clip End",
+      "Far clipping distance computed by Auto Clipping (zero when it does not apply)");
+  /* BFA end */
 
   prop = RNA_def_property(srna, "pause_render", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(

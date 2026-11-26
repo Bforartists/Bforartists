@@ -103122,3 +103122,63 @@ msgstr "Додати нову колекцію всередині активно
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Додати нову колекцію всередині активної колекції та перемістити в неї вибрані об'єкти Структуратора"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "Автоматичне відсікання"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "Підлаштовує початок і кінець відсікання під масштаб, щоб бачити вибрані об'єкти якомога ближче. Власні значення зберігаються і знову використовуються після вимкнення. Не використовується при погляді крізь камеру, див. автоматичне відсікання камери"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "У 3D-в'юпорті при погляді крізь цю камеру підлаштовує відсікання під найближчі та найвіддаленіші видимі об'єкти. Відсікання камери не змінюється і досі використовується для рендерингу"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "Початок автоматичного відсікання"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Ближня відстань відсікання, обчислена автоматичним відсіканням (нуль, якщо не застосовується)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "Кінець автоматичного відсікання"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Дальня відстань відсікання, обчислена автоматичним відсіканням (нуль, якщо не застосовується)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "Вигляд з камери використовує відсікання камери"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "Застосувати автообрізання до камери"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "Копіює обрізання, обчислене автообрізанням у 3D-в'юпорті, у Clip Near і Clip Far камери, що використовуються для рендерингу"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "Уся анімація"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "Використати діапазон, обчислений для поточного кадру"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "Використати найближчу та найдальшу глибину, видиму на кадрах сцени, щоб нічого не обрізалося під час рендерингу. Повільно: сцена обчислюється на кожному кадрі"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "Кадри, за якими обчислюється діапазон"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "Запікання відсікання"

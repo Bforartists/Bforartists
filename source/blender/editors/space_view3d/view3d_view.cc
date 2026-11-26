@@ -1008,7 +1008,7 @@ static bool view3d_localview_init(const Depsgraph *depsgraph,
 
           if (rv3d->persp == RV3D_PERSP) {
             /* Don't zoom closer than the near clipping plane. */
-            const float dist_min = ED_view3d_dist_soft_min_get(v3d, true);
+            const float dist_min = ED_view3d_dist_soft_min_get(v3d, true, rv3d);
             CLAMP_MIN(dist_new, dist_min);
           }
         }

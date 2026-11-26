@@ -73375,3 +73375,63 @@ msgstr "Fügt eine neue Sammlung innerhalb der aktiven Sammlung hinzu"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Fügt eine neue Sammlung innerhalb der aktiven Sammlung hinzu und verschiebt die ausgewählten Outliner-Objekte hinein"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "Automatisches Clipping"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "Passt Clip-Start und Clip-Ende dem Zoom an, um die ausgewählten Objekte so nah wie möglich zu sehen. Ihre eigenen Werte bleiben erhalten und werden wieder verwendet, wenn dies deaktiviert wird. Wird beim Blick durch eine Kamera nicht verwendet, siehe das automatische Clipping der Kamera"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "Passt im 3D-Viewport beim Blick durch diese Kamera das Clipping an die nächsten und am weitesten entfernten Objekte an, die sie sieht. Das Clipping der Kamera wird nicht verändert und weiterhin zum Rendern verwendet"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "Automatischer Clip-Start"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Vom automatischen Clipping berechneter naher Clipping-Abstand (null, wenn es nicht angewendet wird)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "Automatisches Clip-Ende"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Vom automatischen Clipping berechneter ferner Clipping-Abstand (null, wenn es nicht angewendet wird)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "Die Kameraansicht verwendet das Clipping der Kamera"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "Auto-Clipping auf Kamera anwenden"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "Kopiert das vom Auto-Clipping im 3D-Viewport berechnete Clipping in Clip Near und Clip Far der Kamera, die zum Rendern verwendet werden"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "Gesamte Animation"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "Den für das aktuelle Frame berechneten Bereich verwenden"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "Die nächste und die fernste Tiefe verwenden, die über die Frames der Szene gesehen wird, damit beim Rendern nichts abgeschnitten wird. Langsam: die Szene wird in jedem Frame ausgewertet"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "Frames, aus denen der Bereich berechnet wird"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "Clipping backen"
