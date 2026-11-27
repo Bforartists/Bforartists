@@ -995,6 +995,13 @@ class TOPBAR_MT_primitives(Menu):
                             row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
                             row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
+                    # The Curves object has its own two, the same as its Add menu in Edit Mode, #5613.
+                    if obj.type == 'CURVES':
+                        if addon_prefs.topbar_primitives_curve:
+                            row = layout.row(align=True)
+                            row.operator("curves.add_bezier", text="", icon='CURVE_BEZCURVE')
+                            row.operator("curves.add_circle", text="", icon='CURVE_BEZCIRCLE')
+
                     if obj.type == 'SURFACE':
                         if addon_prefs.topbar_primitives_surface:
                             row = layout.row(align=True)
