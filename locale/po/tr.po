@@ -136189,11 +136189,6 @@ msgstr "Düzenleyici bölgelerini göster veya gizle (araç çubuğu, kenar çub
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Alan Kenarını Böl"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Sahne Efekti Dizgici Düzenleyicisini Aç"
 
@@ -136219,12 +136214,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "Metin şeridinin metin düzenleme modunda olup olmadığı"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Alan kenarını imleç konumunda böler ve bitişik her iki alanı da böler"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Alan Kenarını Ayır"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Kenarı Böl"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "İmleçteki alan kenarını, birleştirildiği hizalı kenarlardan ayırır; böylece tek başına hareket eder"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Kenarı Ayır"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"
@@ -136280,6 +136280,23 @@ msgstr "Etkin koleksiyonun içine yeni bir koleksiyon ekler"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Etkin koleksiyonun içine yeni bir koleksiyon ekler ve seçili Başlıklar nesnelerini içine taşır"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "Kipe Sabitle"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "Koparılan menüyü veya paneli yalnızca bir kipte ya da tüm kiplerde gösterir"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "Yalnızca sabitlendiği kipte gösterilir. Tüm kiplerde göstermek için tıklayın"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "Tüm kiplerde gösterilir. Yalnızca geçerli kipte göstermek için tıklayın"
 
 # BFA - machine translated, please review
 msgid "Auto Clipping"

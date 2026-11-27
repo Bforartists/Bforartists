@@ -591,6 +591,13 @@ static void block_region_refresh(const bContext *C, ARegion *region)
   CTX_wm_region_set(const_cast<bContext *>(C), ctx_region);
 }
 
+/* BFA - Tear-Off Menu/Panel: the header button that pins a tear-off to its mode, #7114. Its icon
+ * changes with the mode, so it goes by its operator. */
+static bool but_is_tear_off_mode_toggle(const Button &but)
+{
+  return but.optype && STREQ(but.optype->idname, "WM_OT_tear_off_mode_toggle");
+}
+
 /* BFA - Tear-Off Menu/Panel: where a button of the open header is when collapsed. A collapsed
  * block keeps its layout but not its position, so this goes by its top left corner. */
 static rctf tear_off_pin_but_rect(const PopupBlockHandle *handle,
@@ -750,6 +757,52 @@ bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const w
   return true;
 }
 
+/* BFA - Tear-Off Menu/Panel: seconds, for the bar of the Tear Off row to grow under the cursor and
+ * to shrink back, #7115. Quick, as it answers the cursor, and a little slower on the way out so
+ * passing over the row doesn't flash. */
+static constexpr double TEAR_OFF_ROW_FADE_IN_TIME = 0.1;
+static constexpr double TEAR_OFF_ROW_FADE_OUT_TIME = 0.2;
+
+float tear_off_row_fade_sync(const bContext *C, PopupBlockHandle *handle, const bool is_hovered)
+{
+  const float target = is_hovered ? 1.0f : 0.0f;
+  if (handle == nullptr) {
+    return target;
+  }
+  handle->tear_off_row_hover = is_hovered;
+  if (U.uiflag & USER_REDUCE_MOTION) {
+    handle->tear_off_row_fade = target;
+  }
+  else if (handle->tear_off_row_fade != target && handle->tear_off_row_fade_timer == nullptr) {
+    handle->tear_off_row_fade_timer = WM_event_timer_add(
+        CTX_wm_manager(C), CTX_wm_window(C), TIMER, TEAR_OFF_PIN_FADE_STEP);
+  }
+  /* Eased, as a straight line starts and stops with a visible step. */
+  const float fade = handle->tear_off_row_fade;
+  return fade * fade * (3.0f - 2.0f * fade);
+}
+
+bool tear_off_row_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event)
+{
+  wmTimer *timer = handle->tear_off_row_fade_timer;
+  if (timer == nullptr || event->customdata != timer) {
+    return false;
+  }
+  const float target = handle->tear_off_row_hover ? 1.0f : 0.0f;
+  const double time = (target > handle->tear_off_row_fade) ? TEAR_OFF_ROW_FADE_IN_TIME :
+                                                             TEAR_OFF_ROW_FADE_OUT_TIME;
+  const float step = float(timer->time_delta / time);
+  handle->tear_off_row_fade = (target > handle->tear_off_row_fade) ?
+                                  std::min(handle->tear_off_row_fade + step, target) :
+                                  std::max(handle->tear_off_row_fade - step, target);
+  ED_region_tag_redraw(handle->region);
+  if (handle->tear_off_row_fade == target) {
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer);
+    handle->tear_off_row_fade_timer = nullptr;
+  }
+  return true;
+}
+
 /* BFA - Tear-Off Menu/Panel: seconds, for what covered a clicked tear-off to give way to it. Only a
  * touch, because it follows a click and shouldn't feel like a wait. */
 static constexpr double TEAR_OFF_RAISE_TIME = 0.18;
@@ -831,10 +884,12 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
   for (Button &but : block->buttons()) {
     const bool is_close = but.icon == ICON_PANEL_CLOSE;
     const bool is_pin = but.icon == ICON_UNPINNED;
+    /* Only shown, #7114: a collapsed pin takes clicks on its pin and close icons alone. */
+    const bool is_mode = but_is_tear_off_mode_toggle(but);
     const bool is_checkbox_title = ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN) &&
                                    !but.drawstr.empty();
     if (!but.tear_off_header || (but.flag & UI_HIDDEN) ||
-        !(but.type == ButtonType::Label || is_close || is_pin || is_checkbox_title))
+        !(but.type == ButtonType::Label || is_close || is_pin || is_mode || is_checkbox_title))
     {
       continue;
     }
@@ -1155,6 +1210,10 @@ static void popup_block_remove(bContext *C, PopupBlockHandle *handle)
     WM_event_timer_remove(wm, win, handle->tear_off_raise_timer);
     handle->tear_off_raise_timer = nullptr;
   }
+  if (handle->tear_off_row_fade_timer) {
+    WM_event_timer_remove(wm, win, handle->tear_off_row_fade_timer);
+    handle->tear_off_row_fade_timer = nullptr;
+  }
   if (handle->keep_open_timer) {
     WM_event_timer_remove(wm, win, handle->keep_open_timer);
   }
@@ -1371,7 +1430,9 @@ static void tear_off_panel_header_align(Block *block, const float bounds)
 static void tear_off_header_icons_snap(Block *block)
 {
   for (Button &bt : block->buttons()) {
-    if (bt.tear_off_header && ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE)) {
+    if (bt.tear_off_header &&
+        (ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE) || but_is_tear_off_mode_toggle(bt)))
+    {
       /* Centered too, as in a menu they'd line up with the icons of its rows, off center here. */
       bt.drawflag &= ~(BUT_ALIGN_ALL | BUT_ICON_LEFT);
       const float size = std::round(BLI_rctf_size_y(&bt.rect));

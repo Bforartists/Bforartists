@@ -12972,6 +12972,12 @@ static int handle_menus_recursive(bContext *C,
   int retval = WM_UI_HANDLER_CONTINUE;
   bool do_towards_reinit = false;
 
+  /* BFA - Tear-Off Menu/Panel: the bar of the Tear Off row grows under the cursor, #7115. Here
+   * for every menu, as submenus and menus opened from a button have no handler of their own. */
+  if (event->type == TIMER) {
+    tear_off_row_fade_tick(C, menu, event);
+  }
+
   /* check if we have a submenu, and handle events for it first */
   Button *but = region_find_active_but(menu->region);
   HandleButtonData *data = (but) ? but->active : nullptr;
@@ -14184,9 +14190,13 @@ static int popup_handler(bContext *C, const wmEvent *event, void *userdata)
   }
   /* BFA - Tear-Off Menu/Panel: drags update their active dropbox and tooltip in
    * #wm_drags_handle_events, called from region dispatch, which this modal handler runs before.
-   * A mouse move swallowed by the tear-off would never update the drop feedback. */
+   * A mouse move swallowed by the tear-off would never update the drop feedback.
+   * Only over this tear-off, #7118: elsewhere the editor under the cursor does it with its own
+   * context. From here its drop polls would run with no editor in the context, and the Outliner's
+   * crashed on any drag while a tear-off was open. */
   if (menu->is_tear_off && ELEM(event->type, MOUSEMOVE, TIMER) &&
-      !CTX_wm_manager(C)->runtime->drags.is_empty())
+      !CTX_wm_manager(C)->runtime->drags.is_empty() && tear_off_is_visible(C, menu) &&
+      popup_contains_point(menu, event->xy))
   {
     ARegion *region_prev = CTX_wm_region(C);
     CTX_wm_region_set(C, menu->region);
@@ -14855,6 +14865,18 @@ void tear_off_source_popup_close_tag(ARegion *region_popup)
   if (block && block->handle && !block->handle->is_tear_off) {
     block->handle->menuretval = RETURN_CANCEL;
   }
+}
+
+/* BFA - Tear-Off Menu/Panel: see the declaration. */
+std::optional<bool> tear_off_region_contains_point(const bContext *C,
+                                                   const ARegion *region,
+                                                   const int xy[2])
+{
+  const PopupBlockHandle *menu = tear_off_handle_from_region(CTX_wm_window(C), region);
+  if (menu == nullptr) {
+    return std::nullopt;
+  }
+  return tear_off_is_visible(C, menu) && popup_contains_point(menu, xy);
 }
 
 /* BFA - Tear-Off Menu/Panel */

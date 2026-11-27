@@ -166749,11 +166749,6 @@ msgstr "편집기 영역 표시 또는 숨기기 (툴바, 사이드바, 채널)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "영역 경계 분할"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "씬 이펙트 컴포지터 에디터 열기"
 
@@ -166779,12 +166774,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "텍스트 스트립이 텍스트 편집 모드인지 여부"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "커서 위치의 영역 경계를 분할하여 인접한 두 영역을 모두 분할합니다"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "영역 경계 분리"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "엣지 분할"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "커서 위치의 영역 경계를 병합된 정렬 경계에서 분리하여 따로 움직이도록 합니다"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "엣지 분리"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"
@@ -166840,6 +166840,23 @@ msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가합니다"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가하고 선택된 아웃라이너 오브젝트를 그 안으로 이동합니다"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "모드에 고정"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "떼어 낸 메뉴나 패널을 한 모드에서만 또는 모든 모드에서 표시합니다"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "고정된 모드에서만 표시됩니다. 클릭하면 모든 모드에서 표시합니다"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "모든 모드에서 표시됩니다. 클릭하면 현재 모드에서만 표시합니다"
 
 # BFA - machine translated, please review
 msgid "Auto Clipping"

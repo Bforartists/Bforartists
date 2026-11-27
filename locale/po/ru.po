@@ -182221,11 +182221,6 @@ msgstr "Показать или скрыть области редактора (
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Разделить границу области"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Открыть редактор композитинга эффекта сцены"
 
@@ -182251,12 +182246,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "Находится ли текстовая дорожка в режиме редактирования текста"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Разделить границу области в позиции курсора, разделяя обе соседние области"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Отделить границу области"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Разделить границу"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Отделить границу области под курсором от выровненных границ, с которыми она объединена, чтобы она перемещалась отдельно"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Отделить границу"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"
@@ -182312,6 +182312,23 @@ msgstr "Добавить новую коллекцию внутри активн
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Добавить новую коллекцию внутри активной коллекции и переместить в неё выделенные объекты Аутлайнера"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "Закрепить за режимом"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "Показывать оторванное меню или панель только в одном режиме или во всех режимах"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "Показывается только в режиме, за которым закреплено. Щёлкните, чтобы показывать во всех режимах"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "Показывается во всех режимах. Щёлкните, чтобы показывать только в текущем режиме"
 
 # BFA - machine translated, please review
 msgid "Auto Clipping"

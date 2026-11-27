@@ -50,7 +50,7 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = shaderfx_panel_get_property_pointers(panel, nullptr);
 
-  layout.use_property_split_set(false); /* BFA - align props left */
+  layout.use_property_split_set(true);
 
   layout.prop(ptr, "rim_color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "mask_color", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -66,7 +66,7 @@ static void blur_panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = shaderfx_panel_get_property_pointers(panel, nullptr);
 
-  layout.use_property_split_set(false); /* BFA - align props left */
+  layout.use_property_split_set(true);
 
   layout.prop(ptr, "blur", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   layout.prop(ptr, "samples", UI_ITEM_NONE, std::nullopt, ICON_NONE);

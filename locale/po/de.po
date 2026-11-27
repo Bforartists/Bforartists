@@ -73284,11 +73284,6 @@ msgstr "Editorbereiche ein- oder ausblenden (Werkzeugleiste, Seitenleiste, Kanä
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Bereichskante teilen"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Compositor-Editor des Szeneneffekts öffnen"
 
@@ -73314,12 +73309,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "Ob der Textstreifen im Textbearbeitungsmodus ist"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Teilt die Bereichskante am Mauszeiger und teilt dabei beide angrenzenden Bereiche"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Bereichskante trennen"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Kante teilen"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Trennt die Bereichskante am Mauszeiger von den ausgerichteten Kanten, mit denen sie verbunden ist, sodass sie sich einzeln bewegen lässt"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Kante trennen"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"
@@ -73375,6 +73375,23 @@ msgstr "Fügt eine neue Sammlung innerhalb der aktiven Sammlung hinzu"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Fügt eine neue Sammlung innerhalb der aktiven Sammlung hinzu und verschiebt die ausgewählten Outliner-Objekte hinein"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "An Modus anheften"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "Zeigt das abgerissene Menü oder Panel nur in einem Modus oder in allen Modi"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "Wird nur in dem Modus angezeigt, an den es angeheftet ist. Klicken, um es in allen Modi anzuzeigen"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "Wird in allen Modi angezeigt. Klicken, um es nur im aktuellen Modus anzuzeigen"
 
 # BFA - machine translated, please review
 msgid "Auto Clipping"
