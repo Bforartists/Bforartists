@@ -138953,9 +138953,10 @@ msgid "Beam Angle: %.2f"
 msgstr "ビーム角度：%.2f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "スポットライトのブレンドを調整"
+msgid "Adjust Beam Shape Blend"
+msgstr "ビーム形状のブレンドを調整"
 
 
 msgid "Spot Blend: %.2f"
@@ -183013,9 +183014,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "ステンシルマスクテクスチャの位置をリセット"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "スポットライトのサイズを調整"
+msgid "Adjust Beam Shape Angle"
+msgstr "ビーム形状の角度を調整"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

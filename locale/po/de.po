@@ -72063,9 +72063,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Position der Schablonen-Maskentextur zurücksetzen"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Spotlicht-Größe anpassen"
+msgid "Adjust Beam Shape Angle"
+msgstr "Winkel der Strahlform anpassen"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
@@ -73452,3 +73453,9 @@ msgstr "Frames, aus denen der Bereich berechnet wird"
 # BFA - machine translated, please review
 msgid "Bake Clipping"
 msgstr "Clipping backen"
+
+# BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
+msgctxt "Operator"
+msgid "Adjust Beam Shape Blend"
+msgstr "Überblendung der Strahlform anpassen"

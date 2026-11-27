@@ -135501,9 +135501,10 @@ msgid "Beam Angle: %.2f"
 msgstr "Góc Độ của Chùm Tia: %.2f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Điều Chỉnh Độ Pha Trộn Đèn Pha"
+msgid "Adjust Beam Shape Blend"
+msgstr "Điều chỉnh độ hòa trộn hình dạng chùm tia"
 
 
 msgid "Spot Blend: %.2f"
@@ -178592,9 +178593,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Hoàn Lại vị trí Chất Liệu Màn Chắn Lọc Khuôn In"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Điều Chỉnh Kích Thước Đèn Rọi"
+msgid "Adjust Beam Shape Angle"
+msgstr "Điều chỉnh góc hình dạng chùm tia"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

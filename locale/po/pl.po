@@ -137150,9 +137150,10 @@ msgid "Beam Angle: %.2f"
 msgstr "Kąt wiązki: %.2f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Dostosuj mieszanie światła punktowego"
+msgid "Adjust Beam Shape Blend"
+msgstr "Dostosuj przejście kształtu wiązki"
 
 
 msgid "Spot Blend: %.2f"
@@ -180822,9 +180823,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Resetuj pozycję tekstury maski szablonu"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Dostosuj rozmiar światła punktowego"
+msgid "Adjust Beam Shape Angle"
+msgstr "Dostosuj kąt kształtu wiązki"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

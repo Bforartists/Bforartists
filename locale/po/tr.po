@@ -106188,9 +106188,10 @@ msgid "Light Power: %.3f"
 msgstr "Işık Gücü: %.3f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Spot Işık Karışımını Ayarla"
+msgid "Adjust Beam Shape Blend"
+msgstr "Işın Şekli Geçişini Ayarla"
 
 
 msgid "Spot Blend: %.2f"
@@ -134895,9 +134896,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Şablon Maske Dokusu konumunu sıfırla"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Spot Işık Boyutunu Ayarla"
+msgid "Adjust Beam Shape Angle"
+msgstr "Işın Şekli Açısını Ayarla"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

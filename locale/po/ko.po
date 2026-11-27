@@ -127450,9 +127450,10 @@ msgid "Beam Angle: %.2f"
 msgstr "빔 각도: %.2f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "스포트 라이트 블렌딩 조정"
+msgid "Adjust Beam Shape Blend"
+msgstr "빔 모양 블렌드 조정"
 
 
 msgid "Spot Blend: %.2f"
@@ -165411,9 +165412,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "스텐실 마스크 텍스처 위치 초기화"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "스폿 라이트 크기 조정"
+msgid "Adjust Beam Shape Angle"
+msgstr "빔 모양 각도 조정"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
