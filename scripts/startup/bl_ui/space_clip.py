@@ -2288,10 +2288,16 @@ class CLIP_PT_overlay_display(Panel):
         col.prop(view, "show_marker_pattern", text="Pattern")
         col.prop(view, "show_marker_search", text="Search")
 
-        col.prop(view, "show_track_path", text="Path")
-        col = col.column()
-        col.active = view.show_track_path
-        col.prop(view, "path_length", text="Length")
+        # BFA - the length only shows while the path is on, a greyed out slider is clutter. The
+        # arrow says there is a setting behind the checkbox, #7083.
+        sub = col.row(align=True)
+        sub.prop(view, "show_track_path", text="Path")
+        if view.show_track_path:
+            sub = col.row()
+            sub.separator()
+            sub.prop(view, "path_length", text="Length")
+        else:
+            sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
         col = row.column()
         col.prop(view, "show_disabled", text="Show Disabled")
