@@ -407,6 +407,8 @@ def get_commits(since, until):
         f"--since={since}",
         f"--until={until}",
         "--format=%H|%an|%s",
+        # Merge commits are not changes: the report listed "Merge branch ..." lines.
+        "--no-merges",
         "--reverse"
     ])
     commits = []
@@ -487,7 +489,12 @@ def generate_report(commits, show_all=False, since_date=None, until_date=None):
     # ── Stats bar ──
     total_original = len(commits)
     total_shown = len(interesting)
-    nr_features = total_shown - nr_fix - nr_cleanup - nr_refactor
+    # Counted over the commits shown. The fix, cleanup and refactor counters cover every commit,
+    # most of which are not shown, so subtracting them from the shown total went negative.
+    nr_features = sum(
+        1 for c in interesting
+        if not (is_fix(c["subject"]) or is_cleanup(c["subject"]) or is_refactor(c["subject"]))
+    )
     report_lines.append(
         f"> ✨ {total_shown} changes this week "
         f"({nr_features} features, {nr_fix} fixes, {nr_cleanup} cleanup, {nr_refactor} refactor) "
@@ -542,6 +549,8 @@ def generate_report(commits, show_all=False, since_date=None, until_date=None):
                     first_para = re.sub(r"\n+", " ", first_para)
                     # Collapse multiple spaces
                     first_para = re.sub(r" {2,}", " ", first_para)
+                    # A commit body that starts with "## ..." would become a heading of the report.
+                    first_para = first_para.lstrip("#").lstrip()
                     if len(first_para) > 30:
                         # Description → plain paragraph (no bullet/quote).
                         report_lines.append(f"{first_para[:500]}")
