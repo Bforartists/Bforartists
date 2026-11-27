@@ -6528,8 +6528,81 @@ static void tear_off_shelf_title_get(const Block *block,
   }
 }
 
+/* BFA - Tear-Off Menu/Panel: the icon of the mode a tear-off is pinned to, the same one the mode
+ * selector shows, so the header says which mode brings it back, #7114. */
+static int tear_off_mode_icon(const int mode)
+{
+  switch (mode) {
+    case CTX_MODE_OBJECT:
+      return ICON_OBJECT_DATAMODE;
+    case CTX_MODE_POSE:
+      return ICON_POSE_HLT;
+    case CTX_MODE_SCULPT:
+    case CTX_MODE_SCULPT_CURVES:
+    case CTX_MODE_SCULPT_GREASE_PENCIL:
+    case CTX_MODE_SCULPT_GPENCIL_LEGACY:
+      return ICON_SCULPTMODE_HLT;
+    case CTX_MODE_PAINT_WEIGHT:
+    case CTX_MODE_WEIGHT_GREASE_PENCIL:
+    case CTX_MODE_WEIGHT_GPENCIL_LEGACY:
+      return ICON_WPAINT_HLT;
+    case CTX_MODE_PAINT_VERTEX:
+    case CTX_MODE_VERTEX_GREASE_PENCIL:
+    case CTX_MODE_VERTEX_GPENCIL_LEGACY:
+      return ICON_VPAINT_HLT;
+    case CTX_MODE_PAINT_TEXTURE:
+      return ICON_TPAINT_HLT;
+    case CTX_MODE_PARTICLE:
+      return ICON_PARTICLEMODE;
+    case CTX_MODE_PAINT_GREASE_PENCIL:
+    case CTX_MODE_PAINT_GPENCIL_LEGACY:
+      return ICON_GREASEPENCIL;
+    default:
+      return ICON_EDITMODE_HLT;
+  }
+}
+
+/* BFA - Tear-Off Menu/Panel: whether the header has the mode button, #7114. Not without an editor,
+ * as such a tear-off never hides. Not on a narrow shelf either: its title matters more than a third
+ * icon, and a shelf shows in all modes by default. */
+static bool tear_off_header_has_mode_button(const Block *block)
+{
+  const PopupBlockHandle *handle = block->handle;
+  if (handle == nullptr || !handle->is_tear_off || handle->tear_off_spacetype == 0) {
+    return false;
+  }
+  if (block_is_tear_off_shelf(block)) {
+    const bContext *C = static_cast<const bContext *>(block->evil_C);
+    return tear_off_layout_width(CTX_wm_window(C), handle) >= int(6.0f * UI_UNIT_X);
+  }
+  return true;
+}
+
+/* BFA - Tear-Off Menu/Panel: the icons at the right of a tear-off header. The mode button shows
+ * the mode the tear-off is pinned to, or that it shows in all modes, and a click switches between
+ * the two, #7114. */
+static void tear_off_header_icons_draw(Layout *row,
+                                       const char *collapse_op,
+                                       const char *close_op)
+{
+  /* Nested non-expanding row keeps the icons compact together. */
+  Layout *icons = &row->row(true);
+  icons->fixed_size_set(true);
+  if (tear_off_header_has_mode_button(row->block())) {
+    const int mode = row->block()->handle->tear_off_mode;
+    PointerRNA opptr = icons->op(
+        "WM_OT_tear_off_mode_toggle", "", (mode >= 0) ? tear_off_mode_icon(mode) : ICON_INTERNET);
+    if (opptr.data) {
+      /* For the tooltip, which has no tear-off in its context. */
+      RNA_boolean_set(&opptr, "is_pinned", mode >= 0);
+    }
+  }
+  icons->op(collapse_op, "", ICON_UNPINNED);
+  icons->op(close_op, "", ICON_PANEL_CLOSE);
+}
+
 /* BFA - Tear-Off Menu/Panel: draw the tear-off header row (menu/panel label on the left,
- * pin + close icons on the right) followed by a separator line. The icons are right-aligned
+ * mode + pin + close icons on the right) followed by a separator line. The icons are right-aligned
  * to the block content width after layout by #block_tear_off_align_header(); a spacer is not
  * used because #update_flexible_spacing targets the region width, which is meaningless for
  * popup blocks (and would shift the whole block). */
@@ -6547,20 +6620,16 @@ void tear_off_header_draw(Layout *layout,
   if (!(layout->block()->flag & BLOCK_POPOVER)) {
     row->alignment_set(LayoutAlign::Left);
   }
-  /* The reserved room is the two header icons. */
+  /* The reserved room is the header icons. */
   int title_icon;
   const char *title;
   tear_off_shelf_title_get(layout->block(),
                            CTX_IFACE_(translation_context, label),
-                           2 * UI_UNIT_X,
+                           (tear_off_header_has_mode_button(layout->block()) ? 3 : 2) * UI_UNIT_X,
                            &title_icon,
                            &title);
   row->label(title, title_icon);
-  /* Nested non-expanding row keeps the two icons compact together. */
-  Layout *icons = &row->row(true);
-  icons->fixed_size_set(true);
-  icons->op(collapse_op, "", ICON_UNPINNED);
-  icons->op(close_op, "", ICON_PANEL_CLOSE);
+  tear_off_header_icons_draw(row, collapse_op, close_op);
   layout->emboss_set(prev_emboss);
   /* BFA - Tear-Off Menu/Panel: with the panel colors, the header's own color is what ends it. */
   if (!block_has_tear_off_panel_colors(layout->block())) {
@@ -6703,10 +6772,12 @@ static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel,
     row->label(layout_has_panel_label(left, pt) ? "" : label, ICON_NONE);
   }
   else {
-    /* The reserved room is the two header icons and the preset. */
+    /* The reserved room is the header icons and the preset. */
     int title_icon;
     const char *title;
-    const int reserved = (2 + ((pt->draw_header_preset && has_header) ? 1 : 0)) * UI_UNIT_X;
+    const int reserved = ((tear_off_header_has_mode_button(layout->block()) ? 3 : 2) +
+                          ((pt->draw_header_preset && has_header) ? 1 : 0)) *
+                         UI_UNIT_X;
     tear_off_shelf_title_get(layout->block(), label, reserved, &title_icon, &title);
     /* An empty label would still take up room from the icons. */
     if (title[0] != '\0' || title_icon != ICON_NONE) {
@@ -6721,10 +6792,7 @@ static void tear_off_panel_header_draw(bContext *C, PanelType *pt, Panel *panel,
     pt->draw_header_preset(C, panel);
     panel->layout = nullptr;
   }
-  Layout *icons = &row->row(true);
-  icons->fixed_size_set(true);
-  icons->op("WM_OT_panel_tear_off_collapse", "", ICON_UNPINNED);
-  icons->op("WM_OT_panel_tear_off_close", "", ICON_PANEL_CLOSE);
+  tear_off_header_icons_draw(row, "WM_OT_panel_tear_off_collapse", "WM_OT_panel_tear_off_close");
   layout->emboss_set(prev_emboss);
   /* With the panel colors, the header's own color is what ends it. */
   if (!block_has_tear_off_panel_colors(layout->block())) {

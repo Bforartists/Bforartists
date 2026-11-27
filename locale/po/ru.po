@@ -182312,3 +182312,20 @@ msgstr "Добавить новую коллекцию внутри активн
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Добавить новую коллекцию внутри активной коллекции и переместить в неё выделенные объекты Аутлайнера"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "Закрепить за режимом"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "Показывать оторванное меню или панель только в одном режиме или во всех режимах"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "Показывается только в режиме, за которым закреплено. Щёлкните, чтобы показывать во всех режимах"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "Показывается во всех режимах. Щёлкните, чтобы показывать только в текущем режиме"

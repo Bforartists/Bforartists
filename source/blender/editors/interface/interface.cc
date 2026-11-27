@@ -384,7 +384,8 @@ static void update_flexible_spacing(const ARegion *region, Block *block)
 static bool but_is_tear_off_header_icon(const Button &but)
 {
   return but.optype && (strstr(but.optype->idname, "tear_off_collapse") != nullptr ||
-                        strstr(but.optype->idname, "tear_off_close") != nullptr);
+                        strstr(but.optype->idname, "tear_off_close") != nullptr ||
+                        strstr(but.optype->idname, "tear_off_mode_toggle") != nullptr);
 }
 
 /* BFA - Tear-Off Menu/Panel: right-align the pin/close buttons of the tear-off header
