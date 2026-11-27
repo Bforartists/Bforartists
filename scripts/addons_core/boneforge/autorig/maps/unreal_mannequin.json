@@ -1,0 +1,26 @@
+{
+  "name": "Unreal Mannequin",
+  "description": "Unreal Engine mannequin skeleton naming.",
+  "bones": {
+    "pelvis": "hips",
+    "spine_01": "spine.01",
+    "spine_02": "spine.02",
+    "spine_03": "chest",
+    "neck_01": "neck",
+    "head": "head",
+    "clavicle_l": "clavicle.fk-L",
+    "upperarm_l": "upperarm.fk-L",
+    "lowerarm_l": "forearm.fk-L",
+    "hand_l": "hand.fk-L",
+    "clavicle_r": "clavicle.fk-R",
+    "upperarm_r": "upperarm.fk-R",
+    "lowerarm_r": "forearm.fk-R",
+    "hand_r": "hand.fk-R",
+    "thigh_l": "thigh.fk-L",
+    "calf_l": "shin.fk-L",
+    "foot_l": "foot.fk-L",
+    "thigh_r": "thigh.fk-R",
+    "calf_r": "shin.fk-R",
+    "foot_r": "foot.fk-R"
+  }
+}
