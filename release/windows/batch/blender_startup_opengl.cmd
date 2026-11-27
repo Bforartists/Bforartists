@@ -1,4 +1,5 @@
 @echo off
-echo Starting Blender with the OpenGL backend
+echo Starting Bforartists with the OpenGL backend
 
-"%~dp0\blender" --gpu-backend opengl
+rem BFA - the executable is named bforartists
+"%~dp0\bforartists" --gpu-backend opengl

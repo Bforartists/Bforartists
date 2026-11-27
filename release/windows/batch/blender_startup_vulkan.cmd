@@ -1,4 +1,5 @@
 @echo off
-echo Starting Blender with the Vulkan backend
+echo Starting Bforartists with the Vulkan backend
 
-"%~dp0\blender" --gpu-backend vulkan
+rem BFA - the executable is named bforartists
+"%~dp0\bforartists" --gpu-backend vulkan
