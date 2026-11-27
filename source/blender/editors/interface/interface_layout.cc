@@ -6570,8 +6570,8 @@ void tear_off_header_draw(Layout *layout,
 }
 
 /* BFA - Tear-Off Menu/Panel: the row that tears a menu, popover or dropdown off. It's a thin strip
- * of grip dots without a label, so it doesn't push the real entries down by a whole row. The
- * tooltip of the operator still says what it does. #draw_button draws the dots. */
+ * with a handle bar and no label, so it doesn't push the real entries down by a whole row. The
+ * tooltip of the operator still says what it does. #draw_button draws the bar. */
 PointerRNA tear_off_row_draw(Layout *layout, const char *opname)
 {
   const EmbossType prev_emboss = layout->emboss_or_undefined();
