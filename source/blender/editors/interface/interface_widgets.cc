@@ -5761,20 +5761,24 @@ static WidgetType *popover_widget_type(Button *but, rcti *rect)
  * as something to grab and not as a menu entry, #7115. It's short and dim until the cursor is over
  * the row, to stay quiet at the top of every menu. Then it takes the row's width and the text
  * color, in place of the menu item highlight: the row is too low for that rounded box, whose
- * corners and outline smeared into the menu's edge. */
-static void tear_off_row_widget_draw(const uiWidgetColors *wcol,
+ * corners and outline smeared into the menu's edge. It grows and brightens over a moment, unless
+ * Reduce Motion is on, see #tear_off_row_fade_sync. */
+static void tear_off_row_widget_draw(const bContext *C,
+                                     const Button *but,
+                                     const uiWidgetColors *wcol,
                                      const rcti *rect,
                                      const float zoom)
 {
   /* Only a hovered menu item has an inner color. */
   const bool is_hovered = wcol->inner[3] != 0;
+  const float fade = tear_off_row_fade_sync(C, but->block->handle, is_hovered);
   /* The thickness of the region handle, which here grows with the interface scale like the row. */
   const float thickness = std::max(2.0f, roundf(4.0f * UI_SCALE_FAC * zoom));
   /* The side padding of a menu item. */
   const float pad = roundf(0.125f * U.widget_unit * zoom);
   const float width_max = float(BLI_rcti_size_x(rect)) - 2.0f * pad;
-  const float width = is_hovered ? width_max :
-                                   std::min(width_max, roundf(3.0f * U.widget_unit * zoom));
+  const float width_rest = std::min(width_max, roundf(3.0f * U.widget_unit * zoom));
+  const float width = roundf(interpf(width_max, width_rest, fade));
   if (width < thickness || BLI_rcti_size_y(rect) < thickness) {
     return;
   }
@@ -5788,8 +5792,8 @@ static void tear_off_row_widget_draw(const uiWidgetColors *wcol,
   /* The text color, which is the selected one on a hovered row, so the bar follows the theme. */
   float inner[4];
   rgb_uchar_to_float(inner, wcol->text);
-  inner[3] = is_hovered ? 0.6f : 0.25f;
-  const float outline[4] = {0.0f, 0.0f, 0.0f, is_hovered ? 0.3f : 0.0f};
+  inner[3] = interpf(0.6f, 0.25f, fade);
+  const float outline[4] = {0.0f, 0.0f, 0.0f, 0.3f * fade};
 
   /* Widgets still in the batch would be drawn over this. */
   widgetbase_draw_cache_flush();
@@ -6157,7 +6161,7 @@ void draw_button(const bContext *C, ARegion *region, uiStyle *style, Button *but
   /* BFA - Tear-Off Menu/Panel: the Tear Off row has no label and draws itself. The entry in a
    * panel's context menu runs the same operator, but it has a label and draws like any item. */
   if (but->drawstr.empty() && but->optype && button_is_tear_off_row(but)) {
-    tear_off_row_widget_draw(&wt->wcol, rect, zoom);
+    tear_off_row_widget_draw(C, but, &wt->wcol, rect, zoom);
     return;
   }
 

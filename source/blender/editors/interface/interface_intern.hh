@@ -1228,6 +1228,13 @@ struct PopupBlockHandle {
    * button that opened it has no value to apply. */
   bool tear_off_row_used = false;
 
+  /** BFA - Tear-Off Menu/Panel: how far the bar of the Tear Off row has grown under the cursor,
+   * from 0 at rest to 1, and where it's heading, see #tear_off_row_fade_sync, #7115. */
+  float tear_off_row_fade = 0.0f;
+  bool tear_off_row_hover = false;
+  /** BFA - Tear-Off Menu/Panel: only while #tear_off_row_fade is on its way. */
+  wmTimer *tear_off_row_fade_timer = nullptr;
+
   /** BFA - Tear-Off Menu/Panel: torn off a region's panel, not a popover's row. Set at creation,
    * because the first layout reads it. */
   bool tear_off_from_region = false;
@@ -1541,6 +1548,14 @@ bool tear_off_pin_icon_rect(const PopupBlockHandle *handle, int icon, rctf *r_re
 void tear_off_pin_fade_start(const bContext *C, PopupBlockHandle *handle);
 /** BFA - Tear-Off Menu/Panel: true if this timer event was this pin's fade. */
 bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event);
+/**
+ * BFA - Tear-Off Menu/Panel: how far the bar of the Tear Off row has grown, from 0 at rest to 1
+ * under the cursor, #7115. Called when the row draws, which is when its hover state is known, and
+ * starts the timer that takes it there. With Reduce Motion it's there at once.
+ */
+float tear_off_row_fade_sync(const bContext *C, PopupBlockHandle *handle, bool is_hovered);
+/** BFA - Tear-Off Menu/Panel: true if this timer event was this popup's Tear Off row. */
+bool tear_off_row_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event);
 /** BFA - Tear-Off Menu/Panel: fades in a tear-off just moved to the front. `under_next` is the
  * region that was above it. */
 void tear_off_raise_fade_start(const bContext *C,

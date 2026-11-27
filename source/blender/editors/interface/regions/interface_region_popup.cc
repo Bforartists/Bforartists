@@ -750,6 +750,52 @@ bool tear_off_pin_fade_tick(const bContext *C, PopupBlockHandle *handle, const w
   return true;
 }
 
+/* BFA - Tear-Off Menu/Panel: seconds, for the bar of the Tear Off row to grow under the cursor and
+ * to shrink back, #7115. Quick, as it answers the cursor, and a little slower on the way out so
+ * passing over the row doesn't flash. */
+static constexpr double TEAR_OFF_ROW_FADE_IN_TIME = 0.1;
+static constexpr double TEAR_OFF_ROW_FADE_OUT_TIME = 0.2;
+
+float tear_off_row_fade_sync(const bContext *C, PopupBlockHandle *handle, const bool is_hovered)
+{
+  const float target = is_hovered ? 1.0f : 0.0f;
+  if (handle == nullptr) {
+    return target;
+  }
+  handle->tear_off_row_hover = is_hovered;
+  if (U.uiflag & USER_REDUCE_MOTION) {
+    handle->tear_off_row_fade = target;
+  }
+  else if (handle->tear_off_row_fade != target && handle->tear_off_row_fade_timer == nullptr) {
+    handle->tear_off_row_fade_timer = WM_event_timer_add(
+        CTX_wm_manager(C), CTX_wm_window(C), TIMER, TEAR_OFF_PIN_FADE_STEP);
+  }
+  /* Eased, as a straight line starts and stops with a visible step. */
+  const float fade = handle->tear_off_row_fade;
+  return fade * fade * (3.0f - 2.0f * fade);
+}
+
+bool tear_off_row_fade_tick(const bContext *C, PopupBlockHandle *handle, const wmEvent *event)
+{
+  wmTimer *timer = handle->tear_off_row_fade_timer;
+  if (timer == nullptr || event->customdata != timer) {
+    return false;
+  }
+  const float target = handle->tear_off_row_hover ? 1.0f : 0.0f;
+  const double time = (target > handle->tear_off_row_fade) ? TEAR_OFF_ROW_FADE_IN_TIME :
+                                                             TEAR_OFF_ROW_FADE_OUT_TIME;
+  const float step = float(timer->time_delta / time);
+  handle->tear_off_row_fade = (target > handle->tear_off_row_fade) ?
+                                  std::min(handle->tear_off_row_fade + step, target) :
+                                  std::max(handle->tear_off_row_fade - step, target);
+  ED_region_tag_redraw(handle->region);
+  if (handle->tear_off_row_fade == target) {
+    WM_event_timer_remove(CTX_wm_manager(C), CTX_wm_window(C), timer);
+    handle->tear_off_row_fade_timer = nullptr;
+  }
+  return true;
+}
+
 /* BFA - Tear-Off Menu/Panel: seconds, for what covered a clicked tear-off to give way to it. Only a
  * touch, because it follows a click and shouldn't feel like a wait. */
 static constexpr double TEAR_OFF_RAISE_TIME = 0.18;
@@ -1154,6 +1200,10 @@ static void popup_block_remove(bContext *C, PopupBlockHandle *handle)
   if (handle->tear_off_raise_timer) {
     WM_event_timer_remove(wm, win, handle->tear_off_raise_timer);
     handle->tear_off_raise_timer = nullptr;
+  }
+  if (handle->tear_off_row_fade_timer) {
+    WM_event_timer_remove(wm, win, handle->tear_off_row_fade_timer);
+    handle->tear_off_row_fade_timer = nullptr;
   }
   if (handle->keep_open_timer) {
     WM_event_timer_remove(wm, win, handle->keep_open_timer);
