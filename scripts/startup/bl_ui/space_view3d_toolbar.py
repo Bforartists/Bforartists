@@ -2131,6 +2131,20 @@ class VIEW3D_PT_tools_grease_pencil_paint_appearance(GreasePencilDisplayPanel, P
     bl_category = "Tool"
     bl_ui_units_x = 16
 
+    # BFA - only the Draw brush has cursor settings in this panel. For the others (Erase, Fill,
+    # Tint) it was an empty panel in the sidebar and the Properties editor, so it's hidden there,
+    # #5890. The popover of the tool header stays: it has the Display Cursor checkbox for every
+    # brush.
+    @classmethod
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+        brush = context.tool_settings.gpencil_paint.brush
+        if brush.gpencil_brush_type != 'DRAW':
+            region = context.region
+            return region is not None and region.type == 'TOOL_HEADER'
+        return True
+
 
 class VIEW3D_PT_tools_grease_pencil_sculpt_appearance(GreasePencilDisplayPanel, Panel, View3DPanel):
     bl_context = ".grease_pencil_sculpt"
