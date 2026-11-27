@@ -236,17 +236,45 @@ static void delete_fmodifier_cb(bContext *C, void *ctx_v, void *fcm_v)
   DEG_id_tag_update(ctx->owner_id, ID_RECALC_ANIMATION);
 }
 
+/**
+ * BFA - a checkbox with the value it switches on, in our standard layout: the checkbox with its
+ * label floats left, the value sits in the value column and is only shown while the checkbox is
+ * on, a triangle stands in for it while off. Blender puts the label in the label column and
+ * squeezes the checkbox in front of a greyed out value, which reads zigzag down the panel.
+ */
+static void fmodifier_toggle_value_draw(ui::Layout &layout,
+                                        PointerRNA *ptr,
+                                        const StringRefNull toggle_propname,
+                                        const StringRefNull value_propname,
+                                        const StringRef label,
+                                        const bool indent)
+{
+  /* The split factor of the property split layout, so the values line up with the rows around. */
+  ui::Layout &split = layout.split(0.4f, true);
+
+  ui::Layout &toggle_row = split.row(true);
+  toggle_row.use_property_split_set(false);
+  if (indent) {
+    toggle_row.separator();
+  }
+  toggle_row.prop(ptr, toggle_propname, UI_ITEM_NONE, label, ICON_NONE);
+
+  ui::Layout &value_row = split.row(true);
+  value_row.use_property_split_set(false);
+  if (RNA_boolean_get(ptr, toggle_propname.c_str())) {
+    value_row.prop(ptr, value_propname, UI_ITEM_NONE, "", ICON_NONE);
+  }
+  else {
+    value_row.label("", ICON_DISCLOSURE_TRI_RIGHT);
+  }
+}
+
 static void fmodifier_influence_draw(ui::Layout &layout, PointerRNA *ptr)
 {
-  FModifier *fcm = static_cast<FModifier *>(ptr->data);
   layout.separator();
 
-  ui::Layout &row = layout.row(true, IFACE_("Influence"));
-  row.prop(ptr, "use_influence", UI_ITEM_NONE, "", ICON_NONE);
-
-  ui::Layout &sub = row.row(true);
-  sub.active_set(fcm->flag & FMODIFIER_FLAG_USEINFLUENCE);
-  sub.prop(ptr, "influence", UI_ITEM_NONE, "", ICON_NONE);
+  /* BFA - our checkbox and value layout. */
+  fmodifier_toggle_value_draw(layout, ptr, "use_influence", "influence", IFACE_("Influence"), false);
 }
 
 static void fmodifier_frame_range_header_draw(const bContext *C, Panel *panel)
@@ -769,33 +797,20 @@ static void limits_panel_draw(const bContext *C, Panel *panel)
   layout.use_property_split_set(true);
   layout.use_property_decorate_set(false);
 
-  /* Minimums. */
-  ui::Layout *col = &layout.column(false);
-  ui::Layout *row = &col->row(true, IFACE_("Minimum X"));
-  row->prop(ptr, "use_min_x", UI_ITEM_NONE, "", ICON_NONE);
-  ui::Layout *sub = &row->column(true);
-  sub->active_set(RNA_boolean_get(ptr, "use_min_x"));
-  sub->prop(ptr, "min_x", UI_ITEM_NONE, "", ICON_NONE);
+  /* BFA - a Minimum and a Maximum label with X and Y indented below, in our checkbox and value
+   * layout, instead of "Minimum X" and a lone "Y" sharing the label column. */
 
-  row = &col->row(true, IFACE_("Y"));
-  row->prop(ptr, "use_min_y", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &row->column(true);
-  sub->active_set(RNA_boolean_get(ptr, "use_min_y"));
-  sub->prop(ptr, "min_y", UI_ITEM_NONE, "", ICON_NONE);
+  /* Minimums. */
+  ui::Layout *col = &layout.column(true);
+  col->label(IFACE_("Minimum"), ICON_NONE);
+  fmodifier_toggle_value_draw(*col, ptr, "use_min_x", "min_x", IFACE_("X"), true);
+  fmodifier_toggle_value_draw(*col, ptr, "use_min_y", "min_y", IFACE_("Y"), true);
 
   /* Maximums. */
-  col = &layout.column(false);
-  row = &col->row(true, IFACE_("Maximum X"));
-  row->prop(ptr, "use_max_x", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &row->column(true);
-  sub->active_set(RNA_boolean_get(ptr, "use_max_x"));
-  sub->prop(ptr, "max_x", UI_ITEM_NONE, "", ICON_NONE);
-
-  row = &col->row(true, IFACE_("Y"));
-  row->prop(ptr, "use_max_y", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &row->column(true);
-  sub->active_set(RNA_boolean_get(ptr, "use_max_y"));
-  sub->prop(ptr, "max_y", UI_ITEM_NONE, "", ICON_NONE);
+  col = &layout.column(true);
+  col->label(IFACE_("Maximum"), ICON_NONE);
+  fmodifier_toggle_value_draw(*col, ptr, "use_max_x", "max_x", IFACE_("X"), true);
+  fmodifier_toggle_value_draw(*col, ptr, "use_max_y", "max_y", IFACE_("Y"), true);
 
   fmodifier_influence_draw(layout, ptr);
 }
@@ -835,19 +850,12 @@ static void stepped_panel_draw(const bContext *C, Panel *panel)
   col.prop(ptr, "frame_step", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   col.prop(ptr, "frame_offset", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-  /* Start range settings. */
-  ui::Layout *row = &layout.row(true, IFACE_("Start Frame"));
-  row->prop(ptr, "use_frame_start", UI_ITEM_NONE, "", ICON_NONE);
-  ui::Layout *sub = &row->column(true);
-  sub->active_set(RNA_boolean_get(ptr, "use_frame_start"));
-  sub->prop(ptr, "frame_start", UI_ITEM_NONE, "", ICON_NONE);
-
-  /* End range settings. */
-  row = &layout.row(true, IFACE_("End Frame"));
-  row->prop(ptr, "use_frame_end", UI_ITEM_NONE, "", ICON_NONE);
-  sub = &row->column(true);
-  sub->active_set(RNA_boolean_get(ptr, "use_frame_end"));
-  sub->prop(ptr, "frame_end", UI_ITEM_NONE, "", ICON_NONE);
+  /* BFA - our checkbox and value layout for the start and the end of the range. */
+  ui::Layout &range_col = layout.column(true);
+  fmodifier_toggle_value_draw(
+      range_col, ptr, "use_frame_start", "frame_start", IFACE_("Start Frame"), false);
+  fmodifier_toggle_value_draw(
+      range_col, ptr, "use_frame_end", "frame_end", IFACE_("End Frame"), false);
 
   fmodifier_influence_draw(layout, ptr);
 }
