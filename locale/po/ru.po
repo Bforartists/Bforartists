@@ -137154,9 +137154,10 @@ msgid "Beam Angle: %.2f"
 msgstr "Угол луча: %.2f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Отрегулировать затухание фокуса"
+msgid "Adjust Beam Shape Blend"
+msgstr "Настроить смешение формы луча"
 
 
 msgid "Spot Blend: %.2f"
@@ -180892,9 +180893,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Сбросить положение текстуры маски трафарета"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Настроить размер прожектора"
+msgid "Adjust Beam Shape Angle"
+msgstr "Настроить угол формы луча"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

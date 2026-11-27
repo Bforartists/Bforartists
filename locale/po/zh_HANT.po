@@ -112119,9 +112119,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "重設模板遮罩紋理位置"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "調整聚光大小"
+msgid "Adjust Beam Shape Angle"
+msgstr "調整光束形狀角度"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
@@ -113549,3 +113550,9 @@ msgstr "用於計算範圍的影格"
 # BFA - machine translated, please review
 msgid "Bake Clipping"
 msgstr "烘培裁剪"
+
+# BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
+msgctxt "Operator"
+msgid "Adjust Beam Shape Blend"
+msgstr "調整光束形狀混合"

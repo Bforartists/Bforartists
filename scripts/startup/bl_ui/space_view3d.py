@@ -4044,7 +4044,8 @@ class VIEW3D_MT_object(Menu):
 
                 props = layout.operator(
                     "wm.context_modal_mouse",
-                    text="Adjust Spot Light Size",
+                    # BFA - named after the Beam Shape panel these two settings are in, #5387.
+                    text="Adjust Beam Shape Angle",
                     icon="LIGHT_SIZE",
                 )
                 props.data_path_iter = "selected_editable_objects"
@@ -4054,7 +4055,7 @@ class VIEW3D_MT_object(Menu):
 
                 props = layout.operator(
                     "wm.context_modal_mouse",
-                    text="Adjust Spot Light Blend",
+                    text="Adjust Beam Shape Blend",
                     icon="SPOT_BLEND",
                 )
                 props.data_path_iter = "selected_editable_objects"
@@ -4364,7 +4365,8 @@ class VIEW3D_MT_object_context_menu(Menu):
 
                 props = layout.operator(
                     "wm.context_modal_mouse",
-                    text="Adjust Spot Light Size",
+                    # BFA - named after the Beam Shape panel these two settings are in, #5387.
+                    text="Adjust Beam Shape Angle",
                     icon="LIGHT_SIZE",
                 )
                 props.data_path_iter = "selected_editable_objects"
@@ -4374,7 +4376,7 @@ class VIEW3D_MT_object_context_menu(Menu):
 
                 props = layout.operator(
                     "wm.context_modal_mouse",
-                    text="Adjust Spot Light Blend",
+                    text="Adjust Beam Shape Blend",
                     icon="SPOT_BLEND",
                 )
                 props.data_path_iter = "selected_editable_objects"

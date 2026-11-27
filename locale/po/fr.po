@@ -137128,9 +137128,10 @@ msgid "Beam Angle: %.2f"
 msgstr "Angle du faisceau : %.2f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Ajuster le mélange du spot"
+msgid "Adjust Beam Shape Blend"
+msgstr "Ajuster le mélange de la forme de faisceau"
 
 
 msgid "Spot Blend: %.2f"
@@ -180704,9 +180705,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Réinitialiser la position de la texture de masque pochoir"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Ajuster la taille de l’éclairage spot"
+msgid "Adjust Beam Shape Angle"
+msgstr "Ajuster l’angle de la forme de faisceau"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

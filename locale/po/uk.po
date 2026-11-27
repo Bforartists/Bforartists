@@ -81470,9 +81470,10 @@ msgid "Adjust Light Power"
 msgstr "Наладнати Потужність Освітлювача"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Наладнати Змішання Прожектора"
+msgid "Adjust Beam Shape Blend"
+msgstr "Налаштувати змішування форми променя"
 
 
 msgctxt "Operator"
@@ -101775,9 +101776,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Скинути позицію текстури маски трафарету"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Коригувати розмір прожектора"
+msgid "Adjust Beam Shape Angle"
+msgstr "Налаштувати кут форми променя"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

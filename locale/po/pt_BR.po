@@ -61976,9 +61976,10 @@ msgid "Adjust Light Power"
 msgstr "Ajustar Potência da Luz"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Ajustar Mesclagem da Luz de Spot"
+msgid "Adjust Beam Shape Blend"
+msgstr "Ajustar mesclagem do formato do feixe"
 
 
 msgctxt "Operator"
@@ -80804,9 +80805,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Redefinir posição da textura de máscara estêncil"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Ajustar tamanho da luz spot"
+msgid "Adjust Beam Shape Angle"
+msgstr "Ajustar ângulo do formato do feixe"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

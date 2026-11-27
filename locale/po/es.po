@@ -137150,9 +137150,10 @@ msgid "Beam Angle: %.2f"
 msgstr "Ángulo del haz: %.2f"
 
 
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
 msgctxt "Operator"
-msgid "Adjust Spot Light Blend"
-msgstr "Ajustar fundido del foco"
+msgid "Adjust Beam Shape Blend"
+msgstr "Ajustar fundido de la forma del haz"
 
 
 msgid "Spot Blend: %.2f"
@@ -180830,9 +180831,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Restablecer posición de la textura de máscara esténcil"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Ajustar tamaño de luz focal"
+msgid "Adjust Beam Shape Angle"
+msgstr "Ajustar ángulo de la forma del haz"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

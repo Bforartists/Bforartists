@@ -151674,9 +151674,10 @@ msgid "Reset Stencil Mask Texture position"
 msgstr "Repor posição da textura da máscara stencil"
 
 # BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Size"
 msgctxt "Operator"
-msgid "Adjust Spot Light Size"
-msgstr "Ajustar tamanho da luz foco"
+msgid "Adjust Beam Shape Angle"
+msgstr "Ajustar ângulo do formato de feixe"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
@@ -153127,3 +153128,9 @@ msgstr "Fotogramas a partir dos quais o intervalo é calculado"
 # BFA - machine translated, please review
 msgid "Bake Clipping"
 msgstr "Gerar e gravar recorte"
+
+# BFA - machine translated, please review
+# BFA - reworded, Blender: "Adjust Spot Light Blend"
+msgctxt "Operator"
+msgid "Adjust Beam Shape Blend"
+msgstr "Ajustar mistura do formato de feixe"
