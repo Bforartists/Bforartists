@@ -12972,6 +12972,12 @@ static int handle_menus_recursive(bContext *C,
   int retval = WM_UI_HANDLER_CONTINUE;
   bool do_towards_reinit = false;
 
+  /* BFA - Tear-Off Menu/Panel: the bar of the Tear Off row grows under the cursor, #7115. Here
+   * for every menu, as submenus and menus opened from a button have no handler of their own. */
+  if (event->type == TIMER) {
+    tear_off_row_fade_tick(C, menu, event);
+  }
+
   /* check if we have a submenu, and handle events for it first */
   Button *but = region_find_active_but(menu->region);
   HandleButtonData *data = (but) ? but->active : nullptr;
