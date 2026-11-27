@@ -136227,6 +136227,19 @@ msgid "Split Edge"
 msgstr "Kenarı Böl"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Alan Kenarını Ayır"
+
+# BFA - machine translated, please review
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "İmleçteki alan kenarını, birleştirildiği hizalı kenarlardan ayırır; böylece tek başına hareket eder"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Kenarı Ayır"
+
+# BFA - machine translated, please review
 msgid "Open dragged blend file?"
 msgstr "Sürüklenen Harman dosyası açılsın mı?"
 

@@ -3346,6 +3346,56 @@ static void SCREEN_OT_edge_split(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Separate Edge Operator (BFA - #7108)
+ * \{ */
+
+static wmOperatorStatus area_edge_separate_exec(bContext *C, wmOperator *op)
+{
+  int cursor[2];
+  RNA_int_get_array(op->ptr, "cursor", cursor);
+
+  wmWindow *win = CTX_wm_window(C);
+  bScreen *screen = CTX_wm_screen(C);
+  ScrArea *sa1, *sa2;
+  ScrEdge *edge = screen_area_edge_from_cursor(C, cursor, &sa1, &sa2);
+  if (!edge || !sa1 || !sa2) {
+    return OPERATOR_CANCELLED;
+  }
+
+  if (!screen_geom_edge_separate(win, screen, edge, cursor, false)) {
+    return OPERATOR_CANCELLED;
+  }
+
+  WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
+
+  return OPERATOR_FINISHED;
+}
+
+static void SCREEN_OT_edge_separate(wmOperatorType *ot)
+{
+  PropertyRNA *prop;
+
+  /* identifiers */
+  ot->name = "Separate Area Edge";
+  ot->description =
+      "Separate the area edge at the cursor from the aligned edges it is merged with, so that "
+      "it moves on its own";
+  ot->idname = "SCREEN_OT_edge_separate";
+  ot->exec = area_edge_separate_exec;
+  ot->poll = ED_operator_screenactive;
+
+  /* flags */
+  ot->flag = OPTYPE_INTERNAL;
+
+  /* rna */
+  prop = RNA_def_int_vector(
+      ot->srna, "cursor", 2, nullptr, INT_MIN, INT_MAX, "Cursor", "", INT_MIN, INT_MAX);
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Scale Region Edge Operator
  * \{ */
 
@@ -5764,6 +5814,22 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
     ptr = layout.op("SCREEN_OT_edge_merge",
                     IFACE_("Merge Edge"),
                     ICON_MERGE_EDGE,
+                    blender::wm::OpCallContext::ExecDefault,
+                    UI_ITEM_NONE);
+    RNA_int_set_array(&ptr, "cursor", event->xy);
+  }
+
+  /* BFA - #7108: Separate Edge, the way back from Merge Edge. Only shown on an edge that is
+   * merged with others. */
+  if (sa1 && sa2 &&
+      screen_geom_edge_separate(CTX_wm_window(C), CTX_wm_screen(C), edge, event->xy, true))
+  {
+    if (!screen_geom_edge_can_extend(CTX_wm_window(C), edge)) {
+      layout.separator();
+    }
+    ptr = layout.op("SCREEN_OT_edge_separate",
+                    IFACE_("Separate Edge"),
+                    ICON_SEPARATE,
                     blender::wm::OpCallContext::ExecDefault,
                     UI_ITEM_NONE);
     RNA_int_set_array(&ptr, "cursor", event->xy);
@@ -8833,6 +8899,7 @@ void ED_operatortypes_screen()
   WM_operatortype_append(SCREEN_OT_area_move);
   WM_operatortype_append(SCREEN_OT_edge_merge);
   WM_operatortype_append(SCREEN_OT_edge_split); /* BFA - #6756 */
+  WM_operatortype_append(SCREEN_OT_edge_separate); /* BFA - #7108 */
   WM_operatortype_append(SCREEN_OT_area_split);
   WM_operatortype_append(SCREEN_OT_area_join);
   WM_operatortype_append(SCREEN_OT_area_close);

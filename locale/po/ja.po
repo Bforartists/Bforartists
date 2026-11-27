@@ -184320,6 +184320,19 @@ msgid "Split Edge"
 msgstr "境界を分割"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "エリア境界を分離"
+
+# BFA - machine translated, please review
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "カーソル位置のエリア境界を、統合されている整列した境界から分離し、単独で動かせるようにします"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "境界を分離"
+
+# BFA - machine translated, please review
 msgid "Open dragged blend file?"
 msgstr "ドラッグした Blend ファイルを開きますか?"
 

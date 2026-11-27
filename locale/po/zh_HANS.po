@@ -182257,6 +182257,19 @@ msgid "Split Edge"
 msgstr "拆分边缘"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "分离区域边缘"
+
+# BFA - machine translated, please review
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "将光标处的区域边缘与其合并的对齐边缘分离，使其可以单独移动"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "分离边缘"
+
+# BFA - machine translated, please review
 msgid "Open dragged blend file?"
 msgstr "打开拖入的 Blend 文件?"
 

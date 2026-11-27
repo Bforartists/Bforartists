@@ -84266,6 +84266,19 @@ msgid "Split Edge"
 msgstr "Dividi Bordo"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Separa Bordo Area"
+
+# BFA - machine translated, please review
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Separa il bordo dell'area sotto il cursore dai bordi allineati con cui è unito, in modo che si muova da solo"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Separa Bordo"
+
+# BFA - machine translated, please review
 msgid "Open dragged blend file?"
 msgstr "Aprire il file Blend trascinato?"
 

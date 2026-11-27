@@ -179959,6 +179959,19 @@ msgid "Split Edge"
 msgstr "Tách Cạnh"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Tách Rời Cạnh Khu Vực"
+
+# BFA - machine translated, please review
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Tách rời cạnh khu vực tại con trỏ khỏi các cạnh thẳng hàng mà nó đã được hợp nhất, để nó di chuyển độc lập"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Tách Rời Cạnh"
+
+# BFA - machine translated, please review
 msgid "Open dragged blend file?"
 msgstr "Mở tập tin Blend đã kéo?"
 

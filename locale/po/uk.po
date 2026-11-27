@@ -103069,6 +103069,19 @@ msgid "Split Edge"
 msgstr "Розділити контур"
 
 # BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Відокремити контур області"
+
+# BFA - machine translated, please review
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Відокремити контур області під курсором від вирівняних контурів, з якими він об'єднаний, щоб він переміщувався окремо"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Відокремити контур"
+
+# BFA - machine translated, please review
 msgid "Open dragged blend file?"
 msgstr "Відкрити перетягнутий файл blend?"
 
