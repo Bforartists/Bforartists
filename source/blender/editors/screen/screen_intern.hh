@@ -247,6 +247,17 @@ bool screen_geom_edge_can_extend(const wmWindow *win, ScrEdge *edge);
  */
 void screen_geom_edge_aligned_merge(const wmWindow *win, ScrEdge *edge);
 
+/**
+ * BFA - #7108: the inverse of #screen_geom_edge_aligned_merge. Separate the section of the line
+ * under \a cursor from the aligned edges it is merged with, so that it moves on its own.
+ * With \a test_only nothing changes, and the return value tells if there is anything to separate.
+ */
+bool screen_geom_edge_separate(const wmWindow *win,
+                               bScreen *screen,
+                               ScrEdge *edge,
+                               const int cursor[2],
+                               bool test_only);
+
 /* `screen_context.cc` */
 
 /**

@@ -152959,11 +152959,6 @@ msgstr "Mostrar ou ocultar as regiões do editor (barra de ferramentas, barra la
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Dividir Margem de Área"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Abrir Editor de Composição do Efeito de Cena"
 
@@ -152989,12 +152984,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "Se a faixa de texto está em modo de edição de texto"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Divide a margem da área no cursor, dividindo ambas as áreas adjacentes"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Separar Margem de Área"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Dividir Margem"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Separa a margem da área no cursor das margens alinhadas com as quais está unida, para que se mova sozinha"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Separar Margem"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"

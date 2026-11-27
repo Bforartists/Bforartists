@@ -113381,11 +113381,6 @@ msgstr "顯示或隱藏編輯器區域（工具列、側邊欄、通道）"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "切割區域邊緣"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "開啟場景特效合成器編輯器"
 
@@ -113411,12 +113406,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "文字片段是否處於文字編輯模式"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "在游標處切割區域邊緣，同時切割相鄰的兩個區域"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "分離區域邊緣"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "切割邊緣"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "將游標處的區域邊緣與其合併的對齊邊緣分離，使其可以單獨移動"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "分離邊緣"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"

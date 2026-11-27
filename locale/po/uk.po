@@ -103031,11 +103031,6 @@ msgstr "Показати або сховати області редактора
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Розділити контур області"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Відкрити редактор компонування ефекту сцени"
 
@@ -103061,12 +103056,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "Чи перебуває смужка тексту в режимі редагування тексту"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Розділити контур області біля курсора, розділяючи обидві сусідні області"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Відокремити контур області"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Розділити контур"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Відокремити контур області під курсором від вирівняних контурів, з якими він об'єднаний, щоб він переміщувався окремо"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Відокремити контур"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"

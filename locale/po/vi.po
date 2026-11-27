@@ -179921,11 +179921,6 @@ msgstr "Hiện hoặc ẩn các vùng của trình chỉnh sửa (thanh công c�
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Tách Cạnh Khu Vực"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Mở Trình Biên Soạn Tổng Hợp của Hiệu ứng cảnh"
 
@@ -179951,12 +179946,17 @@ msgid "Whether the text strip is in text editing mode"
 msgstr "Dải văn bản có đang ở chế độ biên soạn văn bản hay không"
 
 # BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Tách cạnh khu vực tại vị trí con trỏ, tách cả hai khu vực liền kề"
+msgctxt "Operator"
+msgid "Separate Area Edge"
+msgstr "Tách Rời Cạnh Khu Vực"
 
 # BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Tách Cạnh"
+msgid "Separate the area edge at the cursor from the aligned edges it is merged with, so that it moves on its own"
+msgstr "Tách rời cạnh khu vực tại con trỏ khỏi các cạnh thẳng hàng mà nó đã được hợp nhất, để nó di chuyển độc lập"
+
+# BFA - machine translated, please review
+msgid "Separate Edge"
+msgstr "Tách Rời Cạnh"
 
 # BFA - machine translated, please review
 msgid "Open dragged blend file?"

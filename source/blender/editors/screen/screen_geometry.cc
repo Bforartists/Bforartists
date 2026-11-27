@@ -10,9 +10,13 @@
  * which the flexible screen-layout system of Blender is established.
  */
 
+#include <array>
+
 #include "BLI_listbase.hh"
 #include "BLI_math_vector_c.hh"
 #include "BLI_rect.hh"
+#include "BLI_set.hh"
+#include "BLI_vector.hh"
 
 #include "BKE_screen.hh"
 
@@ -546,5 +550,216 @@ void screen_geom_edge_aligned_merge(const wmWindow *win, ScrEdge *edge)
     sv->flag = 0;
   }
 }
+
+/* -------------------------------------------------------------------- */
+/** \name Separate Edge (BFA - #7108)
+ *
+ * The inverse of #screen_geom_edge_aligned_merge. Area edges move together when their areas share
+ * corner vertices along the line. Merging makes aligned edges share them, and there was no way
+ * back. Separating gives the areas along the section under the cursor their own vertices at the
+ * junctions where the section meets the rest of the line.
+ * \{ */
+
+namespace {
+
+/** One side of an area that lies on the line, `lo` and `hi` ordered along the line. */
+struct LineSide {
+  ScrArea *area;
+  ScrVert **lo;
+  ScrVert **hi;
+};
+
+}  // namespace
+
+/**
+ * True if the line crossing \a vert stays in one piece when the areas in \a section_areas get
+ * their own copy of \a vert. Both sides of a line have to stay connected to move as one,
+ * otherwise dragging it would pull the areas apart.
+ */
+static bool screen_geom_crossing_line_stays_connected(const bScreen *screen,
+                                                      const ScrVert *vert,
+                                                      const Set<const ScrArea *> &section_areas,
+                                                      const bool line_is_vertical)
+{
+  using Node = std::pair<const ScrVert *, bool>;
+  Set<Node> reached;
+  reached.add({vert, true});
+
+  bool changed = true;
+  while (changed) {
+    changed = false;
+    for (const ScrArea &area : screen->areabase) {
+      const bool in_section = section_areas.contains(&area);
+      /* The two sides of the area that run across the line. */
+      const std::array<std::pair<const ScrVert *, const ScrVert *>, 2> sides =
+          line_is_vertical ? std::array<std::pair<const ScrVert *, const ScrVert *>, 2>{
+                                 {{area.v2, area.v3}, {area.v1, area.v4}}} :
+                             std::array<std::pair<const ScrVert *, const ScrVert *>, 2>{
+                                 {{area.v1, area.v2}, {area.v4, area.v3}}};
+      for (const auto &[a, b] : sides) {
+        const Node node_a{a, in_section && a == vert};
+        const Node node_b{b, in_section && b == vert};
+        if (reached.contains(node_a) != reached.contains(node_b)) {
+          reached.add(node_a);
+          reached.add(node_b);
+          changed = true;
+        }
+      }
+    }
+  }
+  return reached.contains({vert, false});
+}
+
+bool screen_geom_edge_separate(const wmWindow *win,
+                               bScreen *screen,
+                               ScrEdge *edge,
+                               const int cursor[2],
+                               const bool test_only)
+{
+  const bool is_vertical = (edge->v1->vec.x == edge->v2->vec.x);
+  auto along = [&](const ScrVert *v) { return is_vertical ? v->vec.y : v->vec.x; };
+
+  /* All vertices of the line the edge is part of. */
+  Set<const ScrVert *> line_verts;
+  screen_geom_select_connected_edge(win, edge);
+  for (ScrVert &v : screen->vertbase) {
+    if (v.flag) {
+      line_verts.add(&v);
+    }
+  }
+  ED_screen_verts_iter(win, screen, sv)
+  {
+    sv->flag = 0;
+  }
+
+  /* The area sides on both sides of the line. */
+  Vector<LineSide> sides;
+  for (ScrArea &area : screen->areabase) {
+    const std::array<std::pair<ScrVert **, ScrVert **>, 2> candidates =
+        is_vertical ? std::array<std::pair<ScrVert **, ScrVert **>, 2>{
+                          {{&area.v1, &area.v2}, {&area.v4, &area.v3}}} :
+                      std::array<std::pair<ScrVert **, ScrVert **>, 2>{
+                          {{&area.v1, &area.v4}, {&area.v2, &area.v3}}};
+    for (const auto &[lo, hi] : candidates) {
+      if (line_verts.contains(*lo) && line_verts.contains(*hi)) {
+        sides.append({&area, lo, hi});
+      }
+    }
+  }
+  if (sides.is_empty()) {
+    return false;
+  }
+
+  int line_min = INT_MAX, line_max = INT_MIN;
+  for (const LineSide &side : sides) {
+    line_min = std::min(line_min, int(along(*side.lo)));
+    line_max = std::max(line_max, int(along(*side.hi)));
+  }
+
+  /* The line can only be cut where no area runs past the point, so at a junction where areas end
+   * on both sides of the line. */
+  auto is_junction = [&](const int t) {
+    if (t <= line_min || t >= line_max) {
+      return false;
+    }
+    for (const LineSide &side : sides) {
+      if (along(*side.lo) < t && t < along(*side.hi)) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  /* The section under the cursor ends at the nearest junction in each direction. */
+  const int cursor_t = is_vertical ? cursor[1] : cursor[0];
+  int section_min = line_min, section_max = line_max;
+  for (const LineSide &side : sides) {
+    for (const int t : {int(along(*side.lo)), int(along(*side.hi))}) {
+      if (!is_junction(t)) {
+        continue;
+      }
+      if (t < cursor_t) {
+        section_min = std::max(section_min, t);
+      }
+      else {
+        section_max = std::min(section_max, t);
+      }
+    }
+  }
+  if (section_min == line_min && section_max == line_max) {
+    return false;
+  }
+
+  Set<const ScrArea *> section_areas;
+  for (const LineSide &side : sides) {
+    if (along(*side.lo) >= section_min && along(*side.hi) <= section_max) {
+      section_areas.add(side.area);
+    }
+  }
+
+  /* The vertices the section shares with the rest of the line. */
+  Vector<ScrVert *> shared_verts;
+  for (const LineSide &side : sides) {
+    if (!section_areas.contains(side.area)) {
+      continue;
+    }
+    for (ScrVert *vert : {*side.lo, *side.hi}) {
+      const int t = along(vert);
+      if ((t != section_min || t == line_min) && (t != section_max || t == line_max)) {
+        continue;
+      }
+      if (shared_verts.contains(vert)) {
+        continue;
+      }
+      bool is_shared = false;
+      for (const LineSide &other : sides) {
+        if (!section_areas.contains(other.area) && ELEM(vert, *other.lo, *other.hi)) {
+          is_shared = true;
+          break;
+        }
+      }
+      if (is_shared &&
+          screen_geom_crossing_line_stays_connected(screen, vert, section_areas, is_vertical))
+      {
+        shared_verts.append(vert);
+      }
+    }
+  }
+  if (shared_verts.is_empty()) {
+    return false;
+  }
+  if (test_only) {
+    return true;
+  }
+
+  for (ScrVert *vert : shared_verts) {
+    ScrVert *vert_new = screen_geom_vertex_add(screen, vert->vec.x, vert->vec.y);
+    for (ScrArea &area : screen->areabase) {
+      if (!section_areas.contains(&area)) {
+        continue;
+      }
+      for (ScrVert **corner : {&area.v1, &area.v2, &area.v3, &area.v4}) {
+        if (*corner == vert) {
+          *corner = vert_new;
+        }
+      }
+    }
+  }
+
+  /* Rebuild the edges from the areas. */
+  for (ScrArea &area : screen->areabase) {
+    screen_geom_edge_add(screen, area.v1, area.v2);
+    screen_geom_edge_add(screen, area.v2, area.v3);
+    screen_geom_edge_add(screen, area.v3, area.v4);
+    screen_geom_edge_add(screen, area.v4, area.v1);
+  }
+  BKE_screen_remove_double_scredges(screen);
+  BKE_screen_remove_unused_scredges(screen);
+  BKE_screen_remove_unused_scrverts(screen);
+
+  return true;
+}
+
+/** \} */
 
 }  // namespace blender

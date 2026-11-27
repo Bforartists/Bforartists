@@ -3277,10 +3277,10 @@ static void SCREEN_OT_area_split(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Split Edge Operator (BFA - #6756)
+/** \name Separate Edge Operator (BFA - #7108)
  * \{ */
 
-static wmOperatorStatus area_edge_split_exec(bContext *C, wmOperator *op)
+static wmOperatorStatus area_edge_separate_exec(bContext *C, wmOperator *op)
 {
   int cursor[2];
   RNA_int_get_array(op->ptr, "cursor", cursor);
@@ -3293,45 +3293,26 @@ static wmOperatorStatus area_edge_split_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  /* The inverse of Merge Edge: cut each neighbor perpendicular to the edge at
-   * the cursor, recreating a junction. */
-  const eScreenAxis dir_axis =
-      screen_geom_edge_is_horizontal(edge) ? SCREEN_AXIS_V : SCREEN_AXIS_H;
-
-  bool changed = false;
-  for (ScrArea *area : {sa1, sa2}) {
-    const float fac =
-        (dir_axis == SCREEN_AXIS_V) ?
-            float(cursor[0] - area->v1->vec.x) / float(area->v4->vec.x - area->v1->vec.x) :
-            float(cursor[1] - area->v1->vec.y) / float(area->v2->vec.y - area->v1->vec.y);
-    if (area_split_allowed(area, dir_axis) &&
-        area_split(win, screen, area, dir_axis, fac) != nullptr)
-    {
-      changed = true;
-    }
-  }
-
-  if (!changed) {
+  if (!screen_geom_edge_separate(win, screen, edge, cursor, false)) {
     return OPERATOR_CANCELLED;
   }
 
-  BKE_screen_remove_double_scredges(screen);
   WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, nullptr);
-  BKE_icon_changed(screen->id.icon_id);
-  WM_window_title_refresh(CTX_wm_manager(C), win);
 
   return OPERATOR_FINISHED;
 }
 
-static void SCREEN_OT_edge_split(wmOperatorType *ot)
+static void SCREEN_OT_edge_separate(wmOperatorType *ot)
 {
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Split Area Edge";
-  ot->description = "Split the area edge at the cursor, splitting both adjacent areas";
-  ot->idname = "SCREEN_OT_edge_split";
-  ot->exec = area_edge_split_exec;
+  ot->name = "Separate Area Edge";
+  ot->description =
+      "Separate the area edge at the cursor from the aligned edges it is merged with, so that "
+      "it moves on its own";
+  ot->idname = "SCREEN_OT_edge_separate";
+  ot->exec = area_edge_separate_exec;
   ot->poll = ED_operator_screenactive;
 
   /* flags */
@@ -5748,22 +5729,27 @@ static wmOperatorStatus screen_area_options_invoke(bContext *C,
     RNA_int_set_array(&ptr, "cursor", event->xy);
   }
 
-  /* BFA - #6756: Split Edge, the inverse of Merge Edge. */
-  if (sa1 && sa2) {
-    layout.separator();
-    ptr = layout.op("SCREEN_OT_edge_split",
-                    IFACE_("Split Edge"),
-                    ICON_SPLITEDGE,
-                    blender::wm::OpCallContext::ExecDefault,
-                    UI_ITEM_NONE);
-    RNA_int_set_array(&ptr, "cursor", event->xy);
-  }
-
   if (screen_geom_edge_can_extend(CTX_wm_window(C), edge)) {
     layout.separator();
     ptr = layout.op("SCREEN_OT_edge_merge",
                     IFACE_("Merge Edge"),
                     ICON_MERGE_EDGE,
+                    blender::wm::OpCallContext::ExecDefault,
+                    UI_ITEM_NONE);
+    RNA_int_set_array(&ptr, "cursor", event->xy);
+  }
+
+  /* BFA - #7108: Separate Edge, the way back from Merge Edge. Only shown on an edge that is
+   * merged with others. */
+  if (sa1 && sa2 &&
+      screen_geom_edge_separate(CTX_wm_window(C), CTX_wm_screen(C), edge, event->xy, true))
+  {
+    if (!screen_geom_edge_can_extend(CTX_wm_window(C), edge)) {
+      layout.separator();
+    }
+    ptr = layout.op("SCREEN_OT_edge_separate",
+                    IFACE_("Separate Edge"),
+                    ICON_SEPARATE,
                     blender::wm::OpCallContext::ExecDefault,
                     UI_ITEM_NONE);
     RNA_int_set_array(&ptr, "cursor", event->xy);
@@ -8832,7 +8818,7 @@ void ED_operatortypes_screen()
   /* Screen tools. */
   WM_operatortype_append(SCREEN_OT_area_move);
   WM_operatortype_append(SCREEN_OT_edge_merge);
-  WM_operatortype_append(SCREEN_OT_edge_split); /* BFA - #6756 */
+  WM_operatortype_append(SCREEN_OT_edge_separate); /* BFA - #7108 */
   WM_operatortype_append(SCREEN_OT_area_split);
   WM_operatortype_append(SCREEN_OT_area_join);
   WM_operatortype_append(SCREEN_OT_area_close);
