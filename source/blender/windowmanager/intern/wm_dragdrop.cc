@@ -619,8 +619,19 @@ static wmDropBox *wm_dropbox_active(bContext *C, wmDrag *drag, const wmEvent *ev
 
   /* BFA - Tear-Off Menu/Panel: popup regions are screen-level, so they are never found by
    * #ED_area_find_region_xy_visual. Check them first so pinned panels show drop feedback. */
+  /* BFA - Tear-Off Menu/Panel: a tear-off under the cursor covers the editor below, which must not
+   * be asked: its drop polls would run without its context, #7118. */
+  bool is_over_tear_off = false;
   for (ARegion &region : screen->regionbase) {
     if (BLI_rcti_isect_pt_v(&region.winrct, event->xy)) {
+      if (const std::optional<bool> is_inside = ui::tear_off_region_contains_point(
+              C, &region, event->xy))
+      {
+        if (!*is_inside) {
+          continue;
+        }
+        is_over_tear_off = true;
+      }
       ARegion *region_prev = CTX_wm_region(C);
       CTX_wm_region_set(C, &region);
       drop = dropbox_active(C, &region.runtime->handlers, drag, event);
@@ -631,7 +642,7 @@ static wmDropBox *wm_dropbox_active(bContext *C, wmDrag *drag, const wmEvent *ev
     }
   }
 
-  if (area && !drop) {
+  if (area && !drop && !is_over_tear_off) { /* BFA - Tear-Off Menu/Panel */
     ARegion *region = ED_area_find_region_xy_visual(area, RGN_TYPE_ANY, event->xy);
     if (region) {
       drop = dropbox_active(C, &region->runtime->handlers, drag, event);
