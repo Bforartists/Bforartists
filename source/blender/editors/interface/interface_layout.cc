@@ -6591,7 +6591,7 @@ static void tear_off_header_icons_draw(Layout *row,
   if (tear_off_header_has_mode_button(row->block())) {
     const int mode = row->block()->handle->tear_off_mode;
     PointerRNA opptr = icons->op(
-        "WM_OT_tear_off_mode_toggle", "", (mode >= 0) ? tear_off_mode_icon(mode) : ICON_INTERNET);
+        "WM_OT_tear_off_mode_toggle", "", (mode >= 0) ? tear_off_mode_icon(mode) : ICON_HAND);
     if (opptr.data) {
       /* For the tooltip, which has no tear-off in its context. */
       RNA_boolean_set(&opptr, "is_pinned", mode >= 0);
