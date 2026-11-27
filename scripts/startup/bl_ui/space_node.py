@@ -1345,10 +1345,13 @@ class NODE_PT_quality(Panel):
             sub = row.row()
             sub.use_property_split = False
             sub.prop(rd, "compositor_proxy_use_preview_scale", text="Scale")
-            # BFA - scale value greyed out while the checkbox is off
+            # BFA - the scale value only shows while the checkbox is on, a greyed out slider is
+            # clutter. The arrow says there is something behind the checkbox, #7078.
             sub = row.row(align=True)
-            sub.active = rd.compositor_proxy_use_preview_scale
-            sub.prop(rd, "compositor_proxy_preview_scale", text="")
+            if rd.compositor_proxy_use_preview_scale:
+                sub.prop(rd, "compositor_proxy_preview_scale", text="")
+            else:
+                sub.label(icon='DISCLOSURE_TRI_RIGHT')
             row = col.row()
             row.separator()
             row.use_property_split = False
