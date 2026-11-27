@@ -43,10 +43,16 @@ static void panel_draw(const bContext * /*C*/, Panel *panel)
 
   PointerRNA *ptr = shaderfx_panel_get_property_pointers(panel, nullptr);
 
-  layout.use_property_split_set(false); /* BFA - align props left */
+  layout.use_property_split_set(true);
 
   layout.prop(ptr, "size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-  layout.prop(ptr, "use_antialiasing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+  /* BFA - checkboxes float left, the split layout would put them in the value column. */
+  {
+    ui::Layout &row = layout.row(true);
+    row.use_property_split_set(false);
+    row.prop(ptr, "use_antialiasing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    row.decorator(ptr, "use_antialiasing", 0);
+  }
 
   shaderfx_panel_end(layout, ptr);
 }
