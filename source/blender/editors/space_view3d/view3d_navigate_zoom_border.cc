@@ -59,7 +59,7 @@ static wmOperatorStatus view3d_zoom_border_exec(bContext *C, wmOperator *op)
   /* check if zooming in/out view */
   const bool zoom_in = !RNA_boolean_get(op->ptr, "zoom_out");
 
-  const Bounds<float> dist_range = ED_view3d_dist_soft_range_get(v3d, rv3d->is_persp);
+  const Bounds<float> dist_range = ED_view3d_dist_soft_range_get(v3d, rv3d->is_persp, rv3d);
 
   ED_view3d_depth_override(CTX_data_ensure_evaluated_depsgraph(C),
                            region,

@@ -212,7 +212,16 @@ void main()
     constexpr float z_max_offset = 0.00025f;
     float z_factor = float(grid_iter * OVERLAY_GRID_STEPS_DRAW + line.level) /
                      float(OVERLAY_GRID_ITER_LEN * OVERLAY_GRID_STEPS_DRAW);
-    gl_Position.z += mix(z_max_offset, z_min_offset, z_factor);
+    float z_offset = mix(z_max_offset, z_min_offset, z_factor);
+    /* BFA - In depth, this offset is proportional to the distance divided by the near clip
+     * distance, so it is tuned for the default near distance (0.01). Scale it by the near
+     * distance in use, otherwise with a very close near plane (Auto Clipping zoomed in) it
+     * pushes the grid out of the depth range and the grid disappears. */
+    if (flag_test(grid_flag, GRID_DEPTH_BIAS_FROM_NEAR) && drw_view_is_perspective()) {
+      /* View space near distance, negative like the result of `drw_view_far()`. */
+      z_offset *= -drw_view_near() / 0.01f;
+    }
+    gl_Position.z += z_offset;
   }
   else if (flag_test(grid_flag, GRID_BEHIND_GEOMETRY)) {
     /* Set z to far plane, placing the grid behind all geometry. */

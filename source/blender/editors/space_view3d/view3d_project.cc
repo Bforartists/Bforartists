@@ -342,13 +342,11 @@ static void view3d_win_to_ray_segment(const Depsgraph *depsgraph,
   ED_view3d_win_to_origin(region, mval, r_ray_co);
   ED_view3d_win_to_vector(region, mval, r_ray_dir);
 
-  if ((rv3d->is_persp == false) && (rv3d->persp != RV3D_CAMOB)) {
-    end_offset = v3d->clip_end / 2.0f;
-    start_offset = -end_offset;
-  }
-  else {
-    ED_view3d_clip_range_get(depsgraph, v3d, rv3d, false, &start_offset, &end_offset);
-  }
+  /* BFA - Auto Clipping: the clipping of an orthographic view may not be the one of the 3D
+   * view, so it is read through #ED_view3d_clip_range_get in all cases. Without the option it
+   * returns the same range as before (`-clip_end / 2` to `clip_end / 2`). */
+  ED_view3d_clip_range_get(depsgraph, v3d, rv3d, false, &start_offset, &end_offset);
+  /* BFA end */
 
   if (r_ray_start) {
     madd_v3_v3v3fl(r_ray_start, r_ray_co, r_ray_dir, start_offset);

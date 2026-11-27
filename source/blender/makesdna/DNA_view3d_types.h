@@ -202,6 +202,16 @@ enum eView3D_Flag2 : int {
   V3D_SHOW_CAMERA_PASSEPARTOUT = (1 << 19),
   V3D_XR_SHOW_PASSTHROUGH = 1 << 20,
   V3D_SHOW_TOOLSHELF_TABS = 1 << 21, /* BFA - toolshelf tabs toggle flag */
+  /**
+   * BFA - Auto Clipping: the clipping range follows the zoom, to see the selected objects as
+   * close as possible.
+   * Stored in a previously unused bit of an existing field, so no versioning is needed
+   * (files written without it simply load with the option off).
+   * A high bit is used on purpose: upstream Blender allocates new bits of this field in
+   * increasing order, so a low bit would sooner or later collide with one of its flags
+   * and silently turn the option on in files saved by Blender.
+   */
+  V3D_AUTO_CLIP = 1 << 30,
 };
 ENUM_OPERATORS(eView3D_Flag2)
 

@@ -82,6 +82,20 @@ static void rna_Camera_angle_y_set(PointerRNA *ptr, float value)
   cam->lens = fov_to_focallength(value, cam->sensor_y);
 }
 
+/* BFA - Auto Clipping: the frames the range is computed from, stored as a flag. */
+static int rna_Camera_auto_clip_frames_get(PointerRNA *ptr)
+{
+  const Camera *cam = id_cast<const Camera *>(ptr->owner_id);
+  return (cam->flag & CAM_AUTO_CLIP_ANIMATION) ? 1 : 0;
+}
+
+static void rna_Camera_auto_clip_frames_set(PointerRNA *ptr, int value)
+{
+  Camera *cam = id_cast<Camera *>(ptr->owner_id);
+  SET_FLAG_FROM_TEST(cam->flag, value == 1, CAM_AUTO_CLIP_ANIMATION);
+}
+/* BFA end */
+
 static void rna_Camera_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
 {
   Camera *camera = id_cast<Camera *>(ptr->owner_id);
@@ -799,6 +813,40 @@ void RNA_def_camera(BlenderRNA *brna)
   RNA_def_property_ui_range(prop, 0.001f, FLT_MAX, 10, 3);
   RNA_def_property_ui_text(prop, "Clip End", "Camera far clipping distance");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, nullptr);
+
+  /* BFA - Auto Clipping: only changes what the 3D viewport shows when looking through the
+   * camera, so the values above (used to render) are not modified. */
+  prop = RNA_def_property(srna, "use_auto_clip", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, nullptr, "flag", CAM_AUTO_CLIP);
+  RNA_def_property_ui_text(
+      prop,
+      "Auto Clipping",
+      "In the 3D Viewport, looking through this camera, adapt the clipping to "
+      "the nearest and furthest objects it sees. The clipping of the camera is "
+      "not modified and is still used to render");
+  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, nullptr);
+
+  /* The frames the button that copies the computed range to the clipping above uses. */
+  static const EnumPropertyItem auto_clip_frames_items[] = {
+      {0, "CURRENT", 0, "Current Frame", "Use the range computed for the current frame"},
+      {1,
+       "ANIMATION",
+       0,
+       "Whole Animation",
+       "Use the nearest and furthest depth seen over the frames of the scene, so nothing is "
+       "clipped while rendering it. Slow: the scene is evaluated at every frame"},
+      {0, nullptr, 0, nullptr, nullptr},
+  };
+  prop = RNA_def_property(srna, "auto_clip_frames", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, auto_clip_frames_items);
+  RNA_def_property_enum_funcs(
+      prop, "rna_Camera_auto_clip_frames_get", "rna_Camera_auto_clip_frames_set", nullptr);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  /* No name: a dropdown without a label before it shows the name of its property as a title in
+   * its menu, which the other dropdowns of the properties do not have. */
+  RNA_def_property_ui_text(prop, "", "Frames the range is computed from");
+  RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, nullptr);
+  /* BFA end */
 
   prop = RNA_def_property(srna, "lens", PROP_FLOAT, PROP_DISTANCE_CAMERA);
   RNA_def_property_float_sdna(prop, nullptr, "lens");

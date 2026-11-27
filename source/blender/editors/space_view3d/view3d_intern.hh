@@ -61,6 +61,17 @@ void VIEW3D_OT_clear_render_border(wmOperatorType *ot);
 void VIEW3D_OT_toggle_shading(wmOperatorType *ot);
 void VIEW3D_OT_toggle_xray(wmOperatorType *ot);
 
+/* `view3d_auto_clip.cc` (BFA - Auto Clipping) */
+
+/**
+ * Compute the clipping range of \a region when Auto Clipping applies: #V3D_AUTO_CLIP in a free
+ * view, #CAM_AUTO_CLIP of the camera looking through it. Called before the region is drawn, so
+ * every navigation, selection or transform change is taken into account.
+ */
+void view3d_auto_clip_update(const bContext *C, ARegion *region);
+/** Copy the range computed for the camera view to the clipping of the camera. */
+void VIEW3D_OT_camera_clip_from_auto(wmOperatorType *ot);
+
 /* `view3d_draw.cc` */
 
 void view3d_main_region_draw(const bContext *C, ARegion *region);

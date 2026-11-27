@@ -252,6 +252,7 @@ void view3d_operatortypes()
   WM_operatortype_append(VIEW3D_OT_select_menu);
   WM_operatortype_append(VIEW3D_OT_bone_select_menu);
   WM_operatortype_append(VIEW3D_OT_camera_to_view);
+  WM_operatortype_append(VIEW3D_OT_camera_clip_from_auto); /* BFA - Auto Clipping */
   WM_operatortype_append(VIEW3D_OT_camera_to_view_selected);
   WM_operatortype_append(VIEW3D_OT_object_as_camera);
   WM_operatortype_append(VIEW3D_OT_localview);

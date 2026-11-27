@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "BKE_view3d_runtime.hh" /* BFA - Auto Clipping */
+
 #include "DEG_depsgraph_query.hh"
 
 #include "DNA_camera_types.h"
@@ -298,6 +300,14 @@ class Grid : Overlay {
       return false;
     }
 
+    /* BFA - The near distance of Auto Clipping can be far below the default one: keep the
+     * depth bias of the grid relative to it (see `overlay_grid_vert.glsl`). Without the option
+     * the grid is drawn as in Blender. */
+    if (rv3d->runtime->auto_clip_valid) {
+      grid_flag_ |= (grid_flag_ ? GRID_DEPTH_BIAS_FROM_NEAR : OVERLAY_GridBits(0));
+      axis_flag_ |= (axis_flag_ ? GRID_DEPTH_BIAS_FROM_NEAR : OVERLAY_GridBits(0));
+    }
+
     /* Query grid scales from unit/scaling; this range suffices for user-visible levels. */
     Array<float, SI_GRID_STEPS_LEN> steps(SI_GRID_STEPS_LEN);
     ED_view3d_grid_steps(state.scene, v3d, rv3d, steps.data());
@@ -391,13 +401,23 @@ class Grid : Overlay {
         axis_flag_ |= GRID_CAMERA;
       }
 
-      float clip_dist = ((Camera *)(camera_object->data))->clip_end;
+      /* BFA - Auto Clipping: the clip end in use may not be the one of the camera. */
+      float clip_dist = rv3d->runtime->auto_clip_valid ?
+                            rv3d->runtime->auto_clip_end :
+                            ((Camera *)(camera_object->data))->clip_end;
+      /* BFA end */
       grid_ubo_.clip_rect = float2(clip_dist);
     }
     else {
       bool use_clip_end = rv3d->is_persp ||
                           ((v3d->flag & (V3D_XR_SESSION_SURFACE | V3D_XR_SESSION_MIRROR)) != 0);
-      grid_ubo_.clip_rect = use_clip_end ? float2(v3d->clip_end) :
+      /* BFA - Auto Clipping: the clip end in use may not be the one of the 3D view. In
+       * orthographic views the computed range does not have the format of a distance. */
+      const float clip_end = (rv3d->is_persp && rv3d->runtime->auto_clip_valid) ?
+                                 rv3d->runtime->auto_clip_end :
+                                 v3d->clip_end;
+      /* BFA end */
+      grid_ubo_.clip_rect = use_clip_end ? float2(clip_end) :
                                            float2(std::max(4.0f / rv3d->winmat[0][0],
                                                            4.0f / rv3d->winmat[1][1]));
     }

@@ -182329,3 +182329,63 @@ msgstr "Показывается только в режиме, за которы
 # BFA - machine translated, please review
 msgid "Shown in all modes. Click to show it only in the current mode"
 msgstr "Показывается во всех режимах. Щёлкните, чтобы показывать только в текущем режиме"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "Автоматическая отсечка"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "Подстраивает начало и конец отсечки под масштаб, чтобы видеть выбранные объекты как можно ближе. Собственные значения сохраняются и снова используются при отключении. Не используется при взгляде через камеру, см. автоматическую отсечку камеры"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "В 3D-вьюпорте при взгляде через эту камеру подстраивает отсечку под ближайшие и самые дальние видимые объекты. Отсечка камеры не изменяется и по-прежнему используется при рендеринге"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "Начало автоматической отсечки"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Ближняя дистанция отсечки, вычисленная автоматической отсечкой (ноль, если не применяется)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "Конец автоматической отсечки"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Дальняя дистанция отсечки, вычисленная автоматической отсечкой (ноль, если не применяется)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "Вид из камеры использует отсечку камеры"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "Применить автообрезку к камере"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "Копирует обрезку, вычисленную автообрезкой в 3D-вьюпорте, в Clip Near и Clip Far камеры, используемые для рендеринга"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "Вся анимация"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "Использовать диапазон, вычисленный для текущего кадра"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "Использовать ближайшую и самую дальнюю глубину, видимую на кадрах сцены, чтобы ничто не обрезалось при рендеринге. Медленно: сцена вычисляется на каждом кадре"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "Кадры, по которым вычисляется диапазон"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "Запекание отсечки"

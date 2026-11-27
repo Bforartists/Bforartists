@@ -182227,3 +182227,63 @@ msgstr "Widoczne tylko w trybie, do którego jest przypięte. Kliknij, aby pokaz
 # BFA - machine translated, please review
 msgid "Shown in all modes. Click to show it only in the current mode"
 msgstr "Widoczne we wszystkich trybach. Kliknij, aby pokazywać tylko w bieżącym trybie"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "Automatyczne obcinanie"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "Dopasowuje początek i koniec obcinania do powiększenia, aby widzieć zaznaczone obiekty jak najbliżej. Ich własne wartości są zachowane i używane ponownie po wyłączeniu. Nieużywane podczas patrzenia przez kamerę, zobacz automatyczne obcinanie kamery"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "W widoku 3D, patrząc przez tę kamerę, dopasowuje obcinanie do najbliższych i najdalszych obiektów, które widzi. Obcinanie kamery nie jest zmieniane i nadal służy do renderowania"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "Początek automatycznego obcinania"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Bliska odległość obcinania obliczona przez automatyczne obcinanie (zero, jeśli nie ma zastosowania)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "Koniec automatycznego obcinania"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Daleka odległość obcinania obliczona przez automatyczne obcinanie (zero, jeśli nie ma zastosowania)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "Widok kamery używa obcinania kamery"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "Zastosuj automatyczne przycinanie do kamery"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "Kopiuje przycinanie obliczone przez automatyczne przycinanie w widoku 3D do Clip Near i Clip Far kamery, używanych do renderowania"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "Cała animacja"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "Użyj zakresu obliczonego dla bieżącej klatki"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "Użyj najbliższej i najdalszej głębokości widzianej w klatkach sceny, aby nic nie zostało przycięte podczas renderowania. Wolne: scena jest oceniana w każdej klatce"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "Klatki, z których obliczany jest zakres"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "Wypiecz obcinanie"

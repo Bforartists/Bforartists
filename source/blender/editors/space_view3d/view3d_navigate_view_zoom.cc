@@ -330,7 +330,7 @@ static void viewzoom_apply_3d(ViewOpsData *vod,
                               const bool zoom_invert,
                               const bool zoom_to_pos)
 {
-  const Bounds<float> dist_range = ED_view3d_dist_soft_range_get(vod->v3d, false);
+  const Bounds<float> dist_range = ED_view3d_dist_soft_range_get(vod->v3d, false, vod->rv3d);
   float zfac = viewzoom_scale_value_offset(&vod->region->winrct,
                                            viewzoom,
                                            zoom_invert,
@@ -431,7 +431,7 @@ static void view_zoom_apply_step(bContext *C,
   use_cam_zoom = (rv3d->persp == RV3D_CAMOB) &&
                  !(rv3d->is_persp && ED_view3d_camera_lock_check(v3d, rv3d));
 
-  const Bounds<float> dist_range = ED_view3d_dist_soft_range_get(v3d, false);
+  const Bounds<float> dist_range = ED_view3d_dist_soft_range_get(v3d, false, rv3d);
 
   if (delta < 0) {
     const float step = 1.2f;

@@ -166,6 +166,36 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
         sub.prop(cam, "clip_end", text="Clip Far", text_ctxt=i18n_contexts.id_camera)
 
 
+# BFA - Auto Clipping: only changes the 3D viewport looking through this camera, the clipping of
+# the Lens panel, used to render, is not modified. The button copies the computed range to it,
+# to "bake" it (available while a 3D viewport looks through this camera).
+class DATA_PT_lens_auto_clip(CameraButtonsPanel, Panel):
+    bl_label = "Auto Clipping"
+    bl_parent_id = "DATA_PT_lens"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {
+        'BLENDER_RENDER',
+        'BLENDER_EEVEE',
+        'BLENDER_WORKBENCH',
+    }
+
+    def draw_header(self, context):
+        cam = context.camera
+        self.layout.prop(cam, "use_auto_clip", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        cam = context.camera
+
+        layout.active = cam.use_auto_clip
+
+        col = layout.column()
+        col.prop(cam, "auto_clip_frames", text="Frames")
+        col.operator("view3d.camera_clip_from_auto", text="Bake Clipping", icon='BAKE')
+
+
 class DATA_PT_camera_stereoscopy(CameraButtonsPanel, Panel):
     bl_label = "Stereoscopy"
     COMPAT_ENGINES = {
@@ -657,6 +687,7 @@ classes = (
     CAMERA_PT_safe_areas_presets,
     DATA_PT_context_camera,
     DATA_PT_lens,
+    DATA_PT_lens_auto_clip,
     DATA_PT_camera_dof,
     DATA_PT_camera_dof_aperture,
     DATA_PT_camera,

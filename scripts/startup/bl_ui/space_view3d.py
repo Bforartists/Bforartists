@@ -8877,9 +8877,28 @@ class VIEW3D_PT_view3d_properties(Panel):
         subcol.active = bool(view.region_3d.view_perspective != "CAMERA" or view.region_quadviews)
         subcol.prop(view, "lens", text="Focal Length")
 
+        # BFA - Auto Clipping: while the range of this view is computed, Clip Near/Far are greyed
+        # out and show it, it follows the zoom. The values of the user are kept and used again
+        # when it is off. The range is zero when Auto Clipping does not apply: the option is off,
+        # or the camera looked through does not use it.
+        region_3d = view.region_3d
+        use_auto_clip = region_3d.auto_clip_end > 0.0
+        if use_auto_clip:
+            clip_data, clip_start, clip_end = region_3d, "auto_clip_start", "auto_clip_end"
+        else:
+            clip_data, clip_start, clip_end = view, "clip_start", "clip_end"
         subcol = col.column(align=True)
-        subcol.prop(view, "clip_start", text="Clip Near")
-        subcol.prop(view, "clip_end", text="Clip Far", text_ctxt=i18n_contexts.id_camera)
+        subcol.enabled = not use_auto_clip
+        subcol.prop(clip_data, clip_start, text="Clip Near")
+        subcol.prop(clip_data, clip_end, text="Clip Far", text_ctxt=i18n_contexts.id_camera)
+
+        subcol = col.column()
+        row = subcol.row()
+        row.use_property_split = False
+        row.prop(view, "use_auto_clip")
+        if view.use_auto_clip and region_3d.view_perspective == "CAMERA" and not use_auto_clip:
+            # BFA - the camera view uses the clipping of the camera, see its Auto Clipping
+            subcol.label(text="Camera view uses the camera clipping")
 
         subcol.separator()
 

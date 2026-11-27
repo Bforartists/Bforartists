@@ -154,16 +154,36 @@ Camera *ED_view3d_camera_data_get(View3D *v3d, RegionView3D *rv3d)
   return nullptr;
 }
 
-float ED_view3d_dist_soft_min_get(const View3D *v3d, const bool use_persp_range)
+float ED_view3d_dist_soft_min_get(const View3D *v3d,
+                                  const bool use_persp_range,
+                                  const RegionView3D *rv3d)
 {
+  /* BFA - Auto Clipping: the near clipping plane follows the view distance, so it can not stop
+   * the zoom. Only a minimum depending on float precision is kept: the view is positioned
+   * relative to the origin with a float, so its absolute precision is about 1e-7 of the
+   * coordinates of the pivot. Under 1e-5 of them the view would visibly shake. */
+  if (v3d->flag2 & V3D_AUTO_CLIP) {
+    float dist_min = v3d->grid * 1.0e-4f;
+    if (rv3d) {
+      const float ofs_max = std::max(
+          {fabsf(rv3d->ofs[0]), fabsf(rv3d->ofs[1]), fabsf(rv3d->ofs[2])});
+      dist_min = std::max(dist_min, ofs_max * 1.0e-5f);
+    }
+    return dist_min;
+  }
   return use_persp_range ? (v3d->clip_start * 1.5f) : v3d->grid * 0.001f;
 }
 
-Bounds<float> ED_view3d_dist_soft_range_get(const View3D *v3d, const bool use_persp_range)
+Bounds<float> ED_view3d_dist_soft_range_get(const View3D *v3d,
+                                            const bool use_persp_range,
+                                            const RegionView3D *rv3d)
 {
+  /* BFA - Auto Clipping: same reason as above, the far plane follows the view distance. */
+  const float dist_max = (v3d->flag2 & V3D_AUTO_CLIP) ? (v3d->grid * 1.0e6f) :
+                                                        (v3d->clip_end * 10.0f);
   return {
-      ED_view3d_dist_soft_min_get(v3d, use_persp_range),
-      v3d->clip_end * 10.0f,
+      ED_view3d_dist_soft_min_get(v3d, use_persp_range, rv3d),
+      dist_max,
   };
 }
 

@@ -182069,3 +182069,63 @@ msgstr "Affiché uniquement dans le mode auquel il est épinglé. Cliquer pour l
 # BFA - machine translated, please review
 msgid "Shown in all modes. Click to show it only in the current mode"
 msgstr "Affiché dans tous les modes. Cliquer pour l’afficher uniquement dans le mode actuel"
+
+# BFA - machine translated, please review
+msgid "Auto Clipping"
+msgstr "Découpage automatique"
+
+# BFA - machine translated, please review
+msgid "Adapt Clip Near and Clip Far to the zoom, to see the selected objects as close as possible. Their own values are kept and used again when this is disabled. Not used when looking through a camera, see the Auto Clipping of the camera"
+msgstr "Adapte le début et la fin du découpage au zoom, pour voir les objets sélectionnés au plus près. Leurs propres valeurs sont conservées et réutilisées quand l'option est désactivée. Inutilisé en regardant à travers une caméra, voir le découpage automatique de la caméra"
+
+# BFA - machine translated, please review
+msgid "In the 3D Viewport, looking through this camera, adapt the clipping to the nearest and furthest objects it sees. The clipping of the camera is not modified and is still used to render"
+msgstr "Dans la vue 3D, en regardant à travers cette caméra, adapte le découpage aux objets les plus proches et les plus éloignés qu'elle voit. Le découpage de la caméra n'est pas modifié et sert toujours au rendu"
+
+# BFA - machine translated, please review
+msgid "Auto Clip Start"
+msgstr "Début du découpage automatique"
+
+# BFA - machine translated, please review
+msgid "Near clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Distance de découpage proche calculée par le découpage automatique (zéro s'il ne s'applique pas)"
+
+# BFA - machine translated, please review
+msgid "Auto Clip End"
+msgstr "Fin du découpage automatique"
+
+# BFA - machine translated, please review
+msgid "Far clipping distance computed by Auto Clipping (zero when it does not apply)"
+msgstr "Distance de découpage lointaine calculée par le découpage automatique (zéro s'il ne s'applique pas)"
+
+# BFA - machine translated, please review
+msgid "Camera view uses the camera clipping"
+msgstr "La vue caméra utilise le découpage de la caméra"
+
+# BFA - machine translated, please review
+msgid "Apply Auto Clipping to Camera"
+msgstr "Appliquer le découpage automatique à la caméra"
+
+# BFA - machine translated, please review
+msgid "Copy the clipping computed by Auto Clipping in the 3D Viewport to the Clip Near and Clip Far of the camera, used to render"
+msgstr "Copie le découpage calculé par le découpage automatique dans la vue 3D vers le début et la fin du découpage de la caméra, utilisés pour le rendu"
+
+# BFA - machine translated, please review
+msgid "Whole Animation"
+msgstr "Toute l'animation"
+
+# BFA - machine translated, please review
+msgid "Use the range computed for the current frame"
+msgstr "Utilise la plage calculée pour l'image actuelle"
+
+# BFA - machine translated, please review
+msgid "Use the nearest and furthest depth seen over the frames of the scene, so nothing is clipped while rendering it. Slow: the scene is evaluated at every frame"
+msgstr "Utilise la profondeur la plus proche et la plus éloignée vues sur les images de la scène, pour que rien ne soit coupé pendant son rendu. Lent : la scène est évaluée à chaque image"
+
+# BFA - machine translated, please review
+msgid "Frames the range is computed from"
+msgstr "Images à partir desquelles la plage est calculée"
+
+# BFA - machine translated, please review
+msgid "Bake Clipping"
+msgstr "Précalculer le découpage"
