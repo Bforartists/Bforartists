@@ -291,9 +291,12 @@ class MASK_PT_display:
             sub.active = space_data.show_mask_overlay
             sub.prop(space_data, "mask_overlay_mode", text="")
 
-            row = col.row()
-            row.active = space_data.show_mask_overlay and (space_data.mask_overlay_mode == 'COMBINED')
-            row.prop(space_data, "blend_factor", text="Blending Factor")
+            # BFA - the factor only blends the Combined overlay, so it only shows for that one.
+            # Greyed out for the other mode it was clutter, #7083.
+            if space_data.mask_overlay_mode == 'COMBINED':
+                row = col.row()
+                row.separator()
+                row.prop(space_data, "blend_factor", text="Blending Factor")
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
