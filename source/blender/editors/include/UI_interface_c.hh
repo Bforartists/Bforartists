@@ -2484,6 +2484,14 @@ void popup_handlers_remove_all(bContext *C, ListBaseT<wmEventHandler> *handlers)
  */
 bool tear_off_enabled();
 /**
+ * BFA - Tear-Off Menu/Panel: whether the tear-off of this region is shown under this window
+ * position, or nothing if the region isn't a tear-off's. Not its `winrct`: a collapsed tear-off's
+ * region covers the whole window, and a hidden one keeps its region, #7118.
+ */
+std::optional<bool> tear_off_region_contains_point(const bContext *C,
+                                                   const ARegion *region,
+                                                   const int xy[2]);
+/**
  * BFA - Tear-Off Menu/Panel: #PopupBlockHandle::tear_off_width for the block of this layout, 0
  * when it isn't in a tear-off of a tool shelf panel. For RNA, which can't see the handle.
  */
