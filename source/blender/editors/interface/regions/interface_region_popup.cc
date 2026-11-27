@@ -591,6 +591,13 @@ static void block_region_refresh(const bContext *C, ARegion *region)
   CTX_wm_region_set(const_cast<bContext *>(C), ctx_region);
 }
 
+/* BFA - Tear-Off Menu/Panel: the header button that pins a tear-off to its mode, #7114. Its icon
+ * changes with the mode, so it goes by its operator. */
+static bool but_is_tear_off_mode_toggle(const Button &but)
+{
+  return but.optype && STREQ(but.optype->idname, "WM_OT_tear_off_mode_toggle");
+}
+
 /* BFA - Tear-Off Menu/Panel: where a button of the open header is when collapsed. A collapsed
  * block keeps its layout but not its position, so this goes by its top left corner. */
 static rctf tear_off_pin_but_rect(const PopupBlockHandle *handle,
@@ -831,10 +838,12 @@ static void tear_off_pin_widget_draw(const bContext *C, ARegion *region, Block *
   for (Button &but : block->buttons()) {
     const bool is_close = but.icon == ICON_PANEL_CLOSE;
     const bool is_pin = but.icon == ICON_UNPINNED;
+    /* Only shown, #7114: a collapsed pin takes clicks on its pin and close icons alone. */
+    const bool is_mode = but_is_tear_off_mode_toggle(but);
     const bool is_checkbox_title = ELEM(but.type, ButtonType::Checkbox, ButtonType::CheckboxN) &&
                                    !but.drawstr.empty();
     if (!but.tear_off_header || (but.flag & UI_HIDDEN) ||
-        !(but.type == ButtonType::Label || is_close || is_pin || is_checkbox_title))
+        !(but.type == ButtonType::Label || is_close || is_pin || is_mode || is_checkbox_title))
     {
       continue;
     }
@@ -1371,7 +1380,9 @@ static void tear_off_panel_header_align(Block *block, const float bounds)
 static void tear_off_header_icons_snap(Block *block)
 {
   for (Button &bt : block->buttons()) {
-    if (bt.tear_off_header && ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE)) {
+    if (bt.tear_off_header &&
+        (ELEM(bt.icon, ICON_UNPINNED, ICON_PANEL_CLOSE) || but_is_tear_off_mode_toggle(bt)))
+    {
       /* Centered too, as in a menu they'd line up with the icons of its rows, off center here. */
       bt.drawflag &= ~(BUT_ALIGN_ALL | BUT_ICON_LEFT);
       const float size = std::round(BLI_rctf_size_y(&bt.rect));

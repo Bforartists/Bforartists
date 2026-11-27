@@ -2544,9 +2544,32 @@ static bool wm_tear_off_poll(bContext *C)
   return ui::tear_off_enabled() && WM_operator_winactive(C);
 }
 
+/* BFA - Tear-Off Menu/Panel: the mode a new tear-off is pinned to, or -1 to show it in all modes,
+ * #7114. Only the 3D View has modes, so a tear-off from another editor doesn't hide with them. A
+ * panel of the 3D View says with its context if it belongs to a mode, also when the Properties
+ * editor shows it in the Tool tab. Without one it shows in every mode, like the sidebar's Item
+ * tab. A menu or dropdown says nothing, so in the 3D View it's taken to belong to the mode. The
+ * button in the header switches between the two. */
+static int tear_off_mode_default(bContext *C, const PanelType *pt)
+{
+  if (pt) {
+    const PanelType *root = pt;
+    while (root->parent) {
+      root = root->parent;
+    }
+    return (root->space_type == SPACE_VIEW3D && root->context[0] != '\0') ?
+               int(CTX_data_mode_enum(C)) :
+               -1;
+  }
+  const ScrArea *area = CTX_wm_area(C);
+  return (area && area->spacetype == SPACE_VIEW3D) ? int(CTX_data_mode_enum(C)) : -1;
+}
+
 /* BFA - Tear-Off Menu/Panel: finish a popup just created as a tear-off. Does nothing if the popup
  * wasn't created. */
-static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle)
+static void tear_off_handle_init(bContext *C,
+                                 ui::PopupBlockHandle *handle,
+                                 const PanelType *pt = nullptr)
 {
   if (handle == nullptr || handle->region == nullptr) {
     return;
@@ -2568,7 +2591,7 @@ static void tear_off_handle_init(bContext *C, ui::PopupBlockHandle *handle)
 
   /* Record the context this popup was torn off from so it can be hidden/restored when the editor
    * domain or its mode changes. */
-  handle->tear_off_mode = CTX_data_mode_enum(C);
+  handle->tear_off_mode = tear_off_mode_default(C, pt);
   handle->tear_off_spacetype = CTX_wm_area(C) ? CTX_wm_area(C)->spacetype : 0;
   handle->tear_off_workspace = CTX_wm_workspace(C);
 
@@ -2732,6 +2755,47 @@ static void WM_OT_menu_tear_off_collapse(wmOperatorType *ot)
   ot->poll = wm_tear_off_poll;
 }
 
+/* BFA - Tear-Off Menu/Panel: pin the tear-off to the current mode, or show it in all modes,
+ * #7114. */
+static wmOperatorStatus wm_tear_off_mode_toggle_exec(bContext *C, wmOperator * /*op*/)
+{
+  ui::PopupBlockHandle *menu = tear_off_handle_from_context(C);
+  if (menu == nullptr) {
+    return OPERATOR_CANCELLED;
+  }
+
+  menu->tear_off_mode = (menu->tear_off_mode >= 0) ? -1 : int(CTX_data_mode_enum(C));
+  /* The button shows the new state. */
+  ED_region_tag_refresh_ui(menu->region);
+  return OPERATOR_FINISHED;
+}
+
+static std::string wm_tear_off_mode_toggle_get_description(bContext * /*C*/,
+                                                           wmOperatorType * /*ot*/,
+                                                           PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "is_pinned")) {
+    return TIP_("Shown only in the mode it is pinned to. Click to show it in all modes");
+  }
+  return TIP_("Shown in all modes. Click to show it only in the current mode");
+}
+
+/* BFA - Tear-Off Menu/Panel */
+static void WM_OT_tear_off_mode_toggle(wmOperatorType *ot)
+{
+  ot->name = "Pin to Mode";
+  ot->idname = "WM_OT_tear_off_mode_toggle";
+  ot->description = "Show the torn-off menu or panel only in one mode, or in all modes";
+
+  ot->exec = wm_tear_off_mode_toggle_exec;
+  ot->poll = wm_tear_off_poll;
+  ot->get_description = wm_tear_off_mode_toggle_get_description;
+
+  /* What the button shows, set when it's drawn. */
+  PropertyRNA *prop = RNA_def_boolean(ot->srna, "is_pinned", false, "Pinned", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+}
+
 /* BFA - Tear-Off Menu/Panel: stores identifiers rather than a button, because the source button
  * can be freed on redraw and pointers don't survive undo. */
 static wmOperatorStatus wm_enum_tear_off_exec(bContext *C, wmOperator *op)
@@ -2822,7 +2886,7 @@ static wmOperatorStatus wm_panel_tear_off_exec(bContext *C, wmOperator *op)
       C, pt, true, false, &handle, true, tear_off_init, RNA_boolean_get(op->ptr, "skip_poll"));
 
   /* BFA - Tear-Off Menu/Panel */
-  tear_off_handle_init(C, handle);
+  tear_off_handle_init(C, handle, pt);
   tear_off_place_at_source(op, handle);
 
   tear_off_grab_begin(C, op, handle); /* BFA - Tear-Off Menu/Panel */
@@ -4751,6 +4815,7 @@ void wm_operatortypes_register()
   WM_operatortype_append(WM_OT_menu_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_menu_tear_off_close); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_menu_tear_off_collapse); /* BFA - Tear-Off Menu/Panel */
+  WM_operatortype_append(WM_OT_tear_off_mode_toggle); /* BFA - Tear-Off Menu/Panel, #7114 */
   WM_operatortype_append(WM_OT_enum_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_panel_tear_off); /* BFA - Tear-Off Menu/Panel */
   WM_operatortype_append(WM_OT_panel_tear_off_close); /* BFA - Tear-Off Menu/Panel */

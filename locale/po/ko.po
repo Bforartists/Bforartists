@@ -166840,3 +166840,20 @@ msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가합니다"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "활성 컬렉션 안에 새로운 컬렉션을 추가하고 선택된 아웃라이너 오브젝트를 그 안으로 이동합니다"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "모드에 고정"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "떼어 낸 메뉴나 패널을 한 모드에서만 또는 모든 모드에서 표시합니다"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "고정된 모드에서만 표시됩니다. 클릭하면 모든 모드에서 표시합니다"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "모든 모드에서 표시됩니다. 클릭하면 현재 모드에서만 표시합니다"

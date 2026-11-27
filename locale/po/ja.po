@@ -184373,3 +184373,20 @@ msgstr "アクティブなコレクションの中に新しいコレクション
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "アクティブなコレクションの中に新しいコレクションを追加し、選択したアウトライナーのオブジェクトをそこに移動します"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "モードに固定"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "切り離したメニューやパネルを 1 つのモードのみ、またはすべてのモードで表示します"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "固定されたモードでのみ表示されます。クリックするとすべてのモードで表示します"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "すべてのモードで表示されます。クリックすると現在のモードでのみ表示します"

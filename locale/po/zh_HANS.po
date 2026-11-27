@@ -182310,3 +182310,20 @@ msgstr "在活动集合内添加一个新集合"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "在活动集合内添加一个新集合并将选定的大纲视图物体移动到其中"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "固定到模式"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "仅在一个模式或在所有模式下显示撕下的菜单或面板"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "仅在其固定的模式下显示。点击以在所有模式下显示"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "在所有模式下显示。点击以仅在当前模式下显示"

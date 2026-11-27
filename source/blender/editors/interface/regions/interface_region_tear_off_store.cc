@@ -673,6 +673,9 @@ static bool entry_pin_create(bContext *C, wmWindow *win, const EntryData &data, 
     return false;
   }
   entry_apply(data, win, handle);
+  /* Creating it chose a default, and the user may have chosen otherwise, #7114. An entry with a
+   * mode is only created in that mode. */
+  handle->tear_off_mode = data.mode.empty() ? -1 : int(CTX_data_mode_enum(C));
   return true;
 }
 

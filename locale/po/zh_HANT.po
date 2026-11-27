@@ -113472,3 +113472,20 @@ msgstr "在作用中的集盒內新增一個集盒"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "在作用中的集盒內新增一個集盒並將選取的大綱編輯器物件移動至其中"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "固定到模式"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "僅在一個模式或在所有模式下顯示撕下的選單或面板"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "僅在其固定的模式下顯示。點擊以在所有模式下顯示"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "在所有模式下顯示。點擊以僅在目前模式下顯示"

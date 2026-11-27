@@ -182210,3 +182210,20 @@ msgstr "Agrega una nueva colección dentro de la colección activa"
 # BFA - machine translated, please review
 msgid "Add a new collection inside the active collection and move selected Outliner objects into it"
 msgstr "Agrega una nueva colección dentro de la colección activa y mueve a ella los objetos seleccionados del Listado"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pin to Mode"
+msgstr "Fijar al modo"
+
+# BFA - machine translated, please review
+msgid "Show the torn-off menu or panel only in one mode, or in all modes"
+msgstr "Muestra el menú o panel desprendido solo en un modo o en todos los modos"
+
+# BFA - machine translated, please review
+msgid "Shown only in the mode it is pinned to. Click to show it in all modes"
+msgstr "Se muestra solo en el modo al que está fijado. Clic para mostrarlo en todos los modos"
+
+# BFA - machine translated, please review
+msgid "Shown in all modes. Click to show it only in the current mode"
+msgstr "Se muestra en todos los modos. Clic para mostrarlo solo en el modo actual"
