@@ -3711,6 +3711,11 @@ class WM_MT_region_toggle_pie(Menu):
         # Note that the tool header is enabled/disabled along with the header,
         # no need to include both in this list.
         'HEADER': "show_region_header",
+        # BFA - the tool settings have their own entry, #6000. They hide with the header, but the
+        # header can show without them, and then nothing in the pie brought them back. Next to
+        # the header in this list, so the header keeps the top of the pie and this goes to the
+        # top left.
+        'TOOL_HEADER': "show_region_tool_header",
         'FOOTER': "show_region_footer",
         'ASSET_SHELF': "show_region_asset_shelf",
         'CHANNELS': "show_region_channels",
@@ -3728,6 +3733,7 @@ class WM_MT_region_toggle_pie(Menu):
         'TOOLS': 'UI_TOOLBAR',
         'UI': 'UI_SIDEBAR',
         'HEADER': 'UI_HEADER_BAR',
+        'TOOL_HEADER': 'TOOL_SETTINGS',  # BFA - #6000
         'FOOTER': 'UI_FOOTER_BAR',
         'ASSET_SHELF': 'ASSET_MANAGER',
         'CHANNELS': 'UI_CHANNELS',
@@ -3765,7 +3771,10 @@ class WM_MT_region_toggle_pie(Menu):
             if attr is None:
                 continue
             # In some cases channels exists but can't be toggled.
-            assert hasattr(space_data, attr)
+            # BFA - only checked, as an editor with the region but not the property would stop
+            # the whole pie.
+            if not hasattr(space_data, attr):
+                continue
 
             if space_data.is_property_readonly(attr):
                 continue
@@ -3842,6 +3851,10 @@ class WM_MT_region_toggle_pie(Menu):
             attr = cls._region_info[region_type]
             value = getattr(space_data, attr)
             icon = cls._region_icons[region_type]  # Get icon from mapping
+
+            # BFA - the name it has in the View menu, the region type is called Tool Header.
+            if region_type == 'TOOL_HEADER':
+                text = "Tool Settings"
 
             # bfa - customize labels for filebrowser context
             if is_file_browser:
