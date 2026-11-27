@@ -182219,11 +182219,6 @@ msgstr "显示或隐藏编辑器区域（工具栏、侧栏、通道）"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "拆分区域边缘"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "打开场景效果合成器编辑器"
 
@@ -182247,14 +182242,6 @@ msgstr "文本编辑已激活"
 # BFA - machine translated, please review
 msgid "Whether the text strip is in text editing mode"
 msgstr "文本片段是否处于文本编辑模式"
-
-# BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "在光标处拆分区域边缘，同时拆分相邻的两个区域"
-
-# BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "拆分边缘"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

@@ -166749,11 +166749,6 @@ msgstr "편집기 영역 표시 또는 숨기기 (툴바, 사이드바, 채널)"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "영역 경계 분할"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "씬 이펙트 컴포지터 에디터 열기"
 
@@ -166777,14 +166772,6 @@ msgstr "텍스트 편집 활성"
 # BFA - machine translated, please review
 msgid "Whether the text strip is in text editing mode"
 msgstr "텍스트 스트립이 텍스트 편집 모드인지 여부"
-
-# BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "커서 위치의 영역 경계를 분할하여 인접한 두 영역을 모두 분할합니다"
-
-# BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "엣지 분할"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

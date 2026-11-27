@@ -84228,11 +84228,6 @@ msgstr "Mostra o nascondi le regioni dell'editor (barra degli strumenti, barra l
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Dividi Bordo Area"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Apri Editor Compositore dell'Effetto Scena"
 
@@ -84256,14 +84251,6 @@ msgstr "Modifica Testo Attiva"
 # BFA - machine translated, please review
 msgid "Whether the text strip is in text editing mode"
 msgstr "Indica se lo spezzone di testo è in modalità di modifica del testo"
-
-# BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Divide il bordo dell'area in corrispondenza del cursore, dividendo entrambe le aree adiacenti"
-
-# BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Dividi Bordo"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

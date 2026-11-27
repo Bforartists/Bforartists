@@ -182221,11 +182221,6 @@ msgstr "Показать или скрыть области редактора (
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Разделить границу области"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Открыть редактор композитинга эффекта сцены"
 
@@ -182249,14 +182244,6 @@ msgstr "Редактирование текста активно"
 # BFA - machine translated, please review
 msgid "Whether the text strip is in text editing mode"
 msgstr "Находится ли текстовая дорожка в режиме редактирования текста"
-
-# BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Разделить границу области в позиции курсора, разделяя обе соседние области"
-
-# BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Разделить границу"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

@@ -184282,11 +184282,6 @@ msgstr "エディターの領域を表示または非表示にする（ツール
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "エリア境界を分割"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "シーンエフェクトのコンポジターエディターを開く"
 
@@ -184310,14 +184305,6 @@ msgstr "テキスト編集がアクティブ"
 # BFA - machine translated, please review
 msgid "Whether the text strip is in text editing mode"
 msgstr "テキストストリップがテキスト編集モードかどうか"
-
-# BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "カーソル位置のエリア境界を分割し、隣接する両方のエリアを分割します"
-
-# BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "境界を分割"
 
 # BFA - machine translated, please review
 msgctxt "Operator"

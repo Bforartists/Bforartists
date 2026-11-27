@@ -136189,11 +136189,6 @@ msgstr "Düzenleyici bölgelerini göster veya gizle (araç çubuğu, kenar çub
 
 # BFA - machine translated, please review
 msgctxt "Operator"
-msgid "Split Area Edge"
-msgstr "Alan Kenarını Böl"
-
-# BFA - machine translated, please review
-msgctxt "Operator"
 msgid "Open Scene Effect Compositor Editor"
 msgstr "Sahne Efekti Dizgici Düzenleyicisini Aç"
 
@@ -136217,14 +136212,6 @@ msgstr "Metin Düzenleme Etkin"
 # BFA - machine translated, please review
 msgid "Whether the text strip is in text editing mode"
 msgstr "Metin şeridinin metin düzenleme modunda olup olmadığı"
-
-# BFA - machine translated, please review
-msgid "Split the area edge at the cursor, splitting both adjacent areas"
-msgstr "Alan kenarını imleç konumunda böler ve bitişik her iki alanı da böler"
-
-# BFA - machine translated, please review
-msgid "Split Edge"
-msgstr "Kenarı Böl"
 
 # BFA - machine translated, please review
 msgctxt "Operator"
