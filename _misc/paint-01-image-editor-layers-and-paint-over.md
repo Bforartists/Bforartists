@@ -325,10 +325,50 @@ not part of this plan.
 
 - Full selections: rectangle, ellipse, lasso, by colour, stored as a mask. Every brush and fill
   respects them. Moving selected pixels lifts them into a floating layer.
-- Camera projection of the painting onto scene geometry, for camera moves that planes cannot
-  survive. Blender has the parts (UV Project, `Project Edit`, `Project Apply`) but no clean
-  workflow.
 - Adjustment layers that stay editable (levels, hue and saturation, curves).
+- Camera projection of the painting onto scene geometry, for camera moves that planes cannot
+  survive. See below.
+
+#### Project onto geometry
+
+Recipe from the maintainer, 27 November 2026. One button, **`Project Painting onto Scene`**, does
+three things:
+
+1. **Make a camera UV map** on every mesh that is in the camera frame. A new UV map with a fixed
+   name (for example `PaintOver`), next to the UV maps the mesh already has. Those are not touched.
+2. **Fill it by projecting from the camera**, with what we already ship: the camera UV project
+   Geometry Nodes asset from the default library, applied, or `Project from View` with camera
+   bounds (`uvedit_unwrap_ops.cc:3568`).
+3. **Add the painting to every material on those meshes.** One shared node group goes in before
+   the material output. It reads the painting through the `PaintOver` UV map and blends it over
+   the material as emission, so the paint looks as painted and takes no light. The blend follows
+   the paint's own transparency, so unpainted areas keep their material.
+
+**One control for all of it.** The blend amount sits inside the shared node group. Every material
+uses the same group, so one slider in the Layers panel fades the paint in and out on the whole
+scene. `Remove Projection` takes the group out of all materials and deletes the UV maps again.
+
+Everything this makes is plain Blender data (a UV map, a node group, an image), so the file
+renders the same in vanilla Blender.
+
+Things the build has to deal with:
+
+| Problem | Why | Answer |
+|---|---|---|
+| Paint goes through objects | A UV projection has no idea what is in front. Back sides and hidden surfaces get the paint too | The node group fades paint out on faces turned away from the camera. Surfaces hidden behind others stay painted. Accepted at first, it only shows when the camera moves far |
+| Stretch on large faces | The UV is stored per corner. Across one big polygon a perspective projection bends, the stored UV does not | Subdivide large faces before projecting (the Geometry Nodes asset can do this), or warn |
+| Outside the frame | UVs beyond the picture edge would repeat it | The image is set to clip, so nothing shows there |
+| A material shared with a mesh outside the frame | That mesh has no `PaintOver` UV map, and would show one stray pixel colour all over | To check in the prototype. Likely answer: give those meshes an empty `PaintOver` map placed outside the picture |
+| Moving and deforming objects | An applied UV map sticks to the surface. That is what we want for a still set, and wrong for a walking character | Projection is for the set. Characters are left out by default |
+| Cost | One more texture and a blend in every material in frame | Heavy on big scenes, as expected. The slider at 0 can mute the group |
+
+An option for later, if stretch on large faces turns out to hurt: do the projection in the shader
+from the camera's position for each pixel. It is exact on any mesh and needs no UV map, but it is
+tied to a camera object that must stay where it was.
+
+To do before the design is final: confirm the name and the inputs of the camera UV project asset.
+A search of the library files on 27 November 2026 found a `UV Project` group in `G_Primitives.blend`
+described as relative to an object, and no asset with "camera" in its name.
 
 ## 5. The hard parts
 
@@ -407,6 +447,7 @@ From the maintainer, 27 November 2026.
 | 9 | What "like Grease Pencil" covers | Tools and layout only. Not the stroke feel |
 | 10 | Getting paint alone back onto the render | Reference layers, yes. Also any single layer can be sent to the compositor or shown over the camera by itself |
 | 11 | Selection | Minimal cut (box and lasso to a new layer) in Tier 1, full selections in Tier 6. Selection here means pixels in a layer, or whole layers. There are no strokes to select, this is raster. Selecting strokes stays a Grease Pencil thing |
+| 13 | Projection onto geometry (Tier 6) | Camera UV map on the meshes in frame, filled with the shipped camera UV project asset or Project from View, then one shared node group in every material that blends the painting in as emission, with one slider for all |
 
 Still open:
 
