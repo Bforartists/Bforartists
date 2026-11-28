@@ -12,11 +12,11 @@ merges Blender main into the new branch, pauses for conflict resolution,
 then performs LFS checkout with BFA bias.
 
 Usage:
-    python tools/utils/bforartists_merge_blender.py --week-number 45                      # Standard run
-    python tools/utils/bforartists_merge_blender.py --week-number 45 --force              # Force skip confirmation
-    python tools/utils/bforartists_merge_blender.py --week-number 45 --dry-run            # Simulate run
-    python tools/utils/bforartists_merge_blender.py --week-number 45 --skip-master-update # Skip master update
-    python tools/utils/bforartists_merge_blender.py --week-number 45 --resume             # Resume from conflicts
+    python tools/utils/bforartists_merge_blender.py --week-number 47                      # Standard run
+    python tools/utils/bforartists_merge_blender.py --week-number 47 --force              # Force skip confirmation
+    python tools/utils/bforartists_merge_blender.py --week-number 47 --dry-run            # Simulate run
+    python tools/utils/bforartists_merge_blender.py --week-number 47 --skip-master-update # Skip master update
+    python tools/utils/bforartists_merge_blender.py --week-number 47 --resume             # Resume from conflicts
 
 Help:
     python tools/utils/bforartists_merge_blender.py --help
