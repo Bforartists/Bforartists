@@ -26,6 +26,7 @@
 
 #include "ED_asset.hh"
 #include "ED_buttons.hh"
+#include "ED_space_graph.hh"
 #include "ED_spreadsheet.hh"
 #include "ED_userpref.hh"
 
@@ -997,7 +998,7 @@ static void rna_Space_bool_from_region_flag_update_by_type(bContext *C,
     }
     else if (region_flag == RGN_FLAG_HIDDEN_BY_USER) {
       if (!(region->flag & RGN_FLAG_HIDDEN_BY_USER) != !(region->flag & RGN_FLAG_HIDDEN)) {
-        ED_region_toggle_hidden(C, region);
+        ED_region_toggle_hidden(C, area, region);
 
         if ((region->flag & RGN_FLAG_HIDDEN_BY_USER) == 0) {
           ui::ED_area_type_hud_ensure(C, area);
@@ -2872,7 +2873,7 @@ static void rna_SpaceGraphEditor_normalize_update(bContext *C, PointerRNA * /*pt
 static bool rna_SpaceGraphEditor_has_ghost_curves_get(PointerRNA *ptr)
 {
   SpaceGraph *sipo = static_cast<SpaceGraph *>(ptr->data);
-  return (sipo->runtime.ghost_curves.is_empty() == false);
+  return (sipo->runtime->ghost_curves.is_empty() == false);
 }
 
 static void rna_SpaceConsole_rect_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
@@ -2935,36 +2936,6 @@ static void rna_SequenceEditor_render_size_update(bContext *C, PointerRNA *ptr)
 
   seq_build_proxy(C, ptr);
   seq::cache_cleanup(scene, seq::CacheCleanup::All);
-}
-
-static bool rna_SequenceEditor_clamp_view_get(PointerRNA *ptr)
-{
-  SpaceSeq *sseq = static_cast<SpaceSeq *>(ptr->data);
-  return (sseq->flag & SEQ_CLAMP_VIEW) != 0;
-}
-
-static void rna_SequenceEditor_clamp_view_set(PointerRNA *ptr, bool value)
-{
-  SpaceSeq *sseq = static_cast<SpaceSeq *>(ptr->data);
-  ScrArea *area;
-  ARegion *region;
-
-  area = rna_area_from_space(ptr); /* can be nullptr */
-  if (area == nullptr) {
-    return;
-  }
-
-  region = BKE_area_find_region_type(area, RGN_TYPE_WINDOW);
-  if (region) {
-    if (value) {
-      sseq->flag |= SEQ_CLAMP_VIEW;
-      region->v2d.align &= ~V2D_ALIGN_NO_NEG_Y;
-    }
-    else {
-      sseq->flag &= ~SEQ_CLAMP_VIEW;
-      region->v2d.align |= V2D_ALIGN_NO_NEG_Y;
-    }
-  }
 }
 
 static void rna_Sequencer_view_type_update(Main * /*bmain*/, Scene * /*scene*/, PointerRNA *ptr)
@@ -7181,6 +7152,7 @@ static void rna_def_space_sequencer_timeline_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "waveform_display_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "timeline_overlay.flag");
   RNA_def_property_enum_items(prop, waveform_type_display_items);
+  RNA_def_property_enum_default(prop, 0);
   RNA_def_property_ui_text(prop, "Waveform Display", "How Waveforms are displayed");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
@@ -7197,6 +7169,7 @@ static void rna_def_space_sequencer_timeline_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "waveform_display_style", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "timeline_overlay.flag");
   RNA_def_property_enum_items(prop, waveform_style_display_items);
+  RNA_def_property_enum_default(prop, SEQ_TIMELINE_WAVEFORMS_HALF);
   RNA_def_property_ui_text(prop, "Waveform Style", "How Waveforms are displayed");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
@@ -7228,6 +7201,7 @@ static void rna_def_space_sequencer_timeline_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "thumbnail_display_style", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "timeline_overlay.flag");
   RNA_def_property_enum_items(prop, thumbnail_style_items);
+  RNA_def_property_enum_default(prop, SEQ_TIMELINE_STRIP_END_THUMBNAILS);
   RNA_def_property_ui_text(prop, "Thumbnail style", "How thumbnails are displayed");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);
 
@@ -7413,6 +7387,7 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
   prop = RNA_def_property(srna, "preview_channels", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, nullptr, "flag");
   RNA_def_property_enum_items(prop, preview_channels_items);
+  RNA_def_property_enum_default(prop, SEQ_USE_ALPHA);
   RNA_def_property_ui_text(prop, "Display Channels", "Channels of the preview to display");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, "rna_SequenceEditor_update_cache");
@@ -7448,8 +7423,6 @@ static void rna_def_space_sequencer(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_clamp_view", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, nullptr, "flag", SEQ_CLAMP_VIEW);
-  RNA_def_property_boolean_funcs(
-      prop, "rna_SequenceEditor_clamp_view_get", "rna_SequenceEditor_clamp_view_set");
   RNA_def_property_ui_text(
       prop, "Limit View to Contents", "Limit timeline height to maximum used channel slot");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SEQUENCER, nullptr);

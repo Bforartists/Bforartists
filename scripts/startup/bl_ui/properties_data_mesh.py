@@ -38,6 +38,14 @@ class MESH_MT_vertex_group_context_menu(Menu):
             "object.vertex_group_mirror", text="Mirror Vertex Group (Topology)", icon="TRANSFORM_MIRROR"
         ).use_topology = True
         layout.separator()
+        props = layout.operator("object.vertex_group_lock", text="Lock All", icon="LOCKED")
+        props.action, props.mask = "LOCK", "ALL"
+        props = layout.operator("object.vertex_group_lock", text="Unlock All", icon="UNLOCKED")
+        props.action, props.mask = "UNLOCK", "ALL"
+        props = layout.operator("object.vertex_group_lock", text="Lock Invert All", icon="INVERSE")
+        props.action, props.mask = "INVERT", "ALL"
+
+        layout.separator()
         layout.operator(
             "object.vertex_group_remove_from", text="Remove from All Groups", icon="REMOVE_FROM_ALL_GROUPS"
         ).use_all_groups = True
@@ -46,13 +54,6 @@ class MESH_MT_vertex_group_context_menu(Menu):
             "object.vertex_group_remove", text="Delete All Unlocked Groups", icon="DELETE"
         ).all_unlocked = True
         layout.operator("object.vertex_group_remove", text="Delete All Groups", icon="DELETE").all = True
-        layout.separator()
-        props = layout.operator("object.vertex_group_lock", text="Lock All", icon="LOCKED")
-        props.action, props.mask = "LOCK", "ALL"
-        props = layout.operator("object.vertex_group_lock", text="Unlock All", icon="UNLOCKED")
-        props.action, props.mask = "UNLOCK", "ALL"
-        props = layout.operator("object.vertex_group_lock", text="Lock Invert All", icon="INVERSE")
-        props.action, props.mask = "INVERT", "ALL"
 
 
 class MESH_MT_shape_key_context_menu(Menu):

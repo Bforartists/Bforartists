@@ -6,6 +6,11 @@
  * \ingroup fbx
  */
 
+#include <algorithm>
+#include <cmath>
+
+#include <xxhash.h>
+
 #include "BKE_idprop.hh"
 #include "BKE_object.hh"
 #include "BKE_object_types.hh"
@@ -13,11 +18,34 @@
 #include "BLI_string.hh"
 #include "BLI_string_utf8.hh"
 
+#include "DNA_key_types.h"
 #include "DNA_object_types.h"
 
 #include "fbx_import_util.hh"
 
+#include "CLG_log.h"
+
 namespace blender::io::fbx {
+
+static CLG_LogRef LOG = {"io.fbx"};
+
+void expand_shape_key_range(KeyBlock &block, const float min_weight, const float max_weight)
+{
+  /* Match the hard limits in ShapeKey RNA. */
+  constexpr float hard_min = -10.0f;
+  constexpr float hard_max = 10.0f;
+  /* Leave room for editing the weight, as the Python importer did. */
+  if (min_weight < block.slidermin) {
+    block.slidermin = std::max(hard_min, std::floor(2.0f * min_weight));
+  }
+  if (max_weight > block.slidermax) {
+    block.slidermax = std::min(hard_max, std::ceil(2.0f * max_weight));
+  }
+  if (min_weight < hard_min || max_weight > hard_max) {
+    CLOG_WARN(
+        &LOG, "Shape key '%s' has weights outside the supported range [-10, 10]", block.name);
+  }
+}
 
 const char *get_fbx_name(const ufbx_string &name, const char *def)
 {
@@ -46,7 +74,8 @@ void matrix_to_m44(const ufbx_matrix &src, float dst[4][4])
 
 ufbx_matrix calc_bone_pose_matrix(const ufbx_transform &local_xform,
                                   const ufbx_node &node,
-                                  const ufbx_matrix &local_bind_inv_matrix)
+                                  const ufbx_matrix &local_bind_inv_matrix,
+                                  const ufbx_matrix *correction)
 {
   ufbx_transform xform = local_xform;
 
@@ -62,6 +91,16 @@ ufbx_matrix calc_bone_pose_matrix(const ufbx_transform &local_xform,
   /* Transformed to the bind transform in joint-local space. */
   ufbx_matrix matrix = ufbx_transform_to_matrix(&xform);
   matrix = ufbx_matrix_mul(&local_bind_inv_matrix, &matrix);
+
+  if (correction != nullptr) {
+    /* Automatic orientation changes bone local axes while preserving the motion.
+     * We need to express the pose transform in the new axes: 1) map from the corrected axes
+     * to the original ones, 2) apply the original pose, 3) map back to the corrected axes,
+     * or `inverse(correction) * matrix * correction` in matrix terms. */
+    const ufbx_matrix correction_inv = ufbx_matrix_invert(correction);
+    matrix = ufbx_matrix_mul(&correction_inv, &matrix);
+    matrix = ufbx_matrix_mul(&matrix, correction);
+  }
   return matrix;
 }
 
@@ -124,17 +163,14 @@ void node_matrix_to_obj(const ufbx_node *node, Object *obj, const FbxElementMapp
   if (obj->parent == nullptr && parbone && mapping.node_is_blender_bone.contains(parbone)) {
     Object *arm = mapping.bone_to_armature.lookup_default(parbone, nullptr);
     if (arm != nullptr) {
-      ufbx_matrix offset_mtx = ufbx_identity_matrix;
-      offset_mtx.cols[3].y = -mapping.bone_to_length.lookup_default(parbone, 0.0);
       if (mapping.node_is_blender_bone.contains(node)) {
         /* The node itself is a "fake bone", in which case parent it to the matching
          * fake bone, and matrix is just what puts transform at the bone tail. */
         parbone = node;
-        mtx = offset_mtx;
+        mtx = ufbx_identity_matrix;
       }
-      else {
-        mtx = ufbx_matrix_mul(&offset_mtx, &mtx);
-      }
+      const ufbx_matrix offset_mtx = mapping.calc_bone_child_offset_matrix(parbone);
+      mtx = ufbx_matrix_mul(&offset_mtx, &mtx);
 
       obj->parent = arm;
       obj->partype = PARBONE;
@@ -156,12 +192,36 @@ void node_matrix_to_obj(const ufbx_node *node, Object *obj, const FbxElementMapp
   ufbx_matrix_to_obj(mtx, obj);
 }
 
+/* For custom property names that are too long, take the prefix and
+ * append 7 digit hash of the original full name. */
+static StringRef custom_property_name(const StringRef name, char (&buffer)[MAX_IDPROP_NAME])
+{
+  if (name.size() < MAX_IDPROP_NAME) {
+    return name;
+  }
+
+  constexpr int suffix_size = 8;
+  name.copy_utf8_truncated(MutableCStr(buffer, sizeof(buffer) - suffix_size));
+  const size_t prefix_size = strlen(buffer);
+  const unsigned int hash = XXH3_64bits(name.data(), name.size()) & 0x0fffffff;
+  BLI_snprintf(buffer + prefix_size, sizeof(buffer) - prefix_size, "_%07x", hash);
+  return StringRef(buffer);
+}
+
+static void add_custom_property(IDProperty *group, IDProperty *property)
+{
+  if (property != nullptr && !IDP_AddToGroup(group, property)) {
+    IDP_FreeProperty(property);
+  }
+}
+
 static void read_ufbx_property(const ufbx_prop &prop, IDProperty *idgroup, bool enums_as_strings)
 {
   IDProperty *idprop = nullptr;
   IDPropertyTemplate val = {0};
-  //@TODO: validate_blend_names on the property name
-  const char *name = prop.name.data;
+  char name_buffer[MAX_IDPROP_NAME];
+  const StringRef name = custom_property_name(StringRef(prop.name.data, prop.name.length),
+                                              name_buffer);
 
   switch (prop.type) {
     case UFBX_PROP_BOOLEAN:
@@ -212,7 +272,7 @@ static void read_ufbx_property(const ufbx_prop &prop, IDProperty *idgroup, bool 
       idprop = IDP_New(IDP_DOUBLE, &val, name);
       break;
     case UFBX_PROP_STRING:
-      if (STREQ(name, "UDP3DSMAX")) {
+      if (name == "UDP3DSMAX") {
         /* 3dsmax user properties are coming as `UDP3DSMAX` property. Parse them
          * as multi-line text, splitting across `=` within each line. */
         const char *line = prop.value_str.data;
@@ -229,14 +289,13 @@ static void read_ufbx_property(const ufbx_prop &prop, IDProperty *idgroup, bool 
             eq_pos++;
           }
           if (eq_pos[0] == '=') {
-            std::string str_name = StringRef(line_start, eq_pos).trim();
+            const StringRef str_name = custom_property_name(StringRef(line_start, eq_pos).trim(),
+                                                            name_buffer);
             std::string str_val = StringRef(eq_pos + 1, line).trim();
-            //@TODO validate_blend_names on str_name
             val.string.str = str_val.c_str();
             val.string.len = str_val.size() + 1; /* .len needs to include null terminator. */
             val.string.subtype = IDP_STRING_SUB_UTF8;
-            IDProperty *str_prop = IDP_New(IDP_STRING, &val, str_name.c_str());
-            IDP_AddToGroup(idgroup, str_prop);
+            add_custom_property(idgroup, IDP_New(IDP_STRING, &val, str_name));
           }
 
           if (line[0] == 0) {
@@ -280,9 +339,7 @@ static void read_ufbx_property(const ufbx_prop &prop, IDProperty *idgroup, bool 
       break;
   }
 
-  if (idprop != nullptr) {
-    IDP_AddToGroup(idgroup, idprop);
-  }
+  add_custom_property(idgroup, idprop);
 }
 
 void read_custom_properties(const ufbx_props &props, ID &id, bool enums_as_strings)

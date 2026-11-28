@@ -106,6 +106,7 @@ enum class Diag {
   ArrayNeedsSizeOrInitializer,
   ArraySizeMustBeGreaterThanZero,
   ArraySizeNotConstantExpression,
+  ArraySizeNotConstantForDefaultInitialization,
   ArrayTypeOperand,
 
   AttributeOnlyEntryPointsCanUseIn,
@@ -173,6 +174,7 @@ enum class Diag {
   ExpectedComputeShaderEntryPoint,
   ExpectedFragmentShaderEntryPoint,
   ExpectedVertexShaderEntryPoint,
+  ExpectedTypedExpression,
 
   ExprCannotContainFunctionCalls,
   ExprNotIntegralConstant,
@@ -189,7 +191,13 @@ enum class Diag {
   ImplicitPaddingAtEndOfStruct,
   ImplicitPaddingBeforeMember,
 
+  InitializerListAnonymous,
+  InitializerListArray,
+  InitializerListBitfield,
+  InitializerListEmptyBaseClass,
+  InitializerListNoSelfReference,
   InitializerListRequiresExplicitType,
+  InitializerListUnion,
 
   InliningNoDefinition,
 
@@ -221,6 +229,8 @@ enum class Diag {
 
   NoteDeclarationUnionRequested,
   NoteInDeclarationOfVariable,
+  NoteInDesignatedInitializerList,
+  NoteInInitializerList,
   NoteInInliningOf,
   NoteInStorageBufferDeclaration,
   NoteInUniformBufferDeclaration,
@@ -268,6 +278,8 @@ enum class Diag {
   StructuredBindingNotEnoughNames,
   StructuredBindingTooManyNames,
 
+  StructInitializerExcessElement,
+
   SubscriptNotInt,
 
   TemplateInvalidArg,
@@ -310,9 +322,13 @@ enum class Diag {
   UnrolledLoopTooManyIterations,
 
   UnsupportedSymbolInExpr,
+  UnsupportedDecltypeInExpr,
   UnsupportedDefaultedBody,
+  UnsupportedDefaultMemberInitializerNotExpression,
   UnsupportedDeletedBody,
+  UnsupportedDoubleLiteral,
   UnsupportedPureVirtualFunctionBody,
+  UnsupportedDefaultMemberInitializerInUnion,
 
   UsingNamespaceNotSupported,
 };
@@ -332,6 +348,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Array size must be greater than zero";
     case Diag::ArraySizeNotConstantExpression:
       return "Array size is not a constant expression";
+    case Diag::ArraySizeNotConstantForDefaultInitialization:
+      return "Array of type '{}' with default member initializers needs a constant size";
     case Diag::ArrayTypeOperand:
       return "Invalid operand of array type";
     case Diag::AttributeNotAllowedInComp:
@@ -434,6 +452,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Excess elements in scalar initializer";
     case Diag::ExpectedVertexShaderEntryPoint:
       return "Expected vertex shader entry point function";
+    case Diag::ExpectedTypedExpression:
+      return "Expected typed expression";
     case Diag::ExprCannotContainFunctionCalls:
       return "{} cannot contain function calls";
     case Diag::ExprNotIntegralConstant:
@@ -459,6 +479,22 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Implicit {} bytes padding before '{}', add manual padding";
     case Diag::InitializerListRequiresExplicitType:
       return "Initializer list requires explicit type";
+    case Diag::InitializerListAnonymous:
+      return "Initializer list is not supported on '{}' because it contains an anonymous member, "
+             "use designated initializer list instead";
+    case Diag::InitializerListArray:
+      return "Initializer list is not supported on '{}' because it contains the array member "
+             "'{}', use designated initializer list instead";
+    case Diag::InitializerListBitfield:
+      return "Initializer list is not supported on '{}' because it contains bitfield '{}', "
+             "use designated initializer list instead";
+    case Diag::InitializerListUnion:
+      return "Initializer list is not supported on union '{}'";
+    case Diag::InitializerListEmptyBaseClass:
+      return "Initializer list is not supported on '{}' because it inherit empty base class '{}', "
+             "use designated initializer list instead";
+    case Diag::InitializerListNoSelfReference:
+      return "Initializer list cannot call methods or access members";
     case Diag::InliningNoDefinition:
       return "Cannot inline function '{}' without a definition";
     case Diag::InliningRecursive:
@@ -510,6 +546,10 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "In declaration of union '{}' requested here";
     case Diag::NoteInDeclarationOfVariable:
       return "In declaration of '{}' of type '{}'";
+    case Diag::NoteInDesignatedInitializerList:
+      return "In designated initializer list requested here";
+    case Diag::NoteInInitializerList:
+      return "In initializer list requested here";
     case Diag::NoteInInliningOf:
       return "In inlining of function '{}' requested here";
     case Diag::NoteInStorageBufferDeclaration:
@@ -604,6 +644,8 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Not enough names in structure binding";
     case Diag::StructuredBindingTooManyNames:
       return "Too many names in structure binding";
+    case Diag::StructInitializerExcessElement:
+      return "Excess elements in struct initializer";
     case Diag::SubscriptNotInt:
       return "Array subscript is not an integer";
     case Diag::TemplateInvalidArg:
@@ -673,14 +715,23 @@ static inline std::string_view diagnostic_message_get(Diag diag)
       return "Non-constant expression in unrolled loop control";
     case Diag::UnrolledLoopTooManyIterations:
       return "Loop unrolling generates too many iterations (over 64)";
+    case Diag::UnsupportedDecltypeInExpr:
+      return "'decltype' is not supported inside expression, use 'using' to create an alias "
+             "instead";
     case Diag::UnsupportedSymbolInExpr:
       return "Unsupported symbol '{}' inside {}";
     case Diag::UnsupportedDefaultedBody:
       return "Defaulted body are not supported";
+    case Diag::UnsupportedDefaultMemberInitializerNotExpression:
+      return "Default member initializer must be an expression, not an initializer list";
     case Diag::UnsupportedDeletedBody:
       return "Deleted functions are not supported";
+    case Diag::UnsupportedDoubleLiteral:
+      return "Double literals are not supported, add 'f' suffix";
     case Diag::UnsupportedPureVirtualFunctionBody:
       return "Pure virtual function with body are not supported";
+    case Diag::UnsupportedDefaultMemberInitializerInUnion:
+      return "Default member initializers are not supported in unions";
     case Diag::UsingNamespaceNotSupported:
       return "Using namespace statements are not supported";
   }
@@ -701,6 +752,7 @@ struct AstNodeException {
                    const string &param3 = "")
       : node(node), diag(diag), param1(param1), param2(param2), param3(param3)
   {
+    assert(node.is_valid());
   }
 };
 

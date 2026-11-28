@@ -181,6 +181,7 @@ IDTypeInfo IDType_ID_PAL = {
     .foreach_working_space_color = palette_foreach_working_space_color,
     .foreach_asset_weak_reference = nullptr,
     .owner_pointer_get = nullptr,
+    .foreach_embedded_id = nullptr,
 
     .blend_write = palette_blend_write,
     .blend_read_data = palette_blend_read_data,
@@ -252,6 +253,7 @@ IDTypeInfo IDType_ID_PC = {
     .foreach_working_space_color = nullptr,
     .foreach_asset_weak_reference = nullptr,
     .owner_pointer_get = nullptr,
+    .foreach_embedded_id = nullptr,
 
     .blend_write = paint_curve_blend_write,
     .blend_read_data = paint_curve_blend_read_data,
@@ -1558,7 +1560,7 @@ void BKE_paint_init(Main *bmain, Scene *sce, PaintMode mode, const bool ensure_b
     BKE_paint_cavity_curve_preset(paint, CURVE_PRESET_LINE);
   }
 
-  if (ELEM(mode, PaintMode::Sculpt, PaintMode::Vertex, PaintMode::Weight)) {
+  if (ELEM(mode, PaintMode::Sculpt, PaintMode::Vertex, PaintMode::Weight, PaintMode::Texture3D)) {
     BKE_paint_mesh_automasking_settings_ensure(*paint);
   }
 }

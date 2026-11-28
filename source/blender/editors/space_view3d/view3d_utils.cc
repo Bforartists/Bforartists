@@ -1460,9 +1460,10 @@ void ED_view3d_distance_set(RegionView3D *rv3d, const float dist)
 #if 0
   mul_mat3_m4_v3(rv3d->viewinv, tvec);
 #else
-  /* Rotate the distance delta by the same rotation the view matrix is built from. */
+  /* Rotate the distance delta by the inverse of the rotation the view matrix is built from. */
   float mat[3][3];
   quat_to_mat3(mat, rv3d->viewquat);
+  invert_m3(mat);
   mul_m3_v3(mat, tvec);
 #endif
   sub_v3_v3(rv3d->ofs, tvec);
@@ -1878,26 +1879,6 @@ bool ED_view3d_camera_to_view_selected_with_set_clipping(Main *bmain,
 /* -------------------------------------------------------------------- */
 /** \name Depth Buffer Utilities
  * \{ */
-
-struct ReadData {
-  int count;
-  int count_max;
-  float r_depth;
-};
-
-static bool depth_read_test_fn(const void *value, void *userdata)
-{
-  ReadData *data = static_cast<ReadData *>(userdata);
-  float depth = *static_cast<float *>(const_cast<void *>(value));
-  data->r_depth = std::min(depth, data->r_depth);
-
-  if ((++data->count) >= data->count_max) {
-    /* Outside the margin. */
-    return true;
-  }
-  return false;
-}
-
 bool ED_view3d_depth_read_cached(const ViewDepths *vd,
                                  const int mval[2],
                                  int margin,
@@ -1918,18 +1899,16 @@ bool ED_view3d_depth_read_cached(const ViewDepths *vd,
 
   float depth = 1.0f;
   if (margin) {
-    int shape[2] = {vd->w, vd->h};
-    int pixel_count = (min_ii(x + margin + 1, shape[1]) - max_ii(x - margin, 0)) *
-                      (min_ii(y + margin + 1, shape[0]) - max_ii(y - margin, 0));
+    const int xmin = max_ii(x - margin, 0);
+    const int xmax = min_ii(x + margin + 1, vd->w);
+    const int ymin = max_ii(y - margin, 0);
+    const int ymax = min_ii(y + margin + 1, vd->h);
 
-    ReadData data;
-    data.count = 0;
-    data.count_max = pixel_count;
-    data.r_depth = 1.0f;
-
-    /* TODO: No need to go spiral. */
-    BLI_array_iter_spiral_square(vd->depths, shape, mval, depth_read_test_fn, &data);
-    depth = data.r_depth;
+    for (int yi = ymin; yi < ymax; yi++) {
+      for (int xi = xmin; xi < xmax; xi++) {
+        depth = std::min(depth, vd->depths[yi * vd->w + xi]);
+      }
+    }
   }
   else {
     depth = vd->depths[y * vd->w + x];

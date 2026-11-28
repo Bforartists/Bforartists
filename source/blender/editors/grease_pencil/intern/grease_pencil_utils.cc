@@ -1889,7 +1889,7 @@ void add_single_curve(bke::greasepencil::Drawing &drawing, const bool at_end)
   bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
 
   attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
-    if (iter.storage_type == bke::AttrStorageType::Single) {
+    if (iter.storage_type == bke::GList::StorageType::Single) {
       return;
     }
     bke::GSpanAttributeWriter dst = attributes.lookup_for_write_span(iter.name);
@@ -1929,7 +1929,7 @@ void resize_single_curve(bke::CurvesGeometry &curves, const bool at_end, const i
 
     bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
     attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
-      if (iter.storage_type == bke::AttrStorageType::Single) {
+      if (iter.storage_type == bke::GList::StorageType::Single) {
         return;
       }
       if (iter.domain != bke::AttrDomain::Point) {
@@ -1947,7 +1947,7 @@ void resize_single_curve(bke::CurvesGeometry &curves, const bool at_end, const i
     const int removed_points_num = current_points_num - new_points_num;
     bke::MutableAttributeAccessor attributes = curves.attributes_for_write();
     attributes.foreach_attribute([&](const bke::AttributeIter &iter) {
-      if (iter.storage_type == bke::AttrStorageType::Single) {
+      if (iter.storage_type == bke::GList::StorageType::Single) {
         return;
       }
       if (iter.domain != bke::AttrDomain::Point) {

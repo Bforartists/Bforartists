@@ -1281,7 +1281,16 @@ class VIEW3D_HT_header(Header):
 
     @staticmethod
     def _texture_mask_icon(ipaint):
-        mask_enabled = ipaint.use_stencil_layer or ipaint.use_cavity
+        if show_experimental_texture_paint(ipaint.brush):
+            automasking = ipaint.mesh_automasking_settings
+            mask_enabled = (
+                automasking.use_automasking_cavity or
+                automasking.use_automasking_cavity_inverted or
+                automasking.use_automasking_view_normal or
+                ipaint.use_stencil_layer
+            )
+        else:
+            mask_enabled = ipaint.use_stencil_layer or ipaint.use_cavity
         return "MOD_MASK" if mask_enabled else "MOD_MASK_OFF"  # BFA - mask icon
 
 
@@ -1465,13 +1474,8 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base, Menu):
         layout = self.layout
         layout.separator()
         if context.mode == 'EDIT_MESH':
-            layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
-            layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
+            # BFA - circularize, flatten and the edge loop operators moved upstream into VIEW3D_MT_edit_mesh_loops
             layout.operator("transform.shrink_fatten", text="Shrink/Fatten", icon="SHRINK_FATTEN")
-            layout.operator("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon="SPACE_LOOPS_EVENLY")
-            layout.operator("mesh.relax_edge_loops", text="Relax Edge Loops", icon="RELAX_EDGE_LOOPS")
-            layout.operator("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected", icon="CURVE_EDGE_LOOPS")
-            layout.operator("mesh.fit_edge_loops_to_annotation", text="Fit Edge Loops To Annotation", icon="FIT_EDGE_LOOPS_TO_ANNOTATION")  # BFA - icon added, new in Blender 5.3
             layout.operator("transform.skin_resize", icon="MOD_SKIN")
         elif context.mode in {'EDIT_CURVE', 'EDIT_GREASE_PENCIL', 'EDIT_CURVES', 'EDIT_POINTCLOUD'}:
             layout.operator("transform.transform", text="Radius", icon="SHRINK_FATTEN").mode = 'CURVE_SHRINKFATTEN'
@@ -2557,6 +2561,22 @@ class VIEW3D_MT_edit_mesh_select_loops(Menu):
         layout.operator("mesh.region_to_loop", text="Boundary of Selected")
 
 
+class VIEW3D_MT_edit_mesh_loops(Menu):
+    bl_label = "Loops"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        # BFA - icons added to all entries
+        layout.operator("mesh.bridge_edge_loops", text="Bridge", icon="BRIDGE_EDGELOOPS")
+        layout.operator("mesh.circularize", text="To Circle", icon="TOCIRCLE")
+        layout.operator("mesh.curve_edge_loops_between_selected", text="Curve Between Selected", icon="CURVE_EDGE_LOOPS")
+        layout.operator("mesh.flatten", text="Flatten", icon="FLATTEN")
+        layout.operator("mesh.relax_edge_loops", text="Relax", icon="RELAX_EDGE_LOOPS")
+        layout.operator("mesh.space_edge_loops_evenly", text="Space Evenly", icon="SPACE_LOOPS_EVENLY")
+        layout.operator("mesh.fit_edge_loops_to_annotation", text="Fit to Annotation", icon="FIT_EDGE_LOOPS_TO_ANNOTATION")
+
+
 class VIEW3D_MT_select_edit_mesh(Menu):
     bl_label = "Select"
 
@@ -2834,8 +2854,8 @@ class VIEW3D_MT_edit_lattice_context_menu(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_mirror")
-        layout.menu("VIEW3D_MT_edit_lattice_flip")  # bfa menu - blender uses enum
         layout.menu("VIEW3D_MT_snap")
+        layout.menu("VIEW3D_MT_edit_lattice_flip")  # bfa menu - blender uses enum
 
         layout.separator()
 
@@ -4116,10 +4136,6 @@ class VIEW3D_MT_object_rigid_body(Menu):
 
         layout.separator()
 
-        layout.operator("rigidbody.objects_remove", text="Remove", icon="RIGID_REMOVE")
-
-        layout.separator()
-
         layout.operator("rigidbody.shape_change", text="Change Shape", icon="RIGID_CHANGE_SHAPE")
         layout.operator(
             "rigidbody.mass_calculate",
@@ -4145,6 +4161,11 @@ class VIEW3D_MT_object_rigid_body(Menu):
         layout.separator()
 
         layout.operator("rigidbody.connect", text="Connect", icon="RIGID_CONSTRAINTS_CONNECT")
+
+        layout.separator()
+
+        # BFA - Remove moved to the bottom upstream; kept the BFA icon
+        layout.operator("rigidbody.objects_remove", text="Remove", icon="RIGID_REMOVE")
 
 
 class VIEW3D_MT_object_clear(Menu):
@@ -4242,7 +4263,7 @@ class VIEW3D_MT_object_context_menu(Menu):
 
             if not obj.data.dof.focus_object:
                 if view and view.camera == obj and view.region_3d.view_perspective == "CAMERA":
-                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon="DOF")
+                    props = layout.operator("ui.eyedropper_depth", text="Pick DOF Distance", icon="DOF")
                 else:
                     props = layout.operator(
                         "wm.context_modal_mouse",
@@ -6116,7 +6137,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.menu("VIEW3D_MT_transform_armature")
 
-        layout.menu("VIEW3D_MT_pose_transform")
+        layout.menu("VIEW3D_MT_pose_transform", text="Clear")
         layout.menu("VIEW3D_MT_pose_apply")
 
         layout.menu("VIEW3D_MT_snap")
@@ -6494,6 +6515,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_edit_mesh_loops")
         layout.menu("VIEW3D_MT_edit_mesh_merge", text="Merge")
         layout.menu("VIEW3D_MT_edit_mesh_split", text="Split")
         layout.operator_menu_enum("mesh.separate", "type")
@@ -6525,12 +6547,12 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.menu("VIEW3D_MT_edit_mesh_showhide")
         layout.menu("VIEW3D_MT_edit_mesh_clean")
+        layout.menu("VIEW3D_MT_edit_mesh_select_mode")  # BFA - moved above Delete so the delete group is last, like Blender's menu polish (week 47)
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_delete")
         layout.menu("VIEW3D_MT_edit_mesh_dissolve")  # bfa menu
-        layout.menu("VIEW3D_MT_edit_mesh_select_mode")
 
 
 # bfa menu
@@ -6615,6 +6637,10 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
+            col.menu("VIEW3D_MT_edit_mesh_loops")
+
+            col.separator()
+
             col.operator(
                 "mesh.extrude_vertices_move",
                 text="Extrude Vertices",
@@ -6685,6 +6711,10 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
+            col.menu("VIEW3D_MT_edit_mesh_loops")
+
+            col.separator()
+
             col.operator("mesh.extrude_edges_move", text="Extrude Edges", icon="EXTRUDE_REGION")
 
             col.separator()  # BFA-Draise - Seperated Legacy operator to be in own group like in the Legacy Menu, also consistent order
@@ -6697,8 +6727,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
                 selected_edges_len >= 1
             ):  # BFA-Draise - Changed order of Make Edge before Bridge Edge Loop for consistency with Vertex Context
                 col.operator("mesh.edge_face_add", text="Make Edge/Face", icon="MAKE_EDGEFACE")
-            if selected_edges_len >= 2:
-                col.operator("mesh.bridge_edge_loops", icon="BRIDGE_EDGELOOPS")
+            # BFA - bridge edge loops moved upstream into VIEW3D_MT_edit_mesh_loops
             if selected_edges_len >= 2:
                 col.operator("mesh.fill", icon="FILL")
 
@@ -6759,6 +6788,10 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
+            col.menu("VIEW3D_MT_edit_mesh_loops")
+
+            col.separator()
+
             col.operator(
                 "view3d.edit_mesh_extrude_move_normal",
                 text="Extrude Faces",
@@ -6782,12 +6815,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()  # BFA-Draise - Seperated extrude operators to be in own group for consistency
 
-            if selected_faces_len >= 2:
-                col.operator(
-                    "mesh.bridge_edge_loops",
-                    text="Bridge Faces",
-                    icon="BRIDGE_EDGELOOPS",
-                )
+            # BFA - Bridge Faces moved upstream into VIEW3D_MT_edit_mesh_loops
 
             # BFA-Draise - changed order after "Poke" for consistency to other menus
             col.operator("mesh.poke", icon="POKEFACES")
@@ -7004,7 +7032,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.menu("VIEW3D_MT_edit_mesh_edges_legacy")  # bfa menu
 
-        layout.operator("mesh.bridge_edge_loops", icon="BRIDGE_EDGELOOPS")
+        # BFA - bridge edge loops moved upstream into VIEW3D_MT_edit_mesh_loops
         layout.operator("mesh.screw", icon="MOD_SCREW")
 
         layout.separator()
@@ -7165,25 +7193,6 @@ class VIEW3D_MT_edit_mesh_faces_legacy(Menu):
     bl_label = "Legacy"
 
     def draw(self, context):
-        # bfa - checking if in edit mode and in wich select mode we are.
-        # We need to check for all three select modes, or the menu remains empty.
-        # See also the specials menu
-        def count_selected_items_for_objects_in_mode():
-            selected_verts_len = 0
-            selected_edges_len = 0
-            selected_faces_len = 0
-            for ob in context.objects_in_mode_unique_data:
-                v, e, f = ob.data.count_selected_items()
-                selected_verts_len += v
-                selected_edges_len += e
-                selected_faces_len += f
-            return (selected_verts_len, selected_edges_len, selected_faces_len)
-
-        is_vert_mode, is_edge_mode, is_face_mode = context.tool_settings.mesh_select_mode
-        selected_verts_len, selected_edges_len, selected_faces_len = count_selected_items_for_objects_in_mode()
-
-        del count_selected_items_for_objects_in_mode
-
         layout = self.layout
 
         layout.operator("mesh.inset", icon="INSET_FACES")
@@ -7207,9 +7216,7 @@ class VIEW3D_MT_edit_mesh_faces_legacy(Menu):
             icon="EXTRUDE_REGION",
         )
 
-        # bfa - we need the check, or BFA will crash at this operator
-        if selected_faces_len >= 2:
-            layout.operator("mesh.bridge_edge_loops", text="Bridge Faces", icon="BRIDGE_EDGELOOPS")
+        # BFA - Bridge Faces removed, Bridge lives in the Loops menu only (VIEW3D_MT_edit_mesh_loops)
 
 
 class VIEW3D_MT_edit_mesh_normals_select_strength(Menu):
@@ -7497,9 +7504,9 @@ def draw_curve(self, context):
 
     layout.separator()
 
+    layout.operator("curve.duplicate_move", text="Duplicate", icon="DUPLICATE")
     if edit_object.type == "SURFACE":
         layout.operator("curve.spin", icon="SPIN")
-    layout.operator("curve.duplicate_move", text="Duplicate", icon="DUPLICATE")
 
     layout.separator()
 
@@ -7609,6 +7616,9 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
         layout.operator("curve.subdivide", icon="SUBDIVIDE_EDGES")
         layout.operator("curve.extrude_move", text="Extrude Curve", icon="EXTRUDE_REGION")
         layout.operator("curve.make_segment", icon="MAKE_CURVESEGMENT")
+
+        layout.separator()
+
         layout.operator("curve.duplicate_move", text="Duplicate", icon="DUPLICATE")
 
         layout.separator()
@@ -7642,15 +7652,17 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
 
         layout.separator()
 
-        # Remove
-        layout.operator("curve.split", icon="SPLIT")
-        layout.operator("curve.decimate", icon="DECIMATE")
-        layout.operator("curve.separate", icon="SEPARATE")
-        layout.menu_contents("VIEW3D_MT_edit_curve_delete")  # BFA - Re-use same submenu used in "Curve" header menu
-        layout.operator("curve.dissolve_verts", icon="DISSOLVE_VERTS")
+        layout.menu("VIEW3D_MT_edit_curve_showhide")  # BFA - added to context menu, above the delete group so Delete stays last
+
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_curve_showhide")  # BFA - added to context menu
+        # Remove
+        layout.operator("curve.separate", icon="SEPARATE")
+        layout.operator("curve.split", icon="SPLIT")
+        layout.operator("curve.decimate", icon="DECIMATE")
+        layout.operator("curve.dissolve_verts", icon="DISSOLVE_VERTS")
+        # BFA - delete last, like Blender's menu polish (week 47); re-use same submenu used in "Curve" header menu
+        layout.menu_contents("VIEW3D_MT_edit_curve_delete")
 
 
 class VIEW3D_MT_edit_curve_delete(Menu):
@@ -7831,6 +7843,8 @@ class VIEW3D_MT_edit_font_context_menu(Menu):
 
         layout.separator()
 
+        # BFA - no icon: upstream's menu polish put the delete X on this submenu, which is the whole
+        # Text menu here.
         layout.menu("VIEW3D_MT_edit_font")
 
 
@@ -7923,14 +7937,19 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
+        layout.operator("armature.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")  # BFA - moved up like upstream
         layout.operator("armature.extrude_move", icon="EXTRUDE_REGION")
         layout.operator("armature.click_extrude", icon="EXTRUDE_REGION")
-
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked", icon="EXTRUDE_REGION")
 
+        layout.separator()
+
         layout.operator("armature.duplicate_move", icon="DUPLICATE")
-        layout.operator("armature.duplicate_rename", icon="DUPLICATE")
+        layout.operator("armature.duplicate_rename", text="Duplicate and Rename", icon="DUPLICATE")
+
+        layout.separator()
+
         layout.operator("armature.fill", icon="FILLBETWEEN")
 
         layout.separator()
@@ -7941,7 +7960,6 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator("armature.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
         layout.operator(
             "armature.switch_direction",
             text="Switch Direction",
@@ -8003,11 +8021,14 @@ class VIEW3D_MT_armature_context_menu(Menu):
         layout.operator_context = "INVOKE_REGION_WIN"
 
         # Add
-        layout.operator("armature.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
-        layout.operator("armature.duplicate_move", text="Duplicate", icon="DUPLICATE")
         layout.operator("armature.extrude_move", icon="EXTRUDE_REGION")
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked", icon="EXTRUDE_REGION")
+        layout.operator("armature.subdivide", text="Subdivide", icon="SUBDIVIDE_EDGES")
+
+        layout.separator()
+
+        layout.operator("armature.duplicate_move", text="Duplicate", icon="DUPLICATE")
 
         layout.separator()
 
@@ -8267,9 +8288,6 @@ class VIEW3D_MT_edit_greasepencil(Menu):
         layout.operator("grease_pencil.paste", text="Paste", icon="PASTEDOWN").type = "ACTIVE"
         layout.operator("grease_pencil.paste", text="Paste by Layer", icon="PASTEDOWN").type = "LAYER"
 
-        layout.operator_menu_enum("grease_pencil.dissolve", "type")
-        layout.menu("VIEW3D_MT_edit_greasepencil_delete")
-
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_greasepencil_cleanup")
@@ -8277,6 +8295,11 @@ class VIEW3D_MT_edit_greasepencil(Menu):
 
         layout.separator()
         layout.operator_menu_enum("grease_pencil.separate", "mode", text="Separate")
+
+        layout.separator()
+        # BFA - delete last, like Blender's menu polish (week 47)
+        layout.operator_menu_enum("grease_pencil.dissolve", "type")
+        layout.menu("VIEW3D_MT_edit_greasepencil_delete")
 
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
 
@@ -8423,9 +8446,12 @@ class VIEW3D_MT_edit_curves(Menu):
         layout.operator_menu_enum("curves.curve_type_set", text="Set Spline Type",
                                   property="type")  # BFA - made title consistent
         # layout.operator_menu_enum("curves.handle_type_set", "type") # BFA - hide, as already exposed in header
-        layout.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")
         layout.operator("curves.cyclic_toggle", icon="TOGGLE_CYCLIC")
         layout.template_node_operator_asset_menu_items(catalog_path=self.bl_label)
+
+        layout.separator()
+
+        layout.operator("curves.attribute_set", icon="NODE_ATTRIBUTE")  # BFA - moved down like upstream
 
         layout.separator()
 
@@ -8725,6 +8751,12 @@ class VIEW3D_MT_sculpt_mask_edit_pie(Menu):
 class VIEW3D_MT_mesh_paint_automasking_pie(Menu):
     bl_label = "Automasking"
 
+    @classmethod
+    def poll(cls, context):
+        mode = context.mode
+        return mode != 'PAINT_TEXTURE' or (
+            bpy.context.preferences.experimental.use_3d_texture_paint and context.space_data.type == 'VIEW_3D')
+
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
@@ -8734,19 +8766,29 @@ class VIEW3D_MT_mesh_paint_automasking_pie(Menu):
 
         settings = paint.mesh_automasking_settings
 
-        pie.prop(settings, "use_automasking_topology", text="Topology")
+        if mode != 'PAINT_TEXTURE':
+            pie.prop(settings, "use_automasking_topology", text="Topology")
+        else:
+            pie.separator()
         if mode == 'SCULPT':
             pie.prop(settings, "use_automasking_face_sets", text="Face Sets")
         else:
             pie.separator()
-        pie.prop(settings, "use_automasking_boundary_edges", text="Mesh Boundary")
+        if mode != 'PAINT_TEXTURE':
+            pie.prop(settings, "use_automasking_boundary_edges", text="Mesh Boundary")
+        else:
+            pie.separator()
         if mode == 'SCULPT':
             pie.prop(settings, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
         else:
             pie.separator()
+
         pie.prop(settings, "use_automasking_cavity", text="Cavity")
         pie.prop(settings, "use_automasking_cavity_inverted", text="Cavity (Inverted)")
-        pie.prop(settings, "use_automasking_start_normal", text="Area Normal")
+        if mode != 'PAINT_TEXTURE':
+            pie.prop(settings, "use_automasking_start_normal", text="Area Normal")
+        else:
+            pie.separator()
         pie.prop(settings, "use_automasking_view_normal", text="View Normal")
 
 
@@ -12642,6 +12684,7 @@ classes = (
     VIEW3D_MT_edit_mesh_select_mode,
     VIEW3D_MT_edit_mesh_select_linked,
     VIEW3D_MT_edit_mesh_select_loops,
+    VIEW3D_MT_edit_mesh_loops,
     VIEW3D_MT_edit_mesh_extrude_dupli,  # bfa operator for separated tooltip
     VIEW3D_MT_edit_mesh_extrude_dupli_rotate,  # bfa operator for separated tooltip
     VIEW3D_MT_edit_mesh_extrude,

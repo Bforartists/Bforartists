@@ -49,6 +49,7 @@
 
 #include "action_runtime.hh"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 
@@ -1080,22 +1081,62 @@ Vector<ID *> Slot::runtime_users()
   return this->runtime->users;
 }
 
+Vector<ID *> Slot::runtime_owners()
+{
+  BLI_assert_msg(this->runtime, "Slot::runtime should always be allocated");
+  return this->runtime->owners;
+}
+
 void Slot::users_add(ID &animated_id)
 {
   BLI_assert(this->runtime);
-  this->runtime->users.append_non_duplicates(&animated_id);
+  BLI_assert(this->runtime->users.size() == this->runtime->owners.size());
+
+  if (this->runtime->users.contains(&animated_id)) {
+    /* Already tracked, so don't bother adding again. */
+    return;
+  }
+  this->runtime->users.append(&animated_id);
+
+  ID *owner_id = (animated_id.flag & ID_FLAG_EMBEDDED_DATA) ? BKE_id_owner_get(&animated_id) :
+                                                              &animated_id;
+  BLI_assert(owner_id);
+  this->runtime->owners.append(owner_id);
+  BLI_assert(this->runtime->users.size() == this->runtime->owners.size());
 }
 
 void Slot::users_remove(ID &animated_id)
 {
   BLI_assert(this->runtime);
   Vector<ID *> &users = this->runtime->users;
+  Vector<ID *> &owners = this->runtime->owners;
+  BLI_assert(users.size() == owners.size());
 
   /* Even though users_add() ensures that there are no duplicates, there's still things like
    * pointer swapping etc. that can happen via the foreach-id looping code. That means that the
    * entries in the user map are not 100% under control of the user_add() and user_remove()
    * function, and thus we cannot assume that there are no duplicates. */
-  users.remove_if([&](const ID *user) { return user == &animated_id; });
+
+  while (true) {
+    const int index = users.first_index_of_try(&animated_id);
+    if (index < 0) {
+      break;
+    }
+    users.remove_and_reorder(index);
+    owners.remove_and_reorder(index);
+  }
+
+  /* When an owner ID is removed, its embedded IDs should also be removed. */
+  while (true) {
+    const int index = owners.first_index_of_try(&animated_id);
+    if (index < 0) {
+      break;
+    }
+    users.remove_and_reorder(index);
+    owners.remove_and_reorder(index);
+  }
+
+  BLI_assert(users.size() == owners.size());
 }
 
 void Slot::users_invalidate(Main &bmain)
@@ -2100,9 +2141,11 @@ static void cyclic_keying_ensure_cycle_range_exists(FCurve &fcurve, const float2
   fcurve.bezt[0].vec[2][0] -= fix;
 
   /* Reallocate the array to make space for the 2nd point. */
+  BezTriple *new_bezt = MEM_new_array_uninitialized<BezTriple>(fcurve.totvert + 1, __func__);
+  std::copy_n(fcurve.bezt, fcurve.totvert, new_bezt);
+  MEM_delete(fcurve.bezt);
+  fcurve.bezt = new_bezt;
   fcurve.totvert++;
-  fcurve.bezt = static_cast<BezTriple *>(
-      MEM_realloc_uninitialized(fcurve.bezt, sizeof(BezTriple) * fcurve.totvert));
 
   /* Duplicate and offset the keyframe. */
   fcurve.bezt[1] = fcurve.bezt[0];

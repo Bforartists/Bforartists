@@ -33,6 +33,7 @@
 #include "DEG_depsgraph_query.hh"
 
 #include "GPU_context.hh"
+#include "GPU_init_exit.hh"
 
 #ifdef WITH_PYTHON
 #  include "BPY_extern.hh"
@@ -281,12 +282,12 @@ static void render_result_to_bake(RenderEngine *engine, RenderResult *rr)
 
   /* Find bake image corresponding to layer. */
   int image_id = 0;
-  for (; image_id < engine->bake.targets->images_num; image_id++) {
+  for (; image_id < engine->bake.targets->images.size(); image_id++) {
     if (STREQ(engine->bake.targets->images[image_id].render_layer_name, rl->name)) {
       break;
     }
   }
-  if (image_id == engine->bake.targets->images_num) {
+  if (image_id == engine->bake.targets->images.size()) {
     return;
   }
 
@@ -784,7 +785,7 @@ bool RE_bake_engine(Render *re,
                     Object *object,
                     const int object_id,
                     const BakePixel pixel_array[],
-                    const BakeTargets *targets,
+                    BakeTargets *targets,
                     const eScenePassType pass_type,
                     const int pass_filter,
                     float result[])
@@ -826,7 +827,7 @@ bool RE_bake_engine(Render *re,
     engine->bake.result = result;
     engine->bake.object_id = object_id;
 
-    for (int i = 0; i < targets->images_num; i++) {
+    for (int i = 0; i < targets->images.size(); i++) {
       const BakeImage *image = &targets->images[i];
       engine->bake.image_id = i;
 
@@ -993,6 +994,12 @@ bool RE_engine_render(Render *re, bool do_all)
       BKE_report(re->reports, RPT_ERROR, "Cannot initialize the GPU");
       G.is_break = true;
       return true;
+    }
+    if (G.background && !GPU_is_init()) {
+      /* Ensure the GPU is initialized by the time the depsgraph is evaluated, so GPU Subdivision
+       * can be enabled. Otherwise the first render always runs with CPU Subdivision, which yields
+       * slightly different results. */
+      WM_init_gpu_offscreen();
     }
   }
 

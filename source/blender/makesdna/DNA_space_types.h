@@ -224,14 +224,6 @@ struct SpaceOutliner {
 /** \name Graph Editor
  * \{ */
 
-struct SpaceGraph_Runtime {
-  /** #eGraphEdit_Runtime_Flag */
-  char flag = 0;
-  char _pad[7] = {};
-  /** Sampled snapshots of F-Curves used as in-session guides */
-  ListBaseT<FCurve> ghost_curves = {nullptr, nullptr};
-};
-
 /** 'Graph' Editor (formerly known as the IPO Editor). */
 struct SpaceGraph {
   DNA_DEFINE_CXX_METHODS(SpaceGraph)
@@ -269,7 +261,7 @@ struct SpaceGraph {
   char _pad1[2] = {};
   /* Store visible region size before entering the local view. */
   rctf local_view_visible_region_before = {};
-  SpaceGraph_Runtime runtime;
+  struct SpaceGraph_Runtime *runtime = nullptr;
 };
 
 /** \} */
@@ -308,7 +300,10 @@ struct SpaceNla {
 
 enum eCompositionGuideFlags : short;
 struct SequencerPreviewOverlay {
-  eSpaceSeq_SequencerPreviewOverlay_Flag flag = {};
+  eSpaceSeq_SequencerPreviewOverlay_Flag flag = SEQ_PREVIEW_SHOW_GPENCIL |
+                                                SEQ_PREVIEW_SHOW_OUTLINE_SELECTED |
+                                                SEQ_PREVIEW_SHOW_METADATA |
+                                                SEQ_PREVIEW_SHOW_COMPOSITION_GUIDES;
   eCompositionGuideFlags composition_guide_flags = {};
   char _pad[2] = {};
 
@@ -317,12 +312,21 @@ struct SequencerPreviewOverlay {
 };
 
 struct SequencerTimelineOverlay {
-  eSpaceSeq_SequencerTimelineOverlay_Flag flag = {};
+  eSpaceSeq_SequencerTimelineOverlay_Flag flag = SEQ_TIMELINE_SHOW_STRIP_NAME |
+                                                 SEQ_TIMELINE_SHOW_STRIP_SOURCE |
+                                                 SEQ_TIMELINE_SHOW_STRIP_DURATION |
+                                                 SEQ_TIMELINE_SHOW_GRID |
+                                                 SEQ_TIMELINE_SHOW_FCURVES |
+                                                 SEQ_TIMELINE_SHOW_STRIP_COLOR_TAG |
+                                                 SEQ_TIMELINE_SHOW_STRIP_RETIMING |
+                                                 SEQ_TIMELINE_WAVEFORMS_HALF |
+                                                 SEQ_TIMELINE_SHOW_THUMBNAILS |
+                                                 SEQ_TIMELINE_STRIP_END_THUMBNAILS;
   char _pad0[4] = {};
 };
 
 struct SequencerCacheOverlay {
-  eSpaceSeq_SequencerCacheOverlay_Flag flag = {};
+  eSpaceSeq_SequencerCacheOverlay_Flag flag = SEQ_CACHE_SHOW | SEQ_CACHE_SHOW_FINAL_OUT;
   char _pad0[4] = {};
 };
 
@@ -344,18 +348,19 @@ struct SpaceSeq {
   /** Deprecated: offset for drawing the image preview. */
   DNA_DEPRECATED float xof = 0;
   DNA_DEPRECATED float yof = 0;
-  eSpaceSeq_RegionType mainb = {}; /* Strange name for view type (image, histogram, ...). */
+  /* Strange name for view type (image, histogram, ...). */
+  eSpaceSeq_RegionType mainb = SEQ_DRAW_IMG_IMBUF;
   eSpaceSeq_Proxy_RenderSize render_size = SEQ_RENDER_SIZE_SCENE;
   short chanshown = 0;
   short zebra = 0; /* Show overexposed. 0=disabled; otherwise as percentage of "pure white". */
-  eSpaceSeq_Flag flag = {};
+  eSpaceSeq_Flag flag = SEQ_USE_ALPHA | SEQ_SHOW_MARKERS | SEQ_ZOOM_TO_FIT | SEQ_SHOW_OVERLAY;
   /** Deprecated, handled by View2D now. */
   DNA_DEPRECATED float zoom = 0;
   /** See SEQ_VIEW_* below. */
   eSpaceSeq_Displays view = SEQ_VIEW_SEQUENCE;
   eSpaceSeq_OverlayFrameType overlay_frame_type = SEQ_OVERLAY_FRAME_TYPE_RECT;
   /** Overlay an image of the editing on below the strips. */
-  eSpaceSeq_DrawFlag draw_flag = {};
+  eSpaceSeq_DrawFlag draw_flag = SEQ_DRAW_EDIT_POINT_PREVIEW;
   eSpaceSeq_Gizmo_Flag gizmo_flag = {};
   char _pad[4] = {};
 

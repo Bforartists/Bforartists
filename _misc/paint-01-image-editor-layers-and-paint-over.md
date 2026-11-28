@@ -1,30 +1,40 @@
-# Image Editor Painting 2027: Layers, Transform, Paint Over Render, Camera Planes
+# Image Editor Painting 2027: Pieces, Layers, Render Round Trip, Camera Planes
 
-Draft 2, 2026-11-27. Status: proposal, decisions in section 7 recorded. Sizes are estimates made
-without measuring the work.
+Draft 4, 2026-11-27. Status: proposal, decisions in section 7 recorded. Sizes are estimates made
+without measuring the work. Draft 3 reorders the tiers around the goal in section 0.
 
 This is the design note for making the Image Editor's paint mode a place where real 2D work can be
 finished: texture editing, matte painting over a render, and concept bashing from the 3D viewport.
-Brush engines are a separate subject. This note covers what the brushes need around them to be
-useful: layers, moving things, bringing pictures in, and getting the result back into 3D.
+Brush engines are a separate subject, and the one we have is good enough to start. This note
+covers what the brushes need around them to be useful.
+
+## 0. The goal
+
+From the maintainer, 27 November 2026. Layers matter, but they are a means. The goal is:
+
+1. **Work with pieces of images together.** Drop pictures in, move, scale, rotate and distort
+   them with gizmos, cut bits out, blend them. Photo bashing.
+2. **Pull from the render, push back into the render.** One click each way.
+3. **Draw the way Grease Pencil draws**, but straight onto an image. Same tools, same places.
+4. **Familiar, fast, easy.** Nothing to set up, nothing to look up.
+5. Together these make **texture painting in the Image Editor really useful**.
 
 ## At a glance
 
-> 🎨 **One story: render, paint over it in layers, see it back in the camera. Never leave.**
+> 🎨 **One story: drop it in, move it, paint it, send it back to the render. Never leave.**
 
 | Tier | Name | The artist can now... | Size |
 |---|---|---|---|
-| 0 🧱 | Foundations | (nothing yet: layer data, flatten, undo proven in a prototype) | M |
-| 1 🗂️ | Layers | paint on layers with opacity, blend modes, lock, merge, and save them | L |
-| 2 ✋ | Move and Drop | drop or paste a picture in as a layer, then move, scale, rotate and flip it with a gizmo | M |
-| 3 🖼️ | Paint Over Render | press one button on a render or the viewport and paint on top of it, then refresh the render underneath | S |
-| 4 🎥 | Back to 3D | see the painting live in the camera, and split the layers into planes in front of the camera | S to M |
-| 5 ✂️ | Selections and Masks | select a region, cut, copy, move it, mask a layer, crop | L |
-| 6 🏔️ | Projection and Adjustments | project the painting onto scene geometry, adjustment layers, layer groups | L |
+| 0 🧱 | Foundations | (nothing yet: layer data, flatten, gizmo speed and undo proven in a prototype) | M |
+| 1 ✋ | Pieces | drop or paste pictures in as layers, move, scale, rotate and distort them with a gizmo, cut bits out, erase, paint on layers | L |
+| 2 🔁 | Render Round Trip | paint over a render or the viewport with one button, and have the paint come out on top of every new render and show in the camera | M |
+| 3 ✏️ | Draws Like Grease Pencil | find the Grease Pencil tools in the same places: shapes, eyedropper, erase, same keys | M |
+| 4 🎥 | Camera Planes | split the layers into planes in front of the camera, with depth | S to M |
+| 5 💾 | Layer Files and Depth | exchange layered files with Krita, group and mask layers, crop | M |
+| 6 🏔️ | Selections, Projection, Adjustments | use full selections with every brush, project the painting onto geometry, adjustment layers | L |
 
-Tiers 1 to 4 are the 2027 goal. They are what turns "possible but painful" into "useful". Tiers 5
-and 6 are wanted in 2027 as well if the first four land in time. They start once the first four
-have been used on real work, and they are the ones that slip into 2028 if something has to.
+Tiers 1 to 3 are the goal itself and come first. Tier 4 is small and can be built alongside. All
+six are wanted in 2027. Tiers 5 and 6 are the ones that slip into 2028 if something has to.
 
 **Is it possible?** Yes. Nothing here needs a new kind of technology. The honest picture:
 
@@ -88,7 +98,11 @@ Image "Matte_01"            <- the flat result. This is what materials, the comp
 ```
 
 - The stack lives in **custom properties** on the flat image: for each layer a pointer to its
-  Image, name, visible, locked, opacity, blend mode, and a 2D transform (offset, rotation, scale).
+  Image, name, visible, locked, opacity, blend mode, a 2D transform (offset, rotation, scale, and
+  four corners for perspective), and a **reference** switch.
+- A **reference layer** is seen in the editor but left out of the flat result. The render under a
+  paint-over is one. So the flat image holds the paint alone, with transparency, and can be laid
+  over a new render or over the live viewport (Tier 2). Traced photos and guides use it too.
 - Custom properties are kept by vanilla Blender on load and save, and the pointers keep the layer
   images alive. A Bforartists-only DNA struct would be dropped by vanilla on save, so it is not
   used. This follows the rule in `CLAUDE.md`.
@@ -158,111 +172,163 @@ the bridge for render paint-overs.
 
 ## 4. The tiers
 
+The order follows the goal in section 0: first working with pieces, then the trip to the render
+and back, then the familiar drawing tools. Layers come first only as far as the pieces need them.
+
 ### Tier 0 🧱 Foundations
 
 Prototype only, nothing ships.
 
 - Layer stack stored and read from C++, with an RNA view for the UI and for scripts.
 - Flatten: active layer redirect, and a flat image that updates while a stroke is running.
+- A layer drawn with a pending transform, moved with the gizmo, at full frame rate.
 - Measure: 4K and 8K, byte and float, 5 and 30 layers. This decides between the plain and the
   cached flatten (section 5.1).
-- Undo test: stroke, add layer, stroke, reorder, undo all the way back.
+- Undo test: stroke, add layer, move layer, stroke, reorder, undo all the way back.
+- Check that a layered UDIM image works (each layer is then a tiled image with the same tiles).
 
-Exit check: painting on layer 3 of 10 at 4K feels the same as painting on a single image.
+Exit check: painting on layer 3 of 10 at 4K feels the same as painting on a single image, and
+dragging a 4K photo layer with the gizmo is smooth.
 
-### Tier 1 🗂️ Layers
+### Tier 1 ✋ Pieces: layers, drop, gizmo, cut
 
-- **Layers panel** in the Image Editor sidebar and as a tab next to Tool: list with eye, lock,
-  name, thumbnail, drag to reorder. Opacity and blend mode above the list, as in Krita.
-- Operators: new layer, duplicate, delete, merge down, flatten, move up and down, clear,
-  convert an ordinary image to a layered one and back, alpha lock.
-- `Image > New` gets a "Layered" checkbox. Painting on an ordinary image stays exactly as it is.
+The heart of the plan. One release, because none of these is useful without the others.
+
+**Layers, the part the pieces need**
+
+- **Layers panel** in the Image Editor sidebar, laid out like the Grease Pencil Layers panel: list
+  with eye, lock, name, thumbnail, drag to reorder. Opacity and blend mode above the list.
+- New, duplicate, delete, merge down, flatten, clear, alpha lock.
+- `Image > New` gets a "Layered" checkbox. Any ordinary image can be converted to a layered one
+  and back. Painting on an ordinary image stays exactly as it is.
 - The 3D viewport Texture Paint slot can point at a layered image. The stroke there goes to the
-  active layer as well, and the model shows the flat result.
-- Export and import of OpenRaster.
+  active layer, and the model shows the flat result. So a texture is painted in the Image Editor
+  with layers and seen on the model at the same time.
 
-### Tier 2 ✋ Move and Drop
+**Bring pictures in**
 
-- **Drop a file** on the Image Editor while a layered image is shown: it becomes a new layer under
-  the cursor. Drop on an ordinary image shows a small dialog: `Open`, or `Add as Layer` (which
-  converts the image to a layered one first). A modifier key skips the dialog. Same for image
-  assets from the Asset Browser.
-- **Paste** (`Ctrl V`) makes a layer in a layered image, not a separate "Clipboard" image.
-- **Layer transform tool**: move, rotate, scale, flip, with the existing 2D gizmo. It needs a new
-  bounds case for pixel layers and the paint mode block lifted for this tool.
+- **Drop a file** on a layered image: it becomes a new layer under the cursor, with the gizmo on
+  it. Drop on an ordinary image shows a small dialog: `Open`, or `Add as Layer` (which converts
+  the image to a layered one first). A modifier key skips the dialog. Same for image assets from
+  the Asset Browser, so a folder of photo cut-outs works as a bashing library.
+- **Paste** (`Ctrl V`) makes a layer, not a separate "Clipboard" image. A screenshot or a copy
+  from a browser lands straight on the canvas.
+
+**Move them**
+
+- **Layer transform tool**: move, rotate, scale, flip, with the existing 2D gizmo, plus
+  **perspective** by dragging the four corners. Perspective is what makes a photo sit on a wall
+  or a floor, so it is part of this tier and not an extra.
+- Clicking a pixel with the tool picks the layer under the cursor, so pieces are grabbed
+  directly, without going to the list.
 - The transform is **kept as numbers** on the layer and shown live. Nothing is resampled until
-  `Apply Transform`, a merge, or a stroke on that layer. So a photo can be moved ten times without
+  `Apply Transform`, a merge, or a stroke on that layer. A photo can be moved ten times without
   getting soft.
-- Number fields for position, rotation and scale in the Layers panel. Fit to canvas, fill canvas,
-  centre.
-- Later in this tier, if time allows: perspective (four corner) distort. It is the single most
-  used transform in photo bashing, and the image transform function already takes a 3x3 matrix.
+- Number fields in the panel. Fit to canvas, fill canvas, centre.
 
-### Tier 3 🖼️ Paint Over Render
+**Cut them**
+
+- Box and lasso select with three results: **cut to new layer**, **copy to new layer**, delete.
+  This is the least selection that makes bashing possible: take the tree out of the photo, leave
+  the sky. Selections that every brush respects come in Tier 6.
+- An **Erase tool** with soft brushes, to blend a piece into what is under it.
+- Quick colour match on a layer as plain operators: hue and saturation, brightness and contrast,
+  levels, invert. They change the pixels. Adjustment layers that stay editable are Tier 6.
+
+### Tier 2 🔁 Render Round Trip
+
+**Pull from the render**
 
 - **`Paint Over Render`** button in the Image Editor header when a Render Result or Viewer image
   is shown, and in the Render menu. It:
-  1. copies the shown picture into a new layered image, as a locked bottom layer "Render",
+  1. copies the shown picture into a new layered image as a locked **reference layer** "Render",
   2. adds an empty layer "Paint" above it and makes it active,
   3. switches the editor to that image in paint mode with a brush ready.
 - **`Paint Over Viewport`** in the 3D view does the same from a viewport snapshot. The code for
   the snapshot exists in `Image from View`.
-- The new image remembers scene, camera and frame. **`Refresh Render Layer`** replaces only the
-  bottom layer after a new render. The paint layers stay. This is the loop that makes iteration
-  possible: change the lighting, render, refresh, keep the paint.
+- The image remembers scene, camera and frame. **`Refresh Render Layer`** replaces only the
+  reference layer after a new render. The paint stays.
 - Options: which pass to copy (combined by default), and "also bring passes as layers" for AO,
   mist or an object matte, hidden by default.
 - Colour: renders are scene-linear float. The painting stays float and is shown through the same
-  view transform as the render, so the colours do not shift when the button is pressed. Float
-  painting at render size is part of the Tier 0 speed measurement.
-- Back to the compositor: the flat image is an ordinary image, so an Image node picks it up. A
-  `Use in Compositor` button adds that node.
+  view transform as the render, so colours do not shift when the button is pressed.
 
-Stills first. Painting over an animation (a layer that holds per frame) is not in this plan.
+**Push back into the render**
 
-### Tier 4 🎥 Back to 3D
+A reference layer is seen in the editor but left out of the flat result (section 3.1). So the
+flat image is the paint alone, with transparency. That makes the way back simple:
 
-Three ways, from cheap to deep. The first two are in this tier.
+- **`Composite Over Render`**: one button adds an Image node with the painting and an Alpha Over
+  after the render layers in the compositor. From then on every render comes out with the paint
+  on top. Change the lighting, render again, the paint is still there. Nothing to redo.
+- **`Show in Camera`**: one button puts the painting on the scene camera, in front, with an
+  opacity slider. It updates while you paint, and because it is the paint alone, the live 3D
+  scene shows through underneath. This is the painting "cast" into the viewport.
+- **Per layer**: the same two buttons in the layer's right-click menu, `Composite Layer Over
+  Render` and `Show Layer in Camera`. They send that one layer by itself. A layer is an ordinary
+  image, so this needs nothing new. Useful when only the fog, or only the sky, should go back.
+- `Save a Copy` with the reference included gives the full picture as a file.
 
-1. **Show in Camera.** One button puts the flat image on the scene camera as a background image,
-   in front, with an opacity slider. It updates as you paint. This is the "cast the painting into
-   the viewport" answer, and it is almost free because camera background images already exist.
-2. **Layers to Camera Planes.** Each visible layer becomes a plane, parented to the camera and
-   sized to fill its frame at its distance. Options:
-   - **Near** and **Far**: the distance of the first and the last plane from the camera. The
-     layers are spread between them in stack order, top layer nearest.
-   - **Bias**: a slider from -1 to 1. At 0 the planes are evenly spaced. Towards 1 they bunch up
-     at the far end, with wide gaps near the camera. Towards -1 they bunch up near the camera.
-     The planes move live while the slider is dragged, and each plane rescales to keep filling
-     the frame.
-   - Later: **from the render depth**, where each layer goes to the typical depth of the render
-     under its painted pixels. Needs a depth pass kept from Tier 3.
-   - material: emission with alpha, so it looks the same as the painting.
+Stills first. The paint sits over every frame of a locked-off shot, which is already useful.
+Paint that changes per frame is not in this plan.
 
-   Each plane uses the layer's own image, so painting in the Image Editor, or straight on the plane
-   in the 3D view, updates both. Unparent the planes and move the camera and you have a 2.5D matte
-   painting with parallax. The plane sizing code exists in `Import Images as Planes`. The parenting
-   and the depth placement are new.
-3. **Project onto geometry** (Tier 6). The painting is projected from the camera onto the scene
-   meshes, for camera moves that planes cannot survive. Blender has the parts (UV Project,
-   `Project Edit` and `Project Apply`) but no clean workflow.
+### Tier 3 ✏️ Draws Like Grease Pencil
 
-### Tier 5 ✂️ Selections and Masks
+Someone who knows Grease Pencil draw mode should find the same tools in the same places, with the
+same keys, when painting on an image. Today the two differ:
 
-- Rectangle, ellipse, lasso and "by colour" selection in paint mode, stored as a mask image.
-- Strokes and fills respect the selection. Cut, copy, paste, delete, and move the selected pixels
-  (which lifts them into a floating layer, as in Krita).
-- Layer masks, clipping to the layer below.
+| | Grease Pencil draw mode | Image paint today |
+|---|---|---|
+| Tools | Draw, Erase, Fill, Trim, Eyedropper, Line, Polyline, Arc, Curve, Box, Circle | Draw, Blur, Smear, Clone, Fill, Mask |
+| Layers | Panel with opacity, blend, masks, transform, adjustments, groups | None |
+| Select | Tweak, box, circle, lasso | None |
+
+- Add to image paint: **Line, Polyline, Arc, Curve, Box, Circle** (drawn with the active brush),
+  **Eyedropper** as a tool. Erase arrives in Tier 1.
+- Same tool order in the toolbar, same icons where the tool is the same. Hotkeys are a separate
+  question (open decision 12).
+- Same header layout: brush, colour, radius and strength in the same order as Grease Pencil.
+- Smooth stroke (stabiliser) reachable from the header as in Grease Pencil.
+- Blur, Smear and Clone stay. They are what an image has and strokes do not.
+
+This tier is UI and operators around the existing brush code. It covers tools and layout only
+(decision 9). How the stroke itself feels (smoothing, pressure response) is brush engine work and
+not part of this plan.
+
+### Tier 4 🎥 Camera Planes
+
+- **Layers to Camera Planes.** Each visible layer becomes a plane, parented to the camera and
+  sized to fill its frame at its distance. Options:
+  - **Near** and **Far**: the distance of the first and the last plane from the camera. The
+    layers are spread between them in stack order, top layer nearest.
+  - **Bias**: a slider from -1 to 1. At 0 the planes are evenly spaced. Towards 1 they bunch up
+    at the far end, with wide gaps near the camera. Towards -1 they bunch up near the camera.
+    The planes move live while the slider is dragged, and each plane rescales to keep filling
+    the frame.
+  - Material: emission with alpha, so it looks the same as the painting.
+  - Later: **from the render depth**, where each layer goes to the typical depth of the render
+    under its painted pixels.
+- Each plane uses the layer's own image, so painting in the Image Editor, or straight on the
+  plane in the 3D view, updates both. The planes are real objects, so they are in the render,
+  behind and in front of scene objects. Unparent them and move the camera and you have a 2.5D
+  matte painting with parallax.
+- The plane sizing code exists in `Import Images as Planes`. Parenting and spacing are new.
+
+### Tier 5 💾 Layer Files and Depth
+
+- Export and import of OpenRaster (section 3.4), then multilayer EXR.
+- Layer groups, clipping to the layer below, layer masks.
 - Crop tool and canvas resize that act on all layers.
+- Image selectors fold layer images under their parent (section 5.4).
 
-This tier is large because selection touches every tool. That is why it comes after the first
-four, which give the most with the least.
+### Tier 6 🏔️ Selections, Projection, Adjustments
 
-### Tier 6 🏔️ Projection and Adjustments
-
-- Camera projection of the painting onto geometry (see Tier 4, third way).
-- Adjustment layers (levels, hue and saturation, curves) and layer groups.
-- Reference layers and a colour picker that samples the flat result.
+- Full selections: rectangle, ellipse, lasso, by colour, stored as a mask. Every brush and fill
+  respects them. Moving selected pixels lifts them into a floating layer.
+- Camera projection of the painting onto scene geometry, for camera moves that planes cannot
+  survive. Blender has the parts (UV Project, `Project Edit`, `Project Apply`) but no clean
+  workflow.
+- Adjustment layers that stay editable (levels, hue and saturation, curves).
 
 ## 5. The hard parts
 
@@ -278,6 +344,11 @@ Every dab changes the active layer, and the flat picture has to follow at once.
   user (material, compositor, save) asks for it.
 
 Tier 0 measures the plain way first. The cached way is only built if the numbers ask for it.
+
+Dragging a layer with the gizmo has the same problem in another form: resampling a 4K photo on
+the CPU for every mouse move is too slow. While the gizmo is held, the layer is drawn by the GPU
+in the Image Editor with its matrix, and the flat image is updated once, on release. The model in
+the 3D view and the camera overlay therefore follow on release, not during the drag.
 
 ### 5.2 Undo
 
@@ -326,14 +397,19 @@ From the maintainer, 27 November 2026.
 | # | Question | Decision |
 |---|---|---|
 | 1 | Layers as plain images with custom properties (section 3.1)? | Yes. Files must work in vanilla Blender, with no add-on and without Bforartists |
-| 2 | Scope for 2027 | Tiers 1 to 4, and Tiers 5 and 6 in the same year if possible |
+| 2 | Scope for 2027 | All tiers in 2027 if possible. Tiers 1 to 3 first (draft 3 numbering), Tiers 5 and 6 are the ones that may slip |
 | 3 | Where does this sit against the animation campaign? | Separate track |
 | 4 | Dropping a picture on the Image Editor | A layer on a layered image. A dialog (Open or Add as Layer) on an ordinary image |
 | 6 | Camera planes spacing | Near and Far distance with a Bias slider, so the planes can sit closer together far away or closer together near the camera. Depth placement from the render later |
 | 7 | Layered image as the default for `Image > New` in paint mode? | Not until it is stable and tested |
+| 8 | What the plan is for | Section 0. Pieces, gizmos and bashing, the trip to the render and back, and drawing like Grease Pencil come before layer extras. The tiers were reordered for this in draft 3 |
+| 5 | First layered file format | OpenRaster (section 3.4). Multilayer EXR second |
+| 9 | What "like Grease Pencil" covers | Tools and layout only. Not the stroke feel |
+| 10 | Getting paint alone back onto the render | Reference layers, yes. Also any single layer can be sent to the compositor or shown over the camera by itself |
+| 11 | Selection | Minimal cut (box and lasso to a new layer) in Tier 1, full selections in Tier 6. Selection here means pixels in a layer, or whole layers. There are no strokes to select, this is raster. Selecting strokes stays a Grease Pencil thing |
 
 Still open:
 
 | # | Question | Suggested answer |
 |---|---|---|
-| 5 | First layered file format | OpenRaster, explained in section 3.4. Multilayer EXR second |
+| 12 | Hotkeys for the new image paint tools: the same as their Grease Pencil twins? | Yes where the key is free in the Image Editor. Not part of decision 9 |

@@ -77,13 +77,13 @@ static wmOperatorStatus sequencer_retiming_data_show_exec(bContext *C, wmOperato
   VectorSet<Strip *> selected = seq::query_selected_strips(seq::active_seqbase_get(ed));
   selected.remove_if([](Strip *strip) { return !seq::retiming_is_allowed(strip); });
 
-  Set<Strip *> selected_keys;
+  bool keys_selected = false;
   Map<SeqRetimingKey *, Strip *> retiming_sel = seq::retiming_selection_get(ed);
   for (Strip *retiming_strip : retiming_sel.values()) {
     if (seq::retiming_show_keys(retiming_strip)) {
       selected.add(retiming_strip);
     }
-    selected_keys.add(retiming_strip);
+    keys_selected |= selected.contains(retiming_strip);
   }
 
   if (selected.is_empty()) {
@@ -103,8 +103,8 @@ static wmOperatorStatus sequencer_retiming_data_show_exec(bContext *C, wmOperato
     }
     else {
       strip->flag |= SEQ_SHOW_RETIMING;
-      /* If retiming keys are selected, deselect the strip, since both can't happen. */
-      if (selected_keys.contains(strip)) {
+      /* If any retiming keys are selected, deselect all strips, since both can't happen. */
+      if (keys_selected) {
         strip->flag &= ~SEQ_SELECT;
       }
     }
@@ -963,7 +963,7 @@ wmOperatorStatus sequencer_retiming_box_select_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
+  const eSelectOp sel_op = RNA_enum_get<eSelectOp>(op->ptr, "mode");
   bool changed = false;
 
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
@@ -1043,12 +1043,6 @@ wmOperatorStatus sequencer_retiming_select_all_exec(bContext *C, wmOperator *op)
 
   VectorSet<Strip *> strips = all_strips_from_context(C);
 
-  ARegion *region = CTX_wm_region(C);
-  if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
-    strips.remove_if(
-        [&](Strip *strip) { return strip_is_too_small_for_retiming(scene, &region->v2d, strip); });
-  }
-
   if (action == SEL_TOGGLE) {
     action = SEL_SELECT;
     for (Strip *strip : strips) {
@@ -1066,6 +1060,19 @@ wmOperatorStatus sequencer_retiming_select_all_exec(bContext *C, wmOperator *op)
 
   if (action == SEL_DESELECT) {
     seq::retiming_selection_clear(seq::editing_get(scene));
+  }
+
+  ARegion *region = CTX_wm_region(C);
+  if (region && (region->regiontype == RGN_TYPE_WINDOW)) {
+    strips.remove_if([&](Strip *strip) {
+      if (!strip_is_too_small_for_retiming(scene, &region->v2d, strip)) {
+        return false;
+      }
+      for (SeqRetimingKey &key : seq::retiming_keys_get(strip)) {
+        key.flag &= ~SEQ_KEY_SELECTED;
+      }
+      return true;
+    });
   }
 
   for (Strip *strip : strips) {

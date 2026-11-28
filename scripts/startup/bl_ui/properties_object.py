@@ -201,9 +201,10 @@ class COLLECTION_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.collection_unlink", text = "Delete", icon='DELETE')
         layout.operator("object.collection_objects_select", icon = "HAND")
         layout.operator("object.instance_offset_from_cursor", icon = "CURSOR")
+        layout.separator()
+        layout.operator("object.collection_unlink", text = "Delete", icon='DELETE')
 
 
 class OBJECT_PT_collections(ObjectButtonsPanel, Panel):

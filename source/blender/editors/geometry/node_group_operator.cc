@@ -817,6 +817,7 @@ static std::optional<ID_Type> socket_type_to_id_type(const eNodeSocketDatatype s
     case SOCK_BUNDLE:
     case SOCK_CLOSURE:
     case SOCK_DYNAMIC:
+    case SOCK_TEXTURE:
       return std::nullopt;
     case SOCK_OBJECT:
       return ID_OB;
@@ -824,8 +825,6 @@ static std::optional<ID_Type> socket_type_to_id_type(const eNodeSocketDatatype s
       return ID_IM;
     case SOCK_COLLECTION:
       return ID_GR;
-    case SOCK_TEXTURE:
-      return ID_TE;
     case SOCK_MATERIAL:
       return ID_MA;
     case SOCK_FONT:
@@ -855,7 +854,7 @@ static Map<std::string, ID *> gather_input_ids(const Main &bmain,
 
   Map<std::string, ID *> ids;
   for (const bNodeTreeInterfaceSocket *input : node_group.interface_inputs()) {
-    const std::optional<ID_Type> id_type = socket_type_to_id_type(input->socket_typeinfo()->type);
+    const std::optional<ID_Type> id_type = socket_type_to_id_type(input->socket_typeinfo().type);
     if (!id_type) {
       continue;
     }
@@ -1319,6 +1318,7 @@ static StructRNA *get_input_socket_struct_rna(IDProperty &input_idprop,
                             nodes::geometry_nodes_input_type_items_value_or_attribute_or_layer,
                             nodes::GeometryNodesInputType::Value);
       make_common_attribute_name_prop(*srna, name, description, input_idprop);
+      RNA_def_string(srna, "layer_name", nullptr, 0, name.c_str(), description.c_str());
       break;
     }
     case SOCK_INT: {

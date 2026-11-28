@@ -481,7 +481,6 @@ set(LIB
   PRIVATE bf::dna
   PRIVATE bf::draw
   PRIVATE bf::imbuf
-  PRIVATE bf::intern::atomic
   PRIVATE bf::intern::clog
   PRIVATE bf::intern::guardedalloc
   PRIVATE bf::nodes
@@ -592,6 +591,7 @@ set(GLSL_SRC
   shaders/common/gpu_shader_math_matrix_normalize.bsl.hh
   shaders/common/gpu_shader_math_matrix_projection.bsl.hh
   shaders/common/gpu_shader_math_matrix_transform.bsl.hh
+  shaders/common/gpu_shader_math_octahedral.bsl.hh
   shaders/common/gpu_shader_math_precise.bsl.hh
   shaders/common/gpu_shader_math_quaternion.bsl.hh
   shaders/common/gpu_shader_math_rotation.bsl.hh
@@ -681,6 +681,7 @@ set(GLSL_SRC
   shaders/material/gpu_shader_material_normal.bsl.hh
   shaders/material/gpu_shader_material_normal_map.bsl.hh
   shaders/material/gpu_shader_material_object_info.bsl.hh
+  shaders/material/gpu_shader_material_open_pbr.bsl.hh
   shaders/material/gpu_shader_material_open_pbr_util.bsl.hh
   shaders/material/gpu_shader_material_output_aov.bsl.hh
   shaders/material/gpu_shader_material_output_material.bsl.hh
@@ -747,7 +748,6 @@ set(GLSL_SRC
 
   shaders/gpu_shader_display_fallback.bsl.hh
 
-  shaders/gpu_shader_index_gen.bsl.hh
 
   shaders/compat/gpu_shader_compat_glsl.glsl
   shaders/compat/gpu_shader_glsl_extension.glsl

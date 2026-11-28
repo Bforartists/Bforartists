@@ -71,13 +71,14 @@ static wmOperatorStatus wm_fbx_import_exec(bContext *C, wmOperator *op)
   params.use_custom_props = RNA_boolean_get(op->ptr, "use_custom_props");
   params.props_enum_as_string = RNA_boolean_get(op->ptr, "use_custom_props_enum_as_string");
   params.ignore_leaf_bones = RNA_boolean_get(op->ptr, "ignore_leaf_bones");
+  params.auto_bone_orientation = RNA_boolean_get(op->ptr, "auto_bone_orientation");
   params.import_subdivision = RNA_boolean_get(op->ptr, "import_subdivision");
   params.validate_meshes = RNA_boolean_get(op->ptr, "validate_meshes");
   params.use_anim = RNA_boolean_get(op->ptr, "use_anim");
   params.anim_offset = RNA_float_get(op->ptr, "anim_offset");
-  params.vertex_colors = eFBXVertexColorMode(RNA_enum_get(op->ptr, "import_colors"));
-  params.mtl_name_collision_mode = eFBXMtlNameCollisionMode(
-      RNA_enum_get(op->ptr, "mtl_name_collision_mode"));
+  params.vertex_colors = RNA_enum_get<eFBXVertexColorMode>(op->ptr, "import_colors");
+  params.mtl_name_collision_mode = RNA_enum_get<eFBXMtlNameCollisionMode>(
+      op->ptr, "mtl_name_collision_mode");
 
   params.reports = op->reports;
 
@@ -151,6 +152,7 @@ static void ui_fbx_import_settings(const bContext *C, ui::Layout &layout, Pointe
   if (ui::Layout *panel = layout.panel(C, "FBX_import_armature", false, IFACE_("Armature"))) {
     ui::Layout &col = panel->column(false);
     col.use_property_split_set(false);  // bfa
+    col.prop(ptr, "auto_bone_orientation", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     col.prop(ptr, "ignore_leaf_bones", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
 }
@@ -226,6 +228,11 @@ void WM_OT_fbx_import(wmOperatorType *ot)
                   "Ignore Leaf Bones",
                   "Ignore the last bone at the end of each chain (used to mark the length of the "
                   "previous bone)");
+  RNA_def_boolean(ot->srna,
+                  "auto_bone_orientation",
+                  false,
+                  "Auto Bone Orientation",
+                  "Align major bone axis with the bone children");
   RNA_def_boolean(
       ot->srna,
       "validate_meshes",

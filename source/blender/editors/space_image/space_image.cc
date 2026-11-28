@@ -518,7 +518,7 @@ static void IMAGE_GGT_gizmo2d_resize(wmGizmoGroupType *gzgt)
 
 static void IMAGE_GGT_gizmo2d_rotate(wmGizmoGroupType *gzgt)
 {
-  gzgt->name = "UV Transform Gizmo Resize";
+  gzgt->name = "UV Transform Gizmo Rotate";
   gzgt->idname = "IMAGE_GGT_gizmo2d_rotate";
 
   gzgt->flag |= (WM_GIZMOGROUPTYPE_DRAW_MODAL_EXCLUDE | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
@@ -1380,9 +1380,9 @@ static void image_space_blend_read_data(BlendDataReader * /*reader*/, SpaceLink 
 #endif
 }
 
-static void image_space_blend_write(BlendWriter *writer, SpaceLink *sl)
+static void image_space_blend_write(ScreenBlendWriteData &screen_writer, SpaceLink *sl)
 {
-  writer->write_struct_cast<SpaceImage>(sl);
+  screen_writer.writer->write_struct_cast<SpaceImage>(sl);
 }
 
 /**************************** spacetype *****************************/

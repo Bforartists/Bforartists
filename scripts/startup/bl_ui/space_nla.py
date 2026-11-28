@@ -385,7 +385,7 @@ class NLA_MT_strips(Menu):
             "nla.duplicate", text="Duplicate", icon="DUPLICATE"
         ).linked = False
         layout.operator(
-            "nla.duplicate", text="Linked Duplicate", icon="DUPLICATE"
+            "nla.duplicate", text="Duplicate Linked", icon="DUPLICATE"
         ).linked = True
         layout.operator("nla.split", icon="SPLIT")
         props = layout.operator("wm.call_panel", text="Rename", icon="RENAME")
@@ -591,12 +591,12 @@ class NLA_MT_channel_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
-
-        layout.separator()
-
         layout.operator("nla.tracks_add", text="Add Track").above_selected = False
         layout.operator("nla.tracks_add", text="Add Track Above Selected").above_selected = True
+
+        layout.separator()
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
+
         layout.separator()
         layout.operator("nla.tracks_delete", icon='DELETE')
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")

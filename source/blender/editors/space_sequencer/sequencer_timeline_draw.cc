@@ -872,10 +872,15 @@ static size_t draw_seq_text_get_overlay_string(const StripDrawContext &strip_ctx
         (strip->flag & SEQ_SCENE_STRIPS) == 0)
     {
       BLI_assert(strip->scene_view_layer_name != nullptr);
+      const ViewLayer *view_layer = BKE_view_layer_find(strip->scene,
+                                                        strip->scene_view_layer_name);
+      if (view_layer == nullptr) {
+        view_layer = BKE_view_layer_default_render(strip->scene);
+      }
       if (i != 0) {
         text_array[i++] = text_sep;
       }
-      text_array[i++] = strip->scene_view_layer_name;
+      text_array[i++] = view_layer->name;
     }
   }
 
@@ -2278,10 +2283,24 @@ static std::optional<BladeSplit> blade_split_get(
     split_expand_strips(ed, strip, include, split.strips);
   }
 
-  if (split.strips.is_empty() && !all_channels) {
-    return std::nullopt;
+  if (!split.strips.is_empty() || all_channels) {
+    return split;
   }
-  return split;
+
+  /* Check to see if we are at a split point (where two strips directly neighbor one another).
+   * If so, then show the tooltip and preview frame even though it's technically not splittable. */
+  bool left_neighbor = false, right_neighbor = false;
+  for (Strip &strip : *ed->current_strips()) {
+    if (strip.channel == *channel && (!only_selected || (strip.flag & SEQ_SELECT))) {
+      left_neighbor |= strip.right_handle(scene) == split_frame;
+      right_neighbor |= strip.left_handle() == split_frame;
+    }
+  }
+  if (left_neighbor && right_neighbor) {
+    return split;
+  }
+
+  return std::nullopt;
 }
 
 static void blade_split_draw(Scene *scene, const ARegion *region, const BladeSplit &split)

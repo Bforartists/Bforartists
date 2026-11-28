@@ -30,6 +30,7 @@ from bl_ui.properties_paint_common import (
     brush_settings,
     brush_settings_advanced,
     draw_color_settings,
+    draw_texture_paint_automasking_settings,
     supports_shape_panel,
     show_experimental_texture_paint,
 )
@@ -47,6 +48,7 @@ class VIEW3D_MT_brush_context_menu(Menu):
 
         settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         brush = getattr(settings, "brush", None)
+        is_editable_asset = brush and brush.library and brush.library.is_editable  # BFA - guard: brush can be None
 
         if context.region.type == "UI" and context.space_data.type == "VIEW_3D":
             # skip if no active brush
@@ -80,7 +82,6 @@ class VIEW3D_MT_brush_context_menu(Menu):
                 layout.operator(
                     "brush.asset_save_as", text="Duplicate Asset", icon="DUPLICATE"
                 )  # BFA - moved to top level
-                layout.operator("brush.asset_delete", text="Delete Asset", icon="X")  # BFA - moved to context menu
 
                 layout.separator()
 
@@ -88,6 +89,11 @@ class VIEW3D_MT_brush_context_menu(Menu):
                 layout.operator(
                     "brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA"
                 )  # BFA - icon added
+
+                layout.separator()
+
+                # BFA - delete last, like Blender's menu polish (week 47)
+                layout.operator("brush.asset_delete", text="Delete Asset", icon="X")  # BFA - moved to context menu
 
             else:
                 layout.label(text="This brush is built-in and not editable", icon="STATUS_INFO")
@@ -107,6 +113,14 @@ class VIEW3D_MT_brush_context_menu(Menu):
         layout.operator("brush.asset_load_preview", text="Edit Preview Image...")
         layout.operator("brush.asset_save", text="Save Changes to Asset")
         layout.operator("brush.asset_revert", text="Revert to Asset")
+
+        layout.separator()
+
+        op_text = (
+            iface_("Delete Asset", i18n_contexts.operator_default) if is_editable_asset
+            else iface_("Delete", i18n_contexts.operator_default)
+        )
+        layout.operator("brush.asset_delete", text=op_text)
 
 
 class View3DPanel:
@@ -800,6 +814,10 @@ class VIEW3D_PT_mask(Panel):
         tool_settings = context.tool_settings
         ipaint = tool_settings.image_paint
 
+        # BFA - upstream: with experimental 3D texture paint, auto-masking settings replace the cavity mask
+        if show_experimental_texture_paint(ipaint.brush):
+            draw_texture_paint_automasking_settings(layout, ipaint.mesh_automasking_settings)
+
         # BFA - Stencil Mask and Cavity Mask are drawn directly in this popover
         # as checkbox toggles with the split label system, instead of being
         # collapsible child panels. (Fixes double dropdown, issue #6470)
@@ -843,6 +861,10 @@ class VIEW3D_PT_mask(Panel):
                 row.prop(ipaint, "invert_stencil", text="", icon="IMAGE_ALPHA")
 
         # Cavity Mask
+        # BFA - upstream: cavity mask is replaced by auto-masking in experimental 3D texture paint
+        if show_experimental_texture_paint(ipaint.brush):
+            return
+
         layout.separator()
 
         row = layout.row()

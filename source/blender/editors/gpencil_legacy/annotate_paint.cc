@@ -6,6 +6,7 @@
  * \ingroup edgpencil
  */
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -633,8 +634,10 @@ static short annotation_stroke_addpoint(tGPsdata *p,
 
       /* first time point is adding to temporary buffer -- need to allocate new point in stroke */
       if (gpd->runtime.sbuffer_used == 0) {
-        gps->points = static_cast<bGPDspoint *>(
-            MEM_realloc_uninitialized(gps->points, sizeof(bGPDspoint) * (gps->totpoints + 1)));
+        bGPDspoint *new_points = MEM_new_array<bGPDspoint>(gps->totpoints + 1, __func__);
+        std::copy_n(gps->points, gps->totpoints, new_points);
+        MEM_delete(gps->points);
+        gps->points = new_points;
         gps->totpoints++;
       }
 
@@ -2157,7 +2160,7 @@ static void annotation_draw_cancel(bContext *C, wmOperator *op)
 static int annotation_draw_init(bContext *C, wmOperator *op, const wmEvent *event)
 {
   tGPsdata *p;
-  eGPencil_PaintModes paintmode = eGPencil_PaintModes(RNA_enum_get(op->ptr, "mode"));
+  eGPencil_PaintModes paintmode = RNA_enum_get<eGPencil_PaintModes>(op->ptr, "mode");
 
   /* check context */
   p = static_cast<tGPsdata *>(op->customdata = annotation_session_initpaint(C));
@@ -2546,13 +2549,13 @@ static wmOperatorStatus annotation_draw_invoke(bContext *C, wmOperator *op, cons
   else if (p->paintmode == GP_PAINTMODE_DRAW_STRAIGHT) {
     if (RNA_enum_get(op->ptr, "arrowstyle_start") != GP_STROKE_ARROWSTYLE_NONE) {
       p->gpd->runtime.sbuffer_sflag |= GP_STROKE_USE_ARROW_START;
-      p->gpd->runtime.arrow_start_style = eGPDstroke_Arrowstyle(
-          RNA_enum_get(op->ptr, "arrowstyle_start"));
+      p->gpd->runtime.arrow_start_style = RNA_enum_get<eGPDstroke_Arrowstyle>(op->ptr,
+                                                                              "arrowstyle_start");
     }
     if (RNA_enum_get(op->ptr, "arrowstyle_end") != GP_STROKE_ARROWSTYLE_NONE) {
       p->gpd->runtime.sbuffer_sflag |= GP_STROKE_USE_ARROW_END;
-      p->gpd->runtime.arrow_end_style = eGPDstroke_Arrowstyle(
-          RNA_enum_get(op->ptr, "arrowstyle_end"));
+      p->gpd->runtime.arrow_end_style = RNA_enum_get<eGPDstroke_Arrowstyle>(op->ptr,
+                                                                            "arrowstyle_end");
     }
   }
   else if (p->paintmode == GP_PAINTMODE_DRAW) {
@@ -2791,7 +2794,7 @@ static wmOperatorStatus annotation_draw_modal(bContext *C, wmOperator *op, const
          * NOTE: This just makes it nicer to work with drawing sessions
          */
         if (p->paintmode == GP_PAINTMODE_ERASER) {
-          p->paintmode = eGPencil_PaintModes(RNA_enum_get(op->ptr, "mode"));
+          p->paintmode = RNA_enum_get<eGPencil_PaintModes>(op->ptr, "mode");
 
           /* if the original mode was *still* eraser,
            * we'll let it say for now, since this gives
@@ -2864,7 +2867,7 @@ static wmOperatorStatus annotation_draw_modal(bContext *C, wmOperator *op, const
         }
         else { /* Any mouse button besides right. */
           /* restore drawmode to default */
-          p->paintmode = eGPencil_PaintModes(RNA_enum_get(op->ptr, "mode"));
+          p->paintmode = RNA_enum_get<eGPencil_PaintModes>(op->ptr, "mode");
         }
 
         annotation_draw_toggle_eraser_cursor(p, p->paintmode == GP_PAINTMODE_ERASER);

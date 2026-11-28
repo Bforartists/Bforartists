@@ -713,6 +713,12 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
       }
       break;
     }
+    case TFM_MODAL_PRECISION: {
+      if (t->mode_info == &TransMode_timetranslate) {
+        return false;
+      }
+      break;
+    }
     case TFM_MODAL_INSERTOFS_TOGGLE_DIR:
     case TFM_MODAL_NODE_ATTACH_ON:
     case TFM_MODAL_NODE_ATTACH_OFF:
@@ -817,6 +823,9 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
         return false;
       }
       if (t->data_type == &TransConvertType_SequencerRetiming) {
+        return false;
+      }
+      if (t->mode_info == &TransMode_timetranslate) {
         return false;
       }
       break;

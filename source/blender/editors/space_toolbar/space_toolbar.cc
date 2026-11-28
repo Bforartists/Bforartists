@@ -142,9 +142,10 @@ static void toolbar_header_listener(const wmRegionListenerParams *params)
   }
 }
 
-static void toolbar_space_blend_write(BlendWriter *writer, SpaceLink *sl)
+/* BFA - signature changed upstream in 564ea777ecc (ScreenBlendWriteData) */
+static void toolbar_space_blend_write(ScreenBlendWriteData &screen_writer, SpaceLink *sl)
 {
-  writer->write_struct_cast<SpaceToolbar>(sl);
+  screen_writer.writer->write_struct_cast<SpaceToolbar>(sl);
 }
 
 /********************* registration ********************/

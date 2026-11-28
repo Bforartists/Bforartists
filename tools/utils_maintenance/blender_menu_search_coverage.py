@@ -73,6 +73,7 @@ OPERATOR_IGNORE = (
     "graph.clickselect",
     "graph.cursor_set",  # Interactive cursor placement.
     "graph.select_lasso",
+    "grease_pencil.select_linked_pick",
     "mask.select_lasso",
     "mask.select_linked_pick",
     "mesh.polybuild_*",  # Only accessed via tool.

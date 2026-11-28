@@ -315,7 +315,57 @@ template<int64_t N> std::string ParsedRNAPath<N>::to_string() const
   return rna_path::to_string(this->items);
 }
 
+template<int64_t N, int64_t M>
+bool operator<(const ParsedRNAPath<N> &left, const ParsedRNAPath<M> &right)
+{
+
+  /* Compare lexicographically. */
+  const int right_size = right.items.size();
+  for (const int index : left.items.index_range()) {
+    if (index >= right_size) {
+      /* Left is longer than right, sort the shortest path first. */
+      return false;
+    }
+    const rna_path::Item &left_item = left.items[index];
+    const rna_path::Item &right_item = right.items[index];
+    if (left_item == right_item) {
+      continue;
+    }
+
+    /* Compare the variant types. */
+    if (left_item.index() != right_item.index()) {
+      return left_item.index() < right_item.index();
+    }
+
+    /* Compare the value of the variants.
+     * The index() guard above guarantees both hold the same variant type. */
+    if (std::holds_alternative<rna_path::Member>(left_item)) {
+      return std::get<rna_path::Member>(left_item).identifier.ref() <
+             std::get<rna_path::Member>(right_item).identifier.ref();
+    }
+    if (std::holds_alternative<rna_path::LookupIndex>(left_item)) {
+      return std::get<rna_path::LookupIndex>(left_item).index <
+             std::get<rna_path::LookupIndex>(right_item).index;
+    }
+    BLI_assert(std::holds_alternative<rna_path::LookupKey>(left_item));
+    return std::get<rna_path::LookupKey>(left_item).key.ref() <
+           std::get<rna_path::LookupKey>(right_item).key.ref();
+  }
+
+  /* The left path is a prefix of the right path, but the right path may still be longer. In that
+   * case, the left path should be sorted first. */
+  if (right_size > left.items.size()) {
+    return true;
+  }
+
+  return false;
+}
+
+/* Instantiate templates. */
 template class ParsedRNAPath<4>;
+/* It's unlikely that mixed path types are going to be compared, so just instantiate the known
+ * ones. */
+template bool operator<(const ParsedRNAPath<4> &left, const ParsedRNAPath<4> &right);
 
 /**
  * Generic rna path parser.
@@ -1057,22 +1107,25 @@ ID *RNA_find_real_ID_and_path(ID *id, const char **r_path)
     return id;
   }
 
-  if (r_path) {
-    switch (id->id_type()) {
-      case ID_NT:
-        *r_path = "node_tree";
-        break;
-      case ID_GR:
-        *r_path = "collection";
-        break;
-      default:
-        BLI_assert_msg(0, "Missing handling of embedded id type.");
-    }
-  }
-
   ID *owner_id = BKE_id_owner_get(id);
   BLI_assert_msg(owner_id != nullptr, "Missing handling of embedded id type.");
-  return (owner_id != nullptr) ? owner_id : id;
+  if (owner_id == nullptr) {
+    return id;
+  }
+
+  if (r_path) {
+    /* Property of the owner that holds the embedded ID. */
+    BKE_idtype_id_foreach_embedded_id_p(
+        owner_id,
+        [&](ID **embedded_id_p, const ID_Type /*id_type*/, StringRefNull rna_identifier) {
+          if (*embedded_id_p == id) {
+            *r_path = rna_identifier.c_str();
+          }
+        });
+    BLI_assert_msg((*r_path)[0] != '\0', "Missing handling of embedded id type.");
+  }
+
+  return owner_id;
 }
 
 static std::optional<std::string> rna_prepend_real_ID_path(ID *id,

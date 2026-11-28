@@ -491,10 +491,7 @@ static void generate_geometry(gesture::GestureData &gesture_data)
   /* Get the triangulation for the front/back poly. */
   const int face_tris_num = bke::mesh::face_triangles_num(screen_points.size());
   Array<uint3> tris(face_tris_num);
-  BLI_polyfill_calc(reinterpret_cast<const float (*)[2]>(screen_points.data()),
-                    screen_points.size(),
-                    0,
-                    reinterpret_cast<uint(*)[3]>(tris.data()));
+  BLI_polyfill_calc(screen_points, 0, tris);
 
   /* Write the front face triangle indices. */
   MutableSpan<int> face_offsets = trim_operation->mesh->face_offsets_for_write();
@@ -687,12 +684,12 @@ static void init_operation(gesture::GestureData &gesture_data, wmOperator &op)
   trim_operation->op.apply_for_symmetry_pass = gesture_apply_for_symmetry_pass;
   trim_operation->op.end = gesture_end;
 
-  trim_operation->mode = OperationType(RNA_enum_get(op.ptr, "trim_mode"));
+  trim_operation->mode = RNA_enum_get<OperationType>(op.ptr, "trim_mode");
   trim_operation->use_cursor_depth = RNA_boolean_get(op.ptr, "use_cursor_depth");
-  trim_operation->orientation = OrientationType(RNA_enum_get(op.ptr, "trim_orientation"));
-  trim_operation->extrude_mode = ExtrudeMode(RNA_enum_get(op.ptr, "trim_extrude_mode"));
-  trim_operation->solver_mode = blender::geometry::boolean::Solver(
-      RNA_enum_get(op.ptr, "trim_solver"));
+  trim_operation->orientation = RNA_enum_get<OrientationType>(op.ptr, "trim_orientation");
+  trim_operation->extrude_mode = RNA_enum_get<ExtrudeMode>(op.ptr, "trim_extrude_mode");
+  trim_operation->solver_mode = RNA_enum_get<blender::geometry::boolean::Solver>(op.ptr,
+                                                                                 "trim_solver");
 
   /* If the cursor was not over the mesh, force the orientation to view. */
   if (!trim_operation->initial_hit) {

@@ -987,11 +987,8 @@ endif()
 
 # Metal
 if(APPLE)
-  option(WITH_METAL_BACKEND "\
-Use Metal for graphics instead of (or as well as) OpenGL on macOS."
-    ON
-  )
-  mark_as_advanced(WITH_METAL_BACKEND)
+  # The Metal backend is unconditionally enabled for Apple devices (Mac, iPad, etc...).
+  set(WITH_METAL_BACKEND ON)
 else()
   set(WITH_METAL_BACKEND OFF)
 endif()
@@ -2493,7 +2490,6 @@ if(WITH_BLENDER)
   # internal and external library information first, for test linking
   add_subdirectory(source)
 elseif(WITH_CYCLES_STANDALONE OR WITH_CYCLES_HYDRA_RENDER_DELEGATE)
-  add_subdirectory(intern/atomic)
   add_subdirectory(intern/guardedalloc)
   add_subdirectory(intern/libc_compat)
   add_subdirectory(intern/sky)

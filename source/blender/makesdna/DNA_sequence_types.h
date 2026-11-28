@@ -22,6 +22,7 @@
 #include "DNA_vec_types.h"    /* for #rctf */
 
 #include "BLI_enum_flags.hh"
+#include "BLI_math_constants.hh"
 
 #include <optional>
 
@@ -266,8 +267,8 @@ struct StripCrop {
 struct StripTransform {
   float xofs = 0;
   float yofs = 0;
-  float scale_x = 0;
-  float scale_y = 0;
+  float scale_x = 1.0f;
+  float scale_y = 1.0f;
   float rotation = 0;
   /**
    * Relative 0-1 range, where (0,0) is the bottom-left of the image.
@@ -275,7 +276,7 @@ struct StripTransform {
    * Either call #image_transform_origin_get, or convert to absolute view-space pixel offset from
    * the preview center with #image_transform_origin_preview_offset_get.
    */
-  float origin[2] = {};
+  float origin[2] = {0.5, 0.5};
   eStripTransformFilter filter = SEQ_TRANSFORM_FILTER_AUTO;
 };
 
@@ -298,7 +299,7 @@ struct StripProxy {
   char filename[/*FILE_MAXFILE*/ 256] = "";
   struct MovieReader *anim = nullptr; /* Custom proxy anim file. */
 
-  short quality = 0; /* Proxy build quality. */
+  short quality = 50; /* Proxy build quality. */
 
   eStripProxyBuildSize build_size_flags =
       SEQ_PROXY_IMAGE_SIZE_NONE; /* which proxy sizes to build. */
@@ -365,7 +366,7 @@ struct Strip {
   eStripFlag flag = SEQ_FLAG_NONE;
   StripType type = STRIP_TYPE_IMAGE;
   /** The length of the contents of this strip before handles are applied. To be used with
-   * #content_length() and #content_length_set(). */
+   * #source_duration() and #source_duration_set(). */
   int len = 0;
   /**
    * Start frame of contents of strip in absolute frame coordinates.
@@ -384,8 +385,8 @@ struct Strip {
   int channel = 0;
   /** Starting and ending points of the effect strip. Undefined for other strip types. */
   int startdisp = 0, enddisp = 0;
-  float sat = 0;
-  float mul = 0;
+  float sat = 1.0f;
+  float mul = 1.0f;
 
   /** Stream-index for movie or sound files with several streams. */
   short streamindex = 0;
@@ -428,13 +429,13 @@ struct Strip {
 
   /** The linked "bSound" object. */
   struct bSound *sound = nullptr;
-  float volume = 0;
+  float volume = 1.0f;
 
   /** Pitch ranges from -0.1 to 10, replaced in 3.3 with #Strip::speed_factor on sound strips.
    * Pan ranges from -2 to 2. */
   DNA_DEPRECATED float pitch_legacy = 0;
   float pan = 0;
-  float strobe = 0;
+  float strobe = 1.0f;
 
   float sound_offset = 0;
   char _pad4[4] = {};
@@ -445,8 +446,8 @@ struct Strip {
   /** Frame offset from start/end of video file content to be ignored and invisible to the VSE. */
   int anim_startofs = 0, anim_endofs = 0;
 
-  StripBlendMode blend_mode = STRIP_BLEND_REPLACE;
-  float blend_opacity = 0;
+  StripBlendMode blend_mode = STRIP_BLEND_ALPHAOVER;
+  float blend_opacity = 100.0f;
 
   StripColorTag color_tag = STRIP_COLOR_NONE;
 
@@ -472,7 +473,7 @@ struct Strip {
 
   /* Playback rate of original video file in frames per second, for movie strips only. */
   float media_playback_rate = 0;
-  float speed_factor = 0;
+  float speed_factor = 1.0f;
 
   struct SeqRetimingKey *retiming_keys = nullptr;
   int retiming_keys_num = 0;
@@ -488,87 +489,67 @@ struct Strip {
     return this->effect_num_inputs_get() != 0;
   }
 
-  /**
-   * Get timeline frame where strip content starts.
-   */
+  /** Timeline frame where the content starts. Setting it will also move strip handles. */
   float content_start() const;
-  /**
-   * Set frame where strip content starts.
-   * This function will also move strip handles.
-   */
   void content_start_set(const Scene *scene, int timeline_frame);
-  /**
-   * Get timeline frame where strip content ends.
-   */
+
+  /** Timeline frame where the underlying content ends. */
   float content_end(const Scene *scene) const;
+
+  /** Timeline frames spanned by the content after frame rate adjustment and retiming. */
+  int content_duration(const Scene *scene) const;
+
   /**
-   * Get number of frames (in timeline) that can be rendered.
-   * This can change depending on scene FPS or strip speed factor.
+   * Number of frames in the source before any frame rate adjustment or retiming.
+   * For single-image strips and effects, this is always 1.
    */
-  int length(const Scene *scene) const;
+  int source_duration() const;
   /**
-   * Get the sound offset (if any) and round it to the nearest integer.
-   * This is mostly used in places where subframe data is not allowed (like re-timing key
-   * positions). Returns zero if strip is not a sound strip or if there is no offset.
+   * Initialize or update the number of frames in the strip's source. Setting the source duration
+   * is done when strips are first created, but can also be done to "fake" a certain duration for
+   * various reasons.
    */
-  int rounded_sound_offset(float scene_fps) const;
-  /**
-   * Get timeline frame where strip boundary starts.
-   */
+  void source_duration_set(int new_source_duration);
+
+  /** Timeline frames of the handles. Setting them does not move the content. */
   int left_handle() const;
-  /**
-   * Get timeline frame where strip boundary ends.
-   */
   int right_handle(const Scene *scene) const;
-  /**
-   * Set frame where strip boundary starts. This function moves only handle, content is not moved.
-   */
   void left_handle_set(const Scene *scene, int timeline_frame);
-  /**
-   * Set frame where strip boundary ends.
-   * This function moves only handle, content is not moved.
-   */
   void right_handle_set(const Scene *scene, int timeline_frame);
+
   /**
-   * Set the left and right handles of the strip.
-   * \note `left_frame` must be less than `right_frame`.
+   * Set both left and right handles of a strip at once.
+   * \note #left_frame must be less than #right_frame.
    */
   void handles_set(const Scene *scene, int left_frame, int right_frame);
-  /**
-   * Set the strip's channel, clamped between 1 and #MAX_CHANNELS.
-   */
-  void channel_set(int channel);
-  /**
-   * Test if this strip would be rendered at the given frame.
-   *
-   * \param timeline_frame: absolute frame in the timeline
-   * \return true if \a timeline_frame exists in the strip's [start_frame, end_frame) range,
-   * i.e., inclusive start and exclusive end.
-   */
-  bool intersects_frame(const Scene *scene, int timeline_frame) const;
-  /**
-   * Get difference between scene and movie strip frame-rate.
-   * Returns 1.0f for all other strip types.
-   */
-  float media_playback_rate_factor(float scene_fps) const;
-  /**
-   * Get FPS rate of source media. Movie, scene and movie-clip strips are supported.
-   * Returns 0 for unsupported strip or if media can't be loaded.
-   */
-  float media_fps(Scene *scene);
 
-  /**
-   * Raw frame count before any handles are applied.
-   * */
-  int content_length() const;
-  void content_length_set(int new_length);
-
-  /**
-   * Frame distance from the right handle to the content end.
-   */
+  /** Frame distance from the right handle to the content end. */
   float end_offset() const;
   void end_offset_set(float new_end_offset);
 
+  /** Set the strip's channel, clamped between 1 and #MAX_CHANNELS. */
+  void channel_set(int channel);
+
+  /**
+   * Test if this strip would be rendered at the given frame.
+   *
+   * \return true if \a timeline_frame lies in the strip's [left_handle, right_handle) range, i.e.
+   * inclusive start and exclusive end.
+   */
+  bool intersects_frame(const Scene *scene, int timeline_frame) const;
+
+  /** Ratio of media playback rate to scene fps with auto playback rate set, 1.0f otherwise. */
+  float source_playback_rate_factor(float scene_fps) const;
+
+  /** Frame rate of the source media, or 0 if unsupported or it can't be loaded. */
+  float source_fps(Scene *scene);
+
+  /**
+   * Sound offset rounded to whole frames, or 0 for non-sound strips.
+   * This is mostly used in places where subframe data is not allowed (like re-timing key
+   * positions).
+   */
+  int rounded_sound_offset(float scene_fps) const;
 #endif
 };
 
@@ -672,8 +653,9 @@ struct Editing {
   eEditingOverlayFrameFlag overlay_frame_flag = SEQ_EDIT_OVERLAY_FRAME_NONE;
   rctf overlay_frame_rect = {};
 
-  eEditingShowMissingMediaFlag show_missing_media_flag = SEQ_EDIT_SHOW_NONE;
-  eEditingCacheFlag cache_flag = SEQ_CACHE_NONE;
+  eEditingShowMissingMediaFlag show_missing_media_flag = SEQ_EDIT_SHOW_MISSING_MEDIA;
+  eEditingCacheFlag cache_flag = SEQ_CACHE_PREFETCH_ENABLE | SEQ_CACHE_STORE_FINAL_OUT |
+                                 SEQ_CACHE_STORE_RAW;
 
   seq::EditingRuntime *runtime = nullptr;
 
@@ -777,13 +759,13 @@ struct WipeVars {
 
 struct GlowVars {
   /** Minimum intensity to trigger a glow. */
-  float fMini = 0;
-  float fClamp = 0;
+  float fMini = 0.25f;
+  float fClamp = 1.0f;
   /** Amount to multiply glow intensity. */
-  float fBoost = 0;
+  float fBoost = 0.5f;
   /** Radius of glow blurring. */
-  float dDist = 0;
-  int dQuality = 0;
+  float dDist = 3.0f;
+  int dQuality = 3;
   /** SHOW/HIDE glow buffer. */
   int bNoComp = 0;
 };
@@ -802,9 +784,9 @@ struct TransformVarsLegacy {
 };
 
 struct SolidColorVars {
-  float col[3] = {};
-  int width;
-  int height;
+  float col[3] = {0.5, 0.5, 0.5};
+  int width = 1;
+  int height = 1;
 };
 
 struct SpeedControlVars {
@@ -817,14 +799,14 @@ struct SpeedControlVars {
 
   eEffectSpeedControlType speed_control_type = SEQ_SPEED_STRETCH;
 
-  float speed_fader = 0;
+  float speed_fader = 1.0f;
   float speed_fader_length = 0;
   float speed_fader_frame_number = 0;
 };
 
 struct GaussianBlurVars {
-  float size_x = 0;
-  float size_y = 0;
+  float size_x = 9.0f;
+  float size_y = 9.0f;
 };
 
 struct TextVars {
@@ -839,21 +821,24 @@ struct TextVars {
   char _pad2[4] = {};
 
   struct VFont *text_font = nullptr;
-  int text_blf_id = 0;
-  float text_size = 0;
+  int text_blf_id = -1;
+  float text_size = 60.0f;
   float space_line = 1.0f;
-  float abs_space_line = 1.0f;
-  float color[4] = {}, shadow_color[4] = {}, box_color[4] = {}, outline_color[4] = {};
-  float loc[2] = {};
-  float wrap_width = 0;
-  float box_margin = 0;
+  float abs_space_line = 60.0f;
+  float color[4] = {1.0, 1.0, 1.0, 1.0};
+  float shadow_color[4] = {0.0, 0.0, 0.0, 0.7};
+  float box_color[4] = {0.2, 0.2, 0.2, 0.7};
+  float outline_color[4] = {0.0, 0.0, 0.0, 0.7};
+  float loc[2] = {0.5, 0.5};
+  float wrap_width = 1.0f;
+  float box_margin = 0.01f;
   float box_roundness = 0;
-  float shadow_angle = 0;
-  float shadow_offset = 0;
+  float shadow_angle = DEG2RADF(65.0f);
+  float shadow_offset = 0.04f;
   float shadow_blur = 0;
-  float outline_width = 0;
+  float outline_width = 0.05f;
   eEffectTextFlags flag = SEQ_TEXT_NONE;
-  eEffectTextAlignX align = SEQ_TEXT_ALIGN_X_LEFT;
+  eEffectTextAlignX align = SEQ_TEXT_ALIGN_X_CENTER;
   char _pad[2] = {};
 
   /** Offsets in characters (unicode code-points) for #TextVars::text_ptr. */
@@ -864,8 +849,8 @@ struct TextVars {
   /** Replaced by `anchor_y` in 4.4. */
   DNA_DEPRECATED char align_y_legacy = 0;
 
-  eEffectTextAnchorX anchor_x = SEQ_TEXT_ANCHOR_X_LEFT;
-  eEffectTextAnchorY anchor_y = SEQ_TEXT_ANCHOR_Y_TOP;
+  eEffectTextAnchorX anchor_x = SEQ_TEXT_ANCHOR_X_CENTER;
+  eEffectTextAnchorY anchor_y = SEQ_TEXT_ANCHOR_Y_CENTER;
   char _pad1[1] = {};
   seq::TextVarsRuntime *runtime = nullptr;
 
@@ -880,9 +865,9 @@ struct TextVars {
 #define STRIP_FONT_NOT_LOADED -2
 
 struct ColorMixVars {
-  StripBlendMode blend_effect = STRIP_BLEND_REPLACE;
+  StripBlendMode blend_effect = STRIP_BLEND_OVERLAY;
   /** Blend factor [0.0f, 1.0f]. */
-  float factor = 0;
+  float factor = 1.0f;
 };
 
 struct CompositorEffectVars {
@@ -973,7 +958,7 @@ struct ColorBalanceModifierData {
   StripModifierData modifier;
 
   StripColorBalance color_balance;
-  float color_multiply = 0;
+  float color_multiply = 1.0f;
 };
 
 struct CurvesModifierData {
@@ -1009,6 +994,7 @@ struct WhiteBalanceModifierData {
 struct SequencerTonemapModifierData {
   StripModifierData modifier;
 
+  /* Same as tone-map compositor node. */
   float key = 0.18f, offset = 1.0f, gamma = 1.0f;
   float intensity = 0, contrast = 0, adaptation = 1.0f, correction = 0;
   eModTonemapType type = SEQ_TONEMAP_RD_PHOTORECEPTOR;
@@ -1044,7 +1030,7 @@ struct PitchModifierData {
   ePitchMode mode = PITCH_MODE_SEMITONES;
   int semitones = 0;
   int cents = 0;
-  float ratio = 0;
+  float ratio = 1.0f;
   char preserve_formant = 0;
   char _pad[3] = {};
   ePitchQuality quality = PITCH_QUALITY_HIGH;
@@ -1052,9 +1038,9 @@ struct PitchModifierData {
 
 struct EchoModifierData {
   StripModifierData modifier;
-  float delay = 0;
-  float feedback = 0;
-  float mix = 0;
+  float delay = 1.0f;
+  float feedback = 0.5f;
+  float mix = 0.5f;
   char _pad[4] = {};
 };
 

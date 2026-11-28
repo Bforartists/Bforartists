@@ -1392,7 +1392,7 @@ static wmOperatorStatus edbm_select_similar_region_exec(bContext *C, wmOperator 
   bool changed = false;
 
   /* Group variables. */
-  int (*group_index)[2];
+  Vector<int2> group_index;
   int group_tot;
   int i;
 
@@ -1402,8 +1402,9 @@ static wmOperatorStatus edbm_select_similar_region_exec(bContext *C, wmOperator 
   }
 
   int *groups_array = MEM_new_array_uninitialized<int>(bm->totfacesel, __func__);
-  group_tot = BM_mesh_calc_face_groups(
-      bm, groups_array, &group_index, nullptr, nullptr, nullptr, BM_ELEM_SELECT, BM_VERT);
+  group_index = BM_mesh_calc_face_groups(
+      bm, groups_array, nullptr, nullptr, nullptr, BM_ELEM_SELECT, BM_VERT);
+  group_tot = int(group_index.size());
 
   BM_mesh_elem_table_ensure(bm, BM_FACE);
 
@@ -1439,7 +1440,6 @@ static wmOperatorStatus edbm_select_similar_region_exec(bContext *C, wmOperator 
   }
 
   MEM_delete(groups_array);
-  MEM_delete(group_index);
 
   if (changed) {
     EDBM_uvselect_clear(bm);
@@ -1664,7 +1664,7 @@ static bool walker_select(BMesh *bm,
 
 static wmOperatorStatus edbm_edge_loop_multiselect_exec(bContext *C, wmOperator *op)
 {
-  const BMWDelimitFlag delimit = BMWDelimitFlag(RNA_enum_get(op->ptr, "delimit_edge_loop"));
+  const BMWDelimitFlag delimit = RNA_enum_get<BMWDelimitFlag>(op->ptr, "delimit_edge_loop");
   const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1737,7 +1737,7 @@ static wmOperatorStatus edbm_edge_loop_multiselect_exec(bContext *C, wmOperator 
 
 static wmOperatorStatus edbm_edge_ring_multiselect_exec(bContext *C, wmOperator *op)
 {
-  const BMWDelimitFlag delimit = BMWDelimitFlag(RNA_enum_get(op->ptr, "delimit_edge_ring"));
+  const BMWDelimitFlag delimit = RNA_enum_get<BMWDelimitFlag>(op->ptr, "delimit_edge_ring");
   const Main *bmain = CTX_data_main(C);
   const Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
@@ -1839,7 +1839,7 @@ static wmOperatorStatus edbm_boundary_loop_multiselect_exec(bContext *C, wmOpera
   }
 
   const bool extend = RNA_boolean_get(op->ptr, "extend");
-  const BMWDelimitFlag delimit = BMWDelimitFlag(RNA_enum_get(op->ptr, "delimit_edge_loop"));
+  const BMWDelimitFlag delimit = RNA_enum_get<BMWDelimitFlag>(op->ptr, "delimit_edge_loop");
   bool changed_multi = false;
 
   for (const int ob_index : objects.index_range()) {
@@ -2428,7 +2428,7 @@ static wmOperatorStatus edbm_select_loop_exec(bContext *C, wmOperator *op)
   const char *delimit_prop = (em->selectmode & SCE_SELECT_FACE) ? "delimit_face_loop" :
                                                                   "delimit_edge_loop";
   return edbm_select_loop_or_ring_exec_impl(
-      C, op, false, BMWDelimitFlag(RNA_enum_get(op->ptr, delimit_prop)));
+      C, op, false, RNA_enum_get<BMWDelimitFlag>(op->ptr, delimit_prop));
 }
 
 static wmOperatorStatus edbm_select_loop_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -2443,7 +2443,7 @@ static wmOperatorStatus edbm_select_ring_exec(bContext *C, wmOperator *op)
   const char *delimit_prop = (em->selectmode & SCE_SELECT_FACE) ? "delimit_face_loop" :
                                                                   "delimit_edge_ring";
   return edbm_select_loop_or_ring_exec_impl(
-      C, op, true, BMWDelimitFlag(RNA_enum_get(op->ptr, delimit_prop)));
+      C, op, true, RNA_enum_get<BMWDelimitFlag>(op->ptr, delimit_prop));
 }
 
 static wmOperatorStatus edbm_select_ring_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -3748,12 +3748,13 @@ bool EDBM_select_interior_faces(BMesh *bm)
   }
 
   /* Group variables. */
-  int (*fgroup_index)[2];
+  Vector<int2> fgroup_index;
   int fgroup_len;
 
   int *fgroup_array = MEM_new_array_uninitialized<int>(bm->totface, __func__);
-  fgroup_len = BM_mesh_calc_face_groups(
-      bm, fgroup_array, &fgroup_index, bm_interior_loop_filter_fn, nullptr, nullptr, 0, BM_EDGE);
+  fgroup_index = BM_mesh_calc_face_groups(
+      bm, fgroup_array, bm_interior_loop_filter_fn, nullptr, nullptr, 0, BM_EDGE);
+  fgroup_len = int(fgroup_index.size());
 
   int *fgroup_recalc_stack = MEM_new_array_uninitialized<int>(fgroup_len, __func__);
   STACK_DECLARE(fgroup_recalc_stack);
@@ -3789,7 +3790,6 @@ bool EDBM_select_interior_faces(BMesh *bm)
   }
 
   MEM_delete(fgroup_array);
-  MEM_delete(fgroup_index);
 
   Heap *fgroup_heap = BLI_heap_new_ex(fgroup_len);
   HeapNode **fgroup_table = MEM_new_array_uninitialized<HeapNode *>(fgroup_len, __func__);
@@ -4650,7 +4650,7 @@ static wmOperatorStatus edbm_select_by_pole_count_exec(bContext *C, wmOperator *
   const bool extend = RNA_boolean_get(op->ptr, "extend");
   const bool exclude_nonmanifold = RNA_boolean_get(op->ptr, "exclude_nonmanifold");
   const int pole_count = RNA_int_get(op->ptr, "pole_count");
-  const eElemCountType type = eElemCountType(RNA_enum_get(op->ptr, "type"));
+  const eElemCountType type = RNA_enum_get<eElemCountType>(op->ptr, "type");
   const Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       *bmain, scene, view_layer, CTX_wm_view3d(C));
 
@@ -4781,7 +4781,7 @@ static wmOperatorStatus edbm_select_face_by_sides_exec(bContext *C, wmOperator *
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const bool extend = RNA_boolean_get(op->ptr, "extend");
   const int numverts = RNA_int_get(op->ptr, "number");
-  const eElemCountType type = eElemCountType(RNA_enum_get(op->ptr, "type"));
+  const eElemCountType type = RNA_enum_get<eElemCountType>(op->ptr, "type");
   const Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
       *bmain, scene, view_layer, CTX_wm_view3d(C));
 

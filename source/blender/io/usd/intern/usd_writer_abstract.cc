@@ -418,7 +418,7 @@ void USDAbstractWriter::write_id_properties(const pxr::UsdPrim &prim,
   }
 
   if (usd_export_context_.export_params.author_blender_name) {
-    if (GS(id.name) == ID_OB) {
+    if (id.id_type() == ID_OB) {
       /* Author property of original blender Object name. */
       prim.CreateAttribute(pxr::TfToken(usdtokens::blender_ns.GetString() + ":object_name"),
                            pxr::SdfValueTypeNames->String,
@@ -537,6 +537,7 @@ void USDAbstractWriter::write_user_properties(const pxr::UsdPrim &prim,
       case IDP_GROUP:
       case IDP_ID:
       case IDP_IDPARRAY:
+      IDP_ANY_STRUCT_TYPE_CASE:
         /* Not supported. */
         break;
     }

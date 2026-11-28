@@ -13,13 +13,14 @@ from bl_ui import anim
 
 # Use by both image & clip context menus.
 def draw_mask_context_menu(layout, _context):
+    layout.operator("mask.copy_splines", icon='COPYDOWN')
+    layout.operator("mask.paste_splines", icon='PASTEDOWN')
+
+    layout.separator()
+
     layout.operator_menu_enum("mask.handle_type_set", "type")
     layout.operator("mask.switch_direction", icon = "SWITCH_DIRECTION")
     layout.operator("mask.cyclic_toggle", icon = "TOGGLE_CYCLIC")
-
-    layout.separator()
-    layout.operator("mask.copy_splines", icon='COPYDOWN')
-    layout.operator("mask.paste_splines", icon='PASTEDOWN')
 
     layout.separator()
 
@@ -370,7 +371,6 @@ class MASK_MT_mask(Menu):
         layout.separator()
 
         layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
-        layout.operator("mask.delete", icon = "DELETE") # BFA
 
         layout.separator()
 
@@ -399,6 +399,10 @@ class MASK_MT_mask(Menu):
 
         layout.menu("MASK_MT_animation")
         layout.menu("MASK_MT_visibility")
+
+        layout.separator()
+
+        layout.operator("mask.delete", icon = "DELETE") # BFA - delete last, like Blender's menu polish (week 47)
 
 
 class MASK_MT_add(Menu):

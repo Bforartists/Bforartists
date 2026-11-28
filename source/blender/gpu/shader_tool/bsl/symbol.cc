@@ -245,11 +245,37 @@ struct SymbolParser : NodeErrorHandler {
   void parse_function_return_type(SymbolScope &scope, ast::IdType return_type)
   {
     SymbolFunction &fn = *scope.as_function();
-    fn.return_type = &fn.lookup_class(table, return_type.identifier()).unwrap(this);
+    fn.return_type = &parse_id_type(scope, return_type);
 
     if (fn.is_entry_point() && fn.return_type != table.void_cls) {
       error(return_type, Diag::EntryPointVoidReturn);
     }
+  }
+
+  const SymbolClass &parse_id_type(SymbolScope &scope,
+                                   IdType type,
+                                   const ast::Declarator auto_decl = {})
+  {
+    if (type.is_decltype()) {
+      ast::Expr expr = type.decltype_expr();
+      const SymbolClass &cls =
+          *table.expr_type_analysis(scope, expr.child_first()).unwrap(this).type;
+      if (cls.is_error) {
+        error(type, Diag::ExpectedTypedExpression);
+      }
+      return cls;
+    }
+    IdQualified type_id = type.identifier();
+
+    if (auto_decl.is_valid() && type_id.str() == "auto") {
+      return table.resolve_auto_type(scope, auto_decl).unwrap(this);
+    }
+
+    const SymbolClass &cls = scope.lookup_class(table, type_id).unwrap(this);
+    if (cls.is_error) {
+      error(type_id, Diag::UnknownTypeNameWithArg, type_id.str());
+    }
+    return cls;
   }
 
   /* Create declaration for each function argument so name lookup will work with these.
@@ -261,11 +287,8 @@ struct SymbolParser : NodeErrorHandler {
     for (FuncArg arg : arg_list.children_of_type<FuncArg>()) {
       auto attr = resource_type_from_attributes(arg.attributes()).unwrap(this);
 
-      const SymbolClass &type = scope.lookup_class(table, arg.type().identifier()).unwrap(this);
-      if (type.is_error) {
-        error(
-            arg.type().identifier(), Diag::UnknownTypeNameWithArg, arg.type().identifier().str());
-      }
+      const SymbolClass &type = parse_id_type(scope, arg.type());
+
       Declarator decl = arg.declarator();
       SymbolVariable &var = table.var_arena.alloc(scope, type, decl, table);
       if (scope.variable_emplace(&var)) {
@@ -422,7 +445,7 @@ struct SymbolParser : NodeErrorHandler {
   void parse_loop_arguments(SymbolScope &scope, ForLoop loop)
   {
     for (VarDecl var : loop.condition().descendants_of_type<VarDecl>()) {
-      const SymbolClass &type = scope.lookup_class(table, var.type().identifier()).unwrap(this);
+      const SymbolClass &type = parse_id_type(scope, var.type());
       for (Declarator decl : var.children_of_type<Declarator>()) {
         SymbolVariable &sym = table.var_arena.alloc(scope, type, decl, table);
         if (scope.variable_emplace(&sym)) {
@@ -523,21 +546,34 @@ struct SymbolParser : NodeErrorHandler {
   {
     if (stmt.is_namespace()) {
       error(stmt, Diag::UsingNamespaceNotSupported);
+      return;
     }
-    IdQualified aliased(stmt.aliased());
+
     IdQualified name(stmt.identifier());
     string identifier(name.name().str());
-    SymbolFunction &fun = scope.lookup_function(table, aliased).unwrap(this);
+
+    IdType aliased(stmt.aliased());
+
+    if (aliased.is_decltype()) {
+      const SymbolClass &type = parse_id_type(scope, aliased);
+      scope.classes.emplace(identifier, const_cast<SymbolClass *>(&type), name.front());
+      return;
+    }
+
+    const IdQualified aliased_id = aliased.is_valid() ? aliased.identifier() : name;
+
+    SymbolFunction &fun = scope.lookup_function(table, aliased_id).unwrap(this);
     if (!fun.is_error) {
-      scope.functions.emplace(identifier, &fun, stmt.identifier().front());
+      scope.functions.emplace(identifier, &fun, name.front());
       return;
     }
-    SymbolClass &type = scope.lookup_class(table, aliased).unwrap(this);
-    if (type.is_error && fun.is_error) {
-      error(aliased, Diag::UnknownTypeName);
+
+    SymbolClass &type = scope.lookup_class(table, aliased_id).unwrap(this);
+    if (!type.is_error) {
+      scope.classes.emplace(identifier, &type, name.front());
       return;
     }
-    scope.classes.emplace(identifier, &type, stmt.identifier().front());
+    error(aliased_id, Diag::UnknownTypeName);
   }
 
   void parse_enum_value(SymbolScope &scope,
@@ -671,6 +707,16 @@ struct SymbolParser : NodeErrorHandler {
           error(var.loc.tok, Diag::Redefinition, cls.original);
         }
         var.set_offset(parent_class.is_union(), offset);
+
+        if (parent_class.is_union() && cls.is_default_initialized) {
+          /* The union constructor only zero initializes its storage. */
+          error(decl, Diag::UnsupportedDefaultMemberInitializerInUnion);
+        }
+
+        SymbolClass *parent_cls = scope.as_class();
+        if (parent_cls && !parent_cls->is_union) {
+          parent_cls->is_default_initialized |= cls.is_default_initialized;
+        }
       }
     }
     return cls;
@@ -740,6 +786,7 @@ struct SymbolParser : NodeErrorHandler {
       else {
         cls.base_classes.emplace_back(parent_id, parent_cls);
         inherit_members(cls, *parent_cls);
+        cls.is_default_initialized |= parent_cls->is_default_initialized;
       }
       parent_id = parent_id.next();
     }
@@ -833,9 +880,15 @@ struct SymbolParser : NodeErrorHandler {
       }
     }
 
+    const bool is_template = !suffix.empty();
+
     bool is_overload = false;
     SymbolScope &scope = ns ? *ns : def_scope;
-    if (auto [fdecl, fn_ptr] = scope.lookup_function_forward_decl(func); fdecl.is_valid()) {
+    if (auto [fdecl, fn_ptr] = scope.lookup_function_forward_decl(func);
+        /* Template instances are not the definition of a plain prototype with
+         * the same signature. Reusing it would link it twice in the overload list. */
+        !is_template && fdecl.is_valid())
+    {
       fn = fn_ptr;
       /* Modify symbol location if it is forward declared. */
       fn->loc = fdecl.front();
@@ -1028,7 +1081,16 @@ struct SymbolParser : NodeErrorHandler {
        * instantiation. */
       SymbolFunction *fn = &table.fun_arena.alloc(scope, *table.err_cls, fn_decl);
       fn->is_complete = false;
-      fn = scope.functions.emplace(fn).first;
+
+      auto [existing, inserted] = scope.functions.emplace(fn);
+      if (!inserted && existing->is_method() && scope.as_class() != existing->parent_class()) {
+        /* Hide inherited base class method instead of attaching the template to it. */
+        scope.functions.insert_override(fn);
+      }
+      else {
+        fn = existing;
+      }
+
       if (fn->template_data) {
         error(fn_decl.identifier(), Diag::RedefinitionTemplate, fn_decl.identifier().str());
       }
@@ -1308,19 +1370,16 @@ struct SymbolParser : NodeErrorHandler {
                       SymbolVariable *&bitfield_base,
                       const std::string &prefix)
   {
-    IdQualified type_id = var.type().identifier();
-    string_view type_id_str = type_id.str();
+    IdType id_type = var.type();
 
     /* Assumes C++ compilation already checked that all declarator uses the same type.
      * Deduce type using only the first declarator. */
     Declarator first_decl = var.child_first(NodeType::Declarator);
 
-    const SymbolClass &type = (type_id_str == "auto") ?
-                                  table.resolve_auto_type(scope, first_decl).unwrap(this) :
-                                  scope.lookup_class(table, type_id).unwrap(this);
+    const SymbolClass &type = parse_id_type(scope, id_type, first_decl);
 
     if (type.is_error) {
-      error(var, Diag::UnknownTypeNameWithArg, type_id_str);
+      error(id_type, Diag::UnknownTypeNameWithArg, id_type.str());
       return;
     }
 
@@ -1330,11 +1389,11 @@ struct SymbolParser : NodeErrorHandler {
 
     SymbolClass &type_mut = const_cast<SymbolClass &>(type);
     if (attr.res_type == ResourceType::UNIFORM_BUF && !type.is_std140_compatible) {
-      NOTE(type_id, Diag::NoteInUniformBufferDeclaration, type.original);
+      NOTE(id_type, Diag::NoteInUniformBufferDeclaration, type.original);
       type_mut.ensure_size_and_align(this);
     }
     else if (attr.res_type == ResourceType::STORAGE_BUF && !type.is_std430_compatible) {
-      NOTE(type_id, Diag::NoteInStorageBufferDeclaration, type.original);
+      NOTE(id_type, Diag::NoteInStorageBufferDeclaration, type.original);
       type_mut.ensure_size_and_align(this, true);
     }
 
@@ -1408,6 +1467,9 @@ struct SymbolParser : NodeErrorHandler {
       SymbolVariable &sym = table.var_arena.alloc(scope, type, decl, table);
       sym.res_type = attr.res_type;
       sym.is_static |= attr.res_type != ResourceType::NONE;
+      if (!sym.is_static) {
+        sym.default_value = decl.initial_value().expr();
+      }
       if (scope.variable_emplace(&sym)) {
         /* Check if redefinition is simply hiding a base class member. */
         SymbolVariable *other = scope.variables.find(sym.identifier)->second.second;
@@ -1421,6 +1483,39 @@ struct SymbolParser : NodeErrorHandler {
                sym.identifier);
           error(sym.loc.tok, Diag::Redefinition, sym.identifier);
         }
+      }
+
+      if (cls && sym.default_value.is_valid()) {
+        cls->is_default_initialized = true;
+      }
+      else if (cls && !cls->is_union && !sym.is_static && type.is_default_initialized) {
+        /* Member type is default initialized, so the class also becomes default initialized.
+         * Unions only zero initialize their storage. */
+        cls->is_default_initialized = true;
+      }
+
+      if (cls && !sym.is_static) {
+        /* Non-empty initializer lists are not supported by the default constructor. Empty ones
+         * are equivalent to the default zero initialization. Both `T a = {...}` and `T a{...}`
+         * forms are checked. */
+        InitializerList list = decl.initial_value().initializer_list();
+        if (!list.is_valid()) {
+          list = decl.initializer_list();
+        }
+
+        if (list.is_valid() && !list.is_empty()) {
+          error(list, Diag::UnsupportedDefaultMemberInitializerNotExpression);
+        }
+        else if (list.is_valid()) {
+          cls->is_default_initialized = true;
+        }
+      }
+
+      if (cls && cls->is_union && !sym.is_static &&
+          (sym.default_value.is_valid() || type.is_default_initialized))
+      {
+        /* The union constructor only zero initializes its storage. */
+        error(decl, Diag::UnsupportedDefaultMemberInitializerInUnion);
       }
 
       if (sym.is_ptr) {

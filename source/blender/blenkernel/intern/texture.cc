@@ -84,9 +84,7 @@ static void texture_copy_data(Main *bmain,
     texture_dst->ima = nullptr;
   }
 
-  if (texture_dst->coba) {
-    texture_dst->coba = MEM_dupalloc(texture_dst->coba);
-  }
+  texture_dst->coba = BKE_colorband_copy_or_null(texture_src->coba);
   if (texture_src->nodetree) {
     if (texture_src->nodetree->runtime->execdata) {
       ntreeTexEndExecTree(texture_src->nodetree->runtime->execdata);
@@ -204,6 +202,7 @@ IDTypeInfo IDType_ID_TE = {
     .foreach_working_space_color = nullptr,
     .foreach_asset_weak_reference = nullptr,
     .owner_pointer_get = nullptr,
+    .foreach_embedded_id = bke::node_tree_foreach_embedded_id,
 
     .blend_write = texture_blend_write,
     .blend_read_data = texture_blend_read_data,

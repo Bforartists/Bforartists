@@ -870,13 +870,12 @@ struct BlockInteraction_Params {
    * When true, this interaction is not modal
    * (user clicking on a number button arrows or pasting a value for example).
    */
-  bool is_click;
+  bool is_click = false;
   /**
    * Array of unique event ID's (values from #Button.retval).
    * There may be more than one for multi-button editing (see #BUT_DRAG_MULTI).
    */
-  int *unique_retval_ids;
-  uint unique_retval_ids_len;
+  Span<int> unique_retval_ids;
 };
 
 /** Returns 'user_data', freed by #uiBlockInteractionEndFn. */
@@ -2832,10 +2831,23 @@ void template_icon_view(Layout *layout,
 void template_histogram(Layout *layout, PointerRNA *ptr, StringRefNull propname);
 void template_waveform(Layout *layout, PointerRNA *ptr, StringRefNull propname);
 void template_vectorscope(Layout *layout, PointerRNA *ptr, StringRefNull propname);
+
+/**
+ * Determines how the curve mapping is drawn:
+ * - Whether or not a RGB/XYZ selection is drawn.
+ * - What the exact labels of the curve selector are.
+ * - How many curve mappings are editable from this UI.
+ */
+enum class CurveMappingLabels : int8_t {
+  None,
+  XYZ,
+  CRGB,
+  HSV,
+};
 void template_curve_mapping(Layout *layout,
                             PointerRNA *ptr,
                             StringRefNull propname,
-                            int type,
+                            CurveMappingLabels labels,
                             bool levels,
                             bool brush,
                             bool neg_slope,
@@ -3082,6 +3094,7 @@ struct DragColorHandle {
 };
 
 void operatortypes_ui();
+void menutypes_ui();
 /**
  * \brief User Interface Keymap
  */
@@ -3365,6 +3378,9 @@ ARegion *tooltip_create_from_search_item_generic(bContext *C,
 
 /* For float buttons the 'step', is scaled */
 #define UI_PRECISION_FLOAT_SCALE 0.01f
+
+#define UI_PRECISION_FLOAT_STEP_MIN 0.000001f
+#define UI_PRECISION_FLOAT_STEP_MAX 10.0f
 
 /* Typical UI text */
 #define UI_FSTYLE_WIDGET (const uiFontStyle *)&(ui::style_get()->widget)

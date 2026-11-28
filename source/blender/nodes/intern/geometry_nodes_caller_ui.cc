@@ -396,8 +396,7 @@ static void add_attribute_search_or_value_buttons(
 {
   std::string rna_path = "value";
   std::string identifier = socket.identifier;
-  const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-  const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
+  const eNodeSocketDatatype type = socket.socket_typeinfo().type;
 
   const bool show_attribute_input = RNA_enum_get(socket_props_ptr, "type") ==
                                     int(nodes::GeometryNodesInputType::Attribute);
@@ -465,8 +464,7 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
   /* Use #ui::Layout::prop_search to draw pointer properties because #ui::Layout::prop would not
    * have enough information about what type of ID to select for editing the values. This is
    * because pointer IDProperties contain no information about their type. */
-  const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-  const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
+  const eNodeSocketDatatype type = socket.socket_typeinfo().type;
 
   if (ELEM(type, SOCK_GEOMETRY, SOCK_MATRIX, SOCK_BUNDLE, SOCK_CLOSURE)) {
     return;
@@ -502,12 +500,6 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
     case SOCK_MATERIAL: {
       row.use_property_split_set(false); /* BFA - made this wide */
       row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "materials", name, ICON_MATERIAL);
-      row.label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
-      break;
-    }
-    case SOCK_TEXTURE: {
-      row.use_property_split_set(false); /* BFA - made this wide */
-      row.prop_search(socket_props_ptr, "value", ctx.bmain_ptr, "textures", name, ICON_TEXTURE);
       row.label("", ICON_BLANK1); /* BFA - added blank label for consistent alignment */
       break;
     }
@@ -585,7 +577,13 @@ static void draw_property_for_socket(DrawGroupInputsContext &ctx,
       if (socket.flag & NODE_INTERFACE_SOCKET_MENU_EXPANDED) {
         /* BFA - pass actual name so Layout::prop draws the label inside the property split,
          * aligning the value column with other properties. */
-        row.prop(socket_props_ptr, "value", ui::ITEM_R_EXPAND, name, ICON_NONE);
+        /* Use a single space when the name is empty to work around a bug with expanded enums. Also
+         * see #item_enum_expand_exec. */
+        row.prop(socket_props_ptr,
+                 "value",
+                 ui::ITEM_R_EXPAND,
+                 StringRef(name).is_empty() ? " " : name,
+                 ICON_NONE);
       }
       else {
         row.prop(socket_props_ptr, "value", UI_ITEM_NONE, name, ICON_NONE);
@@ -775,8 +773,7 @@ static bool has_output_attribute(const DrawGroupInputsContext &ctx, const bNodeT
     if (!ctx.output_usages[i].is_visible) {
       continue;
     }
-    const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-    const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
+    const eNodeSocketDatatype type = socket.socket_typeinfo().type;
     if (nodes::socket_type_has_attribute_toggle(type)) {
       return true;
     }
@@ -809,8 +806,7 @@ static void draw_output_attributes_panel(DrawGroupInputsContext &ctx, ui::Layout
   const Span<const bNodeTreeInterfaceSocket *> interface_outputs = ctx.tree->interface_outputs();
   for (const int i : interface_outputs.index_range()) {
     const bNodeTreeInterfaceSocket &socket = *interface_outputs[i];
-    const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-    const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
+    const eNodeSocketDatatype type = socket.socket_typeinfo().type;
     if (!ctx.output_usages[i].is_visible) {
       continue;
     }
@@ -1044,7 +1040,11 @@ void draw_geometry_nodes_operator_redo_ui(const bContext &C,
   ctx.input_usages.reinitialize(tree.interface_inputs().size());
   ctx.output_usages.reinitialize(tree.interface_outputs().size());
   nodes::socket_usage_inference::infer_group_interface_inputs_usage(
-      tree, *ctx.properties_ptr, ctx.input_usages, ctx.output_usages);
+      ValueInferenceContext::GeometryNodesOperator,
+      tree,
+      *ctx.properties_ptr,
+      ctx.input_usages,
+      ctx.output_usages);
   draw_interface_panel_content(
       C,
       layout,

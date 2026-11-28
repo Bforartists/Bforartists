@@ -2195,6 +2195,7 @@ void RNA_def_nodes_shader(BlenderRNA *brna)
   define("ShaderNode", "ShaderNodeBsdfHairPrincipled", def_hair_principled, ICON_CURVES);
   define("ShaderNode", "ShaderNodeBsdfMetallic", def_metallic, ICON_METALLIC);
   define("ShaderNode", "ShaderNodeBsdfPrincipled", def_principled, ICON_NODE_PRINCIPLED);
+  define("ShaderNode", "ShaderNodeBsdfOpenPBR", nullptr, ICON_NONE);  /* BFA - WIP - needs icon */
   define("ShaderNode", "ShaderNodeBsdfRayPortal", nullptr, ICON_NODE_RAY_PORTAL);
   define("ShaderNode", "ShaderNodeBsdfRefraction", def_refraction, ICON_NODE_REFRACTIONSHADER);
   define("ShaderNode", "ShaderNodeBsdfSheen", def_sheen, ICON_NODE_VELVET);

@@ -1275,9 +1275,12 @@ class SEQUENCER_MT_strip_text(Menu):
         layout.menu("SEQUENCER_MT_strip_text_characters")  # BFA - menu
 
         layout.separator()
+        layout.operator("sequencer.text_line_break", icon="CARET_NEXT_CHAR")
+
+        layout.separator()
+        # BFA - delete last, like Blender's menu polish (week 47)
         props = layout.operator("sequencer.text_delete", icon="DELETE")
         props.type = "PREVIOUS_OR_SELECTION"
-        layout.operator("sequencer.text_line_break", icon="CARET_NEXT_CHAR")
 
 
 # BFA - Menu
@@ -1507,13 +1510,16 @@ class SEQUENCER_MT_strip_retiming(Menu):
                 col = layout.column()
                 col.enabled = is_retiming
                 col.operator("sequencer.retiming_key_add", icon="KEYFRAMES_INSERT")
-                col.operator("sequencer.retiming_key_delete", icon="DELETE")
                 col.operator("sequencer.retiming_add_freeze_frame_slide", icon="KEYTYPE_MOVING_HOLD_VEC",)
                 col.operator("sequencer.retiming_add_transition_slide", icon="NODE_CURVE_TIME")
 
                 layout.separator()
 
                 layout.operator("sequencer.retiming_reset", icon="KEYFRAMES_REMOVE")
+                # BFA - delete last, like Blender's menu polish (week 47)
+                col = layout.column()
+                col.enabled = is_retiming
+                col.operator("sequencer.retiming_key_delete", icon="DELETE")
             else:
                 layout.label(text="To retime, select a movie or sound strip", icon="QUESTION")  # BFA
         except:
@@ -1625,7 +1631,6 @@ class SEQUENCER_MT_strip(Menu):
                     "ADJUSTMENT",
                     "GAUSSIAN_BLUR",
                 }:
-                    layout.separator()
                     layout.menu("SEQUENCER_MT_strip_effect")
                     layout.menu("SEQUENCER_MT_strip_effect_change")
                 elif strip_type == "MOVIE":
@@ -1633,24 +1638,26 @@ class SEQUENCER_MT_strip(Menu):
                     layout.menu("SEQUENCER_MT_strip_movie")
                 elif strip_type == "IMAGE":
                     layout.separator()
-                    layout.operator("sequencer.rendersize")
-                    layout.operator("sequencer.images_separate")
-                elif strip_type != 'SOUND':
-                    layout.separator()
-                    layout.operator("sequencer.rendersize")
-                elif strip_type == 'META':
+                    layout.operator("sequencer.rendersize", icon="RENDER_REGION")
+                    layout.operator("sequencer.images_separate", icon="SEPARATE")
+                # BFA - the old `strip_type == "META"` branch here only held the effect menus and was unreachable behind the
+                # `!= "SOUND"` branch; it is the TEXT branch as in SEQUENCER_MT_context_menu
+                elif strip_type == "TEXT":
                     layout.separator()
                     layout.menu("SEQUENCER_MT_strip_effect")
                     layout.menu("SEQUENCER_MT_strip_effect_change")
-                elif strip_type == "META":
+                elif strip_type != "SOUND":
+                    layout.separator()
+                    layout.operator("sequencer.rendersize", icon="RENDER_REGION")
+                # BFA - upstream (44ff89168cc) fixed the meta operators missing from the strip menu, so META is its own chain
+                if strip_type == "META":
                     layout.separator()
                     layout.operator("sequencer.meta_make", icon="ADD_METASTRIP")
                     layout.operator("sequencer.meta_separate", icon="REMOVE_METASTRIP")
-                    layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon="TOGGLE_META")
-                if strip_type != "META":
+                else:
                     layout.separator()
                     layout.operator("sequencer.meta_make", icon="ADD_METASTRIP")
-                    layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon="TOGGLE_META")
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon="TOGGLE_META")
 
         if has_sequencer:
             layout.separator()
@@ -1888,9 +1895,6 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.operator("sequencer.rendersize", icon="RENDER_REGION")
                 if has_selection:
                     layout.operator("sequencer.images_separate", icon="SEPARATE")
-            elif strip_type != 'SOUND':
-                layout.separator()
-                layout.operator("sequencer.rendersize")
             elif strip_type == "TEXT":
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_effect")
@@ -1900,6 +1904,10 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.operator("sequencer.meta_make", icon="ADD_METASTRIP")
                 layout.operator("sequencer.meta_separate", icon="REMOVE_METASTRIP")
                 layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon="TOGGLE_META")
+            # BFA - upstream moved the IMAGE branch before `!= "SOUND"` so it is reachable; same here, `!= "SOUND"` goes last
+            elif strip_type != "SOUND":
+                layout.separator()
+                layout.operator("sequencer.rendersize", icon="RENDER_REGION")
             if strip_type != "META":
                 layout.separator()
                 layout.operator("sequencer.meta_make", icon="ADD_METASTRIP")

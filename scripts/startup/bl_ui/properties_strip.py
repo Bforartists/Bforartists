@@ -565,7 +565,8 @@ class STRIP_PT_source(StripButtonsPanel, Panel):
                 else:
                     split.label(text="Pack")
                     split.operator("sound.pack", icon='UGLYPACKAGE', text="")
-                
+
+                layout.prop(sound, "track_index")
                 layout.use_property_split = False # BFA - align left
                 layout.prop(sound, "use_memory_cache")
 

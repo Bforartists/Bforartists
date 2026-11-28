@@ -15,10 +15,6 @@
  *              IEEE TVCG 2002
  *              https://www.cs.umd.edu/~zwicker/publications/EWASplatting-TVCG02.pdf
  *
- *  [octa2017]  Rune Stubbe
- *              Octahedral Encoding
- *              https://www.shadertoy.com/view/Mtfyzl (link is not author's source)
- *
  *  [3dgs2023]  Bernhard Kebl, Georgios Kopanas et al.
  *              3D Gaussian Splatting for Real-Time Radiance Field Rendering
  *              ACM Transactions on Graphics (SIGGRAPH 2023)
@@ -44,9 +40,9 @@
 #include "gpu_shader_math_constants.bsl.hh"
 #include "gpu_shader_math_matrix_construct.bsl.hh"
 #include "gpu_shader_math_matrix_transform.bsl.hh"
+#include "gpu_shader_math_octahedral.bsl.hh"
 #include "gpu_shader_math_quaternion.bsl.hh"
 #include "gpu_shader_math_vector.bsl.hh"
-#include "gpu_shader_math_vector_reduce.bsl.hh"
 
 namespace draw::gsplat {
 
@@ -61,29 +57,6 @@ template<typename T> void swap(T &a, T &b)
 }
 template void swap<float>(float &, float &);
 template void swap<float2>(float2 &, float2 &);
-
-/* TODO(not_mark): use or update `eevee_octahedron_lib` instead? */
-/** Octahedral normal encoding [octa2017]. */
-float2 pack_normal_octahedral(float3 N)
-{
-  N /= reduce_add(abs(N));
-  N.xy = N.z >= 0.0f ? N.xy :
-                       (1.0f - abs(N.yx)) *
-                           mix(float2(-1.0f), float2(1.0f), greaterThanEqual(N.xy, float2(0)));
-  N.xy = N.xy * 0.5f + 0.5f;
-  return N.xy;
-}
-
-/* TODO(not_mark): use or update `eevee_octahedron_lib` instead? */
-/** Octahedral normal decoding [octa2017]. */
-float3 unpack_normal_octahedral(float2 p)
-{
-  p = p * 2.0f - 1.0f;
-  float3 N = float3(p.xy, 1.0f - reduce_add(abs(p.xy)));
-  float t = clamp(-N.z, 0.0f, 1.0f);
-  N.xy += mix(float2(-t), float2(t), greaterThanEqual(N.xy, float2(0.0f)));
-  return normalize(N);
-}
 
 /**
  * Inverse of expmap packing [quat2017] of quaternion data.
@@ -203,15 +176,17 @@ float2 get_shape_offset(uint vert_id)
 {
   /* Flip vertices 1,2 for ccw winding order by flipping their sign. */
   const float winding_order_mult = get_shape_winding_ccw(vert_id) ? -1.0f : 1.0f;
+  /* Offset chosen s.t. cut-off boundaries are minimally visible. */
+  constexpr float shape_offset_v = 2.25f;
   switch (vert_id % DRW_GSPLAT_STRIP_TILE_SIZE) {
     case 0:
-      return float2(-1.0, -1.0);
+      return float2(-shape_offset_v, -shape_offset_v);
     case 1:
-      return float2(1.0, -1.0) * winding_order_mult;
+      return float2(shape_offset_v, -shape_offset_v) * winding_order_mult;
     case 2:
-      return float2(-1.0, 1.0) * winding_order_mult;
+      return float2(-shape_offset_v, shape_offset_v) * winding_order_mult;
     case 3:
-      return float2(1.0, 1.0);
+      return float2(shape_offset_v, shape_offset_v);
     default:
       return float2(NAN_FLT);
   };
@@ -332,8 +307,8 @@ float3 project_gaussian(ObjectMatrices object, ViewMatrices view, Gaussian gs)
   const float tan_fov_y = 1.0f / view.winmat[1][1];
   const float lim_x = 1.3f * tan_fov_x;
   const float lim_y = 1.3f * tan_fov_y;
-  const float focal_x = 0.5f * view.winmat[0][0];
-  const float focal_y = 0.5f * view.winmat[1][1];
+  const float focal_x = view.winmat[0][0];
+  const float focal_y = view.winmat[1][1];
   const float4x4 model_to_view = view.viewmat * object.model;
 
   /* Parameter `t` in [ewas2002], effectively projected point. */
@@ -378,8 +353,6 @@ float3 project_gaussian(ObjectMatrices object, ViewMatrices view, Gaussian gs)
  */
 AxisTuple covmat_to_axes(float3 covmat_2d_v)
 {
-  constexpr float std_dev = 3.0f;
-
   const float mid = 0.5f * (covmat_2d_v.x + covmat_2d_v.z);
   const float radius = length(float2((covmat_2d_v.x - covmat_2d_v.z) * 0.5f, covmat_2d_v.y));
 
@@ -387,8 +360,8 @@ AxisTuple covmat_to_axes(float3 covmat_2d_v)
   const float lambda_2 = max(mid - radius, 1e-8f);
 
   const float2 diag = normalize(float2(covmat_2d_v.y, lambda_1 - covmat_2d_v.x));
-  const float2 axis_0 = min(std_dev * sqrt(lambda_1), 1.0) * diag;
-  const float2 axis_1 = min(std_dev * sqrt(lambda_2), 1.0) * float2(diag.y, -diag.x);
+  const float2 axis_0 = min(sqrt(2.0f * lambda_1), 1.0f) * diag;
+  const float2 axis_1 = min(sqrt(2.0f * lambda_2), 1.0f) * float2(diag.y, -diag.x);
   return AxisTuple::from(axis_0, axis_1);
 }
 
@@ -500,7 +473,7 @@ struct ShapeResource {
       return SplatShape::culled();
     }
 
-    SplatShape shape = {.id = detail::get_shape_id(vert_id), .shape_offset = 2.0f * shape_offset};
+    SplatShape shape = {.id = detail::get_shape_id(vert_id), .shape_offset = shape_offset};
     AxisTuple axes;
 
     /* TODO(not_mark): Load of precomputed data is disabled until we can address
@@ -517,7 +490,7 @@ struct ShapeResource {
       const uint4 shape_data = texelFetch(shape_data_tx, int(shape.id));
       shape.mean = detail::unpack_gaussian_mean(shape_data, infos.splat_mean_range);
       shape.wP = object.point_object_to_world(shape.mean);
-      shape.wN = detail::unpack_normal_octahedral(unpackSnorm2x16(prepass_data.y));
+      shape.wN = normalize(octahedral_uv_to_direction(unpackSnorm2x16(prepass_data.y)));
     }
     else {
       const Gaussian gs = get_gaussian(shape.id);

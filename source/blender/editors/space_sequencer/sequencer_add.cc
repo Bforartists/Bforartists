@@ -95,6 +95,11 @@ enum class ImageImport {
   Individual,
 };
 
+enum class AudioTracks {
+  All,
+  Single,
+};
+
 static const EnumPropertyItem rna_enum_image_import_type_items[] = {
     {int(ImageImport::Detect),
      "DETECT",
@@ -113,6 +118,16 @@ static const EnumPropertyItem rna_enum_image_import_type_items[] = {
      0,
      "Individual Images",
      "Add each selected image as an individual strip"},
+    {0, nullptr, 0, nullptr, nullptr},
+};
+
+static const EnumPropertyItem rna_enum_audio_tracks_items[] = {
+    {int(AudioTracks::All), "ALL", 0, "All Tracks", "Add a sound strip for every audio track"},
+    {int(AudioTracks::Single),
+     "SINGLE",
+     0,
+     "Single Track",
+     "Only add the audio track with the given index"},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -166,7 +181,7 @@ static bool sequencer_add_draw_check_fn(PointerRNA *ptr, PropertyRNA *prop, void
 
   /* Only show placeholders option if image sequence creation is not forced. */
   if (STREQ(prop_id, "use_placeholders")) {
-    return ImageImport(RNA_enum_get(ptr, "image_import_type")) == ImageImport::Detect;
+    return RNA_enum_get<ImageImport>(ptr, "image_import_type") == ImageImport::Detect;
   }
 
   return !STR_ELEM(prop_id,
@@ -179,7 +194,10 @@ static bool sequencer_add_draw_check_fn(PointerRNA *ptr, PropertyRNA *prop, void
                    "move_strips_after_add",
                    "replace_sel",
                    "skip_locked_or_muted_channels",
-                   "use_sequence_detection");
+                   "use_sequence_detection",
+                   "sound",
+                   "audio_tracks",
+                   "audio_track_index");
 }
 
 static void sequencer_add_ui(bContext * /*C*/, wmOperator *op)
@@ -209,9 +227,19 @@ static void sequencer_add_ui(bContext * /*C*/, wmOperator *op)
                    ui::BUT_LABEL_ALIGN_NONE,
                    false);
 
+  if (RNA_struct_find_property(op->ptr, "sound")) {
+    layout.prop(op->ptr, "sound", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+    if (RNA_boolean_get(op->ptr, "sound")) {
+      layout.row(true).prop(op->ptr, "audio_tracks", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
+      if (AudioTracks(RNA_enum_get(op->ptr, "audio_tracks")) == AudioTracks::Single) {
+        layout.prop(op->ptr, "audio_track_index", UI_ITEM_NONE, std::nullopt, ICON_NONE);
+      }
+    }
+  }
+
   /* There is no effect strip add UI, so assume an image is being imported if "length" is found. */
   if (RNA_struct_find_property(op->ptr, "length") &&
-      ImageImport(RNA_enum_get(op->ptr, "image_import_type")) != ImageImport::Sequence)
+      RNA_enum_get<ImageImport>(op->ptr, "image_import_type") != ImageImport::Sequence)
   {
     layout.prop(op->ptr, "length", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
@@ -541,7 +569,7 @@ static bool load_data_init_from_operator(seq::LoadData *load_data, bContext *C, 
 
   PropertyRNA *prop;
   if ((prop = RNA_struct_find_property(op->ptr, "fit_method"))) {
-    load_data->fit_method = eSeqImageFitMethod(RNA_enum_get(op->ptr, "fit_method"));
+    load_data->fit_method = RNA_enum_get<eSeqImageFitMethod>(op->ptr, "fit_method");
     seq::tool_settings_fit_method_set(CTX_data_sequencer_scene(C), load_data->fit_method);
   }
 
@@ -697,7 +725,7 @@ static void seq_load_handle_overlap(bContext *C, wmOperator *op, Span<Strip *> s
 
   const bool overlap_mode_is_set = RNA_struct_property_is_set(op->ptr, "overlap_mode");
   const eSeqOverlapMode overlap_mode = overlap_mode_is_set ?
-                                           eSeqOverlapMode(RNA_enum_get(op->ptr, "overlap_mode")) :
+                                           RNA_enum_get<eSeqOverlapMode>(op->ptr, "overlap_mode") :
                                            seq::tool_settings_overlap_mode_get(scene);
 
   /* Do some minimal shuffling now (on add) if there will be a move afterwards; this parks the
@@ -1281,7 +1309,7 @@ static void sequencer_add_movie_sync_strip(Scene *scene,
   /* Expand missing sound data in the underlying container to fill the movie strip's length. To the
    * user, this missing data is the same as complete silence, so we pretend like it is. */
   if (strip->type == STRIP_TYPE_SOUND) {
-    strip->content_length_set(std::max(anchor->content_length(), strip->content_length()));
+    strip->source_duration_set(std::max(anchor->source_duration(), strip->source_duration()));
   }
 
   /* Match the strip length to the anchor to have all streams align on the timeline. */
@@ -1315,8 +1343,23 @@ static void sequencer_add_movie_strips_single_file(bContext *C,
   ColorManagedColorspaceSettings colorspace_settings;
   MovieReader *probe_anim = openanim_noload(
       filepath_abs, ImBufFlags::Zero, 0, true, &colorspace_settings);
+
   const int video_count = MOV_get_video_stream_count(probe_anim);
-  const int sound_count = load_sound ? BKE_sound_stream_count(bmain, filepath_abs) : 0;
+
+  const int sound_total = load_sound ? BKE_sound_stream_count(bmain, filepath_abs) : 0;
+  IndexRange sound_indices(sound_total);
+  if (AudioTracks(RNA_enum_get(op->ptr, "audio_tracks")) == AudioTracks::Single) {
+    const int index = RNA_int_get(op->ptr, "audio_track_index");
+    sound_indices = index < sound_total ? IndexRange(index, 1) : IndexRange();
+    if (load_sound && index >= sound_total) {
+      BKE_reportf(op->reports,
+                  RPT_WARNING,
+                  "File '%s' has no audio track with index %d",
+                  load_data->path,
+                  index);
+    }
+  }
+  const int sound_count = sound_indices.size();
 
   if (probe_anim != nullptr) {
     MOV_close(probe_anim);
@@ -1348,9 +1391,9 @@ static void sequencer_add_movie_strips_single_file(bContext *C,
   }
 
   /* Audio streams. */
-  for (const int sound_index : IndexRange(sound_count)) {
+  for (const int sound_index : sound_indices) {
     load_data->stream_index = sound_index;
-    load_data->channel = base_channel + sound_index;
+    load_data->channel = base_channel + sound_index - sound_indices.start();
     Strip *strip = seq::add_sound_strip(bmain, scene, ed->current_strips(), load_data);
     if (strip == nullptr) {
       continue;
@@ -1558,6 +1601,21 @@ void SEQUENCER_OT_movie_strip_add(wmOperatorType *ot)
                                         SEQPROP_VIEW_TRANSFORM | SEQPROP_PLAYBACK_RATE |
                                         SEQPROP_MOVE);
   RNA_def_boolean(ot->srna, "sound", true, "Sound", "Load sound with the movie");
+  RNA_def_enum(ot->srna,
+               "audio_tracks",
+               rna_enum_audio_tracks_items,
+               int(AudioTracks::All),
+               "Audio Tracks",
+               "Which audio tracks to add from the movie");
+  RNA_def_int(ot->srna,
+              "audio_track_index",
+              0,
+              0,
+              20,
+              "Audio Track Index",
+              "Index of the audio track to add",
+              0,
+              20);
   RNA_def_boolean(ot->srna,
                   "use_framerate",
                   true,
@@ -1870,7 +1928,7 @@ static wmOperatorStatus sequencer_add_image_strip_exec(bContext *C, wmOperator *
   char vt_old[64];
   STRNCPY_UTF8(vt_old, scene->view_settings.view_transform);
 
-  const ImageImport import_type = ImageImport(RNA_enum_get(op->ptr, "image_import_type"));
+  const ImageImport import_type = RNA_enum_get<ImageImport>(op->ptr, "image_import_type");
 
   if (import_type == ImageImport::Sequence) {
     if (!sequencer_add_image_sequence_force(C, op, load_data)) {
@@ -2156,7 +2214,7 @@ static wmOperatorStatus sequencer_add_effect_strip_exec(bContext *C, wmOperator 
   Scene *scene = CTX_data_sequencer_scene(C);
   Editing *ed = seq::editing_ensure(scene);
 
-  StripType effect_type = StripType(RNA_enum_get(op->ptr, "type"));
+  StripType effect_type = RNA_enum_get<StripType>(op->ptr, "type");
   const int min_inputs = seq::effect_type_get_min_num_inputs(effect_type);
 
   VectorSet<Strip *> inputs;
@@ -2251,7 +2309,7 @@ static wmOperatorStatus sequencer_add_effect_strip_invoke(bContext *C,
 
   int prop_flag = SEQPROP_LENGTH;
   /* When invoking an effect strip which uses inputs, skip guessing of the channel. */
-  StripType type = StripType(RNA_enum_get(op->ptr, "type"));
+  StripType type = RNA_enum_get<StripType>(op->ptr, "type");
   if (is_op_for_effect_with_inputs(CTX_data_sequencer_scene(C), type)) {
     prop_flag |= SEQPROP_NOCHAN;
   }
@@ -2267,7 +2325,7 @@ static bool sequencer_add_effect_strip_poll_property(const bContext *C,
                                                      const PropertyRNA *prop)
 {
   const char *prop_id = RNA_property_identifier(prop);
-  StripType type = StripType(RNA_enum_get(op->ptr, "type"));
+  StripType type = RNA_enum_get<StripType>(op->ptr, "type");
 
   /* Hide start frame and length for effect strips that are locked to their parents' location. */
   if (is_op_for_effect_with_inputs(CTX_data_sequencer_scene(C), type)) {

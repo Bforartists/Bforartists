@@ -180,10 +180,10 @@ static void draw_property_for_socket(
   row.use_property_decorate_set(true);
   row.active_set(input_usages[node_group.interface_input_index(socket)].is_used);
 
-  const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-  const eNodeSocketDatatype type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
+  const bke::bNodeSocketType &typeinfo = socket.socket_typeinfo();
+  const eNodeSocketDatatype type = typeinfo.type;
 
-  if (!typeinfo->make_scene_compositor_effect_input_srna) {
+  if (!typeinfo.make_scene_compositor_effect_input_srna) {
     return;
   }
 
@@ -202,7 +202,7 @@ static void draw_property_for_socket(
     case SOCK_MENU: {
       if (socket.flag & NODE_INTERFACE_SOCKET_MENU_EXPANDED) {
         /* Use a single space when the name is empty to work around a bug with expanded enums. Also
-         * see #ui_item_enum_expand_exec. */
+         * see #item_enum_expand_exec. */
         row.prop(&input_ptr,
                  "value",
                  ui::ITEM_R_EXPAND,
@@ -243,7 +243,10 @@ static void draw_effect_inputs(const bContext &C, PointerRNA &effect_ptr, ui::La
   Array<nodes::socket_usage_inference::SocketUsage> input_usages;
   input_usages.reinitialize(effect.node_group->interface_inputs().size());
   nodes::socket_usage_inference::infer_group_interface_inputs_usage(
-      *effect.node_group, properties_ptr, input_usages);
+      nodes::ValueInferenceContext::CompositorSceneEffect,
+      *effect.node_group,
+      properties_ptr,
+      input_usages);
 
   for (const bNodeTreeInterfaceItem *item : effect.node_group->tree_interface.root_panel.items()) {
     switch (item->item_type) {

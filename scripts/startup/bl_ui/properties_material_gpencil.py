@@ -292,13 +292,15 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             # col.prop(gpcolor, "use_fill_holdout") #BFA - shown below
 
         elif gpcolor.fill_style == 'GRADIENT':
+            col.prop(gpcolor, "fill_color", text="Base Color")
+
             col.prop(gpcolor, "gradient_type")
             col.template_color_ramp(gpcolor, "gradient", expand=True)
 
             col.separator()
 
             # col.prop(gpcolor, "use_fill_holdout") # BFA - double entry, Holdout is shown below for all fill styles
-
+            col.prop(gpcolor, "mix_factor", text="Blend", slider=True)
             col.prop(gpcolor, "texture_offset", text="Location")
 
             row = col.row()

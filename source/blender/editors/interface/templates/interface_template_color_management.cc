@@ -85,8 +85,15 @@ void template_colormanaged_view_settings(Layout *layout,
   }
   else {
     row->label("", ICON_DISCLOSURE_TRI_DOWN);  // bfa - icon
-    template_curve_mapping(
-        col, &view_transform_ptr, "curve_mapping", 'c', true, false, false, false, false);
+    template_curve_mapping(col,
+                           &view_transform_ptr,
+                           "curve_mapping",
+                           ui::CurveMappingLabels::CRGB,
+                           true,
+                           false,
+                           false,
+                           false,
+                           false);
   }
 
   row = &col->row(true);                               // bfa - our layout

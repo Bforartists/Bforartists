@@ -446,12 +446,11 @@ static void gather_attributes(const Span<StringRef> names,
                               MutableAttributeAccessor dst_attributes)
 {
   for (const StringRef name : names) {
-    const GVArray src = *src_attributes.lookup(name, AttrDomain::Point);
+    const GVArray src = *src_attributes.lookup(name, domain);
     const AttrType type = cpp_type_to_attribute_type(src.type());
     if (GSpanAttributeWriter dst = dst_attributes.lookup_or_add_for_write_only_span(
             name, domain, type))
     {
-      const GVArraySpan src = *src_attributes.lookup(name, domain);
       array_utils::gather(src, index_map, dst.span);
       dst.finish();
     }
@@ -521,7 +520,7 @@ void mesh_remesh_reproject_attributes(const Mesh &src, Mesh &dst)
     if (ELEM(iter.name, "position", ".edge_verts", ".corner_vert", ".corner_edge")) {
       return;
     }
-    if (iter.storage_type == bke::AttrStorageType::Single) {
+    if (iter.storage_type == bke::GList::StorageType::Single) {
       const GVArray src_attr = *iter.get();
       const CommonVArrayInfo info = src_attr.common_info();
       if (info.type == CommonVArrayInfo::Type::Single) {

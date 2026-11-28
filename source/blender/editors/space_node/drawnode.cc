@@ -112,7 +112,8 @@ static void node_buts_mix_rgb(ui::Layout &layout, bContext * /*C*/, PointerRNA *
 
 static void node_buts_time(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  template_curve_mapping(&layout, ptr, "curve", 's', false, false, false, false, false);
+  template_curve_mapping(
+      &layout, ptr, "curve", ui::CurveMappingLabels::None, false, false, false, false, false);
 }
 
 static void node_buts_colorramp(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -122,12 +123,14 @@ static void node_buts_colorramp(ui::Layout &layout, bContext * /*C*/, PointerRNA
 
 static void node_buts_curvevec(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  template_curve_mapping(&layout, ptr, "mapping", 'v', false, false, false, false, false);
+  template_curve_mapping(
+      &layout, ptr, "mapping", ui::CurveMappingLabels::XYZ, false, false, false, false, false);
 }
 
 static void node_buts_curvefloat(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
 {
-  template_curve_mapping(&layout, ptr, "mapping", 0, false, false, false, false, false);
+  template_curve_mapping(
+      &layout, ptr, "mapping", ui::CurveMappingLabels::None, false, false, false, false, false);
 }
 
 }  // namespace ed::space_node
@@ -162,8 +165,15 @@ static void node_buts_curvecol(ui::Layout &layout, bContext * /*C*/, PointerRNA 
 
   /* "Tone" (Standard/Film-like) only used in the Compositor. */
   bNodeTree *ntree = id_cast<bNodeTree *>(ptr->owner_id);
-  template_curve_mapping(
-      &layout, ptr, "mapping", 'c', false, false, false, (ntree->type == NTREE_COMPOSIT), false);
+  template_curve_mapping(&layout,
+                         ptr,
+                         "mapping",
+                         ui::CurveMappingLabels::CRGB,
+                         false,
+                         false,
+                         false,
+                         (ntree->type == NTREE_COMPOSIT),
+                         false);
 }
 
 static void node_buts_normal(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -567,7 +577,8 @@ static void node_composit_buts_huecorrect(ui::Layout &layout, bContext * /*C*/, 
     cumap->flag &= ~CUMA_DRAW_SAMPLE;
   }
 
-  template_curve_mapping(&layout, ptr, "mapping", 'h', false, false, false, false, false);
+  template_curve_mapping(
+      &layout, ptr, "mapping", ui::CurveMappingLabels::HSV, false, false, false, false, false);
 }
 
 static void node_composit_buts_combsep_color(ui::Layout &layout, bContext * /*C*/, PointerRNA *ptr)
@@ -1537,9 +1548,7 @@ static void std_node_socket_interface_draw(ID *id,
 {
   PointerRNA ptr = RNA_pointer_create_discrete(id, RNA_NodeTreeInterfaceSocket, interface_socket);
 
-  const bke::bNodeSocketType *typeinfo = interface_socket->socket_typeinfo();
-  BLI_assert(typeinfo != nullptr);
-  eNodeSocketDatatype type = typeinfo->type;
+  eNodeSocketDatatype type = interface_socket->socket_typeinfo().type;
 
   ui::Layout *col = &layout->column(false);
 
@@ -1550,6 +1559,9 @@ static void std_node_socket_interface_draw(ID *id,
       ui::Layout *sub = &col->column(true);
       sub->prop(&ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), ICON_NONE);
       sub->prop(&ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), ICON_NONE);
+      sub = &col->column(true);
+      sub->prop(&ptr, "step", DEFAULT_FLAGS, IFACE_("Step"), ICON_NONE);
+      sub->prop(&ptr, "precision", DEFAULT_FLAGS, IFACE_("Precision"), ICON_NONE);
       break;
     }
     case SOCK_INT: {

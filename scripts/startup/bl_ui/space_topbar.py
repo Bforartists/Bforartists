@@ -1024,8 +1024,6 @@ class TOPBAR_MT_workspace_menu(Menu):
         layout = self.layout
 
         layout.operator("workspace.duplicate", text="Duplicate", icon="DUPLICATE")
-        if len(bpy.data.workspaces) > 1:  # BFA - simpler logic
-            layout.operator("workspace.delete", text="Delete", icon="DELETE")
 
         layout.separator()
 
@@ -1048,6 +1046,8 @@ class TOPBAR_MT_workspace_menu(Menu):
         layout.separator()
 
         layout.operator("workspace.delete_all_others", icon="WORKSPACE_DELETE")
+        if len(bpy.data.workspaces) > 1:  # BFA - simpler logic
+            layout.operator("workspace.delete", text="Delete", icon="DELETE")  # BFA - delete last, like Blender's menu polish (week 47)
 
 
 # Grease Pencil Object - Primitive curve

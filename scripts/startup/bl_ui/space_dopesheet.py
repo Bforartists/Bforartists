@@ -786,10 +786,8 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.operator_context = "INVOKE_REGION_CHANNELS"
 
-        layout.operator("anim.channels_delete", icon="DELETE")
         # layout.operator("action.clean", text="Clean Channels").channels = True	# BFA - located in the keys channel
 
-        layout.separator()
         layout.operator("anim.channels_group", text="Group Channels", icon="NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
 
@@ -828,6 +826,9 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon="DISCONTINUE_EULER")
+
+        layout.separator()
+        layout.operator("anim.channels_delete", icon="DELETE")  # BFA - delete last, like Blender's menu polish (week 47)
 
 
 class DOPESHEET_MT_channel_extrapolation(Menu):
@@ -898,11 +899,6 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
 
-        if ob and ob.type == "GREASEPENCIL":
-            layout.operator("grease_pencil.delete_breakdown")
-
-        layout.separator()
-
         layout.operator("action.clean", icon="CLEAN_KEYS").channels = False
 
         # BFA - https://projects.blender.org/blender/blender/pulls/113335
@@ -914,6 +910,10 @@ class DOPESHEET_MT_key(Menu):
         layout.separator()
 
         layout.operator("action.bake_keys", icon="BAKE_ACTION")
+
+        if ob and ob.type == "GREASEPENCIL":
+            layout.separator()
+            layout.operator("grease_pencil.delete_breakdown")  # BFA - delete last, like Blender's menu polish (week 47)
 
 
 # BFA
@@ -961,11 +961,6 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         col.prop(st, "show_markers")
         col.prop(tool_settings, "lock_markers")
         col.prop(st, "use_marker_sync")
-
-        layout.separator()
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
-        layout.separator()
-        layout.operator("action.delete", icon='X')
 
         layout.separator()
 
@@ -1135,9 +1130,6 @@ class DOPESHEET_MT_gpencil_channel(Menu):
 
         layout.operator_context = "INVOKE_REGION_CHANNELS"
 
-        layout.operator("anim.channels_delete", icon="DELETE")
-
-        layout.separator()
         # BFA - menu comes from space_graph.py
         layout.menu("GRAPH_MT_channel_settings_toggle")
 
@@ -1161,6 +1153,9 @@ class DOPESHEET_MT_gpencil_channel(Menu):
 
         layout.operator("anim.channels_view_selected", icon="VIEW_SELECTED")
 
+        layout.separator()
+        layout.operator("anim.channels_delete", icon="DELETE")  # BFA - delete last, like Blender's menu polish (week 47)
+
 
 class DOPESHEET_MT_delete(Menu):
     bl_label = "Delete"
@@ -1168,7 +1163,7 @@ class DOPESHEET_MT_delete(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("action.delete")
+        layout.operator("action.delete", icon='X')
 
         layout.separator()
 
@@ -1199,11 +1194,7 @@ class DOPESHEET_MT_context_menu(Menu):
         if st.mode != "GPENCIL":
             layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
             layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
-            layout.operator_menu_enum("action.easing_type", "type", text="Easing Mode")
-
-        if st.mode == "GPENCIL":
-            layout.separator()
-            layout.operator("grease_pencil.delete_breakdown")
+            layout.operator_menu_enum("action.easing_type", "type", text="Easing Type")  # BFA - upstream label rename
 
         layout.separator()
 
@@ -1211,7 +1202,8 @@ class DOPESHEET_MT_context_menu(Menu):
         layout.operator_menu_enum("action.snap", "type", text="Snap")
 
         layout.separator()
-
+        if st.mode == 'GPENCIL':
+            layout.operator("grease_pencil.delete_breakdown")
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("action.delete", icon='X')
 
@@ -1268,10 +1260,9 @@ class DOPESHEET_MT_channel_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("anim.channels_delete", icon="DELETE")
-
         if is_graph_editor and context.space_data.mode == "DRIVERS":
-            layout.operator("graph.driver_delete_invalid", icon="DELETE")
+            layout.operator("graph.driver_delete_invalid", icon="DELETE")  # BFA - delete last, like Blender's menu polish (week 47)
+        layout.operator("anim.channels_delete", icon="DELETE")
 
 
 class DOPESHEET_MT_snap_pie(Menu):

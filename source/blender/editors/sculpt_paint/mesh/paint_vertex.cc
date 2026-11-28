@@ -21,6 +21,7 @@
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_matrix.hh"
 #include "BLI_task.hh"
+#include "BLI_task_c.hh"
 #include "BLI_vector.hh"
 
 #include "DNA_brush_types.h"
@@ -229,8 +230,8 @@ void smooth_brush_toggle_off(Paint *paint, StrokeCache *cache)
 
 StrokeToggleSettings create_toggle_settings(const wmOperator &op, Main &bmain, Paint &paint)
 {
-  const BrushStrokeMode stroke_mode = BrushStrokeMode(RNA_enum_get(op.ptr, "mode"));
-  const BrushSwitchMode brush_switch_mode = BrushSwitchMode(RNA_enum_get(op.ptr, "brush_toggle"));
+  const BrushStrokeMode stroke_mode = RNA_enum_get<BrushStrokeMode>(op.ptr, "mode");
+  const BrushSwitchMode brush_switch_mode = RNA_enum_get<BrushSwitchMode>(op.ptr, "brush_toggle");
   const bool pen_flip = RNA_boolean_get(op.ptr, "pen_flip");
 
   StrokeToggleSettings toggle_settings;
@@ -531,16 +532,14 @@ static Color vpaint_blend_stroke(const VPaint &vp,
   return result;
 }
 
-static void paint_and_tex_color_alpha_intern(const VPaint &vp,
-                                             const ViewContext *vc,
-                                             const float3 &co,
-                                             float4 &r_rgba)
+static void paint_and_tex_color_alpha_intern(
+    const VPaint &vp, const ViewContext *vc, const float3 &co, const int thread_id, float4 &r_rgba)
 {
   const Brush *brush = BKE_paint_brush_for_read(&vp.paint);
-  const MTex *mtex = BKE_brush_mask_texture_get(brush, PaintMode::Vertex);
+  const MTex *mtex = BKE_brush_color_texture_get(brush, PaintMode::Vertex);
   BLI_assert(mtex->tex != nullptr);
   if (mtex->brush_map_mode == MTEX_MAP_MODE_3D) {
-    BKE_brush_sample_tex_3d(&vp.paint, brush, mtex, co, r_rgba, 0, nullptr);
+    BKE_brush_sample_tex_3d(&vp.paint, brush, mtex, co, thread_id, nullptr, r_rgba);
   }
   else {
     float co_ss[2]; /* screenspace */
@@ -549,7 +548,7 @@ static void paint_and_tex_color_alpha_intern(const VPaint &vp,
         V3D_PROJ_RET_OK)
     {
       const float co_ss_3d[3] = {co_ss[0], co_ss[1], 0.0f}; /* we need a 3rd empty value */
-      BKE_brush_sample_tex_3d(&vp.paint, brush, mtex, co_ss_3d, r_rgba, 0, nullptr);
+      BKE_brush_sample_tex_3d(&vp.paint, brush, mtex, co_ss_3d, thread_id, nullptr, r_rgba);
     }
     else {
       zero_v4(r_rgba);
@@ -734,7 +733,7 @@ static std::unique_ptr<VPaintData> vpaint_init_vpaint(wmOperator *op,
   vpd->vc = vc;
 
   vpd->paintcol = vpaint_get_current_col(
-      vp, (BrushStrokeMode(RNA_enum_get(op->ptr, "mode")) == BrushStrokeMode::Invert));
+      vp, (RNA_enum_get<BrushStrokeMode>(op->ptr, "mode") == BrushStrokeMode::Invert));
 
   vpd->is_texbrush = !(brush.vertex_brush_type == VPAINT_BRUSH_TYPE_BLUR) && brush.mtex.tex;
 
@@ -1460,13 +1459,11 @@ static void calculate_average_color(VPaintData &vpd,
 }
 
 template<typename Color>
-static float paint_and_tex_color_alpha(const VPaint &vp,
-                                       VPaintData &vpd,
-                                       const float v_co[3],
-                                       Color *r_color)
+static float paint_and_tex_color_alpha(
+    const VPaint &vp, VPaintData &vpd, const float v_co[3], const int thread_id, Color *r_color)
 {
   float4 rgba;
-  paint_and_tex_color_alpha_intern(vp, &vpd.vc, v_co, rgba);
+  paint_and_tex_color_alpha_intern(vp, &vpd.vc, v_co, thread_id, rgba);
 
   ColorPaint4f rgba_br = toFloat(vpd.paintcol);
   mul_v3_v3(rgba_br, rgba);
@@ -1541,6 +1538,7 @@ static void vpaint_do_draw(const Depsgraph &depsgraph,
 
   node_mask.foreach_index(
       [&](const int i) {
+        const int thread_id = BLI_task_parallel_thread_id(nullptr);
         const Span<int> verts = nodes[i].verts();
         Array<float, bke::pbvh::MESH_LEAF_LIMIT> factors(verts.size());
         fill_factor_from_hide(hide_vert, verts, factors);
@@ -1610,7 +1608,8 @@ static void vpaint_do_draw(const Depsgraph &depsgraph,
               const float3 symm_point = ed::sculpt_paint::symmetry_flip(
                   position, cache.mirror_symmetry_pass);
 
-              tex_alpha = paint_and_tex_color_alpha<Color>(vp, vpd, symm_point, &color_final);
+              tex_alpha = paint_and_tex_color_alpha<Color>(
+                  vp, vpd, symm_point, thread_id, &color_final);
             }
 
             /* Use the automasking factor again when calculating the final brush strength to avoid

@@ -6,6 +6,7 @@
  * \ingroup bke
  */
 
+#include <algorithm>
 #include <cfloat>
 #include <climits>
 #include <cstddef>
@@ -18,12 +19,17 @@
 #include <fmt/format.h>
 
 #include "BLI_listbase.hh"
+#include "BLI_map.hh"
 #include "BLI_math_base_c.hh"
 #include "BLI_set.hh"
 #include "BLI_string.hh"
+#include "BLI_string_ref.hh"
 #include "BLI_string_utf8.hh"
 #include "BLI_utildefines.hh"
 
+#include "BKE_colorband.hh"
+#include "BKE_colortools.hh"
+#include "BKE_curveprofile.h"
 #include "BKE_idprop.hh"
 #include "BKE_idprop_hash.hh"
 #include "BKE_lib_id.hh"
@@ -229,8 +235,11 @@ void IDP_ResizeIDPArray(IDProperty *prop, int newlen)
   }
 
   const int newsize = idp_resize_grow_size_calc(newlen);
-  prop->data.pointer = MEM_realloc_zeroed(prop->data.pointer,
-                                          sizeof(IDProperty) * size_t(newsize));
+  IDProperty *old_array = static_cast<IDProperty *>(prop->data.pointer);
+  IDProperty *new_array = MEM_new_array<IDProperty>(size_t(newsize), __func__);
+  std::copy_n(old_array, std::min(prop->len, newlen), new_array);
+  MEM_delete(old_array);
+  prop->data.pointer = new_array;
   prop->len = newlen;
   prop->totallen = newsize;
 }
@@ -260,6 +269,18 @@ static void idp_resize_group_array(
   }
 }
 
+template<typename T>
+static void idp_array_reallocate(IDProperty *prop, const int newlen, const int newsize)
+{
+  T *old_data = static_cast<T *>(prop->data.pointer);
+  T *new_data = MEM_new_array_uninitialized<T>(size_t(newsize), __func__);
+  const int copy_num = std::min(prop->len, newlen);
+  std::copy_n(old_data, copy_num, new_data);
+  std::fill_n(new_data + copy_num, newsize - copy_num, T{});
+  MEM_delete(old_data);
+  prop->data.pointer = new_data;
+}
+
 void IDP_ResizeArray(IDProperty *prop, int newlen)
 {
   const bool is_grow = newlen >= prop->len;
@@ -276,8 +297,32 @@ void IDP_ResizeArray(IDProperty *prop, int newlen)
     idp_resize_group_array(prop, newlen, prop->data.pointer, true, 0);
   }
 
-  prop->data.pointer = MEM_realloc_zeroed(prop->data.pointer,
-                                          idp_size_table[int(prop->subtype)] * size_t(newsize));
+  if (prop->type == IDP_STRING) {
+    idp_array_reallocate<char>(prop, newlen, newsize);
+  }
+  else {
+    BLI_assert(prop->type == IDP_ARRAY);
+    switch (eIDPropertyType(prop->subtype)) {
+      case IDP_INT:
+        idp_array_reallocate<int>(prop, newlen, newsize);
+        break;
+      case IDP_FLOAT:
+        idp_array_reallocate<float>(prop, newlen, newsize);
+        break;
+      case IDP_DOUBLE:
+        idp_array_reallocate<double>(prop, newlen, newsize);
+        break;
+      case IDP_BOOLEAN:
+        idp_array_reallocate<int8_t>(prop, newlen, newsize);
+        break;
+      case IDP_GROUP:
+        idp_array_reallocate<IDProperty *>(prop, newlen, newsize);
+        break;
+      default:
+        BLI_assert_unreachable();
+        return;
+    }
+  }
 
   if (is_grow == true) {
     idp_resize_group_array(prop, newlen, prop->data.pointer, true, 0);
@@ -965,6 +1010,17 @@ float IDP_coerce_to_float_or_zero(const IDProperty *prop)
   }
 }
 
+static IDProperty *IDP_CopyStruct(const IDProperty *prop, const int flag)
+{
+  const IDPropertyStructTypeInfo *info = IDP_struct_type_info(prop->type);
+  BLI_assert(info);
+  IDProperty *newp = idp_generic_copy(prop, flag);
+  if (prop->data.pointer) {
+    newp->data.pointer = info->copy(prop->data.pointer, flag);
+  }
+  return newp;
+}
+
 IDProperty *IDP_CopyProperty_ex(const IDProperty *prop, const int flag)
 {
   switch (prop->type) {
@@ -978,6 +1034,8 @@ IDProperty *IDP_CopyProperty_ex(const IDProperty *prop, const int flag)
       return IDP_CopyArray(prop, flag);
     case IDP_IDPARRAY:
       return IDP_CopyIDPArray(prop, flag);
+    IDP_ANY_STRUCT_TYPE_CASE:
+      return IDP_CopyStruct(prop, flag);
     default:
       return idp_generic_copy(prop, flag);
   }
@@ -1116,6 +1174,20 @@ bool IDP_EqualsProperties_ex(const IDProperty *prop1,
     }
     case IDP_ID:
       return (IDP_ID_get(prop1) == IDP_ID_get(prop2));
+    IDP_ANY_STRUCT_TYPE_CASE: {
+      if (prop1->data.pointer == prop2->data.pointer) {
+        return true;
+      }
+      if (!prop1->data.pointer || !prop2->data.pointer) {
+        return false;
+      }
+      if (const IDPropertyStructTypeInfo *info = IDP_struct_type_info(prop1->type)) {
+        if (info->equals) {
+          return info->equals(prop1->data.pointer, prop2->data.pointer);
+        }
+      }
+      return false;
+    }
     default:
       BLI_assert_unreachable();
       break;
@@ -1380,6 +1452,15 @@ static void idp_free_property_content_recurse(IDProperty *prop,
         id_us_min(IDP_ID_get(prop));
       }
       break;
+    IDP_ANY_STRUCT_TYPE_CASE: {
+      if (prop->data.pointer) {
+        const IDPropertyStructTypeInfo *info = IDP_struct_type_info(prop->type);
+        BLI_assert(info);
+        info->free(prop->data.pointer);
+        prop->data.pointer = nullptr;
+      }
+      break;
+    }
   }
 
   if (prop->ui_data != nullptr) {
@@ -1442,7 +1523,9 @@ static void idp_foreach_property_recurse(IDProperty *id_property_root,
     return;
   }
 
-  if (type_filter == 0 || (1 << id_property_root->type) & type_filter) {
+  if (type_filter == 0 || (id_property_root->type < IDP_NUM_BASIC_TYPES &&
+                           (1 << id_property_root->type) & type_filter))
+  {
     callback(id_property_root);
   }
 
@@ -1570,6 +1653,7 @@ static void IDP_WriteArray(const IDProperty *prop, BlendWriter *writer, const in
       case IDP_ARRAY:
       case IDP_ID:
       case IDP_IDPARRAY:
+      IDP_ANY_STRUCT_TYPE_CASE:
         BLI_assert_unreachable();
         break;
     }
@@ -1660,6 +1744,14 @@ static void IDP_WriteProperty_OnlyData(const IDProperty *prop,
     case IDP_IDPARRAY:
       IDP_WriteIDPArray(prop, writer, recursion_depth);
       break;
+    IDP_ANY_STRUCT_TYPE_CASE: {
+      if (prop->data.pointer) {
+        const IDPropertyStructTypeInfo *info = IDP_struct_type_info(prop->type);
+        BLI_assert(info);
+        info->blend_write(writer, prop->data.pointer);
+      }
+      break;
+    }
   }
   if (prop->ui_data != nullptr) {
     write_ui_data(prop, writer);
@@ -1841,6 +1933,7 @@ static void IDP_DirectLinkArray(IDProperty *prop,
     case IDP_ARRAY:
     case IDP_ID:
     case IDP_IDPARRAY:
+    IDP_ANY_STRUCT_TYPE_CASE:
       BLI_assert_unreachable();
       break;
   }
@@ -1890,6 +1983,7 @@ static void IDP_DirectLinkProperty(IDProperty *prop,
     idprop->subtype = 0;
     IDP_int_set(idprop, 0);
     idprop->ui_data = nullptr;
+    idprop->data.pointer = nullptr;
   };
 
   if (recursion_depth > MAX_IDPROP_DEPTH_LEVEL_FOR_READ) {
@@ -1930,6 +2024,12 @@ static void IDP_DirectLinkProperty(IDProperty *prop,
     case IDP_BOOLEAN:
     case IDP_ID:
       break; /* Nothing special to do here. */
+    IDP_ANY_STRUCT_TYPE_CASE: {
+      const IDPropertyStructTypeInfo *info = IDP_struct_type_info(prop->type);
+      BLI_assert(info);
+      info->blend_read(reader, &prop->data.pointer);
+      break;
+    }
     default:
       /* Unknown IDP type, nuke it (we cannot handle unknown types everywhere in code,
        * IDP are way too polymorphic to do it safely). */
@@ -2293,11 +2393,106 @@ void hash(const IDProperty &base_prop, XXH3_state_t *hash_state)
         /* Handled by the recursion in #IDP_foreach_property. */
         break;
       }
+      IDP_ANY_STRUCT_TYPE_CASE: {
+        /* Currently, only the struct type is taken into account for the hash. This could be
+         * extended to include more data of the struct type. For now this is not needed though. */
+        break;
+      }
     }
   });
 }
 
 }  // namespace bke::idprop
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name IDProperty types using DNA structs.
+ * \{ */
+
+static std::array<const IDPropertyStructTypeInfo *, IDP_NUM_STRUCT_TYPES> g_idp_struct_types = {};
+
+static Map<StringRefNull, const IDPropertyStructTypeInfo *> &idp_struct_types_by_rna()
+{
+  static Map<StringRefNull, const IDPropertyStructTypeInfo *> map;
+  return map;
+}
+
+static bool is_idp_struct_type(const eIDPropertyType type)
+{
+  switch (type) {
+    default:
+      return false;
+    IDP_ANY_STRUCT_TYPE_CASE:
+      return true;
+  }
+}
+
+void IDP_struct_type_register(const IDPropertyStructTypeInfo &type_info)
+{
+  BLI_assert(is_idp_struct_type(type_info.idp_type));
+  BLI_assert(!type_info.rna_identifier.empty());
+  BLI_assert(type_info.create_default);
+  BLI_assert(type_info.copy);
+  BLI_assert(type_info.free);
+  BLI_assert(type_info.blend_write);
+  BLI_assert(type_info.blend_read);
+
+  g_idp_struct_types[type_info.idp_type - IDP_STRUCT_BASE] = &type_info;
+  idp_struct_types_by_rna().add_new(type_info.rna_identifier, &type_info);
+}
+
+const IDPropertyStructTypeInfo *IDP_struct_type_info(const eIDPropertyType type)
+{
+  if (!is_idp_struct_type(type)) {
+    return nullptr;
+  }
+  return g_idp_struct_types[type - IDP_STRUCT_BASE];
+}
+
+bool IDP_contains_struct_type(IDProperty *prop)
+{
+  bool contains_struct = false;
+  IDP_foreach_property(prop, eIDPropertyTypeFilter(0), [&](IDProperty *child) {
+    if (is_idp_struct_type(eIDPropertyType(child->type))) {
+      contains_struct = true;
+    }
+  });
+  return contains_struct;
+}
+
+const IDPropertyStructTypeInfo *IDP_struct_type_find_by_rna_identifier(
+    const StringRef rna_identifier)
+{
+  return idp_struct_types_by_rna().lookup_default_as(rna_identifier, nullptr);
+}
+
+void IDP_struct_type_init()
+{
+  BKE_curvemapping_idproperty_type_register();
+  BKE_colorband_idproperty_type_register();
+  BKE_curveprofile_idproperty_type_register();
+}
+
+void IDP_struct_type_exit()
+{
+  g_idp_struct_types.fill(nullptr);
+  idp_struct_types_by_rna().clear();
+}
+
+IDProperty *IDP_NewStruct(const StringRef name,
+                          const IDPropertyStructTypeInfo &type_info,
+                          const eIDPropertyFlag flags)
+{
+  BLI_assert(IDP_struct_type_info(type_info.idp_type) == &type_info);
+
+  IDProperty *prop = MEM_new<IDProperty>(__func__);
+  prop->type = type_info.idp_type;
+  prop->flag = flags;
+  name.copy_utf8_truncated(prop->name);
+  prop->data.pointer = type_info.create_default();
+  return prop;
+}
 
 /** \} */
 
@@ -2321,7 +2516,7 @@ const IDProperty *_IDP_assert_type_and_subtype(const IDProperty *prop,
 
 const IDProperty *_IDP_assert_type_mask(const IDProperty *prop, const int ty_mask)
 {
-  BLI_assert(1 << int(prop->type) & ty_mask);
+  BLI_assert(int(prop->type) < IDP_NUM_BASIC_TYPES && (1 << int(prop->type) & ty_mask));
   return prop;
 }
 #endif /* !NDEBUG */

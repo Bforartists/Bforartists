@@ -833,11 +833,15 @@ class Slot : public ActionSlot {
   void set_selected(bool selected);
   bool is_active() const;
 
-  /** Return the set of IDs that are animated by this Slot. */
+  /**
+   * Return the set of IDs that are animated by this Slot.
+   *
+   * \note For now, this may reference embedded IDs. See #167041.
+   */
   Span<ID *> users(Main &bmain) const;
 
   /**
-   * Directly return the runtime users vector.
+   * Directly return the runtime users vector, possibly containing embedded IDs.
    *
    * This function does not refresh the users cache, so it may be out of date.
    *
@@ -847,6 +851,21 @@ class Slot : public ActionSlot {
    * \see #Slot::users(Main &bmain)
    */
   Vector<ID *> runtime_users();
+  /**
+   * Directly return the runtime owners vector, containing the real IDs.
+   *
+   * Even when the actual 'slot user' is an embedded ID, this contains the real ID that owns it.
+   * This makes this function inconsistent with #Slot::users(), but that is temporary until
+   * #167041 is implemented.
+   *
+   * This function does not refresh the users cache, so it may be out of date.
+   *
+   * This is a low-level function, and should only be used when calling `users(bmain)` is not
+   * appropriate.
+   *
+   * \see #Slot::users(Main &bmain)
+   */
+  Vector<ID *> runtime_owners();
 
   /**
    * Register this ID as animated by this Slot.

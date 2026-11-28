@@ -3393,17 +3393,6 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
    * noticeable for the node editor - where dragging on a node should move it, see: #73212.
    * note we still allow for starting the gizmo drag outside, then travel 'inside' the node. */
   // bfa node minimap move to below
-  // if (region->runtime->type->clip_gizmo_events_by_ui) {
-  //   if (ui::region_block_find_mouse_over(region, event->xy, true)) {
-  //     if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
-  //       if (restore_highlight_unless_activated == false) {
-  //         WM_tooltip_clear(C, CTX_wm_window(C));
-  //         wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
-  //         }
-  //     }
-  //     return action;
-  //   }
-  // }
 
   struct PrevGizmoData {
     wmGizmo *gz_modal;
@@ -3472,7 +3461,9 @@ static eHandlerActionFlag wm_handlers_do_gizmo_handler(bContext *C,
   // bfa node minimap
   if (region->runtime->type->clip_gizmo_events_by_ui && !is_view_controls_gizmo) {
     if (ui::region_block_find_mouse_over(region, event->xy, true)) {
-      if (gz != nullptr && event->type != EVT_GIZMO_UPDATE) {
+      /* Don't clear the highlight while a gizmo is dragged,
+       * it would stop the drag, see: #75535. */
+      if (gz != nullptr && wm_gizmomap_modal_get(gzmap) == nullptr) {
         if (restore_highlight_unless_activated == false) {
           WM_tooltip_clear(C, CTX_wm_window(C));
           wm_gizmomap_highlight_set(gzmap, C, nullptr, 0);
