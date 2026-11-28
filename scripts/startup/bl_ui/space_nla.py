@@ -335,19 +335,8 @@ class NLA_MT_marker_select(Menu):
         ).mode = "RIGHT"
 
 
-class NLA_MT_add(Menu):
-    bl_label = "Add"
-    bl_translation_context = i18n_contexts.operator_default
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("nla.actionclip_add", text="Action")
-        layout.operator("nla.transition_add", text="Transition")
-        layout.operator("nla.soundclip_add", text="Sound")
-
-        layout.separator()
-        layout.operator("nla.selected_objects_add", text="Selected Objects")
+# BFA - Blender's NLA_MT_add is replaced by ours further down (icons, meta strips and the track
+# entries). Both were defined here, and the second silently won, #7133.
 
 
 class NLA_MT_tracks(Menu):

@@ -105,22 +105,8 @@ class VIEW3D_MT_brush_context_menu(Menu):
             if context.region.type == "UI" and context.space_data.type == "VIEW_3D"
             else context.region.type == "ASSET_SHELF"
         )
-        # BFA - end of changes
-
-        layout.separator()
-
-        layout.operator("brush.asset_edit_metadata", text="Edit Metadata...")
-        layout.operator("brush.asset_load_preview", text="Edit Preview Image...")
-        layout.operator("brush.asset_save", text="Save Changes to Asset")
-        layout.operator("brush.asset_revert", text="Revert to Asset")
-
-        layout.separator()
-
-        op_text = (
-            iface_("Delete Asset", i18n_contexts.operator_default) if is_editable_asset
-            else iface_("Delete", i18n_contexts.operator_default)
-        )
-        layout.operator("brush.asset_delete", text=op_text)
+        # BFA - end of changes. The rest of Blender's draw function used to sit below this return
+        # where it never ran, and every merge added to it, #7133.
 
 
 class View3DPanel:
@@ -2856,8 +2842,9 @@ classes = (
     VIEW3D_PT_tools_vertexpaint_options,
 
     VIEW3D_PT_mask,
-    VIEW3D_PT_stencil_projectpaint, # BFA - Not used (kept for merge compatibility, issue #6470)
-    VIEW3D_PT_tools_imagepaint_options_cavity, # BFA - Not used (kept for merge compatibility, issue #6470)
+    # BFA - VIEW3D_PT_stencil_projectpaint and VIEW3D_PT_tools_imagepaint_options_cavity are not
+    # registered. VIEW3D_PT_mask draws both settings itself (#6470), and as registered child
+    # panels they showed a second time below it, #7130. The classes stay for merges.
 
     VIEW3D_PT_tools_imagepaint_symmetry,
     VIEW3D_PT_tools_imagepaint_symmetry_for_topbar,
