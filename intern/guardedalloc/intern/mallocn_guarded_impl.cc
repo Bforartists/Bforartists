@@ -8,6 +8,8 @@
  * Guarded memory allocation, and boundary-write detection.
  */
 
+#include <atomic>
+#include <cassert>
 #include <stdarg.h>
 #include <stddef.h> /* offsetof */
 #include <stdio.h>  /* printf */
@@ -30,7 +32,6 @@
 /* to ensure strict conversions */
 #include "../../source/blender/blenlib/BLI_strict_flags.hh"
 
-#include "atomic_ops.h"
 #include "mallocn_intern.hh"
 #include "mallocn_intern_function_pointers.hh"
 
@@ -380,99 +381,6 @@ void *MEM_guarded_dupallocN(const void *vmemh)
   return newp;
 }
 
-void *MEM_guarded_reallocN_id(void *vmemh, size_t len, const char *str)
-{
-  PRF_scope(blender::ProfileCategory::Core);
-  void *newp = nullptr;
-
-  if (vmemh) {
-    MemHead *memh = static_cast<MemHead *>(vmemh);
-    memh--;
-
-    if ((memh->flag & MEMHEAD_FLAG_NONTRIVIAL_DESTRUCTOR) != 0) {
-      report_error_on_address(
-          vmemh,
-          "Attempt to use C-style MEM_realloc_uninitialized on a pointer created with "
-          "CPP-style MEM_new or new\n");
-    }
-
-    if (memh->alignment == 0) [[likely]] {
-      newp = MEM_guarded_mallocN(len, memh->name);
-    }
-    else {
-      newp = MEM_guarded_mallocN_aligned(
-          len, size_t(memh->alignment), memh->name, DestructorType::Trivial);
-    }
-
-    if (newp) {
-      if (len < memh->len) {
-        /* shrink */
-        memcpy(newp, vmemh, len);
-      }
-      else {
-        /* grow (or remain same size) */
-        memcpy(newp, vmemh, memh->len);
-      }
-    }
-
-    MEM_guarded_freeN(vmemh, DestructorType::Trivial);
-  }
-  else {
-    newp = MEM_guarded_mallocN(len, str);
-  }
-
-  return newp;
-}
-
-void *MEM_guarded_recallocN_id(void *vmemh, size_t len, const char *str)
-{
-  PRF_scope(blender::ProfileCategory::Core);
-  void *newp = nullptr;
-
-  if (vmemh) {
-    MemHead *memh = static_cast<MemHead *>(vmemh);
-    memh--;
-
-    if ((memh->flag & MEMHEAD_FLAG_NONTRIVIAL_DESTRUCTOR) != 0) {
-      report_error_on_address(
-          vmemh,
-          "Attempt to use C-style MEM_realloc_zeroed on a pointer created with "
-          "CPP-style MEM_new or new\n");
-    }
-
-    if (memh->alignment == 0) [[likely]] {
-      newp = MEM_guarded_mallocN(len, memh->name);
-    }
-    else {
-      newp = MEM_guarded_mallocN_aligned(
-          len, size_t(memh->alignment), memh->name, DestructorType::Trivial);
-    }
-
-    if (newp) {
-      if (len < memh->len) {
-        /* shrink */
-        memcpy(newp, vmemh, len);
-      }
-      else {
-        memcpy(newp, vmemh, memh->len);
-
-        if (len > memh->len) {
-          /* grow */
-          /* zero new bytes */
-          memset(((char *)newp) + memh->len, 0, len - memh->len);
-        }
-      }
-    }
-
-    MEM_guarded_freeN(vmemh, DestructorType::Trivial);
-  }
-  else {
-    newp = MEM_guarded_callocN(len, str);
-  }
-
-  return newp;
-}
-
 #ifdef DEBUG_BACKTRACE_EXECINFO
 static void make_memhead_backtrace(MemHead *memh)
 {
@@ -521,8 +429,8 @@ static void make_memhead_header(MemHead *memh,
   memt = (MemTail *)(((char *)memh) + sizeof(MemHead) + len);
   memt->tag3 = MEMTAG3;
 
-  atomic_add_and_fetch_u(&totblock, 1);
-  atomic_add_and_fetch_z(&mem_in_use, len);
+  std::atomic_ref<uint>(totblock).fetch_add(1);
+  std::atomic_ref<size_t>(mem_in_use).fetch_add(len);
 
   mem_lock_thread();
   addtail(membase, &memh->next);
@@ -1206,8 +1114,8 @@ static void rem_memblock(MemHead *memh)
   }
   mem_unlock_thread();
 
-  atomic_sub_and_fetch_u(&totblock, 1);
-  atomic_sub_and_fetch_z(&mem_in_use, memh->len);
+  std::atomic_ref<uint>(totblock).fetch_sub(1);
+  std::atomic_ref<size_t>(mem_in_use).fetch_sub(memh->len);
 
 #ifdef DEBUG_MEMDUPLINAME
   if (memh->need_free_name) {

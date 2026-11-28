@@ -86,15 +86,8 @@ class VIEW3D_PT_object_tab_transform(ToolsystemPanel):
             OperatorEntry("transform.tosphere", text="To Sphere", icon='TOSPHERE'),
         ]
 
-        if context.mode in {'EDIT_MESH'}:
-            entries.extend([
-                OperatorEntry("mesh.circularize", text="To Circle", icon='TOCIRCLE'),
-                OperatorEntry("mesh.flatten", text="Flatten", icon="FLATTEN"),
-                OperatorEntry("mesh.space_edge_loops_evenly", text="Space Edge Loops Evenly", icon='SPACE_LOOPS_EVENLY'),
-                OperatorEntry("mesh.relax_edge_loops", text="Relax Edge Loops", icon='RELAX_EDGE_LOOPS'),
-                OperatorEntry("mesh.curve_edge_loops_between_selected", text="Curve Edge Loops Between Selected", icon='CURVE_EDGE_LOOPS'),
-                OperatorEntry("mesh.fit_edge_loops_to_annotation", text="Fit Edge Loops To Annotation", icon='FIT_EDGE_LOOPS_TO_ANNOTATION'),
-            ])
+        # The loop tools (To Circle, Flatten, Relax ...) left this panel for the Loops panel of
+        # the Mesh tab, as Blender moved them from the Transform menu to a Loops menu (week 47).
 
         entries.extend([
             OperatorEntry("transform.shear", text="Shear", icon='SHEAR'),
@@ -641,6 +634,29 @@ class VIEW3D_PT_mesh_tab_merge(ToolsystemPanel):
         draw_entries(layout, context, entries)
 
 
+class VIEW3D_PT_mesh_tab_loops(ToolsystemPanel):
+    # The Loops menu of the Mesh menu and the context menus, same entries and order (week 47).
+    bl_label = "Loops"
+    bl_category = "Mesh"
+    bl_context="mesh_edit"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        entries = (
+            OperatorEntry("mesh.bridge_edge_loops", text="Bridge", icon='BRIDGE_EDGELOOPS'),
+            OperatorEntry("mesh.circularize", text="To Circle", icon='TOCIRCLE'),
+            OperatorEntry("mesh.curve_edge_loops_between_selected", text="Curve Between Selected", icon='CURVE_EDGE_LOOPS'),
+            OperatorEntry("mesh.flatten", text="Flatten", icon='FLATTEN'),
+            OperatorEntry("mesh.relax_edge_loops", text="Relax", icon='RELAX_EDGE_LOOPS'),
+            OperatorEntry("mesh.space_edge_loops_evenly", text="Space Evenly", icon='SPACE_LOOPS_EVENLY'),
+            OperatorEntry("mesh.fit_edge_loops_to_annotation", text="Fit to Annotation", icon='FIT_EDGE_LOOPS_TO_ANNOTATION'),
+        )
+
+        draw_entries(layout, context, entries)
+
+
 class VIEW3D_PT_mesh_tab_split(ToolsystemPanel):
     bl_label = "Split"
     bl_category = "Mesh"
@@ -833,7 +849,7 @@ class VIEW3D_PT_edge_tab_edge(ToolsystemPanel):
 
         entries = [
             SetOperatorContext('INVOKE_REGION_WIN'),
-            OperatorEntry("mesh.bridge_edge_loops", icon='BRIDGE_EDGELOOPS'),
+            # Bridge is in the Loops panel of the Mesh tab, like in the menus.
             OperatorEntry("mesh.screw", icon='MOD_SCREW'),
             Separator,
             OperatorEntry("mesh.subdivide", icon='SUBDIVIDE_EDGES'),
@@ -2119,6 +2135,7 @@ classes = (
 
     # Mesh (Edit Mode)
     VIEW3D_PT_mesh_tab_merge,
+    VIEW3D_PT_mesh_tab_loops,
     VIEW3D_PT_mesh_tab_split,
     VIEW3D_PT_mesh_tab_separate,
     VIEW3D_PT_mesh_tab_tools,

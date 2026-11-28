@@ -155,7 +155,7 @@ void reverse_points_of(bke::CurvesGeometry &dst_curves, const IndexRange points_
     if (iter.data_type == bke::AttrType::String) {
       return;
     }
-    if (iter.storage_type == bke::AttrStorageType::Single) {
+    if (iter.storage_type == bke::GList::StorageType::Single) {
       return;
     }
 
@@ -516,8 +516,8 @@ wmOperatorStatus grease_pencil_join_selection_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  const ActiveLayerBehavior active_layer_behavior = static_cast<ActiveLayerBehavior>(
-      RNA_enum_get(op->ptr, "type"));
+  const ActiveLayerBehavior active_layer_behavior = RNA_enum_get<ActiveLayerBehavior>(op->ptr,
+                                                                                      "type");
   const Layer &active_layer = *grease_pencil.get_active_layer();
 
   Drawing *dst_drawing = grease_pencil.get_editable_drawing_at(active_layer, scene->r.cfra);

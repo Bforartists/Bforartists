@@ -4298,7 +4298,7 @@ static wmOperatorStatus uv_select_linked_internal(bContext *C,
     extend = RNA_boolean_get(op->ptr, "extend");
     deselect = RNA_boolean_get(op->ptr, "deselect");
   }
-  const UVDelimitMode delimit_mode = UVDelimitMode(RNA_enum_get(op->ptr, "delimit"));
+  const UVDelimitMode delimit_mode = RNA_enum_get<UVDelimitMode>(op->ptr, "delimit");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       *bmain, scene, view_layer, nullptr);
@@ -4977,7 +4977,7 @@ static wmOperatorStatus uv_box_select_exec(bContext *C, wmOperator *op)
   WM_operator_properties_border_to_rctf(op, &rectf);
   ui::view2d_region_to_view_rctf(&region->v2d, &rectf, &rectf);
 
-  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
+  const eSelectOp sel_op = RNA_enum_get<eSelectOp>(op->ptr, "mode");
   const bool select = (sel_op != SEL_OP_SUB);
   const bool use_pre_deselect = SEL_OP_USE_PRE_DESELECT(sel_op);
 
@@ -5266,7 +5266,7 @@ static wmOperatorStatus uv_circle_select_exec(bContext *C, wmOperator *op)
   bool changed_multi = false;
 
   wmGesture *gesture = static_cast<wmGesture *>(op->customdata);
-  const eSelectOp sel_op = ED_select_op_modal(eSelectOp(RNA_enum_get(op->ptr, "mode")),
+  const eSelectOp sel_op = ED_select_op_modal(RNA_enum_get<eSelectOp>(op->ptr, "mode"),
                                               WM_gesture_is_modal_first(gesture));
   const bool select = (sel_op != SEL_OP_SUB);
   const bool use_pre_deselect = SEL_OP_USE_PRE_DESELECT(sel_op);
@@ -5703,7 +5703,7 @@ static wmOperatorStatus uv_lasso_select_exec(bContext *C, wmOperator *op)
     return OPERATOR_PASS_THROUGH;
   }
 
-  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
+  const eSelectOp sel_op = RNA_enum_get<eSelectOp>(op->ptr, "mode");
   bool changed = do_lasso_select_mesh_uv(C, mcoords, sel_op);
 
   return changed ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
@@ -6470,9 +6470,9 @@ static wmOperatorStatus uv_select_similar_vert_exec(bContext *C, wmOperator *op)
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   ToolSettings *ts = CTX_data_tool_settings(C);
 
-  const eUVSelectSimilar type = eUVSelectSimilar(RNA_enum_get(op->ptr, "type"));
+  const eUVSelectSimilar type = RNA_enum_get<eUVSelectSimilar>(op->ptr, "type");
   const float threshold = RNA_float_get(op->ptr, "threshold");
-  const eSimilarCmp compare = eSimilarCmp(RNA_enum_get(op->ptr, "compare"));
+  const eSimilarCmp compare = RNA_enum_get<eSimilarCmp>(op->ptr, "compare");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       *bmain, scene, view_layer, nullptr);
@@ -6578,9 +6578,9 @@ static wmOperatorStatus uv_select_similar_edge_exec(bContext *C, wmOperator *op)
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   ToolSettings *ts = CTX_data_tool_settings(C);
 
-  const eUVSelectSimilar type = eUVSelectSimilar(RNA_enum_get(op->ptr, "type"));
+  const eUVSelectSimilar type = RNA_enum_get<eUVSelectSimilar>(op->ptr, "type");
   const float threshold = RNA_float_get(op->ptr, "threshold");
-  const eSimilarCmp compare = eSimilarCmp(RNA_enum_get(op->ptr, "compare"));
+  const eSimilarCmp compare = RNA_enum_get<eSimilarCmp>(op->ptr, "compare");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       *bmain, scene, view_layer, nullptr);
@@ -6687,9 +6687,9 @@ static wmOperatorStatus uv_select_similar_face_exec(bContext *C, wmOperator *op)
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   ToolSettings *ts = CTX_data_tool_settings(C);
 
-  const eUVSelectSimilar type = eUVSelectSimilar(RNA_enum_get(op->ptr, "type"));
+  const eUVSelectSimilar type = RNA_enum_get<eUVSelectSimilar>(op->ptr, "type");
   const float threshold = RNA_float_get(op->ptr, "threshold");
-  const eSimilarCmp compare = eSimilarCmp(RNA_enum_get(op->ptr, "compare"));
+  const eSimilarCmp compare = RNA_enum_get<eSimilarCmp>(op->ptr, "compare");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       *bmain, scene, view_layer, nullptr);
@@ -6823,9 +6823,9 @@ static wmOperatorStatus uv_select_similar_island_exec(bContext *C, wmOperator *o
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   ToolSettings *ts = CTX_data_tool_settings(C);
 
-  const eUVSelectSimilar type = eUVSelectSimilar(RNA_enum_get(op->ptr, "type"));
+  const eUVSelectSimilar type = RNA_enum_get<eUVSelectSimilar>(op->ptr, "type");
   const float threshold = RNA_float_get(op->ptr, "threshold");
-  const eSimilarCmp compare = eSimilarCmp(RNA_enum_get(op->ptr, "compare"));
+  const eSimilarCmp compare = RNA_enum_get<eSimilarCmp>(op->ptr, "compare");
 
   Vector<Object *> objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       *bmain, scene, view_layer, nullptr);
@@ -7084,41 +7084,34 @@ void UV_OT_select_similar_bfa(wmOperatorType *ot)
  * So an edge that has two connected edge loops only assigns one loop in the array.
  * \{ */
 
-BMFace **ED_uvedit_selected_faces(const Scene *scene, BMesh *bm, int len_max, int *r_faces_len)
+Vector<BMFace *> ED_uvedit_selected_faces(const Scene *scene, BMesh *bm, int len_max)
 {
   CLAMP_MAX(len_max, bm->totface);
-  int faces_len = 0;
-  BMFace **faces = MEM_new_array_uninitialized<BMFace *>(len_max, __func__);
+  Vector<BMFace *> faces;
 
   BMIter iter;
   BMFace *f;
   BM_ITER_MESH (f, &iter, bm, BM_FACES_OF_MESH) {
     if (uvedit_face_visible_test(scene, f)) {
       if (uvedit_face_select_test(scene, bm, f)) {
-        faces[faces_len++] = f;
-        if (faces_len == len_max) {
-          goto finally;
+        faces.append(f);
+        if (faces.size() == len_max) {
+          return faces;
         }
       }
     }
   }
 
-finally:
-  *r_faces_len = faces_len;
-  if (faces_len != len_max) {
-    faces = static_cast<BMFace **>(MEM_realloc_uninitialized(faces, sizeof(*faces) * faces_len));
-  }
   return faces;
 }
 
-BMLoop **ED_uvedit_selected_edges(const Scene *scene, BMesh *bm, int len_max, int *r_edges_len)
+Vector<BMLoop *> ED_uvedit_selected_edges(const Scene *scene, BMesh *bm, int len_max)
 {
   const BMUVOffsets offsets = BM_uv_map_offsets_get(bm);
   BLI_assert(offsets.uv >= 0);
 
   CLAMP_MAX(len_max, bm->totloop);
-  int edges_len = 0;
-  BMLoop **edges = MEM_new_array_uninitialized<BMLoop *>(len_max, __func__);
+  Vector<BMLoop *> edges;
 
   BMIter iter;
   BMFace *f;
@@ -7141,9 +7134,9 @@ BMLoop **ED_uvedit_selected_edges(const Scene *scene, BMesh *bm, int len_max, in
           if (uvedit_edge_select_test(scene, bm, l_iter, offsets)) {
             BM_elem_flag_enable(l_iter, BM_ELEM_TAG);
 
-            edges[edges_len++] = l_iter;
-            if (edges_len == len_max) {
-              goto finally;
+            edges.append(l_iter);
+            if (edges.size() == len_max) {
+              return edges;
             }
 
             /* Tag other connected loops so we don't consider them separate edges. */
@@ -7161,22 +7154,16 @@ BMLoop **ED_uvedit_selected_edges(const Scene *scene, BMesh *bm, int len_max, in
     }
   }
 
-finally:
-  *r_edges_len = edges_len;
-  if (edges_len != len_max) {
-    edges = static_cast<BMLoop **>(MEM_realloc_uninitialized(edges, sizeof(*edges) * edges_len));
-  }
   return edges;
 }
 
-BMLoop **ED_uvedit_selected_verts(const Scene *scene, BMesh *bm, int len_max, int *r_verts_len)
+Vector<BMLoop *> ED_uvedit_selected_verts(const Scene *scene, BMesh *bm, int len_max)
 {
   const BMUVOffsets offsets = BM_uv_map_offsets_get(bm);
   BLI_assert(offsets.uv >= 0);
 
   CLAMP_MAX(len_max, bm->totloop);
-  int verts_len = 0;
-  BMLoop **verts = MEM_new_array_uninitialized<BMLoop *>(len_max, __func__);
+  Vector<BMLoop *> verts;
 
   BMIter iter;
   BMFace *f;
@@ -7199,9 +7186,9 @@ BMLoop **ED_uvedit_selected_verts(const Scene *scene, BMesh *bm, int len_max, in
           if (uvedit_uv_select_test(scene, bm, l_iter, offsets)) {
             BM_elem_flag_enable(l_iter->v, BM_ELEM_TAG);
 
-            verts[verts_len++] = l_iter;
-            if (verts_len == len_max) {
-              goto finally;
+            verts.append(l_iter);
+            if (verts.size() == len_max) {
+              return verts;
             }
 
             /* Tag other connected loops so we don't consider them separate vertices. */
@@ -7218,11 +7205,6 @@ BMLoop **ED_uvedit_selected_verts(const Scene *scene, BMesh *bm, int len_max, in
     }
   }
 
-finally:
-  *r_verts_len = verts_len;
-  if (verts_len != len_max) {
-    verts = static_cast<BMLoop **>(MEM_realloc_uninitialized(verts, sizeof(*verts) * verts_len));
-  }
   return verts;
 }
 
@@ -7359,7 +7341,7 @@ static wmOperatorStatus uv_select_mode_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   ToolSettings *ts = scene->toolsettings;
-  const eTool_UvSelectMode new_uv_selectmode = eTool_UvSelectMode(RNA_enum_get(op->ptr, "type"));
+  const eTool_UvSelectMode new_uv_selectmode = RNA_enum_get<eTool_UvSelectMode>(op->ptr, "type");
 
   /* Early exit if no change in current selection mode */
   if (new_uv_selectmode == ts->uv_selectmode) {

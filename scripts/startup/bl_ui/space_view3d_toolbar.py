@@ -30,6 +30,7 @@ from bl_ui.properties_paint_common import (
     brush_settings,
     brush_settings_advanced,
     draw_color_settings,
+    draw_texture_paint_automasking_settings,
     supports_shape_panel,
     show_experimental_texture_paint,
 )
@@ -47,6 +48,7 @@ class VIEW3D_MT_brush_context_menu(Menu):
 
         settings = UnifiedPaintPanel.paint_settings_from_active_tool(context)
         brush = getattr(settings, "brush", None)
+        is_editable_asset = brush and brush.library and brush.library.is_editable  # BFA - guard: brush can be None
 
         if context.region.type == "UI" and context.space_data.type == "VIEW_3D":
             # skip if no active brush
@@ -80,7 +82,6 @@ class VIEW3D_MT_brush_context_menu(Menu):
                 layout.operator(
                     "brush.asset_save_as", text="Duplicate Asset", icon="DUPLICATE"
                 )  # BFA - moved to top level
-                layout.operator("brush.asset_delete", text="Delete Asset", icon="X")  # BFA - moved to context menu
 
                 layout.separator()
 
@@ -88,6 +89,11 @@ class VIEW3D_MT_brush_context_menu(Menu):
                 layout.operator(
                     "brush.asset_load_preview", text="Edit Preview Image", icon="IMAGE_DATA"
                 )  # BFA - icon added
+
+                layout.separator()
+
+                # BFA - delete last, like Blender's menu polish (week 47)
+                layout.operator("brush.asset_delete", text="Delete Asset", icon="X")  # BFA - moved to context menu
 
             else:
                 layout.label(text="This brush is built-in and not editable", icon="STATUS_INFO")
@@ -99,14 +105,8 @@ class VIEW3D_MT_brush_context_menu(Menu):
             if context.region.type == "UI" and context.space_data.type == "VIEW_3D"
             else context.region.type == "ASSET_SHELF"
         )
-        # BFA - end of changes
-
-        layout.separator()
-
-        layout.operator("brush.asset_edit_metadata", text="Edit Metadata...")
-        layout.operator("brush.asset_load_preview", text="Edit Preview Image...")
-        layout.operator("brush.asset_save", text="Save Changes to Asset")
-        layout.operator("brush.asset_revert", text="Revert to Asset")
+        # BFA - end of changes. The rest of Blender's draw function used to sit below this return
+        # where it never ran, and every merge added to it, #7133.
 
 
 class View3DPanel:
@@ -800,6 +800,10 @@ class VIEW3D_PT_mask(Panel):
         tool_settings = context.tool_settings
         ipaint = tool_settings.image_paint
 
+        # BFA - upstream: with experimental 3D texture paint, auto-masking settings replace the cavity mask
+        if show_experimental_texture_paint(ipaint.brush):
+            draw_texture_paint_automasking_settings(layout, ipaint.mesh_automasking_settings)
+
         # BFA - Stencil Mask and Cavity Mask are drawn directly in this popover
         # as checkbox toggles with the split label system, instead of being
         # collapsible child panels. (Fixes double dropdown, issue #6470)
@@ -843,6 +847,10 @@ class VIEW3D_PT_mask(Panel):
                 row.prop(ipaint, "invert_stencil", text="", icon="IMAGE_ALPHA")
 
         # Cavity Mask
+        # BFA - upstream: cavity mask is replaced by auto-masking in experimental 3D texture paint
+        if show_experimental_texture_paint(ipaint.brush):
+            return
+
         layout.separator()
 
         row = layout.row()
@@ -2834,8 +2842,9 @@ classes = (
     VIEW3D_PT_tools_vertexpaint_options,
 
     VIEW3D_PT_mask,
-    VIEW3D_PT_stencil_projectpaint, # BFA - Not used (kept for merge compatibility, issue #6470)
-    VIEW3D_PT_tools_imagepaint_options_cavity, # BFA - Not used (kept for merge compatibility, issue #6470)
+    # BFA - VIEW3D_PT_stencil_projectpaint and VIEW3D_PT_tools_imagepaint_options_cavity are not
+    # registered. VIEW3D_PT_mask draws both settings itself (#6470), and as registered child
+    # panels they showed a second time below it, #7130. The classes stay for merges.
 
     VIEW3D_PT_tools_imagepaint_symmetry,
     VIEW3D_PT_tools_imagepaint_symmetry_for_topbar,

@@ -9,6 +9,7 @@
  * allocate and free of all library data
  */
 
+#include <atomic>
 #include <cctype>
 #include <cstddef>
 #include <cstdio>
@@ -24,9 +25,7 @@
 /* all types are needed here, in order to do memory operations */
 #include "DNA_ID.h"
 #include "DNA_anim_types.h"
-#include "DNA_collection_types.h"
 #include "DNA_key_types.h"
-#include "DNA_node_types.h"
 #include "DNA_workspace_types.h"
 
 #include "BLI_listbase.hh"
@@ -59,7 +58,6 @@
 #include "BKE_library.hh"
 #include "BKE_main.hh"
 #include "BKE_main_namemap.hh"
-#include "BKE_node.hh"
 #include "BKE_rigidbody.h"
 
 #include "DEG_depsgraph.hh"
@@ -70,8 +68,6 @@
 
 #include "BLO_read_write.hh"
 #include "BLO_readfile.hh"
-
-#include "atomic_ops.h"
 
 #include "lib_intern.hh"
 
@@ -317,16 +313,7 @@ static void propagate_status_to_embedded_ids(ID &id)
     embedded_id.runtime->owner_bmain = id.runtime->owner_bmain;
   };
 
-  bNodeTree *ntree = bke::node_tree_from_id(&id);
-  if (ntree) {
-    propagate_status_fn(ntree->id);
-  }
-  if (id.id_type() == ID_SCE) {
-    Collection *master_collection = id_cast<Scene &>(id).master_collection;
-    if (master_collection) {
-      propagate_status_fn(master_collection->id);
-    }
-  }
+  BKE_idtype_id_foreach_embedded_id(&id, propagate_status_fn);
 }
 
 void id_lib_extern(ID *id, const bool enforce_fix)
@@ -506,31 +493,14 @@ void BKE_id_newptr_and_tag_clear(ID *id)
   if (key != nullptr) {
     BKE_id_newptr_and_tag_clear(&key->id);
   }
-  bNodeTree *ntree = bke::node_tree_from_id(id);
-  if (ntree != nullptr) {
-    BKE_id_newptr_and_tag_clear(&ntree->id);
-  }
-  if (id->id_type() == ID_SCE) {
-    Collection *master_collection = (id_cast<Scene *>(id))->master_collection;
-    if (master_collection != nullptr) {
-      BKE_id_newptr_and_tag_clear(&master_collection->id);
-    }
-  }
+  BKE_idtype_id_foreach_embedded_id(
+      id, [](ID &embedded_id) { BKE_id_newptr_and_tag_clear(&embedded_id); });
 }
 
 void bke::id::id_lib_set(ID &id, Library *lib)
 {
   id.lib = lib;
-  bNodeTree *ntree = node_tree_from_id(&id);
-  if (ntree) {
-    ntree->id.lib = lib;
-  }
-  if (GS(id.name) == ID_SCE) {
-    Scene &scene = reinterpret_cast<Scene &>(id);
-    if (scene.master_collection) {
-      scene.master_collection->id.lib = lib;
-    }
-  }
+  BKE_idtype_id_foreach_embedded_id(&id, [&](ID &embedded_id) { embedded_id.lib = lib; });
 }
 
 static int lib_id_expand_local_cb(LibraryIDLinkCallbackData *cb_data)
@@ -668,17 +638,11 @@ void BKE_lib_id_make_local_generic(Main *bmain, ID *id, const int flags)
       if (key && key_new) {
         ID_NEW_SET(key, key_new);
       }
-      bNodeTree *ntree = bke::node_tree_from_id(id), *ntree_new = bke::node_tree_from_id(id_new);
-      if (ntree && ntree_new) {
-        ID_NEW_SET(ntree, ntree_new);
-      }
-      if (id->id_type() == ID_SCE) {
-        Collection *master_collection = (id_cast<Scene *>(id))->master_collection,
-                   *master_collection_new = (id_cast<Scene *>(id_new))->master_collection;
-        if (master_collection && master_collection_new) {
-          ID_NEW_SET(master_collection, master_collection_new);
+      BKE_idtype_id_foreach_embedded_id_pair(id, id_new, [](ID **embedded_p, ID **embedded_new_p) {
+        if (*embedded_p && *embedded_new_p) {
+          ID_NEW_SET(*embedded_p, *embedded_new_p);
         }
-      }
+      });
 
       const bool lib_local = (flags & LIB_ID_MAKELOCAL_FULL_LIBRARY) != 0;
       if (!lib_local) {
@@ -1057,22 +1021,9 @@ static void id_swap(Main *bmain,
     id_b->recalc = id_a_back.recalc;
   }
 
-  id_embedded_swap(bmain,
-                   reinterpret_cast<ID **>(bke::node_tree_ptr_from_id(id_a)),
-                   reinterpret_cast<ID **>(bke::node_tree_ptr_from_id(id_b)),
-                   do_full_id,
-                   remapper_id_a,
-                   remapper_id_b);
-  if (id_a->id_type() == ID_SCE) {
-    Scene *scene_a = id_cast<Scene *>(id_a);
-    Scene *scene_b = id_cast<Scene *>(id_b);
-    id_embedded_swap(bmain,
-                     reinterpret_cast<ID **>(&scene_a->master_collection),
-                     reinterpret_cast<ID **>(&scene_b->master_collection),
-                     do_full_id,
-                     remapper_id_a,
-                     remapper_id_b);
-  }
+  BKE_idtype_id_foreach_embedded_id_pair(id_a, id_b, [&](ID **embedded_a_p, ID **embedded_b_p) {
+    id_embedded_swap(bmain, embedded_a_p, embedded_b_p, do_full_id, remapper_id_a, remapper_id_b);
+  });
 
   if (remapper_id_a != nullptr) {
     remapper_id_a->add(id_b, id_a);
@@ -1313,7 +1264,7 @@ void BKE_libblock_management_usercounts_clear(Main *bmain, void *idv)
   id->tag |= ID_TAG_NO_USER_REFCOUNT;
 }
 
-void BKE_main_id_tag_listbase(ListBaseT<ID> *lb, const int tag, const bool value)
+void BKE_main_id_tag_listbase(ListBaseT<ID> *lb, const eID_Tag tag, const bool value)
 {
   ID *id;
   if (value) {
@@ -1322,21 +1273,20 @@ void BKE_main_id_tag_listbase(ListBaseT<ID> *lb, const int tag, const bool value
     }
   }
   else {
-    const int ntag = ~tag;
     for (id = lb->first(); id; id = static_cast<ID *>(id->next)) {
-      id->tag &= ntag;
+      id->tag &= ~tag;
     }
   }
 }
 
-void BKE_main_id_tag_idcode(Main *mainvar, const short type, const int tag, const bool value)
+void BKE_main_id_tag_idcode(Main *mainvar, const short type, const eID_Tag tag, const bool value)
 {
   ListBaseT<ID> *lb = which_libbase(mainvar, type);
 
   BKE_main_id_tag_listbase(lb, tag, value);
 }
 
-void BKE_main_id_tag_all(Main *mainvar, const int tag, const bool value)
+void BKE_main_id_tag_all(Main *mainvar, eID_Tag tag, const bool value)
 {
   MainListsArray lbarray = BKE_main_lists_get(*mainvar);
   int a = lbarray.size();
@@ -1345,23 +1295,22 @@ void BKE_main_id_tag_all(Main *mainvar, const int tag, const bool value)
   }
 }
 
-void BKE_main_id_flag_listbase(ListBaseT<ID> *lb, const int flag, const bool value)
+void BKE_main_id_flag_listbase(ListBaseT<ID> *lb, const eID_Flag flag, const bool value)
 {
   ID *id;
   if (value) {
     for (id = lb->first(); id; id = static_cast<ID *>(id->next)) {
-      id->tag |= flag;
+      id->flag |= flag;
     }
   }
   else {
-    const int nflag = ~flag;
     for (id = lb->first(); id; id = static_cast<ID *>(id->next)) {
-      id->tag &= nflag;
+      id->flag &= ~flag;
     }
   }
 }
 
-void BKE_main_id_flag_all(Main *bmain, const int flag, const bool value)
+void BKE_main_id_flag_all(Main *bmain, eID_Flag flag, const bool value)
 {
   MainListsArray lbarray = BKE_main_lists_get(*bmain);
   int a = lbarray.size();
@@ -1432,6 +1381,22 @@ void BKE_libblock_runtime_ensure(ID &id)
   }
 }
 
+void BKE_libblock_link_placeholder_clear_data(ID &id, const bool is_undo)
+{
+  /* For placeholders (references to linked data), zero-initialize, and only explicitly copy the
+   * very small subset of required data. */
+  ID temp_id = ID{};
+  temp_id.lib = id.lib;
+  STRNCPY(temp_id.name, id.name);
+  temp_id.flag = id.flag;
+  temp_id.session_uid = id.session_uid;
+  if (is_undo) {
+    temp_id.recalc_up_to_undo_push = id.recalc_up_to_undo_push;
+    temp_id.tag = id.tag & ID_TAG_KEEP_ON_UNDO;
+  }
+  id = temp_id;
+}
+
 void BKE_libblock_owner_bmain_set(ID &id, Main *bmain, const bool assert_contained)
 {
   BKE_libblock_runtime_ensure(id);
@@ -1448,16 +1413,8 @@ void BKE_libblock_owner_bmain_set(ID &id, Main *bmain, const bool assert_contain
   }
 
   /* Update owner-id on embedded IDs too. */
-  bNodeTree *ntree = bke::node_tree_from_id(&id);
-  if (ntree != nullptr) {
-    BKE_libblock_owner_bmain_set(ntree->id, bmain, false);
-  }
-  if (id.id_type() == ID_SCE) {
-    Collection *master_collection = id_cast<Scene &>(id).master_collection;
-    if (master_collection != nullptr) {
-      BKE_libblock_owner_bmain_set(master_collection->id, bmain, false);
-    }
-  }
+  BKE_idtype_id_foreach_embedded_id(
+      &id, [&](ID &embedded_id) { BKE_libblock_owner_bmain_set(embedded_id, bmain, false); });
 }
 
 const Main *ID::owner_bmain() const
@@ -1644,17 +1601,17 @@ void BKE_libblock_runtime_reset_remapping_status(ID *id)
 }
 
 /* ********** ID session-wise UID management. ********** */
-static uint global_session_uid = 0;
+static std::atomic<uint> global_session_uid = 0;
 
 void BKE_lib_libblock_session_uid_ensure(ID *id)
 {
   if (id->session_uid == MAIN_ID_SESSION_UID_UNSET) {
     BLI_assert((id->tag & ID_TAG_TEMP_MAIN) == 0); /* Caller must ensure this. */
-    id->session_uid = atomic_add_and_fetch_uint32(&global_session_uid, 1);
+    id->session_uid = global_session_uid.fetch_add(1) + 1;
     /* In case overflow happens, still assign a valid ID. This way opening files many times works
      * correctly. */
     if (id->session_uid == MAIN_ID_SESSION_UID_UNSET) [[unlikely]] {
-      id->session_uid = atomic_add_and_fetch_uint32(&global_session_uid, 1);
+      id->session_uid = global_session_uid.fetch_add(1) + 1;
     }
   }
 }
@@ -2513,12 +2470,9 @@ void BKE_library_make_local(Main *bmain,
     const bool do_skip = (id && !BKE_idtype_idcode_is_linkable(id->id_type()));
 
     for (; id; id = static_cast<ID *>(id->next)) {
-      ID *ntree = id_cast<ID *>(bke::node_tree_from_id(id));
-
       id->tag &= ~ID_TAG_DOIT;
-      if (ntree != nullptr) {
-        ntree->tag &= ~ID_TAG_DOIT;
-      }
+      BKE_idtype_id_foreach_embedded_id(id,
+                                        [](ID &embedded_id) { embedded_id.tag &= ~ID_TAG_DOIT; });
 
       if (!ID_IS_LINKED(id)) {
         id->tag &= ~(ID_TAG_EXTERN | ID_TAG_INDIRECT | ID_TAG_NEW);
@@ -2539,7 +2493,7 @@ void BKE_library_make_local(Main *bmain,
        * Also, never ever make proxified objects local, would not make any sense. */
       /* Some more notes:
        *   - Shape-keys are never tagged here (since they are not linkable).
-       *   - Node-trees used in materials etc. have to be tagged manually,
+       *   - Embedded IDs like node-trees used in materials have to be tagged manually,
        *     since they do not exist in Main (!).
        * This is ok-ish on 'make local' side of things
        * (since those are handled by their 'owner' IDs),
@@ -2551,12 +2505,11 @@ void BKE_library_make_local(Main *bmain,
         BLI_linklist_prepend_arena(&todo_ids, id, linklist_mem);
         id->tag |= ID_TAG_DOIT;
 
-        /* Tag those nasty non-ID node-trees,
-         * but do not add them to todo list, making them local is handled by 'owner' ID.
-         * This is needed for library_make_local_copying_check() to work OK at step 2. */
-        if (ntree != nullptr) {
-          ntree->tag |= ID_TAG_DOIT;
-        }
+        /* Tag embedded IDs, but do not add them to todo list, making them local is handled by
+         * 'owner' ID. This is needed for library_make_local_copying_check() to work OK at
+         * step 2. */
+        BKE_idtype_id_foreach_embedded_id(id,
+                                          [](ID &embedded_id) { embedded_id.tag |= ID_TAG_DOIT; });
       }
       else {
         /* Linked ID that we won't be making local (needed info for step 2, see below). */
@@ -2819,12 +2772,12 @@ char *BKE_id_to_unique_string_key(const ID *id)
 
 void BKE_id_tag_set_atomic(ID *id, int tag)
 {
-  atomic_fetch_and_or_int32(&id->tag, tag);
+  std::atomic_ref(id->tag).fetch_or(tag);
 }
 
 void BKE_id_tag_clear_atomic(ID *id, int tag)
 {
-  atomic_fetch_and_and_int32(&id->tag, ~tag);
+  std::atomic_ref(id->tag).fetch_and(~tag);
 }
 
 bool BKE_id_is_in_main(Main *bmain, ID *id)

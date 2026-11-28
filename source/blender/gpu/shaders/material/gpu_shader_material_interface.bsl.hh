@@ -356,7 +356,7 @@ float ambient_occlusion_eval(const KernelGlobals & /*kg*/,
   return 0.0f;
 }
 
-/* Attribute node occlusion node. */
+/* Attribute node. */
 
 float4 attr_load_color_post(KernelGlobals & /*kg*/, float4 attr)
 {
@@ -492,12 +492,12 @@ void raycast_eval(KernelGlobals & /*kg*/,
 
 float texture_lod_bias_get(KernelGlobals & /*kg*/)
 {
-  return 0.0;
+  return 0.0f;
 }
 
 float derivative_scale_get(KernelGlobals & /*kg*/)
 {
-  return 1.0;
+  return 1.0f;
 }
 
 /* AOV Output. */

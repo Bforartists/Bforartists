@@ -484,13 +484,6 @@ class GRAPH_MT_channel(Menu):
         operator_context = layout.operator_context
         layout.operator_context = "INVOKE_REGION_CHANNELS"
 
-        layout.operator("anim.channels_delete", icon="DELETE")
-
-        if context.space_data.mode == "DRIVERS":
-            layout.operator("graph.driver_delete_invalid", icon="DELETE")
-
-        layout.separator()
-
         layout.operator("anim.channels_group", text="Group Channels", icon="NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon="REMOVE_FROM_ALL_GROUPS")
 
@@ -548,6 +541,13 @@ class GRAPH_MT_channel(Menu):
             text="Discontinuity (Euler) Filter",
             icon="DISCONTINUE_EULER",
         )
+
+        layout.separator()
+
+        # BFA - delete last, like Blender's menu polish (week 47)
+        if context.space_data.mode == "DRIVERS":
+            layout.operator("graph.driver_delete_invalid", icon="DELETE")
+        layout.operator("anim.channels_delete", icon="DELETE")
 
 
 class GRAPH_MT_channel_settings_toggle(Menu):
@@ -686,7 +686,7 @@ class GRAPH_MT_key(Menu):
         layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
 
         layout.separator()
-        layout.operator_menu_enum("graph.keyframe_insert", "type", text="Insert")
+        layout.operator_menu_enum("graph.keyframe_insert", "type", text="Insert Keyframes")  # BFA - upstream label rename
 
         layout.separator()
 
@@ -698,7 +698,6 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.paste", text="Paste Keyframes", icon="PASTEDOWN")
         layout.operator("graph.paste", text="Paste Flipped", icon="PASTEFLIPDOWN").flipped = True
         layout.operator("graph.duplicate_move", icon="DUPLICATE")
-        layout.operator("graph.delete", icon="DELETE")
 
         layout.separator()
 
@@ -719,7 +718,7 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_blending")
         layout.menu("GRAPH_MT_key_smoothing")
         layout.separator()
-        layout.operator("graph.delete", text="Delete", icon='X')
+        layout.operator("graph.delete", text="Delete", icon="DELETE")  # BFA - delete last, like Blender's menu polish (week 47); BFA icon
 
 
 class GRAPH_MT_key_snap(Menu):
@@ -733,6 +732,7 @@ class GRAPH_MT_key_snap(Menu):
         layout.operator("graph.snap", text="Nearest Frame", icon="SNAP_NEARESTFRAME").type = "NEAREST_FRAME"
         layout.operator("graph.snap", text="Nearest Second", icon="SNAP_NEARESTSECOND").type = "NEAREST_SECOND"
         layout.operator("graph.snap", text="Nearest Marker", icon="SNAP_NEARESTMARKER").type = "NEAREST_MARKER"
+        layout.separator()  # BFA - upstream added a separator before the handle entries
         layout.operator("graph.snap", text="Flatten Handles", icon="FLATTEN_HANDLER").type = "HORIZONTAL"
         layout.operator("graph.equalize_handles", text="Equalize Handles", icon="EQUALIZE_HANDLER").side = "BOTH"
         layout.separator()
@@ -802,14 +802,12 @@ class GRAPH_MT_context_menu(Menu):
 
         layout.operator_menu_enum("graph.handle_type", "type", text="Handle Type")
         layout.operator_menu_enum("graph.interpolation_type", "type", text="Interpolation Mode")
-        layout.operator_menu_enum("graph.easing_type", "type", text="Easing Mode")
+        layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")  # BFA - upstream label rename
 
         layout.separator()
 
         layout.operator("graph.keyframe_insert", icon="KEYFRAMES_INSERT").type = "SEL"
         layout.operator("graph.duplicate_move", icon="DUPLICATE")
-        layout.operator_context = "EXEC_REGION_WIN"
-        layout.operator("graph.delete", icon="DELETE")
 
         layout.separator()
 
@@ -817,7 +815,7 @@ class GRAPH_MT_context_menu(Menu):
         layout.operator_menu_enum("graph.snap", "type", text="Snap")
         layout.separator()
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("graph.delete", icon='X')
+        layout.operator("graph.delete", icon="DELETE")  # BFA - BFA icon, delete is the last entry like Blender's menu polish
 
 
 class GRAPH_MT_pivot_pie(Menu):

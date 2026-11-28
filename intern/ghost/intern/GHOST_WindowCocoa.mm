@@ -7,13 +7,10 @@
 #include "GHOST_ContextNone.hh"
 #include "GHOST_Debug.hh"
 
+#include "GHOST_ContextMTL.hh"
 #include "GHOST_GestureHandlerCocoa.hh"
 #include "GHOST_SystemCocoa.hh"
 #include "GHOST_WindowViewCocoa.hh"
-
-#ifdef WITH_METAL_BACKEND
-#  include "GHOST_ContextMTL.hh"
-#endif
 
 #ifdef WITH_VULKAN_BACKEND
 #  include "GHOST_ContextVK.hh"
@@ -371,31 +368,7 @@ GHOST_WindowCocoa::GHOST_WindowCocoa(GHOST_SystemCocoa *systemCocoa,
 
     GHOST_ASSERT(metalDevice != nullptr, "Failed to obtain default macOS Metal device.");
 
-    metal_layer_ = [[CAMetalLayer alloc] init];
-    metal_layer_.edgeAntialiasingMask = 0;
-    metal_layer_.masksToBounds = NO;
-    metal_layer_.opaque = YES;
-    metal_layer_.framebufferOnly = YES;
-    metal_layer_.presentsWithTransaction = NO;
-    [metal_layer_ removeAllAnimations];
-    metal_layer_.device = metalDevice;
-
-    if (context_params.vsync != GHOST_kVSyncModeUnset) {
-      metal_layer_.displaySyncEnabled = (context_params.vsync == GHOST_kVSyncModeOff) ? NO : YES;
-    }
-
-    /* Enable EDR support. This is done by:
-     * 1. Using a floating point render target, so that values outside 0..1 can be used
-     * 2. Informing the OS that we are EDR aware, and intend to use values outside 0..1
-     * 3. Setting the extended sRGB color space so that the OS knows how to interpret the
-     *    values.
-     */
-    metal_layer_.wantsExtendedDynamicRangeContent = YES;
-    metal_layer_.pixelFormat = MTLPixelFormatRGBA16Float;
-    const CFStringRef name = kCGColorSpaceExtendedSRGB;
-    CGColorSpaceRef colorspace = CGColorSpaceCreateWithName(name);
-    metal_layer_.colorspace = colorspace;
-    CGColorSpaceRelease(colorspace);
+    metal_layer_ = GHOST_ContextMTL::createMetalLayer(metalDevice, context_params.vsync);
 
     /* For Blender to know if this window supports HDR. */
     hdr_info_.hdr_enabled = true;
@@ -907,7 +880,6 @@ GHOST_Context *GHOST_WindowCocoa::newDrawingContext(GHOST_TDrawingContextType ty
     }
 #endif
 
-#ifdef WITH_METAL_BACKEND
     case GHOST_kDrawingContextTypeMetal: {
       GHOST_Context *context = new GHOST_ContextMTL(
           want_context_params_, window_view_, metal_layer_);
@@ -917,7 +889,6 @@ GHOST_Context *GHOST_WindowCocoa::newDrawingContext(GHOST_TDrawingContextType ty
       delete context;
       return nullptr;
     }
-#endif
 
     default:
       /* Unsupported backend. */

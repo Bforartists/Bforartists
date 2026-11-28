@@ -250,7 +250,7 @@ bool ImagePaintStroke::test_start(wmOperator *op, const float2 mouse)
   BLI_assert(!CTX_wm_region_view3d(evil_C));
 
   Brush *brush = BKE_paint_brush(&settings->imapaint.paint);
-  auto mode = BrushStrokeMode(RNA_enum_get(op->ptr, "mode"));
+  auto mode = RNA_enum_get<BrushStrokeMode>(op->ptr, "mode");
 
   copy_v2_v2(this->gradient_data.prev_mouse, mouse);
   copy_v2_v2(this->gradient_data.start_mouse, mouse);
@@ -429,8 +429,8 @@ bool TexturePaintStroke::test_start(wmOperator *op, const float2 mouse)
   }
 
   Brush *brush = BKE_paint_brush(&settings->imapaint.paint);
-  auto mode = BrushStrokeMode(RNA_enum_get(op->ptr, "mode"));
-  auto brush_switch_mode = BrushSwitchMode(RNA_enum_get(op->ptr, "brush_toggle"));
+  auto mode = RNA_enum_get<BrushStrokeMode>(op->ptr, "mode");
+  auto brush_switch_mode = RNA_enum_get<BrushSwitchMode>(op->ptr, "brush_toggle");
 
   copy_v2_v2(this->gradient_data.prev_mouse, mouse);
   copy_v2_v2(this->gradient_data.start_mouse, mouse);
@@ -489,7 +489,7 @@ struct ExperimentalTexturePaintStroke final : public PaintStroke {
 
     if (!ss.cache) {
       ss.cache = MEM_new<StrokeCache>(__func__);
-      const BrushStrokeMode stroke_mode = BrushStrokeMode(RNA_enum_get(op->ptr, "mode"));
+      const BrushStrokeMode stroke_mode = RNA_enum_get<BrushStrokeMode>(op->ptr, "mode");
       const bool pen_flip = RNA_boolean_get(op->ptr, "pen_flip");
 
       StrokeToggleSettings toggle_settings;
@@ -567,10 +567,14 @@ bool ExperimentalTexturePaintStroke::test_start(wmOperator *op, float2 mouse)
 
   mode_data_ = std::move(texture_paint_data);
 
-  if (brush_type_is_paint(this->brush->sculpt_brush_type)) {
+  if (this->brush->image_brush_type == IMAGE_PAINT_BRUSH_TYPE_DRAW) {
     BKE_curvemapping_init(this->brush->curve_rand_hue);
     BKE_curvemapping_init(this->brush->curve_rand_saturation);
     BKE_curvemapping_init(this->brush->curve_rand_value);
+
+    if (BKE_brush_color_jitter_get_settings(this->paint, this->brush)) {
+      cache.initial_hsv_jitter = BKE_paint_seed_hsv_jitter();
+    }
   }
 
   cursor_geometry_info_update(*this->depsgraph, *paint, nullptr, this->vc, base_, mouse, false);
@@ -667,15 +671,13 @@ static void do_brush_action(const Depsgraph &depsgraph,
     return;
   }
 
-/* TODO: Automasking support */
-#if 0
   if (auto_mask::is_enabled(image_paint_settings.paint, ob, &brush)) {
-    auto_mask::Cache &cache = auto_mask::stroke_cache_ensure(depsgraph, image_paint_settings.paint,
-  &brush, ob); if (cache.settings.flags & BRUSH_AUTOMASKING_CAVITY_ALL) {
-      cache.calc_cavity_factor(depsgraph, ob, node_mask);
+    auto_mask::Cache &automasking = auto_mask::stroke_cache_ensure(
+        depsgraph, image_paint_settings.paint, &brush, ob);
+    if (automasking.settings.flags & BRUSH_AUTOMASKING_CAVITY_ALL) {
+      automasking.calc_cavity_factor(depsgraph, ob, node_mask);
     }
   }
-#endif
 
   /* TODO: Sculpt normal */
   /* TODO: Brush local mat */
@@ -792,7 +794,7 @@ void ExperimentalTexturePaintStroke::done(bool is_cancel, bool stroke_started)
 static PaintStroke *create_paint_stroke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   if (CTX_wm_region_view3d(C)) {
-    auto switch_mode = BrushSwitchMode(RNA_enum_get(op->ptr, "brush_toggle"));
+    auto switch_mode = RNA_enum_get<BrushSwitchMode>(op->ptr, "brush_toggle");
 
     const Paint &paint = *BKE_paint_get_active_from_context(C);
     const Brush &brush = *BKE_paint_brush_for_read(&paint);
@@ -809,7 +811,7 @@ static PaintStroke *create_paint_stroke(bContext *C, wmOperator *op, const wmEve
 static PaintStroke *get_paint_stroke(bContext *C, wmOperator *op)
 {
   if (CTX_wm_region_view3d(C)) {
-    auto switch_mode = BrushSwitchMode(RNA_enum_get(op->ptr, "brush_toggle"));
+    auto switch_mode = RNA_enum_get<BrushSwitchMode>(op->ptr, "brush_toggle");
 
     const Paint &paint = *BKE_paint_get_active_from_context(C);
     const Brush &brush = *BKE_paint_brush_for_read(&paint);
@@ -826,7 +828,7 @@ static PaintStroke *get_paint_stroke(bContext *C, wmOperator *op)
 static bool should_check_before_stroke_creation(bContext *C, wmOperator *op)
 {
   if (CTX_wm_region_view3d(C)) {
-    auto switch_mode = BrushSwitchMode(RNA_enum_get(op->ptr, "brush_toggle"));
+    auto switch_mode = RNA_enum_get<BrushSwitchMode>(op->ptr, "brush_toggle");
 
     const Paint &paint = *BKE_paint_get_active_from_context(C);
     const Brush &brush = *BKE_paint_brush_for_read(&paint);

@@ -225,21 +225,6 @@ const EnumPropertyItem rna_enum_usd_convert_scene_units_items[] = {
     {0, nullptr, 0, nullptr, nullptr},
 };
 
-/* Stored in the wmOperator's customdata field to indicate it should run as a background job.
- * This is set when the operator is invoked, and not set when it is only executed. */
-struct USDOperatorOptions {
-  bool as_background_job;
-};
-
-static void free_operator_customdata(wmOperator *op)
-{
-  if (op->customdata) {
-    USDOperatorOptions *options = static_cast<USDOperatorOptions *>(op->customdata);
-    MEM_delete(options);
-    op->customdata = nullptr;
-  }
-}
-
 /* Ensure that the prim_path is not set to
  * the absolute root path '/'. */
 static void process_prim_path(std::string &prim_path)
@@ -262,10 +247,6 @@ static wmOperatorStatus wm_usd_export_invoke(bContext *C,
                                              wmOperator *op,
                                              const wmEvent * /*event*/)
 {
-  USDOperatorOptions *options = MEM_new_zeroed<USDOperatorOptions>("USDOperatorOptions");
-  options->as_background_job = true;
-  op->customdata = options;
-
   ED_fileselect_ensure_default_filepath(C, op, ".usdc");
 
   WM_event_add_fileselect(C, op);
@@ -277,18 +258,15 @@ static wmOperatorStatus wm_usd_export_exec(bContext *C, wmOperator *op)
 {
   if (!RNA_struct_property_is_set_ex(op->ptr, "filepath", false)) {
     BKE_report(op->reports, RPT_ERROR, "No filepath given");
-    free_operator_customdata(op);
     return OPERATOR_CANCELLED;
   }
 
-  const USDOperatorOptions *options = static_cast<USDOperatorOptions *>(op->customdata);
-  const bool as_background_job = (options != nullptr && options->as_background_job);
-  free_operator_customdata(op);
+  const bool as_background_job = (op->flag & OP_IS_INVOKE) != 0;
 
   char filepath[FILE_MAX];
   RNA_string_get(op->ptr, "filepath", filepath);
 
-  const TexExportMode textures_mode = TexExportMode(RNA_enum_get(op->ptr, "export_textures_mode"));
+  const TexExportMode textures_mode = RNA_enum_get<TexExportMode>(op->ptr, "export_textures_mode");
   bool export_textures = false;
   bool use_original_paths = false;
 
@@ -339,8 +317,8 @@ static wmOperatorStatus wm_usd_export_exec(bContext *C, wmOperator *op)
   params.author_blender_name = RNA_boolean_get(op->ptr, "author_blender_name");
   params.allow_unicode = RNA_boolean_get(op->ptr, "allow_unicode");
 
-  params.export_subdiv = SubdivExportMode(RNA_enum_get(op->ptr, "export_subdivision"));
-  params.evaluation_mode = eEvaluationMode(RNA_enum_get(op->ptr, "evaluation_mode"));
+  params.export_subdiv = RNA_enum_get<SubdivExportMode>(op->ptr, "export_subdivision");
+  params.evaluation_mode = RNA_enum_get<eEvaluationMode>(op->ptr, "evaluation_mode");
 
   params.generate_preview_surface = RNA_boolean_get(op->ptr, "generate_preview_surface");
   params.generate_materialx_network = RNA_boolean_get(op->ptr, "generate_materialx_network");
@@ -354,13 +332,13 @@ static wmOperatorStatus wm_usd_export_exec(bContext *C, wmOperator *op)
   params.ngon_method = RNA_enum_get(op->ptr, "ngon_method");
 
   params.convert_orientation = RNA_boolean_get(op->ptr, "convert_orientation");
-  params.forward_axis = eIOAxis(RNA_enum_get(op->ptr, "export_global_forward_selection"));
-  params.up_axis = eIOAxis(RNA_enum_get(op->ptr, "export_global_up_selection"));
-  params.xform_op_mode = XformOpMode(RNA_enum_get(op->ptr, "xform_op_mode"));
+  params.forward_axis = RNA_enum_get<eIOAxis>(op->ptr, "export_global_forward_selection");
+  params.up_axis = RNA_enum_get<eIOAxis>(op->ptr, "export_global_up_selection");
+  params.xform_op_mode = RNA_enum_get<XformOpMode>(op->ptr, "xform_op_mode");
 
-  params.usdz_downscale_size = TextureDownscaleSize(RNA_enum_get(op->ptr, "usdz_downscale_size"));
+  params.usdz_downscale_size = RNA_enum_get<TextureDownscaleSize>(op->ptr, "usdz_downscale_size");
   params.usdz_downscale_custom_size = RNA_int_get(op->ptr, "usdz_downscale_custom_size");
-  params.convert_scene_units = SceneUnits(RNA_enum_get(op->ptr, "convert_scene_units"));
+  params.convert_scene_units = RNA_enum_get<SceneUnits>(op->ptr, "convert_scene_units");
   params.custom_meters_per_unit = RNA_float_get(op->ptr, "meters_per_unit");
 
   params.merge_parent_xform = RNA_boolean_get(op->ptr, "merge_parent_xform");
@@ -423,7 +401,7 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
     }
 
     col->prop(ptr, "convert_scene_units", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    if (SceneUnits(RNA_enum_get(ptr, "convert_scene_units")) == SceneUnits::Custom) {
+    if (RNA_enum_get<SceneUnits>(ptr, "convert_scene_units") == SceneUnits::Custom) {
       col->prop(ptr, "meters_per_unit", UI_ITEM_NONE, std::nullopt, ICON_NONE);
     }
 
@@ -498,15 +476,15 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
       col->use_property_split_set(true);
       col->prop(ptr, "export_textures_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
 
-      const TexExportMode textures_mode = TexExportMode(
-          RNA_enum_get(op->ptr, "export_textures_mode"));
+      const TexExportMode textures_mode = RNA_enum_get<TexExportMode>(op->ptr,
+                                                                      "export_textures_mode");
 
       ui::Layout &sub_col = col->column(true);
       sub_col.use_property_split_set(false);  // bfa changed to false to float left
       sub_col.enabled_set(textures_mode == TexExportMode::NewPath);
       sub_col.prop(ptr, "overwrite_textures", UI_ITEM_NONE, std::nullopt, ICON_NONE);
       sub_col.prop(ptr, "usdz_downscale_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-      if (TextureDownscaleSize(RNA_enum_get(ptr, "usdz_downscale_size")) ==
+      if (RNA_enum_get<TextureDownscaleSize>(ptr, "usdz_downscale_size") ==
           TextureDownscaleSize::Custom)
       {
         sub_col.prop(ptr, "usdz_downscale_custom_size", UI_ITEM_NONE, std::nullopt, ICON_NONE);
@@ -528,11 +506,6 @@ static void wm_usd_export_draw(bContext *C, wmOperator *op)
     col.use_property_split_set(false);  // bfa
     col.prop(ptr, "use_instancing", UI_ITEM_NONE, std::nullopt, ICON_NONE);
   }
-}
-
-static void wm_usd_export_cancel(bContext * /*C*/, wmOperator *op)
-{
-  free_operator_customdata(op);
 }
 
 static bool wm_usd_export_check(bContext * /*C*/, wmOperator *op)
@@ -577,7 +550,6 @@ void WM_OT_usd_export(wmOperatorType *ot)
   ot->exec = wm_usd_export_exec;
   ot->poll = WM_operator_winactive;
   ot->ui = wm_usd_export_draw;
-  ot->cancel = wm_usd_export_cancel;
   ot->check = wm_usd_export_check;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_PRESET; /* No UNDO possible. */
@@ -888,10 +860,6 @@ void WM_OT_usd_export(wmOperatorType *ot)
 
 static wmOperatorStatus wm_usd_import_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  USDOperatorOptions *options = MEM_new_zeroed<USDOperatorOptions>("USDOperatorOptions");
-  options->as_background_job = true;
-  op->customdata = options;
-
   return ed::io::filesel_drop_import_invoke(C, op, event);
 }
 
@@ -899,13 +867,10 @@ static wmOperatorStatus wm_usd_import_exec(bContext *C, wmOperator *op)
 {
   if (!RNA_struct_property_is_set_ex(op->ptr, "filepath", false)) {
     BKE_report(op->reports, RPT_ERROR, "No filepath given");
-    free_operator_customdata(op);
     return OPERATOR_CANCELLED;
   }
 
-  const USDOperatorOptions *options = static_cast<USDOperatorOptions *>(op->customdata);
-  const bool as_background_job = (options != nullptr && options->as_background_job);
-  free_operator_customdata(op);
+  const bool as_background_job = (op->flag & OP_IS_INVOKE) != 0;
 
   char filepath[FILE_MAX];
   RNA_string_get(op->ptr, "filepath", filepath);
@@ -970,14 +935,14 @@ static wmOperatorStatus wm_usd_import_exec(bContext *C, wmOperator *op)
 
   params.import_usd_preview = RNA_boolean_get(op->ptr, "import_usd_preview");
   params.set_material_blend = RNA_boolean_get(op->ptr, "set_material_blend");
-  params.mtl_purpose = MtlPurpose(RNA_enum_get(op->ptr, "mtl_purpose"));
-  params.mtl_name_collision_mode = MtlNameCollisionMode(
-      RNA_enum_get(op->ptr, "mtl_name_collision_mode"));
-  params.import_textures_mode = TexImportMode(RNA_enum_get(op->ptr, "import_textures_mode"));
-  params.tex_name_collision_mode = TexNameCollisionMode(
-      RNA_enum_get(op->ptr, "tex_name_collision_mode"));
+  params.mtl_purpose = RNA_enum_get<MtlPurpose>(op->ptr, "mtl_purpose");
+  params.mtl_name_collision_mode = RNA_enum_get<MtlNameCollisionMode>(op->ptr,
+                                                                      "mtl_name_collision_mode");
+  params.import_textures_mode = RNA_enum_get<TexImportMode>(op->ptr, "import_textures_mode");
+  params.tex_name_collision_mode = RNA_enum_get<TexNameCollisionMode>(op->ptr,
+                                                                      "tex_name_collision_mode");
 
-  params.property_import_mode = PropertyImportMode(RNA_enum_get(op->ptr, "property_import_mode"));
+  params.property_import_mode = RNA_enum_get<PropertyImportMode>(op->ptr, "property_import_mode");
 
   params.prim_path_mask = RNA_string_get(op->ptr, "prim_path_mask");
 
@@ -992,11 +957,6 @@ static wmOperatorStatus wm_usd_import_exec(bContext *C, wmOperator *op)
   const bool ok = USD_import(C, filepath, &params, as_background_job, op->reports);
 
   return as_background_job || ok ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
-}
-
-static void wm_usd_import_cancel(bContext * /*C*/, wmOperator *op)
-{
-  free_operator_customdata(op);
 }
 
 static void wm_usd_import_draw(bContext *C, wmOperator *op)
@@ -1099,7 +1059,7 @@ static void wm_usd_import_draw(bContext *C, wmOperator *op)
     ui::Layout &col = panel->column(false);
 
     col.prop(ptr, "import_textures_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);
-    const bool copy_textures = TexImportMode(RNA_enum_get(op->ptr, "import_textures_mode")) ==
+    const bool copy_textures = RNA_enum_get<TexImportMode>(op->ptr, "import_textures_mode") ==
                                TexImportMode::Copy;
 
     ui::Layout *row = &col.row(true);
@@ -1128,7 +1088,6 @@ void WM_OT_usd_import(wmOperatorType *ot)
 
   ot->invoke = wm_usd_import_invoke;
   ot->exec = wm_usd_import_exec;
-  ot->cancel = wm_usd_import_cancel;
   ot->poll = WM_operator_winactive;
   ot->ui = wm_usd_import_draw;
 

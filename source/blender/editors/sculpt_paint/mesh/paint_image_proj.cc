@@ -8,6 +8,7 @@
  */
 
 #include <algorithm>
+#include <atomic>
 #include <cfloat>
 #include <climits>
 #include <cmath>
@@ -35,8 +36,6 @@
 #include "BLI_task_c.hh"
 #include "BLI_threads.hh"
 #include "BLI_utildefines.hh"
-
-#include "atomic_ops.h"
 
 #include "BLT_translation.hh"
 
@@ -304,6 +303,7 @@ struct ProjPaintState {
   BrushSwitchMode brush_switch_mode;
 
   float brush_size;
+  float pressure;
   Object *ob;
   /* for symmetry, we need to store modified object matrix */
   float obmat[4][4];
@@ -414,7 +414,7 @@ struct ProjPaintState {
   int bucketMin[2];
   int bucketMax[2];
   /** must lock threads while accessing these. */
-  int context_bucket_index;
+  std::atomic<int> context_bucket_index;
 
   CurveMapping *cavity_curve;
   BlurKernel *blurkernel;
@@ -5032,7 +5032,7 @@ static bool project_bucket_iter_init(ProjPaintState *ps, const float mval_f[2])
     ps->bucketMax[1] = ps->buckets_y;
   }
 
-  ps->context_bucket_index = ps->bucketMin[0] + ps->bucketMin[1] * ps->buckets_x;
+  ps->context_bucket_index.store(ps->bucketMin[0] + ps->bucketMin[1] * ps->buckets_x);
   return true;
 }
 
@@ -5045,8 +5045,8 @@ static bool project_bucket_iter_next(ProjPaintState *ps,
 
   const int max_bucket_idx = ps->bucketMax[0] + (ps->bucketMax[1] - 1) * ps->buckets_x;
 
-  for (int bidx = atomic_fetch_and_add_int32(&ps->context_bucket_index, 1); bidx < max_bucket_idx;
-       bidx = atomic_fetch_and_add_int32(&ps->context_bucket_index, 1))
+  for (int bidx = ps->context_bucket_index.fetch_add(1); bidx < max_bucket_idx;
+       bidx = ps->context_bucket_index.fetch_add(1))
   {
     const int bucket_y = bidx / ps->buckets_x;
     const int bucket_x = bidx - (bucket_y * ps->buckets_x);
@@ -5445,6 +5445,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
   LinkNode *node;
   ProjPixel *projPixel;
   Brush *brush = ps->brush;
+  const MTex *mtex = BKE_brush_mask_texture_get(brush, PaintMode::Texture3D);
 
   int last_index = -1;
   ProjPaintImage *last_projIma = nullptr;
@@ -5684,8 +5685,13 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
 
             /* Mask texture. */
             if (ps->is_maskbrush) {
-              float texmask = BKE_brush_sample_masktex(
-                  ps->paint, ps->brush, projPixel->projCoSS, thread_index, pool);
+              float texmask = BKE_brush_sample_masktex(ps->paint,
+                                                       ps->brush,
+                                                       mtex,
+                                                       projPixel->projCoSS,
+                                                       ps->pressure,
+                                                       thread_index,
+                                                       pool);
               CLAMP(texmask, 0.0f, 1.0f);
               custom_mask *= texmask;
             }
@@ -5709,7 +5715,7 @@ static void do_projectpaint_thread(TaskPool *__restrict /*pool*/, void *ph_v)
               /* NOTE: for clone and smear,
                * we only use the alpha, could be a special function */
               BKE_brush_sample_tex_3d(
-                  ps->paint, brush, mtex, samplecos, texrgba, thread_index, pool);
+                  ps->paint, brush, mtex, samplecos, thread_index, pool, texrgba);
 
               copy_v3_v3(texrgb, texrgba);
               custom_mask *= texrgba[3];
@@ -6035,6 +6041,7 @@ static void paint_proj_stroke_ps(const bContext * /*C*/,
   Scene *scene = ps->scene;
 
   ps->brush_size = size;
+  ps->pressure = pressure;
   ps->blend = brush->blend;
   if (eraser) {
     ps->blend = IMB_BLEND_ERASE_ALPHA;
@@ -6907,8 +6914,8 @@ static std::optional<std::string> proj_paint_color_attribute_create(wmOperator *
   if (op) {
     RNA_string_get(op->ptr, "name", name);
     RNA_float_get_array(op->ptr, "color", color);
-    domain = bke::AttrDomain(RNA_enum_get(op->ptr, "domain"));
-    type = eCustomDataType(RNA_enum_get(op->ptr, "data_type"));
+    domain = RNA_enum_get<bke::AttrDomain>(op->ptr, "domain");
+    type = RNA_enum_get<eCustomDataType>(op->ptr, "data_type");
   }
 
   Mesh *mesh = id_cast<Mesh *>(ob.data);
@@ -7031,8 +7038,8 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
     }
 
     const ePaintCanvasSource slot_type = ob->mode == OB_MODE_SCULPT ?
-                                             ePaintCanvasSource(
-                                                 RNA_enum_get(op->ptr, "slot_type")) :
+                                             RNA_enum_get<ePaintCanvasSource>(op->ptr,
+                                                                              "slot_type") :
                                              PAINT_CANVAS_SOURCE_IMAGE;
 
     /* Create a new node. */
@@ -7203,7 +7210,7 @@ static void texture_paint_add_texture_paint_slot_ui(bContext *C, wmOperator *op)
   ePaintCanvasSource slot_type = PAINT_CANVAS_SOURCE_IMAGE;
 
   if (ob->mode == OB_MODE_SCULPT) {
-    slot_type = ePaintCanvasSource(RNA_enum_get(op->ptr, "slot_type"));
+    slot_type = RNA_enum_get<ePaintCanvasSource>(op->ptr, "slot_type");
     layout.prop(op->ptr, "slot_type", ui::ITEM_R_EXPAND, std::nullopt, ICON_NONE);
   }
 

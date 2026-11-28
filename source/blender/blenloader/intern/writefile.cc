@@ -125,6 +125,7 @@
 #include "BKE_lib_query.hh"
 #include "BKE_library.hh"
 #include "BKE_main.hh"
+#include "BKE_main_idmap.hh"
 #include "BKE_main_namemap.hh"
 #include "BKE_node.hh"
 #include "BKE_packedFile.hh"
@@ -443,10 +444,11 @@ bool ZstdWriteWrap::write(const void *buf, const size_t buf_len)
 /** \name Write Data Type & Functions
  * \{ */
 
-static WriteData *writedata_new(WriteWrap *ww)
+static WriteData *writedata_new(WriteWrap *ww, Main *bmain)
 {
   WriteData *wd = MEM_new<WriteData>(__func__);
 
+  wd->bmain = bmain;
   wd->timestamp_init = BLI_time_now_seconds();
 
   wd->sdna = DNA_sdna_current_get();
@@ -500,6 +502,9 @@ static void writedata_free(WriteData *wd)
 {
   if (wd->buffer.buf) {
     MEM_delete(wd->buffer.buf);
+  }
+  if (wd->idmap) {
+    BKE_main_idmap_destroy(wd->idmap);
   }
   MEM_delete(wd);
 }
@@ -583,9 +588,9 @@ static void mywrite(WriteData *wd, const void *adr, size_t len)
  * \param current: The current memory file (can be nullptr).
  * \warning Talks to other functions with global parameters
  */
-static WriteData *mywrite_begin(WriteWrap *ww, MemFile *compare, MemFile *current)
+static WriteData *mywrite_begin(WriteWrap *ww, MemFile *compare, MemFile *current, Main *bmain)
 {
-  WriteData *wd = writedata_new(ww);
+  WriteData *wd = writedata_new(ww, bmain);
 
   if (current != nullptr) {
     BLO_memfile_write_init(wd, &wd->mem, current, compare);
@@ -1366,7 +1371,7 @@ static void write_id(WriteData *wd, ID *id)
   const IDTypeInfo *id_type = BKE_idtype_get_info_from_id(id);
   mywrite_id_begin(wd, id);
   if (id_type->blend_write != nullptr) {
-    BlendWriter writer = {wd};
+    BlendWriter writer(wd);
     BLO_Write_IDBuffer id_buffer{*id, wd->use_memfile, false};
     id_type->blend_write(&writer, id_buffer.get(), id);
   }
@@ -1380,7 +1385,7 @@ static void write_id_placeholder(WriteData *wd, ID *id)
   /* Only copy required data for the placeholder ID. */
   BLO_Write_IDBuffer id_buffer{*id, wd->use_memfile, true};
 
-  writestruct_at_address(wd, ID_LINK_PLACEHOLDER, ID, 1, id, &id_buffer, nullptr);
+  writestruct_at_address(wd, ID_LINK_PLACEHOLDER, ID, 1, id, id_buffer.get(), nullptr);
 
   mywrite_id_end(wd, id);
 }
@@ -1646,17 +1651,10 @@ BLO_Write_IDBuffer::BLO_Write_IDBuffer(ID &id, const bool is_undo, const bool is
   /* Copy ID data itself into buffer, to be able to freely modify it. */
 
   if (is_placeholder) {
-    /* For placeholders (references to linked data), zero-initialize, and only explicitly copy the
-     * very small subset of required data. */
-    *temp_id = ID{};
-    temp_id->lib = id.lib;
-    STRNCPY(temp_id->name, id.name);
-    temp_id->flag = id.flag;
-    temp_id->session_uid = id.session_uid;
-    if (is_undo) {
-      temp_id->recalc_up_to_undo_push = id.recalc_up_to_undo_push;
-      temp_id->tag = id.tag & ID_TAG_KEEP_ON_UNDO;
-    }
+    /* For placeholders (references to linked data), only preserve the very small subset of
+     * required data. */
+    *temp_id = id;
+    BKE_libblock_link_placeholder_clear_data(*temp_id, is_undo);
     return;
   }
 
@@ -1822,10 +1820,10 @@ static bool write_file_handle(Main *mainvar,
 {
   WriteData *wd;
 
-  wd = mywrite_begin(ww, compare, current);
+  wd = mywrite_begin(ww, compare, current, mainvar);
   wd->debug_dst = debug_dst;
   wd->filepath = filepath;
-  BlendWriter writer = {wd};
+  BlendWriter writer(wd);
 
   BKE_main_view_layers_synced_ensure(mainvar);
 
@@ -2219,6 +2217,8 @@ bool BLO_write_file_mem(Main *mainvar, MemFile *compare, MemFile *current, const
   return (err == 0);
 }
 
+BlendWriter::BlendWriter(WriteData *wd) : wd(wd) {}
+
 bool BlendWriter::is_undo() const
 {
   return this->wd->use_memfile;
@@ -2397,6 +2397,20 @@ void BlendWriter::generated_pointer_tag(const void *data)
   BLI_assert(this->wd->stable_address_ids.pointer_map.lookup_default(data, address_id) ==
              address_id);
   this->wd->stable_address_ids.pointer_map.add(data, address_id);
+}
+
+IDNameLib_Map *BlendWriter::idmap()
+{
+  if (!this->wd->bmain) {
+    return nullptr;
+  }
+  if (!this->wd->idmap) {
+    this->wd->idmap = BKE_main_idmap_create(this->wd->bmain,
+                                            /*create_valid_ids_set=*/false,
+                                            /*old_bmain=*/nullptr,
+                                            MAIN_IDMAP_TYPE_UID);
+  }
+  return this->wd->idmap;
 }
 
 StringRefNull BlendWriter::filepath() const

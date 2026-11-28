@@ -35,6 +35,7 @@
 #include "ED_keyframes_edit.hh"
 #include "ED_markers.hh"
 #include "ED_select_utils.hh"
+#include "ED_space_graph.hh"
 
 #include "WM_api.hh"
 #include "WM_types.hh"
@@ -877,7 +878,7 @@ static wmOperatorStatus graphkeys_box_select_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
+  const eSelectOp sel_op = RNA_enum_get<eSelectOp>(op->ptr, "mode");
   const eEditKeyframes_Select selectmode = (sel_op != SEL_OP_SUB) ? SELECT_ADD : SELECT_SUBTRACT;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
     deselect_graph_keys(&ac, true, SELECT_SUBTRACT, true);
@@ -993,7 +994,7 @@ static wmOperatorStatus graphkeys_lassoselect_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
+  const eSelectOp sel_op = RNA_enum_get<eSelectOp>(op->ptr, "mode");
   const eEditKeyframes_Select selectmode = (sel_op != SEL_OP_SUB) ? SELECT_ADD : SELECT_SUBTRACT;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
     deselect_graph_keys(&ac, false, SELECT_SUBTRACT, true);
@@ -1080,7 +1081,7 @@ static wmOperatorStatus graph_circle_select_exec(bContext *C, wmOperator *op)
   }
 
   const eSelectOp sel_op = ED_select_op_modal(
-      eSelectOp(RNA_enum_get(op->ptr, "mode")),
+      RNA_enum_get<eSelectOp>(op->ptr, "mode"),
       WM_gesture_is_modal_first(static_cast<const wmGesture *>(op->customdata)));
   const eEditKeyframes_Select selectmode = (sel_op != SEL_OP_SUB) ? SELECT_ADD : SELECT_SUBTRACT;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
@@ -1743,8 +1744,8 @@ static wmOperatorStatus mouse_graph_keys(bAnimContext *ac,
     wait_to_deselect_others = false;
   }
 
-  sipo->runtime.flag &= ~(SIPO_RUNTIME_FLAG_TWEAK_HANDLES_LEFT |
-                          SIPO_RUNTIME_FLAG_TWEAK_HANDLES_RIGHT);
+  sipo->runtime->flag &= ~(SIPO_RUNTIME_FLAG_TWEAK_HANDLES_LEFT |
+                           SIPO_RUNTIME_FLAG_TWEAK_HANDLES_RIGHT);
 
   const bool already_selected =
       (nvi != nullptr) && (((nvi->hpoint == NEAREST_HANDLE_KEY) && (nvi->bezt->f2 & SELECT)) ||
@@ -1878,10 +1879,10 @@ static wmOperatorStatus mouse_graph_keys(bAnimContext *ac,
   }
 
   if (nvi->hpoint == NEAREST_HANDLE_LEFT) {
-    sipo->runtime.flag |= SIPO_RUNTIME_FLAG_TWEAK_HANDLES_LEFT;
+    sipo->runtime->flag |= SIPO_RUNTIME_FLAG_TWEAK_HANDLES_LEFT;
   }
   else if (nvi->hpoint == NEAREST_HANDLE_RIGHT) {
-    sipo->runtime.flag |= SIPO_RUNTIME_FLAG_TWEAK_HANDLES_RIGHT;
+    sipo->runtime->flag |= SIPO_RUNTIME_FLAG_TWEAK_HANDLES_RIGHT;
   }
 
   /* free temp sample data for filtering */
@@ -2180,11 +2181,11 @@ static wmOperatorStatus graphkeys_select_key_handles_exec(bContext *C, wmOperato
   }
 
   const eGraphKey_SelectKeyHandles_Action left_handle_action =
-      static_cast<eGraphKey_SelectKeyHandles_Action>(RNA_enum_get(op->ptr, "left_handle_action"));
+      RNA_enum_get<eGraphKey_SelectKeyHandles_Action>(op->ptr, "left_handle_action");
   const eGraphKey_SelectKeyHandles_Action key_action =
-      static_cast<eGraphKey_SelectKeyHandles_Action>(RNA_enum_get(op->ptr, "key_action"));
+      RNA_enum_get<eGraphKey_SelectKeyHandles_Action>(op->ptr, "key_action");
   const eGraphKey_SelectKeyHandles_Action right_handle_action =
-      static_cast<eGraphKey_SelectKeyHandles_Action>(RNA_enum_get(op->ptr, "right_handle_action"));
+      RNA_enum_get<eGraphKey_SelectKeyHandles_Action>(op->ptr, "right_handle_action");
 
   graphkeys_select_key_handles(&ac, left_handle_action, key_action, right_handle_action);
 

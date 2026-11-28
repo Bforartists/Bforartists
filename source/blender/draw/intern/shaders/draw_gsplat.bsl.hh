@@ -110,7 +110,7 @@ struct SplatData {
 
   uint2 pack() const
   {
-    return uint2(axes.pack(), packSnorm2x16(detail::pack_normal_octahedral(N)));
+    return uint2(axes.pack(), packSnorm2x16(octahedral_uv_from_direction(N)));
   }
 };
 
@@ -228,7 +228,7 @@ float3 eval_radiance(Gaussian gs,
     radiance += L3.evaluate(lV);
   }
 
-  /* Resolve radiance as sh + 0.5, matching the implementation of [3dgs2023]. Note that our
+  /* Resolve radiance as sh + 0.5f, matching the implementation of [3dgs2023]. Note that our
    * conversion to linear rgb is erroneous; splat data is fitted for sRGB data. */
   float3 resolved_radiance = detail::scene_linear_from_bt709(radiance + 0.5f);
   return max(resolved_radiance, 0.0f);

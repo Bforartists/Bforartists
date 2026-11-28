@@ -91,7 +91,14 @@ void VKVertexBuffer::update_sub(uint start_offset, uint data_size_in_bytes, cons
     VKContext &context = *VKContext::get();
     VKStagingBuffer staging_buffer(
         buffer_, VKStagingBuffer::Direction::HostToDevice, start_offset, data_size_in_bytes);
-    memcpy(staging_buffer.host_buffer_get().mapped_memory_get(), data, data_size_in_bytes);
+    VKBuffer &host_buffer = staging_buffer.host_buffer_get();
+    if (!host_buffer.is_mapped()) {
+      CLOG_ERROR(&LOG,
+                 "Unable to update vertex buffer via a staging buffer as the staging buffer could "
+                 "not be allocated. The previous contents of the updated range are kept.");
+      return;
+    }
+    host_buffer.update_sub_immediately(0, data_size_in_bytes, data);
     staging_buffer.copy_to_device(context);
   }
 }
@@ -165,16 +172,6 @@ void VKVertexBuffer::acquire_data()
   /* TODO: Use mapped memory. */
   MEM_SAFE_DELETE(data_);
   data_ = MEM_new_array_uninitialized<uchar>(this->size_alloc_get(), __func__);
-}
-
-void VKVertexBuffer::resize_data()
-{
-  if (usage_ == GPU_USAGE_DEVICE_ONLY) {
-    return;
-  }
-
-  data_ = static_cast<uchar *>(
-      MEM_realloc_uninitialized(data_, sizeof(uchar) * this->size_alloc_get()));
 }
 
 void VKVertexBuffer::release_data()

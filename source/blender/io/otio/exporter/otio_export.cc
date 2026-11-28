@@ -118,7 +118,7 @@ static int media_length(const StripExportContext &ctx, const Strip &strip)
   if (seq::transform_single_image_check(&strip)) {
     return strip.right_handle(ctx.scene) - strip.left_handle();
   }
-  return strip.anim_startofs + strip.content_length() + strip.anim_endofs;
+  return strip.anim_startofs + strip.source_duration() + strip.anim_endofs;
 }
 
 static std::string media_filepath(const StripExportContext &ctx, const Strip &strip)
@@ -288,8 +288,9 @@ static float speed_factor(const StripExportContext &ctx,
   switch (speed->speed_control_type) {
     case SEQ_SPEED_STRETCH: {
       const float speed_length = speed_strip.right_handle(ctx.scene) - speed_strip.left_handle();
-      return speed_length != 0.0f ? (input.length(ctx.scene) - input.startofs) / speed_length :
-                                    0.0f;
+      return speed_length != 0.0f ?
+                 (input.content_duration(ctx.scene) - input.startofs) / speed_length :
+                 0.0f;
     }
     case SEQ_SPEED_MULTIPLY:
       return speed->speed_fader;
@@ -313,6 +314,7 @@ static SerializableObject::Retainer<otio::Effect> strip_to_effect(const StripExp
   else {
     effect = new FreezeFrame(name);
   }
+  effect->set_enabled(!(effect_strip.flag & SEQ_MUTE));
   add_strip_metadata(ctx, effect_strip, *effect);
   return effect;
 }
@@ -464,6 +466,7 @@ static void add_transition(const StripExportContext &ctx,
                                                           Transition::Type::SMPTE_Dissolve,
                      frames(ctx, in_offset),
                      frames(ctx, out_offset)));
+  otio_transition->set_enabled(!(transition.flag & SEQ_MUTE));
   add_strip_metadata(ctx, transition, *otio_transition);
   if (ctx.params.use_resolve_metadata) {
     resolve_add_transition_data(*ctx.scene, transition, *otio_transition);

@@ -27,6 +27,8 @@
 #include "BLI_math_geom_c.hh"
 #include "BLI_math_matrix_types.hh"
 #include "BLI_math_vector.hh"
+#include "BLI_task_c.hh"
+#include "BLI_vector_set.hh"
 #ifdef DEBUG_PIXEL_NODES
 #  include "BLI_hash_c.hh"
 #endif
@@ -40,6 +42,7 @@
 #include "BKE_brush.hh"
 #include "BKE_image_wrappers.hh"
 #include "BKE_object_types.hh"
+#include "BKE_paint.hh"
 #include "BKE_paint_bvh.hh"
 #include "BKE_paint_bvh_pixels.hh"
 
@@ -220,7 +223,121 @@ static void calc_pixel_row_positions(const float3 P_start,
   }
 }
 
-static BitVector<> init_uv_primitives_brush_test(const Bounds<float3> &brush_bounds,
+namespace {
+
+/* TODO: Replace with #Bounds.intersects once it handles the edge case where the intersection of
+ * the two bounds loses a dimension (`is_empty` returns false when `intersects` should return
+ * true). */
+static bool isect_aabb_aabb_v2(const Bounds<float2> &a, const Bounds<float2> &b)
+{
+  return a.min.x < b.max.x && a.min.y < b.max.y && b.min.x < a.max.x && b.min.y < a.max.y;
+}
+
+/**
+ * The bounds of the brush depend on the falloff shape (Sphere / Projected). This helper class
+ * abstracts away the intersection checks with the brush bounds.
+ */
+class BrushBounds {
+  /* The falloff shape is either Sphere or Projected (PAINT_FALLOFF_SHAPE_SPHERE /
+   * PAINT_FALLOFF_SHAPE_TUBE). */
+  eBrushFalloffShape falloff_shape_;
+
+  /** Used for #PAINT_FALLOFF_SHAPE_SPHERE. */
+  Bounds<float3> sphere_bounds_;
+
+  /** Used for #PAINT_FALLOFF_SHAPE_TUBE. */
+  float3 location_;
+  float3 plane_x_;
+  float3 plane_y_;
+  Bounds<float2> view_bounds_;
+
+ public:
+  BrushBounds(const eBrushFalloffShape shape,
+              const float3 &center,
+              const float radius,
+              const float3 &view_normal)
+      : falloff_shape_(shape),
+        sphere_bounds_(center - radius, center + radius),
+        location_(center),
+        view_bounds_(float2(-radius), float2(radius))
+  {
+    if (shape == PAINT_FALLOFF_SHAPE_TUBE) {
+      /* The x and y axis of the plane we're projecting onto. */
+      plane_x_ = math::normalize(math::orthogonal(view_normal));
+      plane_y_ = math::cross(view_normal, plane_x_);
+    }
+  }
+
+  bool intersects_triangle(const float3 &p0, const float3 &p1, const float3 &p2) const
+  {
+    switch (falloff_shape_) {
+      case PAINT_FALLOFF_SHAPE_SPHERE: {
+        Bounds<float3> tri_bounds(p0);
+        math::min_max(p1, tri_bounds.min, tri_bounds.max);
+        math::min_max(p2, tri_bounds.min, tri_bounds.max);
+        /* TODO: Use #Bounds.intersects. */
+        return isect_aabb_aabb_v3(
+            sphere_bounds_.min, sphere_bounds_.max, tri_bounds.min, tri_bounds.max);
+      }
+      case PAINT_FALLOFF_SHAPE_TUBE: {
+        Bounds<float2> tri_bounds(project_2d(p0));
+        math::min_max(project_2d(p1), tri_bounds.min, tri_bounds.max);
+        math::min_max(project_2d(p2), tri_bounds.min, tri_bounds.max);
+        /* TODO: Use #Bounds.intersects. */
+        return isect_aabb_aabb_v2(view_bounds_, tri_bounds);
+      }
+    }
+    BLI_assert_unreachable();
+    return true;
+  }
+
+  bool intersects_segment(const float3 &start, const float3 &end) const
+  {
+    switch (falloff_shape_) {
+      case PAINT_FALLOFF_SHAPE_SPHERE:
+        return sphere_bounds_.intersects_segment(start, end);
+      case PAINT_FALLOFF_SHAPE_TUBE:
+        return view_bounds_.intersects_segment(project_2d(start), project_2d(end));
+    }
+    BLI_assert_unreachable();
+    return true;
+  }
+
+  bool intersects_bounds(const Bounds<float3> &bounds) const
+  {
+    switch (falloff_shape_) {
+      case PAINT_FALLOFF_SHAPE_SPHERE:
+        /* TODO: Use #Bounds.intersects. */
+        return isect_aabb_aabb_v3(sphere_bounds_.min, sphere_bounds_.max, bounds.min, bounds.max);
+      case PAINT_FALLOFF_SHAPE_TUBE: {
+        /* Project the corners of the 3D bounds to create 2D bounds. */
+        const std::array corners = bounds::corners(bounds);
+        Bounds<float2> projected_bounds(project_2d(corners[0]));
+        for (const float3 &corner : Span(corners).drop_front(1)) {
+          math::min_max(project_2d(corner), projected_bounds.min, projected_bounds.max);
+        }
+        /* TODO: Use #Bounds.intersects. */
+        return isect_aabb_aabb_v2(view_bounds_, projected_bounds);
+      }
+    }
+    BLI_assert_unreachable();
+    return true;
+  }
+
+ private:
+  /**
+   * Projects the 3D position onto the 3D plane defined by the view normal and center position.
+   */
+  float2 project_2d(const float3 &position) const
+  {
+    const float3 offset = position - location_;
+    return float2(math::dot(offset, plane_x_), math::dot(offset, plane_y_));
+  }
+};
+
+}  // namespace
+
+static BitVector<> init_uv_primitives_brush_test(const BrushBounds &brush_bounds,
                                                  const Span<int> corner_verts,
                                                  const Span<int3> corner_tris,
                                                  const Span<int> tri_indices,
@@ -230,13 +347,10 @@ static BitVector<> init_uv_primitives_brush_test(const Bounds<float3> &brush_bou
   BitVector<> brush_test(tri_indices.size());
   for (const int i : tri_indices.index_range()) {
     const int3 &tri = corner_tris[tri_indices[i]];
-
-    Bounds<float3> tri_bounds(positions[corner_verts[tri[0]]]);
-    math::min_max(positions[corner_verts[tri[1]]], tri_bounds.min, tri_bounds.max);
-    math::min_max(positions[corner_verts[tri[2]]], tri_bounds.min, tri_bounds.max);
-
-    brush_test[i].set(
-        isect_aabb_aabb_v3(brush_bounds.min, brush_bounds.max, tri_bounds.min, tri_bounds.max));
+    const float3 &p0 = positions[corner_verts[tri[0]]];
+    const float3 &p1 = positions[corner_verts[tri[1]]];
+    const float3 &p2 = positions[corner_verts[tri[2]]];
+    brush_test[i].set(brush_bounds.intersects_triangle(p0, p1, p2));
   }
   return brush_test;
 }
@@ -435,6 +549,16 @@ struct ArrayPaintColor {
   }
 };
 
+/** Premultiplied colors, where the alpha acts as an additional mask. */
+struct TexturePaintColor {
+  Span<float4> colors;
+
+  const float4 &operator[](const int i) const
+  {
+    return colors[i];
+  }
+};
+
 };  // namespace
 
 /**
@@ -542,8 +666,10 @@ struct PaintLocalData {
   Vector<float3> pixel_positions;
   Vector<float> distances;
   Vector<float> factors;
+  Vector<float> texture_alpha_values;
 
   Vector<float4> paint_blend_pixels;
+  Vector<float4> texture_colors;
 
   /** Spans that were painted on by the thread. */
   struct ModifiedSpan {
@@ -715,6 +841,8 @@ namespace {
 
 /** The data of a paint step shared between brush types. */
 struct PaintStepContext : NonCopyable, NonMovable {
+  const Depsgraph &depsgraph;
+  const Object &object;
   const Brush &brush;
   const SculptSession &ss;
   const StrokeCache &cache;
@@ -729,17 +857,22 @@ struct PaintStepContext : NonCopyable, NonMovable {
   const ImageData *mask_data;
   bool is_mask_inverted;
 
+  const auto_mask::Cache *automasking;
+
   PaintStepContext(const Depsgraph &depsgraph,
                    const ImagePaintSettings &paint_settings,
                    const Brush &brush,
                    const Object &ob,
                    const ImageData *mask_data)
-      : brush(brush),
+      : depsgraph(depsgraph),
+        object(ob),
+        brush(brush),
         ss(*ob.runtime->sculpt_session),
         cache(*ss.cache),
         positions_eval(bke::pbvh::vert_positions_eval(depsgraph, ob)),
         mask_data(mask_data),
-        is_mask_inverted((paint_settings.flag & IMAGEPAINT_PROJECT_LAYER_STENCIL_INV) != 0)
+        is_mask_inverted((paint_settings.flag & IMAGEPAINT_PROJECT_LAYER_STENCIL_INV) != 0),
+        automasking(cache.automasking.get())
   {
     const Mesh &mesh = *id_cast<const Mesh *>(ob.data);
     corner_verts = mesh.corner_verts();
@@ -779,6 +912,72 @@ struct PixelRun {
 
 }  // namespace
 
+static Array<float3> calc_tri_automask_factors(const Depsgraph &depsgraph,
+                                               const Object &object,
+                                               const auto_mask::Cache &automasking,
+                                               const bke::pbvh::MeshNode &node,
+                                               const Span<int> corner_verts,
+                                               const Span<int3> corner_tris,
+                                               const Span<int> tri_indices,
+                                               BitVector<> &brush_test)
+{
+  PRF_scope(ProfileCategory::Editor);
+  IndexMaskMemory memory;
+  const IndexMask tested_tris = IndexMask::from_predicate(
+      tri_indices.index_range(), memory, [&](const int64_t i) { return brush_test[i]; });
+
+  VectorSet<int> verts;
+  Array<int3> tri_vert_indices(tested_tris.size());
+  tested_tris.foreach_index([&](const int64_t i, const int64_t pos) {
+    const int3 &tri = corner_tris[tri_indices[i]];
+    for (const int j : IndexRange(3)) {
+      tri_vert_indices[pos][j] = verts.index_of_or_add(corner_verts[tri[j]]);
+    }
+  });
+
+  Array<float> vert_factors(verts.size(), 1.0f);
+  auto_mask::calc_vert_factors(
+      depsgraph, object, automasking, node, verts.as_span(), vert_factors);
+
+  Array<float3> tri_factors(tri_indices.size(), float3(0.0f));
+  tested_tris.foreach_index(
+      [&](const int64_t i, const int64_t pos) {
+        const int3 tri = tri_vert_indices[pos];
+        const float3 factors(vert_factors[tri[0]], vert_factors[tri[1]], vert_factors[tri[2]]);
+        tri_factors[i] = factors;
+      },
+      exec_mode::grain_size(512));
+  /* Update #brush_test for triangles that have been compelety masked. */
+  tested_tris.foreach_index([&](const int64_t i) {
+    if (math::is_zero(tri_factors[i])) {
+      brush_test[i].reset();
+    }
+  });
+  return tri_factors;
+}
+
+static void apply_automask_factors(const float3 &tri_automask_factors,
+                                   const float3 &tri_v0,
+                                   const float3 &tri_v1,
+                                   const float3 &tri_v2,
+                                   const Span<float3> row_positions,
+                                   const MutableSpan<float> factors)
+{
+  /* Compute the barycentric weights only for the first and last position in the row. Since the
+   * factors for a row will be a linear function, we can just compute the ends and then interpolate
+   * linearly. */
+  float3 weights_start;
+  float3 weights_end;
+  interp_weights_tri_v3(weights_start, tri_v0, tri_v1, tri_v2, row_positions.first());
+  interp_weights_tri_v3(weights_end, tri_v0, tri_v1, tri_v2, row_positions.last());
+  const float start = math::dot(weights_start, tri_automask_factors);
+  const float end = math::dot(weights_end, tri_automask_factors);
+  const float delta = factors.size() > 1 ? (end - start) / (factors.size() - 1) : end;
+  for (const int i : factors.index_range()) {
+    factors[i] *= std::clamp(start + delta * i, 0.0f, 1.0f);
+  }
+}
+
 template<typename Fn>
 static void foreach_pixel_tri_row(const UDIMTilePixels &tile_data,
                                   Span<float3x3> pixel_to_position_mats,
@@ -814,6 +1013,7 @@ static void foreach_pixel_tri_row(const UDIMTilePixels &tile_data,
 template<typename Fn>
 static void foreach_run(const PaintStepContext &ctx,
                         ImageData &image_data,
+                        const bke::pbvh::MeshNode &node,
                         PixelNode &pixel_node,
                         Fn &&fn)
 {
@@ -822,10 +1022,12 @@ static void foreach_run(const PaintStepContext &ctx,
   const StrokeCache &cache = ctx.cache;
   const ImageData *mask_data = ctx.mask_data;
   const bool is_mask_inverted = ctx.is_mask_inverted;
+  const MTex *mask_tex = BKE_brush_mask_texture_get(&brush, PaintMode::Texture3D);
+  const bool use_mask_texture = mask_tex->tex != nullptr;
 
-  const float3 location = cache.location_symm;
-  const float radius = cache.radius;
-  const Bounds<float3> brush_bounds(location - radius, location + radius);
+  const eBrushFalloffShape falloff_shape = eBrushFalloffShape(brush.falloff_shape);
+  const BrushBounds brush_bounds(
+      falloff_shape, cache.location_symm, cache.radius, cache.view_normal_symm);
   BitVector<> brush_test = init_uv_primitives_brush_test(brush_bounds,
                                                          ctx.corner_verts,
                                                          ctx.corner_tris,
@@ -836,6 +1038,19 @@ static void foreach_run(const PaintStepContext &ctx,
     BLI_assert(!ctx.corner_tri_faces.is_empty());
     apply_selection_filter(
         ctx.corner_tri_faces, pixel_node.uv_primitives.tri_indices, ctx.select_poly, brush_test);
+  }
+
+  Array<float3> tri_automask_factors;
+  if (ctx.automasking) {
+    /* This updates brush_test if a triangle is completely masked by auto masking. */
+    tri_automask_factors = calc_tri_automask_factors(ctx.depsgraph,
+                                                     ctx.object,
+                                                     *ctx.automasking,
+                                                     node,
+                                                     ctx.corner_verts,
+                                                     ctx.corner_tris,
+                                                     pixel_node.uv_primitives.tri_indices,
+                                                     brush_test);
   }
 
   bool pixels_updated = false;
@@ -891,9 +1106,11 @@ static void foreach_run(const PaintStepContext &ctx,
         tls.factors.resize(run_size);
         tls.pixel_positions.resize(run_size);
         tls.distances.resize(run_size);
+        tls.texture_alpha_values.resize(run_size);
         const MutableSpan<float> factors = tls.factors;
         const MutableSpan<float3> positions = tls.pixel_positions;
         const MutableSpan<float> distances = tls.distances;
+        const MutableSpan<float> texture_alpha_values = tls.texture_alpha_values;
 
         /* Tracking for active subset of run with nonzero factors. */
         int run_active_begin = -1;
@@ -924,17 +1141,27 @@ static void foreach_run(const PaintStepContext &ctx,
                                                                           tri_row_size);
                 const MutableSpan<float> tri_distances = distances.slice(tri_row_offset,
                                                                          tri_row_size);
+                const MutableSpan<float> tri_texture_alpha_values = texture_alpha_values.slice(
+                    tri_row_offset, tri_row_size);
 
                 tri_factors.fill(1.0f);
                 calc_pixel_row_positions(
                     P_start, P_delta, tri_positions, IndexRange(tri_row_size));
-                calc_brush_distances(
-                    ss, tri_positions, eBrushFalloffShape(brush.falloff_shape), tri_distances);
+                calc_brush_distances(ss, tri_positions, falloff_shape, tri_distances);
                 filter_distances_with_radius(cache.radius, tri_distances, tri_factors);
                 apply_hardness_to_distances(cache, tri_distances);
                 calc_brush_strength_factors(cache, brush, tri_distances, tri_factors);
-                calc_brush_texture_factors(
-                    PaintMode::Texture3D, ss, brush, tri_positions, tri_factors);
+                if (use_mask_texture) {
+                  calc_brush_texture_factors(PaintMode::Texture3D,
+                                             ss,
+                                             brush,
+                                             tri_positions,
+                                             tri_factors,
+                                             tri_texture_alpha_values);
+                  apply_texture_pressure_mask(
+                      brush.mask_pressure, cache.pressure, tri_texture_alpha_values);
+                  scale_factors(tri_factors, tri_texture_alpha_values);
+                }
                 scale_factors(tri_factors, cache.bstrength);
                 if (std::holds_alternative<Span<float4>>(mask_buffer)) {
                   calc_stencil_mask_factors<float4>(
@@ -957,6 +1184,19 @@ static void foreach_run(const PaintStepContext &ctx,
                       tri_row_size,
                       tri_row_x,
                       run_y);
+                }
+                if (ctx.automasking) {
+                  const int3 &tri =
+                      ctx.corner_tris[pixel_node.uv_primitives.tri_indices[uv_prim_index]];
+                  const float3 &tri_v0 = ctx.positions_eval[ctx.corner_verts[tri[0]]];
+                  const float3 &tri_v1 = ctx.positions_eval[ctx.corner_verts[tri[1]]];
+                  const float3 &tri_v2 = ctx.positions_eval[ctx.corner_verts[tri[2]]];
+                  apply_automask_factors(tri_automask_factors[uv_prim_index],
+                                         tri_v0,
+                                         tri_v1,
+                                         tri_v2,
+                                         tri_positions,
+                                         tri_factors);
                 }
 
                 /* Track which subset of the run has non-zero factors. */
@@ -1050,17 +1290,80 @@ static void foreach_run(const PaintStepContext &ctx,
   pixel_node.flags.dirty |= pixels_updated;
 }
 
+static void calc_brush_texture_colors(const SculptSession &ss,
+                                      const Brush &brush,
+                                      const MTex &mtex,
+                                      const float4 &brush_color,
+                                      const Span<float3> positions,
+                                      const Span<float> factors,
+                                      const MutableSpan<float4> r_colors)
+{
+  PRF_scope(ProfileCategory::Editor);
+  BLI_assert(positions.size() == r_colors.size());
+
+  const int thread_id = BLI_task_parallel_thread_id(nullptr);
+  for (const int i : positions.index_range()) {
+    if (factors[i] == 0.0f) {
+      r_colors[i] = float4(0.0f);
+      continue;
+    }
+    float texture_value;
+    float4 texture_rgba;
+    /* NOTE: This is not a thread-safe call. */
+    apply_brush_texture(ss, brush, mtex, positions[i], thread_id, &texture_value, texture_rgba);
+    /* NOTE: Use the same logic as in vertex paint. The RGB channels are the brush
+     * color multiplied by the texture color and pre-multiplied with the texture alpha channel. */
+    r_colors[i] = float4(brush_color.xyz() * texture_rgba.xyz() * texture_rgba.w, texture_rgba.w);
+  }
+}
+
+static void do_paint_pixels_from_source_texture(const PaintStepContext &ctx,
+                                                const PaintBlendSettings &blend_settings,
+                                                const float4 &brush_color,
+                                                const MTex &color_mtex,
+                                                ImageData &image_data,
+                                                bke::pbvh::MeshNode &node,
+                                                PixelNode &pixel_node)
+{
+  PRF_scope(ProfileCategory::Editor);
+
+  foreach_run(ctx,
+              image_data,
+              node,
+              pixel_node,
+              [&](const PaintTileData &tile, const PixelRun &run, PaintLocalData &tls) {
+                const int img_index = run.y * tile.image_buffer.x + run.x;
+                tls.texture_colors.resize(run.size);
+                calc_brush_texture_colors(ctx.ss,
+                                          ctx.brush,
+                                          color_mtex,
+                                          brush_color,
+                                          run.positions,
+                                          run.factors,
+                                          tls.texture_colors);
+                paint_blend_pixels(blend_settings,
+                                   TexturePaintColor{tls.texture_colors},
+                                   run.factors,
+                                   tile.buffer,
+                                   img_index,
+                                   run.y,
+                                   tile.processors,
+                                   tls.paint_blend_pixels);
+              });
+}
+
 static void do_paint_pixels(const PaintStepContext &ctx,
                             const PaintBlendSettings &blend_settings,
                             const float4 &brush_color,
                             ImageData &image_data,
-                            bke::pbvh::Node & /*node*/,
+                            const bke::pbvh::MeshNode &node,
                             PixelNode &pixel_node)
 {
   PRF_scope(ProfileCategory::Editor);
 
   foreach_run(ctx,
               image_data,
+              node,
               pixel_node,
               [&](const PaintTileData &tile, const PixelRun &run, PaintLocalData &tls) {
                 /* Blend pixels with computed factors. */
@@ -1105,7 +1408,7 @@ static void prepare_scratch_tiles(ImageData &image_data)
 
 static void calc_pixel_factors(const PaintStepContext &ctx,
                                ImageData &image_data,
-                               bke::pbvh::Node & /*node*/,
+                               const bke::pbvh::MeshNode &node,
                                PixelNode &pixel_node)
 {
   PRF_scope(ProfileCategory::Editor);
@@ -1123,6 +1426,7 @@ static void calc_pixel_factors(const PaintStepContext &ctx,
   foreach_run(
       ctx,
       image_data,
+      node,
       pixel_node,
       [&](const PaintTileData &tile, const PixelRun &run, PaintLocalData & /*tls*/) {
         PRF_scope_with_name("calc_pixel_factors_run", ProfileCategory::Editor);
@@ -1253,11 +1557,11 @@ static IndexMask calculate_search_nodes(const ImageData &image_data,
                                         bke::pbvh::Tree &pbvh,
                                         MutableSpan<PixelNode> pixel_nodes,
                                         IndexMaskMemory &memory,
-                                        const Bounds<float3> &source_bounds)
+                                        const BrushBounds &brush_bounds)
 {
   const IndexMask search_nodes = bke::pbvh::search_nodes(
       pbvh, memory, [&](const bke::pbvh::Node &node) {
-        return node.bounds().intersects(source_bounds);
+        return brush_bounds.intersects_bounds(node.bounds());
       });
   const IndexMask nodes_to_build = IndexMask::from_predicate(
       search_nodes, memory, [&](const int i) { return !pixel_nodes[i].search_data; });
@@ -1540,6 +1844,40 @@ static void finish_paint_step(Object &ob,
   });
 }
 
+static void paint_source_texture_color(const Depsgraph &depsgraph,
+                                       const ImagePaintSettings &paint_settings,
+                                       const Brush &brush,
+                                       Object &ob,
+                                       ImageData &image_data,
+                                       ImageData *mask_data,
+                                       const float4 &brush_color,
+                                       const MTex &color_mtex,
+                                       const IndexMask &node_mask)
+{
+  PRF_scope(ProfileCategory::Editor);
+
+  bke::pbvh::Tree &pbvh = *bke::object::pbvh_get(ob);
+  MutableSpan<bke::pbvh::MeshNode> nodes = pbvh.nodes<bke::pbvh::MeshNode>();
+  PixelData &pixel_data = *pbvh.pixels_;
+  MutableSpan<PixelNode> pixel_nodes = pixel_data.nodes;
+
+  const PaintBlendSettings blend_settings(brush);
+
+  node_mask.foreach_index(
+      [&](const int i) { fetch_image_buffers(image_data, mask_data, nodes[i], pixel_nodes[i]); });
+
+  const PaintStepContext ctx(depsgraph, paint_settings, brush, ob, mask_data);
+
+  node_mask.foreach_index(
+      [&](const int i) {
+        do_paint_pixels_from_source_texture(
+            ctx, blend_settings, brush_color, color_mtex, image_data, nodes[i], pixel_nodes[i]);
+      },
+      exec_mode::grain_size(1));
+
+  finish_paint_step(ob, image_data, nodes, pixel_nodes, node_mask);
+}
+
 static void paint_constant_color(const Depsgraph &depsgraph,
                                  const ImagePaintSettings &paint_settings,
                                  const Brush &brush,
@@ -1572,6 +1910,26 @@ static void paint_constant_color(const Depsgraph &depsgraph,
   finish_paint_step(ob, image_data, nodes, pixel_nodes, node_mask);
 }
 
+static float4 brush_paint_color_get(const Paint &paint,
+                                    const Brush &brush,
+                                    const StrokeCache &cache)
+{
+  const float3 color = cache.toggle_settings.invert ?
+                           BKE_brush_secondary_color_get(&paint, &brush) :
+                           BKE_brush_color_get(&paint, &brush);
+  const std::optional<BrushColorJitterSettings> color_jitter_settings =
+      BKE_brush_color_jitter_get_settings(&paint, &brush);
+  if (!color_jitter_settings) {
+    return float4(color, 1.0f);
+  }
+  return float4(BKE_paint_randomize_color(*color_jitter_settings,
+                                          *cache.initial_hsv_jitter,
+                                          cache.stroke_distance,
+                                          cache.pressure,
+                                          color),
+                1.0f);
+}
+
 void do_3d_image_paint_brush(const Depsgraph &depsgraph,
                              const ImagePaintSettings &paint_settings,
                              const Brush &brush,
@@ -1580,13 +1938,24 @@ void do_3d_image_paint_brush(const Depsgraph &depsgraph,
                              ImageData *mask_data,
                              const IndexMask &node_mask)
 {
-  const bool is_inverted = ob.runtime->sculpt_session->cache->toggle_settings.invert;
-  const float4 brush_color(is_inverted ?
-                               BKE_brush_secondary_color_get(&paint_settings.paint, &brush) :
-                               BKE_brush_color_get(&paint_settings.paint, &brush),
-                           1.0f);
-  paint_constant_color(
-      depsgraph, paint_settings, brush, ob, image_data, mask_data, brush_color, node_mask);
+  const float4 brush_color = brush_paint_color_get(
+      paint_settings.paint, brush, *ob.runtime->sculpt_session->cache);
+  const MTex *color_mtex = BKE_brush_color_texture_get(&brush, PaintMode::Texture3D);
+  if (color_mtex && color_mtex->tex) {
+    paint_source_texture_color(depsgraph,
+                               paint_settings,
+                               brush,
+                               ob,
+                               image_data,
+                               mask_data,
+                               brush_color,
+                               *color_mtex,
+                               node_mask);
+  }
+  else {
+    paint_constant_color(
+        depsgraph, paint_settings, brush, ob, image_data, mask_data, brush_color, node_mask);
+  }
 }
 
 void do_3d_image_mask_brush(const Depsgraph &depsgraph,
@@ -1651,11 +2020,12 @@ void do_3d_image_smear_brush(const Depsgraph &depsgraph,
    * than its own position is used, so these bounds contain every pixel that can be sampled. */
   const float3 location = ss.cache->location_symm + brush_delta;
   const float radius = ss.cache->radius + math::length(brush_delta);
-  const Bounds<float3> search_bounds(location - radius, location + radius);
+  const BrushBounds brush_bounds(
+      eBrushFalloffShape(brush.falloff_shape), location, radius, ss.cache->view_normal_symm);
 
   IndexMaskMemory memory;
   IndexMask search_nodes = calculate_search_nodes(
-      image_data, pbvh, pixel_nodes, memory, search_bounds);
+      image_data, pbvh, pixel_nodes, memory, brush_bounds);
   BLI_assert(search_nodes.size() >= node_mask.size());
 
   const Vector<image::TileNumber> dirty_tiles = collect_dirty_tiles(pixel_nodes, node_mask);

@@ -73,6 +73,7 @@ struct ElementAnimations {
   const ufbx_anim_prop *prop_rotation = nullptr;
   const ufbx_anim_prop *prop_scale = nullptr;
   const ufbx_anim_prop *prop_blend_shape = nullptr;
+  KeyBlock *shape_key_block = nullptr;
   const ufbx_anim_prop *prop_focal_length = nullptr;
   const ufbx_anim_prop *prop_focus_dist = nullptr;
   const ufbx_anim_prop *prop_mat_diffuse = nullptr;
@@ -112,13 +113,14 @@ static Vector<ElementAnimations> gather_animated_properties(const FbxElementMapp
     const bool is_anim_mat = is_diffuse;
 
     ID *target_id = nullptr;
+    KeyBlock *shape_key_block = nullptr;
     eRotationModes object_rotmode = ROT_MODE_QUAT;
 
     if (is_blend_shape) {
       /* Animating blend shape weight. */
-      Key *target_key = mapping.el_to_shape_key.lookup_default(fprop.element, nullptr);
-      if (target_key != nullptr) {
-        target_id = &target_key->id;
+      if (const FbxShapeKey *shape_key = mapping.el_to_shape_key.lookup_ptr(fprop.element)) {
+        target_id = &shape_key->key->id;
+        shape_key_block = shape_key->block;
       }
     }
     else if (is_anim_camera) {
@@ -153,9 +155,8 @@ static Vector<ElementAnimations> gather_animated_properties(const FbxElementMapp
       if (obj == nullptr) {
         continue;
       }
-      /* Ignore animation of rigged meshes (very hard to handle; matches behavior of python fbx
-       * importer). */
-      if (obj->type == OB_MESH && obj->parent && obj->parent->type == OB_ARMATURE) {
+      /* The original animation is in the wrong space for a reparented mesh. */
+      if (mapping.meshes_reparented_to_armature.contains(obj)) {
         continue;
       }
       target_id = &obj->id;
@@ -183,6 +184,7 @@ static Vector<ElementAnimations> gather_animated_properties(const FbxElementMapp
     }
     if (is_blend_shape) {
       anims.prop_blend_shape = &fprop;
+      anims.shape_key_block = shape_key_block;
     }
     if (is_focal_length) {
       anims.prop_focal_length = &fprop;
@@ -272,6 +274,10 @@ static void create_transform_curve_data(const FbxElementMapping &mapping,
   const ufbx_node *fnode = ufbx_as_node(anim.fbx_elem);
   ufbx_matrix bone_xform = ufbx_identity_matrix;
   const bool is_bone = mapping.node_is_blender_bone.contains(fnode);
+  /* Parent bone length for non-bones parented to a bone. */
+  const ufbx_real bone_parent_length = is_bone ? 0.0 :
+                                                 mapping.bone_to_length.lookup_default(
+                                                     fnode->parent, 0.0);
   if (is_bone) {
     /* Bone transform curves need to be transformed to the bind transform
      * in joint-local space:
@@ -290,6 +296,20 @@ static void create_transform_curve_data(const FbxElementMapping &mapping,
 
     bone_xform = mapping.calc_local_bind_matrix(fnode, world_to_arm);
     bone_xform = ufbx_matrix_invert(&bone_xform);
+  }
+
+  /* Objects parented to a bone have their transform relative to the bone tail, apply the same
+   * offset to the animated transform. */
+  bool has_bone_parent_offset = false;
+  ufbx_matrix bone_parent_offset = ufbx_identity_matrix;
+  if (!is_bone && anim.target_id->id_type() == ID_OB) {
+    const Object *obj = reinterpret_cast<const Object *>(anim.target_id);
+    if (obj->parent != nullptr && obj->partype == PARBONE && fnode->parent != nullptr &&
+        mapping.node_is_blender_bone.contains(fnode->parent))
+    {
+      has_bone_parent_offset = true;
+      bone_parent_offset = mapping.calc_bone_child_offset_matrix(fnode->parent);
+    }
   }
 
   int rot_channels = 3;
@@ -378,8 +398,18 @@ static void create_transform_curve_data(const FbxElementMapping &mapping,
     }
 
     if (is_bone) {
-      ufbx_matrix matrix = calc_bone_pose_matrix(xform, *fnode, bone_xform);
+      ufbx_matrix matrix = calc_bone_pose_matrix(
+          xform, *fnode, bone_xform, mapping.find_bone_correction(fnode));
       xform = ufbx_matrix_to_transform(&matrix);
+    }
+    else if (has_bone_parent_offset) {
+      ufbx_matrix matrix = ufbx_transform_to_matrix(&xform);
+      matrix = ufbx_matrix_mul(&bone_parent_offset, &matrix);
+      xform = ufbx_matrix_to_transform(&matrix);
+    }
+    else {
+      /* FBX attaches objects to the bone head, Blender attaches to the tail. */
+      xform.translation.y -= bone_parent_length;
     }
 
     set_curve_sample(curves[pos_index + 0], i, tf, float(xform.translation.x));
@@ -426,7 +456,7 @@ static void create_camera_curves(const ufbx_metadata &metadata,
                                  const double fps,
                                  const float anim_offset)
 {
-  if (anim.target_id == nullptr || GS(anim.target_id->name) != ID_CA) {
+  if (anim.target_id == nullptr || anim.target_id->id_type() != ID_CA) {
     return;
   }
 
@@ -463,7 +493,7 @@ static void create_material_curves(const ElementAnimations &anim,
                                    const double fps,
                                    const float anim_offset)
 {
-  if (anim.target_id == nullptr || GS(anim.target_id->name) != ID_MA) {
+  if (anim.target_id == nullptr || anim.target_id->id_type() != ID_MA) {
     return;
   }
 
@@ -502,19 +532,22 @@ static void create_blend_shape_curves(const ElementAnimations &anim,
                                       const double fps,
                                       const float anim_offset)
 {
-  const ufbx_blend_channel *fchan = ufbx_as_blend_channel(anim.prop_blend_shape->element);
-  BLI_assert(fchan != nullptr);
-  std::string rna_path = std::string("key_blocks[\"") +
-                         BLI_str_escape(fchan->target_shape->name.data) + "\"].value";
+  KeyBlock &block = *anim.shape_key_block;
+  std::string rna_path = std::string("key_blocks[\"") + BLI_str_escape(block.name) + "\"].value";
   const ufbx_anim_curve *input_curve = anim.prop_blend_shape->anim_value->curves[0];
   FCurve *curve = create_fcurve(channelbag, {rna_path, 0}, input_curve->keyframes.count);
+  float min_weight = block.slidermin;
+  float max_weight = block.slidermax;
   for (int64_t i = 0; i < curve->totvert; i++) {
     const ufbx_keyframe &fkey = input_curve->keyframes[i];
     double t = fkey.time;
     float tf = float(t * fps + anim_offset);
-    float val = float(fkey.value / 100.0); /* FBX shape weights are 0..100 range. */
+    float val = float(fkey.value / 100.0); /* Convert FBX percent to a weight. */
     set_curve_sample(curve, i, tf, val);
+    min_weight = std::min(min_weight, val);
+    max_weight = std::max(max_weight, val);
   }
+  expand_shape_key_range(block, min_weight, max_weight);
   finalize_curve(curve);
 }
 
@@ -561,7 +594,7 @@ void import_animations(Main &bmain,
         /* Create a slot for this ID. */
         BLI_assert(id != nullptr);
         const std::string slot_name = id->name;
-        animrig::Slot &slot = action.slot_add_for_id_type(GS(id->name));
+        animrig::Slot &slot = action.slot_add_for_id_type(id->id_type());
         action.slot_identifier_define(slot, slot_name);
 
         /* Assign this action & slot to ID. */

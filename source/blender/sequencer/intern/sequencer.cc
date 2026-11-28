@@ -87,7 +87,6 @@ namespace seq {
 StripProxy *seq_strip_proxy_alloc()
 {
   StripProxy *strip_proxy = MEM_new<StripProxy>("StripProxy");
-  strip_proxy->quality = 50;
   return strip_proxy;
 }
 
@@ -97,11 +96,6 @@ static StripData *strip_data_alloc(StripType type)
 
   if (type != STRIP_TYPE_SOUND) {
     data->transform = MEM_new<StripTransform>("StripTransform");
-    data->transform->scale_x = 1;
-    data->transform->scale_y = 1;
-    data->transform->origin[0] = 0.5f;
-    data->transform->origin[1] = 0.5f;
-    data->transform->filter = SEQ_TRANSFORM_FILTER_AUTO;
     data->crop = MEM_new<StripCrop>("StripCrop");
   }
   return data;
@@ -143,20 +137,10 @@ Strip *strip_alloc(ListBaseT<Strip> *lb, int timeline_frame, int channel, StripT
   strip->flag = SEQ_SELECT;
   strip->start = timeline_frame;
   strip->channel_set(channel);
-  strip->sat = 1.0;
-  strip->mul = 1.0;
-  strip->blend_opacity = 100.0;
-  strip->volume = 1.0f;
   strip->type = type;
-  strip->media_playback_rate = 0.0f;
-  strip->speed_factor = 1.0f;
-  strip->strobe = 1.0f;
 
   if (strip->type == STRIP_TYPE_ADJUSTMENT) {
     strip->blend_mode = STRIP_BLEND_CROSS;
-  }
-  else {
-    strip->blend_mode = STRIP_BLEND_ALPHAOVER;
   }
 
   strip->data = strip_data_alloc(type);
@@ -309,8 +293,6 @@ Editing *editing_ensure(Scene *scene)
 {
   if (scene->ed == nullptr) {
     Editing *ed = scene->ed = MEM_new<Editing>("addseq");
-    ed->cache_flag = (SEQ_CACHE_PREFETCH_ENABLE | SEQ_CACHE_STORE_FINAL_OUT | SEQ_CACHE_STORE_RAW);
-    ed->show_missing_media_flag = SEQ_EDIT_SHOW_MISSING_MEDIA;
     channels_ensure(&ed->channels);
   }
 
@@ -374,18 +356,6 @@ static void seq_new_fix_links_recursive(Strip *strip, Map<Strip *, Strip *> stri
 SequencerToolSettings *tool_settings_init()
 {
   SequencerToolSettings *tool_settings = MEM_new<SequencerToolSettings>("Sequencer tool settings");
-  tool_settings->fit_method = SEQ_SCALE_TO_FIT;
-  tool_settings->snap_mode = SEQ_SNAP_TO_STRIPS | SEQ_SNAP_TO_CURRENT_FRAME |
-                             SEQ_SNAP_TO_STRIP_HOLD | SEQ_SNAP_TO_MARKERS | SEQ_SNAP_TO_RETIMING |
-                             SEQ_SNAP_TO_PREVIEW_BORDERS | SEQ_SNAP_TO_PREVIEW_CENTER |
-                             SEQ_SNAP_TO_STRIPS_PREVIEW | SEQ_SNAP_TO_FRAME_RANGE;
-  tool_settings->snap_flag = SEQ_SNAP_TO_ALL_CHANNEL_STRIPS;
-  tool_settings->snap_distance = 15;
-  tool_settings->overlap_mode = SEQ_OVERLAP_SHUFFLE;
-  tool_settings->ripple_flag = SEQ_RIPPLE_ALL_CHANNELS | SEQ_RIPPLE_MARKERS |
-                               SEQ_RIPPLE_CLEAR_RANGES;
-  tool_settings->pivot_point = V3D_AROUND_CENTER_MEDIAN;
-
   return tool_settings;
 }
 
@@ -1038,10 +1008,11 @@ static bool strip_read_data_cb(Strip *strip, void *user_data)
         BLO_read_struct_nonnull(reader, ColorMixVars, &strip->effectdata);
         break;
       case STRIP_TYPE_COMPOSITOR: {
-        BLO_read_struct_nonnull(reader, CompositorEffectVars, &strip->effectdata);
-        CompositorEffectVars *comp = static_cast<CompositorEffectVars *>(strip->effectdata);
-        BLO_read_struct(reader, IDProperty, &comp->system_properties);
-        IDP_BlendDataRead(reader, &comp->system_properties);
+        if (BLO_read_struct_nonnull(reader, CompositorEffectVars, &strip->effectdata)) {
+          CompositorEffectVars *comp = static_cast<CompositorEffectVars *>(strip->effectdata);
+          BLO_read_struct(reader, IDProperty, &comp->system_properties);
+          IDP_BlendDataRead(reader, &comp->system_properties);
+        }
         break;
       }
       default:

@@ -4540,11 +4540,9 @@ static bool mesh_separate_loose(
   Array<BMEdge *> edge_groups(bm_old->totedge);
   Array<BMFace *> face_groups(bm_old->totface);
 
-  int (*groups)[3] = nullptr;
-  int groups_len = BM_mesh_calc_edge_groups_as_arrays(
-      bm_old, vert_groups.data(), edge_groups.data(), face_groups.data(), &groups);
-  if (groups_len <= 1) {
-    MEM_SAFE_DELETE(groups);
+  const Vector<int3> groups = BM_mesh_calc_edge_groups_as_arrays(
+      bm_old, vert_groups.data(), edge_groups.data(), face_groups.data());
+  if (groups.size() <= 1) {
     return false;
   }
 
@@ -4556,7 +4554,7 @@ static bool mesh_separate_loose(
 
   /* Separate out all groups except the first. */
   uint group_ofs[3] = {uint(groups[0][0]), uint(groups[0][1]), uint(groups[0][2])};
-  for (int i = 1; i < groups_len; i++) {
+  for (const int i : groups.index_range().drop_front(1)) {
     Base *base_new = mesh_separate_arrays(bmain,
                                           scene,
                                           view_layer,
@@ -4584,7 +4582,6 @@ static bool mesh_separate_loose(
     BM_mesh_bm_to_me(nullptr, bm_old, me_old, &to_mesh_params);
   }
 
-  MEM_delete(groups);
   return result;
 }
 

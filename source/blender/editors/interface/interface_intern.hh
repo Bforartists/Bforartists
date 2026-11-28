@@ -608,6 +608,9 @@ struct ButtonExtraOpIcon {
   bool disabled;
 };
 
+/** Width of the color picker popup contents. */
+#define PICKER_TOTAL_W (180.0f * UI_SCALE_FAC)
+
 struct ColorPicker {
   ColorPicker *next, *prev;
 
@@ -2342,6 +2345,8 @@ int paste_property_drivers(Span<FCurve *> src_drivers,
 }  // namespace internal
 void panel_region_width_set(ARegion *region, const float aspect, int unscaled_size);
 void region_panels_sort_for_search_filter_visibility_change(bContext *C, const ARegion *region);
+
+void template_id_menu();
 
 }  // namespace ui
 }  // namespace blender

@@ -22,6 +22,8 @@
 #include "BLI_math_vector_types.hh"
 #include "BLI_rect.hh"
 
+#include "BKE_scene.hh"
+
 #include "BLF_api.hh"
 
 #include "SEQ_animation.hh"
@@ -785,7 +787,9 @@ static int2 strip_source_size_get(const Scene *scene, const Strip *strip)
       if (strip->scene == nullptr || (strip->flag & SEQ_SCENE_STRIPS) != 0) {
         return parent_scene_size;
       }
-      return int2(strip->scene->r.xsch, strip->scene->r.ysch);
+      int width, height;
+      BKE_render_resolution(&strip->scene->r, false, &width, &height);
+      return int2(width, height);
     }
     case STRIP_TYPE_COLOR: {
       const SolidColorVars *cv = static_cast<const SolidColorVars *>(strip->effectdata);
@@ -871,18 +875,19 @@ float2 image_transform_origin_preview_offset_get(const Scene *scene, const Strip
          image_transform_viewport_scale_get(scene, strip);
 }
 
-float3x3 image_transform_matrix_get(const Scene *scene, const Strip *strip)
+float3x3 image_transform_matrix_get(const Scene *scene, const Strip *strip, bool apply_rotation)
 {
   const StripTransform *tr = strip->data->transform;
+  const float rotation = apply_rotation ? tr->rotation : 0.0f;
   const float3x3 matrix = math::from_loc_rot_scale<float3x3>(
-      float2(tr->xofs, tr->yofs), tr->rotation, float2(tr->scale_x, tr->scale_y));
+      float2(tr->xofs, tr->yofs), rotation, float2(tr->scale_x, tr->scale_y));
   const float2 origin_offset_imgpx = convert_origin_to_image_offset(scene, strip, tr->origin);
 
   return math::from_scale<float3x3>(image_transform_viewport_scale_get(scene, strip)) *
          math::from_origin_transform(matrix, origin_offset_imgpx);
 }
 
-Array<float2> image_transform_quad_get(const Scene *scene, const Strip *strip)
+Array<float2> image_transform_quad_get(const Scene *scene, const Strip *strip, bool apply_rotation)
 {
   constexpr int num_corners = 4;
   const float2 box_size = float2(image_transform_box_size_get(scene, strip));
@@ -934,7 +939,7 @@ Array<float2> image_transform_quad_get(const Scene *scene, const Strip *strip)
     }
   }
 
-  const float3x3 matrix = image_transform_matrix_get(scene, strip);
+  const float3x3 matrix = image_transform_matrix_get(scene, strip, apply_rotation);
 
   Array<float2> quad_final(num_corners);
   for (const int i : IndexRange(num_corners)) {

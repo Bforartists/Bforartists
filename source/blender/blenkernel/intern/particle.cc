@@ -433,6 +433,7 @@ IDTypeInfo IDType_ID_PA = {
     .foreach_working_space_color = nullptr,
     .foreach_asset_weak_reference = nullptr,
     .owner_pointer_get = nullptr,
+    .foreach_embedded_id = nullptr,
 
     .blend_write = particle_settings_blend_write,
     .blend_read_data = particle_settings_blend_read_data,
@@ -4055,7 +4056,7 @@ void object_remove_particle_system(Main *bmain,
       }
     }
     /* Clear particle flag in domain settings when removing particle system manually. */
-    if (fmd->type == MOD_FLUID_TYPE_DOMAIN) {
+    if (psys->part && fmd->type == MOD_FLUID_TYPE_DOMAIN) {
       if (psys->part->type == PART_FLUID_FLIP) {
         fmd->domain->particle_type &= ~FLUID_DOMAIN_PARTICLE_FLIP;
       }

@@ -151,7 +151,21 @@ struct FileData {
    */
   eID_Tag id_tag_extra = {};
 
+  /**
+   * Store mapping from old sub-data pointers (the values they have in the .blend file) to new
+   * ones, typically from value in `bhead->old` to address in memory where the sub-data was read.
+   *
+   * Lifetime of its entries has a limited scope (typically during a single ID reading, and a few
+   * other cases like user preferences reading), and the map is cleared and reused afterwards.
+   */
   OldNewMap *datamap = nullptr;
+  /**
+   * Store mapping from old global data pointers (the values they have in the .blend file) to new
+   * ones, typically from value in `bhead->old` to address in memory where the global data was
+   * read.
+   *
+   * Lifetime of its entries is similar to its FileData owner.
+   */
   OldNewMap *globmap = nullptr;
   /** Used to keep track of already loaded packed IDs to avoid loading them multiple times. */
   std::shared_ptr<Map<IDHash, ID *>> id_by_deep_hash;
@@ -160,6 +174,8 @@ struct FileData {
    * Store mapping from old ID pointers (the values they have in the .blend file) to new ones,
    * typically from value in `bhead->old` to address in memory where the ID was read.
    * Used during library-linking process (see #lib_link_all).
+   *
+   * Lifetime of its entries is similar to its FileData owner.
    */
   OldNewMap *libmap = nullptr;
 
@@ -214,6 +230,18 @@ struct FileData {
    * Set when reading a file from undo with incomplete preview, to trigger restart of preview jobs.
    */
   bool need_preview_render_restart = false;
+
+  /**
+   * Allow readfile code to accept references from linked to local data.
+   *
+   * \warning Use with caution! This can produce fully invalid data for a regular global Main
+   * data-base!
+   *
+   * \note Typically used for specific situation, e.g. the
+   * eBLOLibLinkFlags::BLO_LIBLINK_ALLOW_LOCAL_ID_REFERENCES flag from linking code, to allow
+   * copy-pasting data with (linked) dependencies into the current open blendfile.
+   */
+  bool allow_linked_to_local_references = false;
 };
 
 /**

@@ -28,6 +28,7 @@
 #include "GPU_state.hh"
 
 #include "ED_anim_api.hh"
+#include "ED_space_graph.hh"
 
 #include "graph_intern.hh"
 
@@ -734,6 +735,10 @@ static void draw_fcurve_curve(const FCurve *fcu,
     float fcu_start = 0;
     float fcu_end = 0;
     BKE_fcurve_calc_range(fcu, &fcu_start, &fcu_end, false);
+    if (fcu_start > draw_range.end || fcu_end < draw_range.start) {
+      /* FCurve completely outside the drawing range. */
+      return;
+    }
     /* Clamp to graph editor rendering bounds. */
     draw_range.start = max_ff(draw_range.start, fcu_start);
     draw_range.end = min_ff(draw_range.end, fcu_end);
@@ -1145,7 +1150,7 @@ static void draw_fcurve_curve_keys(FCurve &fcu,
         curve_vertices.append(prevbezt->vec[1]);
         float current_frame = prevbezt->vec[1][0] + evaluation_step;
         while (current_frame < bezt->vec[1][0]) {
-          curve_vertices.append({current_frame, evaluate_fcurve(&fcu, current_frame)});
+          curve_vertices.append({current_frame, evaluate_fcurve_only_curve(&fcu, current_frame)});
           current_frame += evaluation_step;
         }
         break;
@@ -1487,7 +1492,7 @@ void graph_draw_ghost_curves(bAnimContext *ac, const SpaceGraph *sipo, const Vie
    * See issue #109920 for details. */
   const bool draw_extrapolation = false;
   /* the ghost curves are simply sampled F-Curves stored in sipo->runtime.ghost_curves */
-  for (FCurve &fcu : sipo->runtime.ghost_curves) {
+  for (FCurve &fcu : sipo->runtime->ghost_curves) {
     /* set whatever color the curve has set
      * - this is set by the function which creates these
      * - draw with a fixed opacity of 2

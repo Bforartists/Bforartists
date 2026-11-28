@@ -1387,7 +1387,7 @@ static int adjust_shot_duration_right(Scene *master_scene,
       const int new_len = max_ii(strip->scene->r.efra - strip->scene->r.sfra + 1 -
                                      strip->anim_startofs - strip->anim_endofs,
                                  0);
-      strip->content_length_set(new_len);
+      strip->source_duration_set(/* BFA - was content_length_set, renamed upstream in b8e7ceaae78 */ new_len);
       strip->handles_set(master_scene, left, right_after_absorb + scene_extend);
     }
     scene_strip_retime_overlap_update(master_scene, strip);
@@ -1502,7 +1502,7 @@ static int adjust_shot_duration_left(Scene *master_scene,
       const int new_len = max_ii(strip->scene->r.efra - strip->scene->r.sfra + 1 -
                                      strip->anim_startofs - strip->anim_endofs,
                                  0);
-      strip->content_length_set(new_len);
+      strip->source_duration_set(/* BFA - was content_length_set, renamed upstream in b8e7ceaae78 */ new_len);
       strip->handles_set(master_scene, left, right);
     }
     scene_strip_retime_overlap_update(master_scene, strip);
@@ -1792,7 +1792,7 @@ static void clamp_scene_strip_range(const bContext *C, Scene *master_scene, Stri
   const int new_len = max_ii(new_efra - new_sfra + 1 - strip->anim_startofs -
                                  strip->anim_endofs,
                              0);
-  strip->content_length_set(new_len);
+  strip->source_duration_set(/* BFA - was content_length_set, renamed upstream in b8e7ceaae78 */ new_len);
   strip->handles_set(master_scene, left, right);
 }
 
@@ -2426,7 +2426,7 @@ static wmOperatorStatus scene_strip_timing_modal(bContext *C,
           strip->endofs = data->orig_endofs;
           strip->anim_startofs = data->orig_anim_startofs;
           strip->anim_endofs = data->orig_anim_endofs;
-          strip->content_length_set(data->orig_len);
+          strip->source_duration_set(/* BFA - was content_length_set, renamed upstream in b8e7ceaae78 */ data->orig_len);
           strip->channel = data->orig_channel;
           if (strip->scene) {
             strip->scene->r.sfra = data->orig_sfra;

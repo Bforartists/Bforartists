@@ -23,12 +23,10 @@
 #include "DNA_screen_types.h"
 
 #include "BLI_array.hh"
-#include "BLI_array_utils_c.hh"
 #include "BLI_linklist.hh"
 #include "BLI_listbase.hh"
 #include "BLI_math_geom_c.hh"
 #include "BLI_rect.hh"
-#include "BLI_sort_utils.hh"
 #include "BLI_string.hh"
 #include "BLI_string_cursor_utf8.hh"
 #include "BLI_string_utf8.hh"
@@ -257,7 +255,9 @@ enum MenuScrollType {
 
 struct BlockInteraction_Handle {
   BlockInteraction_Params params;
-  void *user_data;
+  /** Owns the data referenced by #BlockInteraction_Params::unique_retval_ids. */
+  Vector<int> unique_retval_ids;
+  void *user_data = nullptr;
   /**
    * This is shared between #HandleButtonData and #uiAfterFunc,
    * the last user runs the end callback and frees the data.
@@ -265,7 +265,7 @@ struct BlockInteraction_Handle {
    * This is needed as the order of freeing changes depending on
    * accepting/canceling the operation.
    */
-  int user_count;
+  int user_count = 0;
 };
 
 #ifdef USE_ALLSELECT
@@ -2804,7 +2804,7 @@ static void but_paste_text(bContext *C, Button *but, HandleButtonData *data, cha
 static void but_copy_colorband(Button *but)
 {
   if (but->poin != nullptr) {
-    memcpy(&but_copypaste_coba, but->poin, sizeof(ColorBand));
+    BKE_colorband_copy_data(&but_copypaste_coba, reinterpret_cast<const ColorBand *>(but->poin));
   }
 }
 
@@ -2812,7 +2812,7 @@ static void but_paste_colorband(bContext *C, Button *but, HandleButtonData *data
 {
   if (but_copypaste_coba.tot != 0 && but->poin != nullptr) {
     button_activate_state(C, but, BUTTON_STATE_NUM_EDITING);
-    memcpy(data->coba, &but_copypaste_coba, sizeof(ColorBand));
+    BKE_colorband_copy_data(data->coba, &but_copypaste_coba);
     button_activate_state(C, but, BUTTON_STATE_EXIT);
   }
 }
@@ -3261,8 +3261,10 @@ static void textedit_string_ensure_max_length(Button *but, TextEdit &text_edit, 
   BLI_assert(text_edit.edit_string == but->editstr);
 
   if (str_maxncpy > text_edit.max_string_size) {
-    text_edit.edit_string = but->editstr = static_cast<char *>(
-        MEM_realloc_uninitialized(text_edit.edit_string, sizeof(char) * str_maxncpy));
+    char *new_string = MEM_new_array_uninitialized<char>(str_maxncpy, __func__);
+    std::copy_n(text_edit.edit_string, text_edit.max_string_size, new_string);
+    MEM_delete(text_edit.edit_string);
+    text_edit.edit_string = but->editstr = new_string;
     text_edit.max_string_size = str_maxncpy;
   }
 }
@@ -8168,6 +8170,27 @@ static bool numedit_but_COLORBAND(
   return changed;
 }
 
+/** Return the index of the color stop closest to \a mx, or the active one if none is close. */
+static int colorband_stop_at(const Block *block, const Button *but, const ColorBand *coba, int mx)
+{
+  /* Ignore zoom-level for mindist. */
+  int mindist = (50 * UI_SCALE_FAC) * block->aspect;
+  int cur = coba->cur;
+  for (int a = 0; a < coba->tot; a++) {
+    int xco = but->rect.xmin + (coba->data[a].pos * BLI_rctf_size_x(&but->rect));
+    xco = abs(xco - mx);
+    if (a == coba->cur) {
+      /* Selected one disadvantage. */
+      xco += 5;
+    }
+    if (xco < mindist) {
+      cur = a;
+      mindist = xco;
+    }
+  }
+  return cur;
+}
+
 static int do_but_COLORBAND(
     bContext *C, Block *block, Button *but, HandleButtonData *data, const wmEvent *event)
 {
@@ -8176,6 +8199,45 @@ static int do_but_COLORBAND(
   window_to_block(data->region, block, &mx, &my);
 
   if (data->state == BUTTON_STATE_HIGHLIGHT) {
+    /* Show hints in the status bar. */
+    if (!data->changed_wokspace_status) {
+      WorkspaceStatus status(C);
+      status.item(IFACE_("Edit Color"), ICON_MOUSE_LMB_2X);
+      status.item(IFACE_("Add Stop"), ICON_EVENT_CTRL, ICON_MOUSE_LMB);
+      data->changed_wokspace_status = true;
+    }
+    if (event->type == LEFTMOUSE && event->val == KM_DBL_CLICK) {
+      /* On double click, open the color picker for the color stop under the mouse.
+       * Also select the stop, since the first click may have been used to close another popup. */
+      ColorBand *coba = reinterpret_cast<ColorBand *>(but->poin);
+      coba->cur = colorband_stop_at(block, but, coba, mx);
+      for (Button &but_color : block->buttons() | std::views::drop(block->but_index(but) + 1)) {
+        if (but_color.type != ButtonType::Color ||
+            but_color.rnapoin.type != RNA_ColorRampElement || but_color.rnaindex != -1)
+        {
+          continue;
+        }
+        /* Only use the color button of this color ramp. */
+        const CBData *cbd = static_cast<const CBData *>(but_color.rnapoin.data);
+        if (cbd < coba->data || cbd >= coba->data + coba->tot) {
+          continue;
+        }
+        /* Make the color button edit the selected stop. */
+        but_color.rnapoin.data = coba->data + coba->cur;
+        /* Temporarily move the color button to the active stop so the popup opens here. */
+        const rctf rect_orig = but_color.rect;
+        but_color.rect = but->rect;
+        /* Center on the stop, using the popup width (contents plus padding). */
+        const float stop_x = but->rect.xmin +
+                             coba->data[coba->cur].pos * BLI_rctf_size_x(&but->rect);
+        const float half_width = (PICKER_TOTAL_W + UI_UNIT_X) / 2.0f;
+        but_color.rect.xmin = stop_x - half_width;
+        but_color.rect.xmax = stop_x + half_width;
+        handle_button_activate(C, data->region, &but_color, BUTTON_ACTIVATE_OPEN);
+        but_color.rect = rect_orig;
+        return WM_UI_HANDLER_BREAK;
+      }
+    }
     if (event->type == LEFTMOUSE && event->val == KM_PRESS) {
       ColorBand *coba = reinterpret_cast<ColorBand *>(but->poin);
 
@@ -8186,29 +8248,13 @@ static int do_but_COLORBAND(
         button_activate_state(C, but, BUTTON_STATE_EXIT);
       }
       else {
-        CBData *cbd;
-        /* ignore zoom-level for mindist */
-        int mindist = (50 * UI_SCALE_FAC) * block->aspect;
-        int xco;
         data->dragstartx = mx;
         data->dragstarty = my;
         data->draglastx = mx;
         data->draglasty = my;
 
         /* activate new key when mouse is close */
-        int a;
-        for (a = 0, cbd = coba->data; a < coba->tot; a++, cbd++) {
-          xco = but->rect.xmin + (cbd->pos * BLI_rctf_size_x(&but->rect));
-          xco = abs(xco - mx);
-          if (a == coba->cur) {
-            /* Selected one disadvantage. */
-            xco += 5;
-          }
-          if (xco < mindist) {
-            coba->cur = a;
-            mindist = xco;
-          }
-        }
+        coba->cur = colorband_stop_at(block, but, coba, mx);
 
         data->dragcbd = coba->data + coba->cur;
         data->dragfstart = data->dragcbd->pos;
@@ -9512,6 +9558,7 @@ static void button_tooltip_timer_reset(bContext *C, Button *but)
 static bool button_modal_state(HandleButtonState state)
 {
   return ELEM(state,
+              BUTTON_STATE_WAIT_DRAG,
               BUTTON_STATE_WAIT_RELEASE,
               BUTTON_STATE_WAIT_KEY_EVENT,
               BUTTON_STATE_NUM_EDITING,
@@ -15278,34 +15325,20 @@ static BlockInteraction_Handle *block_interaction_begin(bContext *C,
                                                         const bool is_click)
 {
   BLI_assert(block->custom_interaction_callbacks.begin_fn != nullptr);
-  BlockInteraction_Handle *interaction = MEM_new_zeroed<BlockInteraction_Handle>(__func__);
+  BlockInteraction_Handle *interaction = MEM_new<BlockInteraction_Handle>(__func__);
 
-  int unique_retval_ids_len = 0;
+  Vector<int> &unique_retval_ids = interaction->unique_retval_ids;
   for (const Button &but : block->buttons()) {
     if (but.active || (but.flag & BUT_DRAG_MULTI)) {
-      unique_retval_ids_len++;
+      unique_retval_ids.append(but.retval);
     }
   }
-
-  int *unique_retval_ids = MEM_new_array_uninitialized<int>(unique_retval_ids_len, __func__);
-  unique_retval_ids_len = 0;
-  for (const Button &but : block->buttons()) {
-    if (but.active || (but.flag & BUT_DRAG_MULTI)) {
-      unique_retval_ids[unique_retval_ids_len++] = but.retval;
-    }
-  }
-
-  if (unique_retval_ids_len > 1) {
-    qsort(unique_retval_ids, unique_retval_ids_len, sizeof(int), BLI_sortutil_cmp_int);
-    unique_retval_ids_len = BLI_array_deduplicate_ordered(unique_retval_ids,
-                                                          unique_retval_ids_len);
-    unique_retval_ids = static_cast<int *>(MEM_realloc_uninitialized(
-        unique_retval_ids, sizeof(*unique_retval_ids) * unique_retval_ids_len));
-  }
+  std::sort(unique_retval_ids.begin(), unique_retval_ids.end());
+  unique_retval_ids.resize(std::unique(unique_retval_ids.begin(), unique_retval_ids.end()) -
+                           unique_retval_ids.begin());
 
   interaction->params.is_click = is_click;
   interaction->params.unique_retval_ids = unique_retval_ids;
-  interaction->params.unique_retval_ids_len = unique_retval_ids_len;
 
   interaction->user_data = block->custom_interaction_callbacks.begin_fn(
       C, &interaction->params, block->custom_interaction_callbacks.arg1);
@@ -15318,7 +15351,6 @@ static void block_interaction_end(bContext *C,
 {
   BLI_assert(callbacks->end_fn != nullptr);
   callbacks->end_fn(C, &interaction->params, callbacks->arg1, interaction->user_data);
-  MEM_delete(interaction->params.unique_retval_ids);
   MEM_delete(interaction);
 }
 

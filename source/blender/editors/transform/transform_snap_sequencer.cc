@@ -84,7 +84,6 @@ static VectorSet<Strip *> query_strip_sources_timeline(const Scene *scene)
   ListBaseT<Strip> *seqbase = seq::active_seqbase_get(ed);
 
   VectorSet<Strip *> strip_sources = seq::query_selected_strips(seqbase);
-  strip_sources.remove_if([&](Strip *strip) { return seq::transform_is_locked(channels, strip); });
 
   const Map retiming_selection = seq::retiming_selection_get(ed);
   /* Strips owned by retiming keys are technically not selected,
@@ -93,6 +92,7 @@ static VectorSet<Strip *> query_strip_sources_timeline(const Scene *scene)
     strip_sources.add(strip);
   }
 
+  strip_sources.remove_if([&](Strip *strip) { return seq::transform_is_locked(channels, strip); });
   return strip_sources;
 }
 
@@ -192,19 +192,30 @@ static int cmp_fn(const void *a, const void *b)
                          (*static_cast<float2 *>(const_cast<void *>(b)))[0]);
 }
 
-static void build_sources_timeline(const Scene *scene,
+static void build_sources_timeline(const TransInfo *t,
                                    TransSeqSnapData *snap_data,
                                    const Span<Strip *> strip_sources)
 {
+  const Scene *scene = t->scene;
   for (Strip *strip : strip_sources) {
     const int channel = strip->channel;
     const int left = strip->left_handle();
     const int right = strip->right_handle(scene);
 
-    if (strip->flag & SEQ_LEFTSEL && !(strip->flag & SEQ_RIGHTSEL)) {
+    int handle_flag = strip->flag & (SEQ_LEFTSEL | SEQ_RIGHTSEL);
+    if (t->mode == TFM_TIME_EXTEND) {
+      const int extend_flag = transform_convert_sequencer_time_extend_flag(
+          scene, strip, t->frame_side);
+      if (extend_flag == 0) {
+        continue;
+      }
+      handle_flag = extend_flag & (SEQ_LEFTSEL | SEQ_RIGHTSEL);
+    }
+
+    if (handle_flag == SEQ_LEFTSEL) {
       snap_data->sources.append(float2(left, channel));
     }
-    else if (strip->flag & SEQ_RIGHTSEL && !(strip->flag & SEQ_LEFTSEL)) {
+    else if (handle_flag == SEQ_RIGHTSEL) {
       snap_data->sources.append(float2(right, channel));
     }
     else {
@@ -219,9 +230,13 @@ static void build_sources_timeline(const Scene *scene,
 static void build_sources_timeline_retiming(const Scene *scene, TransSeqSnapData *snap_data)
 {
   const Editing *ed = seq::editing_get(scene);
+  const ListBaseT<SeqTimelineChannel> *channels = seq::channels_displayed_get(ed);
   const Map retiming_selection = seq::retiming_selection_get(ed);
 
   for (auto item : retiming_selection.items()) {
+    if (seq::transform_is_locked(channels, item.value)) {
+      continue;
+    }
     const int channel = item.value->channel;
     const int key_frame = seq::retiming_key_frame_get(scene, item.value, item.key);
     snap_data->sources.append(float2(key_frame, channel));
@@ -373,7 +388,7 @@ static void build_snap_data_timeline(const TransInfo *t, TransSeqSnapData *snap_
 
   /* Build arrays of snap points. */
   if (t->data_type == &TransConvertType_Sequencer) {
-    build_sources_timeline(scene, snap_data, strip_sources);
+    build_sources_timeline(t, snap_data, strip_sources);
   }
   else { /* &TransConvertType_SequencerRetiming */
     build_sources_timeline_retiming(scene, snap_data);

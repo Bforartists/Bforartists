@@ -335,19 +335,8 @@ class NLA_MT_marker_select(Menu):
         ).mode = "RIGHT"
 
 
-class NLA_MT_add(Menu):
-    bl_label = "Add"
-    bl_translation_context = i18n_contexts.operator_default
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("nla.actionclip_add", text="Action")
-        layout.operator("nla.transition_add", text="Transition")
-        layout.operator("nla.soundclip_add", text="Sound")
-
-        layout.separator()
-        layout.operator("nla.selected_objects_add", text="Selected Objects")
+# BFA - Blender's NLA_MT_add is replaced by ours further down (icons, meta strips and the track
+# entries). Both were defined here, and the second silently won, #7133.
 
 
 class NLA_MT_tracks(Menu):
@@ -385,7 +374,7 @@ class NLA_MT_strips(Menu):
             "nla.duplicate", text="Duplicate", icon="DUPLICATE"
         ).linked = False
         layout.operator(
-            "nla.duplicate", text="Linked Duplicate", icon="DUPLICATE"
+            "nla.duplicate", text="Duplicate Linked", icon="DUPLICATE"
         ).linked = True
         layout.operator("nla.split", icon="SPLIT")
         props = layout.operator("wm.call_panel", text="Rename", icon="RENAME")
@@ -591,12 +580,12 @@ class NLA_MT_channel_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
-
-        layout.separator()
-
         layout.operator("nla.tracks_add", text="Add Track").above_selected = False
         layout.operator("nla.tracks_add", text="Add Track Above Selected").above_selected = True
+
+        layout.separator()
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
+
         layout.separator()
         layout.operator("nla.tracks_delete", icon='DELETE')
         layout.operator("anim.channels_clean_empty", icon="CLEAN_CHANNELS")

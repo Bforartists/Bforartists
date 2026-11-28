@@ -1175,7 +1175,7 @@ void CLIP_OT_change_frame(wmOperatorType *ot)
   ot->poll = change_frame_poll;
 
   /* flags */
-  ot->flag = OPTYPE_BLOCKING | OPTYPE_UNDO;
+  ot->flag = OPTYPE_BLOCKING | OPTYPE_UNDO | OPTYPE_GRAB_CURSOR_X;
 
   /* rna */
   RNA_def_int(ot->srna, "frame", 0, MINAFRAME, MAXFRAME, "Frame", "", MINAFRAME, MAXFRAME);
@@ -1595,7 +1595,7 @@ void CLIP_OT_rebuild_proxy(wmOperatorType *ot)
 static wmOperatorStatus mode_set_exec(bContext *C, wmOperator *op)
 {
   SpaceClip *sc = CTX_wm_space_clip(C);
-  const eSpaceClip_Mode mode = eSpaceClip_Mode(RNA_enum_get(op->ptr, "mode"));
+  const eSpaceClip_Mode mode = RNA_enum_get<eSpaceClip_Mode>(op->ptr, "mode");
 
   sc->mode = mode;
 

@@ -108,10 +108,10 @@ class CompositorEffectContext : public CompositorContext {
     int float_counter = 0;
     int color_counter = 0;
     for (const bNodeTreeInterfaceSocket *input_socket : node_group.interface_inputs()) {
-      bke::bNodeSocketType *typeinfo = input_socket->socket_typeinfo();
-      const eNodeSocketDatatype socket_type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
-      const bool valid_socket_type = typeinfo && node_group.typeinfo->valid_socket_type(
-                                                     node_group.typeinfo, typeinfo);
+      const bke::bNodeSocketType &typeinfo = input_socket->socket_typeinfo();
+      const eNodeSocketDatatype socket_type = typeinfo.type;
+      const bool valid_socket_type = node_group.typeinfo->valid_socket_type(node_group.typeinfo,
+                                                                            &typeinfo);
       /* Fallback to ResultType::Float for invalid inputs. */
       const ResultType result_type = valid_socket_type ?
                                          compositor::get_node_interface_socket_result_type(
@@ -210,12 +210,12 @@ static void init_compositor_effect(Strip *strip)
   strip->effectdata = data;
 }
 
-static void free_compositor_effect(Strip *strip, const bool /*do_id_user*/)
+static void free_compositor_effect(Strip *strip, const bool do_id_user)
 {
   if (strip->effectdata) {
     CompositorEffectVars *data = static_cast<CompositorEffectVars *>(strip->effectdata);
     if (data->system_properties != nullptr) {
-      IDP_FreeProperty_ex(data->system_properties, false);
+      IDP_FreeProperty_ex(data->system_properties, do_id_user);
     }
     MEM_delete(data);
     strip->effectdata = nullptr;
@@ -299,8 +299,8 @@ void compositor_effect_nodes_input_usages(const Scene &sequencer_scene,
   }
 
   ResourceScope scope;
-  Vector<nodes::InferenceValue> input_values = nodes::get_geometry_nodes_input_inference_values(
-      tree, properties_ptr, scope);
+  Vector<nodes::InferenceValue> input_values = nodes::get_input_inference_values(
+      nodes::ValueInferenceContext::CompositorStripEffect, tree, properties_ptr, scope);
 
   /* Effect fader and first N color inputs are supplied by the strips during evaluation, so
    * treat them as unknown. Otherwise an input with usage conditional on the fader (e.g. mixed
@@ -310,8 +310,7 @@ void compositor_effect_nodes_input_usages(const Scene &sequencer_scene,
   int color_counter = 0;
   for (const int i : IndexRange(inputs_num)) {
     const bNodeTreeInterfaceSocket &socket = *tree.interface_inputs()[i];
-    const bke::bNodeSocketType *typeinfo = socket.socket_typeinfo();
-    const eNodeSocketDatatype socket_type = typeinfo ? typeinfo->type : SOCK_CUSTOM;
+    const eNodeSocketDatatype socket_type = socket.socket_typeinfo().type;
     if (socket_type == SOCK_FLOAT && float_counter == 0) {
       input_values[i] = nodes::InferenceValue::Unknown();
       float_counter++;

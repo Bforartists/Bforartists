@@ -81,9 +81,7 @@ static void copy_data(const ModifierData *md, ModifierData *target, const int fl
   BKE_modifier_copydata_generic(md, target, flag);
   modifier::greasepencil::copy_influence_data(&tmd->influence, &ttmd->influence, flag);
 
-  if (tmd->color_ramp) {
-    ttmd->color_ramp = MEM_dupalloc(tmd->color_ramp);
-  }
+  ttmd->color_ramp = BKE_colorband_copy_or_null(tmd->color_ramp);
 }
 
 static void free_data(ModifierData *md)
@@ -433,8 +431,8 @@ static void panel_draw(const bContext *C, Panel *panel)
 
   layout.use_property_split_set(true);
 
-  const GreasePencilTintModifierMode tint_mode = GreasePencilTintModifierMode(
-      RNA_enum_get(ptr, "tint_mode"));
+  const GreasePencilTintModifierMode tint_mode = RNA_enum_get<GreasePencilTintModifierMode>(
+      ptr, "tint_mode");
   const bool use_weight_as_factor = RNA_boolean_get(ptr, "use_weight_as_factor");
 
   layout.prop(ptr, "color_mode", UI_ITEM_NONE, std::nullopt, ICON_NONE);

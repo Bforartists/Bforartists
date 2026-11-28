@@ -363,12 +363,6 @@ void Prepass::end_sync()
       }
     }
   }
-
-  /* First HideFromRaycast Subpass. */
-  if (has_raycast && supports_raycast_visibility_) {
-    setup_subs_[true][false][false][false]->texture_copy(&fb_depth_tx_,
-                                                         &inst_.render_buffers.raycast_depth_tx);
-  }
 }
 
 void Prepass::render(View &view,
@@ -376,8 +370,6 @@ void Prepass::render(View &view,
                      gpu::Texture *fb_depth_tx,
                      bool can_raycast)
 {
-  fb_depth_tx_ = fb_depth_tx;
-
   /* Raycast-visible objects must not ray-cast against the prepass (that would self-hit the
    * buffers they write), so disable ray-casting for the main pass. */
   bool32_t can_raycast_orig = inst_.uniform_data.pipeline.can_raycast;
@@ -385,6 +377,12 @@ void Prepass::render(View &view,
     inst_.uniform_data.pipeline.push_update();
   }
   inst_.manager->submit(pass_, view);
+
+  if (inst_.pipelines.has_raycast && fb_depth_tx) {
+    /** WARNING: There are some known issues with copies involving texture views on AMD.
+     * We may need to do a framebuffer copy instead. */
+    GPU_texture_copy(inst_.render_buffers.raycast_depth_tx, fb_depth_tx);
+  }
 
   if (!pass_hide_from_raycast_.is_empty()) {
     /* The prepass normal/object-ID attachments must be stored to memory before the hide
@@ -987,12 +985,14 @@ void DeferredLayer::end_sync(bool is_first_pass,
                                  uint8_t(StencilBits::TRANSMISSION);
           sub.state_stencil(0x0u, i + 1, compare_mask);
           sub.draw_procedural(GPU_PRIM_TRIS, 1, 3);
+          sub.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
           if (use_transmission) {
             /* Separate pass for transmission BSDF as their evaluation is quite costly. */
             set_specialization_constants(sub, sh, true);
             sub.shader_set(sh);
             sub.state_stencil(0x0u, (i + 1) | uint8_t(StencilBits::TRANSMISSION), compare_mask);
             sub.draw_procedural(GPU_PRIM_TRIS, 1, 3);
+            sub.barrier(GPU_BARRIER_SHADER_IMAGE_ACCESS);
           }
         }
       }

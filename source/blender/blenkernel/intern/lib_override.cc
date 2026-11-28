@@ -7,6 +7,7 @@
  */
 
 #include <algorithm>
+#include <atomic>
 #include <cstdlib>
 #include <cstring>
 #include <deque>
@@ -74,8 +75,6 @@
 #include "RNA_path.hh"
 #include "RNA_prototypes.hh"
 #include "RNA_types.hh"
-
-#include "atomic_ops.h"
 
 #include "lib_intern.hh"
 
@@ -4252,17 +4251,8 @@ void BKE_lib_override_library_make_local(Main *bmain, ID *id)
     shape_key->id.flag &= ~ID_FLAG_EMBEDDED_DATA_LIB_OVERRIDE;
   }
 
-  bNodeTree *node_tree = bke::node_tree_from_id(id);
-  if (node_tree != nullptr) {
-    node_tree->id.flag &= ~ID_FLAG_EMBEDDED_DATA_LIB_OVERRIDE;
-  }
-
-  if (id->id_type() == ID_SCE) {
-    Collection *master_collection = reinterpret_cast<Scene *>(id)->master_collection;
-    if (master_collection != nullptr) {
-      master_collection->id.flag &= ~ID_FLAG_EMBEDDED_DATA_LIB_OVERRIDE;
-    }
-  }
+  BKE_idtype_id_foreach_embedded_id(
+      id, [](ID &embedded_id) { embedded_id.flag &= ~ID_FLAG_EMBEDDED_DATA_LIB_OVERRIDE; });
 
   /* Need to mark all types of sub-data that can be mixed (from linked data/local to the override)
    * as local now. */
@@ -4744,6 +4734,7 @@ bool BKE_lib_override_library_property_operation_operands_validate(
 
 static bool override_library_is_valid(const ID &id,
                                       const IDOverrideLibrary &liboverride,
+                                      const bool local_reference_is_possible,
                                       ReportList *reports)
 {
   if (liboverride.reference == nullptr) {
@@ -4766,14 +4757,25 @@ static bool override_library_is_valid(const ID &id,
     return false;
   }
   if (!ID_IS_LINKED(liboverride.reference)) {
-    /* Very serious data corruption, cannot do much about it besides removing the liboverride data.
-     */
-    BKE_reportf(reports,
-                RPT_ERROR,
-                "Data corruption: data-block '%s' is using another local data-block ('%s') as "
-                "library override reference, removing all override data",
-                id.name,
-                liboverride.reference->name);
+    if (local_reference_is_possible) {
+      /* Might happen when using `BLO_LIBLINK_ALLOW_LOCAL_ID_REFERENCES` (i.e. copy/paste context
+       * currently). */
+      BKE_reportf(reports,
+                  RPT_WARNING,
+                  "Library override '%s' referencing data in current Blendfile, removing all "
+                  "override data",
+                  id.name);
+    }
+    else {
+      /* Very serious data corruption, cannot do much about it besides removing the liboverride
+       * data. */
+      BKE_reportf(reports,
+                  RPT_ERROR,
+                  "Data corruption: data-block '%s' is using another local data-block ('%s') as "
+                  "library override reference, removing all override data",
+                  id.name,
+                  liboverride.reference->name);
+    }
     return false;
   }
   return true;
@@ -4799,7 +4801,10 @@ static void override_library_properties_validate(const ID &id,
   }
 }
 
-void BKE_lib_override_library_validate(Main *bmain, ID *id, ReportList *reports)
+void BKE_lib_override_library_validate(Main *bmain,
+                                       ID *id,
+                                       const bool local_reference_is_possible,
+                                       ReportList *reports)
 {
   /* Do NOT use `ID_IS_OVERRIDE_LIBRARY` here, since this code also needs to fix broken cases (like
    * null reference pointer), which would be skipped by that macro. */
@@ -4811,7 +4816,9 @@ void BKE_lib_override_library_validate(Main *bmain, ID *id, ReportList *reports)
   IDOverrideLibrary *liboverride = id->override_library;
   if (ID_IS_OVERRIDE_LIBRARY_VIRTUAL(id)) {
     liboverride = BKE_lib_override_library_get(bmain, id, nullptr, &liboverride_id);
-    if (!liboverride || !override_library_is_valid(*liboverride_id, *liboverride, reports)) {
+    if (!liboverride || !override_library_is_valid(
+                            *liboverride_id, *liboverride, local_reference_is_possible, reports))
+    {
       /* Happens in case the given ID is a liboverride-embedded one (actual embedded ID like
        * NodeTree or master collection, or shape-keys), used by a totally not-liboverride owner ID.
        * Just clear the relevant ID flag.
@@ -4825,7 +4832,9 @@ void BKE_lib_override_library_validate(Main *bmain, ID *id, ReportList *reports)
   /* NOTE: In code deleting liboverride data below, #BKE_lib_override_library_make_local is used
    * instead of directly calling #BKE_lib_override_library_free, because the former also handles
    * properly 'liboverride embedded' IDs, like root node-trees, or shape-keys. */
-  if (!override_library_is_valid(*liboverride_id, *liboverride, reports)) {
+  if (!override_library_is_valid(
+          *liboverride_id, *liboverride, local_reference_is_possible, reports))
+  {
     BKE_lib_override_library_make_local(nullptr, liboverride_id);
     return;
   }
@@ -4833,12 +4842,14 @@ void BKE_lib_override_library_validate(Main *bmain, ID *id, ReportList *reports)
   override_library_properties_validate(*liboverride_id, *liboverride, reports);
 }
 
-void BKE_lib_override_library_main_validate(Main *bmain, ReportList *reports)
+void BKE_lib_override_library_main_validate(Main *bmain,
+                                            const bool local_reference_is_possible,
+                                            ReportList *reports)
 {
   ID *id;
 
   FOREACH_MAIN_ID_BEGIN (bmain, id) {
-    BKE_lib_override_library_validate(bmain, id, reports);
+    BKE_lib_override_library_validate(bmain, id, local_reference_is_possible, reports);
   }
   FOREACH_MAIN_ID_END;
 }
@@ -5068,8 +5079,7 @@ static void lib_override_library_operations_create_cb(TaskPool *__restrict pool,
       id,
       (RNA_OVERRIDE_COMPARE_CREATE | RNA_OVERRIDE_COMPARE_TAG_FOR_RESTORE),
       &report_flags);
-  atomic_fetch_and_or_uint32(reinterpret_cast<uint32_t *>(&create_data->report_flags),
-                             report_flags);
+  std::atomic_ref(reinterpret_cast<uint32_t &>(create_data->report_flags)).fetch_or(report_flags);
 }
 
 void BKE_lib_override_library_main_operations_create(Main *bmain,
@@ -5132,20 +5142,12 @@ void BKE_lib_override_library_main_operations_create(Main *bmain,
         id->tag |= ID_TAG_LIBOVERRIDE_AUTOREFRESH;
       }
     }
-    if (bNodeTree *ntree = bke::node_tree_from_id(id)) {
-      if (ntree->id.tag & ID_TAG_LIBOVERRIDE_AUTOREFRESH) {
-        ntree->id.tag &= ~ID_TAG_LIBOVERRIDE_AUTOREFRESH;
+    BKE_idtype_id_foreach_embedded_id(id, [&](ID &embedded_id) {
+      if (embedded_id.tag & ID_TAG_LIBOVERRIDE_AUTOREFRESH) {
+        embedded_id.tag &= ~ID_TAG_LIBOVERRIDE_AUTOREFRESH;
         id->tag |= ID_TAG_LIBOVERRIDE_AUTOREFRESH;
       }
-    }
-    if (id->id_type() == ID_SCE) {
-      if (Collection *scene_collection = reinterpret_cast<Scene *>(id)->master_collection) {
-        if (scene_collection->id.tag & ID_TAG_LIBOVERRIDE_AUTOREFRESH) {
-          scene_collection->id.tag &= ~ID_TAG_LIBOVERRIDE_AUTOREFRESH;
-          id->tag |= ID_TAG_LIBOVERRIDE_AUTOREFRESH;
-        }
-      }
-    }
+    });
 
     if (force_auto || (id->tag & ID_TAG_LIBOVERRIDE_AUTOREFRESH)) {
       /* Usual issue with pose, it's quiet rare but sometimes they may not be up to date when this

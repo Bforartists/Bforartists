@@ -2868,6 +2868,8 @@ static const char *rna_property_subtypename(PropertySubType type)
       return "PROP_COLOR_TEMPERATURE";
     case PROP_FREQUENCY:
       return "PROP_FREQUENCY";
+    case PROP_WAVELENGTH_UM:
+      return "PROP_WAVELENGTH_UM";
     default: {
       /* in case we don't have a type preset that includes the subtype */
       if (RNA_SUBTYPE_UNIT(type)) {
@@ -2913,6 +2915,8 @@ static const char *rna_property_subtype_unit(PropertySubType type)
       return "PROP_UNIT_COLOR_TEMPERATURE";
     case PROP_UNIT_FREQUENCY:
       return "PROP_UNIT_FREQUENCY";
+    case PROP_UNIT_WAVELENGTH_UM:
+      return "PROP_UNIT_WAVELENGTH_UM";
     default:
       return "PROP_UNIT_UNKNOWN";
   }
@@ -3746,12 +3750,13 @@ static void rna_generate_property(FILE *f, StructRNA *srna, const char *nest, Pr
     case PROP_FLOAT: {
       FloatPropertyRNA *fprop = reinterpret_cast<FloatPropertyRNA *>(prop);
       fprintf(f,
-              "\t\t%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ",
+              "\t\t%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ",
               rna_function_string(fprop->get),
               rna_function_string(fprop->set),
               rna_function_string(fprop->getarray),
               rna_function_string(fprop->setarray),
               rna_function_string(fprop->range),
+              rna_function_string(fprop->precision_fn),
               rna_function_string(fprop->get_ex),
               rna_function_string(fprop->set_ex),
               rna_function_string(fprop->getarray_ex),

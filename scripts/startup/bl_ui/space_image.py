@@ -868,7 +868,7 @@ class IMAGE_MT_uvs_legacy(Menu):
         sima = context.space_data
         uv = sima.uv_editor
 
-        layout.operator("uv.rip_move", icon="RIP")
+        layout.operator("uv.rip_move", text="Rip UVs and Move", icon="RIP")
 
 
 # BFA - not used

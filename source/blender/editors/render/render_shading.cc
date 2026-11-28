@@ -2861,6 +2861,13 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
+  if (!BKE_id_is_editable(bmain, &ma->id)) {
+    BKE_report(op->reports,
+               RPT_ERROR,
+               "Cannot paste into a library linked or non-editable override material");
+    return OPERATOR_CANCELLED;
+  }
+
   /* Read copy buffer .blend file. */
   char filepath[FILE_MAX];
   material_copybuffer_filepath_get(filepath);
@@ -2907,7 +2914,6 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
 
   /* Keep animation by moving local animation to the paste node-tree. */
   if (ma->nodetree && ma_from->nodetree) {
-    BLI_assert(ma_from->nodetree->adt == nullptr);
     std::swap(ma->nodetree->adt, ma_from->nodetree->adt);
   }
 
@@ -2990,6 +2996,7 @@ static wmOperatorStatus paste_material_exec(bContext *C, wmOperator *op)
 
   /* There are some custom updates to the node tree above, better do a full update pass. */
   BKE_ntree_update_tag_all(ma->nodetree);
+  bke::animdata::action_slots_user_cache_invalidate(*bmain);
   BKE_main_ensure_invariants(*bmain);
 
   DEG_id_tag_update(&ma->id, ID_RECALC_SYNC_TO_EVAL);

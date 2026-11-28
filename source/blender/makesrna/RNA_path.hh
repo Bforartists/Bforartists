@@ -25,6 +25,7 @@
 
 #include "RNA_types.hh"
 
+#include "BLI_assert.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_ustring.hh"
 
@@ -158,7 +159,66 @@ template<int64_t N = 4> class ParsedRNAPath {
   {
     return this->items;
   }
+
+  /** Append an rna_path::Member to the items. */
+  void append_member(const UString member)
+  {
+    this->items.append(rna_path::Member{member});
+  }
+  /**
+   * Append an rna_path::Member to the items.
+   *
+   * \note Do not use this to append string literals. Use "literal"_ustr with the above UString
+   * overload instead.
+   */
+  void append_member(const StringRef member)
+  {
+    this->append_member(UString(member));
+  }
+
+  /** Append an rna_path::LookupKey to the items. */
+  void append_lookup(const UString lookup_key)
+  {
+    this->items.append(rna_path::LookupKey{lookup_key});
+  }
+  /** Append an rna_path::LookupKey to the items. */
+  void append_lookup(const StringRef lookup_key)
+  {
+    this->append_lookup(UString(lookup_key));
+  }
+
+  /** Append an rna_path::LookupIndex to the items. */
+  void append_lookup(const int64_t lookup_index)
+  {
+    this->items.append(rna_path::LookupIndex{lookup_index});
+  }
+
+  /** Remove the last 'count' items. */
+  void remove_last(const int64_t count = 1)
+  {
+    for (const int _ : IndexRange(count)) {
+      this->items.remove_last();
+    }
+  }
 };
+
+template<int64_t N, int64_t M>
+bool operator==(const ParsedRNAPath<N> &left, const ParsedRNAPath<M> &right)
+{
+  return left.items == right.items;
+}
+
+template<int64_t N, int64_t M>
+bool operator!=(const ParsedRNAPath<N> &left, const ParsedRNAPath<M> &right)
+{
+  return !(left == right);
+}
+
+/**
+ * Lexicographically compare the parsed RNA paths.
+ */
+template<int64_t N, int64_t M>
+bool operator<(const ParsedRNAPath<N> &left, const ParsedRNAPath<M> &right);
 
 /**
  * NOTE: equality is defined in a specific way here to reflect the semantic

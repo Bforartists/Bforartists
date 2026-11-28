@@ -20,6 +20,7 @@ class MATERIAL_MT_context_menu(Menu):
         layout.operator("material.copy", icon='COPYDOWN')
         layout.operator("object.material_slot_copy", icon='COPYDOWN') # BFA - icon
         layout.operator("material.paste", icon='PASTEDOWN')
+        layout.separator()
         layout.operator("object.material_slot_remove_unused", icon='DELETE') # BFA - icon
         layout.operator("object.material_slot_remove_all", icon='DELETE') # BFA - icon
 

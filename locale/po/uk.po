@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 5.4.0 Alpha (b'023dcaed86e9')\n"
+"Project-Id-Version: Blender 5.4.0 Alpha (b'6c6f527b5ffb')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-16 11:03+0000\n"
+"POT-Creation-Date: 2026-11-23 08:41+0000\n"
 "PO-Revision-Date: 2026-07-22 11:12+0000\n"
 "Last-Translator: Gamfid <gamfid@users.noreply.translate.blender.org>\n"
 "Language-Team: Ukrainian <https://translate.blender.org/projects/blender-ui/ui/uk/>\n"
@@ -26421,6 +26421,114 @@ msgid "Material slot name"
 msgstr "Назва гнізда матеріалу"
 
 
+msgid "Merge"
+msgstr "Об'єднання"
+
+
+msgid "Primitives"
+msgstr "Примітиви"
+
+
+msgid "Import"
+msgstr "Імпортувати"
+
+
+msgid "Show/Hide"
+msgstr "Показати/приховати"
+
+
+msgid "Clean Up"
+msgstr "Вичищення"
+
+
+msgid "Utilities"
+msgstr "Утиліти"
+
+
+msgid "Special Characters"
+msgstr "Спеціальні символи"
+
+
+msgid "Kerning"
+msgstr "Кернінг"
+
+
+msgid "Metaball"
+msgstr "Метакуля"
+
+
+msgid "Math"
+msgstr "Математика"
+
+
+msgid "UV"
+msgstr "UV"
+
+
+msgid "Names"
+msgstr "Назви"
+
+
+msgid "Sample"
+msgstr "Вибірка"
+
+
+msgid "Bone Roll"
+msgstr "Прокручення Кістки"
+
+
+msgid "Stroke"
+msgstr "Штрих"
+
+
+msgid "Pivot Point"
+msgstr "Точка Опертя"
+
+
+msgid "Snap"
+msgstr "Підхоп"
+
+
+msgid "Proportional Editing Falloff"
+msgstr "Спад Пропорційного Редагування"
+
+
+msgid "Mask Edit"
+msgstr "Редагування Маски"
+
+
+msgid "Automasking"
+msgstr "Автомаскування"
+
+
+msgid "Face Sets Edit"
+msgstr "Редагування Наборів Граней"
+
+
+msgid "Vertex Group Locks"
+msgstr "Блокування Груп Вершин"
+
+
+msgid "Linked"
+msgstr "Пов'язане"
+
+
+msgid "Layout"
+msgstr "Розстановка"
+
+
+msgid "Mirror"
+msgstr "Дзеркалення"
+
+
+msgid "UV Mapping"
+msgstr "Розкладання UV"
+
+
+msgid "Local View"
+msgstr "Огляд Локально"
+
+
 msgid "Viewpoint"
 msgstr "Точка зору"
 
@@ -26429,16 +26537,8 @@ msgid "Navigation"
 msgstr "Навігація"
 
 
-msgid "Primitives"
-msgstr "Примітиви"
-
-
 msgid "Align View"
 msgstr "Вирівняти Огляд"
-
-
-msgid "Import"
-msgstr "Імпортувати"
 
 
 msgid "Align View to Active"
@@ -26457,44 +26557,28 @@ msgid "Select Similar"
 msgstr "Вибрати подібні"
 
 
-msgid "Utilities"
-msgstr "Утиліти"
-
-
 msgid "Select All by Trait"
 msgstr "Вибрати все за рисою"
+
+
+msgid "Keying"
+msgstr "Ключування"
 
 
 msgid "Select Linked"
 msgstr "Виділити пов'язане"
 
 
+msgid "Tracking"
+msgstr "Стеження"
+
+
 msgid "Select Loops"
 msgstr "Виділити петлі"
 
 
-msgid "Math"
-msgstr "Математика"
-
-
-msgid "UV"
-msgstr "UV"
-
-
-msgid "Sample"
-msgstr "Вибірка"
-
-
-msgid "Stroke"
-msgstr "Штрих"
-
-
 msgid "Assign Material"
 msgstr "Призначити Матеріал"
-
-
-msgid "Metaball"
-msgstr "Метакуля"
 
 
 msgid "Light"
@@ -26529,14 +26613,6 @@ msgid "Quick Effects"
 msgstr "Швидкі ефекти"
 
 
-msgid "Show/Hide"
-msgstr "Показати/приховати"
-
-
-msgid "Clean Up"
-msgstr "Вичищення"
-
-
 msgid "Asset"
 msgstr "Актив"
 
@@ -26553,20 +26629,8 @@ msgid "Link/Transfer Data"
 msgstr "Пов'язати/Перенести Дані"
 
 
-msgid "Linked"
-msgstr "Пов'язане"
-
-
-msgid "Layout"
-msgstr "Розстановка"
-
-
 msgid "Hooks"
 msgstr "Гачки"
-
-
-msgid "Vertex Group Locks"
-msgstr "Блокування Груп Вершин"
 
 
 msgid "Sculpt Set Pivot"
@@ -26585,20 +26649,8 @@ msgid "In-Betweens"
 msgstr "У проміжках"
 
 
-msgid "Keying"
-msgstr "Ключування"
-
-
 msgid "Propagate"
 msgstr "Поширити"
-
-
-msgid "Tracking"
-msgstr "Стеження"
-
-
-msgid "Names"
-msgstr "Назви"
 
 
 msgid "Toggle Bone Options"
@@ -26627,58 +26679,6 @@ msgstr "Вибрати за Силою Грані"
 
 msgid "Set Face Strength"
 msgstr "Задати Силу Грані"
-
-
-msgid "Merge"
-msgstr "Об'єднання"
-
-
-msgid "Special Characters"
-msgstr "Спеціальні символи"
-
-
-msgid "Kerning"
-msgstr "Кернінг"
-
-
-msgid "Bone Roll"
-msgstr "Прокручення Кістки"
-
-
-msgid "Pivot Point"
-msgstr "Точка Опертя"
-
-
-msgid "Snap"
-msgstr "Підхоп"
-
-
-msgid "Proportional Editing Falloff"
-msgstr "Спад Пропорційного Редагування"
-
-
-msgid "Mask Edit"
-msgstr "Редагування Маски"
-
-
-msgid "Automasking"
-msgstr "Автомаскування"
-
-
-msgid "Face Sets Edit"
-msgstr "Редагування Наборів Граней"
-
-
-msgid "Mirror"
-msgstr "Дзеркалення"
-
-
-msgid "UV Mapping"
-msgstr "Розкладання UV"
-
-
-msgid "Local View"
-msgstr "Огляд Локально"
 
 
 msgid "Basic"
@@ -60722,50 +60722,6 @@ msgid "Panel containing UI elements"
 msgstr "Панель, що містить елементи Інтерфейсу Користувача"
 
 
-msgid "Curve Edit Mode"
-msgstr "Режим Редагування Кривої"
-
-
-msgid "Transform Orientations"
-msgstr "Орієнтації Трансформ"
-
-
-msgid "Stroke Placement"
-msgstr "Розміщення Штриха"
-
-
-msgid "Drawing Plane"
-msgstr "Площина Рисування"
-
-
-msgid "Guides"
-msgstr "Напрямні"
-
-
-msgid "Quad View"
-msgstr "Чотирибічний Огляд"
-
-
-msgid "Onion Skin"
-msgstr "Покрив Калькою"
-
-
-msgid "Stereoscopy"
-msgstr "Стереоскопія"
-
-
-msgid "Multi Frame"
-msgstr "Багато Кадр"
-
-
-msgid "Auto-Masking"
-msgstr "Авто-Маскування"
-
-
-msgid "VR"
-msgstr "ВР"
-
-
 msgid "Active Tool"
 msgstr "Активний Засіб"
 
@@ -60794,6 +60750,10 @@ msgid "Overlays"
 msgstr "Накладки"
 
 
+msgid "Guides"
+msgstr "Напрямні"
+
+
 msgid "Motion Tracking"
 msgstr "Відстеження руху"
 
@@ -60804,6 +60764,46 @@ msgstr "Режим Редагування Сіті"
 
 msgid "Measurement"
 msgstr "Вимірювання"
+
+
+msgid "Curve Edit Mode"
+msgstr "Режим Редагування Кривої"
+
+
+msgid "Transform Orientations"
+msgstr "Орієнтації Трансформ"
+
+
+msgid "Stroke Placement"
+msgstr "Розміщення Штриха"
+
+
+msgid "Drawing Plane"
+msgstr "Площина Рисування"
+
+
+msgid "Quad View"
+msgstr "Чотирибічний Огляд"
+
+
+msgid "Onion Skin"
+msgstr "Покрив Калькою"
+
+
+msgid "Stereoscopy"
+msgstr "Стереоскопія"
+
+
+msgid "Multi Frame"
+msgstr "Багато Кадр"
+
+
+msgid "Auto-Masking"
+msgstr "Авто-Маскування"
+
+
+msgid "VR"
+msgstr "ВР"
 
 
 msgid "Chain Scaling"
@@ -103201,3 +103201,44 @@ msgstr "Кадри, за якими обчислюється діапазон"
 # BFA - machine translated, please review
 msgid "Bake Clipping"
 msgstr "Запікання відсікання"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Delete Invalid Bookmarks"
+msgstr "Видалити недійсні закладки"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Rip UVs and Move"
+msgstr "Розірвати UV та перемістити"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Pick DOF Distance"
+msgstr "Вибрати відстань ГРІП"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Curve Between Selected"
+msgstr "Вигнути між вибраними"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Fit to Annotation"
+msgstr "Підігнати під анотацію"
+
+# BFA - machine translated, please review
+# BFA - reworded, Blender: "Duplicate and Rename..."
+msgctxt "Operator"
+msgid "Duplicate and Rename"
+msgstr "Дублювати та перейменувати"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "Space Evenly"
+msgstr "Рівномірно розподілити"
+
+# BFA - machine translated, please review
+msgctxt "Operator"
+msgid "To Circle"
+msgstr "До кола"

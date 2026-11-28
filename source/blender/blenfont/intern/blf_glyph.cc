@@ -136,6 +136,7 @@ GlyphCacheBLF *blf_glyph_cache_acquire(FontBLF *font)
   GlyphCacheBLF *gc = blf_glyph_cache_find(font);
 
   if (!gc) {
+    std::scoped_lock lock(ft_lib_mutex);
     gc = blf_glyph_cache_new(font);
   }
 
@@ -1383,6 +1384,9 @@ GlyphBLF *blf_glyph_ensure(FontBLF *font, GlyphCacheBLF *gc, const uint charcode
     return g;
   }
 
+  /* Rendering may use and change the state of fallback fonts. */
+  std::scoped_lock lock(ft_lib_mutex);
+
   /* Glyph might not come from the initial font. */
   FontBLF *font_with_glyph = font;
   FT_UInt glyph_index = blf_glyph_index_from_charcode(&font_with_glyph, charcode);
@@ -1538,8 +1542,10 @@ void blf_glyph_draw(FontBLF *font, GlyphCacheBLF *gc, GlyphBLF *g, const int x, 
       int h = bitmap_len / w + 1;
 
       gc->bitmap_len_alloc = w * h;
-      gc->bitmap_result = static_cast<char *>(
-          MEM_realloc_uninitialized(gc->bitmap_result, size_t(gc->bitmap_len_alloc)));
+      char *new_bitmap = MEM_new_array_uninitialized<char>(size_t(gc->bitmap_len_alloc), __func__);
+      std::copy_n(gc->bitmap_result, gc->bitmap_len, new_bitmap);
+      MEM_delete(gc->bitmap_result);
+      gc->bitmap_result = new_bitmap;
 
       /* Keep in sync with the texture. */
       if (gc->texture) {

@@ -664,7 +664,7 @@ static wmOperatorStatus actkeys_box_select_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
+  const eSelectOp sel_op = RNA_enum_get<eSelectOp>(op->ptr, "mode");
   const eEditKeyframes_Select selectmode = (sel_op != SEL_OP_SUB) ? SELECT_ADD : SELECT_SUBTRACT;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
     deselect_action_keys(&ac, 1, SELECT_SUBTRACT);
@@ -952,7 +952,7 @@ static wmOperatorStatus actkeys_lassoselect_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  const eSelectOp sel_op = eSelectOp(RNA_enum_get(op->ptr, "mode"));
+  const eSelectOp sel_op = RNA_enum_get<eSelectOp>(op->ptr, "mode");
   const eEditKeyframes_Select selectmode = (sel_op != SEL_OP_SUB) ? SELECT_ADD : SELECT_SUBTRACT;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
     deselect_action_keys(&ac, 1, SELECT_SUBTRACT);
@@ -1014,7 +1014,7 @@ static wmOperatorStatus action_circle_select_exec(bContext *C, wmOperator *op)
   }
 
   const eSelectOp sel_op = ED_select_op_modal(
-      eSelectOp(RNA_enum_get(op->ptr, "mode")),
+      RNA_enum_get<eSelectOp>(op->ptr, "mode"),
       WM_gesture_is_modal_first(static_cast<wmGesture *>(op->customdata)));
   const eEditKeyframes_Select selectmode = (sel_op != SEL_OP_SUB) ? SELECT_ADD : SELECT_SUBTRACT;
   if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
@@ -1180,7 +1180,7 @@ static void columnselect_action_keys(bAnimContext *ac, short mode)
                   static_cast<bGPDlayer *>(ale.data), &ked.cfra_elem_list, true);
               break;
             case ANIMTYPE_GREASE_PENCIL_LAYER:
-              ed::greasepencil ::create_keyframe_edit_data_selected_frames_list(
+              ed::greasepencil::create_keyframe_edit_data_selected_frames_list(
                   &ked, static_cast<GreasePencilLayer *>(ale.data)->wrap());
               break;
             default:
@@ -1975,8 +1975,9 @@ static wmOperatorStatus mouse_action_keys(bAnimContext *ac,
     /* reset selection mode for next steps */
     select_mode = SELECT_ADD;
 
-    /* Rather than deselecting others, users may want to drag to box-select (drag from empty space)
-     * or tweak-translate an already selected item. If these cases may apply, delay deselection. */
+    /* Rather than deselecting others, users may want to drag to box-select (drag from empty
+     * space) or tweak-translate an already selected item. If these cases may apply, delay
+     * deselection. */
     if (wait_to_deselect_others && (!found || is_selected)) {
       ret_value = OPERATOR_RUNNING_MODAL;
     }
@@ -2204,7 +2205,7 @@ static wmOperatorStatus select_by_type_exec(bContext *C, wmOperator *op)
                                     ANIMFILTER_NODUPLIS | ANIMFILTER_FOREDIT |
                                     ANIMFILTER_FCURVESONLY);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
-  const eBezTriple_KeyframeType key_type = eBezTriple_KeyframeType(RNA_enum_get(op->ptr, "type"));
+  const eBezTriple_KeyframeType key_type = RNA_enum_get<eBezTriple_KeyframeType>(op->ptr, "type");
   const bool extend = RNA_boolean_get(op->ptr, "extend");
   for (bAnimListElem &elem : anim_data) {
     FCurve *fcurve = static_cast<FCurve *>(elem.data);

@@ -303,18 +303,15 @@ MTLContext::~MTLContext()
   /* Detach resource references. */
   GPU_texture_unbind_all();
 
-  /* Unbind UBOs. */
+  /* Reset UBO and SSBO bindings. The bound buffers must not be accessed: they may have been freed
+   * while bound, by a thread on which this context was not active. */
   for (auto &ubo_bind : this->pipeline_state.ubo_bindings) {
-    if (ubo_bind.bound && ubo_bind.ubo != nullptr) {
-      GPU_uniformbuf_unbind(ubo_bind.ubo);
-    }
+    ubo_bind.bound = false;
+    ubo_bind.ubo = nullptr;
   }
-
-  /* Unbind SSBOs. */
   for (auto &ssbo_bind : this->pipeline_state.ssbo_bindings) {
-    if (ssbo_bind.bound && ssbo_bind.ssbo != nullptr) {
-      ssbo_bind.ssbo->unbind();
-    }
+    ssbo_bind.bound = false;
+    ssbo_bind.ssbo = nullptr;
   }
 
   /* Release Dummy resources. */
@@ -1986,7 +1983,7 @@ id<MTLComputePipelineState> MTLContextComputeUtils::get_buffer_clear_pso()
     if (error || buffer_clear_pso_ == nil) {
       CLOG_ERROR(&LOG,
                  "Failed to prepare compute_buffer_clear MTLComputePipelineState %s",
-                 [[error localizedDescription] UTF8String]);
+                 error ? [[error localizedDescription] UTF8String] : "unknown");
       BLI_assert(false);
       return nil;
     }

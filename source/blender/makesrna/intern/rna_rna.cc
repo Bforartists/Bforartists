@@ -83,7 +83,8 @@ const EnumPropertyItem rna_enum_property_type_items[] = {
   {PROP_TEMPERATURE, "TEMPERATURE", 0, "Temperature", ""}, \
   {PROP_WAVELENGTH, "WAVELENGTH", 0, "Wavelength", ""}, \
   {PROP_COLOR_TEMPERATURE, "COLOR_TEMPERATURE", 0, "Color Temperature", ""}, \
-  {PROP_FREQUENCY, "FREQUENCY", 0, "Frequency", ""}
+  {PROP_FREQUENCY, "FREQUENCY", 0, "Frequency", ""}, \
+  {PROP_WAVELENGTH_UM, "WAVELENGTH_UM", 0, "Wavelength (um)", ""}
 
 #define RNA_ENUM_PROPERTY_SUBTYPE_NUMBER_ARRAY_ITEMS \
   {PROP_COLOR, "COLOR", 0, "Linear Color", "Color in the scene linear working color space"}, \
@@ -158,6 +159,7 @@ const EnumPropertyItem rna_enum_property_unit_items[] = {
     {PROP_UNIT_WAVELENGTH, "WAVELENGTH", 0, "Wavelength", ""},
     {PROP_UNIT_COLOR_TEMPERATURE, "COLOR_TEMPERATURE", 0, "Color Temperature", ""},
     {PROP_UNIT_FREQUENCY, "FREQUENCY", 0, "Frequency", ""},
+    {PROP_UNIT_WAVELENGTH_UM, "WAVELENGTH_UM", 0, "Wavelength (um)", ""},
     {0, nullptr, 0, nullptr, nullptr},
 };
 
@@ -398,17 +400,26 @@ static bool rna_idproperty_known(CollectionPropertyIterator *iter, void *data)
   PropertyRNA *prop;
   StructRNA *ptype = iter->builtin_parent.type;
 
+  /* Structs id properties are only exposed through RNA PointerProperty definitions (typically
+   * system IDProperties). */
+  if (IDP_struct_type_info(idprop->type)) {
+    return true;
+  }
+
   /* Function to skip any id properties that are already known by RNA,
    * for the second loop where we go over unknown id properties.
    *
    * Note that only dynamically-defined RNA properties (the ones actually using IDProperties as
    * storage back-end) should be checked here. If a custom property is named the same as a 'normal'
    * RNA property, they are different data. */
-  const UString idprop_name(idprop->name);
+  const std::optional<UString> idprop_name = UString::find(idprop->name);
+  if (!idprop_name) {
+    return false;
+  }
   do {
     for (prop = ptype->cont.properties.first(); prop; prop = prop->next) {
       if ((prop->flag_internal & PROP_INTERN_BUILTIN) == 0 &&
-          (prop->flag & PROP_IDPROPERTY) != 0 && prop->identifier == idprop_name)
+          (prop->flag & PROP_IDPROPERTY) != 0 && prop->identifier == *idprop_name)
       {
         return true;
       }
@@ -604,7 +615,8 @@ PointerRNA rna_builtin_properties_get(CollectionPropertyIterator *iter)
 
 bool rna_builtin_properties_lookup_string(PointerRNA *ptr, const char *key, PointerRNA *r_ptr)
 {
-  PropertyRNA *prop = RNA_struct_find_property(ptr, UString(key));
+  const std::optional<UString> key_ustr = UString::find(key);
+  PropertyRNA *prop = key_ustr ? RNA_struct_find_property(ptr, *key_ustr) : nullptr;
   if (!prop) {
     *r_ptr = {};
     return false;
@@ -1363,7 +1375,7 @@ static bool rna_BlenderRNA_structs_lookup_string(PointerRNA *ptr,
                                                  PointerRNA *r_ptr)
 {
   BlenderRNA *brna = static_cast<BlenderRNA *>(ptr->data);
-  StructRNA *srna = brna->structs_map.lookup_default(UString(key), nullptr);
+  StructRNA *srna = brna->structs_map.lookup_default_as(StringRef(key), nullptr);
   if (srna != nullptr) {
     *r_ptr = RNA_pointer_create_discrete(nullptr, RNA_Struct, srna);
     return true;
@@ -2189,7 +2201,7 @@ void rna_property_override_diff_default(Main *bmain, RNAPropertyOverrideDiffCont
        * pointer.
        * Doing this here avoids having to manually specify `PROPOVERRIDE_NO_PROP_NAME` to things
        * like ShapeKey pointers. */
-      if (prop_a->identifier == "rna_type"_ustr) {
+      if (prop_a->identifier == "rna_type") {
         /* Dummy 'pass' answer, this is a meta-data and must be ignored... */
         return;
       }

@@ -597,22 +597,23 @@ void VKBackend::detect_workarounds(VKDevice &device)
                                     VK_TRUE;
 
   /* During testing graphics pipeline library feature it was detected that it would crash on
-   * official AMD drivers.
+   * official AMD drivers. The driver fault is reliably reproduced when compiling a shader that
+   * uses ray queries.
    */
-  if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL) &&
-      bool(G.debug & G_DEBUG_GPU))
-  {
+  if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL)) {
     extensions.graphics_pipeline_library = false;
-    extensions.vertex_input_dynamic_state = false;
+    /* Keep vertex input dynamic state outside GPU debugging, it is needed for EEVEE pipeline
+     * precompilation. */
+    if (G.debug & G_DEBUG_GPU) {
+      extensions.vertex_input_dynamic_state = false;
+    }
   }
 
   /* AMD official driver always reads layer 0 for all layers in subpassLoad. The Vulkan spec
    * (VUID-StandaloneSpirv-OpTypeImage-06214) requires the layer to be implicit from the fragment
    * position.
-   *
-   * Similar issue seems to happen on Windows + Intel and on Mesa.
    */
-  if (GPU_type_matches(GPU_DEVICE_ATI | GPU_DEVICE_INTEL, GPU_OS_ANY, GPU_DRIVER_ANY)) {
+  if (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_OFFICIAL)) {
     extensions.dynamic_rendering_local_read = false;
   }
 

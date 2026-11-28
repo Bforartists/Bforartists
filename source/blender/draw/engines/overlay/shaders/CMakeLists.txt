@@ -28,14 +28,8 @@ set(INC_GLSL
 
 set(SRC_GLSL_VERT
   overlay_clipbound_vert.glsl
-  overlay_edit_curve_handle_vert.glsl
-  overlay_edit_curve_normals_vert.glsl
-  overlay_edit_curve_point_vert.glsl
-  overlay_edit_curve_wire_vert.glsl
   overlay_edit_curves_handle_vert.glsl
-  overlay_edit_gpencil_canvas_vert.glsl
   overlay_edit_pointcloud_vert.glsl
-  overlay_edit_mesh_analysis_vert.glsl
   overlay_edit_mesh_skin_root_vert.glsl
   overlay_edit_particle_point_vert.glsl
   overlay_edit_particle_strand_vert.glsl
@@ -46,13 +40,6 @@ set(SRC_GLSL_VERT
   overlay_edit_uv_stretching_vert.glsl
   overlay_edit_uv_tiled_image_borders_vert.glsl
   overlay_edit_uv_verts_vert.glsl
-  overlay_extra_groundline_vert.glsl
-  overlay_extra_lightprobe_grid_vert.glsl
-  overlay_extra_loose_point_vert.glsl
-  overlay_extra_point_vert.glsl
-  overlay_extra_vert.glsl
-  overlay_extra_wire_vert.glsl
-  overlay_facing_vert.glsl
   overlay_fullscreen_vert.glsl
   overlay_grid_vert.glsl
   overlay_image_vert.glsl
@@ -74,14 +61,10 @@ set(SRC_GLSL_VERT
 
 set(SRC_GLSL_FRAG
   overlay_background_frag.glsl
-  overlay_edit_mesh_analysis_frag.glsl
   overlay_edit_uv_edges_frag.glsl
   overlay_edit_uv_image_mask_frag.glsl
   overlay_edit_uv_verts_frag.glsl
   overlay_extra_frag.glsl
-  overlay_extra_loose_point_frag.glsl
-  overlay_extra_wire_frag.glsl
-  overlay_facing_frag.glsl
   overlay_grid_frag.glsl
   overlay_image_frag.glsl
   overlay_motion_path_line_frag.glsl
@@ -89,7 +72,6 @@ set(SRC_GLSL_FRAG
   overlay_paint_texture_frag.glsl
   overlay_paint_weight_frag.glsl
   overlay_point_varying_color_frag.glsl
-  overlay_point_varying_color_varying_outline_aa_frag.glsl
   overlay_sculpt_curves_selection_frag.glsl
   overlay_sculpt_mask_frag.glsl
   overlay_uniform_color_frag.glsl

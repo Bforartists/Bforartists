@@ -11,6 +11,7 @@
 #include <optional>
 
 #include "BLI_compiler_compat.hh"
+#include "BLI_function_ref.hh"
 #include "BLI_span.hh"
 
 #include "BKE_node_socket_value_fwd.hh"
@@ -57,6 +58,7 @@ struct bNodeTree;
 struct bNodeTreeExec;
 
 class CPPType;
+class ResourceScope;
 namespace nodes {
 struct GeneratedTreeSrnaData;
 class NodeMultiFunctionBuilder;
@@ -65,6 +67,8 @@ class NodeDeclaration;
 class NodeDeclarationBuilder;
 class GatherAddNodeSearchParams;
 class GatherLinkSearchOpParams;
+class InferenceValue;
+struct GeoNodesCallData;
 struct NodeExtraInfoParams;
 namespace value_elem {
 class InverseElemEvalParams;
@@ -154,6 +158,28 @@ using SocketMakeNodesInputSrnaFunction = void (*)(const bNodeTree &tree,
                                                   StructRNA &srna,
                                                   const bNodeTreeInterfaceSocket &io_socket,
                                                   nodes::GeneratedTreeSrnaData &r_generated);
+struct UpdatePropsOnInterfaceChangeParams {
+  const bNodeTree &tree;
+  const bNodeTreeInterfaceSocket &io_socket;
+  PointerRNA &props;
+};
+using UpdatePropsOnInterfaceChangeFunction = void (*)(const UpdatePropsOnInterfaceChangeParams &p);
+struct GetSocketInferenceValueParams {
+  const bNodeTree &tree;
+  const bNodeTreeInterfaceSocket &io_socket;
+  ResourceScope &scope;
+  PointerRNA &props;
+  nodes::InferenceValue &r_value;
+};
+using SocketSrnaToInferenceValueFunction = void (*)(GetSocketInferenceValueParams &p);
+struct GetSocketEvalValueParams {
+  const bNodeTree &tree;
+  const bNodeTreeInterfaceSocket &io_socket;
+  const nodes::GeoNodesCallData *call_data;
+  PointerRNA &props;
+};
+using SocketSrnaToEvalValueFunction =
+    std::optional<SocketValueVariant> (*)(GetSocketEvalValueParams &p);
 
 /**
  * \brief Defines a socket type.
@@ -215,9 +241,19 @@ struct bNodeSocketType {
   /* Default value for this socket type. */
   const SocketValueVariant *geometry_nodes_default_value = nullptr;
 
+  /** Get the values that is passed into the geometry nodes evaluation. */
+  SocketSrnaToEvalValueFunction get_eval_value_from_rna_props__geometry_nodes = nullptr;
+
+  /** Get the InferenceValue that is passed into usage-inferencing. */
+  SocketSrnaToInferenceValueFunction get_inference_value_from_rna_props__geometry_nodes = nullptr;
+  SocketSrnaToInferenceValueFunction get_inference_value_from_rna_props__compositor_nodes =
+      nullptr;
+
   SocketMakeNodesInputSrnaFunction make_geometry_nodes_input_srna = nullptr;
   SocketMakeNodesInputSrnaFunction make_compositor_nodes_input_srna = nullptr;
   SocketMakeNodesInputSrnaFunction make_scene_compositor_effect_input_srna = nullptr;
+
+  UpdatePropsOnInterfaceChangeFunction update_props_on_interface_change__geometry_nodes = nullptr;
 };
 
 using NodeInitExecFunction = void *(*)(bNodeExecContext * context,
@@ -563,7 +599,8 @@ struct bNodeTreeType {
   bool (*validate_link)(eNodeSocketDatatype from, eNodeSocketDatatype to) = nullptr;
 
   /* Check if the socket type is valid for this tree type. */
-  bool (*valid_socket_type)(bNodeTreeType *ntreetype, bNodeSocketType *socket_type) = nullptr;
+  bool (*valid_socket_type)(bNodeTreeType *ntreetype,
+                            const bNodeSocketType *socket_type) = nullptr;
 
   /**
    * If true, then some UI elements related to building node groups will be hidden.
@@ -634,6 +671,13 @@ bNodeTree **node_tree_ptr_from_id(ID *id);
 bNodeTree *node_tree_from_id(ID *id);
 
 /**
+ * #IDTypeInfo.foreach_embedded_id for data-blocks that only embed a node tree.
+ */
+void node_tree_foreach_embedded_id(
+    ID *id,
+    FunctionRef<void(ID **embedded_id_p, ID_Type id_type, StringRefNull rna_identifier)> fn);
+
+/**
  * Check recursively if a node tree contains another.
  */
 bool node_tree_contains_tree(const bNodeTree &tree_to_search_in,
@@ -683,7 +727,12 @@ void node_set_undefined_type(bNode &node);
 
 Span<bNodeType *> node_types_get();
 
-bNodeSocketType *node_socket_type_find(StringRef idname);
+bNodeSocketType *node_socket_type_find(UString idname);
+inline bNodeSocketType *node_socket_type_find(const StringRef idname)
+{
+  return node_socket_type_find(UString(idname));
+}
+
 bNodeSocketType *node_socket_type_find_static(int type, int subtype = 0);
 void node_register_socket_type(bNodeSocketType &stype);
 void node_unregister_socket_type(bNodeSocketType &stype);
@@ -693,9 +742,9 @@ StringRefNull node_socket_type_label(const bNodeSocketType &stype);
 /* The optional dimensions argument can be provided for types that support multiple possible
  * dimensions like Vector. It is expected to be in the range [2, 4] and if not provided, 3 will be
  * assumed. */
-std::optional<StringRefNull> node_static_socket_type(int type,
-                                                     int subtype,
-                                                     std::optional<int> dimensions = std::nullopt);
+std::optional<UString> node_static_socket_type(int type,
+                                               int subtype,
+                                               std::optional<int> dimensions = std::nullopt);
 std::optional<StringRefNull> node_static_socket_interface_type_new(
     int type, int subtype, std::optional<int> dimensions = std::nullopt);
 
@@ -710,7 +759,7 @@ const bNodeSocket *node_find_socket(const bNode &node,
 bNodeSocket *node_add_socket(bNodeTree &ntree,
                              bNode &node,
                              eNodeSocketInOut in_out,
-                             StringRefNull idname,
+                             UString idname,
                              StringRefNull identifier,
                              StringRefNull name);
 bNodeSocket *node_add_static_socket(bNodeTree &ntree,
@@ -976,7 +1025,7 @@ void node_tree_node_flag_set(bNodeTree &ntree, eNode_Flag flag, bool enable);
 /**
  * \note `ntree` itself has been read!
  */
-void node_tree_blend_read_data(BlendDataReader *reader, ID *owner_id, bNodeTree *ntree);
+void node_tree_blend_read_data(BlendDataReader *reader, bNodeTree *ntree);
 
 bool node_is_static_socket_type(const bNodeSocketType &stype);
 
@@ -984,10 +1033,7 @@ StringRefNull node_socket_sub_type_label(int subtype);
 
 void node_remove_socket_ex(bNodeTree &ntree, bNode &node, bNodeSocket &sock, bool do_id_user);
 
-void node_modify_socket_type(bNodeTree &ntree,
-                             bNode &node,
-                             bNodeSocket &sock,
-                             StringRefNull idname);
+void node_modify_socket_type(bNodeTree &ntree, bNode &node, bNodeSocket &sock, UString idname);
 
 /**
  * \note Goes over entire tree.
